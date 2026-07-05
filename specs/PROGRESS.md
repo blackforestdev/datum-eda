@@ -5,9 +5,14 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-07-02 — governance apparatus slimmed to behavioral gates
-(PG-* proofs + write fences) plus spec-governance coverage/classification; the
-per-doc enforcement ledger and doc-string pinning gates were retired.
+Last updated: 2026-07-04 — write-surface convergence COMPLETE (wave commits
+`dff7c2c..c567698`): the engine native-write facade
+(`crates/engine/src/api/native_write/`, 11 families) authors every native
+operation batch, genesis is engine-owned, the daemon reaches the substrate via
+`native.write`/`native.describe`, and the CLI flat namespace was dissolved into
+`args/` + `commands/<family>/` + `context/` + `main_tests/` with the exec layer
+deleted. (2026-07-02: governance apparatus slimmed to behavioral gates plus
+spec-governance coverage/classification.)
 
 **Current-vs-target framing**:
 - **Current implementation evidence**: the historical milestone tables below
@@ -17,9 +22,10 @@ per-doc enforcement ledger and doc-string pinning gates were retired.
 - **Not the North Star**: legacy M0-M7 milestone completion rows are retained as
   evidence, but they no longer define the next implementation priority.
 
-**Active milestone**: substrate readiness for product mechanics. Imported-board
-fidelity work is paused unless it directly proves or unblocks the substrate
-contracts below.
+**Active milestone**: native authoring depth on the landed substrate. The
+substrate is the universal native write authority (facade complete, wave
+commits `dff7c2c..c567698`); imported-board fidelity work stays paused unless
+it directly proves or unblocks the substrate contracts below.
 **Active product driver**: library/schematic foundation. Datum's next maturity
 axis is native governed library data and schematic capture as the normal
 electrical source of truth, followed by schematic-to-PCB implementation.
@@ -105,6 +111,20 @@ from target to current evidence only when there is an implementation anchor,
 test/gate, and CLI/MCP/API surface where applicable. Imported-board fidelity can
 continue only after the relevant substrate contracts are implemented or after an
 explicit governance decision records why a fidelity slice is exempt.
+
+### Native Write Facade — Write-Surface Convergence (2026-07-04, COMPLETE)
+
+Evidence: wave commits `dff7c2c..c567698` (facade scaffold `22a1b0f`, Waves
+1–4 `3d597cc`/`319ceef`/`f65314d`/`06a2f80`, daemon substrate reach `1c93ca6`,
+legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Engine native-write facade | [x] | `crates/engine/src/api/native_write/` (11 families over 4 waves): ALL CLI operation authoring moved engine-side; the CLI authors zero operation batches. Route-proposal domain logic lives in `crates/engine/src/board/route_proposal/`; fixture seeding goes through the facade (last raw `board.json` write gone). Remaining CLI `write_canonical_json` call sites are user-addressed artifact/report exports (route-proposal and forward-annotation artifacts), not project source shards. |
+| Engine-owned genesis | [x] | `bootstrap_native_project` in `native_write/genesis.rs`; the `project new` CLI bootstrap bypass is closed. Genesis is deliberately not journaled; a t=0 provenance record is pending an owner decision (options documented in the `genesis.rs` module docs). |
+| Daemon substrate reach | [x] | `native.write` + `native.describe` (registry-driven, resolve-per-request, `tool`/`assistant` provenance). Legacy fence executed: 11 imported-board dispatch arms retired, the imported-KiCad converter session (4 legacy mutators + `Engine::save`, private `ImportedSessionUndoRecord` memo) is terminally frozen per decision 011. MCP provenance closed (`cli_commit_source` everywhere, `assistant` default). |
+| CLI reorganization | [x] | Flat namespace dissolved into `args/`, `commands/<family>/`, `context/`, `main_tests/`; exec layer deleted (273 `run()` impls collapsed into single dispatch); `main.rs` at 194 lines; orphan-coverage gate added. |
+| Honest remainder | [~] | MCP direct tools for a few proposal-gated families lack proposal twins (`component_instance` bind/set/delete unreachable under `assistant` provenance) — follow-up surface work. Verb-registry migration ongoing (7 of the public `datum.*` prefixes generated; per-prefix count/hash pins retire as families migrate). |
 
 ### Single-Source Verb Registry (Decision 017)
 

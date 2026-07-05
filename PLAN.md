@@ -56,11 +56,12 @@ decomposition is now organic and governance-triggered, not gate-scheduled.
 
 Current focus (post-correction, committed course): the canonical mutation
 substrate (typed `Operation` + single `commit()` + journal +
-`ProjectResolver`) has landed and is converging — routing every remaining
-write surface onto it is active work, not a future phase. On that substrate,
-the active product frontier is **native authoring**: governed library →
-schematic capture → PCB layout → manufacturing output, with full AI
-augmentation through the same deterministic primitives.
+`ProjectResolver`) has landed and write-surface convergence is COMPLETE — the
+engine native-write facade authors every native operation batch (see
+`specs/PROGRESS.md`). On that substrate, the active product frontier is
+**native authoring**: governed library → schematic capture → PCB layout →
+manufacturing output, with full AI augmentation through the same
+deterministic primitives.
 
 Boundaries of the window:
 1. KiCad import is FROZEN. The M7 spike imports a board with sufficient
@@ -68,7 +69,7 @@ Boundaries of the window:
    gates native maturity.
 2. The GUI editor (interactive authoring in the GUI, wired to the engine) is
    a named later phase of the committed sequence — real, but after the
-   substrate convergence and native-authoring foundation.
+   native-authoring foundation (substrate convergence is done).
 3. Legacy milestones stay closed/frozen: `M0`–`M5` closed for scope, `M6`
    strategy reporting frozen pending evidence runs; regression fixes only.
 4. Use `specs/PROGRESS.md` as the source for the next bounded slice; do not

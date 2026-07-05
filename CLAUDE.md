@@ -37,7 +37,7 @@ they support the product; they do not define its identity.
   redundant tool is a defect.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..016`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..017`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -81,12 +81,15 @@ product-mechanics docs.
   PCB, and generating CAM output, with full AI augmentation. Its foundation,
   the product-mechanics **substrate** (typed `Operation` enum + single
   `commit()` + journal + `ProjectResolver` + stable
-  `ObjectId`/`ComponentInstance` + `model_revision` + Import Map), has
-  **landed and is committed** (HEAD `5fe3016`) and now backs a growing share of
-  native authoring; the active work is converging every remaining write surface
-  onto it. See the substrate-readiness table in `specs/PROGRESS.md`.
-- **Post-correction sequence (committed):** substrate (committed,
-  converging) → library →
+  `ObjectId`/`ComponentInstance` + `model_revision` + Import Map), is now the
+  **universal native write authority**: the engine native-write facade
+  (`crates/engine/src/api/native_write/`, 11 families) authors every native
+  operation batch; the CLI is a thin args/dispatch/views surface with zero
+  operation authoring; the daemon reaches the substrate through
+  `native.write`/`native.describe`; genesis is engine-owned. See
+  `specs/PROGRESS.md`.
+- **Post-correction sequence (committed):** substrate (complete as the native
+  write authority) → library →
   native authoring + GUI surface. The GUI build-out is a named, real phase of
   this sequence — **not** an implied "M8 later".
 - **Frozen:** KiCad import. The M7 spike already imports a board with enough
@@ -116,28 +119,28 @@ Real, shipped capability — read alongside the substrate gap below:
   review surface + visual regression harness
 
 ### Known gap between status and ethos (do not overstate)
-- **Committed:** the substrate and the native-authoring work that backs it are
-  committed at HEAD `5fe3016`; a fresh checkout now sees it. Keep
-  `SPEC_PARITY.md` and drift gates aligned when inventory shapes change.
-- **Convergence-debt, not absence:** the substrate exists but is not yet the
-  universal write authority. ~13 `write_canonical_json` sites remain (e.g.
-  project-create bootstrap); the imported-KiCad `Engine::save` text-patch path
-  is still legacy. The public daemon write-bypass is now CLOSED — the daemon
-  write path is fenced by the new daemon write-parity gate. Routing every
-  remaining surface onto `commit()` is the active convergence work.
-- **Known correctness defects (P0s — FIXED):** the schematic global-label merge
-  (formerly keyed on root-count not name in `connectivity/mod.rs`, fusing
-  distinct global nets) is now name-keyed; the engine DRC no longer counts
-  unfilled zones as routed copper. Both are CLOSED as of HEAD `5fe3016`.
-- **Library:** native pool/library mutation runs through the substrate, but the
-  decision-008 native types (Footprint/PinPadMap/LibraryBinding) exist as JSON
-  subdirs, not yet Rust types; the IPC footprint system is absent.
-- **GUI:** a review surface, not an editor. Interactive authoring in the GUI
-  (the user selecting a tool and drawing/placing/editing, wired to the engine)
-  is not yet built.
+Write-surface convergence is COMPLETE — do not resurrect the old
+"convergence-debt" framing. The honest remainder:
+- **Legacy converter session (terminal, not debt):** the imported-KiCad
+  session keeps 4 legacy mutator methods + `Engine::save` with a private
+  in-memory `ImportedSessionUndoRecord` memo (never journaled); terminally
+  frozen, dies with the one-time converter (decision 011).
+- **MCP proposal twins:** a few proposal-gated families expose direct tools
+  without proposal twins — `component_instance` bind/set/delete are
+  unreachable under assistant provenance. Follow-up surface work.
+- **Genesis t=0 record:** genesis is deliberately not journaled; a t=0 record
+  is pending an owner decision (options in `native_write/genesis.rs`).
+- **Verb registry migration ongoing (decision 017):** 7 of the public
+  `datum.*` prefixes are registry-generated (44/332 public tools); per-prefix
+  count/hash pins retire as each family migrates.
+- **Library:** decision-008 `Footprint`/`PinPadMap` are now engine Rust types
+  and the first IPC-7351B two-terminal generator landed; `LibraryBinding` is
+  not yet a Rust type and the broader IPC footprint system remains unbuilt.
+- **GUI:** a review surface, not an editor; interactive authoring (the user
+  selecting a tool and drawing/placing/editing) is not yet built.
 
 The per-domain tool contracts in `docs/contracts/` specify the target each
-domain builds toward once the substrate lands.
+domain builds toward on the landed substrate.
 
 ## Working Posture (for agents)
 - **Planning vs execution.** Default to high-level planning and specification
@@ -244,7 +247,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..012 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..017 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +
@@ -272,9 +275,11 @@ project/
 │   └── (legacy: M0/M1 checklists, R1_G0_FOUNDATION.md, workflows/)
 │
 ├── crates/
-│   ├── engine/             # Core engine (Rust library crate)
-│   ├── cli/                # CLI binary `datum-eda` (crate datum-eda-cli)
-│   ├── engine-daemon/      # JSON-RPC daemon over Unix socket
+│   ├── engine/             # Core engine; src/api/native_write/ facade
+│   ├── cli/                # CLI `datum-eda` (crate datum-eda-cli): args/ +
+│   │                       #   commands/<family>/ + context/ + main_tests/
+│   ├── engine-daemon/      # JSON-RPC daemon (native.write/native.describe)
+│   ├── verb-registry/      # Single-source verb registry (decision 017)
 │   ├── test-harness/       # Perf/quality harnesses and helpers
 │   ├── gui-protocol/       # Scene contract + primitive types (no GUI deps)
 │   ├── gui-render/         # wgpu renderer + visual regression harness
@@ -302,17 +307,14 @@ project/
 ```
 
 ## Not Yet Implemented
-The substrate and authoring frontier (see `docs/contracts/` for target specs):
-- The canonical mutation substrate: typed `Operation`/`OperationBatch`, single
-  `commit()` + journal, `ProjectResolver`, `ComponentInstance`,
-  `model_revision`/`object_revision`, Import Map `import_key`. **This is the
-  active target and gates everything below.**
-- Native schematic/library/manufacturing authoring on the canonical model
-  (today it is private file writes off-model).
-- Unified `DesignModel` authority (today imported KiCad text is de-facto
-  authority).
-- Full GUI editor (substrate + read-only review exist; interactive editing
-  not exposed end-to-end). Product-real embedded terminal and assistant.
+The authoring frontier (see `docs/contracts/` for target specs); the substrate
+is landed and authoritative — what remains is depth on top of it:
+- Richer semantic schematic/library editors, rule reference-resolution
+  semantics, and broader proposal/check operation vocabulary.
+- Decision-008 `LibraryBinding` as a Rust type and the full IPC footprint
+  system (first IPC-7351B two-terminal generator landed).
+- Full GUI editor (substrate + read-only review + PTY terminal lane exist;
+  interactive editing not exposed end-to-end). Product-real assistant.
 - Native copper-pour zone fill (imported fills only today).
 - 3D viewer, panelization, STEP/IDF/ODB++/IPC-2581 export — spec stubs landed
   in Standards Audit Batch 1, implementation deferred.
