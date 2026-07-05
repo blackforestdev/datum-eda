@@ -342,6 +342,7 @@ _GENERATED_TOOL_SPECS = [
     for prefix in (
         "datum.artifact",
         "datum.check",
+        "datum.component_instance",
         "datum.context",
         "datum.journal",
         "datum.manufacturing",
@@ -399,9 +400,6 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.pcb.place_net_class", **datum_alias("place_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_net_class"])},
     {"name": "datum.pcb.edit_net_class", **datum_alias("edit_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_net_class"]), "x_dispatch_args": ["path", "net_class", "name", "clearance_nm", "track_width_nm", "via_drill_nm", "via_diameter_nm", "diffpair_width_nm", "diffpair_gap_nm"]},
     {"name": "datum.pcb.delete_net_class", **datum_alias("delete_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_net_class"])},
-    {"name": "datum.component_instance.bind", **datum_alias("bind_component_instance", RELATIONSHIP_TOOL_SCHEMAS["bind_component_instance"])},
-    {"name": "datum.component_instance.set", **datum_alias("set_component_instance", RELATIONSHIP_TOOL_SCHEMAS["set_component_instance"])},
-    {"name": "datum.component_instance.delete", **datum_alias("delete_component_instance", RELATIONSHIP_TOOL_SCHEMAS["delete_component_instance"])},
     {"name": "datum.library.list_objects", **datum_alias("get_pool_library_objects", LIBRARY_TOOL_SCHEMAS["get_pool_library_objects"])},
     {"name": "datum.library.show_object", **datum_alias("show_pool_library_object", LIBRARY_TOOL_SCHEMAS["show_pool_library_object"])},
     {"name": "datum.library.pool_models", **datum_alias("get_pool_model_blobs", LIBRARY_TOOL_SCHEMAS["get_pool_model_blobs"])},

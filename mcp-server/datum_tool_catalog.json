@@ -1094,6 +1094,309 @@
       "write_surface": null
     },
     {
+      "description": "Create a journaled ComponentInstance binding between one or more schematic symbols and one board package.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "bind-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "symbol",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          },
+          {
+            "param": "symbols",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "symbol_roles",
+            "repeated": "--symbol-role"
+          },
+          {
+            "param": "package_roles",
+            "repeated": "--package-role"
+          }
+        ],
+        "kind": "cli",
+        "method": "bind_component_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "package",
+        "component_instance",
+        "symbols",
+        "part",
+        "symbol_roles",
+        "package_roles"
+      ],
+      "dispatch_defaults": {
+        "package_roles": null,
+        "part": null,
+        "symbol_roles": null
+      },
+      "inputSchema": {
+        "anyOf": [
+          {
+            "required": [
+              "symbol"
+            ]
+          },
+          {
+            "required": [
+              "symbols"
+            ]
+          }
+        ],
+        "properties": {
+          "component_instance": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "part": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "symbol_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.component_instance.bind",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one journaled ComponentInstance binding by UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_component_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "component_instance"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component_instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component_instance"
+        ],
+        "type": "object"
+      },
+      "name": "datum.component_instance.delete",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Update a journaled ComponentInstance symbol/package binding, preserving multi-symbol authored instances when `symbols` is supplied.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          },
+          {
+            "param": "symbol",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "param": "symbols",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "symbol_roles",
+            "repeated": "--symbol-role"
+          },
+          {
+            "param": "package_roles",
+            "repeated": "--package-role"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_component_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "component_instance",
+        "symbol",
+        "package",
+        "symbols",
+        "part",
+        "symbol_roles",
+        "package_roles"
+      ],
+      "dispatch_defaults": {
+        "package_roles": null,
+        "part": null,
+        "symbol_roles": null
+      },
+      "inputSchema": {
+        "anyOf": [
+          {
+            "required": [
+              "symbol"
+            ]
+          },
+          {
+            "required": [
+              "symbols"
+            ]
+          }
+        ],
+        "properties": {
+          "component_instance": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "part": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "symbol_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "component_instance",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.component_instance.set",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Return the current Datum session/context envelope, including project identity, model revision, actor type, capabilities, visible artifacts/check runs, provenance seed, and refresh metadata.",
       "dispatch": {
         "argv": [

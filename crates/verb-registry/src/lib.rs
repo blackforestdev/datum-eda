@@ -13,6 +13,7 @@
 mod catalog;
 mod verbs_artifact;
 mod verbs_check;
+mod verbs_component_instance;
 mod verbs_context;
 mod verbs_journal;
 mod verbs_library;
@@ -192,9 +193,10 @@ impl VerbSpec {
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
     static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
-        let families: [&[VerbSpec]; 11] = [
+        let families: [&[VerbSpec]; 12] = [
             verbs_artifact::VERBS,
             verbs_check::VERBS,
+            verbs_component_instance::VERBS,
             verbs_context::VERBS,
             verbs_journal::VERBS,
             verbs_library::VERBS,

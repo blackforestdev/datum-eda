@@ -27,6 +27,7 @@ from pathlib import Path
 MIGRATED_PREFIXES: frozenset[str] = frozenset({
     "datum.artifact",
     "datum.check",
+    "datum.component_instance",
     "datum.context",
     "datum.journal",
     "datum.manufacturing",
