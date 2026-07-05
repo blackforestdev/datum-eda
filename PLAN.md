@@ -75,9 +75,12 @@ Boundaries of the window:
 4. Use `specs/PROGRESS.md` as the source for the next bounded slice; do not
    let local worktree momentum redefine roadmap priority.
 
-Tier A substrate close-out is tracked in `specs/PROGRESS.md`: component-instance
-proposal twins are the governed assistant path, and decision 018 is the ratified
-genesis provenance boundary.
+Tier A substrate close-out and Tier B library foundation are tracked in
+`specs/PROGRESS.md`: component-instance proposal twins are the governed
+assistant path, decision 018 is the ratified genesis provenance boundary,
+`LibraryBinding` is now a Rust substrate type, IPC-7351B two-terminal/SOIC
+generation slices are live across CLI/proposal/MCP, and a governed authored
+native library baseline fixture exists.
 
 ## Milestones
 

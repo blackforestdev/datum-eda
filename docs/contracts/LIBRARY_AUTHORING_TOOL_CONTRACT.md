@@ -389,7 +389,10 @@ edit.
 3. CLI command: `datum-eda library gen-ipc-footprint --package <id>
    --density <A|B|C> --dims <file.json>` (emits a proposal).
 4. MCP/AI tool: `library_propose_ipc_footprint{package_ref,
-   density_level, source_dimensions}`.
+   density_level, source_dimensions}`. Current public slices expose
+   `datum.library.generate_ipc7351b_soic` for direct journaled authoring and
+   `datum.proposal.generate_ipc7351b_soic` for proposal-first review, alongside
+   the existing two-terminal chip slice.
 5. AI query/context needed: package family + body dimensions/tolerances/
    lead geometry, the target IPC basis (7351B vs 7352 is an Open Owner
    Question), and the density level.
@@ -606,18 +609,23 @@ engine diagnostics through `project validate`.
   attachments are useful slices, but the target needs one hash/provenance/role/
   review-state contract consistently across Part, Package, and Footprint
   targets.
-- `LibraryBinding` / update-binding operations. `ComponentInstance` exists,
-  but library bindings are not yet the single first-class join that pins
-  revisions for Part, Symbol, Package, Footprint, PinPadMap, and models.
+- `LibraryBinding` / update-binding operations. `ComponentInstance` now carries
+  Rust `LibraryBinding` records that can pin Part, Symbol, Package, Footprint,
+  PinPadMap, and model roles, with resolver/commit validation and
+  backward-compatible `part_ref` projection. The remaining target is the public
+  update-binding operation family and proposal-first ECO propagation for placed
+  bindings.
 - Pool layering and override policy. Priority ordering exists, but duplicate
   UUID/shadowing, same-UUID override versus fork semantics, writable pool
   targets, conflict diagnostics, and project-local override records need one
   normative rule set.
 - Validation tiers. Commit-time rejection, resolver diagnostics, and
   `project validate` findings are not yet a single documented contract.
-- IPC footprint generation. Standards basis/deviation recording is specified,
-  but full IPC-7351/7352 generation, naming, thermal/anti-pad synthesis,
-  density family coverage, and standards-derived pad/mask/paste checks remain
+- IPC footprint generation. IPC-7351B two-terminal chip and SOIC vertical slices
+  now exist through engine generators, journaled CLI writes, proposal creation,
+  MCP aliases, and LibraryGraph basis/process-policy validation. Full IPC-7351/
+  7352 family coverage, naming policy alternatives, thermal/anti-pad synthesis,
+  check-run findings, deviations, export consumption, and import audit remain
   future work.
 - Multi-format symbol style rendering (IEEE 315 / IEC 60617), automatic
   diff-pair/bus pin-group inference, and cross-project ECO fan-out.
@@ -629,8 +637,9 @@ engine diagnostics through `project validate`.
    `pool_ref` enum and `LibraryBinding` layering.
 2. Which `approval_state` values gate placement, and is the placement
    gate a hard block or a warning by default?
-3. IPC-7351B vs IPC-7352 as the default generated-footprint naming/basis,
-   and which first package family the generator supports?
+3. IPC-7351B vs IPC-7352 as the default generated-footprint naming/basis
+   beyond the landed IPC-7351B two-terminal and SOIC slices, and which next
+   package family the generator supports?
 4. How strict should default checks be for imported `UnknownBasis`
    library data (warn vs fail)?
 5. Boundary for `EditLibraryObjectField`: the decision says library

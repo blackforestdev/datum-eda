@@ -7,6 +7,14 @@
 > Research basis:
 > [IPC_COMPLIANCE_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
 
+Current implementation slice: IPC-7351B two-terminal chip and SOIC generators
+exist in the engine, write through journaled CLI commands, have proposal twins,
+are exposed through MCP `datum.library.generate_ipc7351b_*` and
+`datum.proposal.generate_ipc7351b_*` aliases, and validate structured
+`IpcFootprintBasis` plus padstack mask/paste policy through `LibraryGraph`.
+Deviation records, check-run findings, export consumption, import audit, and
+broader package families remain target work.
+
 ## Purpose
 
 Define how Datum should handle IPC-driven footprint work so the product does

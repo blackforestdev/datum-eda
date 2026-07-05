@@ -6,6 +6,13 @@
 > into *their own* pool. See `PRODUCT_MECHANICS_008A` for the model deltas this
 > spec depends on (notably D2, pin graphic style).
 > **Companion to**: `specs/IMPORT_SPEC.md`, decision-008.
+>
+> Current implementation boundary: Datum now has a checked-in authored native
+> library baseline fixture (`crates/test-harness/testdata/library/native_authored_baseline_v1`)
+> that resolves and validates Unit/Symbol/Entity/Package/Footprint/Padstack/
+> Part/PinPadMap records without import-derived content. That fixture proves
+> the native pool substrate; this import spec remains the proposed per-user
+> compatibility on-ramp.
 
 ## 1. Intent & North-Star posture
 

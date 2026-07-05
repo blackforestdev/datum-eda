@@ -132,11 +132,15 @@ Write-surface convergence is COMPLETE — do not resurrect the old
   ratified by decision 018: no mutation-journal record; future visible genesis
   evidence must be a non-mutation sidecar.
 - **Verb registry migration complete for public `datum.*` tools (decision 017):**
-  all 17 public prefixes are registry-generated (335/335 public tools);
+  all 17 public prefixes are registry-generated (337/337 public tools);
   hidden compatibility tools remain fenced outside the public generated surface.
 - **Library:** decision-008 `Footprint`/`PinPadMap` are now engine Rust types
-  and the first IPC-7351B two-terminal generator landed; `LibraryBinding` is
-  not yet a Rust type and the broader IPC footprint system remains unbuilt.
+  and `LibraryBinding` is now the component-instance join type for placed
+  part/symbol/package/footprint/pin-pad-map/model bindings. IPC generation now
+  covers two-terminal chips and SOIC as engine-owned vertical slices with CLI,
+  proposal, MCP, and LibraryGraph validation coverage; broader package-family
+  coverage plus check-run/deviation/export/import-audit consumption remains
+  future work.
 - **GUI:** a review surface, not an editor; interactive authoring (the user
   selecting a tool and drawing/placing/editing) is not yet built.
 
@@ -312,8 +316,9 @@ The authoring frontier (see `docs/contracts/` for target specs); the substrate
 is landed and authoritative — what remains is depth on top of it:
 - Richer semantic schematic/library editors, rule reference-resolution
   semantics, and broader proposal/check operation vocabulary.
-- Decision-008 `LibraryBinding` as a Rust type and the full IPC footprint
-  system (first IPC-7351B two-terminal generator landed).
+- Full IPC footprint-system depth beyond the landed IPC-7351B two-terminal and
+  SOIC slices: broader families, deviation/check-run/export consumption, and
+  import-audit integration.
 - Full GUI editor (substrate + read-only review + PTY terminal lane exist;
   interactive editing not exposed end-to-end). Product-real assistant.
 - Native copper-pour zone fill (imported fills only today).
