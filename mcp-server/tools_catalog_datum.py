@@ -352,6 +352,7 @@ _GENERATED_TOOL_SPECS = [
         "datum.proposal",
         "datum.query",
         "datum.replacement",
+        "datum.route",
         "datum.session",
     )
     for spec in generated_specs_for_prefix(prefix)

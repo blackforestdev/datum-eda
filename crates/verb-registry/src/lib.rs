@@ -24,9 +24,10 @@ mod verbs_project;
 mod verbs_proposal;
 mod verbs_query;
 mod verbs_replacement;
+mod verbs_route;
 mod verbs_session;
 
-pub use catalog::{CATALOG_VERSION, catalog_json, catalog_string};
+pub use catalog::{catalog_json, catalog_string, CATALOG_VERSION};
 
 /// Visibility/lifecycle status of a verb on the public surface.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -195,7 +196,7 @@ impl VerbSpec {
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
     static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
-        let families: [&[VerbSpec]; 14] = [
+        let families: [&[VerbSpec]; 15] = [
             verbs_artifact::VERBS,
             verbs_check::VERBS,
             verbs_component_instance::VERBS,
@@ -209,6 +210,7 @@ pub fn verbs() -> &'static [VerbSpec] {
             verbs_proposal::VERBS,
             verbs_query::VERBS,
             verbs_replacement::VERBS,
+            verbs_route::VERBS,
             verbs_session::VERBS,
         ];
         let mut verbs = Vec::with_capacity(families.iter().map(|family| family.len()).sum());
@@ -333,7 +335,8 @@ mod tests {
         for verb in verbs() {
             if !verb.terminal {
                 assert!(
-                    verb.terminal_optional_params.is_empty() && verb.terminal_argv_override.is_none(),
+                    verb.terminal_optional_params.is_empty()
+                        && verb.terminal_argv_override.is_none(),
                     "{} carries terminal metadata but is not a terminal verb",
                     verb.id
                 );
@@ -347,7 +350,10 @@ mod tests {
             for param in verb.params {
                 if let Some(raw) = param.default_json {
                     serde_json::from_str::<serde_json::Value>(raw).unwrap_or_else(|err| {
-                        panic!("{} param {} default_json invalid: {err}", verb.id, param.name)
+                        panic!(
+                            "{} param {} default_json invalid: {err}",
+                            verb.id, param.name
+                        )
                     });
                 }
             }

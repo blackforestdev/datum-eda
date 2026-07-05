@@ -3,9 +3,9 @@
 //! Emits `mcp-server/datum_tool_catalog.json`: verbs sorted by id, object keys
 //! sorted (serde_json's default `BTreeMap`-backed `Map`), trailing newline.
 
-use serde_json::{Map, Value, json};
+use serde_json::{json, Map, Value};
 
-use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, verbs};
+use crate::{verbs, ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec};
 
 pub const CATALOG_VERSION: u64 = 1;
 
@@ -80,12 +80,27 @@ fn dispatch_defaults(verb: &VerbSpec) -> Value {
     for param in verb.params {
         if let Some(raw) = param.default_json {
             let value: Value = serde_json::from_str(raw).unwrap_or_else(|err| {
-                panic!("{} param {} default_json invalid: {err}", verb.id, param.name)
+                panic!(
+                    "{} param {} default_json invalid: {err}",
+                    verb.id, param.name
+                )
             });
             defaults.insert(param.name.to_string(), value);
         }
     }
     Value::Object(defaults)
+}
+
+fn public_metadata(verb: &VerbSpec) -> Value {
+    match verb.id {
+        "datum.route.capture_strategy_baseline" | "datum.route.write_strategy_fixture_suite" => {
+            json!({
+                "authoring_boundary": "generated_fixture_only",
+                "write_path_policy": "direct project-shard writes are restricted to deterministic regression fixture generation",
+            })
+        }
+        _ => Value::Null,
+    }
 }
 
 fn verb_json(verb: &VerbSpec) -> Value {
@@ -106,6 +121,7 @@ fn verb_json(verb: &VerbSpec) -> Value {
             .write_surface
             .map(|surface| json!({"class": surface.class, "evidence": surface.evidence}))
             .unwrap_or(Value::Null),
+        "public_metadata": public_metadata(verb),
     })
 }
 
@@ -119,8 +135,8 @@ pub fn catalog_json() -> Value {
 
 /// The catalog rendered exactly as persisted (pretty, trailing newline).
 pub fn catalog_string() -> String {
-    let mut rendered = serde_json::to_string_pretty(&catalog_json())
-        .expect("catalog serialization cannot fail");
+    let mut rendered =
+        serde_json::to_string_pretty(&catalog_json()).expect("catalog serialization cannot fail");
     rendered.push('\n');
     rendered
 }

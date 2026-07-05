@@ -37,6 +37,7 @@ MIGRATED_PREFIXES: frozenset[str] = frozenset({
     "datum.proposal",
     "datum.query",
     "datum.replacement",
+    "datum.route",
     "datum.session",
 })
 
@@ -65,6 +66,9 @@ def _spec_from_verb(verb: dict[str, object]) -> dict[str, object]:
     if write_surface:
         spec["x_public_write_surface_class"] = write_surface["class"]
         spec["x_write_surface_evidence"] = write_surface["evidence"]
+    public_metadata = verb.get("public_metadata")
+    if isinstance(public_metadata, dict):
+        spec.update(public_metadata)
     return spec
 
 

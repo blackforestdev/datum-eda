@@ -39,6 +39,7 @@ class TestDispatchDatumTaxonomyCatalog(unittest.TestCase):
             "datum.proposal",
             "datum.query",
             "datum.replacement",
+            "datum.route",
             "datum.session",
         ):
             _assert_contiguous_block(self, tool_names, _generated_names(prefix))

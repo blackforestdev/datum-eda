@@ -24,7 +24,7 @@ const CLAP_PARSE_FAILURE_MARKERS: &[&str] = &[
     "cannot be used with",
 ];
 
-fn dummy_value(param: &ParamSpec) -> &'static str {
+fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
     // `proposal review --status` is a clap value_enum; the generic per-type
     // dummy is not a valid variant, so use a real one.
     if param.name == "status" {
@@ -38,6 +38,20 @@ fn dummy_value(param: &ParamSpec) -> &'static str {
     }
     if param.name == "checks_run" {
         return "00000000-0000-0000-0000-000000000001";
+    }
+    if param.name == "candidate" {
+        return "route-path-candidate";
+    }
+    if param.name == "profile" || param.name == "objective" {
+        return "default";
+    }
+    if param.name == "policy" {
+        return if verb_id == "datum.route.apply" || verb_id == "datum.route.export_path_proposal"
+        {
+            "plain"
+        } else {
+            "strict_identical"
+        };
     }
     match param.ty {
         ParamType::Str => "verb-registry-roundtrip-dummy",
@@ -56,18 +70,18 @@ fn param_spec<'a>(params: &'a [ParamSpec], name: &str) -> &'a ParamSpec {
         .unwrap_or_else(|| panic!("argv references undeclared param {name}"))
 }
 
-fn render_token(token: &ArgvToken, params: &[ParamSpec], argv: &mut Vec<String>) {
+fn render_token(verb_id: &str, token: &ArgvToken, params: &[ParamSpec], argv: &mut Vec<String>) {
     match *token {
         ArgvToken::Lit(lit) => argv.push(lit.to_string()),
-        ArgvToken::Param(name) => argv.push(dummy_value(param_spec(params, name)).to_string()),
+        ArgvToken::Param(name) => argv.push(dummy_value(verb_id, param_spec(params, name)).to_string()),
         ArgvToken::Flag { flag, param } => {
             argv.push(flag.to_string());
-            argv.push(dummy_value(param_spec(params, param)).to_string());
+            argv.push(dummy_value(verb_id, param_spec(params, param)).to_string());
         }
         ArgvToken::Switch { flag, .. } => argv.push(flag.to_string()),
         ArgvToken::Repeated { flag, param } => {
             argv.push(flag.to_string());
-            argv.push(dummy_value(param_spec(params, param)).to_string());
+            argv.push(dummy_value(verb_id, param_spec(params, param)).to_string());
         }
     }
 }
@@ -105,7 +119,7 @@ fn every_cli_verb_argv_parses_against_the_real_clap_surface() {
         let mut base = Vec::new();
         for token in argv {
             if is_required(token, verb.params) {
-                render_token(token, verb.params, &mut base);
+                render_token(verb.id, token, verb.params, &mut base);
             }
         }
         assert_clap_accepts(verb.id, &base);
@@ -113,7 +127,7 @@ fn every_cli_verb_argv_parses_against_the_real_clap_surface() {
         for token in argv {
             if !is_required(token, verb.params) {
                 let mut extended = base.clone();
-                render_token(token, verb.params, &mut extended);
+                render_token(verb.id, token, verb.params, &mut extended);
                 assert_clap_accepts(verb.id, &extended);
             }
         }

@@ -43,6 +43,7 @@
         "type": "object"
       },
       "name": "datum.artifact.cancel_output_job_run",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -99,6 +100,7 @@
         "type": "object"
       },
       "name": "datum.artifact.compare",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -157,6 +159,7 @@
         "type": "object"
       },
       "name": "datum.artifact.export_manufacturing_set",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -204,6 +207,7 @@
         "type": "object"
       },
       "name": "datum.artifact.files",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -286,6 +290,7 @@
         "type": "object"
       },
       "name": "datum.artifact.generate",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -324,6 +329,7 @@
         "type": "object"
       },
       "name": "datum.artifact.list",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -391,6 +397,7 @@
         "type": "object"
       },
       "name": "datum.artifact.preview",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -438,6 +445,7 @@
         "type": "object"
       },
       "name": "datum.artifact.show",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -485,6 +493,7 @@
         "type": "object"
       },
       "name": "datum.artifact.start_output_job_run",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -532,6 +541,7 @@
         "type": "object"
       },
       "name": "datum.artifact.validate",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -590,6 +600,7 @@
         "type": "object"
       },
       "name": "datum.artifact.validate_manufacturing_set",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -657,6 +668,7 @@
         "type": "object"
       },
       "name": "datum.check.accept_deviation",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -702,6 +714,7 @@
         "type": "object"
       },
       "name": "datum.check.explain_violation",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -762,6 +775,7 @@
         "type": "object"
       },
       "name": "datum.check.fill_zones",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -800,6 +814,7 @@
         "type": "object"
       },
       "name": "datum.check.list",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -838,6 +853,7 @@
         "type": "object"
       },
       "name": "datum.check.profiles",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -876,6 +892,7 @@
         "type": "object"
       },
       "name": "datum.check.repair_standards",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -925,6 +942,7 @@
         "type": "object"
       },
       "name": "datum.check.run",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -974,6 +992,7 @@
         "type": "object"
       },
       "name": "datum.check.run_profile",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1021,6 +1040,7 @@
         "type": "object"
       },
       "name": "datum.check.show",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1088,6 +1108,7 @@
         "type": "object"
       },
       "name": "datum.check.waive",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1217,6 +1238,7 @@
         "type": "object"
       },
       "name": "datum.component_instance.bind",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1264,6 +1286,7 @@
         "type": "object"
       },
       "name": "datum.component_instance.delete",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1391,6 +1414,7 @@
         "type": "object"
       },
       "name": "datum.component_instance.set",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1452,6 +1476,7 @@
         "type": "object"
       },
       "name": "datum.context.get",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1513,6 +1538,7 @@
         "type": "object"
       },
       "name": "datum.context.refresh",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1629,6 +1655,7 @@
         "type": "object"
       },
       "name": "datum.context.session_activity",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1745,6 +1772,7 @@
         "type": "object"
       },
       "name": "datum.context.session_events",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1783,6 +1811,7 @@
         "type": "object"
       },
       "name": "datum.journal.list",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1837,6 +1866,7 @@
         "type": "object"
       },
       "name": "datum.journal.redo",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1884,6 +1914,7 @@
         "type": "object"
       },
       "name": "datum.journal.show",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -1938,6 +1969,7 @@
         "type": "object"
       },
       "name": "datum.journal.undo",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2030,6 +2062,7 @@
         "type": "object"
       },
       "name": "datum.library.list_objects",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2112,6 +2145,7 @@
         "type": "object"
       },
       "name": "datum.library.show_object",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2227,6 +2261,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.create_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2332,6 +2367,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.create_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2404,6 +2440,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.delete_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2476,6 +2513,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.delete_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2603,6 +2641,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.update_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2741,6 +2780,7 @@
         "type": "object"
       },
       "name": "datum.manufacturing.update_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2866,6 +2906,7 @@
         "type": "object"
       },
       "name": "datum.output_job.create",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -2979,6 +3020,7 @@
         "type": "object"
       },
       "name": "datum.output_job.create_gerber_set",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3051,6 +3093,7 @@
         "type": "object"
       },
       "name": "datum.output_job.delete",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3112,6 +3155,7 @@
         "type": "object"
       },
       "name": "datum.output_job.run",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3258,6 +3302,7 @@
         "type": "object"
       },
       "name": "datum.output_job.update",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3288,6 +3333,7 @@
         "type": "object"
       },
       "name": "datum.pool.get_package",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3315,6 +3361,7 @@
         "type": "object"
       },
       "name": "datum.pool.get_part",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3342,6 +3389,7 @@
         "type": "object"
       },
       "name": "datum.pool.search",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3456,6 +3504,7 @@
         "type": "object"
       },
       "name": "datum.project.create_pool_pin_pad_map",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3549,6 +3598,7 @@
         "type": "object"
       },
       "name": "datum.project.set_pool_pin_pad_map",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3587,6 +3637,7 @@
         "type": "object"
       },
       "name": "datum.project.validate",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3634,6 +3685,7 @@
         "type": "object"
       },
       "name": "datum.proposal.accept_apply",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3755,6 +3807,7 @@
         "type": "object"
       },
       "name": "datum.proposal.add_pool_footprint_silkscreen_circle",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3885,6 +3938,7 @@
         "type": "object"
       },
       "name": "datum.proposal.add_pool_footprint_silkscreen_line",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -3997,6 +4051,7 @@
         "type": "object"
       },
       "name": "datum.proposal.add_pool_footprint_silkscreen_polygon",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4127,6 +4182,7 @@
         "type": "object"
       },
       "name": "datum.proposal.add_pool_footprint_silkscreen_rect",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4177,6 +4233,7 @@
         "type": "object"
       },
       "name": "datum.proposal.apply",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4286,6 +4343,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4391,6 +4449,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_board_component_replacement",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4492,6 +4551,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_board_component_replacement_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4593,6 +4653,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_board_component_replacements",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4701,6 +4762,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_draw_wire",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4806,6 +4868,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_manufacturing_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4931,6 +4994,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_output_job",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5049,6 +5113,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5159,6 +5224,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_place_label",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5300,6 +5366,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_place_symbol",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5454,6 +5521,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_entity",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5557,6 +5625,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_footprint",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5660,6 +5729,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_library_object",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5824,6 +5894,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_package",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -5973,6 +6044,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_padstack",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6102,6 +6174,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_pin_pad_map",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6205,6 +6278,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_symbol",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6311,6 +6385,7 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_unit",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6361,6 +6436,7 @@
         "type": "object"
       },
       "name": "datum.proposal.defer",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6433,6 +6509,7 @@
         "type": "object"
       },
       "name": "datum.proposal.delete_manufacturing_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6505,6 +6582,7 @@
         "type": "object"
       },
       "name": "datum.proposal.delete_output_job",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6577,6 +6655,7 @@
         "type": "object"
       },
       "name": "datum.proposal.delete_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6618,6 +6697,7 @@
         "type": "object"
       },
       "name": "datum.proposal.list",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6665,6 +6745,7 @@
         "type": "object"
       },
       "name": "datum.proposal.preview",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6712,6 +6793,7 @@
         "type": "object"
       },
       "name": "datum.proposal.reject",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6776,6 +6858,7 @@
         "type": "object"
       },
       "name": "datum.proposal.review",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6870,6 +6953,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_footprint_courtyard_polygon",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6991,6 +7075,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_footprint_courtyard_rect",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7142,6 +7227,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_footprint_pad",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7236,6 +7322,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_package_courtyard_polygon",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7357,6 +7444,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_package_courtyard_rect",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7508,6 +7596,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_package_pad",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7617,6 +7706,7 @@
         "type": "object"
       },
       "name": "datum.proposal.set_pool_pin_pad_map",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7667,6 +7757,7 @@
         "type": "object"
       },
       "name": "datum.proposal.show",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7802,6 +7893,7 @@
         "type": "object"
       },
       "name": "datum.proposal.update_manufacturing_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -7951,6 +8043,7 @@
         "type": "object"
       },
       "name": "datum.proposal.update_output_job",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8078,6 +8171,7 @@
         "type": "object"
       },
       "name": "datum.proposal.update_panel_projection",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8128,6 +8222,7 @@
         "type": "object"
       },
       "name": "datum.proposal.validate",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8169,6 +8264,7 @@
         "type": "object"
       },
       "name": "datum.query.board_dimensions",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8210,6 +8306,7 @@
         "type": "object"
       },
       "name": "datum.query.board_keepouts",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8251,6 +8348,7 @@
         "type": "object"
       },
       "name": "datum.query.board_net_classes",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8292,6 +8390,7 @@
         "type": "object"
       },
       "name": "datum.query.board_nets",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8333,6 +8432,7 @@
         "type": "object"
       },
       "name": "datum.query.board_outline",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8374,6 +8474,7 @@
         "type": "object"
       },
       "name": "datum.query.board_pads",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8415,6 +8516,7 @@
         "type": "object"
       },
       "name": "datum.query.board_stackup",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8433,6 +8535,7 @@
         "type": "object"
       },
       "name": "datum.query.board_summary",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8474,6 +8577,7 @@
         "type": "object"
       },
       "name": "datum.query.board_texts",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8515,6 +8619,7 @@
         "type": "object"
       },
       "name": "datum.query.board_tracks",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8556,6 +8661,7 @@
         "type": "object"
       },
       "name": "datum.query.board_vias",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8597,6 +8703,7 @@
         "type": "object"
       },
       "name": "datum.query.board_zones",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8615,6 +8722,7 @@
         "type": "object"
       },
       "name": "datum.query.bus_entries",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8633,6 +8741,7 @@
         "type": "object"
       },
       "name": "datum.query.buses",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8671,6 +8780,7 @@
         "type": "object"
       },
       "name": "datum.query.component_instances",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8689,6 +8799,7 @@
         "type": "object"
       },
       "name": "datum.query.components",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8707,6 +8818,7 @@
         "type": "object"
       },
       "name": "datum.query.connectivity_diagnostics",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8725,6 +8837,7 @@
         "type": "object"
       },
       "name": "datum.query.design_rules",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8752,6 +8865,7 @@
         "type": "object"
       },
       "name": "datum.query.hierarchy",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8790,6 +8904,7 @@
         "type": "object"
       },
       "name": "datum.query.import_map",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8808,6 +8923,7 @@
         "type": "object"
       },
       "name": "datum.query.imported_hierarchy",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8826,6 +8942,7 @@
         "type": "object"
       },
       "name": "datum.query.labels",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8864,6 +8981,7 @@
         "type": "object"
       },
       "name": "datum.query.manufacturing_plans",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8882,6 +9000,7 @@
         "type": "object"
       },
       "name": "datum.query.net_info",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8900,6 +9019,7 @@
         "type": "object"
       },
       "name": "datum.query.netlist",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8918,6 +9038,7 @@
         "type": "object"
       },
       "name": "datum.query.noconnects",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8956,6 +9077,7 @@
         "type": "object"
       },
       "name": "datum.query.output_jobs",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -8994,6 +9116,7 @@
         "type": "object"
       },
       "name": "datum.query.panel_projections",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9012,6 +9135,7 @@
         "type": "object"
       },
       "name": "datum.query.ports",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9050,6 +9174,7 @@
         "type": "object"
       },
       "name": "datum.query.relationships",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9091,6 +9216,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_bus_entries",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9132,6 +9258,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_buses",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9173,6 +9300,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_drawings",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9214,6 +9342,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_junctions",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9255,6 +9384,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_labels",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9273,6 +9403,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_nets",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9314,6 +9445,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_noconnects",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9355,6 +9487,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_ports",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9373,6 +9506,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_summary",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9414,6 +9548,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_texts",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9455,6 +9590,7 @@
         "type": "object"
       },
       "name": "datum.query.schematic_wires",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9473,6 +9609,7 @@
         "type": "object"
       },
       "name": "datum.query.sheets",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9514,6 +9651,7 @@
         "type": "object"
       },
       "name": "datum.query.source_shards",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9541,6 +9679,7 @@
         "type": "object"
       },
       "name": "datum.query.symbol_fields",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9559,6 +9698,7 @@
         "type": "object"
       },
       "name": "datum.query.symbols",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9577,6 +9717,7 @@
         "type": "object"
       },
       "name": "datum.query.unrouted",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9615,6 +9756,7 @@
         "type": "object"
       },
       "name": "datum.query.variants",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9653,6 +9795,7 @@
         "type": "object"
       },
       "name": "datum.query.zone_fills",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9713,6 +9856,7 @@
         "type": "object"
       },
       "name": "datum.replacement.edit_scoped_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9740,6 +9884,7 @@
         "type": "object"
       },
       "name": "datum.replacement.get_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9802,6 +9947,7 @@
         "type": "object"
       },
       "name": "datum.replacement.get_scoped_plan",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9829,6 +9975,7 @@
         "type": "object"
       },
       "name": "datum.replacement.package_candidates",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9856,6 +10003,1404 @@
         "type": "object"
       },
       "name": "datum.replacement.part_candidates",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Apply one accepted deterministic route candidate through the proposal journal gateway.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-apply"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--candidate",
+            "param": "candidate"
+          },
+          {
+            "flag": "--policy",
+            "param": "policy"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_apply"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "candidate",
+        "policy"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "candidate": {
+            "enum": [
+              "route-path-candidate",
+              "route-path-candidate-via",
+              "route-path-candidate-two-via",
+              "route-path-candidate-three-via",
+              "route-path-candidate-four-via",
+              "route-path-candidate-five-via",
+              "route-path-candidate-six-via",
+              "route-path-candidate-authored-via-chain",
+              "route-path-candidate-orthogonal-dogleg",
+              "route-path-candidate-orthogonal-two-bend",
+              "route-path-candidate-orthogonal-graph",
+              "route-path-candidate-orthogonal-graph-via",
+              "route-path-candidate-orthogonal-graph-two-via",
+              "route-path-candidate-orthogonal-graph-three-via",
+              "route-path-candidate-orthogonal-graph-four-via",
+              "route-path-candidate-orthogonal-graph-five-via",
+              "route-path-candidate-orthogonal-graph-six-via",
+              "authored-copper-plus-one-gap",
+              "authored-copper-graph"
+            ],
+            "type": "string"
+          },
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "policy": {
+            "enum": [
+              "plain",
+              "zone_aware",
+              "obstacle_aware",
+              "zone_obstacle_aware",
+              "zone_obstacle_topology_aware",
+              "zone_obstacle_topology_layer_balance_aware"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid",
+          "candidate"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.apply",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "journaled_route_apply",
+        "evidence": "routes through route-apply proposal/journal gateway"
+      }
+    },
+    {
+      "description": "Apply one native route proposal artifact through the proposal journal gateway when it still matches the current live project state.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "apply-route-proposal-artifact"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "apply_route_proposal_artifact"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.apply_proposal_artifact",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_artifact_apply",
+        "evidence": "applies embedded route proposal artifact through substrate apply path"
+      }
+    },
+    {
+      "description": "Apply the currently selected deterministic route proposal through the proposal journal gateway.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-apply-selected"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_apply_selected"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.apply_selected",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "journaled_route_apply",
+        "evidence": "routes through route-apply proposal/journal gateway"
+      }
+    },
+    {
+      "description": "Materialize the generated-regression-fixture route-strategy suite, evaluate it, and save one reusable versioned batch-result baseline artifact; not a user design-authoring path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "capture-route-strategy-curated-baseline"
+          },
+          {
+            "flag": "--out-dir",
+            "param": "out_dir"
+          },
+          {
+            "flag": "--manifest",
+            "param": "manifest"
+          },
+          {
+            "flag": "--result",
+            "param": "result"
+          }
+        ],
+        "kind": "cli",
+        "method": "capture_route_strategy_curated_baseline"
+      },
+      "dispatch_args": [
+        "out_dir",
+        "manifest",
+        "result"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "manifest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "out_dir": {
+            "type": "string"
+          },
+          "result": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "out_dir"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.capture_strategy_baseline",
+      "public_metadata": {
+        "authoring_boundary": "generated_fixture_only",
+        "write_path_policy": "direct project-shard writes are restricted to deterministic regression fixture generation"
+      },
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Compare two saved versioned route-strategy batch result artifacts by request_id and aggregate summary counts without live re-evaluation.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "compare-route-strategy-batch-result"
+          },
+          {
+            "param": "before"
+          },
+          {
+            "param": "after"
+          }
+        ],
+        "kind": "cli",
+        "method": "compare_route_strategy_batch_result"
+      },
+      "dispatch_args": [
+        "before",
+        "after"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "before": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "before",
+          "after"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.compare_strategy_batch_result",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Explain family-level selection and rejection for the current deterministic route proposal.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-proposal-explain"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_proposal_explain"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.explain_proposal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Export one deterministic route proposal artifact from an accepted current route-path candidate family.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "export-route-path-proposal"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--candidate",
+            "param": "candidate"
+          },
+          {
+            "flag": "--policy",
+            "param": "policy"
+          },
+          {
+            "flag": "--out",
+            "param": "out"
+          }
+        ],
+        "kind": "cli",
+        "method": "export_route_path_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "candidate",
+        "policy",
+        "out"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "candidate": {
+            "enum": [
+              "route-path-candidate",
+              "route-path-candidate-via",
+              "route-path-candidate-two-via",
+              "route-path-candidate-three-via",
+              "route-path-candidate-four-via",
+              "route-path-candidate-five-via",
+              "route-path-candidate-six-via",
+              "route-path-candidate-authored-via-chain",
+              "route-path-candidate-orthogonal-dogleg",
+              "route-path-candidate-orthogonal-two-bend",
+              "route-path-candidate-orthogonal-graph",
+              "route-path-candidate-orthogonal-graph-via",
+              "route-path-candidate-orthogonal-graph-two-via",
+              "route-path-candidate-orthogonal-graph-three-via",
+              "route-path-candidate-orthogonal-graph-four-via",
+              "route-path-candidate-orthogonal-graph-five-via",
+              "route-path-candidate-orthogonal-graph-six-via",
+              "authored-copper-plus-one-gap",
+              "authored-copper-graph"
+            ],
+            "type": "string"
+          },
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "out": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "policy": {
+            "enum": [
+              "plain",
+              "zone_aware",
+              "obstacle_aware",
+              "zone_obstacle_aware",
+              "zone_obstacle_topology_aware",
+              "zone_obstacle_topology_layer_balance_aware"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid",
+          "candidate",
+          "out"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.export_path_proposal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Export the currently selected deterministic route proposal as a native route proposal artifact.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "export-route-proposal"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--out",
+            "param": "out"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "export_route_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "out",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "out": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid",
+          "out"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.export_proposal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Evaluate two saved versioned route-strategy batch result artifacts against one explicit deterministic CI gate policy.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "gate-route-strategy-batch-result"
+          },
+          {
+            "param": "before"
+          },
+          {
+            "param": "after"
+          },
+          {
+            "flag": "--policy",
+            "param": "policy"
+          }
+        ],
+        "kind": "cli",
+        "method": "gate_route_strategy_batch_result"
+      },
+      "dispatch_args": [
+        "before",
+        "after",
+        "policy"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "before": {
+            "type": "string"
+          },
+          "policy": {
+            "enum": [
+              "strict_identical",
+              "allow_aggregate_only",
+              "fail_on_recommendation_change"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "before",
+          "after"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.gate_strategy_batch_result",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Inspect one native route proposal artifact without consulting live project state.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "inspect-route-proposal-artifact"
+          },
+          {
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "inspect_route_proposal_artifact"
+      },
+      "dispatch_args": [
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.inspect_proposal_artifact",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Inspect one saved versioned route-strategy batch result artifact and report summary counts, per-request outcomes, and malformed entries.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "inspect-route-strategy-batch-result"
+          },
+          {
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "inspect_route_strategy_batch_result"
+      },
+      "dispatch_args": [
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.inspect_strategy_batch_result",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Revalidate one native route proposal artifact against the current live project state without applying it.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "revalidate-route-proposal-artifact"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "revalidate_route_proposal_artifact"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.revalidate_proposal_artifact",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Review one selected deterministic route proposal or one saved route proposal artifact without mutating project state.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "review-route-proposal"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "review_route_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "profile",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "oneOf": [
+          {
+            "required": [
+              "path",
+              "net_uuid",
+              "from_anchor_pad_uuid",
+              "to_anchor_pad_uuid"
+            ]
+          },
+          {
+            "required": [
+              "artifact"
+            ]
+          }
+        ],
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.route.review_proposal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Select the current deterministic route proposal for one net and anchor pair.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-proposal"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.select_proposal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Evaluate the current accepted M6 strategy surfaces across a versioned batch request manifest and return per-request evidence plus aggregate summary counts.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-strategy-batch-evaluate"
+          },
+          {
+            "flag": "--requests",
+            "param": "requests"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_strategy_batch_evaluate"
+      },
+      "dispatch_args": [
+        "requests"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "requests": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "requests"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.strategy_batch_evaluate",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Compare the accepted deterministic routing objectives/profiles, report the current live selector outcome for each, and recommend one profile under the approved comparison rule.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-strategy-compare"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_strategy_compare"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.strategy_compare",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Report the bounded decision delta between the accepted deterministic routing objectives/profiles using the current live selector outcomes and one explicit delta classification.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-strategy-delta"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_strategy_delta"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.strategy_delta",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Report which accepted selector profile should be used for one deterministic routing objective and show the current live selector outcome under that profile.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "route-strategy-report"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net_uuid"
+          },
+          {
+            "flag": "--from-anchor",
+            "param": "from_anchor_pad_uuid"
+          },
+          {
+            "flag": "--to-anchor",
+            "param": "to_anchor_pad_uuid"
+          },
+          {
+            "flag": "--objective",
+            "param": "objective"
+          }
+        ],
+        "kind": "cli",
+        "method": "route_strategy_report"
+      },
+      "dispatch_args": [
+        "path",
+        "net_uuid",
+        "from_anchor_pad_uuid",
+        "to_anchor_pad_uuid",
+        "objective"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_anchor_pad_uuid": {
+            "type": "string"
+          },
+          "net_uuid": {
+            "type": "string"
+          },
+          "objective": {
+            "enum": [
+              "default",
+              "authored-copper-priority"
+            ],
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_anchor_pad_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_uuid",
+          "from_anchor_pad_uuid",
+          "to_anchor_pad_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.strategy_report",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Summarize saved route-strategy batch result artifacts from one directory or explicit list, with optional baseline gate summary.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "summarize-route-strategy-batch-results"
+          },
+          {
+            "flag": "--dir",
+            "param": "dir"
+          },
+          {
+            "param": "artifacts",
+            "repeated": "--artifact"
+          },
+          {
+            "flag": "--baseline",
+            "param": "baseline"
+          },
+          {
+            "flag": "--policy",
+            "param": "policy"
+          }
+        ],
+        "kind": "cli",
+        "method": "summarize_route_strategy_batch_results"
+      },
+      "dispatch_args": [
+        "dir",
+        "artifacts",
+        "baseline",
+        "policy"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifacts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "baseline": {
+            "type": "string"
+          },
+          "dir": {
+            "type": "string"
+          },
+          "policy": {
+            "enum": [
+              "strict_identical",
+              "allow_aggregate_only",
+              "fail_on_recommendation_change"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.route.summarize_strategy_batch_results",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Validate one saved versioned route-strategy batch result artifact for supported version, required fields, and summary/result count integrity.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "validate-route-strategy-batch-result"
+          },
+          {
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_route_strategy_batch_result"
+      },
+      "dispatch_args": [
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.validate_strategy_batch_result",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Write one deterministic generated-regression-fixture native-project suite plus a versioned batch request manifest for repeated route-strategy batch evidence runs; not a user design-authoring path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "write-route-strategy-curated-fixture-suite"
+          },
+          {
+            "flag": "--out-dir",
+            "param": "out_dir"
+          },
+          {
+            "flag": "--manifest",
+            "param": "manifest"
+          }
+        ],
+        "kind": "cli",
+        "method": "write_route_strategy_curated_fixture_suite"
+      },
+      "dispatch_args": [
+        "out_dir",
+        "manifest"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "manifest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "out_dir": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "out_dir"
+        ],
+        "type": "object"
+      },
+      "name": "datum.route.write_strategy_fixture_suite",
+      "public_metadata": {
+        "authoring_boundary": "generated_fixture_only",
+        "write_path_policy": "direct project-shard writes are restricted to deterministic regression fixture generation"
+      },
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9874,6 +11419,7 @@
         "type": "object"
       },
       "name": "datum.session.close",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9901,6 +11447,7 @@
         "type": "object"
       },
       "name": "datum.session.open",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9928,6 +11475,7 @@
         "type": "object"
       },
       "name": "datum.session.save",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -9966,6 +11514,7 @@
         "type": "object"
       },
       "name": "datum.session.validate",
+      "public_metadata": null,
       "replacements": [],
       "retirement": null,
       "status": "public",
