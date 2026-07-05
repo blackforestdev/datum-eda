@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "uuid": "20000000-0000-4000-8000-000000000001",
+  "name": "Single op amp unit",
+  "manufacturer": "Datum",
+  "pins": {
+    "20000000-0000-4000-8000-000000000101": {
+      "uuid": "20000000-0000-4000-8000-000000000101",
+      "name": "OUT",
+      "direction": "Output",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000102": {
+      "uuid": "20000000-0000-4000-8000-000000000102",
+      "name": "IN-",
+      "direction": "Input",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000103": {
+      "uuid": "20000000-0000-4000-8000-000000000103",
+      "name": "IN+",
+      "direction": "Input",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000104": {
+      "uuid": "20000000-0000-4000-8000-000000000104",
+      "name": "V-",
+      "direction": "PowerIn",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000105": {
+      "uuid": "20000000-0000-4000-8000-000000000105",
+      "name": "NC",
+      "direction": "NoConnect",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000106": {
+      "uuid": "20000000-0000-4000-8000-000000000106",
+      "name": "V+",
+      "direction": "PowerIn",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000107": {
+      "uuid": "20000000-0000-4000-8000-000000000107",
+      "name": "NC2",
+      "direction": "NoConnect",
+      "swap_group": 0,
+      "alternates": []
+    },
+    "20000000-0000-4000-8000-000000000108": {
+      "uuid": "20000000-0000-4000-8000-000000000108",
+      "name": "NC3",
+      "direction": "NoConnect",
+      "swap_group": 0,
+      "alternates": []
+    }
+  },
+  "tags": [
+    "datum-authored-baseline-v1"
+  ]
+}

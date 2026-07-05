@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "uuid": "70000000-0000-4000-8000-000000000001",
+  "name": "SOIC gull-wing rectangular SMD pad",
+  "aperture": {
+    "rect": {
+      "width_nm": 1300000,
+      "height_nm": 450000
+    }
+  },
+  "drill_nm": null,
+  "plated": false,
+  "layer_span": "pad_layer",
+  "mask_policy": {
+    "expansion_nm": 50000
+  },
+  "paste_policy": {
+    "expansion_nm": -50000
+  },
+  "annular_ring_nm": null,
+  "thermal": null,
+  "antipad": null
+}

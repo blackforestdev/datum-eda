@@ -1,4 +1,5 @@
 use super::*;
+use crate::pool::LibraryGraph;
 
 pub(super) fn write_project_with_pool(root: &Path, project_id: Uuid, board_id: Uuid) {
     write_minimal_project(root, project_id, board_id);
@@ -179,6 +180,121 @@ fn resolver_discovers_native_pool_library_directories() {
         assert_eq!(object.domain, "pool");
         assert_eq!(object.kind, kind);
     }
+}
+
+#[test]
+fn resolver_accepts_authored_native_library_baseline_fixture() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+        "../test-harness/testdata/library/native_authored_baseline_v1",
+    );
+    let model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("authored native library fixture should resolve");
+
+    assert!(
+        model.diagnostics.is_empty(),
+        "unexpected resolver diagnostics: {:#?}",
+        model.diagnostics
+    );
+
+    let expected = [
+        (
+            Uuid::parse_str("20000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/units/20000000-0000-4000-8000-000000000001.json",
+            "units",
+            SourceShardTaxon::PoolUnit,
+        ),
+        (
+            Uuid::parse_str("30000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/symbols/30000000-0000-4000-8000-000000000001.json",
+            "symbols",
+            SourceShardTaxon::PoolSymbol,
+        ),
+        (
+            Uuid::parse_str("40000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/entities/40000000-0000-4000-8000-000000000001.json",
+            "entities",
+            SourceShardTaxon::PoolEntity,
+        ),
+        (
+            Uuid::parse_str("50000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/packages/50000000-0000-4000-8000-000000000001.json",
+            "packages",
+            SourceShardTaxon::PoolPackage,
+        ),
+        (
+            Uuid::parse_str("60000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/footprints/60000000-0000-4000-8000-000000000001.json",
+            "footprints",
+            SourceShardTaxon::PoolFootprint,
+        ),
+        (
+            Uuid::parse_str("70000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/padstacks/70000000-0000-4000-8000-000000000001.json",
+            "padstacks",
+            SourceShardTaxon::PoolPadstack,
+        ),
+        (
+            Uuid::parse_str("90000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/parts/90000000-0000-4000-8000-000000000001.json",
+            "parts",
+            SourceShardTaxon::PoolPart,
+        ),
+        (
+            Uuid::parse_str("a0000000-0000-4000-8000-000000000001").unwrap(),
+            "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json",
+            "pin_pad_maps",
+            SourceShardTaxon::PoolPinPadMap,
+        ),
+    ];
+
+    let mut graph = LibraryGraph::default();
+    for (object_id, relative_path, kind, taxon) in expected {
+        let shard = model
+            .source_shards
+            .iter()
+            .find(|shard| {
+                shard.kind == SourceShardKind::Pool && shard.relative_path == relative_path
+            })
+            .unwrap_or_else(|| panic!("missing pool source shard {relative_path}"));
+        assert_eq!(shard.taxon, Some(taxon));
+        let object = model
+            .objects
+            .get(&object_id)
+            .unwrap_or_else(|| panic!("missing pool object {object_id}"));
+        assert_eq!(object.domain, "pool");
+        assert_eq!(object.kind, kind);
+
+        let value = read_json_value(&root.join(relative_path)).expect("fixture shard should read");
+        let diagnostics = graph.insert_pool_object(kind, object_id, relative_path, value);
+        assert!(
+            diagnostics.is_empty(),
+            "unexpected graph registration diagnostics: {diagnostics:#?}"
+        );
+    }
+
+    let report = graph.validation_report();
+    assert!(report.valid, "unexpected graph report: {report:#?}");
+    assert_eq!(report.summary.diagnostics, 0);
+    assert_eq!(graph.units.len(), 1);
+    assert_eq!(graph.symbols.len(), 1);
+    assert_eq!(graph.entities.len(), 1);
+    assert_eq!(graph.packages.len(), 1);
+    assert_eq!(graph.footprints.len(), 1);
+    assert_eq!(graph.padstacks.len(), 1);
+    assert_eq!(graph.parts.len(), 1);
+    assert_eq!(graph.pin_pad_maps.len(), 1);
+
+    let part_id = Uuid::parse_str("90000000-0000-4000-8000-000000000001").unwrap();
+    let part = graph.parts.get(&part_id).expect("part should be registered");
+    assert_eq!(
+        part["default_footprint"],
+        "60000000-0000-4000-8000-000000000001"
+    );
+    assert_eq!(
+        part["default_pin_pad_map"],
+        "a0000000-0000-4000-8000-000000000001"
+    );
 }
 
 #[test]
