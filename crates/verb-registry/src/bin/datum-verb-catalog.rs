@@ -61,7 +61,9 @@ fn check(expected: &str, path: &Path) -> ExitCode {
             expected_lines.len()
         );
     }
-    eprintln!("run `cargo run -p datum-verb-registry --bin datum-verb-catalog -- --write` to regenerate");
+    eprintln!(
+        "run `cargo run -p datum-verb-registry --bin datum-verb-catalog -- --write` to regenerate"
+    );
     ExitCode::FAILURE
 }
 
@@ -72,7 +74,10 @@ fn main() -> ExitCode {
     match mode.as_deref() {
         Some("--write") => {
             if let Err(err) = std::fs::write(&path, rendered) {
-                eprintln!("datum-verb-catalog --write: cannot write {}: {err}", path.display());
+                eprintln!(
+                    "datum-verb-catalog --write: cannot write {}: {err}",
+                    path.display()
+                );
                 return ExitCode::FAILURE;
             }
             println!("datum-verb-catalog --write: wrote {}", path.display());

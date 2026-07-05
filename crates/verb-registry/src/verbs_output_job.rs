@@ -40,8 +40,14 @@ const RATIONALE: ParamSpec = ParamSpec {
     default_json: None,
 };
 
-const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag { flag: "--proposal", param: "proposal" };
-const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag { flag: "--rationale", param: "rationale" };
+const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--proposal",
+    param: "proposal",
+};
+const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--rationale",
+    param: "rationale",
+};
 
 /// Exact hand-written MCP schema (`create_gerber_output_job`): the preset
 /// `include` dispatch default and the `proposal`/`rationale` dispatch-only
@@ -61,12 +67,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--include", param: "include" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--include",
+                    param: "include",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -136,17 +160,32 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
                 // `include` is always injected as the gerber-set preset via
                 // the dispatch default, so it is a literal argv pair here.
                 ArgvToken::Lit("--include"),
                 ArgvToken::Lit("gerber-set"),
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
             ],
         },
         params: &[
@@ -214,7 +253,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -249,8 +291,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("generate"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
             ],
         },
         params: &[
@@ -288,14 +336,38 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Switch { flag: "--clear-manufacturing-plan", param: "clear_manufacturing_plan" },
-                ArgvToken::Switch { flag: "--clear-variant", param: "clear_variant" },
-                ArgvToken::Switch { flag: "--clear-output-dir", param: "clear_output_dir" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-manufacturing-plan",
+                    param: "clear_manufacturing_plan",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-variant",
+                    param: "clear_variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-output-dir",
+                    param: "clear_output_dir",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],

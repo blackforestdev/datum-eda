@@ -19,6 +19,7 @@ mod verbs_journal;
 mod verbs_library;
 mod verbs_manufacturing;
 mod verbs_output_job;
+mod verbs_pcb;
 mod verbs_pool;
 mod verbs_project;
 mod verbs_proposal;
@@ -27,7 +28,7 @@ mod verbs_replacement;
 mod verbs_route;
 mod verbs_session;
 
-pub use catalog::{catalog_json, catalog_string, CATALOG_VERSION};
+pub use catalog::{CATALOG_VERSION, catalog_json, catalog_string};
 
 /// Visibility/lifecycle status of a verb on the public surface.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -196,7 +197,7 @@ impl VerbSpec {
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
     static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
-        let families: [&[VerbSpec]; 15] = [
+        let families: [&[VerbSpec]; 16] = [
             verbs_artifact::VERBS,
             verbs_check::VERBS,
             verbs_component_instance::VERBS,
@@ -205,6 +206,7 @@ pub fn verbs() -> &'static [VerbSpec] {
             verbs_library::VERBS,
             verbs_manufacturing::VERBS,
             verbs_output_job::VERBS,
+            verbs_pcb::VERBS,
             verbs_pool::VERBS,
             verbs_project::VERBS,
             verbs_proposal::VERBS,

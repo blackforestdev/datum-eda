@@ -63,12 +63,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("create-pool-pin-pad-map"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--pool", param: "pool" },
-                ArgvToken::Flag { flag: "--map", param: "map" },
-                ArgvToken::Flag { flag: "--part", param: "part" },
-                ArgvToken::Flag { flag: "--footprint", param: "footprint" },
-                ArgvToken::Switch { flag: "--set-default", param: "set_default" },
-                ArgvToken::Repeated { flag: "--entry", param: "entries" },
+                ArgvToken::Flag {
+                    flag: "--pool",
+                    param: "pool",
+                },
+                ArgvToken::Flag {
+                    flag: "--map",
+                    param: "map",
+                },
+                ArgvToken::Flag {
+                    flag: "--part",
+                    param: "part",
+                },
+                ArgvToken::Flag {
+                    flag: "--footprint",
+                    param: "footprint",
+                },
+                ArgvToken::Switch {
+                    flag: "--set-default",
+                    param: "set_default",
+                },
+                ArgvToken::Repeated {
+                    flag: "--entry",
+                    param: "entries",
+                },
             ],
         },
         params: &[
@@ -116,10 +134,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-pool-pin-pad-map"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--pool", param: "pool" },
-                ArgvToken::Flag { flag: "--map", param: "map" },
-                ArgvToken::Flag { flag: "--mode", param: "mode" },
-                ArgvToken::Repeated { flag: "--entry", param: "entries" },
+                ArgvToken::Flag {
+                    flag: "--pool",
+                    param: "pool",
+                },
+                ArgvToken::Flag {
+                    flag: "--map",
+                    param: "map",
+                },
+                ArgvToken::Flag {
+                    flag: "--mode",
+                    param: "mode",
+                },
+                ArgvToken::Repeated {
+                    flag: "--entry",
+                    param: "entries",
+                },
             ],
         },
         params: &[

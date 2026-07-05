@@ -17,7 +17,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::DaemonRpc { method: "close_project" },
+        dispatch: Dispatch::DaemonRpc {
+            method: "close_project",
+        },
         params: &[],
         schema_json_override: None,
         write_surface: None,
@@ -31,7 +33,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::DaemonRpc { method: "open_project" },
+        dispatch: Dispatch::DaemonRpc {
+            method: "open_project",
+        },
         params: &[ParamSpec {
             name: "path",
             ty: ParamType::Str,

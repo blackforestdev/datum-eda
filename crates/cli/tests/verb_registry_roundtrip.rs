@@ -86,6 +86,27 @@ fn render_token(verb_id: &str, token: &ArgvToken, params: &[ParamSpec], argv: &m
     }
 }
 
+fn render_optional_prerequisites(
+    verb_id: &str,
+    token: &ArgvToken,
+    params: &[ParamSpec],
+    argv: &mut Vec<String>,
+) {
+    if verb_id == "datum.pcb.generate_board_components"
+        && matches!(token.param_name(), Some("proposal" | "rationale"))
+    {
+        render_token(
+            verb_id,
+            &ArgvToken::Switch {
+                flag: "--as-proposal",
+                param: "as_proposal",
+            },
+            params,
+            argv,
+        );
+    }
+}
+
 fn is_required(token: &ArgvToken, params: &[ParamSpec]) -> bool {
     match token.param_name() {
         Some(name) => param_spec(params, name).required,
@@ -127,6 +148,7 @@ fn every_cli_verb_argv_parses_against_the_real_clap_surface() {
         for token in argv {
             if !is_required(token, verb.params) {
                 let mut extended = base.clone();
+                render_optional_prerequisites(verb.id, token, verb.params, &mut extended);
                 render_token(verb.id, token, verb.params, &mut extended);
                 assert_clap_accepts(verb.id, &extended);
             }

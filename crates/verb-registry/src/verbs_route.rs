@@ -302,7 +302,11 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 param: "policy"
             },
         ],
-        [p!("before", Str, required), p!("after", Str, required), POLICY],
+        [
+            p!("before", Str, required),
+            p!("after", Str, required),
+            POLICY
+        ],
         r#"{"type":"object","properties":{"before":{"type":"string"},"after":{"type":"string"},"policy":{"type":"string","enum":["strict_identical","allow_aggregate_only","fail_on_recommendation_change"]}},"required":["before","after"]}"#,
         None,
     ),

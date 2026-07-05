@@ -88,9 +88,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             argv: &[
                 ArgvToken::Lit("context"),
                 ArgvToken::Lit("get"),
-                ArgvToken::Flag { flag: "--session", param: "session" },
-                ArgvToken::Flag { flag: "--path", param: "path" },
-                ArgvToken::Flag { flag: "--project-root", param: "project_root" },
+                ArgvToken::Flag {
+                    flag: "--session",
+                    param: "session",
+                },
+                ArgvToken::Flag {
+                    flag: "--path",
+                    param: "path",
+                },
+                ArgvToken::Flag {
+                    flag: "--project-root",
+                    param: "project_root",
+                },
             ],
         },
         params: CONTEXT_ENVELOPE_PARAMS,
@@ -111,9 +120,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             argv: &[
                 ArgvToken::Lit("context"),
                 ArgvToken::Lit("refresh"),
-                ArgvToken::Flag { flag: "--session", param: "session" },
-                ArgvToken::Flag { flag: "--path", param: "path" },
-                ArgvToken::Flag { flag: "--project-root", param: "project_root" },
+                ArgvToken::Flag {
+                    flag: "--session",
+                    param: "session",
+                },
+                ArgvToken::Flag {
+                    flag: "--path",
+                    param: "path",
+                },
+                ArgvToken::Flag {
+                    flag: "--project-root",
+                    param: "project_root",
+                },
             ],
         },
         params: CONTEXT_ENVELOPE_PARAMS,
@@ -134,14 +152,38 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             argv: &[
                 ArgvToken::Lit("context"),
                 ArgvToken::Lit("session-activity"),
-                ArgvToken::Flag { flag: "--session", param: "session" },
-                ArgvToken::Flag { flag: "--path", param: "path" },
-                ArgvToken::Flag { flag: "--project-root", param: "project_root" },
-                ArgvToken::Flag { flag: "--event-kind", param: "event_kind" },
-                ArgvToken::Flag { flag: "--origin", param: "origin" },
-                ArgvToken::Flag { flag: "--command-id", param: "command_id" },
-                ArgvToken::Flag { flag: "--execution-id", param: "execution_id" },
-                ArgvToken::Flag { flag: "--limit", param: "limit" },
+                ArgvToken::Flag {
+                    flag: "--session",
+                    param: "session",
+                },
+                ArgvToken::Flag {
+                    flag: "--path",
+                    param: "path",
+                },
+                ArgvToken::Flag {
+                    flag: "--project-root",
+                    param: "project_root",
+                },
+                ArgvToken::Flag {
+                    flag: "--event-kind",
+                    param: "event_kind",
+                },
+                ArgvToken::Flag {
+                    flag: "--origin",
+                    param: "origin",
+                },
+                ArgvToken::Flag {
+                    flag: "--command-id",
+                    param: "command_id",
+                },
+                ArgvToken::Flag {
+                    flag: "--execution-id",
+                    param: "execution_id",
+                },
+                ArgvToken::Flag {
+                    flag: "--limit",
+                    param: "limit",
+                },
             ],
         },
         params: SESSION_EVENT_FILTER_PARAMS,
@@ -162,14 +204,38 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             argv: &[
                 ArgvToken::Lit("context"),
                 ArgvToken::Lit("session-events"),
-                ArgvToken::Flag { flag: "--session", param: "session" },
-                ArgvToken::Flag { flag: "--path", param: "path" },
-                ArgvToken::Flag { flag: "--project-root", param: "project_root" },
-                ArgvToken::Flag { flag: "--event-kind", param: "event_kind" },
-                ArgvToken::Flag { flag: "--origin", param: "origin" },
-                ArgvToken::Flag { flag: "--command-id", param: "command_id" },
-                ArgvToken::Flag { flag: "--execution-id", param: "execution_id" },
-                ArgvToken::Flag { flag: "--limit", param: "limit" },
+                ArgvToken::Flag {
+                    flag: "--session",
+                    param: "session",
+                },
+                ArgvToken::Flag {
+                    flag: "--path",
+                    param: "path",
+                },
+                ArgvToken::Flag {
+                    flag: "--project-root",
+                    param: "project_root",
+                },
+                ArgvToken::Flag {
+                    flag: "--event-kind",
+                    param: "event_kind",
+                },
+                ArgvToken::Flag {
+                    flag: "--origin",
+                    param: "origin",
+                },
+                ArgvToken::Flag {
+                    flag: "--command-id",
+                    param: "command_id",
+                },
+                ArgvToken::Flag {
+                    flag: "--execution-id",
+                    param: "execution_id",
+                },
+                ArgvToken::Flag {
+                    flag: "--limit",
+                    param: "limit",
+                },
             ],
         },
         params: SESSION_EVENT_FILTER_PARAMS,

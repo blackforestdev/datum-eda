@@ -419,53 +419,62 @@ _GENERATED_LIBRARY_TOOL_BY_NAME = {
 _GENERATED_LIBRARY_TOOL_SPECS = [
     _GENERATED_LIBRARY_TOOL_BY_NAME[name] for name in _GENERATED_LIBRARY_TOOL_ORDER
 ]
+_GENERATED_PCB_TOOL_BY_NAME = {
+    str(spec["name"]): spec for spec in generated_specs_for_prefix("datum.pcb")
+}
+_GENERATED_PCB_TOOL_ORDER = [
+    "datum.pcb.place_component",
+    "datum.pcb.generate_board_components",
+    "datum.pcb.move_component",
+    "datum.pcb.rotate_component",
+    "datum.pcb.flip_component",
+    "datum.pcb.delete_component",
+    "datum.pcb.set_component_reference",
+    "datum.pcb.set_component_value",
+    "datum.pcb.set_component_part",
+    "datum.pcb.set_component_package",
+    "datum.pcb.lock_component",
+    "datum.pcb.unlock_component",
+    "datum.pcb.draw_track",
+    "datum.pcb.edit_track",
+    "datum.pcb.delete_track",
+    "datum.pcb.place_via",
+    "datum.pcb.edit_via",
+    "datum.pcb.delete_via",
+    "datum.pcb.place_zone",
+    "datum.pcb.edit_zone",
+    "datum.pcb.delete_zone",
+    "datum.pcb.place_pad",
+    "datum.pcb.edit_pad",
+    "datum.pcb.delete_pad",
+    "datum.pcb.set_pad_net",
+    "datum.pcb.clear_pad_net",
+    "datum.pcb.place_net",
+    "datum.pcb.edit_net",
+    "datum.pcb.delete_net",
+    "datum.pcb.set_board_name",
+    "datum.pcb.set_outline",
+    "datum.pcb.set_stackup",
+    "datum.pcb.add_default_top_stackup",
+    "datum.pcb.place_keepout",
+    "datum.pcb.edit_keepout",
+    "datum.pcb.delete_keepout",
+    "datum.pcb.place_dimension",
+    "datum.pcb.edit_dimension",
+    "datum.pcb.delete_dimension",
+    "datum.pcb.place_text",
+    "datum.pcb.edit_text",
+    "datum.pcb.delete_text",
+    "datum.pcb.place_net_class",
+    "datum.pcb.edit_net_class",
+    "datum.pcb.delete_net_class",
+]
+_GENERATED_PCB_TOOL_SPECS = [
+    _GENERATED_PCB_TOOL_BY_NAME[name] for name in _GENERATED_PCB_TOOL_ORDER
+]
 
 DATUM_TOOL_SPECS = [
-    {"name": "datum.pcb.place_component", **datum_alias("place_board_component", DATUM_PLACE_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.generate_board_components", **datum_alias("generate_board_components", DATUM_GENERATE_BOARD_COMPONENTS_SCHEMA), "x_dispatch_args": ["path", "apply", "as_proposal", "proposal", "rationale", "origin_x_nm", "origin_y_nm", "pitch_nm", "layer"]},
-    {"name": "datum.pcb.move_component", **datum_alias("move_board_component", DATUM_MOVE_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.rotate_component", **datum_alias("rotate_board_component", DATUM_ROTATE_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.flip_component", **datum_alias("flip_board_component", DATUM_FLIP_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.delete_component", **datum_alias("delete_board_component", DATUM_DELETE_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.set_component_reference", **datum_alias("set_board_component_reference", DATUM_COMPONENT_PROPERTY_SCHEMAS["datum.pcb.set_component_reference"])},
-    {"name": "datum.pcb.set_component_value", **datum_alias("set_board_component_value", DATUM_COMPONENT_PROPERTY_SCHEMAS["datum.pcb.set_component_value"])},
-    {"name": "datum.pcb.set_component_part", **datum_alias("set_board_component_part", DATUM_COMPONENT_PROPERTY_SCHEMAS["datum.pcb.set_component_part"])},
-    {"name": "datum.pcb.set_component_package", **datum_alias("set_board_component_package", DATUM_COMPONENT_PROPERTY_SCHEMAS["datum.pcb.set_component_package"])},
-    {"name": "datum.pcb.lock_component", **datum_alias("lock_board_component", DATUM_LOCK_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.unlock_component", **datum_alias("unlock_board_component", DATUM_LOCK_COMPONENT_SCHEMA)},
-    {"name": "datum.pcb.draw_track", **datum_alias("draw_board_track", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.draw_track"])},
-    {"name": "datum.pcb.edit_track", **datum_alias("edit_board_track", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_track"])},
-    {"name": "datum.pcb.delete_track", **datum_alias("delete_board_track", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_track"])},
-    {"name": "datum.pcb.place_via", **datum_alias("place_board_via", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_via"])},
-    {"name": "datum.pcb.edit_via", **datum_alias("edit_board_via", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_via"])},
-    {"name": "datum.pcb.delete_via", **datum_alias("delete_board_via", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_via"])},
-    {"name": "datum.pcb.place_zone", **datum_alias("place_board_zone", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_zone"]), "x_dispatch_args": ["path", "net", "vertices", "layer", "thermal_gap_nm", "thermal_spoke_width_nm", "priority", "thermal_relief"]},
-    {"name": "datum.pcb.edit_zone", **datum_alias("edit_board_zone", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_zone"]), "x_dispatch_args": ["path", "zone", "net", "vertices", "layer", "priority", "thermal_relief", "thermal_gap_nm", "thermal_spoke_width_nm"]},
-    {"name": "datum.pcb.delete_zone", **datum_alias("delete_board_zone", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_zone"])},
-    {"name": "datum.pcb.place_pad", **datum_alias("place_board_pad", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_pad"])},
-    {"name": "datum.pcb.edit_pad", **datum_alias("edit_board_pad", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_pad"])},
-    {"name": "datum.pcb.delete_pad", **datum_alias("delete_board_pad", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_pad"])},
-    {"name": "datum.pcb.set_pad_net", **datum_alias("set_board_pad_net", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.set_pad_net"])},
-    {"name": "datum.pcb.clear_pad_net", **datum_alias("clear_board_pad_net", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.clear_pad_net"])},
-    {"name": "datum.pcb.place_net", **datum_alias("place_board_net", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_net"])},
-    {"name": "datum.pcb.edit_net", **datum_alias("edit_board_net", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_net"]), "x_dispatch_args": ["path", "net", "name", "class", "impedance_target_ohms", "impedance_tolerance_pct", "controlled_dielectric_layer", "clear_controlled_impedance"]},
-    {"name": "datum.pcb.delete_net", **datum_alias("delete_board_net", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_net"])},
-    {"name": "datum.pcb.set_board_name", **datum_alias("set_board_name", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.set_board_name"])},
-    {"name": "datum.pcb.set_outline", **datum_alias("set_board_outline", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.set_outline"])},
-    {"name": "datum.pcb.set_stackup", **datum_alias("set_board_stackup", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.set_stackup"]), "x_dispatch_args": ["path", "layers"]},
-    {"name": "datum.pcb.add_default_top_stackup", **datum_alias("add_default_top_stackup", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.add_default_top_stackup"])},
-    {"name": "datum.pcb.place_keepout", **datum_alias("place_board_keepout", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_keepout"]), "x_dispatch_args": ["path", "vertices", "layers", "kind"]},
-    {"name": "datum.pcb.edit_keepout", **datum_alias("edit_board_keepout", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_keepout"]), "x_dispatch_args": ["path", "keepout", "vertices", "layers", "kind"]},
-    {"name": "datum.pcb.delete_keepout", **datum_alias("delete_board_keepout", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_keepout"])},
-    {"name": "datum.pcb.place_dimension", **datum_alias("place_board_dimension", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_dimension"])},
-    {"name": "datum.pcb.edit_dimension", **datum_alias("edit_board_dimension", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_dimension"]), "x_dispatch_args": ["path", "dimension", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm", "layer", "text", "clear_text"]},
-    {"name": "datum.pcb.delete_dimension", **datum_alias("delete_board_dimension", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_dimension"])},
-    {"name": "datum.pcb.place_text", **datum_alias("place_board_text", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_text"]), "x_dispatch_args": ["path", "text", "x_nm", "y_nm", "layer", "rotation_deg", "height_nm", "stroke_width_nm", "render_intent", "family", "style", "style_class", "h_align", "v_align", "mirrored", "keep_upright", "line_spacing_ratio_ppm", "bold", "italic"]},
-    {"name": "datum.pcb.edit_text", **datum_alias("edit_board_text", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_text"]), "x_dispatch_args": ["path", "text", "value", "x_nm", "y_nm", "layer", "rotation_deg", "height_nm", "stroke_width_nm", "render_intent", "family", "style", "style_class", "h_align", "v_align", "mirrored", "keep_upright", "line_spacing_ratio_ppm", "bold", "italic"]},
-    {"name": "datum.pcb.delete_text", **datum_alias("delete_board_text", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_text"])},
-    {"name": "datum.pcb.place_net_class", **datum_alias("place_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.place_net_class"])},
-    {"name": "datum.pcb.edit_net_class", **datum_alias("edit_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.edit_net_class"]), "x_dispatch_args": ["path", "net_class", "name", "clearance_nm", "track_width_nm", "via_drill_nm", "via_diameter_nm", "diffpair_width_nm", "diffpair_gap_nm"]},
-    {"name": "datum.pcb.delete_net_class", **datum_alias("delete_board_net_class", DATUM_PCB_PRIMITIVE_SCHEMAS["datum.pcb.delete_net_class"])},
+    *_GENERATED_PCB_TOOL_SPECS,
     *_GENERATED_LIBRARY_TOOL_SPECS,
     {"name": "datum.schematic.create_sheet", **datum_alias("create_sheet", DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS["datum.schematic.create_sheet"])},
     {"name": "datum.schematic.delete_sheet", **datum_alias("delete_sheet", DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS["datum.schematic.delete_sheet"])},
@@ -519,7 +528,12 @@ DATUM_TOOL_SPECS = [
 # Import-time guard: a hand-written entry for a verb the generated catalog
 # already owns is a defect and must fail loudly (caught by server.py --self-test).
 _GENERATED_SPEC_IDS = {
-    id(spec) for spec in [*_GENERATED_TOOL_SPECS, *_GENERATED_LIBRARY_TOOL_SPECS]
+    id(spec)
+    for spec in [
+        *_GENERATED_TOOL_SPECS,
+        *_GENERATED_LIBRARY_TOOL_SPECS,
+        *_GENERATED_PCB_TOOL_SPECS,
+    ]
 }
 reject_hand_written_duplicates(
     [str(spec["name"]) for spec in DATUM_TOOL_SPECS if id(spec) not in _GENERATED_SPEC_IDS]

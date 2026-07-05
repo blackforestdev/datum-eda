@@ -20,7 +20,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::DaemonRpc { method: "get_package" },
+        dispatch: Dispatch::DaemonRpc {
+            method: "get_package",
+        },
         params: &[UUID],
         schema_json_override: None,
         write_surface: None,
@@ -48,7 +50,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::DaemonRpc { method: "search_pool" },
+        dispatch: Dispatch::DaemonRpc {
+            method: "search_pool",
+        },
         params: &[ParamSpec {
             name: "query",
             ty: ParamType::Str,

@@ -8380,6 +8380,3757 @@
       }
     },
     {
+      "description": "Add the default top-side board stackup support layers (top copper, mask, silk, paste, and mechanical) without replacing compatible existing layers.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-default-top-stackup"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_default_top_stackup"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.add_default_top_stackup",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project board pad net assignment.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-board-pad-net"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_board_pad_net"
+      },
+      "dispatch_args": [
+        "path",
+        "pad"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "pad": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "pad"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.clear_pad_net",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board component through the journaled board-package removal path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-component"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board dimension.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-dimension"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--dimension",
+            "param": "dimension"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_dimension"
+      },
+      "dispatch_args": [
+        "path",
+        "dimension"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "dimension"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_dimension",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board keepout polygon.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-keepout"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--keepout",
+            "param": "keepout"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_keepout"
+      },
+      "dispatch_args": [
+        "path",
+        "keepout"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "keepout": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "keepout"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_keepout",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board net.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-net"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_net"
+      },
+      "dispatch_args": [
+        "path",
+        "net"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "net": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_net",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board net class.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-net-class"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net-class",
+            "param": "net_class"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_net_class"
+      },
+      "dispatch_args": [
+        "path",
+        "net_class"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "net_class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net_class"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_net_class",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board pad.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_pad"
+      },
+      "dispatch_args": [
+        "path",
+        "pad"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "pad": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "pad"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_pad",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_text"
+      },
+      "dispatch_args": [
+        "path",
+        "text"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "text"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board track.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-track"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--track",
+            "param": "track"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_track"
+      },
+      "dispatch_args": [
+        "path",
+        "track"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "track": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "track"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_track",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board via.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-via"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--via",
+            "param": "via"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_via"
+      },
+      "dispatch_args": [
+        "path",
+        "via"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "via": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "via"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_via",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project board copper zone boundary.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-board-zone"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--zone",
+            "param": "zone"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_board_zone"
+      },
+      "dispatch_args": [
+        "path",
+        "zone"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "zone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "zone"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.delete_zone",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Draw one native-project board track.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "draw-board-track"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "draw_board_track"
+      },
+      "dispatch_args": [
+        "path",
+        "net",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "net": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "net",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "width_nm",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.draw_track",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board dimension.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-dimension"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--dimension",
+            "param": "dimension"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "param": "clear_text",
+            "switch": "--clear-text"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_dimension"
+      },
+      "dispatch_args": [
+        "path",
+        "dimension",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "layer",
+        "text",
+        "clear_text"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear_text": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "dimension": {
+            "type": "string"
+          },
+          "from_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "from_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "to_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "dimension"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_dimension",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board keepout polygon.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-keepout"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--keepout",
+            "param": "keepout"
+          },
+          {
+            "param": "vertices",
+            "repeated": "--vertex"
+          },
+          {
+            "param": "layers",
+            "repeated": "--layer"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_keepout"
+      },
+      "dispatch_args": [
+        "path",
+        "keepout",
+        "vertices",
+        "layers",
+        "kind"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "keepout": {
+            "type": "string"
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "layers": {
+            "items": {
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "vertices": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "keepout"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_keepout",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board net, including controlled-impedance metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-net"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--class",
+            "param": "class"
+          },
+          {
+            "flag": "--impedance-target-ohms",
+            "param": "impedance_target_ohms"
+          },
+          {
+            "flag": "--impedance-tolerance-pct",
+            "param": "impedance_tolerance_pct"
+          },
+          {
+            "flag": "--controlled-dielectric-layer",
+            "param": "controlled_dielectric_layer"
+          },
+          {
+            "param": "clear_controlled_impedance",
+            "switch": "--clear-controlled-impedance"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_net"
+      },
+      "dispatch_args": [
+        "path",
+        "net",
+        "name",
+        "class",
+        "impedance_target_ohms",
+        "impedance_tolerance_pct",
+        "controlled_dielectric_layer",
+        "clear_controlled_impedance"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "clear_controlled_impedance": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "controlled_dielectric_layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "impedance_target_ohms": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "impedance_tolerance_pct": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "net": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "net"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_net",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board net class.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-net-class"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net-class",
+            "param": "net_class"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--clearance-nm",
+            "param": "clearance_nm"
+          },
+          {
+            "flag": "--track-width-nm",
+            "param": "track_width_nm"
+          },
+          {
+            "flag": "--via-drill-nm",
+            "param": "via_drill_nm"
+          },
+          {
+            "flag": "--via-diameter-nm",
+            "param": "via_diameter_nm"
+          },
+          {
+            "flag": "--diffpair-width-nm",
+            "param": "diffpair_width_nm"
+          },
+          {
+            "flag": "--diffpair-gap-nm",
+            "param": "diffpair_gap_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_net_class"
+      },
+      "dispatch_args": [
+        "path",
+        "net_class",
+        "name",
+        "clearance_nm",
+        "track_width_nm",
+        "via_drill_nm",
+        "via_diameter_nm",
+        "diffpair_width_nm",
+        "diffpair_gap_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clearance_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diffpair_gap_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diffpair_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "net_class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "track_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "via_diameter_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "via_drill_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "net_class"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_net_class",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board pad.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--shape",
+            "param": "shape"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_pad"
+      },
+      "dispatch_args": [
+        "path",
+        "pad",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "shape",
+        "diameter_nm",
+        "width_nm",
+        "height_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "diameter_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pad": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "shape": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "pad"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_pad",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          },
+          {
+            "flag": "--stroke-width-nm",
+            "param": "stroke_width_nm"
+          },
+          {
+            "flag": "--render-intent",
+            "param": "render_intent"
+          },
+          {
+            "flag": "--family",
+            "param": "family"
+          },
+          {
+            "flag": "--style",
+            "param": "style"
+          },
+          {
+            "flag": "--style-class",
+            "param": "style_class"
+          },
+          {
+            "flag": "--h-align",
+            "param": "h_align"
+          },
+          {
+            "flag": "--v-align",
+            "param": "v_align"
+          },
+          {
+            "flag": "--mirrored",
+            "param": "mirrored"
+          },
+          {
+            "flag": "--keep-upright",
+            "param": "keep_upright"
+          },
+          {
+            "flag": "--line-spacing-ratio-ppm",
+            "param": "line_spacing_ratio_ppm"
+          },
+          {
+            "flag": "--bold",
+            "param": "bold"
+          },
+          {
+            "flag": "--italic",
+            "param": "italic"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_text"
+      },
+      "dispatch_args": [
+        "path",
+        "text",
+        "value",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "rotation_deg",
+        "height_nm",
+        "stroke_width_nm",
+        "render_intent",
+        "family",
+        "style",
+        "style_class",
+        "h_align",
+        "v_align",
+        "mirrored",
+        "keep_upright",
+        "line_spacing_ratio_ppm",
+        "bold",
+        "italic"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bold": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "family": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "h_align": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "italic": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "keep_upright": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "line_spacing_ratio_ppm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "mirrored": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "render_intent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "stroke_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "style": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "style_class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "v_align": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "text"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board track.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-track"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--track",
+            "param": "track"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_track"
+      },
+      "dispatch_args": [
+        "path",
+        "track",
+        "net",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "from_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "net": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "to_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "track": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "track"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_track",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board via.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-via"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--via",
+            "param": "via"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--drill-nm",
+            "param": "drill_nm"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--from-layer",
+            "param": "from_layer"
+          },
+          {
+            "flag": "--to-layer",
+            "param": "to_layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_via"
+      },
+      "dispatch_args": [
+        "path",
+        "via",
+        "net",
+        "x_nm",
+        "y_nm",
+        "drill_nm",
+        "diameter_nm",
+        "from_layer",
+        "to_layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "diameter_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drill_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "from_layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "net": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "via": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "via"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_via",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project board copper zone boundary.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-board-zone"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--zone",
+            "param": "zone"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "param": "vertices",
+            "repeated": "--vertex"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--priority",
+            "param": "priority"
+          },
+          {
+            "flag": "--thermal-relief",
+            "param": "thermal_relief"
+          },
+          {
+            "flag": "--thermal-gap-nm",
+            "param": "thermal_gap_nm"
+          },
+          {
+            "flag": "--thermal-spoke-width-nm",
+            "param": "thermal_spoke_width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_board_zone"
+      },
+      "dispatch_args": [
+        "path",
+        "zone",
+        "net",
+        "vertices",
+        "layer",
+        "priority",
+        "thermal_relief",
+        "thermal_gap_nm",
+        "thermal_spoke_width_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "net": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "priority": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "thermal_gap_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "thermal_relief": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "thermal_spoke_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "vertices": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "zone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "zone"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.edit_zone",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Flip one native-project board component to a target copper side/layer through the journaled SetComponentSide path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "flip-board-component"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "flip_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.flip_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Generate initial native-project board components from schematic symbols with bound parts/packages; previews by default and journals only when apply is true.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "generate-board-components"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "apply",
+            "switch": "--apply"
+          },
+          {
+            "param": "as_proposal",
+            "switch": "--as-proposal"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          },
+          {
+            "flag": "--origin-x-nm",
+            "param": "origin_x_nm"
+          },
+          {
+            "flag": "--origin-y-nm",
+            "param": "origin_y_nm"
+          },
+          {
+            "flag": "--pitch-nm",
+            "param": "pitch_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "generate_board_components"
+      },
+      "dispatch_args": [
+        "path",
+        "apply",
+        "as_proposal",
+        "proposal",
+        "rationale",
+        "origin_x_nm",
+        "origin_y_nm",
+        "pitch_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "apply": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "as_proposal": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "origin_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "origin_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pitch_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.generate_board_components",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Lock one native-project board component through the journaled board-package lock path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-component-locked"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          }
+        ],
+        "kind": "cli",
+        "method": "lock_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.lock_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Move one native-project board component through the journaled board-package position path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "move-board-component"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "move_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.move_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board component through the journaled board-package creation path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-component"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "part",
+        "package",
+        "reference",
+        "value",
+        "x_nm",
+        "y_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "package",
+          "reference",
+          "value",
+          "x_nm",
+          "y_nm",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board dimension.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-dimension"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_dimension"
+      },
+      "dispatch_args": [
+        "path",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "layer",
+        "text"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_dimension",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board keepout polygon.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-keepout"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "param": "vertices",
+            "repeated": "--vertex"
+          },
+          {
+            "param": "layers",
+            "repeated": "--layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_keepout"
+      },
+      "dispatch_args": [
+        "path",
+        "vertices",
+        "layers",
+        "kind"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "layers": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "path": {
+            "type": "string"
+          },
+          "vertices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "vertices",
+          "layers",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_keepout",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board net, optionally with controlled-impedance metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-net"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--class",
+            "param": "class"
+          },
+          {
+            "flag": "--impedance-target-ohms",
+            "param": "impedance_target_ohms"
+          },
+          {
+            "flag": "--impedance-tolerance-pct",
+            "param": "impedance_tolerance_pct"
+          },
+          {
+            "flag": "--controlled-dielectric-layer",
+            "param": "controlled_dielectric_layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_net"
+      },
+      "dispatch_args": [
+        "path",
+        "name",
+        "class",
+        "impedance_target_ohms",
+        "impedance_tolerance_pct",
+        "controlled_dielectric_layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "controlled_dielectric_layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "impedance_target_ohms": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "impedance_tolerance_pct": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "name",
+          "class"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_net",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board net class.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-net-class"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--clearance-nm",
+            "param": "clearance_nm"
+          },
+          {
+            "flag": "--track-width-nm",
+            "param": "track_width_nm"
+          },
+          {
+            "flag": "--via-drill-nm",
+            "param": "via_drill_nm"
+          },
+          {
+            "flag": "--via-diameter-nm",
+            "param": "via_diameter_nm"
+          },
+          {
+            "flag": "--diffpair-width-nm",
+            "param": "diffpair_width_nm"
+          },
+          {
+            "flag": "--diffpair-gap-nm",
+            "param": "diffpair_gap_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_net_class"
+      },
+      "dispatch_args": [
+        "path",
+        "name",
+        "clearance_nm",
+        "track_width_nm",
+        "via_drill_nm",
+        "via_diameter_nm",
+        "diffpair_width_nm",
+        "diffpair_gap_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clearance_nm": {
+            "type": "integer"
+          },
+          "diffpair_gap_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diffpair_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "track_width_nm": {
+            "type": "integer"
+          },
+          "via_diameter_nm": {
+            "type": "integer"
+          },
+          "via_drill_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "name",
+          "clearance_nm",
+          "track_width_nm",
+          "via_drill_nm",
+          "via_diameter_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_net_class",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board pad.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--shape",
+            "param": "shape"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_pad"
+      },
+      "dispatch_args": [
+        "path",
+        "package",
+        "name",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "shape",
+        "diameter_nm",
+        "width_nm",
+        "height_nm",
+        "net"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "diameter_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "net": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "shape": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "name",
+          "x_nm",
+          "y_nm",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_pad",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          },
+          {
+            "flag": "--stroke-width-nm",
+            "param": "stroke_width_nm"
+          },
+          {
+            "flag": "--render-intent",
+            "param": "render_intent"
+          },
+          {
+            "flag": "--family",
+            "param": "family"
+          },
+          {
+            "flag": "--style",
+            "param": "style"
+          },
+          {
+            "flag": "--style-class",
+            "param": "style_class"
+          },
+          {
+            "flag": "--h-align",
+            "param": "h_align"
+          },
+          {
+            "flag": "--v-align",
+            "param": "v_align"
+          },
+          {
+            "param": "mirrored",
+            "switch": "--mirrored"
+          },
+          {
+            "param": "keep_upright",
+            "switch": "--keep-upright"
+          },
+          {
+            "flag": "--line-spacing-ratio-ppm",
+            "param": "line_spacing_ratio_ppm"
+          },
+          {
+            "param": "bold",
+            "switch": "--bold"
+          },
+          {
+            "param": "italic",
+            "switch": "--italic"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_text"
+      },
+      "dispatch_args": [
+        "path",
+        "text",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "rotation_deg",
+        "height_nm",
+        "stroke_width_nm",
+        "render_intent",
+        "family",
+        "style",
+        "style_class",
+        "h_align",
+        "v_align",
+        "mirrored",
+        "keep_upright",
+        "line_spacing_ratio_ppm",
+        "bold",
+        "italic"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bold": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "family": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "h_align": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "italic": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "keep_upright": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "line_spacing_ratio_ppm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "mirrored": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "render_intent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "stroke_width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "style": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "style_class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "v_align": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "text",
+          "x_nm",
+          "y_nm",
+          "layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board via.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-via"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--drill-nm",
+            "param": "drill_nm"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--from-layer",
+            "param": "from_layer"
+          },
+          {
+            "flag": "--to-layer",
+            "param": "to_layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_via"
+      },
+      "dispatch_args": [
+        "path",
+        "net",
+        "x_nm",
+        "y_nm",
+        "drill_nm",
+        "diameter_nm",
+        "from_layer",
+        "to_layer"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "diameter_nm": {
+            "type": "integer"
+          },
+          "drill_nm": {
+            "type": "integer"
+          },
+          "from_layer": {
+            "type": "integer"
+          },
+          "net": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_layer": {
+            "type": "integer"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "net",
+          "x_nm",
+          "y_nm",
+          "drill_nm",
+          "diameter_nm",
+          "from_layer",
+          "to_layer"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_via",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project board copper zone boundary.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-board-zone"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          },
+          {
+            "param": "vertices",
+            "repeated": "--vertex"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--priority",
+            "param": "priority"
+          },
+          {
+            "flag": "--thermal-relief",
+            "param": "thermal_relief"
+          },
+          {
+            "flag": "--thermal-gap-nm",
+            "param": "thermal_gap_nm"
+          },
+          {
+            "flag": "--thermal-spoke-width-nm",
+            "param": "thermal_spoke_width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_board_zone"
+      },
+      "dispatch_args": [
+        "path",
+        "net",
+        "vertices",
+        "layer",
+        "thermal_gap_nm",
+        "thermal_spoke_width_nm",
+        "priority",
+        "thermal_relief"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": "integer"
+          },
+          "net": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "priority": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "thermal_gap_nm": {
+            "type": "integer"
+          },
+          "thermal_relief": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "thermal_spoke_width_nm": {
+            "type": "integer"
+          },
+          "vertices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "net",
+          "vertices",
+          "layer",
+          "thermal_gap_nm",
+          "thermal_spoke_width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.place_zone",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Rotate one native-project board component through the journaled board-package rotation path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "rotate-board-component"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          }
+        ],
+        "kind": "cli",
+        "method": "rotate_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "rotation_deg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "rotation_deg": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "rotation_deg"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.rotate_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set the native-project board name.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-name"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_name"
+      },
+      "dispatch_args": [
+        "path",
+        "name"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_board_name",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project board component package UUID through the journaled board-package property path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-component-package"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_component_package"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "package"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_component_package",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project board component part UUID through the journaled board-package property path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-component-part"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_component_part"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "part"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_component_part",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project board component reference through the journaled board-package property path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-component-reference"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_component_reference"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "reference"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "reference"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_component_reference",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project board component value through the journaled board-package property path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-component-value"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_component_value"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "value"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component",
+          "value"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_component_value",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Replace the native-project board outline polygon.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-outline"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "vertices",
+            "repeated": "--vertex"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_outline"
+      },
+      "dispatch_args": [
+        "path",
+        "vertices"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "vertices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "vertices"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_outline",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project board pad net assignment.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-pad-net"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_pad_net"
+      },
+      "dispatch_args": [
+        "path",
+        "pad",
+        "net"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "net": {
+            "type": "string"
+          },
+          "pad": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "pad",
+          "net"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_pad_net",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Replace the native-project board stackup. Each layer is id:name:type:thickness_nm with optional material fields :dielectric_constant:loss_tangent:copper_weight_oz:roughness_um:material_name.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-board-stackup"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "layers",
+            "repeated": "--layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_board_stackup"
+      },
+      "dispatch_args": [
+        "path",
+        "layers"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "layers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "layers"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.set_stackup",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Lock one native-project board component through the journaled board-package lock path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-board-component-locked"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          }
+        ],
+        "kind": "cli",
+        "method": "unlock_board_component"
+      },
+      "dispatch_args": [
+        "path",
+        "component"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "component"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.unlock_component",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Return package/body metadata plus legacy package land-pattern compatibility fields for a UUID.",
       "dispatch": {
         "kind": "daemon",

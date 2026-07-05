@@ -38,8 +38,14 @@ const RATIONALE: ParamSpec = ParamSpec {
     default_json: None,
 };
 
-const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag { flag: "--proposal", param: "proposal" };
-const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag { flag: "--rationale", param: "rationale" };
+const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--proposal",
+    param: "proposal",
+};
+const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--rationale",
+    param: "rationale",
+};
 
 /// Exact hand-written MCP schema: `x_nm`/`y_nm`/`rotation_deg` are optional
 /// but declared non-nullable there, which the ParamSpec derivation (optional
@@ -59,12 +65,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--key", param: "key" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--board", param: "board" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--key",
+                    param: "key",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--board",
+                    param: "board",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -134,10 +158,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -193,7 +229,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -228,7 +267,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -263,12 +305,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--board", param: "board" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--board",
+                    param: "board",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -338,13 +398,34 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Switch { flag: "--clear-variant", param: "clear_variant" },
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
-                ArgvToken::Switch { flag: "--clear-panel-projection", param: "clear_panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-variant",
+                    param: "clear_variant",
+                },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-panel-projection",
+                    param: "clear_panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],

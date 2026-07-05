@@ -29,7 +29,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("cancel-output-job-run"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--run", param: "run" },
+                ArgvToken::Flag {
+                    flag: "--run",
+                    param: "run",
+                },
             ],
         },
         params: &[
@@ -60,8 +63,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("compare"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--before", param: "before" },
-                ArgvToken::Flag { flag: "--after", param: "after" },
+                ArgvToken::Flag {
+                    flag: "--before",
+                    param: "before",
+                },
+                ArgvToken::Flag {
+                    flag: "--after",
+                    param: "after",
+                },
             ],
         },
         params: &[
@@ -99,8 +108,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("export-manufacturing-set"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
             ],
         },
         params: &[
@@ -138,7 +153,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("files"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--artifact", param: "artifact" },
+                ArgvToken::Flag {
+                    flag: "--artifact",
+                    param: "artifact",
+                },
             ],
         },
         params: &[
@@ -169,10 +187,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("generate"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--include", param: "include" },
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--include",
+                    param: "include",
+                },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
             ],
         },
         params: &[
@@ -247,9 +277,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("preview"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--artifact", param: "artifact" },
-                ArgvToken::Flag { flag: "--artifact-dir", param: "artifact_dir" },
-                ArgvToken::Flag { flag: "--file", param: "file" },
+                ArgvToken::Flag {
+                    flag: "--artifact",
+                    param: "artifact",
+                },
+                ArgvToken::Flag {
+                    flag: "--artifact-dir",
+                    param: "artifact_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--file",
+                    param: "file",
+                },
             ],
         },
         params: &[
@@ -294,7 +333,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("show"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--artifact", param: "artifact" },
+                ArgvToken::Flag {
+                    flag: "--artifact",
+                    param: "artifact",
+                },
             ],
         },
         params: &[
@@ -325,7 +367,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("start-output-job-run"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
             ],
         },
         params: &[
@@ -356,7 +401,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("validate"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--artifact", param: "artifact" },
+                ArgvToken::Flag {
+                    flag: "--artifact",
+                    param: "artifact",
+                },
             ],
         },
         params: &[
@@ -387,8 +435,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("artifact"),
                 ArgvToken::Lit("validate-manufacturing-set"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
             ],
         },
         params: &[

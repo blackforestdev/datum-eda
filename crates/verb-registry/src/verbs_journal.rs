@@ -100,7 +100,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("journal"),
                 ArgvToken::Lit("show"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--transaction", param: "transaction" },
+                ArgvToken::Flag {
+                    flag: "--transaction",
+                    param: "transaction",
+                },
             ],
         },
         params: &[

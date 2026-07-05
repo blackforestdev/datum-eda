@@ -130,8 +130,8 @@ Write-surface convergence is COMPLETE — do not resurrect the old
   unreachable under assistant provenance. Follow-up surface work.
 - **Genesis t=0 record:** genesis is deliberately not journaled; a t=0 record
   is pending an owner decision (options in `native_write/genesis.rs`).
-- **Verb registry migration ongoing (decision 017):** 15 of the public
-  `datum.*` prefixes are registry-generated (225/332 public tools); per-prefix
+- **Verb registry migration ongoing (decision 017):** 16 of the public
+  `datum.*` prefixes are registry-generated (270/332 public tools); per-prefix
   count/hash pins retire as each family migrates.
 - **Library:** decision-008 `Footprint`/`PinPadMap` are now engine Rust types
   and the first IPC-7351B two-terminal generator landed; `LibraryBinding` is

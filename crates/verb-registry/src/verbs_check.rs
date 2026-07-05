@@ -25,14 +25,16 @@ const FINGERPRINT: ParamSpec = ParamSpec {
     default_json: None,
 };
 
-const CHECK_RUN_SUMMARY: &str =
-    "Run a native project CheckRun profile and persist a resolver-owned CheckRun evidence artifact.";
+const CHECK_RUN_SUMMARY: &str = "Run a native project CheckRun profile and persist a resolver-owned CheckRun evidence artifact.";
 
 const CHECK_RUN_ARGV: &[ArgvToken] = &[
     ArgvToken::Lit("check"),
     ArgvToken::Lit("run"),
     ArgvToken::Param("path"),
-    ArgvToken::Flag { flag: "--profile", param: "profile" },
+    ArgvToken::Flag {
+        flag: "--profile",
+        param: "profile",
+    },
 ];
 
 const CHECK_RUN_PARAMS: &[ParamSpec] = &[
@@ -59,9 +61,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("check"),
                 ArgvToken::Lit("accept-deviation"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--fingerprint", param: "fingerprint" },
-                ArgvToken::Flag { flag: "--rationale", param: "rationale" },
-                ArgvToken::Flag { flag: "--accepted-by", param: "accepted_by" },
+                ArgvToken::Flag {
+                    flag: "--fingerprint",
+                    param: "fingerprint",
+                },
+                ArgvToken::Flag {
+                    flag: "--rationale",
+                    param: "rationale",
+                },
+                ArgvToken::Flag {
+                    flag: "--accepted-by",
+                    param: "accepted_by",
+                },
             ],
         },
         params: &[
@@ -94,7 +105,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::DaemonRpc { method: "explain_violation" },
+        dispatch: Dispatch::DaemonRpc {
+            method: "explain_violation",
+        },
         params: &[
             ParamSpec {
                 name: "domain",
@@ -140,8 +153,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("check"),
                 ArgvToken::Lit("fill-zones"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--zone", param: "zone" },
-                ArgvToken::Flag { flag: "--net", param: "net" },
+                ArgvToken::Flag {
+                    flag: "--zone",
+                    param: "zone",
+                },
+                ArgvToken::Flag {
+                    flag: "--net",
+                    param: "net",
+                },
             ],
         },
         params: &[
@@ -236,7 +255,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::Cli { method: "get_check_run", argv: CHECK_RUN_ARGV },
+        dispatch: Dispatch::Cli {
+            method: "get_check_run",
+            argv: CHECK_RUN_ARGV,
+        },
         params: CHECK_RUN_PARAMS,
         schema_json_override: None,
         write_surface: None,
@@ -250,7 +272,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         status: VerbStatus::Public,
         replacements: &[],
         retirement: None,
-        dispatch: Dispatch::Cli { method: "get_check_run", argv: CHECK_RUN_ARGV },
+        dispatch: Dispatch::Cli {
+            method: "get_check_run",
+            argv: CHECK_RUN_ARGV,
+        },
         params: CHECK_RUN_PARAMS,
         schema_json_override: None,
         write_surface: None,
@@ -272,7 +297,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("check"),
                 ArgvToken::Lit("show"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--check-run", param: "check_run" },
+                ArgvToken::Flag {
+                    flag: "--check-run",
+                    param: "check_run",
+                },
             ],
         },
         params: &[
@@ -303,9 +331,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("check"),
                 ArgvToken::Lit("waive"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--fingerprint", param: "fingerprint" },
-                ArgvToken::Flag { flag: "--rationale", param: "rationale" },
-                ArgvToken::Flag { flag: "--created-by", param: "created_by" },
+                ArgvToken::Flag {
+                    flag: "--fingerprint",
+                    param: "fingerprint",
+                },
+                ArgvToken::Flag {
+                    flag: "--rationale",
+                    param: "rationale",
+                },
+                ArgvToken::Flag {
+                    flag: "--created-by",
+                    param: "created_by",
+                },
             ],
         },
         params: &[

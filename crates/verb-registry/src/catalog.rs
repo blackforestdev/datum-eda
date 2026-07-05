@@ -3,9 +3,9 @@
 //! Emits `mcp-server/datum_tool_catalog.json`: verbs sorted by id, object keys
 //! sorted (serde_json's default `BTreeMap`-backed `Map`), trailing newline.
 
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value, json};
 
-use crate::{verbs, ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec};
+use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, verbs};
 
 pub const CATALOG_VERSION: u64 = 1;
 
