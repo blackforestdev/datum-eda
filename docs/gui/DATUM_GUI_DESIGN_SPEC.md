@@ -186,6 +186,10 @@ objects; singular labels become "…Selected…"; Properties opens a multi-edit.
 | Zone | Fill | Unfill | Edit Border | Properties | Repour · Add Cutout · Duplicate to Layer · More… |
 | Empty | Place ▸ | Paste | Grid ▸ | View ▸ | — |
 
+**Full per-object menu content** (every object type in PCB + schematic —
+cardinal-4 / secondary / overflow / sub-wheels, each leaf mapped to an engine op,
+with destructive / tool-start / cross-probe flags): **`docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`**.
+
 **Still to prove:** the marking-menu interaction in the prototype (delayed popup,
 expert flick drawing nothing), and per-object cardinal tuning with the owner.
 Reference visual: `docs/gui/prototypes/context-menu-marking-menu.html` (contiguous
