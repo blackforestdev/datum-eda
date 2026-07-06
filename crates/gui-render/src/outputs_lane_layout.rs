@@ -11,6 +11,7 @@ pub(super) struct OutputsLaneLayout {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum OutputsBodySectionKind {
+    Supervision,
     FocusedArtifact,
     Checks,
     Actions,

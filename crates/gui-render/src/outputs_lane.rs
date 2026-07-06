@@ -114,6 +114,9 @@ pub(super) fn render_outputs_lane(
     let upper_sections = solve_upper_output_sections(state, layout.body);
     for section in &upper_sections {
         match section.kind {
+            OutputsBodySectionKind::Supervision => {
+                render_engine_supervision_section(state, section.rect, text_runs)
+            }
             OutputsBodySectionKind::FocusedArtifact => render_focused_artifact_section(
                 state,
                 section.rect,
@@ -167,6 +170,10 @@ fn solve_upper_output_sections(
         body,
         &[
             OutputsBodySectionSpec {
+                kind: OutputsBodySectionKind::Supervision,
+                height: engine_supervision_section_height(state),
+            },
+            OutputsBodySectionSpec {
                 kind: OutputsBodySectionKind::FocusedArtifact,
                 height: focused_artifact_section_height(state),
             },
@@ -181,6 +188,126 @@ fn solve_upper_output_sections(
         ],
     )
     .unwrap_or_default()
+}
+
+fn engine_supervision_section_height(state: &ReviewWorkspaceState) -> f32 {
+    if state.supervision.contract.is_empty() {
+        return 0.0;
+    }
+    5.0 * output_row_height() + 6.0
+}
+
+fn render_engine_supervision_section(
+    state: &ReviewWorkspaceState,
+    rect: RectPx,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let snapshot = &state.supervision;
+    let mut y = rect.y;
+    let bottom = rect.y + rect.height;
+    let row_height = output_row_height();
+    if y + row_height > bottom {
+        return;
+    }
+    draw_text(
+        "ENGINE SUPERVISION",
+        rect.x,
+        y,
+        10.5,
+        TEXT_SECONDARY,
+        TextFace::Mono,
+        text_runs,
+    );
+    y += row_height;
+    if y + row_height > bottom {
+        return;
+    }
+    let tip = snapshot
+        .journal
+        .accepted_transaction_tip
+        .as_deref()
+        .map(|tip| suffix_id(tip).to_uppercase())
+        .unwrap_or_else(|| "NONE".to_string());
+    draw_text(
+        &format!(
+            "REV {} / JOURNAL {} / TIP {}",
+            suffix_id(&snapshot.model_revision).to_uppercase(),
+            snapshot.journal.applied_transaction_count,
+            tip
+        ),
+        rect.x + 12.0,
+        y,
+        10.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+    y += row_height;
+    if y + row_height > bottom {
+        return;
+    }
+    draw_text(
+        &format!(
+            "SHARDS {} / ATTENTION {} / READ ONLY {}",
+            snapshot.source_shards.total,
+            snapshot.source_shards.attention_count(),
+            if snapshot.read_only { "YES" } else { "NO" }
+        ),
+        rect.x + 12.0,
+        y,
+        10.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+    y += row_height;
+    if y + row_height > bottom {
+        return;
+    }
+    draw_text(
+        &format!(
+            "{} C{} P{} T{} V{} Z{} TXT{} L{}",
+            truncate_text(&snapshot.scene_kind.to_uppercase(), 22),
+            snapshot.scene.component_count,
+            snapshot.scene.pad_count,
+            snapshot.scene.track_count,
+            snapshot.scene.via_count,
+            snapshot.scene.zone_count,
+            snapshot.scene.board_text_count,
+            snapshot.scene.layer_count
+        ),
+        rect.x + 12.0,
+        y,
+        10.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+    y += row_height;
+    if y + row_height > bottom {
+        return;
+    }
+    draw_text(
+        &format!(
+            "CHECK {} FIND {} / DATA JOB{} ART{} PROP{}",
+            snapshot
+                .checks
+                .status
+                .as_deref()
+                .unwrap_or("not_run")
+                .to_uppercase(),
+            snapshot.checks.finding_count,
+            snapshot.data.output_job_count,
+            snapshot.data.artifact_count,
+            snapshot.data.proposal_count
+        ),
+        rect.x + 12.0,
+        y,
+        10.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
 }
 
 fn focused_artifact_section_height(state: &ReviewWorkspaceState) -> f32 {

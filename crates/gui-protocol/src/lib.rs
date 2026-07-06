@@ -820,6 +820,7 @@ pub struct ReviewWorkspaceState {
     pub production: ProductionStatus,
     pub source_shards: SourceShardStatusSummary,
     pub checks: CheckRunReviewState,
+    pub supervision: GuiSupervisionSnapshot,
     pub selection: SelectionTarget,
     pub active_review_target_id: String,
     pub tool: WorkspaceTool,
@@ -827,6 +828,82 @@ pub struct ReviewWorkspaceState {
     pub backing: Option<WorkspaceBacking>,
     pub last_command_status: Option<EditorCommandStatus>,
     pub ui: WorkspaceUiState,
+}
+
+pub const GUI_SUPERVISION_SNAPSHOT_CONTRACT: &str = "datum_gui_supervision_snapshot_v1";
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct GuiSupervisionSnapshot {
+    pub contract: String,
+    pub project_root: String,
+    pub project_uuid: String,
+    pub project_name: String,
+    pub model_revision: String,
+    pub scene_kind: String,
+    pub read_only: bool,
+    pub journal: GuiJournalSupervision,
+    pub source_shards: SourceShardStatusSummary,
+    pub scene: GuiSceneSupervision,
+    pub checks: GuiCheckSupervision,
+    pub data: GuiDataSupervision,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
+pub struct GuiJournalSupervision {
+    pub applied_transaction_count: usize,
+    pub accepted_transaction_tip: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
+pub struct GuiSceneSupervision {
+    pub component_count: usize,
+    pub pad_count: usize,
+    pub track_count: usize,
+    pub via_count: usize,
+    pub zone_count: usize,
+    pub board_text_count: usize,
+    pub board_graphic_count: usize,
+    pub layer_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
+pub struct GuiCheckSupervision {
+    pub check_run_id: Option<String>,
+    pub model_revision: Option<String>,
+    pub profile_id: Option<String>,
+    pub status: Option<String>,
+    pub finding_count: usize,
+    pub proposal_ref_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
+pub struct GuiDataSupervision {
+    pub output_job_count: usize,
+    pub artifact_count: usize,
+    pub artifact_run_count: usize,
+    pub proposal_count: usize,
+    pub manufacturing_plan_count: usize,
+    pub panel_projection_count: usize,
+    pub latest_status: Option<String>,
+}
+
+impl Default for GuiSupervisionSnapshot {
+    fn default() -> Self {
+        Self {
+            contract: GUI_SUPERVISION_SNAPSHOT_CONTRACT.to_string(),
+            project_root: String::new(),
+            project_uuid: String::new(),
+            project_name: String::new(),
+            model_revision: String::new(),
+            scene_kind: String::new(),
+            read_only: true,
+            journal: GuiJournalSupervision::default(),
+            source_shards: SourceShardStatusSummary::default(),
+            scene: GuiSceneSupervision::default(),
+            checks: GuiCheckSupervision::default(),
+            data: GuiDataSupervision::default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -2590,6 +2667,7 @@ impl ReviewWorkspaceState {
             },
             backing: None,
             last_command_status: None,
+            supervision: GuiSupervisionSnapshot::default(),
             ui: WorkspaceUiState {
                 active_dock_tab: None,
                 dock_height_px: 220,
@@ -3368,6 +3446,13 @@ fn load_workspace_state_impl(
     state.production = load_production_status(&cli, request)?;
     state.source_shards = refresh_source_shard_status(request)?;
     state.checks = load_check_run_review_state(&cli, request)?;
+    state.supervision = load_gui_supervision_snapshot(
+        request,
+        &state.scene,
+        &state.production,
+        &state.source_shards,
+        &state.checks,
+    )?;
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
         board_path,
@@ -3378,6 +3463,68 @@ fn load_workspace_state_impl(
     ));
     Ok(state)
 }
+
+fn load_gui_supervision_snapshot(
+    request: &LiveReviewRequest,
+    scene: &BoardReviewSceneV1,
+    production: &ProductionStatus,
+    source_shards: &SourceShardStatusSummary,
+    checks: &CheckRunReviewState,
+) -> Result<GuiSupervisionSnapshot> {
+    let mut snapshot = GuiSupervisionSnapshot {
+        contract: GUI_SUPERVISION_SNAPSHOT_CONTRACT.to_string(),
+        project_root: request.project_root.display().to_string(),
+        project_uuid: scene.project_uuid.clone(),
+        project_name: scene.project_name.clone(),
+        model_revision: scene.source_revision.clone(),
+        scene_kind: scene.kind.clone(),
+        read_only: true,
+        journal: GuiJournalSupervision::default(),
+        source_shards: source_shards.clone(),
+        scene: GuiSceneSupervision {
+            component_count: scene.components.len(),
+            pad_count: scene.pads.len(),
+            track_count: scene.tracks.len(),
+            via_count: scene.vias.len(),
+            zone_count: scene.zones.len(),
+            board_text_count: scene.board_texts.len(),
+            board_graphic_count: scene.board_graphics.len(),
+            layer_count: scene.layers.len(),
+        },
+        checks: GuiCheckSupervision {
+            check_run_id: checks.check_run_id.clone(),
+            model_revision: checks.model_revision.clone(),
+            profile_id: checks.profile_id.clone(),
+            status: checks.status.clone(),
+            finding_count: checks.finding_count,
+            proposal_ref_count: checks.proposal_refs.len(),
+        },
+        data: GuiDataSupervision {
+            output_job_count: production.output_job_count,
+            artifact_count: production.artifact_count,
+            artifact_run_count: production.artifact_run_count,
+            proposal_count: production.proposal_count,
+            manufacturing_plan_count: production.manufacturing_plan_count,
+            panel_projection_count: production.panel_projection_count,
+            latest_status: production.latest_status.clone(),
+        },
+    };
+    if request.board_file.is_none() {
+        let model = ProjectResolver::new(&request.project_root).resolve()?;
+        snapshot.project_uuid = model.project.project_id.to_string();
+        snapshot.project_name = model.project.name;
+        snapshot.model_revision = model.model_revision.0;
+        snapshot.journal.applied_transaction_count = model.journal_cursor.applied_transaction_count;
+        snapshot.journal.accepted_transaction_tip = model
+            .journal_cursor
+            .applied_transaction_count
+            .checked_sub(1)
+            .and_then(|index| model.journal.get(index))
+            .map(|transaction| transaction.transaction_id.to_string());
+    }
+    Ok(snapshot)
+}
+
 fn load_check_run_review_state(
     cli: &[String],
     request: &LiveReviewRequest,
@@ -5879,6 +6026,37 @@ mod tests {
                 .any(|text| text.text_uuid == text_id.to_string() && text.text == "Resolver Truth"),
             "native GUI scene should reflect journal-materialized board text, not stale promoted board JSON"
         );
+        let snapshot = load_gui_supervision_snapshot(
+            &LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            &scene,
+            &ProductionStatus::default(),
+            &SourceShardStatusSummary::default(),
+            &CheckRunReviewState::default(),
+        )
+        .expect("supervision snapshot should load from resolver");
+
+        assert_eq!(snapshot.contract, GUI_SUPERVISION_SNAPSHOT_CONTRACT);
+        assert!(snapshot.read_only);
+        assert_eq!(snapshot.project_uuid, project_id.to_string());
+        assert_eq!(snapshot.model_revision, model.model_revision.0);
+        assert_eq!(snapshot.journal.applied_transaction_count, 1);
+        let expected_transaction_tip = model
+            .journal
+            .first()
+            .map(|transaction| transaction.transaction_id.to_string());
+        assert_eq!(
+            snapshot.journal.accepted_transaction_tip.as_deref(),
+            expected_transaction_tip.as_deref()
+        );
+        assert_eq!(snapshot.scene.board_text_count, scene.board_texts.len());
     }
 
     #[test]

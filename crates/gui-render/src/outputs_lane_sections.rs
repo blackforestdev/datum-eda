@@ -38,6 +38,7 @@ pub(super) fn render_lower_output_sections(
                 render_output_jobs_section(state, section.rect, text_runs, hit_regions)
             }
             OutputsBodySectionKind::FocusedArtifact
+            | OutputsBodySectionKind::Supervision
             | OutputsBodySectionKind::Checks
             | OutputsBodySectionKind::Actions => {}
         }
