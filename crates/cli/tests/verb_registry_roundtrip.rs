@@ -25,6 +25,12 @@ const CLAP_PARSE_FAILURE_MARKERS: &[&str] = &[
 ];
 
 fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
+    if verb_id == "datum.pcb.align_components" && param.name == "components" {
+        return "00000000-0000-0000-0000-000000000001";
+    }
+    if verb_id == "datum.pcb.align_components" && param.name == "mode" {
+        return "left";
+    }
     // `proposal review --status` is a clap value_enum; the generic per-type
     // dummy is not a valid variant, so use a real one.
     if param.name == "status" {
