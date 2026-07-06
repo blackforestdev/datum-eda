@@ -226,6 +226,39 @@ conveys the interface. The prototype is the visual source of truth; this spec is
 the ratified rationale + rules. Each approved pass updates both in the same
 change. Next surfaces after the board editor: schematic editor, library browser.
 
+## Design Language & Consistency
+
+Datum's UI follows the Ive/Jobs ethos: **the software should not ship with a
+manual.** Good design is invisible — the interface is obvious, and its craft goes
+unnoticed because nothing about it demands attention. The aspiration: let a novice
+wield an expert's reach — *the design carries the competence, so the user doesn't
+have to.* If a workflow needs explaining, the design failed, not the user.
+
+**One action, one identity, everywhere.** A verb has exactly one icon, one label,
+and one behavior wherever it appears — menu bar, marking menu, command palette,
+toolbar. The context-menu glyph *is* the toolbar glyph *is* the File-menu glyph.
+This is not policed; it falls out of the verb-registry projection (every surface
+renders the same verb, so its icon and behavior are shared *by construction* — see
+Modularity). Consistency the architecture makes hard to break.
+
+**Entry points are calibrated, not redundant.** Multiple ways to reach an action
+are a feature *only if* each is the natural reach in a distinct moment: **menu bar**
+= discovery/learning; **marking menu** = in-place speed, eyes on the work; **command
+palette** = search-by-name; **keyboard/gesture** = expert muscle memory; **toolbar**
+= the few always-present tools. All fire the *same* verb, glyph, and result.
+**Paths that behave differently, or exist for no distinct moment, are a defect** —
+that is precisely how tools get confusing (too many roads to one place). Default to
+*subtraction*: when unsure whether a path earns its place, remove it, don't add it.
+
+**Cross-domain interaction parity.** The same verb-shape works the same way across
+every editor mode. Drawing a **wire** in the schematic and a **trace** on the PCB
+are one interaction — same tool slot, same gesture, same icon family, same
+place→click→finish rhythm; only the domain object differs. place / move / delete /
+properties behave identically in schematic, PCB, footprint, and symbol modes.
+**Learn a move once; it works everywhere.** Enforced by the marking-menu invariants
+(Delete always Cardinal-S, `▸ change` always the same slot) and by every mode
+projecting the same verb families.
+
 ## Modularity & Extensibility
 
 The design is deliberately **add/remove, not rewrite**: every addition or change to
