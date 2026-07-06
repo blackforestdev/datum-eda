@@ -226,6 +226,41 @@ conveys the interface. The prototype is the visual source of truth; this spec is
 the ratified rationale + rules. Each approved pass updates both in the same
 change. Next surfaces after the board editor: schematic editor, library browser.
 
+## Modularity & Extensibility
+
+The design is deliberately **add/remove, not rewrite**: every addition or change to
+the GUI is a *data entry* against one of a few extension points, never a bespoke new
+surface. This is what keeps the current effortless add/remove workflow true as the
+product grows — and it is a controlling constraint, not a nice-to-have.
+
+**Extension points** (add a capability *once*; every surface projects it):
+- **Verb registry (decision 017)** — the single capability catalog. Add a tool =
+  add a verb; the menu bar, marking menus, command palette, CLI, and MCP all
+  project from it. No surface hardcodes a tool list.
+- **Menu model (data, not code)** — the per-object menu content
+  (`DATUM_GUI_CONTEXT_MENU_CONTENT.md`) is a table of object → slot → verb. Target:
+  a machine-checkable `menu_model` manifest so adding / removing / reassigning a
+  menu item is editing one row, drift-checked against the verb registry.
+- **Design Book tokens (decision 015)** — visual change = token edit; nothing
+  hardcodes a color or size. Restyle by changing a token; everything follows.
+- **Typed `Operation` + one `commit()`** — add an operation variant + its builder;
+  every surface (GUI / CLI / MCP) gains it through the same path. No private writers.
+- **Self-contained object-type and mode definitions** — each object's wheel and each
+  editor mode (schematic / PCB / footprint / symbol) is an independent definition;
+  a new object type or editor mode is *added*, not woven through the shell.
+
+**Rules that preserve it:**
+- Add a tool → add a verb + a menu_model entry (+ its typed op if it mutates).
+- Add / reorder a menu item → edit a menu_model row.
+- Add an object type → add its per-object menu definition.
+- Add an editor mode → add a document type + toolset; shell composition untouched.
+- **If you find yourself editing a *surface* to add a capability, the extension
+  point is missing — add it there first.**
+
+The co-development loop (spec ⇄ prototype, one element per pass) is the same
+principle at the process level: each pass adds or refines a single, self-contained
+element. That is why it feels effortless — keep it that way.
+
 ## Governance
 
 Tracked in `specs/spec_governance_manifest.json` (docs/gui enforced glob) and in
