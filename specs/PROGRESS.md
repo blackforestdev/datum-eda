@@ -41,8 +41,9 @@
    designed.
 2. **GUI Phase 1 build — application shell + board render fidelity** on the
    `datum-test` fixture, read-only, with screenshot goldens + owner review
-   (needs no write-path). Buildable once step 1 defines the shell layout and the
-   board-render design. Spec: `DATUM_GUI_PRODUCT_SPEC.md` §Phase 1.
+   (needs no write-path). **Precise executable spec: `docs/gui/DATUM_GUI_PHASE_1_SPEC.md`**
+   (deliverables D1–D7, reuse map, acceptance gates, binding Do-NOT list). Buildable
+   now (reads work via `run_cli_json`); the rail for Codex's first GUI build.
 3. **GUI write-path enablement** — the four-item backend plumbing that lets the
    GUI author journaled operations directly. Plan already written:
    `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (decisions 019 + 017), sequence
