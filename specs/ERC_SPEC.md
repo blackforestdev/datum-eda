@@ -28,30 +28,46 @@ ERC does not consume:
 
 ### 3.1 Pin Electrical Types
 
-The 10-variant taxonomy below is the **target**. The shipped
-`PinElectricalType` (`crates/engine/src/schematic/mod.rs`, verified
-2026-06-22) narrows it to six variants — it omits `TriState`,
-`OpenCollector`, `OpenEmitter`, and `NoConnect` (no-connect is modeled
-separately via no-connect markers, not as a pin electrical type):
+The canonical pin electrical taxonomy is `LibraryPinElectricalType:v1`.
+It is owned by the library/pool model in
+`crates/engine/src/pool/pin.rs`; schematic pins consume the same taxonomy
+through `schematic::PinElectricalType`, which is an alias to
+`LibraryPinElectricalType`. ERC consumes this library-owned type directly
+and emits the canonical snake-case names in pin evidence:
 
 ```rust
-// Target taxonomy:
 pub enum PinElectricalType {
     Input,
     Output,
     Bidirectional,
     Passive,
-    TriState,       // target — not in shipped enum
-    OpenCollector,  // target — not in shipped enum
-    OpenEmitter,    // target — not in shipped enum
     PowerIn,
     PowerOut,
-    NoConnect,      // target — modeled as no-connect markers, not a pin type
+    OpenCollector,
+    OpenEmitter,
+    TriState,
+    NoConnect,
 }
-
-// Shipped (six variants):
-//   Input, Output, Bidirectional, Passive, PowerIn, PowerOut
 ```
+
+```text
+input
+output
+bidirectional
+passive
+power_in
+power_out
+open_collector
+open_emitter
+tri_state
+no_connect
+```
+
+`OpenCollector`, `OpenEmitter`, and `TriState` are explicit drivers but are
+not treated as strong push-pull conflicting outputs by current ERC
+classification. `NoConnect` is intentionally supported both as a pin
+electrical type and as a separate no-connect marker; either representation
+can express intentional disconnection, and ERC keeps both paths explicit.
 
 ### 3.2 Net Semantic Classes
 
@@ -80,26 +96,39 @@ The following checks are required for `M2`:
 1. `output_to_output_conflict`
 - two or more strong outputs drive the same net
 
-2. `undriven_input`
-- input or power-in pin is attached to a net with no valid driver/source
+2. `power_in_without_source`
+- power-input pins are attached to a net with no valid power source
 
-3. `power_without_source`
-- a power net contains only `PowerIn` pins and no valid power source
+3. `noconnect_connected`
+- a pin marked `NoConnect`, or carrying a no-connect marker, is attached to
+  a resolved net
 
-4. `noconnect_connected`
-- a pin marked `NoConnect` is attached to a resolved net
+4. `input_without_explicit_driver`
+- a net has input pins without an explicit driver, but passive biasing or
+  attached components make the current severity informational
 
-5. `unconnected_required_pin`
+5. `undriven_input_pin`
+- input pins are attached to a net with no valid driver/source
+
+6. `unconnected_component_pin`
 - a non-optional pin has no net attachment and no waiver/no-connect marker
 
-6. `passive_only_net`
-- a net contains only passive pins and no explicit source
+7. `unconnected_interface_port`
+- an interface port is isolated from component pins and labels
 
-7. `hierarchical_connectivity_mismatch`
+8. `undriven_power_net`
+- a power-like named net has no connected component pins
+
+9. `undriven_named_net`
+- a non-power named net has no connected component pins
+
+10. `hierarchical_connectivity_mismatch`
 - parent/child port mapping is incomplete or inconsistent
 
-M2 may emit `warning` rather than `error` for `passive_only_net`
-depending on project defaults.
+The target `passive_only_net` rule remains unimplemented as a distinct
+finding code. Current ERC folds passive-only/biasing context into
+`input_without_explicit_driver` severity decisions rather than emitting a
+separate passive-only finding.
 
 ---
 
@@ -118,12 +147,11 @@ ERC evaluates pin compatibility by net:
 | Passive + Passive | Warning |
 | TriState + Output | Warning or OK, configurable |
 
-Rows that reference target-only pin types (`TriState`, and the pin-type
-form of `NoConnect`; see § 3.1) are part of the target matrix, not the
-shipped six-variant taxonomy.
-
-The full compatibility matrix is authored in the engine and versioned in
-the canonical ruleset.
+The compatibility matrix is authored in the engine classification helpers
+and versioned by `LibraryPinElectricalType:v1`. The current implementation
+classifies `Output` and `PowerOut` as strong conflicting outputs, while
+`OpenCollector`, `OpenEmitter`, and `TriState` count as explicit drivers
+without triggering output-output contention by themselves.
 
 ---
 

@@ -35,6 +35,13 @@ It must not depend on board state, routed copper, or cached connectivity.
 
 ## 3. Output Graph
 
+The target product graph is the `SchematicConnectivityGraph` shape below.
+The shipped engine currently exposes deterministic read surfaces through
+`schematic_net_info`, `schematic_hierarchy_info`, and
+`schematic_diagnostics`; those surfaces carry the same graph intent in the
+current `SchematicNetInfo`, `HierarchyInfo`, and
+`ConnectivityDiagnosticInfo` API shapes.
+
 ```rust
 pub struct SchematicConnectivityGraph {
     pub nets: HashMap<Uuid, SchematicNet>,
@@ -132,11 +139,19 @@ Current imported KiCad subset:
 ## 6. Connectivity Diagnostics
 
 These are resolver-level problems, not ERC policy decisions:
-- conflicting labels on the same segment
-- missing hierarchical port target
-- ambiguous bus member expansion
-- malformed sheet hierarchy
-- dangling symbol pin reference
+- unsupported bus/member label syntax in the current imported KiCad subset
+  (`unsupported_bus_member_syntax`)
+- dangling component pin (`dangling_component_pin`)
+- dangling interface port (`dangling_interface_port`)
+- anonymous multi-pin net without a label or port
+  (`anonymous_multi_pin_net`)
+- missing hierarchical port target (`missing_hierarchical_port_target`)
+- multiply mapped hierarchical port (`multiply_mapped_hierarchical_port`)
+
+Target diagnostics still include conflicting labels on the same segment,
+malformed sheet hierarchy, and dangling symbol pin references. Those are
+tracked as future connectivity expansion items until the resolver emits
+concrete diagnostic kinds for them.
 
 Diagnostics may block ERC if the graph cannot be resolved safely.
 

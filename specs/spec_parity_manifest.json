@@ -55,6 +55,18 @@
       "kind": "pool_library_surface",
       "source": "pool/library Operation variants + ProjectCommands variants + datum.library.* tools",
       "owner_spec": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md"
+    },
+    {
+      "id": "erc_pin_taxonomy_surface",
+      "kind": "erc_pin_taxonomy_surface",
+      "source": "LibraryPinElectricalType + schematic alias + ERC taxonomy revision/name map + emitted finding codes",
+      "owner_spec": "specs/ERC_SPEC.md"
+    },
+    {
+      "id": "schematic_connectivity_surface",
+      "kind": "schematic_connectivity_surface",
+      "source": "schematic connectivity query functions + diagnostic kind markers",
+      "owner_spec": "specs/SCHEMATIC_CONNECTIVITY_SPEC.md"
     }
   ]
 }

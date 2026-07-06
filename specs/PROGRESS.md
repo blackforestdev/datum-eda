@@ -73,8 +73,8 @@ full per-reference detail; `progress_anchor` is the path/name below):
 | `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md` | `check_schematic_private_writers` + `PG-OUTPUT-JOB-RUN-REPLAY` | three-surface lean thesis + T0 unification + panelization ungated |
 | `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` | `check_mcp_public_taxonomy` + `check_daemon_write_parity` + `mcp_runtime_methods` parity | DatumToolSession + generic commit() coverage + unified Proposal not-yet |
 | `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md` | scale/layout unit tests + checked-in goldens | **no drift gate** for layout invariants / visual-regression matrix |
-| `specs/ERC_SPEC.md` | engine + CLI ERC tests | no drift gate; target-vs-shipped `PinElectricalType` divergence not machine-reconciled |
-| `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | engine + CLI connectivity tests | no connectivity-owned drift gate |
+| `specs/ERC_SPEC.md` | engine + CLI ERC tests + `check_erc_connectivity_parity` + `erc_pin_taxonomy_surface` parity | remaining target ERC result-shape and passive-only rule gaps are documented; finding revision keys are not complete across all library object revisions |
+| `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | engine + CLI connectivity tests + `check_erc_connectivity_parity` + `schematic_connectivity_surface` parity | target graph shape and future diagnostics beyond the shipped read surfaces remain partial |
 | `specs/IMPORT_SPEC.md` | `check_import_query_determinism` (CI) + `PG-IDENTITY-SUBSTRATE` | feature matrices / round-trip ungated (import frozen) |
 
 Decision records `000..016` are `doctrine` — most are **enforced** by named
@@ -93,8 +93,13 @@ no gate reconciles them with code):
    families, check/export consumption, deviations, and import audit remain
    open.
 3. **STANDARDS_COMPLIANCE §4 disposition table**: ungated prose.
-4. **ERC / connectivity specs**: proven by cargo tests only, no drift gate, and
-   ERC has an un-reconciled target-vs-shipped taxonomy divergence.
+4. **ERC / connectivity specs**: CLOSED for pin-taxonomy and shipped
+   diagnostic/code drift — `check_erc_connectivity_parity` plus spec-parity
+   inventories now lock the canonical ten-type `LibraryPinElectricalType:v1`
+   alias, ERC emitted code list, and shipped connectivity diagnostics.
+   Remaining work is product depth: target ERC result-shape promotion,
+   complete revision keys across library object revisions, passive-only net as
+   its own finding if retained, and future connectivity diagnostics.
 5. **Manual-editor GUI workflow (002)** and **workspace UX (007)**: substrate
    gated, UX not.
 6. **`OPEN_QUESTION_RESOLUTIONS`**: unenforced ratifications log; consolidate
@@ -153,7 +158,7 @@ tests, and public surfaces exist.
 
 | Goal | Current Evidence | Target / Non-overclaim Boundary |
 |------|------------------|---------------------------------|
-| Canonical pin electrical type | [~] `schematic::PinElectricalType` is now the pool-owned `LibraryPinElectricalType` alias, so schematic pins and ERC consume the library taxonomy rather than a parallel schematic enum. Focused ERC tests lock all ten canonical roles and their current driver/conflict semantics. ERC pin-backed findings now carry `pin_evidence` with canonical pin type, taxonomy revision, symbol UUID/reference, library ID, unit selection, and available part/entity/gate bindings; CheckRun evidence projects that into an `erc_pin_taxonomy` evidence object. | One library-owned canonical taxonomy drives schematic materialization and ERC without a parallel schematic authority enum, and persisted findings expose enough revision/taxonomy context for stable audit. |
+| Canonical pin electrical type | [~] `schematic::PinElectricalType` is now the pool-owned `LibraryPinElectricalType` alias, so schematic pins and ERC consume the library taxonomy rather than a parallel schematic enum. The canonical roles are Input, Output, Bidirectional, Passive, PowerIn, PowerOut, OpenCollector, OpenEmitter, TriState, and NoConnect; focused ERC tests lock their current driver/conflict semantics. ERC pin-backed findings now carry `pin_evidence` with canonical pin type, taxonomy revision, symbol UUID/reference, library ID, unit selection, and available part/entity/gate bindings; CheckRun evidence projects that into an `erc_pin_taxonomy` evidence object. | One library-owned canonical taxonomy drives schematic materialization and ERC without a parallel schematic authority enum, and persisted findings expose enough revision/taxonomy context for stable audit. |
 | Symbol pin style | [~] `SymbolPinAnchor` now carries orientation, optional length, and a bounded decoration enum; typed symbol pin-anchor authoring preserves unit-pin UUID and position. | Symbol style must cover the full decision-008/KiCad import vocabulary, including active-low/alternate-function style semantics where distinct from current decorations. |
 | Symbol schema convergence | [~] Engine `Symbol` now has fields, default refdes prefix, style-profile assertions, standards basis, check state, provenance, drawings, and pin anchors. Rendering, checks, and importer/exporter parity for the richer schema remain partial. | Decision-008 symbol schema is the single engine-owned schema consumed consistently by CLI/MCP/GUI/import/export/check surfaces. |
 | `PinPadMap` authority | [~] `pool/pin_pad_maps` are resolver-visible, validate part/footprint mapping refs, and now have typed CLI authoring via `create-pool-pin-pad-map` / `set-pool-pin-pad-map`; `Part.default_pin_pad_map` can be set during map creation. `PinPadMap.mappings` are gate-aware `pad -> {gate, pin}` bindings, so repeated unit pins across multi-gate entities remain distinct. Runtime component replacement, package-change compatibility signatures, and pad-net remapping now prefer a valid `Part.default_pin_pad_map` resolved through `Pool.pin_pad_maps`. Legacy `set-pool-part-pad-map*` commands now bridge legacy-shaped inputs into the part default first-class `PinPadMap` and do not write `Part.pad_map`; focused regressions prove missing or stale `default_pin_pad_map` rejects the legacy command without mutating `Part.pad_map`. `LibraryGraphValidationReport` now classifies legacy `Part.pad_map` rows as migratable, shadowed by an authoritative default `PinPadMap`, or blocked by malformed/ambiguous references. `Part.pad_map` remains read/import compatibility data for existing payloads, not a new write authority. | `PinPadMap` is the first-class binding authority; `Part.pad_map` is retired or strictly import/compatibility input behind migration policy. |

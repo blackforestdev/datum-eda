@@ -353,11 +353,14 @@ Prior-findings resolution:
 - Bus container/bus_entry data model ignored — OPEN; correctly frozen per
   ratified north.
 - ERC rule-code taxonomy / waiver keys on code string — PARTIAL. Waiver
-  keyed on code string (`erc/mod.rs:471`); ERC_SPEC §3.1/§4/§5/§6 carry
-  shipped-vs-target banners reconciling the taxonomy.
-- PinElectricalType narrows TriState/OC/OE away (6 variants) — PARTIAL.
-  `schematic/mod.rs:105-112` still six variants; ERC_SPEC §3.1 declares the
-  10-variant taxonomy as target. Type gap persists; doc honesty restored.
+  keyed on code string (`erc/mod.rs:471`); ERC_SPEC §3.1/§4/§5/§6 now names
+  the shipped `LibraryPinElectricalType:v1` taxonomy and current string-code
+  result shape while retaining target result-shape gaps.
+- PinElectricalType target-vs-shipped divergence — RESOLVED.
+  `schematic::PinElectricalType` is now an alias to the pool-owned
+  `LibraryPinElectricalType` ten-variant taxonomy; ERC canonicalizes all ten
+  names and classifies OpenCollector/OpenEmitter/TriState/NoConnect directly.
+  Remaining ERC work is evidence/result-shape depth, not enum ownership.
 - WaiverTarget::Fingerprint a no-op stub in ERC — OPEN. `schematic/mod.rs`
   4-arm enum; `erc/mod.rs:491` `Fingerprint(_) => false`. Dead scaffolding.
 - CheckDeviation + DeviationApprovalStatus::Accepted unconsumed by ERC —
@@ -375,10 +378,10 @@ Course guidance: PARTIAL holds with a clearly positive trajectory. The
 dominant prior finding (the P0 global-label merge) is RESOLVED with the
 exact prescribed name-keyed fix and same-count regression; the two prior
 doc defects (passive_only_net; ERC shipped-vs-target) are both closed. What
-keeps the subsystem at PARTIAL is the unchanged set of target-only type gaps
+keeps the subsystem at PARTIAL is the remaining set of target-only gaps
 (no NetSemanticClass enum, no typed ERC code enum / SchematicLocation,
-six-variant PinElectricalType, dead Fingerprint waiver, no conflicting-label
-detection) — now honestly bannered as target. Next, none urgent: (1)
+dead Fingerprint waiver, no conflicting-label detection) — now honestly
+bannered as target. Next, none urgent: (1)
 implement passive_only_net OR keep `[~]` as a tracked deferral; (2) the
 ErcFinding typed-code / SchematicLocation promotion is a product question —
 surface to the owner; (3) wire or remove the dead Fingerprint waiver arm;

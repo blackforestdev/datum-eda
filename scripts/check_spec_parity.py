@@ -198,6 +198,96 @@ def pool_library_surface() -> list[str]:
     return sorted(items)
 
 
+PIN_ELECTRICAL_TYPES = (
+    "Input",
+    "Output",
+    "Bidirectional",
+    "Passive",
+    "PowerIn",
+    "PowerOut",
+    "OpenCollector",
+    "OpenEmitter",
+    "TriState",
+    "NoConnect",
+)
+
+ERC_FINDING_CODES = (
+    "output_to_output_conflict",
+    "power_in_without_source",
+    "noconnect_connected",
+    "input_without_explicit_driver",
+    "undriven_input_pin",
+    "unconnected_component_pin",
+    "unconnected_interface_port",
+    "undriven_power_net",
+    "undriven_named_net",
+    "hierarchical_connectivity_mismatch",
+)
+
+CONNECTIVITY_DIAGNOSTIC_KINDS = (
+    "unsupported_bus_member_syntax",
+    "dangling_component_pin",
+    "dangling_interface_port",
+    "anonymous_multi_pin_net",
+    "missing_hierarchical_port_target",
+    "multiply_mapped_hierarchical_port",
+)
+
+
+def erc_pin_taxonomy_surface() -> list[str]:
+    """Canonical pin taxonomy and current ERC finding-code surface."""
+    items: set[str] = set()
+    pool_pin = read_text(ROOT / "crates/engine/src/pool/pin.rs")
+    schematic = read_text(ROOT / "crates/engine/src/schematic/mod.rs")
+    electrical = read_text(ROOT / "crates/engine/src/erc/electrical.rs")
+    erc_mod = read_text(ROOT / "crates/engine/src/erc/mod.rs")
+
+    actual_variants = set(
+        rust_enum_variants(
+            ROOT / "crates/engine/src/pool/pin.rs",
+            "LibraryPinElectricalType",
+        )
+    )
+    for variant in PIN_ELECTRICAL_TYPES:
+        if variant in actual_variants:
+            items.add(f"pin_type:{variant}")
+
+    if "pub type PinDirection = LibraryPinElectricalType;" in pool_pin:
+        items.add("alias:pool.PinDirection=LibraryPinElectricalType")
+    if "pub use crate::pool::LibraryPinElectricalType as PinElectricalType;" in schematic:
+        items.add("alias:schematic.PinElectricalType=LibraryPinElectricalType")
+    if 'PIN_ELECTRICAL_TAXONOMY_REVISION: &str = "LibraryPinElectricalType:v1"' in electrical:
+        items.add("taxonomy_revision:LibraryPinElectricalType:v1")
+
+    for variant, name in re.findall(
+        r'PinElectricalType::([A-Za-z0-9_]+)\s*=>\s*"([a-z0-9_]+)"',
+        electrical,
+    ):
+        items.add(f"canonical_name:{variant}={name}")
+
+    for code in ERC_FINDING_CODES:
+        if code in erc_mod:
+            items.add(f"erc_code:{code}")
+
+    return sorted(items)
+
+
+def schematic_connectivity_surface() -> list[str]:
+    """Current schematic connectivity diagnostic kind surface."""
+    text = read_text(ROOT / "crates/engine/src/connectivity/mod.rs")
+    items: set[str] = set()
+    for kind in CONNECTIVITY_DIAGNOSTIC_KINDS:
+        if f'kind: "{kind}".into()' in text:
+            items.add(f"connectivity_diagnostic:{kind}")
+    if "pub fn schematic_net_info" in text:
+        items.add("query:schematic_net_info")
+    if "pub fn schematic_diagnostics" in text:
+        items.add("query:schematic_diagnostics")
+    if "pub fn schematic_hierarchy_info" in text:
+        items.add("query:schematic_hierarchy_info")
+    return sorted(items)
+
+
 def inventory_items(spec: dict[str, str]) -> list[str]:
     kind = spec["kind"]
     if kind == "mcp_runtime_methods":
@@ -216,6 +306,10 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return standards_check_surface()
     if kind == "pool_library_surface":
         return pool_library_surface()
+    if kind == "erc_pin_taxonomy_surface":
+        return erc_pin_taxonomy_surface()
+    if kind == "schematic_connectivity_surface":
+        return schematic_connectivity_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 
