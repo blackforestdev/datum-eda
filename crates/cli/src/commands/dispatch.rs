@@ -1458,6 +1458,7 @@ pub(crate) fn execute_project_command(
         ProjectCommands::EditBoardNetClass(args) => args.run(format),
         ProjectCommands::EditBoardNet(args) => args.run(format),
         ProjectCommands::MoveBoardComponent(args) => args.run(format),
+        ProjectCommands::AlignBoardComponents(args) => args.run(format),
         ProjectCommands::SetBoardComponentPart(args) => args.run(format),
         ProjectCommands::SetBoardComponentPackage(args) => args.run(format),
         ProjectCommands::SetBoardComponentLayer(args)

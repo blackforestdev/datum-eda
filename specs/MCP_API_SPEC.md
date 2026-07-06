@@ -1078,6 +1078,16 @@ are no longer flat daemon methods. Their canonical MCP aliases are
 native-project scoped and dispatch through journaled CLI authoring via the
 matching `datum-eda project ...board-component...` commands.
 
+#### `align_components`
+
+Canonical native-project MCP alias `datum.pcb.align_components` requires
+`path`, repeated `components`, and a mode (`left`, `right`, `top`, `bottom`,
+`hcenter`, `vcenter`, `distribute-h`, or `distribute-v`). It dispatches through
+`datum-eda project align-board-components`, computes the batch in the engine
+native-write facade, skips locked components with explicit report fields, and
+commits one journal transaction containing the resulting
+`SetBoardPackagePosition` operations.
+
 #### `lock_component` / `unlock_component`
 
 Canonical native-project MCP aliases `datum.pcb.lock_component` and

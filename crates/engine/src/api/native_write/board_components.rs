@@ -23,7 +23,7 @@ use uuid::Uuid;
 
 use crate::board::PlacedPackage;
 use crate::error::EngineError;
-use crate::substrate::{DesignModel, ObjectId, Operation};
+use crate::substrate::{DesignModel, ObjectId, Operation, SourceShardKind};
 
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
 use super::ids;
@@ -74,6 +74,29 @@ pub enum BoardPackageEdit {
     Side {
         layer: i32,
     },
+}
+
+/// A single align/distribute mode for placed board packages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum BoardPackageAlignMode {
+    Left,
+    Right,
+    Top,
+    Bottom,
+    HCenter,
+    VCenter,
+    DistributeH,
+    DistributeV,
+}
+
+/// Summary of the package ids affected or skipped by an align/distribute
+/// batch.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BoardPackageAlignPlan {
+    pub aligned: Vec<ObjectId>,
+    pub skipped_locked: Vec<ObjectId>,
+    pub unchanged: Vec<ObjectId>,
 }
 
 /// Derive the deterministic id for a board package generated from a schematic
@@ -165,6 +188,84 @@ pub fn build_edit_board_package(
         .finish()
 }
 
+/// Build one atomic align/distribute batch for placed board packages.
+///
+/// Locked packages are skipped rather than moved. All movable package moves
+/// are emitted as `SetBoardPackagePosition` operations in one guarded batch,
+/// so the whole alignment has one journal entry and one undo step.
+pub fn build_align_board_packages(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    package_ids: &[ObjectId],
+    mode: BoardPackageAlignMode,
+) -> Result<(PreparedWrite, BoardPackageAlignPlan), EngineError> {
+    let packages = load_board_packages(model)?;
+    if package_ids.len() < 2 {
+        return Err(EngineError::Validation(
+            "align/distribute requires at least two component ids".to_string(),
+        ));
+    }
+
+    let mut selected = Vec::new();
+    for package_id in package_ids {
+        let package = packages.get(package_id).ok_or(EngineError::NotFound {
+            object_type: "board_package",
+            uuid: *package_id,
+        })?;
+        selected.push(package.clone());
+    }
+
+    let movable = selected
+        .iter()
+        .filter(|package| !package.locked)
+        .cloned()
+        .collect::<Vec<_>>();
+    let skipped_locked = selected
+        .iter()
+        .filter(|package| package.locked)
+        .map(|package| package.uuid)
+        .collect::<Vec<_>>();
+    if movable.len() < 2 {
+        return Err(EngineError::Validation(
+            "align/distribute requires at least two unlocked components".to_string(),
+        ));
+    }
+
+    let target_positions = align_target_positions(&movable, mode)?;
+    let mut operations = Vec::new();
+    let mut aligned = Vec::new();
+    let mut unchanged = Vec::new();
+    for package in &movable {
+        let (x, y) = target_positions
+            .iter()
+            .find(|(id, _, _)| *id == package.uuid)
+            .map(|(_, x, y)| (*x, *y))
+            .expect("target exists for every movable package");
+        if package.position.x == x && package.position.y == y {
+            unchanged.push(package.uuid);
+            continue;
+        }
+        aligned.push(package.uuid);
+        operations.push(Operation::SetBoardPackagePosition {
+            package_id: package.uuid,
+            x,
+            y,
+        });
+    }
+
+    let prepared = BatchComposer::compose(model, provenance)
+        .push_ops(operations)
+        .finish()?;
+    Ok((
+        prepared,
+        BoardPackageAlignPlan {
+            aligned,
+            skipped_locked,
+            unchanged,
+        },
+    ))
+}
+
 /// Build the batch that deletes an existing placed package. `package` and
 /// `materialized` are the stored payloads (threaded raw for byte-exact
 /// journal parity with the pre-migration CLI).
@@ -195,6 +296,116 @@ fn create_board_package_operation(
     })
 }
 
+fn load_board_packages(
+    model: &DesignModel,
+) -> Result<std::collections::BTreeMap<ObjectId, PlacedPackage>, EngineError> {
+    let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let packages = board
+        .get("packages")
+        .and_then(serde_json::Value::as_object)
+        .ok_or_else(|| EngineError::Validation("board shard missing packages map".to_string()))?;
+    packages
+        .values()
+        .map(|value| {
+            let package = serde_json::from_value::<PlacedPackage>(value.clone())?;
+            Ok((package.uuid, package))
+        })
+        .collect()
+}
+
+fn align_target_positions(
+    packages: &[PlacedPackage],
+    mode: BoardPackageAlignMode,
+) -> Result<Vec<(ObjectId, i64, i64)>, EngineError> {
+    let min_x = packages
+        .iter()
+        .map(|package| package.position.x)
+        .min()
+        .expect("nonempty packages");
+    let max_x = packages
+        .iter()
+        .map(|package| package.position.x)
+        .max()
+        .expect("nonempty packages");
+    let min_y = packages
+        .iter()
+        .map(|package| package.position.y)
+        .min()
+        .expect("nonempty packages");
+    let max_y = packages
+        .iter()
+        .map(|package| package.position.y)
+        .max()
+        .expect("nonempty packages");
+    let h_center = min_x + (max_x - min_x) / 2;
+    let v_center = min_y + (max_y - min_y) / 2;
+
+    let mut sorted = packages.to_vec();
+    match mode {
+        BoardPackageAlignMode::DistributeH => {
+            sorted.sort_by_key(|package| (package.position.x, package.uuid));
+            distribute_targets(&sorted, true)
+        }
+        BoardPackageAlignMode::DistributeV => {
+            sorted.sort_by_key(|package| (package.position.y, package.uuid));
+            distribute_targets(&sorted, false)
+        }
+        _ => Ok(packages
+            .iter()
+            .map(|package| {
+                let (x, y) = match mode {
+                    BoardPackageAlignMode::Left => (min_x, package.position.y),
+                    BoardPackageAlignMode::Right => (max_x, package.position.y),
+                    BoardPackageAlignMode::Top => (package.position.x, min_y),
+                    BoardPackageAlignMode::Bottom => (package.position.x, max_y),
+                    BoardPackageAlignMode::HCenter => (h_center, package.position.y),
+                    BoardPackageAlignMode::VCenter => (package.position.x, v_center),
+                    BoardPackageAlignMode::DistributeH | BoardPackageAlignMode::DistributeV => {
+                        unreachable!("distribution handled above")
+                    }
+                };
+                (package.uuid, x, y)
+            })
+            .collect()),
+    }
+}
+
+fn distribute_targets(
+    sorted: &[PlacedPackage],
+    horizontal: bool,
+) -> Result<Vec<(ObjectId, i64, i64)>, EngineError> {
+    if sorted.len() < 3 {
+        return Err(EngineError::Validation(
+            "distribute requires at least three unlocked components".to_string(),
+        ));
+    }
+    let first = sorted.first().expect("nonempty packages");
+    let last = sorted.last().expect("nonempty packages");
+    let start = if horizontal {
+        first.position.x
+    } else {
+        first.position.y
+    };
+    let end = if horizontal {
+        last.position.x
+    } else {
+        last.position.y
+    };
+    let slots = (sorted.len() - 1) as i64;
+    Ok(sorted
+        .iter()
+        .enumerate()
+        .map(|(index, package)| {
+            let coordinate = start + ((end - start) * index as i64) / slots;
+            if horizontal {
+                (package.uuid, coordinate, package.position.y)
+            } else {
+                (package.uuid, package.position.x, coordinate)
+            }
+        })
+        .collect())
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::test_support::resolved_model_with_board_package;
@@ -203,7 +414,11 @@ mod tests {
     use crate::substrate::{CommitSource, ObjectRevision};
 
     fn test_provenance() -> WriteProvenance {
-        WriteProvenance::new("unit-test", CommitSource::Test, "board components facade test")
+        WriteProvenance::new(
+            "unit-test",
+            CommitSource::Test,
+            "board components facade test",
+        )
     }
 
     fn test_package(uuid: Uuid) -> PlacedPackage {
@@ -262,10 +477,11 @@ mod tests {
             .expect("multi place should build");
 
         assert_eq!(prepared.batch.operations.len(), 2);
-        assert!(prepared.batch.operations.iter().all(|operation| matches!(
-            operation,
-            Operation::CreateBoardPackage { .. }
-        )));
+        assert!(prepared
+            .batch
+            .operations
+            .iter()
+            .all(|operation| matches!(operation, Operation::CreateBoardPackage { .. })));
         assert_eq!(
             prepared.batch.expected_model_revision,
             Some(model.model_revision.clone())
@@ -434,6 +650,140 @@ mod tests {
         assert_eq!(
             derive_board_package_from_symbol_id(&project_id, symbol_id),
             expected
+        );
+    }
+
+    #[test]
+    fn align_left_builds_one_guarded_batch_and_skips_locked() {
+        let (root, _model, _board_id, first_id) =
+            resolved_model_with_board_package("board_components_align_left");
+        let second_id = Uuid::new_v4();
+        let third_id = Uuid::new_v4();
+        let mut board = serde_json::from_str::<serde_json::Value>(
+            &std::fs::read_to_string(root.join("board/board.json")).unwrap(),
+        )
+        .unwrap();
+        board["packages"][second_id.to_string()] = serde_json::json!({
+            "uuid": second_id,
+            "part": Uuid::new_v4(),
+            "package": Uuid::new_v4(),
+            "reference": "U2",
+            "value": "B",
+            "position": { "x": 100, "y": 20 },
+            "rotation": 0,
+            "layer": 1,
+            "locked": false
+        });
+        board["packages"][third_id.to_string()] = serde_json::json!({
+            "uuid": third_id,
+            "part": Uuid::new_v4(),
+            "package": Uuid::new_v4(),
+            "reference": "U3",
+            "value": "C",
+            "position": { "x": 250, "y": 30 },
+            "rotation": 0,
+            "layer": 1,
+            "locked": true
+        });
+        std::fs::write(
+            root.join("board/board.json"),
+            serde_json::to_string_pretty(&board).unwrap(),
+        )
+        .unwrap();
+        let model = crate::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+
+        let (prepared, plan) = build_align_board_packages(
+            &model,
+            test_provenance(),
+            &[first_id, second_id, third_id],
+            BoardPackageAlignMode::Left,
+        )
+        .expect("align should build");
+
+        assert_eq!(plan.skipped_locked, vec![third_id]);
+        assert_eq!(plan.aligned, vec![second_id]);
+        assert_eq!(plan.unchanged, vec![first_id]);
+        assert_eq!(
+            prepared.batch.operations,
+            vec![
+                Operation::GuardObjectRevision {
+                    object_id: second_id,
+                    expected_object_revision: ObjectRevision(0),
+                },
+                Operation::SetBoardPackagePosition {
+                    package_id: second_id,
+                    x: 0,
+                    y: 20,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn distribute_h_spaces_unlocked_components() {
+        let (root, _model, _board_id, first_id) =
+            resolved_model_with_board_package("board_components_distribute_h");
+        let second_id = Uuid::new_v4();
+        let third_id = Uuid::new_v4();
+        let mut board = serde_json::from_str::<serde_json::Value>(
+            &std::fs::read_to_string(root.join("board/board.json")).unwrap(),
+        )
+        .unwrap();
+        board["packages"][second_id.to_string()] = serde_json::json!({
+            "uuid": second_id,
+            "part": Uuid::new_v4(),
+            "package": Uuid::new_v4(),
+            "reference": "U2",
+            "value": "B",
+            "position": { "x": 90, "y": 20 },
+            "rotation": 0,
+            "layer": 1,
+            "locked": false
+        });
+        board["packages"][third_id.to_string()] = serde_json::json!({
+            "uuid": third_id,
+            "part": Uuid::new_v4(),
+            "package": Uuid::new_v4(),
+            "reference": "U3",
+            "value": "C",
+            "position": { "x": 300, "y": 30 },
+            "rotation": 0,
+            "layer": 1,
+            "locked": false
+        });
+        std::fs::write(
+            root.join("board/board.json"),
+            serde_json::to_string_pretty(&board).unwrap(),
+        )
+        .unwrap();
+        let model = crate::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+
+        let (prepared, plan) = build_align_board_packages(
+            &model,
+            test_provenance(),
+            &[first_id, second_id, third_id],
+            BoardPackageAlignMode::DistributeH,
+        )
+        .expect("distribution should build");
+
+        assert_eq!(plan.aligned, vec![second_id]);
+        assert_eq!(
+            prepared.batch.operations,
+            vec![
+                Operation::GuardObjectRevision {
+                    object_id: second_id,
+                    expected_object_revision: ObjectRevision(0),
+                },
+                Operation::SetBoardPackagePosition {
+                    package_id: second_id,
+                    x: 150,
+                    y: 20,
+                },
+            ]
         );
     }
 }

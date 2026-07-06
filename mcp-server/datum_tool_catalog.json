@@ -8624,6 +8624,77 @@
       "write_surface": null
     },
     {
+      "description": "Align or distribute native-project board components as one journaled board-package position batch.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "align-board-components"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "components",
+            "repeated": "--component"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          }
+        ],
+        "kind": "cli",
+        "method": "align_board_components"
+      },
+      "dispatch_args": [
+        "path",
+        "components",
+        "mode"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "components": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "left",
+              "right",
+              "top",
+              "bottom",
+              "hcenter",
+              "vcenter",
+              "distribute-h",
+              "distribute-v"
+            ],
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "components",
+          "mode"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pcb.align_components",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Clear one native-project board pad net assignment.",
       "dispatch": {
         "argv": [

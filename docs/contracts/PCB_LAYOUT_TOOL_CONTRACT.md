@@ -781,13 +781,15 @@ regression fixture per user memory.
   **request a small native board project from the owner** rather than
   fabricating one, per the no-synthetic-fixture rule.
 
-**First proof slice (load-bearing):** retire one native-write CLI verb
-(recommend `draw-track`, `routing_net.rs:91`) into a typed `AddTrack`
-Operation through `commit()`, and prove: a `TransactionRecord` appears in
-the journal, `model_revision` bumps, `datum-eda journal undo` restores byte
-state, and the imported and native write paths now share one commit
-gateway. This single retirement is the template for the remaining 111
-sites.
+**Current proof slices:** native board authoring now routes through the engine
+native-write facade and journaled substrate; the Tier D matrix gate
+(`scripts/check_pcb_layout_tool_matrix.py`) locks the 13 logical PCB buckets
+against the concrete public registry. `datum.pcb.align_components` is the
+single mode-parameterized align/distribute surface: the engine computes a batch
+of `SetBoardPackagePosition` operations, skips locked components with explicit
+report fields, and commits one journal transaction/undo step. Native
+`fill_zones` remains a generated-evidence producer under `datum.check`, not a
+PCB source mutation.
 
 ## Not-Yet-Supported
 
@@ -820,7 +822,10 @@ sites.
   journaled native project CLI paths. The flat legacy session tools remain
   compatibility surfaces. Richer GUI flip UX and broader geometry families
   remain pending.
-- Engine `align`/`distribute` op does not exist.
+- Align/distribute now exists as one mode-parameterized direct-commit tool:
+  `datum.pcb.align_components` / `datum-eda project align-board-components`.
+  It emits a single guarded `OperationBatch` containing the required
+  `SetBoardPackagePosition` operations; per-mode align tools remain forbidden.
 - Track/via/zone authoring now has native-project MCP coverage via
   `datum.pcb.draw_track`, `edit_track`, `delete_track`, `place_via`,
   `edit_via`, `delete_via`, `place_zone`, and `delete_zone` over journaled

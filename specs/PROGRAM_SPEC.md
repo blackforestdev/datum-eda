@@ -254,7 +254,7 @@ by forcing fragile imported-schematic write-back into `M3`.
 |-----------|-----------|
 | Native format | JSON, schema documented, versioned |
 | Schematic operations | PlaceSymbol, MoveSymbol, RotateSymbol, MirrorSymbol, DeleteSymbol, DrawWire, DeleteWire, PlaceJunction, DeleteJunction, PlaceLabel, RenameLabel, DeleteLabel, PlacePowerSymbol, CreateBus, EditBusMembers, DeleteBus, PlaceBusEntry, DeleteBusEntry, CreateSheetInstance, MoveSheetInstance, DeleteSheetInstance, PlaceHierarchicalPort, EditHierarchicalPort, DeleteHierarchicalPort, PlaceNoConnect, DeleteNoConnect, SetFieldValue, MoveField, SetFieldVisibility, Annotate, AssignPart, AssignGate |
-| Board operations | PlaceComponent, AddTrack, AddVia, AddZone, EditZone, DeleteZone, PourCopper, AddKeepout |
+| Board operations | PlaceComponent, Move/Rotate/FlipComponent, AlignComponents, AddTrack, AddVia, AddZone, EditZone, DeleteZone, PourCopper, AddKeepout |
 | Schematic query parity | Labels, buses, bus entries, no-connects, hierarchy, field queries available through engine API, CLI, and MCP |
 | Forward annotation | ECO with per-change accept/reject |
 | Gerber export | RS-274X, validates in gerbv without warnings |

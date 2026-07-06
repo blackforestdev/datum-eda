@@ -197,6 +197,64 @@ class TestNativeWriteParity(unittest.TestCase):
                 self.assertEqual(operation["package_id"], component)
                 self.assertEqual(board_components(root)[0]["layer"], 2)
 
+                second = call_tool(
+                    host,
+                    "datum.pcb.place_component",
+                    {
+                        "path": str(root),
+                        "part": part,
+                        "package": package,
+                        "reference": "U2",
+                        "value": "OPA",
+                        "x_nm": 7000,
+                        "y_nm": 2000,
+                        "layer": 1,
+                    },
+                )["component_uuid"]
+                locked = call_tool(
+                    host,
+                    "datum.pcb.place_component",
+                    {
+                        "path": str(root),
+                        "part": part,
+                        "package": package,
+                        "reference": "U3",
+                        "value": "OPA",
+                        "x_nm": 9000,
+                        "y_nm": 2000,
+                        "layer": 1,
+                    },
+                )["component_uuid"]
+                call_tool(host, "datum.pcb.lock_component", {"path": str(root), "component": locked})
+                align = call_tool(
+                    host,
+                    "datum.pcb.align_components",
+                    {
+                        "path": str(root),
+                        "components": [component, second, locked],
+                        "mode": "left",
+                    },
+                )
+                self.assertEqual(align["action"], "align_board_components")
+                self.assertEqual(align["aligned_component_uuids"], [second])
+                self.assertEqual(align["skipped_locked_component_uuids"], [locked])
+                journal = call_tool(host, "datum.journal.list", {"path": str(root)})
+                latest = journal["transactions"][-1]
+                self.assertEqual(latest["reason"], "align board components")
+                self.assertEqual(latest["operations"], 1)
+                record = call_tool(
+                    host,
+                    "datum.journal.show",
+                    {"path": str(root), "transaction": latest["transaction_id"]},
+                )
+                operation = record["transaction"]["operations"][0]
+                self.assertEqual(operation["kind"], "set_board_package_position")
+                self.assertEqual(operation["package_id"], second)
+                positions = {entry["uuid"]: entry["position"] for entry in board_components(root)}
+                self.assertEqual(positions[component]["x"], 3000)
+                self.assertEqual(positions[second]["x"], 3000)
+                self.assertEqual(positions[locked]["x"], 9000)
+
                 call_tool(
                     host,
                     "datum.pcb.set_component_reference",
@@ -206,7 +264,8 @@ class TestNativeWriteParity(unittest.TestCase):
                     self, host, str(root), "set board component reference", "set_board_package_reference"
                 )
                 self.assertEqual(operation["package_id"], component)
-                self.assertEqual(board_components(root)[0]["reference"], "U2")
+                component_by_id = {entry["uuid"]: entry for entry in board_components(root)}
+                self.assertEqual(component_by_id[component]["reference"], "U2")
 
                 call_tool(
                     host,
@@ -217,7 +276,8 @@ class TestNativeWriteParity(unittest.TestCase):
                     self, host, str(root), "set board component value", "set_board_package_value"
                 )
                 self.assertEqual(operation["package_id"], component)
-                self.assertEqual(board_components(root)[0]["value"], "OPA1656")
+                component_by_id = {entry["uuid"]: entry for entry in board_components(root)}
+                self.assertEqual(component_by_id[component]["value"], "OPA1656")
 
                 self.assertEqual(
                     call_tool(
@@ -231,11 +291,11 @@ class TestNativeWriteParity(unittest.TestCase):
                     self, host, str(root), "delete board component", "delete_board_package"
                 )
                 self.assertEqual(operation["package_id"], component)
-                self.assertEqual(board_components(root), [])
+                self.assertNotIn(component, {entry["uuid"] for entry in board_components(root)})
                 self.assertEqual(call_tool(host, "datum.journal.undo", {"path": str(root)})["status"], "applied")
-                self.assertEqual(board_components(root)[0]["uuid"], component)
+                self.assertIn(component, {entry["uuid"] for entry in board_components(root)})
                 self.assertEqual(call_tool(host, "datum.journal.redo", {"path": str(root)})["status"], "applied")
-                self.assertEqual(board_components(root), [])
+                self.assertNotIn(component, {entry["uuid"] for entry in board_components(root)})
 
     def test_schematic_draw_wire_tools_call_writes_model_and_journal(self) -> None:
         with tempfile.TemporaryDirectory(prefix="datum-mcp-wire-") as tmp:

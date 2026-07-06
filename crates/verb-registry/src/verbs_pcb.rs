@@ -256,6 +256,41 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         terminal_argv_override: None,
     },
     VerbSpec {
+        id: "datum.pcb.align_components",
+        summary: "Align or distribute native-project board components as one journaled board-package position batch.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::Cli {
+            method: "align_board_components",
+            argv: &[
+                ArgvToken::Lit("project"),
+                ArgvToken::Lit("align-board-components"),
+                ArgvToken::Param("path"),
+                ArgvToken::Repeated {
+                    flag: "--component",
+                    param: "components",
+                },
+                ArgvToken::Flag {
+                    flag: "--mode",
+                    param: "mode",
+                },
+            ],
+        },
+        params: &[
+            p!("path", Str, true, None),
+            p!("components", StrList, true, None),
+            p!("mode", Str, true, None),
+        ],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"components":{"type":"array","items":{"type":"string"},"minItems":2},"mode":{"type":"string","enum":["left","right","top","bottom","hcenter","vcenter","distribute-h","distribute-v"]}},"required":["path","components","mode"]}"###,
+        ),
+        write_surface: None,
+        terminal: false,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
         id: "datum.pcb.delete_component",
         summary: "Delete one native-project board component through the journaled board-package removal path.",
         status: VerbStatus::Public,

@@ -3,19 +3,19 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::api::native_write::board_components::{
-    BoardPackageEdit, BoardPackagePlacement, build_delete_board_package, build_edit_board_package,
-    build_place_board_package,
+    build_align_board_packages, build_delete_board_package, build_edit_board_package,
+    build_place_board_package, BoardPackageAlignMode, BoardPackageEdit, BoardPackagePlacement,
 };
-use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::api::native_write::{commit_prepared, WriteProvenance};
 use eda_engine::board::PlacedPackage;
 use eda_engine::ir::geometry::Point;
 use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use crate::{
-    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
-    load_native_project_with_resolved_board_and_model, materialize_supported_pool_package_graphics,
-    native_project_board_component_report,
+    load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
+    materialize_supported_pool_package_graphics, native_project_board_component_report,
+    NativeProjectBoardComponentAlignReportView, NativeProjectBoardComponentMutationReportView,
 };
 
 use crate::cli_commit_source;
@@ -112,6 +112,51 @@ pub(crate) fn move_native_project_board_component(
         &project,
         component,
     ))
+}
+
+pub(crate) fn align_native_project_board_components(
+    root: &Path,
+    component_uuids: Vec<Uuid>,
+    mode: ProjectBoardAlignMode,
+) -> Result<NativeProjectBoardComponentAlignReportView> {
+    let requested_count = component_uuids.len();
+    let mode_label = project_align_mode_label(mode).to_string();
+    let engine_mode = board_package_align_mode(mode);
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let (prepared, plan) = build_align_board_packages(
+        &model,
+        cli_provenance("align board components")?,
+        &component_uuids,
+        engine_mode,
+    )?;
+    commit_prepared(&mut model, root, prepared)?;
+
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardComponentAlignReportView {
+        action: "align_board_components".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        mode: mode_label,
+        requested_count,
+        aligned_count: plan.aligned.len(),
+        skipped_locked_count: plan.skipped_locked.len(),
+        unchanged_count: plan.unchanged.len(),
+        aligned_component_uuids: plan
+            .aligned
+            .iter()
+            .map(std::string::ToString::to_string)
+            .collect(),
+        skipped_locked_component_uuids: plan
+            .skipped_locked
+            .iter()
+            .map(std::string::ToString::to_string)
+            .collect(),
+        unchanged_component_uuids: plan
+            .unchanged
+            .iter()
+            .map(std::string::ToString::to_string)
+            .collect(),
+    })
 }
 
 pub(crate) fn set_native_project_board_component_part(
@@ -331,6 +376,32 @@ fn component_materialization_payload(
     serde_json::Value::Object(payload)
 }
 
+fn board_package_align_mode(mode: ProjectBoardAlignMode) -> BoardPackageAlignMode {
+    match mode {
+        ProjectBoardAlignMode::Left => BoardPackageAlignMode::Left,
+        ProjectBoardAlignMode::Right => BoardPackageAlignMode::Right,
+        ProjectBoardAlignMode::Top => BoardPackageAlignMode::Top,
+        ProjectBoardAlignMode::Bottom => BoardPackageAlignMode::Bottom,
+        ProjectBoardAlignMode::HCenter => BoardPackageAlignMode::HCenter,
+        ProjectBoardAlignMode::VCenter => BoardPackageAlignMode::VCenter,
+        ProjectBoardAlignMode::DistributeH => BoardPackageAlignMode::DistributeH,
+        ProjectBoardAlignMode::DistributeV => BoardPackageAlignMode::DistributeV,
+    }
+}
+
+fn project_align_mode_label(mode: ProjectBoardAlignMode) -> &'static str {
+    match mode {
+        ProjectBoardAlignMode::Left => "left",
+        ProjectBoardAlignMode::Right => "right",
+        ProjectBoardAlignMode::Top => "top",
+        ProjectBoardAlignMode::Bottom => "bottom",
+        ProjectBoardAlignMode::HCenter => "hcenter",
+        ProjectBoardAlignMode::VCenter => "vcenter",
+        ProjectBoardAlignMode::DistributeH => "distribute-h",
+        ProjectBoardAlignMode::DistributeV => "distribute-v",
+    }
+}
+
 fn insert_component_materialization_map<T: serde::Serialize>(
     payload: &mut serde_json::Map<String, serde_json::Value>,
     field: &str,
@@ -471,6 +542,23 @@ impl ProjectMoveBoardComponentArgs {
             format,
             &report,
             render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectAlignBoardComponentsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuids,
+            mode,
+        } = self;
+        let report = align_native_project_board_components(&path, component_uuids, mode)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_align_text,
         );
         Ok((output, 0))
     }

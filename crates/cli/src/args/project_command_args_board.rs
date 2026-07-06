@@ -623,6 +623,31 @@ pub(crate) struct ProjectMoveBoardComponentArgs {
     pub(crate) y_nm: i64,
 }
 
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
+#[value(rename_all = "kebab-case")]
+pub(crate) enum ProjectBoardAlignMode {
+    Left,
+    Right,
+    Top,
+    Bottom,
+    HCenter,
+    VCenter,
+    DistributeH,
+    DistributeV,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectAlignBoardComponentsArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Component UUID. Repeat for every component in the batch.
+    #[arg(long = "component", required = true)]
+    pub(crate) component_uuids: Vec<Uuid>,
+    /// Align/distribute mode
+    #[arg(long = "mode")]
+    pub(crate) mode: ProjectBoardAlignMode,
+}
+
 #[derive(clap::Args)]
 pub(crate) struct ProjectRotateBoardComponentArgs {
     /// Project root directory

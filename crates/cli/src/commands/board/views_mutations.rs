@@ -105,6 +105,49 @@ pub(crate) struct NativeProjectBoardPadMutationReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectBoardComponentAlignReportView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) mode: String,
+    pub(crate) requested_count: usize,
+    pub(crate) aligned_count: usize,
+    pub(crate) skipped_locked_count: usize,
+    pub(crate) unchanged_count: usize,
+    pub(crate) aligned_component_uuids: Vec<String>,
+    pub(crate) skipped_locked_component_uuids: Vec<String>,
+    pub(crate) unchanged_component_uuids: Vec<String>,
+}
+
+pub(crate) fn render_native_project_board_component_align_text(
+    report: &NativeProjectBoardComponentAlignReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("mode: {}", report.mode),
+        format!("requested_count: {}", report.requested_count),
+        format!("aligned_count: {}", report.aligned_count),
+        format!("skipped_locked_count: {}", report.skipped_locked_count),
+        format!("unchanged_count: {}", report.unchanged_count),
+        format!(
+            "aligned_component_uuids: {}",
+            report.aligned_component_uuids.join(",")
+        ),
+        format!(
+            "skipped_locked_component_uuids: {}",
+            report.skipped_locked_component_uuids.join(",")
+        ),
+        format!(
+            "unchanged_component_uuids: {}",
+            report.unchanged_component_uuids.join(",")
+        ),
+    ]
+    .join("\n")
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBoardNetClassMutationReportView {
     pub(crate) action: String,
     pub(crate) project_root: String,

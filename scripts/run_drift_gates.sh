@@ -10,6 +10,7 @@ python3 scripts/check_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_design_tokens.py
 python3 scripts/check_gui_icon_assets.py
 python3 scripts/check_erc_connectivity_parity.py
+python3 scripts/check_pcb_layout_tool_matrix.py
 python3 scripts/check_schematic_private_writers.py
 python3 scripts/check_daemon_write_parity.py
 python3 scripts/check_mcp_public_taxonomy.py

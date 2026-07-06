@@ -542,6 +542,8 @@ pub(crate) enum ProjectCommands {
     GenerateBoardComponents(ProjectGenerateBoardComponentsArgs),
     /// Move one native board component/package
     MoveBoardComponent(ProjectMoveBoardComponentArgs),
+    /// Align or distribute native board components as one journaled batch
+    AlignBoardComponents(ProjectAlignBoardComponentsArgs),
     /// Rotate one native board component/package
     RotateBoardComponent(ProjectRotateBoardComponentArgs),
     /// Delete one native board component

@@ -53,6 +53,7 @@ _PREFIX_ORDERS: dict[str, tuple[str, ...]] = {
         "datum.pcb.move_component",
         "datum.pcb.rotate_component",
         "datum.pcb.flip_component",
+        "datum.pcb.align_components",
         "datum.pcb.delete_component",
         "datum.pcb.set_component_reference",
         "datum.pcb.set_component_value",

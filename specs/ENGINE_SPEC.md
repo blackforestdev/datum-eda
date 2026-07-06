@@ -322,10 +322,14 @@ there are no per-domain private undo/redo paths.
 Current native board operation vocabulary includes exact-payload create,
 replace, and delete coverage for authored board pads, tracks, vias, nets,
 netclasses, dimensions, text, and keepouts where the current product surface
-exposes those object families. Track and via replacement is represented as
-`SetBoardTrack` and `SetBoardVia`: the operation preserves object identity,
-bumps the object revision, stages the replacement board shard value through the
-journal, and captures a same-kind inverse operation for undo/redo.
+exposes those object families. `build_align_board_packages` computes
+align/distribute batches over placed board packages and emits multiple
+`SetBoardPackagePosition` operations into one guarded `OperationBatch`, so the
+user-visible align action has one journal transaction and one undo step. Track
+and via replacement is represented as `SetBoardTrack` and `SetBoardVia`: the
+operation preserves object identity, bumps the object revision, stages the
+replacement board shard value through the journal, and captures a same-kind
+inverse operation for undo/redo.
 Component side changes are represented as `SetComponentSide`: the operation
 updates the package side, mirrors owned authored pads and persisted
 `component_pads` across the package origin on X, swaps side-sensitive pad layer
@@ -358,10 +362,10 @@ pub struct ZoneFill {
 
 Native unfilled/stale/unsupported zones emit no copper plus a hard
 `CheckFinding` for fabrication/manufacturing contexts. Imported filled zones
-may preserve source-tool islands as `Filled` derived geometry with provenance;
-they remain derived-with-provenance, not authored board truth. Exporting a
-zone boundary polygon directly as copper is a **Current implementation defect**
-and is not target behavior.
+may preserve source-tool islands as imported copper compatibility data, while
+native `ZoneFill` records remain generated evidence with provenance, not
+authored board truth. Exporting an authored zone boundary polygon directly as
+copper is forbidden target behavior and gated at the projection boundary.
 
 Persisted `ZoneFill` records are generated evidence, not authored source.
 CLI/MCP `fill_zones` producers persist them through journaled generated-evidence

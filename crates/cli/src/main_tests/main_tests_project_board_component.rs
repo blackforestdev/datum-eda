@@ -30,6 +30,43 @@ fn board_pads_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn place_board_component_for_alignment(root: &Path, reference: &str, x_nm: i64) -> String {
+    let part_uuid = Uuid::new_v4();
+    let package_uuid = Uuid::new_v4();
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "place-board-component",
+            root.to_str().unwrap(),
+            "--part",
+            &part_uuid.to_string(),
+            "--package",
+            &package_uuid.to_string(),
+            "--reference",
+            reference,
+            "--value",
+            "ALIGN",
+            "--x-nm",
+            &x_nm.to_string(),
+            "--y-nm",
+            "1000",
+            "--layer",
+            "1",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("place board component should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("place output should parse");
+    report["component_uuid"]
+        .as_str()
+        .expect("component uuid should be reported")
+        .to_string()
+}
+
 #[test]
 fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-component");
@@ -530,6 +567,102 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     assert!(summary_output.contains("board_components: 0"));
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_board_component_align_left_is_one_undoable_batch_and_skips_locked() {
+    let root = unique_project_root("datum-eda-cli-project-board-component-align");
+    create_native_project(&root, Some("Board Component Align Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let first = place_board_component_for_alignment(&root, "U1", 1000);
+    let second = place_board_component_for_alignment(&root, "U2", 3000);
+    let locked = place_board_component_for_alignment(&root, "U3", 5000);
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-component-locked",
+            root.to_str().unwrap(),
+            "--component",
+            &locked,
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("lock board component should succeed");
+
+    let align_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "align-board-components",
+            root.to_str().unwrap(),
+            "--component",
+            &first,
+            "--component",
+            &second,
+            "--component",
+            &locked,
+            "--mode",
+            "left",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("align board components should succeed");
+    let align: serde_json::Value =
+        serde_json::from_str(&align_output).expect("align output should parse");
+    assert_eq!(align["action"], "align_board_components");
+    assert_eq!(align["mode"], "left");
+    assert_eq!(align["requested_count"], 3);
+    assert_eq!(align["aligned_count"], 1);
+    assert_eq!(align["skipped_locked_count"], 1);
+    assert_eq!(align["unchanged_count"], 1);
+    assert_eq!(align["aligned_component_uuids"][0], second);
+    assert_eq!(align["skipped_locked_component_uuids"][0], locked);
+    assert_eq!(align["unchanged_component_uuids"][0], first);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let position_x = |component_id: &str| -> i64 {
+        components
+            .iter()
+            .find(|component| component["uuid"] == component_id)
+            .expect("component should exist")["position"]["x"]
+            .as_i64()
+            .expect("x should be an integer")
+    };
+    assert_eq!(position_x(&first), 1000);
+    assert_eq!(position_x(&second), 1000);
+    assert_eq!(position_x(&locked), 5000);
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "undo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("align undo should succeed");
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let position_x = |component_id: &str| -> i64 {
+        components
+            .iter()
+            .find(|component| component["uuid"] == component_id)
+            .expect("component should exist")["position"]["x"]
+            .as_i64()
+            .expect("x should be an integer")
+    };
+    assert_eq!(position_x(&first), 1000);
+    assert_eq!(position_x(&second), 3000);
+    assert_eq!(position_x(&locked), 5000);
 }
 
 #[test]
