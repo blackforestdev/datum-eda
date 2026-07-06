@@ -107,6 +107,67 @@ Reference: `docs/gui/prototypes/board-editor.html` (pass 3) shows a PCB|Schemati
 split with per-pane mode tools, context-follows-focus, and U1 cross-probed across
 both panes.
 
+## Context Menu System (right-click) — the speed surface
+
+Designed 2026-07-06 from a two-part research pass: EDA right-click systems
+(Altium / KiCad / Horizon / Eagle) for *content*, and marking/radial menus
+(Autodesk Maya, Sketchbook Pro, Blender, Fluxbox; Kurtenbach & Buxton HCI work)
+for *form*.
+
+**Paradigm** — **select-first, object-verb** (KiCad / Horizon), NOT Eagle's modal
+verb-first. The menu is **filtered to only the actions valid for the current
+selection** (Horizon's anti-bloat discipline). Every item **emits a typed
+`Operation` through the one commit path** — so the context menu is also the
+natural home for AI **"Propose…"** variants and undo/provenance affordances (kept
+in one submenu to preserve the short-menu discipline).
+
+**Form — hybrid marking menu + linear overflow:**
+- Right-click opens a per-object-type **marking menu** (radial). *Same gesture,
+  two modes*: **hold ~280 ms → labeled wheel draws** (novice); **flick immediately
+  in a direction → command fires, nothing draws** (expert, eyes stay on the
+  board). The novice drag *is* the expert flick — continuous skill transfer.
+- **≤8 items per wheel; the 4 cardinal (N/E/S/W) carry the most-frequent verbs**
+  (only cardinals are reliably reproducible blind); diagonals carry secondary
+  actions. **Never place a destructive/irreversible action on a diagonal — keep
+  Delete cardinal.**
+- **Nesting ≤2 levels**; any sub-wheel is **4-wide** (cardinal-only).
+- One wedge is **"More…" → a conventional linear, scannable list** (the
+  magenta-group-delineated menu already mocked) for the long tail — parameterized
+  actions (net classes, track widths, value pickers). Support **tear-off** so a
+  chosen list floats as a palette during repetitive work.
+- **Every item carries a keyboard accelerator** (manual-first hedge; a third
+  eyes-free path).
+- **Frozen geometry**: slot positions are constant per object type; unavailable
+  actions grey **in place**, never reflow; never auto-sort by recency.
+  **User-editable** (hoist your own verbs onto cardinals).
+
+**Linear ordering** (the overflow and any non-radial fallback), top→bottom with
+magenta group separators: object-special (frequent-first) → transform block →
+grouped submenus (`Select ▸` / `Net ▸` / `Convert ▸`) → clipboard/lifecycle →
+lock/visibility toggles → **Properties last (`E`)**.
+
+**Empty-canvas menu is different** — space-level only: Paste, Select All,
+`Grid ▸`, `View ▸`, `Place ▸`, global toggles (router/ratsnest/highlight). No
+object verbs.
+
+**Multi-select** — menu = the **intersection** of actions valid for all selected
+objects; singular labels become "…Selected…"; Properties opens a multi-edit.
+
+**Per-object cardinal proposals** (owner-tunable, user-editable):
+
+| Object | N | E | S | W | diagonals |
+|---|---|---|---|---|---|
+| Component | Move | Rotate | Delete | Properties | Flip · Lock · Find in schematic · More… |
+| Track | Route/Continue | Change Width | Delete | Change Layer | Drag · Highlight Net · Add Via · More… |
+| Via | Change Size | Assign Net | Delete | Properties | Move · Highlight Net · More… |
+| Net | Highlight | Hide Ratsnest | Assign Netclass | Assign Color | Select All · More… |
+| Zone | Fill | Unfill | Edit Border | Properties | Repour · Add Cutout · Duplicate to Layer · More… |
+| Empty | Place ▸ | Paste | Grid ▸ | View ▸ | — |
+
+**Still to prove:** the marking-menu interaction in the prototype (delayed popup,
+expert flick drawing nothing, the mark "ink" trail), and per-object cardinal
+tuning with the owner. Reference visual: the radial marking-menu mock.
+
 ## Open design decisions (resolve before broader build-out)
 
 1. **AI surface — RESOLVED (2026-07-06): both, by role.** Proposed *changes*
@@ -121,16 +182,11 @@ both panes.
    the surfaces above are model-agnostic.)
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
-3. **Context menus (right-click) — a CORE SPEED SURFACE, not an afterthought.**
-   Direction (2026-07-06): the local right-click menu is a *primary* interaction
-   surface for **speed** — keep the user's eyes on the target and the tools on the
-   work. Lineage: Fluxbox root menu, Autodesk **marking menus** (Maya), Sketchbook
-   Pro — local, gesture-selectable, muscle-memory-fast. Requirements: **context-
-   dependent** by what is hovered/selected; **nested sub-menus**; **accent
-   (magenta) delineation between grouped subsections**. Still UNSPECIFIED in the
-   corpus — needs a focused research pass that includes marking/radial menus
-   (gesture-to-select), then design into the interaction spec. This is the
-   interaction that most makes the editor feel fast.
+3. **Context menus — RESOLVED (2026-07-06)** into the "Context Menu System"
+   section above (hybrid marking menu + linear overflow, select-first object-verb,
+   per-object cardinal verbs). Remaining: validate the marking-menu interaction in
+   the prototype (delayed popup, expert flick, mark trail) and tune the per-object
+   cardinal assignments with the owner.
 4. **Datum visual identity**: reference frames, origins, fiducials, measurement
    styling — no Datum-specific identity yet (generic dark theme). Owner call.
 
