@@ -271,6 +271,27 @@ class FakeDaemonClientMutationsMixin:
         self.calls.append(("move_board_component", path, component, x_nm, y_nm))
         return self._component_modified_response(1151, component, f"move_board_component {component}")
 
+    def align_board_components(
+        self, path: str, components: list[str], mode: str
+    ) -> JsonRpcResponse:
+        self.calls.append(("align_board_components", path, components, mode))
+        return JsonRpcResponse(
+            "2.0",
+            1154,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [
+                        {"object_type": "component", "uuid": component}
+                        for component in components
+                    ],
+                    "deleted": [],
+                },
+                "description": f"align_board_components {len(components)}",
+            },
+            None,
+        )
+
     def create_sheet(self, path: str, name: str, sheet: str | None = None) -> JsonRpcResponse:
         self.calls.append(("create_sheet", path, name, sheet))
         sheet_id = sheet or "sheet-1"
