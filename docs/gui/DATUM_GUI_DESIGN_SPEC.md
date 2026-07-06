@@ -270,10 +270,14 @@ product grows — and it is a controlling constraint, not a nice-to-have.
 - **Verb registry (decision 017)** — the single capability catalog. Add a tool =
   add a verb; the menu bar, marking menus, command palette, CLI, and MCP all
   project from it. No surface hardcodes a tool list.
-- **Menu model (data, not code)** — the per-object menu content
-  (`DATUM_GUI_CONTEXT_MENU_CONTENT.md`) is a table of object → slot → verb. Target:
-  a machine-checkable `menu_model` manifest so adding / removing / reassigning a
-  menu item is editing one row, drift-checked against the verb registry.
+- **Menu model (data, not code)** — the menu bar and per-object marking menus are
+  the data manifest `docs/gui/menu_model.json` (each entry bound to a real
+  `datum.*` verb, a `gui_local` view action, or `not_built` = worklist), realizing
+  the content in `DATUM_GUI_CONTEXT_MENU_CONTENT.md`. Adding / removing /
+  reassigning a menu item is **editing one row**, and `scripts/check_menu_model.py`
+  (in `run_drift_gates.sh`) guarantees every `verb` reference exists in the registry
+  catalog and enforces the marking-menu invariants (cardinal N/E/S/W, destructive
+  never on a diagonal). No vaporware menu items; the GUI reads the manifest.
 - **Design Book tokens (decision 015)** — visual change = token edit; nothing
   hardcodes a color or size. Restyle by changing a token; everything follows.
 - **Typed `Operation` + one `commit()`** — add an operation variant + its builder;
