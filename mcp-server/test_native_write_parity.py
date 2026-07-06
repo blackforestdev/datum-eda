@@ -308,11 +308,12 @@ class TestNativeWriteParity(unittest.TestCase):
                 self.assertEqual(junctions[0]["sheet"], sheet)
                 self.assertEqual(junctions[0]["position"], {"x": 50, "y": 60})
                 operation = assert_latest_journal_operation(
-                    self, host, str(root), "place schematic junction", "create_schematic_junction"
+                    self, host, str(root), "place schematic junction", "place_schematic_marker"
                 )
                 self.assertEqual(operation["sheet_id"], sheet)
-                self.assertEqual(operation["junction_id"], junction)
-                self.assertEqual(operation["junction"]["position"], {"x": 50, "y": 60})
+                self.assertEqual(operation["marker_id"], junction)
+                self.assertEqual(operation["marker_kind"], "Junction")
+                self.assertEqual(operation["marker"]["position"], {"x": 50, "y": 60})
                 self.assertEqual(call_tool(host, "datum.journal.undo", {"path": str(root)})["status"], "applied")
                 self.assertEqual(query_result(host, "datum.query.schematic_junctions", root), [])
                 self.assertEqual(call_tool(host, "datum.journal.redo", {"path": str(root)})["status"], "applied")
@@ -431,12 +432,13 @@ class TestNativeWriteParity(unittest.TestCase):
                 self.assertEqual(markers[0]["pin"], pin)
                 self.assertEqual(markers[0]["position"], {"x": 70, "y": 80})
                 operation = assert_latest_journal_operation(
-                    self, host, str(root), "place schematic noconnect", "create_schematic_no_connect"
+                    self, host, str(root), "place schematic noconnect", "place_schematic_marker"
                 )
                 self.assertEqual(operation["sheet_id"], sheet)
-                self.assertEqual(operation["noconnect_id"], noconnect)
-                self.assertEqual(operation["noconnect"]["symbol"], symbol)
-                self.assertEqual(operation["noconnect"]["pin"], pin)
+                self.assertEqual(operation["marker_id"], noconnect)
+                self.assertEqual(operation["marker_kind"], "NoConnect")
+                self.assertEqual(operation["marker"]["symbol"], symbol)
+                self.assertEqual(operation["marker"]["pin"], pin)
                 self.assertEqual(call_tool(host, "datum.journal.undo", {"path": str(root)})["status"], "applied")
                 self.assertEqual(query_result(host, "datum.query.schematic_noconnects", root), [])
                 self.assertEqual(call_tool(host, "datum.journal.redo", {"path": str(root)})["status"], "applied")

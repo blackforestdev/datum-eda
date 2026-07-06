@@ -27,7 +27,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 4 | `7099fa49aca6e9574dc7ea5847914d8c20969222b5f2cf79090016539044e107` |
 | `workspace_crates` | `specs/PROGRESS.md` | 8 | `d48e33427561b9af0d9986d51f36230e8321898487657f43a46f7c1c0e2ed4da` |
 | `daemon_dispatch_methods` | `specs/PROGRESS.md` | 41 | `7c6fab120a23d8fbf495e171180071b7ce7ac0ef113898f8b97c3e51da00e5f6` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 194 | `efc32d4daf16cfcc2997f9f9d85353d53aca4d768db9090dec2c6128b0aaedb4` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 195 | `6fb5a78ca1dded0ad445a54c8ba2cd428f9c5a18204bdf3cc3b7b7c51849d669` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
 | `pool_library_surface` | `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` | 115 | `2cbc95f1de4a410dbe6fb181eec5ffe4644afcc7ef946be8254c12fae893d1d2` |
 | `erc_pin_taxonomy_surface` | `specs/ERC_SPEC.md` | 33 | `8f44622d66f182ef0d12cd5a49eb0033647eb56f1b277adc0645b5ae3033a8a9` |

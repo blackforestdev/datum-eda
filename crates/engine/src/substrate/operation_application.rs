@@ -385,6 +385,19 @@ pub(super) fn apply_operation(
             *noconnect_id,
             noconnect,
         ),
+        Operation::PlaceSchematicMarker {
+            sheet_id,
+            marker_id,
+            marker_kind,
+            marker,
+        } => apply_schematic_map_create(
+            model,
+            diff,
+            *sheet_id,
+            marker_kind.map_name(),
+            *marker_id,
+            marker,
+        ),
         Operation::DeleteSchematicNoConnect {
             sheet_id,
             noconnect_id,

@@ -156,6 +156,7 @@ pub(super) fn apply_operation_to_objects(
         | Operation::CreateSchematicJunction { .. }
         | Operation::DeleteSchematicJunction { .. }
         | Operation::CreateSchematicNoConnect { .. }
+        | Operation::PlaceSchematicMarker { .. }
         | Operation::DeleteSchematicNoConnect { .. }
         | Operation::CreateSchematicSheet { .. }
         | Operation::DeleteSchematicSheet { .. }

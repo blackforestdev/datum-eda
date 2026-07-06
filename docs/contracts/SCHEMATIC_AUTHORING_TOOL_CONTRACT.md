@@ -65,7 +65,13 @@ journaled native-project operations and resolver replay; canonical MCP
 remaining product gap is not "no schematic substrate"; it is completion and
 normalization of the contract shape: heterogeneous delete/set-field collapse,
 binding evidence breadth, revision-keyed ERC/binding semantics, and
-proposal boundaries for higher-level cross-domain edits. Pool-backed
+proposal boundaries for higher-level cross-domain edits. The first
+contract-normalized schematic operation is now engine-owned:
+`Operation::PlaceSchematicMarker { marker_kind:
+Junction|NoConnect, ... }` writes the same sheet maps as the legacy
+junction/no-connect operations, replays from the journal, and generates
+undo inverses; the compatibility CLI verbs `place-junction` and
+`place-noconnect` now author that normalized operation. Pool-backed
 `place-symbol` now mints an authored symbol-first `ComponentInstance` when the
 pool symbol resolves to a unique entity/gate/compatible part. It reports
 explicit status for compatibility `lib_id`s, unresolved/ambiguous entity gates,
@@ -301,15 +307,20 @@ restated.
   connection; `Place > No-Connect` on an intentionally open pin.
 - **(2) Operation:** `PlaceMarker{sheet_id, position, kind:
   Junction|NoConnect}` → `OperationBatch` (local edits). Junction is also
-  auto-emitted inside `DrawWire` batches. Today
-  `place_native_project_junction` and `place_native_project_noconnect`
-  are two near-identical single-point JSON writers; both are
-  zero-dimension point annotations differing only by kind.
+  auto-emitted inside future `DrawWire` batches. Implemented substrate slice:
+  `Operation::PlaceSchematicMarker { sheet_id, marker_id, marker_kind,
+  marker }` is the journal vocabulary for both point-marker placements.
+  It persists into either the `junctions` or `noconnects` sheet map based on
+  `marker_kind`, replays through `ProjectResolver`, and undoes by emitting the
+  matching legacy delete inverse.
 - **(3) CLI:** `datum-eda project place-marker --root <dir> --sheet <uuid>
-  --x <nm> --y <nm> --kind <junction|noconnect>` (collapses
-  place-junction / place-noconnect).
+  --x <nm> --y <nm> --kind <junction|noconnect>` is the normalized target.
+  Current compatibility commands `place-junction` and `place-noconnect` remain
+  public but now author `PlaceSchematicMarker` through the engine write
+  facade.
 - **(4) MCP/AI:** `place_marker` (not present). One tool, kind enum;
-  returns `OperationResult`.
+  returns `OperationResult`. Current MCP compatibility aliases still expose
+  `datum.schematic.place_junction` and `datum.schematic.place_noconnect`.
 - **(5) AI query/context:** For junction, wire-crossing coordinates
   (`schematic.query` wires/junctions). For no-connect, pins intended to
   be left open (`schematic.query` symbol_pins). Same point-placement
@@ -321,9 +332,10 @@ restated.
   deliberately open pin; assert `unconnected_component_pin` for that pin
   clears while `noconnect_connected` stays absent, undo restores the
   warning. Then place-marker kind=junction at a T; assert net merge.
-- **(8) Not yet supported:** No operation/undo; junction not auto-inferred
-  during wire draw; two redundant point-placement verbs today instead of
-  one parametric op.
+- **(8) Not yet supported:** The normalized public CLI/MCP alias
+  `place-marker` / `datum.schematic.place_marker`, auto-junction inference
+  during wire draw, and contract-shaped `OperationResult` are still target
+  work. The journal operation itself is normalized.
 
 ### 7. place-port (create-or-edit, hierarchical / interface port)
 
@@ -591,19 +603,21 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
 - **Contract-normalized schematic operations.** Current schematic write slices
   use journaled operations and resolver replay, but they remain exposed mostly
   as compatibility-shaped per-kind/per-field commands. The ten-operation
-  contract still needs normalized `DeleteObjects`, `SetSymbolField`,
-  `PlaceMarker`, richer `CreateBus`, and consistent `OperationResult` /
-  `model_revision` reporting.
+  contract now has its first normalized journal operation:
+  `PlaceSchematicMarker` for junction/no-connect placement. It still needs
+  normalized `DeleteObjects`, `SetSymbolField`, richer `CreateBus`, public
+  `place-marker`/`datum.schematic.place_marker` aliases, and consistent
+  `OperationResult` / `model_revision` reporting.
 - **ComponentInstance mint/bind from schematic placement.** Pool-backed
   `place-symbol` now stores part/entity/gate UUIDs and mints an authored
   symbol-first `ComponentInstance` with a `part_ref` when the resolved
   entity/gate has one compatible part. Compatibility `lib_id`s, unresolved or
   ambiguous entity-gate matches, ambiguous compatible parts, incompatible part
   mappings, and later board-package attachment remain explicit partial states.
-- **Hierarchy authoring.** create-sheet / sheet-instance / sheet-pin have
-  no authoring op (only `ProjectNew` scaffold + read queries;
-  `sheet_instances` is in the IR). Deferred to a later slice; net-rewiring
-  sheet changes are proposal-first.
+- **Hierarchy authoring.** Sheet definition, sheet instance create/delete/move,
+  and parent-port bind/unbind operations are implemented and journaled.
+  Sheet-pin authoring and broader net-rewiring hierarchy edits remain
+  proposal-first target work.
 - **Revision-keyed ERC + waiver authoring.** ERC findings are not yet
   `model_revision`/fingerprint-keyed (current addressing is
   `(domain,index)`), and the proposal-gated `author-waiver` op /
@@ -639,8 +653,9 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
    (run-erc itself is already implemented and read-only.)
 6. **MCP write timing.** First schematic MCP writes now exist only for
    journaled connectivity primitives (`draw_wire`, `delete_wire`,
-   `place_junction`, `delete_junction`, `place_noconnect`,
-   `delete_noconnect`) plus labels (`place_label`, `rename_label`,
+   compatibility `place_junction`, `delete_junction`, `place_noconnect`,
+   `delete_noconnect`; junction/no-connect placement now journals as
+   `PlaceSchematicMarker`) plus labels (`place_label`, `rename_label`,
    `delete_label`), ports (`place_port`, `edit_port`, `delete_port`), and
    buses (`create_bus`, `edit_bus_members`, `place_bus_entry`,
    `delete_bus_entry`), and symbol lifecycle edits (`place_symbol`,

@@ -1,7 +1,7 @@
 use super::schematic_sheet_maps::{
     insert_sheet_map_value, remove_sheet_map_value, sheet_map_value, sheet_uuid,
 };
-use super::{EngineError, Operation};
+use super::{EngineError, Operation, SchematicMarkerKind};
 
 pub(super) fn apply_schematic_sheet_operation(
     sheet_value: &mut serde_json::Value,
@@ -50,6 +50,20 @@ pub(super) fn apply_schematic_sheet_operation(
             noconnect,
         } if sheet_uuid(sheet_value) == Some(*sheet_id) => {
             insert_sheet_map_value(sheet_value, "noconnects", *noconnect_id, noconnect.clone())?;
+            Ok(true)
+        }
+        Operation::PlaceSchematicMarker {
+            sheet_id,
+            marker_id,
+            marker_kind,
+            marker,
+        } if sheet_uuid(sheet_value) == Some(*sheet_id) => {
+            insert_sheet_map_value(
+                sheet_value,
+                marker_kind.map_name(),
+                *marker_id,
+                marker.clone(),
+            )?;
             Ok(true)
         }
         Operation::DeleteSchematicNoConnect {
@@ -199,9 +213,9 @@ pub(super) fn apply_schematic_sheet_operation(
         Operation::CreateSchematicJunction { .. } | Operation::DeleteSchematicJunction { .. } => {
             Ok(false)
         }
-        Operation::CreateSchematicNoConnect { .. } | Operation::DeleteSchematicNoConnect { .. } => {
-            Ok(false)
-        }
+        Operation::CreateSchematicNoConnect { .. }
+        | Operation::PlaceSchematicMarker { .. }
+        | Operation::DeleteSchematicNoConnect { .. } => Ok(false),
         Operation::CreateSchematicLabel { .. }
         | Operation::SetSchematicLabel { .. }
         | Operation::DeleteSchematicLabel { .. } => Ok(false),
@@ -306,6 +320,33 @@ pub(super) fn inverse_schematic_sheet_operation(
                 noconnect: noconnect.clone(),
             });
             insert_sheet_map_value(sheet_value, "noconnects", *noconnect_id, noconnect.clone())?;
+            Ok(true)
+        }
+        Operation::PlaceSchematicMarker {
+            sheet_id,
+            marker_id,
+            marker_kind,
+            marker,
+        } if sheet_uuid(sheet_value) == Some(*sheet_id) => {
+            let inverse = match marker_kind {
+                SchematicMarkerKind::Junction => Operation::DeleteSchematicJunction {
+                    sheet_id: *sheet_id,
+                    junction_id: *marker_id,
+                    junction: marker.clone(),
+                },
+                SchematicMarkerKind::NoConnect => Operation::DeleteSchematicNoConnect {
+                    sheet_id: *sheet_id,
+                    noconnect_id: *marker_id,
+                    noconnect: marker.clone(),
+                },
+            };
+            inverse_operations.push(inverse);
+            insert_sheet_map_value(
+                sheet_value,
+                marker_kind.map_name(),
+                *marker_id,
+                marker.clone(),
+            )?;
             Ok(true)
         }
         Operation::DeleteSchematicNoConnect {
@@ -592,9 +633,9 @@ pub(super) fn inverse_schematic_sheet_operation(
         Operation::CreateSchematicJunction { .. } | Operation::DeleteSchematicJunction { .. } => {
             Ok(false)
         }
-        Operation::CreateSchematicNoConnect { .. } | Operation::DeleteSchematicNoConnect { .. } => {
-            Ok(false)
-        }
+        Operation::CreateSchematicNoConnect { .. }
+        | Operation::PlaceSchematicMarker { .. }
+        | Operation::DeleteSchematicNoConnect { .. } => Ok(false),
         Operation::CreateSchematicLabel { .. }
         | Operation::SetSchematicLabel { .. }
         | Operation::DeleteSchematicLabel { .. } => Ok(false),

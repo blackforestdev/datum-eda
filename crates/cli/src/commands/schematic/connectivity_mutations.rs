@@ -1,15 +1,15 @@
 use super::*;
 use eda_engine::api::native_write::schematic_connectivity::{
-    build_create_schematic_bus, build_create_schematic_bus_entry, build_create_schematic_junction,
-    build_create_schematic_label, build_create_schematic_noconnect, build_create_schematic_port,
-    build_create_schematic_wire, build_delete_schematic_bus, build_delete_schematic_bus_entry,
-    build_delete_schematic_junction, build_delete_schematic_label,
+    build_create_schematic_bus, build_create_schematic_bus_entry, build_create_schematic_label,
+    build_create_schematic_port, build_create_schematic_wire, build_delete_schematic_bus,
+    build_delete_schematic_bus_entry, build_delete_schematic_junction, build_delete_schematic_label,
     build_delete_schematic_noconnect, build_delete_schematic_port, build_delete_schematic_wire,
-    build_set_schematic_bus, build_set_schematic_label, build_set_schematic_port,
+    build_place_schematic_marker, build_set_schematic_bus, build_set_schematic_label,
+    build_set_schematic_port,
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::error::EngineError;
-use eda_engine::substrate::{CommitReport, DesignModel, ProjectResolver};
+use eda_engine::substrate::{CommitReport, DesignModel, ProjectResolver, SchematicMarkerKind};
 
 pub(crate) fn place_native_project_label(
     root: &Path,
@@ -199,7 +199,14 @@ pub(crate) fn place_native_project_junction(
         position,
     };
     commit_schematic_write(root, "place schematic junction", |model, provenance| {
-        build_create_schematic_junction(model, provenance, sheet_uuid, &junction)
+        build_place_schematic_marker(
+            model,
+            provenance,
+            sheet_uuid,
+            junction_uuid,
+            SchematicMarkerKind::Junction,
+            serde_json::to_value(&junction)?,
+        )
     })?;
 
     Ok(NativeProjectJunctionMutationReportView {
@@ -539,7 +546,14 @@ pub(crate) fn place_native_project_noconnect(
         position,
     };
     commit_schematic_write(root, "place schematic noconnect", |model, provenance| {
-        build_create_schematic_noconnect(model, provenance, sheet_uuid, &noconnect)
+        build_place_schematic_marker(
+            model,
+            provenance,
+            sheet_uuid,
+            noconnect_uuid,
+            SchematicMarkerKind::NoConnect,
+            serde_json::to_value(&noconnect)?,
+        )
     })?;
 
     Ok(NativeProjectNoConnectMutationReportView {

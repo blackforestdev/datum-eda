@@ -508,6 +508,12 @@ pub enum Operation {
         noconnect_id: ObjectId,
         noconnect: serde_json::Value,
     },
+    PlaceSchematicMarker {
+        sheet_id: ObjectId,
+        marker_id: ObjectId,
+        marker_kind: SchematicMarkerKind,
+        marker: serde_json::Value,
+    },
     DeleteSchematicNoConnect {
         sheet_id: ObjectId,
         noconnect_id: ObjectId,
@@ -613,6 +619,21 @@ pub enum Operation {
         symbol_id: ObjectId,
         symbol: serde_json::Value,
     },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SchematicMarkerKind {
+    Junction,
+    NoConnect,
+}
+
+impl SchematicMarkerKind {
+    pub fn map_name(&self) -> &'static str {
+        match self {
+            SchematicMarkerKind::Junction => "junctions",
+            SchematicMarkerKind::NoConnect => "noconnects",
+        }
+    }
 }
 
 impl Operation {

@@ -16,7 +16,7 @@
 
 use crate::error::EngineError;
 use crate::schematic::{Bus, BusEntry, HierarchicalPort, Junction, NetLabel, NoConnectMarker, SchematicWire};
-use crate::substrate::{DesignModel, ObjectId, Operation};
+use crate::substrate::{DesignModel, ObjectId, Operation, SchematicMarkerKind};
 
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
 
@@ -121,6 +121,28 @@ pub fn build_create_schematic_junction(
             junction: serde_json::to_value(junction)?,
         })
         .primary_object(junction.uuid)
+        .finish()
+}
+
+/// Build the normalized marker-placement batch required by the schematic
+/// authoring contract. The marker kind selects the persisted sheet map while
+/// keeping the journal vocabulary as one `PlaceSchematicMarker` operation.
+pub fn build_place_schematic_marker(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    sheet_id: ObjectId,
+    marker_id: ObjectId,
+    kind: SchematicMarkerKind,
+    marker: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    BatchComposer::compose(model, provenance)
+        .push_op(Operation::PlaceSchematicMarker {
+            sheet_id,
+            marker_id,
+            marker_kind: kind,
+            marker,
+        })
+        .primary_object(marker_id)
         .finish()
 }
 

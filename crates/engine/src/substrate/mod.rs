@@ -98,7 +98,7 @@ use journal::{
     canonical_json_hash, materialized_shard_value, replay_journal_shard_value, sort_source_shards,
     stage_operation_shard_writes, update_staged_source_hashes,
 };
-pub use operation::Operation;
+pub use operation::{Operation, SchematicMarkerKind};
 use operation_application::apply_operation;
 pub use proposal::*;
 pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};

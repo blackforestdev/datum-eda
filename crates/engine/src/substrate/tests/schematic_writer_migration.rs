@@ -217,6 +217,148 @@ fn journaled_schematic_noconnect_create_delete_and_undoes() {
 }
 
 #[test]
+fn normalized_schematic_marker_junction_commits_replays_and_undoes() {
+    let root = temp_project_root("schematic_marker_junction_journal");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let sheet_id = Uuid::new_v5(&project_id, b"sheet");
+    let marker_id = Uuid::new_v4();
+    write_minimal_project(&root, project_id, board_id);
+    let marker = serde_json::json!({
+        "uuid": marker_id,
+        "position": { "x": 90, "y": 100 }
+    });
+
+    let mut model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolve should succeed");
+    let report = model
+        .commit_journaled(
+            &root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(model.model_revision.clone()),
+                provenance: CommitProvenance {
+                    actor: "test".to_string(),
+                    source: CommitSource::Test,
+                    reason: "place schematic marker".to_string(),
+                },
+                operations: vec![Operation::PlaceSchematicMarker {
+                    sheet_id,
+                    marker_id,
+                    marker_kind: SchematicMarkerKind::Junction,
+                    marker: marker.clone(),
+                }],
+            },
+        )
+        .expect("schematic marker create should commit");
+    assert!(matches!(
+        report.transaction.operations[0],
+        Operation::PlaceSchematicMarker {
+            marker_kind: SchematicMarkerKind::Junction,
+            ..
+        }
+    ));
+
+    let sheet_path = root.join("schematic/sheets/main.json");
+    let sheet = read_json_value(&sheet_path).expect("sheet should read");
+    assert_eq!(
+        sheet["junctions"][marker_id.to_string()]["position"]["x"],
+        90
+    );
+    assert!(model.objects.contains_key(&marker_id));
+
+    let mut stale_sheet = sheet.clone();
+    stale_sheet["junctions"] = serde_json::json!({});
+    write_json(&sheet_path, stale_sheet);
+    let replayed = ProjectResolver::new(&root)
+        .resolve()
+        .expect("reopen should replay journal");
+    let replayed_sheet = replayed
+        .materialized_source_shard_value(SourceShardKind::SchematicSheet)
+        .expect("materialized schematic sheet should read");
+    assert_eq!(
+        replayed_sheet["junctions"][marker_id.to_string()]["position"]["y"],
+        100
+    );
+
+    let mut reopened = replayed;
+    let undo_report = reopened
+        .commit_journal_undo(
+            &root,
+            CommitProvenance {
+                actor: "test".to_string(),
+                source: CommitSource::Test,
+                reason: "undo schematic marker".to_string(),
+            },
+        )
+        .expect("schematic marker undo should commit");
+    assert!(matches!(
+        undo_report.transaction.operations[0],
+        Operation::DeleteSchematicJunction { junction_id, .. } if junction_id == marker_id
+    ));
+    let undone = read_json_value(&sheet_path).expect("sheet should read after undo");
+    assert!(undone["junctions"].as_object().unwrap().is_empty());
+}
+
+#[test]
+fn normalized_schematic_marker_noconnect_commits_to_noconnect_map() {
+    let root = temp_project_root("schematic_marker_noconnect_journal");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let sheet_id = Uuid::new_v5(&project_id, b"sheet");
+    let marker_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let pin_id = Uuid::new_v4();
+    write_minimal_project(&root, project_id, board_id);
+    let marker = serde_json::json!({
+        "uuid": marker_id,
+        "symbol": symbol_id,
+        "pin": pin_id,
+        "position": { "x": 110, "y": 120 }
+    });
+
+    let mut model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolve should succeed");
+    let report = model
+        .commit_journaled(
+            &root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(model.model_revision.clone()),
+                provenance: CommitProvenance {
+                    actor: "test".to_string(),
+                    source: CommitSource::Test,
+                    reason: "place schematic marker".to_string(),
+                },
+                operations: vec![Operation::PlaceSchematicMarker {
+                    sheet_id,
+                    marker_id,
+                    marker_kind: SchematicMarkerKind::NoConnect,
+                    marker: marker.clone(),
+                }],
+            },
+        )
+        .expect("schematic marker create should commit");
+    assert!(matches!(
+        report.transaction.operations[0],
+        Operation::PlaceSchematicMarker {
+            marker_kind: SchematicMarkerKind::NoConnect,
+            ..
+        }
+    ));
+
+    let sheet_path = root.join("schematic/sheets/main.json");
+    let sheet = read_json_value(&sheet_path).expect("sheet should read");
+    assert_eq!(
+        sheet["noconnects"][marker_id.to_string()]["position"]["x"],
+        110
+    );
+    assert!(model.objects.contains_key(&marker_id));
+}
+
+#[test]
 fn journaled_schematic_label_create_set_delete_and_undoes() {
     let root = temp_project_root("schematic_label_journal");
     let project_id = Uuid::new_v4();
