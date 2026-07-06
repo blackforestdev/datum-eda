@@ -1,5 +1,6 @@
 use anyhow::{Context, Result, bail};
 use eda_engine::board::BoardText;
+use eda_engine::substrate::{ProjectResolver, SourceShardKind};
 use eda_engine::text::{
     TextAttributes, TextFamilyId, TextGeometryPrimitive, TextHAlign, TextRenderIntent, TextStyleId,
     TextVAlign, default_stroke_width_nm, layout_text_geometry, layout_text_mesh_from_board_text,
@@ -3776,23 +3777,21 @@ fn hsv_to_rgb(h: f32, s: f32, v: f32) -> [f32; 3] {
     }
 }
 
-/// Load the board scene directly from native project JSON files, bypassing
-/// CLI subprocess invocations. Returns the built scene and the resolved
-/// board file path.
+/// Load the board scene from the engine-resolved native project model,
+/// bypassing CLI subprocess invocations. Returns the built scene and the
+/// board file path that backs the native board shard.
 fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSceneV1, PathBuf)> {
     let root = &request.project_root;
-    // --- Read project manifest ---
-    let manifest_path = root.join("project.json");
-    let manifest_text = std::fs::read_to_string(&manifest_path)
-        .with_context(|| format!("failed to read {}", manifest_path.display()))?;
-    let manifest: NativeManifest = serde_json::from_str(&manifest_text)
-        .with_context(|| format!("failed to parse {}", manifest_path.display()))?;
-
-    let board_path = root.join(&manifest.board);
-    let board_text = std::fs::read_to_string(&board_path)
-        .with_context(|| format!("failed to read {}", board_path.display()))?;
-    let board_value: Value = serde_json::from_str(&board_text)
-        .with_context(|| format!("failed to parse {}", board_path.display()))?;
+    let model = ProjectResolver::new(root).resolve()?;
+    let board_shard = model
+        .source_shards
+        .iter()
+        .find(|shard| shard.kind == SourceShardKind::BoardRoot)
+        .context("resolved native project model is missing board root shard")?;
+    let board_path = board_shard.path.clone();
+    let board_value = model
+        .materialized_source_shard_value(SourceShardKind::BoardRoot)
+        .context("failed to materialize resolved board root shard")?;
 
     let board_uuid = board_value
         .get("uuid")
@@ -3801,8 +3800,8 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         .to_string();
     let inspect = ProjectInspectPayload {
         project_root: root.display().to_string(),
-        project_name: manifest.name,
-        project_uuid: manifest.uuid.to_string(),
+        project_name: model.project.name.clone(),
+        project_uuid: model.project.project_id.to_string(),
         board_uuid: board_uuid.clone(),
         board_path: board_path.display().to_string(),
     };
@@ -3883,15 +3882,8 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
     if let Some(layers) = scene_layers_from_native_stackup_value(&board_value) {
         scene.layers = layers;
     }
+    scene.source_revision = model.model_revision.0.clone();
     Ok((scene, board_path))
-}
-
-/// Minimal native project manifest for scene loading.
-#[derive(Debug, Clone, Deserialize)]
-struct NativeManifest {
-    uuid: uuid::Uuid,
-    name: String,
-    board: String,
 }
 
 fn extract_outline(board: &Value) -> Result<OutlinePayload> {
@@ -5734,6 +5726,160 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 mod tests {
     use super::kicad_scene_import::*;
     use super::*;
+    use eda_engine::substrate::{CommitProvenance, CommitSource, Operation, OperationBatch};
+    use uuid::Uuid;
+
+    fn unique_project_root(label: &str) -> PathBuf {
+        std::env::temp_dir().join(format!("{label}-{}", Uuid::new_v4()))
+    }
+
+    fn write_json(path: &Path, value: serde_json::Value) {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).expect("fixture directory should create");
+        }
+        std::fs::write(path, format!("{value}\n")).expect("fixture JSON should write");
+    }
+
+    fn write_minimal_native_project(root: &Path, project_id: Uuid, board_id: Uuid) {
+        write_json(
+            &root.join("project.json"),
+            json!({
+                "schema_version": 1,
+                "uuid": project_id,
+                "name": "GUI Engine Scene Demo",
+                "pools": [],
+                "schematic": "schematic/schematic.json",
+                "board": "board/board.json",
+                "rules": "rules/rules.json"
+            }),
+        );
+        write_json(
+            &root.join("schematic/schematic.json"),
+            json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "sheets": {},
+                "definitions": {},
+                "instances": [],
+                "variants": {},
+                "waivers": [],
+                "deviations": []
+            }),
+        );
+        write_json(
+            &root.join("board/board.json"),
+            json!({
+                "schema_version": 1,
+                "uuid": board_id,
+                "name": "GUI Engine Scene Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "component_silkscreen": {},
+                "component_pads": {},
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "dimensions": [],
+                "texts": [],
+                "keepouts": {}
+            }),
+        );
+        write_json(
+            &root.join("rules/rules.json"),
+            json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "object_revision": 0,
+                "rules": []
+            }),
+        );
+    }
+
+    #[test]
+    fn native_board_scene_loads_resolver_materialized_board_state() {
+        let root = unique_project_root("datum-gui-engine-scene");
+        let project_id = Uuid::new_v4();
+        let board_id = Uuid::new_v4();
+        let text_id = Uuid::new_v4();
+        write_minimal_native_project(&root, project_id, board_id);
+        let mut model = ProjectResolver::new(&root)
+            .resolve()
+            .expect("native fixture should resolve");
+        model
+            .commit_journaled(
+                &root,
+                OperationBatch {
+                    batch_id: Uuid::new_v4(),
+                    expected_model_revision: Some(model.model_revision.clone()),
+                    provenance: CommitProvenance {
+                        actor: "gui-protocol-test".to_string(),
+                        source: CommitSource::Test,
+                        reason: "place board text for resolver-backed GUI scene".to_string(),
+                    },
+                    operations: vec![Operation::CreateBoardText {
+                        text_id,
+                        text: json!({
+                            "uuid": text_id,
+                            "text": "Resolver Truth",
+                            "position": { "x": 1_000_000, "y": 2_000_000 },
+                            "rotation": 0,
+                            "layer": 37,
+                            "height_nm": 1_000_000
+                        }),
+                    }],
+                },
+            )
+            .expect("board text should commit through substrate");
+        write_json(
+            &root.join("board/board.json"),
+            json!({
+                "schema_version": 1,
+                "uuid": board_id,
+                "name": "GUI Engine Scene Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "component_silkscreen": {},
+                "component_pads": {},
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "dimensions": [],
+                "texts": [],
+                "keepouts": {}
+            }),
+        );
+
+        let (scene, board_path) = load_scene_from_engine(&LiveReviewRequest {
+            project_root: root.clone(),
+            board_file: None,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+        })
+        .expect("resolver-backed native scene should load");
+
+        assert_eq!(board_path, root.join("board/board.json"));
+        assert_eq!(scene.project_uuid, project_id.to_string());
+        assert_eq!(scene.board_uuid, board_id.to_string());
+        assert_eq!(scene.source_revision, model.model_revision.0);
+        assert!(
+            scene
+                .board_texts
+                .iter()
+                .any(|text| text.text_uuid == text_id.to_string() && text.text == "Resolver Truth"),
+            "native GUI scene should reflect journal-materialized board text, not stale promoted board JSON"
+        );
+    }
 
     #[test]
     fn focused_artifact_prefers_latest_artifact_navigation_context() {
