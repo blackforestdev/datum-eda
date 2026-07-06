@@ -86,9 +86,12 @@ Interop / compatibility:
   undo/redo.
 
 GUI (engine consumer):
-- Read-only board review surface + visual-regression harness. A Taffy-based
-  layout system and a token-based design system are landing. The interactive
-  editor is a named, in-progress phase — not yet end-to-end.
+- Read-only board review and engine supervision/status surface +
+  visual-regression harness. Native board scenes resolve through the engine
+  model and the Outputs lane reflects model revision, journal/source-shard,
+  check, proposal/artifact, and production status. A Taffy-based layout system
+  and a token-based design system are landing. The interactive editor is a
+  named, in-progress phase — not yet end-to-end.
 
 See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for usage examples,
 [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the MCP tool catalog, and

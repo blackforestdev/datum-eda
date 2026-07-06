@@ -77,12 +77,13 @@ product-mechanics model above. Status sources of truth: `specs/PROGRESS.md`,
 `specs/SPEC_PARITY.md` (machine-checked inventory shapes), and the
 product-mechanics docs.
 
-- **Active focus:** native authoring — Datum drawing a schematic, laying out a
-  PCB, and generating CAM output, with full AI augmentation. Its foundation,
-  the product-mechanics **substrate** (typed `Operation` enum + single
-  `commit()` + journal + `ProjectResolver` + stable
-  `ObjectId`/`ComponentInstance` + `model_revision` + Import Map), is now the
-  **universal native write authority**: the engine native-write facade
+- **Active focus:** GUI supervision/status reflection over native authoring —
+  Datum making substrate truth visible to the human operator without claiming
+  direct GUI editor readiness. Its foundation, the product-mechanics
+  **substrate** (typed `Operation` enum + single `commit()` + journal +
+  `ProjectResolver` + stable `ObjectId`/`ComponentInstance` +
+  `model_revision` + Import Map), is now the **universal native write
+  authority**: the engine native-write facade
   (`crates/engine/src/api/native_write/`, 11 families) authors every native
   operation batch; the CLI is a thin args/dispatch/views surface with zero
   operation authoring; the daemon reaches the substrate through
@@ -116,7 +117,8 @@ Real, shipped capability — read alongside the substrate gap below:
 - Deterministic routing kernel (60+ path-candidate strategies) and
   route-proposal artifact export/apply/inspect/revalidate
 - GUI substrate (`gui-protocol`/`gui-render`/`gui-app`): read-only board
-  review surface + visual regression harness
+  review surface, engine supervision/status snapshot, Outputs-lane
+  supervision rendering, and visual regression harness
 
 ### Known gap between status and ethos (do not overstate)
 Write-surface convergence is COMPLETE — do not resurrect the old
@@ -141,8 +143,10 @@ Write-surface convergence is COMPLETE — do not resurrect the old
   proposal, MCP, and LibraryGraph validation coverage; broader package-family
   coverage plus check-run/deviation/export/import-audit consumption remains
   future work.
-- **GUI:** a review surface, not an editor; interactive authoring (the user
-  selecting a tool and drawing/placing/editing) is not yet built.
+- **GUI:** a review/supervision surface, not an editor; native board scenes and
+  the Outputs lane reflect resolver/materialized engine truth, but interactive
+  authoring (the user selecting a tool and drawing/placing/editing through a
+  direct GUI commit path) is not yet built.
 
 The per-domain tool contracts in `docs/contracts/` specify the target each
 domain builds toward on the landed substrate.

@@ -26,8 +26,11 @@ capability and new divergences, and re-rates each subsystem.
 > spec set, and the supervision-reflection code — was a misdirection and has
 > been reverted/removed. Every finding, gap, and priority in this snapshot
 > that references supervision-reflection, Decision-013, or the GUI spec set is
-> VOID. The GUI direction will be redefined from the owner's intent
-> (interactive authoring the user can actually use).
+> VOID. The GUI direction was redefined from the owner's intent
+> (interactive authoring the user can actually use); the authority is now
+> decisions 014/015 + `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md`. The `013`
+> slot is vacated — see the tombstone at
+> `docs/decisions/PRODUCT_MECHANICS_013_GUI_SUPERVISION_AND_PARITY.md`.
 
 The ratified "north": native-first AI-augmented EDA (schematic → PCB →
 CAM); the native model + native format are the ONLY authority; KiCad
@@ -858,7 +861,8 @@ Still open / divergent:
   SelectJournalEntry/SelectRelationship/SetActiveVariant/RefreshModel).
 
 New since last audit: the full `specs/gui/` area-spec set landed (GUI_SPEC
-master + 7 area specs + PRODUCT_MECHANICS_013); GUI_SPEC §8 supersedes
+master + 7 area specs + the since-vacated `013` record — see the tombstone
+`docs/decisions/PRODUCT_MECHANICS_013_GUI_SUPERVISION_AND_PARITY.md`); GUI_SPEC §8 supersedes
 M7_FRONTEND_SPEC 1.7/1.8 at the controlling level; the durability flip (all
 prior GUI progress now committed at 465cc33); the clean Decision-013
 spec-ahead gap.

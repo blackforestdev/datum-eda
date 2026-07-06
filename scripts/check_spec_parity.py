@@ -335,6 +335,53 @@ def zone_fill_surface() -> list[str]:
     return sorted(items)
 
 
+def gui_supervision_surface() -> list[str]:
+    """Current read-only GUI supervision/status reflection surface."""
+    items: set[str] = set()
+    protocol = read_text(ROOT / "crates/gui-protocol/src/lib.rs")
+    render = read_text(ROOT / "crates/gui-render/src/outputs_lane.rs")
+    layout = read_text(ROOT / "crates/gui-render/src/outputs_lane_layout.rs")
+
+    for marker in (
+        'GUI_SUPERVISION_SNAPSHOT_CONTRACT: &str = "datum_gui_supervision_snapshot_v1"',
+        "pub supervision: GuiSupervisionSnapshot",
+        "pub struct GuiSupervisionSnapshot",
+        "pub struct GuiJournalSupervision",
+        "pub struct GuiSceneSupervision",
+        "pub struct GuiCheckSupervision",
+        "pub struct GuiDataSupervision",
+        "fn load_gui_supervision_snapshot",
+        "ProjectResolver::new(&request.project_root).resolve()",
+        "snapshot.journal.applied_transaction_count",
+        "snapshot.journal.accepted_transaction_tip",
+        "SourceShardStatusSummary",
+    ):
+        if marker in protocol:
+            items.add(f"protocol:{marker}")
+
+    for marker in (
+        "ProjectResolver::new(root).resolve()",
+        "materialized_source_shard_value(SourceShardKind::BoardRoot)",
+        "scene.source_revision = model.model_revision.0.clone()",
+    ):
+        if marker in protocol:
+            items.add(f"scene_loader:{marker}")
+
+    for marker in (
+        "ENGINE SUPERVISION",
+        "render_engine_supervision_section",
+        "engine_supervision_section_height",
+        "snapshot.source_shards.attention_count()",
+    ):
+        if marker in render:
+            items.add(f"renderer:{marker}")
+
+    if "Supervision," in layout:
+        items.add("layout:OutputsBodySectionKind::Supervision")
+
+    return sorted(items)
+
+
 def inventory_items(spec: dict[str, str]) -> list[str]:
     kind = spec["kind"]
     if kind == "mcp_runtime_methods":
@@ -359,6 +406,8 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return schematic_connectivity_surface()
     if kind == "zone_fill_surface":
         return zone_fill_surface()
+    if kind == "gui_supervision_surface":
+        return gui_supervision_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 

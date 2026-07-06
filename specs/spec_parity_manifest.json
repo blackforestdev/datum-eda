@@ -73,6 +73,12 @@
       "kind": "zone_fill_surface",
       "source": "ZoneFill generated-evidence schema/path + operations + native-write builder + public fill/query tools",
       "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "gui_supervision_surface",
+      "kind": "gui_supervision_surface",
+      "source": "GUI supervision snapshot contract + resolver-backed native scene load + Outputs lane status reflection",
+      "owner_spec": "specs/PROGRESS.md"
     }
   ]
 }

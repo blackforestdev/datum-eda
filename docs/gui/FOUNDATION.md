@@ -60,10 +60,12 @@ application:
    - logs, deterministic command output, artifact inspection, and scripted
      actions
 
-3. **Integrated AI assistant lane**
-   - design assistance
-   - explanation of engine reports and review evidence
-   - guided action discovery and review support
+3. **Integrated AI/agent assistance through the command lane**
+   - design assistance launched from the terminal-owned `AGENTS` dock path
+   - explanation of engine reports and review evidence through deterministic
+     context files and command handoffs
+   - guided action discovery and review support without a separate mutation
+     authority
 
 All three lanes are first-class user experiences. Only the engine and its
 explicit machine surfaces remain design authority.
@@ -115,8 +117,9 @@ The following `M7` opening decisions are now treated as locked direction:
 - single-selection model with a separate active review target
 - explicit authored/proposed/diagnostic visual-state separation
 - integrated bottom-docked terminal lane with read-only/supporting role
-- integrated bottom-docked AI assistant lane with explanation/review-support
-  role and no mutation authority
+- terminal-owned `AGENTS` assistance entry with explanation/review-support role
+  and no mutation authority; a separate assistant bridge is not an active
+  design authority
 
 These decisions should be implemented unless the architect explicitly reopens
 them.

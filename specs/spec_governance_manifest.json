@@ -60,6 +60,7 @@
     "docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md": {"class": "governed", "progress_anchor": "docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md"},
     "docs/decisions/PRODUCT_MECHANICS_011_IMPORT_INTEROP_ROLE.md": {"class": "doctrine"},
     "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md": {"class": "doctrine"},
+    "docs/decisions/PRODUCT_MECHANICS_013_GUI_SUPERVISION_AND_PARITY.md": {"class": "historical", "reason": "Tombstone. The GUI supervision-reflection track was a misfire, reverted in 7e352f4 (2026-06-23); record retained only to close the vacated 013 slot. Superseded by decisions 014/015 and docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md."},
     "docs/decisions/PRODUCT_MECHANICS_014_UI_LAYOUT_SYSTEM.md": {"class": "doctrine"},
     "docs/decisions/PRODUCT_MECHANICS_015_UI_DESIGN_SYSTEM.md": {"class": "doctrine"},
     "docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md": {"class": "doctrine"},

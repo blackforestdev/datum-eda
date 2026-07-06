@@ -5,8 +5,13 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-07-04 — write-surface convergence COMPLETE (wave commits
-`dff7c2c..c567698`): the engine native-write facade
+Last updated: 2026-07-06 — Tier E GUI supervision/status reflection opened on
+the post-substrate stack: native GUI board scenes now load through
+`ProjectResolver` materialized board state, `ReviewWorkspaceState` carries the
+read-only `datum_gui_supervision_snapshot_v1` contract, and the Outputs data
+lane renders engine revision/journal/source/check/production supervision
+without adding GUI editor authority. Earlier write-surface convergence remains
+COMPLETE (wave commits `dff7c2c..c567698`): the engine native-write facade
 (`crates/engine/src/api/native_write/`, 11 families) authors every native
 operation batch, genesis is engine-owned, the daemon reaches the substrate via
 `native.write`/`native.describe`, and the CLI flat namespace was dissolved into
@@ -17,20 +22,20 @@ spec-governance coverage/classification.)
 **Current-vs-target framing**:
 - **Current implementation evidence**: the historical milestone tables below
   remain truthful records of the implementation slices that have landed.
-- **Active target**: product-mechanics substrate readiness before further
-  imported-board fidelity expansion.
+- **Active target**: GUI supervision/status reflection over the substrate,
+  without claiming GUI editor readiness.
 - **Not the North Star**: legacy M0-M7 milestone completion rows are retained as
   evidence, but they no longer define the next implementation priority.
 
-**Active milestone**: native authoring depth on the landed substrate. The
-substrate is the universal native write authority (facade complete, wave
-commits `dff7c2c..c567698`); imported-board fidelity work stays paused unless
-it directly proves or unblocks the substrate contracts below.
-**Active product driver**: library/schematic foundation. Datum's next maturity
-axis is native governed library data and schematic capture as the normal
-electrical source of truth, followed by schematic-to-PCB implementation.
-Import fidelity cannot be the active maturity metric while native library and
-schematic authoring remain incomplete.
+**Active milestone**: Tier E GUI supervision/status reflection. The GUI is a
+read-only review/status surface for engine truth: resolver-materialized board
+state, model revision, journal cursor, source-shard dirty state, check summary,
+proposal/artifact/output status, and terminal-mediated command handoffs. It is
+not yet a direct GUI editor.
+**Active product driver**: make B-D substrate work visible enough for human
+supervision. Native library/schematic/PCB/manufacturing depth remains the
+product foundation; the GUI now reflects that engine state without becoming a
+new mutation authority.
 **Frozen**: M6 (strategy reporting layer landed; pending repeated evidence
 runs from the checked-in baseline gate).
 **Closed for scope**: M0–M5.
@@ -41,7 +46,11 @@ below.
 Machine-checked inventory shapes live in `specs/SPEC_PARITY.md` (gated by
 `scripts/check_spec_parity.py`, wired into `scripts/run_drift_gates.sh`).
 Surfaces currently locked: `mcp_runtime_methods`, `cli_project_commands`,
-`engine_text_modules`, `m7_text_visual_fixtures`, `workspace_crates`.
+`engine_text_modules`, `m7_text_visual_fixtures`, `workspace_crates`,
+`daemon_dispatch_methods`, `engine_api_pub_fns`, `standards_check_surface`,
+`pool_library_surface`, `erc_pin_taxonomy_surface`,
+`schematic_connectivity_surface`, `zone_fill_surface`,
+`gui_supervision_surface`.
 
 ---
 
@@ -133,6 +142,7 @@ legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
 | Tier A close-out | [x] | ComponentInstance bind/set/delete now have proposal twins (`datum.proposal.bind_component_instance`, `.set_component_instance`, `.delete_component_instance`) so assistant-provenance callers can create governed proposals instead of direct writes. Decision 018 closes the genesis t=0 owner decision. Public verb-registry migration remains complete with 17 public `datum.*` prefixes generated. |
 | Tier B library foundation | [x] | `LibraryBinding` is now a Rust type carried by authored `ComponentInstance` shards, with resolver/commit validation and backward-compatible `part_ref` projection. IPC-7351B generation now has two engine-owned vertical slices: two-terminal chips and SOIC, both exposed through journaled CLI writes, proposal creation, MCP aliases, generated registry/catalog entries, and LibraryGraph basis/process-policy validation. A Datum-authored native baseline fixture under `crates/test-harness/testdata/library/native_authored_baseline_v1` proves governed native pool data for Unit, Symbol, Entity, Package, Footprint, Padstack, Part, and first-class PinPadMap without ratifying a bundled-library packaging decision. Public tool count was 337/337 after the SOIC library/proposal tools were added; Tier D raises it to 338 with `datum.pcb.align_components`. |
 | Tier D PCB/manufacturing depth | [~] | The PCB 13-tool logical matrix is now machine-gated by `scripts/check_pcb_layout_tool_matrix.py`: it maps the 46 concrete `datum.pcb.*` verbs plus `datum.check.fill_zones`/`datum.check.run` back to the contract buckets, requires `datum.pcb.align_components` as one mode-parameterized batch tool, rejects per-mode align/distribute tools, and keeps `fill_zones` as derived generated evidence. Engine `build_align_board_packages` emits multiple `SetBoardPackagePosition` operations in one guarded `OperationBatch`; CLI/MCP parity tests prove locked-component skip reporting and one undoable batch. Native zone fill remains the bounded generated-evidence solver already shipped (`SetZoneFill`/`DeleteZoneFill`, Unfilled/Stale/Unsupported honesty); the full polygon-boolean/thermal/antipad pour solver remains future product depth. |
+| Tier E GUI supervision/status surface | [~] | Native GUI board scenes now load through `ProjectResolver::resolve()` plus `DesignModel::materialized_source_shard_value(BoardRoot)` instead of raw promoted `board/board.json`, so journal-materialized board state is visible even when the promoted shard is stale. `ReviewWorkspaceState` now carries `datum_gui_supervision_snapshot_v1`, summarizing project identity, model revision, journal cursor/tip, source-shard health, scene object counts, check status, and production/proposal/artifact counts. The Outputs data lane renders a read-only `ENGINE SUPERVISION` block from that snapshot. This is supervision/status reflection only: GUI authoring remains terminal-mediated or future work, and the GUI does not construct or commit `OperationBatch` directly. |
 
 ### Single-Source Verb Registry (Decision 017)
 
@@ -213,7 +223,7 @@ public catalog tools nor explicit `pending:<datum.* surface>` migration targets,
 so compatibility retirement is tied to machine-readable migration paths rather
 than prose-only criteria.
 
-| Spec parity / governance | [~] | `specs/SPEC_PARITY.md` and drift gates lock selected current inventories; the parity gate now tracks 12 inventories, including `standards_check_surface` for shipped standards-aware DRC/check-repair markers, `pool_library_surface` for pool/library Operation/CLI/MCP markers, `schematic_connectivity_surface` for connectivity/diagnostic markers, and `zone_fill_surface` for generated-evidence ownership of `.datum/zone_fills`. `scripts/run_migration_proof_gates.sh` runs the named PG-* proof gates from 000D against focused engine/CLI regressions and is invoked from `scripts/run_drift_gates.sh` (the former PG-HARNESS-WIRING self-check was retired 2026-07-02 — CI invokes the runner directly). `scripts/check_schematic_private_writers.py` is now wired into `scripts/run_drift_gates.sh` and fails if migrated schematic or production authoring modules reintroduce direct JSON writers instead of typed journaled `OperationBatch` commits, if generated-evidence manifest paths reintroduce CLI-local `.datum/artifacts` / `.datum/artifact_runs` / `.datum/output_job_runs` / `.datum/zone_fills` writers instead of substrate persistence helpers or journaled generated-evidence staging, if artifact/run CLI evidence users stop calling the expected `persist_artifact_metadata`, `persist_artifact_run`, or `persist_output_job_run` helpers, if the engine-owned generated-evidence helper grows additional raw `std::fs::write` call sites beyond its single temp-file atomic write, if `gui-app` re-imports board-text private writer helpers instead of terminal-prefilled journaled CLI commands, if retired GUI board-text private writer files reappear, or if forward-annotation review state escapes its explicit `.datum/forward_annotation_review/review.json` sidecar helper. The same guard now classifies non-journaled `project new` bootstrap writes, route-strategy fixture/artifact writes, ZoneFill generated-evidence staging through `zone_fill_journal_ops`, the single engine generated-evidence temp-file writer, and generated Gerber/drill/BOM/PnP export file writes as exact-count exceptions, so new source-writing `write_canonical_json` or `std::fs::write` call sites cannot hide among bootstrap/generated output paths without being deliberately classified. | Governance defines which specs are source of truth, how target/current claims are separated, and which gates prevent stale milestone evidence from driving active scope. |
+| Spec parity / governance | [~] | `specs/SPEC_PARITY.md` and drift gates lock selected current inventories; the parity gate now tracks 13 inventories, including `standards_check_surface` for shipped standards-aware DRC/check-repair markers, `pool_library_surface` for pool/library Operation/CLI/MCP markers, `schematic_connectivity_surface` for connectivity/diagnostic markers, `zone_fill_surface` for generated-evidence ownership of `.datum/zone_fills`, and `gui_supervision_surface` for the read-only GUI supervision snapshot/rendering markers. `scripts/run_migration_proof_gates.sh` runs the named PG-* proof gates from 000D against focused engine/CLI regressions and is invoked from `scripts/run_drift_gates.sh` (the former PG-HARNESS-WIRING self-check was retired 2026-07-02 — CI invokes the runner directly). `scripts/check_schematic_private_writers.py` is now wired into `scripts/run_drift_gates.sh` and fails if migrated schematic or production authoring modules reintroduce direct JSON writers instead of typed journaled `OperationBatch` commits, if generated-evidence manifest paths reintroduce CLI-local `.datum/artifacts` / `.datum/artifact_runs` / `.datum/output_job_runs` / `.datum/zone_fills` writers instead of substrate persistence helpers or journaled generated-evidence staging, if artifact/run CLI evidence users stop calling the expected `persist_artifact_metadata`, `persist_artifact_run`, or `persist_output_job_run` helpers, if the engine-owned generated-evidence helper grows additional raw `std::fs::write` call sites beyond its single temp-file atomic write, if `gui-app` re-imports board-text private writer helpers instead of terminal-prefilled journaled CLI commands, if retired GUI board-text private writer files reappear, or if forward-annotation review state escapes its explicit `.datum/forward_annotation_review/review.json` sidecar helper. The same guard now classifies non-journaled `project new` bootstrap writes, route-strategy fixture/artifact writes, ZoneFill generated-evidence staging through `zone_fill_journal_ops`, the single engine generated-evidence temp-file writer, and generated Gerber/drill/BOM/PnP export file writes as exact-count exceptions, so new source-writing `write_canonical_json` or `std::fs::write` call sites cannot hide among bootstrap/generated output paths without being deliberately classified. | Governance defines which specs are source of truth, how target/current claims are separated, and which gates prevent stale milestone evidence from driving active scope. |
 
 MCP bridge note: flat compatibility methods and canonical aliases now invoke canonical CLI argv for the first resolver query family, proposals, journals, check waivers/deviations, artifact read/export/validation surfaces, OutputJob execution/lifecycle evidence, and producer-specific OutputJob/ManufacturingPlan/PanelProjection proposal builders. Remaining `project ...` bridge calls are direct production authoring compatibility commands rather than proposal authoring paths.
 
@@ -1200,6 +1210,18 @@ protocol summary now also carries an `attention` list with shard relative path,
 kind, authority, taxon, and dirty state for each non-clean shard; the GUI
 renders the first attention rows in the project panel and terminal context JSON
 exposes the same drilldown to agents.
+
+GUI supervision/status note: native board scene loading now resolves the project
+through `ProjectResolver` and asks the `DesignModel` for the materialized board
+root shard, so the viewport reflects accepted journal state rather than only
+the promoted `board/board.json` file. The protocol surface now includes
+`datum_gui_supervision_snapshot_v1` on `ReviewWorkspaceState`, carrying model
+revision, journal cursor/tip, source-shard summary, scene object counts, check
+summary, and production/proposal/artifact counts. The Outputs dock renders that
+snapshot as `ENGINE SUPERVISION`. This is a read-only supervision/status
+surface; GUI edit affordances remain terminal-prefilled command handoffs until
+a future direct editor path constructs and commits substrate operations with
+its own gates.
 
 Generated-evidence source-shard note: public `resolve-debug` coverage now proves
 journal-recovered ZoneFill, OutputJobRun, ArtifactRun, and CheckRun evidence
