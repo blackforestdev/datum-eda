@@ -141,6 +141,14 @@ in one submenu to preserve the short-menu discipline).
   actions grey **in place**, never reflow; never auto-sort by recency.
   **User-editable** (hoist your own verbs onto cardinals).
 
+**Adoption is progressive — the gesture is never required.** The floor stays as
+easy as any CAD package: a beginner *holds* to get a normal labeled menu, or uses
+the menu bar / command palette / keyboard — nothing forces the flick. The flick
+is an opt-in speed *reward* that pays off with repetition, so the ceiling is
+faster than any competitor. This deliberately optimizes for intermediate-to-
+advanced users (Datum's target segment) without a beginner penalty — the concern
+"it might take getting used to" is real but opt-in, never a wall.
+
 **Linear ordering** (the overflow and any non-radial fallback), top→bottom with
 magenta group separators: object-special (frequent-first) → transform block →
 grouped submenus (`Select ▸` / `Net ▸` / `Convert ▸`) → clipboard/lifecycle →
