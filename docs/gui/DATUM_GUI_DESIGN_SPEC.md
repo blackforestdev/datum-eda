@@ -109,15 +109,28 @@ both panes.
 
 ## Open design decisions (resolve before broader build-out)
 
-1. **Bottom dock vs. inline overlay for AI/Terminal.** The prototype draws the
-   docked Terminal/Assistant model (FOUNDATION/M7); the Design Book argues AI is
-   an *inline ghost overlay*, "never a chat app bolted into the shell." Pick one.
+1. **AI surface — RESOLVED (2026-07-06): both, by role.** Proposed *changes*
+   render as an **inline ghost overlay on the canvas** (dimmed geometry in place,
+   `Tab` accept / `Esc` dismiss) — never a chat panel stealing the canvas. The
+   **conversational agent lives in the terminal/assistant lane** — the "code-agent
+   for EDA" model: converse, or `Esc` and redirect, exactly like driving Claude
+   Code — reconciling decisions 004/006 (assistant surface) + 005 (terminal). The
+   two are complementary, not alternatives: overlay = proposal presentation on the
+   canvas; terminal lane = the agent conversation. Both ship. (Note the AI need not
+   be one large model — e.g. a small GPU-resident routing model handles routing;
+   the surfaces above are model-agnostic.)
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
-3. **Context menus (right-click) — currently UNSPECIFIED and unresearched.** A
-   core EDA interaction surface (canvas context menu, per-object-type actions,
-   panel-row menus) is absent from the entire corpus. Must be researched and
-   designed before the editor is buildable.
+3. **Context menus (right-click) — a CORE SPEED SURFACE, not an afterthought.**
+   Direction (2026-07-06): the local right-click menu is a *primary* interaction
+   surface for **speed** — keep the user's eyes on the target and the tools on the
+   work. Lineage: Fluxbox root menu, Autodesk **marking menus** (Maya), Sketchbook
+   Pro — local, gesture-selectable, muscle-memory-fast. Requirements: **context-
+   dependent** by what is hovered/selected; **nested sub-menus**; **accent
+   (magenta) delineation between grouped subsections**. Still UNSPECIFIED in the
+   corpus — needs a focused research pass that includes marking/radial menus
+   (gesture-to-select), then design into the interaction spec. This is the
+   interaction that most makes the editor feel fast.
 4. **Datum visual identity**: reference frames, origins, fiducials, measurement
    styling — no Datum-specific identity yet (generic dark theme). Owner call.
 
