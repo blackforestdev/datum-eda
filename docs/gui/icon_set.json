@@ -1,0 +1,456 @@
+{
+  "schema": "datum_icon_set_v1",
+  "notes": "Declared icon set for the GUI. Every icon id referenced by docs/gui/menu_model.json (and panels) must be a key here; gated by scripts/check_menu_model.py. source 'eda' = custom Datum glyph in crates/engine/assets/icons/eda/ (status exists|to_author = authoring worklist); source 'tabler' = mapped to the MIT Tabler base set per the Design Book (decision 015 iconography). Adding an icon = one entry here.",
+  "icons": {
+    "about": {
+      "source": "tabler",
+      "glyph": "about",
+      "status": "mapped"
+    },
+    "align": {
+      "source": "tabler",
+      "glyph": "align",
+      "status": "mapped"
+    },
+    "artifacts": {
+      "source": "tabler",
+      "glyph": "artifacts",
+      "status": "mapped"
+    },
+    "break": {
+      "source": "eda",
+      "asset": "break.svg",
+      "status": "to_author"
+    },
+    "bus": {
+      "source": "eda",
+      "asset": "bus.svg",
+      "status": "to_author"
+    },
+    "bus-entry": {
+      "source": "eda",
+      "asset": "bus-entry.svg",
+      "status": "to_author"
+    },
+    "check": {
+      "source": "tabler",
+      "glyph": "check",
+      "status": "mapped"
+    },
+    "close": {
+      "source": "tabler",
+      "glyph": "close",
+      "status": "mapped"
+    },
+    "commands": {
+      "source": "tabler",
+      "glyph": "commands",
+      "status": "mapped"
+    },
+    "compare": {
+      "source": "tabler",
+      "glyph": "compare",
+      "status": "mapped"
+    },
+    "component": {
+      "source": "eda",
+      "asset": "component.svg",
+      "status": "to_author"
+    },
+    "convert": {
+      "source": "tabler",
+      "glyph": "convert",
+      "status": "mapped"
+    },
+    "copy": {
+      "source": "tabler",
+      "glyph": "copy",
+      "status": "mapped"
+    },
+    "crossprobe": {
+      "source": "eda",
+      "asset": "crossprobe.svg",
+      "status": "to_author"
+    },
+    "cut": {
+      "source": "tabler",
+      "glyph": "cut",
+      "status": "mapped"
+    },
+    "debug": {
+      "source": "tabler",
+      "glyph": "debug",
+      "status": "mapped"
+    },
+    "delete": {
+      "source": "tabler",
+      "glyph": "delete",
+      "status": "mapped"
+    },
+    "deviation": {
+      "source": "tabler",
+      "glyph": "deviation",
+      "status": "mapped"
+    },
+    "diagnostics": {
+      "source": "tabler",
+      "glyph": "diagnostics",
+      "status": "mapped"
+    },
+    "dimension": {
+      "source": "eda",
+      "asset": "dimension.svg",
+      "status": "to_author"
+    },
+    "documents": {
+      "source": "tabler",
+      "glyph": "documents",
+      "status": "mapped"
+    },
+    "drag": {
+      "source": "tabler",
+      "glyph": "drag",
+      "status": "mapped"
+    },
+    "draw-line": {
+      "source": "tabler",
+      "glyph": "draw-line",
+      "status": "mapped"
+    },
+    "drc": {
+      "source": "eda",
+      "asset": "drc-marker.svg",
+      "status": "exists"
+    },
+    "erc": {
+      "source": "eda",
+      "asset": "erc.svg",
+      "status": "to_author"
+    },
+    "explain": {
+      "source": "tabler",
+      "glyph": "explain",
+      "status": "mapped"
+    },
+    "export": {
+      "source": "tabler",
+      "glyph": "export",
+      "status": "mapped"
+    },
+    "field": {
+      "source": "tabler",
+      "glyph": "field",
+      "status": "mapped"
+    },
+    "file-new": {
+      "source": "tabler",
+      "glyph": "file-new",
+      "status": "mapped"
+    },
+    "fill": {
+      "source": "eda",
+      "asset": "fill.svg",
+      "status": "to_author"
+    },
+    "findings": {
+      "source": "tabler",
+      "glyph": "findings",
+      "status": "mapped"
+    },
+    "fit": {
+      "source": "tabler",
+      "glyph": "fit",
+      "status": "mapped"
+    },
+    "flip": {
+      "source": "tabler",
+      "glyph": "flip",
+      "status": "mapped"
+    },
+    "folder-open": {
+      "source": "tabler",
+      "glyph": "folder-open",
+      "status": "mapped"
+    },
+    "generate": {
+      "source": "tabler",
+      "glyph": "generate",
+      "status": "mapped"
+    },
+    "gerber": {
+      "source": "tabler",
+      "glyph": "gerber",
+      "status": "mapped"
+    },
+    "import": {
+      "source": "tabler",
+      "glyph": "import",
+      "status": "mapped"
+    },
+    "junction": {
+      "source": "eda",
+      "asset": "junction.svg",
+      "status": "to_author"
+    },
+    "keepout": {
+      "source": "eda",
+      "asset": "keepout.svg",
+      "status": "exists"
+    },
+    "label": {
+      "source": "eda",
+      "asset": "label.svg",
+      "status": "to_author"
+    },
+    "layers": {
+      "source": "eda",
+      "asset": "layer-stack.svg",
+      "status": "exists"
+    },
+    "layout": {
+      "source": "tabler",
+      "glyph": "layout",
+      "status": "mapped"
+    },
+    "lock": {
+      "source": "tabler",
+      "glyph": "lock",
+      "status": "mapped"
+    },
+    "mirror": {
+      "source": "tabler",
+      "glyph": "mirror",
+      "status": "mapped"
+    },
+    "move": {
+      "source": "tabler",
+      "glyph": "move",
+      "status": "mapped"
+    },
+    "net": {
+      "source": "eda",
+      "asset": "net-ratsnest.svg",
+      "status": "exists"
+    },
+    "net-class": {
+      "source": "eda",
+      "asset": "net-class.svg",
+      "status": "to_author"
+    },
+    "noconnect": {
+      "source": "eda",
+      "asset": "noconnect.svg",
+      "status": "to_author"
+    },
+    "outline": {
+      "source": "eda",
+      "asset": "outline.svg",
+      "status": "to_author"
+    },
+    "output-job": {
+      "source": "tabler",
+      "glyph": "output-job",
+      "status": "mapped"
+    },
+    "package": {
+      "source": "eda",
+      "asset": "package.svg",
+      "status": "to_author"
+    },
+    "pad": {
+      "source": "eda",
+      "asset": "pad.svg",
+      "status": "exists"
+    },
+    "panel": {
+      "source": "tabler",
+      "glyph": "panel",
+      "status": "mapped"
+    },
+    "panels": {
+      "source": "tabler",
+      "glyph": "panels",
+      "status": "mapped"
+    },
+    "part": {
+      "source": "eda",
+      "asset": "part.svg",
+      "status": "to_author"
+    },
+    "paste": {
+      "source": "tabler",
+      "glyph": "paste",
+      "status": "mapped"
+    },
+    "plan": {
+      "source": "tabler",
+      "glyph": "plan",
+      "status": "mapped"
+    },
+    "port": {
+      "source": "eda",
+      "asset": "port.svg",
+      "status": "to_author"
+    },
+    "power": {
+      "source": "eda",
+      "asset": "power.svg",
+      "status": "to_author"
+    },
+    "profiles": {
+      "source": "tabler",
+      "glyph": "profiles",
+      "status": "mapped"
+    },
+    "properties": {
+      "source": "tabler",
+      "glyph": "properties",
+      "status": "mapped"
+    },
+    "ratsnest": {
+      "source": "eda",
+      "asset": "net-ratsnest.svg",
+      "status": "exists"
+    },
+    "redo": {
+      "source": "tabler",
+      "glyph": "redo",
+      "status": "mapped"
+    },
+    "rename": {
+      "source": "tabler",
+      "glyph": "rename",
+      "status": "mapped"
+    },
+    "repair": {
+      "source": "tabler",
+      "glyph": "repair",
+      "status": "mapped"
+    },
+    "reset": {
+      "source": "tabler",
+      "glyph": "reset",
+      "status": "mapped"
+    },
+    "rotate": {
+      "source": "tabler",
+      "glyph": "rotate",
+      "status": "mapped"
+    },
+    "route-apply": {
+      "source": "eda",
+      "asset": "route-apply.svg",
+      "status": "to_author"
+    },
+    "rules": {
+      "source": "tabler",
+      "glyph": "rules",
+      "status": "mapped"
+    },
+    "run": {
+      "source": "tabler",
+      "glyph": "run",
+      "status": "mapped"
+    },
+    "save": {
+      "source": "tabler",
+      "glyph": "save",
+      "status": "mapped"
+    },
+    "save-as": {
+      "source": "tabler",
+      "glyph": "save-as",
+      "status": "mapped"
+    },
+    "select": {
+      "source": "tabler",
+      "glyph": "select",
+      "status": "mapped"
+    },
+    "settings": {
+      "source": "tabler",
+      "glyph": "settings",
+      "status": "mapped"
+    },
+    "symbol": {
+      "source": "eda",
+      "asset": "symbol.svg",
+      "status": "to_author"
+    },
+    "terminal": {
+      "source": "tabler",
+      "glyph": "terminal",
+      "status": "mapped"
+    },
+    "text": {
+      "source": "tabler",
+      "glyph": "text",
+      "status": "mapped"
+    },
+    "track": {
+      "source": "eda",
+      "asset": "route-track.svg",
+      "status": "exists"
+    },
+    "undo": {
+      "source": "tabler",
+      "glyph": "undo",
+      "status": "mapped"
+    },
+    "unit": {
+      "source": "tabler",
+      "glyph": "unit",
+      "status": "mapped"
+    },
+    "unlock": {
+      "source": "tabler",
+      "glyph": "unlock",
+      "status": "mapped"
+    },
+    "validate": {
+      "source": "tabler",
+      "glyph": "validate",
+      "status": "mapped"
+    },
+    "value": {
+      "source": "tabler",
+      "glyph": "value",
+      "status": "mapped"
+    },
+    "via": {
+      "source": "eda",
+      "asset": "via.svg",
+      "status": "exists"
+    },
+    "waive": {
+      "source": "tabler",
+      "glyph": "waive",
+      "status": "mapped"
+    },
+    "width": {
+      "source": "eda",
+      "asset": "width.svg",
+      "status": "to_author"
+    },
+    "wire": {
+      "source": "eda",
+      "asset": "wire.svg",
+      "status": "to_author"
+    },
+    "zone": {
+      "source": "eda",
+      "asset": "zone-pour.svg",
+      "status": "exists"
+    },
+    "zoom-in": {
+      "source": "tabler",
+      "glyph": "zoom-in",
+      "status": "mapped"
+    },
+    "zoom-out": {
+      "source": "tabler",
+      "glyph": "zoom-out",
+      "status": "mapped"
+    }
+  }
+}

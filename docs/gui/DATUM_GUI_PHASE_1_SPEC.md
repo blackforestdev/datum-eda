@@ -75,9 +75,12 @@ test. Everything in Phase 1 serves that sentence.
 - **D5 — Layers / Filters panel.** From the board stackup: per-layer color swatch +
   visibility toggle, active layer, dim-unrelated. Toggles are consumer-side view
   state.
-- **D6 — Icon set.** Every icon id referenced by `menu_model.json` and the panels
-  resolves to a real asset (`crates/engine/assets/icons/eda/` + chrome glyphs);
-  gated by `check_gui_icon_assets`. Add missing glyphs in the Design Book style.
+- **D6 — Icon set.** Icons are declared in `docs/gui/icon_set.json` (Tabler MIT
+  base + custom EDA glyphs); `check_menu_model.py` already enforces that every
+  menu icon is declared and every `exists` EDA glyph is on disk. Author the **21
+  `to_author` EDA glyphs** in the Design Book style (`crates/engine/assets/icons/eda/`),
+  flipping each `to_author` → `exists`, and map the Tabler-sourced ids to real
+  Tabler glyphs. Do not invent an undeclared icon — add the entry first.
 - **D7 — Screenshot-golden acceptance.** Wire the visual-regression harness
   (`DATUM_GUI_VISUAL_REGRESSION_HARNESS.md`) to capture `datum-test` board goldens
   across the layout scale matrix {1.0, 1.25, 1.5, 2.0}, committed and human-reviewed.

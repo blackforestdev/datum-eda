@@ -19,6 +19,8 @@ import json, re, sys, pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MODEL = ROOT / "docs" / "gui" / "menu_model.json"
 CATALOG = ROOT / "mcp-server" / "datum_tool_catalog.json"
+ICON_SET = ROOT / "docs" / "gui" / "icon_set.json"
+ICON_DIR = ROOT / "crates" / "engine" / "assets" / "icons" / "eda"
 VERB_RE = re.compile(r"^datum\.[a-z_]+\.[a-z0-9_]+$")
 CARD = {"N", "E", "S", "W"}
 DIAG = {"NE", "SE", "SW", "NW"}
@@ -35,6 +37,17 @@ def collect_verbs(obj, out):
     elif isinstance(obj, list):
         for v in obj:
             collect_verbs(v, out)
+
+
+def collect_icons(obj, out):
+    if isinstance(obj, dict):
+        if isinstance(obj.get("icon"), str):
+            out.add(obj["icon"])
+        for v in obj.values():
+            collect_icons(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            collect_icons(v, out)
 
 
 def main():
@@ -93,6 +106,21 @@ def main():
         elif "empty" in e:
             counts["empty"] += 1
 
+    # icon_set: every referenced icon must be declared; every 'exists' eda glyph on disk
+    icon_set = json.loads(ICON_SET.read_text()).get("icons", {})
+    used_icons = set()
+    collect_icons(model, used_icons)
+    for ic in sorted(used_icons):
+        if ic not in icon_set:
+            fail.append(f"icon '{ic}' referenced in menu_model but not declared in icon_set.json")
+    for iid, meta in icon_set.items():
+        if meta.get("source") == "eda" and meta.get("status") == "exists" \
+           and not (ICON_DIR / meta.get("asset", "")).is_file():
+            fail.append(f"icon '{iid}': eda asset {meta.get('asset')} missing in {ICON_DIR}")
+    ic_exists = sum(1 for v in icon_set.values() if v.get("source") == "eda" and v.get("status") == "exists")
+    ic_author = sum(1 for v in icon_set.values() if v.get("source") == "eda" and v.get("status") == "to_author")
+    ic_tabler = sum(1 for v in icon_set.values() if v.get("source") == "tabler")
+
     if fail:
         print("menu_model gate FAILED:")
         for f in fail:
@@ -102,7 +130,9 @@ def main():
     print(f"menu_model gate passed: {len(entries)} entries "
           f"({counts['verb']} verb-backed, {counts['gui_local']} gui-local, "
           f"{counts['not_built']} not-built/worklist, {counts['submenu']} submenu-ref, "
-          f"{counts['empty']} empty); all verb references exist in the registry catalog.")
+          f"{counts['empty']} empty); all verb references valid; "
+          f"icons: {ic_exists} eda-existing / {ic_author} eda-to-author / {ic_tabler} tabler-mapped, "
+          f"all declared in icon_set.json.")
     return 0
 
 

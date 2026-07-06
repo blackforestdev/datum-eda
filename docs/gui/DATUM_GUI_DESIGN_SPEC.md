@@ -277,7 +277,10 @@ product grows — and it is a controlling constraint, not a nice-to-have.
   reassigning a menu item is **editing one row**, and `scripts/check_menu_model.py`
   (in `run_drift_gates.sh`) guarantees every `verb` reference exists in the registry
   catalog and enforces the marking-menu invariants (cardinal N/E/S/W, destructive
-  never on a diagonal). No vaporware menu items; the GUI reads the manifest.
+  never on a diagonal). No vaporware menu items; the GUI reads the manifest. Icons
+  are the same discipline: every menu icon is declared in `docs/gui/icon_set.json`
+  (Tabler MIT base + custom EDA glyphs), validated by the same gate — the
+  `to_author` entries are the glyph worklist, exactly parallel to `not_built` verbs.
 - **Design Book tokens (decision 015)** — visual change = token edit; nothing
   hardcodes a color or size. Restyle by changing a token; everything follows.
 - **Typed `Operation` + one `commit()`** — add an operation variant + its builder;
