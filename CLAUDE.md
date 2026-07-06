@@ -42,9 +42,14 @@ they support the product; they do not define its identity.
 > inferring product intent from code or a milestone.
 
 ## Specification Governance (controlling)
-Core principle: **no orphaned specs.** Every active specification, contract,
-or decision record is tracked and classified; a doc that exists in the repo
-but is not tracked is a governance defect, not a neutral document.
+Core principle: **no orphaned specs — in coverage OR in sequence.** Every active
+specification, contract, or decision record must be (a) tracked and classified,
+and (b) placed in the ordered roadmap so its position, dependencies, and next
+action are derivable. A doc that exists but is not tracked is a governance
+defect; a doc that is classified but not woven into the roadmap frontier is a
+**roadmap orphan** — equally a defect, and the specific failure this project has
+repeatedly paid course-correction time for. Writing a spec is not finished until
+the next agent can find where it sits and what comes next.
 
 When you CREATE or REFINE any spec / contract / decision record, in the SAME
 change you MUST:
@@ -56,6 +61,22 @@ change you MUST:
    `specs/spec_parity_manifest.json` (enforced by `check_spec_parity.py`).
 4. If it ratifies mechanism, it must be a numbered decision record in
    `docs/decisions/`, not a loose doc or an `OPEN_QUESTION_RESOLUTIONS` entry.
+5. Weave it into the **Active Frontier** at the top of `specs/PROGRESS.md`: give
+   it an ordered position with its dependency (what must land first), what it
+   unblocks, and its state. A spec describing future work that does not appear in
+   the Active Frontier is not done being written.
+
+**Roadmap wayfinding (the bullseye rule).** The single canonical answer to
+"what is the next logical development step / specification?" is the **Active
+Frontier** at the top of `specs/PROGRESS.md` — an ordered, dependency-aware list
+whose every entry links to its governing spec/decision. A freshly spawned agent
+must be able to read that section *alone* and return the correct next step.
+Before proposing or starting work, read the Active Frontier; before finishing any
+spec or course-correction, update it. Roadmap intent lives in ONE place — the
+Frontier links down to detail; other docs (including this file's "Current Status"
+and PROGRESS's lower sections) must not restate the next-step ordering as a rival
+copy that drifts. If your work will not place cleanly into the Frontier, the
+sequencing is wrong — fix that before writing more prose.
 
 Behavioral invariants are enforced by the PG-* proof gates
 (`run_migration_proof_gates.sh`) and the write-fence gates
@@ -77,9 +98,12 @@ product-mechanics model above. Status sources of truth: `specs/PROGRESS.md`,
 `specs/SPEC_PARITY.md` (machine-checked inventory shapes), and the
 product-mechanics docs.
 
-- **Active focus:** GUI supervision/status reflection over native authoring —
-  Datum making substrate truth visible to the human operator without claiming
-  direct GUI editor readiness. Its foundation, the product-mechanics
+- **Active focus:** GUI product-model recovery toward a testable program
+  (decision 019) — the recovered application shell, board-render fidelity, and
+  the GUI→engine write path that lets menu/editor actions author typed operations
+  directly (not terminal CLI strings). **The authoritative, ordered next steps
+  are the Active Frontier at the top of `specs/PROGRESS.md`; read that, don't
+  re-derive the roadmap from this prose.** Its foundation, the product-mechanics
   **substrate** (typed `Operation` enum + single `commit()` + journal +
   `ProjectResolver` + stable `ObjectId`/`ComponentInstance` +
   `model_revision` + Import Map), is now the **universal native write

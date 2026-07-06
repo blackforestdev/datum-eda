@@ -1,5 +1,25 @@
 # Program Specification
 
+> **RECONCILIATION (2026-07-06).** This file is the *legacy milestone master*
+> (M0–M4, R1) from **before** the product-mechanics course correction. It is
+> **not** the current roadmap authority and is **not** in the CLAUDE.md authority
+> ordering (CLAUDE.md → product-mechanics + `docs/decisions/` → `docs/contracts/`
+> → `specs/PROGRESS.md`); for scope and sequencing it is subordinate to all four.
+>
+> - **HISTORICAL (original plan, not current scope):** the "v1 Definition"
+>   (including *"v1 does not: create designs, edit designs, route, export
+>   manufacturing files, or provide a GUI"*) and the "Milestone Exit Criteria"
+>   (M0–M4). Native authoring, export, and the GUI are now **active** work — see
+>   `docs/decisions/` and the Active Frontier at the top of `specs/PROGRESS.md`.
+>   Do not cite these sections as current product limits.
+> - **STILL LIVE AND GOVERNED:** the *subordinate-spec ownership map* below (which
+>   formal spec owns which contract) and the *Standards And Compliance Governance*
+>   terms + the *Standards Integration Gate*. These remain in force.
+>
+> For "what is current" and "what is next," read the Active Frontier in
+> `specs/PROGRESS.md` and the decision records — never infer current scope from
+> the milestone/v1 sections here.
+
 ## Ownership and Precedence
 
 This document is the master entry point for the formal specification set.
@@ -63,6 +83,10 @@ Interpretation rule:
 
 ## v1 Definition
 
+> **HISTORICAL** (see reconciliation banner at top): records the original v1
+> plan, not current scope. Native authoring/export/GUI are active per the Active
+> Frontier in `specs/PROGRESS.md`.
+
 v1 = PLAN.md milestone M2.
 v1 is the first public release.
 
@@ -112,6 +136,11 @@ Minimum program-level requirement:
 ---
 
 ## Milestone Exit Criteria
+
+> **HISTORICAL** (see reconciliation banner at top): the M0–M4 milestone
+> contracts record the original delivery plan and remain truthful evidence of
+> what shipped. They are **not** the current roadmap; current sequencing is the
+> Active Frontier in `specs/PROGRESS.md` + `docs/decisions/`.
 
 ### M0: Canonical IR + Foundation
 

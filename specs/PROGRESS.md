@@ -5,37 +5,96 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-07-06 — Tier E GUI supervision/status reflection opened on
-the post-substrate stack: native GUI board scenes now load through
-`ProjectResolver` materialized board state, `ReviewWorkspaceState` carries the
-read-only `datum_gui_supervision_snapshot_v1` contract, and the Outputs data
-lane renders engine revision/journal/source/check/production supervision
-without adding GUI editor authority. Earlier write-surface convergence remains
-COMPLETE (wave commits `dff7c2c..c567698`): the engine native-write facade
-(`crates/engine/src/api/native_write/`, 11 families) authors every native
-operation batch, genesis is engine-owned, the daemon reaches the substrate via
-`native.write`/`native.describe`, and the CLI flat namespace was dissolved into
-`args/` + `commands/<family>/` + `context/` + `main_tests/` with the exec layer
-deleted. (2026-07-02: governance apparatus slimmed to behavioral gates plus
-spec-governance coverage/classification.)
+---
+
+## Active Frontier — Next Development Steps (canonical)
+
+> **This is THE answer to "what is the next logical development step /
+> specification?"** (CLAUDE.md → Specification Governance → Roadmap Wayfinding).
+> Ordered, dependency-aware; every item links to its governing spec/decision.
+> Detail lives in the sections below — this list is the single entry point.
+> Update it in the SAME change as any spec creation or course-correction.
+
+1. **Define the GUI product specification to a buildable design level.**
+   *In progress (2026-07-06):* the "how" is now being captured as a governed
+   design spec + a live prototype, co-developed — `docs/gui/DATUM_GUI_DESIGN_SPEC.md`
+   plus the controlling visual prototype `docs/gui/prototypes/board-editor.html`
+   (board editor, pro-audio/Bitwig-Ableton idiom, built from the Design Book
+   tokens). Remaining to define: the other surfaces (schematic editor, library
+   browser) and the open design decisions in the design spec (dock-vs-overlay,
+   fonts, **context menus — unspecified/unresearched**, Datum visual identity).
+   Today `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` is a *policy contract* (shell component
+   checklist, menu *list*, editor-authority *rules*, and a menu→mechanism *map*
+   in `docs/gui/DATUM_GUI_MENU_BINDINGS.md`) — the design spec + prototype are what
+   turn it into a **buildable product design.** Still missing across surfaces:
+   concrete information architecture / layout
+   (wireframes of every region and its default/collapsed states); the complete
+   menu specification (every item, submenu, shortcut, enabled/disabled
+   condition, and effect — the `menu_model`); the interaction model per surface
+   (selection, tool activation, place/move/route gestures, hover/drag/context
+   menus, keyboard + command palette); per-document/editor screen design (board,
+   schematic, library browser, inspector, checks, outputs); and end-to-end
+   workflows. Governing: decision 019 + `DATUM_GUI_PRODUCT_SPEC.md` (to be
+   deepened) + decisions 014/015. State: **the actual next specification work;
+   definition scope to be shaped with the owner.** Gates steps 2–4 — you cannot
+   correctly build a shell or wire a menu to an operation until the surfaces are
+   designed.
+2. **GUI Phase 1 build — application shell + board render fidelity** on the
+   `datum-test` fixture, read-only, with screenshot goldens + owner review
+   (needs no write-path). Buildable once step 1 defines the shell layout and the
+   board-render design. Spec: `DATUM_GUI_PRODUCT_SPEC.md` §Phase 1.
+3. **GUI write-path enablement** — the four-item backend plumbing that lets the
+   GUI author journaled operations directly. Plan already written:
+   `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (decisions 019 + 017), sequence
+   P0 → W1 → W2 → W3. Needed once *authoring* surfaces are built (after the
+   read-only Phase 1), NOT before. State: **planned; not the immediate step.**
+4. **Native authoring depth (queued):** schematic and PCB editor surfaces
+   emitting typed operations over the write path. Contracts:
+   `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`,
+   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–3.
+
+**Also in flight (governance, parallel):** `specs/PROGRAM_SPEC.md` reconciled to
+the product-mechanics model (2026-07-06); Tier E `GuiSupervisionSnapshot` strip
+to be rescoped per the leverage audit (keep EDA counts as a status bar, drop
+journal-tip/read-only provenance telemetry).
+
+---
+
+Last updated: 2026-07-06 — GUI product-model recovery planning opened under
+decision 019. `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`
+ratifies the recovered desktop product model, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`
+is the single governed GUI product spec, and
+`docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` classifies the existing GUI code as
+keep/adapt/replace/delete/missing before further implementation. Tier E GUI
+supervision/status reflection remains implementation evidence, but it is no
+longer the active product target. The active GUI target is now Phase 1
+application shell + board render fidelity: the `datum-test` fixture with real
+footprint/pad/track geometry and screenshot-golden review. Earlier
+write-surface convergence remains COMPLETE (wave commits `dff7c2c..c567698`):
+the engine native-write facade (`crates/engine/src/api/native_write/`, 11
+families) authors every native operation batch, genesis is engine-owned, the
+daemon reaches the substrate via `native.write`/`native.describe`, and the CLI
+flat namespace was dissolved into `args/` + `commands/<family>/` + `context/` +
+`main_tests/` with the exec layer deleted. (2026-07-02: governance apparatus
+slimmed to behavioral gates plus spec-governance coverage/classification.)
 
 **Current-vs-target framing**:
 - **Current implementation evidence**: the historical milestone tables below
   remain truthful records of the implementation slices that have landed.
-- **Active target**: GUI supervision/status reflection over the substrate,
-  without claiming GUI editor readiness.
+- **Active target**: GUI product-model recovery planning and Phase 1 app
+  shell + board render fidelity, without claiming editor readiness.
 - **Not the North Star**: legacy M0-M7 milestone completion rows are retained as
   evidence, but they no longer define the next implementation priority.
 
-**Active milestone**: Tier E GUI supervision/status reflection. The GUI is a
-read-only review/status surface for engine truth: resolver-materialized board
-state, model revision, journal cursor, source-shard dirty state, check summary,
-proposal/artifact/output status, and terminal-mediated command handoffs. It is
-not yet a direct GUI editor.
-**Active product driver**: make B-D substrate work visible enough for human
-supervision. Native library/schematic/PCB/manufacturing depth remains the
-product foundation; the GUI now reflects that engine state without becoming a
-new mutation authority.
+**Active milestone**: GUI product-model recovery planning. Decision 019
+supersedes the M7 route-review shell as the GUI planning target and anchors a
+single product spec plus one code-leverage audit. The first implementation
+phase is an application shell and board-render fidelity baseline that a human
+can run, load, inspect, and review against screenshot goldens.
+**Active product driver**: restore Datum as a human-driven desktop EDA
+application while preserving the substrate rule that GUI edits emit typed
+operations/proposals through engine commit/journal paths, not terminal-injected
+CLI macros.
 **Frozen**: M6 (strategy reporting layer landed; pending repeated evidence
 runs from the checked-in baseline gate).
 **Closed for scope**: M0–M5.
@@ -60,13 +119,12 @@ Every specification that steers development is classified in
 `specs/spec_governance_manifest.json` and enforced by
 `scripts/check_spec_governance.py` (wired into `scripts/run_drift_gates.sh`).
 The gate imposes two obligations: (1) **coverage** — no spec, contract, or
-decision record may exist unclassified; (2) **enforcement honesty** — every
-non-historical entry must carry an `enforcement` block whose `enforced_by`
-references (gates / proof-gates / spec-parity inventories / tests) the gate
-**verifies exist**, and/or an explicit `gap` naming what is NOT enforced. A spec
-cannot claim enforcement it lacks, and cannot sit un-enforced without the gap
-being visible. This is the machine-checked backstop for the CLAUDE.md
-"Specification Governance (controlling)" rule.
+decision record may exist unclassified; (2) **classification honesty** — every
+entry must be `governed`, `doctrine`, `pending`, or `historical`, and a
+historical doc may not self-declare active. Behavioral enforcement and explicit
+gaps live in proof gates, parity inventories, tests, and this tracker rather
+than as required per-doc manifest blocks. This is the machine-checked backstop
+for the CLAUDE.md "Specification Governance (controlling)" rule.
 
 Verified enforcement of every previously-untracked spec (the manifest holds the
 full per-reference detail; `progress_anchor` is the path/name below):
@@ -81,10 +139,12 @@ full per-reference detail; `progress_anchor` is the path/name below):
 | `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md` | `check_pcb_layout_tool_matrix` + `check_mcp_public_taxonomy` + `check_daemon_write_parity` + `PG-ZONEFILL-SUBSTRATE` | richer general polygon pour solver remains bounded; interactive GUI editor remains pending |
 | `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md` | `check_schematic_private_writers` + `PG-OUTPUT-JOB-RUN-REPLAY` | three-surface lean thesis + T0 unification + panelization ungated |
 | `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` | `check_mcp_public_taxonomy` + `check_daemon_write_parity` + `mcp_runtime_methods` parity | DatumToolSession + generic commit() coverage + unified Proposal not-yet |
-| `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md` | scale/layout unit tests + checked-in goldens | **no drift gate** for layout invariants / visual-regression matrix |
+| `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md` | `PG-UI-LAYOUT-INVARIANTS` + scale/layout unit tests + checked-in goldens | PNG golden image matrix in CI and broader populated-state coverage remain open |
 | `specs/ERC_SPEC.md` | engine + CLI ERC tests + `check_erc_connectivity_parity` + `erc_pin_taxonomy_surface` parity | remaining target ERC result-shape and passive-only rule gaps are documented; finding revision keys are not complete across all library object revisions |
 | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | engine + CLI connectivity tests + `check_erc_connectivity_parity` + `schematic_connectivity_surface` parity | target graph shape and future diagnostics beyond the shipped read surfaces remain partial |
 | `specs/IMPORT_SPEC.md` | `check_import_query_determinism` (CI) + `PG-IDENTITY-SUBSTRATE` | feature matrices / round-trip ungated (import frozen) |
+| `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` | spec-governance coverage + decision 019 authority | implementation not started; Phase 1 app shell / board-render fidelity acceptance and screenshot-golden matrix remain future work |
+| `docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` | spec-governance coverage + decision 019 authority | audit classifications steer follow-on implementation, but no code migration is complete until each keep/adapt/replace/delete item is tied to commits/tests |
 
 Decision records `000..016` are `doctrine` — most are **enforced** by named
 proof-gates/substrate gates (see the manifest's per-record `enforced_by`); the
@@ -110,7 +170,9 @@ no gate reconciles them with code):
    complete revision keys across library object revisions, passive-only net as
    its own finding if retained, and future connectivity diagnostics.
 5. **Manual-editor GUI workflow (002)** and **workspace UX (007)**: substrate
-   gated, UX not.
+   gated, UX not. Decision 019 opens the GUI product-model recovery plan; Phase
+   1 shell/render-fidelity implementation and visual-regression gates remain
+   open.
 6. **`OPEN_QUESTION_RESOLUTIONS`**: unenforced ratifications log; consolidate
    into numbered decision records.
 
@@ -143,6 +205,9 @@ legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
 | Tier B library foundation | [x] | `LibraryBinding` is now a Rust type carried by authored `ComponentInstance` shards, with resolver/commit validation and backward-compatible `part_ref` projection. IPC-7351B generation now has two engine-owned vertical slices: two-terminal chips and SOIC, both exposed through journaled CLI writes, proposal creation, MCP aliases, generated registry/catalog entries, and LibraryGraph basis/process-policy validation. A Datum-authored native baseline fixture under `crates/test-harness/testdata/library/native_authored_baseline_v1` proves governed native pool data for Unit, Symbol, Entity, Package, Footprint, Padstack, Part, and first-class PinPadMap without ratifying a bundled-library packaging decision. Public tool count was 337/337 after the SOIC library/proposal tools were added; Tier D raises it to 338 with `datum.pcb.align_components`. |
 | Tier D PCB/manufacturing depth | [~] | The PCB 13-tool logical matrix is now machine-gated by `scripts/check_pcb_layout_tool_matrix.py`: it maps the 46 concrete `datum.pcb.*` verbs plus `datum.check.fill_zones`/`datum.check.run` back to the contract buckets, requires `datum.pcb.align_components` as one mode-parameterized batch tool, rejects per-mode align/distribute tools, and keeps `fill_zones` as derived generated evidence. Engine `build_align_board_packages` emits multiple `SetBoardPackagePosition` operations in one guarded `OperationBatch`; CLI/MCP parity tests prove locked-component skip reporting and one undoable batch. Native zone fill remains the bounded generated-evidence solver already shipped (`SetZoneFill`/`DeleteZoneFill`, Unfilled/Stale/Unsupported honesty); the full polygon-boolean/thermal/antipad pour solver remains future product depth. |
 | Tier E GUI supervision/status surface | [~] | Native GUI board scenes now load through `ProjectResolver::resolve()` plus `DesignModel::materialized_source_shard_value(BoardRoot)` instead of raw promoted `board/board.json`, so journal-materialized board state is visible even when the promoted shard is stale. `ReviewWorkspaceState` now carries `datum_gui_supervision_snapshot_v1`, summarizing project identity, model revision, journal cursor/tip, source-shard health, scene object counts, check status, and production/proposal/artifact counts. The Outputs data lane renders a read-only `ENGINE SUPERVISION` block from that snapshot. This is supervision/status reflection only: GUI authoring remains terminal-mediated or future work, and the GUI does not construct or commit `OperationBatch` directly. |
+| GUI product-model recovery planning | [~] | Decision 019 ratifies the recovered GUI product model and makes `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` plus `docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` the governed planning surface. The current implementation is still the M7-derived review shell; the next implementation phase is Phase 1 application shell + board-render fidelity with the `datum-test` fixture, real footprint/pad/track geometry, screenshot goldens, and owner review. GUI editor actions must emit typed engine operations/proposals directly through the substrate; terminal command injection is explicitly disallowed as an editor implementation path. |
+| GUI menu→mechanism bindings | [x] | `docs/gui/DATUM_GUI_MENU_BINDINGS.md` (governed) maps every product-spec menu command to its real backing verb/native-write builder/CLI, tagged live / engine-ready-GUI-blocked / not-built, from a four-source capability inventory (verb registry, native-write facade, CLI, daemon + tool surface, 2026-07-05). Records the File-menu semantics gap (no native save/open/close) and authoring gaps (schematic wire/junction edit, route-apply facade migration, forward-annotation action coverage). |
+| GUI write-path enablement (four-item plumbing) | [ ] | `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (governed) bounds the plumbing that unblocks every engine-ready/GUI-blocked authoring item: W1 register remaining native-write families with `native.write` (7→full set), W2 add a `Dispatch::NativeWrite` variant to the verb registry (decision 017), W3 expose verb/param-schema enumeration on the daemon (`specs/MCP_API_SPEC.md`), W4 give `gui-app` a daemon client + GUI action model (decision 019 Editor Authority). Sequenced P0 thin proof (rename via the 7 already-wired verbs) → W1 → W2 → W3. Planning only; execution unauthorized. |
 
 ### Single-Source Verb Registry (Decision 017)
 

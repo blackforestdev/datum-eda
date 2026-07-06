@@ -15,8 +15,13 @@ __pycache__/
 .claude/
 CLAUDE.md
 
-# Research symlinks (local sandbox only)
-/research
+# Research: Datum's own analysis writeups under /research are now TRACKED.
+# The two external source symlinks below point into /home/bfadmin/sandbox and must
+# NOT be committed: horizon-source is GPL and eagle-analysis is third-party source —
+# committing either into Datum's repo would violate the licensing posture
+# (engine never ships copyleft; subprocess/IPC only). Keep them ignored.
+/research/eagle-analysis
+/research/horizon-source
 
 # Codex
 .codex
