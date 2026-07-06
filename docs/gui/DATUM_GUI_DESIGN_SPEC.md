@@ -112,7 +112,8 @@ both panes.
 Designed 2026-07-06 from a two-part research pass: EDA right-click systems
 (Altium / KiCad / Horizon / Eagle) for *content*, and marking/radial menus
 (Autodesk Maya, Sketchbook Pro, Blender, Fluxbox; Kurtenbach & Buxton HCI work)
-for *form*.
+for *form*. **Full research record with citations:**
+`research/gui-context-menus/CONTEXT_MENU_RESEARCH.md`.
 
 **Paradigm** — **select-first, object-verb** (KiCad / Horizon), NOT Eagle's modal
 verb-first. The menu is **filtered to only the actions valid for the current
@@ -141,6 +142,9 @@ in one submenu to preserve the short-menu discipline).
   re-centered. The parent wheel stays put (faded/blurred), so the compound stroke
   flows outward and the gesture path stays constant per object type → the whole
   drill-down becomes one memorized flick-shape rather than a slow menu descent.
+  Pure compound marks degrade when *deep* (Zhao & Balakrishnan, UIST 2004), so any
+  level past the depth-2 cap would use **simple marks** (a separate stroke per
+  level) instead of one long zig-zag.
 - One wedge is **"More…" → a conventional linear, scannable list** (the
   magenta-group-delineated menu already mocked) for the long tail — parameterized
   actions (net classes, track widths, value pickers). Support **tear-off** so a

@@ -21,18 +21,21 @@
   .hint{position:absolute;right:22px;bottom:16px;font-family:var(--mono);font-size:11px;color:var(--tx3);z-index:5}
   .hint b{color:var(--acc-h)}
   .wd{stroke:rgba(11,12,14,.5);stroke-width:1;fill:rgba(32,37,46,.88);transition:fill .09s;cursor:pointer}
-  .wd.hassub{fill:rgba(37,26,42,.88)}
-  .wd.active{fill:rgba(206,90,146,.9)}
+  .wd.hassub{fill:rgba(37,26,42,.9)}
+  .wd.active{fill:rgba(206,90,146,.92)}
   .wl{text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--tx);font-size:13px;font-family:var(--sans);font-weight:500}
+  .wl.sm{font-size:11px}
   .wl.sub{fill:var(--acc-h)}
   .wl.active{fill:#141619;font-weight:600}
   .wk{text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--tx3);font-size:10px;font-family:var(--mono)}
   .wk.active{fill:rgba(20,22,25,.75)}
+  .cdot{fill:var(--acc);pointer-events:none}
+  .trail{fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.9;pointer-events:none;filter:drop-shadow(0 0 4px rgba(206,90,146,.55))}
   .hubc{fill:rgba(18,20,26,.95);stroke:var(--acc);stroke-width:1.8;cursor:pointer}
   .hubt{fill:var(--silk);font-family:var(--mono);font-size:13px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
   @keyframes fadein{from{opacity:0}to{opacity:1}}
-  .whl{animation:fadein .2s both}
-  .whl.faded{opacity:.5;filter:url(#soft);transition:opacity .22s;pointer-events:none}
+  .whl{animation:fadein .18s both}
+  .whl.faded{opacity:.45;filter:url(#soft);transition:opacity .2s;pointer-events:none}
   @media(prefers-reduced-motion:reduce){.whl{animation:none}}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}
   @media(max-width:720px){.cols{grid-template-columns:1fr}}
@@ -40,17 +43,13 @@
   .card h3{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-weight:600}
   .card p{margin:0 0 11px;color:var(--tx2);font-size:14px}.card p:last-child{margin:0}
   .card b{color:var(--tx)}
-  .modes{display:flex;flex-direction:column;gap:11px}
-  .mode{display:flex;gap:11px;align-items:flex-start}
-  .mode .k{font-family:var(--mono);font-size:11px;color:var(--acc);border:1px solid var(--acc);border-radius:5px;padding:2px 8px;white-space:nowrap;flex:0 0 auto;margin-top:1px}
-  .mode .t{font-size:13.5px;color:var(--tx2)}.mode .t b{color:var(--tx)}
   code{font-family:var(--mono);font-size:.85em;background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:1px 5px;color:var(--tx)}
 </style>
 
 <div class="wrap">
   <p class="eyebrow">Datum GUI · context menu design</p>
-  <h1>The right-click marking menu</h1>
-  <p class="sub">Contiguous, semi-transparent wedges over a softly blurred board; the wheel <b>auto-scales to its item count</b>, and a submenu opens as its <b>own radial</b> while the parent layer fades and blurs behind it.</p>
+  <h1>Compound-mark marking menu</h1>
+  <p class="sub">A submenu spawns as its <b>own radial at the wedge you flick toward</b> — so the path through levels is <b>one continuous stroke</b> (flick to Align, then flick a direction = a bent "compound mark"). Draw it blind once it's muscle memory.</p>
 
   <div class="stage">
     <div class="badge" id="badge">Right-clicked <b>U1</b> · component wheel</div>
@@ -58,122 +57,111 @@
       <defs>
         <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#171A20" stroke-width="1"/></pattern>
         <filter id="blur"><feGaussianBlur stdDeviation="2.3"/></filter>
-        <filter id="soft"><feGaussianBlur stdDeviation="3.4"/></filter>
-        <clipPath id="disc"><circle cx="200" cy="200" r="190"/></clipPath>
+        <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+        <clipPath id="disc"><circle cx="200" cy="200" r="196"/></clipPath>
       </defs>
-
-      <!-- board (sharp) -->
       <g id="board">
-        <rect x="34" y="34" width="332" height="332" rx="8" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".5"/>
-        <rect x="34" y="34" width="332" height="332" rx="8" fill="url(#grid)"/>
+        <rect x="30" y="30" width="340" height="340" rx="8" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".5"/>
+        <rect x="30" y="30" width="340" height="340" rx="8" fill="url(#grid)"/>
         <g stroke-width="4" fill="none" stroke-linecap="round">
-          <path d="M110 150 H172" stroke="var(--cu-b)"/><path d="M228 150 H300 V232" stroke="var(--cu-b)"/>
+          <path d="M110 150 H172" stroke="var(--cu-b)"/><path d="M228 150 H300 V236" stroke="var(--cu-b)"/>
           <path d="M172 128 H120 V80" stroke="var(--cu-f)"/><path d="M228 128 H300" stroke="var(--cu-f)"/>
-          <path d="M110 250 H228" stroke="var(--cu-f)"/>
+          <path d="M110 260 H228" stroke="var(--cu-f)"/>
         </g>
         <g fill="#1a1206" stroke="var(--via)" stroke-width="2"><circle cx="300" cy="150" r="4"/><circle cx="120" cy="128" r="4"/></g>
-        <g fill="#151922" stroke="#3A414D"><rect x="96" y="70" width="34" height="18" rx="2"/><rect x="286" y="70" width="34" height="18" rx="2"/><rect x="58" y="150" width="22" height="86" rx="2"/><rect x="286" y="238" width="44" height="26" rx="2"/></g>
-        <g fill="var(--pad)"><rect x="92" y="74" width="7" height="10"/><rect x="127" y="74" width="7" height="10"/><rect x="68" y="160" width="9" height="8"/><rect x="68" y="184" width="9" height="8"/></g>
+        <g fill="#151922" stroke="#3A414D"><rect x="94" y="66" width="34" height="18" rx="2"/><rect x="288" y="66" width="34" height="18" rx="2"/><rect x="52" y="150" width="22" height="88" rx="2"/><rect x="288" y="244" width="46" height="26" rx="2"/></g>
+        <g fill="var(--pad)"><rect x="90" y="70" width="7" height="10"/><rect x="125" y="70" width="7" height="10"/><rect x="62" y="160" width="9" height="8"/><rect x="62" y="186" width="9" height="8"/></g>
         <rect x="172" y="172" width="56" height="56" rx="3" fill="#161a24" stroke="#3A414D"/>
         <text x="200" y="204" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
       </g>
-      <!-- blurred copy of the board, clipped to the menu disc -->
       <use href="#board" xlink:href="#board" filter="url(#blur)" clip-path="url(#disc)"/>
-      <circle cx="200" cy="200" r="190" fill="rgba(11,12,14,.28)"/>
-      <circle cx="200" cy="200" r="190" fill="none" stroke="rgba(206,90,146,.16)" stroke-width="1"/>
+      <circle cx="200" cy="200" r="196" fill="rgba(11,12,14,.26)"/>
 
-      <!-- wheels get built here -->
       <g id="stack"></g>
-      <circle id="hub" class="hubc" cx="200" cy="200" r="53"/>
+      <polyline id="trail" class="trail" points=""/>
+      <circle id="hub" class="hubc" cx="200" cy="200" r="50"/>
       <text id="hubt" class="hubt" x="200" y="200">U1</text>
     </svg>
-    <div class="hint">hover to mark · click <b>Align ▸</b> to descend · hub <b>◀</b> to return</div>
+    <div class="hint">hover to mark · click <b>Align ▸</b> — the sub-wheel spawns there · hub <b>◀</b> back</div>
   </div>
 
   <div class="cols">
     <div class="card">
-      <h3>Same gesture, two speeds</h3>
-      <div class="modes">
-        <div class="mode"><span class="k">flick →</span><span class="t"><b>Expert.</b> Press and flick toward the verb — the wheel never draws, the command fires. Eyes stay on the board.</span></div>
-        <div class="mode"><span class="k">hold ~280ms</span><span class="t"><b>Novice.</b> Press and wait — labeled wheel appears, drag to a slot. Every hold rehearses the expert flick.</span></div>
-      </div>
+      <h3>The compound mark</h3>
+      <p>Flick toward <b>Align</b>, then toward a direction — the two strokes join into one bent gesture (an inverted "L"). Because the sub-wheel always spawns in the same place relative to the parent, the whole shape becomes <b>one memorized flick</b>, drawn without the menu ever showing. That's the exponential speedup Kurtenbach &amp; Buxton measured.</p>
     </div>
     <div class="card">
-      <h3>Nested wheels &amp; layers</h3>
-      <p>A submenu is a <b>new radial</b>, not a list — <code>Align ▸</code> opens its own wheel of Left / Right / Top / Bottom / Center-H / Center-V. The <b>parent layer fades and blurs</b> behind, glowing faintly through the semi-transparent wedges so you keep context.</p>
-      <p style="color:var(--tx3);font-size:12.5px">Wedges auto-scale to item count (per object type, positions frozen for muscle memory). Past ~8 items or deep nesting, a <code>More…</code> wedge falls back to the linear overflow.</p>
+      <h3>Spawn-in-place, not re-center</h3>
+      <p>The submenu opens as its <b>own radial at the flicked wedge's location</b> (Sketchbook Pro), and the parent fades/blurs in place behind it — so the gesture flows <b>outward</b> and the path stays constant. Sub-wheels stay <code>4-wide cardinal</code> (Left/Right/Top/Bottom) for reliable blind selection.</p>
     </div>
   </div>
 </div>
 
 <script>
   var NS="http://www.w3.org/2000/svg";
-  var cx=200,cy=200,ri=55,ro=178,rl=117;
-  var stackEl=document.getElementById("stack"),hub=document.getElementById("hub"),hubt=document.getElementById("hubt"),badge=document.getElementById("badge");
+  var stackEl=document.getElementById("stack"),hub=document.getElementById("hub"),hubt=document.getElementById("hubt"),badge=document.getElementById("badge"),trail=document.getElementById("trail");
   var stack=[];
-  function pol(r,a){var t=a*Math.PI/180;return[cx+r*Math.cos(t),cy+r*Math.sin(t)];}
+  function pol(r,a,ox,oy){var t=a*Math.PI/180;return[ox+r*Math.cos(t),oy+r*Math.sin(t)];}
   function fmt(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}
-  function sector(center,span){
+  function sector(center,span,ri,ro,ox,oy){
     var h=span/2,a1=center-h,a2=center+h,large=span>180?1:0;
-    var p1=pol(ri,a1),p2=pol(ro,a1),p3=pol(ro,a2),p4=pol(ri,a2);
+    var p1=pol(ri,a1,ox,oy),p2=pol(ro,a1,ox,oy),p3=pol(ro,a2,ox,oy),p4=pol(ri,a2,ox,oy);
     return "M"+fmt(p1)+" L"+fmt(p2)+" A"+ro+" "+ro+" 0 "+large+" 1 "+fmt(p3)+" L"+fmt(p4)+" A"+ri+" "+ri+" 0 "+large+" 0 "+fmt(p1)+" Z";
   }
   function peek(){return stack[stack.length-1];}
   function mark(ang){
     var w=peek();if(!w)return;
-    for(var i=0;i<w.parts.length;i++){
-      var pt=w.parts[i],on=pt.ang===ang;
-      pt.path.classList.toggle("active",on);pt.tl.classList.toggle("active",on);pt.tk.classList.toggle("active",on);
-    }
+    for(var i=0;i<w.parts.length;i++){var pt=w.parts[i],on=pt.ang===ang;pt.path.classList.toggle("active",on);pt.tl.classList.toggle("active",on);pt.tk.classList.toggle("active",on);}
+    var outer=pol(w.ro,ang,w.ox,w.oy),pts="";
+    for(var j=0;j<stack.length;j++){pts+=stack[j].ox.toFixed(1)+","+stack[j].oy.toFixed(1)+" ";}
+    pts+=outer[0].toFixed(1)+","+outer[1].toFixed(1);
+    trail.setAttribute("points",pts);
   }
-  function pushWheel(items,label){
+  function pushWheel(items,label,spawn){
     if(stack.length)peek().g.setAttribute("class","whl faded");
-    var g=document.createElementNS(NS,"g");
-    g.setAttribute("class","whl");
-    var n=items.length,seg=360/n,wheel={g:g,parts:[],label:label};
+    var ox,oy,RI,RO,RL,sm;
+    if(!spawn){ox=200;oy=200;RI=52;RO=146;RL=99;sm=false;}
+    else{var off=spawn.pro*0.92,ar=spawn.ang*Math.PI/180;ox=spawn.px+off*Math.cos(ar);oy=spawn.py+off*Math.sin(ar);RI=24;RO=80;RL=52;sm=true;}
+    var g=document.createElementNS(NS,"g");g.setAttribute("class","whl");
+    var n=items.length,seg=360/n,wheel={g:g,parts:[],label:label,ox:ox,oy:oy,ro:RO};
     for(var i=0;i<n;i++){
       (function(it,idx){
         var ang=-90+idx*seg;
         var p=document.createElementNS(NS,"path");
-        p.setAttribute("d",sector(ang,seg));
+        p.setAttribute("d",sector(ang,seg,RI,RO,ox,oy));
         p.setAttribute("class","wd"+(it.children?" hassub":""));
         p.addEventListener("mouseenter",function(){if(peek()===wheel)mark(ang);});
-        p.addEventListener("click",function(){if(peek()===wheel&&it.children)pushWheel(it.children,it.label);});
+        p.addEventListener("click",function(){if(peek()===wheel&&it.children)pushWheel(it.children,it.label,{px:ox,py:oy,pro:RO,ang:ang});});
         g.appendChild(p);
-        var pos=pol(rl,ang);
-        var t=document.createElementNS(NS,"text");
-        t.setAttribute("x",pos[0].toFixed(1));t.setAttribute("y",(pos[1]-3).toFixed(1));
-        t.setAttribute("class","wl"+(it.children?" sub":""));t.textContent=it.label+(it.children?" ▸":"");
+        var pos=pol(RL,ang,ox,oy);
+        var t=document.createElementNS(NS,"text");t.setAttribute("x",pos[0].toFixed(1));t.setAttribute("y",(pos[1]-3).toFixed(1));t.setAttribute("class","wl"+(sm?" sm":"")+(it.children?" sub":""));t.textContent=it.label+(it.children?" ▸":"");
         g.appendChild(t);
-        var k=document.createElementNS(NS,"text");
-        k.setAttribute("x",pos[0].toFixed(1));k.setAttribute("y",(pos[1]+11).toFixed(1));
-        k.setAttribute("class","wk");k.textContent=it.key||"";
+        var k=document.createElementNS(NS,"text");k.setAttribute("x",pos[0].toFixed(1));k.setAttribute("y",(pos[1]+(sm?9:11)).toFixed(1));k.setAttribute("class","wk");k.textContent=it.key||"";
         g.appendChild(k);
         wheel.parts.push({ang:ang,path:p,tl:t,tk:k});
       })(items[i],i);
     }
-    stackEl.appendChild(g);
-    stack.push(wheel);
+    if(spawn){var dot=document.createElementNS(NS,"circle");dot.setAttribute("cx",ox.toFixed(1));dot.setAttribute("cy",oy.toFixed(1));dot.setAttribute("r","4");dot.setAttribute("class","cdot");g.appendChild(dot);}
+    stackEl.appendChild(g);stack.push(wheel);
     hubt.textContent=stack.length>1?"◀":"U1";
-    badge.innerHTML=stack.length>1?"U1 › <b>"+label+"</b> wheel":"Right-clicked <b>U1</b> · component wheel";
+    badge.innerHTML=stack.length>1?("U1 › <b>"+label+"</b> — spawned in place"):"Right-clicked <b>U1</b> · component wheel";
     mark(wheel.parts[0].ang);
   }
   function popWheel(){
     if(stack.length<=1)return;
-    peek().g.parentNode.removeChild(peek().g);stack.pop();
+    var t=peek();t.g.parentNode.removeChild(t.g);stack.pop();
     peek().g.setAttribute("class","whl");
     hubt.textContent=stack.length>1?"◀":"U1";
-    badge.innerHTML=stack.length>1?"U1 › <b>"+peek().label+"</b> wheel":"Right-clicked <b>U1</b> · component wheel";
+    badge.innerHTML=stack.length>1?("U1 › <b>"+peek().label+"</b> — spawned in place"):"Right-clicked <b>U1</b> · component wheel";
     mark(peek().parts[0].ang);
   }
   hub.addEventListener("click",popWheel);
   document.querySelector(".scene").addEventListener("mouseleave",function(){if(peek())mark(peek().parts[0].ang);});
 
-  var align=[{label:"Left"},{label:"Right"},{label:"Top"},{label:"Bottom"},{label:"Center H"},{label:"Center V"}];
+  var align=[{label:"Top"},{label:"Right"},{label:"Bottom"},{label:"Left"}];
   var component=[
-    {label:"Move",key:"M"},{label:"Rotate",key:"R"},{label:"Delete",key:"⌫"},
-    {label:"Properties",key:"E"},{label:"Flip",key:"F"},{label:"Lock",key:"L"},
-    {label:"Align",children:align}
+    {label:"Move",key:"M"},{label:"Rotate",key:"R"},{label:"Align",children:align},
+    {label:"Delete",key:"⌫"},{label:"Properties",key:"E"},{label:"Flip",key:"F"}
   ];
   pushWheel(component,"Component");
 </script>
