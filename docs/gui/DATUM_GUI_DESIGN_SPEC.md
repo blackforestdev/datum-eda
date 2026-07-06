@@ -190,6 +190,13 @@ objects; singular labels become "…Selected…"; Properties opens a multi-edit.
 cardinal-4 / secondary / overflow / sub-wheels, each leaf mapped to an engine op,
 with destructive / tool-start / cross-probe flags): **`docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`**.
 
+**Tool depth is the moat.** A menu item is a shallow doorway; the capability lives
+in the operation's *parameter space*, reached three ways that emit one op —
+marking-menu presets / tool inspector (full schema) / AI intent (natural language)
+/ CLI. The flagship deep tools (Align as a discipline, parametric array/pattern
+placement, thermal-via arrays, impedance-aware diff-pair routing) and this tri-modal
+contract are specified in **`docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`**.
+
 **Still to prove:** the marking-menu interaction in the prototype (delayed popup,
 expert flick drawing nothing), and per-object cardinal tuning with the owner.
 Reference visual: `docs/gui/prototypes/context-menu-marking-menu.html` (contiguous
