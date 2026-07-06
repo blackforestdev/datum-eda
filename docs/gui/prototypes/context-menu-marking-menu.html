@@ -1,0 +1,158 @@
+<style>
+  :root{
+    --canvas:#0B0C0E;--bg:#121318;--s01:#181B21;--s02:#1F232A;--s03:#272C35;
+    --bd-sub:#2E343E;--bd-str:#3A414D;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;
+    --acc:#CE5A92;--acc-h:#D86EA0;--acc-tint:#2A1D25;--warn:#E0A23A;--err:#E5534B;
+    --silk:#E8E6DC;--pad:#C9974A;--cu-f:#C83A34;--cu-b:#4D7FC4;--via:#C77B3C;--edge:#CBB24A;
+    --sans:ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;padding:40px 22px 70px}
+  .wrap{max-width:940px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin:0 0 8px}
+  h1{font-size:29px;font-weight:650;letter-spacing:-.01em;margin:0 0 8px}
+  .sub{color:var(--tx2);font-size:16px;margin:0 0 4px;max-width:66ch}
+  .sub b{color:var(--tx)}
+  .stage{margin-top:28px;position:relative;height:470px;background:var(--canvas);border:1px solid var(--bd-sub);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .boardbg{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+  .frost{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:376px;height:376px;border-radius:50%;
+    z-index:1;background:rgba(11,12,14,.14);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    box-shadow:0 0 0 1px rgba(206,90,146,.12),0 20px 50px rgba(0,0,0,.5)}
+  .badge{position:absolute;left:22px;top:18px;font-family:var(--mono);font-size:11px;color:var(--tx3);background:var(--s01);border:1px solid var(--bd-sub);border-radius:6px;padding:4px 10px;z-index:5}
+  .badge b{color:var(--acc)}
+  .hint{position:absolute;right:22px;bottom:16px;font-family:var(--mono);font-size:11px;color:var(--tx3);z-index:5}
+  .hint b{color:var(--acc-h)}
+  svg.wheel{width:430px;height:430px;position:relative;z-index:2}
+  .wd{stroke:rgba(11,12,14,.5);stroke-width:1;fill:rgba(32,37,46,.88);transition:fill .09s;cursor:pointer}
+  .wd.hassub{fill:rgba(35,25,40,.88)}
+  .wd.active{fill:rgba(206,90,146,.9)}
+  .wl{text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--tx);font-size:13px;font-family:var(--sans);font-weight:500}
+  .wl.sub{fill:var(--acc-h)}
+  .wl.active{fill:#141619;font-weight:600}
+  .wk{text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--tx3);font-size:10px;font-family:var(--mono)}
+  .wk.active{fill:rgba(20,22,25,.75)}
+  .hubc{fill:rgba(18,20,26,.94);stroke:var(--acc);stroke-width:1.8;cursor:pointer}
+  .hubt{fill:var(--silk);font-family:var(--mono);font-size:13px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+  .whl{transform-box:fill-box;transform-origin:center}
+  .whl.faded{filter:blur(4px);opacity:.5;transition:filter .22s,opacity .22s;pointer-events:none}
+  @keyframes popin{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  .popin{animation:popin .24s cubic-bezier(.2,.85,.3,1) both}
+  @media(prefers-reduced-motion:reduce){.popin{animation:none}}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}}
+  .card{background:var(--s01);border:1px solid var(--bd-sub);border-radius:10px;padding:18px 20px}
+  .card h3{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-weight:600}
+  .card p{margin:0 0 11px;color:var(--tx2);font-size:14px}.card p:last-child{margin:0}
+  .card b{color:var(--tx)}
+  .modes{display:flex;flex-direction:column;gap:11px}
+  .mode{display:flex;gap:11px;align-items:flex-start}
+  .mode .k{font-family:var(--mono);font-size:11px;color:var(--acc);border:1px solid var(--acc);border-radius:5px;padding:2px 8px;white-space:nowrap;flex:0 0 auto;margin-top:1px}
+  .mode .t{font-size:13.5px;color:var(--tx2)}.mode .t b{color:var(--tx)}
+  code{font-family:var(--mono);font-size:.85em;background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:1px 5px;color:var(--tx)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Datum GUI · context menu design</p>
+  <h1>The right-click marking menu</h1>
+  <p class="sub">Contiguous, semi-transparent wedges over a softly blurred board; the wheel <b>auto-scales to its item count</b>, and a submenu opens as its <b>own radial</b> while the parent layer fades and blurs behind it.</p>
+
+  <div class="stage">
+    <svg class="boardbg" viewBox="0 0 460 300" preserveAspectRatio="xMidYMid slice">
+      <rect x="30" y="20" width="400" height="260" rx="6" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".6"/>
+      <g stroke-width="4" fill="none" stroke-linecap="round">
+        <path d="M120 150 H200" stroke="var(--cu-b)"/><path d="M260 150 H330 V210" stroke="var(--cu-b)"/>
+        <path d="M200 120 H150 V80" stroke="var(--cu-f)"/><path d="M300 120 H360" stroke="var(--cu-f)"/>
+        <path d="M120 210 H240" stroke="var(--cu-f)"/>
+      </g>
+      <g fill="#1a1206" stroke="var(--via)" stroke-width="2"><circle cx="330" cy="150" r="4"/><circle cx="150" cy="120" r="4"/></g>
+      <g fill="#151922" stroke="#3A414D"><rect x="90" y="70" width="34" height="18" rx="2"/><rect x="330" y="70" width="34" height="18" rx="2"/><rect x="70" y="150" width="22" height="80" rx="2"/><rect x="330" y="205" width="44" height="26" rx="2"/></g>
+      <g fill="var(--pad)"><rect x="86" y="74" width="7" height="10"/><rect x="121" y="74" width="7" height="10"/><rect x="80" y="160" width="9" height="8"/><rect x="80" y="182" width="9" height="8"/></g>
+      <rect x="200" y="120" width="60" height="60" rx="3" fill="#161a24" stroke="#3A414D"/>
+      <text x="230" y="154" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
+    </svg>
+    <div class="frost"></div>
+    <div class="badge" id="badge">Right-clicked <b>U1</b> · component wheel</div>
+    <svg class="wheel" viewBox="0 0 400 400" aria-label="radial marking menu">
+      <g id="stack"></g>
+      <circle id="hub" class="hubc" cx="200" cy="200" r="53"/>
+      <text id="hubt" class="hubt" x="200" y="200">U1</text>
+    </svg>
+    <div class="hint">hover to mark · click <b>Align ▸</b> to descend · hub <b>◀</b> to return</div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h3>Same gesture, two speeds</h3>
+      <div class="modes">
+        <div class="mode"><span class="k">flick →</span><span class="t"><b>Expert.</b> Press and flick toward the verb — the wheel never draws, the command fires. Eyes stay on the board.</span></div>
+        <div class="mode"><span class="k">hold ~280ms</span><span class="t"><b>Novice.</b> Press and wait — labeled wheel appears, drag to a slot. Every hold rehearses the expert flick.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Nested wheels &amp; layers</h3>
+      <p>A submenu is a <b>new radial</b>, not a list — <code>Align ▸</code> opens its own wheel of Left / Right / Top / Bottom / Center-H / Center-V. The <b>parent layer fades and blurs</b> behind, glowing faintly through the semi-transparent wedges so you keep context.</p>
+      <p style="color:var(--tx3);font-size:12.5px">Wedges auto-scale to the item count (per object type, positions frozen for muscle memory). Past ~8 items or deep nesting, a <code>More…</code> wedge falls back to the linear overflow.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  var NS="http://www.w3.org/2000/svg";
+  var cx=200,cy=200,ri=55,ro=176,rl=116;
+  var stackEl=document.getElementById("stack"),hub=document.getElementById("hub"),hubt=document.getElementById("hubt"),badge=document.getElementById("badge");
+  var stack=[];
+  function pol(r,a){var t=a*Math.PI/180;return[cx+r*Math.cos(t),cy+r*Math.sin(t)];}
+  function sector(center,span){
+    var h=span/2,a1=center-h,a2=center+h,large=span>180?1:0;
+    var p1=pol(ri,a1),p2=pol(ro,a1),p3=pol(ro,a2),p4=pol(ri,a2);
+    function f(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}
+    return "M"+f(p1)+" L"+f(p2)+" A"+ro+" "+ro+" 0 "+large+" 1 "+f(p3)+" L"+f(p4)+" A"+ri+" "+ri+" 0 "+large+" 0 "+f(p1)+" Z";
+  }
+  function top(){return stack[stack.length-1];}
+  function mark(ang){
+    var w=top();if(!w)return;
+    w.parts.forEach(function(pt){var on=pt.ang===ang;pt.path.classList.toggle("active",on);pt.tl.classList.toggle("active",on);pt.tk.classList.toggle("active",on);});
+  }
+  function open(items,label){
+    if(stack.length)top().g.classList.add("faded");
+    var g=document.createElementNS(NS,"g");g.setAttribute("class","whl popin");
+    var n=items.length,seg=360/n,wheel={g:g,parts:[],label:label};
+    items.forEach(function(it,i){
+      var ang=-90+i*seg;
+      var p=document.createElementNS(NS,"path");
+      p.setAttribute("d",sector(ang,seg));
+      p.setAttribute("class","wd"+(it.children?" hassub":""));
+      p.addEventListener("mouseenter",function(){if(top()===wheel)mark(ang);});
+      p.addEventListener("click",function(){if(top()===wheel&&it.children)open(it.children,it.label);});
+      g.appendChild(p);
+      var pos=pol(rl,ang);
+      var t=document.createElementNS(NS,"text");t.setAttribute("x",pos[0].toFixed(1));t.setAttribute("y",(pos[1]-3).toFixed(1));t.setAttribute("class","wl"+(it.children?" sub":""));t.textContent=it.label+(it.children?" ▸":"");
+      g.appendChild(t);
+      var k=document.createElementNS(NS,"text");k.setAttribute("x",pos[0].toFixed(1));k.setAttribute("y",(pos[1]+11).toFixed(1));k.setAttribute("class","wk");k.textContent=it.key||"";
+      g.appendChild(k);
+      wheel.parts.push({ang:ang,path:p,tl:t,tk:k});
+    });
+    stackEl.appendChild(g);stack.push(wheel);
+    hubt.textContent=stack.length>1?"◀":"U1";
+    badge.innerHTML=stack.length>1?"U1 › <b>"+label+"</b> wheel":"Right-clicked <b>U1</b> · component wheel";
+    mark(wheel.parts[0].ang);
+  }
+  function back(){
+    if(stack.length<=1)return;
+    top().g.remove();stack.pop();top().g.classList.remove("faded");
+    hubt.textContent=stack.length>1?"◀":"U1";
+    badge.innerHTML=stack.length>1?"U1 › <b>"+top().label+"</b> wheel":"Right-clicked <b>U1</b> · component wheel";
+    mark(top().parts[0].ang);
+  }
+  hub.addEventListener("click",back);
+  document.querySelector(".wheel").addEventListener("mouseleave",function(){if(top())mark(top().parts[0].ang);});
+
+  var align=[{label:"Left"},{label:"Right"},{label:"Top"},{label:"Bottom"},{label:"Center H"},{label:"Center V"}];
+  var component=[
+    {label:"Move",key:"M"},{label:"Rotate",key:"R"},{label:"Delete",key:"⌫"},
+    {label:"Properties",key:"E"},{label:"Flip",key:"F"},{label:"Lock",key:"L"},
+    {label:"Align",children:align}
+  ];
+  open(component,"Component");
+</script>

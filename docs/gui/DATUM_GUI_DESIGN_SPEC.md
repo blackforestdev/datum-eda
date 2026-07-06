@@ -173,8 +173,11 @@ objects; singular labels become "…Selected…"; Properties opens a multi-edit.
 | Empty | Place ▸ | Paste | Grid ▸ | View ▸ | — |
 
 **Still to prove:** the marking-menu interaction in the prototype (delayed popup,
-expert flick drawing nothing, the mark "ink" trail), and per-object cardinal
-tuning with the owner. Reference visual: the radial marking-menu mock.
+expert flick drawing nothing), and per-object cardinal tuning with the owner.
+Reference visual: `docs/gui/prototypes/context-menu-marking-menu.html` (contiguous
+semi-transparent wedges over a blurred board, auto-scaling, nested radial submenus
+with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated in
+`docs/gui/prototypes/open-decisions.html`.
 
 ## Open design decisions (resolve before broader build-out)
 

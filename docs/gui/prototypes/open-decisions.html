@@ -1,0 +1,170 @@
+<style>
+  :root{
+    --canvas:#0B0C0E;--bg:#121318;--s01:#181B21;--s02:#1F232A;--s03:#272C35;
+    --bd-sub:#2E343E;--bd-str:#3A414D;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;
+    --acc:#CE5A92;--acc-h:#D86EA0;--acc-tint:#2A1D25;--warn:#E0A23A;--err:#E5534B;
+    --cu-f:#C83A34;--pad:#C9974A;--silk:#E8E6DC;--edge:#CBB24A;--wire:#4FA75A;--info:#5B8BD0;
+    --sans:ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:15px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;padding:40px 22px 80px}
+  .wrap{max-width:940px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin:0 0 8px}
+  h1{font-size:30px;font-weight:650;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance}
+  .sub{color:var(--tx2);font-size:16px;margin:0 0 6px;max-width:64ch}
+  .sub b{color:var(--tx)}
+  section{margin-top:52px;border-top:1px solid var(--bd-sub);padding-top:30px}
+  h2{font-size:21px;font-weight:620;margin:0 0 4px;display:flex;align-items:center;gap:12px}
+  h2 .n{font-family:var(--mono);font-size:15px;color:var(--acc);border:1px solid var(--acc);border-radius:7px;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px}
+  .lead{color:var(--tx2);margin:6px 0 22px;max-width:70ch}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.compare{grid-template-columns:1fr}}
+  figure{margin:0}
+  .mock{position:relative;background:var(--s01);border:1px solid var(--bd-sub);border-radius:10px;overflow:hidden}
+  .mock.chosen{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc-tint)}
+  .mock .bar{height:26px;background:var(--bg);border-bottom:1px solid var(--bd-sub);display:flex;align-items:center;gap:6px;padding:0 10px;
+    font-family:var(--mono);font-size:11px;color:var(--tx3)}
+  .mock .bar .dot{width:8px;height:8px;border-radius:50%;background:var(--bd-str)}
+  .mock .stage{position:relative;background:var(--canvas);height:190px}
+  .mock svg{position:absolute;inset:0;width:100%;height:100%}
+  figcaption{margin-top:11px;font-size:14px;color:var(--tx2)}
+  figcaption .tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--acc);display:block;margin-bottom:3px;text-transform:uppercase}
+  /* chat dock */
+  .chatdock{position:absolute;left:0;right:0;bottom:0;height:78px;background:var(--s01);border-top:1px solid var(--bd-sub);padding:8px 10px;display:flex;flex-direction:column;gap:5px}
+  .msg{font-size:11.5px;padding:4px 8px;border-radius:7px;max-width:82%;font-family:var(--mono)}
+  .msg.user{align-self:flex-end;background:var(--acc-tint);color:var(--acc-h);border:1px solid var(--acc)}
+  .msg.ai{align-self:flex-start;background:var(--s02);color:var(--tx2);border:1px solid var(--bd-sub)}
+  .chatin{margin-top:auto;background:var(--s02);border:1px solid var(--bd-sub);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--tx3);font-family:var(--mono)}
+  /* overlay chip */
+  .ghostchip{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:var(--s03);border:1px solid var(--acc);
+    color:var(--acc-h);font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;white-space:nowrap}
+  /* context menu */
+  .ctxmenu{position:absolute;left:118px;top:64px;width:172px;background:var(--s03);border:1px solid var(--bd-str);border-radius:7px;
+    padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:12.5px}
+  .ctxmenu .ci{padding:5px 9px;border-radius:4px;color:var(--tx);display:flex;justify-content:space-between;align-items:center}
+  .ctxmenu .ci .kb{font-family:var(--mono);font-size:10.5px;color:var(--tx3)}
+  .ctxmenu .ci.hot{background:var(--acc-tint);box-shadow:inset 2px 0 0 var(--acc)}
+  .ctxmenu .ci.danger{color:var(--err)}
+  .ctxmenu .ci{position:relative}
+  .ctxmenu .sep{height:1px;background:var(--acc);opacity:.55;margin:5px 6px;border-radius:1px}
+  .ctxmenu .arw{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+  .submenu{position:absolute;left:calc(100% + 5px);top:-6px;width:152px;background:var(--s03);border:1px solid var(--bd-str);border-radius:7px;padding:4px;box-shadow:0 10px 26px rgba(0,0,0,.55)}
+  .submenu .ci{padding:5px 9px;border-radius:4px;color:var(--tx);display:flex;justify-content:space-between;align-items:center;font-size:12px}
+  .submenu .ci .sw{width:9px;height:9px;border-radius:2px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .explain{margin-top:20px;background:var(--s01);border:1px solid var(--bd-sub);border-left:2px solid var(--acc);border-radius:8px;padding:16px 18px}
+  .explain p{margin:0 0 10px}.explain p:last-child{margin:0}
+  .explain b{color:var(--tx)}
+  .lean{margin-top:12px;font-size:14px;color:var(--tx);background:var(--acc-tint);border:1px solid var(--acc);border-radius:7px;padding:9px 13px}
+  .lean b{color:var(--acc-h)}
+  code{font-family:var(--mono);font-size:.86em;background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:1px 5px;color:var(--tx)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Datum GUI · design decisions</p>
+  <h1>Two open decisions, made visible</h1>
+  <p class="sub">You asked for a picture instead of jargon. Here's what each choice actually looks like on the board — pick one per decision and I'll lock it into the design spec.</p>
+
+  <!-- DECISION 1 -->
+  <section>
+    <h2><span class="n">1</span> Where should the AI live?</h2>
+    <p class="lead">When Datum's AI suggests a change — say, routing a net — <b>where does that suggestion appear?</b> Two very different products follow from the answer.</p>
+
+    <div class="compare">
+      <figure>
+        <div class="mock">
+          <div class="bar"><span class="dot"></span>Board · Layout</div>
+          <div class="stage">
+            <svg viewBox="0 0 320 112" preserveAspectRatio="xMidYMid meet">
+              <rect x="14" y="8" width="292" height="60" rx="4" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".7"/>
+              <rect x="120" y="20" width="40" height="34" rx="2" fill="#161a24" stroke="var(--acc)" stroke-width="1.4"/>
+              <text x="140" y="40" fill="var(--silk)" font-size="8" text-anchor="middle" font-family="monospace">U1</text>
+              <rect x="210" y="26" width="24" height="12" rx="1" fill="#151922" stroke="var(--bd-str)"/>
+              <path d="M160 37 H210" stroke="var(--cu-f)" stroke-width="3" fill="none"/>
+            </svg>
+            <div class="chatdock">
+              <div class="msg user">route SPI2 at 100Ω</div>
+              <div class="msg ai">Proposed 2 tracks — review ▸</div>
+              <div class="chatin">Ask Datum…</div>
+            </div>
+          </div>
+        </div>
+        <figcaption><span class="tag">Option A · Dock</span>The Assistant is a <b>chat lane</b> in the bottom dock. You converse; its proposals show up there as a list to review.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="mock chosen">
+          <div class="bar"><span class="dot"></span>Board · Layout</div>
+          <div class="stage">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid meet">
+              <rect x="14" y="12" width="292" height="150" rx="5" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".7"/>
+              <rect x="118" y="60" width="46" height="40" rx="2" fill="#161a24" stroke="var(--acc)" stroke-width="1.4"/>
+              <text x="141" y="84" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
+              <rect x="214" y="66" width="28" height="14" rx="1" fill="#151922" stroke="var(--bd-str)"/>
+              <path d="M164 80 H214" stroke="var(--cu-f)" stroke-width="3.4" fill="none"/>
+              <!-- ghost proposal -->
+              <path d="M164 92 H196 V128 H236" stroke="var(--acc)" stroke-width="3.4" fill="none" stroke-dasharray="6 5" opacity=".8"/>
+              <circle cx="164" cy="92" r="3" fill="none" stroke="var(--acc)"/>
+            </svg>
+            <div class="ghostchip">⇥ Tab to accept · Esc dismiss</div>
+          </div>
+        </div>
+        <figcaption><span class="tag">Option B · Inline overlay</span>No chat panel. The AI's proposal is drawn <b>faintly on the board</b> where it would go — a ghost track. <b>Tab</b> accepts, <b>Esc</b> dismisses.</figcaption>
+      </figure>
+    </div>
+
+    <div class="explain">
+      <p><b>Dock (A)</b> is familiar and conversational — but it's "a chat app bolted onto the shell," and it pulls your eye off the board into a side panel.</p>
+      <p><b>Overlay (B)</b> puts the AI <b>inside the design</b>, not beside it: you see the actual proposed geometry in place and accept or reject it with one key. It never blocks you and never steals the canvas.</p>
+      <p class="lean">Your Design Book already argues for <b>B (inline overlay)</b> — "never a chat app bolted into the shell." The current prototype shows A (the bottom dock). This decision picks which one Datum commits to.</p>
+    </div>
+  </section>
+
+  <!-- DECISION 2 -->
+  <section>
+    <h2><span class="n">2</span> Context menus (right-click)</h2>
+    <p class="lead">A <b>context menu</b> is the little menu that pops up when you <b>right-click</b> something — the fast way to act on whatever's under your cursor without traveling up to the menu bar.</p>
+
+    <div class="compare" style="grid-template-columns:1fr;max-width:520px">
+      <figure>
+        <div class="mock">
+          <div class="bar"><span class="dot"></span>Board · Layout — right-click on U1</div>
+          <div class="stage" style="height:284px">
+            <svg viewBox="0 0 320 210" preserveAspectRatio="xMidYMid meet">
+              <rect x="14" y="12" width="292" height="186" rx="5" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".7"/>
+              <rect x="60" y="58" width="46" height="40" rx="2" fill="#161a24" stroke="var(--acc)" stroke-width="1.6"/>
+              <g fill="var(--pad)"><rect x="66" y="52" width="5" height="7"/><rect x="76" y="52" width="5" height="7"/><rect x="86" y="52" width="5" height="7"/><rect x="66" y="97" width="5" height="7"/><rect x="86" y="97" width="5" height="7"/></g>
+              <text x="83" y="82" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
+            </svg>
+            <div class="ctxmenu">
+              <div class="ci">Properties…<span class="kb">↵</span></div>
+              <div class="ci">Rotate<span class="arw">90° ▸</span></div>
+              <div class="ci">Flip to back<span class="kb">F</span></div>
+              <div class="ci">Lock<span class="kb">L</span></div>
+              <div class="sep"></div>
+              <div class="ci hot">Highlight net<span class="arw">▸</span>
+                <div class="submenu">
+                  <div class="ci">VDD<span class="sw" style="background:var(--cu-f)"></span></div>
+                  <div class="ci hot">GND<span class="sw" style="background:#4D7FC4"></span></div>
+                  <div class="ci">USART1_TX<span class="sw" style="background:var(--cu-f)"></span></div>
+                  <div class="ci" style="color:var(--warn)">SPI2_SCK<span class="sw" style="background:#AEB4BB"></span></div>
+                </div>
+              </div>
+              <div class="ci">Find in schematic<span class="kb">↗</span></div>
+              <div class="sep"></div>
+              <div class="ci danger">Delete<span class="kb">⌫</span></div>
+            </div>
+          </div>
+        </div>
+        <figcaption><span class="tag">What it is</span>Right-click a component → act on it in place: rotate, flip, lock, highlight its net, jump to it in the schematic, delete.</figcaption>
+      </figure>
+    </div>
+
+    <div class="explain">
+      <p><b>Why it's an "open decision":</b> Datum's docs specify the top <b>menu bar</b> and the <b>command palette</b> — but <b>never the right-click menus.</b> In KiCad and Altium a huge share of real editing happens by right-clicking, so this is a core interaction surface that's simply <b>undesigned and unresearched.</b></p>
+      <p>The decision isn't <i>whether</i> — it must exist. It's designing <b>what's in each one</b>: the actions per object type (component vs. track vs. net vs. pad), the empty-canvas menu vs. the on-selection menu, and how they relate to the palette and menu bar.</p>
+      <p class="lean">Recommendation: a <b>focused context-menu research pass</b> across Altium / KiCad / Horizon first (the existing research skipped it), then design it into the interaction spec. It's the one gap that blocks the editor from feeling finished.</p>
+    </div>
+  </section>
+</div>
