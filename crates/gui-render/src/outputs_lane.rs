@@ -194,7 +194,7 @@ fn engine_supervision_section_height(state: &ReviewWorkspaceState) -> f32 {
     if state.supervision.contract.is_empty() {
         return 0.0;
     }
-    5.0 * output_row_height() + 6.0
+    output_row_height() + 6.0
 }
 
 fn render_engine_supervision_section(
@@ -203,7 +203,7 @@ fn render_engine_supervision_section(
     text_runs: &mut Vec<TextRun>,
 ) {
     let snapshot = &state.supervision;
-    let mut y = rect.y;
+    let y = rect.y;
     let bottom = rect.y + rect.height;
     let row_height = output_row_height();
     if y + row_height > bottom {
@@ -218,10 +218,6 @@ fn render_engine_supervision_section(
         TextFace::Mono,
         text_runs,
     );
-    y += row_height;
-    if y + row_height > bottom {
-        return;
-    }
     let tip = snapshot
         .journal
         .accepted_transaction_tip
@@ -230,66 +226,20 @@ fn render_engine_supervision_section(
         .unwrap_or_else(|| "NONE".to_string());
     draw_text(
         &format!(
-            "REV {} / JOURNAL {} / TIP {}",
+            "ENGINE SUPERVISION REV {} / J{} TIP {} / SHARDS {}/{} / {} C{} P{} T{} V{} Z{} TXT{} L{} / CHECK {} F{} / DATA J{} A{} P{} / RO {}",
             suffix_id(&snapshot.model_revision).to_uppercase(),
             snapshot.journal.applied_transaction_count,
-            tip
-        ),
-        rect.x + 12.0,
-        y,
-        10.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    y += row_height;
-    if y + row_height > bottom {
-        return;
-    }
-    draw_text(
-        &format!(
-            "SHARDS {} / ATTENTION {} / READ ONLY {}",
+            tip,
             snapshot.source_shards.total,
             snapshot.source_shards.attention_count(),
-            if snapshot.read_only { "YES" } else { "NO" }
-        ),
-        rect.x + 12.0,
-        y,
-        10.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    y += row_height;
-    if y + row_height > bottom {
-        return;
-    }
-    draw_text(
-        &format!(
-            "{} C{} P{} T{} V{} Z{} TXT{} L{}",
-            truncate_text(&snapshot.scene_kind.to_uppercase(), 22),
+            truncate_text(&snapshot.scene_kind.to_uppercase(), 14),
             snapshot.scene.component_count,
             snapshot.scene.pad_count,
             snapshot.scene.track_count,
             snapshot.scene.via_count,
             snapshot.scene.zone_count,
             snapshot.scene.board_text_count,
-            snapshot.scene.layer_count
-        ),
-        rect.x + 12.0,
-        y,
-        10.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    y += row_height;
-    if y + row_height > bottom {
-        return;
-    }
-    draw_text(
-        &format!(
-            "CHECK {} FIND {} / DATA JOB{} ART{} PROP{}",
+            snapshot.scene.layer_count,
             snapshot
                 .checks
                 .status
@@ -299,12 +249,13 @@ fn render_engine_supervision_section(
             snapshot.checks.finding_count,
             snapshot.data.output_job_count,
             snapshot.data.artifact_count,
-            snapshot.data.proposal_count
+            snapshot.data.proposal_count,
+            if snapshot.read_only { "YES" } else { "NO" }
         ),
-        rect.x + 12.0,
+        rect.x,
         y,
-        10.0,
-        TEXT_MUTED,
+        10.5,
+        TEXT_SECONDARY,
         TextFace::Mono,
         text_runs,
     );
