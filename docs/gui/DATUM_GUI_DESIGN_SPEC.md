@@ -6,7 +6,7 @@
 > open, on the systems ratified by decisions **014** (layout geometry) and **015**
 > (Design Book tokens). Design authored by the project owner; this doc records the
 > ratified design decisions and points at the controlling visual prototype.
-> **Reference prototype**: `docs/gui/prototypes/board-editor.html` (design pass 2).
+> **Reference prototype**: `docs/gui/prototypes/board-editor.html` (design pass 3 — split PCB|Schematic view).
 > **Scope**: The concrete visual composition, density, and interaction craft of
 > the Datum desktop GUI — starting with the board editor.
 
@@ -73,6 +73,39 @@ the same change.
   controls; never icon-only for critical actions.
 - **Status bar**: cursor X/Y (mm) · active tool · selection · grid · active layer
   · DRC count · model revision.
+
+## Workspace & Mode Model
+
+Datum is a **single unified viewport**, not a set of separate editor windows. The
+user opens a document from the Project pane and the viewport enters that
+document's **mode**; the mode carries its own toolset and menus.
+
+- **Documents / modes**: schematic, PCB/board, footprint editor, symbol editor
+  (library-object modes), plus read views (rules/check report, manufacturing).
+  Selecting `project → Schematic` / `Board` / a library `Footprint` / `Symbol`
+  switches the mode.
+- **Mode-specific tools (the SolidWorks pattern)**: each mode swaps the tool rail
+  and the active-editor-gated menus (schematic: wire / symbol / label / bus /
+  junction; PCB: route / via / zone / place; footprint & symbol: their drawing
+  tools) — exactly the gating `DATUM_GUI_MENU_BINDINGS.md` already assumes.
+- **Tiling ("tmux for EDA")**: the viewport splits into panes; each pane is a
+  **(document, view) pair**. This one abstraction covers both "2D + 3D of the same
+  board" and "schematic here, PCB there, footprint in a PIP." Panes tile or float
+  (picture-in-picture).
+- **Context follows focus**: the focused pane owns the tool rail and menus, and
+  the Inspector / Layers / Filters panels bind to the focused pane's document and
+  selection.
+- **Cross-probe over one model**: selection is engine-level, so selecting an
+  object in one pane highlights its counterparts in every other pane showing
+  related objects (schematic symbol ↔ board footprint ↔ net). This falls out of
+  tiled panes over one shared `DesignModel` — Altium's cross-probe / Horizon's
+  message bus, for free.
+- **Open sub-decisions**: whether tools live in a per-pane header strip (as pass 3
+  shows) vs. a global left rail that retargets on focus; PIP vs. tile-only.
+
+Reference: `docs/gui/prototypes/board-editor.html` (pass 3) shows a PCB|Schematic
+split with per-pane mode tools, context-follows-focus, and U1 cross-probed across
+both panes.
 
 ## Open design decisions (resolve before broader build-out)
 
