@@ -131,6 +131,16 @@ in one submenu to preserve the short-menu discipline).
   actions. **Never place a destructive/irreversible action on a diagonal — keep
   Delete cardinal.**
 - **Nesting ≤2 levels**; any sub-wheel is **4-wide** (cardinal-only).
+- **Compound marks — the exponential speedup.** Selecting *through* a submenu is
+  one continuous stroke: flick toward the parent verb, then toward the child —
+  e.g. up-then-right traces an inverted "L". Experts draw the whole shape blind,
+  and it becomes a single muscle-memory gesture (Kurtenbach & Buxton hierarchic
+  marking menus; Zhao & Balakrishnan simple-vs-compound marks). To support it, **a
+  submenu spawns as a new radial at the location of the parent wedge you flicked
+  toward** (offset outward in that direction — the Sketchbook Pro model), *not*
+  re-centered. The parent wheel stays put (faded/blurred), so the compound stroke
+  flows outward and the gesture path stays constant per object type → the whole
+  drill-down becomes one memorized flick-shape rather than a slow menu descent.
 - One wedge is **"More…" → a conventional linear, scannable list** (the
   magenta-group-delineated menu already mocked) for the long tail — parameterized
   actions (net classes, track widths, value pickers). Support **tear-off** so a
