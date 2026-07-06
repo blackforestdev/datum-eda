@@ -151,6 +151,44 @@ Not persisted as canonical authored state:
 Optional future caches may be persisted, but they must be marked as derived and
 safe to discard.
 
+### 5.2.1 ZoneFill Generated Evidence
+
+Native board copper-pour boundaries are authored as `board.zones`; generated
+filled copper is not authored board truth. The current native generated-evidence
+path for zone fills is:
+
+```text
+.datum/
+└── zone_fills/
+    └── <zone_uuid>.json
+```
+
+Each file is a `ZoneFill` record owned by the engine substrate with
+`schema_version: 1`, `zone_id`, `state`, `source_zone_revision`,
+`model_revision`, `islands`, and optional `provenance`. The filename UUID must
+match `zone_id`; journaled `SetZoneFill` validates the same id before staging.
+Resolver materialization classifies these shards as
+`SourceShardKind::ZoneFill`, `SourceShardTaxon::ZoneFill`, and
+`SourceShardAuthority::GeneratedEvidence`.
+
+`state = "filled"` may carry closed, non-degenerate, non-self-intersecting
+polygon islands. `state = "unfilled"` and `state = "unsupported"` carry no
+islands. `state = "stale"` marks persisted evidence whose recorded
+`model_revision` or `source_zone_revision` no longer matches the resolved
+project. Missing persisted evidence for an authored zone resolves as an
+`Unfilled` in-memory record; it is not promoted to disk until an explicit
+producer writes generated evidence.
+
+The only public producer in the current product surface is
+`datum-eda check fill-zones` / MCP `datum.check.fill_zones`. It computes the
+bounded native solver slice, commits `SetZoneFill` generated-evidence
+operations with undo/redo inverses (`DeleteZoneFill` or restoration of the
+previous payload), and never writes `.datum/zone_fills` directly from CLI code.
+`datum.query.zone_fills` exposes resolver-derived state. Copper projection,
+DRC, connectivity, and manufacturing export may consume only current
+`Filled` islands; authored zone boundaries with missing, stale, unsupported, or
+unfilled evidence emit no copper.
+
 ### 5.3 Cross-File References
 
 - Cross-file references always use UUID identity.

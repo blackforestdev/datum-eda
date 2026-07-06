@@ -67,6 +67,12 @@
       "kind": "schematic_connectivity_surface",
       "source": "schematic connectivity query functions + diagnostic kind markers",
       "owner_spec": "specs/SCHEMATIC_CONNECTIVITY_SPEC.md"
+    },
+    {
+      "id": "zone_fill_surface",
+      "kind": "zone_fill_surface",
+      "source": "ZoneFill generated-evidence schema/path + operations + native-write builder + public fill/query tools",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
     }
   ]
 }

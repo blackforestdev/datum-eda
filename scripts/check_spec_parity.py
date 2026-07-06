@@ -288,6 +288,53 @@ def schematic_connectivity_surface() -> list[str]:
     return sorted(items)
 
 
+def zone_fill_surface() -> list[str]:
+    """Native ZoneFill generated-evidence format and projection surface."""
+    items: set[str] = set()
+    operations = set(rust_enum_variants(ROOT / "crates/engine/src/substrate/operation.rs", "Operation"))
+    for variant in ("SetZoneFill", "DeleteZoneFill"):
+        if variant in operations:
+            items.add(f"operation:{variant}")
+
+    substrate_mod = read_text(ROOT / "crates/engine/src/substrate/mod.rs")
+    if "ZoneFill," in substrate_mod:
+        items.add("source_shard_taxon:ZoneFill")
+    if "pub zone_fills: BTreeMap<ObjectId, ZoneFill>" in substrate_mod:
+        items.add("design_model_field:zone_fills")
+
+    zone_fill = read_text(ROOT / "crates/engine/src/substrate/zone_fill.rs")
+    for marker in (
+        "pub const ZONE_FILL_SCHEMA_VERSION: u64 = 1;",
+        'persist_generated_evidence(project_root, ".datum/zone_fills", &fill.zone_id, fill)',
+        "pub fn compute_bounded_zone_fill",
+        "pub fn zone_fill_copper_projection_zones",
+        "pub(super) fn derive_model_zone_fills",
+        "SourceShardKind::ZoneFill",
+        "SourceShardAuthority::GeneratedEvidence",
+        "SourceShardTaxon::ZoneFill",
+        "ZoneFillState::Filled",
+        "ZoneFillState::Unfilled",
+        "ZoneFillState::Stale",
+        "ZoneFillState::Unsupported",
+    ):
+        if marker in zone_fill:
+            items.add(f"marker:{marker}")
+
+    board_routing = read_text(ROOT / "crates/engine/src/api/native_write/board_routing.rs")
+    for marker in ("pub fn build_set_zone_fills", "Operation::SetZoneFill", "Operation::DeleteZoneFill"):
+        if marker in board_routing:
+            items.add(f"native_write:{marker}")
+
+    for name in datum_tool_names("datum.check."):
+        if name == "datum.check.fill_zones":
+            items.add(f"mcp:{name}")
+    for name in datum_tool_names("datum.query."):
+        if name == "datum.query.zone_fills":
+            items.add(f"mcp:{name}")
+
+    return sorted(items)
+
+
 def inventory_items(spec: dict[str, str]) -> list[str]:
     kind = spec["kind"]
     if kind == "mcp_runtime_methods":
@@ -310,6 +357,8 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return erc_pin_taxonomy_surface()
     if kind == "schematic_connectivity_surface":
         return schematic_connectivity_surface()
+    if kind == "zone_fill_surface":
+        return zone_fill_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 
