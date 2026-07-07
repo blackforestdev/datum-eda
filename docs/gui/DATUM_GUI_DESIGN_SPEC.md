@@ -288,6 +288,10 @@ product grows — and it is a controlling constraint, not a nice-to-have.
   are the same discipline: every menu icon is declared in `docs/gui/icon_set.json`
   (Tabler MIT base + custom EDA glyphs), validated by the same gate — the
   `to_author` entries are the glyph worklist, exactly parallel to `not_built` verbs.
+  The menu model is **authored in a spreadsheet** — `docs/gui/menu_model.csv` — and
+  built to the JSON via `scripts/menu_model_csv.py build` (round-trips both ways).
+  Edit the grid, rebuild, gate validates. That is the human authoring surface;
+  nesting (the 3-layer align) fits via the `wheel` + `slot` columns.
 - **Design Book tokens (decision 015)** — visual change = token edit; nothing
   hardcodes a color or size. Restyle by changing a token; everything follows.
 - **Typed `Operation` + one `commit()`** — add an operation variant + its builder;

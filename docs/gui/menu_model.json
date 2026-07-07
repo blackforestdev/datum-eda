@@ -2,154 +2,605 @@
   "schema": "datum_menu_model_v1",
   "notes": "Data-driven GUI menu model: the menu bar and per-object marking menus as a table of label -> icon -> binding. A binding is exactly one of: 'verb' (a real datum.* verb, validated against mcp-server/datum_tool_catalog.json by scripts/check_menu_model.py), 'gui_local' (consumer-side view/shell action, no engine op), or 'not_built' (needed but no verb yet -> the authoring buildout worklist). Adding/removing/reassigning a menu item = editing one entry here (see DATUM_GUI_DESIGN_SPEC 'Modularity'). Marking-menu invariants: cardinal = N/E/S/W (<=4), secondary = diagonals (<=4), destructive never in 'secondary'. Realizes DATUM_GUI_CONTEXT_MENU_CONTENT.md.",
   "menubar": [
-    { "menu": "File", "items": [
-      { "label": "New Project", "icon": "file-new", "not_built": "engine-owned genesis; no public verb" },
-      { "label": "Open Project", "icon": "folder-open", "not_built": "GUI project-session model" },
-      { "label": "Import…", "icon": "import", "not_built": "project import-kicad-* is CLI; no public import verb" },
-      { "label": "Save", "icon": "save", "not_built": "native projects auto-persist; save semantics TBD (design spec File-menu note)" },
-      { "label": "Save As…", "icon": "save-as", "not_built": "copy/branch project tree" },
-      { "label": "Export…", "icon": "export", "verb": "datum.artifact.generate" },
-      { "label": "Close", "icon": "close", "not_built": "GUI session teardown" }
-    ]},
-    { "menu": "Edit", "items": [
-      { "label": "Undo", "icon": "undo", "shortcut": "Ctrl+Z", "verb": "datum.journal.undo" },
-      { "label": "Redo", "icon": "redo", "shortcut": "Ctrl+Shift+Z", "verb": "datum.journal.redo" },
-      { "label": "Cut", "icon": "cut", "not_built": "clipboard model" },
-      { "label": "Copy", "icon": "copy", "not_built": "clipboard model" },
-      { "label": "Paste", "icon": "paste", "not_built": "clipboard model" },
-      { "label": "Delete", "icon": "delete", "not_built": "per-selection; resolved by object type" },
-      { "label": "Preferences…", "icon": "settings", "not_built": "preferences store" }
-    ]},
-    { "menu": "View", "items": [
-      { "label": "Fit to Board", "icon": "fit", "gui_local": "view.fit" },
-      { "label": "Zoom In", "icon": "zoom-in", "gui_local": "view.zoom_in" },
-      { "label": "Zoom Out", "icon": "zoom-out", "gui_local": "view.zoom_out" },
-      { "label": "Layer Visibility", "icon": "layers", "gui_local": "view.layers" },
-      { "label": "Panels", "icon": "panels", "gui_local": "view.panels" },
-      { "label": "Reset Workspace", "icon": "reset", "gui_local": "view.reset" }
-    ]},
-    { "menu": "Place", "active_editor": "schematic", "items": [
-      { "label": "Symbol", "icon": "symbol", "verb": "datum.schematic.place_symbol" },
-      { "label": "Wire", "icon": "wire", "verb": "datum.schematic.draw_wire" },
-      { "label": "Label", "icon": "label", "verb": "datum.schematic.place_label" },
-      { "label": "Junction", "icon": "junction", "verb": "datum.schematic.place_junction" },
-      { "label": "No-Connect", "icon": "noconnect", "verb": "datum.schematic.place_noconnect" },
-      { "label": "Port", "icon": "port", "verb": "datum.schematic.place_port" },
-      { "label": "Bus", "icon": "bus", "verb": "datum.schematic.create_bus" },
-      { "label": "Bus Entry", "icon": "bus-entry", "verb": "datum.schematic.place_bus_entry" },
-      { "label": "Text", "icon": "text", "verb": "datum.schematic.place_text" },
-      { "label": "Drawing", "icon": "draw-line", "verb": "datum.schematic.place_drawing_line" }
-    ]},
-    { "menu": "Route", "active_editor": "pcb", "items": [
-      { "label": "Place Component", "icon": "component", "verb": "datum.pcb.place_component" },
-      { "label": "Move", "icon": "move", "verb": "datum.pcb.move_component" },
-      { "label": "Rotate", "icon": "rotate", "verb": "datum.pcb.rotate_component" },
-      { "label": "Flip", "icon": "flip", "verb": "datum.pcb.flip_component" },
-      { "label": "Align / Distribute", "icon": "align", "verb": "datum.pcb.align_components" },
-      { "label": "Route Track", "icon": "track", "verb": "datum.pcb.draw_track" },
-      { "label": "Via", "icon": "via", "verb": "datum.pcb.place_via" },
-      { "label": "Zone", "icon": "zone", "verb": "datum.pcb.place_zone" },
-      { "label": "Fill Zones", "icon": "fill", "verb": "datum.check.fill_zones" },
-      { "label": "Net", "icon": "net", "verb": "datum.pcb.place_net" },
-      { "label": "Net Class", "icon": "net-class", "verb": "datum.pcb.place_net_class" },
-      { "label": "Pad", "icon": "pad", "verb": "datum.pcb.place_pad" },
-      { "label": "Dimension", "icon": "dimension", "verb": "datum.pcb.place_dimension" },
-      { "label": "Keepout", "icon": "keepout", "verb": "datum.pcb.place_keepout" },
-      { "label": "Board Text", "icon": "text", "verb": "datum.pcb.place_text" },
-      { "label": "Apply Route", "icon": "route-apply", "verb": "datum.route.apply" }
-    ]},
-    { "menu": "Project", "items": [
-      { "label": "Validate", "icon": "validate", "verb": "datum.project.validate" },
-      { "label": "Resolve / Debug", "icon": "debug", "verb": "datum.query.source_shards" },
-      { "label": "Rename Project…", "icon": "rename", "not_built": "no public project-rename verb (native_write only)" },
-      { "label": "Design Rules…", "icon": "rules", "not_built": "project rule verbs not in public catalog (native_write only)" },
-      { "label": "Settings…", "icon": "settings", "not_built": "project settings surface" }
-    ]},
-    { "menu": "Checks", "items": [
-      { "label": "Run ERC", "icon": "erc", "verb": "datum.check.run_profile" },
-      { "label": "Run DRC", "icon": "drc", "verb": "datum.check.run_profile" },
-      { "label": "Run Checks", "icon": "check", "verb": "datum.check.run" },
-      { "label": "Profiles", "icon": "profiles", "verb": "datum.check.profiles" },
-      { "label": "Findings", "icon": "findings", "verb": "datum.check.list" },
-      { "label": "Explain Violation", "icon": "explain", "verb": "datum.check.explain_violation" },
-      { "label": "Waive…", "icon": "waive", "verb": "datum.check.waive" },
-      { "label": "Accept Deviation…", "icon": "deviation", "verb": "datum.check.accept_deviation" },
-      { "label": "Repair Standards", "icon": "repair", "verb": "datum.check.repair_standards" }
-    ]},
-    { "menu": "Manufacturing", "items": [
-      { "label": "Create Output Job…", "icon": "output-job", "verb": "datum.output_job.create" },
-      { "label": "Create Gerber Set", "icon": "gerber", "verb": "datum.output_job.create_gerber_set" },
-      { "label": "Run Output Job", "icon": "run", "verb": "datum.output_job.run" },
-      { "label": "Artifacts", "icon": "artifacts", "verb": "datum.artifact.list" },
-      { "label": "Generate", "icon": "generate", "verb": "datum.artifact.generate" },
-      { "label": "Validate", "icon": "validate", "verb": "datum.artifact.validate" },
-      { "label": "Compare", "icon": "compare", "verb": "datum.artifact.compare" },
-      { "label": "Export Manufacturing Set", "icon": "export", "verb": "datum.artifact.export_manufacturing_set" },
-      { "label": "Manufacturing Plan…", "icon": "plan", "verb": "datum.manufacturing.create_plan" },
-      { "label": "Panelize…", "icon": "panel", "verb": "datum.manufacturing.create_panel_projection" }
-    ]},
-    { "menu": "Window", "items": [
-      { "label": "Documents", "icon": "documents", "gui_local": "window.documents" },
-      { "label": "Terminal Sessions", "icon": "terminal", "gui_local": "window.terminal" },
-      { "label": "Workspace Layout", "icon": "layout", "gui_local": "window.layout" }
-    ]},
-    { "menu": "Help", "items": [
-      { "label": "About Datum", "icon": "about", "gui_local": "help.about" },
-      { "label": "Diagnostics", "icon": "diagnostics", "gui_local": "help.diagnostics" },
-      { "label": "Command Reference", "icon": "commands", "gui_local": "help.commands" }
-    ]}
+    {
+      "menu": "File",
+      "items": [
+        {
+          "label": "New Project",
+          "icon": "file-new",
+          "not_built": "engine-owned genesis; no public verb"
+        },
+        {
+          "label": "Open Project",
+          "icon": "folder-open",
+          "not_built": "GUI project-session model"
+        },
+        {
+          "label": "Import\u2026",
+          "icon": "import",
+          "not_built": "project import-kicad-* is CLI; no public import verb"
+        },
+        {
+          "label": "Save",
+          "icon": "save",
+          "not_built": "native projects auto-persist; save semantics TBD (design spec File-menu note)"
+        },
+        {
+          "label": "Save As\u2026",
+          "icon": "save-as",
+          "not_built": "copy/branch project tree"
+        },
+        {
+          "label": "Export\u2026",
+          "icon": "export",
+          "verb": "datum.artifact.generate"
+        },
+        {
+          "label": "Close",
+          "icon": "close",
+          "not_built": "GUI session teardown"
+        }
+      ]
+    },
+    {
+      "menu": "Edit",
+      "items": [
+        {
+          "label": "Undo",
+          "icon": "undo",
+          "verb": "datum.journal.undo",
+          "shortcut": "Ctrl+Z"
+        },
+        {
+          "label": "Redo",
+          "icon": "redo",
+          "verb": "datum.journal.redo",
+          "shortcut": "Ctrl+Shift+Z"
+        },
+        {
+          "label": "Cut",
+          "icon": "cut",
+          "not_built": "clipboard model"
+        },
+        {
+          "label": "Copy",
+          "icon": "copy",
+          "not_built": "clipboard model"
+        },
+        {
+          "label": "Paste",
+          "icon": "paste",
+          "not_built": "clipboard model"
+        },
+        {
+          "label": "Delete",
+          "icon": "delete",
+          "not_built": "per-selection; resolved by object type"
+        },
+        {
+          "label": "Preferences\u2026",
+          "icon": "settings",
+          "not_built": "preferences store"
+        }
+      ]
+    },
+    {
+      "menu": "View",
+      "items": [
+        {
+          "label": "Fit to Board",
+          "icon": "fit",
+          "gui_local": "view.fit"
+        },
+        {
+          "label": "Zoom In",
+          "icon": "zoom-in",
+          "gui_local": "view.zoom_in"
+        },
+        {
+          "label": "Zoom Out",
+          "icon": "zoom-out",
+          "gui_local": "view.zoom_out"
+        },
+        {
+          "label": "Layer Visibility",
+          "icon": "layers",
+          "gui_local": "view.layers"
+        },
+        {
+          "label": "Panels",
+          "icon": "panels",
+          "gui_local": "view.panels"
+        },
+        {
+          "label": "Reset Workspace",
+          "icon": "reset",
+          "gui_local": "view.reset"
+        }
+      ]
+    },
+    {
+      "menu": "Place",
+      "active_editor": "schematic",
+      "items": [
+        {
+          "label": "Symbol",
+          "icon": "symbol",
+          "verb": "datum.schematic.place_symbol"
+        },
+        {
+          "label": "Wire",
+          "icon": "wire",
+          "verb": "datum.schematic.draw_wire"
+        },
+        {
+          "label": "Label",
+          "icon": "label",
+          "verb": "datum.schematic.place_label"
+        },
+        {
+          "label": "Junction",
+          "icon": "junction",
+          "verb": "datum.schematic.place_junction"
+        },
+        {
+          "label": "No-Connect",
+          "icon": "noconnect",
+          "verb": "datum.schematic.place_noconnect"
+        },
+        {
+          "label": "Port",
+          "icon": "port",
+          "verb": "datum.schematic.place_port"
+        },
+        {
+          "label": "Bus",
+          "icon": "bus",
+          "verb": "datum.schematic.create_bus"
+        },
+        {
+          "label": "Bus Entry",
+          "icon": "bus-entry",
+          "verb": "datum.schematic.place_bus_entry"
+        },
+        {
+          "label": "Text",
+          "icon": "text",
+          "verb": "datum.schematic.place_text"
+        },
+        {
+          "label": "Drawing",
+          "icon": "draw-line",
+          "verb": "datum.schematic.place_drawing_line"
+        }
+      ]
+    },
+    {
+      "menu": "Route",
+      "active_editor": "pcb",
+      "items": [
+        {
+          "label": "Place Component",
+          "icon": "component",
+          "verb": "datum.pcb.place_component"
+        },
+        {
+          "label": "Move",
+          "icon": "move",
+          "verb": "datum.pcb.move_component"
+        },
+        {
+          "label": "Rotate",
+          "icon": "rotate",
+          "verb": "datum.pcb.rotate_component"
+        },
+        {
+          "label": "Flip",
+          "icon": "flip",
+          "verb": "datum.pcb.flip_component"
+        },
+        {
+          "label": "Align / Distribute",
+          "icon": "align",
+          "verb": "datum.pcb.align_components"
+        },
+        {
+          "label": "Route Track",
+          "icon": "track",
+          "verb": "datum.pcb.draw_track"
+        },
+        {
+          "label": "Via",
+          "icon": "via",
+          "verb": "datum.pcb.place_via"
+        },
+        {
+          "label": "Zone",
+          "icon": "zone",
+          "verb": "datum.pcb.place_zone"
+        },
+        {
+          "label": "Fill Zones",
+          "icon": "fill",
+          "verb": "datum.check.fill_zones"
+        },
+        {
+          "label": "Net",
+          "icon": "net",
+          "verb": "datum.pcb.place_net"
+        },
+        {
+          "label": "Net Class",
+          "icon": "net-class",
+          "verb": "datum.pcb.place_net_class"
+        },
+        {
+          "label": "Pad",
+          "icon": "pad",
+          "verb": "datum.pcb.place_pad"
+        },
+        {
+          "label": "Dimension",
+          "icon": "dimension",
+          "verb": "datum.pcb.place_dimension"
+        },
+        {
+          "label": "Keepout",
+          "icon": "keepout",
+          "verb": "datum.pcb.place_keepout"
+        },
+        {
+          "label": "Board Text",
+          "icon": "text",
+          "verb": "datum.pcb.place_text"
+        },
+        {
+          "label": "Apply Route",
+          "icon": "route-apply",
+          "verb": "datum.route.apply"
+        }
+      ]
+    },
+    {
+      "menu": "Project",
+      "items": [
+        {
+          "label": "Validate",
+          "icon": "validate",
+          "verb": "datum.project.validate"
+        },
+        {
+          "label": "Resolve / Debug",
+          "icon": "debug",
+          "verb": "datum.query.source_shards"
+        },
+        {
+          "label": "Rename Project\u2026",
+          "icon": "rename",
+          "not_built": "no public project-rename verb (native_write only)"
+        },
+        {
+          "label": "Design Rules\u2026",
+          "icon": "rules",
+          "not_built": "project rule verbs not in public catalog (native_write only)"
+        },
+        {
+          "label": "Settings\u2026",
+          "icon": "settings",
+          "not_built": "project settings surface"
+        }
+      ]
+    },
+    {
+      "menu": "Checks",
+      "items": [
+        {
+          "label": "Run ERC",
+          "icon": "erc",
+          "verb": "datum.check.run_profile"
+        },
+        {
+          "label": "Run DRC",
+          "icon": "drc",
+          "verb": "datum.check.run_profile"
+        },
+        {
+          "label": "Run Checks",
+          "icon": "check",
+          "verb": "datum.check.run"
+        },
+        {
+          "label": "Profiles",
+          "icon": "profiles",
+          "verb": "datum.check.profiles"
+        },
+        {
+          "label": "Findings",
+          "icon": "findings",
+          "verb": "datum.check.list"
+        },
+        {
+          "label": "Explain Violation",
+          "icon": "explain",
+          "verb": "datum.check.explain_violation"
+        },
+        {
+          "label": "Waive\u2026",
+          "icon": "waive",
+          "verb": "datum.check.waive"
+        },
+        {
+          "label": "Accept Deviation\u2026",
+          "icon": "deviation",
+          "verb": "datum.check.accept_deviation"
+        },
+        {
+          "label": "Repair Standards",
+          "icon": "repair",
+          "verb": "datum.check.repair_standards"
+        }
+      ]
+    },
+    {
+      "menu": "Manufacturing",
+      "items": [
+        {
+          "label": "Create Output Job\u2026",
+          "icon": "output-job",
+          "verb": "datum.output_job.create"
+        },
+        {
+          "label": "Create Gerber Set",
+          "icon": "gerber",
+          "verb": "datum.output_job.create_gerber_set"
+        },
+        {
+          "label": "Run Output Job",
+          "icon": "run",
+          "verb": "datum.output_job.run"
+        },
+        {
+          "label": "Artifacts",
+          "icon": "artifacts",
+          "verb": "datum.artifact.list"
+        },
+        {
+          "label": "Generate",
+          "icon": "generate",
+          "verb": "datum.artifact.generate"
+        },
+        {
+          "label": "Validate",
+          "icon": "validate",
+          "verb": "datum.artifact.validate"
+        },
+        {
+          "label": "Compare",
+          "icon": "compare",
+          "verb": "datum.artifact.compare"
+        },
+        {
+          "label": "Export Manufacturing Set",
+          "icon": "export",
+          "verb": "datum.artifact.export_manufacturing_set"
+        },
+        {
+          "label": "Manufacturing Plan\u2026",
+          "icon": "plan",
+          "verb": "datum.manufacturing.create_plan"
+        },
+        {
+          "label": "Panelize\u2026",
+          "icon": "panel",
+          "verb": "datum.manufacturing.create_panel_projection"
+        }
+      ]
+    },
+    {
+      "menu": "Window",
+      "items": [
+        {
+          "label": "Documents",
+          "icon": "documents",
+          "gui_local": "window.documents"
+        },
+        {
+          "label": "Terminal Sessions",
+          "icon": "terminal",
+          "gui_local": "window.terminal"
+        },
+        {
+          "label": "Workspace Layout",
+          "icon": "layout",
+          "gui_local": "window.layout"
+        }
+      ]
+    },
+    {
+      "menu": "Help",
+      "items": [
+        {
+          "label": "About Datum",
+          "icon": "about",
+          "gui_local": "help.about"
+        },
+        {
+          "label": "Diagnostics",
+          "icon": "diagnostics",
+          "gui_local": "help.diagnostics"
+        },
+        {
+          "label": "Command Reference",
+          "icon": "commands",
+          "gui_local": "help.commands"
+        }
+      ]
+    }
   ],
   "marking_menus": {
     "pcb.component": {
       "cardinal": {
-        "N": { "label": "Rotate", "icon": "rotate", "verb": "datum.pcb.rotate_component" },
-        "E": { "label": "Properties", "icon": "properties", "not_built": "component properties dialog verb" },
-        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_component" },
-        "W": { "label": "Flip", "icon": "flip", "verb": "datum.pcb.flip_component" }
+        "N": {
+          "label": "Rotate",
+          "icon": "rotate",
+          "verb": "datum.pcb.rotate_component"
+        },
+        "E": {
+          "label": "Properties",
+          "icon": "properties",
+          "not_built": "component properties dialog verb"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_component",
+          "destructive": true
+        },
+        "W": {
+          "label": "Flip",
+          "icon": "flip",
+          "verb": "datum.pcb.flip_component"
+        }
       },
       "secondary": {
-        "NE": { "label": "Move", "icon": "move", "verb": "datum.pcb.move_component" },
-        "SE": { "label": "Lock", "icon": "lock", "verb": "datum.pcb.lock_component" },
-        "SW": { "label": "Highlight Net", "icon": "net", "not_built": "net.highlight (view op)" },
-        "NW": { "label": "Select on Schematic", "icon": "crossprobe", "not_built": "crossprobe.select" }
+        "NE": {
+          "label": "Move",
+          "icon": "move",
+          "verb": "datum.pcb.move_component"
+        },
+        "SE": {
+          "label": "Lock",
+          "icon": "lock",
+          "verb": "datum.pcb.lock_component"
+        },
+        "SW": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight (view op)"
+        },
+        "NW": {
+          "label": "Select on Schematic",
+          "icon": "crossprobe",
+          "not_built": "crossprobe.select"
+        }
       },
       "overflow": [
-        { "label": "Set Reference…", "icon": "rename", "verb": "datum.pcb.set_component_reference" },
-        { "label": "Set Value…", "icon": "value", "verb": "datum.pcb.set_component_value" },
-        { "label": "Unlock", "icon": "unlock", "verb": "datum.pcb.unlock_component" },
-        { "label": "Align / Distribute…", "icon": "align", "verb": "datum.pcb.align_components" }
+        {
+          "label": "Set Reference\u2026",
+          "icon": "rename",
+          "verb": "datum.pcb.set_component_reference"
+        },
+        {
+          "label": "Set Value\u2026",
+          "icon": "value",
+          "verb": "datum.pcb.set_component_value"
+        },
+        {
+          "label": "Unlock",
+          "icon": "unlock",
+          "verb": "datum.pcb.unlock_component"
+        },
+        {
+          "label": "Align / Distribute\u2026",
+          "icon": "align",
+          "verb": "datum.pcb.align_components"
+        }
       ],
       "submenus": {
         "Change Footprint": [
-          { "label": "Set Package…", "icon": "package", "verb": "datum.pcb.set_component_package" },
-          { "label": "Set Part…", "icon": "part", "verb": "datum.pcb.set_component_part" }
+          {
+            "label": "Set Package\u2026",
+            "icon": "package",
+            "verb": "datum.pcb.set_component_package"
+          },
+          {
+            "label": "Set Part\u2026",
+            "icon": "part",
+            "verb": "datum.pcb.set_component_part"
+          }
         ]
       }
     },
     "pcb.track": {
       "cardinal": {
-        "N": { "label": "Change Layer", "icon": "layers", "submenu": "Change Layer", "not_built": "change-layer (inserts via)" },
-        "E": { "label": "Drag", "icon": "drag", "not_built": "interactive push/shove drag" },
-        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_track" },
-        "W": { "label": "Change Width", "icon": "width", "verb": "datum.pcb.edit_track" }
+        "N": {
+          "label": "Change Layer",
+          "icon": "layers",
+          "not_built": "change-layer (inserts via)",
+          "submenu": "Change Layer"
+        },
+        "E": {
+          "label": "Drag",
+          "icon": "drag",
+          "not_built": "interactive push/shove drag"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_track",
+          "destructive": true
+        },
+        "W": {
+          "label": "Change Width",
+          "icon": "width",
+          "verb": "datum.pcb.edit_track"
+        }
       },
       "secondary": {
-        "NE": { "label": "Route", "icon": "track", "verb": "datum.pcb.draw_track" },
-        "SE": { "label": "Break", "icon": "break", "not_built": "wire.break at point" },
-        "SW": { "label": "Highlight Net", "icon": "net", "not_built": "net.highlight" },
-        "NW": { "label": "Properties", "icon": "properties", "verb": "datum.pcb.edit_track" }
+        "NE": {
+          "label": "Route",
+          "icon": "track",
+          "verb": "datum.pcb.draw_track"
+        },
+        "SE": {
+          "label": "Break",
+          "icon": "break",
+          "not_built": "wire.break at point"
+        },
+        "SW": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight"
+        },
+        "NW": {
+          "label": "Properties",
+          "icon": "properties",
+          "verb": "datum.pcb.edit_track"
+        }
       },
       "overflow": [
-        { "label": "Delete Whole Net", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_net" }
+        {
+          "label": "Delete Whole Net",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_net",
+          "destructive": true
+        }
       ],
       "submenus": {}
     },
     "pcb.via": {
       "cardinal": {
-        "N": { "label": "Change Size", "icon": "via", "verb": "datum.pcb.edit_via" },
-        "E": { "label": "Properties", "icon": "properties", "verb": "datum.pcb.edit_via" },
-        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_via" },
-        "W": { "label": "Change Net", "icon": "net", "verb": "datum.pcb.set_pad_net" }
+        "N": {
+          "label": "Change Size",
+          "icon": "via",
+          "verb": "datum.pcb.edit_via"
+        },
+        "E": {
+          "label": "Properties",
+          "icon": "properties",
+          "verb": "datum.pcb.edit_via"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_via",
+          "destructive": true
+        },
+        "W": {
+          "label": "Change Net",
+          "icon": "net",
+          "verb": "datum.pcb.set_pad_net"
+        }
       },
       "secondary": {},
       "overflow": [],
@@ -157,10 +608,27 @@
     },
     "pcb.zone": {
       "cardinal": {
-        "N": { "label": "Fill", "icon": "fill", "verb": "datum.check.fill_zones" },
-        "E": { "label": "Properties", "icon": "properties", "verb": "datum.pcb.edit_zone" },
-        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_zone" },
-        "W": { "label": "Edit Outline", "icon": "outline", "not_built": "interactive vertex edit" }
+        "N": {
+          "label": "Fill",
+          "icon": "fill",
+          "verb": "datum.check.fill_zones"
+        },
+        "E": {
+          "label": "Properties",
+          "icon": "properties",
+          "verb": "datum.pcb.edit_zone"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_zone",
+          "destructive": true
+        },
+        "W": {
+          "label": "Edit Outline",
+          "icon": "outline",
+          "not_built": "interactive vertex edit"
+        }
       },
       "secondary": {},
       "overflow": [],
@@ -168,10 +636,26 @@
     },
     "pcb.net": {
       "cardinal": {
-        "N": { "label": "Highlight", "icon": "net", "not_built": "net.highlight (view op)" },
-        "E": { "label": "Select Whole Net", "icon": "select", "not_built": "net.select (view op)" },
-        "S": { "label": "Hide Ratsnest", "icon": "ratsnest", "not_built": "ratsnest toggle (view op)" },
-        "W": { "label": "Assign Net Class", "icon": "net-class", "not_built": "assign netclass from canvas" }
+        "N": {
+          "label": "Highlight",
+          "icon": "net",
+          "not_built": "net.highlight (view op)"
+        },
+        "E": {
+          "label": "Select Whole Net",
+          "icon": "select",
+          "not_built": "net.select (view op)"
+        },
+        "S": {
+          "label": "Hide Ratsnest",
+          "icon": "ratsnest",
+          "not_built": "ratsnest toggle (view op)"
+        },
+        "W": {
+          "label": "Assign Net Class",
+          "icon": "net-class",
+          "not_built": "assign netclass from canvas"
+        }
       },
       "secondary": {},
       "overflow": [],
@@ -179,119 +663,356 @@
     },
     "pcb.empty": {
       "cardinal": {
-        "N": { "label": "Route", "icon": "track", "verb": "datum.pcb.draw_track" },
-        "E": { "label": "Place Component", "icon": "component", "verb": "datum.pcb.place_component" },
-        "S": { "label": "Add Zone", "icon": "zone", "verb": "datum.pcb.place_zone" },
-        "W": { "label": "Paste", "icon": "paste", "not_built": "clipboard model" }
+        "N": {
+          "label": "Route",
+          "icon": "track",
+          "verb": "datum.pcb.draw_track"
+        },
+        "E": {
+          "label": "Place Component",
+          "icon": "component",
+          "verb": "datum.pcb.place_component"
+        },
+        "S": {
+          "label": "Add Zone",
+          "icon": "zone",
+          "verb": "datum.pcb.place_zone"
+        },
+        "W": {
+          "label": "Paste",
+          "icon": "paste",
+          "not_built": "clipboard model"
+        }
       },
       "secondary": {
-        "NE": { "label": "Add Via", "icon": "via", "verb": "datum.pcb.place_via" },
-        "SE": { "label": "Add Text", "icon": "text", "verb": "datum.pcb.place_text" },
-        "SW": { "label": "Add Dimension", "icon": "dimension", "verb": "datum.pcb.place_dimension" },
-        "NW": { "label": "Fill All Zones", "icon": "fill", "verb": "datum.check.fill_zones" }
+        "NE": {
+          "label": "Add Via",
+          "icon": "via",
+          "verb": "datum.pcb.place_via"
+        },
+        "SE": {
+          "label": "Add Text",
+          "icon": "text",
+          "verb": "datum.pcb.place_text"
+        },
+        "SW": {
+          "label": "Add Dimension",
+          "icon": "dimension",
+          "verb": "datum.pcb.place_dimension"
+        },
+        "NW": {
+          "label": "Fill All Zones",
+          "icon": "fill",
+          "verb": "datum.check.fill_zones"
+        }
       },
       "overflow": [],
       "submenus": {}
     },
     "pcb.multiselect": {
       "cardinal": {
-        "N": { "label": "Rotate", "icon": "rotate", "verb": "datum.pcb.rotate_component" },
-        "E": { "label": "Move Exactly", "icon": "move", "not_built": "move-exactly with delta" },
-        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_component" },
-        "W": { "label": "Align", "icon": "align", "submenu": "Align" }
+        "N": {
+          "label": "Rotate",
+          "icon": "rotate",
+          "verb": "datum.pcb.rotate_component"
+        },
+        "E": {
+          "label": "Move Exactly",
+          "icon": "move",
+          "not_built": "move-exactly with delta"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_component",
+          "destructive": true
+        },
+        "W": {
+          "label": "Align",
+          "icon": "align",
+          "submenu": "Align"
+        }
       },
       "secondary": {
-        "NE": { "label": "Duplicate", "icon": "copy", "not_built": "duplicate selection" },
-        "SE": { "label": "Flip", "icon": "flip", "verb": "datum.pcb.flip_component" },
-        "SW": { "label": "Lock", "icon": "lock", "verb": "datum.pcb.lock_component" },
-        "NW": { "label": "Distribute", "icon": "distribute", "submenu": "Distribute" }
+        "NE": {
+          "label": "Duplicate",
+          "icon": "copy",
+          "not_built": "duplicate selection"
+        },
+        "SE": {
+          "label": "Flip",
+          "icon": "flip",
+          "verb": "datum.pcb.flip_component"
+        },
+        "SW": {
+          "label": "Lock",
+          "icon": "lock",
+          "verb": "datum.pcb.lock_component"
+        },
+        "NW": {
+          "label": "Distribute",
+          "icon": "distribute",
+          "submenu": "Distribute"
+        }
       },
       "overflow": [],
       "submenus": {
         "Align": [
-          { "label": "Horizontal", "icon": "align-h", "submenu": "Align Horizontal" },
-          { "label": "Vertical", "icon": "align-v", "submenu": "Align Vertical" },
-          { "label": "Distribute", "icon": "distribute", "submenu": "Distribute" }
+          {
+            "label": "Horizontal",
+            "icon": "align-h",
+            "submenu": "Align Horizontal"
+          },
+          {
+            "label": "Vertical",
+            "icon": "align-v",
+            "submenu": "Align Vertical"
+          },
+          {
+            "label": "Distribute",
+            "icon": "distribute",
+            "submenu": "Distribute"
+          }
         ],
         "Align Horizontal": [
-          { "label": "Left", "icon": "align-left", "verb": "datum.pcb.align_components" },
-          { "label": "Center", "icon": "align-center-h", "verb": "datum.pcb.align_components" },
-          { "label": "Right", "icon": "align-right", "verb": "datum.pcb.align_components" }
+          {
+            "label": "Left",
+            "icon": "align-left",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "Center",
+            "icon": "align-center-h",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "Right",
+            "icon": "align-right",
+            "verb": "datum.pcb.align_components"
+          }
         ],
         "Align Vertical": [
-          { "label": "Top", "icon": "align-top", "verb": "datum.pcb.align_components" },
-          { "label": "Center", "icon": "align-center-v", "verb": "datum.pcb.align_components" },
-          { "label": "Bottom", "icon": "align-bottom", "verb": "datum.pcb.align_components" }
+          {
+            "label": "Top",
+            "icon": "align-top",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "Center",
+            "icon": "align-center-v",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "Bottom",
+            "icon": "align-bottom",
+            "verb": "datum.pcb.align_components"
+          }
         ],
         "Distribute": [
-          { "label": "Even Spacing", "icon": "dist-spacing", "verb": "datum.pcb.align_components" },
-          { "label": "Even Gaps", "icon": "dist-gaps", "verb": "datum.pcb.align_components" },
-          { "label": "To Pitch", "icon": "dist-pitch", "verb": "datum.pcb.align_components" }
+          {
+            "label": "Even Spacing",
+            "icon": "dist-spacing",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "Even Gaps",
+            "icon": "dist-gaps",
+            "verb": "datum.pcb.align_components"
+          },
+          {
+            "label": "To Pitch",
+            "icon": "dist-pitch",
+            "verb": "datum.pcb.align_components"
+          }
         ]
       }
     },
     "schematic.symbol": {
       "cardinal": {
-        "N": { "label": "Properties", "icon": "properties", "not_built": "symbol properties dialog verb" },
-        "E": { "label": "Rotate", "icon": "rotate", "verb": "datum.schematic.rotate_symbol" },
-        "S": { "label": "Move", "icon": "move", "verb": "datum.schematic.move_symbol" },
-        "W": { "label": "Mirror", "icon": "mirror", "verb": "datum.schematic.mirror_symbol" }
+        "N": {
+          "label": "Properties",
+          "icon": "properties",
+          "not_built": "symbol properties dialog verb"
+        },
+        "E": {
+          "label": "Rotate",
+          "icon": "rotate",
+          "verb": "datum.schematic.rotate_symbol"
+        },
+        "S": {
+          "label": "Move",
+          "icon": "move",
+          "verb": "datum.schematic.move_symbol"
+        },
+        "W": {
+          "label": "Mirror",
+          "icon": "mirror",
+          "verb": "datum.schematic.mirror_symbol"
+        }
       },
       "secondary": {
-        "NE": { "label": "Edit Value", "icon": "value", "verb": "datum.schematic.set_symbol_value" },
-        "SE": { "label": "Edit Reference", "icon": "rename", "verb": "datum.schematic.set_symbol_reference" },
-        "SW": { "label": "Highlight Net", "icon": "net", "not_built": "net.highlight" },
-        "NW": { "label": "Select on PCB", "icon": "crossprobe", "not_built": "crossprobe.select" }
+        "NE": {
+          "label": "Edit Value",
+          "icon": "value",
+          "verb": "datum.schematic.set_symbol_value"
+        },
+        "SE": {
+          "label": "Edit Reference",
+          "icon": "rename",
+          "verb": "datum.schematic.set_symbol_reference"
+        },
+        "SW": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight"
+        },
+        "NW": {
+          "label": "Select on PCB",
+          "icon": "crossprobe",
+          "not_built": "crossprobe.select"
+        }
       },
       "overflow": [
-        { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.schematic.delete_symbol" },
-        { "label": "Add Field…", "icon": "field", "verb": "datum.schematic.add_symbol_field" },
-        { "label": "Assign Part…", "icon": "part", "verb": "datum.schematic.set_symbol_part" }
+        {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.schematic.delete_symbol",
+          "destructive": true
+        },
+        {
+          "label": "Add Field\u2026",
+          "icon": "field",
+          "verb": "datum.schematic.add_symbol_field"
+        },
+        {
+          "label": "Assign Part\u2026",
+          "icon": "part",
+          "verb": "datum.schematic.set_symbol_part"
+        }
       ],
       "submenus": {
         "Unit": [
-          { "label": "Set Unit…", "icon": "unit", "verb": "datum.schematic.set_symbol_unit" }
+          {
+            "label": "Set Unit\u2026",
+            "icon": "unit",
+            "verb": "datum.schematic.set_symbol_unit"
+          }
         ]
       }
     },
     "schematic.wire": {
       "cardinal": {
-        "N": { "label": "Highlight Net", "icon": "net", "not_built": "net.highlight (view op)" },
-        "E": { "label": "Add Label", "icon": "label", "verb": "datum.schematic.place_label" },
-        "S": { "label": "Drag", "icon": "drag", "not_built": "interactive wire drag" },
-        "W": { "label": "Add Junction", "icon": "junction", "verb": "datum.schematic.place_junction" }
+        "N": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight (view op)"
+        },
+        "E": {
+          "label": "Add Label",
+          "icon": "label",
+          "verb": "datum.schematic.place_label"
+        },
+        "S": {
+          "label": "Drag",
+          "icon": "drag",
+          "not_built": "interactive wire drag"
+        },
+        "W": {
+          "label": "Add Junction",
+          "icon": "junction",
+          "verb": "datum.schematic.place_junction"
+        }
       },
       "secondary": {},
       "overflow": [
-        { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.schematic.delete_wire" }
+        {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.schematic.delete_wire",
+          "destructive": true
+        }
       ],
       "submenus": {}
     },
     "schematic.label": {
       "cardinal": {
-        "N": { "label": "Rename", "icon": "rename", "verb": "datum.schematic.rename_label" },
-        "E": { "label": "Change To", "icon": "convert", "submenu": "Change To", "not_built": "label type conversion" },
-        "S": { "label": "Move", "icon": "move", "not_built": "move-label verb" },
-        "W": { "label": "Highlight Net", "icon": "net", "not_built": "net.highlight" }
+        "N": {
+          "label": "Rename",
+          "icon": "rename",
+          "verb": "datum.schematic.rename_label"
+        },
+        "E": {
+          "label": "Change To",
+          "icon": "convert",
+          "not_built": "label type conversion",
+          "submenu": "Change To"
+        },
+        "S": {
+          "label": "Move",
+          "icon": "move",
+          "not_built": "move-label verb"
+        },
+        "W": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight"
+        }
       },
       "secondary": {},
       "overflow": [
-        { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.schematic.delete_label" }
+        {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.schematic.delete_label",
+          "destructive": true
+        }
       ],
       "submenus": {}
     },
     "schematic.empty": {
       "cardinal": {
-        "N": { "label": "Place Symbol", "icon": "symbol", "verb": "datum.schematic.place_symbol" },
-        "E": { "label": "Place Wire", "icon": "wire", "verb": "datum.schematic.draw_wire" },
-        "S": { "label": "Place Power", "icon": "power", "not_built": "place power symbol" },
-        "W": { "label": "Place Label", "icon": "label", "verb": "datum.schematic.place_label" }
+        "N": {
+          "label": "Place Symbol",
+          "icon": "symbol",
+          "verb": "datum.schematic.place_symbol"
+        },
+        "E": {
+          "label": "Place Wire",
+          "icon": "wire",
+          "verb": "datum.schematic.draw_wire"
+        },
+        "S": {
+          "label": "Place Power",
+          "icon": "power",
+          "not_built": "place power symbol"
+        },
+        "W": {
+          "label": "Place Label",
+          "icon": "label",
+          "verb": "datum.schematic.place_label"
+        }
       },
       "secondary": {
-        "NE": { "label": "Place Bus", "icon": "bus", "verb": "datum.schematic.create_bus" },
-        "SE": { "label": "Place Text", "icon": "text", "verb": "datum.schematic.place_text" },
-        "SW": { "label": "Place No-Connect", "icon": "noconnect", "verb": "datum.schematic.place_noconnect" },
-        "NW": { "label": "Place Junction", "icon": "junction", "verb": "datum.schematic.place_junction" }
+        "NE": {
+          "label": "Place Bus",
+          "icon": "bus",
+          "verb": "datum.schematic.create_bus"
+        },
+        "SE": {
+          "label": "Place Text",
+          "icon": "text",
+          "verb": "datum.schematic.place_text"
+        },
+        "SW": {
+          "label": "Place No-Connect",
+          "icon": "noconnect",
+          "verb": "datum.schematic.place_noconnect"
+        },
+        "NW": {
+          "label": "Place Junction",
+          "icon": "junction",
+          "verb": "datum.schematic.place_junction"
+        }
       },
       "overflow": [],
       "submenus": {}
