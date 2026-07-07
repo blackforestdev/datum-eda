@@ -1,6 +1,6 @@
 {
   "schema": "datum_icon_set_v1",
-  "notes": "Declared icon set for the GUI. Every icon id referenced by docs/gui/menu_model.json (and panels) must be a key here; gated by scripts/check_menu_model.py. source 'eda' = custom Datum glyph in crates/engine/assets/icons/eda/ (status exists|to_author = authoring worklist); source 'tabler' = mapped to the MIT Tabler base set per the Design Book (decision 015 iconography). Adding an icon = one entry here.",
+  "notes": "Declared icon set for the GUI. Every icon id referenced by docs/gui/menu_model.json (and panels) must be a key here; gated by scripts/check_menu_model.py. source 'eda' = custom Datum glyph in crates/engine/assets/icons/eda/ (status exists|to_author = authoring worklist); source 'tabler' = mapped to the MIT Tabler base set per the Design Book (decision 015). Adding an icon = one entry here.",
   "icons": {
     "about": {
       "source": "tabler",
@@ -11,6 +11,46 @@
       "source": "tabler",
       "glyph": "align",
       "status": "mapped"
+    },
+    "align-bottom": {
+      "source": "eda",
+      "asset": "align-bottom.svg",
+      "status": "to_author"
+    },
+    "align-center-h": {
+      "source": "eda",
+      "asset": "align-center-h.svg",
+      "status": "to_author"
+    },
+    "align-center-v": {
+      "source": "eda",
+      "asset": "align-center-v.svg",
+      "status": "to_author"
+    },
+    "align-h": {
+      "source": "eda",
+      "asset": "align-h.svg",
+      "status": "to_author"
+    },
+    "align-left": {
+      "source": "eda",
+      "asset": "align-left.svg",
+      "status": "to_author"
+    },
+    "align-right": {
+      "source": "eda",
+      "asset": "align-right.svg",
+      "status": "to_author"
+    },
+    "align-top": {
+      "source": "eda",
+      "asset": "align-top.svg",
+      "status": "to_author"
+    },
+    "align-v": {
+      "source": "eda",
+      "asset": "align-v.svg",
+      "status": "to_author"
     },
     "artifacts": {
       "source": "tabler",
@@ -100,6 +140,26 @@
     "dimension": {
       "source": "eda",
       "asset": "dimension.svg",
+      "status": "to_author"
+    },
+    "dist-gaps": {
+      "source": "eda",
+      "asset": "dist-gaps.svg",
+      "status": "to_author"
+    },
+    "dist-pitch": {
+      "source": "eda",
+      "asset": "dist-pitch.svg",
+      "status": "to_author"
+    },
+    "dist-spacing": {
+      "source": "eda",
+      "asset": "dist-spacing.svg",
+      "status": "to_author"
+    },
+    "distribute": {
+      "source": "eda",
+      "asset": "distribute.svg",
       "status": "to_author"
     },
     "documents": {

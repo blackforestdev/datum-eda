@@ -112,7 +112,7 @@
 - **N** Rotate ▪ · **E** Move Exactly ▪ · **S** Delete ⚠ · **W** Align/Distribute ▸★
 - Secondary: Duplicate ▪ · Flip ▪ · Lock ▪ · Group/Ungroup ▪
 - Overflow: Assign Net Class ▸ (copper) · Change Layer ▸ (homogeneous) · Create Array ⚡ · Select Similar ▸
-- Submenus: **Align/Distribute ▸** (L/R/T/B · Center H/V · Distribute H/V) · **Change Layer ▸** · **Assign Net Class ▸** · **Filter ▸** (by type)
+- Submenus: **Align ▸** [3-layer, icon-driven] → **Horizontal ▸** (Left/Center/Right) · **Vertical ▸** (Top/Center/Bottom) · **Distribute ▸** (Even spacing / Even gaps / To pitch) · **Change Layer ▸** · **Assign Net Class ▸** · **Filter ▸** (by type)
 
 ---
 
@@ -185,7 +185,7 @@
 - **N** Move ⚡ · **E** Rotate ▪ · **S** Mirror H/V ▪ · **W** Duplicate ▪
 - Secondary: Align ▸★ · Assign Netclass (if nets) ▪ · Copy/Cut ▪ · Cross-probe to PCB ⌖★
 - Overflow: Distribute ▸ · Align to Grid · Group/Ungroup · Edit Common Field (homogeneous) ▪ · Highlight All Nets ▪ · ⚠ Change/Update Symbols · ⚠ Delete
-- Submenus: **Align ▸** (L/R/T/B · Center H/V) · **Edit Field ▸** (homogeneous)
+- Submenus: **Align ▸** [3-layer, icon-driven] → **Horizontal ▸** (Left/Center/Right) · **Vertical ▸** (Top/Center/Bottom) · **Distribute ▸** (Even spacing / Even gaps / To pitch) · **Edit Field ▸** (homogeneous)
 
 ---
 

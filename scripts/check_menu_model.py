@@ -74,6 +74,16 @@ def main():
         seck = set((mm.get("secondary") or {}).keys())
         if not seck <= DIAG:
             fail.append(f"{name}: secondary has non-diagonal slots {sorted(seck - DIAG)}")
+        subnames = set((mm.get("submenus") or {}).keys())
+        allents = list((mm.get("cardinal") or {}).values()) \
+            + list((mm.get("secondary") or {}).values()) + list(mm.get("overflow") or [])
+        for lst in (mm.get("submenus") or {}).values():
+            allents += lst
+        for e in allents:
+            ref = e.get("submenu")
+            if ref and ref not in subnames and not e.get("not_built"):
+                fail.append(f"{name}: submenu ref '{ref}' has no matching wheel "
+                            f"(and no 'not_built' to mark it as worklist)")
         for slot, e in (mm.get("cardinal") or {}).items():
             entries.append((f"{name}/cardinal/{slot}", e))
         for slot, e in (mm.get("secondary") or {}).items():

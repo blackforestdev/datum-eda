@@ -193,6 +193,43 @@
       "overflow": [],
       "submenus": {}
     },
+    "pcb.multiselect": {
+      "cardinal": {
+        "N": { "label": "Rotate", "icon": "rotate", "verb": "datum.pcb.rotate_component" },
+        "E": { "label": "Move Exactly", "icon": "move", "not_built": "move-exactly with delta" },
+        "S": { "label": "Delete", "icon": "delete", "destructive": true, "verb": "datum.pcb.delete_component" },
+        "W": { "label": "Align", "icon": "align", "submenu": "Align" }
+      },
+      "secondary": {
+        "NE": { "label": "Duplicate", "icon": "copy", "not_built": "duplicate selection" },
+        "SE": { "label": "Flip", "icon": "flip", "verb": "datum.pcb.flip_component" },
+        "SW": { "label": "Lock", "icon": "lock", "verb": "datum.pcb.lock_component" },
+        "NW": { "label": "Distribute", "icon": "distribute", "submenu": "Distribute" }
+      },
+      "overflow": [],
+      "submenus": {
+        "Align": [
+          { "label": "Horizontal", "icon": "align-h", "submenu": "Align Horizontal" },
+          { "label": "Vertical", "icon": "align-v", "submenu": "Align Vertical" },
+          { "label": "Distribute", "icon": "distribute", "submenu": "Distribute" }
+        ],
+        "Align Horizontal": [
+          { "label": "Left", "icon": "align-left", "verb": "datum.pcb.align_components" },
+          { "label": "Center", "icon": "align-center-h", "verb": "datum.pcb.align_components" },
+          { "label": "Right", "icon": "align-right", "verb": "datum.pcb.align_components" }
+        ],
+        "Align Vertical": [
+          { "label": "Top", "icon": "align-top", "verb": "datum.pcb.align_components" },
+          { "label": "Center", "icon": "align-center-v", "verb": "datum.pcb.align_components" },
+          { "label": "Bottom", "icon": "align-bottom", "verb": "datum.pcb.align_components" }
+        ],
+        "Distribute": [
+          { "label": "Even Spacing", "icon": "dist-spacing", "verb": "datum.pcb.align_components" },
+          { "label": "Even Gaps", "icon": "dist-gaps", "verb": "datum.pcb.align_components" },
+          { "label": "To Pitch", "icon": "dist-pitch", "verb": "datum.pcb.align_components" }
+        ]
+      }
+    },
     "schematic.symbol": {
       "cardinal": {
         "N": { "label": "Properties", "icon": "properties", "not_built": "symbol properties dialog verb" },

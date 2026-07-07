@@ -54,17 +54,22 @@ tool. (A new "align mode" is a new enum value, not a new verb.)
 ## Flagship deep tools (parameter spaces)
 
 ### 1. Align & Distribute — a discipline, one verb
-Verb: `datum.pcb.align_components` (exists, mode-parameterized) — extend its schema;
-mirror for schematic symbols.
-- **mode**: `align_left | align_right | align_top | align_bottom | center_h |
-  center_v | distribute_h | distribute_v | to_grid | pack`
-- **reference**: `selection_bounds | primary_selection | named_object | board_origin`
-- **spacing**: `equal_centers | equal_gaps | fixed_pitch(value)` (for distribute)
-- **grid**: pitch + origin (for to_grid)
-- **axis / edge** derived from mode.
-One guarded `OperationBatch` (per-object `Set…Position`), skips locked. Marking-menu
-presets = the common modes; inspector = full schema; AI = *"line these up on the
-left"* / *"space evenly 2 mm"*.
+**Structured axis → position** (a 3-layer marking menu: `Align → axis → position`),
+one parameterized verb `datum.pcb.align_components` (extend its schema; mirror for
+schematic symbols). Align is two-stage — pick axis, then position — never a flat
+list of edges:
+- **op**: `align | distribute`
+- **align.axis**: `horizontal | vertical`
+- **align.position**: horizontal → `left | center | right`; vertical →
+  `top | center | bottom`  *(standard mapping: Horizontal = L/C/R, Vertical = T/C/B)*
+- **distribute.mode**: `even_spacing | even_gaps | to_pitch(value)`  *(first-class,
+  a peer discipline to align — not an afterthought)*
+- **reference**: `selection_bounds | primary_selection | named_object | board_origin | grid`
+One guarded `OperationBatch` (per-object `Set…Position`), skips locked. **Wedges are
+icon-driven** — each shows the alignment *result* (boxes snapping to an edge) so the
+horizontal/vertical word ambiguity never bites (no-manual). Marking menu = the
+compound mark `Align→axis→position` in one gesture; inspector = full schema; AI =
+*"line these up on the left"* / *"distribute evenly 2 mm"*.
 
 ### 2. Parametric Array / Pattern Placement — the speed feature
 Verb (buildout): `place_array` over a source (component / via / pad / footprint).
