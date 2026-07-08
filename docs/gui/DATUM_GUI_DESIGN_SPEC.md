@@ -107,6 +107,52 @@ Reference: `docs/gui/prototypes/board-editor.html` (pass 3) shows a PCB|Schemati
 split with per-pane mode tools, context-follows-focus, and U1 cross-probed across
 both panes.
 
+## Command Surfaces — console, terminal, AI (three, not one)
+
+Three distinct input surfaces got muddled in the M7 spike. They are **separate by
+design**, and correcting this is a decision-level fix (clarifies 005 terminal,
+006 assistant, 019 shell).
+
+1. **Command Console (Eagle / AutoCAD).** A single-line command input in the
+   **lower-left of the viewport**. Type a command (`mo`, `route`, `net`…), hover
+   the target, press Enter → it acts on the object under the cursor. **Every verb
+   is a console command**, and the console language *is* the scripting language
+   (Eagle's ULP → Datum's Python/verbs). It is the **typed twin of the marking
+   menu** — identical verbs, different muscle memory (type vs. flick) — a
+   manual-first power surface. It **drives the editor, not the OS**; it is not a
+   shell. *(This is the original intent that the spec distorted into "a terminal.")*
+2. **Native Terminal (VS Code-style).** A real PTY system terminal
+   (Alacritty/Ghostty/Konsole-grade), **fully integrated, not a bolt-on**, with
+   **multiple tabs/sessions**. It runs any OS task and is where **code agents run**
+   — Claude Code, Codex, or a **local model (vLLM / Ollama)** — with the full Datum
+   surface exposed. Because it's native, a Linux user drives agents through their
+   **own subscription or local models — no forced API credits**. Multiple tabs let
+   **different agents work different aspects in parallel** (schematic / PCB /
+   footprint). Decision 005, clarified.
+3. **AI collaboration = agent-in-terminal + inline ghost overlay.** There is **no
+   separate "Assistant/Agent tab."** The agent runs in the native terminal; its
+   *proposals* render as the inline ghost overlay on the canvas (Tab / Esc). This
+   corrects the M7 distortion (a bolted-on assistant lane — same family as the
+   vacated 013 misfire). **Output** stays a tab (logs/results).
+
+**Why it got muddled:** the spec collapsed the *console* (drive the editor by
+typing verbs) into the *terminal* (run OS commands), then split "AI" into its own
+lane — a surface that was neither a real command line nor a real shell, plus a
+redundant agent tab. Two surfaces pretending to be one; one split into two. Net
+result on the shell: the console is viewport-anchored (lower-left); the bottom dock
+is **Terminal (multi-tab) + Output** — no Assistant tab.
+
+**The unifying law — five doorways, one vocabulary.** menu bar (discovery) ·
+marking menu (gesture) · **command console (typed)** · scripting (verbs in a file)
+· AI (intent). All five drive the **same verb registry**, so **every program action
+must be a verb** — a *complete* set (capability stays a parameter of a small verb
+set, but nothing is unreachable). A missing verb = an action the AI can't do, the
+console can't type, and a script can't call. **Verb-registry completeness is
+first-order**; the menu_model `not_built` entries are the visible gap.
+
+**Future:** SPICE / behavioral-model integration (deferred) benefits directly from
+the multi-tab terminal + parallel-agent model.
+
 ## Context Menu System (right-click) — the speed surface
 
 Designed 2026-07-06 from a two-part research pass: EDA right-click systems
