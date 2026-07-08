@@ -116,10 +116,10 @@ fn project_export_gerber_silkscreen_layer_writes_rs274x_text_strokes() {
     assert!(gerber.contains("D01*"));
     assert!(gerber.contains("X3000000Y4000000D02*"));
     assert!(gerber.contains("X3000000Y5000000D01*"));
-    assert!(gerber.contains("X1000000Y1262695D02*"));
-    assert!(gerber.contains("X1549804Y1262695D01*"));
-    assert!(gerber.contains("X2450195Y1262695D02*"));
-    assert!(gerber.contains("X2699218Y1262695D01*"));
+    assert!(gerber.contains("X1000000Y1290000D02*"));
+    assert!(gerber.contains("X1474000Y1290000D01*"));
+    assert!(gerber.contains("X2216000Y1290000D02*"));
+    assert!(gerber.contains("X2473000Y1290000D01*"));
     assert!(gerber.ends_with("M02*\n"));
 
     let _ = std::fs::remove_dir_all(&root);

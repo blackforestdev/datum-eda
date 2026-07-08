@@ -85,10 +85,10 @@ fn project_mechanical_layer_component_text_export_validate_and_compare() {
     assert_eq!(export_report["component_text_count"], 1);
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
-    assert!(gerber.contains("X1200000Y1672461D02*"));
-    assert!(gerber.contains("X1292773Y1672461D01*"));
+    assert!(gerber.contains("X1200000Y1702000D02*"));
+    assert!(gerber.contains("X1280000Y1702000D01*"));
     assert!(gerber.contains("X1200000Y2400000D02*"));
-    assert!(gerber.contains("X1629687Y2400000D01*"));
+    assert!(gerber.contains("X1545000Y2400000D01*"));
 
     let validate_cli = Cli::try_parse_from([
         "eda",

@@ -180,7 +180,8 @@ mod tests {
     use crate::board::BoardText;
     use crate::ir::geometry::Point;
     use crate::text::{
-        FAMILY_INTER, FAMILY_NEWSTROKE, TextFamilySource, TextHAlign, TextRenderIntent,
+        FAMILY_IBM_PLEX_SANS_CONDENSED, FAMILY_NEWSTROKE, TextFamilySource, TextHAlign,
+        TextRenderIntent,
         TextStyleId, TextVAlign,
     };
     use uuid::Uuid;
@@ -210,22 +211,22 @@ mod tests {
     }
 
     #[test]
-    fn from_board_text_promotes_annotation_legacy_defaults_to_inter() {
+    fn from_board_text_promotes_annotation_legacy_defaults_to_ibm_plex() {
         let attrs = TextAttributes::from_board_text(&sample_board_text(
             TextRenderIntent::Annotation,
             TextFamilyId(FAMILY_NEWSTROKE.to_string()),
         ));
-        assert_eq!(attrs.family.0, FAMILY_INTER);
+        assert_eq!(attrs.family.0, FAMILY_IBM_PLEX_SANS_CONDENSED);
         assert_eq!(attrs.family_source, TextFamilySource::ImplicitDefault);
     }
 
     #[test]
-    fn from_board_text_promotes_manufacturing_legacy_defaults_to_inter() {
+    fn from_board_text_promotes_manufacturing_legacy_defaults_to_ibm_plex() {
         let attrs = TextAttributes::from_board_text(&sample_board_text(
             TextRenderIntent::Manufacturing,
             TextFamilyId(FAMILY_NEWSTROKE.to_string()),
         ));
-        assert_eq!(attrs.family.0, FAMILY_INTER);
+        assert_eq!(attrs.family.0, FAMILY_IBM_PLEX_SANS_CONDENSED);
     }
 
     #[test]

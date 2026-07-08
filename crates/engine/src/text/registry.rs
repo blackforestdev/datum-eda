@@ -8,6 +8,10 @@ pub const FAMILY_NEWSTROKE: &str = "newstroke";
 pub const FAMILY_INTER: &str = "inter";
 pub const FAMILY_INTER_DISPLAY: &str = "inter_display";
 pub const FAMILY_IBM_PLEX_SANS_CONDENSED: &str = "ibm_plex_sans_condensed";
+pub const FAMILY_IBM_PLEX_SANS_CONDENSED_MEDIUM: &str = "ibm_plex_sans_condensed_medium";
+pub const FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD: &str = "ibm_plex_sans_condensed_semibold";
+pub const FAMILY_IBM_PLEX_MONO: &str = "ibm_plex_mono";
+pub const FAMILY_IBM_PLEX_MONO_MEDIUM: &str = "ibm_plex_mono_medium";
 pub const FAMILY_JETBRAINS_MONO: &str = "jetbrains_mono";
 pub const FAMILY_DEV_DEJAVU_SANS: &str = "dev_dejavu_sans";
 
@@ -47,6 +51,30 @@ const FONT_FAMILIES: &[FontFamilyEntry] = &[
         asset_relpath: Some("ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"),
     },
     FontFamilyEntry {
+        family_id: FAMILY_IBM_PLEX_SANS_CONDENSED_MEDIUM,
+        default_style_id: STYLE_REGULAR,
+        backend_kind: GlyphBackendKind::Outline,
+        asset_relpath: Some("ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"),
+    },
+    FontFamilyEntry {
+        family_id: FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD,
+        default_style_id: STYLE_REGULAR,
+        backend_kind: GlyphBackendKind::Outline,
+        asset_relpath: Some("ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"),
+    },
+    FontFamilyEntry {
+        family_id: FAMILY_IBM_PLEX_MONO,
+        default_style_id: STYLE_REGULAR,
+        backend_kind: GlyphBackendKind::Outline,
+        asset_relpath: Some("ibm_plex_mono/IBMPlexMono-Regular.ttf"),
+    },
+    FontFamilyEntry {
+        family_id: FAMILY_IBM_PLEX_MONO_MEDIUM,
+        default_style_id: STYLE_REGULAR,
+        backend_kind: GlyphBackendKind::Outline,
+        asset_relpath: Some("ibm_plex_mono/IBMPlexMono-Medium.ttf"),
+    },
+    FontFamilyEntry {
         family_id: FAMILY_JETBRAINS_MONO,
         default_style_id: STYLE_REGULAR,
         backend_kind: GlyphBackendKind::Outline,
@@ -74,12 +102,22 @@ pub fn family_backend_kind(family: &TextFamilyId) -> GlyphBackendKind {
 }
 
 pub fn default_family_for_intent(intent: TextRenderIntent) -> TextFamilyId {
+    // Rendering Book (docs/gui/DATUM_RENDERING_BOOK.md §5): IBM Plex is the program
+    // typeface. Sans Condensed for all text (silk, annotation, UI, docs); SemiBold
+    // for branding/display. Mono (registered above) is reserved for aligned numeric
+    // data and is selected explicitly, not as an intent default.
     match intent {
-        TextRenderIntent::Manufacturing => TextFamilyId(FAMILY_INTER.to_string()),
-        TextRenderIntent::Annotation => TextFamilyId(FAMILY_INTER.to_string()),
-        TextRenderIntent::Branding => TextFamilyId(FAMILY_INTER_DISPLAY.to_string()),
-        TextRenderIntent::Documentation => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
-        TextRenderIntent::UiPreview => TextFamilyId(FAMILY_INTER.to_string()),
+        TextRenderIntent::Manufacturing => {
+            TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string())
+        }
+        TextRenderIntent::Annotation => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
+        TextRenderIntent::Branding => {
+            TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD.to_string())
+        }
+        TextRenderIntent::Documentation => {
+            TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string())
+        }
+        TextRenderIntent::UiPreview => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
     }
 }
 
@@ -123,18 +161,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn manufacturing_defaults_to_inter_family() {
+    fn manufacturing_defaults_to_ibm_plex_sans_condensed() {
         assert_eq!(
             default_family_for_intent(TextRenderIntent::Manufacturing).0,
-            FAMILY_INTER
+            FAMILY_IBM_PLEX_SANS_CONDENSED
         );
     }
 
     #[test]
-    fn annotation_defaults_to_inter_family() {
+    fn annotation_defaults_to_ibm_plex_sans_condensed() {
         assert_eq!(
             default_family_for_intent(TextRenderIntent::Annotation).0,
-            FAMILY_INTER
+            FAMILY_IBM_PLEX_SANS_CONDENSED
+        );
+    }
+
+    #[test]
+    fn branding_defaults_to_ibm_plex_semibold() {
+        assert_eq!(
+            default_family_for_intent(TextRenderIntent::Branding).0,
+            FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD
         );
     }
 
@@ -157,6 +203,18 @@ mod tests {
             FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()
         )));
         assert!(family_asset_is_vendored(&TextFamilyId(
+            FAMILY_IBM_PLEX_SANS_CONDENSED_MEDIUM.to_string()
+        )));
+        assert!(family_asset_is_vendored(&TextFamilyId(
+            FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD.to_string()
+        )));
+        assert!(family_asset_is_vendored(&TextFamilyId(
+            FAMILY_IBM_PLEX_MONO.to_string()
+        )));
+        assert!(family_asset_is_vendored(&TextFamilyId(
+            FAMILY_IBM_PLEX_MONO_MEDIUM.to_string()
+        )));
+        assert!(family_asset_is_vendored(&TextFamilyId(
             FAMILY_JETBRAINS_MONO.to_string()
         )));
     }
@@ -169,7 +227,7 @@ mod tests {
             &TextFamilyId(FAMILY_NEWSTROKE.to_string()),
             &TextStyleId(STYLE_REGULAR.to_string()),
         );
-        assert_eq!(family.0, FAMILY_INTER);
+        assert_eq!(family.0, FAMILY_IBM_PLEX_SANS_CONDENSED);
         assert_eq!(style.0, STYLE_REGULAR);
     }
 
@@ -181,7 +239,7 @@ mod tests {
             &TextFamilyId(FAMILY_NEWSTROKE.to_string()),
             &TextStyleId(STYLE_REGULAR.to_string()),
         );
-        assert_eq!(family.0, FAMILY_INTER);
+        assert_eq!(family.0, FAMILY_IBM_PLEX_SANS_CONDENSED);
         assert_eq!(style.0, STYLE_REGULAR);
     }
 

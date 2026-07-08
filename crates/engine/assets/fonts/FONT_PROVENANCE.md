@@ -45,6 +45,42 @@ Current vendored outline assets:
 - license: SIL OFL 1.1
 - local asset filename: `assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf`
 
+Additional IBM Plex faces vendored 2026-07-08 for the Rendering Book typography
+(`docs/gui/DATUM_RENDERING_BOOK.md` §5): weighted Sans Condensed hierarchy plus IBM
+Plex Mono for aligned numeric data. Upstream `IBM/plex` tag `v5.0.0`, SIL OFL 1.1:
+
+- family id: `ibm_plex_sans_condensed_medium`
+- upstream name: `IBM Plex Sans Condensed Medium`
+- upstream URL: `https://github.com/IBM/plex` (tag `v5.0.0`)
+- version: v5.0.0 asset fetched on 2026-07-08
+- SHA-256: `5494fa48878fbcff8b3e938efedbee075f7b4532451d3990490d47a743a9951e`
+- license: SIL OFL 1.1
+- local asset filename: `assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf`
+
+- family id: `ibm_plex_sans_condensed_semibold`
+- upstream name: `IBM Plex Sans Condensed SemiBold`
+- upstream URL: `https://github.com/IBM/plex` (tag `v5.0.0`)
+- version: v5.0.0 asset fetched on 2026-07-08
+- SHA-256: `ca6eeb68a1b06d0c671e4df80a923a5ab7d325c1eda12f009eba4281b30f4be9`
+- license: SIL OFL 1.1
+- local asset filename: `assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf`
+
+- family id: `ibm_plex_mono`
+- upstream name: `IBM Plex Mono Regular`
+- upstream URL: `https://github.com/IBM/plex` (tag `v5.0.0`)
+- version: v5.0.0 asset fetched on 2026-07-08
+- SHA-256: `0b1292004f8bc6ff82d4490820e01e42cf839248822c0b9835aa795a8235f79c`
+- license: SIL OFL 1.1
+- local asset filename: `assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf`
+
+- family id: `ibm_plex_mono_medium`
+- upstream name: `IBM Plex Mono Medium`
+- upstream URL: `https://github.com/IBM/plex` (tag `v5.0.0`)
+- version: v5.0.0 asset fetched on 2026-07-08
+- SHA-256: `50f39f344a345d637f34531e47454a1c2ac5f432325a861f0f485e24d74568a6`
+- license: SIL OFL 1.1
+- local asset filename: `assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf`
+
 - family id: `jetbrains_mono`
 - upstream name: `JetBrains Mono Regular`
 - upstream URL: `https://github.com/JetBrains/JetBrainsMono`

@@ -73,9 +73,11 @@ selection/active only.
   defect. Attached nets keep their normal wire colour (they are not part of the
   selected symbol). Selection is **screen-only presentation state** — never
   geometry, never journaled, never in any export (Law 1 fence).
-- **[OPEN] Symbol standard — Fork B.** IEC 60617 rectangular resistor (cleaner,
-  grid-aligned, international) vs ANSI/IEEE 315 zigzag (traditional, US). The
-  prototype toggles both; IEC is shown as the current default pending owner lock.
+- **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
+  rectangular convention generally — is the Datum house standard: cleaner,
+  grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical
+  symbol (it may return later as an optional regional display, but the default and
+  the authored/generated symbol is IEC).
 
 ## 3. PCB footprints  **[LOCKED]**
 
@@ -130,9 +132,13 @@ default-on per Law 2. Rendered geometry is byte-identical to CAM (Law 1).
   fab-dependent) so it prints clean. The on-screen silk *is* the geometry the fab
   receives (Law 1); the same face carries into fab/assembly **documentation** (title
   blocks, fab notes, assembly drawings).
-- **Engine wiring — follow-up (execution).** `gui-render` must load the Mono and
-  weighted faces (today it loads only Sans Condensed Regular) so the built GUI
-  matches this spec. Assets are in the tree; wiring is a code task, not yet done.
+- **Engine wiring — DONE (2026-07-08).** The engine text registry
+  (`crates/engine/src/text/registry.rs`) vendors IBM Plex Sans Condensed
+  Regular/Medium/SemiBold + IBM Plex Mono Regular/Medium, and **every text intent
+  resolves to IBM Plex** (Sans for silk/annotation/UI/docs, SemiBold for branding);
+  all faces recorded in `FONT_PROVENANCE.md`. The GUI's board silk and the CAM
+  exporter share one resolution (Law 1). Manufacturing silk/mechanical gerber
+  goldens were refreshed to the IBM Plex letterforms.
 
 ## 6. Icons  **[LOCKED]**
 
@@ -150,6 +156,8 @@ templates. Each extends this book downstream of an owner-approved prototype pass
 
 ## Open decisions (owner to lock)
 
-- **Fork B**: IEC rectangular vs ANSI zigzag symbol standard.
 - Rounding-ratio validation against measured peel strength; teardrop auto-apply
   thresholds; dimension-line typography; exact vellum warmth.
+
+(Fork B — symbol standard — is now **locked to IEC**, see §2. Font engine wiring is
+**done**, see §5.)
