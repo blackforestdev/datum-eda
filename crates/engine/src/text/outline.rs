@@ -268,16 +268,16 @@ fn decode_outline_line(
 }
 
 fn outline_flatten_tolerance_nm(attrs: &TextAttributes) -> i64 {
-    // Filled-outline text (silk / mechanical / manufacturing) is flattened to a
-    // deterministic, size-relative geometric error budget. The budget is kept well
-    // below the silkscreen minimum feature (~0.15 mm) so the letterform stays
-    // visually and manufacturably faithful, but coarse enough that curved glyphs do
-    // not explode into tens of thousands of sub-micron segments (which produced
-    // ~190 KB gerbers for a few characters). Rendering Book §5: IBM Plex
-    // filled-outline silk.
+    // Datum's doctrine is high-fidelity text across all intents. Fabrication
+    // concerns are handled by validation/policy, not by intentionally coarse
+    // outline flattening in the renderer path.
     //
-    // Budget: 0.5% of authored height, clamped to a sane [4 µm, 40 µm] window.
-    ((attrs.height_nm as i128) / 200_i128).clamp(4_000_i128, 40_000_i128) as i64
+    // Use a size-relative geometric error budget instead of one hidden
+    // constant. This keeps the approximation deterministic while scaling
+    // quality with the authored text size.
+    //
+    // Ratio: 0.001 of height, bounded to keep both tiny and huge text sane.
+    ((attrs.height_nm as i128) / 100_000_i128).clamp(50_i128, 250_i128) as i64
 }
 
 fn flattened_contours_to_contour_set(
@@ -965,8 +965,8 @@ mod tests {
             }
         });
         assert!(tiny < hero);
-        assert_eq!(tiny, 12_500);
-        assert_eq!(hero, 40_000);
+        assert_eq!(tiny, 50);
+        assert_eq!(hero, 180);
     }
 
     #[test]
