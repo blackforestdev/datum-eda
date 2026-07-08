@@ -27,6 +27,7 @@ CLAUDE.md
 .codex
 
 # Editor artifacts
+.~lock.*#
 /.idea
 /.vscode
 *.swp

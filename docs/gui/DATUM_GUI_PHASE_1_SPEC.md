@@ -77,8 +77,9 @@ test. Everything in Phase 1 serves that sentence.
   state.
 - **D6 — Icon set.** Icons are declared in `docs/gui/icon_set.json` (Tabler MIT
   base + custom EDA glyphs); `check_menu_model.py` already enforces that every
-  menu icon is declared and every `exists` EDA glyph is on disk. Author the **21
-  `to_author` EDA glyphs** in the Design Book style (`crates/engine/assets/icons/eda/`),
+  menu icon is declared and every `exists` EDA glyph is on disk. Author the
+  **`to_author` EDA glyphs** (current worklist count in `icon_set.json`) in the
+  Design Book style (`crates/engine/assets/icons/eda/`),
   flipping each `to_author` → `exists`, and map the Tabler-sourced ids to real
   Tabler glyphs. Do not invent an undeclared icon — add the entry first.
 - **D7 — Screenshot-golden acceptance.** Wire the visual-regression harness
