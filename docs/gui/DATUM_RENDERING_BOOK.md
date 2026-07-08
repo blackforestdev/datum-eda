@@ -140,7 +140,56 @@ default-on per Law 2. Rendered geometry is byte-identical to CAM (Law 1).
   exporter share one resolution (Law 1). Manufacturing silk/mechanical gerber
   goldens were refreshed to the IBM Plex letterforms.
 
-## 6. Icons  **[LOCKED]**
+## 6. Text sizing, clearspace & placement  **[LOCKED]**
+
+> Owner-approved via `docs/gui/prototypes/text-placement-study.html`. Research:
+> `research/gui-typography/TEXT_PLACEMENT_CLEARSPACE_RESEARCH.md`. **Honesty note:** the
+> silk height/stroke numbers are fab-DFM + KiCad-library practice, not literal IPC
+> clauses (IPC-2221C / IPC-A-610J mandate only "legible and durable").
+
+**Silk text sizing — scales to the part, no forced minimum.**
+- The **only hard limit is manufacturability:** a DRC *error* fires solely when the
+  thinnest rendered glyph stem falls below the fab profile's `min_feature_width`
+  (~0.15 mm standard / 0.10 mm HD). Text far below 0.8 mm is allowed — an 0402's `R1` is
+  0.5 mm, an 0201's is 0.3 mm; a minimum height taller than the part is wrong.
+- **1.0 mm is a default; ~0.8 mm is a soft legibility advisory that is OFF by default** —
+  never a gate. Datum does not nag every DRC run the way KiCad does.
+- **Weight assist, not enlargement:** at small sizes the renderer may pick IBM Plex Sans
+  Condensed **Medium** to keep the stem imageable; it never makes text taller. Where no
+  printable weight can image, advise "RefDes → assembly drawing," don't enlarge.
+- Small parts (0402/0201/01005) commonly carry **no per-part silk RefDes** — the
+  designator lives on the assembly drawing.
+
+**Schematic text sizing.**
+- Default **1.27 mm (50 mil)** for RefDes, value, pin name, and net label (matches the
+  50 mil grid users know); pin numbers smaller, in IBM Plex Mono (they are data); pin
+  minimum 0.5 mm. Grid-aligned but **finely nudgeable off-grid**. Title-block / fab-note
+  text uses the ISO 3098 ladder (2.5 / 3.5 / 5 mm).
+
+**Clearspace — a minimum distance, expressed as a ratio of cap height.**
+- Keep-clear = **0.5 × cap height (H)** minimum (1.0×H preferred) between text and any
+  neighbour (other silk, text, courtyard, symbol body). Because it is a ratio of H it
+  scales with the text automatically. It is **presentation/legibility**, distinct from
+  the hard silk-to-copper clearance (§3); effective keep-out = `max(silk_to_copper,
+  clearspace)`.
+
+**Placement & repositioning — a movable label with a tether.**
+- RefDes/value/label text is an **anchor + offset field owned by its component/net**:
+  nine auto-position presets plus free manual drag; a drag switches the field to Manual.
+  Nudged off its default, a **tether line** shows what it belongs to (as in every EDA
+  tool).
+- **Moving text is a presentation act.** It authors a journaled `MoveText` /
+  `SetTextAnchor` typed op (undo, provenance, and — unlike screen-only selection — it is
+  in the model and in CAM per Law 1), but it is **structurally incapable of changing the
+  netlist/connectivity** — it is a label, not a connection.
+
+**Legibility checks (DRC).**
+- `text_over_pad` — silk text intersects exposed copper → **error** (ties to §3).
+- `text_overlap` — a neighbour is inside the clearspace → **warning** (ignorable).
+- Manufacturability — thinnest stem < fab `min_feature_width` → **error** (the only hard
+  size limit).
+
+## 7. Icons  **[LOCKED]**
 
 24px viewBox · 1.7 stroke · no fill · round caps &amp; joins · 2px optical grid.
 Every glyph is one declared entry in `docs/gui/icon_set.json` (gated by
@@ -148,7 +197,7 @@ Every glyph is one declared entry in `docs/gui/icon_set.json` (gated by
 not-yet-authored glyphs via a declared fallback so the shell never blocks on art
 (`DATUM_GUI_PHASE_1_SPEC.md` D6, fallback-first).
 
-## 7. Still to specify (next passes, not blockers)
+## 8. Still to specify (next passes, not blockers)
 
 Sheet borders + title block design; full layer-stackup palette; broader symbol and
 footprint families; thermal-relief and copper-pour rendering; assembly/fab-doc
