@@ -87,7 +87,7 @@ def row_to_entry(r):
     return e
 
 
-def build(target=JSON):
+def build_obj():
     rows = list(csv.DictReader(CSV.open()))
     base = json.loads(JSON.read_text())  # preserve schema + notes
     menubar = OrderedDict()
@@ -128,8 +128,23 @@ def build(target=JSON):
         }
     base["menubar"] = out_menubar
     base["marking_menus"] = out_marking
-    pathlib.Path(target).write_text(json.dumps(base, indent=2) + "\n")
+    return base
+
+
+def build(target=JSON):
+    pathlib.Path(target).write_text(json.dumps(build_obj(), indent=2) + "\n")
     print(f"built {target} from {CSV.relative_to(ROOT)}")
+
+
+def check():
+    """Fail if menu_model.json is out of sync with menu_model.csv (drift gate)."""
+    want = json.dumps(build_obj(), indent=2) + "\n"
+    if JSON.read_text() != want:
+        print("OUT OF SYNC: docs/gui/menu_model.json != build(docs/gui/menu_model.csv). "
+              "Run: python3 scripts/menu_model_csv.py build")
+        return 1
+    print("in sync: menu_model.json == build(menu_model.csv)")
+    return 0
 
 
 if __name__ == "__main__":
@@ -138,6 +153,8 @@ if __name__ == "__main__":
         export()
     elif mode == "build":
         build()
+    elif mode == "check":
+        sys.exit(check())
     else:
-        print("usage: menu_model_csv.py [export|build]")
+        print("usage: menu_model_csv.py [export|build|check]")
         sys.exit(2)

@@ -25,7 +25,10 @@
     "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
     "docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md",
     "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
-    "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md"
+    "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md",
+    "docs/gui/menu_model.csv",
+    "docs/gui/menu_model.json",
+    "docs/gui/icon_set.json"
   ],
   "authority_docs": [
     "README.md",
@@ -111,6 +114,9 @@
     "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md": {"class": "governed", "notes": "Per-object-type marking-menu content (PCB + schematic): cardinal-4 / secondary / overflow / sub-wheels with engine-op mapping. Realizes the Context Menu System content in DATUM_GUI_DESIGN_SPEC; research basis in research/gui-context-menus/CONTEXT_MENU_RESEARCH.md."},
     "docs/gui/DATUM_GUI_PHASE_1_SPEC.md": {"class": "governed", "notes": "Precise sequenced Phase 1 GUI build spec under decision 019 (application shell + board render fidelity, READ-ONLY, no write path): deliverables D1-D7, reuse map, acceptance gates, and a binding 'Do NOT' list to keep Codex/execution on rails. Realizes the product spec's Phase 1 Recovery Slice."},
     "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md": {"class": "governed", "notes": "Deep/parametric tools: the parameter spaces of flagship ops (Align discipline, parametric array/pattern placement, thermal-via arrays, impedance-aware diff-pair routing) and the tri-modal contract (marking-menu presets / tool inspector / AI intent / CLI all drive one typed op). Lean 'capability = parameter of a small verb set' made concrete; the depth target the not_built verbs build toward."},
+    "docs/gui/menu_model.csv": {"class": "governed", "notes": "GUI menu-model authoring surface (spreadsheet / source of truth). Built to menu_model.json by scripts/menu_model_csv.py; CSV<->JSON sync enforced by 'menu_model_csv.py check' in run_drift_gates.sh, contents validated by check_menu_model.py. The human-input -> development + project-management instrument; verb-backed vs not_built counts are the live completeness metric."},
+    "docs/gui/menu_model.json": {"class": "governed", "notes": "Built artifact from menu_model.csv (do NOT hand-edit menubar/marking_menus; edit the CSV, run menu_model_csv.py build). Read by the GUI; gated by check_menu_model.py + the CSV<->JSON sync gate."},
+    "docs/gui/icon_set.json": {"class": "governed", "notes": "Declared GUI icon set (Tabler MIT base + custom EDA glyphs); every menu_model icon must be declared here; gated by check_menu_model.py. to_author entries = the glyph authoring worklist."},
     "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md": {"class": "governed", "notes": "Bounded four-item implementation plan under decisions 019 + 017 for the GUI->engine journaled write path. Planning artifact; execution requires authorization. Status tracked in PROGRESS Scope Integration; W2 edits decision 017, W3 edits MCP_API_SPEC, W1 edits ENGINE_SPEC on execution."},
     "docs/gui/REFERENCE_STUDY.md": {"class": "governed", "notes": "GUI design-research input under decision 019; competitor/reference UI study feeding DATUM_GUI_PRODUCT_SPEC (IA/interaction/visual language). Reference input, not standalone roadmap authority."},
     "docs/gui/FOUNDATION.md": {"class": "governed", "notes": "GUI design-research input under decision 019; foundational GUI principles feeding DATUM_GUI_PRODUCT_SPEC. Reference input, not standalone roadmap authority."},
