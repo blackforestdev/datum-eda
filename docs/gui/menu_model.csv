@@ -1,26 +1,26 @@
 surface,context,active_editor,wheel,slot,label,icon,verb,gui_local,not_built,submenu,destructive,shortcut
-menubar,File,,,0,New Project,file-new,,,engine-owned genesis; no public verb,,,
-menubar,File,,,1,Open Project,folder-open,,,GUI project-session model,,,
-menubar,File,,,2,Import…,import,,,project import-kicad-* is CLI; no public import verb,,,
-menubar,File,,,3,Save,save,,,native projects auto-persist; save semantics TBD (design spec File-menu note),,,
-menubar,File,,,4,Save As…,save-as,,,copy/branch project tree,,,
-menubar,File,,,5,Export…,export,datum.artifact.generate,,,,,
-menubar,File,,,6,Close,close,,,GUI session teardown,,,
+menubar,File,,,0,New Project,file-new,,,engine-owned genesis; no public verb,,,Ctrl+N
+menubar,File,,,1,Open Project,folder-open,,,GUI project-session model,,,Ctrl+O
+menubar,File,,,2,Import…,import,,,project import-kicad-* is CLI; no public import verb,,,Ctrl+Shift+I
+menubar,File,,,3,Save,save,,,native projects auto-persist; save semantics TBD (design spec File-menu note),,,Ctrl+S
+menubar,File,,,4,Save As…,save-as,,,copy/branch project tree,,,Ctrl+Shift+S
+menubar,File,,,5,Export…,export,datum.artifact.generate,,,,,Ctrl+Shift+E
+menubar,File,,,6,Close,close,,,GUI session teardown,,,Ctrl+Q
 menubar,Edit,,,0,Undo,undo,datum.journal.undo,,,,,Ctrl+Z
 menubar,Edit,,,1,Redo,redo,datum.journal.redo,,,,,Ctrl+Shift+Z
-menubar,Edit,,,2,Cut,cut,,,clipboard model,,,
-menubar,Edit,,,3,Copy,copy,,,clipboard model,,,
-menubar,Edit,,,4,Paste,paste,,,clipboard model,,,
-menubar,Edit,,,5,Delete,delete,,,per-selection; resolved by object type,,,
+menubar,Edit,,,2,Cut,cut,,,clipboard model,,,Ctrl+X
+menubar,Edit,,,3,Copy,copy,,,clipboard model,,,Ctrl+C
+menubar,Edit,,,4,Paste,paste,,,clipboard model,,,Ctrl+V
+menubar,Edit,,,5,Delete,delete,,,per-selection; resolved by object type,,,Delete
 menubar,Edit,,,6,Preferences…,settings,,,preferences store,,,
-menubar,View,,,0,Fit to Board,fit,,view.fit,,,,
-menubar,View,,,1,Zoom In,zoom-in,,view.zoom_in,,,,
-menubar,View,,,2,Zoom Out,zoom-out,,view.zoom_out,,,,
+menubar,View,,,0,Fit to Board,fit,,view.fit,,,,F
+menubar,View,,,1,Zoom In,zoom-in,,view.zoom_in,,,,Ctrl++
+menubar,View,,,2,Zoom Out,zoom-out,,view.zoom_out,,,,Ctrl+-
 menubar,View,,,3,Layer Visibility,layers,,view.layers,,,,
 menubar,View,,,4,Panels,panels,,view.panels,,,,
 menubar,View,,,5,Reset Workspace,reset,,view.reset,,,,
 menubar,Place,schematic,,0,Symbol,symbol,datum.schematic.place_symbol,,,,,
-menubar,Place,schematic,,1,Wire,wire,datum.schematic.draw_wire,,,,,
+menubar,Place,schematic,,1,Wire,wire,datum.schematic.draw_wire,,,,,W
 menubar,Place,schematic,,2,Label,label,datum.schematic.place_label,,,,,
 menubar,Place,schematic,,3,Junction,junction,datum.schematic.place_junction,,,,,
 menubar,Place,schematic,,4,No-Connect,noconnect,datum.schematic.place_noconnect,,,,,
@@ -30,8 +30,8 @@ menubar,Place,schematic,,7,Bus Entry,bus-entry,datum.schematic.place_bus_entry,,
 menubar,Place,schematic,,8,Text,text,datum.schematic.place_text,,,,,
 menubar,Place,schematic,,9,Drawing,draw-line,datum.schematic.place_drawing_line,,,,,
 menubar,Route,pcb,,0,Place Component,component,datum.pcb.place_component,,,,,
-menubar,Route,pcb,,1,Move,move,datum.pcb.move_component,,,,,
-menubar,Route,pcb,,2,Rotate,rotate,datum.pcb.rotate_component,,,,,
+menubar,Route,pcb,,1,Move,move,datum.pcb.move_component,,,,,M
+menubar,Route,pcb,,2,Rotate,rotate,datum.pcb.rotate_component,,,,,R
 menubar,Route,pcb,,3,Flip,flip,datum.pcb.flip_component,,,,,
 menubar,Route,pcb,,4,Align / Distribute,align,datum.pcb.align_components,,,,,
 menubar,Route,pcb,,5,Route Track,track,datum.pcb.draw_track,,,,,

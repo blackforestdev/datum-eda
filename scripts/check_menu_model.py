@@ -131,6 +131,33 @@ def main():
     ic_author = sum(1 for v in icon_set.values() if v.get("source") == "eda" and v.get("status") == "to_author")
     ic_tabler = sum(1 for v in icon_set.values() if v.get("source") == "tabler")
 
+    # shortcut conflicts (scope-aware): global keys unique app-wide; single-key
+    # editor shortcuts unique within their mode but reusable across modes.
+    shortcuts = {}
+    for menu in model.get("menubar", []):
+        scope = menu.get("active_editor") or "global"
+        for it in menu.get("items", []):
+            if it.get("shortcut"):
+                shortcuts.setdefault(it["shortcut"], []).append((scope, f"{menu['menu']}/{it.get('label')}"))
+    for name, mm in model.get("marking_menus", {}).items():
+        scope = "pcb" if name.startswith("pcb.") else ("schematic" if name.startswith("schematic.") else "global")
+        groups = list((mm.get("cardinal") or {}).values()) + list((mm.get("secondary") or {}).values()) \
+            + list(mm.get("overflow") or [])
+        for lst in (mm.get("submenus") or {}).values():
+            groups += lst
+        for e in groups:
+            if e.get("shortcut"):
+                shortcuts.setdefault(e["shortcut"], []).append((scope, f"{name}/{e.get('label')}"))
+    for key, uses in shortcuts.items():
+        scopes = [s for s, _ in uses]
+        if scopes.count("global") and len(uses) > 1:
+            fail.append(f"shortcut '{key}' conflict (global key reused): {[p for _, p in uses]}")
+        else:
+            for mode in ("pcb", "schematic"):
+                if scopes.count(mode) > 1:
+                    fail.append(f"shortcut '{key}' conflict in {mode}: {[p for s, p in uses if s == mode]}")
+    n_short = sum(len(v) for v in shortcuts.values())
+
     if fail:
         print("menu_model gate FAILED:")
         for f in fail:
@@ -142,7 +169,7 @@ def main():
           f"{counts['not_built']} not-built/worklist, {counts['submenu']} submenu-ref, "
           f"{counts['empty']} empty); all verb references valid; "
           f"icons: {ic_exists} eda-existing / {ic_author} eda-to-author / {ic_tabler} tabler-mapped, "
-          f"all declared in icon_set.json.")
+          f"all declared in icon_set.json; {n_short} shortcuts, no conflicts.")
     return 0
 
 

@@ -8,37 +8,44 @@
         {
           "label": "New Project",
           "icon": "file-new",
-          "not_built": "engine-owned genesis; no public verb"
+          "not_built": "engine-owned genesis; no public verb",
+          "shortcut": "Ctrl+N"
         },
         {
           "label": "Open Project",
           "icon": "folder-open",
-          "not_built": "GUI project-session model"
+          "not_built": "GUI project-session model",
+          "shortcut": "Ctrl+O"
         },
         {
           "label": "Import\u2026",
           "icon": "import",
-          "not_built": "project import-kicad-* is CLI; no public import verb"
+          "not_built": "project import-kicad-* is CLI; no public import verb",
+          "shortcut": "Ctrl+Shift+I"
         },
         {
           "label": "Save",
           "icon": "save",
-          "not_built": "native projects auto-persist; save semantics TBD (design spec File-menu note)"
+          "not_built": "native projects auto-persist; save semantics TBD (design spec File-menu note)",
+          "shortcut": "Ctrl+S"
         },
         {
           "label": "Save As\u2026",
           "icon": "save-as",
-          "not_built": "copy/branch project tree"
+          "not_built": "copy/branch project tree",
+          "shortcut": "Ctrl+Shift+S"
         },
         {
           "label": "Export\u2026",
           "icon": "export",
-          "verb": "datum.artifact.generate"
+          "verb": "datum.artifact.generate",
+          "shortcut": "Ctrl+Shift+E"
         },
         {
           "label": "Close",
           "icon": "close",
-          "not_built": "GUI session teardown"
+          "not_built": "GUI session teardown",
+          "shortcut": "Ctrl+Q"
         }
       ]
     },
@@ -60,22 +67,26 @@
         {
           "label": "Cut",
           "icon": "cut",
-          "not_built": "clipboard model"
+          "not_built": "clipboard model",
+          "shortcut": "Ctrl+X"
         },
         {
           "label": "Copy",
           "icon": "copy",
-          "not_built": "clipboard model"
+          "not_built": "clipboard model",
+          "shortcut": "Ctrl+C"
         },
         {
           "label": "Paste",
           "icon": "paste",
-          "not_built": "clipboard model"
+          "not_built": "clipboard model",
+          "shortcut": "Ctrl+V"
         },
         {
           "label": "Delete",
           "icon": "delete",
-          "not_built": "per-selection; resolved by object type"
+          "not_built": "per-selection; resolved by object type",
+          "shortcut": "Delete"
         },
         {
           "label": "Preferences\u2026",
@@ -90,17 +101,20 @@
         {
           "label": "Fit to Board",
           "icon": "fit",
-          "gui_local": "view.fit"
+          "gui_local": "view.fit",
+          "shortcut": "F"
         },
         {
           "label": "Zoom In",
           "icon": "zoom-in",
-          "gui_local": "view.zoom_in"
+          "gui_local": "view.zoom_in",
+          "shortcut": "Ctrl++"
         },
         {
           "label": "Zoom Out",
           "icon": "zoom-out",
-          "gui_local": "view.zoom_out"
+          "gui_local": "view.zoom_out",
+          "shortcut": "Ctrl+-"
         },
         {
           "label": "Layer Visibility",
@@ -131,7 +145,8 @@
         {
           "label": "Wire",
           "icon": "wire",
-          "verb": "datum.schematic.draw_wire"
+          "verb": "datum.schematic.draw_wire",
+          "shortcut": "W"
         },
         {
           "label": "Label",
@@ -187,12 +202,14 @@
         {
           "label": "Move",
           "icon": "move",
-          "verb": "datum.pcb.move_component"
+          "verb": "datum.pcb.move_component",
+          "shortcut": "M"
         },
         {
           "label": "Rotate",
           "icon": "rotate",
-          "verb": "datum.pcb.rotate_component"
+          "verb": "datum.pcb.rotate_component",
+          "shortcut": "R"
         },
         {
           "label": "Flip",
