@@ -1,0 +1,155 @@
+# Datum Rendering Book
+
+> **Status**: Governed visual-identity spec under decision 019, extending decision
+> 015 (Design Book tokens) from UI chrome into **manufacturable content geometry** —
+> schematic symbols, PCB footprints, silkscreen type, and icons. This is the
+> "what it looks like" authority; its foundation — the two fidelity/beauty Laws and
+> the DFM Geometry Solver — lives in
+> `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md`.
+> **Controlling visual truth**: `docs/gui/prototypes/rendering-study.html`
+> (owner-approved, design pass 3). A built surface must match its composition,
+> palette, and geometry treatment.
+> **Purpose**: pin the house style at concrete values so every development agent
+> (and generator) produces **accurate and consistent** library symbols and
+> footprints, not a per-agent reinvention.
+
+Legend: **[LOCKED]** owner-approved this pass · **[OPEN]** awaiting owner lock.
+
+## 0. Canonical palette — the board-editor token set  **[LOCKED]**
+
+Content geometry uses the shipped `board-editor.html` tokens (do not reinvent):
+
+| Role | Token | Hex |
+|------|-------|-----|
+| Canvas / substrate | `--canvas` | `#0B0C0E` |
+| Copper — top / bottom | `--cu-f` / `--cu-b` | `#C83A34` / `#4D7FC4` |
+| Pad (land) | `--pad` | `#C9974A` |
+| Via | `--via` | `#C77B3C` |
+| Silkscreen | `--silk` | `#E8E6DC` |
+| Board edge | `--edge` | `#CBB24A` |
+| Component body | (body / border) | `#151922` / `#3A414D` |
+| Courtyard | (hairline) | `#6E7681` |
+| Dimension / origin | (annotation) | `#7FB0C8` |
+| Schematic wire | `--wire` | `#4FA75A` |
+| Symbol stroke | `--sym` | `#AEB4BB` |
+| Selection accent | `--acc` | `#CE5A92` |
+
+Semantic (error/warn/ok/info) stays separate from the accent; the accent is
+selection/active only.
+
+## 1. Schematic canvas — dark works, vellum prints  **[LOCKED]**
+
+- **Dark is the working default** (`#0E1013` paper, line grid `#141821`): modern,
+  low-fatigue over long sessions, in the board-editor idiom.
+- **Vellum is a print/documentation toggle** (`#E7E1D2` warm drafting film, ink
+  `#2C2820`): the user flips to it for printing schematics and rendering
+  **monochrome documentation to disk**, where warm paper translates better than
+  glaring white. Vellum is fatiguing for long editing — hence it is the toggle,
+  not the default.
+- **One chrome.** The application chrome (tool rails, panels, marking menus, status
+  bar) stays dark in both modes; only the document *canvas* changes ground.
+
+## 2. Schematic symbols  **[LOCKED except symbol standard]**
+
+- **Filled bodies** (`#161A24` on dark / `#F1ECDE` on vellum) with a small optical
+  corner radius (~3px view) — solid objects with figure-ground, not hollow 1980s
+  line-art.
+- **Pins.** Every component pin renders as a **short stub** from the body edge
+  ending in a small **terminal dot** at the electrical connection point; the pin
+  name sits inside the body (number optional). The terminal dot is the pin marker
+  and is visually distinct from a **junction dot** — pin terminals use the
+  symbol-stroke colour, junctions are filled in the wire colour — so "a pin" and
+  "wires meet here" never read the same. Wires connect *to* the terminal dot and
+  **never cross the symbol body**.
+- **Stroke hierarchy** (deliberate, not uniform): bus > wire > symbol body > pin
+  stub. Wires `--wire` at ~1.6; always orthogonal with crisp corners.
+- **Junction dots** filled in the wire color; **net-label pills** are *filled*
+  rounded-rects (`#151922` fill, `#3A414D` border on dark) — the board-editor pill,
+  not a hollow tag.
+- **Ref/value typography** in the project typeface (§5). Designators tabular.
+- **Selection highlights the whole symbol.** Body stroke, pins, terminal dots, and
+  all symbol text render in the accent (`--sel`) under one soft glow — a
+  half-highlighted symbol (body accented, pins left in the default colour) is a
+  defect. Attached nets keep their normal wire colour (they are not part of the
+  selected symbol). Selection is **screen-only presentation state** — never
+  geometry, never journaled, never in any export (Law 1 fence).
+- **[OPEN] Symbol standard — Fork B.** IEC 60617 rectangular resistor (cleaner,
+  grid-aligned, international) vs ANSI/IEEE 315 zigzag (traditional, US). The
+  prototype toggles both; IEC is shown as the current default pending owner lock.
+
+## 3. PCB footprints  **[LOCKED]**
+
+- **Rounded-rectangle pads at a 25% rounding ratio** (`radius = 0.25 × min(w,h)`,
+  capped). The radius is **real manufactured geometry**, not cosmetic: it raises
+  copper peel strength, etches clean, and solders without bridging. A sharp-cornered
+  pad is the fiction — the etch rounds corners regardless. Gold copper `--pad` on
+  the dark substrate.
+- **Pad-1 marker**: silk dot + printed pad number — unambiguous, not shouting.
+- **Courtyard** as a dashed hairline `#6E7681`; **component body** as the
+  board-editor dark body (`#151922` / `#3A414D` border); **origin crosshair** in the
+  annotation color.
+- **Silkscreen–to–copper clearance**: the silk body outline is **clipped/inset**
+  so it holds the IPC minimum silk-to-copper clearance (~0.15–0.20 mm, fab-dependent)
+  — silk must never overlap or touch exposed copper. The **assembly** outline may
+  abut/cross pads (documentation layer); the **silkscreen** outline may not. This
+  clip is engine-derived geometry (Law 1: what renders is what the fab receives).
+- **Dimension overlays** in mechanical-drawing style: thin extension lines, small
+  arrowheads, tabular values, in `#7FB0C8` — IPC land-pattern math made visible and
+  beautiful.
+
+## 4. DFM-derived geometry defaults  **[LOCKED]**
+
+The look is produced by the DFM Geometry Solver (engine spec in the fidelity note),
+default-on per Law 2. Rendered geometry is byte-identical to CAM (Law 1).
+
+- **Acute trace bend (<90°)** → a **small inner fillet on both inside edges**, sized
+  only to compensate etch loss (open the acid trap) — **not** a chamfer, not a full
+  corner round. The radius is **algorithmically derived** (`r ≈ f(etch_undercut,
+  included_angle)`), kept as small as the etch-relief requires — never prominent.
+- **Right-angle bend** → miter; for high-speed nets the Douville–James optimum
+  microstrip miter `M% = 52 + 65·e^(−1.35·W/h)`.
+- **Trace-to-pad/via junction** → **teardrop** fillet, sized from pad/via/drill
+  diameter and trace width.
+
+## 5. Typography — IBM Plex, program-wide  **[LOCKED]**
+
+- **Two IBM Plex faces, no others.** `IBMPlexSansCondensed` is the primary face —
+  application chrome, headings, on-canvas schematic/footprint text (pin names,
+  reference designators, values, net labels), and silkscreen. `IBMPlexMono` is
+  reserved for **aligned numeric data** — coordinates, hex, dimensions, counts —
+  where digit columns must line up; it is **not** used for labels, names, or
+  designators (those are Sans). No system fonts anywhere; a mixed font (even on one
+  glyph like `·` / `—` / `≥`) is a defect. Faux-bold is **off**
+  (`font-synthesis: none`) — weights are real, never synthesized.
+- **Weights bundled.** Sans Condensed `Regular / Medium / SemiBold` and Mono
+  `Regular / Medium` ship in `crates/engine/assets/fonts/` (SIL-OFL; license at
+  `fonts/OFL.txt`). Hierarchy is carried by real weight + size + color.
+- **Silk is the manufactured case.** IBM Plex rendered as **filled outline geometry**
+  — not stroke centerlines (the "you can always tell Eagle" tell) — and **designed
+  for silk**: it respects the silk minimum feature/line width (~0.15 mm / 6 mil,
+  fab-dependent) so it prints clean. The on-screen silk *is* the geometry the fab
+  receives (Law 1); the same face carries into fab/assembly **documentation** (title
+  blocks, fab notes, assembly drawings).
+- **Engine wiring — follow-up (execution).** `gui-render` must load the Mono and
+  weighted faces (today it loads only Sans Condensed Regular) so the built GUI
+  matches this spec. Assets are in the tree; wiring is a code task, not yet done.
+
+## 6. Icons  **[LOCKED]**
+
+24px viewBox · 1.7 stroke · no fill · round caps &amp; joins · 2px optical grid.
+Every glyph is one declared entry in `docs/gui/icon_set.json` (gated by
+`check_menu_model.py`); the gate forbids an undeclared icon. Phase 1 renders
+not-yet-authored glyphs via a declared fallback so the shell never blocks on art
+(`DATUM_GUI_PHASE_1_SPEC.md` D6, fallback-first).
+
+## 7. Still to specify (next passes, not blockers)
+
+Sheet borders + title block design; full layer-stackup palette; broader symbol and
+footprint families; thermal-relief and copper-pour rendering; assembly/fab-doc
+templates. Each extends this book downstream of an owner-approved prototype pass.
+
+## Open decisions (owner to lock)
+
+- **Fork B**: IEC rectangular vs ANSI zigzag symbol standard.
+- Rounding-ratio validation against measured peel strength; teardrop auto-apply
+  thresholds; dimension-line typography; exact vellum warmth.

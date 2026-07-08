@@ -15,44 +15,65 @@
 > Detail lives in the sections below — this list is the single entry point.
 > Update it in the SAME change as any spec creation or course-correction.
 
-1. **Define the GUI product specification to a buildable design level.**
-   *In progress (2026-07-06):* the "how" is now being captured as a governed
-   design spec + a live prototype, co-developed — `docs/gui/DATUM_GUI_DESIGN_SPEC.md`
-   plus the controlling visual prototype `docs/gui/prototypes/board-editor.html`
-   (board editor, pro-audio/Bitwig-Ableton idiom, built from the Design Book
-   tokens). Remaining to define: the other surfaces (schematic editor, library
-   browser) and the open design decisions in the design spec (dock-vs-overlay,
-   fonts, **context menus — unspecified/unresearched**, Datum visual identity).
-   Today `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` is a *policy contract* (shell component
-   checklist, menu *list*, editor-authority *rules*, and a menu→mechanism *map*
-   in `docs/gui/DATUM_GUI_MENU_BINDINGS.md`) — the design spec + prototype are what
-   turn it into a **buildable product design.** Still missing across surfaces:
-   concrete information architecture / layout
-   (wireframes of every region and its default/collapsed states); the complete
-   menu specification (every item, submenu, shortcut, enabled/disabled
-   condition, and effect — the `menu_model`); the interaction model per surface
-   (selection, tool activation, place/move/route gestures, hover/drag/context
-   menus, keyboard + command palette); per-document/editor screen design (board,
-   schematic, library browser, inspector, checks, outputs); and end-to-end
-   workflows. Governing: decision 019 + `DATUM_GUI_PRODUCT_SPEC.md` (to be
-   deepened) + decisions 014/015. State: **the actual next specification work;
-   definition scope to be shaped with the owner.** Gates steps 2–4 — you cannot
-   correctly build a shell or wire a menu to an operation until the surfaces are
-   designed.
-2. **GUI Phase 1 build — application shell + board render fidelity** on the
-   `datum-test` fixture, read-only, with screenshot goldens + owner review
-   (needs no write-path). **Precise executable spec: `docs/gui/DATUM_GUI_PHASE_1_SPEC.md`**
-   (deliverables D1–D7, reuse map, acceptance gates, binding Do-NOT list). Buildable
-   now (reads work via `run_cli_json`); the rail for Codex's first GUI build.
-3. **GUI write-path enablement** — the four-item backend plumbing that lets the
-   GUI author journaled operations directly. Plan already written:
-   `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (decisions 019 + 017), sequence
-   P0 → W1 → W2 → W3. Needed once *authoring* surfaces are built (after the
-   read-only Phase 1), NOT before. State: **planned; not the immediate step.**
-4. **Native authoring depth (queued):** schematic and PCB editor surfaces
+1. **Deepen the GUI product specification for the surfaces not yet designed.**
+   The **board editor surface is defined and buildable** — its "how" is captured
+   in `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, the controlling visual prototype
+   `docs/gui/prototypes/board-editor.html` (pro-audio/Bitwig-Ableton idiom, built
+   from the Design Book tokens), the complete data-driven menu specification
+   (`docs/gui/menu_model.json` + `.csv`, gated by `check_menu_model.py`), the
+   context-menu system (`docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md` on
+   `research/gui-context-menus/CONTEXT_MENU_RESEARCH.md`), and the deep-verb /
+   tri-modal tooling model (`docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`). **This
+   does NOT gate step 2** — the board build has everything it needs. What remains
+   to *define* is the **other surfaces** (schematic editor, library browser) and
+   the still-open design decisions in the design spec (dock-vs-overlay,
+   `open-decisions.html`). The **Datum visual identity** for symbols/footprints/
+   silk/icons is now captured and largely locked in the **Datum Rendering Book**
+   (`docs/gui/DATUM_RENDERING_BOOK.md`, owner-approved design pass 3 on
+   `docs/gui/prototypes/rendering-study.html`; one open fork — IEC vs ANSI symbol
+   standard).
+   `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` remains the governed policy contract; the
+   design spec + prototypes are what turn each surface into a buildable design.
+   Governing: decision 019 + `DATUM_GUI_PRODUCT_SPEC.md` + decisions 014/015.
+   State: **ongoing per-surface design work, parallel to the board build; scope
+   shaped with the owner.** Gates only the schematic/library surfaces (step 5),
+   not the board shell (steps 2–3).
+2. **GUI Phase 1 build — application shell + board render fidelity (GO, buildable
+   today).** Build the shell + board render on the `datum-test` fixture,
+   read-only, with screenshot goldens + owner review; needs **no** write-path.
+   **Precise executable spec: `docs/gui/DATUM_GUI_PHASE_1_SPEC.md`** (deliverables
+   D1–D7, reuse map, acceptance gates, binding Do-NOT list) realizing
+   `docs/gui/prototypes/board-editor.html`. Reads work via `run_cli_json`. This is
+   the rail for the first GUI build — point a code agent here.
+3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
+   today).** Build the radial marking-menu / context-menu surface realizing
+   `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
+   `menu_model` manifest (same data the menu bar uses): cardinal/secondary/overflow
+   layout, submenu wheels, icons from `icon_set.json`, per-object content per
+   `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`. **Inert in this step** — items
+   render and preview their gesture but do **not** invoke operations; `not_built`
+   and mutating items are visibly disabled, exactly as Phase 1 handles the menu
+   bar. This proves the interaction model and IA without the write path. **Ops
+   wiring** (marking-menu items → journaled operations) is deferred to step 4.
+   Governing: decision 019 + `DATUM_GUI_CONTEXT_MENU_CONTENT.md` +
+   `DATUM_GUI_PARAMETRIC_TOOLING.md`.
+4. **GUI write-path enablement** — the four-item backend plumbing that lets the
+   GUI author journaled operations directly (and wires the step-3 marking menu to
+   real ops). Plan already written: `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`
+   (decisions 019 + 017), sequence P0 → W1 → W2 → W3. Needed once *authoring*
+   surfaces are built (after the read-only Phase 1 + marking-menu shell), NOT
+   before. State: **planned; not the immediate step.**
+5. **Native authoring depth (queued):** schematic and PCB editor surfaces
    emitting typed operations over the write path. Contracts:
    `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`,
-   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–3.
+   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–4.
+   **Named engine dependency:** the **DFM Geometry Solver** (pad rounding · trace
+   corner treatment · teardrops — author topology, derive manufacturable geometry
+   rule-driven per net-class through `commit()`), governed by
+   `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md` under its two invariants
+   (Law 1 render/CAM single-source fidelity, gated; Law 2 beauty-by-default). Sits
+   on the landed routing kernel + the deferred `ImpedanceSpec` solver + the
+   forthcoming Datum Rendering Book. Execution requires authorization.
 
 **Also in flight (governance, parallel):** `specs/PROGRAM_SPEC.md` reconciled to
 the product-mechanics model (2026-07-06); Tier E `GuiSupervisionSnapshot` strip
@@ -210,6 +231,8 @@ legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
 | GUI menu→mechanism bindings | [x] | `docs/gui/DATUM_GUI_MENU_BINDINGS.md` (governed) maps every product-spec menu command to its real backing verb/native-write builder/CLI, tagged live / engine-ready-GUI-blocked / not-built, from a four-source capability inventory (verb registry, native-write facade, CLI, daemon + tool surface, 2026-07-05). Records the File-menu semantics gap (no native save/open/close) and authoring gaps (schematic wire/junction edit, route-apply facade migration, forward-annotation action coverage). |
 | GUI menu_model manifest + gate | [x] | `docs/gui/menu_model.json` — data-driven menu bar + per-object marking menus (149 entries), each bound to a real `datum.*` verb / `gui_local` / `not_built`. Gated by `scripts/check_menu_model.py` (wired into `run_drift_gates.sh`): every `verb` reference must exist in the registry catalog; marking-menu structural invariants enforced (cardinal N/E/S/W, secondary diagonals, destructive never on a diagonal). 101 verb-backed, 36 not-built (= the authoring buildout worklist). Realizes the design-spec Modularity principle (add/remove a row, not rewrite); full per-object content in `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`. |
 | GUI write-path enablement (four-item plumbing) | [ ] | `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (governed) bounds the plumbing that unblocks every engine-ready/GUI-blocked authoring item: W1 register remaining native-write families with `native.write` (7→full set), W2 add a `Dispatch::NativeWrite` variant to the verb registry (decision 017), W3 expose verb/param-schema enumeration on the daemon (`specs/MCP_API_SPEC.md`), W4 give `gui-app` a daemon client + GUI action model (decision 019 Editor Authority). Sequenced P0 thin proof (rename via the 7 already-wired verbs) → W1 → W2 → W3. Planning only; execution unauthorized. |
+| Rendering Book — house visual identity (symbols/footprints/silk/icons) | [~] | `docs/gui/DATUM_RENDERING_BOOK.md` (governed) extends decision 015 tokens into manufacturable content geometry. **Locked (owner-approved design pass 3, prototype `docs/gui/prototypes/rendering-study.html`):** board-editor canonical palette; schematic dark-working-default + vellum print/doc toggle; filled symbol bodies + stroke hierarchy + filled net-label pills + screen-only selection glow; rounded-rect pads (25% ratio) + pad-1 + courtyard + cyan dimension overlays; DFM defaults (acute→small inner fillets, right-angle→miter, teardrops); silk typeface = IBM Plex Sans Condensed as filled outline (screen==CAM). **Open:** Fork B (IEC vs ANSI symbol standard); sheet borders/title block, full stackup palette, broader families (next passes). Captures the "Datum visual identity" item from Active-Frontier step 1. |
+| Render fidelity + DFM Geometry Solver (thesis + future engine) | [ ] | `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md` (governed). Ratifies Law 1 (render/CAM single-geometry-source fidelity — one manufacturable geometry consumed by both the renderer and the Gerber/drill/paste/assembly exporter, enforced by a fidelity gate; presentation overlays fenced out) and Law 2 (engine-drives-visual / beauty-by-default). Names the DFM Geometry Solver — pad rounding · trace corner treatment (acute→chamfer, right-angle→miter/radius per net-class, incl. Douville–James impedance miter) · teardrops — as author-topology/derive-manufacturable-geometry, rule-driven through `commit()`, `capability = parameter of a small verb set`. Active-Frontier step-5 dependency on the routing kernel (landed) + `ImpedanceSpec` (deferred) + the forthcoming Rendering Book. Foundation for the Rendering Book; the fab "fingerprint" thesis (filled-outline silk typeface vs Eagle stroke-font; DFM-optimal copper). Design/planning only; execution unauthorized. |
 
 ### Single-Source Verb Registry (Decision 017)
 

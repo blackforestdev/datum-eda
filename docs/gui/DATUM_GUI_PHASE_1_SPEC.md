@@ -75,13 +75,22 @@ test. Everything in Phase 1 serves that sentence.
 - **D5 — Layers / Filters panel.** From the board stackup: per-layer color swatch +
   visibility toggle, active layer, dim-unrelated. Toggles are consumer-side view
   state.
-- **D6 — Icon set.** Icons are declared in `docs/gui/icon_set.json` (Tabler MIT
-  base + custom EDA glyphs); `check_menu_model.py` already enforces that every
-  menu icon is declared and every `exists` EDA glyph is on disk. Author the
-  **`to_author` EDA glyphs** (current worklist count in `icon_set.json`) in the
-  Design Book style (`crates/engine/assets/icons/eda/`),
-  flipping each `to_author` → `exists`, and map the Tabler-sourced ids to real
-  Tabler glyphs. Do not invent an undeclared icon — add the entry first.
+- **D6 — Icon set (fallback-first; do NOT block the build on glyph authoring).**
+  Icons are declared in `docs/gui/icon_set.json` (Tabler MIT base + custom EDA
+  glyphs); `check_menu_model.py` already enforces that every menu icon is declared
+  and every `exists` EDA glyph is on disk. **Phase 1 renders every menu entry now
+  via a fallback:** any icon whose declared asset is not yet on disk (every
+  `to_author` EDA glyph) resolves to a **declared placeholder** — the mapped
+  Tabler glyph where one is assigned, else a single neutral Design-Book fallback
+  glyph. The shell and goldens are captured with fallbacks in place; a missing
+  asset is **never** a build blocker and **never** a reason to invent an
+  undeclared icon (the gate forbids it — add the entry first, then it falls back).
+  Authoring the **`to_author` EDA glyphs** (current worklist count in
+  `icon_set.json`) in the Design Book style
+  (`crates/engine/assets/icons/eda/`), flipping each `to_author` → `exists`, is a
+  **parallel design-asset track**, not a Phase 1 gate: the board build proceeds on
+  fallbacks and the goldens are re-captured as real glyphs land. Map the
+  Tabler-sourced ids to real Tabler glyphs as part of this deliverable.
 - **D7 — Screenshot-golden acceptance.** Wire the visual-regression harness
   (`DATUM_GUI_VISUAL_REGRESSION_HARNESS.md`) to capture `datum-test` board goldens
   across the layout scale matrix {1.0, 1.25, 1.5, 2.0}, committed and human-reviewed.
