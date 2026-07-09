@@ -151,6 +151,18 @@ def main() -> None:
     if mismatches:
         fail("; ".join(mismatches))
 
+    # Consumption guard (VISUAL_LANGUAGE.md §7): board copper materials must be
+    # built from the design_tokens seam, never from raw RGB array literals. The
+    # token-driven path passes a named base color, so this only trips when a
+    # `from_copper_material([0.xx, ...])` raw literal is reintroduced.
+    render_src = (ROOT / "crates/gui-render/src/lib.rs").read_text()
+    raw_copper = re.findall(r"from_copper_material\(\s*\[", render_src)
+    if raw_copper:
+        fail(
+            f"{len(raw_copper)} copper material(s) built from raw RGB literals in "
+            "gui-render/src/lib.rs; construct from design_tokens::content instead"
+        )
+
     contrast_failures = []
     for text_token, wcag_floor in TEXT_TOKENS:
         for surface_token in SURFACE_TOKENS:
@@ -169,7 +181,8 @@ def main() -> None:
 
     print(
         f"GUI design token gate passed ({len(token_map)} mirrored color tokens, "
-        f"{len(TEXT_TOKENS) * len(SURFACE_TOKENS)} contrast checks)."
+        f"{len(TEXT_TOKENS) * len(SURFACE_TOKENS)} contrast checks, copper "
+        "consumption verified)."
     )
 
 
