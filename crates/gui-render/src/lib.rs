@@ -9,7 +9,7 @@ use eda_engine::export::render_silkscreen_text_strokes;
 use eda_engine::ir::geometry::{LayerId, Point};
 use glyphon::{
     Attrs, Buffer, Cache, Color, Family, FontSystem, Metrics, Resolution, Shaping, SwashCache,
-    TextArea, TextAtlas, TextBounds, TextRenderer, Viewport,
+    TextArea, TextAtlas, TextBounds, TextRenderer, Viewport, Weight,
 };
 use std::collections::BTreeMap;
 use std::ops::Range;
@@ -578,6 +578,7 @@ impl Quad {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum TextFace {
     Ui,
+    UiStrong,
     Mono,
 }
 
@@ -6179,6 +6180,7 @@ fn text_buffer_extent(run: &TextRun, surface_width: u32, surface_height: u32) ->
 fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     let advance_factor = match face {
         TextFace::Ui => 0.78,
+        TextFace::UiStrong => 0.80,
         TextFace::Mono => 0.72,
     };
     let glyphs = text.chars().count().max(1) as f32;
@@ -6226,6 +6228,9 @@ fn load_datum_fonts(font_system: &mut FontSystem) {
 fn text_attrs(face: TextFace) -> Attrs<'static> {
     match face {
         TextFace::Ui => Attrs::new().family(Family::Name("IBM Plex Sans Condensed")),
+        TextFace::UiStrong => Attrs::new()
+            .family(Family::Name("IBM Plex Sans Condensed"))
+            .weight(Weight::SEMIBOLD),
         TextFace::Mono => Attrs::new().family(Family::Name("IBM Plex Mono")),
     }
 }

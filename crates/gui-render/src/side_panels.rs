@@ -27,15 +27,24 @@ pub(super) fn render_side_panels(
         (filters_rect, "LAYERS"),
         (inspector_rect, "INSPECTOR"),
     ] {
+        // Raised card body, then a recessed header strip so the panel title
+        // reads as a header bar (Design Book panel-hd), not floating text.
         panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
+        let header = RectPx {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: UI_CARD_DIVIDER_Y,
+        };
+        panel_quads.push(Quad::from_rect(header, PANEL_BG));
         push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
         draw_text(
             title,
             rect.x + UI_CARD_PADDING_X,
             rect.y + UI_CARD_TITLE_Y,
-            12.0,
+            design_tokens::typography::HEADER_SIZE,
             TEXT_SECONDARY,
-            TextFace::Ui,
+            TextFace::UiStrong,
             text_runs,
         );
         push_section_divider(
