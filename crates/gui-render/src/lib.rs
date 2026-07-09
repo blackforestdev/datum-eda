@@ -1052,15 +1052,6 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
     draw_text(
-        "Board",
-        layout.top_menu_bar.x + design_tokens::spacing::SP_11,
-        layout.top_menu_bar.y + design_tokens::spacing::SP_03,
-        design_tokens::typography::BODY_SIZE,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    draw_text(
         &truncate_text(&state.scene.project_name, 30),
         (layout.top_menu_bar.x + layout.top_menu_bar.width - 220.0).max(layout.top_menu_bar.x),
         layout.top_menu_bar.y + design_tokens::spacing::SP_03,
@@ -4819,29 +4810,34 @@ fn resolve_layer_family_with_scene(
     }
 }
 
+/// Build a copper `LayerAppearance` from a single muted Design Book material
+/// token. `related`/`proposal` are bounded lightenings of that base and silk
+/// comes from the token seam, so no raw hex copper values live in the render
+/// path (`docs/gui/VISUAL_LANGUAGE.md` §7; consumes `design_tokens::content`).
+fn copper_appearance_from_token(base: [f32; 3]) -> LayerAppearance {
+    let lighten = |t: f32| mix_color(base, [1.0, 1.0, 1.0], t);
+    LayerAppearance::from_copper_material(
+        base,
+        lighten(0.42),
+        lighten(0.22),
+        design_tokens::content::SILK_TOP,
+    )
+}
+
 fn resolve_layer_appearance_with_scene(
     layer_id: Option<&str>,
     scene_layers: &[datum_gui_protocol::SceneLayer],
 ) -> LayerAppearance {
     match resolve_layer_family_with_scene(layer_id, scene_layers) {
-        LayerFamily::TopCopper => LayerAppearance::from_copper_material(
-            [0.86, 0.55, 0.24],
-            [1.00, 0.84, 0.56],
-            [0.98, 0.71, 0.30],
-            [0.93, 0.92, 0.82],
-        ),
-        LayerFamily::InnerCopper => LayerAppearance::from_copper_material(
-            [0.67, 0.68, 0.30],
-            [0.92, 0.86, 0.54],
-            [0.84, 0.80, 0.40],
-            [0.86, 0.89, 0.82],
-        ),
-        LayerFamily::BottomCopper => LayerAppearance::from_copper_material(
-            [0.30, 0.76, 0.88],
-            [0.71, 0.95, 1.00],
-            [0.46, 0.88, 0.96],
-            [0.78, 0.92, 0.98],
-        ),
+        LayerFamily::TopCopper => {
+            copper_appearance_from_token(design_tokens::content::COPPER_FRONT)
+        }
+        LayerFamily::InnerCopper => {
+            copper_appearance_from_token(design_tokens::content::COPPER_IN2)
+        }
+        LayerFamily::BottomCopper => {
+            copper_appearance_from_token(design_tokens::content::COPPER_BACK)
+        }
         // Bounded exception: geometry whose layer cannot be resolved to a
         // known copper family keeps deliberately divergent fallback colors so
         // unresolved-layer drift stays visible instead of masquerading as a

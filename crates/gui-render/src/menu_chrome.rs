@@ -32,7 +32,18 @@ pub(super) fn render_menu_bar(
     };
     let icon_set = icon_set().ok();
 
-    let mut x = layout.top_menu_bar.x + 102.0;
+    // Menus begin after the measured brand wordmark (drawn at SP_04) plus a
+    // gap, so the wordmark and first menu title never overlap regardless of
+    // brand text or font metrics.
+    let brand_width = estimated_text_run_width_px(
+        "Datum EDA",
+        design_tokens::typography::BODY_SIZE,
+        TextFace::Ui,
+    );
+    let mut x = layout.top_menu_bar.x
+        + design_tokens::spacing::SP_04
+        + brand_width
+        + design_tokens::spacing::SP_03;
     let y = layout.top_menu_bar.y + design_tokens::spacing::SP_02;
     for menu in &model.menubar {
         let width = menu_title_width(&menu.menu);
@@ -181,7 +192,11 @@ fn find_menu_item(menu_name: &str, label: &str) -> Option<GuiMenuItem> {
 }
 
 fn menu_title_width(label: &str) -> f32 {
-    18.0 + label.chars().count() as f32 * 7.5
+    // Match the actual rendered advance (estimated_text_run_width_px already
+    // includes end padding) plus symmetric item padding, so adjacent titles
+    // never overlap for long labels like "Manufacturing".
+    estimated_text_run_width_px(label, design_tokens::typography::BODY_SIZE, TextFace::Ui)
+        + design_tokens::spacing::SP_02 * 2.0
 }
 
 fn menu_model() -> Result<&'static GuiMenuModel, &'static str> {
