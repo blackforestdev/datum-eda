@@ -1,3 +1,98 @@
+/// Generic selection-identity band (Design Book insp-title): identity primary
+/// line, muted mono kind subtitle, a right-aligned accent-bordered SELECTED
+/// pill, and a BORDER_SUBTLE bottom divider. This is selection chrome that
+/// applies to the routing-review ACTION selection too — not the deferred
+/// populated-component inspector.
+fn push_inspector_title_band(
+    rect: RectPx,
+    identity: &str,
+    kind: &str,
+    show_pill: bool,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let band_top = rect.y + 34.0;
+    draw_text(
+        identity,
+        rect.x + 12.0,
+        band_top,
+        16.0,
+        TEXT_PRIMARY,
+        TextFace::UiStrong,
+        text_runs,
+    );
+    if !kind.is_empty() {
+        draw_text(
+            kind,
+            rect.x + 12.0,
+            band_top + 18.0,
+            11.5,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
+    if show_pill {
+        let label = "SELECTED";
+        let pad_x = 7.0_f32;
+        let text_w =
+            estimated_text_run_width_px(label, 10.0, TextFace::UiMedium) - 16.0;
+        let pill = RectPx {
+            x: rect.x + rect.width - 12.0 - (text_w + pad_x * 2.0),
+            y: band_top - 1.0,
+            width: text_w + pad_x * 2.0,
+            height: 16.0,
+        };
+        push_rect_border(panel_quads, pill, TEXT_ACCENT, 1.0);
+        draw_text(
+            label,
+            pill.x + pad_x,
+            pill.y + 3.0,
+            10.0,
+            TEXT_ACCENT,
+            TextFace::UiMedium,
+            text_runs,
+        );
+    }
+    push_section_divider(
+        panel_quads,
+        rect.x,
+        rect.y + 66.0,
+        rect.width,
+        PANEL_CARD_BORDER,
+    );
+}
+
+/// Uppercase section-header strip (Design Book sect-hd): a SURFACE_01 band with
+/// a top BORDER_SUBTLE hairline and an ~11px semibold TEXT_MUTED label. Generic
+/// chrome; the named Identity/Placement/Checks component sections stay deferred.
+fn push_section_header_strip(
+    x: f32,
+    y: f32,
+    width: f32,
+    label: &str,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let band = RectPx {
+        x,
+        y,
+        width,
+        height: 18.0,
+    };
+    panel_quads.push(Quad::from_rect(band, design_tokens::chrome::SURFACE_01));
+    push_section_divider(panel_quads, x, y, width, PANEL_CARD_BORDER);
+    draw_text(
+        label,
+        x + 12.0,
+        y + 4.0,
+        11.0,
+        TEXT_MUTED,
+        TextFace::UiStrong,
+        text_runs,
+    );
+}
+
 fn render_inspector_panel(
     state: &ReviewWorkspaceState,
     inspector_rect: RectPx,
@@ -5,31 +100,27 @@ fn render_inspector_panel(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    draw_text(
-        "SELECTION",
-        inspector_rect.x + 12.0,
-        inspector_rect.y + 34.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
     match &state.selection {
         SelectionTarget::ReviewAction(action_id) => {
-            draw_text(
-                &format!(
-                    "ACTION {}",
-                    truncate_text(&suffix_id(action_id).to_uppercase(), 14)
-                ),
-                inspector_rect.x + 12.0,
-                inspector_rect.y + 54.0,
-                15.0,
-                TEXT_PRIMARY,
-                TextFace::Mono,
+            push_inspector_title_band(
+                inspector_rect,
+                &format!("Action {}", truncate_text(suffix_id(action_id), 14)),
+                "Route action",
+                true,
+                panel_quads,
                 text_runs,
             );
         }
         SelectionTarget::CheckFinding(fingerprint) => {
+            draw_text(
+                "SELECTION",
+                inspector_rect.x + 12.0,
+                inspector_rect.y + 34.0,
+                11.0,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text_runs,
+            );
             inspector_check_finding::render_check_finding_inspector(
                 state,
                 fingerprint,
@@ -599,13 +690,12 @@ fn render_inspector_panel(
             }
             let _ = y;
         }
-        SelectionTarget::None => draw_text(
-            "NONE",
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 54.0,
-            15.0,
-            TEXT_MUTED,
-            TextFace::Ui,
+        SelectionTarget::None => push_inspector_title_band(
+            inspector_rect,
+            "No selection",
+            "Select an object or review action",
+            false,
+            panel_quads,
             text_runs,
         ),
     }
@@ -618,13 +708,22 @@ fn render_inspector_panel(
             layer: None,
             last_status: None,
         });
-    if let Some(divider_y) = inspector_details.divider_y {
-        push_section_divider(
+    // Replace the bare divider over the detail rows with an uppercase section-
+    // header strip (Design Book sect-hd). The routing-review CONTRACT/NET/
+    // SEGMENT rows sit under a generic "ROUTE ACTION" section.
+    if inspector_details.divider_y.is_some() {
+        let label = if state.selected_review_action().is_some() {
+            "ROUTE ACTION"
+        } else {
+            "DETAILS"
+        };
+        push_section_header_strip(
+            inspector_rect.x,
+            inspector_rect.y + 72.0,
+            inspector_rect.width,
+            label,
             panel_quads,
-            inspector_rect.x + 12.0,
-            divider_y,
-            inspector_rect.width - 24.0,
-            [0.23, 0.25, 0.29],
+            text_runs,
         );
     }
     if let (Some(action), Some(row)) = (state.selected_review_action(), inspector_details.contract)

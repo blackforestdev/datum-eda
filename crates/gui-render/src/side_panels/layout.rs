@@ -449,7 +449,9 @@ fn solve_inspector_detail_layout_with_taffy(
     inspector_rect: RectPx,
 ) -> Option<InspectorDetailLayout> {
     let content_x = inspector_rect.x + UI_CARD_PADDING_X;
-    let content_y = inspector_rect.y + 84.0;
+    // Detail rows sit below the title band (y+34..y+66) and the "ROUTE ACTION"
+    // section-header strip (y+72..y+90).
+    let content_y = inspector_rect.y + 96.0;
     let content_width = (inspector_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);
     let mut nodes = Vec::new();
     let mut taffy: TaffyTree<()> = TaffyTree::new();

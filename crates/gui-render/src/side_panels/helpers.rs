@@ -7,7 +7,7 @@ fn inspector_height_for_state(state: &ReviewWorkspaceState) -> f32 {
     let mut height: f32 = if board_text_selected { 330.0 } else { 150.0 };
     let detail_row_count = inspector_detail_row_count(state);
     if detail_row_count > 0 {
-        let detail_bottom = 84.0 + detail_row_count as f32 * key_value_row_height() + 2.0;
+        let detail_bottom = 96.0 + detail_row_count as f32 * key_value_row_height() + 2.0;
         height = height.max(detail_bottom);
     }
     height
