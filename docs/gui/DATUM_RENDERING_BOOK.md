@@ -140,6 +140,17 @@ default-on per Law 2. Rendered geometry is byte-identical to CAM (Law 1).
   exporter share one resolution (Law 1). Manufacturing silk/mechanical gerber
   goldens were refreshed to the IBM Plex letterforms.
 
+- **Type colour (Grauwert) — even tonal weight.** Large/heavy type is a dark mass that
+  optically overpowers small text; soften it toward the ground so the composition reads
+  with **even tonal colour** (Emil Ruder, *Typographie*, 1967, "shades of grey"; codified
+  as "typographic colour" by Bringhurst). Datum's quantified rule on a light ground: body
+  (≤16 px) and smaller stays **full ink**; above 16 px, step the fill toward the ground by
+  ~8% per size-octave plus ~2% per weight-step, floored at **62% ink**, mixed in OKLab —
+  so a 54 px SemiBold hero renders at ~79% ink (a warm grey). **Mono data is exempt**
+  (always full ink). Grey value is rotation-invariant, so it balances identically in any
+  orientation. Formula + constants + lookup:
+  `research/gui-typography/TYPE_COLOUR_GRAUWERT_RESEARCH.md`.
+
 ## 6. Text sizing, clearspace & placement  **[LOCKED]**
 
 > Owner-approved via `docs/gui/prototypes/text-placement-study.html`. Research:
@@ -197,7 +208,39 @@ Every glyph is one declared entry in `docs/gui/icon_set.json` (gated by
 not-yet-authored glyphs via a declared fallback so the shell never blocks on art
 (`DATUM_GUI_PHASE_1_SPEC.md` D6, fallback-first).
 
-## 8. Still to specify (next passes, not blockers)
+## 8. Title block & sheet frame  **[content LOCKED · visual in progress]**
+
+> Content foundation owner-approved 2026-07-08. Research:
+> `research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md`. Principle:
+> the standards (ISO 7200) require the data to **exist and be controlled**, not to be
+> crammed on the sheet face. Minimalism = separating the **on-face set** from the
+> **model-captured record**. Visual language is being developed on the prototype
+> `docs/gui/prototypes/title-block-study.html`.
+
+**On-face set — minimal, always shown:** Title · Drawing number · Revision (current
+only) · Date of issue · Sheet n/N · Project name · Company (logo + name) · Status ·
+Drawn by · Document type (small/implicit). This is the whole face.
+
+**Compact on the face only when applicable:** Checked/Approved as a single compact line
+(initials + date), never a signature matrix; Classification as one small mark if the
+doc is classified.
+
+**Captured in the doc-control model, NOT on the face:** full revision history table (→
+register + optional revision sheet; the face shows current rev only); full approval
+chain / signatures; client/customer (off by default); contract/PO/project number (in
+the model, or folded into the drawing number); company address/contact (logo + name
+only on the face).
+
+**Per-document-type additions (DFM-aware — only relevant fields ever appear):**
+schematic = the on-face set, nothing more (no scale); fabrication drawing adds scale ·
+projection · units · tolerance · CAGE · material/finish; assembly drawing adds scale ·
+part number · BOM reference.
+
+The ISO 7200 core (title, drawing number, document type, issuing organization,
+revision, date of issue, sheet n/N) is non-negotiable; everything else on the face is
+professional-standard, kept minimal by intent.
+
+## 9. Still to specify (next passes, not blockers)
 
 Sheet borders + title block design; full layer-stackup palette; broader symbol and
 footprint families; thermal-relief and copper-pour rendering; assembly/fab-doc
