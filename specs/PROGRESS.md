@@ -60,6 +60,29 @@
    protocol against the build's chrome goldens
    (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`); no check
    there pixel-diffs wgpu against the HTML prototype.
+2b. **GUI Phase 2 — dual-pane + populated inspector (governed by
+   `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`).** The second GUI build phase: bring the
+   `datum-test` shell to the *full* `board-editor.html` composition — a populated
+   component inspector beside a split Board+Schematic view whose panes cross-probe
+   the same selection. Sequenced in dependency order in the spec: **P2.0** populated
+   single-pane component inspector (LANDED — the parity capture presets a component
+   selection via the `--select <refdes>` launch flag, repointing the poor empty
+   `--demo-known-good` target onto the prototype's single-pane composition,
+   ENFORCED by `check_gui_visual_parity.py` against the shell golden) → **P2.1**
+   split Board+Schematic dual-pane layout → **P2.2** schematic pane populated
+   read-only from the engine (reuses `load_kicad_schematic_workspace_state`) →
+   **P2.3** cross-probe (one selection identity projected into both panes via the
+   existing `SelectionTarget`/`context_envelope::from_selection` substrate) →
+   **P2.4** full Identity/Placement/Checks inspector sections. Each carries an
+   honest check disposition (ENFORCED / TO-ENFORCE / HUMAN) and is marked
+   **spec-only — build is a separately-authorized execution phase**. *Dependency:*
+   Phase-1 shell + board fidelity (step 2) landed. *Unblocks:* the schematic /
+   library authoring surfaces (step 6), which build on the read-only schematic pane
+   and cross-probe substrate. *State:* **P2.0 populated single-pane inspector
+   LANDED via the `--select` repoint; P2.1–P2.4 spec'd, build deferred to
+   authorized execution** (split-view P2.1 and schematic pane P2.2 are DEFERRED
+   build phases — sequenced/specified here, not built). Governing: decision 019 +
+   `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
    `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
@@ -128,7 +151,14 @@ FLAG oversized source modules (headline `crates/gui-render/src/lib.rs`, ~8800 li
 as `decomposition-pending` — a governance-triggered/organic decomposition trigger
 (never a schedule to split), failing only on NEW unregistered oversized modules or
 ledger drift; wired into `run_drift_gates.sh`. This is a governance flag, **not**
-product progress.
+product progress. **GUI Phase 2 spec (governed, spec-only):**
+`docs/gui/DATUM_GUI_PHASE_2_SPEC.md` sequences the second GUI build phase —
+populated component inspector + dual-pane Board+Schematic + cross-probe — extending
+`DATUM_GUI_PHASE_1_SPEC` under the `DATUM_GUI_CONFORMANCE_SPEC` check-disposition
+discipline; P2.0 (populated single-pane inspector via the `--select` capture
+repoint) has landed and is ENFORCED by `check_gui_visual_parity.py`, and P2.1–P2.4
+are specified with build deferred to authorized execution. Ordering lives in the
+Active Frontier (step 2b); this row is status only.
 
 ---
 
