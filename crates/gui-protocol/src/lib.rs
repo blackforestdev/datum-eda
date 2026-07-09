@@ -14,6 +14,11 @@ use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
+pub mod gui_menu_model;
+pub use gui_menu_model::{
+    GuiIconDef, GuiIconSet, GuiMarkingMenu, GuiMenu, GuiMenuBinding, GuiMenuItem, GuiMenuModel,
+    load_default_gui_icon_set, load_default_gui_menu_model,
+};
 mod kicad_scene_import;
 use kicad_scene_import::{
     load_scene_from_kicad_import, outline_board_graphics_from_outline,
@@ -675,6 +680,7 @@ pub struct WorkspaceFilterState {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WorkspaceUiState {
     pub active_dock_tab: Option<DockTab>,
+    pub active_menu: Option<String>,
     pub dock_height_px: u32,
     pub hovered_object_id: Option<String>,
     pub filters: WorkspaceFilterState,
@@ -2670,6 +2676,7 @@ impl ReviewWorkspaceState {
             supervision: GuiSupervisionSnapshot::default(),
             ui: WorkspaceUiState {
                 active_dock_tab: None,
+                active_menu: None,
                 dock_height_px: 220,
                 hovered_object_id: None,
                 filters: WorkspaceFilterState {

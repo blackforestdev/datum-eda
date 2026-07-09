@@ -22,6 +22,7 @@ mod bottom_dock;
 pub mod design_artboards;
 mod design_tokens;
 mod inspector_check_finding;
+mod menu_chrome;
 mod outputs_artifact_runs;
 mod outputs_lane;
 mod outputs_lane_layout;
@@ -35,6 +36,7 @@ mod source_shard_panel;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
+use menu_chrome::render_menu_bar;
 use side_panels::render_side_panels;
 use source_shard_panel::{
     render_source_shard_attention_rows as render_shard_rows, source_shard_health_label,
@@ -422,6 +424,8 @@ pub enum HitTarget {
     ArtifactPreviewViewport,
     ToggleArtifactPreviewGeometry,
     ToggleArtifactPreviewDrills,
+    MenuTitle(String),
+    MenuItem { menu: String, label: String },
     DockResizeHandle,
 }
 
@@ -790,6 +794,13 @@ impl PreparedScene {
         viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
 
         render_phase1_shell_chrome(state, &layout, &mut panel_quads, &mut text_runs);
+        render_menu_bar(
+            state,
+            &layout,
+            &mut panel_quads,
+            &mut text_runs,
+            &mut hit_regions,
+        );
         render_side_panels(
             state,
             &layout,

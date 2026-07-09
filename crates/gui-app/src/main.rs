@@ -2751,8 +2751,97 @@ impl Runtime {
                 .select_artifact_preview_hit_target(target)
                 .unwrap_or(false),
             HitTarget::ArtifactPreviewViewport => false,
+            HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
+            HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
             HitTarget::DockResizeHandle => false, // handled in mouse press
         }
+    }
+
+    fn toggle_menu(&mut self, menu: &str) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        ui.active_menu = if ui.active_menu.as_deref() == Some(menu) {
+            None
+        } else {
+            Some(menu.to_string())
+        };
+        self.invalidate_frame();
+        true
+    }
+
+    fn activate_menu_item(&mut self, menu_name: &str, label: &str) -> bool {
+        let item = datum_gui_protocol::load_default_gui_menu_model()
+            .ok()
+            .and_then(|model| {
+                model
+                    .menubar
+                    .into_iter()
+                    .find(|menu| menu.menu == menu_name)
+                    .and_then(|menu| menu.items.into_iter().find(|item| item.label == label))
+            });
+        self.session.workspace_mut().ui.active_menu = None;
+        let Some(item) = item else {
+            self.push_terminal_line(format!("menu item {menu_name}/{label} unavailable"));
+            self.invalidate_frame();
+            return true;
+        };
+        if let Some(action) = item.gui_local.as_deref() {
+            return self.activate_gui_local_menu_action(action);
+        }
+        let reason = item
+            .not_built
+            .as_deref()
+            .or(item.verb.as_deref())
+            .or(item.submenu.as_deref())
+            .unwrap_or("disabled in Phase 1");
+        self.push_terminal_line(format!("{menu_name}/{label} disabled: {reason}"));
+        self.invalidate_frame();
+        true
+    }
+
+    fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
+        match action {
+            "view.fit" => {
+                self.fit_camera();
+                self.log_review_event("menu view.fit".to_string());
+                true
+            }
+            "view.zoom_in" => {
+                self.zoom_view_from_menu(1.2);
+                self.log_review_event("menu view.zoom_in".to_string());
+                true
+            }
+            "view.zoom_out" => {
+                self.zoom_view_from_menu(1.0 / 1.2);
+                self.log_review_event("menu view.zoom_out".to_string());
+                true
+            }
+            "terminal.toggle" => {
+                if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
+                    self.close_active_dock()
+                } else {
+                    self.set_active_dock(DockTab::Terminal)
+                }
+            }
+            _ => {
+                self.push_terminal_line(format!("menu action {action} is view-local but unwired"));
+                self.invalidate_frame();
+                true
+            }
+        }
+    }
+
+    fn zoom_view_from_menu(&mut self, zoom_delta: f32) {
+        let prepared = self.prepared_scene();
+        let scene_viewport = prepared.scene_viewport;
+        let bounds = self.workspace().scene.bounds.clone();
+        self.camera.zoom_about_screen_point(
+            scene_viewport,
+            &bounds,
+            scene_viewport.x + scene_viewport.width * 0.5,
+            scene_viewport.y + scene_viewport.height * 0.5,
+            zoom_delta,
+        );
+        self.invalidate_scene();
     }
 
     fn trace_timing(&self, message: String) {
