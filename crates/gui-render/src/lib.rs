@@ -3898,7 +3898,7 @@ fn pad_corner_radius_nm(
     match pad.shape_kind.as_str() {
         "circle" => width_nm.min(height_nm) * 0.5,
         "oval" => width_nm.min(height_nm) * 0.5,
-        "roundrect" => {
+        "roundrect" | "round_rect" => {
             let ratio = (pad.roundrect_rratio_ppm as f32 / 1_000_000.0).clamp(0.0, 0.5);
             let radius = width_nm.min(height_nm) * ratio;
             radius.max(world_stroke_nm(1.0, reference_projection))
@@ -4031,7 +4031,7 @@ fn projected_pad_outline(
         _ => {
             let min_dim_px = width_px.min(height_px);
             let radius_px = match pad.shape_kind.as_str() {
-                "roundrect" => {
+                "roundrect" | "round_rect" => {
                     let ratio = (pad.roundrect_rratio_ppm as f32 / 1_000_000.0).clamp(0.0, 0.5);
                     (min_dim_px * ratio).max(1.0)
                 }

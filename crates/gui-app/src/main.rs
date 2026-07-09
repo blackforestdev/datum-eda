@@ -2611,6 +2611,7 @@ impl Runtime {
                         .unwrap_or(true);
                     let state = if visible { "visible" } else { "hidden" };
                     self.log_review_event(format!("layer {layer_id} {state}"));
+                    self.invalidate_scene();
                 }
                 handled
             }

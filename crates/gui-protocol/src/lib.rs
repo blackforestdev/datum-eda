@@ -4233,7 +4233,7 @@ impl std::fmt::Display for EnginePadShape {
             EnginePadShape::Circle => write!(f, "circle"),
             EnginePadShape::Rect => write!(f, "rect"),
             EnginePadShape::Oval => write!(f, "oval"),
-            EnginePadShape::RoundRect => write!(f, "round_rect"),
+            EnginePadShape::RoundRect => write!(f, "roundrect"),
         }
     }
 }
@@ -5773,11 +5773,11 @@ fn component_bounds(
 
 fn pad_bounds(pad: &BoardPadPayload) -> RectNm {
     let half_width = match pad.shape.as_str() {
-        "rect" | "oval" | "roundrect" => (pad.width.max(1)) / 2,
+        "rect" | "oval" | "roundrect" | "round_rect" => (pad.width.max(1)) / 2,
         _ => (pad.diameter.max(1)) / 2,
     };
     let half_height = match pad.shape.as_str() {
-        "rect" | "oval" | "roundrect" => (pad.height.max(1)) / 2,
+        "rect" | "oval" | "roundrect" | "round_rect" => (pad.height.max(1)) / 2,
         _ => (pad.diameter.max(1)) / 2,
     };
     RectNm {
@@ -7759,6 +7759,21 @@ mod tests {
             materialized_kicad_board_project_name(&source),
             "DOA2526 Datum Workspace"
         );
+    }
+
+    #[test]
+    fn native_round_rect_pad_shape_normalizes_to_renderer_shape_name() {
+        let pad: EnginePadPayload = serde_json::from_value(json!({
+            "uuid": "00000000-0000-0000-0000-000000000001",
+            "package": "00000000-0000-0000-0000-000000000002",
+            "name": "1",
+            "position": { "x": 0, "y": 0 },
+            "layer": 0,
+            "shape": "round_rect"
+        }))
+        .expect("engine pad should decode");
+
+        assert_eq!(pad.shape.to_string(), "roundrect");
     }
 
     #[test]
