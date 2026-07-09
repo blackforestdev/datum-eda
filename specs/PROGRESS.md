@@ -116,7 +116,19 @@
 **Also in flight (governance, parallel):** `specs/PROGRAM_SPEC.md` reconciled to
 the product-mechanics model (2026-07-06); Tier E `GuiSupervisionSnapshot` strip
 to be rescoped per the leverage audit (keep EDA counts as a status bar, drop
-journal-tip/read-only provenance telemetry).
+journal-tip/read-only provenance telemetry). **Shell visual-parity gate (landed):**
+`scripts/check_gui_visual_parity.py` makes Phase-1 whole-shell composition parity a
+real failing, same-engine regression gate against the owner-approved shell golden
+`crates/gui-render/testdata/golden/shell/datum-shell.golden.png` (wired through
+`check_gui_conformance.py` → `run_drift_gates.sh`), closing the paperwork defect
+where visual parity was an unenforced HUMAN row; see
+`docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` §0.1/§2/§4 (G9). **Source-module size flag
+(landed):** `scripts/check_source_module_size.py` + `specs/source_module_size_manifest.json`
+FLAG oversized source modules (headline `crates/gui-render/src/lib.rs`, ~8800 lines)
+as `decomposition-pending` — a governance-triggered/organic decomposition trigger
+(never a schedule to split), failing only on NEW unregistered oversized modules or
+ledger drift; wired into `run_drift_gates.sh`. This is a governance flag, **not**
+product progress.
 
 ---
 

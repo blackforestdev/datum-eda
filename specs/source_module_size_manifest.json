@@ -1,0 +1,101 @@
+{
+  "description": "Source-module size governance ledger. Enforced by scripts/check_source_module_size.py (wired into scripts/run_drift_gates.sh). Any tracked source module (crates/**/src/**.rs, scripts/*.py, mcp-server/**.py) over threshold_lines FAILS the gate UNLESS it is registered here as an oversized module with status 'decomposition-pending' and an accurate recorded_lines. This makes known-oversized modules visibly FLAGGED and budgeted (not silently tolerated) while NEW oversized modules fail immediately. Decomposition is governance-triggered and organic (docs/DECOMPOSITION_PLAN.md / Decomposition Philosophy) \u2014 registration here is the governance flag, NOT a schedule to split. The gate also fails if a recorded_lines drifts materially from the live count (the ledger cannot rot) and warns when a registered module shrinks back under threshold (de-list candidate).",
+  "threshold_lines": 1500,
+  "drift_floor_lines": 40,
+  "drift_pct": 0.03,
+  "valid_status": [
+    "decomposition-pending"
+  ],
+  "entries": {
+    "crates/cli/src/commands/dispatch.rs": {
+      "recorded_lines": 1803,
+      "status": "decomposition-pending",
+      "note": "CLI command dispatch table."
+    },
+    "crates/cli/src/commands/library/library.rs": {
+      "recorded_lines": 2653,
+      "status": "decomposition-pending",
+      "note": "CLI library command family."
+    },
+    "crates/cli/src/commands/project/query.rs": {
+      "recorded_lines": 1518,
+      "status": "decomposition-pending",
+      "note": "CLI project-query command module."
+    },
+    "crates/cli/src/commands/route/proposal.rs": {
+      "recorded_lines": 3193,
+      "status": "decomposition-pending",
+      "note": "CLI route-proposal command family."
+    },
+    "crates/cli/src/commands/route/views.rs": {
+      "recorded_lines": 1917,
+      "status": "decomposition-pending",
+      "note": "CLI route views/rendering command module."
+    },
+    "crates/cli/src/main_tests/main_tests_project_board_component_pool_materialization.rs": {
+      "recorded_lines": 2083,
+      "status": "decomposition-pending",
+      "note": "CLI integration-test module (board component pool materialization)."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_part.rs": {
+      "recorded_lines": 2171,
+      "status": "decomposition-pending",
+      "note": "CLI integration-test module (pool/part flows)."
+    },
+    "crates/cli/src/main_tests/main_tests_project_route_proposal_artifact.rs": {
+      "recorded_lines": 5434,
+      "status": "decomposition-pending",
+      "note": "CLI integration-test module (route-proposal artifact flows)."
+    },
+    "crates/engine/src/board/route_proposal/generation.rs": {
+      "recorded_lines": 2836,
+      "status": "decomposition-pending",
+      "note": "Engine route-proposal generation kernel."
+    },
+    "crates/gui-app/src/main.rs": {
+      "recorded_lines": 3574,
+      "status": "decomposition-pending",
+      "note": "winit GUI shell entry + app loop."
+    },
+    "crates/gui-protocol/src/lib.rs": {
+      "recorded_lines": 7865,
+      "status": "decomposition-pending",
+      "note": "GUI scene-contract + primitive types (no GUI deps)."
+    },
+    "crates/gui-render/src/lib.rs": {
+      "recorded_lines": 8800,
+      "status": "decomposition-pending",
+      "note": "GUI render surface monolith (audit-cited ~8641). Primary decomposition target; the split is deferred to a future governance-triggered, organic decomposition per docs/DECOMPOSITION_PLAN.md \u2014 this gate is the flag, not the split."
+    },
+    "crates/verb-registry/src/verbs_library.rs": {
+      "recorded_lines": 3090,
+      "status": "decomposition-pending",
+      "note": "Verb-registry library-family verb definitions."
+    },
+    "crates/verb-registry/src/verbs_pcb.rs": {
+      "recorded_lines": 2134,
+      "status": "decomposition-pending",
+      "note": "Verb-registry PCB-family verb definitions."
+    },
+    "crates/verb-registry/src/verbs_proposal.rs": {
+      "recorded_lines": 2591,
+      "status": "decomposition-pending",
+      "note": "Verb-registry proposal-family verb definitions."
+    },
+    "crates/verb-registry/src/verbs_schematic.rs": {
+      "recorded_lines": 2423,
+      "status": "decomposition-pending",
+      "note": "Verb-registry schematic-family verb definitions."
+    },
+    "mcp-server/daemon_client_request_tests.py": {
+      "recorded_lines": 2570,
+      "status": "decomposition-pending",
+      "note": "MCP daemon-client request test module."
+    },
+    "mcp-server/fake_daemon_support_queries.py": {
+      "recorded_lines": 2561,
+      "status": "decomposition-pending",
+      "note": "MCP fake-daemon support-query fixtures."
+    }
+  }
+}

@@ -15,6 +15,10 @@ python3 scripts/check_gui_conformance.py
 # owner-approved shell golden. It is invoked there (not a second time here) to
 # avoid a duplicate cargo build+capture.
 python3 scripts/check_gui_icon_assets.py
+# Source-module size governance flag: FLAGS oversized modules as
+# decomposition-pending (governance-triggered/organic decomp, never scheduled),
+# fails on NEW unregistered oversized modules or ledger drift. Does not decompose.
+python3 scripts/check_source_module_size.py
 python3 scripts/check_menu_model.py
 python3 scripts/menu_model_csv.py check
 python3 scripts/check_erc_connectivity_parity.py
