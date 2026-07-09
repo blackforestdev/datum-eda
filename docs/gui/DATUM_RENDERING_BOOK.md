@@ -208,7 +208,7 @@ Every glyph is one declared entry in `docs/gui/icon_set.json` (gated by
 not-yet-authored glyphs via a declared fallback so the shell never blocks on art
 (`DATUM_GUI_PHASE_1_SPEC.md` D6, fallback-first).
 
-## 8. Title block & sheet frame  **[content LOCKED · visual in progress]**
+## 8. Title block & sheet frame  **[content + visual LOCKED — Direction B]**
 
 > Content foundation owner-approved 2026-07-08. Research:
 > `research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md`. Principle:
@@ -239,6 +239,47 @@ part number · BOM reference.
 The ISO 7200 core (title, drawing number, document type, issuing organization,
 revision, date of issue, sheet n/N) is non-negotiable; everything else on the face is
 professional-standard, kept minimal by intent.
+
+### Visual language & dimensions (Direction B)
+
+Owner-approved composition: `docs/gui/prototypes/title-block-study.html`; the size
+matrix that proves it translates: `docs/gui/prototypes/title-block-sizes.html`.
+
+**Form & placement.** Two forms, chosen by sheet orientation — **landscape → bottom
+band; portrait → right-edge strip** — same on-face set, same rules, reflowed.
+**Fixed physical size, corner-anchored:** the block is a *constant physical size on
+every sheet size*; the paper size grows the **drawing area**, not the block. The band
+anchors to the sheet's bottom-right corner; the strip to the right edge. (A firm may
+override with a step-up on very large formats; the default is fixed.) This is why the
+block never stretches to fit A-size vs D-size.
+
+**Fixed dimensions (v1).** Landscape **band height 32 mm**; portrait **strip width
+44 mm**; internal **gutter 4 mm**. Content on a two-row baseline grid (band) or stacked
+top→bottom (strip).
+
+**Type scale (physical, on the sheet; tonal value per §5 Grauwert).**
+| Role | Size | Face |
+|------|-----:|------|
+| Micro-label (uppercase, tracked) | 1.8 mm | IBM Plex Mono |
+| Value / data | 2.5 mm | Mono (data) / Sans Cond Medium (text) |
+| Drawing title | 4.0 mm | Sans Cond Medium |
+| Revision value | 4.5 mm | Sans Cond Medium |
+| Sheet-number **hero** | 11 mm (band) · 18 mm (strip) | Sans Cond SemiBold |
+
+**Grid & alignment.** Labels sit on a shared baseline row, values on the next; every
+cell's content is left-inset by the gutter; dividers are inset (they never touch the
+frame or the page edge). **Sheet cell:** `SHEET` on the label row, `n / N` on the value
+row, the **hero centered between them**, with **balanced clear space** — equal margin to
+the divider (left) and the page edge (right), equal top and bottom, text left-justified
+inside. Colour appears once (status only); the accent stays reserved.
+
+**Clear-space** = 0.5 × cap height (§6), so it scales with the text and is
+rotation-invariant.
+
+**Why it translates.** Type scale, grid, clear-space, and Grauwert are all
+ratio/rule-based, and the block is fixed-size + corner-anchored — so the *same* guideline
+renders on **Letter · Tabloid · ANSI-D, both orientations, without redrawing.** The size
+matrix is a projection of these rules, not a set of hand-drawn variants.
 
 ## 9. Still to specify (next passes, not blockers)
 
