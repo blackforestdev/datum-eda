@@ -6191,10 +6191,42 @@ fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
     }
 }
 
+/// Load the vendored IBM Plex faces into the glyphon font database so chrome and
+/// on-canvas UI text render in the Design Book typeface rather than a system
+/// fallback (`docs/gui/DATUM_RENDERING_BOOK.md` §5). Embedded at compile time
+/// from the engine's vendored assets so the GUI never depends on the CWD.
+fn load_datum_fonts(font_system: &mut FontSystem) {
+    let db = font_system.db_mut();
+    db.load_font_data(
+        include_bytes!(
+            "../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"
+        )
+        .to_vec(),
+    );
+    db.load_font_data(
+        include_bytes!(
+            "../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"
+        )
+        .to_vec(),
+    );
+    db.load_font_data(
+        include_bytes!(
+            "../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"
+        )
+        .to_vec(),
+    );
+    db.load_font_data(
+        include_bytes!("../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf").to_vec(),
+    );
+    db.load_font_data(
+        include_bytes!("../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf").to_vec(),
+    );
+}
+
 fn text_attrs(face: TextFace) -> Attrs<'static> {
     match face {
-        TextFace::Ui => Attrs::new().family(Family::SansSerif),
-        TextFace::Mono => Attrs::new().family(Family::Monospace),
+        TextFace::Ui => Attrs::new().family(Family::Name("IBM Plex Sans Condensed")),
+        TextFace::Mono => Attrs::new().family(Family::Name("IBM Plex Mono")),
     }
 }
 
@@ -6705,7 +6737,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             multiview_mask: None,
             cache: None,
         });
-        let font_system = FontSystem::new();
+        let mut font_system = FontSystem::new();
+        load_datum_fonts(&mut font_system);
         let swash_cache = SwashCache::new();
         let cache = Cache::new(device);
         let viewport = Viewport::new(device, &cache);
