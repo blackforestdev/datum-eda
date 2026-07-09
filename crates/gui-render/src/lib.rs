@@ -6531,55 +6531,37 @@ impl Vertex {
     }
 }
 
-/// Our color tokens are sRGB *display* values (e.g. CANVAS #0B0C0E). The render
-/// surface is sRGB, so the GPU applies the sRGB OETF on write — the shader/vertex
-/// color must therefore be LINEAR for the encoded result to equal the token.
-/// Passing the raw sRGB value re-encoded near-blacks up to grey ("50 shades of
-/// grey": #0B0C0E ≈ 0.043 displayed as ~0.23 ≈ #3C). Linearize here so tokens
-/// render as authored. Text goes through glyphon, which is already sRGB-aware.
-fn srgb_to_linear_channel(c: f32) -> f32 {
-    if c <= 0.04045 {
-        c / 12.92
-    } else {
-        ((c + 0.055) / 1.055).powf(2.4)
-    }
-}
-
-fn srgb_to_linear_rgb(c: [f32; 3]) -> [f32; 3] {
-    [
-        srgb_to_linear_channel(c[0]),
-        srgb_to_linear_channel(c[1]),
-        srgb_to_linear_channel(c[2]),
-    ]
-}
-
+/// Quad colors stay in sRGB *token* space on the CPU (so vertex-color contract
+/// tests compare against the design tokens directly). The sRGB->linear
+/// conversion happens in the fragment shader, at the GPU boundary, so the sRGB
+/// surface's encode round-trips to the authored token instead of washing
+/// near-blacks up to grey. Text goes through glyphon, which is already sRGB-aware.
 fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
     let [a, b, c, d] = quad.points;
-    let color = srgb_to_linear_rgb(quad.color);
     out.extend_from_slice(&[
         Vertex {
             pos: [a.0, a.1],
-            color,
+            color: quad.color,
         },
         Vertex {
             pos: [b.0, b.1],
-            color,
+            color: quad.color,
         },
         Vertex {
             pos: [c.0, c.1],
-            color,
+            color: quad.color,
         },
         Vertex {
             pos: [a.0, a.1],
-            color,
+            color: quad.color,
         },
         Vertex {
             pos: [c.0, c.1],
-            color,
+            color: quad.color,
         },
         Vertex {
             pos: [d.0, d.1],
-            color,
+            color: quad.color,
         },
     ]);
 }
@@ -6767,9 +6749,17 @@ fn vs_main(in: VsIn) -> VsOut {
     return out;
 }
 
+// Tokens arrive as sRGB display values; convert to linear so the sRGB surface's
+// encode round-trips to the authored color (near-black stays near-black).
+fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> {
+    let low = c / 12.92;
+    let high = pow((c + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4));
+    return select(high, low, c <= vec3<f32>(0.04045));
+}
+
 @fragment
 fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
-    return vec4<f32>(in.color, 1.0);
+    return vec4<f32>(srgb_to_linear(in.color), 1.0);
 }
 "#
                 .into(),
@@ -6815,9 +6805,15 @@ fn vs_main(in: VsIn) -> VsOut {
     return out;
 }
 
+fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> {
+    let low = c / 12.92;
+    let high = pow((c + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4));
+    return select(high, low, c <= vec3<f32>(0.04045));
+}
+
 @fragment
 fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
-    return vec4<f32>(in.color, 1.0);
+    return vec4<f32>(srgb_to_linear(in.color), 1.0);
 }
 "#
                 .into(),
