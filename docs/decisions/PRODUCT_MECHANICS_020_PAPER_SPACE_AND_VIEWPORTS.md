@@ -48,6 +48,39 @@ panelization drawings, and cover sheets alike. The per-document-type field addit
 §8 make document types **sheet templates** (prescribed viewports + fields). Gerber/drill
 exports are a viewport's content resolved at manufacturing intent.
 
+## Viewport interaction & authored properties
+
+A viewport is directly manipulable on the sheet, and each manipulation sets an
+**authored, journaled property** (a typed `Operation` through `commit()`), distinct from
+the transient drag/gesture that produces it (interaction produces operations; it is not
+an operation). **Three distinct controls — do not conflate them:**
+
+- **Move** — drag the viewport **anywhere on the sheet**; sets its **position**. (Journaled.)
+- **Resize** — **corner-drag** resizes the viewport's **window** (its frame on the sheet),
+  revealing *more or less of the model at the current scale* — the frame is a window, not
+  a zoom. (Journaled.)
+- **Scale** — set from the viewport's **local (marking / context) menu**: preset content
+  scales **2:1 · 1:1 · 1:2 · 1:4 · …**, a **custom** scale, and **fit-to-window**. Scale
+  **zooms the content** (independent of the window size). Sourced from the `menu_model`
+  per-object content (decision 019 context-menu system); the chosen scale is a journaled
+  viewport property.
+
+So: *move* = where on the sheet · *resize* = how big the window · *scale* = how zoomed the
+content. All three are journaled (undo, provenance, diff, AI-proposal); the live drag is not.
+
+## Scale lives on the viewport, not the title block
+
+Because a sheet can carry **many viewports at different scales**, there is **no single
+sheet-wide scale** — so scale is **omitted from the title-block on-face set** (Rendering
+Book §8) **by design**. Instead, **each viewport carries its own scale label** (a
+mechanical-drawing view label, e.g. `SCALE 2:1`, shown at the viewport). This is the
+reason scale was deliberately left off the title block.
+
+- *Exception (single-viewport sheets):* a fab/assembly sheet with one dominant viewport
+  MAY surface that viewport's scale as a **bound field** in the title block (a
+  Ref/Computed field that reads the sole viewport's scale — the field-formula layer) — a
+  convenience, not a second source of truth. **The viewport is the authority for scale.**
+
 ## How it rides the substrate (why this is Datum-shaped)
 
 - **Model is authority; a viewport is a projection.** A viewport shows a *live* view of
@@ -106,7 +139,10 @@ exports are a viewport's content resolved at manufacturing intent.
 
 - **Viewport source vocabulary** — which model views are addressable (schematic sheet,
   board side, inner layer, 3D angle, panel, BOM table).
-- **Scale model** — named scales vs free; fit-to-window semantics; scale bar.
+- **Scale model** — presets (2:1 · 1:1 · 1:2 · 1:4 · …) + custom + fit-to-window, set from
+  the viewport local menu, scale label on each viewport (resolved above). Open finer
+  points: the exact preset ladder, whether a **scale bar** graphic is offered, and
+  rounding for "fit".
 - **Cross-references** — detail callouts, sheet/zone references, "SEE SHEET n" resolution.
 - **v1 scope** — which comes first: schematic-sheet paper space, or the fab-drawing sheet
   template? (Sequencing to be placed on the Active Frontier.)

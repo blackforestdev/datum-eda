@@ -236,6 +236,12 @@ schematic = the on-face set, nothing more (no scale); fabrication drawing adds s
 projection · units · tolerance · CAGE · material/finish; assembly drawing adds scale ·
 part number · BOM reference.
 
+**Scale is a viewport property, not a title-block field** (decision 020): because a sheet
+can hold many viewports at different scales, scale is shown as a **per-viewport label**
+(`SCALE 2:1`), which is why it is omitted from the on-face set. On a single-viewport
+fab/assembly sheet the block *may* surface that sole viewport's scale as a bound field —
+a convenience, never the authority.
+
 The ISO 7200 core (title, drawing number, document type, issuing organization,
 revision, date of issue, sheet n/N) is non-negotiable; everything else on the face is
 professional-standard, kept minimal by intent.
