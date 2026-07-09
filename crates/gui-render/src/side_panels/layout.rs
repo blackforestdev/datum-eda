@@ -350,11 +350,14 @@ fn solve_filters_panel_layout_with_taffy(
     let content_x = filters_rect.x + UI_CARD_PADDING_X;
     let content_y = filters_rect.y + UI_CARD_CONTENT_TOP;
     let content_width = (filters_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);
+    // Layers/review-filter rows sit on a 25px rhythm (Design Book --row) so the
+    // 13px name + 13px swatch center comfortably.
+    let row_h = 25.0_f32;
     let summary_height = 62.0;
-    let fixed_height = 4.0 * 20.0 + UI_STACK_GAP_MEDIUM + summary_height + UI_CARD_CONTENT_BOTTOM;
+    let fixed_height = 4.0 * row_h + UI_STACK_GAP_MEDIUM + summary_height + UI_CARD_CONTENT_BOTTOM;
     let available_layer_height =
-        (filters_rect.height - UI_CARD_CONTENT_TOP - fixed_height).max(20.0);
-    let max_layer_rows = (available_layer_height / 20.0).floor().max(1.0) as usize;
+        (filters_rect.height - UI_CARD_CONTENT_TOP - fixed_height).max(row_h);
+    let max_layer_rows = (available_layer_height / row_h).floor().max(1.0) as usize;
     let layer_count = state.scene.layers.len().min(max_layer_rows);
 
     let mut taffy: TaffyTree<()> = TaffyTree::new();
@@ -373,12 +376,12 @@ fn solve_filters_panel_layout_with_taffy(
         Some(())
     };
 
-    add_node(FiltersPanelNode::Authored, 20.0)?;
-    add_node(FiltersPanelNode::Proposed, 20.0)?;
-    add_node(FiltersPanelNode::Unrouted, 20.0)?;
-    add_node(FiltersPanelNode::DimUnrelated, 20.0)?;
+    add_node(FiltersPanelNode::Authored, row_h)?;
+    add_node(FiltersPanelNode::Proposed, row_h)?;
+    add_node(FiltersPanelNode::Unrouted, row_h)?;
+    add_node(FiltersPanelNode::DimUnrelated, row_h)?;
     for index in 0..layer_count {
-        add_node(FiltersPanelNode::Layer(index), 20.0)?;
+        add_node(FiltersPanelNode::Layer(index), row_h)?;
     }
     add_node(FiltersPanelNode::Gap, UI_STACK_GAP_MEDIUM)?;
     add_node(FiltersPanelNode::ActiveSummary, 18.0)?;

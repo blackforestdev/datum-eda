@@ -132,6 +132,17 @@ fn render_project_and_filters_panel(
             rect: filter_hit_rect(row),
         });
     }
+    // Divider between the review-filter toggles (a routing-review-scene artifact,
+    // not the prototype's physical-layer list) and the physical-layer rows below,
+    // so the two groups read as distinct rather than one flat list. A curated
+    // board+component demo scene omits these toggles entirely (see M8).
+    push_section_divider(
+        panel_quads,
+        filters_rect.x,
+        filters_layout.dim_unrelated.y + filters_layout.dim_unrelated.height + 4.0,
+        filters_rect.width,
+        PANEL_CARD_BORDER,
+    );
     // Show all layers — copper first, then non-copper
     let mut display_layers: Vec<&_> = state.scene.layers.iter().collect();
     display_layers.sort_by_key(|l| {
@@ -205,43 +216,37 @@ fn render_layer_row(
         ));
     }
     let swatch_color = layer_swatch_color_with_scene(Some(&layer.layer_id), &state.scene.layers);
+    // Off rows dim the ENTIRE row (swatch + name) uniformly toward the panel
+    // surface, matching the prototype's .layer-row.off{opacity:.4}. There is no
+    // ON/OFF/ACTIVE text badge — visibility reads through the dim alone.
+    let dim = |color: [f32; 3]| -> [f32; 3] {
+        if visible {
+            color
+        } else {
+            mix_color(color, PANEL_CARD_BG, 0.6)
+        }
+    };
     let swatch = RectPx {
         x: row.x,
-        y: row.y + 2.0,
-        width: 12.0,
-        height: 12.0,
+        y: row.y + 3.0,
+        width: 13.0,
+        height: 13.0,
     };
-    panel_quads.push(Quad::from_rect(
+    panel_quads.push(Quad::from_rect(swatch, dim(swatch_color)));
+    // Subtle ~12% white inset highlight on the swatch edge (not a dark box).
+    push_rect_border(
+        panel_quads,
         swatch,
-        if visible {
-            swatch_color
-        } else {
-            dim_context_color(swatch_color, true)
-        },
-    ));
-    push_rect_border(panel_quads, swatch, PANEL_CARD_BORDER, 1.0);
-    draw_text(
-        &truncate_text(&layer.name.to_uppercase(), 16),
-        row.x + 20.0,
-        row.y,
-        11.0,
-        if visible { TEXT_SECONDARY } else { TEXT_MUTED },
-        TextFace::Ui,
-        text_runs,
+        dim(mix_color(swatch_color, [1.0, 1.0, 1.0], 0.12)),
+        1.0,
     );
     draw_text(
-        if active {
-            "ACTIVE"
-        } else if visible {
-            "ON"
-        } else {
-            "OFF"
-        },
-        row.x + row.width - 44.0,
-        row.y,
-        10.5,
-        if active { TEXT_ACCENT } else { TEXT_MUTED },
-        TextFace::Mono,
+        &truncate_text(&layer.name, 18),
+        row.x + 22.0,
+        row.y + 1.0,
+        13.5,
+        dim(if visible { TEXT_PRIMARY } else { TEXT_MUTED }),
+        TextFace::Ui,
         text_runs,
     );
 }
