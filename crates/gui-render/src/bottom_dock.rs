@@ -242,15 +242,6 @@ fn render_terminal_lane(
         TextFace::Mono,
         text_runs,
     );
-    draw_text(
-        "AGENTS BUTTON PREFILLS CODEX/CLAUDE COMMANDS HERE; EXECUTION REMAINS TERMINAL-OWNED",
-        rect.x + 12.0,
-        rect.y + 58.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
     let mut y = rect.y + 77.0;
     if !state.ui.terminal.tabs.is_empty() {
         draw_text(

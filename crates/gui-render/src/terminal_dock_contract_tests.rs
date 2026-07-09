@@ -116,12 +116,6 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
         "terminal dock should expose its native scrollback copy shortcut"
     );
     assert!(
-        prepared.text_runs.iter().any(|run| run
-            .text
-            .contains("AGENTS BUTTON PREFILLS CODEX/CLAUDE COMMANDS HERE")),
-        "terminal dock should explain that agent launches are terminal-owned prefills"
-    );
-    assert!(
         prepared
             .text_runs
             .iter()
