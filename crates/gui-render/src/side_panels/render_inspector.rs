@@ -46,7 +46,7 @@ fn render_inspector_panel(
                 .find(|c| &c.object_id == object_id)
             {
                 draw_text(
-                    &comp.reference.to_uppercase(),
+                    &comp.reference,
                     inspector_rect.x + 12.0,
                     y,
                     15.0,
@@ -59,8 +59,8 @@ fn render_inspector_panel(
                     push_key_value(
                         inspector_rect.x + 12.0,
                         y,
-                        "VALUE",
-                        &value.to_uppercase(),
+                        "Value",
+                        value,
                         text_runs,
                         TextFace::Ui,
                     );
@@ -69,8 +69,8 @@ fn render_inspector_panel(
                 push_key_value(
                     inspector_rect.x + 12.0,
                     y,
-                    "LAYER",
-                    &comp.placement_layer.to_uppercase(),
+                    "Layer",
+                    &comp.placement_layer,
                     text_runs,
                     TextFace::Mono,
                 );

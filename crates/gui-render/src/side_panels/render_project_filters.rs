@@ -7,25 +7,27 @@ fn render_project_and_filters_panel(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    // Project display slug: data strings render verbatim (mixed case); only
+    // panel/section TITLES stay uppercase.
     draw_text(
-        &truncate_text(&state.scene.project_name.to_uppercase(), 22),
+        &truncate_text(&state.scene.project_name, 24),
         project_layout.project_name.x,
         project_layout.project_name.y,
-        16.0,
+        15.0,
         TEXT_PRIMARY,
-        TextFace::Ui,
+        TextFace::UiStrong,
         text_runs,
     );
     let scene_label = if state.scene.kind == "schematic_review_scene" {
-        "SCHEMATIC"
+        "Schematic"
     } else {
-        "BOARD"
+        "Board"
     };
     draw_text(
         &format!(
-            "{} {}",
+            "{} · {}",
             scene_label,
-            truncate_text(&state.scene.board_name.to_uppercase(), 18)
+            truncate_text(&state.scene.board_name, 18)
         ),
         project_layout.board_name.x,
         project_layout.board_name.y,
@@ -36,7 +38,7 @@ fn render_project_and_filters_panel(
     );
     if let (Some(action), Some(net_rect)) = (state.selected_review_action(), project_layout.net) {
         draw_text(
-            &format!("NET {}", truncate_text(&action.net_name.to_uppercase(), 18)),
+            &format!("Net {}", truncate_text(&action.net_name, 18)),
             net_rect.x,
             net_rect.y,
             13.0,
