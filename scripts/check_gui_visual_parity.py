@@ -41,10 +41,29 @@ ROOT = Path(__file__).resolve().parents[1]
 WINDOW_SIZE = "1680x1050"
 GOLDEN = ROOT / "crates/gui-render/testdata/golden/shell/datum-shell.golden.png"
 
-# Small tolerance: absorbs sub-pixel AA / font-raster jitter, but any real chrome
-# change (a moved panel, a restyled band, a token shift) moves far more than this.
-PER_PIXEL_CHANNEL_TOLERANCE = 24  # 0..255 per-channel delta ignored below this
-MAX_DIFFERING_PX_PCT = 1.5        # fail if more than this share of pixels differ
+# Small tolerance: absorbs sub-pixel AA / font-raster jitter only. Same renderer,
+# so the capture is near-identical to the golden (verified at 0 differing px on the
+# reference workstation). The bar is deliberately tight so a REAL chrome regression
+# — a moved panel, a re-introduced uppercase run, a resurrected ON/OFF badge, the
+# floating-card border — blows past it and FAILS. Two independent assertions:
+#   (a) < MAX_DIFFERING_PX_PCT of pixels differ by more than PER_PIXEL_CHANNEL_TOLERANCE
+#       on any channel (catches small, high-contrast regressions like a badge), AND
+#   (b) mean per-channel difference < MAX_MEAN_CHANNEL_DELTA (catches broad, low-amplitude
+#       shifts like a re-tinted surface that individually stay under the per-pixel bar).
+PER_PIXEL_CHANNEL_TOLERANCE = 8   # 0..255 per-channel delta ignored below this
+MAX_DIFFERING_PX_PCT = 0.5        # fail if more than this share of pixels differ
+MAX_MEAN_CHANNEL_DELTA = 1.5      # fail if the mean per-channel delta exceeds this
+
+
+def pending_shadows() -> list[Path]:
+    """Any *.PENDING placeholder sitting beside the golden.
+
+    A pending placeholder can NEVER make this gate green — that is the exact
+    paperwork defect this gate corrects.
+    """
+    if not GOLDEN.parent.is_dir():
+        return []
+    return sorted(GOLDEN.parent.glob("*.PENDING"))
 
 
 def capture(out_path: Path) -> None:
@@ -76,8 +95,8 @@ def capture(out_path: Path) -> None:
 
 
 def diff(golden: Path, actual: Path) -> int:
-    expected = np.asarray(Image.open(golden).convert("RGBA"), dtype=np.int16)
-    got = np.asarray(Image.open(actual).convert("RGBA"), dtype=np.int16)
+    expected = np.asarray(Image.open(golden).convert("RGB"), dtype=np.int16)
+    got = np.asarray(Image.open(actual).convert("RGB"), dtype=np.int16)
     if expected.shape != got.shape:
         print(
             "GUI-VISUAL-PARITY FAIL: dimensions differ "
@@ -85,20 +104,26 @@ def diff(golden: Path, actual: Path) -> int:
             "The shell layout changed size — re-approve with --bless if intended."
         )
         return 1
-    delta = np.abs(expected - got).max(axis=2)  # worst per-pixel channel delta
+    channel_delta = np.abs(expected - got)
+    delta = channel_delta.max(axis=2)  # worst per-pixel channel delta
     differing = int((delta > PER_PIXEL_CHANNEL_TOLERANCE).sum())
     total = int(delta.size)
     pct = 100.0 * differing / total
     max_delta = int(delta.max())
+    mean_delta = float(channel_delta.mean())  # mean over every channel of every pixel
     print(
         f"GUI-VISUAL-PARITY diff: {differing}/{total} px differ "
-        f"({pct:.3f}%), max channel delta {max_delta}, "
-        f"tolerance {MAX_DIFFERING_PX_PCT:.2f}% @ per-pixel {PER_PIXEL_CHANNEL_TOLERANCE}"
+        f"({pct:.3f}%), max channel delta {max_delta}, mean channel delta {mean_delta:.4f}; "
+        f"tolerance {MAX_DIFFERING_PX_PCT:.2f}% @ per-pixel {PER_PIXEL_CHANNEL_TOLERANCE}, "
+        f"mean {MAX_MEAN_CHANNEL_DELTA}"
     )
-    if pct > MAX_DIFFERING_PX_PCT:
+    regressed = pct > MAX_DIFFERING_PX_PCT or mean_delta > MAX_MEAN_CHANNEL_DELTA
+    if regressed:
         print(
             "GUI-VISUAL-PARITY FAIL: the running app regressed from the "
             "owner-approved shell golden.\n"
+            f"  - differing-pixel {pct:.3f}% (limit {MAX_DIFFERING_PX_PCT}%), "
+            f"mean channel delta {mean_delta:.4f} (limit {MAX_MEAN_CHANNEL_DELTA}).\n"
             "  - If this is an UNINTENDED regression, fix the render.\n"
             "  - If this is an APPROVED visual change, re-capture and commit the\n"
             "    golden: python3 scripts/check_gui_visual_parity.py --bless\n"
@@ -124,10 +149,22 @@ def main() -> int:
         print(f"GUI-VISUAL-PARITY blessed: wrote {GOLDEN.relative_to(ROOT)}")
         return 0
 
-    if not GOLDEN.is_file():
+    # Anti-paperwork teeth: an absent golden OR a *.PENDING placeholder beside it
+    # FAILS the gate — a pending placeholder can never make the gate green. This is
+    # the exact defect being corrected (a HUMAN row guarded by a PENDING file).
+    shadows = pending_shadows()
+    if not GOLDEN.is_file() or shadows:
+        detail = (
+            f"a *.PENDING placeholder shadows it ({', '.join(str(p.relative_to(ROOT)) for p in shadows)})"
+            if shadows
+            else "the golden file is absent"
+        )
         print(
-            f"GUI-VISUAL-PARITY FAIL: missing golden {GOLDEN.relative_to(ROOT)}.\n"
-            "  Capture and commit it once owner-approved:\n"
+            "GUI-VISUAL-PARITY FAIL: owner-approved shell golden not committed — "
+            f"{detail}.\n"
+            f"  expected: {GOLDEN.relative_to(ROOT)}\n"
+            "  A PENDING placeholder does NOT satisfy this gate. Capture and commit\n"
+            "  the golden once owner-approved (and delete any *.PENDING beside it):\n"
             "    python3 scripts/check_gui_visual_parity.py --bless"
         )
         return 1

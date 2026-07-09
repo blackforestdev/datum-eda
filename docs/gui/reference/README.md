@@ -175,6 +175,19 @@ dumping ground for un-built gates.
 
 ## 5. Capture status (honest, updated per capture)
 
+> **Cross-link (whole-shell no-regression is now ENFORCED elsewhere).** This
+> reference-image loop is the **HUMAN owner-judgment layer only** — it is no longer
+> the sole line of defense for the composed shell look. Whole-shell composition
+> parity is now regression-gated by **G9**
+> (`DATUM_GUI_CONFORMANCE_SPEC.md` §2.10 / §4): the same-engine shell visual-parity
+> gate `scripts/check_gui_visual_parity.py` diffs the running app against the
+> owner-approved shell golden
+> `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` and FAILS on any
+> regression (and if the golden is absent or a `*.PENDING` placeholder shadows it).
+> That gate is build-vs-build (never wgpu-vs-HTML). This directory's job is the
+> one-time cross-engine aesthetic judgment that blesses the golden and the
+> region-by-region eyeball review — not machine enforcement.
+
 **Current status: DEFERRED TO MANUAL CAPTURE — no real reference image committed
 yet.**
 

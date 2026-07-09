@@ -47,24 +47,21 @@ GATES = [
     ),
 ]
 
-# Visual parity is now an ENFORCED regression gate (shell visual parity above),
-# not an owner-eye disposition that this aggregate merely reported. The one
-# remaining human step is the OUT-OF-BAND approval of the golden itself (a human
-# judges the app-vs-prototype match once, then blesses the golden); after that,
-# drift from the approved look is a machine failure.
-HUMAN_SIGNOFF_LINES = [
-    "The shell golden (crates/gui-render/testdata/golden/shell/datum-shell.golden.png) is",
-    "owner-approved to match docs/gui/prototypes/board-editor.html; the visual-parity gate",
-    "then FAILS on any regression from that approved look (re-approve via --bless).",
-]
+# Visual parity is now an ENFORCED regression gate, not an owner-eye disposition
+# this aggregate merely reported. The former non-failing HUMAN_SIGNOFF note (which
+# printed "reports HUMAN rows but does not fail on owner-eye disposition") was the
+# defect in prose form and has been DELETED. The golden-exists and *.PENDING-shadow
+# checks — the anti-paperwork teeth — are delegated entirely to the shell
+# visual-parity gate above (it FAILS if the owner-approved golden is absent or a
+# PENDING placeholder shadows it), and because GATES run under check=True, that
+# failure makes this aggregate exit non-zero. The one remaining human step is the
+# OUT-OF-BAND one-time approval of the golden itself (--bless).
 
 
 def main() -> int:
     for name, command in GATES:
         print(f"GUI-CONFORMANCE {name}: {' '.join(command)}")
         subprocess.run(command, cwd=ROOT, check=True)
-    for line in HUMAN_SIGNOFF_LINES:
-        print(f"GUI-CONFORMANCE NOTE: {line}")
     print("GUI conformance gate passed.")
     return 0
 

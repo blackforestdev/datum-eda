@@ -81,6 +81,20 @@ without a concrete reference is not a valid row.
 
 No row proposes pixel-diffing wgpu against HTML. No row is uncomputable-yet-marked-green.
 
+**Golden-backed-HUMAN rule (closes the paperwork hole).** A **HUMAN** disposition
+for a *whole-surface* visual outcome (the composed look of the shell, or of any
+whole surface) may **NOT** be the sole guardian of that outcome. It MUST be backed
+by an **owner-approved, committed golden** that a machine gate regression-checks
+build-vs-build (§2.10 / G9). The HUMAN half is the one-time owner approval of the
+golden (cross-engine aesthetic judgment against `board-editor.html`); the ENFORCED
+half is "no regression from the approved golden." A `*.PENDING` placeholder can
+**never** satisfy this — an absent or PENDING-shadowed golden FAILS the gate. This
+is the exact defect being corrected: previously the composed shell look was every
+per-row HUMAN disposition and nothing else, reviewed against an image that existed
+only as `docs/gui/reference/board-editor.png.PENDING`, with the aggregate merely
+*reporting* HUMAN rows and never failing. (Per-region HUMAN rows for a *sub-region's*
+feel remain valid on their own; this rule binds only whole-surface outcomes.)
+
 ## 2. Per-region conformance tables
 
 Nine audited regions, all covered: **menu-bar · tool-rail · project-tree ·
@@ -239,6 +253,41 @@ tier**.
 
 ---
 
+### 2.10 Whole-shell composition parity
+*Phase scope: P1 (the composed look of the whole shell, not a single region).*
+**Headline:** the aggregate of the §2.1–§2.9 HUMAN rows — "does the build read as the
+same product as the prototype?" — is no longer guarded by paperwork alone. It is
+frozen into an owner-approved **shell golden** and regression-gated same-engine.
+
+| Claim | Prototype value | Build state | Phase | Disposition | Check ref |
+|---|---|---|---|---|---|
+| Whole-shell composition parity (no regression from the approved shell look) | prototype `board-editor.html` | app shell golden | P1 | ENFORCED | `scripts/check_gui_visual_parity.py` vs `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` |
+
+**Canonical capture (fixed; the golden was captured at exactly these parameters and
+the gate re-runs them):**
+
+```bash
+cargo run -q -p datum-gui-app --bin datum-gui --features visual -- \
+  --demo-known-good --visual-test \
+  --screenshot-out <tmp>/datum-shell.capture.png \
+  --window-size 1680x1050 --exit-after-screenshot
+```
+
+Fixed inputs: launch bin `datum-gui`, `--demo-known-good` curated scene,
+`--visual-test` deterministic offscreen path, window `1680x1050`. **Tolerances
+(same-engine, so near-identical — verified at 0 differing px on the reference
+workstation):** dimensions must match exactly (hard fail otherwise); then (a) the
+fraction of pixels differing by more than **8/255** on any channel must be **< 0.5%**,
+AND (b) the **mean per-channel difference** must be **< 1.5/255**. Any real chrome
+regression (a moved panel, a re-introduced uppercase run, a resurrected ON/OFF
+badge, the floating-card border) blows past this and FAILS. Capture-infra failure
+(no GPU/offscreen path) FAILS LOUD — the gate never silently passes. Re-approval is
+an explicit owner action: `scripts/check_gui_visual_parity.py --bless`. This is the
+sanctioned **build-vs-build** golden of §0's Machine layer, extended from the board
+sub-region to the whole shell — **not** the forbidden wgpu-vs-HTML cross-engine diff.
+
+---
+
 ## 3. The four polish items — where they land (index)
 
 Folded in as first-class rows above, not a sidebar:
@@ -276,6 +325,14 @@ slice it verifies**, never red against un-built structure.
 - **G7 — Overlay-within-viewport.** ENFORCED by `layout_invariant_tests.rs`.
 - **G8 — Two-sided menu-layout metric.** ENFORCED by
   `menu_chrome.rs::conformance_menu_title_width_uses_condensed_measured_advance`.
+- **G9 — Shell visual-parity gate.** ENFORCED by `scripts/check_gui_visual_parity.py`
+  (owner-approved shell golden `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`;
+  captures the running app at the §2.10 canonical command and fails on any regression
+  from the approved look, fails if the golden is absent or a `*.PENDING` placeholder
+  shadows it, and fails loud on capture-infra failure — never silently passes). Wired
+  into `check_gui_conformance.py` (hence `run_drift_gates.sh`). This is the machine
+  half of the whole-shell composition disposition (§2.10); the owner approval of the
+  golden is the one-time HUMAN half.
 
 ## 5. Reconciliation register (resolved in this conformance pass)
 
@@ -295,12 +352,13 @@ on them are non-authoritative until the owner decides.
 
 ## 6. Coverage validation
 
-- All **9** regions present (§2.1–§2.9).
+- All **9** regions present (§2.1–§2.9), plus the whole-shell composition-parity
+  row (§2.10, ENFORCED via G9) that regression-gates the *composed* look.
 - Every line item carries **exactly one** of ENFORCED / TO-ENFORCE / HUMAN (rows
   marked "ENFORCED (value) / HUMAN (look)" split a *value* claim from a distinct
   *appearance* claim — each half carries one disposition).
 - **No row pixel-diffs wgpu against `board-editor.html`.**
-- Every **TO-ENFORCE** names a concrete file + assertion (§4 G1–G8; §2 rows).
+- Every **TO-ENFORCE** names a concrete file + assertion (§4 G1–G9; §2 rows).
 - Every **HUMAN** names the reference image (`board-editor.html`) + the committed
   golden (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`).
 - The **composed shell look** (the aggregate of the §2 HUMAN rows) is
