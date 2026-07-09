@@ -16,7 +16,7 @@ pub(super) fn parse_window_size(value: &str) -> Result<(u32, u32)> {
     Ok((width, height))
 }
 #[derive(Debug, Clone, Parser)]
-#[command(name = "datum-gui", about = "Datum M7 route-proposal review spike")]
+#[command(name = "datum-gui", about = "Datum EDA Phase 1 read-only board GUI")]
 pub(super) struct GuiArgs {
     #[arg(long = "demo-known-good", default_value_t = false)]
     pub(super) demo_known_good: bool,

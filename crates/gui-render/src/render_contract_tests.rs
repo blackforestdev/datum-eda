@@ -228,16 +228,13 @@ fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
 }
 
 #[test]
-fn terminal_and_agent_docks_surface_recent_activity_spans() {
+fn terminal_dock_surfaces_recent_activity_spans() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.terminal.activity_summary =
         vec!["#3 command datum.artifact.generate in:7B out:12B".to_string()];
     state.ui.dock_height_px = 260;
 
-    for tab in [
-        datum_gui_protocol::DockTab::Terminal,
-        datum_gui_protocol::DockTab::Assistant,
-    ] {
+    for tab in [datum_gui_protocol::DockTab::Terminal] {
         state.ui.active_dock_tab = Some(tab);
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
         let prepared = PreparedScene::from_workspace(

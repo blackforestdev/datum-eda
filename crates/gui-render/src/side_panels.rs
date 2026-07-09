@@ -3,7 +3,6 @@ use super::*;
 include!("side_panels/layout.rs");
 include!("side_panels/render_project_filters.rs");
 include!("side_panels/render_inspector.rs");
-include!("side_panels/render_review.rs");
 include!("side_panels/helpers.rs");
 
 pub(super) fn render_side_panels(
@@ -23,13 +22,10 @@ pub(super) fn render_side_panels(
     let right_layout = solve_right_panel_layout_with_taffy(state, right)
         .unwrap_or_else(|| fallback_right_panel_layout(state, right));
     let inspector_rect = right_layout.inspector_rect;
-    let review_rect = right_layout.review_rect;
-
     for (rect, title) in [
         (project_rect, "PROJECT"),
-        (filters_rect, "FILTERS"),
+        (filters_rect, "LAYERS"),
         (inspector_rect, "INSPECTOR"),
-        (review_rect, "REVIEW"),
     ] {
         panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
         push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
@@ -61,5 +57,4 @@ pub(super) fn render_side_panels(
         hit_regions,
     );
     render_inspector_panel(state, inspector_rect, panel_quads, text_runs, hit_regions);
-    render_review_panel(state, review_rect, panel_quads, text_runs, hit_regions);
 }

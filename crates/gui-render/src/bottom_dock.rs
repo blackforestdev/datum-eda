@@ -14,7 +14,6 @@ use taffy::prelude::*;
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
     terminal_tab: RectPx,
-    assistant_tab: RectPx,
     outputs_tab: RectPx,
     handle: RectPx,
     content: RectPx,
@@ -23,7 +22,6 @@ struct BottomDockLayout {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum BottomDockNode {
     Terminal,
-    Assistant,
     Outputs,
 }
 
@@ -51,7 +49,6 @@ fn solve_bottom_dock_layout_with_taffy(layout: &ShellLayout) -> Option<BottomDoc
         Some(())
     };
     add_tab(BottomDockNode::Terminal)?;
-    add_tab(BottomDockNode::Assistant)?;
     add_tab(BottomDockNode::Outputs)?;
     drop(add_tab);
 
@@ -89,7 +86,6 @@ fn solve_bottom_dock_layout_with_taffy(layout: &ShellLayout) -> Option<BottomDoc
 
     Some(BottomDockLayout {
         terminal_tab: rect_for(BottomDockNode::Terminal)?,
-        assistant_tab: rect_for(BottomDockNode::Assistant)?,
         outputs_tab: rect_for(BottomDockNode::Outputs)?,
         handle: RectPx {
             x: strip.x,
@@ -115,14 +111,8 @@ fn fallback_bottom_dock_layout(layout: &ShellLayout) -> BottomDockLayout {
             width: 120.0,
             height: strip.height - 16.0,
         },
-        assistant_tab: RectPx {
-            x: strip.x + 140.0,
-            y: strip.y + 8.0,
-            width: 120.0,
-            height: strip.height - 16.0,
-        },
         outputs_tab: RectPx {
-            x: strip.x + 268.0,
+            x: strip.x + 140.0,
             y: strip.y + 8.0,
             width: 120.0,
             height: strip.height - 16.0,
@@ -159,14 +149,8 @@ pub(super) fn render_bottom_tabs(
             matches!(state.ui.active_dock_tab, Some(DockTab::Terminal)),
         ),
         (
-            dock_layout.assistant_tab,
-            "AGENTS",
-            HitTarget::AssistantTab,
-            false,
-        ),
-        (
             dock_layout.outputs_tab,
-            "OUTPUTS",
+            "OUTPUT",
             HitTarget::OutputsTab,
             matches!(state.ui.active_dock_tab, Some(DockTab::Outputs)),
         ),
@@ -205,9 +189,8 @@ pub(super) fn render_bottom_tabs(
     panel_quads.push(Quad::from_rect(content_rect, PANEL_BG));
     push_rect_border(panel_quads, content_rect, PANEL_CARD_BORDER, 1.0);
     match active_tab {
-        DockTab::Terminal | DockTab::Assistant => {
-            render_terminal_lane(state, content_rect, text_runs, hit_regions)
-        }
+        DockTab::Terminal => render_terminal_lane(state, content_rect, text_runs, hit_regions),
+        DockTab::Assistant => {}
         DockTab::Outputs => {
             render_outputs_lane(state, content_rect, panel_quads, text_runs, hit_regions)
         }
@@ -688,10 +671,8 @@ mod tests {
         let layout =
             solve_bottom_dock_layout_with_taffy(&shell).expect("bottom dock layout should solve");
 
-        assert!(layout.terminal_tab.x < layout.assistant_tab.x);
-        assert!(layout.assistant_tab.x < layout.outputs_tab.x);
-        assert!(layout.terminal_tab.x + layout.terminal_tab.width <= layout.assistant_tab.x);
-        assert!(layout.assistant_tab.x + layout.assistant_tab.width <= layout.outputs_tab.x);
+        assert!(layout.terminal_tab.x < layout.outputs_tab.x);
+        assert!(layout.terminal_tab.x + layout.terminal_tab.width <= layout.outputs_tab.x);
         assert!(layout.content.y > layout.terminal_tab.y);
         assert!(layout.content.x >= shell.bottom_strip.x);
         assert!(

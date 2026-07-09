@@ -2177,6 +2177,14 @@ impl Runtime {
     }
 
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
+        if !matches!(tool, WorkspaceTool::Select) {
+            self.push_terminal_line(format!(
+                "{} is disabled in the Phase 1 read-only GUI",
+                tool.label()
+            ));
+            self.invalidate_frame();
+            return true;
+        }
         let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
         if handled {
             self.log_review_event(format!("tool {}", tool.label()));
@@ -2185,7 +2193,7 @@ impl Runtime {
     }
 
     fn active_tool_is_authoring(&self) -> bool {
-        !matches!(self.workspace().tool, WorkspaceTool::Select)
+        false
     }
 
     fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {

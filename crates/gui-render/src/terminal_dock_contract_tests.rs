@@ -240,33 +240,31 @@ fn agent_entry_is_launcher_not_active_terminal_peer() {
         &retained,
     );
 
-    let agents_region = prepared
-        .hit_regions
-        .iter()
-        .find(|region| matches!(region.target, HitTarget::AssistantTab))
-        .expect("AGENTS launcher hit region");
-    assert!(matches!(
-        prepared.hit_test(agents_region.rect.x + 1.0, agents_region.rect.y + 1.0),
-        Some(HitTarget::AssistantTab)
-    ));
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .all(|region| !matches!(region.target, HitTarget::AssistantTab)),
+        "Phase 1 dock must not expose the agent launcher"
+    );
 
     let terminal_label = prepared
         .text_runs
         .iter()
         .find(|run| run.text == "TERMINAL")
         .expect("TERMINAL tab label");
-    let agent_label = prepared
+    let output_label = prepared
         .text_runs
         .iter()
-        .find(|run| run.text == "AGENTS")
-        .expect("AGENTS launcher label");
+        .find(|run| run.text == "OUTPUT")
+        .expect("OUTPUT tab label");
     assert_eq!(
         terminal_label.color, TEXT_PRIMARY,
         "TERMINAL should render as the active command lane"
     );
     assert_eq!(
-        agent_label.color, TEXT_SECONDARY,
-        "AGENTS should render as an inactive launcher, not a second active dock"
+        output_label.color, TEXT_SECONDARY,
+        "OUTPUT should render as an inactive read-only dock"
     );
 }
 

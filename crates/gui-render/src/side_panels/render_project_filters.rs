@@ -102,7 +102,7 @@ fn render_project_and_filters_panel(
         hit_regions.push(HitRegion { target, rect });
     }
     draw_text(
-        &format!("TOOL {}", workspace_tool_label(state.tool)),
+        "READ-ONLY BOARD VIEW",
         project_layout.tool_label.x,
         project_layout.tool_label.y,
         12.0,
@@ -110,63 +110,15 @@ fn render_project_and_filters_panel(
         TextFace::Mono,
         text_runs,
     );
-    let tool_rows = [
-        (WorkspaceTool::Select, "S", "SELECT"),
-        (WorkspaceTool::DrawBoardTrack, "R", "TRACK"),
-        (WorkspaceTool::PlaceBoardVia, "V", "VIA"),
-        (WorkspaceTool::PlaceBoardText, "B", "TEXT"),
-        (WorkspaceTool::Move, "M", "MOVE"),
-        (WorkspaceTool::Delete, "X", "DELETE"),
-    ];
-    let tool_grid_x = project_layout.tool_grid.x;
-    let tool_grid_y = project_layout.tool_grid.y;
-    let tool_gap = 6.0;
-    let tool_columns = 3;
-    let tool_width = ((project_layout.tool_grid.width - tool_gap * (tool_columns as f32 - 1.0))
-        / tool_columns as f32)
-        .max(44.0);
-    for (index, (tool, key, label)) in tool_rows.iter().enumerate() {
-        let column = index % tool_columns;
-        let row = index / tool_columns;
-        let rect = RectPx {
-            x: tool_grid_x + column as f32 * (tool_width + tool_gap),
-            y: tool_grid_y + row as f32 * (UI_ROW_BUTTON + 4.0),
-            width: tool_width,
-            height: UI_ROW_BUTTON,
-        };
-        let active = state.tool == *tool;
-        panel_quads.push(Quad::from_rect(
-            rect,
-            if active {
-                REVIEW_ROW_ACTIVE_BG
-            } else {
-                REVIEW_ROW_BADGE
-            },
-        ));
-        push_rect_border(
-            panel_quads,
-            rect,
-            if active {
-                TEXT_ACCENT
-            } else {
-                PANEL_CARD_BORDER
-            },
-            1.0,
-        );
-        draw_text(
-            &format!("{key} {label}"),
-            rect.x + 5.0,
-            rect.y + 5.0,
-            9.0,
-            if active { TEXT_PRIMARY } else { TEXT_SECONDARY },
-            TextFace::Ui,
-            text_runs,
-        );
-        hit_regions.push(HitRegion {
-            target: HitTarget::SetWorkspaceTool(*tool),
-            rect,
-        });
-    }
+    draw_text(
+        "Select objects to inspect. Authoring tools are disabled in Phase 1.",
+        project_layout.tool_grid.x,
+        project_layout.tool_grid.y,
+        10.0,
+        TEXT_SECONDARY,
+        TextFace::Ui,
+        text_runs,
+    );
     if let Some(import_notice) = project_layout.import_notice {
         draw_text(
             "IMPORT VIEW: AUTHORING REQUIRES NATIVE PROJECT",

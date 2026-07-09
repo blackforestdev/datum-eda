@@ -40,7 +40,6 @@ struct InspectorDetailLayout {
 #[derive(Debug, Clone)]
 pub(super) struct RightPanelLayout {
     pub(super) inspector_rect: RectPx,
-    pub(super) review_rect: RectPx,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -61,8 +60,6 @@ enum ProjectPanelNode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum RightPanelNode {
     Inspector,
-    Spacer,
-    Review,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -214,7 +211,7 @@ pub(super) fn solve_right_panel_layout_with_taffy(
     let card_y = right.y + UI_CARD_MARGIN;
     let card_width = (right.width - UI_CARD_MARGIN * 2.0).max(1.0);
     let content_height = (right.height - UI_CARD_MARGIN * 2.0).max(1.0);
-    let inspector_height = inspector_height_for_state(state).min(content_height);
+    let inspector_height = content_height.max(inspector_height_for_state(state).min(content_height));
 
     let mut taffy: TaffyTree<()> = TaffyTree::new();
     let inspector = taffy
@@ -226,30 +223,7 @@ pub(super) fn solve_right_panel_layout_with_taffy(
             ..Default::default()
         })
         .ok()?;
-    let spacer = taffy
-        .new_leaf(Style {
-            size: Size {
-                width: length(card_width),
-                height: length(UI_STACK_GAP_MEDIUM),
-            },
-            ..Default::default()
-        })
-        .ok()?;
-    let review = taffy
-        .new_leaf(Style {
-            size: Size {
-                width: length(card_width),
-                height: length(100.0),
-            },
-            flex_grow: 1.0,
-            ..Default::default()
-        })
-        .ok()?;
-    let nodes = [
-        (RightPanelNode::Inspector, inspector),
-        (RightPanelNode::Spacer, spacer),
-        (RightPanelNode::Review, review),
-    ];
+    let nodes = [(RightPanelNode::Inspector, inspector)];
     let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
     let root = taffy
         .new_with_children(
@@ -278,7 +252,6 @@ pub(super) fn solve_right_panel_layout_with_taffy(
     };
     Some(RightPanelLayout {
         inspector_rect: rect_for(RightPanelNode::Inspector)?,
-        review_rect: rect_for(RightPanelNode::Review)?,
     })
 }
 
@@ -289,16 +262,8 @@ fn fallback_right_panel_layout(state: &ReviewWorkspaceState, right: RectPx) -> R
         width: right.width - UI_CARD_MARGIN * 2.0,
         height: inspector_height_for_state(state),
     };
-    let review_y = inspector_rect.y + inspector_rect.height + UI_STACK_GAP_MEDIUM;
-    let review_rect = RectPx {
-        x: right.x + UI_CARD_MARGIN,
-        y: review_y,
-        width: right.width - UI_CARD_MARGIN * 2.0,
-        height: (right.y + right.height - review_y - UI_CARD_MARGIN).max(100.0),
-    };
     RightPanelLayout {
         inspector_rect,
-        review_rect,
     }
 }
 

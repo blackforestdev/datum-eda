@@ -50,10 +50,13 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
         let layout = ShellLayout::for_surface(pw, ph, scale, dock);
 
         for (name, rect) in [
+            ("top_menu_bar", layout.top_menu_bar),
+            ("tool_rail", layout.tool_rail),
             ("left_sidebar", layout.left_sidebar),
             ("right_sidebar", layout.right_sidebar),
             ("viewport", layout.viewport),
             ("bottom_strip", layout.bottom_strip),
+            ("status_bar", layout.status_bar),
         ] {
             assert!(
                 rect.width > 0.0 && rect.height > 0.0,
@@ -65,6 +68,10 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
             );
         }
 
+        assert!(
+            !overlaps(layout.tool_rail, layout.left_sidebar),
+            "tool rail overlaps left sidebar at scale {scale}"
+        );
         assert!(
             !overlaps(layout.left_sidebar, layout.viewport),
             "left sidebar overlaps viewport at scale {scale}"
@@ -88,10 +95,13 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
             &retained,
         );
         let panels = [
+            prepared.layout.top_menu_bar,
+            prepared.layout.tool_rail,
             prepared.layout.left_sidebar,
             prepared.layout.right_sidebar,
             prepared.layout.viewport,
             prepared.layout.bottom_strip,
+            prepared.layout.status_bar,
         ];
         for (i, region) in prepared.hit_regions.iter().enumerate() {
             assert!(
@@ -112,12 +122,9 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
                 "inspector card escapes the right sidebar at scale {scale}"
             );
             assert!(
-                within(right.review_rect, prepared.layout.right_sidebar),
-                "review card escapes the right sidebar at scale {scale}"
-            );
-            assert!(
-                !overlaps(right.inspector_rect, right.review_rect),
-                "inspector card overlaps review card at scale {scale}"
+                right.inspector_rect.height
+                    >= prepared.layout.right_sidebar.height - 2.0 * UI_CARD_MARGIN - EPS,
+                "inspector card does not occupy the Phase 1 right sidebar at scale {scale}"
             );
         }
     }
