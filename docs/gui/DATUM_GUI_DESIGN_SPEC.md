@@ -50,8 +50,8 @@ the same change.
 
 - **Shell composition** (left→right, top→bottom): menu bar · tool rail (icon
   accelerators) · left column (Project tree over Layers) · **central board canvas
-  (protagonist)** · right column (Inspector) · bottom dock (Terminal/Assistant
-  tabs) · status bar. Approximate widths: rail ~46px, left ~228px, right ~300px.
+  (protagonist)** · right column (Inspector) · bottom dock (Terminal only —
+  multi-tab) · status bar. Approximate widths: rail ~46px, left ~228px, right ~300px.
 - **Color-application law**: chrome uses only `bg/surface.01–03/border/text`
   tokens; the only chrome color allowed onto the canvas is `--acc` (#CE5A92) as
   selection. Copper/nets/pads/vias/ratsnest use the content tokens.
@@ -133,14 +133,19 @@ design**, and correcting this is a decision-level fix (clarifies 005 terminal,
    separate "Assistant/Agent tab."** The agent runs in the native terminal; its
    *proposals* render as the inline ghost overlay on the canvas (Tab / Esc). This
    corrects the M7 distortion (a bolted-on assistant lane — same family as the
-   vacated 013 misfire). **Output** stays a tab (logs/results).
+   vacated 013 misfire). **There is no Output tab either** — CAM/export results are **files in the
+   project working directory** (produced via the terminal), viewed in the gerber/drill
+   viewer or a paperspace viewport (decision 020), not a supervision lane (the same
+   meta-supervision pattern as the vacated 013 misfire).
 
 **Why it got muddled:** the spec collapsed the *console* (drive the editor by
 typing verbs) into the *terminal* (run OS commands), then split "AI" into its own
 lane — a surface that was neither a real command line nor a real shell, plus a
 redundant agent tab. Two surfaces pretending to be one; one split into two. Net
 result on the shell: the console is viewport-anchored (lower-left); the bottom dock
-is **Terminal (multi-tab) + Output** — no Assistant tab.
+is **the terminal alone (multi-tab)** — no Assistant tab, no Output tab. CAM/export
+output is files in the working directory (produced via the terminal), viewed in the
+gerber/drill viewer or a paperspace viewport (decision 020).
 
 **The unifying law — five doorways, one vocabulary.** menu bar (discovery) ·
 marking menu (gesture) · **command console (typed)** · scripting (verbs in a file)
