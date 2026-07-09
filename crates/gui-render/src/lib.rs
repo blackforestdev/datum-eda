@@ -152,7 +152,7 @@ impl ShellLayout {
     pub fn for_window(width: u32, height: u32, dock_height_px: Option<u32>) -> Self {
         let width = width as f32;
         let height = height as f32;
-        let menu_height = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
+        let menu_height = design_tokens::spacing::SP_07 + 1.0;
         let status_height = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
         let left_width = 224.0_f32.min(width * 0.3);
         let right_width = 296.0_f32.min(width * 0.35);
@@ -1019,7 +1019,17 @@ fn render_phase1_shell_chrome(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
-    push_rect_border(panel_quads, layout.top_menu_bar, PANEL_CARD_BORDER, 1.0);
+    // Menu bar carries only a bottom hairline (Design Book .menubar
+    // border-bottom), never a boxed 4-sided outline.
+    panel_quads.push(Quad::from_rect(
+        RectPx {
+            x: layout.top_menu_bar.x,
+            y: layout.top_menu_bar.y + layout.top_menu_bar.height - 1.0,
+            width: layout.top_menu_bar.width,
+            height: 1.0,
+        },
+        PANEL_CARD_BORDER,
+    ));
     // Brand wordmark: three runs on one baseline — "Datum" / accent middot /
     // "EDA" — advancing x by each measured run width so the middot is truly
     // colored and kerned, not a full "Datum EDA" string.
@@ -7449,7 +7459,7 @@ mod tests {
         let (w, h, dock) = (1280.0_f32, 800.0_f32, 260.0_f32);
         let layout = ShellLayout::for_window(w as u32, h as u32, Some(dock as u32));
 
-        let menu = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
+        let menu = design_tokens::spacing::SP_07 + 1.0;
         let status = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
         let content_h = h - menu - dock - status;
 
@@ -7526,7 +7536,7 @@ mod tests {
         assert_eq!(surface.viewport.x, logical.viewport.x * scale);
         assert_eq!(surface.viewport.width, logical.viewport.width * scale);
 
-        let menu = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
+        let menu = design_tokens::spacing::SP_07 + 1.0;
         let status = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
         assert_eq!(surface.top_menu_bar.height, menu * scale);
         assert_eq!(surface.status_bar.height, status * scale);

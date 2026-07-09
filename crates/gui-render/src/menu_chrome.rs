@@ -32,18 +32,18 @@ pub(super) fn render_menu_bar(
     };
     let icon_set = icon_set().ok();
 
-    // Menus begin after the measured brand wordmark (drawn at SP_04) plus a
-    // gap, so the wordmark and first menu title never overlap regardless of
-    // brand text or font metrics.
-    let brand_width = estimated_text_run_width_px(
-        "Datum EDA",
-        design_tokens::typography::BODY_SIZE,
-        TextFace::Ui,
-    );
+    // Menus begin after the ACTUAL measured multi-run brand wordmark (the same
+    // "Datum" + middot + "EDA" runs the shell draws at 14px semibold, from
+    // SP_04) plus a fixed gap, so File lands a constant distance after the
+    // wordmark regardless of font metrics.
+    let brand_width: f32 = ["Datum", "\u{00B7}", "EDA"]
+        .iter()
+        .map(|run| estimated_text_run_width_px(run, 14.0, TextFace::UiStrong) - 16.0)
+        .sum();
     let mut x = layout.top_menu_bar.x
         + design_tokens::spacing::SP_04
         + brand_width
-        + design_tokens::spacing::SP_03;
+        + design_tokens::spacing::SP_04;
     let y = layout.top_menu_bar.y + design_tokens::spacing::SP_02;
     for menu in &model.menubar {
         let width = menu_title_width(&menu.menu);
@@ -196,7 +196,7 @@ fn menu_title_width(label: &str) -> f32 {
     // includes end padding) plus symmetric item padding, so adjacent titles
     // never overlap for long labels like "Manufacturing".
     estimated_text_run_width_px(label, design_tokens::typography::BODY_SIZE, TextFace::Ui)
-        + design_tokens::spacing::SP_02 * 2.0
+        + design_tokens::spacing::SP_03 * 2.0
 }
 
 fn menu_model() -> Result<&'static GuiMenuModel, &'static str> {
@@ -235,11 +235,11 @@ mod tests {
                 design_tokens::typography::BODY_SIZE,
                 TextFace::Ui,
             );
-            let upper_bound = measured_run + design_tokens::spacing::SP_02 * 2.0 + 0.5;
+            let upper_bound = measured_run + design_tokens::spacing::SP_03 * 2.0 + 0.5;
             let flat_advance_078 =
                 menu.menu.chars().count() as f32 * design_tokens::typography::BODY_SIZE * 0.78
                     + 16.0
-                    + design_tokens::spacing::SP_02 * 2.0;
+                    + design_tokens::spacing::SP_03 * 2.0;
 
             assert!(
                 width <= upper_bound,
