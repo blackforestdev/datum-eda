@@ -350,11 +350,7 @@ fn solve_filters_panel_layout_with_taffy(
     let content_x = filters_rect.x + UI_CARD_PADDING_X;
     let content_y = filters_rect.y + UI_CARD_CONTENT_TOP;
     let content_width = (filters_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);
-    let summary_height = if state.selected_review_action().is_some() {
-        62.0
-    } else {
-        44.0
-    };
+    let summary_height = 62.0;
     let fixed_height = 4.0 * 20.0 + UI_STACK_GAP_MEDIUM + summary_height + UI_CARD_CONTENT_BOTTOM;
     let available_layer_height =
         (filters_rect.height - UI_CARD_CONTENT_TOP - fixed_height).max(20.0);
@@ -385,9 +381,7 @@ fn solve_filters_panel_layout_with_taffy(
         add_node(FiltersPanelNode::Layer(index), 20.0)?;
     }
     add_node(FiltersPanelNode::Gap, UI_STACK_GAP_MEDIUM)?;
-    if state.selected_review_action().is_some() {
-        add_node(FiltersPanelNode::ActiveSummary, 18.0)?;
-    }
+    add_node(FiltersPanelNode::ActiveSummary, 18.0)?;
     add_node(FiltersPanelNode::LayersSummary, 16.0)?;
     add_node(FiltersPanelNode::FocusSummary, 16.0)?;
     add_node(FiltersPanelNode::OutputsSummary, 16.0)?;

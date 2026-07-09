@@ -674,6 +674,7 @@ pub struct WorkspaceFilterState {
     pub show_proposed: bool,
     pub show_unrouted: bool,
     pub dim_unrelated: bool,
+    pub active_layer_id: Option<String>,
     pub layer_visibility: BTreeMap<String, bool>,
 }
 
@@ -2648,6 +2649,12 @@ impl ReviewWorkspaceState {
             .iter()
             .map(|layer| (layer.layer_id.clone(), layer.visible_by_default))
             .collect();
+        let active_layer_id = scene
+            .layers
+            .iter()
+            .find(|layer| layer.visible_by_default)
+            .or_else(|| scene.layers.first())
+            .map(|layer| layer.layer_id.clone());
         let has_review_actions = !review.proposal_actions.is_empty();
         let active_review_target_id = review
             .proposal_actions
@@ -2684,6 +2691,7 @@ impl ReviewWorkspaceState {
                     show_proposed: true,
                     show_unrouted: true,
                     dim_unrelated: has_review_actions,
+                    active_layer_id,
                     layer_visibility,
                 },
                 terminal: TerminalLaneState {

@@ -2601,6 +2601,8 @@ impl Runtime {
                     layer_id.clone(),
                 ));
                 if handled {
+                    self.session.workspace_mut().ui.filters.active_layer_id =
+                        Some(layer_id.clone());
                     let visible = self
                         .workspace()
                         .ui

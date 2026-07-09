@@ -200,27 +200,35 @@ fn render_project_and_filters_panel(
             .get(&layer.layer_id)
             .copied()
             .unwrap_or(layer.visible_by_default);
-        push_boolean_row(
-            row.x,
-            row.y,
-            &truncate_text(&layer.name.to_uppercase(), 18),
-            visible,
-            text_runs,
-        );
+        let active = state
+            .ui
+            .filters
+            .active_layer_id
+            .as_deref()
+            .is_some_and(|active| active == layer.layer_id);
+        render_layer_row(state, row, layer, visible, active, panel_quads, text_runs);
         hit_regions.push(HitRegion {
             target: HitTarget::ToggleLayer(layer.layer_id.clone()),
             rect: filter_hit_rect(*row),
         });
     }
-    if let (Some(action), Some(row)) = (
-        state.selected_review_action(),
-        filters_layout.active_summary,
-    ) {
+    if let Some(row) = filters_layout.active_summary {
+        let active_layer = state
+            .ui
+            .filters
+            .active_layer_id
+            .as_deref()
+            .and_then(|active_id| {
+                state
+                    .scene
+                    .layers
+                    .iter()
+                    .find(|layer| layer.layer_id == active_id)
+            })
+            .map(|layer| layer.name.as_str())
+            .unwrap_or("none");
         draw_text(
-            &format!(
-                "ACTIVE {}",
-                truncate_text(&suffix_id(&action.action_id).to_uppercase(), 14)
-            ),
+            &format!("ACTIVE {}", truncate_text(&active_layer.to_uppercase(), 14)),
             row.x,
             row.y,
             11.0,
@@ -266,6 +274,75 @@ fn render_project_and_filters_panel(
         filters_layout.outputs_summary.y,
         11.0,
         TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+}
+
+fn render_layer_row(
+    state: &ReviewWorkspaceState,
+    row: &RectPx,
+    layer: &datum_gui_protocol::SceneLayer,
+    visible: bool,
+    active: bool,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let row_rect = RectPx {
+        x: row.x - design_tokens::spacing::SP_02,
+        y: row.y - design_tokens::spacing::SP_01,
+        width: row.width + design_tokens::spacing::SP_02 * 2.0,
+        height: row.height,
+    };
+    if active {
+        panel_quads.push(Quad::from_rect(row_rect, REVIEW_ROW_ACTIVE_BG));
+        panel_quads.push(Quad::from_rect(
+            RectPx {
+                x: row_rect.x,
+                y: row_rect.y,
+                width: 2.0,
+                height: row_rect.height,
+            },
+            TEXT_ACCENT,
+        ));
+    }
+    let appearance = resolve_layer_appearance_with_scene(Some(&layer.layer_id), &state.scene.layers);
+    let swatch = RectPx {
+        x: row.x,
+        y: row.y + 2.0,
+        width: 12.0,
+        height: 12.0,
+    };
+    panel_quads.push(Quad::from_rect(
+        swatch,
+        if visible {
+            appearance.authored_track
+        } else {
+            dim_context_color(appearance.authored_track, true)
+        },
+    ));
+    push_rect_border(panel_quads, swatch, PANEL_CARD_BORDER, 1.0);
+    draw_text(
+        &truncate_text(&layer.name.to_uppercase(), 16),
+        row.x + 20.0,
+        row.y,
+        11.0,
+        if visible { TEXT_SECONDARY } else { TEXT_MUTED },
+        TextFace::Ui,
+        text_runs,
+    );
+    draw_text(
+        if active {
+            "ACTIVE"
+        } else if visible {
+            "ON"
+        } else {
+            "OFF"
+        },
+        row.x + row.width - 44.0,
+        row.y,
+        10.5,
+        if active { TEXT_ACCENT } else { TEXT_MUTED },
         TextFace::Mono,
         text_runs,
     );

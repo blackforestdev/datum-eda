@@ -8545,4 +8545,49 @@ mod tests {
             "Phase 1 board-text inspector must be read-only"
         );
     }
+
+    #[test]
+    fn layers_panel_renders_active_layer_and_toggle_regions() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let active_layer = state
+            .ui
+            .filters
+            .active_layer_id
+            .as_deref()
+            .and_then(|active_id| {
+                state
+                    .scene
+                    .layers
+                    .iter()
+                    .find(|layer| layer.layer_id == active_id)
+            })
+            .expect("fixture should set an active layer");
+        let active_label = format!(
+            "ACTIVE {}",
+            truncate_text(&active_layer.name.to_uppercase(), 14)
+        );
+
+        assert!(
+            prepared
+                .text_runs
+                .iter()
+                .any(|run| run.text == active_label),
+            "Layers panel should render the active layer summary"
+        );
+        assert!(
+            prepared
+                .hit_regions
+                .iter()
+                .any(|region| matches!(region.target, HitTarget::ToggleLayer(_))),
+            "Layers panel should expose consumer-side layer toggle hit regions"
+        );
+    }
 }
