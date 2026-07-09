@@ -7,6 +7,7 @@ use datum_gui_render::design_artboards::check_design_artboards;
 use datum_gui_render::visual_runner::{VisualFixtureRun, run_fixture};
 
 const FIXTURE_NAMES: &[&str] = &[
+    "datum-test",
     "text-density-repro",
     "text-fidelity-repro",
     "text-intent-repro",
@@ -15,7 +16,7 @@ const FIXTURE_NAMES: &[&str] = &[
 
 #[test]
 #[ignore = "requires local visual rendering authority; run explicitly until visual CI is pinned"]
-fn board_text_visual_goldens_match() -> Result<()> {
+fn board_visual_goldens_match() -> Result<()> {
     for fixture_name in FIXTURE_NAMES {
         let manifest = fixture_manifest_path(fixture_name);
         let outcomes = run_fixture(&manifest)
@@ -34,7 +35,7 @@ fn board_text_visual_goldens_match() -> Result<()> {
 
 #[test]
 #[ignore = "requires local visual rendering authority; exercises non-golden HiDPI scale rendering"]
-fn board_text_multi_scale_visual_smoke_renders_nonblank() -> Result<()> {
+fn board_multi_scale_visual_smoke_renders_nonblank() -> Result<()> {
     let scales = [1.0_f32, 1.25, 1.5, 2.0];
     let manifest = fixture_manifest_path("text-density-repro");
     let run = VisualFixtureRun::load(&manifest)

@@ -237,9 +237,13 @@ fn scale_suffix(scale_factor: f32) -> String {
 
 fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspaceState> {
     let project_root = repo_root().join(&manifest.project_path);
+    let board_file = manifest
+        .board_file
+        .as_ref()
+        .map(|path| repo_root().join(path));
     let request = LiveReviewRequest {
         project_root,
-        board_file: None,
+        board_file,
         artifact_path: None,
         net_uuid: None,
         from_anchor_pad_uuid: None,

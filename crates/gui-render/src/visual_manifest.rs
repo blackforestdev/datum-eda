@@ -9,6 +9,7 @@ pub struct FixtureManifest {
     pub suite: String,
     pub fixture_format_version: i64,
     pub project_path: PathBuf,
+    pub board_file: Option<PathBuf>,
     pub project_kind: String,
     pub viewport: VisualViewport,
     pub ui_scale_factors: Vec<f32>,
@@ -56,6 +57,7 @@ impl FixtureManifest {
             suite: required_string(&doc, &["fixture", "suite"])?,
             fixture_format_version: required_i64(&doc, &["fixture", "fixture_format_version"])?,
             project_path: PathBuf::from(required_string(&doc, &["input", "project_path"])?),
+            board_file: optional_string(&doc, &["input", "board_file"])?.map(PathBuf::from),
             project_kind: required_string(&doc, &["input", "project_kind"])?,
             viewport: VisualViewport {
                 width_px: required_i64(&doc, &["viewport", "width_px"])?
@@ -106,8 +108,20 @@ impl FixtureManifest {
         if self.lane != "A" {
             bail!("Layer A harness only accepts lane = \"A\"");
         }
-        if self.project_kind != "datum-native" {
-            bail!("Layer A Phase 1 only accepts project_kind = \"datum-native\"");
+        match self.project_kind.as_str() {
+            "datum-native" => {
+                if self.board_file.is_some() {
+                    bail!("datum-native fixtures must not set input.board_file");
+                }
+            }
+            "kicad-board" => {
+                if self.board_file.is_none() {
+                    bail!("kicad-board fixtures require input.board_file");
+                }
+            }
+            other => bail!(
+                "Layer A Phase 1 only accepts project_kind = \"datum-native\" or \"kicad-board\"; got {other:?}"
+            ),
         }
         if self.viewport.width_px == 0 || self.viewport.height_px == 0 {
             bail!("viewport dimensions must be non-zero");
@@ -270,6 +284,16 @@ fn required_string(doc: &SimpleToml, path: &[&str]) -> Result<String> {
     }
 }
 
+fn optional_string(doc: &SimpleToml, path: &[&str]) -> Result<Option<String>> {
+    let Some(value) = doc.get(path) else {
+        return Ok(None);
+    };
+    match value {
+        SimpleTomlValue::String(value) => Ok(Some(value.clone())),
+        _ => bail!("manifest key {} must be a string", path.join(".")),
+    }
+}
+
 fn required_i64(doc: &SimpleToml, path: &[&str]) -> Result<i64> {
     match required_value(doc, path)? {
         SimpleTomlValue::Integer(value) => Ok(*value),
@@ -386,6 +410,47 @@ mod tests {
         )
         .expect("manifest should parse explicit UI scales");
 
+        assert_eq!(manifest.ui_scale_factors, vec![1.0, 1.25, 1.5, 2.0]);
+    }
+
+    #[test]
+    fn parses_imported_kicad_board_fixture_manifest() {
+        let manifest = FixtureManifest::parse(
+            r#"
+            [fixture]
+            name = "datum-test"
+            lane = "A"
+            suite = "board"
+            fixture_format_version = 1
+
+            [input]
+            project_path = "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"
+            board_file = "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb"
+            project_kind = "kicad-board"
+
+            [viewport]
+            width_px = 1280
+            height_px = 768
+            center_mm = [100.0, 75.0]
+            zoom_mm_per_px = 0.18
+            ui_scale_factors = [1.0, 1.25, 1.5, 2.0]
+
+            [golden]
+            filename = "datum-test.golden.png"
+            diff_policy = "exact"
+            diff_tolerance_per_pixel = 0
+            diff_tolerance_total_px_pct = 0.0
+            ssim_threshold = 0.0
+            mask_filename = ""
+
+            [blank_check]
+            expect_non_blank_pct = 1.0
+            "#,
+        )
+        .expect("kicad-board manifest should parse");
+
+        assert_eq!(manifest.project_kind, "kicad-board");
+        assert!(manifest.board_file.is_some());
         assert_eq!(manifest.ui_scale_factors, vec![1.0, 1.25, 1.5, 2.0]);
     }
 
