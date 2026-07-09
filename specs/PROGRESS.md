@@ -44,7 +44,12 @@
    **Precise executable spec: `docs/gui/DATUM_GUI_PHASE_1_SPEC.md`** (deliverables
    D1–D7, reuse map, acceptance gates, binding Do-NOT list) realizing
    `docs/gui/prototypes/board-editor.html`. Reads work via `run_cli_json`. This is
-   the rail for the first GUI build — point a code agent here.
+   the rail for the first GUI build — point a code agent here. **Conformance rail:**
+   `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` makes each prototype claim an actionable
+   per-region checklist with an honest check disposition (ENFORCED / TO-ENFORCE /
+   HUMAN) so the build is driven to match the prototype and drift is caught; it also
+   carries the machine-layer gap register (checks to add) and the open-reconciliation
+   register (owner calls) for this slice.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
    `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
