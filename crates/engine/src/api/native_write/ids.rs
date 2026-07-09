@@ -23,11 +23,7 @@ const SEED_PREFIX: &str = "datum-eda";
 /// The v5 seed is `datum-eda:<namespace_tag>:<seed_parts joined by ':'>`,
 /// e.g. `derive_object_id(&pid, "sheet", &["Main".into()])` seeds
 /// `datum-eda:sheet:Main`.
-pub fn derive_object_id(
-    project_id: &Uuid,
-    namespace_tag: &str,
-    seed_parts: &[String],
-) -> ObjectId {
+pub fn derive_object_id(project_id: &Uuid, namespace_tag: &str, seed_parts: &[String]) -> ObjectId {
     Uuid::new_v5(
         project_id,
         format!("{SEED_PREFIX}:{namespace_tag}:{}", seed_parts.join(":")).as_bytes(),

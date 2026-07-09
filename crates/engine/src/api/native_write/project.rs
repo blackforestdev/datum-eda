@@ -151,8 +151,9 @@ pub fn rule_uuid(rule: &serde_json::Value) -> Result<Uuid, EngineError> {
         .get("uuid")
         .and_then(serde_json::Value::as_str)
         .ok_or_else(|| EngineError::Validation("project rule missing uuid".to_string()))?;
-    Uuid::parse_str(uuid)
-        .map_err(|error| EngineError::Validation(format!("invalid project rule uuid: {uuid}: {error}")))
+    Uuid::parse_str(uuid).map_err(|error| {
+        EngineError::Validation(format!("invalid project rule uuid: {uuid}: {error}"))
+    })
 }
 
 fn rules_root_value(model: &DesignModel) -> Result<serde_json::Value, EngineError> {
@@ -325,9 +326,8 @@ mod tests {
         let (root, mut model, _rules_id) = resolved_genesis_project("project_set_name");
         let project_id = model.project.project_id;
 
-        let prepared =
-            build_set_project_name(&model, test_provenance(), "  Renamed Project  ")
-                .expect("set name should build");
+        let prepared = build_set_project_name(&model, test_provenance(), "  Renamed Project  ")
+            .expect("set name should build");
         assert_eq!(prepared.primary_object_id, Some(project_id));
         assert_eq!(
             prepared.batch.operations,
@@ -451,9 +451,8 @@ mod tests {
             .resolve()
             .expect("project should re-resolve");
 
-        let (prepared, previous) =
-            build_delete_project_rule(&model, test_provenance(), rule_id)
-                .expect("delete rule should build");
+        let (prepared, previous) = build_delete_project_rule(&model, test_provenance(), rule_id)
+            .expect("delete rule should build");
         assert_eq!(previous["uuid"], rule_id.to_string());
         assert_eq!(prepared.primary_object_id, Some(rules_root_id));
         assert!(matches!(
@@ -487,19 +486,26 @@ mod tests {
             clearance_rule(missing, "Ghost", 100_000),
         )
         .expect_err("set of unknown rule should fail");
-        assert!(error
-            .to_string()
-            .contains(&format!("project rule {missing} not found")));
+        assert!(
+            error
+                .to_string()
+                .contains(&format!("project rule {missing} not found"))
+        );
 
         let error = build_delete_project_rule(&model, test_provenance(), missing)
             .expect_err("delete of unknown rule should fail");
-        assert!(error
-            .to_string()
-            .contains(&format!("project rule {missing} not found")));
+        assert!(
+            error
+                .to_string()
+                .contains(&format!("project rule {missing} not found"))
+        );
 
-        let error =
-            build_create_project_rule(&model, test_provenance(), serde_json::json!({ "name": "x" }))
-                .expect_err("rule without uuid should fail");
+        let error = build_create_project_rule(
+            &model,
+            test_provenance(),
+            serde_json::json!({ "name": "x" }),
+        )
+        .expect_err("rule without uuid should fail");
         assert!(error.to_string().contains("project rule missing uuid"));
 
         let error = build_create_project_rule(
@@ -508,7 +514,11 @@ mod tests {
             serde_json::json!({ "uuid": "not-a-uuid" }),
         )
         .expect_err("rule with invalid uuid should fail");
-        assert!(error.to_string().contains("invalid project rule uuid: not-a-uuid"));
+        assert!(
+            error
+                .to_string()
+                .contains("invalid project rule uuid: not-a-uuid")
+        );
         let _ = std::fs::remove_dir_all(&root);
     }
 }

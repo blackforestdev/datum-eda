@@ -3,19 +3,19 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::api::native_write::board_components::{
-    build_align_board_packages, build_delete_board_package, build_edit_board_package,
-    build_place_board_package, BoardPackageAlignMode, BoardPackageEdit, BoardPackagePlacement,
+    BoardPackageAlignMode, BoardPackageEdit, BoardPackagePlacement, build_align_board_packages,
+    build_delete_board_package, build_edit_board_package, build_place_board_package,
 };
-use eda_engine::api::native_write::{commit_prepared, WriteProvenance};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::PlacedPackage;
 use eda_engine::ir::geometry::Point;
 use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use crate::{
+    NativeProjectBoardComponentAlignReportView, NativeProjectBoardComponentMutationReportView,
     load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
     materialize_supported_pool_package_graphics, native_project_board_component_report,
-    NativeProjectBoardComponentAlignReportView, NativeProjectBoardComponentMutationReportView,
 };
 
 use crate::cli_commit_source;

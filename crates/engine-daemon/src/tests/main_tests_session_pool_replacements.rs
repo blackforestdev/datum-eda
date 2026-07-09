@@ -6,7 +6,11 @@ use eda_engine::api::AssignPartInput;
 
 use super::*;
 
-fn assign_part_via_engine(engine: &mut Engine, component_uuid: &str, part_uuid: &serde_json::Value) {
+fn assign_part_via_engine(
+    engine: &mut Engine,
+    component_uuid: &str,
+    part_uuid: &serde_json::Value,
+) {
     engine
         .assign_part(AssignPartInput {
             uuid: uuid::Uuid::parse_str(component_uuid).expect("component uuid should parse"),

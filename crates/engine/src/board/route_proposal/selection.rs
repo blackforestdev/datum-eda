@@ -295,17 +295,16 @@ mod tests {
 
     #[test]
     fn first_successful_candidate_wins_and_later_successes_are_skipped() {
-        let outcome = run_route_proposal_selection(RouteProposalProfile::Default, |spec| {
-            match spec {
+        let outcome =
+            run_route_proposal_selection(RouteProposalProfile::Default, |spec| match spec {
                 RouteProposalCandidate::RoutePathCandidate => Err("no path".to_string()),
                 RouteProposalCandidate::RoutePathCandidateOrthogonalDogleg
                 | RouteProposalCandidate::RoutePathCandidateOrthogonalTwoBend => {
                     Ok(vec![stub_action("m5_test_contract_v1")])
                 }
                 _ => Err("no path".to_string()),
-            }
-        })
-        .expect("selection should run");
+            })
+            .expect("selection should run");
 
         assert_eq!(outcome.status, "deterministic_route_proposal_selected");
         assert_eq!(
@@ -316,7 +315,10 @@ mod tests {
             outcome.selected_candidate.as_deref(),
             Some("route-path-candidate-orthogonal-dogleg")
         );
-        assert_eq!(outcome.selected_contract.as_deref(), Some("m5_test_contract_v1"));
+        assert_eq!(
+            outcome.selected_contract.as_deref(),
+            Some("m5_test_contract_v1")
+        );
         assert_eq!(outcome.attempted_candidates, 18);
         assert_eq!(outcome.candidates[0].message.as_deref(), Some("no path"));
         assert!(outcome.candidates[1].selected);
@@ -330,27 +332,33 @@ mod tests {
 
     #[test]
     fn no_successful_candidate_reports_the_no_proposal_status() {
-        let outcome = run_route_proposal_selection(RouteProposalProfile::Default, |_| {
-            Err("boom".to_string())
-        })
-        .expect("selection should run");
+        let outcome =
+            run_route_proposal_selection(
+                RouteProposalProfile::Default,
+                |_| Err("boom".to_string()),
+            )
+            .expect("selection should run");
         assert_eq!(
             outcome.status,
             "no_route_proposal_under_current_authored_constraints"
         );
         assert_eq!(outcome.selected_spec, None);
-        assert!(outcome.candidates.iter().all(|candidate| !candidate.selected));
+        assert!(
+            outcome
+                .candidates
+                .iter()
+                .all(|candidate| !candidate.selected)
+        );
     }
 
     #[test]
     fn empty_action_set_fails_the_whole_selection() {
-        let error = run_route_proposal_selection(RouteProposalProfile::Default, |spec| {
-            match spec {
+        let error =
+            run_route_proposal_selection(RouteProposalProfile::Default, |spec| match spec {
                 RouteProposalCandidate::RoutePathCandidate => Ok(Vec::new()),
                 _ => Err("no path".to_string()),
-            }
-        })
-        .expect_err("empty action set should fail");
+            })
+            .expect_err("empty action set should fail");
         assert_eq!(
             error,
             "route proposal selector candidate route-path-candidate produced no actions"

@@ -163,7 +163,10 @@ mod tests {
                 vertices: vec![
                     Point { x: 0, y: 0 },
                     Point { x: 5_000_000, y: 0 },
-                    Point { x: 5_000_000, y: 3_000_000 },
+                    Point {
+                        x: 5_000_000,
+                        y: 3_000_000,
+                    },
                     Point { x: 0, y: 3_000_000 },
                 ],
                 closed: true,
@@ -289,12 +292,9 @@ mod tests {
             .resolve()
             .expect("seeded fixture should resolve");
 
-        let prepared = build_route_strategy_fixture_net_class_clear(
-            &model,
-            test_provenance(),
-            &spec.nets[0],
-        )
-        .expect("net class clear should build");
+        let prepared =
+            build_route_strategy_fixture_net_class_clear(&model, test_provenance(), &spec.nets[0])
+                .expect("net class clear should build");
         assert!(matches!(
             prepared.batch.operations[0],
             Operation::GuardObjectRevision { object_id, .. } if object_id == net_uuid

@@ -81,9 +81,7 @@ pub fn set_part_default_pin_pad_map_spec(
     let mut object = pool_library_object_payload(model, &relative_path, part_id)?;
     object
         .as_object_mut()
-        .ok_or_else(|| {
-            EngineError::Validation(format!("part {part_id} payload is not an object"))
-        })?
+        .ok_or_else(|| EngineError::Validation(format!("part {part_id} payload is not an object")))?
         .insert(
             "default_pin_pad_map".to_string(),
             serde_json::Value::String(map_id.to_string()),
@@ -186,10 +184,7 @@ mod tests {
         };
         assert_eq!(target.object_id, part_id);
         assert_eq!(target.object_kind, "parts");
-        assert_eq!(
-            target.relative_path,
-            format!("pool/parts/{part_id}.json")
-        );
+        assert_eq!(target.relative_path, format!("pool/parts/{part_id}.json"));
         assert_eq!(
             object["default_pin_pad_map"],
             serde_json::json!(map_id.to_string())

@@ -32,8 +32,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("create-sheet"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
             ],
         },
         params: &[
@@ -41,7 +47,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("name", Str, true, None),
             p!("sheet", Uuid, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"name":{"type":"string"},"sheet":{"type":["string","null"]}},"required":["path","name"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"name":{"type":"string"},"sheet":{"type":["string","null"]}},"required":["path","name"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -59,14 +67,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-sheet"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("sheet", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"}},"required":["path","sheet"]}"###),
+        params: &[p!("path", Str, true, None), p!("sheet", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"}},"required":["path","sheet"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -84,8 +94,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("rename-sheet"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
             ],
         },
         params: &[
@@ -93,7 +109,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("sheet", Uuid, true, None),
             p!("name", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"}},"required":["path","sheet","name"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"}},"required":["path","sheet","name"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -111,9 +129,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("create-sheet-definition"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--root-sheet", param: "root_sheet" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--definition", param: "definition" },
+                ArgvToken::Flag {
+                    flag: "--root-sheet",
+                    param: "root_sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--definition",
+                    param: "definition",
+                },
             ],
         },
         params: &[
@@ -122,7 +149,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("name", Str, true, None),
             p!("definition", Uuid, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"root_sheet":{"type":"string"},"name":{"type":"string"},"definition":{"type":["string","null"]}},"required":["path","root_sheet","name"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"root_sheet":{"type":"string"},"name":{"type":"string"},"definition":{"type":["string","null"]}},"required":["path","root_sheet","name"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -140,12 +169,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("create-sheet-instance"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--definition", param: "definition" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--parent-sheet", param: "parent_sheet" },
-                ArgvToken::Flag { flag: "--instance", param: "instance" },
+                ArgvToken::Flag {
+                    flag: "--definition",
+                    param: "definition",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--parent-sheet",
+                    param: "parent_sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--instance",
+                    param: "instance",
+                },
             ],
         },
         params: &[
@@ -157,7 +204,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("parent_sheet", Uuid, false, None),
             p!("instance", Uuid, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"definition":{"type":"string"},"name":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"parent_sheet":{"type":["string","null"]},"instance":{"type":["string","null"]}},"required":["path","definition","name","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"definition":{"type":"string"},"name":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"parent_sheet":{"type":["string","null"]},"instance":{"type":["string","null"]}},"required":["path","definition","name","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -175,14 +224,19 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-sheet-instance"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--instance", param: "instance" },
+                ArgvToken::Flag {
+                    flag: "--instance",
+                    param: "instance",
+                },
             ],
         },
         params: &[
             p!("path", Str, true, None),
             p!("instance", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"}},"required":["path","instance"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"}},"required":["path","instance"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -200,9 +254,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("move-sheet-instance"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--instance", param: "instance" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--instance",
+                    param: "instance",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -211,7 +274,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, true, None),
             p!("y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","instance","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","instance","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -229,8 +294,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("bind-sheet-instance-port"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--instance", param: "instance" },
-                ArgvToken::Flag { flag: "--port", param: "port" },
+                ArgvToken::Flag {
+                    flag: "--instance",
+                    param: "instance",
+                },
+                ArgvToken::Flag {
+                    flag: "--port",
+                    param: "port",
+                },
             ],
         },
         params: &[
@@ -238,7 +309,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("instance", Uuid, true, None),
             p!("port", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"port":{"type":"string"}},"required":["path","instance","port"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"port":{"type":"string"}},"required":["path","instance","port"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -256,8 +329,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("unbind-sheet-instance-port"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--instance", param: "instance" },
-                ArgvToken::Flag { flag: "--port", param: "port" },
+                ArgvToken::Flag {
+                    flag: "--instance",
+                    param: "instance",
+                },
+                ArgvToken::Flag {
+                    flag: "--port",
+                    param: "port",
+                },
             ],
         },
         params: &[
@@ -265,7 +344,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("instance", Uuid, true, None),
             p!("port", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"port":{"type":"string"}},"required":["path","instance","port"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"instance":{"type":"string"},"port":{"type":"string"}},"required":["path","instance","port"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -283,11 +364,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("draw-wire"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--from-x-nm", param: "from_x_nm" },
-                ArgvToken::Flag { flag: "--from-y-nm", param: "from_y_nm" },
-                ArgvToken::Flag { flag: "--to-x-nm", param: "to_x_nm" },
-                ArgvToken::Flag { flag: "--to-y-nm", param: "to_y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-x-nm",
+                    param: "from_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-y-nm",
+                    param: "from_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-x-nm",
+                    param: "to_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-y-nm",
+                    param: "to_y_nm",
+                },
             ],
         },
         params: &[
@@ -298,7 +394,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("to_x_nm", Int, true, None),
             p!("to_y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"}},"required":["path","sheet","from_x_nm","from_y_nm","to_x_nm","to_y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"}},"required":["path","sheet","from_x_nm","from_y_nm","to_x_nm","to_y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -316,14 +414,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-wire"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--wire", param: "wire" },
+                ArgvToken::Flag {
+                    flag: "--wire",
+                    param: "wire",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("wire", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"wire":{"type":"string"}},"required":["path","wire"]}"###),
+        params: &[p!("path", Str, true, None), p!("wire", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"wire":{"type":"string"}},"required":["path","wire"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -341,9 +441,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-junction"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -352,7 +461,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, true, None),
             p!("y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -370,14 +481,19 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-junction"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--junction", param: "junction" },
+                ArgvToken::Flag {
+                    flag: "--junction",
+                    param: "junction",
+                },
             ],
         },
         params: &[
             p!("path", Str, true, None),
             p!("junction", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"junction":{"type":"string"}},"required":["path","junction"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"junction":{"type":"string"}},"required":["path","junction"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -395,11 +511,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-noconnect"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--pin", param: "pin" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--pin",
+                    param: "pin",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -410,7 +541,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, true, None),
             p!("y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","symbol","pin","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","symbol","pin","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -428,14 +561,19 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-noconnect"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--noconnect", param: "noconnect" },
+                ArgvToken::Flag {
+                    flag: "--noconnect",
+                    param: "noconnect",
+                },
             ],
         },
         params: &[
             p!("path", Str, true, None),
             p!("noconnect", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"noconnect":{"type":"string"}},"required":["path","noconnect"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"noconnect":{"type":"string"}},"required":["path","noconnect"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -453,11 +591,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-label"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--kind", param: "kind" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--kind",
+                    param: "kind",
+                },
             ],
         },
         params: &[
@@ -468,7 +621,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("y_nm", Int, true, None),
             p!("kind", Str, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"kind":{"type":["string","null"]}},"required":["path","sheet","name","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"kind":{"type":["string","null"]}},"required":["path","sheet","name","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -486,8 +641,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("rename-label"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--label", param: "label" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
+                ArgvToken::Flag {
+                    flag: "--label",
+                    param: "label",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
             ],
         },
         params: &[
@@ -495,7 +656,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("label", Uuid, true, None),
             p!("name", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"label":{"type":"string"},"name":{"type":"string"}},"required":["path","label","name"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"label":{"type":"string"},"name":{"type":"string"}},"required":["path","label","name"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -513,14 +676,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-label"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--label", param: "label" },
+                ArgvToken::Flag {
+                    flag: "--label",
+                    param: "label",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("label", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"label":{"type":"string"}},"required":["path","label"]}"###),
+        params: &[p!("path", Str, true, None), p!("label", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"label":{"type":"string"}},"required":["path","label"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -538,11 +703,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-port"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--direction", param: "direction" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--direction",
+                    param: "direction",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -553,7 +733,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, true, None),
             p!("y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"direction":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","name","direction","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"direction":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","sheet","name","direction","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -571,11 +753,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-port"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--port", param: "port" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--direction", param: "direction" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--port",
+                    param: "port",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--direction",
+                    param: "direction",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -586,7 +783,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, false, None),
             p!("y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"port":{"type":"string"},"name":{"type":["string","null"]},"direction":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","port"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"port":{"type":"string"},"name":{"type":["string","null"]},"direction":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","port"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -604,14 +803,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-port"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--port", param: "port" },
+                ArgvToken::Flag {
+                    flag: "--port",
+                    param: "port",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("port", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"port":{"type":"string"}},"required":["path","port"]}"###),
+        params: &[p!("path", Str, true, None), p!("port", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"port":{"type":"string"}},"required":["path","port"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -629,9 +830,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("create-bus"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Repeated { flag: "--member", param: "members" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Repeated {
+                    flag: "--member",
+                    param: "members",
+                },
             ],
         },
         params: &[
@@ -640,7 +850,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("name", Str, true, None),
             p!("members", StrList, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"members":{"type":"array","items":{"type":"string"}}},"required":["path","sheet","name","members"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"members":{"type":"array","items":{"type":"string"}}},"required":["path","sheet","name","members"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -658,8 +870,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-bus-members"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--bus", param: "bus" },
-                ArgvToken::Repeated { flag: "--member", param: "members" },
+                ArgvToken::Flag {
+                    flag: "--bus",
+                    param: "bus",
+                },
+                ArgvToken::Repeated {
+                    flag: "--member",
+                    param: "members",
+                },
             ],
         },
         params: &[
@@ -667,7 +885,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("bus", Uuid, true, None),
             p!("members", StrList, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"bus":{"type":"string"},"members":{"type":"array","items":{"type":"string"}}},"required":["path","bus","members"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"bus":{"type":"string"},"members":{"type":"array","items":{"type":"string"}}},"required":["path","bus","members"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -685,14 +905,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-bus"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--bus", param: "bus" },
+                ArgvToken::Flag {
+                    flag: "--bus",
+                    param: "bus",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("bus", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"bus":{"type":"string"}},"required":["path","bus"]}"###),
+        params: &[p!("path", Str, true, None), p!("bus", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"bus":{"type":"string"}},"required":["path","bus"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -710,11 +932,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-bus-entry"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--bus", param: "bus" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--wire", param: "wire" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--bus",
+                    param: "bus",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--wire",
+                    param: "wire",
+                },
             ],
         },
         params: &[
@@ -725,7 +962,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("y_nm", Int, true, None),
             p!("wire", Uuid, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"bus":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"wire":{"type":["string","null"]}},"required":["path","sheet","bus","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"bus":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"wire":{"type":["string","null"]}},"required":["path","sheet","bus","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -743,14 +982,19 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-bus-entry"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--bus-entry", param: "bus_entry" },
+                ArgvToken::Flag {
+                    flag: "--bus-entry",
+                    param: "bus_entry",
+                },
             ],
         },
         params: &[
             p!("path", Str, true, None),
             p!("bus_entry", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"bus_entry":{"type":"string"}},"required":["path","bus_entry"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"bus_entry":{"type":"string"}},"required":["path","bus_entry"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -768,11 +1012,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-text"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--text", param: "text" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--text",
+                    param: "text",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
             ],
         },
         params: &[
@@ -783,7 +1042,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("y_nm", Int, true, None),
             p!("rotation_deg", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"text":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"rotation_deg":{"type":["integer","null"]}},"required":["path","sheet","text","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"text":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"rotation_deg":{"type":["integer","null"]}},"required":["path","sheet","text","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -801,11 +1062,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-text"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--text", param: "text" },
-                ArgvToken::Flag { flag: "--value", param: "value" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--text",
+                    param: "text",
+                },
+                ArgvToken::Flag {
+                    flag: "--value",
+                    param: "value",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
             ],
         },
         params: &[
@@ -816,7 +1092,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("y_nm", Int, false, None),
             p!("rotation_deg", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"text":{"type":"string"},"value":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]},"rotation_deg":{"type":["integer","null"]}},"required":["path","text"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"text":{"type":"string"},"value":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]},"rotation_deg":{"type":["integer","null"]}},"required":["path","text"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -834,14 +1112,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-text"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--text", param: "text" },
+                ArgvToken::Flag {
+                    flag: "--text",
+                    param: "text",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("text", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"text":{"type":"string"}},"required":["path","text"]}"###),
+        params: &[p!("path", Str, true, None), p!("text", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"text":{"type":"string"}},"required":["path","text"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -859,11 +1139,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-drawing-line"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--from-x-nm", param: "from_x_nm" },
-                ArgvToken::Flag { flag: "--from-y-nm", param: "from_y_nm" },
-                ArgvToken::Flag { flag: "--to-x-nm", param: "to_x_nm" },
-                ArgvToken::Flag { flag: "--to-y-nm", param: "to_y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-x-nm",
+                    param: "from_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-y-nm",
+                    param: "from_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-x-nm",
+                    param: "to_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-y-nm",
+                    param: "to_y_nm",
+                },
             ],
         },
         params: &[
@@ -874,7 +1169,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("to_x_nm", Int, true, None),
             p!("to_y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"}},"required":["path","sheet","from_x_nm","from_y_nm","to_x_nm","to_y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"}},"required":["path","sheet","from_x_nm","from_y_nm","to_x_nm","to_y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -892,11 +1189,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-drawing-rect"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--min-x-nm", param: "min_x_nm" },
-                ArgvToken::Flag { flag: "--min-y-nm", param: "min_y_nm" },
-                ArgvToken::Flag { flag: "--max-x-nm", param: "max_x_nm" },
-                ArgvToken::Flag { flag: "--max-y-nm", param: "max_y_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--min-x-nm",
+                    param: "min_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--min-y-nm",
+                    param: "min_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--max-x-nm",
+                    param: "max_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--max-y-nm",
+                    param: "max_y_nm",
+                },
             ],
         },
         params: &[
@@ -907,7 +1219,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("max_x_nm", Int, true, None),
             p!("max_y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"min_x_nm":{"type":"integer"},"min_y_nm":{"type":"integer"},"max_x_nm":{"type":"integer"},"max_y_nm":{"type":"integer"}},"required":["path","sheet","min_x_nm","min_y_nm","max_x_nm","max_y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"min_x_nm":{"type":"integer"},"min_y_nm":{"type":"integer"},"max_x_nm":{"type":"integer"},"max_y_nm":{"type":"integer"}},"required":["path","sheet","min_x_nm","min_y_nm","max_x_nm","max_y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -925,10 +1239,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-drawing-circle"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--center-x-nm", param: "center_x_nm" },
-                ArgvToken::Flag { flag: "--center-y-nm", param: "center_y_nm" },
-                ArgvToken::Flag { flag: "--radius-nm", param: "radius_nm" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-x-nm",
+                    param: "center_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-y-nm",
+                    param: "center_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--radius-nm",
+                    param: "radius_nm",
+                },
             ],
         },
         params: &[
@@ -938,7 +1264,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("center_y_nm", Int, true, None),
             p!("radius_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"center_x_nm":{"type":"integer"},"center_y_nm":{"type":"integer"},"radius_nm":{"type":"integer"}},"required":["path","sheet","center_x_nm","center_y_nm","radius_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"center_x_nm":{"type":"integer"},"center_y_nm":{"type":"integer"},"radius_nm":{"type":"integer"}},"required":["path","sheet","center_x_nm","center_y_nm","radius_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -956,12 +1284,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-drawing-arc"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--center-x-nm", param: "center_x_nm" },
-                ArgvToken::Flag { flag: "--center-y-nm", param: "center_y_nm" },
-                ArgvToken::Flag { flag: "--radius-nm", param: "radius_nm" },
-                ArgvToken::Flag { flag: "--start-angle-mdeg", param: "start_angle_mdeg" },
-                ArgvToken::Flag { flag: "--end-angle-mdeg", param: "end_angle_mdeg" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-x-nm",
+                    param: "center_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-y-nm",
+                    param: "center_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--radius-nm",
+                    param: "radius_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--start-angle-mdeg",
+                    param: "start_angle_mdeg",
+                },
+                ArgvToken::Flag {
+                    flag: "--end-angle-mdeg",
+                    param: "end_angle_mdeg",
+                },
             ],
         },
         params: &[
@@ -973,7 +1319,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("start_angle_mdeg", Int, true, None),
             p!("end_angle_mdeg", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"center_x_nm":{"type":"integer"},"center_y_nm":{"type":"integer"},"radius_nm":{"type":"integer"},"start_angle_mdeg":{"type":"integer"},"end_angle_mdeg":{"type":"integer"}},"required":["path","sheet","center_x_nm","center_y_nm","radius_nm","start_angle_mdeg","end_angle_mdeg"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"center_x_nm":{"type":"integer"},"center_y_nm":{"type":"integer"},"radius_nm":{"type":"integer"},"start_angle_mdeg":{"type":"integer"},"end_angle_mdeg":{"type":"integer"}},"required":["path","sheet","center_x_nm","center_y_nm","radius_nm","start_angle_mdeg","end_angle_mdeg"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -991,11 +1339,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-drawing-line"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--drawing", param: "drawing" },
-                ArgvToken::Flag { flag: "--from-x-nm", param: "from_x_nm" },
-                ArgvToken::Flag { flag: "--from-y-nm", param: "from_y_nm" },
-                ArgvToken::Flag { flag: "--to-x-nm", param: "to_x_nm" },
-                ArgvToken::Flag { flag: "--to-y-nm", param: "to_y_nm" },
+                ArgvToken::Flag {
+                    flag: "--drawing",
+                    param: "drawing",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-x-nm",
+                    param: "from_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--from-y-nm",
+                    param: "from_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-x-nm",
+                    param: "to_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--to-y-nm",
+                    param: "to_y_nm",
+                },
             ],
         },
         params: &[
@@ -1006,7 +1369,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("to_x_nm", Int, false, None),
             p!("to_y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"from_x_nm":{"type":["integer","null"]},"from_y_nm":{"type":["integer","null"]},"to_x_nm":{"type":["integer","null"]},"to_y_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"from_x_nm":{"type":["integer","null"]},"from_y_nm":{"type":["integer","null"]},"to_x_nm":{"type":["integer","null"]},"to_y_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1024,11 +1389,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-drawing-rect"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--drawing", param: "drawing" },
-                ArgvToken::Flag { flag: "--min-x-nm", param: "min_x_nm" },
-                ArgvToken::Flag { flag: "--min-y-nm", param: "min_y_nm" },
-                ArgvToken::Flag { flag: "--max-x-nm", param: "max_x_nm" },
-                ArgvToken::Flag { flag: "--max-y-nm", param: "max_y_nm" },
+                ArgvToken::Flag {
+                    flag: "--drawing",
+                    param: "drawing",
+                },
+                ArgvToken::Flag {
+                    flag: "--min-x-nm",
+                    param: "min_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--min-y-nm",
+                    param: "min_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--max-x-nm",
+                    param: "max_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--max-y-nm",
+                    param: "max_y_nm",
+                },
             ],
         },
         params: &[
@@ -1039,7 +1419,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("max_x_nm", Int, false, None),
             p!("max_y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"min_x_nm":{"type":["integer","null"]},"min_y_nm":{"type":["integer","null"]},"max_x_nm":{"type":["integer","null"]},"max_y_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"min_x_nm":{"type":["integer","null"]},"min_y_nm":{"type":["integer","null"]},"max_x_nm":{"type":["integer","null"]},"max_y_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1057,10 +1439,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-drawing-circle"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--drawing", param: "drawing" },
-                ArgvToken::Flag { flag: "--center-x-nm", param: "center_x_nm" },
-                ArgvToken::Flag { flag: "--center-y-nm", param: "center_y_nm" },
-                ArgvToken::Flag { flag: "--radius-nm", param: "radius_nm" },
+                ArgvToken::Flag {
+                    flag: "--drawing",
+                    param: "drawing",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-x-nm",
+                    param: "center_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-y-nm",
+                    param: "center_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--radius-nm",
+                    param: "radius_nm",
+                },
             ],
         },
         params: &[
@@ -1070,7 +1464,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("center_y_nm", Int, false, None),
             p!("radius_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"center_x_nm":{"type":["integer","null"]},"center_y_nm":{"type":["integer","null"]},"radius_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"center_x_nm":{"type":["integer","null"]},"center_y_nm":{"type":["integer","null"]},"radius_nm":{"type":["integer","null"]}},"required":["path","drawing"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1088,12 +1484,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-drawing-arc"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--drawing", param: "drawing" },
-                ArgvToken::Flag { flag: "--center-x-nm", param: "center_x_nm" },
-                ArgvToken::Flag { flag: "--center-y-nm", param: "center_y_nm" },
-                ArgvToken::Flag { flag: "--radius-nm", param: "radius_nm" },
-                ArgvToken::Flag { flag: "--start-angle-mdeg", param: "start_angle_mdeg" },
-                ArgvToken::Flag { flag: "--end-angle-mdeg", param: "end_angle_mdeg" },
+                ArgvToken::Flag {
+                    flag: "--drawing",
+                    param: "drawing",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-x-nm",
+                    param: "center_x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--center-y-nm",
+                    param: "center_y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--radius-nm",
+                    param: "radius_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--start-angle-mdeg",
+                    param: "start_angle_mdeg",
+                },
+                ArgvToken::Flag {
+                    flag: "--end-angle-mdeg",
+                    param: "end_angle_mdeg",
+                },
             ],
         },
         params: &[
@@ -1105,7 +1519,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("start_angle_mdeg", Int, false, None),
             p!("end_angle_mdeg", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"center_x_nm":{"type":["integer","null"]},"center_y_nm":{"type":["integer","null"]},"radius_nm":{"type":["integer","null"]},"start_angle_mdeg":{"type":["integer","null"]},"end_angle_mdeg":{"type":["integer","null"]}},"required":["path","drawing"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"},"center_x_nm":{"type":["integer","null"]},"center_y_nm":{"type":["integer","null"]},"radius_nm":{"type":["integer","null"]},"start_angle_mdeg":{"type":["integer","null"]},"end_angle_mdeg":{"type":["integer","null"]}},"required":["path","drawing"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1123,14 +1539,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-drawing"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--drawing", param: "drawing" },
+                ArgvToken::Flag {
+                    flag: "--drawing",
+                    param: "drawing",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("drawing", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"}},"required":["path","drawing"]}"###),
+        params: &[p!("path", Str, true, None), p!("drawing", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"drawing":{"type":"string"}},"required":["path","drawing"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1148,14 +1566,38 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("place-symbol"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--sheet", param: "sheet" },
-                ArgvToken::Flag { flag: "--reference", param: "reference" },
-                ArgvToken::Flag { flag: "--value", param: "value" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--lib-id", param: "lib_id" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
-                ArgvToken::Switch { flag: "--mirrored", param: "mirrored" },
+                ArgvToken::Flag {
+                    flag: "--sheet",
+                    param: "sheet",
+                },
+                ArgvToken::Flag {
+                    flag: "--reference",
+                    param: "reference",
+                },
+                ArgvToken::Flag {
+                    flag: "--value",
+                    param: "value",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--lib-id",
+                    param: "lib_id",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
+                ArgvToken::Switch {
+                    flag: "--mirrored",
+                    param: "mirrored",
+                },
             ],
         },
         params: &[
@@ -1169,7 +1611,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("rotation_deg", Int, false, None),
             p!("mirrored", Bool, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"reference":{"type":"string"},"value":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"lib_id":{"type":["string","null"]},"rotation_deg":{"type":["integer","null"]},"mirrored":{"type":["boolean","null"]}},"required":["path","sheet","reference","value","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"reference":{"type":"string"},"value":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"lib_id":{"type":["string","null"]},"rotation_deg":{"type":["integer","null"]},"mirrored":{"type":["boolean","null"]}},"required":["path","sheet","reference","value","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1187,9 +1631,18 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("move-symbol"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -1198,7 +1651,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, true, None),
             p!("y_nm", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","symbol","x_nm","y_nm"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"}},"required":["path","symbol","x_nm","y_nm"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1216,8 +1671,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("rotate-symbol"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
             ],
         },
         params: &[
@@ -1225,7 +1686,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("rotation_deg", Int, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"rotation_deg":{"type":"integer"}},"required":["path","symbol","rotation_deg"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"rotation_deg":{"type":"integer"}},"required":["path","symbol","rotation_deg"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1243,14 +1706,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("mirror-symbol"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1268,14 +1733,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-symbol"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1293,8 +1760,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-reference"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--reference", param: "reference" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--reference",
+                    param: "reference",
+                },
             ],
         },
         params: &[
@@ -1302,7 +1775,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("reference", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"reference":{"type":"string"}},"required":["path","symbol","reference"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"reference":{"type":"string"}},"required":["path","symbol","reference"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1320,8 +1795,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-value"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--value", param: "value" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--value",
+                    param: "value",
+                },
             ],
         },
         params: &[
@@ -1329,7 +1810,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("value", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"value":{"type":"string"}},"required":["path","symbol","value"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"value":{"type":"string"}},"required":["path","symbol","value"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1347,8 +1830,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-display-mode"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--mode", param: "mode" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--mode",
+                    param: "mode",
+                },
             ],
         },
         params: &[
@@ -1356,7 +1845,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("mode", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"mode":{"type":"string"}},"required":["path","symbol","mode"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"mode":{"type":"string"}},"required":["path","symbol","mode"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1374,8 +1865,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-hidden-power-behavior"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--behavior", param: "behavior" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--behavior",
+                    param: "behavior",
+                },
             ],
         },
         params: &[
@@ -1383,7 +1880,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("behavior", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"behavior":{"type":"string"}},"required":["path","symbol","behavior"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"behavior":{"type":"string"}},"required":["path","symbol","behavior"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1401,8 +1900,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-unit"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--unit", param: "unit" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--unit",
+                    param: "unit",
+                },
             ],
         },
         params: &[
@@ -1410,7 +1915,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("unit", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"unit":{"type":"string"}},"required":["path","symbol","unit"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"unit":{"type":"string"}},"required":["path","symbol","unit"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1428,14 +1935,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-symbol-unit"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1453,8 +1962,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-gate"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--gate", param: "gate" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--gate",
+                    param: "gate",
+                },
             ],
         },
         params: &[
@@ -1462,7 +1977,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("gate", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"gate":{"type":"string"}},"required":["path","symbol","gate"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"gate":{"type":"string"}},"required":["path","symbol","gate"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1480,14 +1997,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-symbol-gate"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1505,8 +2024,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-entity"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--entity", param: "entity" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--entity",
+                    param: "entity",
+                },
             ],
         },
         params: &[
@@ -1514,7 +2039,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("entity", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"entity":{"type":"string"}},"required":["path","symbol","entity"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"entity":{"type":"string"}},"required":["path","symbol","entity"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1532,14 +2059,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-symbol-entity"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1557,8 +2086,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-part"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--part", param: "part" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--part",
+                    param: "part",
+                },
             ],
         },
         params: &[
@@ -1566,7 +2101,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("part", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"part":{"type":"string"}},"required":["path","symbol","part"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"part":{"type":"string"}},"required":["path","symbol","part"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1584,14 +2121,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-symbol-part"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1609,8 +2148,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-symbol-lib-id"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--lib-id", param: "lib_id" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--lib-id",
+                    param: "lib_id",
+                },
             ],
         },
         params: &[
@@ -1618,7 +2163,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("lib_id", Str, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"lib_id":{"type":"string"}},"required":["path","symbol","lib_id"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"lib_id":{"type":"string"}},"required":["path","symbol","lib_id"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1636,14 +2183,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-symbol-lib-id"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("symbol", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###),
+        params: &[p!("path", Str, true, None), p!("symbol", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"}},"required":["path","symbol"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1661,11 +2210,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("set-pin-override"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--pin", param: "pin" },
-                ArgvToken::Flag { flag: "--visible", param: "visible" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--pin",
+                    param: "pin",
+                },
+                ArgvToken::Flag {
+                    flag: "--visible",
+                    param: "visible",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -1676,7 +2240,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, false, None),
             p!("y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"},"visible":{"type":"boolean"},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","symbol","pin","visible"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"},"visible":{"type":"boolean"},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","symbol","pin","visible"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1694,8 +2260,14 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("clear-pin-override"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--pin", param: "pin" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--pin",
+                    param: "pin",
+                },
             ],
         },
         params: &[
@@ -1703,7 +2275,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("symbol", Uuid, true, None),
             p!("pin", Uuid, true, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"}},"required":["path","symbol","pin"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"pin":{"type":"string"}},"required":["path","symbol","pin"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1721,12 +2295,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("add-symbol-field"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--symbol", param: "symbol" },
-                ArgvToken::Flag { flag: "--key", param: "key" },
-                ArgvToken::Flag { flag: "--value", param: "value" },
-                ArgvToken::Switch { flag: "--hidden", param: "hidden" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--key",
+                    param: "key",
+                },
+                ArgvToken::Flag {
+                    flag: "--value",
+                    param: "value",
+                },
+                ArgvToken::Switch {
+                    flag: "--hidden",
+                    param: "hidden",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -1738,7 +2330,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, false, None),
             p!("y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"key":{"type":"string"},"value":{"type":"string"},"hidden":{"type":["boolean","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","symbol","key","value"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"key":{"type":"string"},"value":{"type":"string"},"hidden":{"type":["boolean","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","symbol","key","value"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1756,12 +2350,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("edit-symbol-field"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--field", param: "field" },
-                ArgvToken::Flag { flag: "--key", param: "key" },
-                ArgvToken::Flag { flag: "--value", param: "value" },
-                ArgvToken::Flag { flag: "--visible", param: "visible" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
+                ArgvToken::Flag {
+                    flag: "--field",
+                    param: "field",
+                },
+                ArgvToken::Flag {
+                    flag: "--key",
+                    param: "key",
+                },
+                ArgvToken::Flag {
+                    flag: "--value",
+                    param: "value",
+                },
+                ArgvToken::Flag {
+                    flag: "--visible",
+                    param: "visible",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
             ],
         },
         params: &[
@@ -1773,7 +2385,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             p!("x_nm", Int, false, None),
             p!("y_nm", Int, false, None),
         ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"field":{"type":"string"},"key":{"type":["string","null"]},"value":{"type":["string","null"]},"visible":{"type":["boolean","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","field"]}"###),
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"field":{"type":"string"},"key":{"type":["string","null"]},"value":{"type":["string","null"]},"visible":{"type":["boolean","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]}},"required":["path","field"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],
@@ -1791,14 +2405,16 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("project"),
                 ArgvToken::Lit("delete-symbol-field"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--field", param: "field" },
+                ArgvToken::Flag {
+                    flag: "--field",
+                    param: "field",
+                },
             ],
         },
-        params: &[
-            p!("path", Str, true, None),
-            p!("field", Uuid, true, None),
-        ],
-        schema_json_override: Some(r###"{"type":"object","properties":{"path":{"type":"string"},"field":{"type":"string"}},"required":["path","field"]}"###),
+        params: &[p!("path", Str, true, None), p!("field", Uuid, true, None)],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"field":{"type":"string"}},"required":["path","field"]}"###,
+        ),
         write_surface: None,
         terminal: false,
         terminal_optional_params: &[],

@@ -63,13 +63,10 @@ pub fn guarded_object_operations(
     object_id: ObjectId,
     mut operations: Vec<Operation>,
 ) -> Result<Vec<Operation>, EngineError> {
-    let object = model
-        .objects
-        .get(&object_id)
-        .ok_or(EngineError::NotFound {
-            object_type: "domain_object",
-            uuid: object_id,
-        })?;
+    let object = model.objects.get(&object_id).ok_or(EngineError::NotFound {
+        object_type: "domain_object",
+        uuid: object_id,
+    })?;
     operations.insert(
         0,
         object_revision_guard_with_revision(object_id, object.object_revision),
@@ -81,13 +78,10 @@ fn object_revision_guard(
     model: &DesignModel,
     object_id: ObjectId,
 ) -> Result<Operation, EngineError> {
-    let object = model
-        .objects
-        .get(&object_id)
-        .ok_or(EngineError::NotFound {
-            object_type: "domain_object",
-            uuid: object_id,
-        })?;
+    let object = model.objects.get(&object_id).ok_or(EngineError::NotFound {
+        object_type: "domain_object",
+        uuid: object_id,
+    })?;
     Ok(object_revision_guard_with_revision(
         object_id,
         object.object_revision,
@@ -242,7 +236,8 @@ mod tests {
 
     #[test]
     fn guarded_operation_batch_guards_each_object_once() {
-        let (_root, model, _board_id, package_id) = resolved_model_with_board_package("guards_dedup");
+        let (_root, model, _board_id, package_id) =
+            resolved_model_with_board_package("guards_dedup");
         let batch = test_batch(
             &model,
             vec![
@@ -323,7 +318,8 @@ mod tests {
 
     #[test]
     fn guarded_existing_object_operation_wraps_mutation() {
-        let (_root, model, _board_id, package_id) = resolved_model_with_board_package("guards_wrap");
+        let (_root, model, _board_id, package_id) =
+            resolved_model_with_board_package("guards_wrap");
         let operations = guarded_existing_object_operation(
             &model,
             Operation::SetBoardPackageValue {

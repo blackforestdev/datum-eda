@@ -330,10 +330,7 @@ mod tests {
             latest_journaled_artifact_id(&model, &existing),
             Some(second.artifact_id),
         );
-        assert_eq!(
-            latest_journaled_artifact_id(&model, &BTreeSet::new()),
-            None,
-        );
+        assert_eq!(latest_journaled_artifact_id(&model, &BTreeSet::new()), None,);
     }
 
     #[test]

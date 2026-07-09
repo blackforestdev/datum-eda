@@ -105,8 +105,7 @@ mod tests {
     use super::*;
     use crate::substrate::{
         ArtifactKind, CommitSource, OUTPUT_JOB_RUN_SCHEMA_VERSION, ObjectRevision,
-        OutputJobLogEntry, OutputJobLogLevel, OutputJobRunStatus,
-        PRODUCTION_RECORD_SCHEMA_VERSION,
+        OutputJobLogEntry, OutputJobLogLevel, OutputJobRunStatus, PRODUCTION_RECORD_SCHEMA_VERSION,
     };
 
     fn test_provenance(reason: &str) -> WriteProvenance {
@@ -133,7 +132,11 @@ mod tests {
             schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
             run_id: derive_output_job_run_id(
                 &model.project.project_id,
-                &["lifecycle".to_string(), output_job.to_string(), seed.to_string()],
+                &[
+                    "lifecycle".to_string(),
+                    output_job.to_string(),
+                    seed.to_string(),
+                ],
             ),
             output_job,
             run_sequence: 1,
@@ -206,9 +209,8 @@ mod tests {
         assert_eq!(model.output_jobs[&job.id].name, "Renamed job");
 
         let live = model.output_jobs[&job.id].clone();
-        let prepared =
-            build_delete_output_job(&model, test_provenance("delete output job"), &live)
-                .expect("delete job should build");
+        let prepared = build_delete_output_job(&model, test_provenance("delete output job"), &live)
+            .expect("delete job should build");
         assert!(matches!(
             prepared.batch.operations[0],
             Operation::GuardObjectRevision { object_id, .. } if object_id == job.id

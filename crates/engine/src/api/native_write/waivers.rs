@@ -75,11 +75,7 @@ pub struct PreparedSchematicDeviation {
 /// Seed layout (persistence-visible, must never drift):
 /// `datum-eda:schematic-waiver:<model_revision>:<fingerprint>:<rationale>`
 /// namespaced by the project id.
-fn derive_schematic_waiver_id(
-    model: &DesignModel,
-    fingerprint: &str,
-    rationale: &str,
-) -> Uuid {
+fn derive_schematic_waiver_id(model: &DesignModel, fingerprint: &str, rationale: &str) -> Uuid {
     derive_object_id(
         &model.project.project_id,
         "schematic-waiver",
@@ -97,11 +93,7 @@ fn derive_schematic_waiver_id(
 /// Seed layout (persistence-visible, must never drift):
 /// `datum-eda:schematic-deviation:<model_revision>:<fingerprint>:<rationale>`
 /// namespaced by the project id.
-fn derive_schematic_deviation_id(
-    model: &DesignModel,
-    fingerprint: &str,
-    rationale: &str,
-) -> Uuid {
+fn derive_schematic_deviation_id(model: &DesignModel, fingerprint: &str, rationale: &str) -> Uuid {
     derive_object_id(
         &model.project.project_id,
         "schematic-deviation",
@@ -443,7 +435,10 @@ mod tests {
             waiver,
         } = &batch.operations[0]
         else {
-            panic!("expected CreateSchematicWaiver, got {:?}", batch.operations[0]);
+            panic!(
+                "expected CreateSchematicWaiver, got {:?}",
+                batch.operations[0]
+            );
         };
         assert_eq!(*op_schematic_id, schematic_id);
         assert_eq!(*waiver_id, expected_waiver_id);
@@ -535,7 +530,10 @@ mod tests {
         .expect("waiver commit should succeed");
 
         assert_eq!(report.transaction.before_model_revision, before);
-        assert_eq!(report.transaction.after_model_revision, model.model_revision);
+        assert_eq!(
+            report.transaction.after_model_revision,
+            model.model_revision
+        );
         assert_ne!(model.model_revision, before);
         assert!(
             model.objects.contains_key(&waiver_id),

@@ -169,9 +169,12 @@ mod tests {
             resolved_model_with_board_package("mfg_create_build");
         let plan = test_plan(&model.project.project_id, board_id);
 
-        let prepared =
-            build_create_manufacturing_plan(&model, test_provenance("create manufacturing plan"), &plan)
-                .expect("create plan should build");
+        let prepared = build_create_manufacturing_plan(
+            &model,
+            test_provenance("create manufacturing plan"),
+            &plan,
+        )
+        .expect("create plan should build");
 
         assert_eq!(prepared.primary_object_id, Some(plan.id));
         assert_eq!(
@@ -193,9 +196,12 @@ mod tests {
             resolved_model_with_board_package("mfg_round_trip");
         let plan = test_plan(&model.project.project_id, board_id);
 
-        let prepared =
-            build_create_manufacturing_plan(&model, test_provenance("create manufacturing plan"), &plan)
-                .expect("create plan should build");
+        let prepared = build_create_manufacturing_plan(
+            &model,
+            test_provenance("create manufacturing plan"),
+            &plan,
+        )
+        .expect("create plan should build");
         commit_prepared(&mut model, &root, prepared).expect("create plan should commit");
         assert!(model.manufacturing_plans.contains_key(&plan.id));
 
@@ -203,9 +209,13 @@ mod tests {
         let mut updated = plan.clone();
         updated.name = "Renamed plan".to_string();
         updated.object_revision = ObjectRevision(plan.object_revision.0 + 1);
-        let prepared =
-            build_set_manufacturing_plan(&model, test_provenance("update manufacturing plan"), &plan, &updated)
-                .expect("set plan should build");
+        let prepared = build_set_manufacturing_plan(
+            &model,
+            test_provenance("update manufacturing plan"),
+            &plan,
+            &updated,
+        )
+        .expect("set plan should build");
         assert_eq!(prepared.batch.operations.len(), 2);
         assert_eq!(
             prepared.batch.operations[0],
@@ -224,9 +234,12 @@ mod tests {
         assert_eq!(reloaded.manufacturing_plans[&plan.id].name, "Renamed plan");
 
         let live = model.manufacturing_plans[&plan.id].clone();
-        let prepared =
-            build_delete_manufacturing_plan(&model, test_provenance("delete manufacturing plan"), &live)
-                .expect("delete plan should build");
+        let prepared = build_delete_manufacturing_plan(
+            &model,
+            test_provenance("delete manufacturing plan"),
+            &live,
+        )
+        .expect("delete plan should build");
         assert!(matches!(
             prepared.batch.operations[0],
             Operation::GuardObjectRevision { object_id, .. } if object_id == plan.id
@@ -253,9 +266,12 @@ mod tests {
             object_revision: ObjectRevision(0),
         };
 
-        let prepared =
-            build_create_panel_projection(&model, test_provenance("create panel projection"), &panel)
-                .expect("create panel should build");
+        let prepared = build_create_panel_projection(
+            &model,
+            test_provenance("create panel projection"),
+            &panel,
+        )
+        .expect("create panel should build");
         assert_eq!(
             prepared.batch.operations,
             vec![Operation::CreatePanelProjection {
@@ -268,9 +284,13 @@ mod tests {
         let mut updated = panel.clone();
         updated.name = "Renamed panel".to_string();
         updated.object_revision = ObjectRevision(panel.object_revision.0 + 1);
-        let prepared =
-            build_set_panel_projection(&model, test_provenance("update panel projection"), &panel, &updated)
-                .expect("set panel should build");
+        let prepared = build_set_panel_projection(
+            &model,
+            test_provenance("update panel projection"),
+            &panel,
+            &updated,
+        )
+        .expect("set panel should build");
         assert!(matches!(
             prepared.batch.operations[0],
             Operation::GuardObjectRevision { object_id, .. } if object_id == panel_id
@@ -281,9 +301,12 @@ mod tests {
         ));
 
         let live = model.panel_projections[&panel_id].clone();
-        let prepared =
-            build_delete_panel_projection(&model, test_provenance("delete panel projection"), &live)
-                .expect("delete panel should build");
+        let prepared = build_delete_panel_projection(
+            &model,
+            test_provenance("delete panel projection"),
+            &live,
+        )
+        .expect("delete panel should build");
         commit_prepared(&mut model, &root, prepared).expect("delete panel should commit");
         assert!(!model.panel_projections.contains_key(&panel_id));
     }

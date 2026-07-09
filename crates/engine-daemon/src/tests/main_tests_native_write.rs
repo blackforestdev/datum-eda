@@ -107,7 +107,10 @@ fn native_write_set_name_commits_through_journal() {
     assert_eq!(result["status"], "applied");
     assert!(result["transaction_id"].is_string());
     assert_eq!(result["before_model_revision"], before_revision.as_str());
-    assert_ne!(result["after_model_revision"], result["before_model_revision"]);
+    assert_ne!(
+        result["after_model_revision"],
+        result["before_model_revision"]
+    );
     assert_eq!(result["operation_count"], 2);
     assert_eq!(result["journal_len"], 1);
     assert!(result["primary_object_id"].is_string());
@@ -243,7 +246,9 @@ fn native_write_rejects_unknown_verb() {
     let error = response.error.expect("unknown verb should fail");
     assert_eq!(error.code, -32062);
     assert!(
-        error.message.contains("unknown native write verb: datum.project.explode"),
+        error
+            .message
+            .contains("unknown native write verb: datum.project.explode"),
         "{}",
         error.message
     );
@@ -274,7 +279,9 @@ fn native_write_rejects_disallowed_source() {
         let error = response.error.expect("disallowed source should fail");
         assert_eq!(error.code, -32602, "source `{source}` must be rejected");
         assert!(
-            error.message.contains("source must be \"tool\" or \"assistant\""),
+            error
+                .message
+                .contains("source must be \"tool\" or \"assistant\""),
             "{}",
             error.message
         );

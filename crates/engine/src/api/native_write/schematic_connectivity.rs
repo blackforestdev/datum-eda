@@ -15,7 +15,9 @@
 //! CLI's historical behavior.
 
 use crate::error::EngineError;
-use crate::schematic::{Bus, BusEntry, HierarchicalPort, Junction, NetLabel, NoConnectMarker, SchematicWire};
+use crate::schematic::{
+    Bus, BusEntry, HierarchicalPort, Junction, NetLabel, NoConnectMarker, SchematicWire,
+};
 use crate::substrate::{DesignModel, ObjectId, Operation, SchematicMarkerKind};
 
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};

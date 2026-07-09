@@ -132,9 +132,7 @@ fn write_project_with_board_package(
 
 /// Write and resolve a minimal project containing one placed board package.
 /// Returns `(project_root, model, board_id, package_id)`.
-pub(super) fn resolved_model_with_board_package(
-    name: &str,
-) -> (PathBuf, DesignModel, Uuid, Uuid) {
+pub(super) fn resolved_model_with_board_package(name: &str) -> (PathBuf, DesignModel, Uuid, Uuid) {
     let root = temp_project_root(name);
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();

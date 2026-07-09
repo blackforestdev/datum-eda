@@ -2,7 +2,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use super::*;
 
-pub(super) fn active_deleted_track_uuids(undo_stack: &[ImportedSessionUndoRecord]) -> BTreeSet<uuid::Uuid> {
+pub(super) fn active_deleted_track_uuids(
+    undo_stack: &[ImportedSessionUndoRecord],
+) -> BTreeSet<uuid::Uuid> {
     let mut deleted = BTreeSet::new();
     for transaction in undo_stack {
         if let ImportedSessionUndoRecord::DeleteTrack { track } = transaction {
@@ -12,7 +14,9 @@ pub(super) fn active_deleted_track_uuids(undo_stack: &[ImportedSessionUndoRecord
     deleted
 }
 
-pub(super) fn active_deleted_via_uuids(undo_stack: &[ImportedSessionUndoRecord]) -> BTreeSet<uuid::Uuid> {
+pub(super) fn active_deleted_via_uuids(
+    undo_stack: &[ImportedSessionUndoRecord],
+) -> BTreeSet<uuid::Uuid> {
     let mut deleted = BTreeSet::new();
     for transaction in undo_stack {
         if let ImportedSessionUndoRecord::DeleteVia { via } = transaction {

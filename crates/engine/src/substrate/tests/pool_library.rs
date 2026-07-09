@@ -184,9 +184,8 @@ fn resolver_discovers_native_pool_library_directories() {
 
 #[test]
 fn resolver_accepts_authored_native_library_baseline_fixture() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
-        "../test-harness/testdata/library/native_authored_baseline_v1",
-    );
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../test-harness/testdata/library/native_authored_baseline_v1");
     let model = ProjectResolver::new(&root)
         .resolve()
         .expect("authored native library fixture should resolve");
@@ -286,7 +285,10 @@ fn resolver_accepts_authored_native_library_baseline_fixture() {
     assert_eq!(graph.pin_pad_maps.len(), 1);
 
     let part_id = Uuid::parse_str("90000000-0000-4000-8000-000000000001").unwrap();
-    let part = graph.parts.get(&part_id).expect("part should be registered");
+    let part = graph
+        .parts
+        .get(&part_id)
+        .expect("part should be registered");
     assert_eq!(
         part["default_footprint"],
         "60000000-0000-4000-8000-000000000001"

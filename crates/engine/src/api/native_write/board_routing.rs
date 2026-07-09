@@ -261,7 +261,10 @@ mod tests {
                 vertices: vec![
                     Point { x: 0, y: 0 },
                     Point { x: 1_000_000, y: 0 },
-                    Point { x: 1_000_000, y: 1_000_000 },
+                    Point {
+                        x: 1_000_000,
+                        y: 1_000_000,
+                    },
                     Point { x: 0, y: 1_000_000 },
                 ],
                 closed: true,
@@ -310,8 +313,8 @@ mod tests {
             resolved_model_with_board_package("board_routing_place_net");
         let net = test_net(Uuid::new_v4());
 
-        let prepared = build_place_board_net(&model, test_provenance(), &net)
-            .expect("place should build");
+        let prepared =
+            build_place_board_net(&model, test_provenance(), &net).expect("place should build");
 
         assert_eq!(prepared.primary_object_id, Some(net.uuid));
         assert_eq!(
@@ -329,8 +332,8 @@ mod tests {
         let mut renamed = net.clone();
         renamed.name = "GND2".to_string();
 
-        let prepared = build_set_board_net(&model, test_provenance(), &renamed)
-            .expect("set should build");
+        let prepared =
+            build_set_board_net(&model, test_provenance(), &renamed).expect("set should build");
 
         assert_eq!(
             prepared.batch.operations,
@@ -353,9 +356,8 @@ mod tests {
             resolved_model_with_net_and_zone("board_routing_delete_net");
         let stored = serde_json::json!({ "uuid": net.uuid, "name": "GND", "class": net.class });
 
-        let prepared =
-            build_delete_board_net(&model, test_provenance(), net.uuid, stored.clone())
-                .expect("delete should build");
+        let prepared = build_delete_board_net(&model, test_provenance(), net.uuid, stored.clone())
+            .expect("delete should build");
 
         assert_eq!(
             prepared.batch.operations,
@@ -400,9 +402,8 @@ mod tests {
         let (_root, model, _net, zone) = resolved_model_with_net_and_zone("board_routing_fill");
         let fill = test_zone_fill(&model, zone.uuid, ZoneFillState::Stale);
 
-        let prepared =
-            build_set_zone_fills(&model, test_provenance(), std::slice::from_ref(&fill))
-                .expect("fill batch should build");
+        let prepared = build_set_zone_fills(&model, test_provenance(), std::slice::from_ref(&fill))
+            .expect("fill batch should build");
 
         // Zone fills are evidence records, not guard targets: exactly the
         // pushed operation, payload byte-identical to the CLI's

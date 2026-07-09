@@ -105,13 +105,13 @@ impl LibraryGraph {
             || basis.mask_expansion_nm < 0
             || basis.paste_reduction_nm < 0
         {
-                diagnostics.push(LibraryGraphDiagnostic {
-                    severity: "error",
-                    code: "invalid_ipc_footprint_basis",
-                    subject: basis_subject.clone(),
-                    message: "ipc_basis courtyard/mask/paste policy values must not be negative"
-                        .to_string(),
-                });
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "error",
+                code: "invalid_ipc_footprint_basis",
+                subject: basis_subject.clone(),
+                message: "ipc_basis courtyard/mask/paste policy values must not be negative"
+                    .to_string(),
+            });
         }
         if let Some(pin_count) = basis.pin_count {
             if pin_count < 4 || pin_count % 2 != 0 {
@@ -260,9 +260,7 @@ impl LibraryGraph {
                 severity: "error",
                 code: "ipc_basis_geometry_mismatch",
                 subject: subject.to_string(),
-                message: format!(
-                    "IPC-7351B SOIC footprint must contain exactly {pin_count} pads"
-                ),
+                message: format!("IPC-7351B SOIC footprint must contain exactly {pin_count} pads"),
             });
         }
         let expected_pad_length = basis.source_dimensions.terminal_length_nm

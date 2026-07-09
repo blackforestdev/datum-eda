@@ -162,11 +162,10 @@ pub(crate) use self::proposal_library::{
     ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
     ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs, ProposalCreatePoolSymbolArgs,
     ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bSoicArgs,
-    ProposalGenerateIpc7351bTwoTerminalChipArgs,
-    ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
-    ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
-    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
-    ProposalSetPoolPinPadMapArgs,
+    ProposalGenerateIpc7351bTwoTerminalChipArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
+    ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
+    ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
+    ProposalSetPoolPackagePadArgs, ProposalSetPoolPinPadMapArgs,
 };
 pub(crate) use self::proposals::{
     ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalBindComponentInstanceArgs,

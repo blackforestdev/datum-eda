@@ -107,16 +107,12 @@ pub fn default_family_for_intent(intent: TextRenderIntent) -> TextFamilyId {
     // for branding/display. Mono (registered above) is reserved for aligned numeric
     // data and is selected explicitly, not as an intent default.
     match intent {
-        TextRenderIntent::Manufacturing => {
-            TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string())
-        }
+        TextRenderIntent::Manufacturing => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
         TextRenderIntent::Annotation => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
         TextRenderIntent::Branding => {
             TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED_SEMIBOLD.to_string())
         }
-        TextRenderIntent::Documentation => {
-            TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string())
-        }
+        TextRenderIntent::Documentation => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
         TextRenderIntent::UiPreview => TextFamilyId(FAMILY_IBM_PLEX_SANS_CONDENSED.to_string()),
     }
 }

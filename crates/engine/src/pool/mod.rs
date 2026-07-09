@@ -20,8 +20,8 @@ mod symbol;
 
 pub use footprint::Footprint;
 pub use ipc_footprint::{
-    GeneratedIpcFootprint, IpcDensityLevel, IpcFootprintBasis, IpcJValues, IpcSourceDimensions,
-    IpcSoicSpec, IpcTwoTerminalChipSpec, generate_ipc7351b_soic,
+    GeneratedIpcFootprint, IpcDensityLevel, IpcFootprintBasis, IpcJValues, IpcSoicSpec,
+    IpcSourceDimensions, IpcTwoTerminalChipSpec, generate_ipc7351b_soic,
     generate_ipc7351b_two_terminal_chip,
 };
 pub use library_graph::{

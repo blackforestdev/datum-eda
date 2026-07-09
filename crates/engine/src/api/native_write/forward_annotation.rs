@@ -505,7 +505,10 @@ mod tests {
         .expect("oracle batch should build");
 
         assert_eq!(facade.operations, oracle.operations);
-        assert_eq!(facade.expected_model_revision, oracle.expected_model_revision);
+        assert_eq!(
+            facade.expected_model_revision,
+            oracle.expected_model_revision
+        );
         // Guard precedes the first mutation of each object, once per object.
         assert!(matches!(
             facade.operations[0],
@@ -542,8 +545,13 @@ mod tests {
             },
         )
         .expect("draft proposal should create");
-        review_proposal_status(&mut model, &root, proposal.proposal_id, ProposalStatus::Accepted)
-            .expect("proposal should accept");
+        review_proposal_status(
+            &mut model,
+            &root,
+            proposal.proposal_id,
+            ProposalStatus::Accepted,
+        )
+        .expect("proposal should accept");
         // Transaction-id prediction parity: the substrate-owned apply first
         // predicts the transaction id from the facade batch, then hard-fails
         // if the journaled commit produces a different id — so a successful
@@ -594,8 +602,9 @@ mod tests {
             }]
         );
 
-        let clear = build_clear_forward_annotation_review(&model, test_provenance(), review.clone())
-            .expect("clear builder should build");
+        let clear =
+            build_clear_forward_annotation_review(&model, test_provenance(), review.clone())
+                .expect("clear builder should build");
         assert_eq!(
             clear.batch.operations,
             vec![Operation::DeleteForwardAnnotationReview {

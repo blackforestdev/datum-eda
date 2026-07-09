@@ -477,11 +477,13 @@ mod tests {
             .expect("multi place should build");
 
         assert_eq!(prepared.batch.operations.len(), 2);
-        assert!(prepared
-            .batch
-            .operations
-            .iter()
-            .all(|operation| matches!(operation, Operation::CreateBoardPackage { .. })));
+        assert!(
+            prepared
+                .batch
+                .operations
+                .iter()
+                .all(|operation| matches!(operation, Operation::CreateBoardPackage { .. }))
+        );
         assert_eq!(
             prepared.batch.expected_model_revision,
             Some(model.model_revision.clone())

@@ -465,8 +465,12 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
     };
 
     if params.dry_run {
-        let operation_kinds: Vec<String> =
-            prepared.batch.operations.iter().map(operation_kind).collect();
+        let operation_kinds: Vec<String> = prepared
+            .batch
+            .operations
+            .iter()
+            .map(operation_kind)
+            .collect();
         return success_response(
             request_id,
             json!({
@@ -504,7 +508,12 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
 fn operation_kind(operation: &Operation) -> String {
     serde_json::to_value(operation)
         .ok()
-        .and_then(|value| value.get("kind").and_then(Value::as_str).map(str::to_string))
+        .and_then(|value| {
+            value
+                .get("kind")
+                .and_then(Value::as_str)
+                .map(str::to_string)
+        })
         .unwrap_or_else(|| "unknown".to_string())
 }
 

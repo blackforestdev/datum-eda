@@ -36,14 +36,14 @@ pub use drift::{
     OrthogonalGraphSegmentFacts, orthogonal_graph_route_proposal_segment_comparison,
     orthogonal_graph_route_proposal_segment_facts,
 };
+pub use fixtures::{
+    RouteStrategyFixtureBoardSpec, build_route_strategy_fixture_board_write,
+    build_route_strategy_fixture_net_class_clear,
+};
 pub use generation::build_route_proposal_actions;
 pub use revalidation::{
     RouteProposalArtifactRevalidation, analyze_route_proposal_artifact_revalidation,
     rebuild_route_proposal_artifact_live_actions,
-};
-pub use fixtures::{
-    RouteStrategyFixtureBoardSpec, build_route_strategy_fixture_board_write,
-    build_route_strategy_fixture_net_class_clear,
 };
 pub use selection::{
     RouteProposalSelectionCandidate, RouteProposalSelectionOutcome, route_proposal_selection_specs,
@@ -224,9 +224,7 @@ pub fn policy_name(policy: RoutePathCandidateAuthoredCopperGraphPolicy) -> Strin
     match policy {
         RoutePathCandidateAuthoredCopperGraphPolicy::Plain => "plain".to_string(),
         RoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware => "zone_aware".to_string(),
-        RoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => {
-            "obstacle_aware".to_string()
-        }
+        RoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => "obstacle_aware".to_string(),
         RoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware => {
             "zone_obstacle_aware".to_string()
         }
@@ -326,8 +324,8 @@ pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FIV
     "route_path_candidate_orthogonal_graph_five_via";
 pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SIX_VIA: &str =
     "route_path_candidate_orthogonal_graph_six_via";
-pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE:
-    &str = "route_path_candidate_authored_copper_graph_zone_aware";
+pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_zone_aware";
 pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE: &str =
     "route_path_candidate_authored_copper_graph_zone_obstacle_aware";
 pub(crate) const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE: &str =

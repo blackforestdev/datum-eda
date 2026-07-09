@@ -8,7 +8,11 @@ use eda_engine::api::AssignPartInput;
 
 use super::*;
 
-fn assign_part_via_engine(engine: &mut Engine, component_uuid: &str, part_uuid: &serde_json::Value) {
+fn assign_part_via_engine(
+    engine: &mut Engine,
+    component_uuid: &str,
+    part_uuid: &serde_json::Value,
+) {
     engine
         .assign_part(AssignPartInput {
             uuid: uuid::Uuid::parse_str(component_uuid).expect("component uuid should parse"),
@@ -317,7 +321,11 @@ fn retired_component_write_arms_return_method_not_found() {
             json!({"uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "value": "22k"}),
         ),
         (4, "replace_components", json!({"replacements": []})),
-        (5, "apply_component_replacement_plan", json!({"replacements": []})),
+        (
+            5,
+            "apply_component_replacement_plan",
+            json!({"replacements": []}),
+        ),
     ] {
         let response = dispatch_request(
             &mut engine,

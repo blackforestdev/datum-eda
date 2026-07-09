@@ -241,11 +241,10 @@ mod tests {
             draw_track_action(&net, "action-2", 2_000_000),
         ];
 
-        let built =
-            build_accepted_route_proposal(&model, test_provenance(), &actions, |uuid| {
-                uuid == net.uuid
-            })
-            .expect("proposal should build");
+        let built = build_accepted_route_proposal(&model, test_provenance(), &actions, |uuid| {
+            uuid == net.uuid
+        })
+        .expect("proposal should build");
         let proposal = built.proposal.expect("proposal should exist");
 
         // Byte-exact historical CLI derivations
@@ -317,11 +316,10 @@ mod tests {
     fn composed_proposal_applies_through_the_journaled_substrate_path() {
         let (root, mut model, net) = fixture_project("apply");
         let actions = vec![draw_track_action(&net, "action-1", 1_000_000)];
-        let built =
-            build_accepted_route_proposal(&model, test_provenance(), &actions, |uuid| {
-                uuid == net.uuid
-            })
-            .expect("proposal should build");
+        let built = build_accepted_route_proposal(&model, test_provenance(), &actions, |uuid| {
+            uuid == net.uuid
+        })
+        .expect("proposal should build");
         let proposal = built.proposal.expect("proposal should exist");
         let proposal_id = proposal.proposal_id;
         let track_id = built.tracks[0].track.uuid;

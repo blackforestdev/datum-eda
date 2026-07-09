@@ -219,8 +219,7 @@ mod tests {
 
     #[test]
     fn set_guards_existing_annotation() {
-        let (_root, model, dimension) =
-            resolved_model_with_dimension("board_annotations_set");
+        let (_root, model, dimension) = resolved_model_with_dimension("board_annotations_set");
         let mut edited = dimension.clone();
         edited.text = None;
 
@@ -244,17 +243,12 @@ mod tests {
 
     #[test]
     fn delete_threads_stored_payload_raw_and_guards() {
-        let (_root, model, dimension) =
-            resolved_model_with_dimension("board_annotations_delete");
+        let (_root, model, dimension) = resolved_model_with_dimension("board_annotations_delete");
         let stored = serde_json::to_value(&dimension).unwrap();
 
-        let prepared = build_delete_board_dimension(
-            &model,
-            test_provenance(),
-            dimension.uuid,
-            stored.clone(),
-        )
-        .expect("delete should build");
+        let prepared =
+            build_delete_board_dimension(&model, test_provenance(), dimension.uuid, stored.clone())
+                .expect("delete should build");
 
         assert_eq!(prepared.primary_object_id, Some(dimension.uuid));
         assert_eq!(

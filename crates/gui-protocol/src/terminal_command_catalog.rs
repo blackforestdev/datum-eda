@@ -67,7 +67,11 @@ fn cli_argv_template(verb: &VerbSpec) -> Vec<String> {
         match *token {
             ArgvToken::Lit(lit) => template.push(lit.to_string()),
             ArgvToken::Param(param) => {
-                let binding = if param == "path" { "project_root" } else { param };
+                let binding = if param == "path" {
+                    "project_root"
+                } else {
+                    param
+                };
                 template.push(format!("{{{binding}}}"));
             }
             ArgvToken::Flag { flag, .. } | ArgvToken::Repeated { flag, .. } => {

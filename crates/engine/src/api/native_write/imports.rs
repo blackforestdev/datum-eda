@@ -352,7 +352,8 @@ pub fn build_eagle_library_import(
 
     // Family B owns pool-library op authoring (pool-ref rule + create ops);
     // its creations carry no guards, so its batch splices verbatim.
-    let library_write = build_pool_library_write(model, provenance.clone(), Some(pool_path), specs)?;
+    let library_write =
+        build_pool_library_write(model, provenance.clone(), Some(pool_path), specs)?;
     let mut operations = library_write.batch.operations;
     let created_object_count = operations
         .iter()
@@ -697,9 +698,7 @@ mod tests {
     use crate::board::{Net, PlacedPackage, Stackup, StackupLayer, StackupLayerType, Track};
     use crate::ir::geometry::{Point, Polygon};
     use crate::pool::Unit;
-    use crate::substrate::{
-        CommitSource, ImportMapEntryStatus, ObjectRevision, ProjectResolver,
-    };
+    use crate::substrate::{CommitSource, ImportMapEntryStatus, ObjectRevision, ProjectResolver};
 
     fn test_provenance() -> WriteProvenance {
         WriteProvenance::new("unit-test", CommitSource::Test, "imports facade test")
@@ -839,9 +838,7 @@ mod tests {
                 stackup: serde_json::to_value(&board.stackup).unwrap(),
             },
             Operation::CreateImportMapShard {
-                relative_path: kicad_board_import_map_relative_path(Path::new(
-                    "source.kicad_pcb",
-                )),
+                relative_path: kicad_board_import_map_relative_path(Path::new("source.kicad_pcb")),
                 shard: serde_json::to_value(ImportMapShard {
                     schema_version: 1,
                     entries,
@@ -1005,8 +1002,8 @@ mod tests {
     #[test]
     fn kicad_footprint_import_matches_oracle_and_reused_identity_skips_creates() {
         let (_root, model, _board_id) = resolved_minimal_model("imports_footprint_oracle");
-        let footprint_source = temp_project_root("imports_footprint_fixture")
-            .join("native-import.kicad_mod");
+        let footprint_source =
+            temp_project_root("imports_footprint_fixture").join("native-import.kicad_mod");
         std::fs::write(
             &footprint_source,
             r#"(footprint "NativeImportFootprint"
@@ -1031,7 +1028,9 @@ mod tests {
             vec![entry.clone()],
         )
         .expect("footprint import should build");
-        let prepared = write.prepared.expect("footprint import should have a batch");
+        let prepared = write
+            .prepared
+            .expect("footprint import should have a batch");
 
         let mut oracle = vec![Operation::AddProjectPoolRef {
             path: "pool".to_string(),

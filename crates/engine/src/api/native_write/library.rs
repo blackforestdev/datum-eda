@@ -299,9 +299,7 @@ fn manifest_pool_refs(model: &DesignModel) -> Result<Vec<(String, u32)>, EngineE
                 .get("path")
                 .and_then(serde_json::Value::as_str)
                 .ok_or_else(|| {
-                    EngineError::Validation(
-                        "project manifest pool ref missing path".to_string(),
-                    )
+                    EngineError::Validation("project manifest pool ref missing path".to_string())
                 })?;
             let priority = pool
                 .get("priority")
@@ -634,7 +632,10 @@ mod tests {
 
     /// The exact previous-payload derivation the CLI performed pre-migration:
     /// a fresh resolve plus shard materialization by relative path.
-    fn cli_previous_payload_oracle(root: &std::path::Path, relative_path: &str) -> serde_json::Value {
+    fn cli_previous_payload_oracle(
+        root: &std::path::Path,
+        relative_path: &str,
+    ) -> serde_json::Value {
         let model = ProjectResolver::new(root)
             .resolve()
             .expect("oracle resolve should succeed");

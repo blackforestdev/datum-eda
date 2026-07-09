@@ -181,8 +181,7 @@ mod tests {
     use crate::ir::geometry::Point;
     use crate::text::{
         FAMILY_IBM_PLEX_SANS_CONDENSED, FAMILY_NEWSTROKE, TextFamilySource, TextHAlign,
-        TextRenderIntent,
-        TextStyleId, TextVAlign,
+        TextRenderIntent, TextStyleId, TextVAlign,
     };
     use uuid::Uuid;
 

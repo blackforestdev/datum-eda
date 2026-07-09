@@ -67,8 +67,7 @@ fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
         return "default";
     }
     if param.name == "policy" {
-        return if verb_id == "datum.route.apply" || verb_id == "datum.route.export_path_proposal"
-        {
+        return if verb_id == "datum.route.apply" || verb_id == "datum.route.export_path_proposal" {
             "plain"
         } else {
             "strict_identical"
@@ -94,7 +93,9 @@ fn param_spec<'a>(params: &'a [ParamSpec], name: &str) -> &'a ParamSpec {
 fn render_token(verb_id: &str, token: &ArgvToken, params: &[ParamSpec], argv: &mut Vec<String>) {
     match *token {
         ArgvToken::Lit(lit) => argv.push(lit.to_string()),
-        ArgvToken::Param(name) => argv.push(dummy_value(verb_id, param_spec(params, name)).to_string()),
+        ArgvToken::Param(name) => {
+            argv.push(dummy_value(verb_id, param_spec(params, name)).to_string())
+        }
         ArgvToken::Flag { flag, param } => {
             argv.push(flag.to_string());
             argv.push(dummy_value(verb_id, param_spec(params, param)).to_string());

@@ -33,11 +33,7 @@ pub struct WriteProvenance {
 }
 
 impl WriteProvenance {
-    pub fn new(
-        actor: impl Into<String>,
-        source: CommitSource,
-        reason: impl Into<String>,
-    ) -> Self {
+    pub fn new(actor: impl Into<String>, source: CommitSource, reason: impl Into<String>) -> Self {
         Self {
             actor: actor.into(),
             source,

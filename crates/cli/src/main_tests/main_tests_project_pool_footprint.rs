@@ -10,10 +10,8 @@ pub(super) const IPC_FOOTPRINT_ID: Uuid = uuid::uuid!("77777777-7777-7777-7777-7
 pub(super) const IPC_PADSTACK_ID: Uuid = uuid::uuid!("88888888-8888-8888-8888-888888888888");
 pub(super) const IPC_PAD_A_ID: Uuid = uuid::uuid!("99999999-9999-9999-9999-999999999999");
 pub(super) const IPC_PAD_B_ID: Uuid = uuid::uuid!("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-pub(super) const IPC_SOIC_FOOTPRINT_ID: Uuid =
-    uuid::uuid!("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
-pub(super) const IPC_SOIC_PADSTACK_ID: Uuid =
-    uuid::uuid!("cccccccc-cccc-cccc-cccc-cccccccccccc");
+pub(super) const IPC_SOIC_FOOTPRINT_ID: Uuid = uuid::uuid!("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+pub(super) const IPC_SOIC_PADSTACK_ID: Uuid = uuid::uuid!("cccccccc-cccc-cccc-cccc-cccccccccccc");
 pub(super) const IPC_SOIC_PAD_IDS: [Uuid; 8] = [
     uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000001"),
     uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000002"),

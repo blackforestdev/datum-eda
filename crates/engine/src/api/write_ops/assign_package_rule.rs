@@ -239,12 +239,13 @@ impl Engine {
         net.class = target_class_uuid;
         let after_net = net.clone();
 
-        self.undo_stack.push(ImportedSessionUndoRecord::SetNetClass {
-            before_net: before_net.clone(),
-            after_net: after_net.clone(),
-            previous_class: previous_class.clone(),
-            current_class: current_class.clone(),
-        });
+        self.undo_stack
+            .push(ImportedSessionUndoRecord::SetNetClass {
+                before_net: before_net.clone(),
+                after_net: after_net.clone(),
+                previous_class: previous_class.clone(),
+                current_class: current_class.clone(),
+            });
         self.redo_stack.clear();
         self.undo_depth = self.undo_stack.len();
         self.redo_depth = 0;
@@ -326,10 +327,11 @@ impl Engine {
                 .then_with(|| a.uuid.cmp(&b.uuid))
         });
 
-        self.undo_stack.push(ImportedSessionUndoRecord::SetDesignRule {
-            previous: previous.clone(),
-            current: rule.clone(),
-        });
+        self.undo_stack
+            .push(ImportedSessionUndoRecord::SetDesignRule {
+                previous: previous.clone(),
+                current: rule.clone(),
+            });
         self.redo_stack.clear();
         self.undo_depth = self.undo_stack.len();
         self.redo_depth = 0;

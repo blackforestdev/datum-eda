@@ -240,14 +240,16 @@ pub(crate) fn build_plus_one_gap_route_proposal_actions(
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_authored_copper_plus_one_gap(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_authored_copper_plus_one_gap(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic plus-one-gap path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -264,9 +266,7 @@ pub(crate) fn build_plus_one_gap_route_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let gap_steps = path
@@ -349,9 +349,7 @@ pub(crate) fn build_route_path_candidate_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic single-layer path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -368,9 +366,7 @@ pub(crate) fn build_route_path_candidate_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     if path.points.len() < 2 {
@@ -450,9 +446,7 @@ pub(crate) fn build_route_path_candidate_orthogonal_dogleg_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal dogleg path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -546,14 +540,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_two_bend_proposal_actions(
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_two_bend(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_two_bend(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal two-bend path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -652,9 +648,7 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -748,14 +742,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_via_proposal_actions(
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -894,14 +890,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_two_via_proposal_actio
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_two_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_two_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph two-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1042,14 +1040,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_three_via_proposal_act
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_three_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_three_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph three-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
     let preflight = board
@@ -1188,14 +1188,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_four_via_proposal_acti
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_four_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_four_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph four-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
     let preflight = board
@@ -1339,14 +1341,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_five_via_proposal_acti
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_five_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_five_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph five-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
     let preflight = board
@@ -1491,14 +1495,16 @@ pub(crate) fn build_route_path_candidate_orthogonal_graph_six_via_proposal_actio
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_orthogonal_graph_six_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_orthogonal_graph_six_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic orthogonal graph six-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
     let preflight = board
@@ -1649,9 +1655,7 @@ pub(crate) fn build_route_path_candidate_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic single-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1668,9 +1672,7 @@ pub(crate) fn build_route_path_candidate_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let selected_path_segment_count = path.segments.len();
@@ -1754,9 +1756,7 @@ pub(crate) fn build_route_path_candidate_two_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic two-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1773,9 +1773,7 @@ pub(crate) fn build_route_path_candidate_two_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected two-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid];
@@ -1807,9 +1805,7 @@ pub(crate) fn build_route_path_candidate_three_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic three-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1825,9 +1821,7 @@ pub(crate) fn build_route_path_candidate_three_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected three-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid, path.via_c_uuid];
@@ -1859,9 +1853,7 @@ pub(crate) fn build_route_path_candidate_four_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic four-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1877,9 +1869,7 @@ pub(crate) fn build_route_path_candidate_four_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected four-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let reused_via_uuids = vec![
@@ -1916,9 +1906,7 @@ pub(crate) fn build_route_path_candidate_five_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic five-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1934,9 +1922,7 @@ pub(crate) fn build_route_path_candidate_five_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected five-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let reused_via_uuids = vec![
@@ -1974,9 +1960,7 @@ pub(crate) fn build_route_path_candidate_six_via_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic six-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -1992,9 +1976,7 @@ pub(crate) fn build_route_path_candidate_six_via_proposal_actions(
     let path = report.path.ok_or_else(|| {
         format!(
             "route proposal requires selected six-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         )
     })?;
     let reused_via_uuids = vec![
@@ -2033,9 +2015,7 @@ pub(crate) fn build_route_path_candidate_authored_via_chain_proposal_actions(
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic authored via chain path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2084,14 +2064,16 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_zone_aware_propos
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_authored_copper_graph_zone_aware(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_authored_copper_graph_zone_aware(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic zone-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2182,14 +2164,16 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_zone_obstacle_awa
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_authored_copper_graph_zone_obstacle_aware(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_authored_copper_graph_zone_obstacle_aware(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2282,14 +2266,16 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_zone_obstacle_awa
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic topology-aware zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2385,9 +2371,7 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_zone_obstacle_awa
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic layer-balance-aware topology-aware zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2478,14 +2462,16 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_obstacle_aware_pr
     to_anchor_pad_uuid: Uuid,
 ) -> Result<Vec<RouteProposalAction>, String> {
     let report = board
-        .route_path_candidate_authored_copper_graph_obstacle_aware(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
+        .route_path_candidate_authored_copper_graph_obstacle_aware(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )
         .map_err(|err| err.to_string())?;
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid
         ));
     }
 
@@ -2587,10 +2573,7 @@ pub(crate) fn build_route_path_candidate_authored_copper_graph_policy_proposal_a
     if report.status != RoutePathCandidateStatus::DeterministicPathFound {
         return Err(format!(
             "route proposal requires deterministic authored-copper graph path for net {} between {} and {} under policy {:?}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            policy
+            net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid, policy
         ));
     }
 
@@ -2720,9 +2703,7 @@ pub(crate) fn route_path_candidate_authored_copper_graph_policy_from_reason(
             Some(RoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware)
         }
         ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE => {
-            Some(
-                RoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
-            )
+            Some(RoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware)
         }
         _ => None,
     }

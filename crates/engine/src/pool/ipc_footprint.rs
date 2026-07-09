@@ -290,8 +290,8 @@ pub fn generate_ipc7351b_soic(spec: IpcSoicSpec) -> Result<GeneratedIpcFootprint
     }
 
     let row_count = spec.pin_count / 2;
-    let row_x = (spec.lead_span_nm / 2) - (spec.terminal_length_nm / 2)
-        + ((j.toe_nm - j.heel_nm) / 2);
+    let row_x =
+        (spec.lead_span_nm / 2) - (spec.terminal_length_nm / 2) + ((j.toe_nm - j.heel_nm) / 2);
     if row_x <= 0 {
         return Err("generated IPC SOIC row center must be positive".to_string());
     }
@@ -350,10 +350,10 @@ pub fn generate_ipc7351b_soic(spec: IpcSoicSpec) -> Result<GeneratedIpcFootprint
 
     let row_outer_x = row_x + (pad_length_nm / 2);
     let row_outer_y = first_y + (pad_width_nm / 2);
-    let courtyard_x = row_outer_x.max(spec.body_width_nm / 2)
-        + spec.density_level.courtyard_excess_nm();
-    let courtyard_y = row_outer_y.max(spec.body_length_nm / 2)
-        + spec.density_level.courtyard_excess_nm();
+    let courtyard_x =
+        row_outer_x.max(spec.body_width_nm / 2) + spec.density_level.courtyard_excess_nm();
+    let courtyard_y =
+        row_outer_y.max(spec.body_length_nm / 2) + spec.density_level.courtyard_excess_nm();
 
     let basis = IpcFootprintBasis {
         family: IPC_7351_FAMILY.to_string(),

@@ -2,10 +2,10 @@ use super::*;
 use eda_engine::api::native_write::schematic_connectivity::{
     build_create_schematic_bus, build_create_schematic_bus_entry, build_create_schematic_label,
     build_create_schematic_port, build_create_schematic_wire, build_delete_schematic_bus,
-    build_delete_schematic_bus_entry, build_delete_schematic_junction, build_delete_schematic_label,
-    build_delete_schematic_noconnect, build_delete_schematic_port, build_delete_schematic_wire,
-    build_place_schematic_marker, build_set_schematic_bus, build_set_schematic_label,
-    build_set_schematic_port,
+    build_delete_schematic_bus_entry, build_delete_schematic_junction,
+    build_delete_schematic_label, build_delete_schematic_noconnect, build_delete_schematic_port,
+    build_delete_schematic_wire, build_place_schematic_marker, build_set_schematic_bus,
+    build_set_schematic_label, build_set_schematic_port,
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::error::EngineError;
