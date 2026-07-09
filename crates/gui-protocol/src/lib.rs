@@ -664,8 +664,6 @@ pub struct EditorCommandStatus {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DockTab {
     Terminal,
-    Assistant,
-    Outputs,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

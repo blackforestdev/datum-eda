@@ -279,9 +279,9 @@ fn terminal_dock_surfaces_recent_activity_spans() {
 }
 
 #[test]
-fn outputs_dock_surfaces_standards_basis_for_process_aperture_findings() {
+fn terminal_dock_does_not_render_output_lane_findings() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
-    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 300;
     state.checks = datum_gui_protocol::check_run_review_state_from_json(
         r#"{
@@ -318,10 +318,10 @@ fn outputs_dock_surfaces_standards_basis_for_process_aperture_findings() {
     );
 
     assert!(
-        prepared
+        !prepared
             .text_runs
             .iter()
             .any(|run| run.text.contains("BASIS DATUM.PROCESS_APERTURE")),
-        "standards/process-aperture findings should render their standards basis"
+        "Phase 1 terminal dock must not render the retired Output lane"
     );
 }

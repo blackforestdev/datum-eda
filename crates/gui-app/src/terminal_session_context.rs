@@ -69,7 +69,5 @@ pub(super) fn workspace_tool_name(tool: WorkspaceTool) -> &'static str {
 pub(super) fn dock_tab_name(tab: DockTab) -> &'static str {
     match tab {
         DockTab::Terminal => "terminal",
-        DockTab::Assistant => "agents",
-        DockTab::Outputs => "outputs",
     }
 }

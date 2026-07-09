@@ -226,7 +226,7 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
 }
 
 #[test]
-fn agent_entry_is_launcher_not_active_terminal_peer() {
+fn dock_exposes_terminal_tab_only() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
@@ -240,31 +240,18 @@ fn agent_entry_is_launcher_not_active_terminal_peer() {
         &retained,
     );
 
-    assert!(
-        prepared
-            .hit_regions
-            .iter()
-            .all(|region| !matches!(region.target, HitTarget::AssistantTab)),
-        "Phase 1 dock must not expose the agent launcher"
-    );
-
     let terminal_label = prepared
         .text_runs
         .iter()
         .find(|run| run.text == "TERMINAL")
         .expect("TERMINAL tab label");
-    let output_label = prepared
-        .text_runs
-        .iter()
-        .find(|run| run.text == "OUTPUT")
-        .expect("OUTPUT tab label");
     assert_eq!(
         terminal_label.color, TEXT_PRIMARY,
         "TERMINAL should render as the active command lane"
     );
-    assert_eq!(
-        output_label.color, TEXT_SECONDARY,
-        "OUTPUT should render as an inactive read-only dock"
+    assert!(
+        !prepared.text_runs.iter().any(|run| run.text == "OUTPUT"),
+        "Phase 1 dock must not render an Output tab"
     );
 }
 

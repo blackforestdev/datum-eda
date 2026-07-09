@@ -39,7 +39,6 @@ mod retained_scene_cache_key;
 mod runtime_terminal_context;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
-mod terminal_agent_launcher;
 mod terminal_check_context;
 mod terminal_context;
 mod terminal_context_contract;
@@ -574,7 +573,6 @@ impl ApplicationHandler for App {
                                 ui.terminal.input.clear();
                                 ui.terminal.cursor = 0;
                             }
-                            Some(DockTab::Assistant | DockTab::Outputs) => {}
                             None => {}
                         }
                         runtime.invalidate_frame();
@@ -1868,7 +1866,7 @@ impl Runtime {
         }
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => self.modifiers.shift_key(),
-            Some(DockTab::Assistant | DockTab::Outputs) | None => false,
+            None => false,
         }
     }
 
@@ -1891,7 +1889,6 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
             DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
-            DockTab::Assistant | DockTab::Outputs => return false,
         };
         let byte_pos = char_to_byte_pos(input, *cursor);
         input.insert_str(byte_pos, text);
@@ -2051,7 +2048,6 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
             DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
-            DockTab::Assistant | DockTab::Outputs => return false,
         };
         if *cursor > 0 {
             let byte_pos = char_to_byte_pos(input, *cursor - 1);
@@ -2074,7 +2070,6 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
             DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
-            DockTab::Assistant | DockTab::Outputs => return false,
         };
         let char_count = input.chars().count();
         let new_pos = (*cursor as i32 + delta).clamp(0, char_count as i32) as usize;
@@ -2096,7 +2091,6 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
             DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
-            DockTab::Assistant | DockTab::Outputs => return false,
         };
         let target = if home { 0 } else { input.chars().count() };
         if target != *cursor {
@@ -2110,8 +2104,6 @@ impl Runtime {
     fn complete_dock_input(&mut self) -> bool {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => false,
-            Some(DockTab::Outputs) => false,
-            Some(DockTab::Assistant) => false,
             None => false,
         }
     }
@@ -2119,8 +2111,6 @@ impl Runtime {
     fn submit_dock_input(&mut self) -> bool {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => self.submit_terminal_rename_input(),
-            Some(DockTab::Outputs) => false,
-            Some(DockTab::Assistant) => self.open_terminal_agent_launcher(),
             None => false,
         }
     }
@@ -2683,8 +2673,6 @@ impl Runtime {
             }
             HitTarget::TerminalSessionDetachActive => self.detach_active_terminal_session(),
             HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
-            HitTarget::AssistantTab => self.open_terminal_agent_launcher(),
-            HitTarget::OutputsTab => self.set_active_dock(DockTab::Outputs),
             HitTarget::TerminalActivitySummary(summary) => {
                 self.set_active_dock(DockTab::Terminal);
                 self.push_terminal_line(format!("selected terminal activity span: {summary}"));

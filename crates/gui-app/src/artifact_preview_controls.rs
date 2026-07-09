@@ -38,18 +38,6 @@ impl Runtime {
         Some(handled)
     }
 
-    pub(super) fn handle_outputs_scroll(&mut self, scroll_lines: f32) -> bool {
-        if self.workspace().ui.active_dock_tab != Some(DockTab::Outputs) {
-            return false;
-        }
-        let command = if scroll_lines > 0.0 {
-            SessionCommand::ZoomArtifactPreviewIn
-        } else {
-            SessionCommand::ZoomArtifactPreviewOut
-        };
-        self.dispatch_session_command(command)
-    }
-
     pub(super) fn handle_artifact_preview_pan_drag(
         &mut self,
         prepared: &PreparedScene,
@@ -87,15 +75,6 @@ impl Runtime {
                     ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
                 }
             }
-            DockTab::Assistant => {
-                if scroll_lines > 0.0 {
-                    let max = ui.terminal.lines.len();
-                    ui.terminal.scroll_offset = (ui.terminal.scroll_offset + delta).min(max);
-                } else {
-                    ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
-                }
-            }
-            DockTab::Outputs => return self.handle_outputs_scroll(scroll_lines),
         }
         self.invalidate_frame();
         true

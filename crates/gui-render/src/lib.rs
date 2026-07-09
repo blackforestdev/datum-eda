@@ -23,14 +23,6 @@ pub mod design_artboards;
 mod design_tokens;
 mod inspector_check_finding;
 mod menu_chrome;
-mod outputs_artifact_runs;
-mod outputs_lane;
-mod outputs_lane_layout;
-mod outputs_lane_sections;
-mod outputs_preview;
-mod outputs_preview_controls;
-mod outputs_proposals;
-mod outputs_run_commands;
 mod side_panels;
 mod source_shard_panel;
 #[cfg(feature = "visual")]
@@ -410,8 +402,6 @@ pub enum HitTarget {
     TerminalSessionRestartActive,
     TerminalSessionDetachActive,
     TerminalSessionCloseActive,
-    AssistantTab,
-    OutputsTab,
     TerminalActivitySummary(String),
     CheckFinding(String),
     ProductionArtifact(String),
@@ -7119,10 +7109,6 @@ fn key_value_row_height() -> f32 {
     text_row_height_for_size(12.5)
 }
 
-fn output_row_height() -> f32 {
-    text_row_height_for_size(10.5)
-}
-
 #[allow(dead_code)]
 fn sample_artifact_preview_primitives()
 -> Vec<datum_gui_protocol::ProductionArtifactPreviewPrimitive> {
@@ -7709,9 +7695,9 @@ mod tests {
     }
 
     #[test]
-    fn outputs_dock_surfaces_artifact_file_summaries() {
+    fn terminal_dock_does_not_surface_artifact_file_summaries() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
-        state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
+        state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
         state.ui.dock_height_px = 560;
         state.production = datum_gui_protocol::ProductionStatus {
             output_job_count: 1,
@@ -7831,73 +7817,17 @@ mod tests {
             .iter()
             .map(|run| run.text.as_str())
             .collect::<Vec<_>>();
-        assert!(rendered_text.contains(&"OUTPUT JOBS"));
-        assert_rendered_text_contains(&rendered_text, "ARTIFACTS datum-eda artifact list");
-        assert_rendered_text_contains(&rendered_text, "FOCUS ART GERBER_SET");
-        assert_rendered_text_contains(&rendered_text, "SHOW datum-eda artifact show");
-        assert_rendered_text_contains(&rendered_text, "VALIDATE datum-eda artifact valid");
-        assert_rendered_text_contains(&rendered_text, "FILES datum-eda artifact files");
-        assert_rendered_text_contains(&rendered_text, "FOCUS FILE fabrication/board-F_Cu.gbr");
-        assert_rendered_text_contains(&rendered_text, "GERBER VIEW");
-        assert_rendered_text_contains(&rendered_text, "PREVIEW datum-eda artifact previ");
-        assert_rendered_text_contains(&rendered_text, "GERBER COPPER / fabrication/board-F_Cu.gbr");
-        assert_rendered_text_contains(&rendered_text, "PREVIEW GERBER_RS274X HASH OK PRIM 4 GEO 4");
-        assert_rendered_text_contains(&rendered_text, "CAM VIEWPORT 100% PRIM 2");
-        assert_rendered_text_contains(&rendered_text, "RESET");
-        assert_rendered_text_contains(&rendered_text, "VIEW PROOF GERBER_COPPER_LAYER");
-        assert!(rendered_text.iter().any(|text| text.contains("PANELS 1")));
-        assert_rendered_text_contains(&rendered_text, "PANEL RELEASE PANEL");
-        assert_rendered_text_contains(&rendered_text, "PLAN RELEASE FABRICATION");
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionArtifact(id)
-                if id == "00000000-0000-0000-0000-00000000art1"
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionArtifactFile(path)
-                if path == "fabrication/board-F_Cu.gbr"
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionTerminalCommand(handoff)
-                if handoff.command_id == "datum.artifact.list"
-                    && handoff.command == "datum-eda artifact list \"$DATUM_PROJECT_ROOT\""
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionTerminalCommand(handoff)
-                if handoff.command_id == "datum.artifact.show"
-                    && handoff.command
-                        == "datum-eda artifact show \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionTerminalCommand(handoff)
-                if handoff.command_id == "datum.artifact.validate"
-                    && handoff.command
-                        == "datum-eda artifact validate \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionTerminalCommand(handoff)
-                if handoff.command_id == "datum.artifact.files"
-                    && handoff.command
-                        == "datum-eda artifact files \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
-        )));
-        assert!(prepared.hit_regions.iter().any(|region| matches!(
-            &region.target,
-            HitTarget::ProductionTerminalCommand(handoff)
-                if handoff.command_id == "datum.artifact.preview"
-                    && handoff.command
-                        == "datum-eda artifact preview \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1 --file fabrication/board-F_Cu.gbr"
-        )));
-        assert!(prepared_has_artifact_preview_controls(&prepared));
-        assert!(artifact_preview_adds_panel_vertices(
-            &prepared,
-            state.clone()
-        ));
-        assert!(outputs_dock_renders_csv_preview_table(state));
+        assert!(
+            !rendered_text.contains(&"OUTPUT JOBS"),
+            "Phase 1 terminal dock must not render Output-lane summaries"
+        );
+        assert!(
+            !prepared
+                .hit_regions
+                .iter()
+                .any(|region| matches!(region.target, HitTarget::ProductionArtifact(_))),
+            "Phase 1 terminal dock must not expose Output-lane artifact hit regions"
+        );
     }
 
     #[test]
@@ -8389,13 +8319,6 @@ mod tests {
             .hit_test(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5)
             .cloned()
             .expect("hit target should exist at rect center")
-    }
-
-    fn assert_rendered_text_contains(rendered_text: &[&str], needle: &str) {
-        assert!(
-            rendered_text.iter().any(|text| text.contains(needle)),
-            "expected rendered text containing {needle:?}; got {rendered_text:?}"
-        );
     }
 
     #[test]
