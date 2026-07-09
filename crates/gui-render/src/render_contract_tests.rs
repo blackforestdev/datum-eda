@@ -249,7 +249,7 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
         .map(|run| run.text.as_str())
         .collect::<Vec<_>>();
 
-    assert!(labels.contains(&"Board / Layout"));
+    assert!(labels.contains(&"Board \u{00B7} Layout"));
     for tool in ["S", "M", "R", "V", "Z"] {
         assert!(labels.contains(&tool), "missing board-pane tool {tool}");
     }

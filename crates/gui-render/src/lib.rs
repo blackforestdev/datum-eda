@@ -214,7 +214,9 @@ impl ShellLayout {
     }
 
     pub fn scene_viewport(&self) -> RectPx {
-        inset_rect(self.viewport, 16.0, 76.0, 16.0, 16.0)
+        // Top inset clears the 31px pane header plus a small gutter; the canvas
+        // sits just beneath the header rather than floating far below it.
+        inset_rect(self.viewport, 16.0, 42.0, 16.0, 16.0)
     }
 
     fn scale_by(self, scale: f32) -> Self {
@@ -620,11 +622,14 @@ const PANEL_BG: [f32; 3] = design_tokens::chrome::SURFACE_01;
 const PANEL_CARD_BG: [f32; 3] = design_tokens::chrome::SURFACE_01;
 const PANEL_CARD_BORDER: [f32; 3] = design_tokens::chrome::BORDER_SUBTLE;
 const VIEWPORT_BG: [f32; 3] = design_tokens::chrome::CANVAS;
+// Retained token: the board pane no longer draws an outer viewport frame (the
+// only outline is the inner board edge), but keep the binding documented.
+#[allow(dead_code)]
 const VIEWPORT_FRAME: [f32; 3] = design_tokens::chrome::BORDER_STRONG;
 const BOARD_OUTER_FIELD: [f32; 3] = design_tokens::chrome::CANVAS;
-const BOARD_INNER_FIELD: [f32; 3] = design_tokens::chrome::SURFACE_01;
-const BOARD_GRID_MAJOR: [f32; 3] = design_tokens::chrome::BORDER_STRONG;
-const BOARD_GRID_MINOR: [f32; 3] = design_tokens::chrome::BORDER_SUBTLE;
+const BOARD_INNER_FIELD: [f32; 3] = design_tokens::content::BOARD_SUBSTRATE;
+const BOARD_GRID_MAJOR: [f32; 3] = design_tokens::content::BOARD_GRID_MAJOR;
+const BOARD_GRID_MINOR: [f32; 3] = design_tokens::content::BOARD_GRID_MINOR;
 const BOARD_EDGE: [f32; 3] = design_tokens::content::EDGE;
 const TEXT_PRIMARY: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
 const TEXT_SECONDARY: [f32; 3] = design_tokens::chrome::TEXT_SECONDARY;
@@ -1127,14 +1132,37 @@ fn render_board_pane_header(
         width: layout.viewport.width,
         height: 31.0,
     };
-    panel_quads.push(Quad::from_rect(header, APP_BG));
-    push_rect_border(panel_quads, header, PANEL_CARD_BORDER, 1.0);
+    // Focused pane: lightened header background (~#16181f) + a bottom hairline
+    // only (no boxed outline).
+    const PANE_HEADER_FOCUS: [f32; 3] = [0x16 as f32 / 255.0, 0x18 as f32 / 255.0, 0x1F as f32 / 255.0];
+    panel_quads.push(Quad::from_rect(header, PANE_HEADER_FOCUS));
+    panel_quads.push(Quad::from_rect(
+        RectPx {
+            x: header.x,
+            y: header.y + header.height - 1.0,
+            width: header.width,
+            height: 1.0,
+        },
+        PANEL_CARD_BORDER,
+    ));
+    // Small accent-tinted board glyph, then the pane title with a middot
+    // separator ("Board · Layout").
+    let glyph = RectPx {
+        x: header.x + design_tokens::spacing::SP_04,
+        y: header.y + 11.0,
+        width: 11.0,
+        height: 9.0,
+    };
+    panel_quads.push(Quad::from_rect(glyph, REVIEW_ROW_ACTIVE_BG));
+    push_rect_border(panel_quads, glyph, TEXT_ACCENT, 1.0);
+    let title = "Board \u{00B7} Layout";
+    let title_x = glyph.x + glyph.width + design_tokens::spacing::SP_03;
     draw_text(
-        "Board / Layout",
-        header.x + design_tokens::spacing::SP_04,
+        title,
+        title_x,
         header.y + design_tokens::spacing::SP_03,
         design_tokens::typography::DATA_SIZE,
-        TEXT_SECONDARY,
+        TEXT_PRIMARY,
         TextFace::Mono,
         text_runs,
     );
@@ -1145,14 +1173,17 @@ fn render_board_pane_header(
         ("V", false),
         ("Z", false),
     ];
-    // Start the tool cluster after the measured pane-title width so the title
-    // never overlaps the first tool button.
+    // Tool cluster after the measured pane-title width. Buttons render on the
+    // interactive SURFACE_02, active gets the accent tint + accent border.
+    // (Letter placeholders are an accepted Phase-1 interim: the chrome path
+    // only emits axis-aligned quads, so the five vector tool icons and true
+    // 5px corner rounding are a tracked fidelity gap.)
     let title_w = estimated_text_run_width_px(
-        "Board / Layout",
+        title,
         design_tokens::typography::DATA_SIZE,
         TextFace::Mono,
     ) - 16.0;
-    let mut x = header.x + design_tokens::spacing::SP_04 + title_w + design_tokens::spacing::SP_05;
+    let mut x = title_x + title_w + design_tokens::spacing::SP_04;
     for (label, active) in tools {
         let rect = RectPx {
             x,
@@ -1165,7 +1196,7 @@ fn render_board_pane_header(
             if active {
                 REVIEW_ROW_ACTIVE_BG
             } else {
-                PANEL_BG
+                design_tokens::chrome::SURFACE_02
             },
         ));
         push_rect_border(
@@ -1193,6 +1224,25 @@ fn render_board_pane_header(
         );
         x += 27.0;
     }
+    // Right-aligned accent focus dot (this pane owns the tools + inspector).
+    let dot = RectPx {
+        x: header.x + header.width - design_tokens::spacing::SP_04 - 7.0,
+        y: header.y + (header.height - 7.0) * 0.5,
+        width: 7.0,
+        height: 7.0,
+    };
+    let dot_points = ellipse_points(
+        (dot.x + dot.width * 0.5, dot.y + dot.height * 0.5),
+        dot.width,
+        dot.height,
+        0.0,
+        20,
+    );
+    push_convex_polygon_fill(panel_quads, &dot_points, TEXT_ACCENT);
+    // Focused-pane accent frame: a ~1.5px inset ACCENT border around the whole
+    // board pane (header + canvas).
+    let pane_frame = inset_rect(layout.viewport, 1.0, 1.0, 1.0, 1.0);
+    push_rect_border(panel_quads, pane_frame, TEXT_ACCENT, 1.5);
 }
 
 fn render_scene(
@@ -1229,56 +1279,11 @@ fn render_scene(
     // (Removed the "F FIT / REVIEW NAV / CLICK SELECT / SCROLL ZOOM / ESC CLEAR"
     // keyboard-hint overlay that overflowed across the canvas top — not part of the
     // designed board pane; shortcuts belong in a proper help surface, not a HUD.)
-    // Status bar at bottom of viewport
-    let status_y = layout.viewport.y + layout.viewport.height - 20.0;
-    let zoom_pct = (camera.zoom * 100.0).round() as i32;
-    let tool_label = workspace_tool_label(state.tool);
-    let sel_label = match &state.selection {
-        SelectionTarget::None => "NONE".to_string(),
-        SelectionTarget::ReviewAction(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
-        SelectionTarget::AuthoredObject(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
-        SelectionTarget::CheckFinding(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
-    };
-    let status_bg = RectPx {
-        x: layout.viewport.x,
-        y: status_y - 2.0,
-        width: layout.viewport.width,
-        height: 22.0,
-    };
-    viewport_overlay_quads.push(Quad::from_rect(status_bg, PANEL_BG));
-    let status_text = format!(
-        "TOOL {}  |  ZOOM {}%  |  SEL {}",
-        tool_label, zoom_pct, sel_label
-    );
-    draw_text(
-        &status_text,
-        layout.viewport.x + 16.0,
-        status_y,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    if let Some(status) = &state.last_command_status {
-        let is_error = status.detail.contains("failed") || status.detail.contains("error");
-        let color = if is_error {
-            design_tokens::chrome::STATUS_ERROR
-        } else {
-            design_tokens::chrome::STATUS_SUCCESS
-        };
-        draw_text(
-            &truncate_text(
-                &format!("{}  {}", status.action.to_uppercase(), status.detail),
-                40,
-            ),
-            layout.viewport.x + layout.viewport.width - 340.0,
-            status_y,
-            10.5,
-            color,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
+    // (Removed the in-canvas TOOL/ZOOM/SEL status strip and the command-status
+    // overlay that painted a PANEL_BG band across the bottom of the canvas.
+    // These readouts belong in the global status bar (see M7), not floating on
+    // the board field — the canvas stays a clean board surface.)
+    let _ = layout;
 }
 
 
@@ -1292,15 +1297,62 @@ fn push_scene_underlay(
         scene_viewport,
         board_surface_color(BoardSurfaceRole::OuterField),
     ));
-    push_rect_border(out, scene_viewport, VIEWPORT_FRAME, 1.0);
+    // No outer viewport frame — the only board outline is the inner board edge.
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
     out.push(Quad::from_rect(
         board_field,
         board_surface_color(BoardSurfaceRole::InnerField),
     ));
-    push_rect_border(out, board_field, design_tokens::content::EDGE, 1.0);
+    // Rounded, slightly-translucent EDGE board edge (radius ~6) instead of a
+    // sharp 4-sided box.
+    let edge_color = mix_color(
+        design_tokens::content::EDGE,
+        board_surface_color(BoardSurfaceRole::InnerField),
+        0.18,
+    );
+    let edge_points = rounded_rect_points(
+        (
+            board_field.x + board_field.width * 0.5,
+            board_field.y + board_field.height * 0.5,
+        ),
+        board_field.width,
+        board_field.height,
+        0.0,
+        6.0,
+    );
+    stroke_closed_screen_polyline(out, &edge_points, edge_color, 1.4);
     push_scene_grid(out, &projection);
+}
+
+/// Stroke a closed polyline given directly in screen-space points (screen-space
+/// analogue of `push_polyline_segments`), used for the rounded board edge.
+fn stroke_closed_screen_polyline(
+    out: &mut Vec<Quad>,
+    points: &[(f32, f32)],
+    color: [f32; 3],
+    thickness_px: f32,
+) {
+    let n = points.len();
+    if n < 2 {
+        return;
+    }
+    for i in 0..n {
+        let a = points[i];
+        let b = points[(i + 1) % n];
+        let dx = b.0 - a.0;
+        let dy = b.1 - a.1;
+        let len = (dx * dx + dy * dy).sqrt().max(0.001);
+        let nx = -dy / len * thickness_px * 0.5;
+        let ny = dx / len * thickness_px * 0.5;
+        let quad = [
+            (a.0 + nx, a.1 + ny),
+            (b.0 + nx, b.1 + ny),
+            (b.0 - nx, b.1 - ny),
+            (a.0 - nx, a.1 - ny),
+        ];
+        push_projected_quad(out, &quad, color);
+    }
 }
 
 fn authored_visible(state: &ReviewWorkspaceState) -> bool {

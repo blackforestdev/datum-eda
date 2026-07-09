@@ -54,6 +54,13 @@ pub(crate) mod content {
     pub(crate) const PAD: Rgb = srgb(0xC9, 0x97, 0x4A);
     pub(crate) const VIA: Rgb = srgb(0xC7, 0x7B, 0x3C);
     pub(crate) const RATSNEST: Rgb = srgb(0xAE, 0xB4, 0xBB);
+    // Board substrate sits one step below chrome::CANVAS and SURFACE_01 — the
+    // dark field the copper/silk/edge sit on. The grid is a whisper near
+    // #171A20, far below chrome BORDER_STRONG/SUBTLE: major slightly stronger,
+    // minor barely visible.
+    pub(crate) const BOARD_SUBSTRATE: Rgb = srgb(0x0E, 0x10, 0x13);
+    pub(crate) const BOARD_GRID_MAJOR: Rgb = srgb(0x1A, 0x1D, 0x24);
+    pub(crate) const BOARD_GRID_MINOR: Rgb = srgb(0x14, 0x16, 0x1B);
     pub(crate) const DRC_ERROR: Rgb = chrome::STATUS_ERROR;
     pub(crate) const DRC_WARN: Rgb = chrome::STATUS_WARN;
     pub(crate) const EXCLUSION: Rgb = srgb(0x6B, 0x72, 0x80);

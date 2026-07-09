@@ -115,6 +115,9 @@ consistently across chrome and canvas.
 | `content.pad` | `#C9974A` | |
 | `content.via` | `#C77B3C` | |
 | `content.ratsnest` | `#AEB4BB` | per-net themeable override layer |
+| `content.board.substrate` | `#0E1013` | the dark board field, one step below `chrome.canvas`/`surface.01`; copper/silk/edge sit on it |
+| `content.board.grid.major` | `#1A1D24` | major grid line — a whisper near `#171A20`, far below chrome `border.strong` |
+| `content.board.grid.minor` | `#14161B` | minor grid line — barely visible, below the major |
 | `content.drc.error` | `#E5534B` | = `color.status.error`; **+ marker shape** (never hue alone) |
 | `content.drc.warn` | `#E0A23A` | = `color.status.warn`; + marker shape |
 | `content.exclusion` | `#6B7280` | |
