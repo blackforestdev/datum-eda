@@ -1,14 +1,17 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalStyledLine};
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BG, PANEL_CARD_BORDER, Quad, REVIEW_ROW_BADGE,
-    RectPx, ShellLayout, TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace,
-    TextRun, draw_text, push_rect_border, truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_ACCENT,
+    TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, design_tokens,
+    draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
 };
 use taffy::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
+    // Retained for the solver contract test; the seated tab is now sized to its
+    // measured label directly in render_bottom_tabs.
+    #[allow(dead_code)]
     terminal_tab: RectPx,
     handle: RectPx,
     content: RectPx,
@@ -127,30 +130,94 @@ pub(super) fn render_bottom_tabs(
 ) {
     let dock_layout = solve_bottom_dock_layout_with_taffy(layout)
         .unwrap_or_else(|| fallback_bottom_dock_layout(layout));
-    let rect = dock_layout.terminal_tab;
-    let active = matches!(state.ui.active_dock_tab, Some(DockTab::Terminal));
+    let strip = layout.bottom_strip;
+    // Single top-edge hairline on the dock strip.
     panel_quads.push(Quad::from_rect(
-        rect,
-        if active {
-            REVIEW_ROW_BADGE
-        } else {
-            PANEL_CARD_BG
+        RectPx {
+            x: strip.x,
+            y: strip.y,
+            width: strip.width,
+            height: 1.0,
         },
+        PANEL_CARD_BORDER,
     ));
-    push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
+    let active = matches!(state.ui.active_dock_tab, Some(DockTab::Terminal));
+    // Tab label is the session's own (lower/mixed-case) name, never an
+    // uppercased constant. PTY doctrine: this lane is the real terminal.
+    let label = state
+        .ui
+        .terminal
+        .title
+        .as_deref()
+        .map(|title| truncate_text(title, 16))
+        .unwrap_or_else(|| "terminal".to_string());
+    // Seated tab sized to the measured label + padding, its bottom anchored to
+    // the strip seam.
+    let label_w = estimated_text_run_width_px(&label, 12.5, TextFace::Ui) - 16.0;
+    let tab = RectPx {
+        x: strip.x + 12.0,
+        y: strip.y + 6.0,
+        width: label_w + design_tokens::spacing::SP_04 * 2.0,
+        height: (strip.height - 6.0).max(1.0),
+    };
+    if active {
+        // SURFACE_01 fill + a 2px ACCENT top edge only — a seated tab, not a box.
+        panel_quads.push(Quad::from_rect(tab, design_tokens::chrome::SURFACE_01));
+        panel_quads.push(Quad::from_rect(
+            RectPx {
+                x: tab.x,
+                y: tab.y,
+                width: tab.width,
+                height: 2.0,
+            },
+            TEXT_ACCENT,
+        ));
+    }
     draw_text(
-        "TERMINAL",
-        rect.x + 12.0,
-        rect.y + 10.0,
-        12.0,
-        if active { TEXT_PRIMARY } else { TEXT_SECONDARY },
+        &label,
+        tab.x + design_tokens::spacing::SP_04,
+        tab.y + 8.0,
+        12.5,
+        if active { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Ui,
         text_runs,
     );
     hit_regions.push(HitRegion {
         target: HitTarget::TerminalTab,
-        rect,
+        rect: tab,
     });
+    // "+" add-terminal affordance seated after the tab.
+    let plus = RectPx {
+        x: tab.x + tab.width + design_tokens::spacing::SP_03,
+        y: tab.y,
+        width: 20.0,
+        height: tab.height,
+    };
+    draw_text(
+        "+",
+        plus.x + 6.0,
+        plus.y + 7.0,
+        14.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+    hit_regions.push(HitRegion {
+        target: HitTarget::TerminalSessionNew,
+        rect: plus,
+    });
+    // Right-aligned persistent dock hint.
+    let hint = "Ctrl+Shift+T new terminal   \u{00B7}   Ctrl+K palette";
+    let hint_w = estimated_text_run_width_px(hint, 11.5, TextFace::Mono) - 16.0;
+    draw_text(
+        hint,
+        strip.x + strip.width - 12.0 - hint_w,
+        tab.y + 8.0,
+        11.5,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
 
     let Some(active_tab) = state.ui.active_dock_tab else {
         return;

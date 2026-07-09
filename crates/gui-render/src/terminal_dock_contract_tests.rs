@@ -223,14 +223,16 @@ fn dock_exposes_terminal_tab_only() {
         &retained,
     );
 
+    // The tab uses the session's own (lower/mixed-case) name, not an uppercased
+    // constant; the fixture terminal has no title, so it reads "terminal".
     let terminal_label = prepared
         .text_runs
         .iter()
-        .find(|run| run.text == "TERMINAL")
-        .expect("TERMINAL tab label");
+        .find(|run| run.text == "terminal")
+        .expect("terminal tab label");
     assert_eq!(
         terminal_label.color, TEXT_PRIMARY,
-        "TERMINAL should render as the active command lane"
+        "the active terminal lane tab should render in the active color"
     );
     assert!(
         !prepared.text_runs.iter().any(|run| run.text == "OUTPUT"),
