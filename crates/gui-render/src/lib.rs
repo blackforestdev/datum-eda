@@ -4815,14 +4815,9 @@ fn resolve_layer_family_with_scene(
 /// token. `related`/`proposal` are bounded lightenings of that base and silk
 /// comes from the token seam, so no raw hex copper values live in the render
 /// path (`docs/gui/VISUAL_LANGUAGE.md` §7; consumes `design_tokens::content`).
-fn copper_appearance_from_token(base: [f32; 3]) -> LayerAppearance {
+fn copper_appearance_from_token(base: [f32; 3], silk: [f32; 3]) -> LayerAppearance {
     let lighten = |t: f32| mix_color(base, [1.0, 1.0, 1.0], t);
-    LayerAppearance::from_copper_material(
-        base,
-        lighten(0.42),
-        lighten(0.22),
-        design_tokens::content::SILK_TOP,
-    )
+    LayerAppearance::from_copper_material(base, lighten(0.42), lighten(0.22), silk)
 }
 
 fn resolve_layer_appearance_with_scene(
@@ -4830,15 +4825,18 @@ fn resolve_layer_appearance_with_scene(
     scene_layers: &[datum_gui_protocol::SceneLayer],
 ) -> LayerAppearance {
     match resolve_layer_family_with_scene(layer_id, scene_layers) {
-        LayerFamily::TopCopper => {
-            copper_appearance_from_token(design_tokens::content::COPPER_FRONT)
-        }
-        LayerFamily::InnerCopper => {
-            copper_appearance_from_token(design_tokens::content::COPPER_IN2)
-        }
-        LayerFamily::BottomCopper => {
-            copper_appearance_from_token(design_tokens::content::COPPER_BACK)
-        }
+        LayerFamily::TopCopper => copper_appearance_from_token(
+            design_tokens::content::COPPER_FRONT,
+            design_tokens::content::SILK_TOP,
+        ),
+        LayerFamily::InnerCopper => copper_appearance_from_token(
+            design_tokens::content::COPPER_IN2,
+            design_tokens::content::SILK_TOP,
+        ),
+        LayerFamily::BottomCopper => copper_appearance_from_token(
+            design_tokens::content::COPPER_BACK,
+            design_tokens::content::SILK_BOTTOM,
+        ),
         // Bounded exception: geometry whose layer cannot be resolved to a
         // known copper family keeps deliberately divergent fallback colors so
         // unresolved-layer drift stays visible instead of masquerading as a
