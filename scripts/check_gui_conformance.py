@@ -37,11 +37,25 @@ GATES = [
             "--nocapture",
         ],
     ),
+    (
+        # The real, FAILING visual-parity gate: capture the running app at the
+        # canonical command + curated demo scene + fixed window and diff it
+        # against the owner-approved shell golden. This replaces the former
+        # HUMAN "paperwork" disposition that reported but never failed.
+        "shell visual parity (owner-approved golden)",
+        [sys.executable, "scripts/check_gui_visual_parity.py"],
+    ),
 ]
 
+# Visual parity is now an ENFORCED regression gate (shell visual parity above),
+# not an owner-eye disposition that this aggregate merely reported. The one
+# remaining human step is the OUT-OF-BAND approval of the golden itself (a human
+# judges the app-vs-prototype match once, then blesses the golden); after that,
+# drift from the approved look is a machine failure.
 HUMAN_SIGNOFF_LINES = [
-    "HUMAN rows are reviewed against docs/gui/reference/board-editor.png and committed datum-test goldens.",
-    "This gate reports HUMAN rows but does not fail on owner-eye disposition.",
+    "The shell golden (crates/gui-render/testdata/golden/shell/datum-shell.golden.png) is",
+    "owner-approved to match docs/gui/prototypes/board-editor.html; the visual-parity gate",
+    "then FAILS on any regression from that approved look (re-approve via --bless).",
 ]
 
 
@@ -50,7 +64,7 @@ def main() -> int:
         print(f"GUI-CONFORMANCE {name}: {' '.join(command)}")
         subprocess.run(command, cwd=ROOT, check=True)
     for line in HUMAN_SIGNOFF_LINES:
-        print(f"GUI-CONFORMANCE HUMAN: {line}")
+        print(f"GUI-CONFORMANCE NOTE: {line}")
     print("GUI conformance gate passed.")
     return 0
 

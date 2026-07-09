@@ -9,6 +9,11 @@ python3 scripts/check_resolver_raw_loads.py
 python3 scripts/check_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_design_tokens.py
 python3 scripts/check_gui_conformance.py
+# check_gui_conformance.py runs the composed-shell visual-parity gate
+# (scripts/check_gui_visual_parity.py) as one of its aggregate gates: it captures
+# the running app at the canonical command and fails on any regression from the
+# owner-approved shell golden. It is invoked there (not a second time here) to
+# avoid a duplicate cargo build+capture.
 python3 scripts/check_gui_icon_assets.py
 python3 scripts/check_menu_model.py
 python3 scripts/menu_model_csv.py check

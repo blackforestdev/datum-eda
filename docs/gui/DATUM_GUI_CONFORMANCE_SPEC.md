@@ -43,6 +43,31 @@ pixel-diffs the build against `board-editor.html`.** The two layers are:
   (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`) for
   cross-engine fidelity and aesthetic/IA judgment. This is where HUMAN lives.
 
+### 0.1 The composed-shell visual-parity gate (fixes the paperwork defect)
+
+Historically the *composed shell look* was every per-row **HUMAN** disposition
+in §2 and nothing else — reviewed against a reference image that existed only as
+`docs/gui/reference/board-editor.png.PENDING`, with `check_gui_conformance.py`
+merely *reporting* HUMAN rows and never failing on them. That gate enforced
+paperwork, not the visual outcome.
+
+That defect is now closed by a **real, same-engine, FAILING gate**:
+`scripts/check_gui_visual_parity.py` captures the running app at a canonical
+command (`--demo-known-good --visual-test --window-size 1680x1050
+--exit-after-screenshot`) and diffs it against a committed, owner-approved
+**shell golden** `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`
+with a small tolerance (build-vs-build, one renderer — **never** a wgpu-vs-HTML
+pixel-diff). The golden is owner-approved once to match `board-editor.html`; the
+gate then **fails** on any regression from that approved look, and is wired into
+`check_gui_conformance.py` (hence `run_drift_gates.sh`). Re-approval is an
+explicit owner action: `check_gui_visual_parity.py --bless`.
+
+**Reading the §2 HUMAN rows now:** each still names the *aesthetic/IA judgment*
+(the one-time owner call that a region matches the prototype). But the composed
+result of those judgments is no longer unenforced — it is frozen into the shell
+golden and regression-gated by §0.1. A HUMAN row is the *approval*; the shell
+golden is the *enforcement* that the approved look does not silently drift.
+
 ## 1. Disposition legend (the discipline of this pilot)
 
 Three dispositions, and only three. **Every row names a link** — a disposition
@@ -278,6 +303,12 @@ on them are non-authoritative until the owner decides.
 - Every **TO-ENFORCE** names a concrete file + assertion (§4 G1–G8; §2 rows).
 - Every **HUMAN** names the reference image (`board-editor.html`) + the committed
   golden (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`).
+- The **composed shell look** (the aggregate of the §2 HUMAN rows) is
+  regression-gated by §0.1 — the same-engine shell visual-parity gate
+  (`scripts/check_gui_visual_parity.py` vs
+  `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`), wired into
+  `check_gui_conformance.py`. Owner approval blesses the golden; the gate fails
+  on drift. Visual parity is no longer report-only paperwork.
 
 ## 7. Pilot status — the discipline generalizes (future doc-by-doc pass)
 

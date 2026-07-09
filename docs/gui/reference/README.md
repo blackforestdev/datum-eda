@@ -24,8 +24,13 @@ they are checked by different machinery:
   rendered goldens **diffed build-vs-build** (same renderer) against committed
   golden PNGs. Lives in the gates named in the conformance spec
   (`scripts/check_gui_design_tokens.py`, `crates/gui-render/src/*` layout/contract
-  tests, `crates/gui-render/src/visual_runner.rs` + the board goldens). **This
-  directory adds no machine gate.**
+  tests, `crates/gui-render/src/visual_runner.rs` + the board goldens, and the
+  **composed-shell visual-parity gate** `scripts/check_gui_visual_parity.py` vs
+  the owner-approved shell golden
+  `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`). **This
+  directory adds no machine gate** — but the shell golden gate does enforce that
+  the once-approved composed look does not silently regress (it is same-engine,
+  build-vs-build, never wgpu-vs-HTML).
 - **Human layer (this directory)** — the committed reference image
   `board-editor.png` (a faithful render of the prototype) reviewed **by eye**,
   region by region, against the build's committed chrome goldens at
