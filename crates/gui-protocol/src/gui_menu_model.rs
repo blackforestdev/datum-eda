@@ -145,4 +145,28 @@ mod tests {
         assert!(fit.is_phase_one_enabled());
         assert!(!export.is_phase_one_enabled());
     }
+
+    #[test]
+    fn every_menu_entry_has_declared_fallback_icon() {
+        let menu = load_default_gui_menu_model().expect("menu model should parse");
+        let icons = load_default_gui_icon_set().expect("icon set should parse");
+
+        for menu_group in &menu.menubar {
+            for item in &menu_group.items {
+                let icon_id = item.icon.as_deref().unwrap_or_else(|| {
+                    panic!("{}/{} is missing an icon", menu_group.menu, item.label)
+                });
+                let icon = icons.icons.get(icon_id).unwrap_or_else(|| {
+                    panic!(
+                        "{}/{} references undeclared icon {icon_id}",
+                        menu_group.menu, item.label
+                    )
+                });
+                assert!(
+                    icon.glyph.is_some() || icon.asset.is_some() || icon.status == "mapped",
+                    "icon {icon_id} needs a fallback glyph or asset declaration"
+                );
+            }
+        }
+    }
 }
