@@ -48,10 +48,11 @@ the same change.
 
 ## Locked decisions — board editor v1
 
-- **Shell composition** (left→right, top→bottom): menu bar · tool rail (icon
-  accelerators) · left column (Project tree over Layers) · **central board canvas
-  (protagonist)** · right column (Inspector) · bottom dock (Terminal only —
-  multi-tab) · status bar. Approximate widths: rail ~46px, left ~228px, right ~300px.
+- **Shell composition** (left→right, top→bottom): menu bar · left column
+  (Project tree over Layers) · **central board/schematic pane field
+  (protagonist)** with per-pane header tools · right column (Inspector) · bottom
+  dock (Terminal only — multi-tab, 32px collapsed) · status bar. Approximate
+  widths: left ~228px, right ~300px.
 - **Color-application law**: chrome uses only `bg/surface.01–03/border/text`
   tokens; the only chrome color allowed onto the canvas is `--acc` (#CE5A92) as
   selection. Copper/nets/pads/vias/ratsnest use the content tokens.
@@ -68,9 +69,9 @@ the same change.
   uppercase section labels ~11.5px with letter-spacing, `tabular-nums` on all
   coordinates/IDs. **Production UI font = IBM Plex Sans** (the prototype uses a
   system stand-in; the sandbox can't embed the binary).
-- **Icon scale/style**: line/stroke glyphs — tool-rail ~20px, tree/panel ~15px;
-  every tool carries a single-key accelerator; tooltips mandatory on icon-only
-  controls; never icon-only for critical actions.
+- **Icon scale/style**: line/stroke glyphs — pane tools ~16–20px, tree/panel
+  ~15px; every tool carries a single-key accelerator; tooltips mandatory on
+  icon-only controls; never icon-only for critical actions.
 - **Status bar**: cursor X/Y (mm) · active tool · selection · grid · active layer
   · DRC count · model revision.
 
@@ -84,15 +85,16 @@ document's **mode**; the mode carries its own toolset and menus.
   (library-object modes), plus read views (rules/check report, manufacturing).
   Selecting `project → Schematic` / `Board` / a library `Footprint` / `Symbol`
   switches the mode.
-- **Mode-specific tools (the SolidWorks pattern)**: each mode swaps the tool rail
-  and the active-editor-gated menus (schematic: wire / symbol / label / bus /
-  junction; PCB: route / via / zone / place; footprint & symbol: their drawing
-  tools) — exactly the gating `DATUM_GUI_MENU_BINDINGS.md` already assumes.
+- **Mode-specific tools (the SolidWorks pattern)**: each focused pane owns a
+  header tool strip and the active-editor-gated menus (schematic: wire / symbol /
+  label / bus / junction; PCB: route / via / zone / place; footprint & symbol:
+  their drawing tools) — exactly the gating `DATUM_GUI_MENU_BINDINGS.md` already
+  assumes.
 - **Tiling ("tmux for EDA")**: the viewport splits into panes; each pane is a
   **(document, view) pair**. This one abstraction covers both "2D + 3D of the same
   board" and "schematic here, PCB there, footprint in a PIP." Panes tile or float
   (picture-in-picture).
-- **Context follows focus**: the focused pane owns the tool rail and menus, and
+- **Context follows focus**: the focused pane owns the pane-header tools and menus, and
   the Inspector / Layers / Filters panels bind to the focused pane's document and
   selection.
 - **Cross-probe over one model**: selection is engine-level, so selecting an
@@ -100,8 +102,7 @@ document's **mode**; the mode carries its own toolset and menus.
   related objects (schematic symbol ↔ board footprint ↔ net). This falls out of
   tiled panes over one shared `DesignModel` — Altium's cross-probe / Horizon's
   message bus, for free.
-- **Open sub-decisions**: whether tools live in a per-pane header strip (as pass 3
-  shows) vs. a global left rail that retargets on focus; PIP vs. tile-only.
+- **Open sub-decisions**: PIP vs. tile-only.
 
 Reference: `docs/gui/prototypes/board-editor.html` (pass 3) shows a PCB|Schematic
 split with per-pane mode tools, context-follows-focus, and U1 cross-probed across

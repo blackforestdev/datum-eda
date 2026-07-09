@@ -279,10 +279,10 @@ pub(super) fn write_terminal_context_files(
             delete_panel_projection: "datum-eda proposal delete-panel-projection \"$DATUM_PROJECT_ROOT\" --panel-projection <uuid> [--rationale <text>]",
         },
         journal_commands: TerminalJournalCommands {
-            list: "datum-eda journal list \"$DATUM_PROJECT_ROOT\"",
-            show: "datum-eda journal show \"$DATUM_PROJECT_ROOT\" --transaction <uuid>",
-            undo: "datum-eda journal undo \"$DATUM_PROJECT_ROOT\"",
-            redo: "datum-eda journal redo \"$DATUM_PROJECT_ROOT\"",
+            list: None,
+            show: None,
+            undo: None,
+            redo: None,
         },
         query_commands: serde_json::json!({
             "resolve_debug": "datum-eda project query \"$DATUM_PROJECT_ROOT\" resolve-debug",

@@ -64,7 +64,7 @@ operations is.
 ### Edit
 | Menu item | Backing mechanism | Status |
 |---|---|---|
-| Undo / Redo | `datum.journal.undo` / `redo`; CLI `journal undo`/`redo` / `project undo`/`redo` | ENGINE-READY / GUI-BLOCKED |
+| Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | ENGINE-READY / GUI-BLOCKED |
 | Cut/Copy/Paste/Delete | per-object delete builders exist (`build_delete_*`); no clipboard model | PARTIAL: delete ENGINE-READY; clipboard NOT-BUILT |
 | Preferences | none | NOT-BUILT |
 

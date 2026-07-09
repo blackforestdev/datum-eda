@@ -313,23 +313,11 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
         envelope["active_context_commands"]["proposal_apply"],
         format!("datum-eda proposal apply {root_arg} --proposal proposal-repair")
     );
-    assert_eq!(
-        envelope["active_context_commands"]["journal_list"],
-        format!("datum-eda journal list {root_arg}")
-    );
+    assert!(envelope["active_context_commands"]["journal_list"].is_null());
     assert_eq!(envelope["accepted_transaction_tip"], transaction_tip);
-    assert_eq!(
-        envelope["active_context_commands"]["journal_show_tip"],
-        format!("datum-eda journal show {root_arg} --transaction {transaction_tip}")
-    );
-    assert_eq!(
-        envelope["active_context_commands"]["journal_undo"],
-        format!("datum-eda journal undo {root_arg}")
-    );
-    assert_eq!(
-        envelope["active_context_commands"]["journal_redo"],
-        format!("datum-eda journal redo {root_arg}")
-    );
+    assert!(envelope["active_context_commands"]["journal_show_tip"].is_null());
+    assert!(envelope["active_context_commands"]["journal_undo"].is_null());
+    assert!(envelope["active_context_commands"]["journal_redo"].is_null());
     assert_eq!(
         envelope["active_context_commands"]["source_shards"],
         format!("datum-eda project query {root_arg} resolve-debug")
@@ -440,14 +428,8 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
     );
     assert!(empty["active_context_commands"]["proposal_show"].is_null());
     assert!(empty["active_context_commands"]["proposal_accept_apply"].is_null());
-    assert_eq!(
-        empty["active_context_commands"]["journal_list"],
-        format!("datum-eda journal list {root_arg}")
-    );
-    assert_eq!(
-        empty["active_context_commands"]["journal_show_tip"],
-        format!("datum-eda journal show {root_arg} --transaction {transaction_tip}")
-    );
+    assert!(empty["active_context_commands"]["journal_list"].is_null());
+    assert!(empty["active_context_commands"]["journal_show_tip"].is_null());
     assert_eq!(
         empty["active_context_commands"]["source_shards"],
         format!("datum-eda project query {root_arg} resolve-debug")

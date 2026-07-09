@@ -54,7 +54,7 @@ impl TerminalActiveContextCommands {
         output_job_id: Option<&str>,
         output_job_run_id: Option<&str>,
         proposal_id: Option<&str>,
-        transaction_tip: Option<&str>,
+        _transaction_tip: Option<&str>,
         check_run_id: Option<&str>,
         selected_finding_fingerprint: Option<&str>,
     ) -> Self {
@@ -182,27 +182,10 @@ impl TerminalActiveContextCommands {
                 proposal_id,
                 "datum.proposal.apply",
             ),
-            journal_list: render_terminal_command(
-                "datum.journal.list",
-                &[("project_root", project_root_binding)],
-            ),
-            journal_show_tip: transaction_tip.and_then(|transaction| {
-                render_terminal_command(
-                    "datum.journal.show",
-                    &[
-                        ("project_root", project_root_binding),
-                        ("transaction", transaction),
-                    ],
-                )
-            }),
-            journal_undo: render_terminal_command(
-                "datum.journal.undo",
-                &[("project_root", project_root_binding)],
-            ),
-            journal_redo: render_terminal_command(
-                "datum.journal.redo",
-                &[("project_root", project_root_binding)],
-            ),
+            journal_list: None,
+            journal_show_tip: None,
+            journal_undo: None,
+            journal_redo: None,
             source_shards: render_terminal_command(
                 "datum.query.source_shards",
                 &[("project_root", project_root_binding)],

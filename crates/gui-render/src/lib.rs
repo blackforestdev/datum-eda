@@ -130,7 +130,6 @@ impl CameraState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ShellLayout {
     pub top_menu_bar: RectPx,
-    pub tool_rail: RectPx,
     pub viewport: RectPx,
     pub left_sidebar: RectPx,
     pub right_sidebar: RectPx,
@@ -155,19 +154,17 @@ impl ShellLayout {
         let width = width as f32;
         let height = height as f32;
         let menu_height = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
-        let rail_width = design_tokens::spacing::SP_09;
         let status_height = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
         let left_width = 228.0_f32.min(width * 0.3);
         let right_width = 300.0_f32.min(width * 0.35);
         let bottom_height = match dock_height_px {
-            Some(h) => (h as f32).clamp(44.0, height * 0.6),
-            None => 44.0_f32.min(height * 0.25),
+            Some(h) => (h as f32).clamp(design_tokens::spacing::SP_07, height * 0.6),
+            None => design_tokens::spacing::SP_07.min(height * 0.25),
         };
         if let Some(layout) = solve_shell_layout_with_taffy(
             width,
             height,
             menu_height,
-            rail_width,
             left_width,
             right_width,
             bottom_height,
@@ -184,22 +181,16 @@ impl ShellLayout {
                 width,
                 height: menu_height,
             },
-            tool_rail: RectPx {
-                x: 0.0,
-                y: menu_height,
-                width: rail_width,
-                height: (height - menu_height - bottom_height - status_height).max(0.0),
-            },
             left_sidebar: RectPx {
-                x: rail_width,
+                x: 0.0,
                 y: menu_height,
                 width: left_width,
                 height: (height - menu_height - bottom_height - status_height).max(0.0),
             },
             viewport: RectPx {
-                x: rail_width + left_width,
+                x: left_width,
                 y: menu_height,
-                width: (width - rail_width - left_width - right_width).max(0.0),
+                width: (width - left_width - right_width).max(0.0),
                 height: (height - menu_height - bottom_height - status_height).max(0.0),
             },
             right_sidebar: RectPx {
@@ -230,7 +221,6 @@ impl ShellLayout {
     fn scale_by(self, scale: f32) -> Self {
         Self {
             top_menu_bar: self.top_menu_bar.scale_by(scale),
-            tool_rail: self.tool_rail.scale_by(scale),
             viewport: self.viewport.scale_by(scale),
             left_sidebar: self.left_sidebar.scale_by(scale),
             right_sidebar: self.right_sidebar.scale_by(scale),
@@ -244,7 +234,6 @@ fn solve_shell_layout_with_taffy(
     width: f32,
     height: f32,
     menu_height: f32,
-    rail_width: f32,
     left_width: f32,
     right_width: f32,
     bottom_height: f32,
@@ -254,49 +243,42 @@ fn solve_shell_layout_with_taffy(
     let top_menu_bar = taffy
         .new_leaf(Style {
             grid_row: line(1),
-            grid_column: span(4),
-            ..Default::default()
-        })
-        .ok()?;
-    let tool_rail = taffy
-        .new_leaf(Style {
-            grid_row: line(2),
-            grid_column: line(1),
+            grid_column: span(3),
             ..Default::default()
         })
         .ok()?;
     let left_sidebar = taffy
         .new_leaf(Style {
             grid_row: line(2),
-            grid_column: line(2),
+            grid_column: line(1),
             ..Default::default()
         })
         .ok()?;
     let viewport = taffy
         .new_leaf(Style {
             grid_row: line(2),
-            grid_column: line(3),
+            grid_column: line(2),
             ..Default::default()
         })
         .ok()?;
     let right_sidebar = taffy
         .new_leaf(Style {
             grid_row: line(2),
-            grid_column: line(4),
+            grid_column: line(3),
             ..Default::default()
         })
         .ok()?;
     let bottom_strip = taffy
         .new_leaf(Style {
             grid_row: line(3),
-            grid_column: span(4),
+            grid_column: span(3),
             ..Default::default()
         })
         .ok()?;
     let status_bar = taffy
         .new_leaf(Style {
             grid_row: line(4),
-            grid_column: span(4),
+            grid_column: span(3),
             ..Default::default()
         })
         .ok()?;
@@ -308,12 +290,7 @@ fn solve_shell_layout_with_taffy(
                     width: length(width),
                     height: length(height),
                 },
-                grid_template_columns: vec![
-                    length(rail_width),
-                    length(left_width),
-                    fr(1.0),
-                    length(right_width),
-                ],
+                grid_template_columns: vec![length(left_width), fr(1.0), length(right_width)],
                 grid_template_rows: vec![
                     length(menu_height),
                     fr(1.0),
@@ -324,7 +301,6 @@ fn solve_shell_layout_with_taffy(
             },
             &[
                 top_menu_bar,
-                tool_rail,
                 left_sidebar,
                 viewport,
                 right_sidebar,
@@ -354,7 +330,6 @@ fn solve_shell_layout_with_taffy(
     };
     Some(ShellLayout {
         top_menu_bar: rect_for(&taffy, top_menu_bar)?,
-        tool_rail: rect_for(&taffy, tool_rail)?,
         left_sidebar: rect_for(&taffy, left_sidebar)?,
         viewport: rect_for(&taffy, viewport)?,
         right_sidebar: rect_for(&taffy, right_sidebar)?,
@@ -578,6 +553,7 @@ impl Quad {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum TextFace {
     Ui,
+    UiMedium,
     UiStrong,
     Mono,
 }
@@ -787,12 +763,11 @@ impl PreparedScene {
         let mut hit_regions = Vec::new();
         let scene_viewport = layout.scene_viewport();
 
-        panel_quads.push(Quad::from_rect(layout.top_menu_bar, PANEL_BG));
-        panel_quads.push(Quad::from_rect(layout.tool_rail, PANEL_CARD_BG));
-        panel_quads.push(Quad::from_rect(layout.left_sidebar, PANEL_BG));
-        panel_quads.push(Quad::from_rect(layout.right_sidebar, PANEL_BG));
-        panel_quads.push(Quad::from_rect(layout.bottom_strip, PANEL_BG));
-        panel_quads.push(Quad::from_rect(layout.status_bar, PANEL_CARD_BG));
+        panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
+        panel_quads.push(Quad::from_rect(layout.left_sidebar, APP_BG));
+        panel_quads.push(Quad::from_rect(layout.right_sidebar, APP_BG));
+        panel_quads.push(Quad::from_rect(layout.bottom_strip, APP_BG));
+        panel_quads.push(Quad::from_rect(layout.status_bar, PANEL_BG));
         viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
 
         render_phase1_shell_chrome(state, &layout, &mut panel_quads, &mut text_runs);
@@ -1062,45 +1037,7 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
 
-    push_rect_border(panel_quads, layout.tool_rail, PANEL_CARD_BORDER, 1.0);
-    let rail_tools = [("S", true), ("Z", false), ("H", false), ("L", false)];
-    let mut y = layout.tool_rail.y + design_tokens::spacing::SP_04;
-    for (label, active) in rail_tools {
-        let rect = RectPx {
-            x: layout.tool_rail.x + design_tokens::spacing::SP_03,
-            y,
-            width: (layout.tool_rail.width - design_tokens::spacing::SP_04).max(1.0),
-            height: design_tokens::spacing::SP_07,
-        };
-        panel_quads.push(Quad::from_rect(
-            rect,
-            if active {
-                REVIEW_ROW_ACTIVE_BG
-            } else {
-                PANEL_BG
-            },
-        ));
-        push_rect_border(
-            panel_quads,
-            rect,
-            if active {
-                TEXT_ACCENT
-            } else {
-                PANEL_CARD_BORDER
-            },
-            1.0,
-        );
-        draw_text(
-            label,
-            rect.x + design_tokens::spacing::SP_04,
-            rect.y + design_tokens::spacing::SP_03,
-            design_tokens::typography::BODY_SIZE,
-            if active { TEXT_PRIMARY } else { TEXT_MUTED },
-            TextFace::Ui,
-            text_runs,
-        );
-        y += design_tokens::spacing::SP_08;
-    }
+    render_board_pane_header(layout, panel_quads, text_runs);
 
     push_rect_border(panel_quads, layout.status_bar, PANEL_CARD_BORDER, 1.0);
     let selection = match &state.selection {
@@ -1124,6 +1061,78 @@ fn render_phase1_shell_chrome(
         TextFace::Mono,
         text_runs,
     );
+}
+
+fn render_board_pane_header(
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let header = RectPx {
+        x: layout.viewport.x,
+        y: layout.viewport.y,
+        width: layout.viewport.width,
+        height: 31.0,
+    };
+    panel_quads.push(Quad::from_rect(header, APP_BG));
+    push_rect_border(panel_quads, header, PANEL_CARD_BORDER, 1.0);
+    draw_text(
+        "Board / Layout",
+        header.x + design_tokens::spacing::SP_04,
+        header.y + design_tokens::spacing::SP_03,
+        design_tokens::typography::DATA_SIZE,
+        TEXT_SECONDARY,
+        TextFace::Mono,
+        text_runs,
+    );
+    let tools = [
+        ("S", true),
+        ("M", false),
+        ("R", false),
+        ("V", false),
+        ("Z", false),
+    ];
+    let mut x = header.x + 118.0;
+    for (label, active) in tools {
+        let rect = RectPx {
+            x,
+            y: header.y + 3.0,
+            width: 25.0,
+            height: 25.0,
+        };
+        panel_quads.push(Quad::from_rect(
+            rect,
+            if active {
+                REVIEW_ROW_ACTIVE_BG
+            } else {
+                PANEL_BG
+            },
+        ));
+        push_rect_border(
+            panel_quads,
+            rect,
+            if active {
+                TEXT_ACCENT
+            } else {
+                PANEL_CARD_BORDER
+            },
+            1.0,
+        );
+        draw_text(
+            label,
+            rect.x + 8.0,
+            rect.y + 7.0,
+            design_tokens::typography::CAPTION_SIZE,
+            if active { TEXT_ACCENT } else { TEXT_MUTED },
+            if active {
+                TextFace::UiMedium
+            } else {
+                TextFace::Mono
+            },
+            text_runs,
+        );
+        x += 27.0;
+    }
 }
 
 fn render_scene(
@@ -1189,13 +1198,20 @@ fn render_scene(
         );
     }
     {
-        draw_text(
+        let hint_bounds = RectPx {
+            x: layout.viewport.x + 16.0,
+            y: layout.viewport.y + 66.0,
+            width: (layout.viewport.width - 32.0).max(1.0),
+            height: 16.0,
+        };
+        draw_text_clipped(
             "F FIT  [ ] REVIEW NAV  CLICK SELECT  SCROLL ZOOM  ESC CLEAR",
-            layout.viewport.x + 16.0,
-            layout.viewport.y + 66.0,
+            hint_bounds.x,
+            hint_bounds.y,
             10.5,
             TEXT_MUTED,
             TextFace::Mono,
+            hint_bounds,
             text_runs,
         );
     }
@@ -1215,7 +1231,7 @@ fn render_scene(
         width: layout.viewport.width,
         height: 22.0,
     };
-    viewport_overlay_quads.push(Quad::from_rect(status_bg, [0.07, 0.08, 0.10]));
+    viewport_overlay_quads.push(Quad::from_rect(status_bg, PANEL_BG));
     let status_text = format!(
         "TOOL {}  |  ZOOM {}%  |  SEL {}",
         tool_label, zoom_pct, sel_label
@@ -1232,9 +1248,9 @@ fn render_scene(
     if let Some(status) = &state.last_command_status {
         let is_error = status.detail.contains("failed") || status.detail.contains("error");
         let color = if is_error {
-            [0.85, 0.40, 0.35]
+            design_tokens::chrome::STATUS_ERROR
         } else {
-            [0.45, 0.72, 0.45]
+            design_tokens::chrome::STATUS_SUCCESS
         };
         draw_text(
             &truncate_text(
@@ -1272,7 +1288,7 @@ fn push_scene_underlay(
         board_field,
         board_surface_color(BoardSurfaceRole::InnerField),
     ));
-    push_rect_border(out, board_field, [0.46, 0.49, 0.53], 1.0);
+    push_rect_border(out, board_field, design_tokens::content::EDGE, 1.0);
     push_scene_grid(out, &projection);
 }
 
@@ -4861,6 +4877,28 @@ fn resolve_layer_appearance(layer_id: Option<&str>) -> LayerAppearance {
     resolve_layer_appearance_with_scene(layer_id, &[])
 }
 
+fn layer_swatch_color_with_scene(
+    layer_id: Option<&str>,
+    scene_layers: &[datum_gui_protocol::SceneLayer],
+) -> [f32; 3] {
+    let Some(id) = layer_id else {
+        return AUTHOR_BASE;
+    };
+    let name = scene_layer_name(id, scene_layers).unwrap_or(id);
+    match name {
+        "F.Cu" => design_tokens::content::COPPER_FRONT,
+        "B.Cu" => design_tokens::content::COPPER_BACK,
+        "Edge.Cuts" => design_tokens::content::EDGE,
+        "Ratsnest" | "Airwires" => design_tokens::content::RATSNEST,
+        "F.SilkS" | "F.Silkscreen" => design_tokens::content::SILK_TOP,
+        "B.SilkS" | "B.Silkscreen" => design_tokens::content::SILK_BOTTOM,
+        name if name.ends_with(".Cu") => design_tokens::content::COPPER_IN2,
+        name if name.ends_with(".Mask") => design_tokens::content::MASK,
+        name if name.ends_with(".Paste") => design_tokens::content::PASTE,
+        _ => resolve_layer_appearance_with_scene(Some(id), scene_layers).authored_track,
+    }
+}
+
 fn scene_layer_name<'a>(
     layer_id: &str,
     scene_layers: &'a [datum_gui_protocol::SceneLayer],
@@ -6177,8 +6215,9 @@ fn text_buffer_extent(run: &TextRun, surface_width: u32, surface_height: u32) ->
 
 fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     let advance_factor = match face {
-        TextFace::Ui => 0.78,
-        TextFace::UiStrong => 0.80,
+        TextFace::Ui => 0.62,
+        TextFace::UiMedium => 0.64,
+        TextFace::UiStrong => 0.66,
         TextFace::Mono => 0.72,
     };
     let glyphs = text.chars().count().max(1) as f32;
@@ -6226,6 +6265,9 @@ fn load_datum_fonts(font_system: &mut FontSystem) {
 fn text_attrs(face: TextFace) -> Attrs<'static> {
     match face {
         TextFace::Ui => Attrs::new().family(Family::Name("IBM Plex Sans Condensed")),
+        TextFace::UiMedium => Attrs::new()
+            .family(Family::Name("IBM Plex Sans Condensed"))
+            .weight(Weight::MEDIUM),
         TextFace::UiStrong => Attrs::new()
             .family(Family::Name("IBM Plex Sans Condensed"))
             .weight(Weight::SEMIBOLD),
@@ -7285,7 +7327,7 @@ mod tests {
     fn shell_layout_reserves_bottom_dock_and_viewport() {
         let layout = ShellLayout::for_window(1280, 800, None);
         assert!(layout.viewport.width > 0.0);
-        assert_eq!(layout.bottom_strip.height, 44.0);
+        assert_eq!(layout.bottom_strip.height, design_tokens::spacing::SP_07);
         assert!(layout.left_sidebar.width > 0.0);
         assert!(layout.right_sidebar.width > 0.0);
     }
@@ -7339,6 +7381,15 @@ mod tests {
     }
 
     #[test]
+    fn conformance_medium_type_tiers_resolve_to_medium_weight() {
+        assert_eq!(design_tokens::typography::STRONG_WEIGHT, 500);
+        assert_eq!(design_tokens::typography::MICRO_WEIGHT, 500);
+        assert_eq!(text_attrs(TextFace::UiMedium).weight, Weight::MEDIUM);
+        assert_eq!(text_attrs(TextFace::UiStrong).weight, Weight::SEMIBOLD);
+        assert_eq!(text_attrs(TextFace::Ui).weight, Weight::NORMAL);
+    }
+
+    #[test]
     fn text_prepare_signature_tracks_render_relevant_inputs() {
         let run = TextRun {
             text: "TERMINAL".to_string(),
@@ -7375,45 +7426,56 @@ mod tests {
     #[test]
     fn shell_layout_is_solved_by_taffy_grid_contract() {
         // Assert the derivable, token-driven grid CONTRACT rather than magic
-        // pixels that drift: menu bar on top; tool rail then the left sidebar
-        // below it; viewport tiling between the sidebars; dock then status bar
+        // pixels that drift: menu bar on top; left sidebar then viewport then
+        // right sidebar below it; dock then status bar
         // pinned full-width to the bottom. Values come from design tokens so
         // this cannot silently fall out of sync with the layout again.
         let (w, h, dock) = (1280.0_f32, 800.0_f32, 260.0_f32);
         let layout = ShellLayout::for_window(w as u32, h as u32, Some(dock as u32));
 
         let menu = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
-        let rail = design_tokens::spacing::SP_09;
         let status = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
         let content_h = h - menu - dock - status;
 
         assert_eq!(
             layout.top_menu_bar,
-            RectPx { x: 0.0, y: 0.0, width: w, height: menu }
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: w,
+                height: menu
+            }
         );
-        assert_eq!(layout.tool_rail.x, 0.0);
-        assert_eq!(layout.tool_rail.y, menu);
-        assert_eq!(layout.tool_rail.width, rail);
-        assert_eq!(layout.left_sidebar.x, rail);
+        assert_eq!(layout.left_sidebar.x, 0.0);
         assert_eq!(layout.left_sidebar.y, menu);
         assert_eq!(layout.left_sidebar.height, content_h);
-        assert_eq!(layout.viewport.x, rail + layout.left_sidebar.width);
+        assert_eq!(layout.viewport.x, layout.left_sidebar.width);
         assert_eq!(layout.viewport.y, menu);
         assert_eq!(layout.viewport.height, content_h);
         assert_eq!(
             layout.viewport.width,
-            w - rail - layout.left_sidebar.width - layout.right_sidebar.width
+            w - layout.left_sidebar.width - layout.right_sidebar.width
         );
         assert_eq!(layout.right_sidebar.x, w - layout.right_sidebar.width);
         assert_eq!(layout.right_sidebar.y, menu);
         assert_eq!(layout.right_sidebar.height, content_h);
         assert_eq!(
             layout.bottom_strip,
-            RectPx { x: 0.0, y: menu + content_h, width: w, height: dock }
+            RectPx {
+                x: 0.0,
+                y: menu + content_h,
+                width: w,
+                height: dock
+            }
         );
         assert_eq!(
             layout.status_bar,
-            RectPx { x: 0.0, y: h - status, width: w, height: status }
+            RectPx {
+                x: 0.0,
+                y: h - status,
+                width: w,
+                height: status
+            }
         );
     }
 
@@ -7432,10 +7494,18 @@ mod tests {
         );
         let surface = ShellLayout::for_surface(phys_w, phys_h, scale, Some(260));
 
-        assert_eq!(surface.top_menu_bar.height, logical.top_menu_bar.height * scale);
-        assert_eq!(surface.tool_rail.width, logical.tool_rail.width * scale);
-        assert_eq!(surface.left_sidebar.width, logical.left_sidebar.width * scale);
-        assert_eq!(surface.right_sidebar.width, logical.right_sidebar.width * scale);
+        assert_eq!(
+            surface.top_menu_bar.height,
+            logical.top_menu_bar.height * scale
+        );
+        assert_eq!(
+            surface.left_sidebar.width,
+            logical.left_sidebar.width * scale
+        );
+        assert_eq!(
+            surface.right_sidebar.width,
+            logical.right_sidebar.width * scale
+        );
         assert_eq!(surface.status_bar.height, logical.status_bar.height * scale);
         assert_eq!(surface.viewport.x, logical.viewport.x * scale);
         assert_eq!(surface.viewport.width, logical.viewport.width * scale);

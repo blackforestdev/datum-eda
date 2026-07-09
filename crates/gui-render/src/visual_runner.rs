@@ -9,8 +9,6 @@ use crate::visual_diff::{DiffPolicy, DiffResult, compare_images, write_diff_imag
 use crate::visual_manifest::FixtureManifest;
 use crate::{CameraState, ShellLayout};
 
-const NM_PER_MM: f32 = 1_000_000.0;
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct VisualFixtureRun {
     pub manifest_path: PathBuf,
@@ -270,15 +268,14 @@ fn camera_for_manifest(manifest: &FixtureManifest, state: &ReviewWorkspaceState)
     let board_field_height = (scene_viewport.height - 20.0).max(1.0);
     let scene_width = (state.scene.bounds.max_x - state.scene.bounds.min_x).max(1) as f32;
     let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f32;
-    let fit_scale = (board_field_width / scene_width)
+    let _fit_scale = (board_field_width / scene_width)
         .min(board_field_height / scene_height)
         .max(0.000_001);
-    let desired_scale = (1.0 / ((viewport.zoom_mm_per_px as f32) * NM_PER_MM)).max(0.000_001);
 
     CameraState {
-        center_x_nm: (viewport.center_mm[0] as f32) * NM_PER_MM,
-        center_y_nm: (viewport.center_mm[1] as f32) * NM_PER_MM,
-        zoom: desired_scale / fit_scale,
+        center_x_nm: ((state.scene.bounds.min_x + state.scene.bounds.max_x) as f32) * 0.5,
+        center_y_nm: ((state.scene.bounds.min_y + state.scene.bounds.max_y) as f32) * 0.5,
+        zoom: 1.0,
     }
 }
 
@@ -366,9 +363,58 @@ mod tests {
         let state = load_state_for_manifest(&manifest).expect("fixture project should load");
         let camera = camera_for_manifest(&manifest, &state);
 
-        assert_eq!(camera.center_x_nm, 105_000_000.0);
-        assert_eq!(camera.center_y_nm, 75_000_000.0);
-        assert!(camera.zoom > 0.0);
+        assert_eq!(
+            camera.center_x_nm,
+            ((state.scene.bounds.min_x + state.scene.bounds.max_x) as f32) * 0.5
+        );
+        assert_eq!(
+            camera.center_y_nm,
+            ((state.scene.bounds.min_y + state.scene.bounds.max_y) as f32) * 0.5
+        );
+        assert_eq!(camera.zoom, 1.0);
+    }
+
+    #[test]
+    fn conformance_golden_camera_frames_board_fit_to_bounds() {
+        let manifest = FixtureManifest::load(fixture_path("datum-test"))
+            .expect("datum-test fixture manifest should load");
+        let state = load_state_for_manifest(&manifest).expect("datum-test fixture should load");
+        let camera = camera_for_manifest(&manifest, &state);
+        let bounds = &state.scene.bounds;
+        let expected_center_x = ((bounds.min_x + bounds.max_x) as f32) * 0.5;
+        let expected_center_y = ((bounds.min_y + bounds.max_y) as f32) * 0.5;
+
+        assert!((camera.center_x_nm - expected_center_x).abs() <= 1.0);
+        assert!((camera.center_y_nm - expected_center_y).abs() <= 1.0);
+        assert!((camera.zoom - 1.0).abs() <= f32::EPSILON);
+
+        let layout = ShellLayout::for_window(
+            manifest.viewport.width_px,
+            manifest.viewport.height_px,
+            None,
+        );
+        let board_field = crate::inset_rect(layout.scene_viewport(), 10.0, 10.0, 10.0, 10.0);
+        let projection = crate::Projection::new(board_field, bounds, camera);
+        let projected = crate::project_rect(
+            datum_gui_protocol::RectNm {
+                min_x: bounds.min_x,
+                min_y: bounds.min_y,
+                max_x: bounds.max_x,
+                max_y: bounds.max_y,
+            },
+            &projection,
+        );
+        let fill_ratio =
+            (projected.width / board_field.width).max(projected.height / board_field.height);
+        let projected_center_x = projected.x + projected.width * 0.5;
+        let projected_center_y = projected.y + projected.height * 0.5;
+
+        assert!(
+            fill_ratio >= 0.70,
+            "projected board fill ratio {fill_ratio:.3}"
+        );
+        assert!((projected_center_x - (board_field.x + board_field.width * 0.5)).abs() <= 1.0);
+        assert!((projected_center_y - (board_field.y + board_field.height * 0.5)).abs() <= 1.0);
     }
 
     #[test]

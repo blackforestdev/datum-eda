@@ -174,8 +174,8 @@ pub(super) struct TerminalProductionCommands {
 
 #[derive(Debug, Serialize)]
 pub(super) struct TerminalJournalCommands {
-    pub(super) list: &'static str,
-    pub(super) show: &'static str,
-    pub(super) undo: &'static str,
-    pub(super) redo: &'static str,
+    pub(super) list: Option<&'static str>,
+    pub(super) show: Option<&'static str>,
+    pub(super) undo: Option<&'static str>,
+    pub(super) redo: Option<&'static str>,
 }

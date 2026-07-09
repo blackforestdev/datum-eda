@@ -54,26 +54,33 @@ pub(crate) mod content {
     pub(crate) const PAD: Rgb = srgb(0xC9, 0x97, 0x4A);
     pub(crate) const VIA: Rgb = srgb(0xC7, 0x7B, 0x3C);
     pub(crate) const RATSNEST: Rgb = srgb(0xAE, 0xB4, 0xBB);
-    pub(crate) const DRC_ERROR: Rgb = srgb(0xFF, 0x4D, 0x4D);
-    pub(crate) const DRC_WARN: Rgb = srgb(0xFF, 0xB0, 0x2E);
+    pub(crate) const DRC_ERROR: Rgb = chrome::STATUS_ERROR;
+    pub(crate) const DRC_WARN: Rgb = chrome::STATUS_WARN;
     pub(crate) const EXCLUSION: Rgb = srgb(0x6B, 0x72, 0x80);
     pub(crate) const SELECTION: Rgb = chrome::ACCENT;
 }
 
 pub(crate) mod typography {
     pub(crate) const DISPLAY_SIZE: f32 = 16.0;
+    pub(crate) const DISPLAY_WEIGHT: u16 = 600;
     pub(crate) const DISPLAY_LINE: f32 = 22.0;
     pub(crate) const HEADER_SIZE: f32 = 12.0;
+    pub(crate) const HEADER_WEIGHT: u16 = 600;
     pub(crate) const HEADER_LINE: f32 = 16.0;
     pub(crate) const BODY_SIZE: f32 = 13.0;
+    pub(crate) const BODY_WEIGHT: u16 = 400;
     pub(crate) const BODY_LINE: f32 = 18.0;
     pub(crate) const STRONG_SIZE: f32 = 13.0;
+    pub(crate) const STRONG_WEIGHT: u16 = 500;
     pub(crate) const STRONG_LINE: f32 = 18.0;
     pub(crate) const DATA_SIZE: f32 = 12.0;
+    pub(crate) const DATA_WEIGHT: u16 = 400;
     pub(crate) const DATA_LINE: f32 = 16.0;
     pub(crate) const CAPTION_SIZE: f32 = 11.0;
+    pub(crate) const CAPTION_WEIGHT: u16 = 400;
     pub(crate) const CAPTION_LINE: f32 = 14.0;
     pub(crate) const MICRO_SIZE: f32 = 10.0;
+    pub(crate) const MICRO_WEIGHT: u16 = 500;
     pub(crate) const MICRO_LINE: f32 = 12.0;
 }
 

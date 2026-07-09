@@ -37,8 +37,8 @@ test. Everything in Phase 1 serves that sentence.
 ## Scope
 
 **Phase 1 IS:**
-- A real application shell (menu bar + tool rail + panels + status bar) laid out
-  by the Taffy layout at the Design Book tokens.
+- A real application shell (menu bar + pane-header tools + panels + status bar)
+  laid out by the Taffy layout at the Design Book tokens.
 - The board rendered from the resolved engine model at professional fidelity.
 - Read-only inspection: select, inspect, filter, navigate.
 
@@ -46,14 +46,17 @@ test. Everything in Phase 1 serves that sentence.
 - Any authoring/editing (place/move/route/delete) — needs the write path.
 - Marking menus wired to operations — needs the write path + the `not_built` ops.
 - The inline AI ghost overlay or the agent lane beyond a read-only terminal.
-- Schematic / footprint / symbol editors (board mode only in Phase 1).
+- Full schematic / footprint / symbol editors. A schematic pane may render as a
+  read-only cross-probe/reference pane in the prototype shell, but editing stays
+  out of Phase 1.
 
 ## Deliverables (build in this order)
 
 - **D1 — App shell composition.** The regions of the prototype, solved by the
-  Taffy layout in logical pixels, styled from tokens: top menu bar · left tool rail
-  · left column (Project tree over Layers) · central board viewport · right column
-  (Inspector) · bottom dock (read-only Terminal) · status bar. No hand-tuned
+  Taffy layout in logical pixels, styled from tokens: top menu bar · left column
+  (Project tree over Layers) · central board/schematic split-pane viewport with
+  Board focused · pane-header tool strip · right column (Inspector) · 32px bottom
+  dock (read-only Terminal) · status bar. No hand-tuned
   offsets. Passes `check_gui_design_tokens` + layout-invariant tests.
 - **D2 — Menu bar from `menu_model.json`.** Render the menu bar and items **from the
   manifest**. Items whose binding is `not_built` render **disabled** (visible,

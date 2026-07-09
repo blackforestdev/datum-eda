@@ -8,6 +8,7 @@ python3 scripts/check_spec_governance.py
 python3 scripts/check_resolver_raw_loads.py
 python3 scripts/check_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_design_tokens.py
+python3 scripts/check_gui_conformance.py
 python3 scripts/check_gui_icon_assets.py
 python3 scripts/check_menu_model.py
 python3 scripts/menu_model_csv.py check

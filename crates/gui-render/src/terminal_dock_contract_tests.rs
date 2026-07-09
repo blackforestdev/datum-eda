@@ -166,29 +166,18 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             "terminal dock should expose {target:?}"
         );
     }
-    for (command_id, command) in [
-        (
-            "datum.journal.list",
-            "datum-eda journal list \"$DATUM_PROJECT_ROOT\"",
-        ),
-        (
-            "datum.journal.undo",
-            "datum-eda journal undo \"$DATUM_PROJECT_ROOT\"",
-        ),
-        (
-            "datum.journal.redo",
-            "datum-eda journal redo \"$DATUM_PROJECT_ROOT\"",
-        ),
+    for command_id in [
+        "datum.journal.list",
+        "datum.journal.undo",
+        "datum.journal.redo",
     ] {
         assert!(
-            prepared.hit_regions.iter().any(|region| matches!(
+            !prepared.hit_regions.iter().any(|region| matches!(
                 &region.target,
                 HitTarget::ProductionTerminalCommand(handoff)
                     if handoff.command_id == command_id
-                        && handoff.mcp_alias.as_deref() == Some(command_id)
-                        && handoff.command == command
             )),
-            "terminal dock should expose {command_id} handoff"
+            "terminal dock must not expose {command_id} as a CLI handoff"
         );
     }
 

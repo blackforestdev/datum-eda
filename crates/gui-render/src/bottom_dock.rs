@@ -1,7 +1,4 @@
-use datum_gui_protocol::{
-    DockTab, ReviewWorkspaceState, TerminalCommandHandoff, TerminalStyledLine,
-    render_terminal_command_handoff,
-};
+use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalStyledLine};
 
 use super::{
     HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BG, PANEL_CARD_BORDER, Quad, REVIEW_ROW_BADGE,
@@ -328,9 +325,6 @@ fn render_terminal_lane(
             y += 16.0;
         }
     }
-    if let Some(next_y) = render_terminal_journal_commands(rect, y, text_runs, hit_regions) {
-        y = next_y + 4.0;
-    }
     if !state.ui.terminal.activity_summary.is_empty() {
         draw_text(
             "ACTIVITY SPANS",
@@ -547,63 +541,6 @@ fn render_terminal_session_controls(
         x += label.len() as f32 * 7.0 + 16.0;
     }
     x + 4.0
-}
-
-fn render_terminal_journal_commands(
-    rect: RectPx,
-    mut y: f32,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) -> Option<f32> {
-    draw_text(
-        "JOURNAL",
-        rect.x + 12.0,
-        y,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    y += 16.0;
-    for (label, command_id) in [
-        ("LIST", "datum.journal.list"),
-        ("UNDO", "datum.journal.undo"),
-        ("REDO", "datum.journal.redo"),
-    ] {
-        let command = render_terminal_command_handoff(
-            command_id,
-            &[("project_root", "$DATUM_PROJECT_ROOT")],
-        )?;
-        push_terminal_command_hit_region(hit_regions, rect, y, &command);
-        draw_text(
-            &format!("{label} {}", truncate_text(&command.command, 62)),
-            rect.x + 24.0,
-            y,
-            10.5,
-            TEXT_SECONDARY,
-            TextFace::Mono,
-            text_runs,
-        );
-        y += 15.0;
-    }
-    Some(y)
-}
-
-fn push_terminal_command_hit_region(
-    hit_regions: &mut Vec<HitRegion>,
-    rect: RectPx,
-    y: f32,
-    command: &TerminalCommandHandoff,
-) {
-    hit_regions.push(HitRegion {
-        target: HitTarget::ProductionTerminalCommand(command.clone()),
-        rect: RectPx {
-            x: rect.x + 18.0,
-            y: y - 2.0,
-            width: (rect.width - 36.0).max(0.0),
-            height: 14.0,
-        },
-    });
 }
 
 fn push_activity_hit_region(hit_regions: &mut Vec<HitRegion>, rect: RectPx, y: f32, summary: &str) {

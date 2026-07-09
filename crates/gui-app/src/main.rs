@@ -3358,7 +3358,7 @@ impl Runtime {
     fn handle_dock_resize_drag(&mut self, next_cursor_pos: (f32, f32)) -> bool {
         let window_height = self.config.height as f32;
         let new_height_physical =
-            (window_height - next_cursor_pos.1).clamp(44.0, window_height * 0.6);
+            (window_height - next_cursor_pos.1).clamp(32.0, window_height * 0.6);
         let new_height_logical = new_height_physical / self.scale_factor.max(0.01);
         let new_height_logical = new_height_logical as u32;
         if self.workspace().ui.dock_height_px == new_height_logical {

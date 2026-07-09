@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DESIGN_BOOK = ROOT / "docs/gui/VISUAL_LANGUAGE.md"
 RUST_TOKENS = ROOT / "crates/gui-render/src/design_tokens.rs"
+BOARD_EDITOR_PROTOTYPE = ROOT / "docs/gui/prototypes/board-editor.html"
 
 REQUIRED_DOC_TOKENS = {
     "color.canvas": "CANVAS",
@@ -66,6 +67,70 @@ SURFACE_TOKENS = [
     "color.surface.03",
 ]
 
+REQUIRED_TYPE_TOKENS = {
+    "type.display": ("DISPLAY", "IBM Plex Sans", 16.0, 600, 22.0),
+    "type.header": ("HEADER", "IBM Plex Sans", 12.0, 600, 16.0),
+    "type.body": ("BODY", "IBM Plex Sans", 13.0, 400, 18.0),
+    "type.strong": ("STRONG", "IBM Plex Sans", 13.0, 500, 18.0),
+    "type.data": ("DATA", "IBM Plex Mono", 12.0, 400, 16.0),
+    "type.caption": ("CAPTION", "IBM Plex Sans", 11.0, 400, 14.0),
+    "type.micro": ("MICRO", "IBM Plex Sans", 10.0, 500, 12.0),
+}
+
+REQUIRED_SPACING_TOKENS = {
+    "sp.01": "SP_01",
+    "sp.02": "SP_02",
+    "sp.03": "SP_03",
+    "sp.04": "SP_04",
+    "sp.05": "SP_05",
+    "sp.06": "SP_06",
+    "sp.07": "SP_07",
+    "sp.08": "SP_08",
+    "sp.09": "SP_09",
+    "sp.10": "SP_10",
+    "sp.11": "SP_11",
+    "sp.12": "SP_12",
+    "sp.13": "SP_13",
+}
+
+REQUIRED_RADIUS_TOKENS = {
+    "radius.sm": "SM",
+    "radius.md": "MD",
+    "radius.lg": "LG",
+}
+
+PROTOTYPE_ROOT_TOKEN_MAP = {
+    "--canvas": "color.canvas",
+    "--bg": "color.bg.base",
+    "--s01": "color.surface.01",
+    "--s02": "color.surface.02",
+    "--s03": "color.surface.03",
+    "--bd-sub": "color.border.subtle",
+    "--bd-str": "color.border.strong",
+    "--tx": "color.text.primary",
+    "--tx2": "color.text.secondary",
+    "--tx3": "color.text.muted",
+    "--onAccent": "color.text.onAccent",
+    "--acc": "color.accent",
+    "--acc-h": "color.accent.hover",
+    "--acc-p": "color.accent.pressed",
+    "--acc-tint": "color.accent.tint",
+    "--err": "color.status.error",
+    "--warn": "color.status.warn",
+    "--ok": "color.status.success",
+    "--info": "color.status.info",
+    "--cu-f": "content.copper.front",
+    "--cu-b": "content.copper.back",
+    "--cu-i1": "content.copper.in1",
+    "--cu-i2": "content.copper.in2",
+    "--silk": "content.silk.top",
+    "--mask": "content.mask",
+    "--pad": "content.pad",
+    "--via": "content.via",
+    "--rat": "content.ratsnest",
+    "--edge": "content.edge",
+}
+
 
 def parse_doc_tokens() -> dict[str, str]:
     text = DESIGN_BOOK.read_text()
@@ -73,6 +138,41 @@ def parse_doc_tokens() -> dict[str, str]:
     for token, hex_value in re.findall(r"`((?:color|content)\.[^`]+)`\s*\|\s*`(#[0-9A-Fa-f]{6})`", text):
         tokens[token] = hex_value.upper()
     return tokens
+
+
+def parse_doc_type_tokens() -> dict[str, tuple[str, float, int, float]]:
+    text = DESIGN_BOOK.read_text()
+    values: dict[str, tuple[str, float, int, float]] = {}
+    for token, family, size, weight, line, _use in re.findall(
+        r"\|\s*`(type\.[^`]+)`\s*\|\s*([^|]+?)\s*\|\s*([0-9.]+)\s*\|\s*([0-9]+)\s*\|\s*([0-9.]+)\s*\|\s*([^|]+)\|",
+        text,
+    ):
+        values[token] = (family.strip(), float(size), int(weight), float(line))
+    return values
+
+
+def parse_doc_numeric_tokens(prefix: str) -> dict[str, float]:
+    text = DESIGN_BOOK.read_text()
+    values: dict[str, float] = {}
+    for token, value in re.findall(rf"`({re.escape(prefix)}\.[^`]+)`\s*\|\s*([0-9.]+)", text):
+        values[token] = float(value)
+    for token, value in re.findall(rf"`({re.escape(prefix)}\.[^`]+)`\s+([0-9.]+)px", text):
+        values[token] = float(value)
+    return values
+
+
+def parse_prototype_root_tokens() -> dict[str, str]:
+    text = BOARD_EDITOR_PROTOTYPE.read_text()
+    root = re.search(r":root\s*\{(?P<body>.*?)\}", text, flags=re.S)
+    if not root:
+        fail("board-editor prototype has no :root token block")
+    values: dict[str, str] = {}
+    for name, hex_value in re.findall(
+        r"(--[A-Za-z0-9_-]+)\s*:\s*(#[0-9A-Fa-f]{6})",
+        root.group("body"),
+    ):
+        values[name] = hex_value.upper()
+    return values
 
 
 def parse_rust_tokens() -> dict[str, str]:
@@ -86,6 +186,23 @@ def parse_rust_tokens() -> dict[str, str]:
     alias_match = re.search(r"pub\(crate\) const SELECTION: Rgb = chrome::ACCENT;", text)
     if alias_match and "ACCENT" in values:
         values["SELECTION"] = values["ACCENT"]
+    for name, target in re.findall(r"pub\(crate\) const ([A-Z0-9_]+): Rgb = chrome::([A-Z0-9_]+);", text):
+        if target in values:
+            values[name] = values[target]
+    return values
+
+
+def parse_rust_numeric_constants(module: str) -> dict[str, float]:
+    text = RUST_TOKENS.read_text()
+    body = re.search(rf"pub\(crate\) mod {module} \{{(?P<body>.*?)\n\}}", text, flags=re.S)
+    if not body:
+        fail(f"Rust token mirror is missing module {module}")
+    values: dict[str, float] = {}
+    for name, value in re.findall(
+        r"pub\(crate\) const ([A-Z0-9_]+): (?:f32|u16) = ([0-9.]+);",
+        body.group("body"),
+    ):
+        values[name] = float(value)
     return values
 
 
@@ -131,7 +248,14 @@ def fail(message: str) -> None:
 
 def main() -> None:
     doc_tokens = parse_doc_tokens()
+    doc_type_tokens = parse_doc_type_tokens()
+    doc_spacing_tokens = parse_doc_numeric_tokens("sp")
+    doc_radius_tokens = parse_doc_numeric_tokens("radius")
+    prototype_tokens = parse_prototype_root_tokens()
     rust_tokens = parse_rust_tokens()
+    rust_typography = parse_rust_numeric_constants("typography")
+    rust_spacing = parse_rust_numeric_constants("spacing")
+    rust_radius = parse_rust_numeric_constants("radius")
     token_map = REQUIRED_DOC_TOKENS | REQUIRED_CONTENT_TOKENS | {
         "content.selection": "SELECTION"
     }
@@ -151,6 +275,55 @@ def main() -> None:
     if mismatches:
         fail("; ".join(mismatches))
 
+    prototype_mismatches = []
+    for prototype_name, doc_name in PROTOTYPE_ROOT_TOKEN_MAP.items():
+        if prototype_name not in prototype_tokens:
+            prototype_mismatches.append(f"prototype missing {prototype_name}")
+        elif prototype_tokens[prototype_name] != doc_tokens[doc_name]:
+            prototype_mismatches.append(
+                f"{prototype_name}: prototype {prototype_tokens[prototype_name]} != {doc_name} {doc_tokens[doc_name]}"
+            )
+    if prototype_mismatches:
+        fail("; ".join(prototype_mismatches))
+
+    type_failures = []
+    for token, (rust_prefix, expected_family, expected_size, expected_weight, expected_line) in REQUIRED_TYPE_TOKENS.items():
+        if token not in doc_type_tokens:
+            type_failures.append(f"Design Book missing {token}")
+            continue
+        family, size, weight, line = doc_type_tokens[token]
+        if family != expected_family:
+            type_failures.append(f"{token}: family {family!r} != {expected_family!r}")
+        if size != expected_size or weight != expected_weight or line != expected_line:
+            type_failures.append(
+                f"{token}: docs {(size, weight, line)} != expected {(expected_size, expected_weight, expected_line)}"
+            )
+        for suffix, expected in [
+            ("SIZE", expected_size),
+            ("WEIGHT", float(expected_weight)),
+            ("LINE", expected_line),
+        ]:
+            rust_name = f"{rust_prefix}_{suffix}"
+            actual = rust_typography.get(rust_name)
+            if actual != expected:
+                type_failures.append(f"typography::{rust_name}: Rust {actual} != docs {expected}")
+    if type_failures:
+        fail("; ".join(type_failures))
+
+    spacing_failures = []
+    for token, rust_name in REQUIRED_SPACING_TOKENS.items():
+        actual = rust_spacing.get(rust_name)
+        expected = doc_spacing_tokens.get(token)
+        if actual != expected:
+            spacing_failures.append(f"{token}/{rust_name}: docs {expected} != Rust {actual}")
+    for token, rust_name in REQUIRED_RADIUS_TOKENS.items():
+        actual = rust_radius.get(rust_name)
+        expected = doc_radius_tokens.get(token)
+        if actual != expected:
+            spacing_failures.append(f"{token}/{rust_name}: docs {expected} != Rust {actual}")
+    if spacing_failures:
+        fail("; ".join(spacing_failures))
+
     # Consumption guard (VISUAL_LANGUAGE.md §7): board copper materials must be
     # built from the design_tokens seam, never from raw RGB array literals. The
     # token-driven path passes a named base color, so this only trips when a
@@ -161,6 +334,18 @@ def main() -> None:
         fail(
             f"{len(raw_copper)} copper material(s) built from raw RGB literals in "
             "gui-render/src/lib.rs; construct from design_tokens::content instead"
+        )
+    forbidden_literals = [
+        ("board-field border", "[0.46, 0.49, 0.53]"),
+        ("viewport status error", "[0.85, 0.40, 0.35]"),
+        ("viewport status success", "[0.45, 0.72, 0.45]"),
+        ("viewport status background", "[0.07, 0.08, 0.10]"),
+    ]
+    literal_failures = [label for label, literal in forbidden_literals if literal in render_src]
+    if literal_failures:
+        fail(
+            "ad-hoc chrome RGB literals remain in gui-render/src/lib.rs: "
+            + ", ".join(literal_failures)
         )
 
     contrast_failures = []
@@ -181,8 +366,11 @@ def main() -> None:
 
     print(
         f"GUI design token gate passed ({len(token_map)} mirrored color tokens, "
-        f"{len(TEXT_TOKENS) * len(SURFACE_TOKENS)} contrast checks, copper "
-        "consumption verified)."
+        f"{len(REQUIRED_TYPE_TOKENS)} type tokens, "
+        f"{len(REQUIRED_SPACING_TOKENS) + len(REQUIRED_RADIUS_TOKENS)} spacing/radius tokens, "
+        f"{len(PROTOTYPE_ROOT_TOKEN_MAP)} prototype vars, "
+        f"{len(TEXT_TOKENS) * len(SURFACE_TOKENS)} contrast checks, copper/chrome "
+        "literal consumption verified)."
     )
 
 

@@ -115,8 +115,8 @@ consistently across chrome and canvas.
 | `content.pad` | `#C9974A` | |
 | `content.via` | `#C77B3C` | |
 | `content.ratsnest` | `#AEB4BB` | per-net themeable override layer |
-| `content.drc.error` | `#FF4D4D` | **+ marker shape** (red also = front copper) |
-| `content.drc.warn` | `#FFB02E` | + marker shape |
+| `content.drc.error` | `#E5534B` | = `color.status.error`; **+ marker shape** (never hue alone) |
+| `content.drc.warn` | `#E0A23A` | = `color.status.warn`; + marker shape |
 | `content.exclusion` | `#6B7280` | |
 | `content.selection` | `#CE5A92` | = `color.accent` (cross-surface selection) |
 
@@ -125,14 +125,12 @@ defined zoom precedence policy (Altium model: base-pattern-scales /
 layer-dominates / override-dominates) — to be specified when net coloring lands.
 
 ### 2.4 Typography
-**UI sans = IBM Plex Sans (owner choice). Variant and mono are OPEN owner
-decisions — not yet decided; do not treat them as locked.**
+**UI sans = IBM Plex Sans (owner choice). Data mono = IBM Plex Mono.**
 - **UI sans:** IBM Plex Sans. The repo currently bundles only the **Condensed**
   cut (`ibm_plex_sans_condensed`); standard non-condensed Plex Sans is *not*
   bundled and adding it is a font-asset addition requiring owner approval.
-- **Data mono: OPEN — owner decision pending.** "IBM Plex" implies IBM Plex Mono,
-  which is *not* bundled; adding it (or any other mono) is a font-asset addition
-  requiring explicit owner approval. No mono is chosen here.
+- **Data mono:** IBM Plex Mono, bundled and used for coordinates, IDs, terminal
+  text, paths, and command-like data.
 - Any font used must be OFL/permissive for embedding in the wgpu/glyphon pipeline.
 
 Type ramp (UI sits in the 10–14px dense range):
@@ -143,7 +141,7 @@ Type ramp (UI sits in the 10–14px dense range):
 | `type.header` | IBM Plex Sans | 12 | 600 | 16 | section headers (uppercase, +0.04em tracking) |
 | `type.body` | IBM Plex Sans | 13 | 400 | 18 | labels, body |
 | `type.strong` | IBM Plex Sans | 13 | 500 | 18 | emphasized values |
-| `type.data` | *mono — OPEN (owner)* | 12 | 400 | 16 | IDs / coordinates / paths / commands |
+| `type.data` | IBM Plex Mono | 12 | 400 | 16 | IDs / coordinates / paths / commands |
 | `type.caption` | IBM Plex Sans | 11 | 400 | 14 | secondary metadata |
 | `type.micro` | IBM Plex Sans | 10 | 500 | 12 | status pills, micro-labels |
 
@@ -279,10 +277,9 @@ Each component resolves entirely to tokens above. States listed are the contract
   are the initial set — confirm against rendered artboards).
 - Tabler vs Lucide as the shipped base icon set; final stroke weight (1.5 vs 2px).
 - **Font decision (owner):** the UI-sans variant (Condensed, bundled, vs standard
-  Plex Sans, a font addition) and the data mono (IBM Plex Mono needs adding; or
-  another choice). Nothing here is decided until the owner picks; adding any
-  non-bundled font requires owner approval. Then validate the ramp at real render
-  sizes.
+  Plex Sans, a font addition). IBM Plex Mono is ratified as the data mono. Adding
+  any non-bundled font requires owner approval. Then validate the ramp at real
+  render sizes.
 - Net/diff override precedence policy (deferred until net coloring lands).
 
 ## 9. Tracked gaps — what this book does NOT yet specify

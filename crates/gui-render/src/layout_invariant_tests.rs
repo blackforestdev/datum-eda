@@ -51,7 +51,6 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
 
         for (name, rect) in [
             ("top_menu_bar", layout.top_menu_bar),
-            ("tool_rail", layout.tool_rail),
             ("left_sidebar", layout.left_sidebar),
             ("right_sidebar", layout.right_sidebar),
             ("viewport", layout.viewport),
@@ -68,10 +67,6 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
             );
         }
 
-        assert!(
-            !overlaps(layout.tool_rail, layout.left_sidebar),
-            "tool rail overlaps left sidebar at scale {scale}"
-        );
         assert!(
             !overlaps(layout.left_sidebar, layout.viewport),
             "left sidebar overlaps viewport at scale {scale}"
@@ -96,7 +91,6 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
         );
         let panels = [
             prepared.layout.top_menu_bar,
-            prepared.layout.tool_rail,
             prepared.layout.left_sidebar,
             prepared.layout.right_sidebar,
             prepared.layout.viewport,
@@ -111,6 +105,22 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
             assert!(
                 panels.iter().any(|panel| within(region.rect, *panel)),
                 "hit region #{i} is not contained in any shell panel at scale {scale}"
+            );
+        }
+        for run in prepared
+            .text_runs
+            .iter()
+            .filter(|run| run.text.contains("REVIEW NAV"))
+        {
+            let bounds = run.clip_bounds.expect("filtered clipped text run");
+            assert!(
+                within(bounds, prepared.layout.viewport),
+                "viewport overlay hint clip escapes viewport at scale {scale}"
+            );
+            assert!(
+                run.x + bounds.width
+                    <= prepared.layout.viewport.x + prepared.layout.viewport.width + EPS,
+                "viewport overlay hint escapes viewport at scale {scale}"
             );
         }
 

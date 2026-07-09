@@ -223,4 +223,37 @@ mod tests {
         assert!(model.menubar.len() >= 3);
         assert!(find_menu_item("View", "Fit to Board").is_some());
     }
+
+    #[test]
+    fn conformance_menu_title_width_uses_condensed_measured_advance() {
+        let model = menu_model().expect("default menu model should load");
+        let mut x = 0.0_f32;
+        for menu in &model.menubar {
+            let width = menu_title_width(&menu.menu);
+            let measured_run = estimated_text_run_width_px(
+                &menu.menu,
+                design_tokens::typography::BODY_SIZE,
+                TextFace::Ui,
+            );
+            let upper_bound = measured_run + design_tokens::spacing::SP_02 * 2.0 + 0.5;
+            let flat_advance_078 =
+                menu.menu.chars().count() as f32 * design_tokens::typography::BODY_SIZE * 0.78
+                    + 16.0
+                    + design_tokens::spacing::SP_02 * 2.0;
+
+            assert!(
+                width <= upper_bound,
+                "{} title box {width:.2} exceeds measured run bound {upper_bound:.2}",
+                menu.menu
+            );
+            assert!(
+                width + 0.5 < flat_advance_078,
+                "{} title box still matches the retired 0.78 flat advance",
+                menu.menu
+            );
+            let next_x = x + width + design_tokens::spacing::SP_01;
+            assert!(next_x > x, "{} title has non-positive advance", menu.menu);
+            x = next_x;
+        }
+    }
 }

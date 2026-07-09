@@ -171,6 +171,125 @@ fn copper_layer_appearance_is_material_first() {
 }
 
 #[test]
+fn conformance_region_token_bindings_follow_design_book() {
+    assert_eq!(APP_BG, design_tokens::chrome::BG_BASE);
+    assert_eq!(PANEL_BG, design_tokens::chrome::SURFACE_01);
+    assert_eq!(PANEL_CARD_BG, design_tokens::chrome::SURFACE_02);
+    assert_eq!(PANEL_CARD_BORDER, design_tokens::chrome::BORDER_SUBTLE);
+    assert_eq!(TEXT_ACCENT, design_tokens::chrome::ACCENT);
+    assert_eq!(REVIEW_ROW_ACTIVE_BG, design_tokens::chrome::ACCENT_TINT);
+    assert_eq!(
+        design_tokens::content::DRC_ERROR,
+        design_tokens::chrome::STATUS_ERROR
+    );
+    assert_eq!(
+        design_tokens::content::DRC_WARN,
+        design_tokens::chrome::STATUS_WARN
+    );
+
+    let layers = [
+        datum_gui_protocol::SceneLayer {
+            layer_id: "f".to_string(),
+            name: "F.Cu".to_string(),
+            kind: "copper".to_string(),
+            render_order: 0,
+            visible_by_default: true,
+        },
+        datum_gui_protocol::SceneLayer {
+            layer_id: "b".to_string(),
+            name: "B.Cu".to_string(),
+            kind: "copper".to_string(),
+            render_order: 1,
+            visible_by_default: true,
+        },
+        datum_gui_protocol::SceneLayer {
+            layer_id: "silk".to_string(),
+            name: "F.SilkS".to_string(),
+            kind: "silk".to_string(),
+            render_order: 2,
+            visible_by_default: true,
+        },
+        datum_gui_protocol::SceneLayer {
+            layer_id: "edge".to_string(),
+            name: "Edge.Cuts".to_string(),
+            kind: "edge".to_string(),
+            render_order: 3,
+            visible_by_default: true,
+        },
+        datum_gui_protocol::SceneLayer {
+            layer_id: "rat".to_string(),
+            name: "Ratsnest".to_string(),
+            kind: "ratsnest".to_string(),
+            render_order: 4,
+            visible_by_default: false,
+        },
+    ];
+    assert_eq!(
+        layer_swatch_color_with_scene(Some("f"), &layers),
+        design_tokens::content::COPPER_FRONT
+    );
+    assert_eq!(
+        layer_swatch_color_with_scene(Some("b"), &layers),
+        design_tokens::content::COPPER_BACK
+    );
+    assert_eq!(
+        layer_swatch_color_with_scene(Some("silk"), &layers),
+        design_tokens::content::SILK_TOP
+    );
+    assert_eq!(
+        layer_swatch_color_with_scene(Some("edge"), &layers),
+        design_tokens::content::EDGE
+    );
+    assert_eq!(
+        layer_swatch_color_with_scene(Some("rat"), &layers),
+        design_tokens::content::RATSNEST
+    );
+
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let has_panel_vertex = |rect: RectPx, color: [f32; 3]| {
+        prepared
+            .panel_vertices()
+            .iter()
+            .any(|vertex| vertex.color == color && vertex.pos == [rect.x, rect.y])
+    };
+    assert!(has_panel_vertex(prepared.layout.top_menu_bar, APP_BG));
+    assert!(has_panel_vertex(prepared.layout.bottom_strip, APP_BG));
+    assert!(has_panel_vertex(prepared.layout.status_bar, PANEL_BG));
+}
+
+#[test]
+fn conformance_pane_header_tools_and_binding_chips_render() {
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let labels = prepared
+        .text_runs
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect::<Vec<_>>();
+
+    assert!(labels.contains(&"Board / Layout"));
+    for tool in ["S", "M", "R", "V", "Z"] {
+        assert!(labels.contains(&tool), "missing board-pane tool {tool}");
+    }
+    assert!(labels.contains(&"FOLLOWS PANE A"));
+}
+
+#[test]
 fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
     // M7-REN-003: diagnostic emphasis over a proposed route may mark the
     // evidence span's endpoints, but per-vertex dots read as generic

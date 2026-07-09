@@ -32,10 +32,6 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "datum.check.run_profile",
             "datum.check.show",
             "datum.check.waive",
-            "datum.journal.list",
-            "datum.journal.redo",
-            "datum.journal.show",
-            "datum.journal.undo",
             "datum.library.list_objects",
             "datum.library.show_object",
             "datum.project.create_pool_pin_pad_map",
@@ -474,37 +470,17 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "{proposal}",
         ],
     );
-    assert_catalog_entry(
-        catalog
-            .get("datum.journal.list")
-            .expect("journal list handoff command"),
-        &["datum-eda", "journal", "list", "{project_root}"],
-    );
-    assert_catalog_entry(
-        catalog
-            .get("datum.journal.show")
-            .expect("journal show handoff command"),
-        &[
-            "datum-eda",
-            "journal",
-            "show",
-            "{project_root}",
-            "--transaction",
-            "{transaction}",
-        ],
-    );
-    assert_catalog_entry(
-        catalog
-            .get("datum.journal.undo")
-            .expect("journal undo handoff command"),
-        &["datum-eda", "journal", "undo", "{project_root}"],
-    );
-    assert_catalog_entry(
-        catalog
-            .get("datum.journal.redo")
-            .expect("journal redo handoff command"),
-        &["datum-eda", "journal", "redo", "{project_root}"],
-    );
+    for command_id in [
+        "datum.journal.list",
+        "datum.journal.show",
+        "datum.journal.undo",
+        "datum.journal.redo",
+    ] {
+        assert!(
+            !catalog.contains_key(command_id),
+            "{command_id} must not be projected as a terminal handoff"
+        );
+    }
 }
 
 fn assert_catalog_entry(entry: &TerminalCommandCatalogEntry, expected_template: &[&str]) {

@@ -247,14 +247,11 @@ fn render_project_and_filters_panel(
         text_runs,
     );
     draw_text(
-        &format!(
-            "FOCUS {}",
-            if has_review_focus(state) { "ON" } else { "OFF" }
-        ),
+        "FOLLOWS PANE A",
         filters_layout.focus_summary.x,
         filters_layout.focus_summary.y,
         11.0,
-        TEXT_MUTED,
+        TEXT_ACCENT,
         TextFace::Mono,
         text_runs,
     );
@@ -306,7 +303,7 @@ fn render_layer_row(
             TEXT_ACCENT,
         ));
     }
-    let appearance = resolve_layer_appearance_with_scene(Some(&layer.layer_id), &state.scene.layers);
+    let swatch_color = layer_swatch_color_with_scene(Some(&layer.layer_id), &state.scene.layers);
     let swatch = RectPx {
         x: row.x,
         y: row.y + 2.0,
@@ -316,9 +313,9 @@ fn render_layer_row(
     panel_quads.push(Quad::from_rect(
         swatch,
         if visible {
-            appearance.authored_track
+            swatch_color
         } else {
-            dim_context_color(appearance.authored_track, true)
+            dim_context_color(swatch_color, true)
         },
     ));
     push_rect_border(panel_quads, swatch, PANEL_CARD_BORDER, 1.0);

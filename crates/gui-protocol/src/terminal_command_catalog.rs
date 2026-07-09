@@ -26,7 +26,7 @@ pub struct TerminalCommandHandoff {
 pub fn terminal_command_catalog() -> BTreeMap<String, TerminalCommandCatalogEntry> {
     datum_verb_registry::verbs()
         .iter()
-        .filter(|verb| verb.terminal)
+        .filter(|verb| verb.terminal && !verb.id.starts_with("datum.journal."))
         .map(|verb| {
             let entry = TerminalCommandCatalogEntry {
                 command_id: verb.id.to_string(),
