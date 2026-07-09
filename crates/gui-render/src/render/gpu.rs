@@ -1,0 +1,883 @@
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
+pub struct Vertex {
+    pub pos: [f32; 2],
+    pub color: [f32; 3],
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
+struct ScreenUniform {
+    resolution: [f32; 2],
+    _pad: [f32; 2],
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
+struct SceneUniform {
+    resolution: [f32; 4],
+    viewport_origin: [f32; 4],
+    viewport_size: [f32; 4],
+    camera_center_scale: [f32; 4],
+}
+
+impl Vertex {
+    fn layout<'a>() -> wgpu::VertexBufferLayout<'a> {
+        wgpu::VertexBufferLayout {
+            array_stride: std::mem::size_of::<Vertex>() as u64,
+            step_mode: wgpu::VertexStepMode::Vertex,
+            attributes: &[
+                wgpu::VertexAttribute {
+                    offset: 0,
+                    shader_location: 0,
+                    format: wgpu::VertexFormat::Float32x2,
+                },
+                wgpu::VertexAttribute {
+                    offset: 8,
+                    shader_location: 1,
+                    format: wgpu::VertexFormat::Float32x3,
+                },
+            ],
+        }
+    }
+}
+
+/// Quad colors stay in sRGB *token* space on the CPU (so vertex-color contract
+/// tests compare against the design tokens directly). The sRGB->linear
+/// conversion happens in the fragment shader, at the GPU boundary, so the sRGB
+/// surface's encode round-trips to the authored token instead of washing
+/// near-blacks up to grey. Text goes through glyphon, which is already sRGB-aware.
+fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
+    let [a, b, c, d] = quad.points;
+    out.extend_from_slice(&[
+        Vertex {
+            pos: [a.0, a.1],
+            color: quad.color,
+        },
+        Vertex {
+            pos: [b.0, b.1],
+            color: quad.color,
+        },
+        Vertex {
+            pos: [c.0, c.1],
+            color: quad.color,
+        },
+        Vertex {
+            pos: [a.0, a.1],
+            color: quad.color,
+        },
+        Vertex {
+            pos: [c.0, c.1],
+            color: quad.color,
+        },
+        Vertex {
+            pos: [d.0, d.1],
+            color: quad.color,
+        },
+    ]);
+}
+
+fn quads_to_vertices(quads: &[Quad]) -> Vec<Vertex> {
+    let mut out = Vec::with_capacity(quads.len() * 6);
+    for quad in quads {
+        quad_to_vertices(&mut out, *quad);
+    }
+    out
+}
+
+pub struct Renderer {
+    pipeline: wgpu::RenderPipeline,
+    world_pipeline: wgpu::RenderPipeline,
+    uniform_bind_group: wgpu::BindGroup,
+    uniform_buffer: wgpu::Buffer,
+    scene_bind_group: wgpu::BindGroup,
+    scene_uniform_buffer: wgpu::Buffer,
+    font_system: FontSystem,
+    swash_cache: SwashCache,
+    viewport: Viewport,
+    atlas: TextAtlas,
+    text_renderer: TextRenderer,
+    text_buffer_cache: Vec<CachedTextBuffer>,
+    last_text_prepare_signature: Option<TextPrepareSignature>,
+    panel_vertex_buffer: Option<wgpu::Buffer>,
+    panel_vertex_capacity: usize,
+    viewport_underlay_vertex_buffer: Option<wgpu::Buffer>,
+    viewport_underlay_vertex_capacity: usize,
+    viewport_overlay_vertex_buffer: Option<wgpu::Buffer>,
+    viewport_overlay_vertex_capacity: usize,
+    world_vertex_buffer: Option<wgpu::Buffer>,
+    world_vertex_capacity: usize,
+    world_vertex_source_ptr: usize,
+    world_vertex_source_len: usize,
+    msaa_view: Option<wgpu::TextureView>,
+    msaa_size: (u32, u32),
+    msaa_format: wgpu::TextureFormat,
+    msaa_samples: u32,
+}
+
+impl Renderer {
+    fn upload_vertices(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        buffer: &mut Option<wgpu::Buffer>,
+        capacity: &mut usize,
+        label: &str,
+        vertices: &[Vertex],
+    ) {
+        let bytes = bytemuck::cast_slice(vertices);
+        if buffer.is_none() || *capacity < bytes.len() {
+            *buffer = Some(
+                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: Some(label),
+                    contents: bytes,
+                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                }),
+            );
+            *capacity = bytes.len();
+            return;
+        }
+        if let Some(buffer) = buffer.as_ref() {
+            queue.write_buffer(buffer, 0, bytes);
+        }
+    }
+
+    fn sync_world_vertices(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        vertices: &[Vertex],
+    ) {
+        let source_ptr = vertices.as_ptr() as usize;
+        let source_len = vertices.len();
+        if self.world_vertex_buffer.is_some()
+            && self.world_vertex_source_ptr == source_ptr
+            && self.world_vertex_source_len == source_len
+        {
+            return;
+        }
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.world_vertex_buffer,
+            &mut self.world_vertex_capacity,
+            "datum-gui-render-world-vertex-buffer",
+            vertices,
+        );
+        self.world_vertex_source_ptr = source_ptr;
+        self.world_vertex_source_len = source_len;
+    }
+
+    fn cached_text_buffer_indices(
+        &mut self,
+        text_runs: &[TextRun],
+        width: u32,
+        height: u32,
+    ) -> (Vec<usize>, TextBufferCacheStats) {
+        let mut indices = Vec::with_capacity(text_runs.len());
+        let mut stats = TextBufferCacheStats::default();
+        for run in text_runs {
+            let (index, missed) = self.ensure_text_buffer(run, width, height);
+            if missed {
+                stats.misses += 1;
+            } else {
+                stats.hits += 1;
+            }
+            indices.push(index);
+        }
+        (indices, stats)
+    }
+
+    fn ensure_text_buffer(&mut self, run: &TextRun, width: u32, height: u32) -> (usize, bool) {
+        let key = text_buffer_key(run, width, height);
+        if let Some(index) = self
+            .text_buffer_cache
+            .iter()
+            .position(|entry| entry.key == key)
+        {
+            return (index, false);
+        }
+        let mut buffer = Buffer::new(
+            &mut self.font_system,
+            Metrics::new(run.size, run.size * 1.22),
+        );
+        let (buffer_width, buffer_height) = text_buffer_extent(run, width, height);
+        buffer.set_size(
+            &mut self.font_system,
+            Some(buffer_width as f32),
+            Some(buffer_height as f32),
+        );
+        let attrs = text_attrs(run.face);
+        buffer.set_text(
+            &mut self.font_system,
+            &run.text,
+            &attrs,
+            Shaping::Basic,
+            None,
+        );
+        buffer.shape_until_scroll(&mut self.font_system, false);
+        self.text_buffer_cache
+            .push(CachedTextBuffer { key, buffer });
+        (self.text_buffer_cache.len() - 1, true)
+    }
+
+    pub fn new(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        format: wgpu::TextureFormat,
+        msaa_samples: u32,
+    ) -> Self {
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("datum-gui-render-shader"),
+            source: wgpu::ShaderSource::Wgsl(
+                r#"
+struct ScreenUniform {
+    resolution: vec2<f32>,
+    _pad: vec2<f32>,
+};
+
+@group(0) @binding(0)
+var<uniform> screen: ScreenUniform;
+
+struct VsIn {
+    @location(0) pos: vec2<f32>,
+    @location(1) color: vec3<f32>,
+};
+
+struct VsOut {
+    @builtin(position) position: vec4<f32>,
+    @location(0) color: vec3<f32>,
+};
+
+@vertex
+fn vs_main(in: VsIn) -> VsOut {
+    var out: VsOut;
+    let clip = vec2<f32>(
+        (in.pos.x / screen.resolution.x) * 2.0 - 1.0,
+        1.0 - (in.pos.y / screen.resolution.y) * 2.0
+    );
+    out.position = vec4<f32>(clip, 0.0, 1.0);
+    out.color = in.color;
+    return out;
+}
+
+// Tokens arrive as sRGB display values; convert to linear so the sRGB surface's
+// encode round-trips to the authored color (near-black stays near-black).
+fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> {
+    let low = c / 12.92;
+    let high = pow((c + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4));
+    return select(high, low, c <= vec3<f32>(0.04045));
+}
+
+@fragment
+fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
+    return vec4<f32>(srgb_to_linear(in.color), 1.0);
+}
+"#
+                .into(),
+            ),
+        });
+        let world_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("datum-gui-render-world-shader"),
+            source: wgpu::ShaderSource::Wgsl(
+                r#"
+struct SceneUniform {
+    resolution: vec4<f32>,
+    viewport_origin: vec4<f32>,
+    viewport_size: vec4<f32>,
+    camera_center_scale: vec4<f32>,
+};
+
+@group(0) @binding(0)
+var<uniform> scene: SceneUniform;
+
+struct VsIn {
+    @location(0) pos: vec2<f32>,
+    @location(1) color: vec3<f32>,
+};
+
+struct VsOut {
+    @builtin(position) position: vec4<f32>,
+    @location(0) color: vec3<f32>,
+};
+
+@vertex
+fn vs_main(in: VsIn) -> VsOut {
+    var out: VsOut;
+    let screen = vec2<f32>(
+        scene.viewport_origin.x + scene.viewport_size.x * 0.5 + (in.pos.x - scene.camera_center_scale.x) * scene.camera_center_scale.z,
+        scene.viewport_origin.y + scene.viewport_size.y * 0.5 + (in.pos.y - scene.camera_center_scale.y) * scene.camera_center_scale.z
+    );
+    let clip = vec2<f32>(
+        (screen.x / scene.resolution.x) * 2.0 - 1.0,
+        1.0 - (screen.y / scene.resolution.y) * 2.0
+    );
+    out.position = vec4<f32>(clip, 0.0, 1.0);
+    out.color = in.color;
+    return out;
+}
+
+fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> {
+    let low = c / 12.92;
+    let high = pow((c + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4));
+    return select(high, low, c <= vec3<f32>(0.04045));
+}
+
+@fragment
+fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
+    return vec4<f32>(srgb_to_linear(in.color), 1.0);
+}
+"#
+                .into(),
+            ),
+        });
+        let uniform_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("datum-gui-render-uniform-bgl"),
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+            });
+        let scene_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("datum-gui-render-scene-bgl"),
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+            });
+        let uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("datum-gui-render-uniform-buffer"),
+            contents: bytemuck::bytes_of(&ScreenUniform {
+                resolution: [1.0, 1.0],
+                _pad: [0.0, 0.0],
+            }),
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        });
+        let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("datum-gui-render-uniform-bg"),
+            layout: &uniform_bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
+        });
+        let scene_uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("datum-gui-render-scene-uniform-buffer"),
+            contents: bytemuck::bytes_of(&SceneUniform {
+                resolution: [1.0, 1.0, 0.0, 0.0],
+                viewport_origin: [0.0, 0.0, 0.0, 0.0],
+                viewport_size: [1.0, 1.0, 0.0, 0.0],
+                camera_center_scale: [0.0, 0.0, 1.0, 0.0],
+            }),
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        });
+        let scene_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("datum-gui-render-scene-bg"),
+            layout: &scene_bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: scene_uniform_buffer.as_entire_binding(),
+            }],
+        });
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("datum-gui-render-pipeline-layout"),
+            bind_group_layouts: &[&uniform_bind_group_layout],
+            immediate_size: 0,
+        });
+        let world_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("datum-gui-render-world-pipeline-layout"),
+                bind_group_layouts: &[&scene_bind_group_layout],
+                immediate_size: 0,
+            });
+        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("datum-gui-render-pipeline"),
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: Some("vs_main"),
+                buffers: &[Vertex::layout()],
+                compilation_options: Default::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState::REPLACE),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: Default::default(),
+            }),
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState {
+                count: msaa_samples,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            multiview_mask: None,
+            cache: None,
+        });
+        let world_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("datum-gui-render-world-pipeline"),
+            layout: Some(&world_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &world_shader,
+                entry_point: Some("vs_main"),
+                buffers: &[Vertex::layout()],
+                compilation_options: Default::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &world_shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState::REPLACE),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: Default::default(),
+            }),
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState {
+                count: msaa_samples,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            multiview_mask: None,
+            cache: None,
+        });
+        let mut font_system = FontSystem::new();
+        load_datum_fonts(&mut font_system);
+        let swash_cache = SwashCache::new();
+        let cache = Cache::new(device);
+        let viewport = Viewport::new(device, &cache);
+        let mut atlas = TextAtlas::new(device, queue, &cache, format);
+        let text_renderer = TextRenderer::new(
+            &mut atlas,
+            device,
+            wgpu::MultisampleState {
+                count: msaa_samples,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            None,
+        );
+        Self {
+            pipeline,
+            world_pipeline,
+            uniform_bind_group,
+            uniform_buffer,
+            scene_bind_group,
+            scene_uniform_buffer,
+            font_system,
+            swash_cache,
+            viewport,
+            atlas,
+            text_renderer,
+            text_buffer_cache: Vec::new(),
+            last_text_prepare_signature: None,
+            panel_vertex_buffer: None,
+            panel_vertex_capacity: 0,
+            viewport_underlay_vertex_buffer: None,
+            viewport_underlay_vertex_capacity: 0,
+            viewport_overlay_vertex_buffer: None,
+            viewport_overlay_vertex_capacity: 0,
+            world_vertex_buffer: None,
+            world_vertex_capacity: 0,
+            world_vertex_source_ptr: 0,
+            world_vertex_source_len: 0,
+            msaa_view: None,
+            msaa_size: (0, 0),
+            msaa_format: format,
+            msaa_samples,
+        }
+    }
+
+    fn ensure_msaa(
+        &mut self,
+        device: &wgpu::Device,
+        width: u32,
+        height: u32,
+    ) -> &wgpu::TextureView {
+        if self.msaa_size != (width, height) || self.msaa_view.is_none() {
+            let texture = device.create_texture(&wgpu::TextureDescriptor {
+                label: Some("datum-gui-render-msaa"),
+                size: wgpu::Extent3d {
+                    width: width.max(1),
+                    height: height.max(1),
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: self.msaa_samples,
+                dimension: wgpu::TextureDimension::D2,
+                format: self.msaa_format,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                view_formats: &[],
+            });
+            self.msaa_view = Some(texture.create_view(&wgpu::TextureViewDescriptor::default()));
+            self.msaa_size = (width, height);
+        }
+        self.msaa_view.as_ref().unwrap()
+    }
+
+    pub fn render(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        target: &wgpu::TextureView,
+        prepared: &PreparedScene,
+        retained: &RetainedScene,
+        width: u32,
+        height: u32,
+    ) -> anyhow::Result<()> {
+        let render_started = std::time::Instant::now();
+        let panel_vertices = prepared.panel_vertices();
+        let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
+        let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
+        let world_vertices = retained.world_vertices();
+        let visible_world_ranges = prepared.visible_world_ranges();
+        let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+        let projection = Projection::new(board_field, &prepared.scene_bounds, prepared.camera);
+        queue.write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::bytes_of(&ScreenUniform {
+                resolution: [width as f32, height as f32],
+                _pad: [0.0, 0.0],
+            }),
+        );
+        queue.write_buffer(
+            &self.scene_uniform_buffer,
+            0,
+            bytemuck::bytes_of(&SceneUniform {
+                resolution: [width as f32, height as f32, 0.0, 0.0],
+                viewport_origin: [board_field.x, board_field.y, 0.0, 0.0],
+                viewport_size: [board_field.width, board_field.height, 0.0, 0.0],
+                camera_center_scale: [
+                    prepared.camera.center_x_nm,
+                    prepared.camera.center_y_nm,
+                    projection.scale,
+                    0.0,
+                ],
+            }),
+        );
+        let upload_started = std::time::Instant::now();
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.panel_vertex_buffer,
+            &mut self.panel_vertex_capacity,
+            "datum-gui-render-panel-vertex-buffer",
+            panel_vertices,
+        );
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.viewport_underlay_vertex_buffer,
+            &mut self.viewport_underlay_vertex_capacity,
+            "datum-gui-render-viewport-underlay-vertex-buffer",
+            viewport_underlay_vertices,
+        );
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.viewport_overlay_vertex_buffer,
+            &mut self.viewport_overlay_vertex_capacity,
+            "datum-gui-render-viewport-overlay-vertex-buffer",
+            viewport_overlay_vertices,
+        );
+        self.sync_world_vertices(device, queue, world_vertices);
+        let upload_elapsed = upload_started.elapsed();
+        let encode_started = std::time::Instant::now();
+        let msaa_view = self.ensure_msaa(device, width, height).clone();
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("datum-gui-render-encoder"),
+        });
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("datum-gui-render-pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &msaa_view,
+                    resolve_target: Some(target),
+                    depth_slice: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: APP_BG[0] as f64,
+                            g: APP_BG[1] as f64,
+                            b: APP_BG[2] as f64,
+                            a: 1.0,
+                        }),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                occlusion_query_set: None,
+                timestamp_writes: None,
+                multiview_mask: None,
+            });
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            if !panel_vertices.is_empty() {
+                pass.set_vertex_buffer(
+                    0,
+                    self.panel_vertex_buffer
+                        .as_ref()
+                        .expect("panel vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..panel_vertices.len() as u32, 0..1);
+            }
+            if !viewport_underlay_vertices.is_empty() {
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.viewport_underlay_vertex_buffer
+                        .as_ref()
+                        .expect("viewport underlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
+            }
+            if !world_vertices.is_empty() && !visible_world_ranges.is_empty() {
+                pass.set_pipeline(&self.world_pipeline);
+                pass.set_bind_group(0, &self.scene_bind_group, &[]);
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.world_vertex_buffer
+                        .as_ref()
+                        .expect("world vertex buffer should exist")
+                        .slice(..),
+                );
+                for range in visible_world_ranges {
+                    pass.draw(range.clone(), 0..1);
+                }
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
+            if !viewport_overlay_vertices.is_empty() {
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.viewport_overlay_vertex_buffer
+                        .as_ref()
+                        .expect("viewport overlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
+            }
+        }
+        let encode_elapsed = encode_started.elapsed();
+        self.viewport.update(queue, Resolution { width, height });
+        let text_prepare_started = std::time::Instant::now();
+        let (text_buffer_indices, text_cache_stats) =
+            self.cached_text_buffer_indices(&prepared.text_runs, width, height);
+        let text_signature =
+            text_prepare_signature(&text_buffer_indices, &prepared.text_runs, width, height);
+        let skipped_text_prepare = self
+            .last_text_prepare_signature
+            .as_ref()
+            .is_some_and(|previous| previous == &text_signature)
+            && text_cache_stats.misses == 0;
+        if !skipped_text_prepare {
+            let prepare_result = self.text_renderer.prepare(
+                device,
+                queue,
+                &mut self.font_system,
+                &mut self.atlas,
+                &self.viewport,
+                build_text_areas(
+                    &self.text_buffer_cache,
+                    &text_buffer_indices,
+                    &prepared.text_runs,
+                ),
+                &mut self.swash_cache,
+            );
+            if let Err(initial_error) = prepare_result {
+                // Keep the glyph atlas warm during normal interaction. Trim only
+                // when prepare reports pressure, then retry with the same semantic
+                // text areas. This preserves the DOA2526 atlas-safety behavior
+                // without forcing avoidable re-rasterization on every selection.
+                self.atlas.trim();
+                self.text_renderer
+                    .prepare(
+                        device,
+                        queue,
+                        &mut self.font_system,
+                        &mut self.atlas,
+                        &self.viewport,
+                        build_text_areas(
+                            &self.text_buffer_cache,
+                            &text_buffer_indices,
+                            &prepared.text_runs,
+                        ),
+                        &mut self.swash_cache,
+                    )
+                    .map_err(|retry_error| {
+                        anyhow::anyhow!(
+                            "prepare GUI text after atlas trim: {retry_error}; initial: {initial_error}"
+                        )
+                    })?;
+            }
+            self.last_text_prepare_signature = Some(text_signature);
+        }
+        let text_prepare_elapsed = text_prepare_started.elapsed();
+        let text_encode_started = std::time::Instant::now();
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("datum-gui-text-pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &msaa_view,
+                    resolve_target: Some(target),
+                    depth_slice: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                occlusion_query_set: None,
+                timestamp_writes: None,
+                multiview_mask: None,
+            });
+            self.text_renderer
+                .render(&self.atlas, &self.viewport, &mut pass)
+                .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
+        }
+        let text_encode_elapsed = text_encode_started.elapsed();
+        let submit_started = std::time::Instant::now();
+        queue.submit([encoder.finish()]);
+        let submit_elapsed = submit_started.elapsed();
+        trace_render_timing(format!(
+            "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{} text_prepare_skipped={}",
+            render_started.elapsed().as_millis(),
+            upload_elapsed.as_millis(),
+            encode_elapsed.as_millis(),
+            text_prepare_elapsed.as_millis(),
+            text_encode_elapsed.as_millis(),
+            submit_elapsed.as_millis(),
+            panel_vertices.len(),
+            viewport_underlay_vertices.len(),
+            world_vertices.len(),
+            viewport_overlay_vertices.len(),
+            prepared.text_runs.len(),
+            text_cache_stats.hits,
+            text_cache_stats.misses,
+            skipped_text_prepare,
+        ));
+        Ok(())
+    }
+}
+
+fn trace_render_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-render] {message}");
+    }
+}
+
+fn trace_graphic_timing(
+    graphic: &BoardGraphicPrimitive,
+    started: std::time::Instant,
+    quad_count: usize,
+) {
+    let elapsed_ms = started.elapsed().as_millis();
+    if std::env::var_os("DATUM_TRACE_GRAPHICS").is_some() && (elapsed_ms >= 5 || quad_count >= 1024)
+    {
+        eprintln!(
+            "[datum-graphic] {} kind={} layer={} points={} holes={} quads={} {}ms",
+            graphic.object_id,
+            graphic.primitive_kind,
+            graphic.layer_id,
+            graphic.path.len(),
+            graphic.holes.len(),
+            quad_count,
+            elapsed_ms
+        );
+    }
+}
+
+fn suffix_id(id: &str) -> &str {
+    id.rsplit(':').next().unwrap_or(id)
+}
+
+fn draw_text(
+    text: &str,
+    x: f32,
+    y: f32,
+    size: f32,
+    color: [f32; 3],
+    face: TextFace,
+    out: &mut Vec<TextRun>,
+) {
+    out.push(TextRun {
+        text: text.to_string(),
+        x,
+        y,
+        size,
+        color,
+        face,
+        clip_bounds: None,
+    });
+}
+
+fn draw_text_clipped(
+    text: &str,
+    x: f32,
+    y: f32,
+    size: f32,
+    color: [f32; 3],
+    face: TextFace,
+    clip_bounds: RectPx,
+    out: &mut Vec<TextRun>,
+) {
+    out.push(TextRun {
+        text: text.to_string(),
+        x,
+        y,
+        size,
+        color,
+        face,
+        clip_bounds: Some(clip_bounds),
+    });
+}
+
+fn text_row_height_for_size(size: f32) -> f32 {
+    (size * 1.6).ceil().max(size + 4.0)
+}
+
+fn key_value_row_height() -> f32 {
+    // Key/value rows sit on a ~27px rhythm (Design Book kv min-height) so the
+    // two type tiers breathe instead of crowding.
+    27.0
+}
+

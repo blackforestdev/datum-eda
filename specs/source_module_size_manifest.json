@@ -62,11 +62,6 @@
       "status": "decomposition-pending",
       "note": "GUI scene-contract + primitive types (no GUI deps)."
     },
-    "crates/gui-render/src/lib.rs": {
-      "recorded_lines": 8800,
-      "status": "decomposition-pending",
-      "note": "GUI render surface monolith (audit-cited ~8641). Primary decomposition target; the split is deferred to a future governance-triggered, organic decomposition per docs/DECOMPOSITION_PLAN.md \u2014 this gate is the flag, not the split."
-    },
     "crates/verb-registry/src/verbs_library.rs": {
       "recorded_lines": 3090,
       "status": "decomposition-pending",
