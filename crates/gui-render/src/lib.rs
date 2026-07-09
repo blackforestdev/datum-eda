@@ -6531,32 +6531,55 @@ impl Vertex {
     }
 }
 
+/// Our color tokens are sRGB *display* values (e.g. CANVAS #0B0C0E). The render
+/// surface is sRGB, so the GPU applies the sRGB OETF on write — the shader/vertex
+/// color must therefore be LINEAR for the encoded result to equal the token.
+/// Passing the raw sRGB value re-encoded near-blacks up to grey ("50 shades of
+/// grey": #0B0C0E ≈ 0.043 displayed as ~0.23 ≈ #3C). Linearize here so tokens
+/// render as authored. Text goes through glyphon, which is already sRGB-aware.
+fn srgb_to_linear_channel(c: f32) -> f32 {
+    if c <= 0.04045 {
+        c / 12.92
+    } else {
+        ((c + 0.055) / 1.055).powf(2.4)
+    }
+}
+
+fn srgb_to_linear_rgb(c: [f32; 3]) -> [f32; 3] {
+    [
+        srgb_to_linear_channel(c[0]),
+        srgb_to_linear_channel(c[1]),
+        srgb_to_linear_channel(c[2]),
+    ]
+}
+
 fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
     let [a, b, c, d] = quad.points;
+    let color = srgb_to_linear_rgb(quad.color);
     out.extend_from_slice(&[
         Vertex {
             pos: [a.0, a.1],
-            color: quad.color,
+            color,
         },
         Vertex {
             pos: [b.0, b.1],
-            color: quad.color,
+            color,
         },
         Vertex {
             pos: [c.0, c.1],
-            color: quad.color,
+            color,
         },
         Vertex {
             pos: [a.0, a.1],
-            color: quad.color,
+            color,
         },
         Vertex {
             pos: [c.0, c.1],
-            color: quad.color,
+            color,
         },
         Vertex {
             pos: [d.0, d.1],
-            color: quad.color,
+            color,
         },
     ]);
 }

@@ -1040,7 +1040,15 @@ impl Runtime {
         let size = window.inner_size();
         let scale_factor = scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32);
         let caps = surface.get_capabilities(&adapter);
-        let format = caps.formats[0];
+        // Force an sRGB surface so the renderer's sRGB->linear vertex conversion
+        // round-trips correctly (near-black tokens must render near-black, not the
+        // washed-out grey a linear surface produced from raw sRGB values).
+        let format = caps
+            .formats
+            .iter()
+            .copied()
+            .find(|f| f.is_srgb())
+            .unwrap_or(caps.formats[0]);
         let msaa_samples = select_msaa_samples(&adapter, format);
         let present_mode = caps
             .present_modes
