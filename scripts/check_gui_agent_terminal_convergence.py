@@ -34,8 +34,8 @@ def main() -> int:
                 f"retired embedded assistant bridge artifact must not exist: {path.relative_to(ROOT)}"
             )
 
-    if '"TERMINAL"' not in bottom_dock:
-        failures.append("bottom dock must render the TERMINAL tab")
+    if '"terminal"' not in bottom_dock:
+        failures.append("bottom dock must render the terminal tab")
     for forbidden_label in ('"AGENTS"', '"ASSISTANT"', '"OUTPUT"'):
         if forbidden_label in bottom_dock:
             failures.append(f"bottom dock must not render {forbidden_label} as a dock tab")
