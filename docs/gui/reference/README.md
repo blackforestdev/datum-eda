@@ -25,14 +25,17 @@ they are checked by different machinery:
   golden PNGs. Lives in the gates named in the conformance spec
   (`scripts/check_gui_design_tokens.py`, `crates/gui-render/src/*` layout/contract
   tests, `crates/gui-render/src/visual_runner.rs` + the board goldens, and the
-  **composed-shell visual-parity gate** `scripts/check_gui_visual_parity.py` vs
-  the owner-approved shell golden
+  **single-pane shell no-regression gate** `scripts/check_gui_visual_parity.py` vs
+  the committed shell golden
   `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` — captured from
   the datum-test board with a preset R1 component selection, a populated
-  single-pane composition per `board-editor.html`). **This
-  directory adds no machine gate** — but the shell golden gate does enforce that
-  the once-approved composed look does not silently regress (it is same-engine,
-  build-vs-build, never wgpu-vs-HTML).
+  **single-pane** composition: board + inspector). That golden is a **single-pane
+  INTERIM** target — it is **NOT owner-approved against `board-editor.html`**,
+  which is a **split Board+Schematic** composition that cannot be captured until
+  Phase-2 builds the split view. **This directory adds no machine gate** — the
+  shell golden gate only enforces that the current single-pane look does not
+  silently regress (same-engine, build-vs-build, never wgpu-vs-HTML); it does not
+  certify prototype parity.
 - **Human layer (this directory)** — the committed reference image
   `board-editor.png` (a faithful render of the prototype) reviewed **by eye**,
   region by region, against the build's committed chrome goldens at
@@ -177,21 +180,26 @@ dumping ground for un-built gates.
 
 ## 5. Capture status (honest, updated per capture)
 
-> **Cross-link (whole-shell no-regression is now ENFORCED elsewhere).** This
-> reference-image loop is the **HUMAN owner-judgment layer only** — it is no longer
-> the sole line of defense for the composed shell look. Whole-shell composition
-> parity is now regression-gated by **G9**
-> (`DATUM_GUI_CONFORMANCE_SPEC.md` §2.10 / §4): the same-engine shell visual-parity
-> gate `scripts/check_gui_visual_parity.py` diffs the running app against the
-> owner-approved shell golden
+> **Cross-link (only the SINGLE-PANE look is regression-gated; the full split
+> composition is Phase-2).** This reference-image loop is the **HUMAN
+> owner-judgment layer** for the full board-editor composition. What is machine-
+> gated today is only the **current single-pane** shell look, via **G9**
+> (`DATUM_GUI_CONFORMANCE_SPEC.md` §2.10 / §4): the same-engine gate
+> `scripts/check_gui_visual_parity.py` diffs the running app against the committed
+> **single-pane** shell golden
 > `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` and FAILS on any
 > regression (and if the golden is absent or a `*.PENDING` placeholder shadows it).
-> That gate is build-vs-build (never wgpu-vs-HTML). This directory's job is the
-> one-time cross-engine aesthetic judgment that blesses the golden and the
-> region-by-region eyeball review — not machine enforcement.
+> That gate is build-vs-build (never wgpu-vs-HTML) and it is **NOT** prototype-
+> parity certification. The **full board-editor.html composition** — the SPLIT
+> Board+Schematic view with a populated inspector — cannot be captured until
+> Phase-2 builds the split view + schematic pane; its owner-approved reference is
+> gated by **G10** (`scripts/check_gui_reference_capture.py`), which is **EXPECTED
+> RED** until this directory's `board-editor.png` is captured. This directory's
+> job is that one-time cross-engine aesthetic judgment and the region-by-region
+> eyeball review — not machine enforcement of the single-pane golden.
 
 **Current status: DEFERRED TO MANUAL CAPTURE — no real reference image committed
-yet.**
+yet, and the full split composition it must show is a Phase-2 build.**
 
 The automated capture was attempted in the environment that stood up this loop.
 Chromium 150 is installed with all shared libraries present, but it **SIGTRAPs and
