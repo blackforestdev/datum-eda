@@ -3,7 +3,7 @@ fn render_inspector_panel(
     inspector_rect: RectPx,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
+    _hit_regions: &mut Vec<HitRegion>,
 ) {
     draw_text(
         "SELECTION",
@@ -203,6 +203,50 @@ fn render_inspector_panel(
                     text_runs,
                     TextFace::Mono,
                 );
+            } else if let Some(zone) = state
+                .scene
+                .zones
+                .iter()
+                .find(|z| &z.object_id == object_id)
+            {
+                draw_text(
+                    "ZONE",
+                    inspector_rect.x + 12.0,
+                    y,
+                    15.0,
+                    TEXT_PRIMARY,
+                    TextFace::Mono,
+                    text_runs,
+                );
+                y += text_row_height_for_size(15.0);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LAYER",
+                    &zone.layer_id.to_uppercase(),
+                    text_runs,
+                    TextFace::Mono,
+                );
+                y += key_value_row_height();
+                if let Some(net_uuid) = &zone.net_uuid {
+                    push_key_value(
+                        inspector_rect.x + 12.0,
+                        y,
+                        "NET",
+                        &truncate_text(net_uuid, 18),
+                        text_runs,
+                        TextFace::Mono,
+                    );
+                    y += key_value_row_height();
+                }
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "VERTICES",
+                    &zone.polygon.len().to_string(),
+                    text_runs,
+                    TextFace::Mono,
+                );
             } else if let Some(text) = state
                 .scene
                 .board_texts
@@ -219,6 +263,7 @@ fn render_inspector_panel(
                     text_runs,
                 );
                 y += text_row_height_for_size(15.0);
+                let hit_regions = &mut Vec::<HitRegion>::new();
                 push_board_text_property_row(
                     inspector_rect.x + 12.0,
                     y,
@@ -239,8 +284,8 @@ fn render_inspector_panel(
                 push_board_text_property_row(
                     inspector_rect.x + 12.0,
                     y,
-                    "EDIT",
-                    "CONTENT",
+                    "MODE",
+                    "READ ONLY",
                     text_runs,
                 );
                 hit_regions.push(HitRegion {
@@ -531,7 +576,7 @@ fn render_inspector_panel(
                 });
                 y += key_value_row_height();
                 draw_text(
-                    "EDGE +/-   CENTER EDIT",
+                    "READ-ONLY INSPECTOR",
                     inspector_rect.x + 12.0,
                     y,
                     10.5,

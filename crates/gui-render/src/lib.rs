@@ -476,6 +476,7 @@ enum WorldHitShape {
         path: Vec<PointNm>,
         half_width_nm: f32,
     },
+    Polygon(Vec<PointNm>),
     Circle {
         center: PointNm,
         radius_nm: f32,
@@ -1009,6 +1010,7 @@ impl WorldHitShape {
                 path,
                 half_width_nm,
             } => polyline_contains_world_point(path, point, *half_width_nm),
+            Self::Polygon(path) => point_in_polygon_world(path, point),
             Self::Circle { center, radius_nm } => {
                 let dx = point.x as f32 - center.x as f32;
                 let dy = point.y as f32 - center.y as f32;
@@ -2215,12 +2217,20 @@ fn push_retained_world_hit_regions(
         if !pad_visible {
             continue;
         }
-        let target_id = component_object_id_for_uuid(scene, &pad.component_uuid)
-            .unwrap_or(pad.object_id.as_str());
         out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(target_id.to_string()),
+            target: HitTarget::AuthoredObject(pad.object_id.clone()),
             layer_id: None,
             shape: WorldHitShape::Rect(pad.bounds),
+        });
+    }
+    for zone in &scene.zones {
+        if !layer_visible(state, &zone.layer_id) || zone.polygon.len() < 3 {
+            continue;
+        }
+        out.push(WorldHitRegion {
+            target: HitTarget::AuthoredObject(zone.object_id.clone()),
+            layer_id: Some(zone.layer_id.clone()),
+            shape: WorldHitShape::Polygon(zone.polygon.clone()),
         });
     }
     for graphic in &scene.component_graphics {
@@ -2801,6 +2811,36 @@ fn component_overlaps_active_action(
 
 fn point_in_rect(point: PointNm, rect: datum_gui_protocol::RectNm) -> bool {
     point.x >= rect.min_x && point.x <= rect.max_x && point.y >= rect.min_y && point.y <= rect.max_y
+}
+
+fn point_in_polygon_world(path: &[PointNm], point: PointNm) -> bool {
+    if path.len() < 3 {
+        return false;
+    }
+    let mut inside = false;
+    let px = point.x as f64;
+    let py = point.y as f64;
+    let mut j = path.len() - 1;
+    for i in 0..path.len() {
+        let xi = path[i].x as f64;
+        let yi = path[i].y as f64;
+        let xj = path[j].x as f64;
+        let yj = path[j].y as f64;
+        let crosses_y = (yi > py) != (yj > py);
+        if crosses_y {
+            let denom = yj - yi;
+            if denom.abs() <= f64::EPSILON {
+                j = i;
+                continue;
+            }
+            let x_at_y = (xj - xi) * (py - yi) / denom + xi;
+            if px < x_at_y {
+                inside = !inside;
+            }
+        }
+        j = i;
+    }
+    inside
 }
 
 fn board_text_hit_rect(text: &BoardTextPrimitive) -> datum_gui_protocol::RectNm {
@@ -8427,5 +8467,82 @@ mod tests {
         );
 
         assert!(roundrect_out.len() > rect_out.len());
+    }
+
+    #[test]
+    fn retained_pad_hit_regions_target_pads_for_inspection() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let pad = state
+            .scene
+            .pads
+            .first()
+            .expect("fixture should include pads");
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+
+        assert!(
+            retained.world_hit_regions.iter().any(|region| {
+                matches!(&region.target, HitTarget::AuthoredObject(id) if id == &pad.object_id)
+            }),
+            "pad hit region should select the pad object for read-only inspection"
+        );
+    }
+
+    #[test]
+    fn polygon_hit_shape_contains_zone_interior_only() {
+        let polygon = vec![
+            PointNm { x: 0, y: 0 },
+            PointNm { x: 100, y: 0 },
+            PointNm { x: 100, y: 100 },
+            PointNm { x: 0, y: 100 },
+        ];
+
+        assert!(point_in_polygon_world(&polygon, PointNm { x: 50, y: 50 }));
+        assert!(!point_in_polygon_world(&polygon, PointNm { x: 150, y: 50 }));
+    }
+
+    #[test]
+    fn board_text_inspector_does_not_emit_edit_hit_regions_in_phase_one() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let Some(text) = state.scene.board_texts.first() else {
+            return;
+        };
+        state.selection = SelectionTarget::AuthoredObject(text.object_id.clone());
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+
+        assert!(
+            prepared.hit_regions.iter().all(|region| {
+                !matches!(
+                    region.target,
+                    HitTarget::ToggleSelectedBoardTextMirrored
+                        | HitTarget::ToggleSelectedBoardTextKeepUpright
+                        | HitTarget::ToggleSelectedBoardTextBold
+                        | HitTarget::CycleSelectedBoardTextRenderIntent
+                        | HitTarget::CycleSelectedBoardTextFamily
+                        | HitTarget::CycleSelectedBoardTextHAlign
+                        | HitTarget::CycleSelectedBoardTextVAlign
+                        | HitTarget::EditSelectedBoardTextRenderIntent
+                        | HitTarget::EditSelectedBoardTextFamily
+                        | HitTarget::EditSelectedBoardTextAlignment
+                        | HitTarget::DecreaseSelectedBoardTextHeight
+                        | HitTarget::IncreaseSelectedBoardTextHeight
+                        | HitTarget::RotateSelectedBoardTextCounterClockwise90
+                        | HitTarget::RotateSelectedBoardTextClockwise90
+                        | HitTarget::DecreaseSelectedBoardTextLineSpacing
+                        | HitTarget::IncreaseSelectedBoardTextLineSpacing
+                        | HitTarget::EditSelectedBoardTextContent
+                        | HitTarget::EditSelectedBoardTextHeight
+                        | HitTarget::EditSelectedBoardTextRotation
+                        | HitTarget::EditSelectedBoardTextLineSpacing
+                )
+            }),
+            "Phase 1 board-text inspector must be read-only"
+        );
     }
 }
