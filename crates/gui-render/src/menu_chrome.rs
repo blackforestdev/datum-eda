@@ -192,11 +192,12 @@ fn find_menu_item(menu_name: &str, label: &str) -> Option<GuiMenuItem> {
 }
 
 fn menu_title_width(label: &str) -> f32 {
-    // Match the actual rendered advance (estimated_text_run_width_px already
-    // includes end padding) plus symmetric item padding, so adjacent titles
-    // never overlap for long labels like "Manufacturing".
+    // estimated_text_run_width_px already bundles ~16px of end padding (≈ the
+    // prototype's 9px-each-side .menu padding). Do NOT add another SP_03*2 on top
+    // — that doubled the inter-title gap. This keeps adjacent titles at the
+    // prototype's tight rhythm while still never overlapping (the estimate is a
+    // slight over-measure of the glyph run).
     estimated_text_run_width_px(label, design_tokens::typography::BODY_SIZE, TextFace::Ui)
-        + design_tokens::spacing::SP_03 * 2.0
 }
 
 fn menu_model() -> Result<&'static GuiMenuModel, &'static str> {
