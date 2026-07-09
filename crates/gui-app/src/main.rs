@@ -2152,7 +2152,15 @@ impl Runtime {
     }
 
     fn log_review_event(&mut self, message: impl Into<String>) {
-        self.push_terminal_line(message.into());
+        // GUI-action narration is the AutoCAD/Eagle command-echo: it belongs in
+        // the (not-yet-built) editor command console, never in the real PTY
+        // terminal. Route it to the invisible console sink. No repaint is forced
+        // here — the sink has no visible surface, and every narrating action
+        // already invalidates the frame independently.
+        self.session
+            .workspace_mut()
+            .ui
+            .push_console_line(message.into());
     }
 
     fn apply_session_result(
