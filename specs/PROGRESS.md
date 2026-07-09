@@ -49,7 +49,12 @@
    per-region checklist with an honest check disposition (ENFORCED / TO-ENFORCE /
    HUMAN) so the build is driven to match the prototype and drift is caught; it also
    carries the machine-layer gap register (checks to add) and the open-reconciliation
-   register (owner calls) for this slice.
+   register (owner calls) for this slice. **Human-review loop:**
+   `docs/gui/reference/` (README + `board-editor.png`) is the HUMAN layer of that
+   conformance rail — the committed reference image plus the region-by-region eyeball
+   protocol against the build's chrome goldens
+   (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`); no check
+   there pixel-diffs wgpu against the HTML prototype.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
    `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the

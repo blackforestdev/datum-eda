@@ -1,0 +1,31 @@
+PLACEHOLDER — the real reference image board-editor.png has NOT been captured yet.
+
+This file exists ONLY because the reference PNG is not committed. It is a note,
+not an image. Do not treat its presence as a captured reference.
+
+Why deferred:
+  The loop was stood up in an environment where Chromium 150 (installed, all libs
+  present) SIGTRAPs / core-dumps immediately on startup — even on a trivial
+  data:text/html page, even with --no-sandbox --disable-gpu --single-process —
+  because the sandbox blocks the namespace/seccomp calls Chromium needs. This is
+  an environment blocker, not a missing dependency and not a prototype problem.
+  A fake or blank image was deliberately NOT committed.
+
+To resolve (on a machine with a working headless browser), from repo root:
+
+  chromium --headless --no-sandbox --hide-scrollbars \
+    --force-device-scale-factor=2 --window-size=1680,1050 \
+    --virtual-time-budget=4000 \
+    --screenshot="docs/gui/reference/board-editor.png" \
+    "file://$(pwd)/docs/gui/prototypes/board-editor.html"
+
+Then:
+  1. Open board-editor.png and confirm it shows the full board-editor shell
+     (menu bar, left columns, split board pane, inspector, dock, status bar).
+  2. git add docs/gui/reference/board-editor.png
+  3. git rm docs/gui/reference/board-editor.png.PENDING   (delete THIS file)
+  4. Update docs/gui/reference/README.md §5 status to CAPTURED (date + browser build).
+
+See docs/gui/reference/README.md for the full human-review loop and the
+machine-ENFORCED vs HUMAN split. Capture parameters are fixed there — do not
+change them ad hoc.
