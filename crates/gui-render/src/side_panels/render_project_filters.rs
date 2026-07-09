@@ -23,12 +23,18 @@ fn render_project_and_filters_panel(
     } else {
         "Board"
     };
+    // Suppress the scene-kind prefix when the board name would merely duplicate
+    // it (e.g. "Board · board"): show one clean label.
+    let board_name = state.scene.board_name.trim();
+    let board_line = if board_name.is_empty()
+        || board_name.eq_ignore_ascii_case(scene_label)
+    {
+        scene_label.to_string()
+    } else {
+        format!("{} · {}", scene_label, truncate_text(board_name, 18))
+    };
     draw_text(
-        &format!(
-            "{} · {}",
-            scene_label,
-            truncate_text(&state.scene.board_name, 18)
-        ),
+        &board_line,
         project_layout.board_name.x,
         project_layout.board_name.y,
         12.5,
@@ -36,17 +42,9 @@ fn render_project_and_filters_panel(
         TextFace::Ui,
         text_runs,
     );
-    if let (Some(action), Some(net_rect)) = (state.selected_review_action(), project_layout.net) {
-        draw_text(
-            &format!("Net {}", truncate_text(&action.net_name, 18)),
-            net_rect.x,
-            net_rect.y,
-            13.0,
-            TEXT_ACCENT,
-            TextFace::Ui,
-            text_runs,
-        );
-    }
+    // (The selected net belongs to the Inspector, not the Project panel — the
+    // "Net <name>" line is removed here to keep the panel a clean project slug.)
+    let _ = project_layout.net;
     // (Removed the source-shard health line + shard rows from the Project panel
     // — provenance diagnostics that read as a debug HUD, not the designed tree.)
     let _ = (project_layout.source_label, project_layout.source_rows);
