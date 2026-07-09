@@ -290,3 +290,28 @@ on them are non-authoritative until the owner decides.
 - Every **TO-ENFORCE** names a concrete file + assertion (§4 G1–G8; §2 rows).
 - Every **HUMAN** names the reference image (`board-editor.html`) + the committed
   golden (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`).
+
+## 7. Pilot status — the discipline generalizes (future doc-by-doc pass)
+
+This document is the **pilot application** of a governance discipline, not a
+one-off. The discipline is:
+
+> **Every claim in a GUI spec must carry exactly one honest check disposition —
+> ENFORCED (a named existing gate/test/golden), TO-ENFORCE (a named machine check
+> to add with the slice it verifies, never faked green or landed red against
+> un-built structure), or HUMAN (reviewed against a committed reference image /
+> golden; never a pixel-diff of wgpu against HTML).** No claim is left as
+> unverifiable prose.
+
+The board editor was chosen as the pilot because it is the first buildable GUI
+surface (Active-Frontier step 2) and already has a controlling prototype, a token
+mirror, and a golden harness — so all three dispositions are exercisable today.
+The intended trajectory is a **doc-by-doc pass** that applies this same discipline
+to the other GUI specs as each surface reaches buildable definition — e.g. the
+marking-menu shell (`DATUM_GUI_CONTEXT_MENU_CONTENT.md`, Active-Frontier step 3),
+the command console (step 4), and the schematic/library surfaces (step 6) — each
+turning its own prototype/claims into an actionable, honestly-dispositioned
+conformance rail. This spec is the **template and precedent** for that pass; it does
+not itself perform it. Sequencing for the rollout lives in the Active Frontier
+(`specs/PROGRESS.md`), which threads each surface's conformance rail behind the
+build slice it governs.

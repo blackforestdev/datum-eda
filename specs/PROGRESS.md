@@ -49,7 +49,12 @@
    per-region checklist with an honest check disposition (ENFORCED / TO-ENFORCE /
    HUMAN) so the build is driven to match the prototype and drift is caught; it also
    carries the machine-layer gap register (checks to add) and the open-reconciliation
-   register (owner calls) for this slice. **Human-review loop:**
+   register (owner calls) for this slice. It is the **pilot** for the
+   spec-actionability discipline (every GUI-spec claim carries one honest check
+   disposition) and the **template** for a future doc-by-doc pass that applies the
+   same discipline to the marking-menu (step 3), command console (step 4), and
+   schematic/library (step 6) surfaces as each reaches buildable definition
+   (`DATUM_GUI_CONFORMANCE_SPEC.md` §7). **Human-review loop:**
    `docs/gui/reference/` (README + `board-editor.png`) is the HUMAN layer of that
    conformance rail — the committed reference image plus the region-by-region eyeball
    protocol against the build's chrome goldens
