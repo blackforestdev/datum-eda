@@ -6512,6 +6512,34 @@ mod tests {
     }
 
     #[test]
+    fn select_flag_reference_resolves_to_authored_component_selection() {
+        // Locks the Phase-2 `--select R1`-style flow the datum-test parity capture
+        // relies on: resolve a human-stable reference designator against the loaded
+        // scene (mirroring app_bootstrap's `--select` handling), then
+        // select_authored_object must yield an AuthoredObject selection for that
+        // component so the single-pane populated component inspector renders. The
+        // gui-protocol fixture's sole component (U1) stands in for the datum-test
+        // board's R1; both exercise the identical reference -> object_id path.
+        let mut state = load_fixture_workspace_state();
+        let reference = state.scene.components[0].reference.clone();
+        let object_id = state
+            .scene
+            .components
+            .iter()
+            .find(|c| c.reference == reference)
+            .map(|c| c.object_id.clone())
+            .expect("fixture component reference should resolve to an object_id");
+        assert!(
+            state.select_authored_object(&object_id),
+            "reference-resolved object_id should confirm scene membership"
+        );
+        assert_eq!(
+            state.selection,
+            SelectionTarget::AuthoredObject(object_id)
+        );
+    }
+
+    #[test]
     fn check_finding_selection_preserves_active_review_target() {
         let mut state = load_fixture_workspace_state();
         state.checks.findings = vec![CheckFindingSummary {

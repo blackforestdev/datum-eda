@@ -371,6 +371,50 @@ mod tests {
     }
 
     #[test]
+    fn authored_component_selection_populates_inspector_reference_and_value() {
+        // Locks the Phase-2 populated-component inspector branch that the
+        // datum-test `--select R1` parity capture freezes: an AuthoredObject
+        // component selection must emit the reference identity run plus a Value
+        // key row inside the right sidebar column (the single-pane populated
+        // composition), not the empty route-action chrome.
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let object_id = state.scene.components[0].object_id.clone();
+        let reference = state.scene.components[0].reference.clone();
+        assert!(
+            state.select_authored_object(&object_id),
+            "fixture component object_id should resolve to an AuthoredObject selection"
+        );
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let right = prepared.layout.right_sidebar;
+        let in_inspector =
+            |run: &TextRun| run.x >= right.x && run.x <= right.x + right.width;
+        // The component reference draws as the inspector identity run (Mono, 15px);
+        // the right-column x filter disambiguates it from the on-board silk label.
+        assert!(
+            prepared.text_runs.iter().any(|run| run.text == reference
+                && matches!(run.face, TextFace::Mono)
+                && in_inspector(run)),
+            "populated component inspector should emit the reference identity run in the right column"
+        );
+        // The Value key row proves the populated branch rendered (route-action
+        // chrome has no Value row).
+        assert!(
+            prepared
+                .text_runs
+                .iter()
+                .any(|run| run.text == "Value" && in_inspector(run)),
+            "populated component inspector should emit the Value key row"
+        );
+    }
+
+    #[test]
     fn project_card_controls_flow_above_filter_controls() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
