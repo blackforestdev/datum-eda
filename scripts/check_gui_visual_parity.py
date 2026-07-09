@@ -5,8 +5,10 @@ This is the honest machine gate for Phase-1 visual parity. A Rust/wgpu render
 will never pixel-match the HTML prototype, so this gate does NOT diff the build
 against ``docs/gui/prototypes/board-editor.html``. Instead it:
 
-  1. captures the running app at a CANONICAL command + curated demo scene +
-     fixed window size (build-vs-build, one renderer), and
+  1. captures the running app at a CANONICAL command — the datum-test board with
+     a preset component selection (R1) + fixed window size (build-vs-build, one
+     renderer), exercising a populated single-pane composition per
+     ``docs/gui/prototypes/board-editor.html`` — and
   2. diffs that capture against a COMMITTED, owner-approved app-screenshot
      golden with a small tolerance.
 
@@ -37,8 +39,15 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# The single canonical capture: curated --demo-known-good scene, fixed window.
+# The single canonical capture: datum-test board with a preset component
+# selection (R1), fixed window. Repointed from the empty --demo-known-good
+# route-review scene to a populated single-pane composition (board + populated
+# component inspector) matching docs/gui/prototypes/board-editor.html.
 WINDOW_SIZE = "1680x1050"
+DATUM_TEST_BOARD = (
+    "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb"
+)
+SELECT_REFERENCE = "R1"
 GOLDEN = ROOT / "crates/gui-render/testdata/golden/shell/datum-shell.golden.png"
 
 # Small tolerance: absorbs sub-pixel AA / font-raster jitter only. Same renderer,
@@ -78,7 +87,10 @@ def capture(out_path: Path) -> None:
         "--features",
         "visual",
         "--",
-        "--demo-known-good",
+        "--board",
+        DATUM_TEST_BOARD,
+        "--select",
+        SELECT_REFERENCE,
         "--visual-test",
         "--screenshot-out",
         str(out_path),

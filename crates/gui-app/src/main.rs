@@ -125,7 +125,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
         .resolve_request()
         .context("resolve offscreen visual-test review context")?;
     let workspace_include_review = !args.wants_plain_project_board_view();
-    let state = if let Some(schematic_file) = &args.schematic_file {
+    let mut state = if let Some(schematic_file) = &args.schematic_file {
         load_kicad_schematic_workspace_state(schematic_file)
             .context("load schematic offscreen workspace state")?
     } else if args.wants_plain_project_board_view() {
@@ -134,6 +134,21 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     } else {
         load_live_workspace_state(&request).context("load live offscreen workspace state")?
     };
+    // Preset a component selection when requested, mirroring the on-screen launch
+    // path in app_bootstrap. `--select` accepts a reference designator (e.g. R1)
+    // resolved against the loaded scene, or a raw object_id; an unknown selector
+    // leaves the inspector empty rather than crashing, so the parity capture fails
+    // loudly on a bad selector.
+    if let Some(sel) = &args.select {
+        let object_id = state
+            .scene
+            .components
+            .iter()
+            .find(|c| c.reference == *sel)
+            .map(|c| c.object_id.clone())
+            .unwrap_or_else(|| sel.clone());
+        state.select_authored_object(&object_id);
+    }
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let (width, height) = args.visual_window_size()?;
     let scale_factor = args.visual_scale_factor.unwrap_or(1.0);

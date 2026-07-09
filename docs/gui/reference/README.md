@@ -27,7 +27,9 @@ they are checked by different machinery:
   tests, `crates/gui-render/src/visual_runner.rs` + the board goldens, and the
   **composed-shell visual-parity gate** `scripts/check_gui_visual_parity.py` vs
   the owner-approved shell golden
-  `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`). **This
+  `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` — captured from
+  the datum-test board with a preset R1 component selection, a populated
+  single-pane composition per `board-editor.html`). **This
   directory adds no machine gate** — but the shell golden gate does enforce that
   the once-approved composed look does not silently regress (it is same-engine,
   build-vs-build, never wgpu-vs-HTML).

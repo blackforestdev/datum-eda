@@ -37,6 +37,11 @@ pub(super) struct GuiArgs {
     pub(super) artifact_path: Option<PathBuf>,
     #[arg(long = "project-root")]
     pub(super) project_root: Option<PathBuf>,
+    #[arg(
+        long = "select",
+        help = "Preset selection to a component by reference designator (e.g. R1) or object_id"
+    )]
+    pub(super) select: Option<String>,
     #[arg(long = "net")]
     pub(super) net_uuid: Option<String>,
     #[arg(long = "from-anchor")]
@@ -201,6 +206,22 @@ impl GuiArgs {
             "workspace load {}ms",
             workspace_started.elapsed().as_millis()
         ));
+
+        // Preset a component selection when requested. `--select` accepts a human-
+        // stable reference designator (e.g. R1) resolved against the loaded scene,
+        // or a raw object_id. This is additive over the plain board view (which
+        // loads with `selection = None`) and reuses the existing selection API;
+        // an unknown selector leaves the inspector empty rather than crashing.
+        if let Some(sel) = &self.select {
+            let object_id = state
+                .scene
+                .components
+                .iter()
+                .find(|c| c.reference == *sel)
+                .map(|c| c.object_id.clone())
+                .unwrap_or_else(|| sel.clone());
+            state.select_authored_object(&object_id);
+        }
 
         let camera_started = std::time::Instant::now();
         append_gui_diagnostic_line("camera fit begin");

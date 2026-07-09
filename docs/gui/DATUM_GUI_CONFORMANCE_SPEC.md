@@ -53,8 +53,10 @@ paperwork, not the visual outcome.
 
 That defect is now closed by a **real, same-engine, FAILING gate**:
 `scripts/check_gui_visual_parity.py` captures the running app at a canonical
-command (`--demo-known-good --visual-test --window-size 1680x1050
---exit-after-screenshot`) and diffs it against a committed, owner-approved
+command (`--board <datum-test path> --select R1 --visual-test --window-size
+1680x1050 --exit-after-screenshot` — the datum-test board with a preset R1
+component selection, a populated single-pane composition per
+`board-editor.html`) and diffs it against a committed, owner-approved
 **shell golden** `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`
 with a small tolerance (build-vs-build, one renderer — **never** a wgpu-vs-HTML
 pixel-diff). The golden is owner-approved once to match `board-editor.html`; the
@@ -268,12 +270,14 @@ the gate re-runs them):**
 
 ```bash
 cargo run -q -p datum-gui-app --bin datum-gui --features visual -- \
-  --demo-known-good --visual-test \
+  --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb \
+  --select R1 --visual-test \
   --screenshot-out <tmp>/datum-shell.capture.png \
   --window-size 1680x1050 --exit-after-screenshot
 ```
 
-Fixed inputs: launch bin `datum-gui`, `--demo-known-good` curated scene,
+Fixed inputs: launch bin `datum-gui`, the datum-test board + preset R1 selection
+(populated single-pane composition per `board-editor.html`),
 `--visual-test` deterministic offscreen path, window `1680x1050`. **Tolerances
 (same-engine, so near-identical — verified at 0 differing px on the reference
 workstation):** dimensions must match exactly (hard fail otherwise); then (a) the
