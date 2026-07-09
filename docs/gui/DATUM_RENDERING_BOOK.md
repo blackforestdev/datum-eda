@@ -245,26 +245,28 @@ professional-standard, kept minimal by intent.
 Owner-approved composition: `docs/gui/prototypes/title-block-study.html`; the size
 matrix that proves it translates: `docs/gui/prototypes/title-block-sizes.html`.
 
-**Form & placement.** Two forms, chosen by sheet orientation — **landscape → bottom
-band; portrait → right-edge strip** — same on-face set, same rules, reflowed.
-**Fixed physical size, corner-anchored:** the block is a *constant physical size on
-every sheet size*; the paper size grows the **drawing area**, not the block. The band
-anchors to the sheet's bottom-right corner; the strip to the right edge. (A firm may
-override with a step-up on very large formats; the default is fixed.) This is why the
-block never stretches to fit A-size vs D-size.
+**Form & placement — four configurations.** Two block positions — **bottom band** and
+**right-edge strip** — each available in **either sheet orientation** (a per-document
+choice), giving four configs: {landscape, portrait} × {band, strip}. The band anchors to
+the bottom-right corner; the strip to the right edge. Content is a two-row baseline grid
+(band) or stacked top→bottom (strip).
 
-**Fixed dimensions (v1).** Landscape **band height 32 mm**; portrait **strip width
-44 mm**; internal **gutter 4 mm**. Content on a two-row baseline grid (band) or stacked
-top→bottom (strip).
+**Scales with the sheet (proportional), ratio-defined.** The block is a constant
+*proportion* of the sheet — a bigger sheet gets a proportionally bigger block, not a
+fixed one. Band height ≈ **12% of the sheet's short edge** (≈ 32 mm on Letter, ≈ 41 mm on
+Tabloid, ≈ 90 mm on 24×36); strip width scales the same way; gutter and type are ratios
+of the band/strip. Base proportions come from the approved Direction-B composition; the
+scale fraction is tunable per firm.
 
-**Type scale (physical, on the sheet; tonal value per §5 Grauwert).**
-| Role | Size | Face |
-|------|-----:|------|
-| Micro-label (uppercase, tracked) | 1.8 mm | IBM Plex Mono |
-| Value / data | 2.5 mm | Mono (data) / Sans Cond Medium (text) |
-| Drawing title | 4.0 mm | Sans Cond Medium |
-| Revision value | 4.5 mm | Sans Cond Medium |
-| Sheet-number **hero** | 11 mm (band) · 18 mm (strip) | Sans Cond SemiBold |
+**Type scale — ratios of the band height `H` (so it scales with the block; tonal value
+per §5 Grauwert).** Values shown at the Letter base (`H` = 32 mm).
+| Role | Ratio of H | @ Letter | Face |
+|------|-----------:|---------:|------|
+| Micro-label (uppercase, tracked) | 0.056·H | 1.8 mm | IBM Plex Mono |
+| Value / data | 0.078·H | 2.5 mm | Mono (data) / Sans Cond Medium (text) |
+| Drawing title | 0.125·H | 4.0 mm | Sans Cond Medium |
+| Revision value | 0.141·H | 4.5 mm | Sans Cond Medium |
+| Sheet-number **hero** | 0.34·H | 11 mm | Sans Cond SemiBold |
 
 **Grid & alignment.** Labels sit on a shared baseline row, values on the next; every
 cell's content is left-inset by the gutter; dividers are inset (they never touch the
@@ -276,10 +278,10 @@ inside. Colour appears once (status only); the accent stays reserved.
 **Clear-space** = 0.5 × cap height (§6), so it scales with the text and is
 rotation-invariant.
 
-**Why it translates.** Type scale, grid, clear-space, and Grauwert are all
-ratio/rule-based, and the block is fixed-size + corner-anchored — so the *same* guideline
-renders on **Letter · Tabloid · ANSI-D, both orientations, without redrawing.** The size
-matrix is a projection of these rules, not a set of hand-drawn variants.
+**Why it translates.** Every dimension is a ratio — of the sheet, or of the band height
+`H` — so the block is a **constant proportion** that scales with the sheet: the *look* is
+identical at every size, and Letter · Tabloid · ANSI-D across all four configs render from
+the one set of ratios without redrawing. The size matrix is that projection.
 
 ## 9. Still to specify (next passes, not blockers)
 
