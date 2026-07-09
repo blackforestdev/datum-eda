@@ -139,7 +139,9 @@ fn copper_layer_appearance_is_material_first() {
 fn conformance_region_token_bindings_follow_design_book() {
     assert_eq!(APP_BG, design_tokens::chrome::BG_BASE);
     assert_eq!(PANEL_BG, design_tokens::chrome::SURFACE_01);
-    assert_eq!(PANEL_CARD_BG, design_tokens::chrome::SURFACE_02);
+    // Passive panel bodies are the flat SURFACE_01 material (flush stacked
+    // panels); SURFACE_02 is reserved for interactive fields/hover/tool-buttons.
+    assert_eq!(PANEL_CARD_BG, design_tokens::chrome::SURFACE_01);
     assert_eq!(PANEL_CARD_BORDER, design_tokens::chrome::BORDER_SUBTLE);
     assert_eq!(TEXT_ACCENT, design_tokens::chrome::ACCENT);
     assert_eq!(REVIEW_ROW_ACTIVE_BG, design_tokens::chrome::ACCENT_TINT);

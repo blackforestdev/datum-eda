@@ -27,17 +27,11 @@ pub(super) fn render_side_panels(
         (filters_rect, "LAYERS"),
         (inspector_rect, "INSPECTOR"),
     ] {
-        // Raised card body, then a recessed header strip so the panel title
-        // reads as a header bar (Design Book panel-hd), not floating text.
+        // Flush stacked panel: body and header strip are the SAME SURFACE_01
+        // material; the 28px header is distinguished only by its uppercase title
+        // and a single BORDER_SUBTLE bottom divider (Design Book panel-hd). No
+        // per-card box border — panels read as a contiguous stack, not widgets.
         panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
-        let header = RectPx {
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: UI_CARD_DIVIDER_Y,
-        };
-        panel_quads.push(Quad::from_rect(header, PANEL_BG));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
         draw_text(
             title,
             rect.x + UI_CARD_PADDING_X,
@@ -49,12 +43,41 @@ pub(super) fn render_side_panels(
         );
         push_section_divider(
             panel_quads,
-            rect.x + UI_CARD_PADDING_X,
+            rect.x,
             rect.y + UI_CARD_DIVIDER_Y,
-            rect.width - UI_CARD_PADDING_X * 2.0,
+            rect.width,
             PANEL_CARD_BORDER,
         );
     }
+    // One BORDER_SUBTLE divider separating the stacked PROJECT and LAYERS panels
+    // in the left column (their bodies are contiguous SURFACE_01).
+    push_section_divider(
+        panel_quads,
+        project_rect.x,
+        project_rect.y + project_rect.height - 1.0,
+        project_rect.width,
+        PANEL_CARD_BORDER,
+    );
+    // Single outer edge border per column (left column right edge, right column
+    // left edge) — the column's only chrome outline, matching `.col` borders.
+    panel_quads.push(Quad::from_rect(
+        RectPx {
+            x: left.x + left.width - 1.0,
+            y: left.y,
+            width: 1.0,
+            height: left.height,
+        },
+        PANEL_CARD_BORDER,
+    ));
+    panel_quads.push(Quad::from_rect(
+        RectPx {
+            x: right.x,
+            y: right.y,
+            width: 1.0,
+            height: right.height,
+        },
+        PANEL_CARD_BORDER,
+    ));
 
     render_project_and_filters_panel(
         state,

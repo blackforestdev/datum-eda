@@ -38,7 +38,10 @@ pub mod visual_manifest;
 #[cfg(feature = "visual")]
 pub mod visual_runner;
 
-const UI_CARD_MARGIN: f32 = design_tokens::spacing::SP_04;
+// Panels are flush stacked bodies that span the sidebar edge-to-edge (Design
+// Book panel language), not inset floating cards — so the shared column margin
+// is zero and separation reads through surface + a single hairline divider.
+const UI_CARD_MARGIN: f32 = 0.0;
 const UI_CARD_PADDING_X: f32 = design_tokens::spacing::SP_04;
 const UI_CARD_TITLE_Y: f32 = design_tokens::spacing::SP_04;
 const UI_CARD_DIVIDER_Y: f32 = design_tokens::spacing::SP_07 - design_tokens::spacing::SP_02;
@@ -151,8 +154,8 @@ impl ShellLayout {
         let height = height as f32;
         let menu_height = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
         let status_height = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
-        let left_width = 228.0_f32.min(width * 0.3);
-        let right_width = 300.0_f32.min(width * 0.35);
+        let left_width = 224.0_f32.min(width * 0.3);
+        let right_width = 296.0_f32.min(width * 0.35);
         let bottom_height = match dock_height_px {
             Some(h) => (h as f32).clamp(design_tokens::spacing::SP_07, height * 0.6),
             None => design_tokens::spacing::SP_07.min(height * 0.25),
@@ -611,7 +614,10 @@ struct RectBits {
 
 const APP_BG: [f32; 3] = design_tokens::chrome::BG_BASE;
 const PANEL_BG: [f32; 3] = design_tokens::chrome::SURFACE_01;
-const PANEL_CARD_BG: [f32; 3] = design_tokens::chrome::SURFACE_02;
+// Passive panel bodies read as the flat SURFACE_01 material (flush stacked
+// panels). SURFACE_02 is reserved for interactive fields/hover/tool-buttons and
+// SURFACE_03 for active chips — see the surface-ladder note in VISUAL_LANGUAGE.
+const PANEL_CARD_BG: [f32; 3] = design_tokens::chrome::SURFACE_01;
 const PANEL_CARD_BORDER: [f32; 3] = design_tokens::chrome::BORDER_SUBTLE;
 const VIEWPORT_BG: [f32; 3] = design_tokens::chrome::CANVAS;
 const VIEWPORT_FRAME: [f32; 3] = design_tokens::chrome::BORDER_STRONG;
