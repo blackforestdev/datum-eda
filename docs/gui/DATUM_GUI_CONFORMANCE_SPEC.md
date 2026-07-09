@@ -214,7 +214,8 @@ tier**.
 | Spacing (Carbon 2/4/8) + radius mirror the book | `--row` etc. placeholders | `spacing::*`, `radius::*` | P1 | **TO-ENFORCE** | add spacing/radius parity arms to `check_gui_design_tokens.py` (§4) |
 | **Menu advance factor** (item 3) | Plex Condensed narrower than 0.78 | flat `0.78` Ui advance, `lib.rs:6180` | P1 | **TO-ENFORCE** | see §2.1 item-3 row (measured advance + two-sided menu test) |
 | **Weight tiers reachable** (type.strong / type.micro = Medium 500) | book §2.4 assigns Medium 500 | `IBMPlexSansCondensed-Medium.ttf` **loaded but `text_attrs` never selects `Weight::MEDIUM`** → tiers unreachable | P1 | **TO-ENFORCE** | add a tier→weight resolution test asserting strong/micro resolve to `Weight::MEDIUM`; fix `text_attrs` to select it |
-| **DRC_ERROR / DRC_WARN / SILK_BOTTOM saturation** (item 4) | `--err/--warn` chrome; content silk single value | `DRC_ERROR #FF4D4D`, `DRC_WARN #FFB02E`, `SILK_BOTTOM #969BA1` ≠ `SILK_TOP #E8E6DC` | P1 | HUMAN (owner-eye) — **do NOT change values** | values stay ENFORCED-as-mirrored by `check_gui_design_tokens.py` so any future change is deliberate; saturation/dimness judgment is owner-eye vs the reference render (§5d) |
+| **DRC marker colors** (item 4) — **already specced/approved in the prototype** | prototype renders ALL checks/DRC in the muted `--err #E5534B` / `--warn #E0A23A` (CHECKS panel count, `SPI2_SCK ⚠`, status `.warnc`) | build adds **separate hotter** `DRC_ERROR #FF4D4D` / `DRC_WARN #FFB02E` — a **divergence from the approved target** | P1 | **TO-ENFORCE** | Build fix, NOT an owner decision: DRC violation markers must render in the approved muted `--err/--warn` (= `STATUS_ERROR/STATUS_WARN`). Reconcile the `DRC_*` tokens to those values (or render DRC via `STATUS_*`) and gate that DRC rendering uses the muted colors |
+| **Back-side silk (`SILK_BOTTOM`)** | prototype specs a single `--silk #E8E6DC` (front only); back silk not covered by the prototype | `SILK_BOTTOM #969BA1` (dimmer) ≠ `SILK_TOP` | P1 | RECORDED-GAP | prototype does not address back silk; the dimmer default is physically sensible (far side reads recessed) — keep it, recorded so any future change is deliberate |
 
 ---
 
@@ -228,9 +229,11 @@ Folded in as first-class rows above, not a sidebar:
    `layout_invariant_tests.rs`; fix via `draw_text_clipped`/`truncate_text`).
 3. **Menu-width tuning** → §2.1 menu-bar + §2.9 typography, **TO-ENFORCE** (replace
    `0.78` at `lib.rs:6178`; two-sided menu metric test in `menu_chrome.rs`).
-4. **DRC / silk-bottom token softening** → §2.9 typography + §2.8 status-bar,
-   **HUMAN / owner-eye** (values unchanged, stay mirror-gated; status-bar already
-   uses chrome `STATUS_WARN`, pre-answering item 4 there).
+4. **DRC marker colors** → §2.9 typography, **TO-ENFORCE** — build fix, not an owner
+   decision: DRC is **already specced/approved in the prototype** as the muted
+   `--err/--warn`; the build's separate hot `DRC_*` tokens diverge and must be
+   reconciled to those values. Back-side silk is a **recorded prototype gap** (dimmer
+   default kept). (Status-bar already uses chrome `STATUS_WARN` correctly.)
 
 ## 4. Machine-layer gap register (checks this spec asks to ADD)
 
