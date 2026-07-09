@@ -4,7 +4,7 @@
 > feeding the (forthcoming) Datum Rendering Book. The two **Laws** below are
 > ratified invariants the product is held to; the **DFM Geometry Solver** is a
 > named future engine (execution requires authorization) placed on the roadmap as
-> an Active-Frontier step-5 dependency. The **Fingerprint** section is the visual
+> an Active-Frontier step-6 dependency. The **Fingerprint** section is the visual
 > identity thesis the Rendering Book will make concrete once the symbol/footprint
 > prototype settles the look.
 > **Authority**: subordinate to decision 019 and the product-mechanics doctrine;
@@ -115,7 +115,7 @@ manufacturing envelope — not luck, and not user effort.
 
 ## Roadmap placement (un-orphaned)
 
-- **Active Frontier step 5 (native authoring depth)** owns the DFM Geometry Solver
+- **Active Frontier step 6 (native authoring depth)** owns the DFM Geometry Solver
   as a named dependency; it depends on the routing kernel (done), the
   `ImpedanceSpec` solver (deferred), and the Rendering Book defaults.
 - **This doc is the foundation the Datum Rendering Book builds on.** The Rendering

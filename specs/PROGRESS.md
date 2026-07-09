@@ -36,7 +36,7 @@
    design spec + prototypes are what turn each surface into a buildable design.
    Governing: decision 019 + `DATUM_GUI_PRODUCT_SPEC.md` + decisions 014/015.
    State: **ongoing per-surface design work, parallel to the board build; scope
-   shaped with the owner.** Gates only the schematic/library surfaces (step 5),
+   shaped with the owner.** Gates only the schematic/library surfaces (step 6),
    not the board shell (steps 2–3).
 2. **GUI Phase 1 build — application shell + board render fidelity (GO, buildable
    today).** Build the shell + board render on the `datum-test` fixture,
@@ -54,19 +54,32 @@
    render and preview their gesture but do **not** invoke operations; `not_built`
    and mutating items are visibly disabled, exactly as Phase 1 handles the menu
    bar. This proves the interaction model and IA without the write path. **Ops
-   wiring** (marking-menu items → journaled operations) is deferred to step 4.
+   wiring** (marking-menu items → journaled operations) is deferred to step 5.
    Governing: decision 019 + `DATUM_GUI_CONTEXT_MENU_CONTENT.md` +
    `DATUM_GUI_PARAMETRIC_TOOLING.md`.
-4. **GUI write-path enablement** — the four-item backend plumbing that lets the
+4. **Command console — the editor command line (AutoCAD/Eagle command-echo).**
+   The visible home for GUI-action narration, split by write-path dependency:
+   **(a) read-only command-echo console (buildable now, on the Phase-1 shell):**
+   the surface that displays GUI-action echoes (fit board, layer toggle, selection,
+   view zoom, ...). The narration is **already decoupled** from the real PTY terminal
+   into an invisible console sink (`ConsoleLaneState` on `WorkspaceUiState`, fed by
+   `log_review_event` → `push_console_line`); this step gives that sink its visible
+   surface. Needs **no** write-path. **(b) authoring command console (gated on the
+   write-path, step 5):** typed mutating verbs entered at the command line, emitting
+   journaled typed `Operation`s exactly as the marking menu and menu bar will. The
+   integrated terminal stays a real shell that GUI actions never write to (decision
+   005). Governing: decision 019 + decision 005 (embedded-terminal doctrine) +
+   `docs/gui/DATUM_GUI_DESIGN_SPEC.md` § "Command Surfaces".
+5. **GUI write-path enablement** — the four-item backend plumbing that lets the
    GUI author journaled operations directly (and wires the step-3 marking menu to
    real ops). Plan already written: `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`
    (decisions 019 + 017), sequence P0 → W1 → W2 → W3. Needed once *authoring*
    surfaces are built (after the read-only Phase 1 + marking-menu shell), NOT
    before. State: **planned; not the immediate step.**
-5. **Native authoring depth (queued):** schematic and PCB editor surfaces
+6. **Native authoring depth (queued):** schematic and PCB editor surfaces
    emitting typed operations over the write path. Contracts:
    `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`,
-   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–4.
+   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–5.
    **Named engine dependency:** the **DFM Geometry Solver** (pad rounding · trace
    corner treatment · teardrops — author topology, derive manufacturable geometry
    rule-driven per net-class through `commit()`), governed by
@@ -74,14 +87,14 @@
    (Law 1 render/CAM single-source fidelity, gated; Law 2 beauty-by-default). Sits
    on the landed routing kernel + the deferred `ImpedanceSpec` solver + the
    forthcoming Datum Rendering Book. Execution requires authorization.
-6. **Documentation system (design landed, spec queued):** paper space / model space
+7. **Documentation system (design landed, spec queued):** paper space / model space
    separation + **viewports** (decision 020) with the title block (Rendering Book §8) as
    the paper-space frame. The design foundation is locked — content foundation,
    Direction-B visual language, Grauwert typography, the dimensioned/proportional-scaling
    guideline, and the field-formula + doc-control template architecture
    (`research/documentation-system/`). **Next:** a spec pass for the
    `Sheet` / `Viewport` / annotation / `SheetSet` object model + v1 scope (schematic paper
-   space vs the fab-drawing sheet template first). Pairs with native authoring (step 5) —
+   space vs the fab-drawing sheet template first). Pairs with native authoring (step 6) —
    it is how the authored model becomes documentation. Governing:
    `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` + Rendering Book §8.
 
@@ -109,6 +122,11 @@ daemon reaches the substrate via `native.write`/`native.describe`, and the CLI
 flat namespace was dissolved into `args/` + `commands/<family>/` + `context/` +
 `main_tests/` with the exec layer deleted. (2026-07-02: governance apparatus
 slimmed to behavioral gates plus spec-governance coverage/classification.)
+(2026-07-09: GUI-action narration decoupled from the integrated PTY terminal —
+`log_review_event` now feeds an invisible `ConsoleLaneState` sink via
+`push_console_line` instead of the terminal display buffer, honoring the decision
+005 doctrine that the terminal is a real shell GUI actions never write to. The
+command console that will make this sink visible is sequenced as Frontier step 4.)
 
 **Current-vs-target framing**:
 - **Current implementation evidence**: the historical milestone tables below
@@ -244,7 +262,7 @@ legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
 | Rendering Book — house visual identity (symbols/footprints/silk/icons) | [~] | `docs/gui/DATUM_RENDERING_BOOK.md` (governed) extends decision 015 tokens into manufacturable content geometry. **Locked (owner-approved design pass 3, prototype `docs/gui/prototypes/rendering-study.html`):** board-editor canonical palette; schematic dark-working-default + vellum print/doc toggle; filled symbol bodies + stroke hierarchy + filled net-label pills + screen-only selection glow; rounded-rect pads (25% ratio) + pad-1 + courtyard + cyan dimension overlays; DFM defaults (acute→small inner fillets, right-angle→miter, teardrops); silk typeface = IBM Plex Sans Condensed as filled outline (screen==CAM). **Symbol standard locked: IEC rectangular** (Fork B closed 2026-07-08). **IBM Plex engine wiring done:** `crates/engine/src/text/registry.rs` vendors Sans Condensed Regular/Medium/SemiBold + Mono Regular/Medium, all intents resolve to IBM Plex, provenance recorded, manufacturing gerber goldens refreshed; engine/cli/gui-render/gui-app/gui-protocol/daemon suites green. **Open:** sheet borders/title block, full stackup palette, broader families (next passes). Captures the "Datum visual identity" item from Active-Frontier step 1. |
 | Gerber text-export compaction (G36/G37 regions + G75 biarc arcs) | [ ] | `research/pcb-text-rendering/OUTLINE_TEXT_GERBER_COMPACTION_RESEARCH.md` (governed research). Root cause of huge outline-text gerbers (~190 KB for 4 chars) is the **export encoding** — scanline-trapezoid perimeter-stroking with no `G36/G37` regions and no `G75` arcs — **not** the flatten tolerance, which stays high-fidelity per the `outline.rs:270` doctrine (renderer never coarsened for fab reasons). Doctrine-faithful fix, renderer untouched: emit one `G36/G37` region per glyph contour with curved edges as `G75`+`G03/G02` arcs from **biarc-fitting the original glyph Béziers**; adaptive-segment fallback gated by fab export policy. Closes the arc/biarc deferral the Phase-2/3 text research left open. Design documented + tracked; **execution unauthorized** (a real engine build task). |
 | Documentation system — paper space + viewports (decision 020) | [~] | `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` (ratified doctrine, 2026-07-08). Datum separates **model space** (authored schematic/PCB/3D/panel) from **paper space** (sheets carrying the title block + viewports + annotations). A **viewport** is a live, scaled, cropped, layer-filtered projection of a model asset (render==CAM, no mutation); paper-space objects (sheet/viewport/dimension/note) are typed ops through commit()/journal. **All documentation output** — schematic sheets, fab/assembly/drill/panelization/cover sheets — becomes *sheets with viewports + title block*; document-types are sheet templates. Enables composed cover sheets, multi-schematic pages, schematic **detail** viewports, and panelization scaled to fit Letter showing V-score/mousebite. Design foundation landed: title block (Rendering Book §8 LOCKED), field-formula/doc-control model + template architecture (`research/documentation-system/`), Grauwert typography (§5). **Next:** spec the `Sheet`/`Viewport`/annotation/`SheetSet` object model + v1 scope (schematic paper space vs fab-drawing template first). Design/decision documented + tracked; spec + execution future. |
-| Render fidelity + DFM Geometry Solver (thesis + future engine) | [ ] | `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md` (governed). Ratifies Law 1 (render/CAM single-geometry-source fidelity — one manufacturable geometry consumed by both the renderer and the Gerber/drill/paste/assembly exporter, enforced by a fidelity gate; presentation overlays fenced out) and Law 2 (engine-drives-visual / beauty-by-default). Names the DFM Geometry Solver — pad rounding · trace corner treatment (acute→chamfer, right-angle→miter/radius per net-class, incl. Douville–James impedance miter) · teardrops — as author-topology/derive-manufacturable-geometry, rule-driven through `commit()`, `capability = parameter of a small verb set`. Active-Frontier step-5 dependency on the routing kernel (landed) + `ImpedanceSpec` (deferred) + the forthcoming Rendering Book. Foundation for the Rendering Book; the fab "fingerprint" thesis (filled-outline silk typeface vs Eagle stroke-font; DFM-optimal copper). Design/planning only; execution unauthorized. |
+| Render fidelity + DFM Geometry Solver (thesis + future engine) | [ ] | `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md` (governed). Ratifies Law 1 (render/CAM single-geometry-source fidelity — one manufacturable geometry consumed by both the renderer and the Gerber/drill/paste/assembly exporter, enforced by a fidelity gate; presentation overlays fenced out) and Law 2 (engine-drives-visual / beauty-by-default). Names the DFM Geometry Solver — pad rounding · trace corner treatment (acute→chamfer, right-angle→miter/radius per net-class, incl. Douville–James impedance miter) · teardrops — as author-topology/derive-manufacturable-geometry, rule-driven through `commit()`, `capability = parameter of a small verb set`. Active-Frontier step-6 dependency on the routing kernel (landed) + `ImpedanceSpec` (deferred) + the forthcoming Rendering Book. Foundation for the Rendering Book; the fab "fingerprint" thesis (filled-outline silk typeface vs Eagle stroke-font; DFM-optimal copper). Design/planning only; execution unauthorized. |
 
 ### Single-Source Verb Registry (Decision 017)
 
