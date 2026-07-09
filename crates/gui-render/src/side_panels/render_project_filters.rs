@@ -45,28 +45,10 @@ fn render_project_and_filters_panel(
             text_runs,
         );
     }
-    let shard_attention_count = state.source_shards.attention_count();
-    let shard_label = source_shard_health_label(&state.source_shards);
-    draw_text(
-        &truncate_text(&shard_label, 26),
-        project_layout.source_label.x,
-        project_layout.source_label.y,
-        11.0,
-        if shard_attention_count == 0 {
-            TEXT_MUTED
-        } else {
-            TEXT_ACCENT
-        },
-        TextFace::Mono,
-        text_runs,
-    );
-    let source_rows_end_y = render_shard_rows(
-        &state.source_shards,
-        project_rect,
-        project_layout.source_rows.y,
-        text_runs,
-    );
-    let action_y = project_layout.fit_row.y.max(source_rows_end_y + 4.0);
+    // (Removed the source-shard health line + shard rows from the Project panel
+    // — provenance diagnostics that read as a debug HUD, not the designed tree.)
+    let _ = (project_layout.source_label, project_layout.source_rows);
+    let action_y = project_layout.fit_row.y;
     let fit_board_rect = RectPx {
         x: project_layout.fit_row.x,
         y: action_y,
@@ -101,48 +83,17 @@ fn render_project_and_filters_panel(
         );
         hit_regions.push(HitRegion { target, rect });
     }
-    draw_text(
-        "READ-ONLY BOARD VIEW",
-        project_layout.tool_label.x,
-        project_layout.tool_label.y,
-        12.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
+    // (Removed the READ-ONLY BOARD VIEW / "Select objects…" / IMPORT VIEW notices
+    // from the Project panel — the read-only state is already conveyed by the empty
+    // inspector and disabled menu items; these lines read as HUD clutter and are not
+    // part of the designed panel.)
+    let _ = (
+        project_layout.tool_label,
+        project_layout.tool_grid,
+        project_layout.import_notice,
     );
-    draw_text(
-        "Select objects to inspect. Authoring tools are disabled in Phase 1.",
-        project_layout.tool_grid.x,
-        project_layout.tool_grid.y,
-        10.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    if let Some(import_notice) = project_layout.import_notice {
-        draw_text(
-            "IMPORT VIEW: AUTHORING REQUIRES NATIVE PROJECT",
-            import_notice.x,
-            import_notice.y,
-            9.5,
-            TEXT_ACCENT,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
-    if let (Some(status), Some(status_rect)) =
-        (&state.last_command_status, project_layout.last_status)
-    {
-        draw_text(
-            &truncate_text(&format!("LAST {}", status.action.to_uppercase()), 24),
-            status_rect.x,
-            status_rect.y,
-            11.0,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
+    // (Removed the "LAST <action>" command-status line — terminal/debug noise.)
+    let _ = project_layout.last_status;
     let filters_layout = solve_filters_panel_layout_with_taffy(state, filters_rect);
     let Some(filters_layout) = filters_layout else {
         return;
@@ -173,7 +124,7 @@ fn render_project_and_filters_panel(
             HitTarget::ToggleDimUnrelated,
         ),
     ] {
-        push_boolean_row(row.x, row.y, label, enabled, text_runs);
+        push_boolean_row(row.x, row.y, row.width, label, enabled, text_runs);
         hit_regions.push(HitRegion {
             target,
             rect: filter_hit_rect(row),
@@ -212,67 +163,15 @@ fn render_project_and_filters_panel(
             rect: filter_hit_rect(*row),
         });
     }
-    if let Some(row) = filters_layout.active_summary {
-        let active_layer = state
-            .ui
-            .filters
-            .active_layer_id
-            .as_deref()
-            .and_then(|active_id| {
-                state
-                    .scene
-                    .layers
-                    .iter()
-                    .find(|layer| layer.layer_id == active_id)
-            })
-            .map(|layer| layer.name.as_str())
-            .unwrap_or("none");
-        draw_text(
-            &format!("ACTIVE {}", truncate_text(&active_layer.to_uppercase(), 14)),
-            row.x,
-            row.y,
-            11.0,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
-    draw_text(
-        &format!("LAYERS {}", state.scene.layers.len()),
-        filters_layout.layers_summary.x,
-        filters_layout.layers_summary.y,
-        11.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    draw_text(
-        "FOLLOWS PANE A",
-        filters_layout.focus_summary.x,
-        filters_layout.focus_summary.y,
-        11.0,
-        TEXT_ACCENT,
-        TextFace::Mono,
-        text_runs,
-    );
-    draw_text(
-        &format!(
-            "OUTPUTS {} / ART {} / {}",
-            state.production.output_job_count,
-            state.production.artifact_count,
-            state
-                .production
-                .latest_status
-                .as_deref()
-                .unwrap_or("never_run")
-                .to_uppercase()
-        ),
-        filters_layout.outputs_summary.x,
-        filters_layout.outputs_summary.y,
-        11.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
+    // (Removed the Layers-panel diagnostic tail — ACTIVE <layer> / LAYERS <n> /
+    // FOLLOWS PANE A / OUTPUTS/ART/status. That state dump read as a debug HUD;
+    // the active layer already shows its ACTIVE badge inline, and the rest is
+    // not part of the designed Layers panel.)
+    let _ = (
+        filters_layout.active_summary,
+        filters_layout.layers_summary,
+        filters_layout.focus_summary,
+        filters_layout.outputs_summary,
     );
 }
 

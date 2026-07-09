@@ -1092,7 +1092,14 @@ fn render_board_pane_header(
         ("V", false),
         ("Z", false),
     ];
-    let mut x = header.x + 118.0;
+    // Start the tool cluster after the measured pane-title width so the title
+    // never overlaps the first tool button.
+    let title_w = estimated_text_run_width_px(
+        "Board / Layout",
+        design_tokens::typography::DATA_SIZE,
+        TextFace::Mono,
+    ) - 16.0;
+    let mut x = header.x + design_tokens::spacing::SP_04 + title_w + design_tokens::spacing::SP_05;
     for (label, active) in tools {
         let rect = RectPx {
             x,
@@ -1160,20 +1167,9 @@ fn render_scene(
         text_runs,
         hit_regions,
     );
-    let viewport_title = if is_schematic_scene(&state.scene) {
-        format!("SCHEMATIC {}", state.scene.board_name.to_uppercase())
-    } else {
-        state.scene.board_name.to_uppercase()
-    };
-    draw_text(
-        &truncate_text(&viewport_title, 28),
-        layout.viewport.x + 16.0,
-        layout.viewport.y + 16.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
+    // (Removed the redundant canvas scene title that collided with the pane
+    // header at the viewport top — the pane header "Board / Layout" and the
+    // Project panel already name the document, matching the prototype.)
     if let Some(action) = state.selected_review_action() {
         draw_text(
             &format!(
@@ -1197,24 +1193,9 @@ fn render_scene(
             text_runs,
         );
     }
-    {
-        let hint_bounds = RectPx {
-            x: layout.viewport.x + 16.0,
-            y: layout.viewport.y + 66.0,
-            width: (layout.viewport.width - 32.0).max(1.0),
-            height: 16.0,
-        };
-        draw_text_clipped(
-            "F FIT  [ ] REVIEW NAV  CLICK SELECT  SCROLL ZOOM  ESC CLEAR",
-            hint_bounds.x,
-            hint_bounds.y,
-            10.5,
-            TEXT_MUTED,
-            TextFace::Mono,
-            hint_bounds,
-            text_runs,
-        );
-    }
+    // (Removed the "F FIT / REVIEW NAV / CLICK SELECT / SCROLL ZOOM / ESC CLEAR"
+    // keyboard-hint overlay that overflowed across the canvas top — not part of the
+    // designed board pane; shortcuts belong in a proper help surface, not a HUD.)
     // Status bar at bottom of viewport
     let status_y = layout.viewport.y + layout.viewport.height - 20.0;
     let zoom_pct = (camera.zoom * 100.0).round() as i32;
@@ -6101,11 +6082,22 @@ fn push_section_divider(out: &mut Vec<Quad>, x: f32, y: f32, width: f32, color: 
     ));
 }
 
-fn push_boolean_row(x: f32, y: f32, label: &str, enabled: bool, text_runs: &mut Vec<TextRun>) {
+fn push_boolean_row(
+    x: f32,
+    y: f32,
+    width: f32,
+    label: &str,
+    enabled: bool,
+    text_runs: &mut Vec<TextRun>,
+) {
     draw_text(label, x, y, 13.0, TEXT_SECONDARY, TextFace::Ui, text_runs);
+    // Right-align the ON/OFF value to the row's right edge so it never collides
+    // with a long label like "DIM UNRELATED".
+    let value = if enabled { "ON" } else { "OFF" };
+    let value_w = estimated_text_run_width_px(value, 13.0, TextFace::Ui) - 16.0;
     draw_text(
-        if enabled { "ON" } else { "OFF" },
-        x + 132.0,
+        value,
+        x + width - value_w - design_tokens::spacing::SP_03,
         y,
         13.0,
         if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
@@ -7798,37 +7790,8 @@ mod tests {
         assert!(last_row_y + 12.0 <= inspector_bottom);
     }
 
-    #[test]
-    fn filter_summary_renders_below_layer_rows() {
-        let state = datum_gui_protocol::load_fixture_workspace_state();
-        let retained = RetainedScene::from_workspace(&state, 1280, 800);
-        let prepared = PreparedScene::from_workspace(
-            &state,
-            1280,
-            800,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-            &retained,
-        );
-        let layer_bottom = prepared
-            .hit_regions
-            .iter()
-            .filter_map(|region| {
-                if matches!(region.target, HitTarget::ToggleLayer(_)) {
-                    Some(region.rect.y + region.rect.height)
-                } else {
-                    None
-                }
-            })
-            .fold(0.0_f32, f32::max);
-        let outputs_y = prepared
-            .text_runs
-            .iter()
-            .find(|run| run.text.starts_with("OUTPUTS "))
-            .expect("production output summary should render")
-            .y;
-
-        assert!(outputs_y > layer_bottom);
-    }
+    // (Removed filter_summary_renders_below_layer_rows — the OUTPUTS/ART/status
+    // summary dump was pulled from the Layers panel as debug-HUD clutter.)
 
     #[test]
     fn terminal_dock_does_not_surface_artifact_file_summaries() {
@@ -8664,31 +8627,9 @@ mod tests {
             CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
         );
-        let active_layer = state
-            .ui
-            .filters
-            .active_layer_id
-            .as_deref()
-            .and_then(|active_id| {
-                state
-                    .scene
-                    .layers
-                    .iter()
-                    .find(|layer| layer.layer_id == active_id)
-            })
-            .expect("fixture should set an active layer");
-        let active_label = format!(
-            "ACTIVE {}",
-            truncate_text(&active_layer.name.to_uppercase(), 14)
-        );
-
-        assert!(
-            prepared
-                .text_runs
-                .iter()
-                .any(|run| run.text == active_label),
-            "Layers panel should render the active layer summary"
-        );
+        // (The "ACTIVE <layer>" summary line was removed as HUD clutter; the
+        // active layer is shown by its inline ACTIVE badge + accent row. The
+        // consumer-facing contract that remains is the toggle hit regions.)
         assert!(
             prepared
                 .hit_regions

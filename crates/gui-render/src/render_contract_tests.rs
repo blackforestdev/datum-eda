@@ -83,44 +83,9 @@ fn render_stage_declaration_order_is_the_only_priority_encoding() {
     );
 }
 
-#[test]
-fn project_panel_renders_source_shard_health() {
-    let mut state = datum_gui_protocol::load_fixture_workspace_state();
-    state.source_shards = datum_gui_protocol::SourceShardStatusSummary {
-        total: 5,
-        clean: 2,
-        dirty: 1,
-        missing: 1,
-        unknown: 1,
-        attention: vec![datum_gui_protocol::SourceShardAttentionItem {
-            relative_path: ".datum/check_runs/run-a.json".to_string(),
-            kind: "check_run".to_string(),
-            authority: "generated_evidence".to_string(),
-            taxon: Some("check_run".to_string()),
-            dirty_state: "missing".to_string(),
-        }],
-    };
-    let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
-        &state,
-        1280,
-        800,
-        CameraState::fit_to_bounds(&state.scene.bounds),
-        &retained,
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("SOURCE SHARDS D1 M1 U1"))
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.starts_with("MISSING .datum/") && run.text.ends_with("run-a.json"))
-    );
-}
+// (Removed project_panel_renders_source_shard_health — the source-shard health
+// line + attention rows were pulled from the Project panel as debug-HUD clutter;
+// shard status is not part of the designed panel.)
 
 #[test]
 fn dimmed_copper_stays_legible_against_board_field() {
@@ -286,7 +251,8 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
     for tool in ["S", "M", "R", "V", "Z"] {
         assert!(labels.contains(&tool), "missing board-pane tool {tool}");
     }
-    assert!(labels.contains(&"FOLLOWS PANE A"));
+    // (The "FOLLOWS PANE A" diagnostic dump was removed from the chrome; the
+    // pane header's title + tools are the conformance surface here.)
 }
 
 #[test]
