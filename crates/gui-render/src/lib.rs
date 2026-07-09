@@ -25,16 +25,12 @@ mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
 mod side_panels;
-mod source_shard_panel;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
 use marking_menu::render_marking_menu;
 use menu_chrome::render_menu_bar;
 use side_panels::render_side_panels;
-use source_shard_panel::{
-    render_source_shard_attention_rows as render_shard_rows, source_shard_health_label,
-};
 #[cfg(feature = "visual")]
 pub mod visual_diff;
 #[cfg(feature = "visual")]
@@ -1170,29 +1166,9 @@ fn render_scene(
     // (Removed the redundant canvas scene title that collided with the pane
     // header at the viewport top — the pane header "Board / Layout" and the
     // Project panel already name the document, matching the prototype.)
-    if let Some(action) = state.selected_review_action() {
-        draw_text(
-            &format!(
-                "ACTIVE {}",
-                truncate_text(&suffix_id(&action.action_id).to_uppercase(), 16)
-            ),
-            layout.viewport.x + 16.0,
-            layout.viewport.y + 32.0,
-            13.0,
-            TEXT_ACCENT,
-            TextFace::Mono,
-            text_runs,
-        );
-        draw_text(
-            &format!("NET {}", truncate_text(&action.net_name.to_uppercase(), 20)),
-            layout.viewport.x + 16.0,
-            layout.viewport.y + 50.0,
-            10.5,
-            TEXT_MUTED,
-            TextFace::Ui,
-            text_runs,
-        );
-    }
+    // (Removed the "ACTIVE <action-id> / NET <name>" review-HUD overlay that
+    // bled over the canvas top-left — internal selection state, not designed
+    // board-pane chrome. The selection is reflected in the Inspector + status bar.)
     // (Removed the "F FIT / REVIEW NAV / CLICK SELECT / SCROLL ZOOM / ESC CLEAR"
     // keyboard-hint overlay that overflowed across the canvas top — not part of the
     // designed board pane; shortcuts belong in a proper help surface, not a HUD.)
@@ -1248,9 +1224,6 @@ fn render_scene(
     }
 }
 
-fn is_schematic_scene(scene: &BoardReviewSceneV1) -> bool {
-    scene.kind == "schematic_review_scene"
-}
 
 fn push_scene_underlay(
     out: &mut Vec<Quad>,

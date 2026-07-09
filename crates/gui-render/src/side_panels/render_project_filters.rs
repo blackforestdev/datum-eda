@@ -1,7 +1,7 @@
 fn render_project_and_filters_panel(
     state: &ReviewWorkspaceState,
     project_layout: &ProjectPanelLayout,
-    project_rect: RectPx,
+    _project_rect: RectPx,
     filters_rect: RectPx,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
