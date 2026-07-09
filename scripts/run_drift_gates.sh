@@ -15,6 +15,13 @@ python3 scripts/check_gui_conformance.py
 # owner-approved shell golden. It is invoked there (not a second time here) to
 # avoid a duplicate cargo build+capture.
 python3 scripts/check_gui_icon_assets.py
+# Honest reference-capture gate: FAILS while the board-editor reference image
+# docs/gui/reference/board-editor.png is missing or its *.PENDING placeholder
+# exists. It is EXPECTED to be RED until the owner captures the reference on a
+# machine with a working headless browser — that red is the honest signal that
+# the full board-editor.html composition (split view, populated inspector) has no
+# owner-approved reference yet and is gated on Phase-2, not a bug to silence.
+python3 scripts/check_gui_reference_capture.py
 # Source-module size governance flag: FLAGS oversized modules as
 # decomposition-pending (governance-triggered/organic decomp, never scheduled),
 # fails on NEW unregistered oversized modules or ledger drift. Does not decompose.
