@@ -56,14 +56,14 @@ the transient drag/gesture that produces it (interaction produces operations; it
 an operation). **Three distinct controls — do not conflate them:**
 
 - **Move** — drag the viewport **anywhere on the sheet**; sets its **position**. (Journaled.)
-- **Resize** — **corner-drag** resizes the viewport's **window** (its frame on the sheet),
-  revealing *more or less of the model at the current scale* — the frame is a window, not
-  a zoom. (Journaled.)
-- **Scale** — set from the viewport's **local (marking / context) menu**: preset content
-  scales **2:1 · 1:1 · 1:2 · 1:4 · …**, a **custom** scale, and **fit-to-window**. Scale
-  **zooms the content** (independent of the window size). Sourced from the `menu_model`
-  per-object content (decision 019 context-menu system); the chosen scale is a journaled
-  viewport property.
+- **Resize** — **corner-drag sizes the viewport window only** — it **never** changes the
+  content scale. A larger window simply reveals *more of the model at the current scale*;
+  the frame is a window, not a zoom. (Journaled.)
+- **Scale** — the **only** control for scale: the viewport's **local (marking / context)
+  menu** — preset content scales **2:1 · 1:1 · 1:2 · 1:4 · …**, a **custom** scale, and
+  **fit-to-window**. Scale **zooms the content** (independent of the window size). Sourced
+  from the `menu_model` per-object content (decision 019 context-menu system); the chosen
+  scale is a journaled viewport property. Corner-drag is never a scale gesture.
 
 So: *move* = where on the sheet · *resize* = how big the window · *scale* = how zoomed the
 content. All three are journaled (undo, provenance, diff, AI-proposal); the live drag is not.
