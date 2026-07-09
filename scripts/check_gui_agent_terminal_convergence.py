@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard that GUI agent entry points converge on the PTY terminal lane."""
+"""Guard that GUI agent entry points stay inside the PTY terminal lane."""
 
 from pathlib import Path
 import sys
@@ -22,7 +22,7 @@ def main() -> int:
     failures: list[str] = []
     main = MAIN.read_text()
     bottom_dock = BOTTOM_DOCK.read_text()
-    launcher = LAUNCHER.read_text()
+    launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""
     terminal_controls = TERMINAL_CONTROLS.read_text()
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
@@ -34,14 +34,14 @@ def main() -> int:
                 f"retired embedded assistant bridge artifact must not exist: {path.relative_to(ROOT)}"
             )
 
-    if '"AGENTS"' not in bottom_dock:
-        failures.append("bottom dock must label the agent entry as AGENTS")
-    if '"ASSISTANT"' in bottom_dock:
-        failures.append("bottom dock must not reintroduce an ASSISTANT tab label")
-    if "HitTarget::AssistantTab => self.open_terminal_agent_launcher()" not in main:
-        failures.append("AssistantTab hit target must route to open_terminal_agent_launcher()")
-    if "DockTab::Terminal | DockTab::Assistant" not in bottom_dock:
-        failures.append("DockTab::Assistant compatibility state must render the terminal lane")
+    if '"TERMINAL"' not in bottom_dock:
+        failures.append("bottom dock must render the TERMINAL tab")
+    for forbidden_label in ('"AGENTS"', '"ASSISTANT"', '"OUTPUT"'):
+        if forbidden_label in bottom_dock:
+            failures.append(f"bottom dock must not render {forbidden_label} as a dock tab")
+    for marker in ("AssistantTab", "OutputsTab", "DockTab::Assistant", "DockTab::Outputs"):
+        if marker in main or marker in bottom_dock or marker in gui_protocol:
+            failures.append(f"terminal-only dock must not contain {marker}")
     activity_handler = (
         "HitTarget::TerminalActivitySummary(summary) => {\n"
         "                self.set_active_dock(DockTab::Terminal);"
@@ -54,12 +54,8 @@ def main() -> int:
     )
     if forbidden_activity_handler in main:
         failures.append("terminal activity selection must not focus DockTab::Assistant")
-    if "TERMINAL_AGENT_LAUNCHER_PREFILL" not in launcher:
-        failures.append("agent launcher must remain a terminal prefill surface")
-    if "self.set_active_dock(DockTab::Terminal)" not in launcher:
-        failures.append("agent launcher must focus the terminal dock")
-    if "self.write_terminal_bytes(TERMINAL_AGENT_LAUNCHER_PREFILL.as_bytes())" not in launcher:
-        failures.append("agent launcher must write the prefill into the PTY terminal")
+    if "mod terminal_agent_launcher;" in main:
+        failures.append("agent launcher module must not be wired as a dock tab surface")
     forbidden_runtime_markers = [
         "AssistantLaneState",
         "AssistantMessage",

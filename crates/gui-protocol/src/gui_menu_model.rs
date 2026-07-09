@@ -169,4 +169,68 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn phase_one_marking_menus_cover_board_object_classes() {
+        let menu = load_default_gui_menu_model().expect("menu model should parse");
+        for key in [
+            "pcb.component",
+            "pcb.pad",
+            "pcb.track",
+            "pcb.via",
+            "pcb.zone",
+            "pcb.empty",
+        ] {
+            assert!(
+                menu.marking_menus.contains_key(key),
+                "missing marking menu {key}"
+            );
+        }
+    }
+
+    #[test]
+    fn every_marking_menu_entry_has_declared_icon() {
+        let menu = load_default_gui_menu_model().expect("menu model should parse");
+        let icons = load_default_gui_icon_set().expect("icon set should parse");
+
+        for (menu_key, marking_menu) in &menu.marking_menus {
+            for (slot, item) in marking_menu
+                .cardinal
+                .iter()
+                .chain(marking_menu.secondary.iter())
+            {
+                assert_marking_item_icon(menu_key, slot, item, &icons);
+            }
+            for (index, item) in marking_menu.overflow.iter().enumerate() {
+                assert_marking_item_icon(menu_key, &format!("overflow[{index}]"), item, &icons);
+            }
+            for (submenu, items) in &marking_menu.submenus {
+                for (index, item) in items.iter().enumerate() {
+                    assert_marking_item_icon(
+                        menu_key,
+                        &format!("{submenu}[{index}]"),
+                        item,
+                        &icons,
+                    );
+                }
+            }
+        }
+    }
+
+    fn assert_marking_item_icon(
+        menu_key: &str,
+        slot: &str,
+        item: &GuiMenuItem,
+        icons: &GuiIconSet,
+    ) {
+        let icon_id = item
+            .icon
+            .as_deref()
+            .unwrap_or_else(|| panic!("{menu_key}/{slot}/{} is missing an icon", item.label));
+        assert!(
+            icons.icons.contains_key(icon_id),
+            "{menu_key}/{slot}/{} references undeclared icon {icon_id}",
+            item.label
+        );
+    }
 }

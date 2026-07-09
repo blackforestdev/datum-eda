@@ -4,10 +4,10 @@ use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
     BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
-    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, TerminalCommandHandoff,
-    WorkspaceTool, ensure_known_good_demo_request, load_board_editor_workspace_state,
-    load_kicad_schematic_workspace_state, load_live_workspace_state,
-    materialize_kicad_board_request,
+    MarkingMenuState, PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent,
+    TerminalCommandHandoff, WorkspaceTool, ensure_known_good_demo_request,
+    load_board_editor_workspace_state, load_kicad_schematic_workspace_state,
+    load_live_workspace_state, materialize_kicad_board_request,
 };
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
@@ -300,6 +300,8 @@ impl ApplicationHandler for App {
                     let mut changed = false;
                     if runtime.dock_drag_active {
                         changed = runtime.handle_dock_resize_drag(next_pos);
+                    } else if runtime.marking_menu_active() {
+                        changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.middle_drag_active || runtime.right_drag_active {
                         changed = runtime.handle_pan_drag(next_pos);
                     }
@@ -307,6 +309,7 @@ impl ApplicationHandler for App {
                     if !runtime.dock_drag_active
                         && !runtime.middle_drag_active
                         && !runtime.right_drag_active
+                        && !runtime.marking_menu_active()
                     {
                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
                         changed = runtime.update_hover(next_pos) || changed;
@@ -367,7 +370,21 @@ impl ApplicationHandler for App {
                     if runtime.report_terminal_mouse_button(MouseButton::Right, state) {
                         return;
                     }
-                    runtime.right_drag_active = state == ElementState::Pressed;
+                    match state {
+                        ElementState::Pressed => {
+                            if runtime.open_marking_menu_at_cursor() {
+                                self.request_redraw_if_needed();
+                            } else {
+                                runtime.right_drag_active = true;
+                            }
+                        }
+                        ElementState::Released => {
+                            runtime.right_drag_active = false;
+                            if runtime.dismiss_marking_menu() {
+                                self.request_redraw_if_needed();
+                            }
+                        }
+                    }
                 }
             }
             WindowEvent::MouseInput {
@@ -537,6 +554,25 @@ impl ApplicationHandler for App {
             {
                 if let Some(runtime) = &mut self.runtime
                     && runtime.submit_dock_input()
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Named(NamedKey::Escape),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if self
+                .runtime
+                .as_ref()
+                .is_some_and(|runtime| runtime.marking_menu_active()) =>
+            {
+                if let Some(runtime) = &mut self.runtime
+                    && runtime.dismiss_marking_menu()
                 {
                     self.request_redraw_if_needed();
                 }
@@ -2359,6 +2395,9 @@ impl Runtime {
     }
 
     fn handle_primary_click(&mut self) -> bool {
+        if self.dismiss_marking_menu() {
+            return true;
+        }
         let Some((x, y)) = self.last_cursor_pos else {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
@@ -2744,8 +2783,86 @@ impl Runtime {
             HitTarget::ArtifactPreviewViewport => false,
             HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
             HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
+            HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
             HitTarget::DockResizeHandle => false, // handled in mouse press
         }
+    }
+
+    fn marking_menu_active(&self) -> bool {
+        self.workspace().ui.marking_menu.is_some()
+    }
+
+    fn open_marking_menu_at_cursor(&mut self) -> bool {
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        if self.cursor_in_dock() {
+            return false;
+        }
+        let world_point = {
+            let prepared = self.prepared_scene();
+            prepared.world_point_at_screen(x, y)
+        };
+        let Some(world_point) = world_point else {
+            return false;
+        };
+        let retained_target = {
+            let retained = self.retained_scene.get_or_insert_with(|| {
+                RetainedScene::from_workspace_for_surface(
+                    self.session.workspace(),
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                )
+            });
+            retained
+                .hit_test_authored_world(world_point, self.session.workspace())
+                .cloned()
+        };
+        let target_object_id = match retained_target {
+            Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
+            _ => None,
+        };
+        let menu_key = marking_menu_key_for_target(target_object_id.as_deref());
+        let ui = &mut self.session.workspace_mut().ui;
+        ui.active_menu = None;
+        ui.marking_menu = Some(MarkingMenuState {
+            menu_key,
+            target_object_id,
+            anchor_x_px: x.round() as i32,
+            anchor_y_px: y.round() as i32,
+            preview_slot: None,
+            gesture_dx_px: 0,
+            gesture_dy_px: 0,
+        });
+        self.invalidate_frame();
+        true
+    }
+
+    fn update_marking_menu_preview(&mut self, pos: (f32, f32)) -> bool {
+        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
+            return false;
+        };
+        let dx = (pos.0 - menu.anchor_x_px as f32).round() as i32;
+        let dy = (pos.1 - menu.anchor_y_px as f32).round() as i32;
+        let next_slot = marking_slot_for_delta(dx, dy);
+        if menu.gesture_dx_px == dx && menu.gesture_dy_px == dy && menu.preview_slot == next_slot {
+            return false;
+        }
+        menu.gesture_dx_px = dx;
+        menu.gesture_dy_px = dy;
+        menu.preview_slot = next_slot;
+        self.invalidate_frame();
+        true
+    }
+
+    fn dismiss_marking_menu(&mut self) -> bool {
+        if self.session.workspace().ui.marking_menu.is_none() {
+            return false;
+        }
+        self.session.workspace_mut().ui.marking_menu = None;
+        self.invalidate_frame();
+        true
     }
 
     fn toggle_menu(&mut self, menu: &str) -> bool {
@@ -3298,6 +3415,46 @@ fn bounds_from_points(
     })
 }
 
+fn marking_menu_key_for_target(target_object_id: Option<&str>) -> String {
+    let key = match target_object_id {
+        Some(id) if id.starts_with("component:") => "pcb.component",
+        Some(id) if id.starts_with("pad:") => "pcb.pad",
+        Some(id) if id.starts_with("track:") => "pcb.track",
+        Some(id) if id.starts_with("via:") => "pcb.via",
+        Some(id) if id.starts_with("zone:") => "pcb.zone",
+        Some(id) if id.starts_with("net:") => "pcb.net",
+        _ => "pcb.empty",
+    };
+    key.to_string()
+}
+
+fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
+    let dx = dx as f32;
+    let dy = dy as f32;
+    if (dx * dx + dy * dy).sqrt() < 18.0 {
+        return None;
+    }
+    let angle = dy.atan2(dx).to_degrees();
+    let slot = if (-22.5..22.5).contains(&angle) {
+        "E"
+    } else if (22.5..67.5).contains(&angle) {
+        "SE"
+    } else if (67.5..112.5).contains(&angle) {
+        "S"
+    } else if (112.5..157.5).contains(&angle) {
+        "SW"
+    } else if angle >= 157.5 || angle < -157.5 {
+        "W"
+    } else if (-157.5..-112.5).contains(&angle) {
+        "NW"
+    } else if (-112.5..-67.5).contains(&angle) {
+        "N"
+    } else {
+        "NE"
+    };
+    Some(slot.to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3336,6 +3493,29 @@ mod tests {
         assert!(!terminal_raw_input_should_handle(true, true, false));
         assert!(!terminal_raw_input_should_handle(true, false, true));
         assert!(!terminal_raw_input_should_handle(false, false, false));
+    }
+
+    #[test]
+    fn marking_menu_key_maps_phase_one_board_objects() {
+        assert_eq!(
+            marking_menu_key_for_target(Some("component:U1")),
+            "pcb.component"
+        );
+        assert_eq!(marking_menu_key_for_target(Some("pad:P1")), "pcb.pad");
+        assert_eq!(marking_menu_key_for_target(Some("track:T1")), "pcb.track");
+        assert_eq!(marking_menu_key_for_target(Some("via:V1")), "pcb.via");
+        assert_eq!(marking_menu_key_for_target(Some("zone:Z1")), "pcb.zone");
+        assert_eq!(marking_menu_key_for_target(None), "pcb.empty");
+    }
+
+    #[test]
+    fn marking_slot_for_delta_uses_screen_direction_wheel() {
+        assert_eq!(marking_slot_for_delta(0, -40).as_deref(), Some("N"));
+        assert_eq!(marking_slot_for_delta(40, 0).as_deref(), Some("E"));
+        assert_eq!(marking_slot_for_delta(0, 40).as_deref(), Some("S"));
+        assert_eq!(marking_slot_for_delta(-40, 0).as_deref(), Some("W"));
+        assert_eq!(marking_slot_for_delta(30, -30).as_deref(), Some("NE"));
+        assert_eq!(marking_slot_for_delta(3, 3), None);
     }
 
     #[test]

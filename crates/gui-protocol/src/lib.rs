@@ -680,11 +680,23 @@ pub struct WorkspaceFilterState {
 pub struct WorkspaceUiState {
     pub active_dock_tab: Option<DockTab>,
     pub active_menu: Option<String>,
+    pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
     pub hovered_object_id: Option<String>,
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
     pub artifact_preview: ArtifactPreviewViewportState,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MarkingMenuState {
+    pub menu_key: String,
+    pub target_object_id: Option<String>,
+    pub anchor_x_px: i32,
+    pub anchor_y_px: i32,
+    pub preview_slot: Option<String>,
+    pub gesture_dx_px: i32,
+    pub gesture_dy_px: i32,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
@@ -2682,6 +2694,7 @@ impl ReviewWorkspaceState {
             ui: WorkspaceUiState {
                 active_dock_tab: None,
                 active_menu: None,
+                marking_menu: None,
                 dock_height_px: 220,
                 hovered_object_id: None,
                 filters: WorkspaceFilterState {

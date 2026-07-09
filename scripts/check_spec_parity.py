@@ -336,11 +336,9 @@ def zone_fill_surface() -> list[str]:
 
 
 def gui_supervision_surface() -> list[str]:
-    """Current read-only GUI supervision/status reflection surface."""
+    """Current read-only GUI diagnostics/status reflection surface."""
     items: set[str] = set()
     protocol = read_text(ROOT / "crates/gui-protocol/src/lib.rs")
-    render = read_text(ROOT / "crates/gui-render/src/outputs_lane.rs")
-    layout = read_text(ROOT / "crates/gui-render/src/outputs_lane_layout.rs")
 
     for marker in (
         'GUI_SUPERVISION_SNAPSHOT_CONTRACT: &str = "datum_gui_supervision_snapshot_v1"',
@@ -366,18 +364,6 @@ def gui_supervision_surface() -> list[str]:
     ):
         if marker in protocol:
             items.add(f"scene_loader:{marker}")
-
-    for marker in (
-        "ENGINE SUPERVISION",
-        "render_engine_supervision_section",
-        "engine_supervision_section_height",
-        "snapshot.source_shards.attention_count()",
-    ):
-        if marker in render:
-            items.add(f"renderer:{marker}")
-
-    if "Supervision," in layout:
-        items.add("layout:OutputsBodySectionKind::Supervision")
 
     return sorted(items)
 

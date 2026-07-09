@@ -22,12 +22,14 @@ mod bottom_dock;
 pub mod design_artboards;
 mod design_tokens;
 mod inspector_check_finding;
+mod marking_menu;
 mod menu_chrome;
 mod side_panels;
 mod source_shard_panel;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
+use marking_menu::render_marking_menu;
 use menu_chrome::render_menu_bar;
 use side_panels::render_side_panels;
 use source_shard_panel::{
@@ -415,7 +417,15 @@ pub enum HitTarget {
     ToggleArtifactPreviewGeometry,
     ToggleArtifactPreviewDrills,
     MenuTitle(String),
-    MenuItem { menu: String, label: String },
+    MenuItem {
+        menu: String,
+        label: String,
+    },
+    MarkingMenuItem {
+        menu_key: String,
+        slot: String,
+        label: String,
+    },
     DockResizeHandle,
 }
 
@@ -813,6 +823,13 @@ impl PreparedScene {
             camera,
             &mut viewport_underlay_quads,
             &mut viewport_overlay_quads,
+            &mut text_runs,
+            &mut hit_regions,
+        );
+        render_marking_menu(
+            state,
+            &layout,
+            &mut panel_quads,
             &mut text_runs,
             &mut hit_regions,
         );
@@ -7827,6 +7844,54 @@ mod tests {
                 .iter()
                 .any(|region| matches!(region.target, HitTarget::ProductionArtifact(_))),
             "Phase 1 terminal dock must not expose Output-lane artifact hit regions"
+        );
+    }
+
+    #[test]
+    fn marking_menu_shell_renders_manifest_items_without_command_targets() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.marking_menu = Some(datum_gui_protocol::MarkingMenuState {
+            menu_key: "pcb.component".to_string(),
+            target_object_id: Some("component:demo".to_string()),
+            anchor_x_px: 640,
+            anchor_y_px: 360,
+            preview_slot: Some("N".to_string()),
+            gesture_dx_px: 0,
+            gesture_dy_px: -72,
+        });
+        let retained = RetainedScene::from_workspace(&state, 1280, 768);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            768,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let rendered_text = prepared
+            .text_runs
+            .iter()
+            .map(|run| run.text.as_str())
+            .collect::<Vec<_>>();
+
+        assert!(rendered_text.contains(&"Rotate"));
+        assert!(rendered_text.contains(&"Delete"));
+        assert!(rendered_text.contains(&"pcb.component"));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::MarkingMenuItem {
+                menu_key,
+                slot,
+                label
+            } if menu_key == "pcb.component" && slot == "N" && label == "Rotate"
+        )));
+        assert!(
+            prepared.hit_regions.iter().all(|region| {
+                !matches!(
+                    region.target,
+                    HitTarget::ProductionTerminalCommand(_) | HitTarget::ProductionOutputJobRun(_)
+                )
+            }),
+            "inert marking-menu shell must not expose terminal command hit targets"
         );
     }
 

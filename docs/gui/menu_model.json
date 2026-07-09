@@ -623,6 +623,55 @@
       "overflow": [],
       "submenus": {}
     },
+    "pcb.pad": {
+      "cardinal": {
+        "N": {
+          "label": "Change Size",
+          "icon": "pad",
+          "verb": "datum.pcb.edit_pad"
+        },
+        "E": {
+          "label": "Properties",
+          "icon": "properties",
+          "not_built": "pad properties dialog verb"
+        },
+        "S": {
+          "label": "Delete",
+          "icon": "delete",
+          "verb": "datum.pcb.delete_pad",
+          "destructive": true
+        },
+        "W": {
+          "label": "Assign Net",
+          "icon": "net",
+          "verb": "datum.pcb.set_pad_net"
+        }
+      },
+      "secondary": {
+        "NE": {
+          "label": "Move",
+          "icon": "move",
+          "not_built": "pad-local move"
+        },
+        "SE": {
+          "label": "Change Layer",
+          "icon": "layers",
+          "not_built": "pad layer editor"
+        },
+        "SW": {
+          "label": "Highlight Net",
+          "icon": "net",
+          "not_built": "net.highlight"
+        },
+        "NW": {
+          "label": "Lock",
+          "icon": "lock",
+          "not_built": "pad lock"
+        }
+      },
+      "overflow": [],
+      "submenus": {}
+    },
     "pcb.zone": {
       "cardinal": {
         "N": {

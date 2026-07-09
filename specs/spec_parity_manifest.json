@@ -77,7 +77,7 @@
     {
       "id": "gui_supervision_surface",
       "kind": "gui_supervision_surface",
-      "source": "GUI supervision snapshot contract + resolver-backed native scene load + Outputs lane status reflection",
+      "source": "GUI diagnostics snapshot contract + resolver-backed native scene load",
       "owner_spec": "specs/PROGRESS.md"
     }
   ]
