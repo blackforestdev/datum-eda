@@ -112,6 +112,49 @@ reason scale was deliberately left off the title block.
 - Fab / assembly / drill drawings become **sheet templates** (a board viewport + relevant
   layers + dimensions + notes + title block), not bespoke one-off generators.
 
+## Additional capabilities (in scope for the spec)
+
+Each of these is a projection of the model or a journaled paper-space property — coherent
+with the substrate, not a bolt-on:
+
+- **Live tables — model-projected content alongside viewports.** BOM, drill/hole table,
+  layer stackup, netlist/pin tables, fabrication notes, and a **sheet index / drawing
+  list** are **live projections of the model** placed on sheets like viewports: they
+  auto-update and render == CAM. A cover-sheet drawing list and a fab-drawing drill table
+  are the *same mechanism* as `n/N` — derived, never hand-typed.
+- **Associative annotations.** Dimensions, leaders, balloons and GD&T are **bound to model
+  features** (board outline, pad-to-pad, hole positions, a component for an assembly
+  balloon) so they follow the model when it changes; balloon numbers tie to the BOM table.
+  Static notes are allowed; associative is the default where a feature exists.
+- **Annotation paper-scale.** Annotations render at a consistent **paper size** regardless
+  of a viewport's content scale — a dimension in a 2:1 viewport and one in a 1:4 viewport
+  both print at the same text/arrow size (annotative scale, per mechanical CAD).
+- **Per-viewport display controls.** Each viewport carries a **display/render style**
+  (full-colour · fab-monochrome · assembly · x-ray · dimmed-inactive), **layer/visibility
+  overrides**, a **lock** (freeze position/size/scale against stray edits), and an
+  optional **non-rectangular clip** boundary. This is why the *same* board reads as a
+  colour review on screen and a clean fab-mono view on a fab sheet — one geometry, styled
+  per viewport (render == CAM holds; style is presentation).
+- **View references that track the sheet set.** Detail callouts, section marks and
+  "SEE SHEET n / DETAIL A" references are **projections of the sheet set** — they stay
+  correct automatically as sheets renumber or reorder (same class as `n/N`).
+- **Edit-in-place — the viewport is a portal.** Double-click into a viewport to author the
+  schematic/board **through** it (typed ops on the model), then back out to paper space. A
+  viewport is a live window you can reach through, not a dead snapshot.
+- **Released sheets are frozen to a model revision (doc-control × substrate).** A sheet in
+  a **Released** state resolves its viewports, tables, and associative annotations against
+  the released **`model_revision`** — a stable, provenance-backed snapshot — while
+  **Draft** sheets stay live. This extends the live-vs-frozen rule (title-block dates) to
+  the whole sheet and makes a released drawing package reproducible.
+- **Output — plot / export / drawing package.** Sheets plot/export to **PDF / plot at true
+  paper size**; a whole **sheet set exports as one package**, which *is* a doc-control
+  **transmittal** (title/revision/approval blocks per IPC-D-325). render == CAM: the
+  exported sheet is byte-identical to the on-screen sheet.
+- **Placement discipline.** Viewports, tables and annotations snap to a sheet grid and get
+  the same **align / distribute** discipline as board objects (the parametric-tooling verb
+  set), and can be locked — so a multi-viewport cover sheet composes cleanly by
+  construction.
+
 ## Prior art
 
 - **AutoCAD** — model space + layout tabs + viewports (the canonical paradigm).
@@ -127,11 +170,12 @@ reason scale was deliberately left off the title block.
 - Unifies the documentation system with the title-block work: the **title block is the
   paper-space frame**; **viewports are what it frames**; the **field-formula + doc-control
   layer** (title-block research) attaches to sheets; **sheet sets** provide the `n/N`.
-- Object model to specify (future): `Sheet`, `Viewport`
-  (source / transform / extent / layers / intent), annotation objects
-  (`Dimension` / `Note` / `Table` / `Callout`), `DetailViewport`, `SheetSet` — alongside
-  the `DrawingSheet` / `SheetField` / `DocumentControlProfile` from the title-block
-  research.
+- Object model to specify (future): `Sheet` (+ `ReleaseState` freezing a `model_revision`),
+  `Viewport` (source / transform / extent / layer-overrides / display-style / lock /
+  clip / intent), `Table` (model-projected: BOM / drill / stackup / netlist / sheet-index),
+  associative annotation objects (`Dimension` / `Leader` / `Balloon` / `Note` / `Callout` /
+  `ViewReference`), `DetailViewport`, `SheetSet` — alongside the `DrawingSheet` /
+  `SheetField` / `DocumentControlProfile` from the title-block research.
 - Import posture unchanged: import remains a one-time converter into model space; paper
   space is native authoring.
 
@@ -144,5 +188,11 @@ reason scale was deliberately left off the title block.
   points: the exact preset ladder, whether a **scale bar** graphic is offered, and
   rounding for "fit".
 - **Cross-references** — detail callouts, sheet/zone references, "SEE SHEET n" resolution.
+- **Freeze-on-release policy** — is a released sheet auto-frozen to its `model_revision`,
+  or explicitly, and can a user "refresh" a released sheet (issuing a new revision)?
+- **Annotation-scale defaults** — the paper text/arrow sizes (tie to the §8/ISO 3098
+  ladder) and whether any annotation may opt into model-scale.
+- **Edit-in-place UX** — how far double-click-into-a-viewport authoring goes vs jumping to
+  the full editor; how it reads for AI/CLI (the op targets the model, not the viewport).
 - **v1 scope** — which comes first: schematic-sheet paper space, or the fab-drawing sheet
   template? (Sequencing to be placed on the Active Frontier.)
