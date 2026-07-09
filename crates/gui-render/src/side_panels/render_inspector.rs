@@ -3,7 +3,7 @@ fn render_inspector_panel(
     inspector_rect: RectPx,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
-    _hit_regions: &mut Vec<HitRegion>,
+    hit_regions: &mut Vec<HitRegion>,
 ) {
     draw_text(
         "SELECTION",
@@ -263,7 +263,6 @@ fn render_inspector_panel(
                     text_runs,
                 );
                 y += text_row_height_for_size(15.0);
-                let hit_regions = &mut Vec::<HitRegion>::new();
                 push_board_text_property_row(
                     inspector_rect.x + 12.0,
                     y,
