@@ -58,9 +58,9 @@
       "note": "winit GUI shell entry + app loop."
     },
     "crates/gui-protocol/src/lib.rs": {
-      "recorded_lines": 7865,
+      "recorded_lines": 7833,
       "status": "decomposition-pending",
-      "note": "GUI scene-contract + primitive types (no GUI deps)."
+      "note": "GUI scene-contract + primitive types (no GUI deps). Still oversized; the workspace consumer-state cluster was extracted to workspace_layout.rs (decision 021)."
     },
     "crates/verb-registry/src/verbs_library.rs": {
       "recorded_lines": 3090,

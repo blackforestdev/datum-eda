@@ -49,6 +49,12 @@ mod terminal_lane;
 pub use terminal_lane::{
     TerminalLaneState, TerminalStyleSpan, TerminalStyledLine, TerminalTabState, TerminalTextStyle,
 };
+mod workspace_layout;
+pub use workspace_layout::{
+    ConsoleLaneState, DockTab, MarkingMenuState, PaneContent, PaneId, PaneNode, SplitOrientation,
+    WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState, PANE_RATIO_MAX,
+    PANE_RATIO_MIN,
+};
 mod production_proposals;
 pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
@@ -659,73 +665,6 @@ pub struct AuthoringToolState {
 pub struct EditorCommandStatus {
     pub action: String,
     pub detail: String,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DockTab {
-    Terminal,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct WorkspaceFilterState {
-    pub show_authored: bool,
-    pub show_proposed: bool,
-    pub show_unrouted: bool,
-    pub dim_unrelated: bool,
-    pub active_layer_id: Option<String>,
-    pub layer_visibility: BTreeMap<String, bool>,
-}
-
-/// The invisible console sink for GUI-action narration — the AutoCAD/Eagle
-/// command-echo lane (fit board, layer toggle, selection, view zoom, ...).
-///
-/// Doctrine: GUI-action echoes are NOT terminal output. The integrated PTY
-/// terminal is a real shell that GUI actions must never write to. The correct
-/// visible home for these echoes is the editor command console, which does not
-/// exist yet (it is downstream of the authoring write-path). Until that surface
-/// is built, narration lands here in an invisible model-only sink — never on the
-/// PTY, never on the terminal display buffer.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct ConsoleLaneState {
-    pub lines: Vec<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct WorkspaceUiState {
-    pub active_dock_tab: Option<DockTab>,
-    pub active_menu: Option<String>,
-    pub marking_menu: Option<MarkingMenuState>,
-    pub dock_height_px: u32,
-    pub hovered_object_id: Option<String>,
-    pub filters: WorkspaceFilterState,
-    pub terminal: TerminalLaneState,
-    pub console: ConsoleLaneState,
-    pub artifact_preview: ArtifactPreviewViewportState,
-}
-
-impl WorkspaceUiState {
-    /// Append a GUI-action narration echo to the invisible console sink.
-    ///
-    /// Mirrors the terminal lane's 240-line cap but never touches the PTY lane:
-    /// this is a model-only field with no visible surface yet.
-    pub fn push_console_line(&mut self, line: String) {
-        self.console.lines.push(line);
-        if self.console.lines.len() > 240 {
-            let overflow = self.console.lines.len() - 240;
-            self.console.lines.drain(0..overflow);
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct MarkingMenuState {
-    pub menu_key: String,
-    pub target_object_id: Option<String>,
-    pub anchor_x_px: i32,
-    pub anchor_y_px: i32,
-    pub preview_slot: Option<String>,
-    pub gesture_dx_px: i32,
-    pub gesture_dy_px: i32,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
@@ -2765,6 +2704,7 @@ impl ReviewWorkspaceState {
                 },
                 console: ConsoleLaneState::default(),
                 artifact_preview: ArtifactPreviewViewportState::default(),
+                layout: WorkspaceLayout::default(),
             },
         }
     }
