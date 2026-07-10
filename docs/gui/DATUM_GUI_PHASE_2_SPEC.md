@@ -96,22 +96,37 @@ marker**.
   (same-engine, build-vs-build; re-approval via `--bless`), wired through
   `check_gui_conformance.py` → `run_drift_gates.sh`.
 
-- **P2.1 — Split Board+Schematic dual-pane view.**
-  **spec only — build is a separate authorized execution phase.**
+- **P2.1 — Split Board+Schematic dual-pane view. FIRST SLICE LANDED.**
   Realize the prototype's dual-pane central viewport: Board and Schematic panes
   side by side under the Taffy solve, each with its own pane-header tool strip,
-  one pane focused. No hand-tuned offsets; geometry is the layout's. Resolves the
-  design-spec's still-open split-view / dock-vs-overlay decision for this
-  composition (owner call recorded before the build slice).
+  one pane focused. No hand-tuned offsets; geometry is the layout's.
+  **Landed (first slice):** `ShellLayout::viewport_panes()` derives two panes +
+  a divider gutter from the resolved `viewport` as a pure post-split (after the
+  Taffy/fallback solve and after `scale_by`, so neither the solver nor `scale_by`
+  becomes pane-aware). Pane A = Board · Layout, focused (lightened header, active
+  tool cluster, accent focus dot, inset ACCENT pane frame, the board world scene
+  re-projected into its canvas — `scene_viewport()` now returns pane A's canvas, so
+  the RetainedScene projection, gpu scissor, and `world_point_at_screen` follow it
+  with no further change). Pane B = Schematic · Sheet 1, unfocused (muted header,
+  dimmed tools, no accent frame/dot) over a VIEWPORT_BG canvas with a centered
+  "Schematic (coming)" placeholder caption — **no world geometry**. Focus is a
+  single source of truth (`ViewportPanes::focused_document()`) driving the header
+  chrome and, structurally, context-follows-focus (Inspector/Layers read the
+  focused pane's document — pane A → board this slice). Invariant tests +
+  render-contract tests added; shell/board goldens re-blessed; parity gate green.
+  **Deferred to later P2.1/P2.2 slices:** real schematic world geometry in pane B
+  (a second RetainedScene buffer + second projection uniform + second scissored
+  gpu pass — a multi-scene GPU refactor), focus-switch input, the
+  context-follows-focus toggle for the unfocused document, independent per-pane
+  camera, and the exact split-ratio owner-approval against `board-editor.html`.
   *Dependency:* P2.0 landed.
-  *Reuse:* the Phase-1 Taffy layout + invariant tests and the
-  central-split-pane region already present in the Phase-1 shell composition (D1
-  built a "board/schematic split-pane viewport with Board focused"); P2.1
-  populates the second pane's geometry, it does not invent a new layout engine.
-  *Check disposition:* **TO-ENFORCE** — extend the layout-invariant tests
-  (`crates/gui-render`) with the dual-pane region assertions and re-capture the
-  shell/board goldens; lands **with** the P2.1 build slice, never red against
-  un-built structure (conformance §1 rule).
+  *Reuse:* the Phase-1 Taffy layout + invariant tests; P2.1's first slice derives
+  the panes as a post-split, it does not invent a new layout engine.
+  *Check disposition:* **ENFORCED (first slice)** — layout-invariant tests carry
+  the dual-pane region assertions (`viewport_split_holds_two_pane_invariants_*`)
+  and render-contract tests pin both pane headers, the placeholder caption, and
+  pane-A-only focus chrome; shell/board goldens re-captured. Real schematic
+  content in pane B stays **TO-ENFORCE** with P2.2.
 
 - **P2.2 — Schematic pane populated from the engine.**
   **spec only — build is a separate authorized execution phase.**
@@ -167,13 +182,16 @@ marker**.
 ## Sequencing summary (dependency graph)
 
 ```
-Phase-1 shell (D1–D7)  ──►  P2.0 (LANDED)  ──►  P2.1  ──►  P2.2  ──►  P2.3
-                                     └────────────────────────────►  P2.4
+Phase-1 shell (D1–D7)  ──►  P2.0 (LANDED)  ──►  P2.1 (first slice LANDED)  ──►  P2.2  ──►  P2.3
+                                     └──────────────────────────────────────────────►  P2.4
 ```
 
-P2.1 and P2.2 are **deferred build phases** — this spec sequences and specifies
-them; it does not build them in the P2.0 workflow. P2.4 branches off P2.0
-directly and may run parallel to P2.1–P2.3.
+P2.1's split-view first slice (two-pane LAYOUT + headers + focus + placeholder
+pane B) has **landed**; real schematic content in pane B (P2.2) and the remaining
+P2.1 depth (focus-switch, per-pane camera, exact split-ratio approval) are still
+**deferred build phases** — this spec sequences and specifies them; it does not
+build them in the P2.0 workflow. P2.4 branches off P2.0 directly and may run
+parallel to P2.1–P2.3.
 
 ## Reuse map (from the leverage audit — do not rebuild these)
 
@@ -205,7 +223,10 @@ owner signs off.
 ## Do NOT (binding)
 
 - **Do not build any deliverable without separate execution authorization.** This
-  is a planning/sequencing spec; only P2.0 has landed. P2.1–P2.4 are spec-only.
+  is a planning/sequencing spec; P2.0 and the P2.1 split-view first slice
+  (two-pane LAYOUT + headers + focus + placeholder pane B) have landed. The
+  remaining P2.1 depth (real schematic content is P2.2) and P2.2–P2.4 are
+  spec-only until separately authorized.
 - **Do not build a write/authoring path** or wire any pane/inspector/menu item to
   a mutation. Phase 2 is read-only; authoring is gated on
   `DATUM_GUI_WRITE_PATH_PLAN.md` (Frontier step 5).

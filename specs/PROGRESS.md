@@ -69,19 +69,27 @@
    selection via the `--select <refdes>` launch flag, repointing the poor empty
    `--demo-known-good` target onto the prototype's single-pane composition,
    ENFORCED by `check_gui_visual_parity.py` against the shell golden) → **P2.1**
-   split Board+Schematic dual-pane layout → **P2.2** schematic pane populated
+   split Board+Schematic dual-pane layout (**first slice LANDED** — the central
+   viewport is a real two-pane split: Board pane A focused (accent frame + focus
+   dot + active tools + the board world scene) | Schematic pane B unfocused (muted
+   header, dimmed tools) over a labeled "Schematic (coming)" placeholder canvas,
+   with per-pane headers, a divider gutter, and single-source focus driving
+   context-follows-focus; `ShellLayout::viewport_panes()` + invariant tests +
+   re-blessed shell/board goldens; pane B world geometry / focus-switch / cross-probe
+   remain later slices) → **P2.2** schematic pane populated
    read-only from the engine (reuses `load_kicad_schematic_workspace_state`) →
    **P2.3** cross-probe (one selection identity projected into both panes via the
    existing `SelectionTarget`/`context_envelope::from_selection` substrate) →
    **P2.4** full Identity/Placement/Checks inspector sections. Each carries an
-   honest check disposition (ENFORCED / TO-ENFORCE / HUMAN) and is marked
+   honest check disposition (ENFORCED / TO-ENFORCE / HUMAN); P2.2–P2.4 remain
    **spec-only — build is a separately-authorized execution phase**. *Dependency:*
    Phase-1 shell + board fidelity (step 2) landed. *Unblocks:* the schematic /
    library authoring surfaces (step 6), which build on the read-only schematic pane
    and cross-probe substrate. *State:* **P2.0 populated single-pane inspector
-   LANDED via the `--select` repoint; P2.1–P2.4 spec'd, build deferred to
-   authorized execution** (split-view P2.1 and schematic pane P2.2 are DEFERRED
-   build phases — sequenced/specified here, not built). Governing: decision 019 +
+   LANDED; P2.1 split-view first slice (two-pane LAYOUT + headers + focus +
+   placeholder pane B) LANDED; P2.2–P2.4 spec'd, build deferred to authorized
+   execution** (real schematic content in pane B is the next slice, still DEFERRED).
+   Governing: decision 019 +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
@@ -156,8 +164,10 @@ product progress. **GUI Phase 2 spec (governed, spec-only):**
 populated component inspector + dual-pane Board+Schematic + cross-probe — extending
 `DATUM_GUI_PHASE_1_SPEC` under the `DATUM_GUI_CONFORMANCE_SPEC` check-disposition
 discipline; P2.0 (populated single-pane inspector via the `--select` capture
-repoint) has landed and is ENFORCED by `check_gui_visual_parity.py`, and P2.1–P2.4
-are specified with build deferred to authorized execution. Ordering lives in the
+repoint) has landed and is ENFORCED by `check_gui_visual_parity.py`, the P2.1
+split-view first slice (two-pane LAYOUT + per-pane headers + focus + placeholder
+pane B) has landed and re-blessed the shell/board goldens, and P2.2–P2.4 are
+specified with build deferred to authorized execution. Ordering lives in the
 Active Frontier (step 2b); this row is status only.
 
 ---

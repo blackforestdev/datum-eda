@@ -1,34 +1,40 @@
 #!/usr/bin/env python3
 """Failing GUI visual-parity gate (same-engine app-screenshot regression).
 
-This is a machine no-regression gate over a SINGLE-PANE INTERIM shell target. A
-Rust/wgpu render will never pixel-match the HTML prototype, so this gate does NOT
-diff the build against ``docs/gui/prototypes/board-editor.html``. Instead it:
+This is a machine no-regression gate over a PHASE-2 SPLIT-VIEW FIRST-SLICE INTERIM
+shell target. A Rust/wgpu render will never pixel-match the HTML prototype, so
+this gate does NOT diff the build against ``docs/gui/prototypes/board-editor.html``.
+Instead it:
 
   1. captures the running app at a CANONICAL command — the datum-test board with
      a preset component selection (R1) + fixed window size (build-vs-build, one
-     renderer), producing a populated SINGLE-PANE composition (board + inspector)
-     — and
+     renderer), producing a populated two-pane composition (Board pane A focused +
+     Inspector, Schematic pane B a labeled placeholder) — and
   2. diffs that capture against a COMMITTED shell golden with a small tolerance.
 
-**Honest scope (do not overstate).** The golden this gate protects is a
-SINGLE-PANE interim target. It is **NOT** owner-approved against
-``board-editor.html``: the prototype is a SPLIT Board+Schematic composition with
-a populated inspector, and that full composition CANNOT be captured until the
-split view + schematic pane are built in **Phase-2** (there is no config
-shortcut). This gate freezes the current single-pane look so it does not silently
-regress; it does not certify prototype parity. The one-time owner cross-engine
-approval of the full board-editor composition is tracked separately by the
-reference-capture loop (``docs/gui/reference/README.md`` +
-``scripts/check_gui_reference_capture.py``, EXPECTED RED until Phase-2).
+**Honest scope (do not overstate).** The golden this gate protects is a Phase-2
+split-view FIRST-SLICE interim target: it now captures the real two-pane split
+LAYOUT (Board pane A | Schematic pane B) with per-pane headers and focus, but
+pane B is a labeled "Schematic (coming)" PLACEHOLDER — it does NOT yet render
+schematic world geometry, authoring, or cross-probe. It is **NOT** owner-approved
+against ``board-editor.html``: the prototype's Schematic pane shows real schematic
+content with populated cross-probe, and that full composition CANNOT be captured
+until the later Phase-2 slices (real schematic scene in pane B, focus-switch,
+cross-probe) are built (there is no config shortcut). This gate freezes the
+current first-slice look so it does not silently regress; it does not certify
+prototype parity. The one-time owner cross-engine approval of the full
+board-editor composition is tracked separately by the reference-capture loop
+(``docs/gui/reference/README.md`` + ``scripts/check_gui_reference_capture.py``,
+EXPECTED RED until the full split composition is buildable).
 
 To keep a wrong scene from being blessed as this golden, the gate applies cheap
 SEMANTIC GUARDS (``guard_intended_fixture``): the capture must come from a real
 board fixture whose layer stack includes the expected copper/silk/edge layers,
 and the fixture must NOT be the synthetic "Datum GUI Known Good" demo scene. The
-split-pane / U1 / STM32 content guards are DEFERRED to Phase-2 (they cannot be
-asserted until the split view renders them) — see the TODO in
-``guard_intended_fixture``.
+split LAYOUT now renders (two pane headers), but the guard is input-side
+(pre-capture) so it cannot assert rendered headers; the SCHEMATIC-CONTENT guards
+(U1 / STM32 in a schematic pane) stay DEFERRED — pane B is still a placeholder —
+see the TODO in ``guard_intended_fixture``.
 
 Usage::
 
@@ -54,10 +60,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # The single canonical capture: datum-test board with a preset component
 # selection (R1), fixed window. Repointed from the empty --demo-known-good
-# route-review scene to a populated SINGLE-PANE composition (board + populated
-# component inspector). This is a single-pane INTERIM target; it is NOT the
-# split Board+Schematic composition of docs/gui/prototypes/board-editor.html —
-# that full composition is gated on Phase-2 (the split view + schematic pane).
+# route-review scene to a populated two-pane composition (Board pane A + populated
+# component inspector; Schematic pane B a labeled placeholder). This is a Phase-2
+# split-view FIRST-SLICE INTERIM target; it is NOT the full Board+Schematic
+# composition of docs/gui/prototypes/board-editor.html — the prototype's schematic
+# pane shows real content + cross-probe, gated on later Phase-2 slices.
 WINDOW_SIZE = "1680x1050"
 DATUM_TEST_BOARD = (
     "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb"
@@ -116,12 +123,13 @@ def guard_intended_fixture() -> None:
     Raising here fails the gate loudly rather than silently blessing/verifying the
     wrong scene.
 
-    TODO(Phase-2): once the split view + schematic pane render, extend these
-    guards to assert the SPLIT-PANE composition (two pane headers), the U1
-    STM32 part in the inspector, and the schematic pane content. Those cannot be
-    asserted today because the single-pane build does not render them — do NOT add
-    them until the Phase-2 slice makes them real, or the guard would be red
-    against un-built structure.
+    TODO(Phase-2): the split LAYOUT now renders (two pane headers), but pane B is
+    still a placeholder. Once the schematic scene renders in pane B, extend these
+    guards to assert the U1/STM32 part in the inspector and the schematic pane
+    content. Those cannot be asserted today because pane B does not render them —
+    do NOT add them until the later Phase-2 slice makes them real, or the guard
+    would be red against un-built structure. (A rendered two-pane-header assertion
+    would need an output-side check, not this pre-capture input guard.)
     """
     board = Path(DATUM_TEST_BOARD)
     if not board.is_file():
@@ -154,7 +162,7 @@ def guard_intended_fixture() -> None:
     print(
         "GUI-VISUAL-PARITY fixture guard OK: real datum-test board with "
         f"layers {', '.join(EXPECTED_FIXTURE_LAYERS)}; not the known-good demo. "
-        "(split-pane/U1/STM32 guards deferred to Phase-2.)"
+        "(split LAYOUT renders; schematic-content U1/STM32 guards deferred — pane B is a placeholder.)"
     )
 
 
@@ -216,7 +224,7 @@ def diff(golden: Path, actual: Path) -> int:
     if regressed:
         print(
             "GUI-VISUAL-PARITY FAIL: the running app regressed from the "
-            "committed single-pane interim shell golden.\n"
+            "committed split-view first-slice interim shell golden.\n"
             f"  - differing-pixel {pct:.3f}% (limit {MAX_DIFFERING_PX_PCT}%), "
             f"mean channel delta {mean_delta:.4f} (limit {MAX_MEAN_CHANNEL_DELTA}).\n"
             "  - If this is an UNINTENDED regression, fix the render.\n"
@@ -226,9 +234,9 @@ def diff(golden: Path, actual: Path) -> int:
         )
         return 1
     print(
-        "GUI-VISUAL-PARITY OK: app matches the committed single-pane interim "
-        "shell golden (NOT prototype parity — full board-editor.html composition "
-        "is gated on Phase-2)."
+        "GUI-VISUAL-PARITY OK: app matches the committed split-view first-slice "
+        "interim shell golden (NOT prototype parity — pane B is a placeholder; "
+        "the full board-editor.html composition is gated on later Phase-2 slices)."
     )
     return 0
 
@@ -238,7 +246,7 @@ def main() -> int:
     parser.add_argument(
         "--bless",
         action="store_true",
-        help="re-capture and overwrite the single-pane interim golden (owner action)",
+        help="re-capture and overwrite the split-view first-slice interim golden (owner action)",
     )
     args = parser.parse_args()
 
@@ -263,7 +271,7 @@ def main() -> int:
             else "the golden file is absent"
         )
         print(
-            "GUI-VISUAL-PARITY FAIL: single-pane interim shell golden not committed — "
+            "GUI-VISUAL-PARITY FAIL: split-view first-slice interim shell golden not committed — "
             f"{detail}.\n"
             f"  expected: {GOLDEN.relative_to(ROOT)}\n"
             "  A PENDING placeholder does NOT satisfy this gate. Capture and commit\n"

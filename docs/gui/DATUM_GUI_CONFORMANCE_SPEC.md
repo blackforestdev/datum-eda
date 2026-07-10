@@ -52,11 +52,12 @@ merely *reporting* HUMAN rows and never failing on them. That gate enforced
 paperwork, not the visual outcome.
 
 That paperwork defect is closed by a **real, same-engine, FAILING gate over a
-SINGLE-PANE INTERIM target**: `scripts/check_gui_visual_parity.py` captures the
-running app at a canonical command (`--board <datum-test path> --select R1
---visual-test --window-size 1680x1050 --exit-after-screenshot` — the datum-test
-board with a preset R1 component selection, a populated **single-pane**
-composition: board + inspector) and diffs it against a committed **shell golden**
+PHASE-2 SPLIT-VIEW FIRST-SLICE INTERIM target**: `scripts/check_gui_visual_parity.py`
+captures the running app at a canonical command (`--board <datum-test path>
+--select R1 --visual-test --window-size 1680x1050 --exit-after-screenshot` — the
+datum-test board with a preset R1 component selection, a populated two-pane
+composition: Board pane A + inspector, Schematic pane B a labeled placeholder) and
+diffs it against a committed **shell golden**
 `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` with a small
 tolerance (build-vs-build, one renderer — **never** a wgpu-vs-HTML pixel-diff).
 The gate then **fails** on any regression from that frozen look, and is wired into
@@ -64,23 +65,28 @@ The gate then **fails** on any regression from that frozen look, and is wired in
 owner action: `check_gui_visual_parity.py --bless`.
 
 **Honest scope — do not overstate what this golden is.** This shell golden is a
-**single-pane interim** target and is **NOT owner-approved against
-`board-editor.html`**. The prototype is a **SPLIT Board+Schematic composition with
-a populated inspector**; that full composition **cannot** be captured until the
-split view + schematic pane are built in **Phase-2** (there is no config
-shortcut — `DATUM_GUI_PHASE_2_SPEC.md` P2.1). What this gate buys today is
-strictly *no silent regression of the current single-pane shell look* — it does
-**not** certify prototype parity. The one-time owner cross-engine approval of the
-full board-editor composition is tracked separately by the reference-capture loop
+Phase-2 **split-view first-slice interim** target: it now captures the real
+two-pane split LAYOUT (Board pane A | Schematic pane B) with per-pane headers and
+focus, but **pane B is a "Schematic (coming)" placeholder** (no schematic content,
+authoring, or cross-probe) and it is **NOT owner-approved against
+`board-editor.html`**. The prototype's Schematic pane shows **real schematic
+content with a populated inspector and cross-probe**; that full composition
+**cannot** be captured until the later Phase-2 slices (real schematic scene in
+pane B, focus-switch, cross-probe) are built (there is no config shortcut —
+`DATUM_GUI_PHASE_2_SPEC.md` P2.1). What this gate buys today is strictly *no silent
+regression of the current first-slice shell look* — it does **not** certify
+prototype parity. The one-time owner cross-engine approval of the full
+board-editor composition is tracked separately by the reference-capture loop
 (`docs/gui/reference/README.md` + `scripts/check_gui_reference_capture.py`), which
-is **EXPECTED RED until Phase-2** because no owner-approved `board-editor.png`
-reference exists yet.
+is **EXPECTED RED** until the full split composition is buildable and an
+owner-approved `board-editor.png` reference exists.
 
 **Reading the §2 HUMAN rows now:** each still names the *aesthetic/IA judgment*
 (the one-time owner call that a region matches the prototype). The composed
-single-pane result is regression-gated by §0.1 so the current look does not
-silently drift; the *full split-view* composed judgment against the prototype is
-Phase-2 work and is not yet enforced or approved.
+first-slice result is regression-gated by §0.1 so the current look does not
+silently drift; the *full split-view* composed judgment against the prototype
+(with real schematic content) is later Phase-2 work and is not yet enforced or
+approved.
 
 ## 1. Disposition legend (the discipline of this pilot)
 
@@ -99,10 +105,11 @@ No row proposes pixel-diffing wgpu against HTML. No row is uncomputable-yet-mark
 for a *whole-surface* visual outcome (the composed look of the shell, or of any
 whole surface) may **NOT** be the sole guardian of that outcome. It MUST be backed
 by a **committed golden** that a machine gate regression-checks
-build-vs-build (§2.10 / G9). For the current shell that golden is a **single-pane
-interim** target frozen against regression — **not** an owner-approval of
-prototype parity (the split-view cross-engine judgment against `board-editor.html`
-is Phase-2 work, tracked by the reference-capture loop, currently RED). The
+build-vs-build (§2.10 / G9). For the current shell that golden is a **split-view
+first-slice interim** target frozen against regression — **not** an owner-approval
+of prototype parity (the full cross-engine judgment against `board-editor.html`,
+with real schematic content in pane B, is later Phase-2 work, tracked by the
+reference-capture loop, currently RED). The
 ENFORCED half is "no regression from the committed golden." A `*.PENDING` placeholder can
 **never** satisfy this — an absent or PENDING-shadowed golden FAILS the gate. This
 is the exact defect being corrected: previously the composed shell look was every
@@ -269,22 +276,25 @@ tier**.
 
 ---
 
-### 2.10 Single-pane shell no-regression (interim)
-*Phase scope: P1 (the composed look of the current SINGLE-PANE shell, not the full
-split-view prototype, and not a single region).*
-**Headline:** the current single-pane shell look is frozen into a committed
-**shell golden** and regression-gated same-engine, so it does not silently drift.
-This is **not** prototype-parity certification: the prototype `board-editor.html`
-is a **split Board+Schematic composition with a populated inspector**, which
-cannot be captured until **Phase-2** (`DATUM_GUI_PHASE_2_SPEC.md` P2.1) builds the
-split view + schematic pane. The whole-split-shell composed judgment against the
-prototype is tracked by the reference-capture loop
-(`scripts/check_gui_reference_capture.py`), **EXPECTED RED until Phase-2**.
+### 2.10 Split-view first-slice shell no-regression (interim)
+*Phase scope: P1/P2-first-slice (the composed look of the current split-view
+first-slice shell — two panes, pane B a placeholder — not the full split-view
+prototype with real schematic content, and not a single region).*
+**Headline:** the current split-view first-slice shell look is frozen into a
+committed **shell golden** and regression-gated same-engine, so it does not
+silently drift. The golden now captures the real two-pane split LAYOUT, but pane B
+is a labeled placeholder. This is **not** prototype-parity certification: the
+prototype `board-editor.html` is a **split Board+Schematic composition with a
+populated inspector and real schematic content**, which cannot be captured until
+the later Phase-2 slices (`DATUM_GUI_PHASE_2_SPEC.md` P2.1+) render the schematic
+pane. The whole-split-shell composed judgment against the prototype is tracked by
+the reference-capture loop (`scripts/check_gui_reference_capture.py`), **EXPECTED
+RED** until the full split composition is buildable.
 
 | Claim | Reference | Build state | Phase | Disposition | Check ref |
 |---|---|---|---|---|---|
-| No regression of the current single-pane shell look (interim; NOT prototype-parity) | committed single-pane shell golden | app single-pane shell | P1 | ENFORCED | `scripts/check_gui_visual_parity.py` vs `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` |
-| Full board-editor.html composition parity (split Board+Schematic, populated inspector) | prototype `board-editor.html` | not built (single-pane) | P2 | HUMAN (gated on Phase-2) | reference-capture loop `scripts/check_gui_reference_capture.py` + `docs/gui/reference/README.md` (RED until captured) |
+| No regression of the current split-view first-slice shell look (interim; NOT prototype-parity) | committed split-view first-slice shell golden | app split-view first slice (pane B placeholder) | P1 | ENFORCED | `scripts/check_gui_visual_parity.py` vs `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` |
+| Full board-editor.html composition parity (split Board+Schematic, populated inspector, real schematic content) | prototype `board-editor.html` | first slice built (pane B placeholder) | P2 | HUMAN (gated on later Phase-2) | reference-capture loop `scripts/check_gui_reference_capture.py` + `docs/gui/reference/README.md` (RED until captured) |
 
 **Canonical capture (fixed; the golden was captured at exactly these parameters and
 the gate re-runs them):**
@@ -298,14 +308,15 @@ cargo run -q -p datum-gui-app --bin datum-gui --features visual -- \
 ```
 
 Fixed inputs: launch bin `datum-gui`, the datum-test board + preset R1 selection
-(a populated **single-pane** composition — board + inspector — NOT the split
-board-editor.html composition), `--visual-test` deterministic offscreen path,
-window `1680x1050`. **Semantic guards** (`guard_intended_fixture`): the capture
-fixture must be a real board whose layer stack includes `F.Cu` / `B.Cu` /
-`F.SilkS` / `Edge.Cuts` and must NOT be the synthetic `Datum GUI Known Good` demo
-scene, so a wrong scene cannot be blessed. The split-pane / U1 / STM32 content
-guards are **deferred to Phase-2** (they cannot be asserted until the split view
-renders them). **Tolerances
+(a populated two-pane composition — Board pane A + inspector, Schematic pane B a
+labeled placeholder — NOT the full board-editor.html composition with real
+schematic content), `--visual-test` deterministic offscreen path, window
+`1680x1050`. **Semantic guards** (`guard_intended_fixture`): the capture fixture
+must be a real board whose layer stack includes `F.Cu` / `B.Cu` / `F.SilkS` /
+`Edge.Cuts` and must NOT be the synthetic `Datum GUI Known Good` demo scene, so a
+wrong scene cannot be blessed. The split LAYOUT now renders (two pane headers),
+but the guard is input-side (pre-capture) and the **U1 / STM32 schematic-content
+guards remain deferred** — pane B is still a placeholder. **Tolerances
 (same-engine, so near-identical — verified at 0 differing px on the reference
 workstation):** dimensions must match exactly (hard fail otherwise); then (a) the
 fraction of pixels differing by more than **8/255** on any channel must be **< 0.5%**,
@@ -356,24 +367,27 @@ slice it verifies**, never red against un-built structure.
 - **G7 — Overlay-within-viewport.** ENFORCED by `layout_invariant_tests.rs`.
 - **G8 — Two-sided menu-layout metric.** ENFORCED by
   `menu_chrome.rs::conformance_menu_title_width_uses_condensed_measured_advance`.
-- **G9 — Single-pane shell no-regression gate (interim).** ENFORCED by
-  `scripts/check_gui_visual_parity.py` (committed single-pane shell golden
-  `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`; captures the
-  running app at the §2.10 canonical command and fails on any regression from the
-  frozen single-pane look, fails if the golden is absent or a `*.PENDING`
+- **G9 — Split-view first-slice shell no-regression gate (interim).** ENFORCED by
+  `scripts/check_gui_visual_parity.py` (committed split-view first-slice shell
+  golden `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`; captures
+  the running app at the §2.10 canonical command and fails on any regression from
+  the frozen first-slice look, fails if the golden is absent or a `*.PENDING`
   placeholder shadows it, applies the `guard_intended_fixture` semantic guards, and
   fails loud on capture-infra failure — never silently passes). Wired into
   `check_gui_conformance.py` (hence `run_drift_gates.sh`). This gate is **interim
-  single-pane no-regression, NOT prototype-parity** — the full board-editor.html
-  composition (split view) is Phase-2 and its owner approval is tracked by G10.
-- **G10 — Reference-capture gate (EXPECTED RED until Phase-2).** ENFORCED by
-  `scripts/check_gui_reference_capture.py` (wired into `run_drift_gates.sh`): FAILS
-  while `docs/gui/reference/board-editor.png` is missing or a `*.PENDING`
-  placeholder exists. This red is the **honest signal** that no owner-approved
-  reference of the full board-editor.html split composition has been captured yet;
-  it is not a bug and must not be silenced with a fabricated image. It resolves
-  when the owner captures the reference (per `docs/gui/reference/README.md` §2) —
-  which becomes possible/meaningful once Phase-2 builds the split view.
+  first-slice no-regression, NOT prototype-parity** — the golden captures the real
+  two-pane split LAYOUT but pane B is a placeholder; the full board-editor.html
+  composition (real schematic content, cross-probe) is later Phase-2 and its owner
+  approval is tracked by G10.
+- **G10 — Reference-capture gate (EXPECTED RED until the full split is buildable).**
+  ENFORCED by `scripts/check_gui_reference_capture.py` (wired into
+  `run_drift_gates.sh`): FAILS while `docs/gui/reference/board-editor.png` is
+  missing or a `*.PENDING` placeholder exists. This red is the **honest signal**
+  that no owner-approved reference of the full board-editor.html split composition
+  has been captured yet; it is not a bug and must not be silenced with a fabricated
+  image. It resolves when the owner captures the reference (per
+  `docs/gui/reference/README.md` §2) — which becomes meaningful once the later
+  Phase-2 slices render real schematic content in pane B.
 
 ## 5. Reconciliation register (resolved in this conformance pass)
 
@@ -393,10 +407,11 @@ on them are non-authoritative until the owner decides.
 
 ## 6. Coverage validation
 
-- All **9** regions present (§2.1–§2.9), plus the single-pane shell no-regression
-  row (§2.10, ENFORCED via G9) that regression-gates the current *single-pane*
-  composed look, and the full-split-composition row (§2.10, HUMAN, gated on
-  Phase-2 via G10 — currently RED, no owner-approved reference captured).
+- All **9** regions present (§2.1–§2.9), plus the split-view first-slice shell
+  no-regression row (§2.10, ENFORCED via G9) that regression-gates the current
+  *split-view first-slice* composed look (two panes, pane B a placeholder), and the
+  full-split-composition row (§2.10, HUMAN, gated on later Phase-2 via G10 —
+  currently RED, no owner-approved reference captured).
 - Every line item carries **exactly one** of ENFORCED / TO-ENFORCE / HUMAN (rows
   marked "ENFORCED (value) / HUMAN (look)" split a *value* claim from a distinct
   *appearance* claim — each half carries one disposition).
@@ -404,14 +419,15 @@ on them are non-authoritative until the owner decides.
 - Every **TO-ENFORCE** names a concrete file + assertion (§4 G1–G9; §2 rows).
 - Every **HUMAN** names the reference image (`board-editor.html`) + the committed
   golden (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`).
-- The **current single-pane shell look** (the aggregate of the §2 HUMAN rows on
-  the single-pane build) is regression-gated by §0.1 — the same-engine shell
-  visual-parity gate (`scripts/check_gui_visual_parity.py` vs
+- The **current split-view first-slice shell look** (the aggregate of the §2 HUMAN
+  rows on the first-slice build) is regression-gated by §0.1 — the same-engine
+  shell visual-parity gate (`scripts/check_gui_visual_parity.py` vs
   `crates/gui-render/testdata/golden/shell/datum-shell.golden.png`), wired into
   `check_gui_conformance.py`. The owner captures the interim golden; the gate
-  fails on drift. This is single-pane no-regression, **not** prototype parity —
-  the **full split-view board-editor.html composition** is Phase-2 and its
-  owner-approved reference is tracked by G10
+  fails on drift. This is first-slice no-regression, **not** prototype parity —
+  the golden captures the real two-pane split LAYOUT but pane B is a placeholder;
+  the **full board-editor.html composition** (real schematic content, cross-probe)
+  is later Phase-2 and its owner-approved reference is tracked by G10
   (`scripts/check_gui_reference_capture.py`), correctly RED until captured. Visual
   parity of the current shell is no longer report-only paperwork; parity of the
   full prototype is honestly marked as not-yet-built.
