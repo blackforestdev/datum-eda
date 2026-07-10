@@ -1208,6 +1208,12 @@ pub struct LiveReviewRequest {
     pub from_anchor_pad_uuid: Option<String>,
     pub to_anchor_pad_uuid: Option<String>,
     pub profile: Option<String>,
+    /// The original KiCad `.kicad_pcb` source this request was materialized
+    /// from, if any. Used solely to locate the companion `.kicad_sch` for
+    /// display in pane B when the board itself now loads from a native project
+    /// whose sibling directory holds no schematic. `None` for direct board-file
+    /// loads and for native projects with no KiCad origin.
+    pub kicad_board_source: Option<PathBuf>,
 }
 
 pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {
@@ -1226,6 +1232,7 @@ pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {
         from_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c218".to_string()),
         to_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c219".to_string()),
         profile: Some("default".to_string()),
+        kicad_board_source: None,
     })
 }
 
@@ -1288,6 +1295,9 @@ pub fn materialize_kicad_board_request(
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        // Carry the original KiCad board so pane B can draw its companion
+        // `.kicad_sch`; the materialized project holds no sibling schematic.
+        kicad_board_source: Some(source),
     })
 }
 
@@ -3445,7 +3455,15 @@ fn load_workspace_state_impl(
         review_attach_started.elapsed().as_millis()
     ));
     let mut state = ReviewWorkspaceState::new(scene, review);
-    state.schematic_scene = load_sibling_schematic_scene(&board_path);
+    // Locate the companion schematic from the ORIGINAL KiCad source when this
+    // request was materialized into a native project (the materialized
+    // `board/board.json` has no sibling `.kicad_sch`); otherwise derive it from
+    // the loaded board path (the direct `--board <file>.kicad_pcb` path).
+    let schematic_companion_base = request
+        .kicad_board_source
+        .as_deref()
+        .unwrap_or(board_path.as_path());
+    state.schematic_scene = load_sibling_schematic_scene(schematic_companion_base);
     state.production = load_production_status(&cli, request)?;
     state.source_shards = refresh_source_shard_status(request)?;
     state.checks = load_check_run_review_state(&cli, request)?;
@@ -6067,6 +6085,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         })
         .expect("resolver-backed native scene should load");
 
@@ -6090,6 +6109,7 @@ mod tests {
                 from_anchor_pad_uuid: None,
                 to_anchor_pad_uuid: None,
                 profile: None,
+                kicad_board_source: None,
             },
             &scene,
             &ProductionStatus::default(),
@@ -6647,6 +6667,7 @@ mod tests {
                 from_anchor_pad_uuid: None,
                 to_anchor_pad_uuid: None,
                 profile: None,
+                kicad_board_source: None,
             },
             board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
         });
@@ -6684,6 +6705,7 @@ mod tests {
                 from_anchor_pad_uuid: None,
                 to_anchor_pad_uuid: None,
                 profile: None,
+                kicad_board_source: None,
             },
             board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
         });
@@ -7590,6 +7612,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         };
         let workspace =
             load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
@@ -7627,6 +7650,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         };
         let workspace =
             load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
@@ -7677,6 +7701,66 @@ mod tests {
     }
 
     #[test]
+    fn datum_test_materialize_path_carries_companion_schematic_scene() {
+        // The app's default `--board <file>.kicad_pcb` load routes through the
+        // materialize path: the KiCad board is imported into a native Datum
+        // project and the board now loads from `<project>/board/board.json`,
+        // whose sibling directory holds no `.kicad_sch`. The original KiCad
+        // source must still be threaded through so pane B can draw the companion
+        // schematic.
+        let source = PathBuf::from(
+            "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
+        );
+        let request = materialize_kicad_board_request(&source, None)
+            .expect("datum-test should materialize into a native Datum project");
+
+        // The board loads from the native project, not the KiCad file, yet the
+        // original KiCad source is carried for companion resolution.
+        assert!(
+            request.board_file.is_none(),
+            "materialize path loads the board from the native project, not the KiCad file"
+        );
+        assert_eq!(
+            request.kicad_board_source.as_deref(),
+            Some(source.canonicalize().unwrap().as_path()),
+            "materialize path must carry the original KiCad source for companion resolution"
+        );
+
+        let workspace = load_board_editor_workspace_state(&request)
+            .expect("materialized datum-test workspace should load");
+
+        // Board scene is unaffected: still the native board, not the schematic.
+        assert_ne!(
+            workspace.scene.kind, "schematic_review_scene",
+            "board scene must remain the board, not be replaced by the schematic"
+        );
+
+        // The companion schematic is populated from the ORIGINAL source sibling.
+        let schematic = workspace
+            .schematic_scene
+            .as_ref()
+            .expect("materialize path should populate schematic_scene from the original source");
+        assert_eq!(
+            schematic.kind, "schematic_review_scene",
+            "companion scene should be the projected schematic review scene"
+        );
+        assert!(
+            schematic
+                .board_graphics
+                .iter()
+                .any(|graphic| graphic.object_id.starts_with("schematic-wire:")),
+            "companion schematic should carry projected wire geometry"
+        );
+        assert!(
+            schematic
+                .board_graphics
+                .iter()
+                .any(|graphic| graphic.object_id.starts_with("schematic-junction:")),
+            "companion schematic should carry projected junction geometry"
+        );
+    }
+
+    #[test]
     fn datum_test_r2_reference_text_materializes_through_component_graphics() {
         let request = LiveReviewRequest {
             project_root: PathBuf::from(
@@ -7690,6 +7774,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         };
         let workspace =
             load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
@@ -7741,6 +7826,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         };
         let workspace =
             load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
@@ -7792,6 +7878,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         };
         let workspace =
             load_board_editor_workspace_state(&request).expect("DOA2526 workspace should load");

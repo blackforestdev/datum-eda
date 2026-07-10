@@ -24,6 +24,7 @@ fn datum_test_request() -> LiveReviewRequest {
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     }
 }
 

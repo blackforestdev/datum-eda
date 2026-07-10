@@ -10,6 +10,7 @@ pub(super) fn accepted_transaction_tip(context: &TerminalLaunchContext) -> Optio
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     })
     .ok()
     .flatten()

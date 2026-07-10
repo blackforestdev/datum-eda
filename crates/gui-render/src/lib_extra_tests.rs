@@ -399,6 +399,7 @@ fn debug_datum_test_q1_q2_component_geometry() {
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     };
     let state = datum_gui_protocol::load_board_editor_workspace_state(&request)
         .expect("datum-test workspace should load");

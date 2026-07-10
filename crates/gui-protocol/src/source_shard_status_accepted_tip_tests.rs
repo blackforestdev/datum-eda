@@ -114,6 +114,7 @@ fn accepted_transaction_tip_reports_resolver_journal_tip() {
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     })
     .expect("accepted transaction tip should load");
 

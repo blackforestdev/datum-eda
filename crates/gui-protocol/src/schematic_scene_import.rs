@@ -40,6 +40,7 @@ pub fn load_kicad_schematic_workspace_state(schematic_file: &Path) -> Result<Rev
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     };
     let mut state = ReviewWorkspaceState::new(scene, empty_route_review_payload(&request));
     state.backing = Some(WorkspaceBacking {

@@ -210,6 +210,7 @@ impl GuiArgs {
                 from_anchor_pad_uuid: None,
                 to_anchor_pad_uuid: None,
                 profile: None,
+                kicad_board_source: None,
             });
         }
         if let Some(artifact_path) = &self.artifact_path {
@@ -230,6 +231,7 @@ impl GuiArgs {
                 from_anchor_pad_uuid: None,
                 to_anchor_pad_uuid: None,
                 profile: self.profile.clone(),
+                kicad_board_source: None,
             });
         }
         Ok(LiveReviewRequest {
@@ -244,6 +246,7 @@ impl GuiArgs {
             from_anchor_pad_uuid: self.from_anchor_pad_uuid.clone(),
             to_anchor_pad_uuid: self.to_anchor_pad_uuid.clone(),
             profile: self.profile.clone(),
+            kicad_board_source: None,
         })
     }
 

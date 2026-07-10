@@ -247,6 +247,7 @@ fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspace
         from_anchor_pad_uuid: None,
         to_anchor_pad_uuid: None,
         profile: None,
+        kicad_board_source: None,
     };
     datum_gui_protocol::load_board_editor_workspace_state(&request)
         .with_context(|| format!("load fixture project {}", request.project_root.display()))

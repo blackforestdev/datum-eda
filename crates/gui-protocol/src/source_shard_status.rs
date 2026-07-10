@@ -208,6 +208,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         })
         .expect("source-shard status should load");
 
@@ -382,6 +383,7 @@ mod tests {
             from_anchor_pad_uuid: None,
             to_anchor_pad_uuid: None,
             profile: None,
+            kicad_board_source: None,
         })
         .expect("source-shard status should load");
 
