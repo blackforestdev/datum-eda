@@ -246,13 +246,18 @@ fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
                 }
             }
 
-            // scene_viewport (world board canvas + gpu scissor) equals the
-            // FOCUSED leaf's scene — the single-live-scene invariant.
-            let focused_scene = panes.focused_pane().rect.scene;
+            // scene_viewport (world board canvas + gpu scissor) equals the BOARD
+            // SCENE leaf's scene — bound to the board pane so the PCB stays put
+            // regardless of focus (falling back to the focused leaf only when no
+            // board leaf exists). The single-live-scene invariant, board-bound.
+            let expected_scene = panes
+                .scene_leaf()
+                .map(|leaf| leaf.rect.scene)
+                .unwrap_or_else(|| panes.focused_pane().rect.scene);
             assert_eq!(
                 layout.scene_viewport(workspace),
-                focused_scene,
-                "{shape_name}: scene_viewport must follow the focused leaf at scale {scale}"
+                expected_scene,
+                "{shape_name}: scene_viewport must follow the board scene leaf at scale {scale}"
             );
             assert_eq!(
                 panes.focused_document(),

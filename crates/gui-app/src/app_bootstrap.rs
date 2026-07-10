@@ -60,6 +60,23 @@ pub(super) struct GuiArgs {
     /// `single` | `board-schematic` | `horizontal-split` | `zoom`.
     #[arg(long = "initial-layout")]
     pub(super) initial_layout: Option<String>,
+    /// Capture/test affordance: open a named top menu dropdown at boot (sets
+    /// `state.ui.active_menu`), so a dropdown-open state can be screenshotted for
+    /// owner validation. Applied in both the windowed and offscreen visual-test
+    /// paths. Absent (the default) leaves every menu closed, so the parity gate
+    /// stays pixel-identical. The menu name matches the menubar title (e.g.
+    /// `File`, `View`); an unknown name simply renders no open dropdown.
+    #[arg(long = "open-menu")]
+    pub(super) open_menu: Option<String>,
+    /// Capture/test affordance: focus the first leaf showing the named content
+    /// (`board` | `schematic`) at boot, so the "view one pane while another is
+    /// focused" states can be screenshotted for owner validation. Applied in both
+    /// the windowed and offscreen visual-test paths. Absent (the default) leaves the
+    /// default Board focus, so the parity gate stays pixel-identical. An unknown or
+    /// absent-content name is a no-op. Pane focus is consumer view state, never
+    /// journaled.
+    #[arg(long = "focus-pane")]
+    pub(super) focus_pane: Option<String>,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
     #[arg(long = "screenshot-out")]
@@ -131,6 +148,28 @@ impl GuiArgs {
                 layout.toggle_zoom();
             }
             _ => {}
+        }
+    }
+
+    /// Apply the `--focus-pane` capture affordance: focus the first leaf showing
+    /// the requested content (`board` | `schematic`). A no-op when the flag is
+    /// absent, unrecognized, or no such leaf exists — so the default Board focus is
+    /// untouched and the parity gate stays pixel-identical. Pane focus is
+    /// consumer/workspace view state, never journaled.
+    pub(super) fn apply_focus_pane(&self, layout: &mut datum_gui_protocol::WorkspaceLayout) {
+        use datum_gui_protocol::PaneContent;
+        let want = match self.focus_pane.as_deref() {
+            Some("board") => PaneContent::Board,
+            Some("schematic") => PaneContent::Schematic,
+            _ => return,
+        };
+        for id in layout.leaves() {
+            let mut probe = layout.clone();
+            probe.focused = id;
+            if probe.focused_content() == want {
+                layout.focused = id;
+                return;
+            }
         }
     }
 
@@ -262,6 +301,16 @@ impl GuiArgs {
         // Capture/test affordance: seed the pane tree if --initial-layout was set
         // (a no-op otherwise, so the default boot layout is untouched).
         self.apply_initial_layout(&mut state.ui.layout);
+        // Capture/test affordance: focus a named pane (a no-op otherwise).
+        self.apply_focus_pane(&mut state.ui.layout);
+
+        // Capture/test affordance: open a named menu dropdown at boot if
+        // --open-menu was set (a no-op otherwise, so parity stays identical).
+        // This LaunchState builder is shared by the windowed and offscreen
+        // visual-test paths, so setting it here covers both.
+        if let Some(menu) = &self.open_menu {
+            state.ui.active_menu = Some(menu.clone());
+        }
 
         let camera_started = std::time::Instant::now();
         append_gui_diagnostic_line("camera fit begin");
@@ -320,6 +369,43 @@ mod initial_layout_tests {
             layout, before,
             "default layout must be untouched without --initial-layout"
         );
+    }
+
+    #[test]
+    fn focus_pane_flag_parses_and_focuses_named_content() {
+        use datum_gui_protocol::{PaneContent, WorkspaceLayout};
+        // Absent: no focus change requested.
+        let args = GuiArgs::parse_from(["datum-gui".to_string()]);
+        assert_eq!(args.focus_pane, None);
+        // Present: focuses the first leaf with the requested content.
+        let args = GuiArgs::parse_from([
+            "datum-gui".to_string(),
+            "--focus-pane".to_string(),
+            "schematic".to_string(),
+        ]);
+        assert_eq!(args.focus_pane.as_deref(), Some("schematic"));
+        let mut layout = WorkspaceLayout::default();
+        assert_eq!(layout.focused_content(), PaneContent::Board);
+        args.apply_focus_pane(&mut layout);
+        assert_eq!(
+            layout.focused_content(),
+            PaneContent::Schematic,
+            "--focus-pane schematic must focus the schematic leaf"
+        );
+    }
+
+    #[test]
+    fn open_menu_flag_parses_and_defaults_absent() {
+        // Absent (default): no menu requested, so parity capture is untouched.
+        let args = GuiArgs::parse_from(["datum-gui".to_string()]);
+        assert_eq!(args.open_menu, None);
+        // Present: the named menu is captured for the boot-time open-dropdown state.
+        let args = GuiArgs::parse_from([
+            "datum-gui".to_string(),
+            "--open-menu".to_string(),
+            "View".to_string(),
+        ]);
+        assert_eq!(args.open_menu.as_deref(), Some("View"));
     }
 
     #[test]

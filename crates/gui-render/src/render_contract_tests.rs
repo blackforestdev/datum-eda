@@ -286,9 +286,31 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
 /// carries the "Inactive - click to focus" placeholder caption instead of a blank
 /// canvas. Focusing the Schematic leaf leaves the Board leaf non-focused.
 #[test]
-fn non_focused_board_pane_shows_inactive_caption() {
+fn non_scene_board_pane_shows_inactive_caption() {
+    // The inactive placeholder is for a Board leaf that is NOT the live scene leaf
+    // — e.g. a SECOND board pane. (The scene-leaf board renders the PCB regardless
+    // of focus; that is locked by board_scene_stays_in_board_pane_regardless_of_focus.)
+    // Build a Board|Board layout by retargeting the schematic leaf to Board, and
+    // focus one of them: the focused board is the scene leaf, the other is inactive.
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
-    state.ui.layout.focus_next(); // focus Schematic; the Board leaf goes non-focused
+    state.ui.layout.focus_next(); // focus the Schematic leaf
+    state
+        .ui
+        .layout
+        .set_focused_content(datum_gui_protocol::PaneContent::Board); // now Board|Board, 2nd focused
+    let board_leaves = state
+        .ui
+        .layout
+        .leaves()
+        .into_iter()
+        .filter(|id| {
+            let mut probe = state.ui.layout.clone();
+            probe.focused = *id;
+            probe.focused_content() == datum_gui_protocol::PaneContent::Board
+        })
+        .count();
+    assert_eq!(board_leaves, 2, "test precondition: two board leaves");
+
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let prepared = PreparedScene::from_workspace(
         &state,
@@ -303,8 +325,8 @@ fn non_focused_board_pane_shows_inactive_caption() {
         .map(|run| run.text.as_str())
         .collect::<Vec<_>>();
     assert!(
-        labels.contains(&"Inactive \u{00B7} click to focus"),
-        "non-focused Board pane should show the inactive placeholder caption"
+        labels.contains(&"Inactive \u{00b7} click to focus"),
+        "a non-scene Board pane should show the inactive placeholder caption"
     );
 }
 
@@ -510,4 +532,290 @@ fn terminal_dock_does_not_render_output_lane_findings() {
             .any(|run| run.text.contains("BASIS DATUM.PROCESS_APERTURE")),
         "Phase 1 terminal dock must not render the retired Output lane"
     );
+}
+
+#[test]
+fn scene_underlay_has_no_decorative_gold_edge_frame() {
+    // Bug A: the spurious gold rounded-rect frame around the board (a fixed 10px
+    // viewport-inset stroke in the InnerField-mixed EDGE color) is removed. The
+    // ONLY board outline is the REAL projected Edge.Cuts in the retained world
+    // pass. Assert the underlay still fills the inner field but no longer emits
+    // any stroke in the retired decorative-edge color, while the real board
+    // outline batches still exist in the retained scene.
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let inner_field = board_surface_color(BoardSurfaceRole::InnerField);
+    let decorative_edge = mix_color(design_tokens::content::EDGE, inner_field, 0.18);
+
+    let underlay = prepared.viewport_underlay_vertices();
+    assert!(
+        underlay.iter().any(|v| v.color == inner_field),
+        "underlay must still fill the inner board field"
+    );
+    assert!(
+        !underlay.iter().any(|v| v.color == decorative_edge),
+        "underlay must not emit the retired decorative gold edge frame color"
+    );
+    // The real Edge.Cuts outline source is still present on the scene (projected
+    // separately in the retained world pass, not synthesized in the underlay).
+    assert!(
+        !state.scene.outline.is_empty(),
+        "real board outline (scene.outline / Edge.Cuts) must still exist"
+    );
+    let _ = &retained;
+}
+
+#[test]
+fn menu_dropdown_composites_into_menu_overlay_under_its_title() {
+    // Bugs B + C: when a menu is open, its dropdown body is emitted into the
+    // dedicated menu-overlay sink (composited AFTER the viewport passes), NOT into
+    // panel_vertices; and it drops directly under its own title (left-aligned to
+    // the active title's rect.x), not from a fixed far-left offset.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    let model =
+        datum_gui_protocol::load_default_gui_menu_model().expect("default menu model should load");
+    // Use the FIRST (leftmost) title so the dropdown is not right-edge clamped.
+    let active_title = model.menubar[0].menu.clone();
+    state.ui.active_menu = Some(active_title.clone());
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    // Bug B: overlay sink is non-empty when a menu is active.
+    let overlay = prepared.menu_overlay_vertices();
+    assert!(
+        !overlay.is_empty(),
+        "menu overlay must carry the dropdown body when a menu is active"
+    );
+
+    // Bug C: the dropdown's left edge equals the active title's rect.x.
+    let title_x = prepared
+        .hit_regions
+        .iter()
+        .find_map(|region| match &region.target {
+            HitTarget::MenuTitle(name) if *name == active_title => Some(region.rect.x),
+            _ => None,
+        })
+        .expect("active menu title must have a hit region");
+    let dropdown_left = overlay
+        .iter()
+        .map(|v| v.pos[0])
+        .fold(f32::INFINITY, f32::min);
+    assert!(
+        (dropdown_left - title_x).abs() < 0.5,
+        "dropdown left {dropdown_left:.2} must align under its title x {title_x:.2}"
+    );
+
+    // Bug B (text occlusion): the dropdown's OWN item labels must live in the
+    // dedicated menu-overlay text sink (drawn LAST, on top of the card) and NOT
+    // in the main text_runs (drawn before the card). If any item label appeared
+    // in the main pass it would either be occluded by the card or, worse, other
+    // main-pass text would bleed over the card. Locking the split guarantees the
+    // card fully occludes the bleed while its own labels stay crisp.
+    let active_menu = model
+        .menubar
+        .iter()
+        .find(|m| m.menu == active_title)
+        .expect("active menu exists in model");
+    let overlay_labels: Vec<&str> = prepared
+        .menu_overlay_text_runs()
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect();
+    let main_labels: Vec<&str> = prepared
+        .text_runs
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect();
+    assert!(
+        !prepared.menu_overlay_text_runs().is_empty(),
+        "menu overlay text sink must carry the dropdown labels when a menu is open"
+    );
+    for item in &active_menu.items {
+        assert!(
+            overlay_labels.contains(&item.label.as_str()),
+            "dropdown item '{}' must render in the menu-overlay text pass",
+            item.label
+        );
+        assert!(
+            !main_labels.contains(&item.label.as_str()),
+            "dropdown item '{}' must NOT be in the main text pass (would bleed/occlude)",
+            item.label
+        );
+    }
+    // The menu-bar TITLE itself stays in the main pass (it lives in the bar and is
+    // never occluded).
+    assert!(
+        main_labels.contains(&active_title.as_str()),
+        "menu-bar title '{active_title}' must remain in the main text pass"
+    );
+}
+
+#[test]
+fn menu_overlay_is_empty_when_no_menu_open() {
+    // Parity safety: default boot (no menu open) emits no overlay quads.
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    assert!(
+        prepared.menu_overlay_vertices().is_empty(),
+        "no menu open -> no menu-overlay quads (default parity capture untouched)"
+    );
+}
+
+#[test]
+fn board_scene_stays_in_board_pane_regardless_of_focus() {
+    // The board scene is bound to the BOARD leaf, not the focused leaf. Focusing a
+    // Schematic pane must NOT move the PCB into it (the earlier bug) NOR make the
+    // PCB vanish from the board pane (the second bug) — the board must stay put and
+    // visible so a user can view it while working another pane. Locks: (1) the
+    // scene viewport is the same board-pane rect whether the board or the schematic
+    // is focused, and (2) the board substrate still renders under both.
+    let inner_field = board_surface_color(BoardSurfaceRole::InnerField);
+
+    // Board focused (fixture default).
+    let board_state = datum_gui_protocol::load_fixture_workspace_state();
+    assert_eq!(
+        board_state.ui.layout.focused_content(),
+        datum_gui_protocol::PaneContent::Board,
+        "fixture default should focus the Board leaf"
+    );
+    let retained_b = RetainedScene::from_workspace(&board_state, 1280, 800);
+    let prepared_b = PreparedScene::from_workspace(
+        &board_state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&board_state.scene.bounds),
+        &retained_b,
+    );
+    assert!(
+        prepared_b
+            .viewport_underlay_vertices()
+            .iter()
+            .any(|v| v.color == inner_field),
+        "board-focused underlay must carry the board substrate field"
+    );
+
+    // Same layout, but focus the Schematic leaf.
+    let mut schem_state = datum_gui_protocol::load_fixture_workspace_state();
+    let schem_id = schem_state
+        .ui
+        .layout
+        .leaves()
+        .into_iter()
+        .find(|id| {
+            let mut probe = schem_state.ui.layout.clone();
+            probe.focused = *id;
+            probe.focused_content() == datum_gui_protocol::PaneContent::Schematic
+        })
+        .expect("default two-pane layout has a Schematic leaf");
+    schem_state.ui.layout.focused = schem_id;
+    assert_eq!(
+        schem_state.ui.layout.focused_content(),
+        datum_gui_protocol::PaneContent::Schematic
+    );
+
+    let retained_s = RetainedScene::from_workspace(&schem_state, 1280, 800);
+    let prepared_s = PreparedScene::from_workspace(
+        &schem_state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&schem_state.scene.bounds),
+        &retained_s,
+    );
+
+    // (1) The scene viewport does not move when focus shifts to the Schematic pane:
+    // it stays bound to the board pane's rect (so the PCB neither migrates into the
+    // schematic pane nor disappears).
+    assert_eq!(
+        prepared_s.scene_viewport, prepared_b.scene_viewport,
+        "board scene viewport must stay on the board pane regardless of focus"
+    );
+    // (1b) The scene LEAF id is the same board leaf under both focus states. The
+    // app binds the active board camera to this id and only swaps the camera when
+    // it changes — so a board<->schematic focus change never resets/refits the
+    // board's zoom (the "PCB zooms to fit on focus" bug).
+    let board_scene_leaf = prepared_b
+        .layout
+        .viewport_panes(&board_state.ui.layout)
+        .scene_leaf_id();
+    let schem_scene_leaf = prepared_s
+        .layout
+        .viewport_panes(&schem_state.ui.layout)
+        .scene_leaf_id();
+    assert!(board_scene_leaf.is_some(), "board layout has a scene leaf");
+    assert_eq!(
+        board_scene_leaf, schem_scene_leaf,
+        "scene leaf (the active camera's owner) must not change on a board<->schematic focus change"
+    );
+    // (2) The board substrate still renders (the board pane keeps showing the PCB
+    // field) even though the Schematic pane is focused.
+    assert!(
+        prepared_s
+            .viewport_underlay_vertices()
+            .iter()
+            .any(|v| v.color == inner_field),
+        "board substrate must persist in the board pane when the Schematic is focused"
+    );
+}
+
+#[test]
+fn menu_dropdown_fits_its_content_no_spill() {
+    // The dropdown card width scales to its content: every label and shortcut must
+    // stay within the card's right edge. The retired fixed-width card (272px + a
+    // fixed 74px shortcut reservation) clipped long labels and wide shortcuts like
+    // "Ctrl+Shift+S".
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    let model =
+        datum_gui_protocol::load_default_gui_menu_model().expect("default menu model should load");
+    // File has the widest shortcuts (Ctrl+Shift+…); fall back to the first menu.
+    let menu_name = model
+        .menubar
+        .iter()
+        .find(|m| m.menu == "File")
+        .map(|m| m.menu.clone())
+        .unwrap_or_else(|| model.menubar[0].menu.clone());
+    state.ui.active_menu = Some(menu_name);
+
+    let retained = RetainedScene::from_workspace(&state, 1680, 1050);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1680,
+        1050,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let card_right = prepared
+        .menu_overlay_vertices()
+        .iter()
+        .map(|v| v.pos[0])
+        .fold(f32::NEG_INFINITY, f32::max);
+    assert!(card_right.is_finite(), "an open menu must emit an overlay card");
+    for run in prepared.menu_overlay_text_runs() {
+        let right_edge = run.x + measured_text_run_width_px(&run.text, run.size, run.face);
+        assert!(
+            right_edge <= card_right + 0.5,
+            "menu text '{}' right edge {right_edge:.1} spills past the card right {card_right:.1}",
+            run.text
+        );
+    }
 }

@@ -97,6 +97,10 @@ pub struct Renderer {
     viewport: Viewport,
     atlas: TextAtlas,
     text_renderer: TextRenderer,
+    // Dedicated renderer for the open menu dropdown's own text, prepared and
+    // rendered in a FINAL pass on top of the dropdown card so it is never
+    // occluded and never disturbs the main text renderer's prepared state.
+    menu_overlay_text_renderer: TextRenderer,
     text_buffer_cache: Vec<CachedTextBuffer>,
     last_text_prepare_signature: Option<TextPrepareSignature>,
     panel_vertex_buffer: Option<wgpu::Buffer>,
@@ -105,6 +109,8 @@ pub struct Renderer {
     viewport_underlay_vertex_capacity: usize,
     viewport_overlay_vertex_buffer: Option<wgpu::Buffer>,
     viewport_overlay_vertex_capacity: usize,
+    menu_overlay_vertex_buffer: Option<wgpu::Buffer>,
+    menu_overlay_vertex_capacity: usize,
     world_vertex_buffer: Option<wgpu::Buffer>,
     world_vertex_capacity: usize,
     world_vertex_source_ptr: usize,
@@ -477,6 +483,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             },
             None,
         );
+        let menu_overlay_text_renderer = TextRenderer::new(
+            &mut atlas,
+            device,
+            wgpu::MultisampleState {
+                count: msaa_samples,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            None,
+        );
         Self {
             pipeline,
             world_pipeline,
@@ -489,6 +505,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport,
             atlas,
             text_renderer,
+            menu_overlay_text_renderer,
             text_buffer_cache: Vec::new(),
             last_text_prepare_signature: None,
             panel_vertex_buffer: None,
@@ -497,6 +514,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_underlay_vertex_capacity: 0,
             viewport_overlay_vertex_buffer: None,
             viewport_overlay_vertex_capacity: 0,
+            menu_overlay_vertex_buffer: None,
+            menu_overlay_vertex_capacity: 0,
             world_vertex_buffer: None,
             world_vertex_capacity: 0,
             world_vertex_source_ptr: 0,
@@ -549,6 +568,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
         let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
+        let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let visible_world_ranges = prepared.visible_world_ranges();
         let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
@@ -600,6 +620,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             &mut self.viewport_overlay_vertex_capacity,
             "datum-gui-render-viewport-overlay-vertex-buffer",
             viewport_overlay_vertices,
+        );
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.menu_overlay_vertex_buffer,
+            &mut self.menu_overlay_vertex_capacity,
+            "datum-gui-render-menu-overlay-vertex-buffer",
+            menu_overlay_vertices,
         );
         self.sync_world_vertices(device, queue, world_vertices);
         let upload_elapsed = upload_started.elapsed();
@@ -696,6 +724,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 );
                 pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
             }
+            // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
+            // composited AFTER the main text pass (below) so it occludes not only
+            // the work-pane quads but every underlying text_run too; its own text
+            // then draws in a final pass on top of the card.
         }
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
@@ -775,6 +807,113 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let text_encode_elapsed = text_encode_started.elapsed();
+
+        // === Menu dropdown, composited LAST (after the main text pass) ===
+        // The card is drawn here — not with the base quads — so it occludes the
+        // work-pane content AND every underlying text_run below it. The dropdown's
+        // OWN text then renders in a final pass on top of the card, so it stays
+        // crisp while the bleed text is hidden. Only present when a menu is open.
+        if !menu_overlay_vertices.is_empty() {
+            // Pass C: the dropdown card background/rows. Base pipeline + screen
+            // uniform; full-window scissor so the drop below the menu bar is not
+            // re-clipped to the scene viewport.
+            {
+                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: Some("datum-gui-menu-overlay-pass"),
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: &msaa_view,
+                        resolve_target: Some(target),
+                        depth_slice: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Load,
+                            store: wgpu::StoreOp::Store,
+                        },
+                    })],
+                    depth_stencil_attachment: None,
+                    occlusion_query_set: None,
+                    timestamp_writes: None,
+                    multiview_mask: None,
+                });
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+                pass.set_scissor_rect(0, 0, width, height);
+                pass.set_vertex_buffer(
+                    0,
+                    self.menu_overlay_vertex_buffer
+                        .as_ref()
+                        .expect("menu overlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..menu_overlay_vertices.len() as u32, 0..1);
+            }
+
+            // Pass D: the dropdown's own text, on top of the card. Uses the
+            // dedicated overlay text renderer so the main renderer's prepared
+            // state/caching is untouched. The content-keyed text_buffer_cache is
+            // shared, so overlay glyph buffers reuse the same atlas.
+            let menu_overlay_text_runs = prepared.menu_overlay_text_runs();
+            if !menu_overlay_text_runs.is_empty() {
+                let (overlay_indices, _) =
+                    self.cached_text_buffer_indices(menu_overlay_text_runs, width, height);
+                let overlay_prepare = self.menu_overlay_text_renderer.prepare(
+                    device,
+                    queue,
+                    &mut self.font_system,
+                    &mut self.atlas,
+                    &self.viewport,
+                    build_text_areas(
+                        &self.text_buffer_cache,
+                        &overlay_indices,
+                        menu_overlay_text_runs,
+                    ),
+                    &mut self.swash_cache,
+                );
+                if let Err(initial_error) = overlay_prepare {
+                    self.atlas.trim();
+                    self.menu_overlay_text_renderer
+                        .prepare(
+                            device,
+                            queue,
+                            &mut self.font_system,
+                            &mut self.atlas,
+                            &self.viewport,
+                            build_text_areas(
+                                &self.text_buffer_cache,
+                                &overlay_indices,
+                                menu_overlay_text_runs,
+                            ),
+                            &mut self.swash_cache,
+                        )
+                        .map_err(|retry_error| {
+                            anyhow::anyhow!(
+                                "prepare menu overlay text after atlas trim: {retry_error}; initial: {initial_error}"
+                            )
+                        })?;
+                }
+                {
+                    let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                        label: Some("datum-gui-menu-overlay-text-pass"),
+                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                            view: &msaa_view,
+                            resolve_target: Some(target),
+                            depth_slice: None,
+                            ops: wgpu::Operations {
+                                load: wgpu::LoadOp::Load,
+                                store: wgpu::StoreOp::Store,
+                            },
+                        })],
+                        depth_stencil_attachment: None,
+                        occlusion_query_set: None,
+                        timestamp_writes: None,
+                        multiview_mask: None,
+                    });
+                    self.menu_overlay_text_renderer
+                        .render(&self.atlas, &self.viewport, &mut pass)
+                        .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
+                }
+            }
+        }
+
         let submit_started = std::time::Instant::now();
         queue.submit([encoder.finish()]);
         let submit_elapsed = submit_started.elapsed();

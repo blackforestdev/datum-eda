@@ -77,6 +77,8 @@ pub struct PreparedScene {
     scene_bounds: datum_gui_protocol::SceneBounds,
     camera: CameraState,
     panel_vertices: Vec<Vertex>,
+    menu_overlay_vertices: Vec<Vertex>,
+    menu_overlay_text_runs: Vec<TextRun>,
     viewport_underlay_vertices: Vec<Vertex>,
     viewport_overlay_vertices: Vec<Vertex>,
     visible_world_ranges: Vec<Range<u32>>,
@@ -387,7 +389,6 @@ struct LayerAppearance {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum BoardSurfaceRole {
-    OuterField,
     InnerField,
     GridMajor,
     GridMinor,

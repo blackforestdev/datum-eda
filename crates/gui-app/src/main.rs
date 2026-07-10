@@ -155,6 +155,13 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     // --initial-layout was set so this offscreen path renders that shape; a no-op
     // otherwise, so the default parity capture is untouched.
     args.apply_initial_layout(&mut state.ui.layout);
+    // Capture/test affordance: focus a named pane, mirroring the windowed path.
+    args.apply_focus_pane(&mut state.ui.layout);
+    // Capture/test affordance: open a named menu dropdown if --open-menu was set,
+    // mirroring the windowed launch path; a no-op otherwise so parity is untouched.
+    if let Some(menu) = &args.open_menu {
+        state.ui.active_menu = Some(menu.clone());
+    }
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let (width, height) = args.visual_window_size()?;
     let scale_factor = args.visual_scale_factor.unwrap_or(1.0);
@@ -3478,14 +3485,23 @@ impl Runtime {
     // multi-scene). These are never journaled — they are workspace state.
     // ---------------------------------------------------------------------
 
-    /// Shared focus-change core: stash the outgoing leaf's live camera, mutate
-    /// focus via `f`, then activate the incoming leaf's warm camera (fit only if
-    /// that leaf has never been focused).
+    /// Shared focus-change core: mutate focus via `f`, then keep the active camera
+    /// bound to the leaf that renders the live BOARD scene. The active camera
+    /// belongs to the SCENE leaf, not whichever pane is focused: moving focus
+    /// between the board and a schematic pane keeps the same scene leaf, so the
+    /// board's framing (zoom/pan) PERSISTS instead of snapping to the schematic's
+    /// fit camera (the "PCB zooms to fit / can be zoomed while another pane is
+    /// selected" bug). The camera is only swapped when the scene leaf actually
+    /// changes — e.g. focus moving to a *different* board pane in a multi-board
+    /// split — at which point the outgoing board's framing is stashed warm and the
+    /// incoming board's warm camera (fit only if never seen) is activated.
     fn swap_pane_focus(&mut self, f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout)) {
-        let outgoing = self.workspace().ui.layout.focused;
+        let outgoing_scene = self.scene_leaf_id();
         f(&mut self.session.workspace_mut().ui.layout);
-        let incoming = self.workspace().ui.layout.focused;
-        if incoming != outgoing {
+        let incoming_scene = self.scene_leaf_id();
+        if let (Some(outgoing), Some(incoming)) = (outgoing_scene, incoming_scene)
+            && outgoing != incoming
+        {
             let bounds = self.workspace().scene.bounds.clone();
             self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
                 CameraState::fit_to_bounds(&bounds)
@@ -3522,12 +3538,17 @@ impl Runtime {
     }
 
     fn pane_close_focused(&mut self) {
-        let outgoing = self.workspace().ui.layout.focused;
+        let outgoing_scene = self.scene_leaf_id();
         self.session.workspace_mut().ui.layout.close_focused();
-        let incoming = self.workspace().ui.layout.focused;
+        let incoming_scene = self.scene_leaf_id();
         let live = self.workspace().ui.layout.leaves();
         self.pane_cameras.retain_live(&live);
-        if incoming != outgoing {
+        // Swap only when the board SCENE leaf changed (e.g. the board pane itself was
+        // closed and another board took over); closing a schematic pane leaves the
+        // board's framing untouched.
+        if let (Some(outgoing), Some(incoming)) = (outgoing_scene, incoming_scene)
+            && outgoing != incoming
+        {
             let bounds = self.workspace().scene.bounds.clone();
             self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
                 CameraState::fit_to_bounds(&bounds)
@@ -3578,6 +3599,15 @@ impl Runtime {
     fn scene_viewport(&self) -> datum_gui_render::RectPx {
         self.current_layout()
             .scene_viewport(&self.workspace().ui.layout)
+    }
+
+    /// The leaf that renders the live board scene (the pane the active camera
+    /// belongs to). Bound to the BOARD pane, not focus — so the board's framing
+    /// persists while another pane is focused.
+    fn scene_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .scene_leaf_id()
     }
 
     /// The workspace leaf pane whose frame contains screen point `(x, y)`, tiling

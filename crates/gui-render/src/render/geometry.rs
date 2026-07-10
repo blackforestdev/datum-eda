@@ -1223,6 +1223,41 @@ fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     glyphs * size * advance_factor + 16.0
 }
 
+/// Shared, lazily-initialized measuring `FontSystem` loaded with the SAME vendored
+/// IBM Plex faces the renderer uses (`load_datum_fonts`), so a measured width here
+/// matches what gpu.rs actually shapes. Kept separate from the renderer's own
+/// `FontSystem` because measurement happens during scene preparation (no GPU) and
+/// must stay deterministic across threads (goldens depend on it).
+static MEASURE_FS: std::sync::OnceLock<std::sync::Mutex<FontSystem>> = std::sync::OnceLock::new();
+
+fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
+    MEASURE_FS.get_or_init(|| {
+        let mut font_system = FontSystem::new();
+        load_datum_fonts(&mut font_system);
+        std::sync::Mutex::new(font_system)
+    })
+}
+
+/// Real shaped width of a single text run, in px, using cosmic-text/glyphon with
+/// the exact per-`TextFace` `Attrs` and `Metrics` gpu.rs renders with (see
+/// `ensure_text_buffer`: `Metrics::new(size, size * 1.22)`, `text_attrs(face)`).
+/// Unlike `estimated_text_run_width_px` (a fixed-advance monospace-style estimate
+/// with baked padding), this reflects the PROPORTIONAL IBM Plex Sans Condensed UI
+/// face, so per-label error is zero and downstream layout gaps stay uniform.
+/// Deterministic: same inputs -> same width, so it is golden-stable.
+fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
+    let mutex = measure_font_system();
+    let mut font_system = mutex.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+    let mut buffer = Buffer::new(&mut font_system, Metrics::new(size, size * 1.22));
+    let attrs = text_attrs(face);
+    buffer.set_text(&mut font_system, text, &attrs, Shaping::Basic, None);
+    buffer.shape_until_scroll(&mut font_system, false);
+    buffer
+        .layout_runs()
+        .map(|run| run.line_w)
+        .fold(0.0_f32, f32::max)
+}
+
 fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
     for run in text_runs {
         run.size *= scale;

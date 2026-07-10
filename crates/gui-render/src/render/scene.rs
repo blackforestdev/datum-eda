@@ -20,11 +20,21 @@ impl PreparedScene {
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, dock_height_for_state(state));
         let mut panel_quads = Vec::new();
+        let mut menu_overlay_quads = Vec::new();
+        let mut menu_overlay_text_runs = Vec::new();
         let mut viewport_underlay_quads = Vec::new();
         let mut viewport_overlay_quads = Vec::new();
         let mut text_runs = Vec::new();
         let mut hit_regions = Vec::new();
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
+        // The board scene renders only when a Board leaf exists to host it (the
+        // common Board|Schematic layout always has one; an all-Schematic layout does
+        // not). Independent of focus, so the PCB persists in its pane while another
+        // pane is focused.
+        let board_scene_active = layout
+            .viewport_panes(&state.ui.layout)
+            .scene_leaf()
+            .is_some();
 
         panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
         panel_quads.push(Quad::from_rect(layout.left_sidebar, APP_BG));
@@ -38,6 +48,8 @@ impl PreparedScene {
             state,
             &layout,
             &mut panel_quads,
+            &mut menu_overlay_quads,
+            &mut menu_overlay_text_runs,
             &mut text_runs,
             &mut hit_regions,
         );
@@ -55,16 +67,23 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
-        render_scene(
-            state,
-            &layout,
-            scene_viewport,
-            camera,
-            &mut viewport_underlay_quads,
-            &mut viewport_overlay_quads,
-            &mut text_runs,
-            &mut hit_regions,
-        );
+        // Single-live-scene: the board scene (substrate + grid underlay, selection
+        // overlay, and world PCB) renders into the BOARD leaf's rect whenever a
+        // board leaf exists — independent of which pane is focused, so the PCB stays
+        // visible in its pane while a Schematic pane is focused. Panes that are not
+        // the board scene leaf show their own placeholder (render_viewport_panes).
+        if board_scene_active {
+            render_scene(
+                state,
+                &layout,
+                scene_viewport,
+                camera,
+                &mut viewport_underlay_quads,
+                &mut viewport_overlay_quads,
+                &mut text_runs,
+                &mut hit_regions,
+            );
+        }
         render_marking_menu(
             state,
             &layout,
@@ -74,11 +93,17 @@ impl PreparedScene {
         );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text_runs, scale);
+            scale_text_run_sizes(&mut menu_overlay_text_runs, scale);
         }
         let panel_vertices = quads_to_vertices(&panel_quads);
+        let menu_overlay_vertices = quads_to_vertices(&menu_overlay_quads);
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
-        let visible_world_ranges = retained_scene.visible_world_ranges(state);
+        let visible_world_ranges = if board_scene_active {
+            retained_scene.visible_world_ranges(state)
+        } else {
+            Vec::new()
+        };
 
         Self {
             layout,
@@ -87,6 +112,8 @@ impl PreparedScene {
             scene_bounds: state.scene.bounds.clone(),
             camera,
             panel_vertices,
+            menu_overlay_vertices,
+            menu_overlay_text_runs,
             viewport_underlay_vertices,
             viewport_overlay_vertices,
             visible_world_ranges,
@@ -113,6 +140,25 @@ impl PreparedScene {
 
     fn panel_vertices(&self) -> &[Vertex] {
         &self.panel_vertices
+    }
+
+    /// Top-overlay quads for the open menu dropdown, composited AFTER the
+    /// scissored viewport passes (see gpu.rs) so work-pane content cannot
+    /// overpaint them. Empty when no menu is open. Menu-bar TITLES are NOT here —
+    /// they live in `panel_vertices`; only the dropdown body/rows land in this
+    /// sink.
+    fn menu_overlay_vertices(&self) -> &[Vertex] {
+        &self.menu_overlay_vertices
+    }
+
+    /// The open dropdown's OWN text (item labels, shortcuts, fallback-icon
+    /// glyphs), rendered in a dedicated pass AFTER the dropdown card so it sits
+    /// crisply on top of it while the main text pass (drawn before the card) is
+    /// fully occluded by the card. Empty when no menu is open. Menu-bar TITLE text
+    /// is NOT here — titles live in the bar and are never occluded, so they stay
+    /// in the main `text_runs`.
+    fn menu_overlay_text_runs(&self) -> &[TextRun] {
+        &self.menu_overlay_text_runs
     }
 
     fn viewport_underlay_vertices(&self) -> &[Vertex] {
@@ -234,6 +280,10 @@ impl RetainedScene {
     }
 
     fn visible_world_ranges(&self, state: &ReviewWorkspaceState) -> Vec<Range<u32>> {
+        // Note: whether the board world renders AT ALL (i.e. a board leaf exists to
+        // host it) is gated by the caller in `from_workspace_for_surface`; here we
+        // only filter which layer batches are visible. The scene is scissored to the
+        // BOARD leaf's rect, so the PCB stays in its pane independent of focus.
         if !authored_visible(state) {
             return Vec::new();
         }
@@ -254,6 +304,11 @@ impl RetainedScene {
         point: PointNm,
         state: &ReviewWorkspaceState,
     ) -> Option<&HitTarget> {
+        // Board hit-testing is scoped by scene-rect containment upstream
+        // (`world_point_at_screen` returns None outside the board leaf's rect), so a
+        // click in the Schematic pane never reaches board geometry — and a click in
+        // the board pane DOES hit it even while another pane is focused (view/inspect
+        // the board while working elsewhere).
         if !authored_visible(state) {
             return None;
         }
@@ -425,8 +480,14 @@ fn render_status_bar(
     };
     let tool = workspace_tool_label(state.tool);
     let layers = state.scene.layers.len().to_string();
+    // Reflect the actually-focused document, not a hardcoded value — focusing the
+    // Schematic pane must read "Schematic" here (context-follows-focus).
+    let focus_label = match state.ui.layout.focused_content() {
+        datum_gui_protocol::PaneContent::Board => "Board",
+        datum_gui_protocol::PaneContent::Schematic => "Schematic",
+    };
     let left: [(&str, &str, [f32; 3]); 4] = [
-        ("focus", "Board", TEXT_ACCENT),
+        ("focus", focus_label, TEXT_ACCENT),
         ("Tool", tool, TEXT_SECONDARY),
         ("Sel", sel.as_str(), TEXT_SECONDARY),
         ("Layers", layers.as_str(), TEXT_SECONDARY),
@@ -477,13 +538,15 @@ fn render_status_bar(
 /// walk its leaf set (generalized to N leaves, nested H/V splits, and zoom) and
 /// draw one header per leaf, each divider, and a per-content canvas. Every leaf
 /// carries real chrome (header band, title, tool cluster, focus differentiation);
-/// the focused leaf gets the accent frame + focus dot. The FOCUSED Board leaf's
+/// the focused leaf gets the accent frame + focus dot. The BOARD scene leaf's
 /// canvas is the world scene (the single retained world buffer, scissored to its
-/// `scene_viewport`). Every other pane is a labeled placeholder under the single-
-/// live-scene model: a Schematic leaf shows "Schematic (coming)", and a non-focused
-/// Board leaf shows "Inactive \u{00B7} click to focus" so it reads as intentional
-/// rather than blank. No world geometry is emitted for placeholders; idle
-/// real-content snapshots are deferred to the P2.2 multi-scene GPU pass.
+/// `scene_viewport`) — it renders the PCB regardless of focus, so the board stays
+/// visible while another pane is focused. Every other pane is a labeled
+/// placeholder under the single-live-scene model: a Schematic leaf shows
+/// "Schematic (coming)", and any ADDITIONAL Board leaf (not the scene leaf) shows
+/// "Inactive \u{00B7} click to focus". No world geometry is emitted for
+/// placeholders; idle real-content snapshots are deferred to the P2.2 multi-scene
+/// GPU pass.
 fn render_viewport_panes(
     layout: &ShellLayout,
     workspace: &datum_gui_protocol::WorkspaceLayout,
@@ -491,6 +554,9 @@ fn render_viewport_panes(
     text_runs: &mut Vec<TextRun>,
 ) {
     let panes = layout.viewport_panes(workspace);
+    // The leaf that hosts the live board scene (focus-independent). Its canvas gets
+    // the substrate + world PCB; any other board leaf is an inactive placeholder.
+    let scene_leaf_id = panes.scene_leaf_id();
     // Tool cluster of the layout pane (the active tool is the first entry). A
     // non-focused pane renders the same cluster dimmed to read as available-but-
     // -inactive rather than owned.
@@ -499,10 +565,35 @@ fn render_viewport_panes(
     // here and (context-follows-focus) which document the side panels read.
     for leaf in &panes.panes {
         let focused = leaf.id == panes.focused;
+        let is_scene_leaf = Some(leaf.id) == scene_leaf_id;
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
             datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
         };
+        // Board scene leaf: the world scene renders into `scene_viewport`, which is
+        // inset 16px inside the pane frame (layout.rs). Paint the whole pane canvas
+        // with the board substrate FIRST — before the header + pink focus frame — so
+        // that inset margin is a shader quad matching the scene field. Without it the
+        // margin fell through to the render-pass CLEAR color; the surface is sRGB and
+        // the clear is gamma-encoded while shader quads are not, so the cleared
+        // margin resolved ~3x brighter and read as a spurious grey border around the
+        // board. Drawing it before the header/frame keeps the pink focus frame and
+        // header on top; the scene underlay/world paint over the interior. Done for
+        // the board scene leaf whether or not it is focused, so the PCB pane never
+        // reverts to a placeholder when focus moves away.
+        if is_scene_leaf {
+            let pane = &leaf.rect;
+            let canvas = RectPx {
+                x: pane.frame.x,
+                y: pane.header.y + pane.header.height,
+                width: pane.frame.width,
+                height: (pane.frame.height - pane.header.height).max(0.0),
+            };
+            panel_quads.push(Quad::from_rect(
+                canvas,
+                board_surface_color(BoardSurfaceRole::InnerField),
+            ));
+        }
         render_pane_header(
             &leaf.rect,
             title,
@@ -515,11 +606,11 @@ fn render_viewport_panes(
             datum_gui_protocol::PaneContent::Schematic => {
                 render_pane_placeholder(&leaf.rect, "Schematic (coming)", panel_quads, text_runs);
             }
-            // A non-focused Board pane cannot render live under single-live-scene
-            // (only the focused leaf owns the world buffer); label it so it reads as
-            // an intentional inactive pane, not a blank. Idle real-content snapshots
-            // land with the P2.2 multi-scene pass.
-            datum_gui_protocol::PaneContent::Board if !focused => {
+            // A Board leaf that is NOT the live scene leaf (e.g. a second board pane
+            // in a split) cannot render live under single-live-scene; label it so it
+            // reads as intentional, not blank. Idle real-content snapshots land with
+            // the P2.2 multi-scene pass.
+            datum_gui_protocol::PaneContent::Board if !is_scene_leaf => {
                 render_pane_placeholder(
                     &leaf.rect,
                     "Inactive \u{00B7} click to focus",
@@ -527,6 +618,8 @@ fn render_viewport_panes(
                     text_runs,
                 );
             }
+            // Board scene leaf canvas is painted above (before the header/frame);
+            // the world PCB renders into it.
             datum_gui_protocol::PaneContent::Board => {}
         }
     }
@@ -761,66 +854,23 @@ fn push_scene_underlay(
     scene_viewport: RectPx,
     camera: CameraState,
 ) {
-    out.push(Quad::from_rect(
-        scene_viewport,
-        board_surface_color(BoardSurfaceRole::OuterField),
-    ));
-    // No outer viewport frame — the only board outline is the inner board edge.
+    // One uniform board substrate fills the ENTIRE viewport. Previously this was a
+    // two-tone step — an outer CANVAS band around a 10px-inset InnerField
+    // rectangle — whose boundary was only ever masked by the decorative gold edge
+    // stroke. With that stroke removed (Bug A), the bare color step read as a
+    // spurious grey border, so the field is now a single flat substrate.
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
     out.push(Quad::from_rect(
-        board_field,
+        scene_viewport,
         board_surface_color(BoardSurfaceRole::InnerField),
     ));
-    // Rounded, slightly-translucent EDGE board edge (radius ~6) instead of a
-    // sharp 4-sided box.
-    let edge_color = mix_color(
-        design_tokens::content::EDGE,
-        board_surface_color(BoardSurfaceRole::InnerField),
-        0.18,
-    );
-    let edge_points = rounded_rect_points(
-        (
-            board_field.x + board_field.width * 0.5,
-            board_field.y + board_field.height * 0.5,
-        ),
-        board_field.width,
-        board_field.height,
-        0.0,
-        6.0,
-    );
-    stroke_closed_screen_polyline(out, &edge_points, edge_color, 1.4);
+    // No decorative board-edge stroke here: the only board outline is the REAL
+    // projected Edge.Cuts, drawn from `scene.outline` in the retained world pass
+    // (`push_retained_board_graphic_batches`). A fixed viewport-inset frame here
+    // was not the true board bounds and read as spurious chrome. The board is still
+    // projected into the 10px-inset `board_field` so it keeps a small margin.
     push_scene_grid(out, &projection);
-}
-
-/// Stroke a closed polyline given directly in screen-space points (screen-space
-/// analogue of `push_polyline_segments`), used for the rounded board edge.
-fn stroke_closed_screen_polyline(
-    out: &mut Vec<Quad>,
-    points: &[(f32, f32)],
-    color: [f32; 3],
-    thickness_px: f32,
-) {
-    let n = points.len();
-    if n < 2 {
-        return;
-    }
-    for i in 0..n {
-        let a = points[i];
-        let b = points[(i + 1) % n];
-        let dx = b.0 - a.0;
-        let dy = b.1 - a.1;
-        let len = (dx * dx + dy * dy).sqrt().max(0.001);
-        let nx = -dy / len * thickness_px * 0.5;
-        let ny = dx / len * thickness_px * 0.5;
-        let quad = [
-            (a.0 + nx, a.1 + ny),
-            (b.0 + nx, b.1 + ny),
-            (b.0 - nx, b.1 - ny),
-            (a.0 - nx, a.1 - ny),
-        ];
-        push_projected_quad(out, &quad, color);
-    }
 }
 
 fn authored_visible(state: &ReviewWorkspaceState) -> bool {

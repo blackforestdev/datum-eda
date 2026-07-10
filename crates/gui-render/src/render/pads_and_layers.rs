@@ -997,7 +997,6 @@ fn push_via_primitive_world(
 
 fn board_surface_color(role: BoardSurfaceRole) -> [f32; 3] {
     match role {
-        BoardSurfaceRole::OuterField => BOARD_OUTER_FIELD,
         BoardSurfaceRole::InnerField => BOARD_INNER_FIELD,
         BoardSurfaceRole::GridMajor => BOARD_GRID_MAJOR,
         BoardSurfaceRole::GridMinor => BOARD_GRID_MINOR,

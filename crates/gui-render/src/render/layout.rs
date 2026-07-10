@@ -182,6 +182,31 @@ impl ViewportPanes {
         self.focused_pane().rect.scene
     }
 
+    /// The leaf that renders the single live BOARD scene: the focused leaf when it
+    /// is a Board, otherwise the first Board leaf in walk order. `None` when no
+    /// leaf shows Board content. The board world buffer, gpu scissor/uniform, and
+    /// board hit-testing all follow THIS leaf — so the PCB stays put in its own
+    /// pane and does NOT vanish (or migrate) when focus moves to a Schematic pane.
+    /// Preferring the focused leaf when it is a Board keeps a split Board|Board
+    /// pairing rendering into whichever board the user is working, while the common
+    /// Board|Schematic layout always renders the PCB in its board pane regardless
+    /// of focus. (Idle snapshots for additional board leaves are the deferred P2.2
+    /// multi-scene pass.)
+    pub fn scene_leaf(&self) -> Option<&LeafPane> {
+        let focused = self.focused_pane();
+        if focused.content == datum_gui_protocol::PaneContent::Board {
+            return Some(focused);
+        }
+        self.panes
+            .iter()
+            .find(|p| p.content == datum_gui_protocol::PaneContent::Board)
+    }
+
+    /// The `PaneId` of the leaf that renders the live board scene, if any.
+    pub fn scene_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.scene_leaf().map(|p| p.id)
+    }
+
     /// The leaf pane whose whole `frame` (header + canvas) contains screen point
     /// `(x, y)`, if any. This is the click-to-focus hit map (decision 021): a
     /// pointer press in a non-focused pane's frame swaps focus to it. Returns
@@ -409,11 +434,18 @@ impl ShellLayout {
     }
 
     pub fn scene_viewport(&self, layout: &datum_gui_protocol::WorkspaceLayout) -> RectPx {
-        // The world board scene renders into the FOCUSED leaf's canvas. Returning
-        // that scene rect here means RetainedScene's reference_projection, gpu.rs
-        // scissor/uniform, and `world_point_at_screen` all follow the focused
-        // leaf with no further change — the single-live-scene invariant.
-        self.viewport_panes(layout).focused_scene()
+        // The world board scene renders into the BOARD leaf's canvas — the one that
+        // owns the live PCB — NOT merely whichever leaf is focused. Returning that
+        // scene rect means RetainedScene's reference_projection, gpu.rs
+        // scissor/uniform, and `world_point_at_screen` all follow the board pane, so
+        // the PCB stays visible in its pane while another pane (e.g. Schematic) is
+        // focused. Falls back to the focused rect only when no board leaf exists
+        // (nothing renders there — the board scene is gated off in that case).
+        let panes = self.viewport_panes(layout);
+        panes
+            .scene_leaf()
+            .map(|leaf| leaf.rect.scene)
+            .unwrap_or_else(|| panes.focused_scene())
     }
 
     fn scale_by(self, scale: f32) -> Self {
