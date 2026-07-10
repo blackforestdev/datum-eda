@@ -192,9 +192,13 @@
           </defs>
           <rect x="0" y="0" width="540" height="400" fill="url(#sgrid)"/>
 
-          <!-- U1 MCU (IEC rectangular symbol) -->
+          <!-- U1 MCU (IEC rectangular symbol: body + pin lines + terminals) -->
           <g>
             <rect x="228" y="96" width="120" height="196" rx="2" fill="#12141a" stroke="var(--sym)" stroke-width="1.4"/>
+            <g stroke="var(--sym)" stroke-width="1.3" fill="none">
+              <path d="M228 118H214"/><path d="M228 142H214"/><path d="M228 166H214"/><path d="M228 214H214"/><path d="M228 238H214"/><path d="M228 266H214"/>
+              <path d="M348 118H362"/><path d="M348 142H362"/><path d="M348 190H362"/><path d="M348 214H362"/><path d="M348 238H362"/></g>
+            <g fill="var(--sym)"><circle cx="214" cy="118" r="1.7"/><circle cx="214" cy="142" r="1.7"/><circle cx="214" cy="166" r="1.7"/><circle cx="214" cy="214" r="1.7"/><circle cx="214" cy="238" r="1.7"/><circle cx="214" cy="266" r="1.7"/><circle cx="362" cy="118" r="1.7"/><circle cx="362" cy="142" r="1.7"/><circle cx="362" cy="190" r="1.7"/><circle cx="362" cy="214" r="1.7"/><circle cx="362" cy="238" r="1.7"/></g>
             <text x="288" y="90" fill="var(--tx)" font-size="11" text-anchor="middle" font-family="monospace" font-weight="700">U1</text>
             <text x="288" y="306" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">STM32F103C8T6</text>
             <g fill="var(--tx2)" font-size="8" font-family="monospace"><text x="234" y="121">VDD</text><text x="234" y="145">VBAT</text><text x="234" y="169">NRST</text><text x="234" y="217">OSC_IN</text><text x="234" y="241">OSC_OUT</text><text x="234" y="269">VSS</text></g>
@@ -202,28 +206,27 @@
             <g fill="var(--tx3)" font-size="6.5" font-family="monospace"><text x="224" y="117" text-anchor="end">24</text><text x="224" y="141" text-anchor="end">1</text><text x="224" y="165" text-anchor="end">7</text><text x="224" y="213" text-anchor="end">5</text><text x="224" y="237" text-anchor="end">6</text><text x="224" y="265" text-anchor="end">8</text><text x="352" y="117">30</text><text x="352" y="141">31</text><text x="352" y="189">26</text><text x="352" y="213">27</text><text x="352" y="237">28</text></g>
           </g>
 
-          <!-- pin stubs (green nets) -->
+          <!-- nets leaving the right-side pin terminals -->
           <g stroke="var(--wire)" stroke-width="1.5" fill="none">
-            <path d="M228 118h-26"/><path d="M228 142h-26"/><path d="M228 166h-26"/><path d="M228 214h-26"/><path d="M228 238h-26"/><path d="M228 266h-26"/>
-            <path d="M348 118h56"/><path d="M348 142h56"/><path d="M348 214h26"/><path d="M348 238h26"/></g>
-          <!-- SPI2_SCK (PB13, pin 26) — SELECTED / highlighted net -->
-          <g stroke="var(--acc)" stroke-width="2" fill="none" filter="url(#netglow)"><path d="M348 190h60"/></g>
-          <!-- no-connect flag on VBAT (intentionally unused pin) -->
-          <g stroke="var(--tx2)" stroke-width="1.4"><path d="M198 138l8 8M206 138l-8 8"/></g>
+            <path d="M362 118H404"/><path d="M362 142H404"/><path d="M362 214H374"/><path d="M362 238H374"/></g>
+          <!-- SPI2_SCK (PB13, pin 26) — SELECTED / highlighted net (from its terminal) -->
+          <g stroke="var(--acc)" stroke-width="2" fill="none" filter="url(#netglow)"><path d="M362 190H408"/></g>
+          <!-- no-connect flag at the VBAT pin terminal (intentionally unused) -->
+          <g stroke="var(--tx2)" stroke-width="1.4"><path d="M210 138l8 8M218 138l-8 8"/></g>
 
           <!-- shared +3V3 rail: VDD and the R1 pull-up top tie to one +3V3 flag -->
-          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 118H160V104"/><path d="M132 118V104"/><path d="M132 104H160"/></g>
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M214 118H160V104"/><path d="M132 118V104"/><path d="M132 104H160"/></g>
           <g stroke="var(--pwr)" stroke-width="1.6" fill="none"><path d="M160 104v-15"/><path d="M150 89h20"/></g>
           <text x="160" y="83" fill="var(--pwr)" font-size="8" text-anchor="middle" font-family="monospace">+3V3</text>
 
           <!-- R1 pull-up (NRST -> +3V3 rail) -->
-          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 166h-70V150"/></g>
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M214 166H132V150"/></g>
           <rect x="126" y="118" width="12" height="32" rx="1.5" fill="#12141a" stroke="var(--sym)" stroke-width="1.3"/>
           <text x="120" y="130" fill="var(--tx2)" font-size="8" text-anchor="end" font-family="monospace">R1</text>
           <text x="120" y="139" fill="var(--tx3)" font-size="7" text-anchor="end" font-family="monospace">10k</text>
 
           <!-- Y1 crystal on OSC pins -->
-          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 214h-42"/><path d="M202 238h-42"/><path d="M160 214v24"/></g>
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M214 214H160"/><path d="M214 238H160"/><path d="M160 214v24"/></g>
           <rect x="138" y="217" width="20" height="18" rx="1.5" fill="#12141a" stroke="var(--sym)" stroke-width="1.3"/>
           <g stroke="var(--sym)" stroke-width="1.5" fill="none"><path d="M136 217v18M160 217v18"/></g>
           <text x="148" y="250" fill="var(--tx3)" font-size="7" text-anchor="middle" font-family="monospace">Y1 · 8MHz</text>
@@ -238,7 +241,7 @@
           <text x="95" y="200" fill="var(--tx3)" font-size="6.5" text-anchor="start" font-family="monospace">100n</text>
 
           <!-- GND on VSS -->
-          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 266h-42v14"/></g>
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M214 266H160v14"/></g>
           <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M151 280h18M155 284h10M158 288h4"/></g>
 
           <!-- USART signals as GLOBAL labels (pointed tag = global net, distinct from the local SPI2 chips) -->
