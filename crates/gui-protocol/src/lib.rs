@@ -801,6 +801,11 @@ fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &
 #[derive(Debug, Clone, PartialEq)]
 pub struct ReviewWorkspaceState {
     pub scene: BoardReviewSceneV1,
+    /// Optional companion schematic scene, projected from the board project's
+    /// sibling `.kicad_sch` alongside (not replacing) `scene`. Carried in
+    /// workspace state so pane B can render real schematic geometry; `None`
+    /// when no schematic is found. Consumer/scene state, not a journaled op.
+    pub schematic_scene: Option<BoardReviewSceneV1>,
     pub review: RouteProposalReviewPayload,
     pub production: ProductionStatus,
     pub source_shards: SourceShardStatusSummary,
@@ -2641,6 +2646,7 @@ impl ReviewWorkspaceState {
             .unwrap_or_else(|| "no-proposal-action".to_string());
         Self {
             scene,
+            schematic_scene: None,
             review,
             production: ProductionStatus::default(),
             source_shards: SourceShardStatusSummary::default(),
@@ -3439,6 +3445,7 @@ fn load_workspace_state_impl(
         review_attach_started.elapsed().as_millis()
     ));
     let mut state = ReviewWorkspaceState::new(scene, review);
+    state.schematic_scene = load_sibling_schematic_scene(&board_path);
     state.production = load_production_status(&cli, request)?;
     state.source_shards = refresh_source_shard_status(request)?;
     state.checks = load_check_run_review_state(&cli, request)?;
@@ -3458,6 +3465,29 @@ fn load_workspace_state_impl(
         workspace_started.elapsed().as_millis()
     ));
     Ok(state)
+}
+
+/// Project the board project's companion schematic into a review scene, if
+/// one exists next to the loaded board file (`<stem>.kicad_sch`). This is
+/// carried alongside the board `scene` so pane B can draw real schematic
+/// geometry; it reuses the existing schematic projector rather than authoring
+/// new geometry. Robust by design: a missing or unparsable schematic yields
+/// `None` and never disturbs the board load.
+fn load_sibling_schematic_scene(board_path: &Path) -> Option<BoardReviewSceneV1> {
+    let sibling = board_path.with_extension("kicad_sch");
+    if !sibling.is_file() {
+        return None;
+    }
+    match schematic_scene_import::load_scene_from_kicad_schematic_import(&sibling) {
+        Ok((scene, _)) => Some(scene),
+        Err(error) => {
+            eprintln!(
+                "datum-gui warning: skipped companion schematic {}: {error:#}",
+                sibling.display()
+            );
+            None
+        }
+    }
 }
 
 fn load_gui_supervision_snapshot(
@@ -7581,6 +7611,69 @@ mod tests {
                 "{reference} should own at least two pads, got {owned_pad_count}"
             );
         }
+    }
+
+    #[test]
+    fn datum_test_board_load_also_carries_companion_schematic_scene() {
+        let request = LiveReviewRequest {
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
+            ),
+            board_file: Some(PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
+            )),
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+        };
+        let workspace =
+            load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
+
+        // The board scene must be unaffected: it is still the board, with
+        // placed components and copper — not the schematic projection.
+        assert_ne!(
+            workspace.scene.kind, "schematic_review_scene",
+            "board scene must remain the board, not be replaced by the schematic"
+        );
+        assert!(
+            workspace
+                .scene
+                .components
+                .iter()
+                .any(|component| component.reference == "Q1"),
+            "board scene should still carry placed board components"
+        );
+
+        // The companion schematic is carried alongside the board scene.
+        let schematic = workspace
+            .schematic_scene
+            .as_ref()
+            .expect("sibling datum-test.kicad_sch should populate schematic_scene");
+        assert_eq!(
+            schematic.kind, "schematic_review_scene",
+            "companion scene should be the projected schematic review scene"
+        );
+        assert!(
+            schematic
+                .board_graphics
+                .iter()
+                .any(|graphic| graphic.object_id.starts_with("schematic-wire:")),
+            "companion schematic should carry projected wire geometry"
+        );
+        assert!(
+            schematic
+                .board_graphics
+                .iter()
+                .any(|graphic| graphic.object_id.starts_with("schematic-junction:")),
+            "companion schematic should carry projected junction geometry"
+        );
+        assert!(
+            schematic.board_graphics.len() > 40,
+            "companion schematic should carry a plausible primitive count, got {}",
+            schematic.board_graphics.len()
+        );
     }
 
     #[test]

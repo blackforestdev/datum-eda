@@ -49,7 +49,7 @@ pub fn load_kicad_schematic_workspace_state(schematic_file: &Path) -> Result<Rev
     Ok(state)
 }
 
-fn load_scene_from_kicad_schematic_import(
+pub(crate) fn load_scene_from_kicad_schematic_import(
     schematic_file: &Path,
 ) -> Result<(BoardReviewSceneV1, PathBuf)> {
     let import_started = std::time::Instant::now();
