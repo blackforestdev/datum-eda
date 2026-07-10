@@ -171,6 +171,66 @@ mod tests {
     }
 
     #[test]
+    fn view_menu_exposes_workspace_pane_ops() {
+        // Decision 021: the View menu must emit the pane-op action ids the FEEL
+        // dispatch already handles, each as a live gui_local item with a declared
+        // icon. This locks the id↔dispatch wiring at the menu-manifest seam.
+        let menu = load_default_gui_menu_model().expect("menu model should parse");
+        let icons = load_default_gui_icon_set().expect("icon set should parse");
+        let view = menu
+            .menubar
+            .iter()
+            .find(|m| m.menu == "View")
+            .expect("View menu should exist");
+        let by_action: BTreeMap<&str, &GuiMenuItem> = view
+            .items
+            .iter()
+            .filter_map(|it| it.gui_local.as_deref().map(|a| (a, it)))
+            .collect();
+        for action in [
+            "view.split_vertical",
+            "view.split_horizontal",
+            "view.close_pane",
+            "view.maximize_pane",
+            "view.focus_next",
+            "view.focus_prev",
+            "view.fill_board",
+            "view.fill_schematic",
+            "view.preset_single",
+            "view.preset_board_schematic",
+        ] {
+            let item = by_action
+                .get(action)
+                .unwrap_or_else(|| panic!("View menu missing gui_local action {action}"));
+            assert!(
+                item.is_phase_one_enabled(),
+                "{action} must be a live gui_local item"
+            );
+            let icon = item
+                .icon
+                .as_deref()
+                .unwrap_or_else(|| panic!("{action} missing an icon"));
+            assert!(
+                icons.icons.contains_key(icon),
+                "{action} references undeclared icon {icon}"
+            );
+        }
+        // Keyboard-mirrored shortcuts are present on the right items.
+        assert_eq!(
+            by_action.get("view.maximize_pane").unwrap().shortcut.as_deref(),
+            Some("Z")
+        );
+        assert_eq!(
+            by_action.get("view.focus_next").unwrap().shortcut.as_deref(),
+            Some("Tab")
+        );
+        assert_eq!(
+            by_action.get("view.focus_prev").unwrap().shortcut.as_deref(),
+            Some("Shift+Tab")
+        );
+    }
+
+    #[test]
     fn phase_one_marking_menus_cover_board_object_classes() {
         let menu = load_default_gui_menu_model().expect("menu model should parse");
         for key in [

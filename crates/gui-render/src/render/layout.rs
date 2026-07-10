@@ -181,6 +181,20 @@ impl ViewportPanes {
     pub fn focused_scene(&self) -> RectPx {
         self.focused_pane().rect.scene
     }
+
+    /// The leaf pane whose whole `frame` (header + canvas) contains screen point
+    /// `(x, y)`, if any. This is the click-to-focus hit map (decision 021): a
+    /// pointer press in a non-focused pane's frame swaps focus to it. Returns
+    /// `None` for points outside every pane (sidebars, dock, menu bar), so the
+    /// caller falls through to its normal (focused-pane) behavior. Purely a
+    /// screen-space rect test over the already-solved tile frames — no model
+    /// mutation; pane focus is consumer view state, never journaled.
+    pub fn leaf_at(&self, x: f32, y: f32) -> Option<datum_gui_protocol::PaneId> {
+        self.panes
+            .iter()
+            .find(|pane| pane.rect.frame.contains(x, y))
+            .map(|pane| pane.id)
+    }
 }
 
 /// Hairline divider gutter width between two split siblings (same 1px as the

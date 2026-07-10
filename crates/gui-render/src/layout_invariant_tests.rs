@@ -304,3 +304,61 @@ fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
         }
     }
 }
+
+/// Click-to-focus hit map (decision 021): a point inside a NON-focused pane maps
+/// to that pane's leaf id (the seam `Runtime::pane_at_screen` calls), and a point
+/// outside every pane (the left sidebar) maps to nothing so the click falls
+/// through to normal behavior. Verifies the exact `ViewportPanes::leaf_at` logic
+/// click-to-focus relies on, across the scale matrix.
+#[test]
+fn leaf_at_maps_points_for_click_to_focus() {
+    use datum_gui_protocol::{PaneContent, WorkspaceLayout};
+
+    let logical_w = 1280u32;
+    let logical_h = 800u32;
+    for scale in SCALES {
+        let pw = ((logical_w as f32) * scale).round() as u32;
+        let ph = ((logical_h as f32) * scale).round() as u32;
+        let layout = ShellLayout::for_surface(pw, ph, scale, None);
+
+        // Default: vertical Board | Schematic split, Board (PaneId 0) focused.
+        let workspace = WorkspaceLayout::default();
+        let panes = layout.viewport_panes(&workspace);
+        assert_eq!(panes.panes.len(), 2, "default is two panes at scale {scale}");
+
+        // A point at the center of each leaf frame maps back to that leaf.
+        for leaf in &panes.panes {
+            let f = leaf.rect.frame;
+            let cx = f.x + f.width * 0.5;
+            let cy = f.y + f.height * 0.5;
+            assert_eq!(
+                panes.leaf_at(cx, cy),
+                Some(leaf.id),
+                "center of leaf {:?} must hit it at scale {scale}",
+                leaf.id
+            );
+        }
+
+        // Concretely: a click in the RIGHT (Schematic) pane is NOT the focused
+        // (Board, id 0) pane -> click-to-focus would swap focus.
+        let schematic = panes
+            .panes
+            .iter()
+            .find(|p| p.content == PaneContent::Schematic)
+            .expect("default has a schematic pane");
+        let f = schematic.rect.frame;
+        let hit = panes
+            .leaf_at(f.x + f.width * 0.5, f.y + f.height * 0.5)
+            .expect("schematic-pane point must hit a leaf");
+        assert_eq!(hit, schematic.id);
+        assert_ne!(hit, panes.focused, "schematic pane differs from focused");
+
+        // A point in the left sidebar (outside every pane frame) maps to nothing.
+        let side = layout.left_sidebar;
+        assert_eq!(
+            panes.leaf_at(side.x + side.width * 0.5, side.y + side.height * 0.5),
+            None,
+            "left-sidebar point must not hit any pane at scale {scale}"
+        );
+    }
+}

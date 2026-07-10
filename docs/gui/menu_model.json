@@ -130,6 +130,59 @@
           "label": "Reset Workspace",
           "icon": "reset",
           "gui_local": "view.reset"
+        },
+        {
+          "label": "Split Vertical",
+          "icon": "panels",
+          "gui_local": "view.split_vertical"
+        },
+        {
+          "label": "Split Horizontal",
+          "icon": "layout",
+          "gui_local": "view.split_horizontal"
+        },
+        {
+          "label": "Close Pane",
+          "icon": "close",
+          "gui_local": "view.close_pane"
+        },
+        {
+          "label": "Maximize Pane",
+          "icon": "fit",
+          "gui_local": "view.maximize_pane",
+          "shortcut": "Z"
+        },
+        {
+          "label": "Focus Next Pane",
+          "icon": "crossprobe",
+          "gui_local": "view.focus_next",
+          "shortcut": "Tab"
+        },
+        {
+          "label": "Focus Previous Pane",
+          "icon": "select",
+          "gui_local": "view.focus_prev",
+          "shortcut": "Shift+Tab"
+        },
+        {
+          "label": "Fill Pane: Board",
+          "icon": "outline",
+          "gui_local": "view.fill_board"
+        },
+        {
+          "label": "Fill Pane: Schematic",
+          "icon": "symbol",
+          "gui_local": "view.fill_schematic"
+        },
+        {
+          "label": "Layout: Single",
+          "icon": "panel",
+          "gui_local": "view.preset_single"
+        },
+        {
+          "label": "Layout: Board + Schematic",
+          "icon": "panels",
+          "gui_local": "view.preset_board_schematic"
         }
       ]
     },

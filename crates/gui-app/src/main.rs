@@ -151,6 +151,10 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
             .unwrap_or_else(|| sel.clone());
         state.select_authored_object(&object_id);
     }
+    // Capture/test affordance (decision 021): seed the pane tree if
+    // --initial-layout was set so this offscreen path renders that shape; a no-op
+    // otherwise, so the default parity capture is untouched.
+    args.apply_initial_layout(&mut state.ui.layout);
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let (width, height) = args.visual_window_size()?;
     let scale_factor = args.visual_scale_factor.unwrap_or(1.0);
@@ -728,6 +732,31 @@ impl ApplicationHandler for App {
                     self.request_redraw_if_needed();
                 }
             }
+            // Pane focus cycling (decision 021): Tab -> next leaf, Shift+Tab ->
+            // previous leaf, when the dock does not own the keyboard. Reuses the
+            // FEEL warm-camera focus swap; workspace view state, never journaled.
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Named(NamedKey::Tab),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if self
+                .runtime
+                .as_ref()
+                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_none()) =>
+            {
+                if let Some(runtime) = &mut self.runtime {
+                    if runtime.modifiers.shift_key() {
+                        runtime.pane_focus_prev();
+                    } else {
+                        runtime.pane_focus_next();
+                    }
+                    self.request_redraw_if_needed();
+                }
+            }
             WindowEvent::KeyboardInput {
                 event:
                     KeyEvent {
@@ -853,6 +882,26 @@ impl ApplicationHandler for App {
                     && !runtime.workspace().ui.active_dock_tab.is_some()
                     && runtime.fit_review_target()
                 {
+                    self.request_redraw_if_needed();
+                }
+            }
+            // Maximize / restore the focused pane (decision 021 zoom). `Z` is free
+            // of the tool keys (s/b/v/m/x/r), fit (f), and review-nav ([ ]); gated
+            // to no-active-dock so it never eats terminal input. Workspace view
+            // state (transient zoom over the tile tree), never journaled.
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("z") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                {
+                    runtime.pane_toggle_zoom();
                     self.request_redraw_if_needed();
                 }
             }
@@ -2446,6 +2495,20 @@ impl Runtime {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
+        // Click-to-focus (decision 021): a press landing in a NON-focused pane
+        // swaps focus to that pane (an instant warm-camera swap via the FEEL
+        // focus path) instead of running board interaction in the wrong pane. A
+        // click in the already-focused pane (or outside every pane) falls through
+        // to today's select/pan behavior below. This is gui_local workspace view
+        // state — never a verb/commit/journal path.
+        if let Some(pane_id) = self.pane_at_screen(x, y)
+            && pane_id != self.workspace().ui.layout.focused
+        {
+            self.swap_pane_focus(|layout| layout.focused = pane_id);
+            self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
+            self.trace_click(format!("primary click ({x:.1}, {y:.1}) focus-swapped to pane {}", pane_id.0));
+            return true;
+        }
         let prepared_started = std::time::Instant::now();
         let (prepared_target, world_point) = {
             let prepared = self.prepared_scene();
@@ -3515,6 +3578,16 @@ impl Runtime {
     fn scene_viewport(&self) -> datum_gui_render::RectPx {
         self.current_layout()
             .scene_viewport(&self.workspace().ui.layout)
+    }
+
+    /// The workspace leaf pane whose frame contains screen point `(x, y)`, tiling
+    /// the current shell exactly as the renderer does. Backs click-to-focus
+    /// (decision 021): a press outside every pane (sidebars/dock/menu) returns
+    /// `None` and the click falls through to normal board behavior.
+    fn pane_at_screen(&self, x: f32, y: f32) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .leaf_at(x, y)
     }
 
     fn update_hover(&mut self, pos: (f32, f32)) -> bool {

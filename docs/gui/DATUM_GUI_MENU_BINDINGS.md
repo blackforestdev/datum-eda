@@ -73,6 +73,21 @@ Fit / Zoom / Pan / Layer Visibility / Panels / Reset Workspace — **consumer-si
 GUI state**, not engine operations (per CLAUDE.md interactive-behavior rule). No
 verb binding; owned by the GUI shell + decisions 014/015. Status: GUI-LOCAL.
 
+**Workspace pane ops (decision 021)** — the View menu also manages the recursive
+tile tree (`state.ui.layout`): Split Vertical (`view.split_vertical`) / Split
+Horizontal (`view.split_horizontal`) / Close Pane (`view.close_pane`) / Maximize
+Pane (`view.maximize_pane`, `Z`) / Focus Next Pane (`view.focus_next`, `Tab`) /
+Focus Previous Pane (`view.focus_prev`, `Shift+Tab`) / Fill Pane: Board
+(`view.fill_board`) / Fill Pane: Schematic (`view.fill_schematic`) / Layout:
+Single (`view.preset_single`) / Layout: Board + Schematic
+(`view.preset_board_schematic`). The same ops are also driven by keyboard (Tab /
+Shift+Tab / Z, gated to no-active-dock) and by pointer: a click in a non-focused
+pane swaps focus to it (instant warm-camera swap), a click in the focused pane
+keeps board interaction. All of these are **workspace/session view state — no
+verb binding, never journaled** (the same class as window layout, selection, or
+hover, per decision 021 and the CLAUDE.md interactive-behavior rule). Status:
+GUI-LOCAL.
+
 ### Place (schematic, active-editor-gated)
 | Item | Verb / builder | Status |
 |---|---|---|

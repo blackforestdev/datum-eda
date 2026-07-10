@@ -52,6 +52,14 @@ pub(super) struct GuiArgs {
     pub(super) profile: Option<String>,
     #[arg(long = "visual-test", default_value_t = false)]
     pub(super) visual_test: bool,
+    /// Capture/test affordance (decision 021): seed the workspace pane tree
+    /// (`state.ui.layout`) to a named shape at boot so each pane state can be
+    /// screenshotted for owner validation and later golden coverage. Omitting it
+    /// (the default) leaves the default Board|Schematic layout untouched, so the
+    /// parity gate stays pixel-identical. Accepts:
+    /// `single` | `board-schematic` | `horizontal-split` | `zoom`.
+    #[arg(long = "initial-layout")]
+    pub(super) initial_layout: Option<String>,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
     #[arg(long = "screenshot-out")]
@@ -96,6 +104,34 @@ impl GuiArgs {
         }
         self.visual_window_size()?;
         Ok(())
+    }
+
+    /// Apply the `--initial-layout` capture affordance (decision 021) to a freshly
+    /// loaded workspace pane tree. A no-op when the flag is absent (default), so
+    /// nothing changes without it — the parity gate stays pixel-identical. An
+    /// unrecognized value is a no-op (leaves the default layout) rather than a
+    /// hard failure, since this is a test/capture affordance, not product input.
+    /// Pane layout is consumer/workspace view state, never journaled.
+    pub(super) fn apply_initial_layout(&self, layout: &mut datum_gui_protocol::WorkspaceLayout) {
+        use datum_gui_protocol::{SplitOrientation, WorkspaceLayout, WorkspacePreset};
+        let Some(spec) = self.initial_layout.as_deref() else {
+            return;
+        };
+        match spec {
+            "single" => layout.apply_preset(WorkspacePreset::Single),
+            "board-schematic" => layout.apply_preset(WorkspacePreset::BoardSchematic),
+            "horizontal-split" => {
+                // A clean top/bottom split: one Board leaf split horizontally.
+                *layout = WorkspaceLayout::single();
+                layout.split_focused(SplitOrientation::Horizontal);
+            }
+            "zoom" => {
+                // The default two-pane layout with the focused leaf maximized.
+                layout.apply_preset(WorkspacePreset::BoardSchematic);
+                layout.toggle_zoom();
+            }
+            _ => {}
+        }
     }
 
     pub(super) fn wants_plain_project_board_view(&self) -> bool {
@@ -223,6 +259,10 @@ impl GuiArgs {
             state.select_authored_object(&object_id);
         }
 
+        // Capture/test affordance: seed the pane tree if --initial-layout was set
+        // (a no-op otherwise, so the default boot layout is untouched).
+        self.apply_initial_layout(&mut state.ui.layout);
+
         let camera_started = std::time::Instant::now();
         append_gui_diagnostic_line("camera fit begin");
         let camera = CameraState::fit_to_bounds(&state.scene.bounds);
@@ -253,5 +293,83 @@ impl GuiArgs {
             terminal_sessions,
             workspace_include_review,
         })
+    }
+}
+
+#[cfg(test)]
+mod initial_layout_tests {
+    use super::*;
+    use datum_gui_protocol::{PaneNode, SplitOrientation, WorkspaceLayout};
+
+    fn args_with(spec: Option<&str>) -> GuiArgs {
+        let mut argv = vec!["datum-gui".to_string()];
+        if let Some(s) = spec {
+            argv.push("--initial-layout".to_string());
+            argv.push(s.to_string());
+        }
+        GuiArgs::parse_from(argv)
+    }
+
+    #[test]
+    fn absent_flag_leaves_default_layout() {
+        let args = args_with(None);
+        let mut layout = WorkspaceLayout::default();
+        let before = layout.clone();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(
+            layout, before,
+            "default layout must be untouched without --initial-layout"
+        );
+    }
+
+    #[test]
+    fn single_preset_collapses_to_one_leaf() {
+        let args = args_with(Some("single"));
+        let mut layout = WorkspaceLayout::default();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(layout.leaves().len(), 1);
+        assert!(layout.zoomed.is_none());
+    }
+
+    #[test]
+    fn board_schematic_preset_is_two_leaves() {
+        let args = args_with(Some("board-schematic"));
+        let mut layout = WorkspaceLayout::single();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(layout.leaves().len(), 2);
+    }
+
+    #[test]
+    fn horizontal_split_is_two_horizontally_stacked_leaves() {
+        let args = args_with(Some("horizontal-split"));
+        let mut layout = WorkspaceLayout::default();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(layout.leaves().len(), 2);
+        assert!(matches!(
+            layout.root,
+            PaneNode::Split {
+                orientation: SplitOrientation::Horizontal,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn zoom_maximizes_the_focused_leaf() {
+        let args = args_with(Some("zoom"));
+        let mut layout = WorkspaceLayout::default();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(layout.zoomed, Some(layout.focused));
+        // Zoom is transient: the underlying tree still has both leaves.
+        assert_eq!(layout.leaves().len(), 2);
+    }
+
+    #[test]
+    fn unknown_value_is_a_no_op() {
+        let args = args_with(Some("bogus"));
+        let mut layout = WorkspaceLayout::default();
+        let before = layout.clone();
+        args.apply_initial_layout(&mut layout);
+        assert_eq!(layout, before);
     }
 }
