@@ -627,7 +627,7 @@ fn render_viewport_panes(
     // (each sits in the reserved gutter span), so painting them after the panes
     // is order-safe.
     for divider in &panes.dividers {
-        panel_quads.push(Quad::from_rect(*divider, PANEL_CARD_BORDER));
+        panel_quads.push(Quad::from_rect(divider.rect, PANEL_CARD_BORDER));
     }
 }
 
@@ -721,14 +721,31 @@ fn render_pane_header(
         if focused { TEXT_ACCENT } else { PANEL_CARD_BORDER },
         1.0,
     );
+    // Right edge available for header content. Reserve the focus-dot zone on the
+    // focused pane so nothing overlaps it. A pane shrunk by a divider-drag resize
+    // must CLIP its header content here instead of spilling the title/tools into
+    // the adjacent (enlarged) pane — the panel/text passes are not scissored
+    // per-pane, so overflow would otherwise float over the neighbor's header.
+    let content_right = header.x + header.width
+        - if focused {
+            design_tokens::spacing::SP_04 + 7.0 + design_tokens::spacing::SP_02
+        } else {
+            design_tokens::spacing::SP_02
+        };
     let title_x = glyph.x + glyph.width + design_tokens::spacing::SP_03;
-    draw_text(
+    draw_text_clipped(
         title,
         title_x,
         header.y + design_tokens::spacing::SP_03,
         design_tokens::typography::DATA_SIZE,
         if focused { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Mono,
+        RectPx {
+            x: title_x,
+            y: header.y,
+            width: (content_right - title_x).max(0.0),
+            height: header.height,
+        },
         text_runs,
     );
     // Tool cluster after the measured pane-title width. Buttons render on the
@@ -753,6 +770,12 @@ fn render_pane_header(
             width: 25.0,
             height: 25.0,
         };
+        // Cull tool buttons that would overflow the pane (after a resize shrank
+        // it): x only grows, so once one does not fit, none after it will. This
+        // stops the tool cluster bleeding into the adjacent pane's header.
+        if rect.x + rect.width > content_right {
+            break;
+        }
         let fill = if active {
             REVIEW_ROW_ACTIVE_BG
         } else if focused {

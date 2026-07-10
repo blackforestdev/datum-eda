@@ -87,17 +87,20 @@
    library authoring surfaces (step 6), which build on the read-only schematic pane
    and cross-probe substrate. *State:* **P2.0 populated single-pane inspector
    LANDED; P2.1 split-view first slice (two-pane LAYOUT + headers + focus +
-   placeholder pane B) LANDED; P2.2–P2.4 spec'd, build deferred to authorized
-   execution** (real schematic content in pane B is the next slice, still DEFERRED).
+   placeholder pane B) LANDED; P2.1 pane-tiling depth (dynamic single/split/close/
+   nesting + Zoom + independent per-pane cameras + divider-drag resize) LANDED;
+   P2.2–P2.4 spec'd, build deferred to authorized execution** (real schematic
+   content in pane B is the next slice, still DEFERRED).
    **Pane model — decision 021** (`docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`):
    the split view is the first implementation of a **recursive binary tile tree**,
    tile-first + View-menu-managed, with **Zoom/maximize** and deliberate **Float/detach**
    as bounded overlay modes. The hard-coded P2.1 fixed split becomes dynamic panes
-   (single-pane default → split/close → nesting); layout is consumer/workspace state,
-   never journaled. Distinct from decision-020 paper-space viewports. Reference:
-   `docs/gui/prototypes/workspace-panes.html`. Near-term slice ordering under 021:
-   **dynamic single/split + Zoom** (resolves "board-only / schematic-only / both" as a
-   user choice) → then real schematic geometry in pane B (P2.2).
+   (single-pane default → split/close → nesting → divider-drag resize); layout is
+   consumer/workspace state, never journaled. Distinct from decision-020 paper-space
+   viewports. Reference: `docs/gui/prototypes/workspace-panes.html`. Near-term slice
+   ordering under 021: **dynamic single/split + Zoom + divider-drag resize** (resolves
+   "board-only / schematic-only / both" as a user choice and lets the owner set any
+   split ratio) — **LANDED** → then real schematic geometry in pane B (P2.2, next).
    Governing: decision 019 + **decision 021 (pane tiling)** +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable

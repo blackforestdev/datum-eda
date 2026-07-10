@@ -234,12 +234,12 @@ fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
             // overlaps a divider gutter) and stays inside the viewport.
             for divider in &panes.dividers {
                 assert!(
-                    within(*divider, layout.viewport),
+                    within(divider.rect, layout.viewport),
                     "{shape_name}: divider escapes the viewport at scale {scale}"
                 );
                 for leaf in &panes.panes {
                     assert!(
-                        !overlaps(leaf.rect.frame, *divider),
+                        !overlaps(leaf.rect.frame, divider.rect),
                         "{shape_name}: leaf {:?} overlaps a divider at scale {scale}",
                         leaf.id
                     );
@@ -301,7 +301,7 @@ fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
             // Divider strictly between the two panes.
             let a = panes.panes[0].rect.frame;
             let b = panes.panes[1].rect.frame;
-            let d = panes.dividers[0];
+            let d = panes.dividers[0].rect;
             assert!(
                 d.x + EPS >= a.x + a.width && d.x + d.width <= b.x + EPS,
                 "default divider is not between the panes at scale {scale}"
@@ -366,4 +366,54 @@ fn leaf_at_maps_points_for_click_to_focus() {
             "left-sidebar point must not hit any pane at scale {scale}"
         );
     }
+}
+
+/// Divider-drag resize (decision 021): each divider carries the path of the Split
+/// it controls, its orientation, and the full split frame, and `divider_at` hits
+/// the (grab-widened) gutter. This is the render-side contract the runtime relies
+/// on to map a grabbed gutter to `WorkspaceLayout::set_ratio_at_path`.
+#[test]
+fn dividers_carry_split_paths_and_are_grabbable() {
+    use datum_gui_protocol::{SplitChild, SplitOrientation, WorkspaceLayout};
+    let layout = ShellLayout::for_surface(1280, 800, 1.0, None);
+
+    // Board|Schematic: exactly one root vertical divider, path [].
+    let ws = WorkspaceLayout::board_schematic();
+    let panes = layout.viewport_panes(&ws);
+    assert_eq!(panes.dividers.len(), 1);
+    let root_div = &panes.dividers[0];
+    assert!(root_div.path.is_empty(), "root split divider has the empty path");
+    assert_eq!(root_div.orientation, SplitOrientation::Vertical);
+    // The split frame spans the whole viewport for the root split.
+    assert_eq!(root_div.split_frame, layout.viewport);
+    // divider_at hits the gutter center and misses a point far from it.
+    let cx = root_div.rect.x + root_div.rect.width * 0.5;
+    let cy = root_div.rect.y + root_div.rect.height * 0.5;
+    assert!(panes.divider_at(cx, cy).is_some(), "gutter center is grabbable");
+    assert!(
+        panes.divider_at(root_div.rect.x - 100.0, cy).is_none(),
+        "a point far from every gutter is not a divider grab"
+    );
+
+    // Nested: focus the schematic leaf and split it horizontally, producing
+    // root = Split[ Board , Split[ Schematic / Board ] ]. Two dividers: the root
+    // vertical (path []) and the inner horizontal (path [Second]).
+    let mut nested = WorkspaceLayout::board_schematic();
+    nested.focus_next();
+    nested.split_focused(SplitOrientation::Horizontal);
+    let np = layout.viewport_panes(&nested);
+    assert_eq!(np.dividers.len(), 2);
+    assert!(
+        np.dividers
+            .iter()
+            .any(|d| d.path.is_empty() && d.orientation == SplitOrientation::Vertical),
+        "root vertical divider present at path []"
+    );
+    assert!(
+        np.dividers
+            .iter()
+            .any(|d| d.path == vec![SplitChild::Second]
+                && d.orientation == SplitOrientation::Horizontal),
+        "inner horizontal divider present at path [Second]"
+    );
 }

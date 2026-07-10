@@ -51,9 +51,9 @@ pub use terminal_lane::{
 };
 mod workspace_layout;
 pub use workspace_layout::{
-    ConsoleLaneState, DockTab, MarkingMenuState, PaneContent, PaneId, PaneNode, SplitOrientation,
-    WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState, PANE_RATIO_MAX,
-    PANE_RATIO_MIN,
+    ConsoleLaneState, DockTab, MarkingMenuState, PaneContent, PaneId, PaneNode, SplitChild,
+    SplitOrientation, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState,
+    PANE_RATIO_MAX, PANE_RATIO_MIN,
 };
 mod production_proposals;
 pub use production_proposals::{

@@ -98,6 +98,18 @@ pub enum SplitOrientation {
     Vertical,
 }
 
+/// One step in a path from the tree root down to a specific `Split` node: descend
+/// into its `first` or `second` child. A `Vec<SplitChild>` addresses a Split
+/// unambiguously (the root Split is the empty path), which is how divider-drag
+/// resize (decision 021) names the split a dragged gutter controls — the renderer
+/// tags each divider with the path of its Split, and `set_ratio_at_path` applies
+/// the new ratio there. Consumer/workspace view state; never journaled.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SplitChild {
+    First,
+    Second,
+}
+
 /// What a pane shows (its `(document, view)` projection over the model).
 ///
 /// Only Board and Schematic exist today. Footprint, Symbol, Datasheet, 3D, and
@@ -345,6 +357,31 @@ impl WorkspaceLayout {
         let clamped = clamp_ratio(ratio);
         let focused = self.focused;
         set_parent_ratio(&mut self.root, focused, clamped);
+    }
+
+    /// Set the split ratio of the `Split` addressed by `path` (from the root), used
+    /// by divider-drag resize (decision 021): dragging a gutter names its Split by
+    /// the path the renderer tagged the divider with, and this applies the new
+    /// (clamped) ratio there. The empty path is the root Split. No-op if the path
+    /// does not resolve to a Split (e.g. it runs into a leaf or off the tree), so a
+    /// stale drag target is harmless. Consumer view state; never journaled.
+    pub fn set_ratio_at_path(&mut self, path: &[SplitChild], ratio: f32) {
+        let clamped = clamp_ratio(ratio);
+        let mut node = &mut self.root;
+        for step in path {
+            match node {
+                PaneNode::Split { first, second, .. } => {
+                    node = match step {
+                        SplitChild::First => first,
+                        SplitChild::Second => second,
+                    };
+                }
+                PaneNode::Leaf { .. } => return,
+            }
+        }
+        if let PaneNode::Split { ratio: slot, .. } = node {
+            *slot = clamped;
+        }
     }
 
     /// Replace the whole layout with a named preset.
@@ -638,6 +675,40 @@ mod tests {
 
         layout.set_focused_ratio(0.42);
         assert_eq!(root_ratio(&layout), 0.42);
+    }
+
+    #[test]
+    fn set_ratio_at_path_targets_the_named_split_and_clamps() {
+        // Root split (empty path): clamps and applies.
+        let mut layout = WorkspaceLayout::board_schematic();
+        layout.set_ratio_at_path(&[], 0.3);
+        assert_eq!(root_ratio(&layout), 0.3);
+        layout.set_ratio_at_path(&[], 5.0);
+        assert_eq!(root_ratio(&layout), PANE_RATIO_MAX);
+        layout.set_ratio_at_path(&[], -1.0);
+        assert_eq!(root_ratio(&layout), PANE_RATIO_MIN);
+
+        // Nested split: focus the schematic leaf and split it, producing
+        // root = Split[ Board , Split[ Schematic , Board ] ]. Path [Second] names
+        // the inner split; setting its ratio must not touch the root's.
+        let mut nested = WorkspaceLayout::board_schematic();
+        nested.set_ratio_at_path(&[], 0.5);
+        nested.focus_next(); // focus the Schematic leaf (PaneId 1)
+        nested.split_focused(SplitOrientation::Horizontal);
+        nested.set_ratio_at_path(&[SplitChild::Second], 0.25);
+        assert_eq!(root_ratio(&nested), 0.5, "root ratio untouched");
+        match &nested.root {
+            PaneNode::Split { second, .. } => match second.as_ref() {
+                PaneNode::Split { ratio, .. } => assert_eq!(*ratio, 0.25),
+                _ => panic!("inner node must be a split"),
+            },
+            _ => panic!("root must be a split"),
+        }
+
+        // A path that runs into a leaf is a harmless no-op.
+        let mut leafish = WorkspaceLayout::board_schematic();
+        leafish.set_ratio_at_path(&[SplitChild::First, SplitChild::First], 0.2);
+        assert_eq!(root_ratio(&leafish), 0.5, "no-op when path hits a leaf");
     }
 
     #[test]

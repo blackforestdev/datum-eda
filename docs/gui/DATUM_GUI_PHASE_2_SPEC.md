@@ -128,6 +128,30 @@ marker**.
   pane-A-only focus chrome; shell/board goldens re-captured. Real schematic
   content in pane B stays **TO-ENFORCE** with P2.2.
 
+- **P2.1 pane-tiling depth (decision 021). LANDED.** The hard-coded fixed split
+  became the dynamic recursive tile tree: **dynamic single/split/close/nesting +
+  Zoom (maximize)** driven from the View menu and Tab/Z/click keys, **independent
+  per-pane warm cameras** (focus-switch never refits; the board camera is bound to
+  the board scene leaf so it persists across focus), and **divider-drag resize** —
+  dragging a split's gutter re-apportions its `ratio` live, clamped to
+  `PANE_RATIO_MIN..MAX`, addressed by the split's root-to-node `path`
+  (`WorkspaceLayout::set_ratio_at_path`) so nested splits resize independently. The
+  renderer tags each divider with its split frame/orientation/path
+  (`ViewportPanes::divider_at`); the runtime grabs the gutter before click-to-focus
+  and consumes the release so a resize never changes focus.
+  *Dependency:* P2.1 first slice landed.
+  *Reuse:* the tile tree (`WorkspaceLayout`/`PaneNode`), `ViewportPanes` tiling,
+  and the warm-camera store — no new layout engine.
+  *Check disposition:* **ENFORCED** — model tests
+  (`set_ratio_at_path_targets_the_named_split_and_clamps`), render tests
+  (`dividers_carry_split_paths_and_are_grabbable`,
+  `board_scene_stays_in_board_pane_regardless_of_focus`), app tests
+  (`pane_resize` ratio math, `pane_cameras` warmth), and layout invariants. The
+  **exact split-ratio owner-approval against `board-editor.html`** (the static
+  default framing) remains a **HUMAN** review item — divider-drag now lets the
+  owner set any ratio interactively; the shipped default preset value is the piece
+  still pending owner sign-off.
+
 - **P2.2 — Schematic pane populated from the engine.**
   **spec only — build is a separate authorized execution phase.**
   Fill the P2.1 schematic pane with the `datum-test` schematic **read-only**,

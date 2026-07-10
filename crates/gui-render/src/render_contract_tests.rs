@@ -819,3 +819,50 @@ fn menu_dropdown_fits_its_content_no_spill() {
         );
     }
 }
+
+#[test]
+fn narrow_pane_header_does_not_bleed_into_neighbor() {
+    // Divider-drag can shrink a pane hard (down to the 0.1 ratio clamp). Its header
+    // (title + tool cluster) must clip/cull to the pane instead of spilling into
+    // the adjacent enlarged pane — the panel/text passes are not scissored
+    // per-pane, so a bleeding tool letter would float over the neighbor's header.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    // Shrink the (left, focused) Board pane hard; the Schematic pane enlarges.
+    state.ui.layout.set_ratio_at_path(&[], 0.12);
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let panes = prepared.layout.viewport_panes(&state.ui.layout);
+    let board = panes.panes[0].rect;
+    let schem = panes.panes[1].rect;
+    assert!(
+        board.frame.width < schem.frame.width,
+        "the board pane must be the shrunk one"
+    );
+
+    // Every header-band text run that STARTS inside the board pane must not extend
+    // (after its clip bounds) into the schematic pane.
+    for run in &prepared.text_runs {
+        let in_header_band = run.y >= board.header.y && run.y <= board.header.y + board.header.height;
+        let starts_in_board = run.x >= board.frame.x && run.x < schem.frame.x;
+        if !in_header_band || !starts_in_board {
+            continue;
+        }
+        let natural_right = run.x + measured_text_run_width_px(&run.text, run.size, run.face);
+        let effective_right = match run.clip_bounds {
+            Some(cb) => natural_right.min(cb.x + cb.width),
+            None => natural_right,
+        };
+        assert!(
+            effective_right <= schem.frame.x + 1.0,
+            "board-pane header run '{}' (right {effective_right:.1}) bleeds into the schematic pane (x {:.1})",
+            run.text,
+            schem.frame.x
+        );
+    }
+}

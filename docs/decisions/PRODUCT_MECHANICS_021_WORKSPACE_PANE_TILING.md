@@ -47,6 +47,16 @@ overlay modes layered on top.**
   focused pane with →** (Board / Schematic / Footprint / Symbol / 3D / Datasheet /
   Check Report), and **Layout presets** (Single · Board+Schematic · …). Splitting
   divides the focused pane; closing collapses it and the sibling reclaims the space.
+- **Split ratios resize by dragging the divider gutter** (direct manipulation,
+  complementing the View-menu tree ops). The 1px gutter between a split's two
+  children is a grab handle (widened by a small grab margin): pressing on it and
+  dragging re-apportions the split — its `ratio` — live, **clamped** so neither
+  child ever collapses to nothing (`PANE_RATIO_MIN..MAX`). Each split is addressed
+  by its **root-to-node path** (the sequence of first/second descents), so nested
+  splits resize independently and a divider drag never disturbs a sibling split. The
+  ratio is workspace view state — never journaled — exactly like which panes exist,
+  focus, and zoom. Dragging a gutter resizes the split; it does **not** change focus
+  or run pane content interaction.
 - **Tile is the foundation; two overlay modes are deliberate escape hatches, not
   the default:**
   1. **Zoom / maximize a pane** — temporarily fill the whole workspace with the
@@ -110,11 +120,14 @@ space — follows focus; layout is consumer state, not journaled). Same word
 - Supersedes the hard-coded fixed Board|Schematic split (first Phase-2 slice) — that
   slice becomes the **first implementation** of this model (single-pane default →
   one split → the full tree).
-- Governs the Phase-2 GUI build: split-view → nested tiling → real schematic pane →
-  cross-probe → zoom → float, sequenced in the Active Frontier.
-- Object model to specify (future): `WorkspaceLayout` (the pane tree), `PaneNode`
-  (`Leaf`/`Split`), `PaneContent` (`(document, view)`), pane focus/zoom/float state
-  — all consumer/workspace state, persisted as preference, never journaled.
+- Governs the Phase-2 GUI build: split-view → nested tiling → **divider-drag
+  resize** → real schematic pane → cross-probe → zoom → float, sequenced in the
+  Active Frontier.
+- Object model (built): `WorkspaceLayout` (the pane tree), `PaneNode`
+  (`Leaf`/`Split` with `ratio`), `PaneContent` (`(document, view)`), pane
+  focus/zoom state, and `SplitChild`/`set_ratio_at_path` (root-to-node split
+  addressing for divider-drag resize). Float state remains future — all consumer/
+  workspace state, persisted as preference, never journaled.
 - Reference prototype: `docs/gui/prototypes/workspace-panes.html`.
 
 ## Open questions (for the spec pass, owner to steer)

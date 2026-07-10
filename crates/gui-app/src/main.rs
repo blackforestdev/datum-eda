@@ -35,6 +35,7 @@ mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
 mod pane_cameras;
+mod pane_resize;
 mod production_status_refresh;
 mod retained_scene_cache_key;
 mod runtime_terminal_context;
@@ -60,6 +61,7 @@ use board_text_terminal_commands::{
 };
 pub(crate) use gui_runtime_support::*;
 use pane_cameras::PaneCameras;
+use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
 use std::fs;
@@ -328,6 +330,8 @@ impl ApplicationHandler for App {
                     let mut changed = false;
                     if runtime.dock_drag_active {
                         changed = runtime.handle_dock_resize_drag(next_pos);
+                    } else if runtime.divider_drag.is_some() {
+                        changed = runtime.handle_divider_drag(next_pos);
                     } else if runtime.marking_menu_active() {
                         changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.middle_drag_active || runtime.right_drag_active {
@@ -335,6 +339,7 @@ impl ApplicationHandler for App {
                     }
                     // Update hover state
                     if !runtime.dock_drag_active
+                        && runtime.divider_drag.is_none()
                         && !runtime.middle_drag_active
                         && !runtime.right_drag_active
                         && !runtime.marking_menu_active()
@@ -342,9 +347,14 @@ impl ApplicationHandler for App {
                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
                         changed = runtime.update_hover(next_pos) || changed;
                     }
+                    // Resize-cursor affordance: read the divider orientation under
+                    // the cursor (or the active drag's) before the runtime borrow
+                    // ends, then set the window cursor.
+                    let resize_cursor = runtime.divider_resize_cursor(next_pos.0, next_pos.1);
                     if changed {
                         self.request_redraw_if_needed();
                     }
+                    self.apply_cursor(resize_cursor);
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
@@ -434,6 +444,13 @@ impl ApplicationHandler for App {
                             self.request_redraw_if_needed();
                             return;
                         }
+                        // Grab a split divider gutter to resize the split (decision
+                        // 021), handled before click-to-focus so grabbing the gutter
+                        // resizes instead of focusing a pane.
+                        if runtime.begin_divider_drag(x, y) {
+                            self.request_redraw_if_needed();
+                            return;
+                        }
                     }
                 }
             }
@@ -444,9 +461,16 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.dock_drag_active = false;
+                    // A completed divider-drag resize ends here; the release must NOT
+                    // fall through to click-to-focus / selection.
+                    let was_divider_drag = runtime.divider_drag.take().is_some();
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
                     {
+                        return;
+                    }
+                    if was_divider_drag {
+                        self.request_redraw_if_needed();
                         return;
                     }
                     let handled = runtime.handle_primary_click();
@@ -1042,6 +1066,9 @@ struct Runtime {
     middle_drag_active: bool,
     right_drag_active: bool,
     dock_drag_active: bool,
+    /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
+    /// view state; never journaled.
+    divider_drag: Option<DividerDrag>,
     terminal_mouse_button: Option<MouseButton>,
     modifiers: ModifiersState,
     redraw_pending: bool,
@@ -1177,6 +1204,7 @@ impl Runtime {
             middle_drag_active: false,
             right_drag_active: false,
             dock_drag_active: false,
+            divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
             redraw_pending: false,
@@ -3581,6 +3609,57 @@ impl Runtime {
             .layout
             .set_focused_content(content);
         self.invalidate_frame();
+    }
+
+    /// The resize-cursor orientation for screen point `(x, y)`: during an active
+    /// divider drag it is the dragged split's orientation; otherwise the
+    /// orientation of the divider gutter under the cursor, if any. `None` means the
+    /// default cursor. Backs the hover affordance that signals a gutter is
+    /// draggable (a vertical split reads east-west, a horizontal split north-south).
+    fn divider_resize_cursor(&self, x: f32, y: f32) -> Option<datum_gui_protocol::SplitOrientation> {
+        if let Some(drag) = &self.divider_drag {
+            return Some(drag.orientation);
+        }
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .divider_at(x, y)
+            .map(|d| d.orientation)
+    }
+
+    /// Divider-drag resize (decision 021): if screen point `(x, y)` grabs a split
+    /// divider gutter, begin a drag on that split and return `true` (so the press
+    /// is consumed instead of focusing a pane / running board interaction).
+    fn begin_divider_drag(&mut self, x: f32, y: f32) -> bool {
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        if let Some(divider) = panes.divider_at(x, y) {
+            self.divider_drag = Some(DividerDrag {
+                path: divider.path.clone(),
+                split_frame: divider.split_frame,
+                orientation: divider.orientation,
+            });
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Apply a divider-drag move: translate the cursor into a new ratio for the
+    /// dragged split and write it (the model clamps so panes never collapse).
+    fn handle_divider_drag(&mut self, pos: (f32, f32)) -> bool {
+        let Some(drag) = &self.divider_drag else {
+            return false;
+        };
+        let ratio = drag.ratio_at(pos.0, pos.1);
+        let path = drag.path.clone();
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .set_ratio_at_path(&path, ratio);
+        self.invalidate_frame();
+        true
     }
 
     fn current_layout(&self) -> ShellLayout {

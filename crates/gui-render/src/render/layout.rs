@@ -154,10 +154,24 @@ pub struct LeafPane {
 /// one canvas the retained world buffer, gpu scissor/uniform, and hit-testing all
 /// follow. Non-focused Board leaves render as today (no per-leaf snapshot yet);
 /// Schematic leaves show the "Schematic (coming)" placeholder.
+/// A split's divider gutter plus everything a divider-drag resize needs
+/// (decision 021): the hairline `rect` painted between the two children, the full
+/// `split_frame` the new ratio is measured within, the split `orientation`, and
+/// the `path` from the tree root to the controlling `Split` (so the runtime maps a
+/// grabbed gutter to `WorkspaceLayout::set_ratio_at_path`). Purely derived layout
+/// geometry — consumer view state, never journaled.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PaneDivider {
+    pub rect: RectPx,
+    pub split_frame: RectPx,
+    pub orientation: datum_gui_protocol::SplitOrientation,
+    pub path: Vec<datum_gui_protocol::SplitChild>,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct ViewportPanes {
     pub panes: Vec<LeafPane>,
-    pub dividers: Vec<RectPx>,
+    pub dividers: Vec<PaneDivider>,
     pub focused: datum_gui_protocol::PaneId,
 }
 
@@ -220,6 +234,21 @@ impl ViewportPanes {
             .find(|pane| pane.rect.frame.contains(x, y))
             .map(|pane| pane.id)
     }
+
+    /// The split divider whose grab-widened gutter contains screen point `(x, y)`,
+    /// if any — backs divider-drag resize (decision 021). The 1px hairline is
+    /// widened by a small grab margin so the gutter is easy to grab with a pointer.
+    /// Dividers never overlap, so at most one matches; returns the first in tree
+    /// order. Pure screen-space test — no mutation; layout is consumer view state.
+    pub fn divider_at(&self, x: f32, y: f32) -> Option<&PaneDivider> {
+        const GRAB_MARGIN: f32 = 4.0;
+        self.dividers.iter().find(|d| {
+            x >= d.rect.x - GRAB_MARGIN
+                && x <= d.rect.x + d.rect.width + GRAB_MARGIN
+                && y >= d.rect.y - GRAB_MARGIN
+                && y <= d.rect.y + d.rect.height + GRAB_MARGIN
+        })
+    }
 }
 
 /// Hairline divider gutter width between two split siblings (same 1px as the
@@ -235,9 +264,10 @@ fn tile_pane_node(
     node: &datum_gui_protocol::PaneNode,
     frame: RectPx,
     panes: &mut Vec<LeafPane>,
-    dividers: &mut Vec<RectPx>,
+    dividers: &mut Vec<PaneDivider>,
+    path: &mut Vec<datum_gui_protocol::SplitChild>,
 ) {
-    use datum_gui_protocol::{PaneNode, SplitOrientation};
+    use datum_gui_protocol::{PaneNode, SplitChild, SplitOrientation};
     match node {
         PaneNode::Leaf { id, content } => {
             panes.push(LeafPane {
@@ -274,9 +304,18 @@ fn tile_pane_node(
                     width: (frame.x + frame.width - second_x).max(0.0),
                     height: frame.height,
                 };
-                tile_pane_node(first, first_frame, panes, dividers);
-                dividers.push(divider);
-                tile_pane_node(second, second_frame, panes, dividers);
+                path.push(SplitChild::First);
+                tile_pane_node(first, first_frame, panes, dividers, path);
+                path.pop();
+                dividers.push(PaneDivider {
+                    rect: divider,
+                    split_frame: frame,
+                    orientation: *orientation,
+                    path: path.clone(),
+                });
+                path.push(SplitChild::Second);
+                tile_pane_node(second, second_frame, panes, dividers, path);
+                path.pop();
             }
             SplitOrientation::Horizontal => {
                 let divider_h = PANE_DIVIDER_W.min(frame.height);
@@ -300,9 +339,18 @@ fn tile_pane_node(
                     width: frame.width,
                     height: (frame.y + frame.height - second_y).max(0.0),
                 };
-                tile_pane_node(first, first_frame, panes, dividers);
-                dividers.push(divider);
-                tile_pane_node(second, second_frame, panes, dividers);
+                path.push(SplitChild::First);
+                tile_pane_node(first, first_frame, panes, dividers, path);
+                path.pop();
+                dividers.push(PaneDivider {
+                    rect: divider,
+                    split_frame: frame,
+                    orientation: *orientation,
+                    path: path.clone(),
+                });
+                path.push(SplitChild::Second);
+                tile_pane_node(second, second_frame, panes, dividers, path);
+                path.pop();
             }
         },
     }
@@ -424,7 +472,13 @@ impl ShellLayout {
                 rect: PaneRect::from_frame(self.viewport),
             });
         } else {
-            tile_pane_node(&layout.root, self.viewport, &mut panes, &mut dividers);
+            tile_pane_node(
+                &layout.root,
+                self.viewport,
+                &mut panes,
+                &mut dividers,
+                &mut Vec::new(),
+            );
         }
         ViewportPanes {
             panes,

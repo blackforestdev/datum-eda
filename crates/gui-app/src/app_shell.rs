@@ -4,6 +4,9 @@ pub(super) struct App {
     pub(super) args: GuiArgs,
     pub(super) window: Option<&'static Window>,
     pub(super) runtime: Option<Runtime>,
+    /// Last cursor icon set on the window, so hover-driven cursor changes only call
+    /// `set_cursor` on a transition (no per-move spam).
+    current_cursor: winit::window::CursorIcon,
     kwin_lifecycle_smoke_step: usize,
 }
 
@@ -13,7 +16,31 @@ impl App {
             args,
             window: None,
             runtime: None,
+            current_cursor: winit::window::CursorIcon::Default,
             kwin_lifecycle_smoke_step: 0,
+        }
+    }
+
+    /// Set the window cursor for a divider-hover/drag orientation: a vertical split
+    /// (left|right, dragged horizontally) reads east-west; a horizontal split
+    /// (top/bottom, dragged vertically) reads north-south; `None` restores the
+    /// default. Only touches the window on a change (tracked in `current_cursor`).
+    pub(super) fn apply_cursor(
+        &mut self,
+        orientation: Option<datum_gui_protocol::SplitOrientation>,
+    ) {
+        use datum_gui_protocol::SplitOrientation;
+        use winit::window::CursorIcon;
+        let icon = match orientation {
+            Some(SplitOrientation::Vertical) => CursorIcon::EwResize,
+            Some(SplitOrientation::Horizontal) => CursorIcon::NsResize,
+            None => CursorIcon::Default,
+        };
+        if self.current_cursor != icon {
+            self.current_cursor = icon;
+            if let Some(window) = self.window {
+                window.set_cursor(icon);
+            }
         }
     }
 

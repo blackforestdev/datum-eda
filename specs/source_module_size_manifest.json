@@ -53,7 +53,7 @@
       "note": "Engine route-proposal generation kernel."
     },
     "crates/gui-app/src/main.rs": {
-      "recorded_lines": 3760,
+      "recorded_lines": 3942,
       "status": "decomposition-pending",
       "note": "winit GUI shell entry + app loop."
     },
