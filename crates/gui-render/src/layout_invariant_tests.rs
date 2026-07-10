@@ -139,3 +139,63 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
         }
     }
 }
+
+/// Phase-2 split-view invariants: the central viewport is tiled into two panes
+/// (Board pane A | Schematic pane B) with a divider gutter between them. Each
+/// pane's frame/header/scene must stay inside the viewport, the two panes must
+/// not overlap, the divider must sit between them, and each header/scene must
+/// stay inside its own pane.
+#[test]
+fn viewport_split_holds_two_pane_invariants_across_scale_matrix() {
+    let logical_w = 1280u32;
+    let logical_h = 800u32;
+
+    for scale in SCALES {
+        let pw = ((logical_w as f32) * scale).round() as u32;
+        let ph = ((logical_h as f32) * scale).round() as u32;
+        let layout = ShellLayout::for_surface(pw, ph, scale, None);
+        let panes = layout.viewport_panes();
+
+        for (name, pane) in [("pane_a", panes.pane_a), ("pane_b", panes.pane_b)] {
+            assert!(
+                pane.frame.width > 0.0 && pane.frame.height > 0.0,
+                "{name} frame is degenerate at scale {scale}"
+            );
+            assert!(
+                within(pane.frame, layout.viewport),
+                "{name} frame escapes the viewport at scale {scale}"
+            );
+            assert!(
+                within(pane.header, pane.frame),
+                "{name} header escapes its own pane at scale {scale}"
+            );
+            assert!(
+                within(pane.scene, pane.frame),
+                "{name} scene canvas escapes its own pane at scale {scale}"
+            );
+        }
+
+        assert!(
+            !overlaps(panes.pane_a.frame, panes.pane_b.frame),
+            "pane A overlaps pane B at scale {scale}"
+        );
+        // The divider sits strictly between the two panes.
+        assert!(
+            panes.divider.x + EPS >= panes.pane_a.frame.x + panes.pane_a.frame.width
+                && panes.divider.x + panes.divider.width <= panes.pane_b.frame.x + EPS,
+            "divider is not between the panes at scale {scale}"
+        );
+        // scene_viewport (the world board canvas + gpu scissor) follows pane A.
+        assert_eq!(
+            layout.scene_viewport(),
+            panes.pane_a.scene,
+            "scene_viewport must follow pane A at scale {scale}"
+        );
+        // Focus is pinned to the Board pane this slice.
+        assert_eq!(
+            panes.focused_document(),
+            FocusedPane::Board,
+            "focused document must be the Board pane this slice at scale {scale}"
+        );
+    }
+}

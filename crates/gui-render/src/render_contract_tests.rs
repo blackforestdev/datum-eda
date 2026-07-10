@@ -253,8 +253,59 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
     for tool in ["S", "M", "R", "V", "Z"] {
         assert!(labels.contains(&tool), "missing board-pane tool {tool}");
     }
+    // Phase-2 split view: pane B carries its own (unfocused) header title and a
+    // labeled "Schematic (coming)" placeholder caption — pane B is a real pane
+    // with real chrome, not schematic world geometry / authoring this slice.
+    assert!(
+        labels.contains(&"Schematic \u{00B7} Sheet 1"),
+        "missing pane B (schematic) header title"
+    );
+    assert!(
+        labels.contains(&"Schematic (coming)"),
+        "missing pane B placeholder caption"
+    );
     // (The "FOLLOWS PANE A" diagnostic dump was removed from the chrome; the
     // pane header's title + tools are the conformance surface here.)
+}
+
+/// The split view differentiates focus: pane A (Board) draws the accent focus
+/// dot + inset ACCENT pane frame; pane B (Schematic) draws neither. Both live
+/// inside their own pane rects. This locks the focus differentiation that makes
+/// context-follows-focus legible (docs/gui/DATUM_GUI_DESIGN_SPEC.md).
+#[test]
+fn split_view_focus_frame_belongs_to_pane_a_only() {
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let panes = prepared.layout.viewport_panes();
+    // The accent pane frame is emitted as panel vertices inset 1px inside pane A;
+    // its top-left accent quad must fall inside pane A and never inside pane B.
+    let has_accent_vertex_in = |rect: RectPx| {
+        prepared.panel_vertices().iter().any(|v| {
+            let [r, g, b] = TEXT_ACCENT;
+            (v.color[0] - r).abs() < 0.01
+                && (v.color[1] - g).abs() < 0.01
+                && (v.color[2] - b).abs() < 0.01
+                && rect.contains(v.pos[0], v.pos[1])
+        })
+    };
+    assert!(
+        has_accent_vertex_in(panes.pane_a.frame),
+        "pane A must carry accent focus chrome"
+    );
+    // Pane B's interior (inside its frame but excluding the shared divider edge)
+    // carries no accent focus frame.
+    let pane_b_interior = inset_rect(panes.pane_b.frame, 2.0, 2.0, 2.0, 2.0);
+    assert!(
+        !has_accent_vertex_in(pane_b_interior),
+        "pane B (unfocused) must not carry an accent focus frame"
+    );
 }
 
 #[test]

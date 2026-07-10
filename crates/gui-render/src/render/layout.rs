@@ -96,6 +96,77 @@ pub struct ShellLayout {
     pub status_bar: RectPx,
 }
 
+/// One split pane inside the central viewport: its whole `frame`, the 31px
+/// `header` band at the top of the frame, and the inset `scene` canvas beneath
+/// the header. A (document, view) pair from the Workspace & Mode model renders
+/// into a `PaneRect` (docs/gui/DATUM_GUI_DESIGN_SPEC.md → Workspace & Mode
+/// Model). Derived purely from an already-solved (and already scaled) frame so
+/// hi-DPI `scale_by` needs no pane awareness.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct PaneRect {
+    pub frame: RectPx,
+    pub header: RectPx,
+    pub scene: RectPx,
+}
+
+impl PaneRect {
+    // Header band height and canvas insets match the pre-split single-pane
+    // `scene_viewport` (16px side/bottom gutter, 42px top clearing the 31px
+    // header). Fixed px in the same space the caller solved in — no scale math.
+    const HEADER_H: f32 = 31.0;
+
+    fn from_frame(frame: RectPx) -> Self {
+        let header = RectPx {
+            x: frame.x,
+            y: frame.y,
+            width: frame.width,
+            height: Self::HEADER_H.min(frame.height),
+        };
+        let scene = inset_rect(frame, 16.0, 42.0, 16.0, 16.0);
+        Self {
+            frame,
+            header,
+            scene,
+        }
+    }
+}
+
+/// The central viewport tiled into two side-by-side panes (Board pane A, left |
+/// Schematic pane B, right) with a hairline `divider` gutter between them. This
+/// is the Phase-2 split-view first slice: a real two-pane LAYOUT derived from
+/// the resolved `viewport` as a pure post-split, so neither the Taffy solver nor
+/// `scale_by` becomes pane-aware.
+/// Which pane currently owns focus. Focus is the single source of truth for both
+/// the per-pane header chrome (accent frame + focus dot + active tools) and — via
+/// context-follows-focus — which document the Inspector/Layers side panels read
+/// (docs/gui/DATUM_GUI_DESIGN_SPEC.md → Workspace & Mode Model). This slice pins
+/// focus to pane A (the Board document); focus-switch input and the toggle for
+/// the unfocused document are deferred to a later slice.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FocusedPane {
+    /// Pane A — the Board · Layout document.
+    Board,
+    /// Pane B — the Schematic · Sheet document (placeholder this slice).
+    Schematic,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ViewportPanes {
+    pub pane_a: PaneRect,
+    pub pane_b: PaneRect,
+    pub divider: RectPx,
+}
+
+impl ViewportPanes {
+    /// The focused pane this slice: pane A (Board). This is the seam
+    /// context-follows-focus reads — the side panels reflect the focused pane's
+    /// document. Making it a single accessor (not a scattered literal) keeps the
+    /// mechanism real while the focus-switch toggle is deferred.
+    pub fn focused_document(&self) -> FocusedPane {
+        FocusedPane::Board
+    }
+}
+
 impl ShellLayout {
     pub fn for_surface(
         physical_width: u32,
@@ -173,10 +244,51 @@ impl ShellLayout {
         }
     }
 
+    /// Split the resolved central `viewport` into two panes (Board A | Schematic
+    /// B) with a hairline divider gutter. A pure post-split derived AFTER the
+    /// taffy/fallback solve and AFTER `scale_by`, so the world scene, gpu
+    /// scissor, and hit-testing all follow pane A with no further edits. The
+    /// ~50/50 ratio is a fidelity detail flagged for owner-approval against
+    /// board-editor.html (deferred), not fixed here.
+    pub fn viewport_panes(&self) -> ViewportPanes {
+        let v = self.viewport;
+        const DIVIDER_W: f32 = 1.0;
+        // Guard against zero/negative pane widths at small widths: never let the
+        // divider overflow a narrow viewport.
+        let divider_w = DIVIDER_W.min(v.width);
+        let pane_a_w = ((v.width - divider_w) * 0.5).max(0.0);
+        let pane_a_frame = RectPx {
+            x: v.x,
+            y: v.y,
+            width: pane_a_w,
+            height: v.height,
+        };
+        let divider = RectPx {
+            x: v.x + pane_a_w,
+            y: v.y,
+            width: divider_w,
+            height: v.height,
+        };
+        let pane_b_x = v.x + pane_a_w + divider_w;
+        let pane_b_frame = RectPx {
+            x: pane_b_x,
+            y: v.y,
+            width: (v.x + v.width - pane_b_x).max(0.0),
+            height: v.height,
+        };
+        ViewportPanes {
+            pane_a: PaneRect::from_frame(pane_a_frame),
+            pane_b: PaneRect::from_frame(pane_b_frame),
+            divider,
+        }
+    }
+
     pub fn scene_viewport(&self) -> RectPx {
-        // Top inset clears the 31px pane header plus a small gutter; the canvas
-        // sits just beneath the header rather than floating far below it.
-        inset_rect(self.viewport, 16.0, 42.0, 16.0, 16.0)
+        // The world board scene renders into pane A's canvas (the focused
+        // left-half Board pane). Returning pane A's scene here means
+        // RetainedScene's reference_projection, gpu.rs scissor/uniform, and
+        // `world_point_at_screen` all follow pane A with no further change.
+        self.viewport_panes().pane_a.scene
     }
 
     fn scale_by(self, scale: f32) -> Self {

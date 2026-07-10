@@ -351,7 +351,7 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
 
-    render_board_pane_header(layout, panel_quads, text_runs);
+    render_viewport_panes(layout, panel_quads, text_runs);
     render_status_bar(state, layout, panel_quads, text_runs);
 }
 
@@ -450,21 +450,98 @@ fn render_status_bar(
     }
 }
 
-fn render_board_pane_header(
+/// Render the Phase-2 two-pane split: Board pane A (left, focused) | Schematic
+/// pane B (right, unfocused) with a hairline divider gutter. Both panes carry
+/// real chrome (header band, title, tool cluster, focus differentiation); pane B
+/// is a labeled placeholder — its canvas is the VIEWPORT_BG underlay with a
+/// centered "Schematic (coming)" caption, NO world geometry. The single retained
+/// world buffer still renders only into pane A's `scene_viewport` (see
+/// pane_b_decision: real schematic world geometry is deferred to slice 2's
+/// multi-scene GPU pass).
+fn render_viewport_panes(
     layout: &ShellLayout,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
-    let header = RectPx {
-        x: layout.viewport.x,
-        y: layout.viewport.y,
-        width: layout.viewport.width,
-        height: 31.0,
+    let panes = layout.viewport_panes();
+    // Focus is the single source of truth: it drives the per-pane header chrome
+    // here and (context-follows-focus) which document the side panels read.
+    let focused = panes.focused_document();
+    // Tool cluster of the layout pane (the active tool is the first entry). The
+    // unfocused pane renders the same cluster dimmed to read as available-but-
+    // -inactive rather than owned.
+    const PANE_TOOLS: [&str; 5] = ["S", "M", "R", "V", "Z"];
+    render_pane_header(
+        &panes.pane_a,
+        "Board \u{00B7} Layout",
+        &PANE_TOOLS,
+        focused == FocusedPane::Board,
+        panel_quads,
+        text_runs,
+    );
+    render_pane_header(
+        &panes.pane_b,
+        "Schematic \u{00B7} Sheet 1",
+        &PANE_TOOLS,
+        focused == FocusedPane::Schematic,
+        panel_quads,
+        text_runs,
+    );
+    // Divider gutter between the panes.
+    panel_quads.push(Quad::from_rect(panes.divider, PANEL_CARD_BORDER));
+    // Pane B canvas fill = VIEWPORT_BG. The board underlay pass is scissored to
+    // pane A's scene (the single retained world buffer), so pane B never receives
+    // that underlay; we paint its canvas explicitly as a panel quad here so it
+    // reads as a real (empty) canvas awaiting content, not bare chrome. No world
+    // geometry is emitted for pane B this slice (labeled placeholder only).
+    let pane_b_canvas = RectPx {
+        x: panes.pane_b.frame.x,
+        y: panes.pane_b.header.y + panes.pane_b.header.height,
+        width: panes.pane_b.frame.width,
+        height: (panes.pane_b.frame.height - panes.pane_b.header.height).max(0.0),
     };
-    // Focused pane: lightened header background (~#16181f) + a bottom hairline
-    // only (no boxed outline).
+    panel_quads.push(Quad::from_rect(pane_b_canvas, VIEWPORT_BG));
+    let caption = "Schematic (coming)";
+    let cap_size = design_tokens::typography::DATA_SIZE;
+    let cap_w =
+        estimated_text_run_width_px(caption, cap_size, TextFace::Mono) - 16.0;
+    let cap_x = panes.pane_b.scene.x + (panes.pane_b.scene.width - cap_w) * 0.5;
+    let cap_y = panes.pane_b.scene.y + (panes.pane_b.scene.height - cap_size) * 0.5;
+    draw_text(
+        caption,
+        cap_x,
+        cap_y,
+        cap_size,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
+}
+
+/// Render one pane's header chrome. Focused = today's lightened header (#16181f)
+/// + active tool cluster + accent focus dot + inset ACCENT pane frame. Unfocused
+/// = muted (recessed) header fill, dimmed tools, no accent frame, no focus dot —
+/// so a glance distinguishes the focused document that owns the Inspector/Layers
+/// (context-follows-focus) from the passive one.
+fn render_pane_header(
+    pane: &PaneRect,
+    title: &str,
+    tools: &[&str],
+    focused: bool,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let header = pane.header;
+    // Focused pane: lightened header background (~#16181f). Unfocused: a darker,
+    // recessed fill (BG_BASE) so it reads as the passive document.
     const PANE_HEADER_FOCUS: [f32; 3] = [0x16 as f32 / 255.0, 0x18 as f32 / 255.0, 0x1F as f32 / 255.0];
-    panel_quads.push(Quad::from_rect(header, PANE_HEADER_FOCUS));
+    let header_fill = if focused {
+        PANE_HEADER_FOCUS
+    } else {
+        design_tokens::chrome::BG_BASE
+    };
+    panel_quads.push(Quad::from_rect(header, header_fill));
+    // Bottom hairline only (no boxed outline), on both panes.
     panel_quads.push(Quad::from_rect(
         RectPx {
             x: header.x,
@@ -474,36 +551,42 @@ fn render_board_pane_header(
         },
         PANEL_CARD_BORDER,
     ));
-    // Small accent-tinted board glyph, then the pane title with a middot
-    // separator ("Board · Layout").
+    // Small pane glyph, then the pane title with a middot separator. The glyph
+    // reads accent when focused, muted-border when passive.
     let glyph = RectPx {
         x: header.x + design_tokens::spacing::SP_04,
         y: header.y + 11.0,
         width: 11.0,
         height: 9.0,
     };
-    panel_quads.push(Quad::from_rect(glyph, REVIEW_ROW_ACTIVE_BG));
-    push_rect_border(panel_quads, glyph, TEXT_ACCENT, 1.0);
-    let title = "Board \u{00B7} Layout";
+    panel_quads.push(Quad::from_rect(
+        glyph,
+        if focused {
+            REVIEW_ROW_ACTIVE_BG
+        } else {
+            design_tokens::chrome::SURFACE_02
+        },
+    ));
+    push_rect_border(
+        panel_quads,
+        glyph,
+        if focused { TEXT_ACCENT } else { PANEL_CARD_BORDER },
+        1.0,
+    );
     let title_x = glyph.x + glyph.width + design_tokens::spacing::SP_03;
     draw_text(
         title,
         title_x,
         header.y + design_tokens::spacing::SP_03,
         design_tokens::typography::DATA_SIZE,
-        TEXT_PRIMARY,
+        if focused { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Mono,
         text_runs,
     );
-    let tools = [
-        ("S", true),
-        ("M", false),
-        ("R", false),
-        ("V", false),
-        ("Z", false),
-    ];
     // Tool cluster after the measured pane-title width. Buttons render on the
-    // interactive SURFACE_02, active gets the accent tint + accent border.
+    // interactive SURFACE_02; the focused pane's active tool gets the accent
+    // tint + accent border. On the unfocused pane the whole cluster is dimmed
+    // (recessed fill, subtle border, muted label) to read as passive.
     // (Letter placeholders are an accepted Phase-1 interim: the chrome path
     // only emits axis-aligned quads, so the five vector tool icons and true
     // 5px corner rounding are a tracked fidelity gap.)
@@ -513,29 +596,28 @@ fn render_board_pane_header(
         TextFace::Mono,
     ) - 16.0;
     let mut x = title_x + title_w + design_tokens::spacing::SP_04;
-    for (label, active) in tools {
+    for (i, label) in tools.iter().enumerate() {
+        // The active tool is the first entry, and only on the focused pane.
+        let active = focused && i == 0;
         let rect = RectPx {
             x,
             y: header.y + 3.0,
             width: 25.0,
             height: 25.0,
         };
-        panel_quads.push(Quad::from_rect(
-            rect,
-            if active {
-                REVIEW_ROW_ACTIVE_BG
-            } else {
-                design_tokens::chrome::SURFACE_02
-            },
-        ));
+        let fill = if active {
+            REVIEW_ROW_ACTIVE_BG
+        } else if focused {
+            design_tokens::chrome::SURFACE_02
+        } else {
+            // Passive pane: recessed fill so tools read as dimmed, not clickable.
+            design_tokens::chrome::BG_BASE
+        };
+        panel_quads.push(Quad::from_rect(rect, fill));
         push_rect_border(
             panel_quads,
             rect,
-            if active {
-                TEXT_ACCENT
-            } else {
-                PANEL_CARD_BORDER
-            },
+            if active { TEXT_ACCENT } else { PANEL_CARD_BORDER },
             1.0,
         );
         draw_text(
@@ -553,25 +635,27 @@ fn render_board_pane_header(
         );
         x += 27.0;
     }
-    // Right-aligned accent focus dot (this pane owns the tools + inspector).
-    let dot = RectPx {
-        x: header.x + header.width - design_tokens::spacing::SP_04 - 7.0,
-        y: header.y + (header.height - 7.0) * 0.5,
-        width: 7.0,
-        height: 7.0,
-    };
-    let dot_points = ellipse_points(
-        (dot.x + dot.width * 0.5, dot.y + dot.height * 0.5),
-        dot.width,
-        dot.height,
-        0.0,
-        20,
-    );
-    push_convex_polygon_fill(panel_quads, &dot_points, TEXT_ACCENT);
-    // Focused-pane accent frame: a ~1.5px inset ACCENT border around the whole
-    // board pane (header + canvas).
-    let pane_frame = inset_rect(layout.viewport, 1.0, 1.0, 1.0, 1.0);
-    push_rect_border(panel_quads, pane_frame, TEXT_ACCENT, 1.5);
+    // Focused pane only: right-aligned accent focus dot (this pane owns the
+    // tools + Inspector) and a ~1.5px inset ACCENT frame around the whole pane.
+    // The unfocused pane emits neither, so focus is unambiguous.
+    if focused {
+        let dot = RectPx {
+            x: header.x + header.width - design_tokens::spacing::SP_04 - 7.0,
+            y: header.y + (header.height - 7.0) * 0.5,
+            width: 7.0,
+            height: 7.0,
+        };
+        let dot_points = ellipse_points(
+            (dot.x + dot.width * 0.5, dot.y + dot.height * 0.5),
+            dot.width,
+            dot.height,
+            0.0,
+            20,
+        );
+        push_convex_polygon_fill(panel_quads, &dot_points, TEXT_ACCENT);
+        let pane_frame = inset_rect(pane.frame, 1.0, 1.0, 1.0, 1.0);
+        push_rect_border(panel_quads, pane_frame, TEXT_ACCENT, 1.5);
+    }
 }
 
 fn render_scene(
