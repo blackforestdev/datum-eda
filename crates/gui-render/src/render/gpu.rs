@@ -92,6 +92,14 @@ pub struct Renderer {
     uniform_buffer: wgpu::Buffer,
     scene_bind_group: wgpu::BindGroup,
     scene_uniform_buffer: wgpu::Buffer,
+    // P2.2a: the static companion schematic world pass needs its OWN uniform +
+    // bind group (a distinct buffer from the board's), because both uniform writes
+    // land at submit time — sharing one buffer would make both passes read the
+    // last-written camera/viewport. The board buffers above are untouched.
+    schematic_scene_bind_group: wgpu::BindGroup,
+    schematic_scene_uniform_buffer: wgpu::Buffer,
+    schematic_world_vertex_buffer: Option<wgpu::Buffer>,
+    schematic_world_vertex_capacity: usize,
     font_system: FontSystem,
     swash_cache: SwashCache,
     viewport: Viewport,
@@ -398,6 +406,27 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 resource: scene_uniform_buffer.as_entire_binding(),
             }],
         });
+        // P2.2a: independent uniform + bind group for the companion schematic pass
+        // (same layout/pipeline as the board world pass, distinct backing buffer).
+        let schematic_scene_uniform_buffer =
+            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("datum-gui-render-schematic-scene-uniform-buffer"),
+                contents: bytemuck::bytes_of(&SceneUniform {
+                    resolution: [1.0, 1.0, 0.0, 0.0],
+                    viewport_origin: [0.0, 0.0, 0.0, 0.0],
+                    viewport_size: [1.0, 1.0, 0.0, 0.0],
+                    camera_center_scale: [0.0, 0.0, 1.0, 0.0],
+                }),
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            });
+        let schematic_scene_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("datum-gui-render-schematic-scene-bg"),
+            layout: &scene_bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: schematic_scene_uniform_buffer.as_entire_binding(),
+            }],
+        });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
             bind_group_layouts: &[&uniform_bind_group_layout],
@@ -500,6 +529,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             uniform_buffer,
             scene_bind_group,
             scene_uniform_buffer,
+            schematic_scene_bind_group,
+            schematic_scene_uniform_buffer,
+            schematic_world_vertex_buffer: None,
+            schematic_world_vertex_capacity: 0,
             font_system,
             swash_cache,
             viewport,
@@ -563,6 +596,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         target: &wgpu::TextureView,
         prepared: &PreparedScene,
         retained: &RetainedScene,
+        schematic_retained: Option<&RetainedScene>,
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
@@ -575,6 +609,17 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let visible_world_ranges = prepared.visible_world_ranges();
         let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
         let projection = Projection::new(board_field, &prepared.scene_bounds, prepared.camera);
+        // P2.2a: resolve the additive companion schematic pass. Active only when
+        // the layout carries a Schematic pane (`schematic_scene_viewport`) AND a
+        // projected schematic RetainedScene was threaded in with geometry to draw.
+        let schematic_pass = match (prepared.schematic_scene_viewport, schematic_retained) {
+            (Some(scene_viewport), Some(sr)) if !sr.world_vertices().is_empty() => {
+                let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+                let proj = Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
+                Some((scene_viewport, field, proj, sr))
+            }
+            _ => None,
+        };
         queue.write_buffer(
             &self.uniform_buffer,
             0,
@@ -598,6 +643,24 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 ],
             }),
         );
+        // Companion schematic uniform (distinct backing buffer — see field docs).
+        if let Some((_, field, proj, _)) = schematic_pass.as_ref() {
+            queue.write_buffer(
+                &self.schematic_scene_uniform_buffer,
+                0,
+                bytemuck::bytes_of(&SceneUniform {
+                    resolution: [width as f32, height as f32, 0.0, 0.0],
+                    viewport_origin: [field.x, field.y, 0.0, 0.0],
+                    viewport_size: [field.width, field.height, 0.0, 0.0],
+                    camera_center_scale: [
+                        prepared.schematic_camera.center_x_nm,
+                        prepared.schematic_camera.center_y_nm,
+                        proj.scale,
+                        0.0,
+                    ],
+                }),
+            );
+        }
         let upload_started = std::time::Instant::now();
         Self::upload_vertices(
             device,
@@ -632,6 +695,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             menu_overlay_vertices,
         );
         self.sync_world_vertices(device, queue, world_vertices);
+        if let Some((_, _, _, sr)) = schematic_pass.as_ref() {
+            Self::upload_vertices(
+                device,
+                queue,
+                &mut self.schematic_world_vertex_buffer,
+                &mut self.schematic_world_vertex_capacity,
+                "datum-gui-render-schematic-world-vertex-buffer",
+                sr.world_vertices(),
+            );
+        }
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
@@ -709,6 +782,33 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 }
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
+            // P2.2a: additive companion schematic world pass. Reuses the same world
+            // pipeline, but with the schematic's own bind group (schematic camera +
+            // viewport uniform) and vertex buffer, scissored to the schematic pane's
+            // scene rect so it can never touch pane A. The board pass above is
+            // completely unchanged. Restores the screen pipeline afterward for the
+            // overlay/menu passes.
+            if let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
+                let ranges = sr.all_world_ranges();
+                if !ranges.is_empty() {
+                    if let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() {
+                        pass.set_pipeline(&self.world_pipeline);
+                        pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
+                        pass.set_scissor_rect(
+                            scene_viewport.x.max(0.0).floor() as u32,
+                            scene_viewport.y.max(0.0).floor() as u32,
+                            scene_viewport.width.max(1.0).ceil() as u32,
+                            scene_viewport.height.max(1.0).ceil() as u32,
+                        );
+                        pass.set_vertex_buffer(0, buffer.slice(..));
+                        for range in ranges {
+                            pass.draw(range, 0..1);
+                        }
+                        pass.set_pipeline(&self.pipeline);
+                        pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+                    }
+                }
             }
             if !viewport_overlay_vertices.is_empty() {
                 pass.set_scissor_rect(

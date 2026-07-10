@@ -502,6 +502,25 @@ impl ShellLayout {
             .unwrap_or_else(|| panes.focused_scene())
     }
 
+    /// The Schematic leaf's scene canvas rect, if a Schematic pane exists — the
+    /// static SECOND world scene's viewport for the P2.2a multi-scene GPU pass.
+    /// Unlike `scene_viewport` (which follows the single live BOARD leaf and is
+    /// focus-independent), this is simply the first Schematic leaf in walk order:
+    /// the companion schematic scene projects into it additively, alongside the
+    /// board. `None` when the layout has no Schematic pane (e.g. an all-Board
+    /// split), in which case the second GPU pass is gated off and the pane keeps
+    /// its "Schematic (coming)" placeholder.
+    pub fn schematic_scene_viewport(
+        &self,
+        layout: &datum_gui_protocol::WorkspaceLayout,
+    ) -> Option<RectPx> {
+        self.viewport_panes(layout)
+            .panes
+            .iter()
+            .find(|leaf| leaf.content == datum_gui_protocol::PaneContent::Schematic)
+            .map(|leaf| leaf.rect.scene)
+    }
+
     fn scale_by(self, scale: f32) -> Self {
         Self {
             top_menu_bar: self.top_menu_bar.scale_by(scale),

@@ -83,6 +83,17 @@ pub struct PreparedScene {
     viewport_overlay_vertices: Vec<Vertex>,
     visible_world_ranges: Vec<Range<u32>>,
     text_runs: Vec<TextRun>,
+    // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
+    // `Some` only when the layout has a Schematic pane AND the workspace carries a
+    // projected `schematic_scene`; gates the additive second world GPU pass. The
+    // camera is a fixed fit-to-schematic-bounds (no interactive pan/zoom on pane B
+    // this slice). Ranges for that pass are derived in gpu.rs from the threaded
+    // schematic RetainedScene (render() has no `state`), so they are not stored
+    // here — the schematic renders all of its batches (its layers are always
+    // visible, not board-layer-toggle governed).
+    schematic_scene_viewport: Option<RectPx>,
+    schematic_bounds: datum_gui_protocol::SceneBounds,
+    schematic_camera: CameraState,
 }
 
 #[derive(Debug, Clone, PartialEq)]

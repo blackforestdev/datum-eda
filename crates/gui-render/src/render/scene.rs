@@ -104,6 +104,30 @@ impl PreparedScene {
         } else {
             Vec::new()
         };
+        // P2.2a: describe the static companion schematic pass. It is active only
+        // when the layout has a Schematic pane AND the workspace carries a projected
+        // schematic scene. Its camera is a fixed fit-to-schematic-bounds; there is
+        // no interactive pan/zoom on pane B this slice.
+        let (schematic_scene_viewport, schematic_bounds, schematic_camera) =
+            match state.schematic_scene.as_ref() {
+                Some(schematic_scene) => (
+                    layout.schematic_scene_viewport(&state.ui.layout),
+                    schematic_scene.bounds.clone(),
+                    CameraState::fit_to_bounds(&schematic_scene.bounds),
+                ),
+                None => {
+                    // Inert placeholder: with no schematic viewport the second pass
+                    // is gated off in gpu.rs, so these values are never consumed.
+                    let inert = datum_gui_protocol::SceneBounds {
+                        min_x: 0,
+                        min_y: 0,
+                        max_x: 1,
+                        max_y: 1,
+                    };
+                    let camera = CameraState::fit_to_bounds(&inert);
+                    (None, inert, camera)
+                }
+            };
 
         Self {
             layout,
@@ -118,6 +142,9 @@ impl PreparedScene {
             viewport_overlay_vertices,
             visible_world_ranges,
             text_runs,
+            schematic_scene_viewport,
+            schematic_bounds,
+            schematic_camera,
         }
     }
 
@@ -275,8 +302,86 @@ impl RetainedScene {
         }
     }
 
+    /// Build the STATIC companion schematic world buffer for the P2.2a
+    /// multi-scene GPU pass. This mirrors `from_workspace_for_surface` exactly —
+    /// the world geometry pipeline is coordinate-agnostic, so it is reused
+    /// verbatim — but projects `state.schematic_scene` into the SCHEMATIC pane's
+    /// rect with its own fit-to-schematic-bounds reference projection. Returns
+    /// `None` (second pass gated off) when the workspace has no companion
+    /// schematic scene or the layout has no Schematic pane. Symbols currently
+    /// project as bare boxes (the projector discards labels/pins) — expected this
+    /// slice; projection fidelity is P2.2b. No hit regions are emitted: pane B is
+    /// non-interactive this slice.
+    ///
+    /// This is a strictly ADDITIVE resolve; it deliberately does NOT bump
+    /// `RETAINED_RESOLVE_COUNT` (that counter gates BOARD pane-op latency and must
+    /// stay board-scoped).
+    pub fn from_workspace_schematic_for_surface(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> Option<Self> {
+        let schematic_scene = state.schematic_scene.as_ref()?;
+        let layout =
+            ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
+        let scene_viewport = layout.schematic_scene_viewport(&state.ui.layout)?;
+        let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+        let reference_projection = Projection::new(
+            board_field,
+            &schematic_scene.bounds,
+            CameraState::fit_to_bounds(&schematic_scene.bounds),
+        );
+        let mut world_quads = Vec::new();
+        let mut world_batches = Vec::new();
+        push_retained_scene_geometry(
+            &mut world_quads,
+            schematic_scene,
+            &reference_projection,
+            state,
+        );
+        if !world_quads.is_empty() {
+            world_batches.push(RetainedWorldBatch {
+                layer_id: None,
+                start: 0,
+                len: (world_quads.len() * 6) as u32,
+            });
+        }
+        push_retained_board_text_geometry_batches(
+            &mut world_quads,
+            &mut world_batches,
+            schematic_scene,
+            &reference_projection,
+            state,
+        );
+        push_retained_board_graphic_batches(
+            &mut world_quads,
+            &mut world_batches,
+            schematic_scene,
+            &reference_projection,
+            state,
+        );
+        let world_vertices = quads_to_vertices(&world_quads);
+        Some(Self {
+            world_vertices,
+            world_batches,
+            world_hit_regions: Vec::new(),
+        })
+    }
+
     pub fn world_vertices(&self) -> &[Vertex] {
         &self.world_vertices
+    }
+
+    /// Every batch's vertex range, unfiltered — the draw list for the static
+    /// companion schematic pass (P2.2a). The schematic's layers are not the
+    /// board's layer-toggle set, so all of its geometry renders; `state`-filtered
+    /// `visible_world_ranges` is the BOARD path.
+    pub fn all_world_ranges(&self) -> Vec<Range<u32>> {
+        self.world_batches
+            .iter()
+            .map(|batch| batch.start..batch.start + batch.len)
+            .collect()
     }
 
     fn visible_world_ranges(&self, state: &ReviewWorkspaceState) -> Vec<Range<u32>> {
@@ -429,7 +534,13 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
 
-    render_viewport_panes(layout, &state.ui.layout, panel_quads, text_runs);
+    render_viewport_panes(
+        layout,
+        &state.ui.layout,
+        state.schematic_scene.is_some(),
+        panel_quads,
+        text_runs,
+    );
     render_status_bar(state, layout, panel_quads, text_runs);
 }
 
@@ -550,6 +661,7 @@ fn render_status_bar(
 fn render_viewport_panes(
     layout: &ShellLayout,
     workspace: &datum_gui_protocol::WorkspaceLayout,
+    has_schematic_scene: bool,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
@@ -557,6 +669,11 @@ fn render_viewport_panes(
     // The leaf that hosts the live board scene (focus-independent). Its canvas gets
     // the substrate + world PCB; any other board leaf is an inactive placeholder.
     let scene_leaf_id = panes.scene_leaf_id();
+    // P2.2a: the FIRST Schematic leaf (walk order) hosts the live companion
+    // schematic scene — its viewport matches `schematic_scene_viewport`'s
+    // first-match `.find`. Claim it once so any additional Schematic leaf keeps
+    // the placeholder under the two-scene (board+schematic) bound of this slice.
+    let mut schematic_live_claimed = false;
     // Tool cluster of the layout pane (the active tool is the first entry). A
     // non-focused pane renders the same cluster dimmed to read as available-but-
     // -inactive rather than owned.
@@ -603,6 +720,29 @@ fn render_viewport_panes(
             text_runs,
         );
         match leaf.content {
+            // Live companion schematic (P2.2a): the first Schematic leaf, when the
+            // workspace carries a projected schematic scene, gets its pane canvas
+            // painted with the substrate underlay (mirroring the board scene leaf's
+            // canvas fill) and NO placeholder caption — the world geometry is drawn
+            // by the additive second GPU pass from the schematic RetainedScene. Any
+            // further Schematic leaf, or an all-schematic workspace with no scene,
+            // falls through to the placeholder below.
+            datum_gui_protocol::PaneContent::Schematic
+                if has_schematic_scene && !schematic_live_claimed =>
+            {
+                schematic_live_claimed = true;
+                let pane = &leaf.rect;
+                let canvas = RectPx {
+                    x: pane.frame.x,
+                    y: pane.header.y + pane.header.height,
+                    width: pane.frame.width,
+                    height: (pane.frame.height - pane.header.height).max(0.0),
+                };
+                panel_quads.push(Quad::from_rect(
+                    canvas,
+                    board_surface_color(BoardSurfaceRole::InnerField),
+                ));
+            }
             datum_gui_protocol::PaneContent::Schematic => {
                 render_pane_placeholder(&leaf.rect, "Schematic (coming)", panel_quads, text_runs);
             }

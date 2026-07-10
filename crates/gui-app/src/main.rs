@@ -1073,6 +1073,13 @@ struct Runtime {
     retained_scene: Option<RetainedScene>,
     retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     prepared_scene: Option<PreparedScene>,
+    // P2.2a: the static companion schematic world buffer, rendered as the additive
+    // second GPU pass into the Schematic pane. Rebuilt lazily whenever it is None;
+    // cleared in lockstep with `prepared_scene` on every scene/frame invalidation,
+    // so it always reflects the current workspace's `schematic_scene`. `None` when
+    // the workspace carries no companion schematic or the layout has no Schematic
+    // pane (second pass simply stays off).
+    schematic_retained_scene: Option<RetainedScene>,
     scene_dirty: bool,
     terminal_sessions: TerminalSessionRegistry,
     terminal_disconnected_reported: bool,
@@ -1209,6 +1216,7 @@ impl Runtime {
             retained_scene: None,
             retained_scene_cache: Vec::new(),
             prepared_scene: None,
+            schematic_retained_scene: None,
             scene_dirty: true,
             terminal_sessions,
             terminal_disconnected_reported: false,
@@ -1349,6 +1357,17 @@ impl Runtime {
             ));
         }
         let scene_elapsed = scene_started.elapsed();
+        // P2.2a: resolve the companion schematic world buffer lazily (cleared on
+        // every scene/frame invalidation, so this stays fresh). `None` when the
+        // workspace has no companion schematic / Schematic pane — second pass off.
+        if self.schematic_retained_scene.is_none() {
+            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.scale_factor,
+            );
+        }
         let retained = self
             .retained_scene
             .as_ref()
@@ -1357,6 +1376,7 @@ impl Runtime {
             .prepared_scene
             .as_ref()
             .context("prepared scene should exist before render")?;
+        let schematic_retained = self.schematic_retained_scene.as_ref();
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("renderer render begin");
         self.renderer.render(
@@ -1365,6 +1385,7 @@ impl Runtime {
             &view,
             prepared,
             retained,
+            schematic_retained,
             self.config.width,
             self.config.height,
         )?;
@@ -1492,6 +1513,14 @@ impl Runtime {
                 retained,
             ));
         }
+        if self.schematic_retained_scene.is_none() {
+            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.scale_factor,
+            );
+        }
         let retained = self
             .retained_scene
             .as_ref()
@@ -1500,12 +1529,14 @@ impl Runtime {
             .prepared_scene
             .as_ref()
             .context("prepared scene should exist before visual screenshot")?;
+        let schematic_retained = self.schematic_retained_scene.as_ref();
         self.renderer.render(
             &self.device,
             &self.queue,
             &target_view,
             prepared,
             retained,
+            schematic_retained,
             self.config.width,
             self.config.height,
         )?;
@@ -1657,6 +1688,7 @@ impl Runtime {
             self.cache_retained_scene(previous_key, retained);
         }
         self.prepared_scene = None;
+        self.schematic_retained_scene = None;
         self.scene_dirty = true;
         self.restore_cached_retained_scene();
     }
@@ -1665,11 +1697,13 @@ impl Runtime {
         self.retained_scene = None;
         self.retained_scene_cache.clear();
         self.prepared_scene = None;
+        self.schematic_retained_scene = None;
         self.scene_dirty = true;
     }
 
     fn invalidate_frame(&mut self) {
         self.prepared_scene = None;
+        self.schematic_retained_scene = None;
         self.scene_dirty = true;
     }
 
