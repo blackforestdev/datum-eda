@@ -39,10 +39,12 @@ GATES = [
     ),
     (
         # The real, FAILING visual-parity gate: capture the running app at the
-        # canonical command + curated demo scene + fixed window and diff it
-        # against the owner-approved shell golden. This replaces the former
+        # canonical command (datum-test board + --select R1, fixed 1680x1050) and
+        # diff it against the committed shell golden. This is a single-pane INTERIM
+        # target — NOT owner-approved against board-editor.html; the full split
+        # Board+Schematic composition is a Phase-2 target. It replaces the former
         # HUMAN "paperwork" disposition that reported but never failed.
-        "shell visual parity (owner-approved golden)",
+        "shell visual parity (single-pane interim golden)",
         [sys.executable, "scripts/check_gui_visual_parity.py"],
     ),
 ]
@@ -52,7 +54,7 @@ GATES = [
 # printed "reports HUMAN rows but does not fail on owner-eye disposition") was the
 # defect in prose form and has been DELETED. The golden-exists and *.PENDING-shadow
 # checks — the anti-paperwork teeth — are delegated entirely to the shell
-# visual-parity gate above (it FAILS if the owner-approved golden is absent or a
+# visual-parity gate above (it FAILS if the interim shell golden is absent or a
 # PENDING placeholder shadows it), and because GATES run under check=True, that
 # failure makes this aggregate exit non-zero. The one remaining human step is the
 # OUT-OF-BAND one-time approval of the golden itself (--bless).

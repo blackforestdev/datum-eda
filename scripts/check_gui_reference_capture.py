@@ -1,33 +1,30 @@
 #!/usr/bin/env python3
-"""Honest reference-capture gate for the board-editor human-review loop.
+"""Reference-capture gate for the board-editor human-review loop.
 
-This gate guards ONE fact and states it plainly: the owner-approved reference
-image of the controlling prototype `docs/gui/prototypes/board-editor.html` has
-NOT been captured yet. It FAILS while either is true:
+Guards ONE fact: the owner's design reference — a browser capture of the
+controlling prototype ``docs/gui/prototypes/board-editor.html`` — is committed at
+``docs/gui/reference/board-editor.png``, so the human-review step has a real
+design target to compare the running app against. The gate FAILS if:
 
-  1. `docs/gui/reference/board-editor.png` is missing, OR
-  2. a `docs/gui/reference/board-editor.png.PENDING` placeholder exists.
+  1. ``docs/gui/reference/board-editor.png`` is missing,
+  2. a ``docs/gui/reference/board-editor.png.PENDING`` placeholder shadows it, or
+  3. the file is not a valid, non-trivial PNG.
 
-**This gate is EXPECTED to be RED right now, and that red is the honest signal —
-not a bug.** The owner has not yet captured the reference image (the automated
-capture SIGTRAPs in the sandbox that stood up the loop; see
-`docs/gui/reference/README.md` §5). Until a real `board-editor.png` is committed
-and the `.PENDING` placeholder is deleted in the same change, the board-editor
-human-review loop has no reference to review against, and this gate says so out
-loud instead of letting a `.PENDING` note masquerade as a captured reference.
+This is now GREEN — the owner captured the reference. It was intentionally RED
+until then (a ``.PENDING`` note is not a captured reference). It stays a live gate
+so the reference can never silently disappear or be replaced by a placeholder.
 
-Why a gate at all: the shell visual-parity gate
-(`scripts/check_gui_visual_parity.py`) can be GREEN today, but it protects only a
-SINGLE-PANE interim shell golden — NOT the full board-editor.html composition
-(split Board+Schematic view with a populated inspector), which cannot be captured
-or reviewed until Phase-2 builds the split view. Without this gate, the absence of
-the real reference image is invisible and the loop reads as "done" when it is not.
-
-Resolving the red (owner action, on a machine with a working headless browser):
-run the §2 capture command in `docs/gui/reference/README.md`, verify the image,
-`git add docs/gui/reference/board-editor.png`, and delete
-`docs/gui/reference/board-editor.png.PENDING` in the same commit. This gate then
-goes GREEN on its own — do NOT satisfy it with a fabricated or blank image.
+Two different images — do NOT conflate them:
+  - ``board-editor.png`` (this reference) is a BROWSER screenshot of
+    ``board-editor.html`` — the human design target, reviewed BY EYE against the
+    app. It is captured at the owner's browser viewport (its own dimensions, e.g.
+    ~1920x953) and is NOT pixel-diffed against the app (cross-engine wgpu-vs-HTML
+    never matches), so it need not match the app golden's 1680x1050.
+  - The app golden
+    (``crates/gui-render/testdata/golden/shell/datum-shell.golden.png``, captured
+    at 1680x1050 by ``check_gui_visual_parity.py``) is a different artifact: the
+    machine no-regression target for the current SINGLE-PANE INTERIM shell. The
+    full split Board+Schematic composition is a Phase-2 target.
 
 Usage::
 
@@ -43,6 +40,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 REFERENCE = ROOT / "docs/gui/reference/board-editor.png"
 PENDING = ROOT / "docs/gui/reference/board-editor.png.PENDING"
+MIN_DIM = 400  # a real prototype screenshot, not a blank/stub
 
 
 def main() -> int:
@@ -54,37 +52,45 @@ def main() -> int:
             "it is a note, not a captured reference."
         )
     if not REFERENCE.is_file():
-        problems.append(
-            f"the reference image is absent ({REFERENCE.relative_to(ROOT)})."
-        )
+        problems.append(f"the reference image is absent ({REFERENCE.relative_to(ROOT)}).")
+
+    size = None
+    if REFERENCE.is_file():
+        try:
+            from PIL import Image
+
+            with Image.open(REFERENCE) as im:
+                im.verify()
+            with Image.open(REFERENCE) as im:
+                size = im.size
+            if min(size) < MIN_DIM:
+                problems.append(
+                    f"the reference image is implausibly small ({size[0]}x{size[1]}); "
+                    "expected a real board-editor.html screenshot."
+                )
+        except Exception as exc:  # noqa: BLE001 - report any decode failure honestly
+            problems.append(f"the reference image is not a valid PNG: {exc}")
 
     if problems:
         print(
-            "GUI-REFERENCE-CAPTURE RED (expected, honest): the board-editor "
-            "reference image has not been captured yet."
+            "GUI-REFERENCE-CAPTURE FAILED: the board-editor design reference is "
+            "missing, shadowed, or invalid."
         )
         for problem in problems:
             print(f"  - {problem}")
         print(
-            "  This red is the honest signal that the board-editor human-review\n"
-            "  loop has no owner-approved reference of\n"
-            "  docs/gui/prototypes/board-editor.html to review against. It is NOT a\n"
-            "  bug to be silenced with a fake image. To resolve (owner action):\n"
-            "    1. run the §2 capture command in docs/gui/reference/README.md\n"
-            "       on a machine with a working headless browser,\n"
-            "    2. verify board-editor.png shows the full board-editor shell,\n"
-            "    3. git add docs/gui/reference/board-editor.png and delete\n"
-            "       docs/gui/reference/board-editor.png.PENDING in the same commit,\n"
-            "    4. update docs/gui/reference/README.md §5 to CAPTURED.\n"
-            "  NOTE: the full board-editor.html composition (split Board+Schematic\n"
-            "  view, populated inspector) is a PHASE-2 target; the shell visual-\n"
-            "  parity gate today protects only a single-pane interim golden."
+            "  The board-editor human-review loop needs a real browser screenshot\n"
+            "  of docs/gui/prototypes/board-editor.html at\n"
+            "  docs/gui/reference/board-editor.png (no *.PENDING shadow). Do NOT\n"
+            "  satisfy it with a fabricated or blank image, and do NOT substitute a\n"
+            "  screenshot of the Datum app (that is the app golden, a DIFFERENT\n"
+            "  artifact). See docs/gui/reference/README.md."
         )
         return 1
 
     print(
-        "GUI-REFERENCE-CAPTURE OK: docs/gui/reference/board-editor.png is "
-        "committed and no *.PENDING placeholder shadows it."
+        f"GUI-REFERENCE-CAPTURE OK: board-editor.png committed "
+        f"({size[0]}x{size[1]} browser capture of the prototype), no *.PENDING shadow."
     )
     return 0
 

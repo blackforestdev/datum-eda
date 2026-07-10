@@ -53,7 +53,7 @@ There is no "reference-vs-HTML gate" and this doc does not propose one.
 | File | What it is |
 |---|---|
 | `README.md` | This loop. |
-| `board-editor.png` | The committed reference image — a render of `docs/gui/prototypes/board-editor.html` at the capture spec in §2. **This is a mockup you look at, not a value source you diff against.** |
+| `board-editor.png` | The committed reference image — a browser screenshot of `docs/gui/prototypes/board-editor.html` (actual capture recorded in §2/§5). **This is a mockup you look at, not a value source you diff against.** |
 | `board-editor.png.PENDING` | Placeholder note present **only while the real image has not been captured** (see §5). Delete it in the same commit that lands a real `board-editor.png`. |
 
 When a real `board-editor.png` exists, `board-editor.png.PENDING` must not.
@@ -96,6 +96,13 @@ wkhtmltoimage --width 1680 --quality 100 \
 
 If you change any capture parameter, record it here in the same commit — the
 reference image is only meaningful next to the parameters that produced it.
+
+**Currently committed:** `board-editor.png` is a hand-captured browser screenshot
+at **1920 × 953** (the owner's browser viewport) — not the headless
+`1680 × 1050 @2×` recipe above. That is acceptable: the reference is an eyeball
+design target, **never pixel-diffed against the app** (cross-engine wgpu-vs-HTML
+never matches — see §5), so its exact size need not equal the app golden's. Use
+the command above only when you want a *reproducible* HiDPI re-capture.
 
 ## 3. The region-by-region review protocol
 
@@ -197,24 +204,27 @@ dumping ground for un-built gates.
 > board-editor.html composition** — the SPLIT Board+Schematic view with a
 > populated inspector and real schematic content — cannot be captured until the
 > later Phase-2 slices render the schematic pane; its owner-approved reference is
-> gated by **G10** (`scripts/check_gui_reference_capture.py`), which is **EXPECTED
-> RED** until this directory's `board-editor.png` is captured. This directory's
-> job is that one-time cross-engine aesthetic judgment and the region-by-region
-> eyeball review — not machine enforcement of the first-slice golden.
+> gated by **G10** (`scripts/check_gui_reference_capture.py`), which is now
+> **GREEN** — this directory's `board-editor.png` is captured. G10 stays live so
+> the reference can never silently vanish or be shadowed by a `*.PENDING` note.
+> This directory's job is that one-time cross-engine aesthetic judgment and the
+> region-by-region eyeball review — not machine enforcement of the first-slice
+> golden.
 
-**Current status: DEFERRED TO MANUAL CAPTURE — no real reference image committed
-yet, and the full split composition it must show is a Phase-2 build.**
+**Current status: CAPTURED (2026-07-09).** `board-editor.png` is committed — a
+**browser screenshot of `docs/gui/prototypes/board-editor.html`** taken by the
+owner at **1920 × 953** (his browser viewport). This differs from the §2 canonical
+headless recipe (`1680 × 1050 @2×`), and that is fine: the committed reference is a
+**human design target reviewed by eye**, never pixel-diffed against the app
+(cross-engine wgpu-vs-HTML never matches), so its exact dimensions need not equal
+the app golden's. G10 is GREEN; the `*.PENDING` placeholder is deleted.
 
-The automated capture was attempted in the environment that stood up this loop.
-Chromium 150 is installed with all shared libraries present, but it **SIGTRAPs and
-core-dumps immediately** — even on a trivial `data:text/html` page, even with
-`--no-sandbox --disable-gpu --single-process` — because the sandbox this ran in
-blocks the namespace/seccomp calls Chromium needs at startup. This is an
-environment blocker, not a missing dependency and not a problem with the prototype.
+The app does **not yet match this reference**: the full split Board+Schematic
+composition with a populated inspector and real schematic content is a **Phase-2
+build**. That gap is honestly scoped as future work, not marked complete.
 
-Rather than commit a fabricated or blank image, `board-editor.png.PENDING` is
-committed as a placeholder. **To resolve:** on a workstation with a working
-headless browser, run the §2 command, verify `board-editor.png` renders the full
-board-editor shell, then commit it and delete `board-editor.png.PENDING` in the
-same change. Update this section to `CAPTURED` with the date and the browser
-build used.
+_History:_ the automated headless capture SIGTRAP'd in the sandbox that stood up
+this loop (Chromium could not complete its namespace/seccomp startup there), so a
+`board-editor.png.PENDING` placeholder held the slot rather than a fabricated
+image. The owner then captured the reference directly from a browser and deleted
+the placeholder — the state this section now records.
