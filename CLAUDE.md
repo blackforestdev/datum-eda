@@ -195,6 +195,15 @@ domain builds toward on the landed substrate.
   authoring) is a real, named phase of the work, not an implied "M8 later".
 - Prefer work that strengthens native EDA primitives and manual workflows.
 - Do not expand import fidelity unless it supports a clear product need.
+- **Screenshot to see your work — don't design blind.** To capture an HTML
+  prototype or artifact (e.g. `docs/gui/prototypes/*.html`) to PNG, run
+  `scripts/shot_html.sh <file> [out.png] [WxH]` (headless Firefox, throwaway
+  isolated profile). Chromium SIGTRAPs in the sandbox — its multi-process sandbox
+  needs namespace/seccomp syscalls the outer sandbox blocks, even with
+  `--no-sandbox` — but Firefox/Gecko starts fine. The wgpu app screenshots via its
+  own `--visual-test --screenshot-out --exit-after-screenshot` flags (see
+  `scripts/check_gui_visual_parity.py`). Always capture and eyeball the render
+  before showing the owner; you can Read the PNG to inspect it.
 
 ## Architecture: Engine-First
 
