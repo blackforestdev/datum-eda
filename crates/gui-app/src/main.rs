@@ -34,6 +34,7 @@ mod app_shell;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
+mod pane_cameras;
 mod production_status_refresh;
 mod retained_scene_cache_key;
 mod runtime_terminal_context;
@@ -58,6 +59,7 @@ use board_text_terminal_commands::{
     board_text_quick_edit_terminal_command,
 };
 pub(crate) use gui_runtime_support::*;
+use pane_cameras::PaneCameras;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
 use std::fs;
@@ -972,7 +974,14 @@ struct Runtime {
     scale_factor: f32,
     renderer: Renderer,
     session: LiveDesignSession,
+    /// The ACTIVE camera: the focused leaf's view. Pan/zoom/fit read and write it
+    /// and the renderer projects the single live scene through it. The other
+    /// leaves' cameras rest warm in `pane_cameras`; on a focus change this is
+    /// stashed there and replaced with the newly-focused leaf's warm camera
+    /// (P2.1b — no refit lag on focus-switch).
     camera: CameraState,
+    /// Warm per-leaf view cameras keyed by `PaneId` (decision 021, P2.1b).
+    pane_cameras: PaneCameras,
     last_cursor_pos: Option<(f32, f32)>,
     middle_drag_active: bool,
     right_drag_active: bool,
@@ -1020,6 +1029,9 @@ impl Runtime {
             terminal_sessions,
             workspace_include_review,
         } = launch_state;
+        // The initially-focused leaf seeds the warm per-leaf camera store; its
+        // camera is the fit camera the launch path already computed.
+        let initial_focus = state.ui.layout.focused;
         let wgpu_started = std::time::Instant::now();
         append_gui_diagnostic_line("wgpu instance create begin");
         let instance = wgpu::Instance::default();
@@ -1104,6 +1116,7 @@ impl Runtime {
             renderer,
             session: LiveDesignSession::new(state),
             camera,
+            pane_cameras: PaneCameras::new(initial_focus, camera),
             last_cursor_pos: None,
             middle_drag_active: false,
             right_drag_active: false,
@@ -2961,6 +2974,60 @@ impl Runtime {
                     self.set_active_dock(DockTab::Terminal)
                 }
             }
+            // Workspace pane ops (decision 021). These reach the same warm pane-op
+            // path the FEEL breakpoint proves is zero-re-resolve. The menu manifest
+            // does not emit these ids yet (that is the later bindings pass); wiring
+            // them here keeps the ops reachable through the one action dispatch.
+            "view.split_vertical" => {
+                self.pane_split_focused(datum_gui_protocol::SplitOrientation::Vertical);
+                self.log_review_event("menu view.split_vertical".to_string());
+                true
+            }
+            "view.split_horizontal" => {
+                self.pane_split_focused(datum_gui_protocol::SplitOrientation::Horizontal);
+                self.log_review_event("menu view.split_horizontal".to_string());
+                true
+            }
+            "view.close_pane" => {
+                self.pane_close_focused();
+                self.log_review_event("menu view.close_pane".to_string());
+                true
+            }
+            "view.focus_next" => {
+                self.pane_focus_next();
+                self.log_review_event("menu view.focus_next".to_string());
+                true
+            }
+            "view.focus_prev" => {
+                self.pane_focus_prev();
+                self.log_review_event("menu view.focus_prev".to_string());
+                true
+            }
+            "view.maximize_pane" => {
+                self.pane_toggle_zoom();
+                self.log_review_event("menu view.maximize_pane".to_string());
+                true
+            }
+            "view.preset_single" => {
+                self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::Single);
+                self.log_review_event("menu view.preset_single".to_string());
+                true
+            }
+            "view.preset_board_schematic" => {
+                self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::BoardSchematic);
+                self.log_review_event("menu view.preset_board_schematic".to_string());
+                true
+            }
+            "view.fill_board" => {
+                self.pane_set_focused_content(datum_gui_protocol::PaneContent::Board);
+                self.log_review_event("menu view.fill_board".to_string());
+                true
+            }
+            "view.fill_schematic" => {
+                self.pane_set_focused_content(datum_gui_protocol::PaneContent::Schematic);
+                self.log_review_event("menu view.fill_schematic".to_string());
+                true
+            }
             _ => {
                 self.push_terminal_line(format!("menu action {action} is view-local but unwired"));
                 self.invalidate_frame();
@@ -3335,6 +3402,101 @@ impl Runtime {
             .zoom_about_screen_point(scene_viewport, &bounds, x, y, delta);
         self.invalidate_frame();
         true
+    }
+
+    // ---------------------------------------------------------------------
+    // Workspace pane ops (decision 021, P2.1b). Every one is a PURE view-state
+    // mutation of the pane tree: it swaps the active camera to the target leaf's
+    // warm camera (never a refit) and calls `invalidate_frame`, which rebuilds
+    // only the cheap prepared chrome/scene and KEEPS the resolved world scene —
+    // so a pane op costs zero world-scene re-resolve (the "no noticeable lag"
+    // gate). Only the focused leaf renders live (single-live-scene); non-focused
+    // Board leaves render as today (idle real-content snapshot lands with P2.2
+    // multi-scene). These are never journaled — they are workspace state.
+    // ---------------------------------------------------------------------
+
+    /// Shared focus-change core: stash the outgoing leaf's live camera, mutate
+    /// focus via `f`, then activate the incoming leaf's warm camera (fit only if
+    /// that leaf has never been focused).
+    fn swap_pane_focus(&mut self, f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout)) {
+        let outgoing = self.workspace().ui.layout.focused;
+        f(&mut self.session.workspace_mut().ui.layout);
+        let incoming = self.workspace().ui.layout.focused;
+        if incoming != outgoing {
+            let bounds = self.workspace().scene.bounds.clone();
+            self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
+                CameraState::fit_to_bounds(&bounds)
+            });
+        }
+        self.invalidate_frame();
+    }
+
+    fn pane_focus_next(&mut self) {
+        self.swap_pane_focus(|layout| layout.focus_next());
+    }
+
+    fn pane_focus_prev(&mut self) {
+        self.swap_pane_focus(|layout| layout.focus_prev());
+    }
+
+    fn pane_split_focused(&mut self, orientation: datum_gui_protocol::SplitOrientation) {
+        // Focus is unchanged by a split; the fresh child inherits the focused
+        // sibling's warm framing so it opens looking like the pane it split from.
+        let before: std::collections::BTreeSet<_> =
+            self.workspace().ui.layout.leaves().into_iter().collect();
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .split_focused(orientation);
+        let inherited = self.camera;
+        for id in self.workspace().ui.layout.leaves() {
+            if !before.contains(&id) {
+                self.pane_cameras.inherit(id, inherited);
+            }
+        }
+        self.invalidate_frame();
+    }
+
+    fn pane_close_focused(&mut self) {
+        let outgoing = self.workspace().ui.layout.focused;
+        self.session.workspace_mut().ui.layout.close_focused();
+        let incoming = self.workspace().ui.layout.focused;
+        let live = self.workspace().ui.layout.leaves();
+        self.pane_cameras.retain_live(&live);
+        if incoming != outgoing {
+            let bounds = self.workspace().scene.bounds.clone();
+            self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
+                CameraState::fit_to_bounds(&bounds)
+            });
+        }
+        self.invalidate_frame();
+    }
+
+    fn pane_toggle_zoom(&mut self) {
+        // Transient maximize of the focused leaf; focus and cameras are untouched.
+        self.session.workspace_mut().ui.layout.toggle_zoom();
+        self.invalidate_frame();
+    }
+
+    fn pane_apply_preset(&mut self, preset: datum_gui_protocol::WorkspacePreset) {
+        self.session.workspace_mut().ui.layout.apply_preset(preset);
+        // A preset rebuilds the tree with fresh ids; reset the warm store to the
+        // new focused leaf and fit it (a preset is a deliberate layout reset).
+        let focused = self.workspace().ui.layout.focused;
+        let bounds = self.workspace().scene.bounds.clone();
+        self.camera = CameraState::fit_to_bounds(&bounds);
+        self.pane_cameras.reset(focused, self.camera);
+        self.invalidate_frame();
+    }
+
+    fn pane_set_focused_content(&mut self, content: datum_gui_protocol::PaneContent) {
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .set_focused_content(content);
+        self.invalidate_frame();
     }
 
     fn current_layout(&self) -> ShellLayout {

@@ -1368,4 +1368,78 @@ mod tests {
             "Layers panel should expose consumer-side layer toggle hit regions"
         );
     }
+
+    /// P2.1b "no noticeable lag" latency gate (decision 021): a pure workspace
+    /// pane op — focus-switch, split, zoom, preset — is view state only and must
+    /// NEVER re-resolve the world scene. We warm the retained world buffer once,
+    /// then drive each pane op the way the app does (mutate the layout tree and
+    /// keep the already-resolved retained scene — the app's `invalidate_frame`
+    /// path, which never drops the retained scene), and assert the resolve counter
+    /// stays flat. A bump would mean a pane op paid a full world-scene rebuild,
+    /// i.e. clicking an adjacent viewport would lag.
+    #[test]
+    fn pane_ops_do_not_re_resolve_the_world_scene() {
+        use datum_gui_protocol::{SplitOrientation, WorkspacePreset};
+
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        // The default workspace is the Board|Schematic split with the Board leaf
+        // focused (today's look) — the starting point every pane op mutates.
+        assert_eq!(
+            state.ui.layout.focused_content(),
+            datum_gui_protocol::PaneContent::Board
+        );
+
+        // The app holds ONE resolved world scene and only rebuilds it on a content
+        // change; a pane op reuses it. Mirror that reuse with a get-or-resolve
+        // Option that only resolves when empty (the `invalidate_frame` contract).
+        let mut retained: Option<RetainedScene> = None;
+        let mut warm = |retained: &mut Option<RetainedScene>,
+                        state: &datum_gui_protocol::ReviewWorkspaceState| {
+            if retained.is_none() {
+                *retained = Some(RetainedScene::from_workspace_for_surface(
+                    state, 1600, 1000, 1.0,
+                ));
+            }
+        };
+
+        warm(&mut retained, &state);
+        let warmed = retained_scene_resolve_count();
+        assert!(warmed >= 1, "warming must resolve the world scene once");
+
+        // focus-switch: Board -> Schematic leaf (adjacent viewport becomes live).
+        state.ui.layout.focus_next();
+        warm(&mut retained, &state);
+        assert_eq!(
+            retained_scene_resolve_count(),
+            warmed,
+            "focus-switch must not re-resolve the world scene"
+        );
+
+        // split the focused leaf.
+        state.ui.layout.split_focused(SplitOrientation::Horizontal);
+        warm(&mut retained, &state);
+        assert_eq!(
+            retained_scene_resolve_count(),
+            warmed,
+            "split must not re-resolve the world scene"
+        );
+
+        // zoom (transient maximize) the focused leaf.
+        state.ui.layout.toggle_zoom();
+        warm(&mut retained, &state);
+        assert_eq!(
+            retained_scene_resolve_count(),
+            warmed,
+            "zoom/maximize must not re-resolve the world scene"
+        );
+
+        // apply a layout preset (rebuilds the whole tree).
+        state.ui.layout.apply_preset(WorkspacePreset::BoardSchematic);
+        warm(&mut retained, &state);
+        assert_eq!(
+            retained_scene_resolve_count(),
+            warmed,
+            "layout preset must not re-resolve the world scene"
+        );
+    }
 }

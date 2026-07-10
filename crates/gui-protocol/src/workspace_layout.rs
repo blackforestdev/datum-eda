@@ -112,7 +112,7 @@ pub enum PaneContent {
 
 /// Stable identifier for a leaf pane, allocated monotonically by the owning
 /// `WorkspaceLayout`. Ids are never reused within a layout's lifetime.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PaneId(pub u32);
 
 /// A node in the recursive tile tree: a leaf pane or a binary split.

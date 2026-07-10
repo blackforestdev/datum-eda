@@ -128,6 +128,25 @@ impl PreparedScene {
     }
 }
 
+thread_local! {
+    /// Per-thread count of ACTUAL world-scene resolves — every time the retained
+    /// world buffer is rebuilt from scratch (a cache MISS). A warm workspace pane
+    /// op (focus-switch / split / close / zoom / preset) reuses the already-
+    /// resolved retained scene and MUST NOT bump this: that is the P2.1b "clicking
+    /// an adjacent viewport to make it live has no noticeable lag" latency gate
+    /// (decision 021). Thread-local so parallel tests never perturb each other's
+    /// baseline; the increment is a single Cell add per full resolve (resolves are
+    /// rare), so it is always compiled, not test-gated.
+    static RETAINED_RESOLVE_COUNT: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// Read the current thread's world-scene resolve counter (see
+/// `RETAINED_RESOLVE_COUNT`). Intended for the pane-op latency assertion: warm a
+/// scene, record this, run pane ops, and assert it is unchanged (zero re-resolve).
+pub fn retained_scene_resolve_count() -> u64 {
+    RETAINED_RESOLVE_COUNT.with(|count| count.get())
+}
+
 impl RetainedScene {
     pub fn from_workspace(state: &ReviewWorkspaceState, width: u32, height: u32) -> Self {
         Self::from_workspace_for_surface(state, width, height, 1.0)
@@ -139,6 +158,10 @@ impl RetainedScene {
         height: u32,
         scale_factor: f32,
     ) -> Self {
+        // This is the single world-scene resolve entry point; count the miss.
+        // (`reference_projection` below is derived here and nowhere else, so a pane
+        // op that reuses the retained scene provably never recomputes it.)
+        RETAINED_RESOLVE_COUNT.with(|count| count.set(count.get() + 1));
         let started = std::time::Instant::now();
         let layout =
             ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
