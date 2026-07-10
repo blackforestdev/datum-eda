@@ -368,6 +368,18 @@ def gui_supervision_surface() -> list[str]:
     return sorted(items)
 
 
+def source_health_debt_surface() -> list[str]:
+    """Exact decision-022 legacy debt identities and downward-only ceilings."""
+    manifest = json.loads(
+        read_text(ROOT / "specs/source_module_size_manifest.json")
+    )
+    items: list[str] = []
+    for rel, entry in sorted(manifest["entries"].items()):
+        for metric, ceiling in sorted(entry["limits"].items()):
+            items.append(f"{rel}:{metric}={ceiling}")
+    return items
+
+
 def inventory_items(spec: dict[str, str]) -> list[str]:
     kind = spec["kind"]
     if kind == "mcp_runtime_methods":
@@ -394,6 +406,8 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return zone_fill_surface()
     if kind == "gui_supervision_surface":
         return gui_supervision_surface()
+    if kind == "source_health_debt_surface":
+        return source_health_debt_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 

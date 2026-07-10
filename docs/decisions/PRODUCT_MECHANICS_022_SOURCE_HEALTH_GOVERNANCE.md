@@ -143,8 +143,9 @@ Each legacy entry MUST identify:
 - lifecycle status; and
 - evidence or issue references.
 
-Permitted lifecycle states are `active` and `exception-active`. A stale, missing,
-renamed, or now-compliant entry MUST fail until reconciled in the same change.
+The normal lifecycle state is `decomposition-required`; standing exceptions are
+not permitted by the baseline schema. A stale, missing, renamed, or
+now-compliant entry MUST fail until reconciled in the same change.
 
 ## Temporary Exception Process
 

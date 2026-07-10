@@ -1,115 +1,1080 @@
 {
-  "description": "Source-module size governance ledger. Enforced by scripts/check_source_module_size.py (wired into scripts/run_drift_gates.sh). Any tracked source module (crates/**/src/**.rs, scripts/*.py, mcp-server/**.py) over threshold_lines FAILS the gate UNLESS it is registered here as an oversized module with status 'decomposition-pending', an honest recorded_lines, and a FROZEN ceiling_lines. This makes known-oversized modules visibly FLAGGED and budgeted (not silently tolerated) while NEW oversized modules fail immediately. Decomposition is governance-triggered and organic (docs/DECOMPOSITION_PLAN.md / Decomposition Philosophy) \u2014 registration here is the governance flag, NOT a schedule to split. The gate also fails if a recorded_lines drifts materially from the live count (the ledger cannot rot) and warns when a registered module shrinks back under threshold (de-list candidate). GROWTH CEILING (perpetuation guard): each entry carries a frozen ceiling_lines = its registered baseline + headroom (growth_headroom: the larger of growth_headroom_floor lines or growth_headroom_pct of the baseline). A flagged module may grow only up to its ceiling; past it the gate FAILS \u2014 the ONLY sanctioned way back under the ceiling is to DECOMPOSE (which shrinks the file), never to raise the ceiling. This stops a registered monolith growing without bound.",
-  "threshold_lines": 1500,
-  "drift_floor_lines": 40,
-  "drift_pct": 0.03,
-  "growth_headroom_pct": 0.15,
-  "growth_headroom_floor": 250,
-  "valid_status": [
-    "decomposition-pending"
-  ],
+  "schema_version": 2,
+  "policy_decision": "PRODUCT_MECHANICS_022",
+  "baseline_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+  "description": "Immutable source-health debt baseline. Every limit is the exact clean-baseline measurement and may only ratchet downward; zero growth headroom is permitted.",
   "entries": {
+    "crates/cli/src/args/project_command_args_artifacts.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 788
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/args/project_command_args_board.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 763
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/args/project_library.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 976
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/args/project_query_plan.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 716
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/command_plan.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 749
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/artifacts/artifacts.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 884
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/board/component_mutations.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 701
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/board/routing_net.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 926
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/check/run_view.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 812
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
     "crates/cli/src/commands/dispatch.rs": {
-      "recorded_lines": 1803,
-      "ceiling_lines": 2074,
-      "status": "decomposition-pending",
-      "note": "CLI command dispatch table."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1803
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/drill/drill.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 728
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/gerber/layers.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 701
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/gerber/mechanical.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 701
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/gerber/plan.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 797
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/inventory/inventory.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 742
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/library/footprint.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1056
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/cli/src/commands/library/library.rs": {
-      "recorded_lines": 2653,
-      "ceiling_lines": 3051,
-      "status": "decomposition-pending",
-      "note": "CLI library command family."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2657
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/library/proposals.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1197
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/manufacturing/manufacturing.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 877
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/project/proposals.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 832
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/cli/src/commands/project/query.rs": {
-      "recorded_lines": 1518,
-      "ceiling_lines": 1768,
-      "status": "decomposition-pending",
-      "note": "CLI project-query command module."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1522
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/project/validate.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1035
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/cli/src/commands/route/proposal.rs": {
-      "recorded_lines": 3193,
-      "ceiling_lines": 3672,
-      "status": "decomposition-pending",
-      "note": "CLI route-proposal command family."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 3193
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/cli/src/commands/route/views.rs": {
-      "recorded_lines": 1917,
-      "ceiling_lines": 2205,
-      "status": "decomposition-pending",
-      "note": "CLI route views/rendering command module."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1917
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/schematic/connectivity_mutations.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1026
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/commands/schematic/symbol_mutations.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1292
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/cli/src/main_tests/main_tests_context.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 736
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_board_component.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 832
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
     "crates/cli/src/main_tests/main_tests_project_board_component_pool_materialization.rs": {
-      "recorded_lines": 2083,
-      "ceiling_lines": 2396,
-      "status": "decomposition-pending",
-      "note": "CLI integration-test module (board component pool materialization)."
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 2083
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_board_zone.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 974
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_check.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 704
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_manufacturing_export.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 765
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_footprint_proposals.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 734
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_library.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 931
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_package_geometry.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 1347
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
     "crates/cli/src/main_tests/main_tests_project_pool_part.rs": {
-      "recorded_lines": 2171,
-      "ceiling_lines": 2497,
-      "status": "decomposition-pending",
-      "note": "CLI integration-test module (pool/part flows)."
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 2171
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_pin_pad_map.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 911
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_symbol_library.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 1307
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_proposals.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 807
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_relationships.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 872
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_route_apply.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 970
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
     "crates/cli/src/main_tests/main_tests_project_route_proposal_artifact.rs": {
-      "recorded_lines": 5434,
-      "ceiling_lines": 6250,
-      "status": "decomposition-pending",
-      "note": "CLI integration-test module (route-proposal artifact flows)."
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 5434
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/cli/src/main_tests/main_tests_project_schematic_proposals.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 815
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/engine/src/api/native_write/board_components.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 383
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
+    },
+    "crates/engine/src/api/native_write/component_instances.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 390
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
+    },
+    "crates/engine/src/api/native_write/forward_annotation.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 472
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
+    },
+    "crates/engine/src/api/native_write/imports.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 459
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
+    },
+    "crates/engine/src/api/native_write/library.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 480
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
     },
     "crates/engine/src/board/route_proposal/generation.rs": {
-      "recorded_lines": 2836,
-      "ceiling_lines": 3262,
-      "status": "decomposition-pending",
-      "note": "Engine route-proposal generation kernel."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2840
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/board/tests/mod_tests_route_path_candidate_authored_copper_graph_policy.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 976
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/engine/src/connectivity/mod.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 790
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/export/tests.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 707
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/engine/src/import/kicad/parser_helpers.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 974
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/import/kicad/skeleton.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1239
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/board_journal_ops.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 707
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/journal.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 803
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/mod.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 722
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/operation_application.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 708
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/replay.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 809
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/engine/src/substrate/tests/schematic_writer_migration.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 793
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/engine/src/substrate/tests/zone_fill.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 754
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/engine/src/text/layout.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 352
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
+    },
+    "crates/engine/src/text/outline.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "inline_test_lines": 411
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
     },
     "crates/gui-app/src/main.rs": {
-      "recorded_lines": 3526,
-      "ceiling_lines": 4055,
-      "status": "decomposition-pending",
-      "note": "winit GUI shell entry + app loop. Decomposition in progress: camera/pane/dock-resize view ops extracted to runtime_camera_pane.rs (decision 021 / source-size governance); ceiling ratcheted down with the shrink."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 3432
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-protocol/src/kicad_scene_import.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "expanded_lines": 2159
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
     },
     "crates/gui-protocol/src/lib.rs": {
-      "recorded_lines": 7833,
-      "ceiling_lines": 9008,
-      "status": "decomposition-pending",
-      "note": "GUI scene-contract + primitive types (no GUI deps). Still oversized; the workspace consumer-state cluster was extracted to workspace_layout.rs (decision 021)."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 5871,
+        "inline_test_lines": 1966
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/lib.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "expanded_lines": 9665
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
+    },
+    "crates/gui-render/src/render/draw_primitives.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 839
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/geometry.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1374
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/gpu.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1026
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/pads_and_layers.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1229
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/retained.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 902
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/scene.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 1053
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/gui-render/src/render/tests.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 1445
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/gui-render/src/render_contract_tests.rs": {
+      "kind": "rust-test",
+      "limits": {
+        "file_lines": 869
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+    },
+    "crates/gui-render/src/side_panels.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "expanded_lines": 1685
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
+    },
+    "crates/gui-render/src/side_panels/render_inspector.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 785
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs": {
+      "kind": "rust-production",
+      "limits": {
+        "expanded_lines": 916
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
     },
     "crates/verb-registry/src/verbs_library.rs": {
-      "recorded_lines": 3090,
-      "ceiling_lines": 3554,
-      "status": "decomposition-pending",
-      "note": "Verb-registry library-family verb definitions."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 3090
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/verb-registry/src/verbs_pcb.rs": {
-      "recorded_lines": 2134,
-      "ceiling_lines": 2455,
-      "status": "decomposition-pending",
-      "note": "Verb-registry PCB-family verb definitions."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2134
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/verb-registry/src/verbs_proposal.rs": {
-      "recorded_lines": 2591,
-      "ceiling_lines": 2980,
-      "status": "decomposition-pending",
-      "note": "Verb-registry proposal-family verb definitions."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2591
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
     "crates/verb-registry/src/verbs_schematic.rs": {
-      "recorded_lines": 2423,
-      "ceiling_lines": 2787,
-      "status": "decomposition-pending",
-      "note": "Verb-registry schematic-family verb definitions."
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2423
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+    },
+    "mcp-server/daemon_client_library_request_tests.py": {
+      "kind": "python-test",
+      "limits": {
+        "file_lines": 974
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
     },
     "mcp-server/daemon_client_request_tests.py": {
-      "recorded_lines": 2570,
-      "ceiling_lines": 2956,
-      "status": "decomposition-pending",
-      "note": "MCP daemon-client request test module."
+      "kind": "python-test",
+      "limits": {
+        "file_lines": 2570
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/fake_daemon_support_library.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 1294
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/fake_daemon_support_mutations.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 873
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/fake_daemon_support_proposals.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 1209
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
     },
     "mcp-server/fake_daemon_support_queries.py": {
-      "recorded_lines": 2561,
-      "ceiling_lines": 2946,
-      "status": "decomposition-pending",
-      "note": "MCP fake-daemon support-query fixtures."
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 2561
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/server_runtime.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 887
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/test_dispatch_datum_taxonomy.py": {
+      "kind": "python-test",
+      "limits": {
+        "file_lines": 711
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/test_dispatch_queries.py": {
+      "kind": "python-test",
+      "limits": {
+        "file_lines": 958
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/test_native_write_parity.py": {
+      "kind": "python-test",
+      "limits": {
+        "file_lines": 719
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/tools_catalog_data.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 801
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/tools_catalog_library.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 769
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "mcp-server/tools_catalog_proposals.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 739
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
+    },
+    "scripts/check_schematic_private_writers.py": {
+      "kind": "python-production",
+      "limits": {
+        "file_lines": 1004
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 700,
+      "status": "decomposition-required",
+      "note": "Authored Python module exceeds the normal source-file limit."
     }
-  }
+  },
+  "exclusions": {
+    "generated": {
+      "paths": [],
+      "requirements": "Requires explicit path, generator, regeneration command, and owner; none at baseline."
+    },
+    "vendored": {
+      "paths": [],
+      "requirements": "Requires explicit path and upstream provenance; none at baseline."
+    },
+    "data_assets": {
+      "paths": [],
+      "requirements": "Non-source data and binary assets are outside source line metrics."
+    }
+  },
+  "exceptions": []
 }

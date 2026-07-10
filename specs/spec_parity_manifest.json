@@ -79,6 +79,12 @@
       "kind": "gui_supervision_surface",
       "source": "GUI diagnostics snapshot contract + resolver-backed native scene load",
       "owner_spec": "specs/PROGRESS.md"
+    },
+    {
+      "id": "source_health_debt_surface",
+      "kind": "source_health_debt_surface",
+      "source": "specs/source_module_size_manifest.json entries + exact metric ceilings",
+      "owner_spec": "docs/SOURCE_HEALTH_POLICY.md"
     }
   ]
 }

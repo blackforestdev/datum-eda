@@ -15,8 +15,8 @@
 > Detail lives in the sections below — this list is the single entry point.
 > Update it in the SAME change as any spec creation or course-correction.
 
-0. **Restore immutable source-health governance (authorized, implementation in
-   progress).** Decision 022 restores repository-wide 700-line production/test
+0. **Immutable source-health governance restoration — LANDED.** Decision 022
+   restores repository-wide 700-line production/test
    tripwires, 350-line inline-test limits, exact zero-headroom legacy ceilings,
    merge-base downward ratchets, touched-monolith burn-down, automatic untracked
    child discovery, and logical `include!` measurement. The operational policy,
@@ -25,8 +25,12 @@
    track. *Dependency:* audit of the July 2 governance retirement and July 9
    flag-ledger replacement complete. *Unblocks:* safe continuation of every
    feature frontier item without further silent monolith growth. *State:*
-   **decision and operational contract ratified; enforcement implementation in
-   progress.** Governing: decision 022 + `docs/SOURCE_HEALTH_POLICY.md`.
+   **LANDED:** controlling decision + operational policy, 96-path/97-metric exact
+   clean-HEAD debt ledger, tracked+untracked whole-repository discovery,
+   recursive literal-`include!` measurement, merge-base immutability and
+   touched-monolith extraction checks, 13 hermetic regressions, parity inventory,
+   CI trusted-base wiring, PR declarations, and CODEOWNERS protection. Governing:
+   decision 022 + `docs/SOURCE_HEALTH_POLICY.md`.
 1. **Deepen the GUI product specification for the surfaces not yet designed.**
    The **board editor surface is defined and buildable** — its "how" is captured
    in `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, the controlling visual prototype
@@ -178,7 +182,7 @@ real failing, same-engine regression gate against the owner-approved shell golde
 `check_gui_conformance.py` → `run_drift_gates.sh`), closing the paperwork defect
 where visual parity was an unenforced HUMAN row; see
 `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` §0.1/§2/§4 (G9). **Source-health
-governance recovery (authorized, in progress):** decision 022 supersedes the
+governance recovery (landed):** decision 022 supersedes the
 permissive 1,500-line flag ledger with blocking repository-wide normal budgets,
 zero-headroom legacy ceilings, merge-base downward ratchets, touched-monolith
 burn-down, and logical-module measurement; see Active Frontier step 0. **GUI

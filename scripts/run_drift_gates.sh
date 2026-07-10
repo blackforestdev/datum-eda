@@ -25,10 +25,16 @@ python3 scripts/check_gui_icon_assets.py
 # the full board-editor.html composition (split view, populated inspector) has no
 # owner-approved reference yet and is gated on Phase-2, not a bug to silence.
 python3 scripts/check_gui_reference_capture.py
-# Source-module size governance flag: FLAGS oversized modules as
-# decomposition-pending (governance-triggered/organic decomp, never scheduled),
-# fails on NEW unregistered oversized modules or ledger drift. Does not decompose.
-python3 scripts/check_source_module_size.py
+# Decision-022 source health: hermetic checker regressions first, then the full
+# tracked+untracked repository scan. CI supplies the trusted PR/push base SHA so
+# legacy ceilings and policy can only ratchet downward; local runs still enforce
+# current-tree discovery, normal budgets, exact ceilings, and logical includes.
+python3 scripts/test_source_health_governance.py
+if [[ -n "${SOURCE_HEALTH_BASE_REF:-}" ]]; then
+  python3 scripts/check_source_health.py --base-ref "$SOURCE_HEALTH_BASE_REF"
+else
+  python3 scripts/check_source_health.py
+fi
 python3 scripts/check_menu_model.py
 python3 scripts/menu_model_csv.py check
 python3 scripts/check_erc_connectivity_parity.py

@@ -10,3 +10,6 @@
 /.github/workflows/alignment.yml @blackforestdev
 /.github/CODEOWNERS @blackforestdev
 /specs/spec_governance_manifest.json @blackforestdev
+/specs/spec_parity_manifest.json @blackforestdev
+/specs/SPEC_PARITY.md @blackforestdev
+/scripts/check_spec_parity.py @blackforestdev
