@@ -9,9 +9,20 @@
 //! distinctive usage-error output; runtime "project not found" failures are
 //! expected and fine.
 
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use datum_verb_registry::{ArgvToken, Dispatch, ParamSpec, ParamType, verbs};
+
+/// Scratch working directory under the cargo target tmpdir. Some verbs treat their
+/// path / project-root parameter as a location to CREATE (e.g. route-strategy
+/// batch, project scaffold), so running the real binary with a relative dummy path
+/// writes files relative to the process CWD. We point the CWD here so those side
+/// effects land under `target/` (gitignored) instead of littering the source tree,
+/// and remove it at the end of the test.
+fn scratch_dir() -> PathBuf {
+    Path::new(env!("CARGO_TARGET_TMPDIR")).join("verb-registry-roundtrip")
+}
 
 /// Substrings clap 4 emits on argv parse/validation failures and never on
 /// engine runtime errors.
@@ -137,8 +148,11 @@ fn is_required(token: &ArgvToken, params: &[ParamSpec]) -> bool {
 }
 
 fn assert_clap_accepts(verb_id: &str, argv: &[String]) {
+    let scratch = scratch_dir();
+    std::fs::create_dir_all(&scratch).ok();
     let output = Command::new(env!("CARGO_BIN_EXE_datum-eda"))
         .args(argv)
+        .current_dir(&scratch)
         .output()
         .unwrap_or_else(|err| panic!("{verb_id}: failed to spawn datum-eda: {err}"));
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -178,4 +192,7 @@ fn every_cli_verb_argv_parses_against_the_real_clap_surface() {
         checked += 1;
     }
     assert!(checked > 0, "registry contained no Dispatch::Cli verbs");
+    // Remove any scratch the round-tripped verbs materialized under the CWD we
+    // pointed at target/.
+    std::fs::remove_dir_all(scratch_dir()).ok();
 }
