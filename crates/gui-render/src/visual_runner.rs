@@ -263,7 +263,7 @@ fn repo_root() -> PathBuf {
 fn camera_for_manifest(manifest: &FixtureManifest, state: &ReviewWorkspaceState) -> CameraState {
     let viewport = manifest.viewport;
     let layout = ShellLayout::for_window(viewport.width_px, viewport.height_px, None);
-    let scene_viewport = layout.scene_viewport();
+    let scene_viewport = layout.scene_viewport(&state.ui.layout);
     let board_field_width = (scene_viewport.width - 20.0).max(1.0);
     let board_field_height = (scene_viewport.height - 20.0).max(1.0);
     let scene_width = (state.scene.bounds.max_x - state.scene.bounds.min_x).max(1) as f32;
@@ -393,7 +393,8 @@ mod tests {
             manifest.viewport.height_px,
             None,
         );
-        let board_field = crate::inset_rect(layout.scene_viewport(), 10.0, 10.0, 10.0, 10.0);
+        let board_field =
+            crate::inset_rect(layout.scene_viewport(&state.ui.layout), 10.0, 10.0, 10.0, 10.0);
         let projection = crate::Projection::new(board_field, bounds, camera);
         let projected = crate::project_rect(
             datum_gui_protocol::RectNm {

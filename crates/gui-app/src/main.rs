@@ -3351,7 +3351,8 @@ impl Runtime {
     }
 
     fn scene_viewport(&self) -> datum_gui_render::RectPx {
-        self.current_layout().scene_viewport()
+        self.current_layout()
+            .scene_viewport(&self.workspace().ui.layout)
     }
 
     fn update_hover(&mut self, pos: (f32, f32)) -> bool {

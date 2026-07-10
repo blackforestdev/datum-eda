@@ -249,31 +249,45 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
         .map(|run| run.text.as_str())
         .collect::<Vec<_>>();
 
-    assert!(labels.contains(&"Board \u{00B7} Layout"));
+    // The default tree tiles a Board leaf and a Schematic leaf; each leaf emits
+    // its content-derived header title, driven from the tree (not fixed literals).
+    let panes = prepared.layout.viewport_panes(&state.ui.layout);
+    for leaf in &panes.panes {
+        let title = match leaf.content {
+            datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
+            datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+        };
+        assert!(
+            labels.contains(&title),
+            "missing header title {title} for leaf {:?}",
+            leaf.id
+        );
+    }
     for tool in ["S", "M", "R", "V", "Z"] {
         assert!(labels.contains(&tool), "missing board-pane tool {tool}");
     }
-    // Phase-2 split view: pane B carries its own (unfocused) header title and a
-    // labeled "Schematic (coming)" placeholder caption — pane B is a real pane
-    // with real chrome, not schematic world geometry / authoring this slice.
+    // A Schematic leaf is a real pane with its own (unfocused) chrome and a
+    // labeled "Schematic (coming)" placeholder caption — not schematic world
+    // geometry / authoring this commit.
     assert!(
-        labels.contains(&"Schematic \u{00B7} Sheet 1"),
-        "missing pane B (schematic) header title"
+        panes
+            .panes
+            .iter()
+            .any(|l| l.content == datum_gui_protocol::PaneContent::Schematic),
+        "default tree should carry a schematic leaf"
     );
     assert!(
         labels.contains(&"Schematic (coming)"),
-        "missing pane B placeholder caption"
+        "missing schematic-leaf placeholder caption"
     );
-    // (The "FOLLOWS PANE A" diagnostic dump was removed from the chrome; the
-    // pane header's title + tools are the conformance surface here.)
 }
 
-/// The split view differentiates focus: pane A (Board) draws the accent focus
-/// dot + inset ACCENT pane frame; pane B (Schematic) draws neither. Both live
-/// inside their own pane rects. This locks the focus differentiation that makes
-/// context-follows-focus legible (docs/gui/DATUM_GUI_DESIGN_SPEC.md).
+/// The tiling differentiates focus: the focused leaf (whichever it is) draws the
+/// accent focus dot + inset ACCENT pane frame; non-focused leaves draw neither.
+/// Each lives inside its own pane rect. This locks the focus differentiation that
+/// makes context-follows-focus legible (docs/gui/DATUM_GUI_DESIGN_SPEC.md).
 #[test]
-fn split_view_focus_frame_belongs_to_pane_a_only() {
+fn focus_frame_belongs_to_the_focused_leaf_only() {
     let state = datum_gui_protocol::load_fixture_workspace_state();
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let prepared = PreparedScene::from_workspace(
@@ -283,9 +297,10 @@ fn split_view_focus_frame_belongs_to_pane_a_only() {
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
     );
-    let panes = prepared.layout.viewport_panes();
-    // The accent pane frame is emitted as panel vertices inset 1px inside pane A;
-    // its top-left accent quad must fall inside pane A and never inside pane B.
+    let panes = prepared.layout.viewport_panes(&state.ui.layout);
+    // The accent pane frame is emitted as panel vertices inset 1px inside the
+    // focused leaf; an accent quad must fall inside its frame and inside no
+    // other (non-focused) leaf's interior.
     let has_accent_vertex_in = |rect: RectPx| {
         prepared.panel_vertices().iter().any(|v| {
             let [r, g, b] = TEXT_ACCENT;
@@ -295,17 +310,24 @@ fn split_view_focus_frame_belongs_to_pane_a_only() {
                 && rect.contains(v.pos[0], v.pos[1])
         })
     };
-    assert!(
-        has_accent_vertex_in(panes.pane_a.frame),
-        "pane A must carry accent focus chrome"
-    );
-    // Pane B's interior (inside its frame but excluding the shared divider edge)
-    // carries no accent focus frame.
-    let pane_b_interior = inset_rect(panes.pane_b.frame, 2.0, 2.0, 2.0, 2.0);
-    assert!(
-        !has_accent_vertex_in(pane_b_interior),
-        "pane B (unfocused) must not carry an accent focus frame"
-    );
+    for leaf in &panes.panes {
+        if leaf.id == panes.focused {
+            assert!(
+                has_accent_vertex_in(leaf.rect.frame),
+                "focused leaf {:?} must carry accent focus chrome",
+                leaf.id
+            );
+        } else {
+            // A non-focused leaf's interior (inside its frame but excluding the
+            // shared divider edge) carries no accent focus frame.
+            let interior = inset_rect(leaf.rect.frame, 2.0, 2.0, 2.0, 2.0);
+            assert!(
+                !has_accent_vertex_in(interior),
+                "non-focused leaf {:?} must not carry an accent focus frame",
+                leaf.id
+            );
+        }
+    }
 }
 
 #[test]

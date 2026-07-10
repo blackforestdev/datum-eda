@@ -140,62 +140,167 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
     }
 }
 
-/// Phase-2 split-view invariants: the central viewport is tiled into two panes
-/// (Board pane A | Schematic pane B) with a divider gutter between them. Each
-/// pane's frame/header/scene must stay inside the viewport, the two panes must
-/// not overlap, the divider must sit between them, and each header/scene must
-/// stay inside its own pane.
+/// Workspace pane-tiling invariants (decision 021): the central viewport is
+/// tiled per the `WorkspaceLayout` tree. Asserted across the scale matrix AND a
+/// set of tree shapes (single Board leaf; the default vertical V-split; an
+/// H-split; a nested Split; and a zoomed default): every leaf rect is
+/// non-degenerate and inside `viewport`; leaf rects don't overlap; dividers lie
+/// strictly between siblings; `scene_viewport()` equals the focused leaf's scene;
+/// and a zoomed leaf fills the whole viewport with no dividers.
 #[test]
-fn viewport_split_holds_two_pane_invariants_across_scale_matrix() {
+fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
+    use datum_gui_protocol::{PaneContent, PaneId, SplitOrientation, WorkspaceLayout};
+
     let logical_w = 1280u32;
     let logical_h = 800u32;
+
+    // A few representative tree shapes to exercise the generalized tile walk.
+    let shapes: Vec<(&str, WorkspaceLayout)> = vec![
+        ("single_board", WorkspaceLayout::single()),
+        ("default_v_split", WorkspaceLayout::default()),
+        ("h_split", {
+            let mut l = WorkspaceLayout::single();
+            l.split_focused(SplitOrientation::Horizontal);
+            l
+        }),
+        ("nested_split", {
+            // Vertical outer split; then split the second (right) leaf
+            // horizontally, producing Board | [Board / Board] with three leaves
+            // and two dividers of differing orientation.
+            let mut l = WorkspaceLayout::single();
+            l.split_focused(SplitOrientation::Vertical); // ids 0 | 1, focus 0
+            l.focus_next(); // focus the right leaf (id 1)
+            l.split_focused(SplitOrientation::Horizontal); // right becomes [1 / 2]
+            l
+        }),
+        ("zoomed_default", {
+            let mut l = WorkspaceLayout::default();
+            l.toggle_zoom(); // maximize the focused (Board) leaf
+            l
+        }),
+    ];
 
     for scale in SCALES {
         let pw = ((logical_w as f32) * scale).round() as u32;
         let ph = ((logical_h as f32) * scale).round() as u32;
         let layout = ShellLayout::for_surface(pw, ph, scale, None);
-        let panes = layout.viewport_panes();
 
-        for (name, pane) in [("pane_a", panes.pane_a), ("pane_b", panes.pane_b)] {
+        for (shape_name, workspace) in &shapes {
+            let panes = layout.viewport_panes(workspace);
             assert!(
-                pane.frame.width > 0.0 && pane.frame.height > 0.0,
-                "{name} frame is degenerate at scale {scale}"
+                !panes.panes.is_empty(),
+                "{shape_name}: tile walk produced no leaves at scale {scale}"
             );
-            assert!(
-                within(pane.frame, layout.viewport),
-                "{name} frame escapes the viewport at scale {scale}"
+
+            // Every leaf rect: non-degenerate, inside the viewport, with its
+            // header and scene inside its own frame.
+            for leaf in &panes.panes {
+                let pane = leaf.rect;
+                assert!(
+                    pane.frame.width > 0.0 && pane.frame.height > 0.0,
+                    "{shape_name}: leaf {:?} frame is degenerate at scale {scale}",
+                    leaf.id
+                );
+                assert!(
+                    within(pane.frame, layout.viewport),
+                    "{shape_name}: leaf {:?} frame escapes the viewport at scale {scale}",
+                    leaf.id
+                );
+                assert!(
+                    within(pane.header, pane.frame),
+                    "{shape_name}: leaf {:?} header escapes its own pane at scale {scale}",
+                    leaf.id
+                );
+                assert!(
+                    within(pane.scene, pane.frame),
+                    "{shape_name}: leaf {:?} scene escapes its own pane at scale {scale}",
+                    leaf.id
+                );
+            }
+
+            // Leaf frames do not overlap one another.
+            for (i, a) in panes.panes.iter().enumerate() {
+                for b in panes.panes.iter().skip(i + 1) {
+                    assert!(
+                        !overlaps(a.rect.frame, b.rect.frame),
+                        "{shape_name}: leaf {:?} overlaps leaf {:?} at scale {scale}",
+                        a.id,
+                        b.id
+                    );
+                }
+            }
+
+            // Every divider lies strictly between two leaf frames (no leaf frame
+            // overlaps a divider gutter) and stays inside the viewport.
+            for divider in &panes.dividers {
+                assert!(
+                    within(*divider, layout.viewport),
+                    "{shape_name}: divider escapes the viewport at scale {scale}"
+                );
+                for leaf in &panes.panes {
+                    assert!(
+                        !overlaps(leaf.rect.frame, *divider),
+                        "{shape_name}: leaf {:?} overlaps a divider at scale {scale}",
+                        leaf.id
+                    );
+                }
+            }
+
+            // scene_viewport (world board canvas + gpu scissor) equals the
+            // FOCUSED leaf's scene — the single-live-scene invariant.
+            let focused_scene = panes.focused_pane().rect.scene;
+            assert_eq!(
+                layout.scene_viewport(workspace),
+                focused_scene,
+                "{shape_name}: scene_viewport must follow the focused leaf at scale {scale}"
             );
-            assert!(
-                within(pane.header, pane.frame),
-                "{name} header escapes its own pane at scale {scale}"
-            );
-            assert!(
-                within(pane.scene, pane.frame),
-                "{name} scene canvas escapes its own pane at scale {scale}"
+            assert_eq!(
+                panes.focused_document(),
+                workspace.focused_content(),
+                "{shape_name}: focused_document must match the tree's focused leaf at scale {scale}"
             );
         }
 
-        assert!(
-            !overlaps(panes.pane_a.frame, panes.pane_b.frame),
-            "pane A overlaps pane B at scale {scale}"
-        );
-        // The divider sits strictly between the two panes.
-        assert!(
-            panes.divider.x + EPS >= panes.pane_a.frame.x + panes.pane_a.frame.width
-                && panes.divider.x + panes.divider.width <= panes.pane_b.frame.x + EPS,
-            "divider is not between the panes at scale {scale}"
-        );
-        // scene_viewport (the world board canvas + gpu scissor) follows pane A.
-        assert_eq!(
-            layout.scene_viewport(),
-            panes.pane_a.scene,
-            "scene_viewport must follow pane A at scale {scale}"
-        );
-        // Focus is pinned to the Board pane this slice.
-        assert_eq!(
-            panes.focused_document(),
-            FocusedPane::Board,
-            "focused document must be the Board pane this slice at scale {scale}"
-        );
+        // Zoom: the maximized leaf fills the WHOLE viewport and no dividers are
+        // emitted; scene_viewport follows that single leaf.
+        {
+            let mut zoomed = WorkspaceLayout::default();
+            zoomed.toggle_zoom();
+            let panes = layout.viewport_panes(&zoomed);
+            assert_eq!(
+                panes.panes.len(),
+                1,
+                "zoom must collapse to a single visible leaf at scale {scale}"
+            );
+            assert!(
+                panes.dividers.is_empty(),
+                "zoom must emit no dividers at scale {scale}"
+            );
+            assert_eq!(
+                panes.panes[0].rect.frame, layout.viewport,
+                "zoomed leaf must fill the whole viewport at scale {scale}"
+            );
+        }
+
+        // Guard the intended default: the default tree reproduces the former
+        // fixed two-pane split — two leaves (Board focused | Schematic), one
+        // vertical divider, and the focused Board leaf's scene as scene_viewport.
+        {
+            let default = WorkspaceLayout::default();
+            let panes = layout.viewport_panes(&default);
+            assert_eq!(panes.panes.len(), 2, "default must be two leaves at scale {scale}");
+            assert_eq!(panes.dividers.len(), 1, "default must have one divider at scale {scale}");
+            assert_eq!(panes.panes[0].content, PaneContent::Board);
+            assert_eq!(panes.panes[1].content, PaneContent::Schematic);
+            assert_eq!(panes.focused, PaneId(0));
+            // Divider strictly between the two panes.
+            let a = panes.panes[0].rect.frame;
+            let b = panes.panes[1].rect.frame;
+            let d = panes.dividers[0];
+            assert!(
+                d.x + EPS >= a.x + a.width && d.x + d.width <= b.x + EPS,
+                "default divider is not between the panes at scale {scale}"
+            );
+        }
     }
 }

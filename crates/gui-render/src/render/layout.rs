@@ -131,39 +131,158 @@ impl PaneRect {
     }
 }
 
-/// The central viewport tiled into two side-by-side panes (Board pane A, left |
-/// Schematic pane B, right) with a hairline `divider` gutter between them. This
-/// is the Phase-2 split-view first slice: a real two-pane LAYOUT derived from
-/// the resolved `viewport` as a pure post-split, so neither the Taffy solver nor
-/// `scale_by` becomes pane-aware.
-/// Which pane currently owns focus. Focus is the single source of truth for both
-/// the per-pane header chrome (accent frame + focus dot + active tools) and — via
-/// context-follows-focus — which document the Inspector/Layers side panels read
-/// (docs/gui/DATUM_GUI_DESIGN_SPEC.md → Workspace & Mode Model). This slice pins
-/// focus to pane A (the Board document); focus-switch input and the toggle for
-/// the unfocused document are deferred to a later slice.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FocusedPane {
-    /// Pane A — the Board · Layout document.
-    Board,
-    /// Pane B — the Schematic · Sheet document (placeholder this slice).
-    Schematic,
+/// One leaf pane placed in screen space by the tile walk: its stable `PaneId`,
+/// the `(document, view)` content it shows, and its solved `PaneRect`
+/// (frame/header/scene). Derived purely as a post-solve over the central
+/// `viewport`, so neither the Taffy solver nor `scale_by` becomes pane-aware.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct LeafPane {
+    pub id: datum_gui_protocol::PaneId,
+    pub content: datum_gui_protocol::PaneContent,
+    pub rect: PaneRect,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+/// The central viewport tiled per the `WorkspaceLayout` tree: the in-order set
+/// of leaf `panes`, the `dividers` (one hairline gutter per Split, between its
+/// two children), and which leaf `focused` owns the accent chrome + (via
+/// context-follows-focus) the Inspector/Layers side panels
+/// (docs/gui/DATUM_GUI_DESIGN_SPEC.md → Workspace & Mode Model). Generalizes the
+/// former fixed two-pane slice to N leaves, nested H/V splits, and zoom, still as
+/// a pure post-split derived AFTER the taffy/fallback solve and AFTER `scale_by`.
+///
+/// The single-live-scene architecture is preserved: `focused_scene()` names the
+/// one canvas the retained world buffer, gpu scissor/uniform, and hit-testing all
+/// follow. Non-focused Board leaves render as today (no per-leaf snapshot yet);
+/// Schematic leaves show the "Schematic (coming)" placeholder.
+#[derive(Debug, Clone, PartialEq)]
 pub struct ViewportPanes {
-    pub pane_a: PaneRect,
-    pub pane_b: PaneRect,
-    pub divider: RectPx,
+    pub panes: Vec<LeafPane>,
+    pub dividers: Vec<RectPx>,
+    pub focused: datum_gui_protocol::PaneId,
 }
 
 impl ViewportPanes {
-    /// The focused pane this slice: pane A (Board). This is the seam
-    /// context-follows-focus reads — the side panels reflect the focused pane's
-    /// document. Making it a single accessor (not a scattered literal) keeps the
-    /// mechanism real while the focus-switch toggle is deferred.
-    pub fn focused_document(&self) -> FocusedPane {
-        FocusedPane::Board
+    /// The focused leaf pane (falls back to the first leaf if `focused` names no
+    /// present leaf — e.g. a stale id; the tree always has at least one leaf).
+    pub fn focused_pane(&self) -> &LeafPane {
+        self.panes
+            .iter()
+            .find(|p| p.id == self.focused)
+            .unwrap_or(&self.panes[0])
+    }
+
+    /// The content of the focused leaf. This is the seam context-follows-focus
+    /// reads — the side panels reflect the focused pane's document.
+    pub fn focused_document(&self) -> datum_gui_protocol::PaneContent {
+        self.focused_pane().content
+    }
+
+    /// The focused leaf's scene canvas rect — the single live scene viewport.
+    pub fn focused_scene(&self) -> RectPx {
+        self.focused_pane().rect.scene
+    }
+}
+
+/// Hairline divider gutter width between two split siblings (same 1px as the
+/// former fixed two-pane divider).
+const PANE_DIVIDER_W: f32 = 1.0;
+
+/// Recursively tile `node` into `frame`, pushing one `LeafPane` per leaf and one
+/// divider per Split. A `Vertical` split places its children side-by-side (left
+/// `first` | right `second`) with a vertical divider; a `Horizontal` split stacks
+/// them (top `first` / bottom `second`) with a horizontal divider. Each Split's
+/// `ratio` governs the `first` child's share of the available (post-divider) span.
+fn tile_pane_node(
+    node: &datum_gui_protocol::PaneNode,
+    frame: RectPx,
+    panes: &mut Vec<LeafPane>,
+    dividers: &mut Vec<RectPx>,
+) {
+    use datum_gui_protocol::{PaneNode, SplitOrientation};
+    match node {
+        PaneNode::Leaf { id, content } => {
+            panes.push(LeafPane {
+                id: *id,
+                content: *content,
+                rect: PaneRect::from_frame(frame),
+            });
+        }
+        PaneNode::Split {
+            orientation,
+            ratio,
+            first,
+            second,
+        } => match orientation {
+            SplitOrientation::Vertical => {
+                let divider_w = PANE_DIVIDER_W.min(frame.width);
+                let first_w = ((frame.width - divider_w) * *ratio).max(0.0);
+                let first_frame = RectPx {
+                    x: frame.x,
+                    y: frame.y,
+                    width: first_w,
+                    height: frame.height,
+                };
+                let divider = RectPx {
+                    x: frame.x + first_w,
+                    y: frame.y,
+                    width: divider_w,
+                    height: frame.height,
+                };
+                let second_x = frame.x + first_w + divider_w;
+                let second_frame = RectPx {
+                    x: second_x,
+                    y: frame.y,
+                    width: (frame.x + frame.width - second_x).max(0.0),
+                    height: frame.height,
+                };
+                tile_pane_node(first, first_frame, panes, dividers);
+                dividers.push(divider);
+                tile_pane_node(second, second_frame, panes, dividers);
+            }
+            SplitOrientation::Horizontal => {
+                let divider_h = PANE_DIVIDER_W.min(frame.height);
+                let first_h = ((frame.height - divider_h) * *ratio).max(0.0);
+                let first_frame = RectPx {
+                    x: frame.x,
+                    y: frame.y,
+                    width: frame.width,
+                    height: first_h,
+                };
+                let divider = RectPx {
+                    x: frame.x,
+                    y: frame.y + first_h,
+                    width: frame.width,
+                    height: divider_h,
+                };
+                let second_y = frame.y + first_h + divider_h;
+                let second_frame = RectPx {
+                    x: frame.x,
+                    y: second_y,
+                    width: frame.width,
+                    height: (frame.y + frame.height - second_y).max(0.0),
+                };
+                tile_pane_node(first, first_frame, panes, dividers);
+                dividers.push(divider);
+                tile_pane_node(second, second_frame, panes, dividers);
+            }
+        },
+    }
+}
+
+/// The content of the leaf named `id`, if present in `node`'s subtree.
+fn leaf_pane_content(
+    node: &datum_gui_protocol::PaneNode,
+    id: datum_gui_protocol::PaneId,
+) -> Option<datum_gui_protocol::PaneContent> {
+    use datum_gui_protocol::PaneNode;
+    match node {
+        PaneNode::Leaf {
+            id: leaf_id,
+            content,
+        } => (*leaf_id == id).then_some(*content),
+        PaneNode::Split { first, second, .. } => {
+            leaf_pane_content(first, id).or_else(|| leaf_pane_content(second, id))
+        }
     }
 }
 
@@ -244,51 +363,43 @@ impl ShellLayout {
         }
     }
 
-    /// Split the resolved central `viewport` into two panes (Board A | Schematic
-    /// B) with a hairline divider gutter. A pure post-split derived AFTER the
-    /// taffy/fallback solve and AFTER `scale_by`, so the world scene, gpu
-    /// scissor, and hit-testing all follow pane A with no further edits. The
-    /// ~50/50 ratio is a fidelity detail flagged for owner-approval against
-    /// board-editor.html (deferred), not fixed here.
-    pub fn viewport_panes(&self) -> ViewportPanes {
-        let v = self.viewport;
-        const DIVIDER_W: f32 = 1.0;
-        // Guard against zero/negative pane widths at small widths: never let the
-        // divider overflow a narrow viewport.
-        let divider_w = DIVIDER_W.min(v.width);
-        let pane_a_w = ((v.width - divider_w) * 0.5).max(0.0);
-        let pane_a_frame = RectPx {
-            x: v.x,
-            y: v.y,
-            width: pane_a_w,
-            height: v.height,
-        };
-        let divider = RectPx {
-            x: v.x + pane_a_w,
-            y: v.y,
-            width: divider_w,
-            height: v.height,
-        };
-        let pane_b_x = v.x + pane_a_w + divider_w;
-        let pane_b_frame = RectPx {
-            x: pane_b_x,
-            y: v.y,
-            width: (v.x + v.width - pane_b_x).max(0.0),
-            height: v.height,
-        };
+    /// Tile the resolved central `viewport` per the `WorkspaceLayout` tree into
+    /// the set of leaf panes plus divider gutters. A pure post-split derived
+    /// AFTER the taffy/fallback solve and AFTER `scale_by`, so the world scene,
+    /// gpu scissor, and hit-testing all follow the FOCUSED leaf with no further
+    /// edits. If `layout.zoomed == Some(id)`, that leaf fills the whole viewport
+    /// and no others/dividers are emitted (transient maximize; the tree is
+    /// untouched). The DEFAULT tree (vertical Board|Schematic at 0.5, Board
+    /// focused) reproduces the former fixed two-pane split pixel-for-pixel.
+    pub fn viewport_panes(&self, layout: &datum_gui_protocol::WorkspaceLayout) -> ViewportPanes {
+        let mut panes = Vec::new();
+        let mut dividers = Vec::new();
+        if let Some(zoomed) = layout.zoomed {
+            // Maximize: the zoomed leaf fills the viewport; no siblings, no
+            // dividers. The tree is never mutated — this is transient view state.
+            let content =
+                leaf_pane_content(&layout.root, zoomed).unwrap_or(datum_gui_protocol::PaneContent::Board);
+            panes.push(LeafPane {
+                id: zoomed,
+                content,
+                rect: PaneRect::from_frame(self.viewport),
+            });
+        } else {
+            tile_pane_node(&layout.root, self.viewport, &mut panes, &mut dividers);
+        }
         ViewportPanes {
-            pane_a: PaneRect::from_frame(pane_a_frame),
-            pane_b: PaneRect::from_frame(pane_b_frame),
-            divider,
+            panes,
+            dividers,
+            focused: layout.focused,
         }
     }
 
-    pub fn scene_viewport(&self) -> RectPx {
-        // The world board scene renders into pane A's canvas (the focused
-        // left-half Board pane). Returning pane A's scene here means
-        // RetainedScene's reference_projection, gpu.rs scissor/uniform, and
-        // `world_point_at_screen` all follow pane A with no further change.
-        self.viewport_panes().pane_a.scene
+    pub fn scene_viewport(&self, layout: &datum_gui_protocol::WorkspaceLayout) -> RectPx {
+        // The world board scene renders into the FOCUSED leaf's canvas. Returning
+        // that scene rect here means RetainedScene's reference_projection, gpu.rs
+        // scissor/uniform, and `world_point_at_screen` all follow the focused
+        // leaf with no further change — the single-live-scene invariant.
+        self.viewport_panes(layout).focused_scene()
     }
 
     fn scale_by(self, scale: f32) -> Self {

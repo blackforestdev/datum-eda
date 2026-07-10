@@ -24,7 +24,7 @@ impl PreparedScene {
         let mut viewport_overlay_quads = Vec::new();
         let mut text_runs = Vec::new();
         let mut hit_regions = Vec::new();
-        let scene_viewport = layout.scene_viewport();
+        let scene_viewport = layout.scene_viewport(&state.ui.layout);
 
         panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
         panel_quads.push(Quad::from_rect(layout.left_sidebar, APP_BG));
@@ -142,7 +142,7 @@ impl RetainedScene {
         let started = std::time::Instant::now();
         let layout =
             ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
-        let scene_viewport = layout.scene_viewport();
+        let scene_viewport = layout.scene_viewport(&state.ui.layout);
         let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
         let reference_projection = Projection::new(
             board_field,
@@ -351,7 +351,7 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
 
-    render_viewport_panes(layout, panel_quads, text_runs);
+    render_viewport_panes(layout, &state.ui.layout, panel_quads, text_runs);
     render_status_bar(state, layout, panel_quads, text_runs);
 }
 
@@ -450,63 +450,79 @@ fn render_status_bar(
     }
 }
 
-/// Render the Phase-2 two-pane split: Board pane A (left, focused) | Schematic
-/// pane B (right, unfocused) with a hairline divider gutter. Both panes carry
-/// real chrome (header band, title, tool cluster, focus differentiation); pane B
-/// is a labeled placeholder — its canvas is the VIEWPORT_BG underlay with a
-/// centered "Schematic (coming)" caption, NO world geometry. The single retained
-/// world buffer still renders only into pane A's `scene_viewport` (see
-/// pane_b_decision: real schematic world geometry is deferred to slice 2's
+/// Render the workspace pane tiling described by the `WorkspaceLayout` tree:
+/// walk its leaf set (generalized to N leaves, nested H/V splits, and zoom) and
+/// draw one header per leaf, each divider, and a per-content canvas. Every leaf
+/// carries real chrome (header band, title, tool cluster, focus differentiation);
+/// the focused leaf gets the accent frame + focus dot. A Board leaf's canvas is
+/// the world scene (the FOCUSED Board leaf shows the single retained world buffer,
+/// scissored to its `scene_viewport`; non-focused Board leaves render as today —
+/// no per-leaf snapshot this commit). A Schematic leaf is a labeled placeholder:
+/// its canvas is the VIEWPORT_BG underlay with a centered "Schematic (coming)"
+/// caption, NO world geometry (real schematic world geometry is deferred to the
 /// multi-scene GPU pass).
 fn render_viewport_panes(
     layout: &ShellLayout,
+    workspace: &datum_gui_protocol::WorkspaceLayout,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
-    let panes = layout.viewport_panes();
-    // Focus is the single source of truth: it drives the per-pane header chrome
-    // here and (context-follows-focus) which document the side panels read.
-    let focused = panes.focused_document();
-    // Tool cluster of the layout pane (the active tool is the first entry). The
-    // unfocused pane renders the same cluster dimmed to read as available-but-
+    let panes = layout.viewport_panes(workspace);
+    // Tool cluster of the layout pane (the active tool is the first entry). A
+    // non-focused pane renders the same cluster dimmed to read as available-but-
     // -inactive rather than owned.
     const PANE_TOOLS: [&str; 5] = ["S", "M", "R", "V", "Z"];
-    render_pane_header(
-        &panes.pane_a,
-        "Board \u{00B7} Layout",
-        &PANE_TOOLS,
-        focused == FocusedPane::Board,
-        panel_quads,
-        text_runs,
-    );
-    render_pane_header(
-        &panes.pane_b,
-        "Schematic \u{00B7} Sheet 1",
-        &PANE_TOOLS,
-        focused == FocusedPane::Schematic,
-        panel_quads,
-        text_runs,
-    );
-    // Divider gutter between the panes.
-    panel_quads.push(Quad::from_rect(panes.divider, PANEL_CARD_BORDER));
-    // Pane B canvas fill = VIEWPORT_BG. The board underlay pass is scissored to
-    // pane A's scene (the single retained world buffer), so pane B never receives
-    // that underlay; we paint its canvas explicitly as a panel quad here so it
-    // reads as a real (empty) canvas awaiting content, not bare chrome. No world
-    // geometry is emitted for pane B this slice (labeled placeholder only).
-    let pane_b_canvas = RectPx {
-        x: panes.pane_b.frame.x,
-        y: panes.pane_b.header.y + panes.pane_b.header.height,
-        width: panes.pane_b.frame.width,
-        height: (panes.pane_b.frame.height - panes.pane_b.header.height).max(0.0),
+    // Focus is the single source of truth: it drives the per-pane header chrome
+    // here and (context-follows-focus) which document the side panels read.
+    for leaf in &panes.panes {
+        let focused = leaf.id == panes.focused;
+        let title = match leaf.content {
+            datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
+            datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+        };
+        render_pane_header(
+            &leaf.rect,
+            title,
+            &PANE_TOOLS,
+            focused,
+            panel_quads,
+            text_runs,
+        );
+        if let datum_gui_protocol::PaneContent::Schematic = leaf.content {
+            render_schematic_placeholder(&leaf.rect, panel_quads, text_runs);
+        }
+    }
+    // Divider gutters between split siblings. They never overlap a pane frame
+    // (each sits in the reserved gutter span), so painting them after the panes
+    // is order-safe.
+    for divider in &panes.dividers {
+        panel_quads.push(Quad::from_rect(*divider, PANEL_CARD_BORDER));
+    }
+}
+
+/// Paint a Schematic leaf's placeholder canvas: a VIEWPORT_BG fill beneath the
+/// header with a centered "Schematic (coming)" caption. The board underlay pass
+/// is scissored to the FOCUSED (Board) leaf's scene, so a Schematic leaf never
+/// receives that underlay; we paint its canvas explicitly as a panel quad here so
+/// it reads as a real (empty) canvas awaiting content, not bare chrome. No world
+/// geometry is emitted (labeled placeholder only).
+fn render_schematic_placeholder(
+    pane: &PaneRect,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let canvas = RectPx {
+        x: pane.frame.x,
+        y: pane.header.y + pane.header.height,
+        width: pane.frame.width,
+        height: (pane.frame.height - pane.header.height).max(0.0),
     };
-    panel_quads.push(Quad::from_rect(pane_b_canvas, VIEWPORT_BG));
+    panel_quads.push(Quad::from_rect(canvas, VIEWPORT_BG));
     let caption = "Schematic (coming)";
     let cap_size = design_tokens::typography::DATA_SIZE;
-    let cap_w =
-        estimated_text_run_width_px(caption, cap_size, TextFace::Mono) - 16.0;
-    let cap_x = panes.pane_b.scene.x + (panes.pane_b.scene.width - cap_w) * 0.5;
-    let cap_y = panes.pane_b.scene.y + (panes.pane_b.scene.height - cap_size) * 0.5;
+    let cap_w = estimated_text_run_width_px(caption, cap_size, TextFace::Mono) - 16.0;
+    let cap_x = pane.scene.x + (pane.scene.width - cap_w) * 0.5;
+    let cap_y = pane.scene.y + (pane.scene.height - cap_size) * 0.5;
     draw_text(
         caption,
         cap_x,
