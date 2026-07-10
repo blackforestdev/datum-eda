@@ -466,7 +466,7 @@ pub(super) fn refresh_terminal_session_context(
         model_revision: context.source_revision.clone(),
         created_unix_ms: read_session_created_unix_ms(&session.session_path)
             .unwrap_or_else(|| unix_time_ms().unwrap_or(0)),
-        process_group_id: Some(session.process_group_id as i32),
+        process_group_id: Some(session.process_group_id),
     };
     write_terminal_context_files(&terminal_context, context)
 }
@@ -522,19 +522,19 @@ pub(super) fn mark_terminal_session_lifecycle(
         &session.context_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id as i32),
+        Some(session.process_group_id),
     )?;
     update_terminal_lifecycle_file(
         &session.latest_context_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id as i32),
+        Some(session.process_group_id),
     )?;
     update_terminal_lifecycle_file(
         &session.session_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id as i32),
+        Some(session.process_group_id),
     )
 }
 

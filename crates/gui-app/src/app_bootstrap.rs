@@ -114,11 +114,10 @@ impl GuiArgs {
         if self.screenshot_out.is_none() {
             anyhow::bail!("--visual-test requires --screenshot-out");
         }
-        if let Some(scale_factor) = self.visual_scale_factor {
-            if !scale_factor.is_finite() || scale_factor <= 0.0 {
+        if let Some(scale_factor) = self.visual_scale_factor
+            && (!scale_factor.is_finite() || scale_factor <= 0.0) {
                 anyhow::bail!("--visual-scale-factor must be a positive finite number");
             }
-        }
         self.visual_window_size()?;
         Ok(())
     }

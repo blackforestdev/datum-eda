@@ -305,7 +305,7 @@ impl TerminalTabStops {
     fn is_stop(&self, column: usize) -> bool {
         self.custom.contains(&column)
             || (self.defaults_enabled
-                && column % 8 == 0
+                && column.is_multiple_of(8)
                 && !self.cleared_defaults.contains(&column))
     }
 
@@ -316,7 +316,7 @@ impl TerminalTabStops {
 
     pub(super) fn clear_current(&mut self, column: usize) {
         self.custom.remove(&column);
-        if column % 8 == 0 {
+        if column.is_multiple_of(8) {
             self.cleared_defaults.insert(column);
         }
     }

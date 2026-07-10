@@ -64,10 +64,10 @@
       "note": "Engine route-proposal generation kernel."
     },
     "crates/gui-app/src/main.rs": {
-      "recorded_lines": 3942,
-      "ceiling_lines": 4534,
+      "recorded_lines": 3526,
+      "ceiling_lines": 4055,
       "status": "decomposition-pending",
-      "note": "winit GUI shell entry + app loop."
+      "note": "winit GUI shell entry + app loop. Decomposition in progress: camera/pane/dock-resize view ops extracted to runtime_camera_pane.rs (decision 021 / source-size governance); ceiling ratcheted down with the shrink."
     },
     "crates/gui-protocol/src/lib.rs": {
       "recorded_lines": 7833,

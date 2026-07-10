@@ -96,12 +96,10 @@ fn build_activity_spans(events: &[Value]) -> Vec<ActivitySpan> {
                 if current
                     .as_ref()
                     .is_some_and(|span| span.kind == "terminal_io" && span.input_bytes > 0)
-                {
-                    if let Some(mut span) = current.take() {
+                    && let Some(mut span) = current.take() {
                         span.end_reason = "next_input";
                         spans.push(span);
                     }
-                }
                 if current.is_none() {
                     current = Some(ActivitySpan::new("terminal_io"));
                 }

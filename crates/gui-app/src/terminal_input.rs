@@ -46,13 +46,12 @@ pub(super) fn terminal_key_action(
             return TerminalKeyAction::LetPasteShortcutHandle;
         }
     }
-    if modifiers.shift_key() {
-        if let Key::Named(key) = &event.logical_key
+    if modifiers.shift_key()
+        && let Key::Named(key) = &event.logical_key
             && let Some(action) = terminal_shift_named_key_action(*key)
         {
             return action;
         }
-    }
     if application_keypad
         && let PhysicalKey::Code(code) = event.physical_key
         && let Some(sequence) = application_keypad_sequence(code)

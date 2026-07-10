@@ -88,7 +88,7 @@ pub(super) fn write_terminal_context_files(
     let updated_unix_ms = unix_time_ms()?;
     let production_visibility = production_visibility_context(&context.production_status);
     let selected_finding_fingerprint = (context.selection_context.kind == "check_finding")
-        .then(|| context.selection_context.id.as_deref())
+        .then_some(context.selection_context.id.as_deref())
         .flatten();
     let latest_proposal_id =
         latest_proposal_id(&context.production_status, &context.selection_context);
