@@ -228,7 +228,7 @@ impl ApplicationHandler for App {
         let window = event_loop
             .create_window(
                 WindowAttributes::default()
-                    .with_title("Datum M7 Spike")
+                    .with_title("Datum EDA")
                     .with_inner_size(LogicalSize::new(window_width as f64, window_height as f64))
                     .with_visible(false),
             )
