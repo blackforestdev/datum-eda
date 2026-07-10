@@ -1,0 +1,366 @@
+<!--
+  Datum EDA — Schematic Editor design reference (Phase B design-readiness for the
+  schematic pane). Composite end-state across slices — do not read it as one slice:
+    P2.2  schematic GEOMETRY (render-only): IEC rectangular symbols, orthogonal
+          wires, junctions, pin name + number, refdes/value, power symbols
+          (+3V3 bar / GND stack), local net labels + global labels, no-connect
+          flags, bus + bus entries, hierarchical sheet symbol, ERC markers.
+    P2.3  net highlight + cross-probe to the board pane (the accent SPI2_SCK path).
+    P2.4  net-centric inspector (Net / Members / Checks-ERC).
+  Locked board-editor.html visual language; symbols are IEC rectangular (Fork B).
+-->
+<style>
+  :root{
+    --canvas:#0B0C0E; --bg:#121318; --s01:#181B21; --s02:#1F232A; --s03:#272C35;
+    --bd-sub:#2E343E; --bd-str:#3A414D;
+    --tx:#E4E7EB; --tx2:#B2B8C3; --tx3:#717885; --onAccent:#141619;
+    --acc:#CE5A92; --acc-h:#D86EA0; --acc-p:#B84A80; --acc-tint:#2A1D25;
+    --err:#E5534B; --warn:#E0A23A; --ok:#4FA75A; --info:#5B8BD0;
+    --cu-f:#C83A34; --cu-b:#4D7FC4;
+    --silk:#E8E6DC; --pad:#C9974A; --edge:#CBB24A;
+    --wire:#4FA75A; --sym:#AEB4BB; --bus:#C2A13A; --pwr:#B7BEC9;
+    --sans:ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --row:25px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14.5px;line-height:1.38;
+    -webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column;height:100vh}
+  .hdr,.hdr *{user-select:none}
+  .menubar{display:flex;align-items:center;gap:2px;height:33px;flex:0 0 33px;background:var(--bg);border-bottom:1px solid var(--bd-sub);padding:0 8px}
+  .brand{font-weight:600;letter-spacing:.02em;color:var(--tx);margin-right:10px;font-size:14px}
+  .brand b{color:var(--acc)}
+  .menu{padding:3px 9px;color:var(--tx2);border-radius:4px;font-size:13.5px;cursor:default}
+  .menu:hover{background:var(--s02);color:var(--tx)}
+  .menu.ctx{color:var(--tx3)}
+  .menubar .spacer{flex:1}
+  .pill{font-family:var(--mono);font-size:12px;color:var(--tx3);border:1px solid var(--bd-sub);border-radius:4px;padding:2px 8px;background:var(--s01)}
+  .workspace{flex:1;display:flex;min-height:0}
+  .col{background:var(--bg);display:flex;flex-direction:column;min-height:0}
+  .col.left{flex:0 0 224px;border-right:1px solid var(--bd-sub)}
+  .col.right{flex:0 0 296px;border-left:1px solid var(--bd-sub)}
+  .panel{display:flex;flex-direction:column;min-height:0;border-bottom:1px solid var(--bd-sub)}
+  .panel.grow{flex:1}
+  .panel-hd{display:flex;align-items:center;gap:6px;height:28px;flex:0 0 28px;padding:0 11px;font-size:11.5px;font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);background:var(--s01)}
+  .panel-hd .count{margin-left:auto;color:var(--tx3);font-weight:500;font-family:var(--mono);letter-spacing:0}
+  .panel-hd .follows{margin-left:auto;font-size:10px;color:var(--tx3);font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none}
+  .panel-hd .follows b{color:var(--acc);font-weight:600}
+  .panel-bd{overflow:auto;background:var(--s01);padding:4px 0}
+  .tree-row{display:flex;align-items:center;gap:7px;height:var(--row);padding:0 11px 0 9px;color:var(--tx2);font-size:13.5px;cursor:default}
+  .tree-row:hover{background:var(--s02)}
+  .tree-row.open{color:var(--tx)}
+  .tree-row.sel{background:var(--acc-tint);box-shadow:inset 2px 0 0 var(--acc);color:var(--tx)}
+  .tree-row .ic{width:15px;height:15px;color:var(--tx3);flex:0 0 15px}
+  .tree-row.l2{padding-left:26px}
+  .tree-row.l3{padding-left:44px}
+  .tree-row .meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--tx3)}
+  .tree-row .pane-tag{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--acc);border:1px solid var(--acc);border-radius:3px;padding:0 5px}
+  /* sheet hierarchy rows (schematic analogue of the Layers panel) */
+  .sheet-row{display:flex;align-items:center;gap:9px;height:var(--row);padding:0 11px;cursor:pointer;font-size:13.5px;color:var(--tx)}
+  .sheet-row:hover{background:var(--s02)}
+  .sheet-row.current{background:var(--acc-tint);box-shadow:inset 2px 0 0 var(--acc)}
+  .sheet-row.l2{padding-left:26px}
+  .sheet-row .ic{width:14px;height:14px;flex:0 0 14px;color:var(--tx3)}
+  .sheet-row.current .ic{color:var(--acc)}
+  .sheet-row .nm{flex:1}
+  .sheet-row .num{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+  /* ---------- split panes ---------- */
+  .split{flex:1;display:flex;min-width:0;background:var(--bd-str);gap:1px}
+  .pane{min-width:0;display:flex;flex-direction:column;background:var(--canvas);position:relative}
+  .pane.schem{flex:1.62}
+  .pane.board{flex:1}
+  .pane.focus{box-shadow:inset 0 0 0 1.5px var(--acc)}
+  .pane-hd{display:flex;align-items:center;gap:8px;height:31px;flex:0 0 31px;padding:0 8px 0 11px;background:var(--bg);border-bottom:1px solid var(--bd-sub)}
+  .pane.focus .pane-hd{background:#16181f}
+  .ptitle{font-size:12.5px;color:var(--tx2);font-family:var(--mono);display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .pane.focus .ptitle{color:var(--tx)}
+  .modeicon{width:14px;height:14px;flex:0 0 14px}
+  .pane.focus .modeicon{color:var(--acc)}
+  .pane-tools{display:flex;align-items:center;gap:2px;margin-left:6px}
+  .ptool{width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--tx3);cursor:pointer}
+  .ptool svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .ptool:hover{background:var(--s02);color:var(--tx)}
+  .ptool.on{color:var(--acc);background:var(--acc-tint);box-shadow:inset 0 0 0 1px var(--acc)}
+  .pane-ctl{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--tx3)}
+  .focusdot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 7px var(--acc)}
+  .pane-ctl .pc{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer}
+  .pane-ctl .pc svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .pane-ctl .pc:hover{background:var(--s02);color:var(--tx)}
+  .pane-body{flex:1;position:relative;overflow:hidden}
+  svg.cv{position:absolute;inset:0;width:100%;height:100%}
+  /* inspector */
+  .insp-title{display:flex;align-items:baseline;gap:8px;padding:10px 13px 9px;background:var(--s01);border-bottom:1px solid var(--bd-sub)}
+  .insp-title .ref{font-size:16.5px;font-weight:600;color:var(--tx);font-family:var(--mono)}
+  .insp-title .kind{font-size:12px;color:var(--tx3);font-family:var(--mono)}
+  .insp-title .chip{margin-left:auto;font-size:11px;color:var(--acc);border:1px solid var(--acc);border-radius:3px;padding:1px 7px;letter-spacing:.04em}
+  .sect-hd{display:flex;align-items:center;gap:6px;height:26px;padding:0 13px;background:var(--s01);font-size:11px;font-weight:600;
+    letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border-top:1px solid var(--bd-sub)}
+  .sect-hd .chev{width:13px;height:13px;transition:transform .12s}
+  .sect-hd.collapsed .chev{transform:rotate(-90deg)}
+  .kv{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:8px;padding:3px 13px;min-height:28px}
+  .kv .k{color:var(--tx2);font-size:13px}
+  .kv .v{font-size:13.5px;color:var(--tx)}
+  .field{background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:4px 8px;color:var(--tx);font-size:13.5px;width:100%;font-family:inherit}
+  .field.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .field.focus{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc-tint);background:#20161c}
+  .field.link{color:var(--info);cursor:pointer;background:transparent;border-color:transparent;padding-left:0}
+  .field.link:hover{text-decoration:underline}
+  .unit{color:var(--tx3);font-size:12px;font-family:var(--mono)}
+  .xprobe{display:flex;align-items:center;gap:8px;margin:6px 13px;padding:6px 9px;background:var(--acc-tint);border:1px solid var(--acc);border-radius:5px;font-size:11.5px;color:var(--acc-h)}
+  .xprobe svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;flex:0 0 14px}
+  /* member (connected pin) rows in the net inspector */
+  .mem{display:flex;align-items:center;gap:8px;padding:3px 13px;min-height:26px;font-family:var(--mono);font-size:12.5px;color:var(--tx)}
+  .mem .pin{color:var(--tx3);margin-left:auto;font-size:11px}
+  .mem .swatch{width:9px;height:9px;border-radius:50%;background:var(--wire);flex:0 0 9px}
+  .mem.sel .swatch{background:var(--acc)}
+  .dock{flex:0 0 32px;display:flex;align-items:center;gap:2px;background:var(--bg);border-top:1px solid var(--bd-sub);padding:0 8px}
+  .dock .dtab{font-size:12.5px;color:var(--tx3);padding:5px 11px;border-radius:4px 4px 0 0;cursor:pointer}
+  .dock .dtab.on{color:var(--tx);background:var(--s01);box-shadow:inset 0 1px 0 var(--acc)}
+  .dock .dtab:hover{color:var(--tx2)}
+  .dock .dtab .rundot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-left:7px;vertical-align:middle;box-shadow:0 0 5px var(--ok)}
+  .dock .dtab.add{color:var(--tx3);padding:5px 9px;font-family:var(--mono)}
+  .dock .dtab.add:hover{color:var(--tx);background:var(--s02)}
+  .dock .hint{margin-left:auto;font-size:11.5px;color:var(--tx3);font-family:var(--mono)}
+  .status{flex:0 0 26px;display:flex;align-items:center;background:var(--s01);border-top:1px solid var(--bd-sub);font-family:var(--mono);font-size:12px;color:var(--tx2)}
+  .status .seg{padding:0 13px;height:100%;display:flex;align-items:center;gap:6px;border-right:1px solid var(--bd-sub);font-variant-numeric:tabular-nums}
+  .status .lab{color:var(--tx3)}
+  .status .warnc{color:var(--warn)}
+  .status .accc{color:var(--acc)}
+  .status .push{flex:1;border:none}
+  .status .ver{color:var(--tx3);padding-right:13px}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="menubar hdr">
+  <span class="brand">Datum<b>·</b>EDA</span>
+  <span class="menu">File</span><span class="menu">Edit</span><span class="menu">View</span>
+  <span class="menu ctx">Place</span><span class="menu">Route</span><span class="menu">Project</span>
+  <span class="menu">Checks</span><span class="menu">Manufacturing</span><span class="menu">Window</span><span class="menu">Help</span>
+  <span class="spacer"></span>
+  <span class="pill">stm32-sensor-node · rev a3f19c</span>
+</div>
+
+<div class="workspace">
+  <!-- left column -->
+  <div class="col left hdr">
+    <div class="panel grow">
+      <div class="panel-hd"><span>Project</span><span class="count">stm32-sensor-node</span></div>
+      <div class="panel-bd">
+        <div class="tree-row open"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4-8 4z"/><path d="M4 7v10l8 4 8-4V7"/></svg>stm32-sensor-node</div>
+        <div class="tree-row l2 open sel"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".5"/></svg>Schematic <span class="pane-tag">pane A</span></div>
+        <div class="tree-row l3"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h6v8H4zM14 8h6v8h-6z"/></svg>Symbols <span class="meta">22</span></div>
+        <div class="tree-row l3"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12h16"/></svg>Nets <span class="meta">41</span></div>
+        <div class="tree-row l2 open"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18v12H3z"/><path d="M7 6v12M17 6v12" opacity=".5"/></svg>Board <span class="pane-tag">pane B</span></div>
+        <div class="tree-row l2"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16v12H4z"/></svg>Library <span class="meta">pool</span></div>
+      </div>
+    </div>
+    <div class="panel" style="flex:0 0 auto">
+      <div class="panel-hd"><span>Sheets</span><span class="follows">follows <b>pane A</b></span></div>
+      <div class="panel-bd">
+        <div class="sheet-row current"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5"/></svg><span class="nm">root.sch</span><span class="num">1/3</span></div>
+        <div class="sheet-row l2"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5"/></svg><span class="nm">power.sch</span><span class="num">2/3</span></div>
+        <div class="sheet-row l2"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5"/></svg><span class="nm">sensor.sch</span><span class="num">3/3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- split viewport: schematic focused (dominant) + board -->
+  <div class="split hdr">
+    <!-- PANE A: SCHEMATIC (focused) -->
+    <div class="pane schem focus">
+      <div class="pane-hd">
+        <span class="ptitle"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg>Schematic · root.sch · Sheet 1/3</span>
+        <span class="pane-tools">
+          <span class="ptool on" title="Select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
+          <span class="ptool" title="Wire"><svg viewBox="0 0 24 24"><path d="M3 6h8v12h10"/></svg></span>
+          <span class="ptool" title="Symbol"><svg viewBox="0 0 24 24"><path d="M8 7h8v10H8z"/><path d="M4 10h4M4 14h4M16 10h4M16 14h4"/></svg></span>
+          <span class="ptool" title="Net label"><svg viewBox="0 0 24 24"><path d="M3 12h9l3-4h6v8h-6l-3-4"/></svg></span>
+          <span class="ptool" title="Bus"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 13h16" stroke-width="2.4"/></svg></span>
+          <span class="ptool" title="Junction"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg></span>
+        </span>
+        <span class="pane-ctl"><span class="focusdot" title="focused pane — owns tools + inspector"></span><span class="pc" title="Split"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M12 4v16"/></svg></span></span>
+      </div>
+      <div class="pane-body">
+        <svg class="cv" viewBox="0 0 540 400" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="sgrid" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#141821" stroke-width="1"/></pattern>
+            <filter id="netglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <rect x="0" y="0" width="540" height="400" fill="url(#sgrid)"/>
+
+          <!-- U1 MCU (IEC rectangular symbol) -->
+          <g>
+            <rect x="228" y="96" width="120" height="196" rx="2" fill="#12141a" stroke="var(--sym)" stroke-width="1.4"/>
+            <text x="288" y="90" fill="var(--tx)" font-size="11" text-anchor="middle" font-family="monospace" font-weight="700">U1</text>
+            <text x="288" y="306" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">STM32F103C8T6</text>
+            <g fill="var(--tx2)" font-size="8" font-family="monospace"><text x="234" y="121">VDD</text><text x="234" y="145">VBAT</text><text x="234" y="169">NRST</text><text x="234" y="217">OSC_IN</text><text x="234" y="241">OSC_OUT</text><text x="234" y="269">VSS</text></g>
+            <g fill="var(--tx2)" font-size="8" font-family="monospace" text-anchor="end"><text x="342" y="121">PA9</text><text x="342" y="145">PA10</text><text x="342" y="193">PB13</text><text x="342" y="217">PB14</text><text x="342" y="241">PB15</text></g>
+            <g fill="var(--tx3)" font-size="6.5" font-family="monospace"><text x="224" y="117" text-anchor="end">24</text><text x="224" y="141" text-anchor="end">1</text><text x="224" y="165" text-anchor="end">7</text><text x="224" y="213" text-anchor="end">5</text><text x="224" y="237" text-anchor="end">6</text><text x="224" y="265" text-anchor="end">8</text><text x="352" y="117">30</text><text x="352" y="141">31</text><text x="352" y="189">26</text><text x="352" y="213">27</text><text x="352" y="237">28</text></g>
+          </g>
+
+          <!-- pin stubs (green nets) -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none">
+            <path d="M228 118h-26"/><path d="M228 142h-26"/><path d="M228 166h-26"/><path d="M228 214h-26"/><path d="M228 238h-26"/><path d="M228 266h-26"/>
+            <path d="M348 118h56"/><path d="M348 142h56"/><path d="M348 214h26"/><path d="M348 238h26"/></g>
+          <!-- SPI2_SCK (PB13, pin 26) — SELECTED / highlighted net -->
+          <g stroke="var(--acc)" stroke-width="2" fill="none" filter="url(#netglow)"><path d="M348 190h60"/></g>
+          <!-- no-connect flag on VBAT (intentionally unused pin) -->
+          <g stroke="var(--tx2)" stroke-width="1.4"><path d="M198 138l8 8M206 138l-8 8"/></g>
+
+          <!-- shared +3V3 rail: VDD and the R1 pull-up top tie to one +3V3 flag -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 118H160V104"/><path d="M132 118V104"/><path d="M132 104H160"/></g>
+          <g stroke="var(--pwr)" stroke-width="1.6" fill="none"><path d="M160 104v-15"/><path d="M150 89h20"/></g>
+          <text x="160" y="83" fill="var(--pwr)" font-size="8" text-anchor="middle" font-family="monospace">+3V3</text>
+
+          <!-- R1 pull-up (NRST -> +3V3 rail) -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 166h-70V150"/></g>
+          <rect x="126" y="118" width="12" height="32" rx="1.5" fill="#12141a" stroke="var(--sym)" stroke-width="1.3"/>
+          <text x="120" y="130" fill="var(--tx2)" font-size="8" text-anchor="end" font-family="monospace">R1</text>
+          <text x="120" y="139" fill="var(--tx3)" font-size="7" text-anchor="end" font-family="monospace">10k</text>
+
+          <!-- Y1 crystal on OSC pins -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 214h-42"/><path d="M202 238h-42"/><path d="M160 214v24"/></g>
+          <rect x="138" y="217" width="20" height="18" rx="1.5" fill="#12141a" stroke="var(--sym)" stroke-width="1.3"/>
+          <g stroke="var(--sym)" stroke-width="1.5" fill="none"><path d="M136 217v18M160 217v18"/></g>
+          <text x="148" y="250" fill="var(--tx3)" font-size="7" text-anchor="middle" font-family="monospace">Y1 · 8MHz</text>
+
+          <!-- C1 decoupling cap: +3V3 -> GND (parallel-plate symbol) -->
+          <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M71 169h18"/></g>
+          <text x="80" y="163" fill="var(--pwr)" font-size="7.5" text-anchor="middle" font-family="monospace">+3V3</text>
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M80 169v17"/><path d="M80 192v11"/></g>
+          <g stroke="var(--sym)" stroke-width="1.7" fill="none"><path d="M70 186h20"/><path d="M70 192h20"/></g>
+          <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M71 203h18M74 207h12M77 211h6"/></g>
+          <text x="95" y="191" fill="var(--tx3)" font-size="7" text-anchor="start" font-family="monospace">C1</text>
+          <text x="95" y="200" fill="var(--tx3)" font-size="6.5" text-anchor="start" font-family="monospace">100n</text>
+
+          <!-- GND on VSS -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M202 266h-42v14"/></g>
+          <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M151 280h18M155 284h10M158 288h4"/></g>
+
+          <!-- USART signals as GLOBAL labels (pointed tag = global net, distinct from the local SPI2 chips) -->
+          <g font-family="monospace" font-size="8.5" text-anchor="middle">
+            <g><path d="M404 118L411 110H492V126H411Z" fill="#151922" stroke="var(--info)" stroke-width="1.1"/><text x="452" y="121" fill="var(--tx)">USART1_TX</text></g>
+            <g><path d="M404 142L411 134H492V150H411Z" fill="#151922" stroke="var(--info)" stroke-width="1.1"/><text x="452" y="145" fill="var(--tx)">USART1_RX</text></g>
+          </g>
+
+          <!-- SPI2 bus: PB13/14/15 collected onto a bus into sensor.sch -->
+          <g stroke="var(--bus)" stroke-width="3.2" fill="none" stroke-linejoin="round"><path d="M430 190v118h34"/></g>
+          <!-- bus entries (diagonal stubs from each member wire to the bus) -->
+          <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M374 214h48l8 8"/><path d="M374 238h40l16 16"/></g>
+          <!-- SCK member wire meets bus (selected/accent) -->
+          <g stroke="var(--acc)" stroke-width="2" fill="none"><path d="M408 190h14l8 8"/></g>
+          <!-- member net labels -->
+          <g font-family="monospace" font-size="8" text-anchor="start">
+            <g><rect x="382" y="182" width="18" height="15" rx="3" fill="var(--acc-tint)" stroke="var(--acc)"/><text x="391" y="193" fill="var(--acc-h)" text-anchor="middle">SCK</text></g>
+            <g><rect x="382" y="206" width="20" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="392" y="217" fill="var(--tx2)" text-anchor="middle">MISO</text></g>
+            <g><rect x="382" y="230" width="20" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="392" y="241" fill="var(--tx2)" text-anchor="middle">MOSI</text></g>
+          </g>
+
+          <!-- hierarchical sub-sheet symbol: sensor.sch -->
+          <g>
+            <rect x="464" y="292" width="66" height="66" rx="2" fill="#141821" stroke="var(--info)" stroke-width="1.4"/>
+            <text x="497" y="288" fill="var(--info)" font-size="8" text-anchor="middle" font-family="monospace">sensor.sch ↘</text>
+            <g fill="var(--tx2)" font-size="7" font-family="monospace"><text x="468" y="312">SPI2</text><text x="468" y="330">+3V3</text><text x="468" y="348">GND</text></g>
+            <g stroke="var(--bus)" stroke-width="3.2" fill="none"><path d="M464 308h-0"/></g>
+          </g>
+
+          <!-- ERC marker: SPI2_SCK has no driver on this sheet -->
+          <g><circle cx="408" cy="190" r="6.5" fill="#1e1608" stroke="var(--warn)" stroke-width="1.3"/><text x="408" y="193" fill="var(--warn)" font-size="8" text-anchor="middle" font-family="monospace">!</text></g>
+
+          <!-- junctions (real 3-way ties only) -->
+          <g fill="var(--wire)"><circle cx="160" cy="104" r="2.3"/></g>
+          <g fill="var(--acc)"><circle cx="422" cy="190" r="2.5"/></g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- PANE B: BOARD (unfocused, cross-probe context) -->
+    <div class="pane board">
+      <div class="pane-hd">
+        <span class="ptitle"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18v12H3z"/><path d="M7 6v12M17 6v12" opacity=".6"/></svg>Board · Layout</span>
+        <span class="pane-tools">
+          <span class="ptool on" title="Select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
+          <span class="ptool" title="Route track"><svg viewBox="0 0 24 24"><path d="M3 17h6l4-10h8"/></svg></span>
+        </span>
+        <span class="pane-ctl"><span class="pc" title="Focus"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg></span></span>
+      </div>
+      <div class="pane-body">
+        <svg class="cv" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet">
+          <defs><pattern id="bgrid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#171A20" stroke-width="1"/></pattern></defs>
+          <rect x="24" y="40" width="252" height="320" rx="6" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".8" stroke-width="1.4"/>
+          <rect x="24" y="40" width="252" height="320" rx="6" fill="url(#bgrid)"/>
+          <!-- SPI2_SCK copper highlighted (cross-probe of the selected net) -->
+          <path d="M150 150 H200 V236 H236" stroke="var(--acc)" stroke-width="3.4" fill="none" stroke-linecap="round" filter="url(#netglow)"/>
+          <path d="M100 120 H150" stroke="var(--cu-f)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <path d="M100 200 H140 V270" stroke="var(--cu-b)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <g><rect x="128" y="130" width="44" height="44" rx="2" fill="#161a24" stroke="var(--bd-str)"/><g fill="var(--pad)"><rect x="134" y="124" width="5" height="7"/><rect x="144" y="124" width="5" height="7"/><rect x="154" y="124" width="5" height="7"/><rect x="164" y="124" width="5" height="7"/></g><text x="150" y="156" fill="var(--silk)" font-size="8" text-anchor="middle" font-family="monospace">U1</text></g>
+          <g><rect x="52" y="120" width="18" height="70" rx="2" fill="#161a24" stroke="var(--bd-str)"/><text x="61" y="116" fill="var(--silk)" font-size="7" text-anchor="middle" font-family="monospace">J1</text></g>
+          <g><rect x="222" y="228" width="34" height="20" rx="2" fill="#161a24" stroke="var(--bd-str)"/><text x="239" y="262" fill="var(--silk)" font-size="7" text-anchor="middle" font-family="monospace">U2</text></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- right column: inspector (follows focused pane — net-centric for schematic) -->
+  <div class="col right hdr">
+    <div class="panel grow" style="border-bottom:none">
+      <div class="panel-hd"><span>Inspector</span><span class="follows">follows <b>pane A</b></span></div>
+      <div class="panel-bd" style="padding:0" id="insp">
+        <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Net · 3 pins</span><span class="chip">SELECTED</span></div>
+        <div class="xprobe"><svg viewBox="0 0 24 24"><path d="M4 7h6M4 7v10M4 17h6M20 7h-6M20 7v10M20 17h-6M10 12h4"/></svg>Cross‑probed — copper highlighted in Board (pane B)</div>
+        <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Net</div>
+        <div class="sect">
+          <div class="kv"><span class="k">Name</span><span class="v"><input class="field focus mono" value="SPI2_SCK"></span></div>
+          <div class="kv"><span class="k">Class</span><span class="v"><span class="field link mono">Signal ↗</span></span></div>
+          <div class="kv"><span class="k">Bus</span><span class="v" style="font-family:var(--mono)">SPI2[SCK,MISO,MOSI]</span></div>
+        </div>
+        <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Members <span style="margin-left:auto;color:var(--tx3);font-family:var(--mono)">3</span></div>
+        <div class="sect">
+          <div class="mem sel"><span class="swatch"></span>U1<span class="pin">PB13 · pin 26</span></div>
+          <div class="mem"><span class="swatch"></span>J1<span class="pin">SWCLK · pin 2</span></div>
+          <div class="mem"><span class="swatch"></span>sensor.sch<span class="pin">SPI2.SCK</span></div>
+        </div>
+        <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Checks (ERC) <span style="margin-left:auto;color:var(--warn);font-family:var(--mono)">2</span></div>
+        <div class="sect">
+          <div class="kv" style="grid-template-columns:16px 1fr"><span style="color:var(--warn)">⚠</span><span class="v" style="font-size:13px">Net driven by no output pin (all inputs)</span></div>
+          <div class="kv" style="grid-template-columns:16px 1fr"><span style="color:var(--warn)">⚠</span><span class="v" style="font-size:13px">Pin 26 SPI2_SCK unrouted on Board</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dock hdr">
+  <span class="dtab on">bash</span><span class="dtab">claude<span class="rundot"></span></span><span class="dtab">codex</span><span class="dtab add" title="New terminal — ⌘⇧T">+</span>
+  <span class="hint">⌘⇧T new terminal — agent (Claude · Codex · local) or shell · ⌘K palette</span>
+</div>
+
+<div class="status hdr">
+  <span class="seg"><span class="lab">focus</span><span class="accc">pane A · Schematic</span></span>
+  <span class="seg"><span class="lab">Tool</span>Select</span>
+  <span class="seg"><span class="lab">Sel</span>net SPI2_SCK <span class="lab">(3 pins)</span></span>
+  <span class="seg"><span class="lab">Sheet</span>1/3</span>
+  <span class="seg"><span class="lab">Grid</span>1.270 mm</span>
+  <span class="push seg"></span>
+  <span class="seg warnc">ERC 3 ⚠</span>
+  <span class="seg" style="border:none"><span class="lab">rev</span>a3f19c</span>
+  <span class="ver">Datum EDA — schematic pane · design pass 1</span>
+</div>
+
+<script>
+  document.querySelectorAll('.pane').forEach(function(p){
+    p.addEventListener('mousedown',function(){
+      document.querySelectorAll('.pane').forEach(function(x){x.classList.remove('focus')});
+      p.classList.add('focus');
+    });
+  });
+  document.getElementById('insp').addEventListener('click',function(e){
+    var h=e.target.closest('.sect-hd'); if(!h)return;
+    h.classList.toggle('collapsed');
+    var s=h.nextElementSibling; if(s&&s.classList.contains('sect')) s.style.display=h.classList.contains('collapsed')?'none':'';
+  });
+</script>
