@@ -282,6 +282,32 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
     );
 }
 
+/// A non-focused Board pane cannot render live under single-live-scene, so it
+/// carries the "Inactive - click to focus" placeholder caption instead of a blank
+/// canvas. Focusing the Schematic leaf leaves the Board leaf non-focused.
+#[test]
+fn non_focused_board_pane_shows_inactive_caption() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.layout.focus_next(); // focus Schematic; the Board leaf goes non-focused
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let labels = prepared
+        .text_runs
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect::<Vec<_>>();
+    assert!(
+        labels.contains(&"Inactive \u{00B7} click to focus"),
+        "non-focused Board pane should show the inactive placeholder caption"
+    );
+}
+
 /// The tiling differentiates focus: the focused leaf (whichever it is) draws the
 /// accent focus dot + inset ACCENT pane frame; non-focused leaves draw neither.
 /// Each lives inside its own pane rect. This locks the focus differentiation that

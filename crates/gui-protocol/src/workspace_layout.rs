@@ -110,6 +110,18 @@ pub enum PaneContent {
     Schematic,
 }
 
+impl PaneContent {
+    /// The complementary content, used so a split pairs Board with Schematic
+    /// (and vice-versa) rather than duplicating the focused pane's content.
+    /// Trivial while only two variants exist; revisit when more land.
+    pub fn complement(self) -> Self {
+        match self {
+            PaneContent::Board => PaneContent::Schematic,
+            PaneContent::Schematic => PaneContent::Board,
+        }
+    }
+}
+
 /// Stable identifier for a leaf pane, allocated monotonically by the owning
 /// `WorkspaceLayout`. Ids are never reused within a layout's lifetime.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -240,8 +252,11 @@ impl WorkspaceLayout {
     }
 
     /// Split the focused leaf into a Split whose children are the old leaf
-    /// (first) and a fresh leaf (second) inheriting the old content. Focus
-    /// stays on the original leaf.
+    /// (first, unchanged content) and a fresh leaf (second) showing the
+    /// COMPLEMENTARY content (Board <-> Schematic). Splitting therefore always
+    /// yields the useful Board|Schematic pairing rather than a duplicate pane, so
+    /// a fresh split never leaves a second same-content pane blank under the
+    /// single-live-scene model. Focus stays on the original leaf.
     pub fn split_focused(&mut self, orientation: SplitOrientation) {
         let new_id = self.alloc_id();
         let focused = self.focused;
@@ -250,6 +265,7 @@ impl WorkspaceLayout {
                 PaneNode::Leaf { content, .. } => *content,
                 PaneNode::Split { .. } => return,
             };
+            let new_content = content.complement();
             let old = std::mem::replace(
                 slot,
                 PaneNode::Leaf {
@@ -263,7 +279,7 @@ impl WorkspaceLayout {
                 first: Box::new(old),
                 second: Box::new(PaneNode::Leaf {
                     id: new_id,
-                    content,
+                    content: new_content,
                 }),
             };
         }
@@ -495,9 +511,10 @@ mod tests {
         // Focus stays on the original leaf.
         assert_eq!(layout.focused, focused_before);
         assert!(leaves.contains(&focused_before));
-        // New leaf inherits the focused content.
+        // Focus keeps the original (Board) content; the new leaf shows the
+        // complement (Schematic), so a split yields the Board|Schematic pairing.
         assert_eq!(layout.focused_content(), PaneContent::Board);
-        assert_eq!(content_of(&layout, leaves[1]), PaneContent::Board);
+        assert_eq!(content_of(&layout, leaves[1]), PaneContent::Schematic);
     }
 
     #[test]

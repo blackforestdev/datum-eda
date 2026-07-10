@@ -477,13 +477,13 @@ fn render_status_bar(
 /// walk its leaf set (generalized to N leaves, nested H/V splits, and zoom) and
 /// draw one header per leaf, each divider, and a per-content canvas. Every leaf
 /// carries real chrome (header band, title, tool cluster, focus differentiation);
-/// the focused leaf gets the accent frame + focus dot. A Board leaf's canvas is
-/// the world scene (the FOCUSED Board leaf shows the single retained world buffer,
-/// scissored to its `scene_viewport`; non-focused Board leaves render as today —
-/// no per-leaf snapshot this commit). A Schematic leaf is a labeled placeholder:
-/// its canvas is the VIEWPORT_BG underlay with a centered "Schematic (coming)"
-/// caption, NO world geometry (real schematic world geometry is deferred to the
-/// multi-scene GPU pass).
+/// the focused leaf gets the accent frame + focus dot. The FOCUSED Board leaf's
+/// canvas is the world scene (the single retained world buffer, scissored to its
+/// `scene_viewport`). Every other pane is a labeled placeholder under the single-
+/// live-scene model: a Schematic leaf shows "Schematic (coming)", and a non-focused
+/// Board leaf shows "Inactive \u{00B7} click to focus" so it reads as intentional
+/// rather than blank. No world geometry is emitted for placeholders; idle
+/// real-content snapshots are deferred to the P2.2 multi-scene GPU pass.
 fn render_viewport_panes(
     layout: &ShellLayout,
     workspace: &datum_gui_protocol::WorkspaceLayout,
@@ -511,8 +511,23 @@ fn render_viewport_panes(
             panel_quads,
             text_runs,
         );
-        if let datum_gui_protocol::PaneContent::Schematic = leaf.content {
-            render_schematic_placeholder(&leaf.rect, panel_quads, text_runs);
+        match leaf.content {
+            datum_gui_protocol::PaneContent::Schematic => {
+                render_pane_placeholder(&leaf.rect, "Schematic (coming)", panel_quads, text_runs);
+            }
+            // A non-focused Board pane cannot render live under single-live-scene
+            // (only the focused leaf owns the world buffer); label it so it reads as
+            // an intentional inactive pane, not a blank. Idle real-content snapshots
+            // land with the P2.2 multi-scene pass.
+            datum_gui_protocol::PaneContent::Board if !focused => {
+                render_pane_placeholder(
+                    &leaf.rect,
+                    "Inactive \u{00B7} click to focus",
+                    panel_quads,
+                    text_runs,
+                );
+            }
+            datum_gui_protocol::PaneContent::Board => {}
         }
     }
     // Divider gutters between split siblings. They never overlap a pane frame
@@ -523,14 +538,16 @@ fn render_viewport_panes(
     }
 }
 
-/// Paint a Schematic leaf's placeholder canvas: a VIEWPORT_BG fill beneath the
-/// header with a centered "Schematic (coming)" caption. The board underlay pass
-/// is scissored to the FOCUSED (Board) leaf's scene, so a Schematic leaf never
-/// receives that underlay; we paint its canvas explicitly as a panel quad here so
-/// it reads as a real (empty) canvas awaiting content, not bare chrome. No world
-/// geometry is emitted (labeled placeholder only).
-fn render_schematic_placeholder(
+/// Paint a non-live pane's placeholder canvas: a VIEWPORT_BG fill beneath the
+/// header with a centered `caption`. The world underlay pass is scissored to the
+/// single FOCUSED Board leaf's scene, so any other pane (a Schematic leaf, or a
+/// non-focused Board leaf under the single-live-scene model) never receives that
+/// underlay; we paint its canvas explicitly as a panel quad here so it reads as a
+/// real (empty) canvas awaiting content, not bare chrome. No world geometry is
+/// emitted (labeled placeholder only).
+fn render_pane_placeholder(
     pane: &PaneRect,
+    caption: &str,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
@@ -541,7 +558,6 @@ fn render_schematic_placeholder(
         height: (pane.frame.height - pane.header.height).max(0.0),
     };
     panel_quads.push(Quad::from_rect(canvas, VIEWPORT_BG));
-    let caption = "Schematic (coming)";
     let cap_size = design_tokens::typography::DATA_SIZE;
     let cap_w = estimated_text_run_width_px(caption, cap_size, TextFace::Mono) - 16.0;
     let cap_x = pane.scene.x + (pane.scene.width - cap_w) * 0.5;
