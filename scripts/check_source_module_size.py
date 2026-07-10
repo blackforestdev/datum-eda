@@ -20,10 +20,17 @@ Consequences:
   updated (so the recorded budget stays honest).
 - **Shrink-back is surfaced** — a registered module that drops back under
   threshold is reported as a de-list candidate (warning, not failure).
+- **Registered monoliths cannot grow without bound** — each entry carries a
+  FROZEN ``ceiling_lines`` (its registered baseline + headroom). A flagged module
+  may grow only up to its ceiling; past it the gate FAILS. The ceiling does not
+  move: the only sanctioned way back under it is to DECOMPOSE (which shrinks the
+  file), never to raise the ceiling. This is the perpetuation guard — the ledger
+  stays honest AND a known monolith has a hard cap on further growth.
 
 This gate does NOT decompose anything. Registration here is the flag that a
 future governance-triggered decomposition change should act on; the split itself
-is deliberately deferred.
+is deliberately deferred — but the ceiling bounds how far a flagged module may
+drift before decomposition is forced.
 """
 
 from __future__ import annotations
@@ -72,6 +79,8 @@ def main() -> int:
     threshold: int = manifest["threshold_lines"]
     floor: int = manifest.get("drift_floor_lines", 40)
     pct: float = manifest.get("drift_pct", 0.03)
+    headroom_pct: float = manifest.get("growth_headroom_pct", 0.15)
+    headroom_floor: int = manifest.get("growth_headroom_floor", 250)
     valid_status: set[str] = set(manifest.get("valid_status", ["decomposition-pending"]))
     entries: dict[str, dict] = manifest["entries"]
 
@@ -86,11 +95,14 @@ def main() -> int:
     for rel, count in sorted(oversized.items()):
         entry = entries.get(rel)
         if entry is None:
+            suggested_ceiling = count + max(headroom_floor, math.ceil(headroom_pct * count))
             failures.append(
                 f"NEW oversized module: {rel} is {count} lines (> {threshold}) and is "
                 f"not registered. Either keep it under {threshold} lines, or register it "
-                f"in {MANIFEST.relative_to(ROOT)} as a decomposition-pending module with "
-                f"an accurate recorded_lines and a note (governance-triggered decomposition)."
+                f"in {MANIFEST.relative_to(ROOT)} as a decomposition-pending module with an "
+                f"accurate recorded_lines, a frozen ceiling_lines (suggested "
+                f"{suggested_ceiling} = baseline + headroom), and a note "
+                f"(governance-triggered decomposition)."
             )
             continue
         status = entry.get("status")
@@ -102,6 +114,20 @@ def main() -> int:
         if not isinstance(recorded, int):
             failures.append(f"{rel}: manifest entry missing integer recorded_lines.")
             continue
+        ceiling = entry.get("ceiling_lines")
+        if not isinstance(ceiling, int):
+            failures.append(
+                f"{rel}: manifest entry missing integer ceiling_lines — the FROZEN "
+                f"decomposition-headroom cap (baseline + headroom = the larger of "
+                f"{headroom_floor} lines or {int(headroom_pct * 100)}% of the baseline)."
+            )
+            continue
+        if ceiling < recorded:
+            failures.append(
+                f"{rel}: ceiling_lines {ceiling} < recorded_lines {recorded}; the ceiling "
+                f"must be >= the recorded baseline."
+            )
+        entry_ok = True
         tol = material_drift(recorded, floor, pct)
         if abs(count - recorded) > tol:
             failures.append(
@@ -110,10 +136,19 @@ def main() -> int:
                 f"recorded_lines in {MANIFEST.relative_to(ROOT)} so the budget stays honest "
                 f"(a large shrink usually means a decomposition landed — de-list instead)."
             )
-        else:
+            entry_ok = False
+        if count > ceiling:
+            failures.append(
+                f"OVER HEADROOM: {rel} is {count} lines, past its frozen decomposition "
+                f"ceiling {ceiling} (baseline {recorded}). A decomposition-pending module may "
+                f"grow only up to its ceiling; the ONLY sanctioned way back under it is to "
+                f"DECOMPOSE (which shrinks the file), never to raise the ceiling. Split it now."
+            )
+            entry_ok = False
+        if entry_ok:
             flags.append(
                 f"FLAG decomposition-pending: {rel} — {count} lines "
-                f"(recorded {recorded}, threshold {threshold})"
+                f"(recorded {recorded}, ceiling {ceiling}, threshold {threshold})"
             )
 
     # 2. No stale / shrunk registrations.
@@ -144,7 +179,8 @@ def main() -> int:
     print(
         f"Source-module size gate passed: {len(oversized)} oversized module(s) flagged "
         f"decomposition-pending, {len(warnings)} de-list candidate(s); "
-        f"no new oversized modules, no ledger drift (threshold {threshold} lines)."
+        f"no new oversized modules, no ledger drift, none over its decomposition ceiling "
+        f"(threshold {threshold} lines)."
     )
     return 0
 

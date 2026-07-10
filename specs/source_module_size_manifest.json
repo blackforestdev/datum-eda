@@ -1,94 +1,113 @@
 {
-  "description": "Source-module size governance ledger. Enforced by scripts/check_source_module_size.py (wired into scripts/run_drift_gates.sh). Any tracked source module (crates/**/src/**.rs, scripts/*.py, mcp-server/**.py) over threshold_lines FAILS the gate UNLESS it is registered here as an oversized module with status 'decomposition-pending' and an accurate recorded_lines. This makes known-oversized modules visibly FLAGGED and budgeted (not silently tolerated) while NEW oversized modules fail immediately. Decomposition is governance-triggered and organic (docs/DECOMPOSITION_PLAN.md / Decomposition Philosophy) \u2014 registration here is the governance flag, NOT a schedule to split. The gate also fails if a recorded_lines drifts materially from the live count (the ledger cannot rot) and warns when a registered module shrinks back under threshold (de-list candidate).",
+  "description": "Source-module size governance ledger. Enforced by scripts/check_source_module_size.py (wired into scripts/run_drift_gates.sh). Any tracked source module (crates/**/src/**.rs, scripts/*.py, mcp-server/**.py) over threshold_lines FAILS the gate UNLESS it is registered here as an oversized module with status 'decomposition-pending', an honest recorded_lines, and a FROZEN ceiling_lines. This makes known-oversized modules visibly FLAGGED and budgeted (not silently tolerated) while NEW oversized modules fail immediately. Decomposition is governance-triggered and organic (docs/DECOMPOSITION_PLAN.md / Decomposition Philosophy) \u2014 registration here is the governance flag, NOT a schedule to split. The gate also fails if a recorded_lines drifts materially from the live count (the ledger cannot rot) and warns when a registered module shrinks back under threshold (de-list candidate). GROWTH CEILING (perpetuation guard): each entry carries a frozen ceiling_lines = its registered baseline + headroom (growth_headroom: the larger of growth_headroom_floor lines or growth_headroom_pct of the baseline). A flagged module may grow only up to its ceiling; past it the gate FAILS \u2014 the ONLY sanctioned way back under the ceiling is to DECOMPOSE (which shrinks the file), never to raise the ceiling. This stops a registered monolith growing without bound.",
   "threshold_lines": 1500,
   "drift_floor_lines": 40,
   "drift_pct": 0.03,
+  "growth_headroom_pct": 0.15,
+  "growth_headroom_floor": 250,
   "valid_status": [
     "decomposition-pending"
   ],
   "entries": {
     "crates/cli/src/commands/dispatch.rs": {
       "recorded_lines": 1803,
+      "ceiling_lines": 2074,
       "status": "decomposition-pending",
       "note": "CLI command dispatch table."
     },
     "crates/cli/src/commands/library/library.rs": {
       "recorded_lines": 2653,
+      "ceiling_lines": 3051,
       "status": "decomposition-pending",
       "note": "CLI library command family."
     },
     "crates/cli/src/commands/project/query.rs": {
       "recorded_lines": 1518,
+      "ceiling_lines": 1768,
       "status": "decomposition-pending",
       "note": "CLI project-query command module."
     },
     "crates/cli/src/commands/route/proposal.rs": {
       "recorded_lines": 3193,
+      "ceiling_lines": 3672,
       "status": "decomposition-pending",
       "note": "CLI route-proposal command family."
     },
     "crates/cli/src/commands/route/views.rs": {
       "recorded_lines": 1917,
+      "ceiling_lines": 2205,
       "status": "decomposition-pending",
       "note": "CLI route views/rendering command module."
     },
     "crates/cli/src/main_tests/main_tests_project_board_component_pool_materialization.rs": {
       "recorded_lines": 2083,
+      "ceiling_lines": 2396,
       "status": "decomposition-pending",
       "note": "CLI integration-test module (board component pool materialization)."
     },
     "crates/cli/src/main_tests/main_tests_project_pool_part.rs": {
       "recorded_lines": 2171,
+      "ceiling_lines": 2497,
       "status": "decomposition-pending",
       "note": "CLI integration-test module (pool/part flows)."
     },
     "crates/cli/src/main_tests/main_tests_project_route_proposal_artifact.rs": {
       "recorded_lines": 5434,
+      "ceiling_lines": 6250,
       "status": "decomposition-pending",
       "note": "CLI integration-test module (route-proposal artifact flows)."
     },
     "crates/engine/src/board/route_proposal/generation.rs": {
       "recorded_lines": 2836,
+      "ceiling_lines": 3262,
       "status": "decomposition-pending",
       "note": "Engine route-proposal generation kernel."
     },
     "crates/gui-app/src/main.rs": {
       "recorded_lines": 3942,
+      "ceiling_lines": 4534,
       "status": "decomposition-pending",
       "note": "winit GUI shell entry + app loop."
     },
     "crates/gui-protocol/src/lib.rs": {
       "recorded_lines": 7833,
+      "ceiling_lines": 9008,
       "status": "decomposition-pending",
       "note": "GUI scene-contract + primitive types (no GUI deps). Still oversized; the workspace consumer-state cluster was extracted to workspace_layout.rs (decision 021)."
     },
     "crates/verb-registry/src/verbs_library.rs": {
       "recorded_lines": 3090,
+      "ceiling_lines": 3554,
       "status": "decomposition-pending",
       "note": "Verb-registry library-family verb definitions."
     },
     "crates/verb-registry/src/verbs_pcb.rs": {
       "recorded_lines": 2134,
+      "ceiling_lines": 2455,
       "status": "decomposition-pending",
       "note": "Verb-registry PCB-family verb definitions."
     },
     "crates/verb-registry/src/verbs_proposal.rs": {
       "recorded_lines": 2591,
+      "ceiling_lines": 2980,
       "status": "decomposition-pending",
       "note": "Verb-registry proposal-family verb definitions."
     },
     "crates/verb-registry/src/verbs_schematic.rs": {
       "recorded_lines": 2423,
+      "ceiling_lines": 2787,
       "status": "decomposition-pending",
       "note": "Verb-registry schematic-family verb definitions."
     },
     "mcp-server/daemon_client_request_tests.py": {
       "recorded_lines": 2570,
+      "ceiling_lines": 2956,
       "status": "decomposition-pending",
       "note": "MCP daemon-client request test module."
     },
     "mcp-server/fake_daemon_support_queries.py": {
       "recorded_lines": 2561,
+      "ceiling_lines": 2946,
       "status": "decomposition-pending",
       "note": "MCP fake-daemon support-query fixtures."
     }
