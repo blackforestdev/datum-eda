@@ -102,11 +102,19 @@ document's **mode**; the mode carries its own toolset and menus.
   related objects (schematic symbol ↔ board footprint ↔ net). This falls out of
   tiled panes over one shared `DesignModel` — Altium's cross-probe / Horizon's
   message bus, for free.
-- **Open sub-decisions**: PIP vs. tile-only.
+**Ratified as decision 021** (`docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`):
+the workspace is a **recursive binary tile tree**, **tile-first**, View-menu-managed,
+with two bounded overlay modes on top — **Zoom/maximize** a pane (the "get the others
+out of the way" need) and deliberate **Float/detach** (PIP over the others). Panes hold
+`(document, view)` pairs over the one `DesignModel`; the layout is **consumer/workspace
+state, never journaled**. Distinct from decision-020 **paper-space viewports** (a
+projection window onto a sheet) — a **workspace pane** is the interactive editor tiling.
+The former "PIP vs tile-only" sub-decision is resolved there (tile foundation + zoom +
+float escape hatch).
 
-Reference: `docs/gui/prototypes/board-editor.html` (pass 3) shows a PCB|Schematic
-split with per-pane mode tools, context-follows-focus, and U1 cross-probed across
-both panes.
+Reference prototypes: `docs/gui/prototypes/board-editor.html` (pass 3, PCB|Schematic
+split with cross-probe) and `docs/gui/prototypes/workspace-panes.html` (the recursive
+tiling + View-menu model).
 
 ## Command Surfaces — console, terminal, AI (three, not one)
 
