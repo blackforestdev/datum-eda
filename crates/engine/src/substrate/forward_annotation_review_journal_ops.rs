@@ -138,11 +138,9 @@ pub(super) fn reconstruct_forward_annotation_review_value(
         for operation in &transaction.operations {
             if let Some((operation_path, next_value)) =
                 forward_annotation_review_operation_write(operation)
-            {
-                if operation_path == relative_path {
+                && operation_path == relative_path {
                     value = next_value.cloned();
                 }
-            }
         }
     }
     value.ok_or_else(|| {

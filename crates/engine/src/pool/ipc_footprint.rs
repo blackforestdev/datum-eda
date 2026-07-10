@@ -435,7 +435,7 @@ fn validate_soic_spec(spec: &IpcSoicSpec) -> Result<(), String> {
     if spec.package_code.trim().is_empty() {
         return Err("IPC SOIC package code must be non-empty".to_string());
     }
-    if spec.pin_count < 4 || spec.pin_count % 2 != 0 {
+    if spec.pin_count < 4 || !spec.pin_count.is_multiple_of(2) {
         return Err("IPC SOIC pin_count must be an even value of at least 4".to_string());
     }
     if spec.pad_uuids.len() != spec.pin_count as usize {

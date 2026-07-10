@@ -5,9 +5,9 @@ use crate::ir::serialization::to_json_deterministic;
 use super::DrcViolation;
 
 pub(crate) fn attach_drc_violation_fingerprints(violations: &mut [DrcViolation]) {
-    for index in 0..violations.len() {
-        let fingerprint = drc_violation_fingerprint(&violations[index]);
-        violations[index].fingerprint = Some(fingerprint);
+    for violation in violations.iter_mut() {
+        let fingerprint = drc_violation_fingerprint(violation);
+        violation.fingerprint = Some(fingerprint);
     }
 }
 

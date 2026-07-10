@@ -149,7 +149,7 @@ pub(super) fn parse_schematic_drawings(
 
 fn indexed_or_block_uuid(block: &str, family: &str, index: usize) -> Uuid {
     block_uuid(block).map_or_else(
-        || Uuid::new_v4(),
+        Uuid::new_v4,
         |uuid| {
             crate::ir::ids::import_uuid(
                 &crate::ir::ids::namespace_kicad(),

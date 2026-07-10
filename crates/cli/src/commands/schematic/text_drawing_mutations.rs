@@ -116,6 +116,8 @@ fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Resu
     Ok(project.root.join("schematic").join(relative_path))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn drawing_report(
     project: &LoadedNativeProject,
     action: &str,

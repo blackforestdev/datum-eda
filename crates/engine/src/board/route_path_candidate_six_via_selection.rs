@@ -95,6 +95,8 @@ pub(super) fn candidate_six_via_matches(
     (candidate_vias, matching_sextuples)
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn matching_six_via_sextuple(
     board: &Board,
     net_uuid: Uuid,
@@ -216,6 +218,8 @@ fn matching_six_via_sextuple(
     })
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn intermediate_layers_for_sextuple(
     via_a: &Via,
     via_b: &Via,

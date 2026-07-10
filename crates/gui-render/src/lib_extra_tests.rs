@@ -440,8 +440,7 @@ fn debug_datum_test_q1_q2_component_geometry() {
 
 #[test]
 fn inferred_component_body_geometry_handles_quarter_turn_parts() {
-    let pads = vec![
-        datum_gui_protocol::PadPrimitive {
+    let pads = [datum_gui_protocol::PadPrimitive {
             object_id: "pad:a".to_string(),
             object_kind: "pad".to_string(),
             source_object_uuid: "a".to_string(),
@@ -518,8 +517,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             solder_paste_margin_ratio_ppm: 0,
             drill_nm: None,
             rotation_degrees: 90.0,
-        },
-    ];
+        }];
     let pad_refs: Vec<_> = pads.iter().collect();
 
     let (_, width, height, rotation_degrees) =

@@ -84,6 +84,8 @@ fn seed_production_records(
     (plan_id, panel_id, job_id, plan, panel, job)
 }
 
+// Substrate helper threads many record/shard fields.
+#[allow(clippy::too_many_arguments)]
 fn assert_recovered_records(
     model: &DesignModel,
     plan_id: Uuid,

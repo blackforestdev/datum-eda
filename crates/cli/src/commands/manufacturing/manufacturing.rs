@@ -8,6 +8,8 @@ use eda_engine::substrate::{
 };
 use uuid::Uuid;
 
+// Shared check-gate helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "../check/gate.rs"]
 mod command_project_direct_export_gate;
 #[path = "evidence.rs"]
@@ -243,6 +245,8 @@ pub(crate) fn export_native_project_manufacturing_set_without_output_run(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn export_native_project_manufacturing_set_with_output_run(
     root: &Path,
     output_dir: &Path,

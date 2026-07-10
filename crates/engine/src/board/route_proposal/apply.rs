@@ -346,7 +346,7 @@ mod tests {
         let error = match build_accepted_route_proposal(
             &model,
             test_provenance(),
-            &[action.clone()],
+            std::slice::from_ref(&action),
             |_| false,
         ) {
             Err(error) => error,

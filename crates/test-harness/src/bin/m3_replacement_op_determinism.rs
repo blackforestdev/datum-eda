@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{
@@ -454,7 +454,7 @@ fn save_probe_gate(gate: &str, paths: (PathBuf, PathBuf), probe: Result<String>)
     }
 }
 
-fn save_and_compare_after_with_setup<S, F>(fixture: &PathBuf, setup: S, mutate: F) -> Result<String>
+fn save_and_compare_after_with_setup<S, F>(fixture: &Path, setup: S, mutate: F) -> Result<String>
 where
     S: Fn(&mut Engine) -> Result<()>,
     F: Fn(&mut Engine) -> Result<String>,
@@ -493,7 +493,7 @@ where
     Ok(first_evidence)
 }
 
-fn save_probe_paths(base: &PathBuf, label: &str) -> (PathBuf, PathBuf) {
+fn save_probe_paths(base: &Path, label: &str) -> (PathBuf, PathBuf) {
     let stem = base
         .file_stem()
         .and_then(|stem| stem.to_str())

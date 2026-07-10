@@ -4,6 +4,8 @@
 #[allow(unused_imports)]
 use super::*;
 
+// Deliberate commands/<family>/<family>.rs layout (see CLAUDE.md repository layout).
+#[allow(clippy::module_inception)]
 mod drill;
 mod views;
 

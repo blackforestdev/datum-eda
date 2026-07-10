@@ -134,9 +134,7 @@ fn push_retained_scene_geometry(
                     render_layer,
                     if active {
                         selected_copper_color(layer_app(render_layer).pad_copper)
-                    } else if hovered {
-                        layer_app(render_layer).pad_related
-                    } else if related {
+                    } else if hovered || related {
                         layer_app(render_layer).pad_related
                     } else {
                         dim_authored_color(layer_app(render_layer).pad_copper, dimmed)
@@ -433,6 +431,8 @@ fn push_retained_scene_geometry(
     let unrouted_started = std::time::Instant::now();
     let unrouted_before = out.len();
     if unrouted_visible(state) {
+        // Local batch buffer whose tuple shape is self-documenting inline.
+        #[allow(clippy::type_complexity)]
         let mut unrouted_batches: Vec<(Vec<PointNm>, [f32; 3], [f32; 3], f32, f32, f32, f32)> =
             Vec::new();
         for unrouted in &scene.unrouted_primitives {

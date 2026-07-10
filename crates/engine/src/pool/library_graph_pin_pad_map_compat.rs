@@ -73,9 +73,7 @@ impl LibraryGraph {
         diagnostics: &mut Vec<LibraryGraphDiagnostic>,
     ) -> Option<(Uuid, Uuid, Option<Uuid>)> {
         if entry.get("gate").is_some() || entry.get("pin").is_some() {
-            let Some(pad_id) = parse_uuid_key(mapping_key, subject, diagnostics) else {
-                return None;
-            };
+            let pad_id = parse_uuid_key(mapping_key, subject, diagnostics)?;
             let gate_id =
                 parse_uuid_field(entry, "gate", subject, "pin_pad_map mapping", diagnostics)?;
             let pin_id =
@@ -83,9 +81,7 @@ impl LibraryGraph {
             return Some((pad_id, gate_id, pin_id));
         }
 
-        let Some(pin_id) = parse_uuid_key(mapping_key, subject, diagnostics) else {
-            return None;
-        };
+        let pin_id = parse_uuid_key(mapping_key, subject, diagnostics)?;
         let pad_id = parse_legacy_pin_pad_map_pad(entry, subject, diagnostics)?;
         let entity_id = entity_id?;
         let gate_id =
@@ -100,12 +96,8 @@ impl LibraryGraph {
         subject: &str,
         diagnostics: &mut Vec<LibraryGraphDiagnostic>,
     ) -> Option<Uuid> {
-        let Some(entity) = self.entities.get(&entity_id) else {
-            return None;
-        };
-        let Some(gates) = entity.get("gates").and_then(serde_json::Value::as_object) else {
-            return None;
-        };
+        let entity = self.entities.get(&entity_id)?;
+        let gates = entity.get("gates").and_then(serde_json::Value::as_object)?;
         let mut matches = Vec::new();
         for (gate_key, gate) in gates {
             let Some(gate_id) = Uuid::parse_str(gate_key).ok() else {

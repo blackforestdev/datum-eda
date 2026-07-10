@@ -9,6 +9,8 @@
 
 mod footprint;
 mod footprint_proposals;
+// Deliberate commands/<family>/<family>.rs layout (see CLAUDE.md repository layout).
+#[allow(clippy::module_inception)]
 mod library;
 mod package;
 mod package_geometry;

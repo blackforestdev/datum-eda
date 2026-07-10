@@ -36,8 +36,8 @@ pub(super) fn validate_and_replay_journal(
 ) -> Result<Vec<TransactionRecord>, EngineError> {
     let mut valid = Vec::new();
     let mut current_revision = compute_model_revision(project_id, shards, objects);
-    if let Some(first) = journal.first() {
-        if first.before_model_revision != current_revision {
+    if let Some(first) = journal.first()
+        && first.before_model_revision != current_revision {
             return validate_promoted_journal_tip(
                 project_root,
                 project_id,
@@ -47,7 +47,6 @@ pub(super) fn validate_and_replay_journal(
                 diagnostics,
             );
         }
-    }
 
     for (index, transaction) in journal.iter().enumerate() {
         if let Err(message) = validate_transaction_links(transaction, &valid) {

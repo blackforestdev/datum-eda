@@ -66,6 +66,8 @@ struct SearchState {
 pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_SELECTION_RULE: &str =
     "select the first unblocked persisted target-net authored-copper path after ordering candidate graph paths by (step_count, topology_transition_count, via_step_count, zone_step_count, step_signature_sequence) ascending, where topology transitions are counted across reused track/via/zone step kind-or-layer changes";
 
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(super) fn selected_authored_copper_graph_zone_obstacle_aware_topology_aware_path(
     board: &Board,
     net_uuid: Uuid,
@@ -440,11 +442,10 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAware {
 
                 let mut next_steps = state.steps.clone();
                 let mut next_transition_count = state.topology_transition_count;
-                if let Some(previous) = next_steps.last() {
-                    if previous.kind != step.kind || previous.layer != step.layer {
+                if let Some(previous) = next_steps.last()
+                    && (previous.kind != step.kind || previous.layer != step.layer) {
                         next_transition_count += 1;
                     }
-                }
 
                 let mut next_visited_nodes = state.visited_nodes.clone();
                 next_visited_nodes.push(*next_node);

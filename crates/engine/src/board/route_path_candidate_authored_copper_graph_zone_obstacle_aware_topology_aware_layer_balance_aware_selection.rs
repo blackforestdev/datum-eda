@@ -68,6 +68,8 @@ struct SearchState {
 pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE_SELECTION_RULE: &str =
     "select the first unblocked persisted target-net authored-copper path after ordering candidate graph paths by (step_count, topology_transition_count, layer_balance_score, via_step_count, zone_step_count, step_signature_sequence) ascending, where layer_balance_score is the max-minus-min reused step count across candidate copper layers and topology transitions are counted across reused track/via/zone step kind-or-layer changes";
 
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(super) fn selected_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_path(
     board: &Board,
     candidate_copper_layers: &[StackupLayer],
@@ -165,6 +167,8 @@ struct AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
 }
 
 impl AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
+    // Routing selection threads many path-candidate/via/layer parameters.
+    #[allow(clippy::too_many_arguments)]
     fn build(
         board: &Board,
         candidate_copper_layers: &[StackupLayer],
@@ -467,11 +471,10 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
 
                 let mut next_steps = state.steps.clone();
                 let mut next_transition_count = state.topology_transition_count;
-                if let Some(previous) = next_steps.last() {
-                    if previous.kind != step.kind || previous.layer != step.layer {
+                if let Some(previous) = next_steps.last()
+                    && (previous.kind != step.kind || previous.layer != step.layer) {
                         next_transition_count += 1;
                     }
-                }
                 next_steps.push(step.clone());
 
                 let mut next_visited_nodes = state.visited_nodes.clone();

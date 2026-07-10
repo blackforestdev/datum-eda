@@ -37,14 +37,13 @@ impl DesignModel {
         validate_non_empty_operation_batch(&batch)?;
         validate_object_revision_guards(self, &batch.operations)?;
         let batch = batch_without_object_revision_guards(batch)?;
-        if let Some(expected) = &batch.expected_model_revision {
-            if expected != &self.model_revision {
+        if let Some(expected) = &batch.expected_model_revision
+            && expected != &self.model_revision {
                 return Err(EngineError::Operation(format!(
                     "model revision mismatch: expected {}, current {}",
                     expected.0, self.model_revision.0
                 )));
             }
-        }
 
         let before_model_revision = self.model_revision.clone();
         let mut diff = CommitDiff::default();
@@ -131,6 +130,8 @@ impl DesignModel {
         )
     }
 
+    // Substrate helper threads many record/shard fields.
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn commit_journaled_with_links_and_inverse(
         &mut self,
         project_root: &Path,

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "== clippy: workspace lint gate (-D warnings) =="
+cargo clippy --workspace --all-targets -- -D warnings
+
 python3 scripts/check_progress_coverage.py
 python3 scripts/check_spec_parity.py
 python3 scripts/check_alignment.py --run-gates

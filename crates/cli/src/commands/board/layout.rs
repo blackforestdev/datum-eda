@@ -76,6 +76,8 @@ pub(crate) fn query_native_project_board_stackup(root: &Path) -> Result<Vec<Stac
         .collect::<Result<Vec<StackupLayer>>>()
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn place_native_project_board_text(
     root: &Path,
     text: String,
@@ -120,9 +122,9 @@ pub(crate) fn place_native_project_board_text(
         render_intent,
         family: family
             .map(TextFamilyId)
-            .unwrap_or_else(TextFamilyId::default),
+            .unwrap_or_default(),
         family_source,
-        style: style.map(TextStyleId).unwrap_or_else(TextStyleId::default),
+        style: style.map(TextStyleId).unwrap_or_default(),
         h_align,
         v_align,
         mirrored,
@@ -165,6 +167,8 @@ pub(crate) fn place_native_project_board_text(
     })
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn edit_native_project_board_text(
     root: &Path,
     text_uuid: Uuid,

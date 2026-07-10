@@ -163,9 +163,9 @@ pub fn layout_text_mesh(
                 tolerance_class,
                 epoch: 0,
             };
-            if !asset_by_handle.contains_key(&handle) {
+            if let std::collections::btree_map::Entry::Vacant(e) = asset_by_handle.entry(handle) {
                 let asset = cached_glyph_mesh_asset(&face, glyph.glyph_id, handle, units_per_em)?;
-                asset_by_handle.insert(handle, asset);
+                e.insert(asset);
             }
             glyphs.push(TextGlyphInstance {
                 glyph_handle: handle,
@@ -511,6 +511,8 @@ fn font_units_to_em_nm(value: i64, units_per_em: u16) -> i64 {
     ((value as i128 * EM_NM as i128) / i128::from(units_per_em)) as i64
 }
 
+// Text layout threads many glyph/run/metrics parameters.
+#[allow(clippy::too_many_arguments)]
 fn include_bbox(
     min_x: &mut i64,
     max_x: &mut i64,

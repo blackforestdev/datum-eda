@@ -68,6 +68,8 @@ pub(super) fn candidate_four_via_matches(
     (candidate_vias, matching_quadruples)
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn matching_four_via_quadruple(
     board: &Board,
     net_uuid: Uuid,

@@ -1,3 +1,5 @@
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(super) fn extract_kicad_footprint_graphics(
     contents: &str,
     components: &[BoardComponentPayload],
@@ -47,7 +49,7 @@ pub(super) fn extract_kicad_footprint_graphics(
 
         // --- fp_line ---
         for block in fp_blocks.get("fp_line").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -55,15 +57,15 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let start = match kicad_parse_xy_anywhere(&block, "start") {
+            let start = match kicad_parse_xy_anywhere(block, "start") {
                 Some(p) => p,
                 None => continue,
             };
-            let end = match kicad_parse_xy_anywhere(&block, "end") {
+            let end = match kicad_parse_xy_anywhere(block, "end") {
                 Some(p) => p,
                 None => continue,
             };
-            let width = kicad_parse_width_nm(&block);
+            let width = kicad_parse_width_nm(block);
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
             all_graphics.push(ComponentGraphicPrimitive {
                 graphic_id: format!("component-graphic:{}:kicad-line:{graphic_index}", fp_uuid),
@@ -84,7 +86,7 @@ pub(super) fn extract_kicad_footprint_graphics(
 
         // --- fp_rect ---
         for block in fp_blocks.get("fp_rect").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -92,15 +94,15 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let s = match kicad_parse_xy_anywhere(&block, "start") {
+            let s = match kicad_parse_xy_anywhere(block, "start") {
                 Some(p) => p,
                 None => continue,
             };
-            let e = match kicad_parse_xy_anywhere(&block, "end") {
+            let e = match kicad_parse_xy_anywhere(block, "end") {
                 Some(p) => p,
                 None => continue,
             };
-            let width = kicad_parse_width_nm(&block);
+            let width = kicad_parse_width_nm(block);
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
             let min_x = s.x.min(e.x);
             let min_y = s.y.min(e.y);
@@ -132,7 +134,7 @@ pub(super) fn extract_kicad_footprint_graphics(
 
         // --- fp_circle ---
         for block in fp_blocks.get("fp_circle").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -140,18 +142,18 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let center = match kicad_parse_xy_anywhere(&block, "center") {
+            let center = match kicad_parse_xy_anywhere(block, "center") {
                 Some(p) => p,
                 None => continue,
             };
-            let end_pt = match kicad_parse_xy_anywhere(&block, "end") {
+            let end_pt = match kicad_parse_xy_anywhere(block, "end") {
                 Some(p) => p,
                 None => continue,
             };
             let dx = end_pt.x - center.x;
             let dy = end_pt.y - center.y;
             let radius = ((dx as f64 * dx as f64 + dy as f64 * dy as f64).sqrt()).round() as i64;
-            let width = kicad_parse_width_nm(&block);
+            let width = kicad_parse_width_nm(block);
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
             all_graphics.push(ComponentGraphicPrimitive {
                 graphic_id: format!("component-graphic:{}:kicad-circle:{graphic_index}", fp_uuid),
@@ -169,7 +171,7 @@ pub(super) fn extract_kicad_footprint_graphics(
 
         // --- fp_arc ---
         for block in fp_blocks.get("fp_arc").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -177,19 +179,19 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let start = match kicad_parse_xy_anywhere(&block, "start") {
+            let start = match kicad_parse_xy_anywhere(block, "start") {
                 Some(p) => p,
                 None => continue,
             };
-            let mid = match kicad_parse_xy_anywhere(&block, "mid") {
+            let mid = match kicad_parse_xy_anywhere(block, "mid") {
                 Some(p) => p,
                 None => continue,
             };
-            let end = match kicad_parse_xy_anywhere(&block, "end") {
+            let end = match kicad_parse_xy_anywhere(block, "end") {
                 Some(p) => p,
                 None => continue,
             };
-            let width = kicad_parse_width_nm(&block);
+            let width = kicad_parse_width_nm(block);
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
             let path = if let Some((center, radius, start_angle, end_angle)) =
                 kicad_arc_from_three_points(&start, &mid, &end)
@@ -219,7 +221,7 @@ pub(super) fn extract_kicad_footprint_graphics(
 
         // --- fp_poly ---
         for block in fp_blocks.get("fp_poly").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -227,11 +229,11 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let vertices = kicad_parse_xy_points(&block);
+            let vertices = kicad_parse_xy_points(block);
             if vertices.is_empty() {
                 continue;
             }
-            let width = kicad_parse_width_nm(&block);
+            let width = kicad_parse_width_nm(block);
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
             all_graphics.push(ComponentGraphicPrimitive {
                 graphic_id: format!("component-graphic:{}:kicad-poly:{graphic_index}", fp_uuid),
@@ -272,11 +274,11 @@ pub(super) fn extract_kicad_footprint_graphics(
                 text_trace.fp_text_template_skipped += 1;
                 continue;
             }
-            if kicad_block_hidden(&block) {
+            if kicad_block_hidden(block) {
                 text_trace.fp_text_hidden_skipped += 1;
                 continue;
             }
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
+            let layer_name = match kicad_parse_layer_anywhere(block) {
                 Some(n) => n,
                 None => continue,
             };
@@ -284,18 +286,18 @@ pub(super) fn extract_kicad_footprint_graphics(
                 Some(r) => r,
                 None => continue,
             };
-            let (local_pos, local_rot) = match kicad_parse_at(&block) {
+            let (local_pos, local_rot) = match kicad_parse_at(block) {
                 Some(v) => v,
                 None => continue,
             };
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            let height = kicad_parse_font_height_nm(&block);
-            let stroke_width_nm = kicad_parse_font_thickness_nm(&block);
+            let height = kicad_parse_font_height_nm(block);
+            let stroke_width_nm = kicad_parse_font_thickness_nm(block);
             let board_pos = transform_component_local_point(component, local_pos);
             let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
-            let mut justify = kicad_parse_text_justify(&block);
+            let mut justify = kicad_parse_text_justify(block);
             justify.keep_upright = true;
-            let source_uuid = kicad_parse_uuid(&block).unwrap_or_else(|| {
+            let source_uuid = kicad_parse_uuid(block).unwrap_or_else(|| {
                 kicad_import_text_uuid("fp_text", &format!("{fp_uuid}/{text_index}/{text}/{lid}"))
                     .to_string()
             });
@@ -355,11 +357,11 @@ pub(super) fn extract_kicad_footprint_graphics(
                 text_trace.property_empty_skipped += 1;
                 continue;
             }
-            if kicad_block_hidden(&prop_section) {
+            if kicad_block_hidden(prop_section) {
                 text_trace.property_hidden_skipped += 1;
                 continue;
             }
-            let layer_name = match kicad_parse_layer_anywhere(&prop_section) {
+            let layer_name = match kicad_parse_layer_anywhere(prop_section) {
                 Some(n) => n,
                 None => continue,
             };
@@ -368,15 +370,15 @@ pub(super) fn extract_kicad_footprint_graphics(
                 None => continue,
             };
             let layer_id = kicad_resolve_layer_id(&layer_name, layer_table);
-            let (local_pos, local_rot) = match kicad_parse_at(&prop_section) {
+            let (local_pos, local_rot) = match kicad_parse_at(prop_section) {
                 Some(v) => v,
                 None => continue,
             };
             let board_pos = transform_component_local_point(component, local_pos);
-            let height_nm = kicad_parse_font_height_nm(&prop_section);
-            let stroke_width_nm = kicad_parse_font_thickness_nm(&prop_section);
+            let height_nm = kicad_parse_font_height_nm(prop_section);
+            let stroke_width_nm = kicad_parse_font_thickness_nm(prop_section);
             let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
-            let mut justify = kicad_parse_text_justify(&prop_section);
+            let mut justify = kicad_parse_text_justify(prop_section);
             justify.keep_upright = true;
             let text_uuid = kicad_import_text_uuid(
                 "property_text",

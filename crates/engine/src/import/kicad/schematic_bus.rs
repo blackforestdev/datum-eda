@@ -27,11 +27,10 @@ pub(super) fn attached_bus_specs<'a>(
         if !label_touches_bus(label, bus) {
             continue;
         }
-        if let Some(spec) = parse_bus_label_spec(&label.name) {
-            if !specs.iter().any(|existing| existing == &spec) {
+        if let Some(spec) = parse_bus_label_spec(&label.name)
+            && !specs.iter().any(|existing| existing == &spec) {
                 specs.push(spec);
             }
-        }
     }
     specs.sort_by(|a, b| a.0.cmp(&b.0).then_with(|| a.1.cmp(&b.1)));
     specs

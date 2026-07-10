@@ -51,6 +51,8 @@ pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<D
     Ok(dimensions)
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn place_native_project_board_net_class(
     root: &Path,
     name: String,
@@ -223,6 +225,8 @@ pub(crate) fn place_native_project_board_dimension(
     })
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn edit_native_project_board_dimension(
     root: &Path,
     dimension_uuid: Uuid,

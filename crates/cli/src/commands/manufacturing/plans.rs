@@ -168,6 +168,8 @@ pub(crate) fn delete_native_project_manufacturing_plan(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn update_native_project_manufacturing_plan(
     root: &Path,
     manufacturing_plan_id: Uuid,
@@ -201,11 +203,10 @@ pub(crate) fn update_native_project_manufacturing_plan(
         .get(&manufacturing_plan_id)
         .cloned()
         .with_context(|| format!("manufacturing plan {manufacturing_plan_id} was not found"))?;
-    if let Some(panel_projection_id) = panel_projection {
-        if !model.panel_projections.contains_key(&panel_projection_id) {
+    if let Some(panel_projection_id) = panel_projection
+        && !model.panel_projections.contains_key(&panel_projection_id) {
             anyhow::bail!("panel projection {panel_projection_id} was not found");
         }
-    }
 
     let mut plan = previous_plan.clone();
     if let Some(name) = name {

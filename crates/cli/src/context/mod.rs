@@ -181,7 +181,7 @@ fn context_provenance(
 
 fn read_context_envelope(context_path: &Path) -> Result<serde_json::Value> {
     let value: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(&context_path)
+        &std::fs::read_to_string(context_path)
             .with_context(|| format!("read context envelope {}", context_path.display()))?,
     )
     .with_context(|| format!("parse context envelope {}", context_path.display()))?;
@@ -219,16 +219,14 @@ fn resolve_context_path(args: &ContextGetArgs) -> Result<PathBuf> {
     if let Some(path) = &args.path {
         return Ok(path.clone());
     }
-    if let Ok(path) = std::env::var("DATUM_DISCOVERY") {
-        if !path.is_empty() {
+    if let Ok(path) = std::env::var("DATUM_DISCOVERY")
+        && !path.is_empty() {
             return Ok(PathBuf::from(path));
         }
-    }
-    if let Ok(path) = std::env::var("DATUM_TERMINAL_CONTEXT") {
-        if !path.is_empty() {
+    if let Ok(path) = std::env::var("DATUM_TERMINAL_CONTEXT")
+        && !path.is_empty() {
             return Ok(PathBuf::from(path));
         }
-    }
     if let Some(root) = &args.project_root {
         if let Some(session) = &args.session {
             let session_path = root
@@ -255,7 +253,7 @@ fn enrich_context_envelope(context_path: &Path, args: &ContextGetArgs, value: &m
             "project_root".to_string(),
             Value::String(root.display().to_string()),
         );
-        if let Ok(model) = ProjectResolver::new(&root).resolve() {
+        if let Ok(model) = ProjectResolver::new(root).resolve() {
             object.insert(
                 "project_id".to_string(),
                 Value::String(model.project.project_id.to_string()),

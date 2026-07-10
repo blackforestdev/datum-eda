@@ -684,6 +684,8 @@ fn inferred_component_body_geometry(
     Some((center, width, height, rotation_degrees))
 }
 
+// Render helper threads many quad/text-run/hit-region sinks.
+#[allow(clippy::too_many_arguments)]
 fn push_component_text_primitive(
     text_runs: &mut Vec<TextRun>,
     text: &ComponentTextPrimitive,
@@ -774,6 +776,8 @@ fn imported_board_text_belongs_to_component(style_class: &str, component_uuid: &
         })
 }
 
+// Render helper threads many quad/text-run/hit-region sinks.
+#[allow(clippy::too_many_arguments)]
 fn push_component_text_world(
     out: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,

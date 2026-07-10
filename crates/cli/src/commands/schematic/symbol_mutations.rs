@@ -33,6 +33,8 @@ fn commit_symbol_update(
     Ok(())
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn place_native_project_symbol(
     root: &Path,
     sheet_uuid: Uuid,

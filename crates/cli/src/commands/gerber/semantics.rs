@@ -454,11 +454,7 @@ pub(crate) fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
                     region_points.push(point);
                 }
                 1 => {
-                    if region_points.is_empty() {
-                        region_points.push(point);
-                    } else {
-                        region_points.push(point);
-                    }
+                    region_points.push(point);
                 }
                 3 => bail!("Gerber flashes inside regions are not supported"),
                 _ => bail!("unsupported Gerber interpolation operation D0{operation}"),
@@ -532,14 +528,13 @@ fn finalize_pending_stroke(
     pending_stroke: &mut Option<PendingStroke>,
     geometries: &mut Vec<ParsedGerberGeometry>,
 ) {
-    if let Some(stroke) = pending_stroke.take() {
-        if stroke.points.len() >= 2 {
+    if let Some(stroke) = pending_stroke.take()
+        && stroke.points.len() >= 2 {
             geometries.push(ParsedGerberGeometry::Stroke {
                 aperture_diameter_nm: stroke.aperture_diameter_nm,
                 points: canonicalize_path_points(&stroke.points),
             });
         }
-    }
 }
 fn canonicalize_path_points(points: &[Point]) -> Vec<Point> {
     let mut normalized = points.to_vec();

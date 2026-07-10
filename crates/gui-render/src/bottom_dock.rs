@@ -46,7 +46,6 @@ fn solve_bottom_dock_layout_with_taffy(layout: &ShellLayout) -> Option<BottomDoc
         Some(())
     };
     add_tab(BottomDockNode::Terminal)?;
-    drop(add_tab);
 
     let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
     let root = taffy

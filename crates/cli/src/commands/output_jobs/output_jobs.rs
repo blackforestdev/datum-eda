@@ -21,6 +21,8 @@ mod command_project_output_job_runs;
 // Own instantiation of the shared release-check gate helper; output jobs
 // use the raw gate + error rendering, not the ensure_ wrapper.
 #[allow(dead_code)]
+// Shared check-gate helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "../check/gate.rs"]
 mod command_project_check_gate;
 
@@ -212,6 +214,8 @@ pub(crate) fn create_native_project_output_job(
     })
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn update_native_project_output_job(
     root: &Path,
     output_job_id: Uuid,

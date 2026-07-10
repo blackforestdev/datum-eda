@@ -39,8 +39,8 @@ pub(crate) fn set_native_project_pool_part_bindings(
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    if let Some(footprint_id) = default_footprint {
-        if model
+    if let Some(footprint_id) = default_footprint
+        && model
             .objects
             .get(&footprint_id)
             .filter(|object| object.domain == "pool" && object.kind == "footprints")
@@ -48,9 +48,8 @@ pub(crate) fn set_native_project_pool_part_bindings(
         {
             bail!("missing pool footprint {footprint_id} for part {part_id}");
         }
-    }
-    if let Some(pin_pad_map_id) = default_pin_pad_map {
-        if model
+    if let Some(pin_pad_map_id) = default_pin_pad_map
+        && model
             .objects
             .get(&pin_pad_map_id)
             .filter(|object| object.domain == "pool" && object.kind == "pin_pad_maps")
@@ -58,7 +57,6 @@ pub(crate) fn set_native_project_pool_part_bindings(
         {
             bail!("missing pool pin_pad_map {pin_pad_map_id} for part {part_id}");
         }
-    }
 
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
     let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;

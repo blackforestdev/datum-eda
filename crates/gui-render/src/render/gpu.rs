@@ -554,6 +554,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         self.msaa_view.as_ref().unwrap()
     }
 
+    // Render helper threads many quad/text-run/hit-region sinks.
+    #[allow(clippy::too_many_arguments)]
     pub fn render(
         &mut self,
         device: &wgpu::Device,
@@ -989,6 +991,8 @@ fn draw_text(
     });
 }
 
+// Render helper threads many quad/text-run/hit-region sinks.
+#[allow(clippy::too_many_arguments)]
 fn draw_text_clipped(
     text: &str,
     x: f32,

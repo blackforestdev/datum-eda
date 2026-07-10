@@ -138,6 +138,8 @@ fn search_pool(query: &str, libraries: &[PathBuf]) -> Result<Vec<PartSummary>> {
         .with_context(|| format!("failed to search pool for {query}"))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn modify_board_with_plan(
     path: &Path,
     delete_track: &[Uuid],

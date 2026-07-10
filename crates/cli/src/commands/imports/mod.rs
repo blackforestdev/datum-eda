@@ -12,6 +12,8 @@ use super::*;
 mod eagle_import_map;
 mod import_map;
 mod import_report;
+// Deliberate commands/<family>/<family>.rs layout (see CLAUDE.md repository layout).
+#[allow(clippy::module_inception)]
 mod imports;
 mod kicad_footprint;
 mod schematic;

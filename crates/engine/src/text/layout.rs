@@ -272,6 +272,8 @@ fn include_point_bounds(
     }
 }
 
+// Text layout threads many glyph/run/metrics parameters.
+#[allow(clippy::too_many_arguments)]
 fn push_segment_with_bounds(
     segments: &mut Vec<GlyphSegmentUnits>,
     min_x_units: &mut i32,

@@ -199,6 +199,8 @@ pub(super) fn kicad_import_text_uuid(kind: &str, key: &str) -> uuid::Uuid {
     )
 }
 
+// Scene import threads many primitive-geometry parameters.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn kicad_board_text(
     uuid: uuid::Uuid,
     text: String,

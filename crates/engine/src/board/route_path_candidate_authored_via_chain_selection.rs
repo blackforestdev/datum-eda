@@ -47,6 +47,8 @@ pub(super) fn candidate_authored_via_chain_matches(
     (candidate_vias, matching_chains)
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn collect_matching_authored_via_chains(
     board: &Board,
     net_uuid: Uuid,

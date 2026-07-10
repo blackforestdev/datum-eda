@@ -133,8 +133,8 @@ fn nested_blocks_by_form_with_max_indent(
         let indent = line.len() - line.trim_start().len();
         let trimmed = line.trim_start();
 
-        if capturing_form.is_none() {
-            if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
+        if capturing_form.is_none()
+            && let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
                 indent <= max_indent
                     && trimmed.starts_with(prefix)
                     && matches!(
@@ -146,7 +146,6 @@ fn nested_blocks_by_form_with_max_indent(
                 current.clear();
                 depth = 0;
             }
-        }
 
         if let Some(form) = capturing_form.as_ref() {
             current.push(line.to_string());
@@ -938,14 +937,12 @@ pub(super) fn parse_kicad_layer_table(contents: &str) -> std::collections::HashM
                     // Format: (id "name" type) or (id "name" type "display_name")
                     let inner = trimmed.trim_start_matches('(').trim_end_matches(')');
                     let mut parts = inner.split_whitespace();
-                    if let Some(id_str) = parts.next() {
-                        if let Ok(id) = id_str.parse::<i32>() {
-                            if let Some(name) = parts.next() {
+                    if let Some(id_str) = parts.next()
+                        && let Ok(id) = id_str.parse::<i32>()
+                            && let Some(name) = parts.next() {
                                 let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
                                 map.insert(name.to_string(), id);
                             }
-                        }
-                    }
                 }
             }
         }

@@ -305,11 +305,10 @@ pub(crate) fn edit_native_project_board_track(
     layer: Option<i32>,
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
-    if let Some(net_uuid) = net_uuid {
-        if !project.board.nets.contains_key(&net_uuid.to_string()) {
+    if let Some(net_uuid) = net_uuid
+        && !project.board.nets.contains_key(&net_uuid.to_string()) {
             bail!("board net not found in native project: {net_uuid}");
         }
-    }
     let value = project
         .board
         .tracks
@@ -360,11 +359,10 @@ pub(crate) fn edit_native_project_board_via(
     to_layer: Option<i32>,
 ) -> Result<NativeProjectBoardViaMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
-    if let Some(net_uuid) = net_uuid {
-        if !project.board.nets.contains_key(&net_uuid.to_string()) {
+    if let Some(net_uuid) = net_uuid
+        && !project.board.nets.contains_key(&net_uuid.to_string()) {
             bail!("board net not found in native project: {net_uuid}");
         }
-    }
     let value = project
         .board
         .vias
@@ -406,6 +404,8 @@ pub(crate) fn edit_native_project_board_via(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn place_native_project_board_zone(
     root: &Path,
     net_uuid: Uuid,
@@ -442,6 +442,8 @@ pub(crate) fn place_native_project_board_zone(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn edit_native_project_board_zone(
     root: &Path,
     zone_uuid: Uuid,
@@ -511,6 +513,8 @@ pub(crate) fn edit_native_project_board_zone(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn edit_native_project_board_net(
     root: &Path,
     net_uuid: Uuid,

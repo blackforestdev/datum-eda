@@ -20,15 +20,14 @@ pub(super) fn latest_proposal_id_from_context(
         .and_then(Value::as_object)
         .filter(|selection| selection.get("kind").and_then(Value::as_str) == Some("proposal"))
         .and_then(|selection| selection.get("id").and_then(Value::as_str));
-    if let Some(selected) = selected {
-        if model
+    if let Some(selected) = selected
+        && model
             .proposals
             .keys()
             .any(|proposal| proposal.to_string() == selected)
         {
             return Some(selected.to_string());
         }
-    }
     model
         .proposals
         .iter()

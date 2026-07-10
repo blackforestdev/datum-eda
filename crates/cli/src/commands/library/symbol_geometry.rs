@@ -11,6 +11,8 @@ use super::library::{
 };
 use super::payload::read_project_pool_object_payload;
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn add_native_project_pool_symbol_line(
     root: &Path,
     pool_path: &str,
@@ -318,6 +320,8 @@ pub(crate) fn add_native_project_pool_symbol_text(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn set_native_project_pool_symbol_pin_anchor(
     root: &Path,
     pool_path: &str,

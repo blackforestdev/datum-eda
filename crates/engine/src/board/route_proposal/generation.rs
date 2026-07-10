@@ -2709,6 +2709,8 @@ pub(crate) fn route_path_candidate_authored_copper_graph_policy_from_reason(
     }
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn build_segmented_route_proposal_actions(
     contract: &str,
     reason: &str,
@@ -2789,6 +2791,8 @@ pub(crate) fn build_segmented_route_proposal_actions(
         .collect()
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn route_proposal_action_id(
     contract: &str,
     proposal_action: &str,

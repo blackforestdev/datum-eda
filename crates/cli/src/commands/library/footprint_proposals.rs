@@ -214,6 +214,8 @@ pub(crate) fn propose_set_native_project_pool_footprint_pad(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_set_native_project_pool_footprint_courtyard_rect(
     root: &Path,
     pool_path: &str,
@@ -320,6 +322,8 @@ pub(crate) fn propose_add_native_project_pool_footprint_silkscreen_rect(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_add_native_project_pool_footprint_silkscreen_circle(
     root: &Path,
     pool_path: &str,
@@ -344,6 +348,8 @@ pub(crate) fn propose_add_native_project_pool_footprint_silkscreen_circle(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_add_native_project_pool_footprint_silkscreen_polygon(
     root: &Path,
     pool_path: &str,

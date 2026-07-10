@@ -23,6 +23,8 @@ mod command_project_artifact_latest;
 mod command_project_artifact_output_runs;
 #[path = "preview.rs"]
 mod command_project_artifact_preview;
+// Shared check-gate helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "../check/gate.rs"]
 mod command_project_check_gate;
 use super::runs::compare_artifact_runs;
@@ -355,17 +357,16 @@ fn generate_single_file_artifact(
     } else {
         None
     };
-    let (artifact_manifest_path, output_job_run_path, artifact_run) = if output_job_run.is_none() {
-        let (manifest_path, run, run_path) =
-            commit_unlinked_artifact_evidence(root, scope, &mut model, &artifact_metadata)?;
-        (manifest_path, None, Some((run, run_path)))
-    } else {
-        let run = output_job_run
-            .as_ref()
-            .expect("output job run should exist for linked artifact");
+    let (artifact_manifest_path, output_job_run_path, artifact_run) = if let Some(run) =
+        &output_job_run
+    {
         let (manifest_path, run_path) =
             commit_linked_artifact_output_job_evidence(root, &mut model, &artifact_metadata, run)?;
         (manifest_path, Some(run_path), None)
+    } else {
+        let (manifest_path, run, run_path) =
+            commit_unlinked_artifact_evidence(root, scope, &mut model, &artifact_metadata)?;
+        (manifest_path, None, Some((run, run_path)))
     };
     Ok(NativeProjectArtifactGenerateEntryView {
         include: scope.to_string(),
@@ -408,6 +409,8 @@ fn artifact_file_from_output(output_dir: &Path, file_name: &str) -> Result<Artif
     })
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn generated_artifact_metadata(
     model: &DesignModel,
     prefix: &str,

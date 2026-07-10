@@ -370,7 +370,7 @@ fn artifact_preview_payload_maps_preview_summary() {
 
     assert_eq!(preview.file, "fabrication/board-F_Cu.gbr");
     assert_eq!(preview.preview_kind, "gerber_rs274x");
-    assert_eq!(preview.hash_matches_metadata, true);
+    assert!(preview.hash_matches_metadata);
     assert_eq!(preview.primitive_count, 4);
     assert_eq!(preview.primitives.len(), 1);
     assert_eq!(preview.primitives[0].kind, "stroke");
@@ -571,11 +571,11 @@ fn artifact_preview_viewport_commands_update_ui_state() {
 
     let geometry = session.apply(datum_gui_protocol::SessionCommand::ToggleArtifactPreviewGeometry);
     assert!(geometry.handled);
-    assert_eq!(session.workspace().ui.artifact_preview.show_geometry, false);
+    assert!(!session.workspace().ui.artifact_preview.show_geometry);
 
     let drills = session.apply(datum_gui_protocol::SessionCommand::ToggleArtifactPreviewDrills);
     assert!(drills.handled);
-    assert_eq!(session.workspace().ui.artifact_preview.show_drills, false);
+    assert!(!session.workspace().ui.artifact_preview.show_drills);
 
     let reset = session.apply(datum_gui_protocol::SessionCommand::ResetArtifactPreviewViewport);
     assert!(reset.handled);

@@ -356,6 +356,8 @@ fn push_line_graphic(
     });
 }
 
+// Scene import threads many primitive-geometry parameters.
+#[allow(clippy::too_many_arguments)]
 fn push_rect_graphic(
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,

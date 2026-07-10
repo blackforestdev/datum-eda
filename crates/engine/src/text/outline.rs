@@ -285,7 +285,7 @@ fn flattened_contours_to_contour_set(
 ) -> Option<TextContourSet> {
     let rings = contours
         .into_iter()
-        .filter_map(|points| normalize_closed_ring(points))
+        .filter_map(normalize_closed_ring)
         .map(|points| TextContourRing {
             signed_area_nm2: signed_area_nm2(&points),
             points: points
@@ -365,9 +365,9 @@ fn resolve_contour_set_non_zero_scanline(contours: TextContourSet) -> TextResolv
             winding += crossing.3;
             if previous_winding == 0 && winding != 0 {
                 span_start = Some((crossing.1, crossing.2));
-            } else if previous_winding != 0 && winding == 0 {
-                if let Some((left_x0, left_x1)) = span_start.take() {
-                    if crossing.0 - left_x0 > EPS {
+            } else if previous_winding != 0 && winding == 0
+                && let Some((left_x0, left_x1)) = span_start.take()
+                    && crossing.0 - left_x0 > EPS {
                         regions.push(TextFilledRegion {
                             outer: vec![
                                 crate::ir::geometry::Point {
@@ -390,8 +390,6 @@ fn resolve_contour_set_non_zero_scanline(contours: TextContourSet) -> TextResolv
                             holes: Vec::new(),
                         });
                     }
-                }
-            }
         }
     }
 

@@ -25,7 +25,9 @@ fn default_import_map_shard_schema_version() -> u64 {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ImportMapEntryStatus {
+    #[default]
     Active,
     MissingInSource,
     Replaced,
@@ -33,11 +35,6 @@ pub enum ImportMapEntryStatus {
     Merged,
 }
 
-impl Default for ImportMapEntryStatus {
-    fn default() -> Self {
-        Self::Active
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImportIdentityAllocation {

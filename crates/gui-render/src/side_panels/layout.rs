@@ -144,7 +144,6 @@ fn solve_project_panel_layout_with_taffy(
         add_node(ProjectPanelNode::Spacer, UI_STACK_GAP_SMALL)?;
         add_node(ProjectPanelNode::LastStatus, UI_ROW_NOTICE)?;
     }
-    drop(add_node);
 
     let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
     let root = taffy
@@ -388,7 +387,6 @@ fn solve_filters_panel_layout_with_taffy(
     add_node(FiltersPanelNode::LayersSummary, 16.0)?;
     add_node(FiltersPanelNode::FocusSummary, 16.0)?;
     add_node(FiltersPanelNode::OutputsSummary, 16.0)?;
-    drop(add_node);
 
     let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
     let root = taffy
@@ -481,7 +479,6 @@ fn solve_inspector_detail_layout_with_taffy(
     if state.last_command_status.is_some() {
         add_node(InspectorDetailNode::LastStatus)?;
     }
-    drop(add_node);
 
     if nodes.is_empty() {
         return Some(InspectorDetailLayout {

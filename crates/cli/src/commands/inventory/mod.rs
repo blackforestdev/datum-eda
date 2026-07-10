@@ -8,6 +8,8 @@
 // (csv.rs and rows.rs stay module-private, as before).
 
 mod csv;
+// Deliberate commands/<family>/<family>.rs layout (see CLAUDE.md repository layout).
+#[allow(clippy::module_inception)]
 mod inventory;
 mod views;
 

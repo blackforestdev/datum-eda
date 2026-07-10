@@ -243,15 +243,14 @@ pub(crate) fn create_native_project_sheet_instance(
     {
         bail!("sheet definition not found in native schematic root: {definition_uuid}");
     }
-    if let Some(parent_sheet_uuid) = parent_sheet_uuid {
-        if !project
+    if let Some(parent_sheet_uuid) = parent_sheet_uuid
+        && !project
             .schematic
             .sheets
             .contains_key(&parent_sheet_uuid.to_string())
         {
             bail!("parent sheet not found in native schematic root: {parent_sheet_uuid}");
         }
-    }
     let instance_uuid = instance_uuid.unwrap_or_else(Uuid::new_v4);
     if project
         .schematic

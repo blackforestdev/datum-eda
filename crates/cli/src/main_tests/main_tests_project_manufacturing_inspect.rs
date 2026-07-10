@@ -117,7 +117,7 @@ fn project_inspect_manufacturing_set_reports_present_missing_and_extra_files() {
         report["entries"].as_array().unwrap().len()
     );
     assert_eq!(report["present_count"], 2);
-    assert_eq!(report["missing_count"].as_u64().unwrap() > 0, true);
+    assert!(report["missing_count"].as_u64().unwrap() > 0);
     assert_eq!(report["extra_count"], 1);
     assert_eq!(
         report["entries"][0]["filename"],

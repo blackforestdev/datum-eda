@@ -68,17 +68,16 @@ pub(super) fn generate_drill_artifact(
     } else {
         None
     };
-    let (artifact_manifest_path, output_job_run_path, artifact_run) = if output_job_run.is_none() {
-        let (manifest_path, run, run_path) =
-            commit_unlinked_artifact_evidence(root, "drill", &mut model, &artifact_metadata)?;
-        (manifest_path, None, Some((run, run_path)))
-    } else {
-        let run = output_job_run
-            .as_ref()
-            .expect("output job run should exist for linked drill artifact");
+    let (artifact_manifest_path, output_job_run_path, artifact_run) = if let Some(run) =
+        &output_job_run
+    {
         let (manifest_path, run_path) =
             commit_linked_artifact_output_job_evidence(root, &mut model, &artifact_metadata, run)?;
         (manifest_path, Some(run_path), None)
+    } else {
+        let (manifest_path, run, run_path) =
+            commit_unlinked_artifact_evidence(root, "drill", &mut model, &artifact_metadata)?;
+        (manifest_path, None, Some((run, run_path)))
     };
     Ok(NativeProjectArtifactGenerateEntryView {
         include: "drill".to_string(),

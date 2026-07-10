@@ -442,7 +442,8 @@ fn terminal_dock_surfaces_recent_activity_spans() {
         vec!["#3 command datum.artifact.generate in:7B out:12B".to_string()];
     state.ui.dock_height_px = 260;
 
-    for tab in [datum_gui_protocol::DockTab::Terminal] {
+    {
+        let tab = datum_gui_protocol::DockTab::Terminal;
         state.ui.active_dock_tab = Some(tab);
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
         let prepared = PreparedScene::from_workspace(

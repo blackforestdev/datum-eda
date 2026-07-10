@@ -27,14 +27,12 @@ pub(super) fn kicad_parse_layer_table(contents: &str) -> std::collections::HashM
         if trimmed.starts_with('(') && !trimmed.starts_with("(layers") {
             let inner = trimmed.trim_start_matches('(').trim_end_matches(')');
             let mut parts = inner.split_whitespace();
-            if let Some(id_str) = parts.next() {
-                if let Ok(id) = id_str.parse::<i32>() {
-                    if let Some(name) = parts.next() {
+            if let Some(id_str) = parts.next()
+                && let Ok(id) = id_str.parse::<i32>()
+                    && let Some(name) = parts.next() {
                         let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
                         map.insert(name.to_string(), id);
                     }
-                }
-            }
         }
     }
     map
@@ -239,8 +237,7 @@ pub(super) fn kicad_parse_layer_anywhere(block: &str) -> Option<String> {
         let start = trimmed.find("(layer ")? + "(layer ".len();
         let rest = &trimmed[start..];
         // Quoted name
-        if rest.starts_with('"') {
-            let inner = &rest[1..];
+        if let Some(inner) = rest.strip_prefix('"') {
             let end = inner.find('"')?;
             Some(canonicalize_kicad_layer_name(&inner[..end]))
         } else {
@@ -256,8 +253,7 @@ pub(super) fn kicad_parse_uuid(block: &str) -> Option<String> {
         let trimmed = line.trim();
         let start = trimmed.find("(uuid ")? + "(uuid ".len();
         let rest = &trimmed[start..];
-        if rest.starts_with('"') {
-            let inner = &rest[1..];
+        if let Some(inner) = rest.strip_prefix('"') {
             let end = inner.find('"')?;
             Some(inner[..end].to_string())
         } else {
@@ -372,8 +368,8 @@ pub(super) fn kicad_nested_blocks_by_form(
     for line in contents.lines() {
         let trimmed = line.trim_start();
 
-        if capturing_form.is_none() {
-            if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
+        if capturing_form.is_none()
+            && let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
                 trimmed.starts_with(prefix)
                     && matches!(
                         trimmed.as_bytes().get(prefix.len()),
@@ -384,7 +380,6 @@ pub(super) fn kicad_nested_blocks_by_form(
                 current.clear();
                 depth = 0;
             }
-        }
 
         if let Some(form) = capturing_form.as_ref() {
             current.push(line.to_string());

@@ -241,8 +241,8 @@ fn validate_schematic_root(
         ) {
             checked_sheet_files += 1;
             validate_schema_version(issues, relative_subject(root, &path), sheet.schema_version);
-            if let Some(expected_uuid) = expected_uuid {
-                if sheet.uuid != expected_uuid {
+            if let Some(expected_uuid) = expected_uuid
+                && sheet.uuid != expected_uuid {
                     push_issue(
                         issues,
                         "error",
@@ -254,7 +254,6 @@ fn validate_schematic_root(
                         ),
                     );
                 }
-            }
             record_uuid(
                 "schematic_sheet",
                 sheet.uuid,
@@ -294,8 +293,8 @@ fn validate_schematic_root(
                 relative_subject(root, &path),
                 definition.schema_version,
             );
-            if let Some(expected_uuid) = expected_uuid {
-                if definition.uuid != expected_uuid {
+            if let Some(expected_uuid) = expected_uuid
+                && definition.uuid != expected_uuid {
                     push_issue(
                         issues,
                         "error",
@@ -307,7 +306,6 @@ fn validate_schematic_root(
                         ),
                     );
                 }
-            }
             record_uuid(
                 "sheet_definition",
                 definition.uuid,
@@ -466,8 +464,8 @@ fn validate_schematic_instances(
                 ),
             );
         }
-        if let Some(parent_sheet) = instance.parent_sheet {
-            if !sheet_uuids.contains(&parent_sheet) {
+        if let Some(parent_sheet) = instance.parent_sheet
+            && !sheet_uuids.contains(&parent_sheet) {
                 push_issue(
                     issues,
                     "error",
@@ -479,7 +477,6 @@ fn validate_schematic_instances(
                     ),
                 );
             }
-        }
     }
 }
 
@@ -690,8 +687,8 @@ fn validate_board_root(
                 ),
             );
         }
-        if let Some(net) = pad.net {
-            if !net_uuids.contains(&net) {
+        if let Some(net) = pad.net
+            && !net_uuids.contains(&net) {
                 push_issue(
                     issues,
                     "error",
@@ -700,7 +697,6 @@ fn validate_board_root(
                     format!("board pad {} references missing net {}", pad.uuid, net),
                 );
             }
-        }
     }
 
     let tracks = validate_uuid_keyed_json_map(
@@ -870,8 +866,8 @@ where
         match serde_json::from_value::<T>(value.clone()) {
             Ok(item) => {
                 let actual_uuid = get_uuid(&item);
-                if let Some(expected_uuid) = expected_uuid {
-                    if actual_uuid != expected_uuid {
+                if let Some(expected_uuid) = expected_uuid
+                    && actual_uuid != expected_uuid {
                         push_issue(
                             issues,
                             "error",
@@ -883,7 +879,6 @@ where
                             ),
                         );
                     }
-                }
                 record_uuid(object_type, actual_uuid, subject, seen, issues);
                 parsed.push(item);
             }
@@ -913,8 +908,8 @@ fn validate_uuid_keyed_typed_map<T, F>(
         let subject = format!("{subject_prefix}/{key}");
         let expected_uuid = parse_uuid_key(key, &subject, issues);
         let actual_uuid = get_uuid(value);
-        if let Some(expected_uuid) = expected_uuid {
-            if actual_uuid != expected_uuid {
+        if let Some(expected_uuid) = expected_uuid
+            && actual_uuid != expected_uuid {
                 push_issue(
                     issues,
                     "error",
@@ -926,7 +921,6 @@ fn validate_uuid_keyed_typed_map<T, F>(
                     ),
                 );
             }
-        }
         record_uuid(object_type, actual_uuid, subject, seen, issues);
     }
 }

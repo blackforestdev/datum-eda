@@ -40,6 +40,8 @@ pub(crate) struct NativeProjectOutputJobProposalView {
     pub(crate) proposal: Proposal,
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_create_native_project_output_job(
     root: &Path,
     prefix: &str,
@@ -92,6 +94,8 @@ pub(crate) fn propose_create_native_project_output_job(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_update_native_project_output_job(
     root: &Path,
     output_job_id: Uuid,
@@ -241,13 +245,12 @@ fn validate_output_job_targets(
             output_job.board_or_panel
         );
     }
-    if let Some(variant_id) = output_job.variant {
-        if !model.variants.contains_key(&variant_id) {
+    if let Some(variant_id) = output_job.variant
+        && !model.variants.contains_key(&variant_id) {
             anyhow::bail!("output job references missing variant {variant_id}");
         }
-    }
-    if let Some(manufacturing_plan_id) = output_job.manufacturing_plan {
-        if !model
+    if let Some(manufacturing_plan_id) = output_job.manufacturing_plan
+        && !model
             .manufacturing_plans
             .contains_key(&manufacturing_plan_id)
         {
@@ -255,7 +258,6 @@ fn validate_output_job_targets(
                 "output job references missing manufacturing plan {manufacturing_plan_id}"
             );
         }
-    }
     Ok(())
 }
 

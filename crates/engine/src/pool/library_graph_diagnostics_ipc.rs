@@ -113,8 +113,8 @@ impl LibraryGraph {
                     .to_string(),
             });
         }
-        if let Some(pin_count) = basis.pin_count {
-            if pin_count < 4 || pin_count % 2 != 0 {
+        if let Some(pin_count) = basis.pin_count
+            && (pin_count < 4 || pin_count % 2 != 0) {
                 diagnostics.push(LibraryGraphDiagnostic {
                     severity: "error",
                     code: "invalid_ipc_footprint_basis",
@@ -122,7 +122,6 @@ impl LibraryGraph {
                     message: "ipc_basis pin_count must be an even value of at least 4".to_string(),
                 });
             }
-        }
         for (field, value) in [
             ("pitch_nm", basis.pitch_nm),
             ("lead_span_nm", basis.lead_span_nm),

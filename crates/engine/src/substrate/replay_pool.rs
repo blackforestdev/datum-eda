@@ -92,7 +92,7 @@ pub(super) fn replay_pool_shards(
 }
 
 fn apply_pool_operation_to_replay_value(
-    values: &mut Vec<(String, serde_json::Value, bool, Option<SourceShardRef>)>,
+    values: &mut [(String, serde_json::Value, bool, Option<SourceShardRef>)],
     relative_path: &str,
     operation: &super::Operation,
 ) -> Result<(), EngineError> {

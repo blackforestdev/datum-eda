@@ -71,6 +71,8 @@ pub(crate) struct NativeProjectBoardUnresolvedSymbol {
     pub(crate) reason: String,
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn generate_native_project_board_components(
     root: &Path,
     apply: bool,

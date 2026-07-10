@@ -681,9 +681,7 @@ mod tests {
     }
 
     fn optional_doa2526_board_path() -> Option<std::path::PathBuf> {
-        if std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS").is_none() {
-            return None;
-        }
+        std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS")?;
         let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../..")
             .join("kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb");
@@ -691,9 +689,7 @@ mod tests {
     }
 
     fn optional_doa2526_schematic_path() -> Option<std::path::PathBuf> {
-        if std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS").is_none() {
-            return None;
-        }
+        std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS")?;
         let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../..")
             .join("kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch");

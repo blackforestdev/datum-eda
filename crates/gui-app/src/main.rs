@@ -3412,6 +3412,24 @@ fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
     Some(slot.to_string())
 }
 
+fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
+    s.char_indices()
+        .nth(char_index)
+        .map(|(i, _)| i)
+        .unwrap_or(s.len())
+}
+
+fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
+    if !bracketed_paste {
+        return text.as_bytes().to_vec();
+    }
+    let mut bytes = Vec::with_capacity(text.len() + 12);
+    bytes.extend_from_slice(b"\x1b[200~");
+    bytes.extend_from_slice(text.as_bytes());
+    bytes.extend_from_slice(b"\x1b[201~");
+    bytes
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3502,22 +3520,4 @@ mod tests {
         convert_texture_pixels_to_rgba(&mut pixels, wgpu::TextureFormat::Bgra8UnormSrgb).unwrap();
         assert_eq!(pixels, vec![3, 2, 1, 255, 30, 20, 10, 255]);
     }
-}
-
-fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
-    s.char_indices()
-        .nth(char_index)
-        .map(|(i, _)| i)
-        .unwrap_or(s.len())
-}
-
-fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
-    if !bracketed_paste {
-        return text.as_bytes().to_vec();
-    }
-    let mut bytes = Vec::with_capacity(text.len() + 12);
-    bytes.extend_from_slice(b"\x1b[200~");
-    bytes.extend_from_slice(text.as_bytes());
-    bytes.extend_from_slice(b"\x1b[201~");
-    bytes
 }

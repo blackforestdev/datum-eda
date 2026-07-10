@@ -716,12 +716,11 @@ fn push_board_text_geometry_world(
     color: [f32; 3],
     reference_projection: &Projection,
 ) {
-    if let Some(transform) = text_geometry.world_transform_nm {
-        if !text_geometry.glyphs.is_empty() {
+    if let Some(transform) = text_geometry.world_transform_nm
+        && !text_geometry.glyphs.is_empty() {
             push_board_text_mesh_world(out, text_geometry, glyph_mesh_assets, transform, color);
             return;
         }
-    }
     for fill in &text_geometry.fills {
         push_world_polygon_fill_contours(out, &fill.outer, &fill.holes, color);
     }

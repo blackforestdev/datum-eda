@@ -14,9 +14,7 @@ pub(super) fn direct_commit_proposal_policy_blockers(
         .operations
         .iter()
         .filter_map(|operation| {
-            let Some((code, family)) = proposal_required_operation(operation) else {
-                return None;
-            };
+            let (code, family) = proposal_required_operation(operation)?;
             Some(ProposalApplyBlocker {
                 code: code.to_string(),
                 message: format!(

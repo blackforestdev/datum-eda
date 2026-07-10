@@ -164,6 +164,8 @@ pub(crate) fn delete_native_project_component_instance(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_bind_native_project_component_instance(
     root: &Path,
     component_instance_id: Option<Uuid>,
@@ -202,6 +204,8 @@ pub(crate) fn propose_bind_native_project_component_instance(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_set_native_project_component_instance(
     root: &Path,
     component_instance_id: Uuid,

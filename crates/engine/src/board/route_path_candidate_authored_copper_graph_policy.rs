@@ -142,6 +142,8 @@ impl Board {
     }
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn base_report(
     policy: RoutePathCandidateAuthoredCopperGraphPolicy,
     selection_rule: String,
@@ -293,7 +295,7 @@ fn map_zone_aware_report(
                 })
                 .unwrap_or(0),
         },
-        report.path.map(|path| map_zone_path(path)),
+        report.path.map(map_zone_path),
     )
 }
 
@@ -411,7 +413,7 @@ fn map_zone_obstacle_aware_report(
                 })
                 .unwrap_or(0),
         },
-        report.path.map(|path| map_zone_obstacle_path(path)),
+        report.path.map(map_zone_obstacle_path),
     )
 }
 
@@ -442,7 +444,7 @@ fn map_topology_aware_report(
             path_via_step_count: report.summary.path_via_step_count,
             path_zone_step_count: report.summary.path_zone_step_count,
         },
-        report.path.map(|path| map_topology_path(path)),
+        report.path.map(map_topology_path),
     )
 }
 

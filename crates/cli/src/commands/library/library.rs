@@ -151,6 +151,8 @@ pub(crate) fn create_native_project_pool_symbol(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_entity(
     root: &Path,
     pool_path: &str,
@@ -221,6 +223,8 @@ pub(crate) fn create_native_project_pool_entity(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_padstack(
     root: &Path,
     pool_path: &str,
@@ -281,6 +285,8 @@ pub(crate) fn create_native_project_pool_padstack(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_part(
     root: &Path,
     pool_path: &str,
@@ -892,8 +898,8 @@ pub(crate) fn detach_native_project_pool_part_model(
     let previous_attachments = models.clone();
     let mut attachments = Vec::new();
     for model in models.iter() {
-        if let Some(attachment_id) = attachment_id {
-            if model
+        if let Some(attachment_id) = attachment_id
+            && model
                 .get("uuid")
                 .and_then(serde_json::Value::as_str)
                 .and_then(|uuid| Uuid::parse_str(uuid).ok())
@@ -901,9 +907,8 @@ pub(crate) fn detach_native_project_pool_part_model(
             {
                 continue;
             }
-        }
-        if let Some(model_id) = model_id {
-            if model
+        if let Some(model_id) = model_id
+            && model
                 .get("model_uuid")
                 .and_then(serde_json::Value::as_str)
                 .and_then(|uuid| Uuid::parse_str(uuid).ok())
@@ -911,7 +916,6 @@ pub(crate) fn detach_native_project_pool_part_model(
             {
                 continue;
             }
-        }
         attachments.push(model.clone());
     }
     if attachments.len() == previous_attachments.len() {

@@ -379,8 +379,8 @@ fn insert_component_instance(
         });
         return;
     }
-    if let Some(part_ref) = &input.part_ref {
-        if !revisioned_pool_ref_matches(
+    if let Some(part_ref) = &input.part_ref
+        && !revisioned_pool_ref_matches(
             part_ref.object_id,
             part_ref.object_revision,
             objects,
@@ -396,7 +396,6 @@ fn insert_component_instance(
             });
             return;
         }
-    }
     if let Err(message) = validate_library_bindings(&input, objects) {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_invalid_library_binding".to_string(),
@@ -467,9 +466,9 @@ fn validate_library_bindings(
             return Err("must not contain multiple part LibraryBindings".to_string());
         }
     }
-    if let (Some(part_ref), Some(part_binding)) = (&input.part_ref, part_binding) {
-        if part_ref.object_id != part_binding.target_object_id
-            || part_ref.object_revision != part_binding.pinned_object_revision
+    if let (Some(part_ref), Some(part_binding)) = (&input.part_ref, part_binding)
+        && (part_ref.object_id != part_binding.target_object_id
+            || part_ref.object_revision != part_binding.pinned_object_revision)
         {
             return Err(format!(
                 "part_ref {}@{} does not match part LibraryBinding {}@{}",
@@ -479,7 +478,6 @@ fn validate_library_bindings(
                 part_binding.pinned_object_revision.0
             ));
         }
-    }
     Ok(())
 }
 
@@ -506,14 +504,13 @@ pub(super) fn validate_role_map(
                 "{label} role for {object_id} must be a lowercase ASCII identifier"
             ));
         }
-        if let Some(role_label) = &metadata.label {
-            if role_label.trim().is_empty()
+        if let Some(role_label) = &metadata.label
+            && (role_label.trim().is_empty()
                 || role_label.len() > 128
-                || role_label.chars().any(char::is_control)
+                || role_label.chars().any(char::is_control))
             {
                 return Err(format!("{label} role label for {object_id} is invalid"));
             }
-        }
         if !ref_ids.contains(object_id) {
             return Err(format!(
                 "{label} role for {object_id} must reference a placed {label}"

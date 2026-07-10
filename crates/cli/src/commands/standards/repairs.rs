@@ -240,11 +240,10 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
         let mut via: Via =
             serde_json::from_value(via_value).context("failed to parse repair target via")?;
         let original = via.clone();
-        if let Some(drill) = repair.via_drill {
-            if via.drill < drill {
+        if let Some(drill) = repair.via_drill
+            && via.drill < drill {
                 via.drill = drill;
             }
-        }
         if let Some(annular) = repair.via_annular {
             let required_diameter = via.drill + (annular * 2);
             if via.diameter < required_diameter {

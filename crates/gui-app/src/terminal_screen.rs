@@ -396,6 +396,8 @@ fn put_char_at(row: &mut String, column: usize, ch: char) {
     row.replace_range(start..end, &ch.to_string());
 }
 
+// Terminal helper threads many escape/screen-state parameters.
+#[allow(clippy::too_many_arguments)]
 fn put_char_with_cursor(
     state: &mut TerminalLaneState,
     cursor_row: &mut usize,

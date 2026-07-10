@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum TextRenderIntent {
+    #[default]
     Manufacturing,
     Annotation,
     Branding,
@@ -11,11 +13,6 @@ pub enum TextRenderIntent {
     UiPreview,
 }
 
-impl Default for TextRenderIntent {
-    fn default() -> Self {
-        Self::Manufacturing
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TextFamilyId(pub String);
@@ -28,16 +25,13 @@ impl Default for TextFamilyId {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum TextFamilySource {
+    #[default]
     ImplicitDefault,
     Explicit,
 }
 
-impl Default for TextFamilySource {
-    fn default() -> Self {
-        Self::ImplicitDefault
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TextStyleId(pub String);

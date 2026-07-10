@@ -106,6 +106,8 @@ fn validate_native_board_pad_geometry(pad: &PlacedPad) -> Result<()> {
     }
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn place_native_project_board_pad(
     root: &Path,
     package_uuid: Uuid,
@@ -163,6 +165,8 @@ pub(crate) fn place_native_project_board_pad(
     ))
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn edit_native_project_board_pad(
     root: &Path,
     pad_uuid: Uuid,

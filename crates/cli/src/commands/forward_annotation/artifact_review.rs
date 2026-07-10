@@ -2,6 +2,8 @@ use super::artifact::load_forward_annotation_proposal_artifact;
 use super::*;
 use std::collections::BTreeMap;
 
+// Shared helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "review_state.rs"]
 mod review_state;
 

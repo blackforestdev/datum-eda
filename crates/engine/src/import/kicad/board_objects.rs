@@ -55,6 +55,8 @@ pub(super) fn check_form_accounting(
     }
 }
 
+// Import constructor threads many parsed board-object fields.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn parse_tracks(
     path: &Path,
     blocks: &[String],
@@ -182,6 +184,8 @@ impl KiCadBoardImportIdentity {
     }
 }
 
+// Import constructor threads many parsed board-object fields.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn parse_vias(
     path: &Path,
     blocks: &[String],
@@ -262,6 +266,8 @@ pub fn board_via_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
     format!("kicad:board-via:{}:{source_uuid}", path.display())
 }
 
+// Import constructor threads many parsed board-object fields.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn parse_zones(
     path: &Path,
     blocks: &[String],

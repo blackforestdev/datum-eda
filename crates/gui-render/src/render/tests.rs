@@ -1393,7 +1393,7 @@ mod tests {
         // change; a pane op reuses it. Mirror that reuse with a get-or-resolve
         // Option that only resolves when empty (the `invalidate_frame` contract).
         let mut retained: Option<RetainedScene> = None;
-        let mut warm = |retained: &mut Option<RetainedScene>,
+        let warm = |retained: &mut Option<RetainedScene>,
                         state: &datum_gui_protocol::ReviewWorkspaceState| {
             if retained.is_none() {
                 *retained = Some(RetainedScene::from_workspace_for_surface(

@@ -52,16 +52,14 @@ pub(super) fn update_active_context_commands(object: &mut Map<String, Value>) {
             "proposal_accept_apply": proposal_command("accept-apply", &project_root, proposal_id),
             "proposal_apply": proposal_command("apply", &project_root, proposal_id),
             "journal_list": Some(render_command(&["datum-eda", "journal", "list", project_root.as_str()])),
-            "journal_show_tip": transaction_tip.and_then(|transaction| {
-                Some(render_command(&[
+            "journal_show_tip": transaction_tip.map(|transaction| render_command(&[
                     "datum-eda",
                     "journal",
                     "show",
                     project_root.as_str(),
                     "--transaction",
                     transaction,
-                ]))
-            }),
+                ])),
             "journal_undo": Some(render_command(&["datum-eda", "journal", "undo", project_root.as_str()])),
             "journal_redo": Some(render_command(&["datum-eda", "journal", "redo", project_root.as_str()])),
             "source_shards": Some(render_command(&["datum-eda", "project", "query", project_root.as_str(), "resolve-debug"])),
@@ -69,24 +67,20 @@ pub(super) fn update_active_context_commands(object: &mut Map<String, Value>) {
             "check_list": Some(render_command(&["datum-eda", "check", "list", project_root.as_str()])),
             "check_profiles": Some(render_command(&["datum-eda", "check", "profiles", project_root.as_str()])),
             "check_fill_zones": Some(render_command(&["datum-eda", "check", "fill-zones", project_root.as_str()])),
-            "check_show": check_run_id.and_then(|check_run| {
-                Some(render_command(&[
+            "check_show": check_run_id.map(|check_run| render_command(&[
                     "datum-eda",
                     "check",
                     "show",
                     project_root.as_str(),
                     "--check-run",
                     check_run,
-                ]))
-            }),
-            "check_repair_standards": check_run_id.and_then(|_| {
-                Some(render_command(&[
+                ])),
+            "check_repair_standards": check_run_id.map(|_| render_command(&[
                     "datum-eda",
                     "check",
                     "repair-standards",
                     project_root.as_str(),
-                ]))
-            }),
+                ])),
             "check_waive_finding": selected_finding.and_then(|fingerprint| {
                 finding_command("datum.check.waive", &project_root, fingerprint)
             }),

@@ -4,11 +4,11 @@ use uuid::Uuid;
 
 pub(super) const ROUTE_PATH_CANDIDATE_SELECTION_RULE: &str = "select the first unblocked matching corridor span in corridor report order (sorted by candidate copper layer order, then pair index)";
 
-pub(super) fn matching_corridor_spans<'a>(
-    corridor_spans: &'a [RouteCorridorSpan],
+pub(super) fn matching_corridor_spans(
+    corridor_spans: &[RouteCorridorSpan],
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
-) -> Vec<&'a RouteCorridorSpan> {
+) -> Vec<&RouteCorridorSpan> {
     corridor_spans
         .iter()
         .filter(|span| {

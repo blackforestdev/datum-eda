@@ -399,6 +399,8 @@ fn read_pool_ref_shards(
     Ok(())
 }
 
+// Substrate helper threads many record/shard fields.
+#[allow(clippy::too_many_arguments)]
 fn read_pool_directory_shards(
     project_root: &Path,
     directory: &Path,

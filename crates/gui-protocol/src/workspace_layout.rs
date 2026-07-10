@@ -394,11 +394,10 @@ impl WorkspaceLayout {
 
     /// Drop `zoomed` if it names a leaf that no longer exists.
     fn clear_stale_zoom(&mut self) {
-        if let Some(z) = self.zoomed {
-            if !self.leaves().contains(&z) {
+        if let Some(z) = self.zoomed
+            && !self.leaves().contains(&z) {
                 self.zoomed = None;
             }
-        }
     }
 }
 

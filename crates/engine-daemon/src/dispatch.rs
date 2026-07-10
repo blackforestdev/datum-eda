@@ -432,8 +432,8 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
         Ok(model) => model,
         Err(err) => return error_response(request_id, -32060, &err.to_string()),
     };
-    if let Some(expected) = params.expected_model_revision.as_deref() {
-        if expected != model.model_revision.0 {
+    if let Some(expected) = params.expected_model_revision.as_deref()
+        && expected != model.model_revision.0 {
             return error_response(
                 request_id,
                 -32061,
@@ -443,7 +443,6 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
                 ),
             );
         }
-    }
     let Some(verb) = find_native_write_verb(&params.verb) else {
         return error_response(
             request_id,

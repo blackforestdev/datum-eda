@@ -5,10 +5,11 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 #[rustfmt::skip]
-pub enum PadShape { Circle, Rect, Oval, RoundRect }
+#[derive(Default)]
+pub enum PadShape { #[default]
+Circle, Rect, Oval, RoundRect }
 
 #[rustfmt::skip]
-impl Default for PadShape { fn default() -> Self { Self::Circle } }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct PadExpansionSetup {

@@ -106,6 +106,9 @@ struct AuthoredCopperPlusOneGapGraph {
     unique_gap_count: usize,
 }
 
+// Domain-meaningful before/after-gap x no/with-authored-copper states; the shared
+// `Authored` suffix carries semantic meaning and is clearer than shortened variants.
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum GapUsageState {
     BeforeGapNoAuthored,
@@ -353,6 +356,8 @@ impl AuthoredCopperPlusOneGapGraph {
         let start = *self.node_ids.get(&from_anchor)?;
         let target = *self.node_ids.get(&to_anchor)?;
         let mut queue = VecDeque::new();
+        // Local batch buffer whose tuple shape is self-documenting inline.
+        #[allow(clippy::type_complexity)]
         let mut visited: HashMap<
             (usize, GapUsageState),
             Option<((usize, GapUsageState), AuthoredCopperPlusOneGapStep)>,

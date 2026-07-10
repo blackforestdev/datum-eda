@@ -346,6 +346,8 @@ fn commit_legacy_package_silkscreen_primitive(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn add_native_project_pool_package_model_3d(
     root: &Path,
     pool_path: &str,

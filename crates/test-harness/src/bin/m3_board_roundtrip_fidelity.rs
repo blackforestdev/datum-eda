@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{
@@ -425,7 +425,7 @@ fn set_reference_fidelity(cli: &Cli) -> Result<String> {
     )
 }
 
-fn run_netinfo_roundtrip<M>(prefix: &str, fixture: &PathBuf, mutate: M) -> Result<String>
+fn run_netinfo_roundtrip<M>(prefix: &str, fixture: &Path, mutate: M) -> Result<String>
 where
     M: Fn(&mut Engine) -> Result<(Vec<eda_engine::board::BoardNetInfo>, String)>,
 {
@@ -458,7 +458,7 @@ where
 
 fn run_components_roundtrip<M, V>(
     prefix: &str,
-    fixture: &PathBuf,
+    fixture: &Path,
     mutate: M,
     validate: V,
 ) -> Result<String>

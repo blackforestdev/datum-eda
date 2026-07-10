@@ -24,6 +24,8 @@ fn default_variant_overlay_shard_schema_version() -> u64 {
     VARIANT_OVERLAY_SHARD_SCHEMA_VERSION
 }
 
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(super) fn read_variant_overlay_shards(
     project_root: &Path,
     objects: &mut BTreeMap<ObjectId, DomainObject>,

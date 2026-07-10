@@ -65,6 +65,8 @@ impl EscapeState {
         self.st_control_string = true;
     }
 
+    // Terminal helper threads many escape/screen-state parameters.
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn consume(
         &mut self,
         byte: u8,
@@ -279,6 +281,8 @@ impl EscapeState {
         self.osc_payload.clear();
     }
 
+    // Terminal helper threads many escape/screen-state parameters.
+    #[allow(clippy::too_many_arguments)]
     fn apply_csi(
         &self,
         final_byte: u8,
@@ -553,6 +557,8 @@ impl EscapeState {
             .collect()
     }
 
+    // Terminal helper threads many escape/screen-state parameters.
+    #[allow(clippy::too_many_arguments)]
     fn apply_private_modes(
         &self,
         enabled: bool,

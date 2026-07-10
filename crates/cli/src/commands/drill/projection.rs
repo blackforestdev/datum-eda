@@ -50,10 +50,10 @@ pub(super) fn render_native_project_excellon_drill_projection_from_hits(
     projection_contract: &str,
 ) -> Result<NativeExcellonDrillProjection> {
     let (project, model) = load_native_project_with_resolved_board_and_model(root)?;
-    let (via_count, component_pad_count) = drill_hit_counts(&drill_hits);
-    let tools = build_excellon_tool_views_for_drill_hits(&drill_hits);
+    let (via_count, component_pad_count) = drill_hit_counts(drill_hits);
+    let tools = build_excellon_tool_views_for_drill_hits(drill_hits);
     let tool_count = tools.len();
-    let excellon = render_excellon_for_drill_hits(&drill_hits)
+    let excellon = render_excellon_for_drill_hits(drill_hits)
         .context("failed to render native board drill hits as Excellon drill")?;
     let production_projection = production_projection_view(
         projection_kind,

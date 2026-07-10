@@ -593,10 +593,7 @@ impl LibraryGraph {
         label: &'static str,
         diagnostics: &mut Vec<LibraryGraphDiagnostic>,
     ) -> Option<Uuid> {
-        let Some(reference) = self.parse_uuid_field(value, field, subject, label, diagnostics)
-        else {
-            return None;
-        };
+        let reference = self.parse_uuid_field(value, field, subject, label, diagnostics)?;
         if !valid_ids.contains(&reference) {
             diagnostics.push(LibraryGraphDiagnostic {
                 severity: "error",

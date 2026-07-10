@@ -210,6 +210,8 @@ impl CommandExecutionSummary {
         })
     }
 
+    // Intentionally consumes self to move owned fields into the JSON value without cloning.
+    #[allow(clippy::wrong_self_convention)]
     fn to_json(self) -> Value {
         serde_json::json!({
             "execution_id": self.execution_id,
@@ -399,6 +401,8 @@ impl TerminalActivitySpan {
         })
     }
 
+    // Intentionally consumes self to move owned fields into the JSON value without cloning.
+    #[allow(clippy::wrong_self_convention)]
     fn to_json(self) -> serde_json::Value {
         serde_json::json!({
             "span_id": format!("span-{index:06}", index = self.span_index),

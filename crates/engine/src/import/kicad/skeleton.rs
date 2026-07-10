@@ -324,7 +324,7 @@ pub(super) fn parse_schematic_skeleton(
             path,
             contents,
             import_map,
-            import_identities.as_deref_mut(),
+            import_identities,
         ),
     };
 
@@ -375,7 +375,7 @@ pub(super) fn parse_board_skeleton(
     let mut net_lookup = HashMap::new();
     let mut import_identities = import_identities;
     for block in top_blocks.get("net").into_iter().flatten() {
-        if let Some((net_code, net_name)) = parse_net_block(&block) {
+        if let Some((net_code, net_name)) = parse_net_block(block) {
             let uuid = deterministic_kicad_board_uuid("net", &net_code.to_string());
             net_lookup.insert(net_code, uuid);
             nets.insert(
@@ -390,7 +390,7 @@ pub(super) fn parse_board_skeleton(
         } else {
             warnings.push(dropped_object_warning(
                 "net",
-                block_uuid(&block),
+                block_uuid(block),
                 &[("code/name", true)],
             ));
         }
@@ -399,7 +399,7 @@ pub(super) fn parse_board_skeleton(
     let mut packages = HashMap::new();
     let mut pads = HashMap::new();
     for block in top_blocks.get("footprint").into_iter().flatten() {
-        let source_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let source_uuid = block_uuid(block).unwrap_or_else(Uuid::new_v4);
         let allocation = import_map.map(|import_map| {
             allocate_import_identity(import_map, board_footprint_import_key(path, source_uuid))
         });
@@ -418,11 +418,11 @@ pub(super) fn parse_board_skeleton(
             ));
         }
         let reference =
-            extract_footprint_property(&block, "Reference").unwrap_or_else(|| "?".into());
-        let value = extract_footprint_property(&block, "Value").unwrap_or_default();
-        let position = block_at_point(&block).unwrap_or_else(Point::zero);
-        let rotation = block_rotation(&block).unwrap_or(0);
-        let layer = match block_layer_name(&block).as_deref() {
+            extract_footprint_property(block, "Reference").unwrap_or_else(|| "?".into());
+        let value = extract_footprint_property(block, "Value").unwrap_or_default();
+        let position = block_at_point(block).unwrap_or_else(Point::zero);
+        let rotation = block_rotation(block).unwrap_or(0);
+        let layer = match block_layer_name(block).as_deref() {
             Some(name) => resolve_layer(name)?,
             None => {
                 return Err(EngineError::Import(format!(
@@ -446,7 +446,7 @@ pub(super) fn parse_board_skeleton(
         );
         for pad in footprint_pads(
             path,
-            &block,
+            block,
             source_uuid,
             package_uuid,
             import_map,
@@ -492,7 +492,7 @@ pub(super) fn parse_board_skeleton(
         path,
         blocks_for("zone"),
         import_map,
-        import_identities.as_deref_mut(),
+        import_identities,
         &net_lookup,
         &mut nets,
         &layer_table,
@@ -502,29 +502,29 @@ pub(super) fn parse_board_skeleton(
     let mut texts = Vec::new();
     let mut dropped_texts = 0usize;
     for block in top_blocks.get("gr_text").into_iter().flatten() {
-        let Some(position) = block_at_point(&block) else {
+        let Some(position) = block_at_point(block) else {
             dropped_texts += 1;
             warnings.push(dropped_object_warning(
                 "gr_text",
-                block_uuid(&block),
+                block_uuid(block),
                 &[("at", true)],
             ));
             continue;
         };
-        let Some(layer_name) = block_layer_name(&block) else {
+        let Some(layer_name) = block_layer_name(block) else {
             // gr_text without a layer has no well-defined placement; drop with
             // accounting rather than silently collapse onto F.Cu.
             dropped_texts += 1;
             warnings.push(dropped_object_warning(
                 "gr_text",
-                block_uuid(&block),
+                block_uuid(block),
                 &[("layer", true)],
             ));
             continue;
         };
         let layer = resolve_layer(&layer_name)?;
-        let text = block_head_string(&block, "gr_text").unwrap_or_default();
-        let uuid = block_uuid(&block).unwrap_or_else(|| {
+        let text = block_head_string(block, "gr_text").unwrap_or_default();
+        let uuid = block_uuid(block).unwrap_or_else(|| {
             deterministic_kicad_board_uuid(
                 "gr_text",
                 &format!("{text}/{}/{}/{}", position.x, position.y, layer),
@@ -534,7 +534,7 @@ pub(super) fn parse_board_skeleton(
             uuid,
             text,
             position,
-            rotation: block_rotation(&block).unwrap_or(0),
+            rotation: block_rotation(block).unwrap_or(0),
             render_intent: crate::text::TextRenderIntent::Manufacturing,
             family: crate::text::TextFamilyId::default(),
             family_source: crate::text::TextFamilySource::ImplicitDefault,
@@ -589,6 +589,8 @@ pub(super) fn parse_board_skeleton(
     ))
 }
 
+// Import constructor threads many parsed board-object fields.
+#[allow(clippy::too_many_arguments)]
 fn footprint_pads(
     path: &Path,
     block: &str,
@@ -1169,6 +1171,7 @@ fn all_copper_layers(layer_table: &HashMap<String, i32>) -> Vec<i32> {
 ///   (or the bounded F.Cu/B.Cu fallback when no table is available)
 /// - `"F&B.Cu"`: expands to front and back copper only
 /// - combinations with multiple copper entries: sorted union of the recognized copper layer ids
+///
 /// Unsupported encodings return an explicit import error rather than silently
 /// falling back to the footprint's placement layer.
 pub(super) fn resolve_pad_copper_layers(

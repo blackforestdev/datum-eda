@@ -426,13 +426,11 @@ pub(crate) fn delete_native_project_bus(
     if let Some(entries) = sheet_value
         .get("bus_entries")
         .and_then(serde_json::Value::as_object)
-    {
-        if let Some((entry_uuid, _)) = entries.iter().find(|(_, value)| {
+        && let Some((entry_uuid, _)) = entries.iter().find(|(_, value)| {
             value.get("bus").and_then(serde_json::Value::as_str) == Some(bus_key.as_str())
         }) {
             bail!("bus {bus_uuid} is still referenced by bus entry {entry_uuid}");
         }
-    }
     commit_schematic_write(root, "delete schematic bus", |model, provenance| {
         build_delete_schematic_bus(model, provenance, sheet_uuid, &bus)
     })?;

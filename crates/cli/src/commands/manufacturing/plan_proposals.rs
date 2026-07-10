@@ -57,11 +57,10 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
     if model.manufacturing_plans.contains_key(&plan_id) {
         anyhow::bail!("manufacturing plan {plan_id} already exists");
     }
-    if let Some(panel_projection_id) = panel_projection {
-        if !model.panel_projections.contains_key(&panel_projection_id) {
+    if let Some(panel_projection_id) = panel_projection
+        && !model.panel_projections.contains_key(&panel_projection_id) {
             anyhow::bail!("panel projection {panel_projection_id} was not found");
         }
-    }
     let plan = ManufacturingPlan {
         schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: plan_id,
@@ -92,6 +91,8 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_update_native_project_manufacturing_plan(
     root: &Path,
     manufacturing_plan_id: Uuid,
@@ -127,11 +128,10 @@ pub(crate) fn propose_update_native_project_manufacturing_plan(
         .get(&manufacturing_plan_id)
         .cloned()
         .with_context(|| format!("manufacturing plan {manufacturing_plan_id} was not found"))?;
-    if let Some(panel_projection_id) = panel_projection {
-        if !model.panel_projections.contains_key(&panel_projection_id) {
+    if let Some(panel_projection_id) = panel_projection
+        && !model.panel_projections.contains_key(&panel_projection_id) {
             anyhow::bail!("panel projection {panel_projection_id} was not found");
         }
-    }
 
     let mut plan = previous_plan.clone();
     if let Some(name) = name {
@@ -212,6 +212,8 @@ pub(crate) fn propose_delete_native_project_manufacturing_plan(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_create_native_project_panel_projection(
     root: &Path,
     key: &str,
@@ -268,6 +270,8 @@ pub(crate) fn propose_create_native_project_panel_projection(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_update_native_project_panel_projection(
     root: &Path,
     panel_projection_id: Uuid,

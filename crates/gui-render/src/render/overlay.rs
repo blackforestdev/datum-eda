@@ -101,11 +101,10 @@ fn push_scene_overlay_and_hits(
         if !authored_visible(state) {
             continue;
         }
-        if let Some(lid) = text.layer_id.as_deref() {
-            if !layer_visible(state, lid) {
+        if let Some(lid) = text.layer_id.as_deref()
+            && !layer_visible(state, lid) {
                 continue;
             }
-        }
         if active_move_component_uuid.as_deref() == Some(text.component_uuid.as_str()) {
             continue;
         }

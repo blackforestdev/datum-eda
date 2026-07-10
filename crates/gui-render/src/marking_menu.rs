@@ -57,6 +57,8 @@ pub(super) fn render_marking_menu(
     );
 }
 
+// Render helper threads many quad/text-run/hit-region sinks.
+#[allow(clippy::too_many_arguments)]
 fn render_slots(
     preview: &MarkingMenuState,
     menu: &GuiMarkingMenu,

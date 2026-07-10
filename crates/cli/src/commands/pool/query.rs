@@ -211,7 +211,7 @@ pub(crate) fn query_native_project_pool_models(
                 );
                 let hash_matches = sha256 == computed_sha256;
                 let attachments = attachment_refs
-                    .get(&sha256.to_string())
+                    .get(sha256)
                     .cloned()
                     .unwrap_or_default();
                 let referenced = !attachments.is_empty();

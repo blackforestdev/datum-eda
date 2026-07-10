@@ -215,16 +215,13 @@ pub struct DomainObject {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ComponentInstanceAuthority {
+    #[default]
     Authored,
     CompatibilityDerived,
 }
 
-impl Default for ComponentInstanceAuthority {
-    fn default() -> Self {
-        Self::Authored
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComponentInstance {

@@ -17,6 +17,8 @@ use eda_engine::substrate::{
 };
 use uuid::Uuid;
 
+// Shared check-gate helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "../check/gate.rs"]
 mod command_project_direct_export_gate;
 #[path = "evidence.rs"]
@@ -697,79 +699,6 @@ fn update_gerber_set_artifact_validation(
     }))
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use eda_engine::substrate::OutputJobRunLauncher;
-
-    #[test]
-    fn terminal_origin_log_entries_capture_gui_terminal_context() {
-        let env = [
-            (
-                "DATUM_PROJECT_ROOT".to_string(),
-                "/tmp/datum/project".to_string(),
-            ),
-            (
-                "DATUM_SOURCE_REVISION".to_string(),
-                "source-revision-test".to_string(),
-            ),
-            (
-                "DATUM_TERMINAL_CONTEXT".to_string(),
-                "/tmp/datum/context.json".to_string(),
-            ),
-            (
-                "DATUM_TERMINAL_SESSION_ID".to_string(),
-                "terminal-test".to_string(),
-            ),
-        ]
-        .into_iter()
-        .collect::<std::collections::BTreeMap<_, _>>();
-        let entries = terminal_origin_log_entries_from(&env, 7);
-        let provenance = terminal_origin_provenance_from(&env).expect("terminal provenance");
-        assert_eq!(provenance.launcher, OutputJobRunLauncher::GuiTerminal);
-        assert_eq!(
-            provenance.terminal_session_id.as_deref(),
-            Some("terminal-test")
-        );
-        assert_eq!(
-            provenance.terminal_context_path,
-            Some(PathBuf::from("/tmp/datum/context.json"))
-        );
-        assert_eq!(
-            provenance.project_root,
-            Some(PathBuf::from("/tmp/datum/project"))
-        );
-        assert_eq!(
-            provenance.source_revision.as_deref(),
-            Some("source-revision-test")
-        );
-        let non_terminal_env = [
-            (
-                "DATUM_PROJECT_ROOT".to_string(),
-                "/tmp/datum/project".to_string(),
-            ),
-            (
-                "DATUM_SOURCE_REVISION".to_string(),
-                "source-revision-test".to_string(),
-            ),
-        ]
-        .into_iter()
-        .collect::<std::collections::BTreeMap<_, _>>();
-        assert_eq!(terminal_origin_provenance_from(&non_terminal_env), None);
-        assert_eq!(entries.len(), 2);
-        assert_eq!(entries[0].sequence, 7);
-        assert_eq!(
-            entries[0].message,
-            "launched from Datum terminal session terminal-test"
-        );
-        assert_eq!(entries[1].sequence, 8);
-        assert_eq!(
-            entries[1].message,
-            "Datum terminal context /tmp/datum/context.json"
-        );
-    }
-}
-
 // Phase 5: exec-layer dissolution — variant run() impls (the former
 // command_exec destructure-and-forward glue, now inherent methods on the
 // clap args structs).
@@ -863,5 +792,78 @@ impl CompareGerberSetArgs {
                 1
             };
         Ok((output, exit_code))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use eda_engine::substrate::OutputJobRunLauncher;
+
+    #[test]
+    fn terminal_origin_log_entries_capture_gui_terminal_context() {
+        let env = [
+            (
+                "DATUM_PROJECT_ROOT".to_string(),
+                "/tmp/datum/project".to_string(),
+            ),
+            (
+                "DATUM_SOURCE_REVISION".to_string(),
+                "source-revision-test".to_string(),
+            ),
+            (
+                "DATUM_TERMINAL_CONTEXT".to_string(),
+                "/tmp/datum/context.json".to_string(),
+            ),
+            (
+                "DATUM_TERMINAL_SESSION_ID".to_string(),
+                "terminal-test".to_string(),
+            ),
+        ]
+        .into_iter()
+        .collect::<std::collections::BTreeMap<_, _>>();
+        let entries = terminal_origin_log_entries_from(&env, 7);
+        let provenance = terminal_origin_provenance_from(&env).expect("terminal provenance");
+        assert_eq!(provenance.launcher, OutputJobRunLauncher::GuiTerminal);
+        assert_eq!(
+            provenance.terminal_session_id.as_deref(),
+            Some("terminal-test")
+        );
+        assert_eq!(
+            provenance.terminal_context_path,
+            Some(PathBuf::from("/tmp/datum/context.json"))
+        );
+        assert_eq!(
+            provenance.project_root,
+            Some(PathBuf::from("/tmp/datum/project"))
+        );
+        assert_eq!(
+            provenance.source_revision.as_deref(),
+            Some("source-revision-test")
+        );
+        let non_terminal_env = [
+            (
+                "DATUM_PROJECT_ROOT".to_string(),
+                "/tmp/datum/project".to_string(),
+            ),
+            (
+                "DATUM_SOURCE_REVISION".to_string(),
+                "source-revision-test".to_string(),
+            ),
+        ]
+        .into_iter()
+        .collect::<std::collections::BTreeMap<_, _>>();
+        assert_eq!(terminal_origin_provenance_from(&non_terminal_env), None);
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].sequence, 7);
+        assert_eq!(
+            entries[0].message,
+            "launched from Datum terminal session terminal-test"
+        );
+        assert_eq!(entries[1].sequence, 8);
+        assert_eq!(
+            entries[1].message,
+            "Datum terminal context /tmp/datum/context.json"
+        );
     }
 }

@@ -76,6 +76,8 @@ pub(crate) struct NativeComponentMechanicalText {
     pub(crate) layer: i32,
 }
 
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(crate) fn resolve_native_project_mechanical_context(
     project: &LoadedNativeProject,
     layer: i32,
@@ -535,6 +537,8 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
     })
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn gerber_mechanical_expected_entries(
     keepout_polygons: &[Polygon],
     component_polygons: &[Polygon],
@@ -637,6 +641,8 @@ fn render_polygon_region_geometry(polygon: &Polygon) -> String {
     render_region_geometry(&points)
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn gerber_mechanical_actual_entries(
     gerber: &ParsedGerber,
     expected_component_polygons: &std::collections::BTreeSet<String>,

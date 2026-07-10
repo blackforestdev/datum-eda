@@ -314,9 +314,7 @@ fn explicit_part_gate_mapping_compatibility(
     mappings: Option<&serde_json::Value>,
     gate_id: Uuid,
 ) -> Option<bool> {
-    let Some(mappings) = mappings.and_then(serde_json::Value::as_object) else {
-        return None;
-    };
+    let mappings = mappings.and_then(serde_json::Value::as_object)?;
     if mappings.is_empty() {
         return None;
     };

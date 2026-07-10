@@ -668,9 +668,9 @@ fn render_pane_placeholder(
 
 /// Render one pane's header chrome. Focused = today's lightened header (#16181f)
 /// + active tool cluster + accent focus dot + inset ACCENT pane frame. Unfocused
-/// = muted (recessed) header fill, dimmed tools, no accent frame, no focus dot —
-/// so a glance distinguishes the focused document that owns the Inspector/Layers
-/// (context-follows-focus) from the passive one.
+///   = muted (recessed) header fill, dimmed tools, no accent frame, no focus dot —
+///   so a glance distinguishes the focused document that owns the Inspector/Layers
+///   (context-follows-focus) from the passive one.
 fn render_pane_header(
     pane: &PaneRect,
     title: &str,
@@ -829,6 +829,8 @@ fn render_pane_header(
     }
 }
 
+// Render helper threads many quad/text-run/hit-region sinks.
+#[allow(clippy::too_many_arguments)]
 fn render_scene(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
@@ -922,7 +924,7 @@ fn via_visible(state: &ReviewWorkspaceState, start_layer_id: &str, end_layer_id:
     layer_visible(state, start_layer_id) || layer_visible(state, end_layer_id)
 }
 
-fn pad_copper_layer_ids<'a>(pad: &'a datum_gui_protocol::PadPrimitive) -> Vec<&'a str> {
+fn pad_copper_layer_ids(pad: &datum_gui_protocol::PadPrimitive) -> Vec<&str> {
     if pad.copper_layer_ids.is_empty() {
         vec![pad.layer_id.as_str()]
     } else {

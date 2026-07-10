@@ -128,6 +128,8 @@ fn explanation_kind(
     }
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn base_report(
     policy: RoutePathCandidateAuthoredCopperGraphPolicy,
     status: RoutePathCandidateStatus,
@@ -473,6 +475,8 @@ fn map_layer_balance_aware_explain_report(
     )
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn map_zone_like_explain_report(
     policy: RoutePathCandidateAuthoredCopperGraphPolicy,
     status: RoutePathCandidateStatus,

@@ -657,12 +657,10 @@ fn terminal_session_terminate_reports_signal_exit() {
     for _ in 0..50 {
         if let Ok(TerminalEvent::Output(bytes)) =
             session.rx.recv_timeout(Duration::from_millis(100))
-        {
-            if String::from_utf8_lossy(&bytes).contains("datum-terminate-ready") {
+            && String::from_utf8_lossy(&bytes).contains("datum-terminate-ready") {
                 ready = true;
                 break;
             }
-        }
     }
     assert!(
         ready,

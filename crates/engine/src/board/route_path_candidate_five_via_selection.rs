@@ -81,6 +81,8 @@ pub(super) fn candidate_five_via_matches(
     (candidate_vias, matching_quintuples)
 }
 
+// Routing selection threads many path-candidate/via/layer parameters.
+#[allow(clippy::too_many_arguments)]
 fn matching_five_via_quintuple(
     board: &Board,
     net_uuid: Uuid,

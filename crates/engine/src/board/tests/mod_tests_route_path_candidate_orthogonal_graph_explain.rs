@@ -65,7 +65,7 @@ fn route_path_candidate_orthogonal_graph_explain_reports_selected_path_reasoning
         report.summary.blocked_edge_count,
         candidate.summary.blocked_edge_count
     );
-    assert!(report.blocked_edges.len() > 0);
+    assert!(!report.blocked_edges.is_empty());
 }
 
 #[test]
@@ -97,5 +97,5 @@ fn route_path_candidate_orthogonal_graph_explain_reports_blocked_graph() {
     );
     assert!(report.selected_path.is_none());
     assert!(report.segment_evidence.is_empty());
-    assert!(report.blocked_edges.len() > 0);
+    assert!(!report.blocked_edges.is_empty());
 }

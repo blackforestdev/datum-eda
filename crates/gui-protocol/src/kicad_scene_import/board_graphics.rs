@@ -21,7 +21,7 @@ pub(super) fn kicad_interpolate_arc_world(
         if sweep >= 0 {
             rel <= sweep
         } else {
-            rel = rel - 3600;
+            rel -= 3600;
             rel >= sweep
         }
     };
@@ -332,11 +332,10 @@ pub(super) fn outline_board_graphics_from_outline(
     if vertices.len() < 2 {
         return Vec::new();
     }
-    if outline.closed && vertices.first() != vertices.last() {
-        if let Some(first) = vertices.first().copied() {
+    if outline.closed && vertices.first() != vertices.last()
+        && let Some(first) = vertices.first().copied() {
             vertices.push(first);
         }
-    }
     vertices
         .windows(2)
         .enumerate()
@@ -426,9 +425,9 @@ pub(super) fn kicad_extract_fp_text_content(first_line: &str) -> Option<String> 
     let after = &trimmed["(fp_text ".len()..];
     // Skip the type token (reference, value, user).
     let rest = after.trim_start();
-    let rest = if rest.starts_with('"') {
+    let rest = if let Some(stripped) = rest.strip_prefix('"') {
         // Type is quoted (rare).
-        let end = rest[1..].find('"')?;
+        let end = stripped.find('"')?;
         rest[end + 2..].trim_start()
     } else {
         let end = rest.find(|c: char| c.is_whitespace())?;

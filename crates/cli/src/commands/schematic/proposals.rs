@@ -80,6 +80,8 @@ pub(crate) struct NativeProjectSymbolProposalView {
     pub(crate) proposal: Proposal,
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_place_native_project_symbol(
     root: &Path,
     sheet_uuid: Uuid,

@@ -201,6 +201,8 @@ fn write_component_instance_shard_with_part_ref(
     );
 }
 
+// Substrate helper threads many record/shard fields.
+#[allow(clippy::too_many_arguments)]
 fn write_component_instance_shard_with_library_binding(
     root: &Path,
     component_instance_id: Uuid,

@@ -2557,7 +2557,7 @@ fn overlay_path_for_action(
 ) -> Vec<PointNm> {
     if let Some(points) = selected_path_points
         && review.proposal_actions.len() > 1
-        && points.len() >= review.proposal_actions.len() + 1
+        && points.len() > review.proposal_actions.len()
     {
         let start = action
             .selected_path_segment_index
@@ -3532,11 +3532,10 @@ fn load_check_run_review_state(
     if let Ok(context) = run_cli_json::<Value>(
         cli,
         &["context", "refresh", "--project-root", &project_root],
-    ) {
-        if let Some(state) = check_runs::check_run_review_state_from_context_value(&context) {
+    )
+        && let Some(state) = check_runs::check_run_review_state_from_context_value(&context) {
             return Ok(state);
         }
-    }
     run_cli_json(cli, &["check", "run", &project_root])
         .or_else(|_| Ok(CheckRunReviewState::default()))
 }
@@ -4493,6 +4492,8 @@ fn extract_component_graphics(
 }
 
 /// Helper: read per-component graphic arrays from the native board JSON.
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 fn read_graphic_arrays(
     board: &Value,
     component_uuid: &str,
@@ -4645,11 +4646,10 @@ fn load_selected_candidate_path(
     ];
     let refs: Vec<&str> = args.iter().map(String::as_str).collect();
     let explain: CandidateExplainPayload = run_cli_json(cli, &refs)?;
-    if let Some(path) = explain.selected_path {
-        if path.points.len() >= 2 {
+    if let Some(path) = explain.selected_path
+        && path.points.len() >= 2 {
             return Ok(Some(path.points));
         }
-    }
     if let Some(span) = explain.selected_span {
         return Ok(Some(vec![span.from, span.to]));
     }
@@ -4766,6 +4766,8 @@ fn load_live_route_review(
     run_cli_json(cli, &refs)
 }
 
+// Scene import threads many primitive-geometry parameters.
+#[allow(clippy::too_many_arguments)]
 fn build_board_review_scene(
     inspect: &ProjectInspectPayload,
     outline: OutlinePayload,
@@ -5521,6 +5523,8 @@ fn resolve_workspace_eda_binary() -> Option<String> {
     None
 }
 
+// Scene import threads many primitive-geometry parameters.
+#[allow(clippy::too_many_arguments)]
 fn collect_layer_ids(
     components: &[BoardComponentPayload],
     component_graphics: &[ComponentGraphicPrimitive],
@@ -5698,20 +5702,18 @@ fn component_bounds(
         .iter()
         .copied()
         .filter(|graphic| {
-            !graphic
+            graphic
                 .layer_id
-                .as_deref()
-                .is_some_and(|layer_id| inferred_scene_layer_name(layer_id) == "Edge.Cuts")
+                .as_deref().is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
         })
         .collect();
     let texts: Vec<&ComponentTextPrimitive> = texts
         .iter()
         .copied()
         .filter(|text| {
-            !text
+            text
                 .layer_id
-                .as_deref()
-                .is_some_and(|layer_id| inferred_scene_layer_name(layer_id) == "Edge.Cuts")
+                .as_deref().is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
         })
         .collect();
     if pads.is_empty() && graphics.is_empty() && texts.is_empty() {
@@ -5787,6 +5789,8 @@ fn close_outline_path(mut vertices: Vec<PointNm>, closed: bool) -> Vec<PointNm> 
     vertices
 }
 
+// Scene import threads many primitive-geometry parameters.
+#[allow(clippy::too_many_arguments)]
 fn scene_bounds<'a>(
     outline: impl Iterator<Item = &'a PointNm>,
     components: impl Iterator<Item = &'a PointNm>,

@@ -5,6 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[path = "artifact_compare.rs"]
 mod artifact_compare;
+// Shared helper #[path]-included into several sibling command modules by design.
+#[allow(clippy::duplicate_mod)]
 #[path = "substrate.rs"]
 mod substrate;
 pub(crate) use artifact_compare::compare_forward_annotation_proposal_artifact;

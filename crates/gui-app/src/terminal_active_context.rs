@@ -46,6 +46,8 @@ pub(super) struct TerminalActiveContextCommands {
 }
 
 impl TerminalActiveContextCommands {
+    // Terminal helper threads many escape/screen-state parameters.
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn from_focus(
         project_root: &Path,
         artifact_id: Option<&str>,

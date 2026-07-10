@@ -634,10 +634,13 @@ fn bom_rows_by_identity(rows: &[NativeBomRow]) -> (BTreeMap<String, NativeBomRow
     let mut duplicates = Vec::new();
     for row in rows {
         let identity = row.identity_key();
-        if by_identity.contains_key(&identity) {
-            duplicates.push(identity);
-        } else {
-            by_identity.insert(identity, row.clone());
+        match by_identity.entry(identity) {
+            std::collections::btree_map::Entry::Occupied(existing) => {
+                duplicates.push(existing.key().clone());
+            }
+            std::collections::btree_map::Entry::Vacant(slot) => {
+                slot.insert(row.clone());
+            }
         }
     }
     (by_identity, duplicates)
@@ -648,10 +651,13 @@ fn pnp_rows_by_identity(rows: &[NativePnpRow]) -> (BTreeMap<String, NativePnpRow
     let mut duplicates = Vec::new();
     for row in rows {
         let identity = row.identity_key();
-        if by_identity.contains_key(&identity) {
-            duplicates.push(identity);
-        } else {
-            by_identity.insert(identity, row.clone());
+        match by_identity.entry(identity) {
+            std::collections::btree_map::Entry::Occupied(existing) => {
+                duplicates.push(existing.key().clone());
+            }
+            std::collections::btree_map::Entry::Vacant(slot) => {
+                slot.insert(row.clone());
+            }
         }
     }
     (by_identity, duplicates)

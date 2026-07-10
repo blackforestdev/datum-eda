@@ -774,6 +774,8 @@ fn annotate_legacy_route_query_output(
     }
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn execute_legacy_route_path_candidate_query(
     format: &OutputFormat,
     path: &Path,
@@ -801,6 +803,8 @@ fn execute_legacy_route_path_candidate_query(
     )
 }
 
+// CLI command handler threads individually parsed flag values.
+#[allow(clippy::too_many_arguments)]
 fn execute_legacy_route_path_candidate_explain_wrapper(
     format: &OutputFormat,
     path: &Path,

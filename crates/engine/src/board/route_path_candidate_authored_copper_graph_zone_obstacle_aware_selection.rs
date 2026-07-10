@@ -72,6 +72,8 @@ pub(super) fn candidate_authored_copper_graph_zone_obstacle_aware_objects(
     (tracks, vias, zones)
 }
 
+// Established multi-value signature; a tuple type alias would not improve clarity.
+#[allow(clippy::type_complexity)]
 pub(super) fn selected_authored_copper_graph_zone_obstacle_aware_path(
     board: &Board,
     net_uuid: Uuid,
