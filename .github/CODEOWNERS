@@ -1,0 +1,12 @@
+# Source-health governance is an owner-controlled boundary. Repository branch
+# protection must require this review and dismiss approval after new commits.
+/docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md @blackforestdev
+/docs/SOURCE_HEALTH_POLICY.md @blackforestdev
+/scripts/check_source_health.py @blackforestdev
+/scripts/test_source_health_governance.py @blackforestdev
+/scripts/check_source_module_size.py @blackforestdev
+/specs/source_module_size_manifest.json @blackforestdev
+/scripts/run_drift_gates.sh @blackforestdev
+/.github/workflows/alignment.yml @blackforestdev
+/.github/CODEOWNERS @blackforestdev
+/specs/spec_governance_manifest.json @blackforestdev

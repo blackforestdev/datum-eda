@@ -37,7 +37,7 @@ they support the product; they do not define its identity.
   redundant tool is a defect.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..017`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..022`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -176,6 +176,11 @@ The per-domain tool contracts in `docs/contracts/` specify the target each
 domain builds toward on the landed substrate.
 
 ## Working Posture (for agents)
+- **Source health is blocking governance.** Before touching an oversized source
+  module, read decision 022 and `docs/SOURCE_HEALTH_POLICY.md`. New source debt
+  cannot be registered into existence; legacy ceilings are exact and
+  downward-only; touching legacy debt requires real ownership extraction and a
+  same-change ratchet. `include!`/forwarding/continuation splits do not count.
 - **Planning vs execution.** Default to high-level planning and specification
   (decision records, tool contracts, sequencing). Feature execution —
   building engines, sourcing or authoring fixtures, running proof slices — is
@@ -280,7 +285,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..017 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..022 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +

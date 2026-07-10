@@ -15,6 +15,18 @@
 > Detail lives in the sections below — this list is the single entry point.
 > Update it in the SAME change as any spec creation or course-correction.
 
+0. **Restore immutable source-health governance (authorized, implementation in
+   progress).** Decision 022 restores repository-wide 700-line production/test
+   tripwires, 350-line inline-test limits, exact zero-headroom legacy ceilings,
+   merge-base downward ratchets, touched-monolith burn-down, automatic untracked
+   child discovery, and logical `include!` measurement. The operational policy,
+   comprehensive checker, hermetic checker tests, full clean-HEAD debt baseline,
+   CODEOWNERS surface, and CI/base-SHA enforcement land as one governed recovery
+   track. *Dependency:* audit of the July 2 governance retirement and July 9
+   flag-ledger replacement complete. *Unblocks:* safe continuation of every
+   feature frontier item without further silent monolith growth. *State:*
+   **decision and operational contract ratified; enforcement implementation in
+   progress.** Governing: decision 022 + `docs/SOURCE_HEALTH_POLICY.md`.
 1. **Deepen the GUI product specification for the surfaces not yet designed.**
    The **board editor surface is defined and buildable** — its "how" is captured
    in `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, the controlling visual prototype
@@ -165,13 +177,12 @@ real failing, same-engine regression gate against the owner-approved shell golde
 `crates/gui-render/testdata/golden/shell/datum-shell.golden.png` (wired through
 `check_gui_conformance.py` → `run_drift_gates.sh`), closing the paperwork defect
 where visual parity was an unenforced HUMAN row; see
-`docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` §0.1/§2/§4 (G9). **Source-module size flag
-(landed):** `scripts/check_source_module_size.py` + `specs/source_module_size_manifest.json`
-FLAG oversized source modules (headline `crates/gui-render/src/lib.rs`, ~8800 lines)
-as `decomposition-pending` — a governance-triggered/organic decomposition trigger
-(never a schedule to split), failing only on NEW unregistered oversized modules or
-ledger drift; wired into `run_drift_gates.sh`. This is a governance flag, **not**
-product progress. **GUI Phase 2 spec (governed, spec-only):**
+`docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` §0.1/§2/§4 (G9). **Source-health
+governance recovery (authorized, in progress):** decision 022 supersedes the
+permissive 1,500-line flag ledger with blocking repository-wide normal budgets,
+zero-headroom legacy ceilings, merge-base downward ratchets, touched-monolith
+burn-down, and logical-module measurement; see Active Frontier step 0. **GUI
+Phase 2 spec (governed, spec-only):**
 `docs/gui/DATUM_GUI_PHASE_2_SPEC.md` sequences the second GUI build phase —
 populated component inspector + dual-pane Board+Schematic + cross-probe — extending
 `DATUM_GUI_PHASE_1_SPEC` under the `DATUM_GUI_CONFORMANCE_SPEC` check-disposition
