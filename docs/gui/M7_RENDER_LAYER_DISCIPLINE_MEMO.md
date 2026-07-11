@@ -101,6 +101,11 @@ Operationally, that means:
 - layer family decides the default material vocabulary
 - primitive class may refine stroke/fill behavior, but should not invent a
   separate semantic color system
+- each layer/stage is an **atomic compositing unit**: all of its fills and
+  strokes must be submitted in their declared within-layer order before any
+  geometry from a later layer/stage is submitted; separating geometry by GPU
+  pipeline must not turn the frame into a global fills pass followed by a
+  global strokes pass
 - exceptions such as vias, through-hole pads, and board-boundary views must be
   explicit and justified in product terms
 
@@ -156,6 +161,20 @@ This means:
 - post-copper authored geometry now follows one shared stage walk in code
   rather than separate local loops for process, silk, mechanical, and edge
 
+The ordering rule applies to actual draw submission, not only to the order of
+stage enums or retained-data construction. A renderer that visits layers in
+this order while later replaying all fills before all strokes is
+non-conforming: for example, a `B.Cu` trace or zone outline must never be
+composited above an `F.Cu`, mask, or paste fill solely because it uses a
+different GPU pipeline. Retained representations must preserve enough ordered
+batch metadata to prove and replay this atomic per-layer compositing.
+
+Copper trace geometry remains governed by the existing hard requirement in
+`M7_COPPER_RENDERING_GUIDANCE.md`: tracks are antialiased, round-cap stroked
+capsules. This memo does not define a second cap/join policy; renderer pipeline
+changes must preserve that governing copper contract while honoring the layer
+stack above.
+
 This is still not a full material-pipeline rewrite, but it is now a declared
 renderer contract and must be treated as such in code review.
 
@@ -195,7 +214,10 @@ The discipline this memo demanded is now enforced in code:
 - **Contract regression tests.** `render_stack_policy_follows_declared_contract`,
   `render_stage_declaration_order_is_the_only_priority_encoding`, and
   `copper_layer_appearance_is_material_first` lock the stage ladder, the
-  single-encoding rule, and material inheritance.
+  single-encoding rule, and material inheritance. Any retained/GPU pipeline
+  split must additionally prove draw-command interleaving across primitive
+  families (at minimum a lower-layer stroke overlapping a higher-layer fill),
+  because priority-helper tests alone do not prove compositing order.
 
 What this slice deliberately did **not** do, per this memo's own boundary:
 unify vias and through-hole pads into a generalized copper pipeline. Those
