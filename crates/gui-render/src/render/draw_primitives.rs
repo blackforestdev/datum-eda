@@ -823,17 +823,47 @@ fn board_graphic_world_color(
     scene_layers: &[datum_gui_protocol::SceneLayer],
     dimmed: bool,
 ) -> [f32; 3] {
-    let app = resolve_layer_appearance_with_scene(Some(layer_id), scene_layers);
     let layer_name = scene_layers
         .iter()
         .find(|layer| layer.layer_id == layer_id)
         .map(|layer| layer.name.as_str())
         .unwrap_or("");
+    // Schematic colour path (P2.2c). The schematic projection tags each element
+    // with a per-net-role `Schematic.*` layer whose prototype token colour is
+    // resolved here; board layers never match, so the board colour path below is
+    // untouched. This deliberately lifts the "reuse board layers" posture that
+    // forced the whole schematic to one silk off-white.
+    if let Some(color) = schematic_layer_world_color(layer_name) {
+        return dim_context_color(color, dimmed);
+    }
+    let app = resolve_layer_appearance_with_scene(Some(layer_id), scene_layers);
     let base_color = if layer_name.ends_with(".SilkS") {
         app.silkscreen
     } else {
         app.authored_track
     };
     dim_context_color(base_color, dimmed)
+}
+
+/// Maps a schematic net-role layer name to its prototype token colour
+/// (`docs/gui/prototypes/schematic-editor.html`). Returns `None` for any
+/// non-schematic (board) layer so the board colour path is left byte-identical.
+fn schematic_layer_world_color(layer_name: &str) -> Option<[f32; 3]> {
+    use crate::design_tokens::{chrome, schematic};
+    Some(match layer_name {
+        // Nets and junctions read as the green signal path.
+        "Schematic.Wire" | "Schematic.Junction" => schematic::WIRE,
+        // Symbol body outline, pin lines, and terminal dots are `--sym` grey.
+        "Schematic.Symbol" => schematic::SYMBOL,
+        // RefDes is the brightest annotation (`--tx`).
+        "Schematic.RefDes" => schematic::REFDES,
+        // Value and pin numbers are the most muted annotation (`--tx3`).
+        "Schematic.Value" | "Schematic.PinNumber" => schematic::VALUE,
+        // Pin names, no-connect crosses, and generic labels/ports sit at `--tx2`.
+        "Schematic.PinName" | "Schematic.NoConnect" | "Schematic.Annotation" => {
+            chrome::TEXT_SECONDARY
+        }
+        _ => return None,
+    })
 }
 

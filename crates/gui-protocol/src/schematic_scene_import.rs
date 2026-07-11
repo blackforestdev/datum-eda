@@ -12,12 +12,27 @@ use uuid::Uuid;
 
 use super::*;
 
-const SCHEMATIC_DRAWING_LAYER: &str = "L37";
+// Per-net-role schematic layers (P2.2c colour fidelity). The projection no
+// longer smuggles every graphic onto one board silk layer (`F.SilkS`, which
+// forced a single off-white); each element carries a schematic-specific layer
+// whose NAME (`Schematic.*`) the renderer maps to the prototype token colour
+// (`docs/gui/prototypes/schematic-editor.html`). Ids sit in a private high band
+// (`L20x`/`L21x`) that never collides with real KiCad board layers (0..=49).
+// Graphic layers use the `L<int>` string form; text layers use the matching
+// integer, because `BoardText.layer` (i32) is rendered to `layer_id` as
+// `format!("L{int}")` — so both graphics and text resolve through the same
+// name lookup.
+const SCHEMATIC_WIRE_LAYER: &str = "L200";
+const SCHEMATIC_SYMBOL_LAYER: &str = "L201";
+const SCHEMATIC_JUNCTION_LAYER: &str = "L202";
+const SCHEMATIC_NOCONNECT_LAYER: &str = "L203";
+const SCHEMATIC_ANNOTATION_LAYER: &str = "L214";
+const SCHEMATIC_REFDES_TEXT_LAYER_INT: i32 = 210;
+const SCHEMATIC_VALUE_TEXT_LAYER_INT: i32 = 211;
+const SCHEMATIC_PIN_NAME_TEXT_LAYER_INT: i32 = 212;
+const SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT: i32 = 213;
+const SCHEMATIC_ANNOTATION_TEXT_LAYER_INT: i32 = 214;
 const SCHEMATIC_FRAME_LAYER: &str = "L44";
-// Integer twin of `SCHEMATIC_DRAWING_LAYER` for `BoardText.layer` (`layer_id`
-// maps 37 -> "L37"); text geometries must land on the same schematic layer as
-// the wire/symbol graphics so they share visibility.
-const SCHEMATIC_DRAWING_LAYER_INT: i32 = 37;
 const SCHEMATIC_STROKE_NM: i64 = 120_000;
 const SYMBOL_HALF_WIDTH_NM: i64 = 1_600_000;
 const SYMBOL_HALF_HEIGHT_NM: i64 = 900_000;
@@ -177,6 +192,7 @@ struct SchematicTextSink {
 
 impl SchematicTextSink {
     #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments)]
     fn push(
         &mut self,
         points: &mut Vec<PointNm>,
@@ -187,6 +203,7 @@ impl SchematicTextSink {
         height_nm: i64,
         h_align: TextHAlign,
         v_align: TextVAlign,
+        layer_int: i32,
     ) {
         let content = content.trim();
         if content.is_empty() {
@@ -201,7 +218,7 @@ impl SchematicTextSink {
                 y: anchor.y,
             },
             rotation: 0,
-            layer: SCHEMATIC_DRAWING_LAYER_INT,
+            layer: layer_int,
             render_intent: TextRenderIntent::Annotation,
             family: TextFamilyId::default(),
             family_source: TextFamilySource::default(),
@@ -265,6 +282,7 @@ fn push_root_sheet_graphics(
             wire.from,
             wire.to,
             SCHEMATIC_STROKE_NM,
+            SCHEMATIC_WIRE_LAYER,
         );
     }
     for drawing in sorted_values(&sheet.drawings) {
@@ -284,6 +302,8 @@ fn push_root_sheet_graphics(
             LABEL_HALF_WIDTH_NM,
             LABEL_HALF_HEIGHT_NM,
             Some(label.name.clone()),
+            SCHEMATIC_ANNOTATION_LAYER,
+            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
         );
     }
     for port in sorted_values(&sheet.ports) {
@@ -297,6 +317,8 @@ fn push_root_sheet_graphics(
             PORT_HALF_WIDTH_NM,
             PORT_HALF_HEIGHT_NM,
             Some(port.name.clone()),
+            SCHEMATIC_ANNOTATION_LAYER,
+            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
         );
     }
     for junction in sorted_values(&sheet.junctions) {
@@ -307,6 +329,7 @@ fn push_root_sheet_graphics(
             junction.uuid,
             junction.position,
             JUNCTION_RADIUS_NM,
+            SCHEMATIC_JUNCTION_LAYER,
         );
     }
     for noconnect in sorted_values(&sheet.noconnects) {
@@ -317,6 +340,7 @@ fn push_root_sheet_graphics(
             noconnect.uuid,
             noconnect.position,
             NOCONNECT_HALF_NM,
+            SCHEMATIC_NOCONNECT_LAYER,
         );
     }
     for schematic_text in sorted_values(&sheet.texts) {
@@ -331,6 +355,7 @@ fn push_root_sheet_graphics(
             LABEL_TEXT_HEIGHT_NM,
             TextHAlign::Left,
             TextVAlign::Center,
+            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
         );
     }
     for instance in sorted_values(&schematic.sheet_instances) {
@@ -347,6 +372,8 @@ fn push_root_sheet_graphics(
             SHEET_INSTANCE_HALF_WIDTH_NM,
             SHEET_INSTANCE_HALF_HEIGHT_NM,
             Some(instance.name.clone()),
+            SCHEMATIC_ANNOTATION_LAYER,
+            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
         );
     }
 }
@@ -366,7 +393,7 @@ fn push_symbol_graphics(
     let center = point_nm(symbol.position);
     let (half_w, half_h) = symbol_body_half_extents(center, &symbol.pins);
 
-    // 1. IEC rectangular body.
+    // 1. IEC rectangular body (hollow, `--sym` grey stroke).
     push_rect_graphic(
         graphics,
         points,
@@ -377,6 +404,8 @@ fn push_symbol_graphics(
         half_w,
         half_h,
         None,
+        SCHEMATIC_SYMBOL_LAYER,
+        SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
     );
 
     // 2. Pin lines + terminal markers, 4. pin name/number text.
@@ -402,6 +431,7 @@ fn push_symbol_graphics(
         REFDES_HEIGHT_NM,
         TextHAlign::Center,
         TextVAlign::Bottom,
+        SCHEMATIC_REFDES_TEXT_LAYER_INT,
     );
     text.push(
         points,
@@ -415,6 +445,7 @@ fn push_symbol_graphics(
         VALUE_HEIGHT_NM,
         TextHAlign::Center,
         TextVAlign::Top,
+        SCHEMATIC_VALUE_TEXT_LAYER_INT,
     );
 }
 
@@ -543,7 +574,7 @@ fn push_symbol_pin(
             object_kind: "schematic_graphic".to_string(),
             primitive_kind: "line".to_string(),
             source_object_uuid: pin.uuid.to_string(),
-            layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+            layer_id: SCHEMATIC_SYMBOL_LAYER.to_string(),
             path,
             holes: Vec::new(),
             width_nm: Some(PIN_STROKE_NM),
@@ -558,6 +589,7 @@ fn push_symbol_pin(
         pin.uuid,
         pin.position,
         PIN_TERMINAL_RADIUS_NM,
+        SCHEMATIC_SYMBOL_LAYER,
     );
 
     // Pin name (inside the body) and pin number (outside on the stub).
@@ -570,6 +602,7 @@ fn push_symbol_pin(
         PIN_NAME_HEIGHT_NM,
         name_h,
         name_v,
+        SCHEMATIC_PIN_NAME_TEXT_LAYER_INT,
     );
     text.push(
         points,
@@ -580,6 +613,7 @@ fn push_symbol_pin(
         PIN_NUMBER_HEIGHT_NM,
         number_h,
         number_v,
+        SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT,
     );
 }
 
@@ -595,6 +629,7 @@ fn push_drawing_graphic(
     text: &mut SchematicTextSink,
     drawing: &SchematicPrimitive,
 ) {
+    // Free graphic drawings are symbol-body geometry: colour them `--sym` grey.
     match drawing {
         SchematicPrimitive::Line { uuid, from, to } => push_line_graphic(
             graphics,
@@ -604,6 +639,7 @@ fn push_drawing_graphic(
             *from,
             *to,
             SCHEMATIC_STROKE_NM,
+            SCHEMATIC_SYMBOL_LAYER,
         ),
         SchematicPrimitive::Rect { uuid, min, max } => {
             let center = Point {
@@ -620,6 +656,8 @@ fn push_drawing_graphic(
                 (max.x - min.x).abs() / 2,
                 (max.y - min.y).abs() / 2,
                 None,
+                SCHEMATIC_SYMBOL_LAYER,
+                SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
             );
         }
         SchematicPrimitive::Circle {
@@ -633,6 +671,7 @@ fn push_drawing_graphic(
             *uuid,
             *center,
             (*radius).max(SCHEMATIC_STROKE_NM),
+            SCHEMATIC_SYMBOL_LAYER,
         ),
         SchematicPrimitive::Arc { uuid, arc } => {
             let path = arc_path_points(*arc);
@@ -642,7 +681,7 @@ fn push_drawing_graphic(
                 object_kind: "schematic_graphic".to_string(),
                 primitive_kind: "polyline".to_string(),
                 source_object_uuid: uuid.to_string(),
-                layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+                layer_id: SCHEMATIC_SYMBOL_LAYER.to_string(),
                 path,
                 holes: Vec::new(),
                 width_nm: Some(SCHEMATIC_STROKE_NM),
@@ -672,6 +711,7 @@ fn arc_path_points(arc: eda_engine::ir::geometry::Arc) -> Vec<PointNm> {
         .collect()
 }
 
+#[allow(clippy::too_many_arguments)]
 fn push_line_graphic(
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,
@@ -680,6 +720,7 @@ fn push_line_graphic(
     from: Point,
     to: Point,
     width_nm: i64,
+    layer_id: &str,
 ) {
     let path = vec![point_nm(from), point_nm(to)];
     points.extend(path.iter().copied());
@@ -688,7 +729,7 @@ fn push_line_graphic(
         object_kind: "schematic_graphic".to_string(),
         primitive_kind: "line".to_string(),
         source_object_uuid: source_uuid.to_string(),
-        layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+        layer_id: layer_id.to_string(),
         path,
         holes: Vec::new(),
         width_nm: Some(width_nm),
@@ -707,6 +748,8 @@ fn push_rect_graphic(
     half_width_nm: i64,
     half_height_nm: i64,
     label: Option<String>,
+    layer_id: &str,
+    label_text_layer_int: i32,
 ) {
     let center = point_nm(center);
     // Boxed schematic objects (net labels, hierarchical ports, sheet instances)
@@ -721,6 +764,7 @@ fn push_rect_graphic(
             LABEL_TEXT_HEIGHT_NM,
             TextHAlign::Center,
             TextVAlign::Center,
+            label_text_layer_int,
         );
     }
     // IEC bodies (and boxed net-label / port / sheet-instance frames) render as
@@ -759,7 +803,7 @@ fn push_rect_graphic(
         object_kind: "schematic_graphic".to_string(),
         primitive_kind: "polyline".to_string(),
         source_object_uuid: source_uuid.to_string(),
-        layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+        layer_id: layer_id.to_string(),
         path,
         holes: Vec::new(),
         width_nm: Some(SCHEMATIC_STROKE_NM),
@@ -773,6 +817,7 @@ fn push_circle_graphic(
     source_uuid: Uuid,
     center: Point,
     radius_nm: i64,
+    layer_id: &str,
 ) {
     let center = point_nm(center);
     let mut path = Vec::new();
@@ -789,7 +834,7 @@ fn push_circle_graphic(
         object_kind: "schematic_graphic".to_string(),
         primitive_kind: "polygon".to_string(),
         source_object_uuid: source_uuid.to_string(),
-        layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+        layer_id: layer_id.to_string(),
         path,
         holes: Vec::new(),
         width_nm: Some(SCHEMATIC_STROKE_NM),
@@ -803,6 +848,7 @@ fn push_cross_graphic(
     source_uuid: Uuid,
     center: Point,
     half_nm: i64,
+    layer_id: &str,
 ) {
     let center = point_nm(center);
     let a = PointNm {
@@ -827,7 +873,7 @@ fn push_cross_graphic(
         object_kind: "schematic_graphic".to_string(),
         primitive_kind: "line".to_string(),
         source_object_uuid: source_uuid.to_string(),
-        layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+        layer_id: layer_id.to_string(),
         path: vec![a, b],
         holes: Vec::new(),
         width_nm: Some(SCHEMATIC_STROKE_NM),
@@ -837,7 +883,7 @@ fn push_cross_graphic(
         object_kind: "schematic_graphic".to_string(),
         primitive_kind: "line".to_string(),
         source_object_uuid: source_uuid.to_string(),
-        layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+        layer_id: layer_id.to_string(),
         path: vec![c, d],
         holes: Vec::new(),
         width_nm: Some(SCHEMATIC_STROKE_NM),
@@ -870,7 +916,22 @@ fn schematic_outline(points: &[PointNm]) -> OutlinePayload {
     }
 }
 
+/// The schematic scene's layer table. Each per-net-role layer carries a
+/// `Schematic.*` NAME the renderer's schematic colour path maps to a prototype
+/// token (`docs/gui/prototypes/schematic-editor.html`); the frame keeps the
+/// board `Edge.Cuts` identity (gold) until P2.2f removes it. All schematic
+/// names resolve to the top-silk render stage (see `render_stage_for_layer`) so
+/// they draw in the post-copper pass; within that stage the projection's
+/// insertion order (wires -> symbols -> junctions -> annotations) is the draw
+/// order.
 fn schematic_scene_layers() -> Vec<SceneLayer> {
+    let role = |layer_id: &str, name: &str, render_order: u32| SceneLayer {
+        layer_id: layer_id.to_string(),
+        name: name.to_string(),
+        kind: "schematic".to_string(),
+        render_order,
+        visible_by_default: true,
+    };
     vec![
         SceneLayer {
             layer_id: SCHEMATIC_FRAME_LAYER.to_string(),
@@ -879,14 +940,39 @@ fn schematic_scene_layers() -> Vec<SceneLayer> {
             render_order: 0,
             visible_by_default: true,
         },
-        SceneLayer {
-            layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
-            name: "F.SilkS".to_string(),
-            kind: "schematic".to_string(),
-            render_order: 1,
-            visible_by_default: true,
-        },
+        role(SCHEMATIC_WIRE_LAYER, "Schematic.Wire", 1),
+        role(SCHEMATIC_SYMBOL_LAYER, "Schematic.Symbol", 2),
+        role(SCHEMATIC_JUNCTION_LAYER, "Schematic.Junction", 3),
+        role(SCHEMATIC_NOCONNECT_LAYER, "Schematic.NoConnect", 4),
+        role(
+            &layer_id_string(SCHEMATIC_REFDES_TEXT_LAYER_INT),
+            "Schematic.RefDes",
+            5,
+        ),
+        role(
+            &layer_id_string(SCHEMATIC_VALUE_TEXT_LAYER_INT),
+            "Schematic.Value",
+            6,
+        ),
+        role(
+            &layer_id_string(SCHEMATIC_PIN_NAME_TEXT_LAYER_INT),
+            "Schematic.PinName",
+            7,
+        ),
+        role(
+            &layer_id_string(SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT),
+            "Schematic.PinNumber",
+            8,
+        ),
+        role(SCHEMATIC_ANNOTATION_LAYER, "Schematic.Annotation", 9),
     ]
+}
+
+/// The `layer_id` string a `BoardText.layer` integer projects to (mirrors the
+/// gui-protocol `L{int}` convention), so a text role's registered `SceneLayer`
+/// id matches the geometry the text pipeline emits.
+fn layer_id_string(layer_int: i32) -> String {
+    format!("L{layer_int}")
 }
 
 fn point_nm(point: Point) -> PointNm {
@@ -976,14 +1062,87 @@ mod tests {
             !scene.glyph_mesh_assets.is_empty(),
             "projected schematic text must carry glyph mesh assets for the world renderer"
         );
-        // Text geometry must land on the schematic drawing layer so it shares
-        // visibility with the wires/symbol bodies.
+        // Text geometry must land on the per-role schematic text layers (P2.2c),
+        // not the old single silk layer, so the renderer can colour refdes/value/
+        // pin-name/pin-number distinctly.
+        let text_layers: std::collections::BTreeSet<&str> = scene
+            .board_text_geometries
+            .iter()
+            .map(|g| g.layer_id.as_str())
+            .collect();
+        assert!(
+            !text_layers.contains(SCHEMATIC_FRAME_LAYER)
+                && !text_layers.contains("L37"),
+            "schematic text must no longer sit on the frame or the old F.SilkS layer"
+        );
+        assert!(
+            text_layers.contains(&layer_id_string(SCHEMATIC_REFDES_TEXT_LAYER_INT).as_str())
+                && text_layers
+                    .contains(&layer_id_string(SCHEMATIC_VALUE_TEXT_LAYER_INT).as_str()),
+            "refdes and value text must carry their own per-role layers, got {text_layers:?}"
+        );
+    }
+
+    #[test]
+    fn schematic_elements_carry_per_net_role_layers() {
+        let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+        let state = load_kicad_schematic_workspace_state(&schematic)
+            .expect("simple schematic should load as a review scene");
+        let scene = &state.scene;
+
+        // No schematic geometry may land on the old monochrome silk layer any
+        // more; each net-role gets its own `Schematic.*` layer so the renderer
+        // can resolve prototype token colours (green wires, grey symbols).
         assert!(
             scene
-                .board_text_geometries
+                .board_graphics
                 .iter()
-                .all(|g| g.layer_id == SCHEMATIC_DRAWING_LAYER),
-            "schematic text geometry must sit on the schematic drawing layer"
+                .all(|g| g.layer_id != "L37"),
+            "no schematic graphic may remain on the retired F.SilkS layer"
+        );
+
+        let layer_of = |prefix: &str| -> &str {
+            scene
+                .board_graphics
+                .iter()
+                .find(|g| g.object_id.starts_with(prefix))
+                .unwrap_or_else(|| panic!("expected a {prefix} graphic"))
+                .layer_id
+                .as_str()
+        };
+        assert_eq!(
+            layer_of("schematic-wire:"),
+            SCHEMATIC_WIRE_LAYER,
+            "wires must sit on the wire (green) layer"
+        );
+        assert_eq!(
+            layer_of("schematic-symbol:"),
+            SCHEMATIC_SYMBOL_LAYER,
+            "symbol bodies must sit on the symbol (grey) layer"
+        );
+
+        // The scene layer table must register each role with its `Schematic.*`
+        // name so the renderer's schematic colour path can key off it.
+        let names: std::collections::BTreeSet<&str> =
+            scene.layers.iter().map(|l| l.name.as_str()).collect();
+        for expected in [
+            "Schematic.Wire",
+            "Schematic.Symbol",
+            "Schematic.Junction",
+            "Schematic.RefDes",
+            "Schematic.Value",
+            "Schematic.PinName",
+            "Schematic.PinNumber",
+        ] {
+            assert!(
+                names.contains(expected),
+                "scene must register schematic role layer {expected}, got {names:?}"
+            );
+        }
+        assert!(
+            !names.contains("F.SilkS"),
+            "the retired monochrome F.SilkS schematic layer must be gone"
         );
     }
 }

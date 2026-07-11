@@ -1138,6 +1138,11 @@ fn render_stage_for_layer(
         "F.Mask" => RenderStage::TopMask,
         "B.SilkS" => RenderStage::BottomSilk,
         "F.SilkS" => RenderStage::TopSilk,
+        // Schematic net-role layers (P2.2c) all draw in the top-silk pass so the
+        // schematic pane renders in the post-copper walk; within the stage the
+        // projection's insertion order is the draw order. Colour is resolved
+        // separately by `schematic_layer_world_color`.
+        name if name.starts_with("Schematic.") => RenderStage::TopSilk,
         "Edge.Cuts" => RenderStage::Edge,
         name if name.ends_with(".CrtYd") || name.ends_with(".Fab") => RenderStage::Mechanical,
         _ => RenderStage::Other,

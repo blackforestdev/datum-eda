@@ -67,6 +67,22 @@ pub(crate) mod content {
     pub(crate) const SELECTION: Rgb = chrome::ACCENT;
 }
 
+/// Schematic net-role colours (P2.2c). These mirror the schematic-editor
+/// prototype tokens (`docs/gui/prototypes/schematic-editor.html` :16-21); each
+/// alias reuses the existing Design Book value whose hex already matches, so the
+/// schematic pane and the board pane draw from one palette rather than a rival
+/// copy. The schematic colour path in `draw_primitives` maps `Schematic.*`
+/// layer names to these.
+pub(crate) mod schematic {
+    use super::{Rgb, chrome, content};
+
+    pub(crate) const WIRE: Rgb = content::COPPER_IN1; // --wire #4FA75A
+    pub(crate) const SYMBOL: Rgb = content::RATSNEST; // --sym  #AEB4BB
+    pub(crate) const REFDES: Rgb = chrome::TEXT_PRIMARY; // --tx   #E4E7EB
+    pub(crate) const PIN_NAME: Rgb = chrome::TEXT_SECONDARY; // --tx2 #B2B8C3
+    pub(crate) const VALUE: Rgb = chrome::TEXT_MUTED; // --tx3  #717885
+}
+
 pub(crate) mod typography {
     pub(crate) const DISPLAY_SIZE: f32 = 16.0;
     pub(crate) const DISPLAY_WEIGHT: u16 = 600;
