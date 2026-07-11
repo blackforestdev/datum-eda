@@ -35,9 +35,21 @@ they support the product; they do not define its identity.
 - **Lean.** Keep Datum clean and efficient: a capability should be a
   parameter of a small verb set, not a tool per object-class-times-format. A
   redundant tool is a defect.
+- **Shared by construction.** Any capability shared by more than one editor —
+  grid, camera, snap, selection, undo, measure, the property inspector,
+  geometry/constraint solving — is built ONCE as a shared backbone and
+  *configured* per editor, never reimplemented per editor. An editor is a thin
+  persona (the verbs it exposes, how its objects render, its one contextual
+  inspector) over services it inherits: **the tools change, the scene doesn't.**
+  Reimplementing a shared capability for a single editor is a defect — the same
+  defect as a redundant tool (this is *Lean* applied to editor architecture). The
+  field converges on this independently (FreeCAD workbenches, Fusion workspaces,
+  Affinity personas, Bitwig's global transport), so it is a law, not a preference.
+  Full treatment: `docs/DATUM_SHARED_TOOLING_TAXONOMY.md`; first ratification in
+  `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..022`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..023`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -187,6 +199,17 @@ domain builds toward on the landed substrate.
   a separate phase: name it as execution and get explicit authorization
   before doing it. "Proof slice" / "proof gate" sections in the docs are
   specifications of what execution must later demonstrate, not to-dos.
+- **Research before building — ten minutes in the library saves ten years in the
+  lab.** Before committing to a foundational or cross-cutting architecture (a
+  shared backbone, a data model, an editor's tool language), research the prior
+  art first — inside Datum and across the field, EDA and beyond. The cost is
+  asymmetric: an hour spent reading how mature tools solved a problem prevents the
+  expensive rework of discovering the design was wrong after it shipped. The
+  per-editor grid divergence is the cautionary case — the up-front shared-tooling
+  research (`docs/DATUM_SHARED_TOOLING_TAXONOMY.md`) would have prevented it. This
+  is proportionate to stakes, not a mandate to research trivia (that would fight
+  *Lean* and the no-rabbit-hole posture); it is the constructive form of "research
+  to resolve, don't bounce bare questions to the owner."
 - **Do not infer product identity** from the active milestone or the nearest
   import/render/regression task. Use the product-mechanics doctrine.
 - No editing path may bypass the canonical operation/commit/journal model.
@@ -294,7 +317,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..022 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..023 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +
