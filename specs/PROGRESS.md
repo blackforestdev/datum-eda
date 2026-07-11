@@ -159,9 +159,12 @@
    screen-constant via the shared engine — THE grid divergence bug fixed, shell golden
    re-blessed) LANDED; S2 (camera routing collapse into one focused_viewport path,
    byte-identical) LANDED; S3 (CoordinateHit keystone — per-pane screen→world + hit-test,
-   schematic symbol hit regions with identity) LANDED. Next: **S4 hover + S5 selection/
-   marquee** (ride on the keystone) → S6 tool-mode → **S7 context menu** → S8 readout →
-   S9 layer-vis → S10–S11 snap/quantize.** Governing: decision 023 +
+   schematic symbol hit regions with identity) LANDED; S4 (per-surface hover +
+   pre-highlight — schematic symbols highlight on hover) LANDED, with the cursor-crosshair
+   builder tested but DORMANT (live wiring pending an owner crosshair-style call —
+   full-viewport vs local — plus a gui-protocol monolith decomposition to thread cursor_pos).
+   Next: **S5 selection/marquee** (rides on the keystone) → S6 tool-mode → **S7 context menu**
+   → S8 readout → S9 layer-vis → S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
