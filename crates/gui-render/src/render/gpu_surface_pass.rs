@@ -4,6 +4,9 @@ use super::*;
 impl Renderer {
 pub(crate) fn draw_surface_grids<'a>(&'a self, pass: &mut wgpu::RenderPass<'a>,
     batches: &[surface_grid_pass::SurfaceGridBatch]) {
+    // `upload_vertices` retains a zero-sized buffer for an empty grid frame.
+    // WGPU rejects binding any slice of that buffer, so avoid the bind entirely.
+    if batches.is_empty() { return }
     let Some(buffer) = self.surface_grid_vertex_buffer.as_ref() else { return };
     pass.set_pipeline(&self.pipeline); pass.set_bind_group(0, &self.uniform_bind_group, &[]);
     pass.set_vertex_buffer(0, buffer.slice(..));
