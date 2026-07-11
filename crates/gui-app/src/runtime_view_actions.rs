@@ -19,12 +19,12 @@ impl Runtime {
                 true
             }
             "view.zoom_in" => {
-                self.zoom_view_from_menu(1.2);
+                self.zoom_focused_view(1.2);
                 self.log_review_event("menu view.zoom_in".to_string());
                 true
             }
             "view.zoom_out" => {
-                self.zoom_view_from_menu(1.0 / 1.2);
+                self.zoom_focused_view(1.0 / 1.2);
                 self.log_review_event("menu view.zoom_out".to_string());
                 true
             }
@@ -94,20 +94,6 @@ impl Runtime {
             // this monolith under its source-health ceiling.
             other => self.activate_view_local_action(other),
         }
-    }
-
-    fn zoom_view_from_menu(&mut self, zoom_delta: f32) {
-        let prepared = self.prepared_scene();
-        let scene_viewport = prepared.scene_viewport;
-        let bounds = self.workspace().scene.bounds.clone();
-        self.camera.zoom_about_screen_point(
-            scene_viewport,
-            &bounds,
-            scene_viewport.x + scene_viewport.width * 0.5,
-            scene_viewport.y + scene_viewport.height * 0.5,
-            zoom_delta,
-        );
-        self.invalidate_scene();
     }
 
     /// Secondary `gui_local` view actions dispatched from

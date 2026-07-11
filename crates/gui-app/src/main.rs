@@ -41,6 +41,7 @@ mod pane_resize;
 mod production_status_refresh;
 mod retained_scene_cache_key;
 mod runtime_board_text_edit;
+mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
 mod runtime_terminal_context;
 mod runtime_view_actions;
@@ -339,6 +340,7 @@ impl ApplicationHandler for App {
             WindowEvent::CursorMoved { position, .. } => {
                 if let Some(runtime) = &mut self.runtime {
                     let next_pos = (position.x as f32, position.y as f32);
+                    let previous_pos = runtime.last_cursor_pos;
                     runtime.last_cursor_pos = Some(next_pos);
                     if runtime.report_terminal_mouse_motion() {
                         runtime.clear_interaction_overlay();
@@ -353,7 +355,8 @@ impl ApplicationHandler for App {
                     } else if runtime.marking_menu_active() {
                         changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.middle_drag_active || runtime.right_drag_active {
-                        changed = runtime.handle_pan_drag(next_pos);
+                        changed = previous_pos
+                            .is_some_and(|previous| runtime.handle_pan_drag(previous, next_pos));
                     }
                     // Update hover state
                     if !runtime.dock_drag_active
@@ -1093,11 +1096,9 @@ struct Runtime {
     scale_factor: f32,
     renderer: Renderer,
     session: LiveDesignSession,
-    /// The ACTIVE camera: the focused leaf's view. Pan/zoom/fit read and write it
-    /// and the renderer projects the single live scene through it. The other
-    /// leaves' cameras rest warm in `pane_cameras`; on a focus change this is
-    /// stashed there and replaced with the newly-focused leaf's warm camera
-    /// (P2.1b — no refit lag on focus-switch).
+    /// Camera for the renderer's live board leaf. Pointer and focused commands
+    /// reach it only when their typed pane route names that leaf; schematic and
+    /// additional-pane cameras remain independently warm in `pane_cameras`.
     camera: CameraState,
     /// Warm per-leaf view cameras keyed by `PaneId` (decision 021, P2.1b).
     pane_cameras: PaneCameras,
@@ -1161,6 +1162,15 @@ impl Runtime {
         // The initially-focused leaf seeds the warm per-leaf camera store; its
         // camera is the fit camera the launch path already computed.
         let initial_focus = state.ui.layout.focused;
+        let initial_content = state.ui.layout.focused_content();
+        let initial_pane_camera = match initial_content {
+            PaneContent::Board => camera,
+            PaneContent::Schematic => state
+                .schematic_scene
+                .as_ref()
+                .map(|scene| CameraState::fit_to_bounds(&scene.bounds))
+                .unwrap_or(camera),
+        };
         let wgpu_started = std::time::Instant::now();
         append_gui_diagnostic_line("wgpu instance create begin");
         let instance = wgpu::Instance::default();
@@ -1245,7 +1255,7 @@ impl Runtime {
             renderer,
             session: LiveDesignSession::new(state),
             camera,
-            pane_cameras: PaneCameras::new(initial_focus, camera),
+            pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
             last_cursor_pos: None,
             middle_drag_active: false,
             right_drag_active: false,
@@ -2590,12 +2600,9 @@ impl Runtime {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
-        // Click-to-focus (decision 021): a press landing in a NON-focused pane
-        // swaps focus to that pane (an instant warm-camera swap via the FEEL
-        // focus path) instead of running board interaction in the wrong pane. A
-        // click in the already-focused pane (or outside every pane) falls through
-        // to today's select/pan behavior below. This is gui_local workspace view
-        // state — never a verb/commit/journal path.
+        // Focus and dispatch are one gesture: after activating a different pane,
+        // continue resolving this same click in that pane's camera/content.
+        let mut focus_changed = false;
         if let Some(pane_id) = self.pane_at_screen(x, y)
             && pane_id != self.workspace().ui.layout.focused
         {
@@ -2605,7 +2612,7 @@ impl Runtime {
                 "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
                 pane_id.0
             ));
-            return true;
+            focus_changed = true;
         }
         let prepared_started = std::time::Instant::now();
         let (prepared_target, world_point) = {
@@ -2622,14 +2629,14 @@ impl Runtime {
                 prepared_elapsed.as_millis(),
                 self.workspace().ui.active_dock_tab
             ));
-            return self.select_hit_target(&target);
+            return self.select_hit_target(&target) || focus_changed;
         }
         if let Some((world_point, SceneSurface::Schematic)) = world_point {
             // S3/UVT-004 plumbing: a focused schematic-pane click now resolves a
             // world point in the schematic camera AND hit-tests the symbol regions.
             // Firing selection off it is S5, so this resolves+traces only; the board
             // path below stays byte-identical.
-            return self.resolve_schematic_primary_click((x, y), world_point);
+            return self.resolve_schematic_primary_click((x, y), world_point) || focus_changed;
         }
         if let Some((world_point, SceneSurface::Board)) = world_point {
             let retained_started = std::time::Instant::now();
@@ -2673,7 +2680,7 @@ impl Runtime {
                     retained_elapsed.as_millis(),
                     self.workspace().ui.active_dock_tab
                 ));
-                return self.select_hit_target(&target);
+                return self.select_hit_target(&target) || focus_changed;
             }
             self.trace_click(format!(
                 "primary click ({x:.1}, {y:.1}) world ({}, {}) no retained target; prepare {}ms; retained {}ms; dock {:?}",
@@ -2683,14 +2690,14 @@ impl Runtime {
                 retained_elapsed.as_millis(),
                 self.workspace().ui.active_dock_tab
             ));
-            return false;
+            return focus_changed;
         }
         self.trace_click(format!(
             "primary click ({x:.1}, {y:.1}) no prepared or viewport target; prepare {}ms; dock {:?}",
             prepared_elapsed.as_millis(),
             self.workspace().ui.active_dock_tab
         ));
-        false
+        focus_changed
     }
 
     fn trace_click(&self, message: String) {
