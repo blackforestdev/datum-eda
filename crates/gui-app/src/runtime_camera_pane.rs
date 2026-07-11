@@ -6,23 +6,50 @@
 //! fields/methods via `use super::*` exactly as the inline impl did.
 
 use super::*;
+use datum_gui_render::RectPx;
+
+/// A small `(slot, bounds, viewport)` handle for the focused pane's camera routing (S2,
+/// UVT-001/004): `slot` is `None` for the active board camera or `Some(leaf)` for a warm
+/// `PaneCameras` entry; `bounds`/`viewport` are the scene and screen rect it hit-tests.
+type FocusedViewport = (Option<datum_gui_protocol::PaneId>, SceneBounds, RectPx);
 
 impl Runtime {
-    pub(super) fn fit_camera(&mut self) {
-        // P2.2d: route the fit to the FOCUSED pane. When the schematic pane is
-        // focused, fit its OWN warm camera to the schematic bounds; otherwise fit
-        // the board scene camera (unchanged). Keeps board-focused behavior identical.
-        if self.focused_camera_is_schematic()
-            && let (Some(leaf), Some(bounds)) = (self.schematic_leaf_id(), self.schematic_bounds())
-        {
-            let fit = CameraState::fit_to_bounds(&bounds);
-            *self
-                .pane_cameras
-                .entry_or_insert_with(leaf, || fit) = fit;
-            self.invalidate_frame();
-            return;
+    /// Resolve the FOCUSED pane to its `(slot, bounds, viewport)` — one path for board,
+    /// schematic, and any future pane, collapsing the old per-surface fork. `None` = a
+    /// focused schematic with no resolved scene; handlers then bail (pan/zoom) or fit board.
+    fn focused_viewport(&self) -> Option<FocusedViewport> {
+        if self.focused_camera_is_schematic() {
+            return Some((
+                Some(self.schematic_leaf_id()?),
+                self.schematic_bounds()?,
+                self.schematic_scene_viewport()?,
+            ));
         }
-        self.camera = CameraState::fit_to_bounds(&self.workspace().scene.bounds);
+        Some((None, self.workspace().scene.bounds.clone(), self.scene_viewport()))
+    }
+
+    /// A mutable handle to the camera behind `slot` — the active board camera
+    /// (`None`) or a warm per-leaf camera created via `init` on first touch.
+    fn camera_slot_mut(
+        &mut self,
+        slot: Option<datum_gui_protocol::PaneId>,
+        init: impl FnOnce() -> CameraState,
+    ) -> &mut CameraState {
+        match slot {
+            None => &mut self.camera,
+            Some(leaf) => self.pane_cameras.entry_or_insert_with(leaf, init),
+        }
+    }
+
+    pub(super) fn fit_camera(&mut self) {
+        // S2: fit the FOCUSED pane's camera to its bounds via the one resolver; a focused
+        // schematic with no resolved scene falls back to the board (pre-collapse behavior).
+        let (slot, bounds) = match self.focused_viewport() {
+            Some((slot, bounds, _)) => (slot, bounds),
+            None => (None, self.workspace().scene.bounds.clone()),
+        };
+        let fit = CameraState::fit_to_bounds(&bounds);
+        *self.camera_slot_mut(slot, || fit) = fit;
         self.invalidate_frame();
     }
 
@@ -155,30 +182,20 @@ impl Runtime {
         };
         let dx = next_cursor_pos.0 - previous.0;
         let dy = next_cursor_pos.1 - previous.1;
-        // P2.2d: when the schematic pane is focused, pan ITS warm camera (board
-        // untouched). No artifact-preview drag in the schematic pane (that overlay
-        // is a board-scene affordance).
-        if self.focused_camera_is_schematic() {
-            let (Some(leaf), Some(bounds), Some(viewport)) = (
-                self.schematic_leaf_id(),
-                self.schematic_bounds(),
-                self.schematic_scene_viewport(),
-            ) else {
-                return false;
-            };
-            self.pane_cameras
-                .entry_or_insert_with(leaf, || CameraState::fit_to_bounds(&bounds))
-                .pan_pixels(viewport, &bounds, dx, dy);
-            self.invalidate_frame();
-            return true;
+        // S2: pan the FOCUSED pane's camera via the resolver; no viewport -> bail (as before).
+        let Some((slot, bounds, viewport)) = self.focused_viewport() else {
+            return false;
+        };
+        // Deliberate board-specific branch: the artifact-preview drag is a
+        // board-scene overlay affordance; if it consumes the drag, pan is skipped.
+        if slot.is_none() {
+            let prepared = self.prepared_scene().clone();
+            if self.handle_artifact_preview_pan_drag(&prepared, previous, next_cursor_pos) {
+                return true;
+            }
         }
-        let prepared = self.prepared_scene().clone();
-        if self.handle_artifact_preview_pan_drag(&prepared, previous, next_cursor_pos) {
-            return true;
-        }
-        let scene_viewport = self.scene_viewport();
-        let bounds = self.workspace().scene.bounds.clone();
-        self.camera.pan_pixels(scene_viewport, &bounds, dx, dy);
+        self.camera_slot_mut(slot, || CameraState::fit_to_bounds(&bounds))
+            .pan_pixels(viewport, &bounds, dx, dy);
         self.invalidate_frame();
         true
     }
@@ -187,33 +204,16 @@ impl Runtime {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };
-        // P2.2d: hit-test the zoom against the FOCUSED pane's scene rect and drive
-        // that pane's camera. Schematic focused -> schematic warm camera; otherwise
-        // the board scene camera (unchanged).
-        if self.focused_camera_is_schematic() {
-            let (Some(leaf), Some(bounds), Some(viewport)) = (
-                self.schematic_leaf_id(),
-                self.schematic_bounds(),
-                self.schematic_scene_viewport(),
-            ) else {
-                return false;
-            };
-            if !viewport.contains(x, y) {
-                return false;
-            }
-            self.pane_cameras
-                .entry_or_insert_with(leaf, || CameraState::fit_to_bounds(&bounds))
-                .zoom_about_screen_point(viewport, &bounds, x, y, delta);
-            self.invalidate_frame();
-            return true;
-        }
-        let scene_viewport = self.scene_viewport();
-        if !scene_viewport.contains(x, y) {
+        // S2: hit-test the zoom against the FOCUSED pane's scene rect and drive its
+        // camera via the one resolver; outside the rect (or no viewport) is a no-op.
+        let Some((slot, bounds, viewport)) = self.focused_viewport() else {
+            return false;
+        };
+        if !viewport.contains(x, y) {
             return false;
         }
-        let bounds = self.workspace().scene.bounds.clone();
-        self.camera
-            .zoom_about_screen_point(scene_viewport, &bounds, x, y, delta);
+        self.camera_slot_mut(slot, || CameraState::fit_to_bounds(&bounds))
+            .zoom_about_screen_point(viewport, &bounds, x, y, delta);
         self.invalidate_frame();
         true
     }
