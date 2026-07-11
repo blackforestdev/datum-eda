@@ -116,7 +116,10 @@
    viewports. Reference: `docs/gui/prototypes/workspace-panes.html`. Near-term slice
    ordering under 021: **dynamic single/split + Zoom + divider-drag resize** (resolves
    "board-only / schematic-only / both" as a user choice and lets the owner set any
-   split ratio) — **LANDED** → then real schematic geometry in pane B (P2.2, next).
+   split ratio) — **LANDED** → **P2.2 schematic render in pane B — IN PROGRESS**
+   (multi-scene + symbol structure landed; re-specced 2026-07-10 to match
+   `schematic-editor.html` — colour fidelity / interactive camera / typed-object
+   geometry / grid are the completion build; see `DATUM_GUI_PHASE_2_SPEC.md` P2.2).
    Governing: decision 019 + **decision 021 (pane tiling)** +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable

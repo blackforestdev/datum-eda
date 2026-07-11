@@ -152,31 +152,86 @@ marker**.
   owner set any ratio interactively; the shipped default preset value is the piece
   still pending owner sign-off.
 
-- **P2.2 — Schematic pane populated from the engine.**
-  **spec only — build is a separate authorized execution phase.**
-  Fill the P2.1 schematic pane with the `datum-test` schematic **read-only**,
-  from resolved engine truth — reusing the existing
-  `load_kicad_schematic_workspace_state` path and the
-  `crates/gui-protocol/src/schematic_scene_import.rs` scene contract (both already
-  present). Symbols render at the locked IEC-rectangular standard (Rendering
-  Book); no editing, no wiring authoring.
-  *Dependency:* P2.1 layout landed.
-  *Reuse:* `load_kicad_schematic_workspace_state`, the schematic scene import
-  contract, and the Rendering Book symbol standard — no new import path.
-  *Check disposition:* **TO-ENFORCE** — add a schematic-pane screenshot golden for
-  `datum-test` across the scale matrix and a scene-contract structural test; lands
-  with the P2.2 build slice. **HUMAN** backstop: owner review of the populated
-  schematic against the prototype (conformance HUMAN layer), backed by the
-  committed golden so the approved look is regression-gated.
+- **P2.2 — Schematic pane rendered to the prototype (read-only).**
+  Render the `datum-test` schematic in its pane so it MATCHES
+  `docs/gui/prototypes/schematic-editor.html` — not merely "geometry appears" but
+  the prototype's **colour, grid, and interaction**. Read-only (no authoring);
+  symbols at the locked IEC-rectangular standard (Rendering Book). The target is
+  the prototype element-for-element (audited 2026-07-10); the sub-slices enumerate
+  it so no detail (e.g. the canvas grid) is dropped again.
+  > **Scope discipline:** the original P2.2 entry ("fill the pane… symbols render
+  > IEC… no editing") was too vague and produced a monochrome, gridless, static
+  > pane that did not match the design. This entry is the corrected definition.
 
-- **P2.3 — Cross-probe between the panes.**
+  **Landed (partial):**
+  - *P2.2a — multi-scene render.* A second live world scene (the companion
+    `schematic_scene`, a projected `BoardReviewSceneV1`) renders scissored to the
+    schematic pane simultaneously with the board — the multi-scene GPU pass;
+    companion carried through the KiCad materialize path from the original
+    `.kicad_sch`. (`36a977a`, `f4fbd29`, `a901b42`.)
+  - *P2.2b — symbol structure.* Hollow IEC symbol bodies (polyline outline), pin
+    lines + terminal dots from `SymbolPin` positions, refdes/value/pin-name/
+    pin-number text; labels/ports/sheet-instances render their names. (`e76543c`.)
+  **Known gaps at "landed" (all P2.2, not P2.3/P2.4):** everything renders ONE
+  monochrome layer colour — schematic geometry is smuggled onto board layer
+  `F.SilkS` → off-white `#E8E6DC`; no schematic grid; static (non-interactive)
+  camera; buses / power symbols / global-labels lack distinct geometry.
+
+  **P2.2 completion (build to the prototype):**
+  - **P2.2c — per-element colour fidelity.** Give schematic geometry its own colour
+    path (schematic-specific `SceneLayer`s per net-role, resolved to prototype
+    tokens) — this **lifts** the "projection-only, reuse board layers" posture,
+    which is precisely what forces monochrome. Targets: wires `--wire` green
+    `#4FA75A`; symbol bodies dark fill `#12141a` + `--sym #AEB4BB` stroke; pin
+    lines/terminals `--sym`; junctions `--wire`; refdes `--tx`, value/pin-number
+    `--tx3`, pin-name `--tx2`; no-connect `--tx2`.
+  - **P2.2d — interactive schematic camera.** The FOCUSED pane (board OR schematic)
+    is pan/zoom interactive; generalize the per-pane warm-camera model (the P2.1b
+    board-bound scene) so the schematic is a first-class scene — interactive when
+    focused, still rendered when not. (The owner must be able to zoom the schematic.)
+  - **P2.2e — typed-object geometry.** Project the engine's typed schematic objects
+    with prototype geometry + colour: `Bus` as gold `--bus #C2A13A` thick (≈3.2)
+    lines + diagonal bus entries; power symbols (+3V3 bar / GND stack, `--pwr
+    #B7BEC9`) detected by `lib_id`; `LabelKind::Global` as the `--info` blue
+    pentagon tag, `Local` as the chip, hierarchical/`HierarchicalPort` styled;
+    decoupling / crystal passive glyphs. Data is present in the engine `Sheet` model
+    (`Bus`, `NetLabel`+`LabelKind`, `HierarchicalPort`) — this is projection plus a
+    power-symbol classification pass.
+  - **P2.2f — schematic canvas grid + frame.** Draw the prototype's SQUARE schematic
+    grid (`#141821`, schematic pitch, zoom-tiered) as the schematic-pane underlay
+    (the companion pass currently draws no grid); REMOVE the extraneous gold
+    `Edge.Cuts` padded-bounds frame the projection currently emits (the prototype
+    schematic has no sheet border). A proper title-block frame is future/out of
+    scope.
+  *Dependency:* P2.1 layout landed (done).
+  *Reuse:* `schematic_scene_import.rs` projection, the world render pipeline, the
+  per-pane warm-camera store, and the engine `Sheet` typed model — no new import.
+  *Check disposition:* **TO-ENFORCE** per sub-slice — a `datum-test` schematic-pane
+  screenshot golden (colour + grid) across the scale matrix; scene-contract
+  structural tests asserting per-net-role layers/colours, bus/power/label geometry,
+  and an interactive-camera test. **HUMAN** backstop: owner review against
+  `schematic-editor.html`, golden-backed. NOTE the whole pane will **not** pixel-
+  match the prototype's *zoomed single-circuit* mockup — it renders the real full
+  sheet; the review target is per-element fidelity (colour, symbol, grid), verified
+  by zooming in.
+  *NOT P2.2 — do not absorb:* net selection/highlight/glow + cross-probe = **P2.3**;
+  the net-centric inspector, the Sheets hierarchy panel, and schematic status-bar
+  segments (Sheet/Grid/ERC) = **P2.4**; a schematic whose `.kicad_sch` only
+  skeleton-imports (e.g. DOA2526) is the separate **schematic-import track**,
+  upstream of render — P2.2 renders faithfully whatever the importer produces.
+
+- **P2.3 — Schematic selection + cross-probe between the panes.**
   **spec only — build is a separate authorized execution phase.**
-  Selecting an object in one pane highlights the linked object in the other
-  (component ↔ its schematic symbol), built on the existing
+  Two coupled pieces: (1) **schematic-side net/object selection + highlight** — the
+  prototype's `--acc` pink highlight with `netglow` on the selected net's wires,
+  pins, and label (there is no schematic selection colour path today; it depends on
+  the P2.2c schematic colour path); and (2) **cross-probe** — selecting an object in
+  one pane highlights the linked object in the other (component ↔ its schematic
+  symbol; net ↔ its copper), built on the existing
   `SelectionTarget`/`select_authored_object` substrate and
   `crates/gui-protocol/src/context_envelope.rs::from_selection` — one selection
-  identity projected into both scenes. Read-only: cross-probe is a
-  consumer-side selection projection, **not** a journaled operation (CLAUDE.md:
+  identity projected into both scenes. Read-only: selection/cross-probe are
+  consumer-side projections, **not** journaled operations (CLAUDE.md:
   selection/hover are consumer-specific, never operations).
   *Dependency:* P2.1 + P2.2 landed.
   *Reuse:* `SelectionTarget`, `select_authored_object`,
@@ -187,15 +242,23 @@ marker**.
   (`crates/gui-render/tests/selection_ownership.rs` is the natural home), plus a
   cross-probe screenshot golden; lands with the P2.3 build slice.
 
-- **P2.4 — Full populated inspector (Identity / Placement / Checks sections).**
+- **P2.4 — Populated inspector + schematic context surfaces.**
   **spec only — build is a separate authorized execution phase.**
-  Extend the P2.0 populated inspector into the named
-  **Identity / Placement / Checks** sections the prototype shows and that
-  `render_inspector.rs` currently marks deferred (its title-band docstring notes
-  the "deferred populated-component inspector"). Read-only fields only; editable
-  fields stay Phase-3 gated on the write path.
-  *Dependency:* P2.0 (extends the same inspector branch); independent of
-  P2.1–P2.3 and may be sequenced in parallel after P2.0.
+  Three coupled surfaces the prototypes show and that today render board-only:
+  (1) the **component inspector** — extend the P2.0 populated inspector into the
+  named **Identity / Placement / Checks** sections (`render_inspector.rs` marks this
+  deferred); (2) the **net-centric inspector** — when a schematic net is selected,
+  the inspector shows **Net / Members / Checks (ERC)** per `schematic-editor.html`
+  (context-follows-focus already routes the inspector to the focused pane); and
+  (3) the **Sheets hierarchy panel** — when a schematic pane is focused, the left
+  Layers slot shows the sheet hierarchy (the model exposes one root sheet today; a
+  multi-sheet panel + selection lands here), plus the schematic status-bar segments
+  (Sheet n/m, Grid, ERC count). Read-only fields only; editable fields stay Phase-3
+  gated on the write path. ERC *findings* feed from the ERC engine (the P2.2e ERC
+  *marker geometry* renders whatever findings exist).
+  *Dependency:* P2.0 (component inspector); the net inspector + Sheets panel depend
+  on P2.2 (schematic render) and share P2.3's selection substrate. May sequence in
+  parallel after P2.0 for the component-inspector piece.
   *Reuse:* the P2.0 populated-component render branch in
   `render_inspector.rs` — add sections, do not fork the inspector.
   *Check disposition:* **TO-ENFORCE** — inspector-content structural test naming
