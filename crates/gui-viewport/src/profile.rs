@@ -18,15 +18,26 @@ pub enum GridMode {
     Rectangular,
 }
 
+/// Screen-space mark used at grid coordinates.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GridMark {
+    /// Continuous vertical and horizontal lines.
+    Lines,
+    /// A short orthogonal cross at every grid coordinate.
+    Crosses,
+    /// A square device-pixel dot at every grid coordinate.
+    Dots,
+}
+
 /// One zoom LOD tier of a [`GridConfig`]: the major pitch and its optional
 /// finer minor pitch, both in nanometres. A tier with `minor_pitch_nm == None`
 /// draws only the major grid (the coarse board tier drops the minor lines).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GridTier {
-    /// Major grid pitch, in nanometres.
-    pub major_pitch_nm: i64,
-    /// Minor grid pitch, in nanometres; `None` suppresses the minor grid.
-    pub minor_pitch_nm: Option<i64>,
+    /// Major X/Y pitch, in nanometres. Square profiles use equal values.
+    pub major_pitch_nm: (i64, i64),
+    /// Minor X/Y pitch, in nanometres; `None` suppresses the minor grid.
+    pub minor_pitch_nm: Option<(i64, i64)>,
 }
 
 /// Per-surface grid configuration (spec §5).
@@ -39,6 +50,8 @@ pub struct GridTier {
 pub struct GridConfig {
     /// Square vs rectangular layout.
     pub mode: GridMode,
+    /// How coordinates are represented visually.
+    pub mark: GridMark,
     /// Grid-line stroke weight; the grid is class-A [`WeightClass::ScreenConstant`].
     pub weight: WeightClass,
     /// Resolved rgb for the minor grid lines.
@@ -47,7 +60,7 @@ pub struct GridConfig {
     pub major_color: [f32; 3],
     /// Zoom LOD tiers, indexed by the surface's resolved detail level
     /// (coarse→fine). Empty until a profile populates it.
-    pub tiers: Vec<GridTier>,
+    pub tiers: &'static [GridTier],
     /// Grid origin, in nanometres `(x, y)`. Placeholder for the §5 origin marker.
     pub origin_nm: Option<(i64, i64)>,
 }
@@ -56,10 +69,11 @@ impl Default for GridConfig {
     fn default() -> Self {
         Self {
             mode: GridMode::Square,
+            mark: GridMark::Lines,
             weight: WeightClass::ScreenConstant(1.0),
             minor_color: [0.0, 0.0, 0.0],
             major_color: [0.0, 0.0, 0.0],
-            tiers: Vec::new(),
+            tiers: &[],
             origin_nm: None,
         }
     }

@@ -1,288 +1,456 @@
-//! Shared screen-space grid engine (spec §5 "Grid Engine").
-//!
-//! The single grid mechanism every `EditorViewport` surface consumes. It
-//! computes an ordered list of screen-space (device-pixel) grid-line rects for
-//! the current camera. It is deliberately abstract: it never sees gui-render's
-//! `Projection` or gui-protocol's scene types — a surface hands it a pixel
-//! viewport, a per-axis world-nm→screen-px affine, the world extent to span, and
-//! its per-surface [`GridConfig`]. This keeps the crate on std only (UVT-002)
-//! and lets the board and (S1b) the schematic share one weight-stable engine.
-//!
-//! ## Slice S1a
-//!
-//! First real mechanism + first consumer wiring: gui-render's board grid
-//! (`push_scene_grid`) repoints onto this engine and must stay byte-identical.
-//! The schematic grid switches in S1b.
+//! Shared, bounded screen-space grid generation.
 
-use crate::profile::GridConfig;
+use crate::profile::{GridConfig, GridMark, GridMode, GridTier};
 
-/// The device-pixel rect the grid spans (the surface's viewport).
+/// Maximum number of screen-space rectangles emitted for one pane.
+pub const MAX_GRID_PRIMITIVES: usize = 16_384;
+/// Below this spacing the grid is visually noise and is hidden.
+pub const GRID_HIDE_FLOOR_PX: f32 = 10.0;
+/// A visible tier coarsens when its minor pitch falls below this spacing.
+pub const GRID_COARSEN_PX: f32 = 20.0;
+/// A previously coarsened tier refines only after crossing this spacing.
+pub const GRID_REFINE_PX: f32 = 80.0;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct GridViewport {
-    /// Left edge, device px.
     pub x: f32,
-    /// Top edge, device px.
     pub y: f32,
-    /// Width, device px.
     pub width: f32,
-    /// Height, device px.
     pub height: f32,
 }
 
-/// One axis's affine world-nm → screen-px projection.
-///
-/// Reproduces the board renderer's per-axis map exactly:
-/// `px = offset + (nm - origin_nm) as f32 * scale`. The `nm - origin_nm`
-/// subtraction is done in i64 and only then cast to f32 — matching the renderer
-/// bit-for-bit, so the shared engine is byte-identical on the board surface.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AxisProjection {
-    /// Device-pixels per nanometre for this axis (the live camera scale).
     pub scale: f32,
-    /// Screen-px offset at `origin_nm`.
     pub offset: f32,
-    /// World-nm coordinate the offset is anchored to (the axis bounds origin).
     pub origin_nm: i64,
 }
 
 impl AxisProjection {
-    /// Project a world-nm coordinate to a device-pixel position on this axis.
     #[inline]
     pub fn project(&self, nm: i64) -> f32 {
-        self.offset + (nm - self.origin_nm) as f32 * self.scale
+        self.offset + ((nm as i128 - self.origin_nm as i128) as f64 * self.scale as f64) as f32
+    }
+
+    fn visible_nm(&self, lo_px: f32, hi_px: f32) -> Option<(i64, i64)> {
+        if !self.scale.is_finite() || self.scale == 0.0 || !lo_px.is_finite() || !hi_px.is_finite()
+        {
+            return None;
+        }
+        let inverse =
+            |px: f32| self.origin_nm as f64 + (px as f64 - self.offset as f64) / self.scale as f64;
+        let a = inverse(lo_px);
+        let b = inverse(hi_px);
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
+        let clamp_floor = |v: f64| v.floor().clamp(i64::MIN as f64, i64::MAX as f64) as i64;
+        let clamp_ceil = |v: f64| v.ceil().clamp(i64::MIN as f64, i64::MAX as f64) as i64;
+        Some((clamp_floor(a.min(b)), clamp_ceil(a.max(b))))
     }
 }
 
-/// The world-nm extent the grid iterates across (typically the scene bounds).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct GridBounds {
-    /// Minimum X, nm.
-    pub min_x: i64,
-    /// Minimum Y, nm.
-    pub min_y: i64,
-    /// Maximum X, nm.
-    pub max_x: i64,
-    /// Maximum Y, nm.
-    pub max_y: i64,
+/// Retained by the viewport so LOD does not chatter around a threshold.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct GridLodState {
+    pub tier: Option<usize>,
 }
 
-/// One computed grid line as an abstract device-pixel rect + rgb colour. The
-/// surface turns each into its own quad/vertex primitive.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct GridLine {
-    /// Left edge, device px.
     pub x: f32,
-    /// Top edge, device px.
     pub y: f32,
-    /// Width, device px.
     pub width: f32,
-    /// Height, device px.
     pub height: f32,
-    /// Resolved rgb.
     pub color: [f32; 3],
 }
 
-/// The shared grid mechanism.
 pub struct GridEngine;
 
 impl GridEngine {
-    /// Compute the ordered grid lines for the current camera.
-    ///
-    /// `tier` indexes `config.tiers` (the consumer's resolved LOD; the board
-    /// keeps its `detail_tier` selection on its own side). Emission order is
-    /// minor-then-major, each vertical-then-horizontal — the exact order the
-    /// board previously pushed its quads, so the retained output is
-    /// byte-identical. An out-of-range `tier` yields no lines.
+    /// Resolve coarse-to-fine LOD using governed screen-space thresholds.
+    pub fn resolve_lod(config: &GridConfig, scale: f32, previous: GridLodState) -> GridLodState {
+        if config.tiers.is_empty() || !scale.is_finite() || scale <= 0.0 {
+            return GridLodState::default();
+        }
+        let spacing = |tier: &GridTier| {
+            let pitch = tier.minor_pitch_nm.unwrap_or(tier.major_pitch_nm);
+            pitch.0.min(pitch.1) as f64 * scale as f64
+        };
+        let coarse_spacing = spacing(&config.tiers[0]);
+        if coarse_spacing < GRID_HIDE_FLOOR_PX as f64 {
+            return GridLodState::default();
+        }
+
+        if let Some(old) = previous.tier.filter(|&i| i < config.tiers.len()) {
+            let mut tier = old;
+            while tier > 0 && spacing(&config.tiers[tier]) < GRID_COARSEN_PX as f64 {
+                tier -= 1;
+            }
+            while tier + 1 < config.tiers.len()
+                && spacing(&config.tiers[tier + 1]) >= GRID_REFINE_PX as f64
+            {
+                tier += 1;
+            }
+            return GridLodState { tier: Some(tier) };
+        }
+
+        let tier = config
+            .tiers
+            .iter()
+            .enumerate()
+            .rev()
+            .find(|(_, t)| spacing(t) >= GRID_COARSEN_PX as f64)
+            .map_or(0, |(i, _)| i);
+        GridLodState { tier: Some(tier) }
+    }
+
+    /// Generate only the inverse-projected visible extent. `tier` is explicit
+    /// so renderers can retain [`GridLodState`] independently per pane.
     pub fn compute(
         config: &GridConfig,
         tier: usize,
         viewport: GridViewport,
-        bounds: GridBounds,
         x_axis: AxisProjection,
         y_axis: AxisProjection,
     ) -> Vec<GridLine> {
-        let mut lines = Vec::new();
+        let mut out = Vec::new();
         let Some(tier) = config.tiers.get(tier) else {
-            return lines;
+            return out;
         };
-        // Class-A screen-constant weight: 1 device px on the board, resolved
-        // against the live scale (zoom-invariant for `ScreenConstant`).
-        let line_px = config.weight.resolve_px(x_axis.scale);
+        if viewport.width <= 0.0 || viewport.height <= 0.0 {
+            return out;
+        }
+        let Some(x_bounds) = x_axis.visible_nm(viewport.x, viewport.x + viewport.width) else {
+            return out;
+        };
+        let Some(y_bounds) = y_axis.visible_nm(viewport.y, viewport.y + viewport.height) else {
+            return out;
+        };
+        let origin = config.origin_nm.unwrap_or((0, 0));
+        let weight = config.weight.resolve_px(x_axis.scale).max(0.0);
+        if weight == 0.0 || !weight.is_finite() {
+            return out;
+        }
 
-        // Minor first (if present), then major — each pass vertical then
-        // horizontal, matching the board's historical quad order exactly.
-        let passes = [
+        for (pitch, color) in [
             tier.minor_pitch_nm.map(|p| (p, config.minor_color)),
             Some((tier.major_pitch_nm, config.major_color)),
-        ];
-        for (pitch_nm, color) in passes.into_iter().flatten() {
-            if pitch_nm <= 0 {
+        ]
+        .into_iter()
+        .flatten()
+        {
+            let pitch = match config.mode {
+                GridMode::Square => (pitch.0, pitch.0),
+                GridMode::Rectangular => pitch,
+            };
+            if pitch.0 <= 0 || pitch.1 <= 0 {
                 continue;
             }
-            // Vertical lines: a full-height rect at each pitch step across X.
-            let mut x = floor_multiple(bounds.min_x, pitch_nm);
-            let end_x = ceil_multiple(bounds.max_x, pitch_nm);
-            while x <= end_x {
-                lines.push(GridLine {
-                    x: x_axis.project(x),
-                    y: viewport.y,
-                    width: line_px,
-                    height: viewport.height,
+            match config.mark {
+                GridMark::Lines => {
+                    emit_axis_lines(
+                        &mut out, true, x_bounds, pitch.0, origin.0, viewport, x_axis, weight,
+                        color,
+                    );
+                    emit_axis_lines(
+                        &mut out, false, y_bounds, pitch.1, origin.1, viewport, y_axis, weight,
+                        color,
+                    );
+                }
+                GridMark::Crosses | GridMark::Dots => emit_marks(
+                    &mut out,
+                    config.mark,
+                    x_bounds,
+                    y_bounds,
+                    pitch,
+                    origin,
+                    x_axis,
+                    y_axis,
+                    weight,
                     color,
-                });
-                x += pitch_nm;
+                ),
             }
-            // Horizontal lines: a full-width rect at each pitch step across Y.
-            let mut y = floor_multiple(bounds.min_y, pitch_nm);
-            let end_y = ceil_multiple(bounds.max_y, pitch_nm);
-            while y <= end_y {
-                lines.push(GridLine {
-                    x: viewport.x,
-                    y: y_axis.project(y),
-                    width: viewport.width,
-                    height: line_px,
-                    color,
-                });
-                y += pitch_nm;
+            if out.len() >= MAX_GRID_PRIMITIVES {
+                break;
             }
         }
-        lines
+        out.truncate(MAX_GRID_PRIMITIVES);
+        out
     }
 }
 
-/// Largest multiple of `pitch` at or below `value` (euclidean floor).
-fn floor_multiple(value: i64, pitch: i64) -> i64 {
-    value.div_euclid(pitch) * pitch
+fn first_last(bounds: (i64, i64), pitch: i64, origin: i64) -> Option<(i128, i128)> {
+    let p = pitch as i128;
+    let o = origin as i128;
+    let lo = bounds.0 as i128;
+    let hi = bounds.1 as i128;
+    let first = o + (lo - o).div_euclid(p) * p;
+    let first = if first < lo {
+        first.checked_add(p)?
+    } else {
+        first
+    };
+    let last = o + (hi - o).div_euclid(p) * p;
+    (first <= last).then_some((first, last))
 }
 
-/// Smallest multiple of `pitch` at or above `value` (euclidean ceil).
-fn ceil_multiple(value: i64, pitch: i64) -> i64 {
-    if value.rem_euclid(pitch) == 0 {
-        value
-    } else {
-        value.div_euclid(pitch) * pitch + pitch
+#[allow(clippy::too_many_arguments)]
+fn emit_axis_lines(
+    out: &mut Vec<GridLine>,
+    vertical: bool,
+    bounds: (i64, i64),
+    pitch: i64,
+    origin: i64,
+    viewport: GridViewport,
+    axis: AxisProjection,
+    weight: f32,
+    color: [f32; 3],
+) {
+    let Some((mut value, last)) = first_last(bounds, pitch, origin) else {
+        return;
+    };
+    let step = pitch as i128;
+    while value <= last && out.len() < MAX_GRID_PRIMITIVES {
+        let px = axis.project(value as i64);
+        out.push(if vertical {
+            GridLine {
+                x: px,
+                y: viewport.y,
+                width: weight,
+                height: viewport.height,
+                color,
+            }
+        } else {
+            GridLine {
+                x: viewport.x,
+                y: px,
+                width: viewport.width,
+                height: weight,
+                color,
+            }
+        });
+        let Some(next) = value.checked_add(step) else {
+            break;
+        };
+        value = next;
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn emit_marks(
+    out: &mut Vec<GridLine>,
+    mark: GridMark,
+    xb: (i64, i64),
+    yb: (i64, i64),
+    pitch: (i64, i64),
+    origin: (i64, i64),
+    xa: AxisProjection,
+    ya: AxisProjection,
+    weight: f32,
+    color: [f32; 3],
+) {
+    let (Some((mut x, xlast)), Some((yfirst, ylast))) = (
+        first_last(xb, pitch.0, origin.0),
+        first_last(yb, pitch.1, origin.1),
+    ) else {
+        return;
+    };
+    let arm = 3.0 * weight;
+    while x <= xlast && out.len() < MAX_GRID_PRIMITIVES {
+        let mut y = yfirst;
+        while y <= ylast && out.len() < MAX_GRID_PRIMITIVES {
+            let (px, py) = (xa.project(x as i64), ya.project(y as i64));
+            if mark == GridMark::Dots {
+                out.push(GridLine {
+                    x: px,
+                    y: py,
+                    width: weight,
+                    height: weight,
+                    color,
+                });
+            } else {
+                out.push(GridLine {
+                    x: px - arm,
+                    y: py,
+                    width: arm * 2.0,
+                    height: weight,
+                    color,
+                });
+                if out.len() < MAX_GRID_PRIMITIVES {
+                    out.push(GridLine {
+                        x: px,
+                        y: py - arm,
+                        width: weight,
+                        height: arm * 2.0,
+                        color,
+                    });
+                }
+            }
+            let Some(next) = y.checked_add(pitch.1 as i128) else {
+                break;
+            };
+            y = next;
+        }
+        let Some(next) = x.checked_add(pitch.0 as i128) else {
+            break;
+        };
+        x = next;
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::profile::{GridMode, GridTier};
-    use crate::stroke::WeightClass;
-
-    fn board_like_config() -> GridConfig {
+    use crate::{GridMode, WeightClass};
+    static TIERS: [GridTier; 3] = [
+        GridTier {
+            major_pitch_nm: (100, 100),
+            minor_pitch_nm: None,
+        },
+        GridTier {
+            major_pitch_nm: (50, 40),
+            minor_pitch_nm: Some((25, 20)),
+        },
+        GridTier {
+            major_pitch_nm: (20, 10),
+            minor_pitch_nm: Some((10, 5)),
+        },
+    ];
+    fn config(mark: GridMark) -> GridConfig {
         GridConfig {
-            mode: GridMode::Square,
+            mode: GridMode::Rectangular,
+            mark,
             weight: WeightClass::ScreenConstant(1.0),
-            minor_color: [0.1, 0.1, 0.1],
-            major_color: [0.2, 0.2, 0.2],
-            tiers: vec![
-                GridTier {
-                    major_pitch_nm: 10_000_000,
-                    minor_pitch_nm: None,
-                },
-                GridTier {
-                    major_pitch_nm: 5_000_000,
-                    minor_pitch_nm: Some(2_500_000),
-                },
-            ],
-            origin_nm: None,
+            minor_color: [0.1; 3],
+            major_color: [0.2; 3],
+            tiers: &TIERS,
+            origin_nm: Some((3, 7)),
         }
     }
-
-    fn identity_axis(origin_nm: i64) -> AxisProjection {
-        // 1 px per 1e6 nm (1 px/mm), zero offset.
+    fn axis(scale: f32, offset: f32) -> AxisProjection {
         AxisProjection {
-            scale: 1e-6,
-            offset: 0.0,
-            origin_nm,
+            scale,
+            offset,
+            origin_nm: 0,
         }
     }
-
-    /// The coarse tier (no minor pitch) emits only major lines, vertical then
-    /// horizontal, spanning the bounds inclusive of the ceil endpoint.
-    #[test]
-    fn coarse_tier_emits_major_only() {
-        let cfg = board_like_config();
-        let vp = GridViewport {
+    fn vp() -> GridViewport {
+        GridViewport {
             x: 0.0,
             y: 0.0,
             width: 100.0,
-            height: 100.0,
-        };
-        let bounds = GridBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 20_000_000,
-            max_y: 20_000_000,
-        };
+            height: 80.0,
+        }
+    }
+
+    #[test]
+    fn generation_is_visible_not_scene_bounded() {
         let lines = GridEngine::compute(
-            &cfg,
+            &config(GridMark::Lines),
             0,
-            vp,
-            bounds,
-            identity_axis(bounds.min_x),
-            identity_axis(bounds.min_y),
+            vp(),
+            axis(1.0, 0.0),
+            axis(1.0, 0.0),
         );
-        // 0,10,20 M nm → 3 vertical + 3 horizontal.
-        assert_eq!(lines.len(), 6);
-        assert!(lines.iter().all(|l| l.color == cfg.major_color));
-        // First three are vertical (1 px wide, full height).
-        assert!(lines[..3]
-            .iter()
-            .all(|l| l.width == 1.0 && l.height == 100.0));
-        // Last three are horizontal (full width, 1 px tall).
-        assert!(lines[3..]
-            .iter()
-            .all(|l| l.width == 100.0 && l.height == 1.0));
+        assert!(lines.iter().all(|l| l.x <= 100.0 && l.y <= 80.0));
+        assert!(lines.len() < 10);
     }
-
-    /// A tier with a minor pitch emits minor lines first, then major.
     #[test]
-    fn minor_lines_precede_major() {
-        let cfg = board_like_config();
-        let vp = GridViewport {
-            x: 0.0,
-            y: 0.0,
-            width: 50.0,
-            height: 50.0,
-        };
-        let bounds = GridBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 5_000_000,
-            max_y: 5_000_000,
-        };
+    fn generation_has_hard_budget_at_extreme_zoom() {
         let lines = GridEngine::compute(
-            &cfg,
-            1,
-            vp,
-            bounds,
-            identity_axis(bounds.min_x),
-            identity_axis(bounds.min_y),
+            &config(GridMark::Dots),
+            2,
+            vp(),
+            axis(1e-9, 0.0),
+            axis(1e-9, 0.0),
         );
-        // Minor 2.5M: 0,2.5,5 → 3 v + 3 h = 6. Major 5M: 0,5 → 2 v + 2 h = 4.
-        assert_eq!(lines.len(), 10);
-        assert!(lines[..6].iter().all(|l| l.color == cfg.minor_color));
-        assert!(lines[6..].iter().all(|l| l.color == cfg.major_color));
+        assert_eq!(lines.len(), MAX_GRID_PRIMITIVES);
     }
-
-    /// An out-of-range tier index yields no lines.
     #[test]
-    fn out_of_range_tier_is_empty() {
-        let cfg = board_like_config();
-        let vp = GridViewport {
-            x: 0.0,
-            y: 0.0,
-            width: 10.0,
-            height: 10.0,
+    fn extreme_coordinates_and_negative_scale_terminate() {
+        let a = AxisProjection {
+            scale: -1e-9,
+            offset: 0.0,
+            origin_nm: i64::MAX,
         };
-        let bounds = GridBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 10,
-            max_y: 10,
-        };
-        assert!(GridEngine::compute(&cfg, 9, vp, bounds, identity_axis(0), identity_axis(0)).is_empty());
+        assert!(
+            GridEngine::compute(&config(GridMark::Lines), 0, vp(), a, a).len()
+                <= MAX_GRID_PRIMITIVES
+        );
+    }
+    #[test]
+    fn rectangular_pitch_and_origin_are_honored() {
+        let lines = GridEngine::compute(
+            &config(GridMark::Lines),
+            1,
+            vp(),
+            axis(1.0, 0.0),
+            axis(1.0, 0.0),
+        );
+        assert!(lines
+            .iter()
+            .any(|l| l.height == 80.0 && (l.x - 3.0).abs() < 0.01));
+        assert!(lines
+            .iter()
+            .any(|l| l.width == 100.0 && (l.y - 7.0).abs() < 0.01));
+    }
+    #[test]
+    fn cross_and_dot_have_distinct_representation() {
+        let dots = GridEngine::compute(
+            &config(GridMark::Dots),
+            0,
+            vp(),
+            axis(1.0, 0.0),
+            axis(1.0, 0.0),
+        );
+        let crosses = GridEngine::compute(
+            &config(GridMark::Crosses),
+            0,
+            vp(),
+            axis(1.0, 0.0),
+            axis(1.0, 0.0),
+        );
+        assert!(!dots.is_empty() && crosses.len() == dots.len() * 2);
+        assert!(dots.iter().all(|p| p.width == 1.0 && p.height == 1.0));
+    }
+    #[test]
+    fn lod_hides_coarsens_and_refines_with_hysteresis() {
+        let cfg = config(GridMark::Lines);
+        assert_eq!(
+            GridEngine::resolve_lod(&cfg, 0.09, GridLodState::default()).tier,
+            None
+        );
+        assert_eq!(
+            GridEngine::resolve_lod(&cfg, 1.0, GridLodState { tier: Some(2) }).tier,
+            Some(1)
+        );
+        assert_eq!(
+            GridEngine::resolve_lod(&cfg, 3.0, GridLodState { tier: Some(0) }).tier,
+            Some(0)
+        );
+        assert_eq!(
+            GridEngine::resolve_lod(&cfg, 9.0, GridLodState { tier: Some(0) }).tier,
+            Some(1)
+        );
+    }
+    #[test]
+    fn invalid_inputs_emit_nothing() {
+        assert!(GridEngine::compute(
+            &config(GridMark::Lines),
+            99,
+            vp(),
+            axis(1.0, 0.0),
+            axis(1.0, 0.0)
+        )
+        .is_empty());
+        assert!(GridEngine::compute(
+            &config(GridMark::Lines),
+            0,
+            vp(),
+            axis(f32::NAN, 0.0),
+            axis(1.0, 0.0)
+        )
+        .is_empty());
     }
 }

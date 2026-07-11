@@ -52,13 +52,20 @@ fn schematic_grid_emits_square_underlay_geometry() {
     let bbox = |q: &Quad| {
         let xs = q.points.iter().map(|p| p.0);
         let ys = q.points.iter().map(|p| p.1);
-        let (min_x, max_x) = xs.clone().fold((f32::MAX, f32::MIN), |(a, b), v| (a.min(v), b.max(v)));
+        let (min_x, max_x) = xs
+            .clone()
+            .fold((f32::MAX, f32::MIN), |(a, b), v| (a.min(v), b.max(v)));
         let (min_y, max_y) = ys.fold((f32::MAX, f32::MIN), |(a, b), v| (a.min(v), b.max(v)));
         (max_x - min_x, max_y - min_y)
     };
     assert!(
-        out.iter().any(|q| { let (w, h) = bbox(q); h > w })
-            && out.iter().any(|q| { let (w, h) = bbox(q); w > h }),
+        out.iter().any(|q| {
+            let (w, h) = bbox(q);
+            h > w
+        }) && out.iter().any(|q| {
+            let (w, h) = bbox(q);
+            w > h
+        }),
         "a square grid must emit both vertical and horizontal screen-space lines"
     );
 }
