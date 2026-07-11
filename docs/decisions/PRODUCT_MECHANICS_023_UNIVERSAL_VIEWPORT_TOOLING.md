@@ -83,10 +83,20 @@ Screen↔world projection and hit-testing MUST be resolved through one
 space. Pointer-preview interactions (hover, cursor, prospective context) target
 the drawing pane containing the pointer; keyboard commands and active-tool
 gestures target the focused drawing pane. A click MAY focus its containing pane
-before dispatching the gesture. No interaction capability may hard-code a single
+and MUST dispatch that same click after focus changes; a second click MUST NOT be
+required. Wheel zoom and drag-pan are pointer gestures and target the containing
+pane. No interaction capability may hard-code a single
 surface's viewport or camera as the sole coordinate authority. Every surface,
 including every non-board surface, MUST be able to map a screen point to world
 and hit-test its own geometry.
+
+Camera identity MUST include both pane identity and the surface/document bound to
+that pane. Duplicate panes showing the same surface are supported and own
+independent warm cameras. Boot, split, preset, document replacement, and pane
+content replacement MUST initialize or rebind that identity; a camera from one
+coordinate space MUST NOT be reused for another. A command targeting a surface
+without a resolved scene MUST return unavailable/no-op and MUST NOT fall back to
+another surface.
 
 ### UVT-005: Stroke weight classes
 
@@ -104,6 +114,10 @@ Class B/C exists because fab-bearing geometry has real width and MUST scale with
 zoom (`render == CAM`). Class A exists because presentation chrome MUST stay
 readable at any zoom. The primitive→class assignment is specified by the
 governed toolkit spec.
+
+Slice completion is enforcement-based: defining a model or config type is not
+completion. A mechanism is LANDED only when every in-scope consumer routes
+through it and its conformance and performance gates pass.
 
 ### UVT-006: Snap gesture is not an operation; the committed result is
 

@@ -25,15 +25,16 @@ slice), or **HUMAN** (reference-image / eyeball review).
 
 Every drawing surface is an `EditorViewport` (never a bare "viewport" —
 decision-021 workspace pane and decision-020 paper-space viewport are distinct).
-Screen↔world projection and hit-testing are resolved for the **focused** surface
-in that surface's own camera/space. Today both funnel through two board-only
-chokepoints (`world_point_at_screen` `scene.rs:174`, `hit_test_authored_world`
-`scene.rs:428`) with the schematic emitting no hit regions (`scene.rs:389`); the
-keystone generalizes both to the focused `EditorViewport`. The per-pane warm
-camera (P2.2d, `runtime_camera_pane.rs:530`) is the precedent.
+Screen↔world projection and hit-testing resolve in the target surface's own
+camera/space. Pointer preview, wheel zoom, and drag-pan target the pane containing
+the pointer; keyboard/menu commands and active-tool gestures target the focused
+pane. A focus-changing click continues dispatch in that pane. Camera state is
+keyed by `(PaneId, surface/document identity)`, so duplicate views remain
+independent and content replacement cannot inherit another coordinate space.
 
-*Disposition: TO-ENFORCE — a routing test asserting each surface maps screen→world
-and hit-tests in its own space; board frame stays byte-identical (visual-parity).*
+*Disposition: TO-ENFORCE — routing/lifecycle tests with distinct surface bounds,
+duplicate panes, content replacement, missing scenes, and same-click dispatch;
+board frame stays byte-identical (visual-parity).*
 
 ### 1.2 Render-approach law (UVT-003)
 
@@ -102,6 +103,18 @@ One shared mechanism each; the per-surface variation is only the `…Config`.
 | **CoordinateReadout** | cursor X/Y→units, dx/dy vs settable origin; focused-editor status fields (§7) | units, precision, polar |
 | **SnapEngine** | 2-tier ordered-scan resolver; SnapTarget registry; SnapFilter (§3) | Target kinds, defaults |
 | **LayerVisibility** | per-surface layer toggle → world-range filter | layer set |
+
+### 2.1 Work budgets and hit eligibility
+
+- Grid generation MUST inverse-project the visible pane, use overflow-safe
+  iteration, and emit at most **16,384 marks/lines per pane per frame**.
+- CoordinateHit MUST use a retained spatial index. Pointer queries MUST examine a
+  deterministically bounded candidate set; full O(n) scans are prohibited.
+- Schematic hit metadata MUST be typed, not inferred from identifier prefixes,
+  for symbols, pins, wires, buses, labels, junctions, and no-connect markers.
+  Hittability is distinct from whether the active tool permits selection.
+- Timing benchmarks on representative large designs supplement deterministic
+  work gates; wall-clock timing alone MUST NOT be the CI correctness oracle.
 
 ---
 
@@ -289,8 +302,9 @@ a min-px clamp (which would smear a sub-pixel glyph).
   deliberately heavier for emphasis; not the geometry floor, never applied to copper.
 - Junction/terminal **dots = 3.0 px floor** (a sub-3-px disc reads as a stray pixel).
 
-*Disposition: TO-ENFORCE — a unit test that class-B width floors in device px (not
-nm) against the live projection; HUMAN — zoom test, grid + selection weight constant.*
+*Disposition: TO-ENFORCE — every §4.2 primitive has an assignment/consumer gate;
+class-B/C width floors in device px against the live projection; HUMAN — zoom
+test, grid + selection weight constant. Model-only scaffolding is not LANDED.*
 
 ### 4.4 LOD threshold (unified, one rule for both panes)
 
@@ -307,7 +321,9 @@ The existing `≥8` Normal cutoff already *is* the 20-px knee (2.5 mm × 8 = 20)
 retune Fine to `px_per_mm ≥ 16` (1.25 mm × 16 = 20) so both boundaries share the
 one rule and the schematic pane inherits it from its own pitches.
 
-*Disposition: TO-ENFORCE — a test that both panes hit the same 20-px knee.*
+*Disposition: TO-ENFORCE — tests that both panes hit the same 20-px knee, 80-px
+re-fine hysteresis, 10-px hide floor, visible-extent clipping, overflow safety,
+and the 16,384-emission budget.*
 
 ---
 

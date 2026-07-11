@@ -154,12 +154,11 @@
    native authoring (step 6) reuses snap/commit; paper-space snap (step 7) reuses the
    SnapEngine. *State:* **decision 023 + governed spec + deep-research sections
    LANDED. Phase-B build in progress (schematic-first, each slice board-golden-safe +
-   source-health-ratcheted): S0 (gui-viewport crate + StrokeWeightModel) LANDED; S1a
-   (shared GridEngine, board repointed byte-identical) LANDED; S1b (schematic grid
-   screen-constant via the shared engine — THE grid divergence bug fixed, shell golden
-   re-blessed) LANDED; S2 (camera routing collapse into one focused_viewport path,
-   byte-identical) LANDED; S3 (CoordinateHit keystone — per-pane screen→world + hit-test,
-   schematic symbol hit regions with identity) LANDED; **S4 (hover + crosshair) — LANDED
+   source-health-ratcheted): **S0–S3 LANDED status RETRACTED pending production
+   correction.** Required gates: S0 full §4.2 primitive adoption; S1 visible/bounded
+   grid + governed LOD/profile consumption; S2 typed camera identity and unified
+   pointer/focused routing/lifecycle; S3 shared indexed EditorViewport with typed
+   schematic hit metadata. **S4 (hover + crosshair) — LANDED
    status RESTORED after production correction:** cursor/hover refresh only dedicated
    post-world interaction buffers while both retained scenes and `PreparedScene` stay warm;
    screen coordinates and hover ownership are typed; identifier-prefix inference is removed;
