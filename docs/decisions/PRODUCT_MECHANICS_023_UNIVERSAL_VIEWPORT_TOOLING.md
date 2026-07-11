@@ -73,12 +73,17 @@ to every surface identically. Baking presentation chrome (grid, selection) into
 a surface's world buffer — the defect that made the schematic grid scale with
 zoom — is prohibited. This preserves `render == CAM` (Law 1): only presentation
 channels live in the overlay; authored geometry stays retained and unaltered.
+High-frequency overlay changes, including cursor motion and hover transitions,
+MUST NOT invalidate, rebuild, or evict retained authored-world geometry.
 
 ### UVT-004: The `EditorViewport` keystone
 
-Screen↔world projection and hit-testing MUST be resolved for the **focused**
-surface in that surface's own camera and coordinate space, through one
-`EditorViewport` abstraction. No interaction capability may hard-code a single
+Screen↔world projection and hit-testing MUST be resolved through one
+`EditorViewport` abstraction in the target surface's own camera and coordinate
+space. Pointer-preview interactions (hover, cursor, prospective context) target
+the drawing pane containing the pointer; keyboard commands and active-tool
+gestures target the focused drawing pane. A click MAY focus its containing pane
+before dispatching the gesture. No interaction capability may hard-code a single
 surface's viewport or camera as the sole coordinate authority. Every surface,
 including every non-board surface, MUST be able to map a screen point to world
 and hit-test its own geometry.

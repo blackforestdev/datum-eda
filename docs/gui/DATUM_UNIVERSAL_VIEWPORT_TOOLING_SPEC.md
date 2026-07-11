@@ -43,9 +43,10 @@ screen-space overlay** driven by the live camera — on every surface. Baking
 presentation chrome into a surface's world buffer is prohibited (that is the
 defect that made the schematic grid scale with zoom). Preserves `render == CAM`.
 
-*Disposition: ENFORCED for the board (existing immediate overlay); TO-ENFORCE for
-the schematic (a test that the schematic grid/selection are not in the retained
-buffer) + HUMAN (zoom the schematic, grid weight constant).*
+*Disposition: ENFORCED for board and schematic grid/hover/cursor. Interaction
+chrome has a dedicated post-world overlay on both surfaces, and the retention
+regression asserts pointer refresh does not resolve retained geometry or disturb
+the schematic grid buffer. HUMAN remains for zoom/readability evaluation.*
 
 ### 1.3 `ViewportProfile` (the per-surface config)
 
@@ -67,8 +68,9 @@ ViewportProfile {
 }
 ```
 
-*Disposition: TO-ENFORCE — a gate asserting no surface constructs grid/camera/snap/
-hit/menu mechanism outside `gui-viewport`.*
+*Disposition: PARTIAL — grid, stroke, hover, and cursor configuration plus the
+shared interaction state mechanism live in `gui-viewport`; camera, snap,
+selection, tool, menu, readout, and layer configuration remain staged work.*
 
 ### 1.4 Crate boundary (UVT-002)
 

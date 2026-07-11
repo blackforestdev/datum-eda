@@ -160,21 +160,16 @@
    re-blessed) LANDED; S2 (camera routing collapse into one focused_viewport path,
    byte-identical) LANDED; S3 (CoordinateHit keystone — per-pane screen→world + hit-test,
    schematic symbol hit regions with identity) LANDED; **S4 (hover + crosshair) — LANDED
-   status RETRACTED (critical perf regression):** cursor/hover motion nulls `prepared_scene`,
-   forcing a full PreparedScene rebuild (geometry/hit-regions/vertices/chrome + schematic
-   geometry) on every pointer event → Datum unusable. Corrective rework REQUIRED before
-   re-landing: (2) typed screen-coordinate type + typed `PaneHover.surface` ownership (no
-   `PointNm`-for-screen, no `schematic-symbol:` prefix inference); (3) overlay-only dirty
-   state that preserves BOTH retained scenes AND `prepared_scene` — interaction chrome is an
-   independent dynamic buffer/uniform; (4) board + schematic interaction chrome through one
-   post-world overlay stage (consistent compositing); (5) handle CursorLeft / terminal
-   capture / modal drags / pane changes; hover/cursor SHARED via `gui-viewport` (not
-   renderer-private, profile.rs still grid+stroke only); hit-region scan is O(n)/event
-   (coordinate_hit.rs) — add a budget; (6) regression asserting `retained_scene_resolve_count()`
-   + prepared-scene rebuilds stay flat across cursor movement + hover transitions; (7)
-   pointer-motion perf test on a large design; (8) resolve focused-vs-containing-pane in the
-   spec; (9) only then restore S4 LANDED. Next: **S4-rework (perf/architecture)** → S5
-   selection/marquee → S6 tool-mode → **S7 context menu** → S8 readout → S9 layer-vis →
+   status RESTORED after production correction:** cursor/hover refresh only dedicated
+   post-world interaction buffers while both retained scenes and `PreparedScene` stay warm;
+   screen coordinates and hover ownership are typed; identifier-prefix inference is removed;
+   CursorLeft, focus loss, terminal capture, and modal drags clear transient state; and a
+   zero-retained-resolve/static-buffer regression covers pointer refresh. Hover/cursor policy
+   and state construction now live in `gui-viewport`. Pointer previews target the containing
+   pane while command/tool gestures target the focused pane, as clarified in UVT-004.
+   Remaining scale work: replace the O(n) hit-region scan with a spatial index under a measured
+   large-design budget. Next: **S5 selection/marquee** → S6 tool-mode →
+   **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable

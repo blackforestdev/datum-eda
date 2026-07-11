@@ -142,7 +142,7 @@ not built).
 | Camera / navigation | shared math, forked routing | board+sch | KiCad `VIEW_CONTROLS`; universal | now | 023 §2 |
 | Snap + quantize (2-tier resolver, SnapTarget registry) | spec | board→all | Horizon grid→object-override; Altium unified cursor-snap | now | 023 §3 |
 | Stroke weight-classes (A/B/C) | absent as a model | ALL | KiCad IU/stroke; render==CAM | now | 023 §4 |
-| Hover / cursor / crosshair | forked/absent | board only | universal | now | 023 §2 |
+| Hover / cursor / crosshair | shared typed state + overlay mechanism | board+schematic | universal | landed S4; extend profiles with new surfaces | 023 §2 |
 | Selection + marquee (viewport gesture) | forked/absent | board only | KiCad `SELECTION`; Horizon `Selectables` | now | 023 §2 |
 | Tool-mode engine + per-editor keymap | forked/board-only | board only | KiCad `TOOL_MANAGER`; Fusion workspace | now | 023 §2 |
 | Context / marking menu (contextual, verb-firing) | forked/board-only | board only | Fusion marking menu (shared grammar, context payload) | now | 023 §6 |
