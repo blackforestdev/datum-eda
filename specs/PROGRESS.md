@@ -159,11 +159,22 @@
    screen-constant via the shared engine — THE grid divergence bug fixed, shell golden
    re-blessed) LANDED; S2 (camera routing collapse into one focused_viewport path,
    byte-identical) LANDED; S3 (CoordinateHit keystone — per-pane screen→world + hit-test,
-   schematic symbol hit regions with identity) LANDED; S4 (per-surface hover +
-   pre-highlight — schematic symbols highlight on hover; live user-selectable cursor
-   crosshair Full/Local/None via the View menu + C-key, default Full-viewport, threaded
-   through a gui-protocol decomposition) LANDED. Next: **S5 selection/marquee** (rides on
-   the keystone) → S6 tool-mode → **S7 context menu** → S8 readout → S9 layer-vis →
+   schematic symbol hit regions with identity) LANDED; **S4 (hover + crosshair) — LANDED
+   status RETRACTED (critical perf regression):** cursor/hover motion nulls `prepared_scene`,
+   forcing a full PreparedScene rebuild (geometry/hit-regions/vertices/chrome + schematic
+   geometry) on every pointer event → Datum unusable. Corrective rework REQUIRED before
+   re-landing: (2) typed screen-coordinate type + typed `PaneHover.surface` ownership (no
+   `PointNm`-for-screen, no `schematic-symbol:` prefix inference); (3) overlay-only dirty
+   state that preserves BOTH retained scenes AND `prepared_scene` — interaction chrome is an
+   independent dynamic buffer/uniform; (4) board + schematic interaction chrome through one
+   post-world overlay stage (consistent compositing); (5) handle CursorLeft / terminal
+   capture / modal drags / pane changes; hover/cursor SHARED via `gui-viewport` (not
+   renderer-private, profile.rs still grid+stroke only); hit-region scan is O(n)/event
+   (coordinate_hit.rs) — add a budget; (6) regression asserting `retained_scene_resolve_count()`
+   + prepared-scene rebuilds stay flat across cursor movement + hover transitions; (7)
+   pointer-motion perf test on a large design; (8) resolve focused-vs-containing-pane in the
+   spec; (9) only then restore S4 LANDED. Next: **S4-rework (perf/architecture)** → S5
+   selection/marquee → S6 tool-mode → **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
