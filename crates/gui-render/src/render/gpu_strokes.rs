@@ -56,22 +56,45 @@ pub(crate) const WORLD_STROKE_SHADER: &str = r#"
 struct SceneUniform { resolution: vec4<f32>, viewport_origin: vec4<f32>, viewport_size: vec4<f32>, camera_center_scale: vec4<f32> };
 @group(0) @binding(0) var<uniform> scene: SceneUniform;
 struct In { @builtin(vertex_index) vertex: u32, @location(0) point_a: vec2<f32>, @location(1) point_b: vec2<f32>, @location(2) color_min_px: vec4<f32>, @location(3) nominal_nm: f32 };
-struct Out { @builtin(position) position: vec4<f32>, @location(0) color: vec3<f32> };
+struct Out {
+ @builtin(position) position: vec4<f32>,
+ @location(0) color: vec3<f32>,
+ @location(1) local_px: vec2<f32>,
+ @location(2) capsule_px: vec2<f32>,
+};
 @vertex fn vs_main(i: In) -> Out {
  let endpoint_b = i.vertex == 1u || i.vertex == 2u || i.vertex == 4u;
  let positive = i.vertex == 0u || i.vertex == 1u || i.vertex == 3u;
  let center = select(i.point_a, i.point_b, endpoint_b); let d = i.point_b - i.point_a;
  let tangent = d / max(length(d), 1.0); let normal = vec2<f32>(-tangent.y, tangent.x);
  let width = max(i.nominal_nm * scene.camera_center_scale.z, i.color_min_px.w);
+ let radius = width * 0.5;
+ let half_length = length(d) * scene.camera_center_scale.z * 0.5;
  let sc = scene.viewport_origin.xy + scene.viewport_size.xy * 0.5
      + (center - scene.camera_center_scale.xy) * scene.camera_center_scale.z
-     + tangent * select(-1.0, 1.0, endpoint_b) * width * 0.5;
- let p = sc + normal * select(-1.0, 1.0, positive) * width * 0.5; var o: Out;
+     + tangent * select(-1.0, 1.0, endpoint_b) * radius;
+ let across = select(-1.0, 1.0, positive) * radius;
+ let along = select(-1.0, 1.0, endpoint_b) * (half_length + radius);
+ let p = sc + normal * across; var o: Out;
  o.position = vec4<f32>((p.x / scene.resolution.x) * 2.0 - 1.0, 1.0 - (p.y / scene.resolution.y) * 2.0, 0.0, 1.0);
- o.color = i.color_min_px.xyz; return o;
+ o.color = i.color_min_px.xyz;
+ o.local_px = vec2<f32>(along, across);
+ o.capsule_px = vec2<f32>(half_length, radius);
+ return o;
 }
 fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> { return select(pow((c + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4)), c / 12.92, c <= vec3<f32>(0.04045)); }
-@fragment fn fs_main(i: Out) -> @location(0) vec4<f32> { return vec4<f32>(srgb_to_linear(i.color), 1.0); }
+@fragment fn fs_main(i: Out, @builtin(sample_index) sample_index: u32) -> @location(0) vec4<f32> {
+ // The six vertices form the capsule's bounding rectangle. Reject its four
+ // square corners analytically so every retained segment has true round caps.
+ // Adjacent segment capsules overlap at their shared endpoint, restoring the
+ // round, gap-free joins used by imported two-point KiCad tracks. Requesting
+ // sample_index makes this test run per sample, preserving antialiasing at the
+ // analytic edge when the renderer's multisampled target is active.
+ let cap_distance = max(abs(i.local_px.x) - i.capsule_px.x, 0.0);
+ let distance_squared = cap_distance * cap_distance + i.local_px.y * i.local_px.y;
+ if distance_squared > i.capsule_px.y * i.capsule_px.y { discard; }
+ return vec4<f32>(srgb_to_linear(i.color), 1.0);
+}
 "#;
 
 pub(crate) fn create_world_stroke_pipeline(device: &wgpu::Device,
@@ -136,10 +159,39 @@ impl Renderer {
 
 #[cfg(test)] mod tests {
  use super::*;
+
+ fn capsule_contains(local_px: [f32; 2], half_length: f32, radius: f32) -> bool {
+  let cap_distance = (local_px[0].abs() - half_length).max(0.0);
+  cap_distance * cap_distance + local_px[1] * local_px[1] <= radius * radius
+ }
+
  #[test] fn retained_stroke_uses_live_scale_and_px_floor() {
  let s = WorldStrokeInstance::segment(PointNm{x:0,y:0}, PointNm{x:1_000_000,y:0}, [1.0;3], 152_400, 1.0);
   let retained = s;
   assert_eq!(s.resolved_width_px(1e-9), 1.0); assert!((s.resolved_width_px(1e-4)-15.24).abs()<0.001);
   assert_eq!(s, retained, "camera changes must not mutate/rebuild retained strokes");
+ }
+
+ #[test]
+ fn round_caps_reject_square_corners_and_cover_shared_endpoints() {
+  let (half_length, radius) = (10.0, 4.0);
+  assert!(capsule_contains([10.0, 0.0], half_length, radius),
+      "the endpoint center must be covered");
+  assert!(capsule_contains([14.0, 0.0], half_length, radius),
+      "the radial cap edge must be covered");
+  assert!(capsule_contains([10.0, 4.0], half_length, radius),
+      "a second capsule sharing the endpoint must overlap without a gap");
+  assert!(!capsule_contains([14.0, 4.0], half_length, radius),
+      "a round cap must reject the old square projecting corner");
+  assert!(!capsule_contains([14.01, 0.0], half_length, radius),
+      "coverage must stop beyond the cap radius");
+ }
+
+ #[test]
+ fn world_stroke_shader_contains_analytic_capsule_rejection() {
+ assert!(WORLD_STROKE_SHADER.contains("let cap_distance ="));
+ assert!(WORLD_STROKE_SHADER.contains("distance_squared >"));
+ assert!(WORLD_STROKE_SHADER.contains("discard;"));
+  assert!(WORLD_STROKE_SHADER.contains("@builtin(sample_index)"));
  }
 }
