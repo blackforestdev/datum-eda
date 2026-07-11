@@ -157,6 +157,13 @@ pub struct Bus {
     pub uuid: Uuid,
     pub name: String,
     pub members: Vec<String>,
+    /// Ordered polyline points of the bus segment(s) in schematic nm. The KiCad
+    /// importer parses these from the `(bus (pts ...))` form; without them the
+    /// bus has no geometry to project (P2.2e gold bus rendering). Defaulted empty
+    /// for buses authored through the write path, whose geometry is set by the
+    /// authoring operation that carries this struct.
+    #[serde(default)]
+    pub segments: Vec<Point>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -165,6 +172,11 @@ pub struct BusEntry {
     pub bus: Uuid,
     pub wire: Option<Uuid>,
     pub position: Point,
+    /// Diagonal offset of the bus-entry stub in schematic nm (KiCad `(size dx dy)`);
+    /// the stub runs from `position` to `position + size`. Defaulted zero for
+    /// entries authored through the write path (rendered with a default diagonal).
+    #[serde(default = "Point::zero")]
+    pub size: Point,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

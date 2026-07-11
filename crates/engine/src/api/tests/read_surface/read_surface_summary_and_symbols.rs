@@ -275,6 +275,7 @@ fn get_bus_entries_returns_entries_for_matching_sheet_selection() {
                             uuid: bus_uuid,
                             name: "DATA".into(),
                             members: vec!["DATA0".into()],
+                            segments: Vec::new(),
                         },
                     )]),
                     bus_entries: HashMap::from([(
@@ -284,6 +285,7 @@ fn get_bus_entries_returns_entries_for_matching_sheet_selection() {
                             bus: bus_uuid,
                             wire: None,
                             position: Point::new(10, 20),
+                            size: Point::zero(),
                         },
                     )]),
                     ports: HashMap::new(),

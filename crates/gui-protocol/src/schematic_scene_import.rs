@@ -1,7 +1,10 @@
 use anyhow::{Context, Result};
 use eda_engine::board::BoardText;
 use eda_engine::ir::geometry::Point;
-use eda_engine::schematic::{PlacedSymbol, Schematic, SchematicPrimitive, Sheet, SymbolPin};
+use eda_engine::schematic::{
+    Bus, BusEntry, HierarchicalPort, LabelKind, NetLabel, PlacedSymbol, PortDirection, Schematic,
+    SchematicPrimitive, Sheet, SymbolPin,
+};
 use eda_engine::text::{
     TextFamilyId, TextFamilySource, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign,
     default_stroke_width_nm,
@@ -26,6 +29,13 @@ const SCHEMATIC_WIRE_LAYER: &str = "L200";
 const SCHEMATIC_SYMBOL_LAYER: &str = "L201";
 const SCHEMATIC_JUNCTION_LAYER: &str = "L202";
 const SCHEMATIC_NOCONNECT_LAYER: &str = "L203";
+// P2.2e typed-object layers. Buses render gold (`--bus`), power flags/stacks grey
+// (`--pwr`), global/hierarchical net-label tags blue (`--info`). Same private high
+// band (`L20x`) as the P2.2c net-role layers, mapped to prototype tokens by the
+// renderer's `schematic_layer_world_color`.
+const SCHEMATIC_BUS_LAYER: &str = "L204";
+const SCHEMATIC_POWER_LAYER: &str = "L205";
+const SCHEMATIC_GLOBAL_LABEL_LAYER: &str = "L206";
 const SCHEMATIC_ANNOTATION_LAYER: &str = "L214";
 const SCHEMATIC_REFDES_TEXT_LAYER_INT: i32 = 210;
 const SCHEMATIC_VALUE_TEXT_LAYER_INT: i32 = 211;
@@ -64,6 +74,30 @@ const NOCONNECT_HALF_NM: i64 = 260_000;
 const SHEET_INSTANCE_HALF_WIDTH_NM: i64 = 2_200_000;
 const SHEET_INSTANCE_HALF_HEIGHT_NM: i64 = 1_400_000;
 const SCHEMATIC_BOUNDS_PAD_NM: i64 = 5_000_000;
+// P2.2e geometry (schematic nm). Buses are thicker than wires (prototype 3.2 vs
+// 1.5 stroke). Bus entries with no imported size fall back to a 2.54mm 45° stub.
+const BUS_STROKE_NM: i64 = 320_000;
+const BUS_ENTRY_STROKE_NM: i64 = 150_000;
+const BUS_ENTRY_DEFAULT_STUB_NM: i64 = 2_540_000;
+// Power flag/stack geometry. Rail = stem + one bar; ground = stem + three
+// shrinking bars. All derived from the symbol origin (power symbols skeleton-
+// import with no pins), rail extending "up" (-y) and ground "down" (+y).
+const POWER_STROKE_NM: i64 = 140_000;
+const POWER_STEM_NM: i64 = 1_400_000;
+const POWER_RAIL_BAR_HALF_NM: i64 = 900_000;
+const POWER_GND_BAR0_HALF_NM: i64 = 900_000;
+const POWER_GND_BAR1_HALF_NM: i64 = 560_000;
+const POWER_GND_BAR2_HALF_NM: i64 = 240_000;
+const POWER_GND_BAR_GAP_NM: i64 = 360_000;
+const POWER_LABEL_HEIGHT_NM: i64 = 560_000;
+const POWER_LABEL_GAP_NM: i64 = 300_000;
+// Global/hierarchical label pentagon tag: a flat body with one pointed end at the
+// net attach point (KiCad global-label shape). Body extends +x from the anchor.
+const GLOBAL_LABEL_STROKE_NM: i64 = 130_000;
+const GLOBAL_LABEL_HALF_HEIGHT_NM: i64 = 420_000;
+const GLOBAL_LABEL_NOTCH_NM: i64 = 420_000;
+const GLOBAL_LABEL_CHAR_NM: i64 = 560_000;
+const GLOBAL_LABEL_PAD_NM: i64 = 500_000;
 
 pub fn load_kicad_schematic_workspace_state(schematic_file: &Path) -> Result<ReviewWorkspaceState> {
     let source = schematic_file.canonicalize().with_context(|| {
@@ -296,41 +330,30 @@ fn push_root_sheet_graphics(
             SCHEMATIC_WIRE_LAYER,
         );
     }
+    // P2.2e: buses (gold thick polylines) and their diagonal green entry stubs.
+    for bus in sorted_values(&sheet.buses) {
+        push_bus_graphic(graphics, points, bus);
+    }
+    for entry in sorted_values(&sheet.bus_entries) {
+        push_bus_entry_graphic(graphics, points, entry);
+    }
     for drawing in sorted_values(&sheet.drawings) {
         push_drawing_graphic(graphics, points, text, drawing);
     }
     for symbol in sorted_values(&sheet.symbols) {
-        push_symbol_graphics(graphics, points, text, symbol);
+        // P2.2e: power symbols (KiCad `power:*` lib_ids) project a rail flag or a
+        // ground stack instead of a generic IEC box.
+        if is_power_symbol(symbol) {
+            push_power_symbol_graphics(graphics, points, text, symbol);
+        } else {
+            push_symbol_graphics(graphics, points, text, symbol);
+        }
     }
     for label in sorted_values(&sheet.labels) {
-        push_rect_graphic(
-            graphics,
-            points,
-            text,
-            format!("schematic-label:{}", label.uuid),
-            label.uuid,
-            label.position,
-            LABEL_HALF_WIDTH_NM,
-            LABEL_HALF_HEIGHT_NM,
-            Some(label.name.clone()),
-            SCHEMATIC_ANNOTATION_LAYER,
-            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
-        );
+        push_net_label_graphic(graphics, points, text, label);
     }
     for port in sorted_values(&sheet.ports) {
-        push_rect_graphic(
-            graphics,
-            points,
-            text,
-            format!("schematic-port:{}", port.uuid),
-            port.uuid,
-            port.position,
-            PORT_HALF_WIDTH_NM,
-            PORT_HALF_HEIGHT_NM,
-            Some(port.name.clone()),
-            SCHEMATIC_ANNOTATION_LAYER,
-            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
-        );
+        push_hierarchical_port_graphic(graphics, points, text, port);
     }
     for junction in sorted_values(&sheet.junctions) {
         push_circle_graphic(
@@ -625,6 +648,339 @@ fn push_symbol_pin(
         number_h,
         number_v,
         SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT,
+    );
+}
+
+/// P2.2e: a bus as a GOLD thick polyline (`Schematic.Bus` -> `--bus`). Geometry
+/// comes from the engine `Bus.segments` (KiCad `(bus (pts ...))`); a bus authored
+/// through the write path with no segments yet is skipped (nothing to draw).
+fn push_bus_graphic(graphics: &mut Vec<BoardGraphicPrimitive>, points: &mut Vec<PointNm>, bus: &Bus) {
+    if bus.segments.len() < 2 {
+        return;
+    }
+    let path: Vec<PointNm> = bus.segments.iter().map(|p| point_nm(*p)).collect();
+    points.extend(path.iter().copied());
+    graphics.push(BoardGraphicPrimitive {
+        object_id: format!("schematic-bus:{}", bus.uuid),
+        object_kind: "schematic_graphic".to_string(),
+        primitive_kind: "polyline".to_string(),
+        source_object_uuid: bus.uuid.to_string(),
+        layer_id: SCHEMATIC_BUS_LAYER.to_string(),
+        path,
+        holes: Vec::new(),
+        width_nm: Some(BUS_STROKE_NM),
+    });
+}
+
+/// P2.2e: a bus entry as the diagonal GREEN stub the prototype shows. Runs from
+/// `position` to `position + size` (KiCad `(size dx dy)`); entries with no imported
+/// size fall back to a 2.54mm 45° stub. Green so it reads as the member wire meeting
+/// the bus, so it sits on the shared wire layer.
+fn push_bus_entry_graphic(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    entry: &BusEntry,
+) {
+    let start = point_nm(entry.position);
+    let (dx, dy) = if entry.size.x != 0 || entry.size.y != 0 {
+        (entry.size.x, entry.size.y)
+    } else {
+        (BUS_ENTRY_DEFAULT_STUB_NM, -BUS_ENTRY_DEFAULT_STUB_NM)
+    };
+    let end = PointNm {
+        x: start.x + dx,
+        y: start.y + dy,
+    };
+    let path = vec![start, end];
+    points.extend(path.iter().copied());
+    graphics.push(BoardGraphicPrimitive {
+        object_id: format!("schematic-bus-entry:{}", entry.uuid),
+        object_kind: "schematic_graphic".to_string(),
+        primitive_kind: "line".to_string(),
+        source_object_uuid: entry.uuid.to_string(),
+        layer_id: SCHEMATIC_WIRE_LAYER.to_string(),
+        path,
+        holes: Vec::new(),
+        width_nm: Some(BUS_ENTRY_STROKE_NM),
+    });
+}
+
+/// True for KiCad power symbols (`power:+3V3`, `power:GND`, ...), keyed on the
+/// `power:` library prefix (case-insensitive).
+fn is_power_symbol(symbol: &PlacedSymbol) -> bool {
+    symbol
+        .lib_id
+        .as_deref()
+        .map(|lib| lib.to_ascii_lowercase().starts_with("power:"))
+        .unwrap_or(false)
+}
+
+/// Distinguishes a ground symbol from a positive rail by name: the symbol part of
+/// the lib_id (after `:`) containing GND / GROUND / VSS / EARTH is a ground stack;
+/// anything else (VCC, +3V3, VEE, PWR_FLAG, ...) is a rail flag.
+fn is_ground_power_symbol(lib_id: &str) -> bool {
+    let name = lib_id.rsplit(':').next().unwrap_or(lib_id).to_ascii_uppercase();
+    ["GND", "GROUND", "VSS", "EARTH"]
+        .iter()
+        .any(|token| name.contains(token))
+}
+
+/// The net name a power symbol labels (its `Value`, e.g. `+3V3`; falling back to
+/// the lib_id symbol name).
+fn power_net_name(symbol: &PlacedSymbol) -> String {
+    if !symbol.value.trim().is_empty() {
+        return symbol.value.clone();
+    }
+    symbol
+        .lib_id
+        .as_deref()
+        .and_then(|lib| lib.rsplit(':').next())
+        .unwrap_or("")
+        .to_string()
+}
+
+/// P2.2e: a power symbol as prototype GEOMETRY on `Schematic.Power` (`--pwr`)
+/// instead of a generic IEC box: a rail flag (stem + one bar) for a positive rail,
+/// or a ground stack (stem + three shrinking bars) for a ground. Power symbols
+/// skeleton-import with no pins, so geometry is anchored at the symbol origin —
+/// rail extending up (-y), ground down (+y).
+fn push_power_symbol_graphics(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    symbol: &PlacedSymbol,
+) {
+    let origin = point_nm(symbol.position);
+    let lib = symbol.lib_id.as_deref().unwrap_or("");
+    let ground = is_ground_power_symbol(lib);
+    // sign: +y (down) for ground, -y (up) for a rail flag.
+    let sign = if ground { 1 } else { -1 };
+
+    // Stem from the connection origin to the flag/stack.
+    let stem_end = PointNm {
+        x: origin.x,
+        y: origin.y + sign * POWER_STEM_NM,
+    };
+    push_power_line(graphics, points, symbol.uuid, "stem", origin, stem_end);
+
+    if ground {
+        // Three shrinking horizontal bars beyond the stem.
+        for (index, half) in [
+            POWER_GND_BAR0_HALF_NM,
+            POWER_GND_BAR1_HALF_NM,
+            POWER_GND_BAR2_HALF_NM,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let y = stem_end.y + sign * (index as i64) * POWER_GND_BAR_GAP_NM;
+            push_power_line(
+                graphics,
+                points,
+                symbol.uuid,
+                &format!("gnd-bar:{index}"),
+                PointNm {
+                    x: origin.x - half,
+                    y,
+                },
+                PointNm {
+                    x: origin.x + half,
+                    y,
+                },
+            );
+        }
+    } else {
+        // One horizontal bar at the top of the stem.
+        push_power_line(
+            graphics,
+            points,
+            symbol.uuid,
+            "rail-bar",
+            PointNm {
+                x: origin.x - POWER_RAIL_BAR_HALF_NM,
+                y: stem_end.y,
+            },
+            PointNm {
+                x: origin.x + POWER_RAIL_BAR_HALF_NM,
+                y: stem_end.y,
+            },
+        );
+    }
+
+    // Net name past the flag/stack (above a rail, below a ground stack).
+    let far_y = if ground {
+        stem_end.y + sign * (2 * POWER_GND_BAR_GAP_NM + POWER_LABEL_GAP_NM)
+    } else {
+        stem_end.y + sign * POWER_LABEL_GAP_NM
+    };
+    let (v_align, layer_int) = if ground {
+        (TextVAlign::Top, SCHEMATIC_VALUE_TEXT_LAYER_INT)
+    } else {
+        (TextVAlign::Bottom, SCHEMATIC_VALUE_TEXT_LAYER_INT)
+    };
+    text.push(
+        points,
+        symbol.uuid,
+        "power-net",
+        &power_net_name(symbol),
+        PointNm {
+            x: origin.x,
+            y: far_y,
+        },
+        POWER_LABEL_HEIGHT_NM,
+        TextHAlign::Center,
+        v_align,
+        layer_int,
+    );
+}
+
+fn push_power_line(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    symbol_uuid: Uuid,
+    key: &str,
+    from: PointNm,
+    to: PointNm,
+) {
+    let path = vec![from, to];
+    points.extend(path.iter().copied());
+    graphics.push(BoardGraphicPrimitive {
+        object_id: format!("schematic-power:{symbol_uuid}:{key}"),
+        object_kind: "schematic_graphic".to_string(),
+        primitive_kind: "line".to_string(),
+        source_object_uuid: symbol_uuid.to_string(),
+        layer_id: SCHEMATIC_POWER_LAYER.to_string(),
+        path,
+        holes: Vec::new(),
+        width_nm: Some(POWER_STROKE_NM),
+    });
+}
+
+/// P2.2e: a net label by kind. `Global`/`Hierarchical` become the pointed pentagon
+/// tag on `Schematic.GlobalLabel` (`--info` blue); `Local`/`Power` keep the chip.
+fn push_net_label_graphic(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    label: &NetLabel,
+) {
+    match label.kind {
+        LabelKind::Global | LabelKind::Hierarchical => push_pentagon_tag(
+            graphics,
+            points,
+            text,
+            format!("schematic-label:{}", label.uuid),
+            label.uuid,
+            label.position,
+            &label.name,
+            1,
+        ),
+        LabelKind::Local | LabelKind::Power => push_rect_graphic(
+            graphics,
+            points,
+            text,
+            format!("schematic-label:{}", label.uuid),
+            label.uuid,
+            label.position,
+            LABEL_HALF_WIDTH_NM,
+            LABEL_HALF_HEIGHT_NM,
+            Some(label.name.clone()),
+            SCHEMATIC_ANNOTATION_LAYER,
+            SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
+        ),
+    }
+}
+
+/// P2.2e: a hierarchical sheet port as a DIRECTIONAL pentagon tag on
+/// `Schematic.GlobalLabel` (`--info`). The tag points away from the sheet by
+/// direction (Output/Bidirectional extend +x; Input/Passive mirror to -x).
+fn push_hierarchical_port_graphic(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    port: &HierarchicalPort,
+) {
+    let dir_sign = match port.direction {
+        PortDirection::Input | PortDirection::Passive => -1,
+        PortDirection::Output | PortDirection::Bidirectional => 1,
+    };
+    push_pentagon_tag(
+        graphics,
+        points,
+        text,
+        format!("schematic-port:{}", port.uuid),
+        port.uuid,
+        port.position,
+        &port.name,
+        dir_sign,
+    );
+}
+
+/// A pointed pentagon net-label / port tag: a flat body with one pointed end at the
+/// net attach point (`position`). `dir_sign` = +1 extends the body +x (tip on the
+/// left), -1 mirrors it. Rendered as a closed polyline on `Schematic.GlobalLabel`
+/// with the name centred in the body.
+#[allow(clippy::too_many_arguments)]
+fn push_pentagon_tag(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    object_id: String,
+    source_uuid: Uuid,
+    position: Point,
+    name: &str,
+    dir_sign: i64,
+) {
+    let anchor = point_nm(position);
+    let half_h = GLOBAL_LABEL_HALF_HEIGHT_NM;
+    let char_count = name.trim().chars().count().max(1) as i64;
+    let body_w = GLOBAL_LABEL_NOTCH_NM + char_count * GLOBAL_LABEL_CHAR_NM + GLOBAL_LABEL_PAD_NM;
+    let notch_x = anchor.x + dir_sign * GLOBAL_LABEL_NOTCH_NM;
+    let body_x = anchor.x + dir_sign * body_w;
+    let path = vec![
+        anchor,
+        PointNm {
+            x: notch_x,
+            y: anchor.y - half_h,
+        },
+        PointNm {
+            x: body_x,
+            y: anchor.y - half_h,
+        },
+        PointNm {
+            x: body_x,
+            y: anchor.y + half_h,
+        },
+        PointNm {
+            x: notch_x,
+            y: anchor.y + half_h,
+        },
+        anchor,
+    ];
+    points.extend(path.iter().copied());
+    graphics.push(BoardGraphicPrimitive {
+        object_id,
+        object_kind: "schematic_graphic".to_string(),
+        primitive_kind: "polyline".to_string(),
+        source_object_uuid: source_uuid.to_string(),
+        layer_id: SCHEMATIC_GLOBAL_LABEL_LAYER.to_string(),
+        path,
+        holes: Vec::new(),
+        width_nm: Some(GLOBAL_LABEL_STROKE_NM),
+    });
+    text.push(
+        points,
+        source_uuid,
+        "label-name",
+        name,
+        PointNm {
+            x: (notch_x + body_x) / 2,
+            y: anchor.y,
+        },
+        LABEL_TEXT_HEIGHT_NM,
+        TextHAlign::Center,
+        TextVAlign::Center,
+        SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
     );
 }
 
@@ -947,6 +1303,9 @@ fn schematic_scene_layers() -> Vec<SceneLayer> {
     };
     vec![
         role(SCHEMATIC_WIRE_LAYER, "Schematic.Wire", 1),
+        role(SCHEMATIC_BUS_LAYER, "Schematic.Bus", 2),
+        role(SCHEMATIC_POWER_LAYER, "Schematic.Power", 2),
+        role(SCHEMATIC_GLOBAL_LABEL_LAYER, "Schematic.GlobalLabel", 2),
         role(SCHEMATIC_SYMBOL_LAYER, "Schematic.Symbol", 2),
         role(SCHEMATIC_JUNCTION_LAYER, "Schematic.Junction", 3),
         role(SCHEMATIC_NOCONNECT_LAYER, "Schematic.NoConnect", 4),
@@ -1187,5 +1546,198 @@ mod tests {
             "the schematic fit-to-bounds envelope must remain a real rect, got {:?}",
             scene.bounds
         );
+    }
+
+    #[test]
+    fn buses_project_gold_lines_and_diagonal_entries() {
+        // P2.2e: a bus projects as a gold thick polyline on its own Schematic.Bus
+        // layer, and its bus entries as diagonal green stubs. The bus-demo fixture
+        // carries one bus (DATA) with two entries.
+        let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/bus-demo.kicad_sch");
+        let state = load_kicad_schematic_workspace_state(&schematic)
+            .expect("bus-demo schematic should load as a review scene");
+        let scene = &state.scene;
+
+        let bus = scene
+            .board_graphics
+            .iter()
+            .find(|g| g.object_id.starts_with("schematic-bus:"))
+            .expect("bus should project a gold polyline");
+        assert_eq!(
+            bus.layer_id, SCHEMATIC_BUS_LAYER,
+            "bus must sit on the Schematic.Bus (gold) layer"
+        );
+        assert!(
+            bus.path.len() >= 2 && bus.width_nm == Some(BUS_STROKE_NM),
+            "bus must carry its imported geometry at the thick bus stroke, got {bus:?}"
+        );
+
+        let entries: Vec<_> = scene
+            .board_graphics
+            .iter()
+            .filter(|g| g.object_id.starts_with("schematic-bus-entry:"))
+            .collect();
+        assert_eq!(entries.len(), 2, "both bus entries should project");
+        for entry in &entries {
+            assert_eq!(
+                entry.layer_id, SCHEMATIC_WIRE_LAYER,
+                "bus entry stubs read as green member wires"
+            );
+            // The stub is diagonal: start != end in both axes (non-zero imported size).
+            assert!(
+                entry.path.len() == 2
+                    && entry.path[0].x != entry.path[1].x
+                    && entry.path[0].y != entry.path[1].y,
+                "bus entry must be a diagonal stub, got {entry:?}"
+            );
+        }
+
+        let names: std::collections::BTreeSet<&str> =
+            scene.layers.iter().map(|l| l.name.as_str()).collect();
+        assert!(
+            names.contains("Schematic.Bus"),
+            "scene must register the Schematic.Bus layer, got {names:?}"
+        );
+    }
+
+    #[test]
+    fn global_labels_project_the_pentagon_tag() {
+        // P2.2e: a Global net label projects as a pointed pentagon tag on the
+        // Schematic.GlobalLabel (blue) layer, not a generic annotation rect. The
+        // simple-demo fixture carries a global label (VCC) plus a local label (SCL)
+        // that stays a chip.
+        let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+        let state = load_kicad_schematic_workspace_state(&schematic)
+            .expect("simple-demo schematic should load as a review scene");
+        let scene = &state.scene;
+
+        let pentagon = scene
+            .board_graphics
+            .iter()
+            .find(|g| {
+                g.object_id.starts_with("schematic-label:")
+                    && g.layer_id == SCHEMATIC_GLOBAL_LABEL_LAYER
+            })
+            .expect("the global label should project onto the GlobalLabel layer");
+        assert_eq!(
+            pentagon.primitive_kind, "polyline",
+            "the pentagon tag is a stroked (not filled) polyline"
+        );
+        assert_eq!(
+            pentagon.path.len(),
+            6,
+            "the pentagon tag has five vertices plus the closing point, got {}",
+            pentagon.path.len()
+        );
+
+        let names: std::collections::BTreeSet<&str> =
+            scene.layers.iter().map(|l| l.name.as_str()).collect();
+        assert!(
+            names.contains("Schematic.GlobalLabel"),
+            "scene must register the Schematic.GlobalLabel layer, got {names:?}"
+        );
+    }
+
+    #[test]
+    fn power_symbols_project_rail_flag_and_ground_stack_geometry() {
+        // P2.2e: power symbols (`power:*` lib_ids) project a rail flag (stem + one
+        // bar) or a ground stack (stem + three shrinking bars) on the Schematic.Power
+        // layer, not a generic IEC box. No repo KiCad fixture carries power symbols,
+        // so the projection is exercised directly over the engine Sheet model (this
+        // constructs engine structs, not fabricated KiCad s-expressions).
+        use eda_engine::ir::geometry::Point;
+        use eda_engine::schematic::{
+            HiddenPowerBehavior, PlacedSymbol, Schematic, Sheet, SymbolDisplayMode,
+        };
+        use std::collections::HashMap;
+
+        let power_symbol = |uuid: Uuid, lib: &str, value: &str, x: i64| PlacedSymbol {
+            uuid,
+            part: None,
+            entity: None,
+            gate: None,
+            lib_id: Some(lib.to_string()),
+            reference: "#PWR".to_string(),
+            value: value.to_string(),
+            fields: Vec::new(),
+            pins: Vec::new(),
+            position: Point::new(x, 0),
+            rotation: 0,
+            mirrored: false,
+            unit_selection: None,
+            display_mode: SymbolDisplayMode::LibraryDefault,
+            pin_overrides: Vec::new(),
+            hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+        };
+        let gnd_uuid = Uuid::from_u128(0x9001);
+        let rail_uuid = Uuid::from_u128(0x9002);
+        let mut symbols = HashMap::new();
+        symbols.insert(gnd_uuid, power_symbol(gnd_uuid, "power:GND", "GND", 0));
+        symbols.insert(rail_uuid, power_symbol(rail_uuid, "power:+3V3", "+3V3", 5_000_000));
+
+        let sheet = Sheet {
+            uuid: Uuid::from_u128(0x1),
+            name: "Root".to_string(),
+            frame: None,
+            symbols,
+            wires: HashMap::new(),
+            junctions: HashMap::new(),
+            labels: HashMap::new(),
+            buses: HashMap::new(),
+            bus_entries: HashMap::new(),
+            ports: HashMap::new(),
+            noconnects: HashMap::new(),
+            texts: HashMap::new(),
+            drawings: HashMap::new(),
+        };
+        let schematic = Schematic {
+            uuid: Uuid::from_u128(0x2),
+            sheets: HashMap::new(),
+            sheet_definitions: HashMap::new(),
+            sheet_instances: HashMap::new(),
+            variants: HashMap::new(),
+            waivers: Vec::new(),
+        };
+
+        let mut graphics = Vec::new();
+        let mut points = Vec::new();
+        let mut text = SchematicTextSink::default();
+        push_root_sheet_graphics(&sheet, &schematic, &mut graphics, &mut points, &mut text);
+
+        let power_lines: Vec<_> = graphics
+            .iter()
+            .filter(|g| g.object_id.starts_with("schematic-power:"))
+            .collect();
+        assert!(
+            !power_lines.is_empty(),
+            "power symbols must project power geometry, not a generic box"
+        );
+        assert!(
+            power_lines
+                .iter()
+                .all(|g| g.layer_id == SCHEMATIC_POWER_LAYER),
+            "all power geometry must sit on the Schematic.Power layer"
+        );
+        // No power symbol may fall through to the generic IEC symbol body.
+        assert!(
+            !graphics
+                .iter()
+                .any(|g| g.object_id.starts_with("schematic-symbol:")),
+            "power symbols must not project a generic symbol body"
+        );
+
+        // Ground stack = stem + three bars (4 lines); rail flag = stem + one bar (2).
+        let gnd_lines = power_lines
+            .iter()
+            .filter(|g| g.object_id.contains(&gnd_uuid.to_string()))
+            .count();
+        let rail_lines = power_lines
+            .iter()
+            .filter(|g| g.object_id.contains(&rail_uuid.to_string()))
+            .count();
+        assert_eq!(gnd_lines, 4, "ground = stem + three shrinking bars");
+        assert_eq!(rail_lines, 2, "positive rail = stem + one bar");
     }
 }

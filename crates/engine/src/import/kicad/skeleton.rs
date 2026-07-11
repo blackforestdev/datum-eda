@@ -217,6 +217,7 @@ pub(super) fn parse_schematic_skeleton(
                 uuid: bus.uuid,
                 name,
                 members,
+                segments: bus.points.clone(),
             },
         );
     }
@@ -253,6 +254,7 @@ pub(super) fn parse_schematic_skeleton(
                 bus,
                 wire,
                 position: entry.position,
+                size: entry.size,
             },
         );
     }

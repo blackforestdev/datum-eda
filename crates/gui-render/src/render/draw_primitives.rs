@@ -942,6 +942,11 @@ fn schematic_layer_world_color(layer_name: &str) -> Option<[f32; 3]> {
         "Schematic.Wire" | "Schematic.Junction" => schematic::WIRE,
         // Symbol body outline, pin lines, and terminal dots are `--sym` grey.
         "Schematic.Symbol" => schematic::SYMBOL,
+        // P2.2e typed-object geometry. Buses are the gold bundle path; power
+        // flags/stacks are `--pwr` grey; global/hierarchical label tags `--info`.
+        "Schematic.Bus" => schematic::BUS,
+        "Schematic.Power" => schematic::POWER,
+        "Schematic.GlobalLabel" => schematic::GLOBAL_LABEL,
         // RefDes is the brightest annotation (`--tx`).
         "Schematic.RefDes" => schematic::REFDES,
         // Value and pin numbers are the most muted annotation (`--tx3`).

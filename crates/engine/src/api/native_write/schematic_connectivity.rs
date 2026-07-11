@@ -508,6 +508,7 @@ mod tests {
             uuid: Uuid::new_v4(),
             name: "DATA".to_string(),
             members: vec!["D0".to_string(), "D1".to_string()],
+            segments: Vec::new(),
         };
         let prepared = build_create_schematic_bus(
             &model,
@@ -526,6 +527,7 @@ mod tests {
             bus: bus.uuid,
             wire: None,
             position: Point { x: 5, y: 5 },
+            size: Point::zero(),
         };
         let prepared = build_create_schematic_bus_entry(
             &model,

@@ -370,6 +370,7 @@ pub(crate) fn create_native_project_bus(
         uuid: bus_uuid,
         name: name.clone(),
         members: members.clone(),
+        segments: Vec::new(),
     };
     commit_schematic_write(root, "create schematic bus", |model, provenance| {
         build_create_schematic_bus(model, provenance, sheet_uuid, &bus)
@@ -476,6 +477,7 @@ pub(crate) fn place_native_project_bus_entry(
         bus: bus_uuid,
         wire: wire_uuid,
         position,
+        size: Point::zero(),
     };
     commit_schematic_write(root, "place schematic bus entry", |model, provenance| {
         build_create_schematic_bus_entry(model, provenance, sheet_uuid, &bus_entry)

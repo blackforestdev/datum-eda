@@ -81,6 +81,13 @@ pub(crate) mod schematic {
     pub(crate) const REFDES: Rgb = chrome::TEXT_PRIMARY; // --tx   #E4E7EB
     pub(crate) const PIN_NAME: Rgb = chrome::TEXT_SECONDARY; // --tx2 #B2B8C3
     pub(crate) const VALUE: Rgb = chrome::TEXT_MUTED; // --tx3  #717885
+    // P2.2e typed-object colours (schematic-editor prototype :21). Bus is the gold
+    // signal-bundle path (`--bus`, reusing the existing COPPER_IN2 whose hex matches
+    // exactly); power flags/stacks are the cool grey `--pwr`; global/hierarchical
+    // net-label tags take the `--info` blue (reusing STATUS_INFO, hex-exact).
+    pub(crate) const BUS: Rgb = content::COPPER_IN2; // --bus  #C2A13A
+    pub(crate) const POWER: Rgb = srgb(0xB7, 0xBE, 0xC9); // --pwr  #B7BEC9
+    pub(crate) const GLOBAL_LABEL: Rgb = chrome::STATUS_INFO; // --info #5B8BD0
     // Schematic canvas grid (P2.2f). A subtle SQUARE line grid, one whisper above
     // the schematic substrate — the prototype's `#sgrid` (`schematic-editor.html`)
     // is a single uniform `#141821`; MINOR matches it exactly and MAJOR sits a
