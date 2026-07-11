@@ -127,6 +127,31 @@
    → **P2.3 cross-probe — NEXT** (one selection identity projected into both panes).
    Governing: decision 019 + **decision 021 (pane tiling)** +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
+2c. **Universal Editor-Interaction & Viewport Toolkit — SPEC LANDED, build staged
+   (governed by decision 023 + `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`).**
+   The schematic grid rendered divergently from the board grid (weights thicken on
+   zoom); investigation found the whole per-viewport interaction class (tool-mode,
+   hover, selection, marquee, context menu, coordinate readout, cursor, snap,
+   keybinding) is board-only or absent for the schematic, funneling through two
+   board-only chokepoints — a structural per-editor fork of shared tooling, the Lean
+   anti-pattern. Decision **023** ratifies one consumer-side backbone every surface
+   *configures* via a `ViewportProfile` (grid/camera/coord-hit/snap/stroke-weight/
+   hover/selection/tool-mode/context-menu/readout/layer-visibility); the governed
+   spec fixes the weight-class table + the min-px floor bug + a unified 20px LOD knee,
+   the two-tier snap resolver, and quantize-to-grid as align `reference: grid`.
+   *Sequencing (spine):* **S0** init `gui-viewport` crate + StrokeWeightModel → **S1**
+   unify GridEngine, screen-constant weight, both panes (**fixes the grid bug**) →
+   **S2** CameraEngine routing collapse → **S3 CoordinateHit keystone** (per-pane
+   hit-test; schematic hit regions) → {S4 hover, S5 selection+marquee, S6 tool-mode,
+   **S7 context menu** (per-surface, verb-firing — the "local menu works across
+   editors" ask), S8 readout, S9 layer-visibility} → S10 SnapEngine → S11 quantize
+   verb. *Dependency:* P2.2 landed; S7 authoring verbs + S11 ride the write-path step.
+   *Unblocks:* **P2.3 cross-probe rides on S3+S5** (schematic selection/hit-test);
+   native authoring (step 6) reuses snap/commit; paper-space snap (step 7) reuses the
+   SnapEngine. *State:* **decision 023 + governed spec + deep-research sections
+   LANDED; Phase-B build (S0–S11) is separately-authorized execution, schematic-first,
+   each slice board-golden-safe + source-health-ratcheted.** Governing: decision 023 +
+   `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
    `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
