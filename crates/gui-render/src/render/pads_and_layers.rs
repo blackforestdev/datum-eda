@@ -1102,15 +1102,3 @@ fn detail_tier(projection: &Projection) -> DetailTier {
     }
 }
 
-fn floor_multiple(value: i64, pitch: i64) -> i64 {
-    value.div_euclid(pitch) * pitch
-}
-
-fn ceil_multiple(value: i64, pitch: i64) -> i64 {
-    if value.rem_euclid(pitch) == 0 {
-        value
-    } else {
-        value.div_euclid(pitch) * pitch + pitch
-    }
-}
-

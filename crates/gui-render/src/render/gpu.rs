@@ -13,6 +13,10 @@ pub struct Renderer {
     schematic_scene_uniform_buffer: wgpu::Buffer,
     schematic_world_vertex_buffer: Option<wgpu::Buffer>,
     schematic_world_vertex_capacity: usize,
+    // Slice S1b: immediate screen-space schematic grid (drawn with the screen
+    // pipeline, scissored to the schematic pane) — never a retained world buffer.
+    schematic_underlay_vertex_buffer: Option<wgpu::Buffer>,
+    schematic_underlay_vertex_capacity: usize,
     font_system: FontSystem,
     swash_cache: SwashCache,
     viewport: Viewport,
@@ -395,6 +399,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_scene_uniform_buffer,
             schematic_world_vertex_buffer: None,
             schematic_world_vertex_capacity: 0,
+            schematic_underlay_vertex_buffer: None,
+            schematic_underlay_vertex_capacity: 0,
             font_system,
             swash_cache,
             viewport,
@@ -482,6 +488,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             }
             _ => None,
         };
+        // Slice S1b: the schematic grid as an IMMEDIATE screen-space pass. Built
+        // from the (warm) schematic projection so it tracks the schematic camera,
+        // with a class-A ScreenConstant weight so its line width is a fixed device
+        // pixel at any zoom — no longer baked into the retained world buffer where
+        // it would thicken on zoom-in.
+        let mut schematic_grid_quads = Vec::new();
+        if let Some((_, _, proj, _)) = schematic_pass.as_ref() {
+            push_schematic_grid(&mut schematic_grid_quads, proj);
+        }
+        let schematic_grid_vertices = quads_to_vertices(&schematic_grid_quads);
         queue.write_buffer(
             &self.uniform_buffer,
             0,
@@ -567,6 +583,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 sr.world_vertices(),
             );
         }
+        if !schematic_grid_vertices.is_empty() {
+            Self::upload_vertices(
+                device,
+                queue,
+                &mut self.schematic_underlay_vertex_buffer,
+                &mut self.schematic_underlay_vertex_capacity,
+                "datum-gui-render-schematic-underlay-vertex-buffer",
+                &schematic_grid_vertices,
+            );
+        }
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
@@ -644,6 +670,25 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 }
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
+            // Slice S1b: immediate schematic grid. Drawn with the SCREEN pipeline
+            // (active here — restored after the board world pass, or the default) so
+            // its pixel-rect lines keep a fixed device-pixel weight at any schematic
+            // zoom, scissored to the schematic pane's scene rect. Painted BEFORE the
+            // schematic world pass below so wires/symbols sit on top of the grid,
+            // preserving the old draw order the retained bake had.
+            if !schematic_grid_vertices.is_empty()
+                && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
+                && let Some(buffer) = self.schematic_underlay_vertex_buffer.as_ref()
+            {
+                pass.set_scissor_rect(
+                    scene_viewport.x.max(0.0).floor() as u32,
+                    scene_viewport.y.max(0.0).floor() as u32,
+                    scene_viewport.width.max(1.0).ceil() as u32,
+                    scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(0, buffer.slice(..));
+                pass.draw(0..schematic_grid_vertices.len() as u32, 0..1);
             }
             // P2.2a: additive companion schematic world pass. Reuses the same world
             // pipeline, but with the schematic's own bind group (schematic camera +
@@ -900,89 +945,5 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         ));
         Ok(())
     }
-}
-
-fn trace_render_timing(message: String) {
-    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
-        eprintln!("[datum-render] {message}");
-    }
-}
-
-fn trace_graphic_timing(
-    graphic: &BoardGraphicPrimitive,
-    started: std::time::Instant,
-    quad_count: usize,
-) {
-    let elapsed_ms = started.elapsed().as_millis();
-    if std::env::var_os("DATUM_TRACE_GRAPHICS").is_some() && (elapsed_ms >= 5 || quad_count >= 1024)
-    {
-        eprintln!(
-            "[datum-graphic] {} kind={} layer={} points={} holes={} quads={} {}ms",
-            graphic.object_id,
-            graphic.primitive_kind,
-            graphic.layer_id,
-            graphic.path.len(),
-            graphic.holes.len(),
-            quad_count,
-            elapsed_ms
-        );
-    }
-}
-
-fn suffix_id(id: &str) -> &str {
-    id.rsplit(':').next().unwrap_or(id)
-}
-
-fn draw_text(
-    text: &str,
-    x: f32,
-    y: f32,
-    size: f32,
-    color: [f32; 3],
-    face: TextFace,
-    out: &mut Vec<TextRun>,
-) {
-    out.push(TextRun {
-        text: text.to_string(),
-        x,
-        y,
-        size,
-        color,
-        face,
-        clip_bounds: None,
-    });
-}
-
-// Render helper threads many quad/text-run/hit-region sinks.
-#[allow(clippy::too_many_arguments)]
-fn draw_text_clipped(
-    text: &str,
-    x: f32,
-    y: f32,
-    size: f32,
-    color: [f32; 3],
-    face: TextFace,
-    clip_bounds: RectPx,
-    out: &mut Vec<TextRun>,
-) {
-    out.push(TextRun {
-        text: text.to_string(),
-        x,
-        y,
-        size,
-        color,
-        face,
-        clip_bounds: Some(clip_bounds),
-    });
-}
-
-fn text_row_height_for_size(size: f32) -> f32 {
-    (size * 1.6).ceil().max(size + 4.0)
-}
-
-fn key_value_row_height() -> f32 {
-    // Key/value rows sit on a ~27px rhythm (Design Book kv min-height) so the
-    // two type tiers breathe instead of crowding.
-    27.0
 }
 

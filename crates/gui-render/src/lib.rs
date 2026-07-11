@@ -63,6 +63,12 @@ pub(crate) use via::push_via_primitive_world;
 mod gpu_data;
 pub use gpu_data::Vertex;
 pub(crate) use gpu_data::{quads_to_vertices, SceneUniform, ScreenUniform};
+#[path = "render/render_helpers.rs"]
+mod render_helpers;
+pub(crate) use render_helpers::{
+    draw_text, draw_text_clipped, key_value_row_height, suffix_id, text_row_height_for_size,
+    trace_graphic_timing, trace_render_timing,
+};
 include!("render/test_support.rs");
 #[cfg(test)]
 mod layout_invariant_tests;
@@ -77,3 +83,6 @@ include!("render/tests.rs");
 #[cfg(test)]
 #[path = "render/board_text_mesh_tests.rs"]
 mod board_text_mesh_tests;
+#[cfg(test)]
+#[path = "render/grid_tests.rs"]
+mod grid_tests;
