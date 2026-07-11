@@ -221,6 +221,17 @@ impl ViewportPanes {
         self.scene_leaf().map(|p| p.id)
     }
 
+    /// The `PaneId` of the companion schematic leaf (the first Schematic leaf in
+    /// walk order, matching `schematic_scene_viewport`), if the layout has one.
+    /// P2.2d keys the schematic pane's warm interactive camera by this id, so the
+    /// focused schematic pane pans/zooms while the board keeps its own framing.
+    pub fn schematic_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.panes
+            .iter()
+            .find(|p| p.content == datum_gui_protocol::PaneContent::Schematic)
+            .map(|p| p.id)
+    }
+
     /// The leaf pane whose whole `frame` (header + canvas) contains screen point
     /// `(x, y)`, if any. This is the click-to-focus hit map (decision 021): a
     /// pointer press in a non-focused pane's frame swaps focus to it. Returns

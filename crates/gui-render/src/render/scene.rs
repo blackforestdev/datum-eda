@@ -104,10 +104,13 @@ impl PreparedScene {
         } else {
             Vec::new()
         };
-        // P2.2a: describe the static companion schematic pass. It is active only
-        // when the layout has a Schematic pane AND the workspace carries a projected
-        // schematic scene. Its camera is a fixed fit-to-schematic-bounds; there is
-        // no interactive pan/zoom on pane B this slice.
+        // P2.2a: describe the companion schematic pass. It is active only when the
+        // layout has a Schematic pane AND the workspace carries a projected
+        // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
+        // INITIAL framing; P2.2d makes the focused schematic pane interactive by
+        // overriding this via `set_schematic_camera` with the pane's warm camera
+        // (the gui-app render/capture path). Left as fit, this is byte-identical to
+        // the pre-P2.2d static default (goldens/tests take this path unchanged).
         let (schematic_scene_viewport, schematic_bounds, schematic_camera) =
             match state.schematic_scene.as_ref() {
                 Some(schematic_scene) => (
@@ -146,6 +149,18 @@ impl PreparedScene {
             schematic_bounds,
             schematic_camera,
         }
+    }
+
+    /// Override the companion schematic pass camera (P2.2d — interactive schematic
+    /// camera). Construction seeds `schematic_camera` with fit-to-schematic-bounds
+    /// (the INITIAL framing, byte-identical to the pre-P2.2d static fit); the
+    /// gui-app supplies the schematic pane's WARM camera here so the owner's
+    /// pan/zoom on the focused schematic pane persists frame-to-frame, exactly like
+    /// the board camera. A no-op when the layout has no schematic pass (the field
+    /// is never read — see `schematic_scene_viewport`). Only the gui-app render/
+    /// capture path calls this; the golden/test path keeps the fit default.
+    pub fn set_schematic_camera(&mut self, camera: CameraState) {
+        self.schematic_camera = camera;
     }
 
     pub fn hit_test(&self, x: f32, y: f32) -> Option<&HitTarget> {

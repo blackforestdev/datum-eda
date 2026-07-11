@@ -56,6 +56,28 @@ impl PaneCameras {
         self.warm.insert(new_leaf, from);
     }
 
+    /// The warm camera for `id`, if the leaf has one. Read by the render path to
+    /// frame a non-active scene (P2.2d: the companion schematic pane's camera,
+    /// which lives here — not in the `Runtime`'s active `camera` field — because
+    /// the board scene leaf owns the active camera even while the schematic is
+    /// focused). `None` before the leaf is first seen (the render path falls back
+    /// to fit-to-bounds, keeping the pre-P2.2d static-fit default byte-identical).
+    pub(crate) fn camera(&self, id: PaneId) -> Option<CameraState> {
+        self.warm.get(&id).copied()
+    }
+
+    /// A mutable handle to `id`'s warm camera, creating it via `init` (its INITIAL
+    /// framing) the first time it is touched. Backs interactive pan/zoom/fit on a
+    /// warm-but-non-active pane (P2.2d: the focused schematic pane), so the gesture
+    /// persists warm exactly like the board camera does.
+    pub(crate) fn entry_or_insert_with(
+        &mut self,
+        id: PaneId,
+        init: impl FnOnce() -> CameraState,
+    ) -> &mut CameraState {
+        self.warm.entry(id).or_insert_with(init)
+    }
+
     /// Drop cameras for leaves that no longer exist (after a close or a preset
     /// that rebuilt the tree), so the warm store never leaks stale ids.
     pub(crate) fn retain_live(&mut self, live: &[PaneId]) {

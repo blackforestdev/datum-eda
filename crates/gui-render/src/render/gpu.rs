@@ -791,23 +791,23 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // overlay/menu passes.
             if let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
                 let ranges = sr.all_world_ranges();
-                if !ranges.is_empty() {
-                    if let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() {
-                        pass.set_pipeline(&self.world_pipeline);
-                        pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
-                        pass.set_scissor_rect(
-                            scene_viewport.x.max(0.0).floor() as u32,
-                            scene_viewport.y.max(0.0).floor() as u32,
-                            scene_viewport.width.max(1.0).ceil() as u32,
-                            scene_viewport.height.max(1.0).ceil() as u32,
-                        );
-                        pass.set_vertex_buffer(0, buffer.slice(..));
-                        for range in ranges {
-                            pass.draw(range, 0..1);
-                        }
-                        pass.set_pipeline(&self.pipeline);
-                        pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+                if !ranges.is_empty()
+                    && let Some(buffer) = self.schematic_world_vertex_buffer.as_ref()
+                {
+                    pass.set_pipeline(&self.world_pipeline);
+                    pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
+                    pass.set_scissor_rect(
+                        scene_viewport.x.max(0.0).floor() as u32,
+                        scene_viewport.y.max(0.0).floor() as u32,
+                        scene_viewport.width.max(1.0).ceil() as u32,
+                        scene_viewport.height.max(1.0).ceil() as u32,
+                    );
+                    pass.set_vertex_buffer(0, buffer.slice(..));
+                    for range in ranges {
+                        pass.draw(range, 0..1);
                     }
+                    pass.set_pipeline(&self.pipeline);
+                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
                 }
             }
             if !viewport_overlay_vertices.is_empty() {

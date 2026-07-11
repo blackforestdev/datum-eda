@@ -9,6 +9,19 @@ use super::*;
 
 impl Runtime {
     pub(super) fn fit_camera(&mut self) {
+        // P2.2d: route the fit to the FOCUSED pane. When the schematic pane is
+        // focused, fit its OWN warm camera to the schematic bounds; otherwise fit
+        // the board scene camera (unchanged). Keeps board-focused behavior identical.
+        if self.focused_camera_is_schematic()
+            && let (Some(leaf), Some(bounds)) = (self.schematic_leaf_id(), self.schematic_bounds())
+        {
+            let fit = CameraState::fit_to_bounds(&bounds);
+            *self
+                .pane_cameras
+                .entry_or_insert_with(leaf, || fit) = fit;
+            self.invalidate_frame();
+            return;
+        }
         self.camera = CameraState::fit_to_bounds(&self.workspace().scene.bounds);
         self.invalidate_frame();
     }
@@ -140,18 +153,32 @@ impl Runtime {
         let Some(previous) = self.last_cursor_pos else {
             return false;
         };
+        let dx = next_cursor_pos.0 - previous.0;
+        let dy = next_cursor_pos.1 - previous.1;
+        // P2.2d: when the schematic pane is focused, pan ITS warm camera (board
+        // untouched). No artifact-preview drag in the schematic pane (that overlay
+        // is a board-scene affordance).
+        if self.focused_camera_is_schematic() {
+            let (Some(leaf), Some(bounds), Some(viewport)) = (
+                self.schematic_leaf_id(),
+                self.schematic_bounds(),
+                self.schematic_scene_viewport(),
+            ) else {
+                return false;
+            };
+            self.pane_cameras
+                .entry_or_insert_with(leaf, || CameraState::fit_to_bounds(&bounds))
+                .pan_pixels(viewport, &bounds, dx, dy);
+            self.invalidate_frame();
+            return true;
+        }
         let prepared = self.prepared_scene().clone();
         if self.handle_artifact_preview_pan_drag(&prepared, previous, next_cursor_pos) {
             return true;
         }
         let scene_viewport = self.scene_viewport();
         let bounds = self.workspace().scene.bounds.clone();
-        self.camera.pan_pixels(
-            scene_viewport,
-            &bounds,
-            next_cursor_pos.0 - previous.0,
-            next_cursor_pos.1 - previous.1,
-        );
+        self.camera.pan_pixels(scene_viewport, &bounds, dx, dy);
         self.invalidate_frame();
         true
     }
@@ -160,6 +187,26 @@ impl Runtime {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };
+        // P2.2d: hit-test the zoom against the FOCUSED pane's scene rect and drive
+        // that pane's camera. Schematic focused -> schematic warm camera; otherwise
+        // the board scene camera (unchanged).
+        if self.focused_camera_is_schematic() {
+            let (Some(leaf), Some(bounds), Some(viewport)) = (
+                self.schematic_leaf_id(),
+                self.schematic_bounds(),
+                self.schematic_scene_viewport(),
+            ) else {
+                return false;
+            };
+            if !viewport.contains(x, y) {
+                return false;
+            }
+            self.pane_cameras
+                .entry_or_insert_with(leaf, || CameraState::fit_to_bounds(&bounds))
+                .zoom_about_screen_point(viewport, &bounds, x, y, delta);
+            self.invalidate_frame();
+            return true;
+        }
         let scene_viewport = self.scene_viewport();
         if !scene_viewport.contains(x, y) {
             return false;
@@ -358,6 +405,54 @@ impl Runtime {
             .scene_leaf_id()
     }
 
+    /// The companion schematic leaf's `PaneId`, if the layout has a Schematic pane.
+    /// P2.2d keys the schematic's warm interactive camera by this id.
+    pub(super) fn schematic_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .schematic_leaf_id()
+    }
+
+    /// The companion schematic scene's world bounds, if a schematic scene exists —
+    /// the reference the schematic camera fits to and pans/zooms within (P2.2d).
+    pub(super) fn schematic_bounds(&self) -> Option<SceneBounds> {
+        self.workspace()
+            .schematic_scene
+            .as_ref()
+            .map(|scene| scene.bounds.clone())
+    }
+
+    /// The schematic leaf's scene canvas rect, if a Schematic pane exists — the
+    /// viewport the schematic camera projects into and the rect the schematic
+    /// zoom/pan hit-tests against (P2.2d).
+    pub(super) fn schematic_scene_viewport(&self) -> Option<datum_gui_render::RectPx> {
+        self.current_layout()
+            .schematic_scene_viewport(&self.workspace().ui.layout)
+    }
+
+    /// True iff the focused pane is the companion schematic leaf — the P2.2d input
+    /// routing decision: pan/zoom/fit drive the schematic's warm camera when true,
+    /// otherwise the board scene camera. Focus (not scene-leaf binding) selects the
+    /// interactive camera, so the owner can zoom whichever pane they focus.
+    pub(super) fn focused_camera_is_schematic(&self) -> bool {
+        focused_is_schematic(self.workspace().ui.layout.focused, self.schematic_leaf_id())
+    }
+
+    /// The camera the companion schematic pass renders with (P2.2d). Once the owner
+    /// has interacted with the focused schematic pane its WARM camera persists here;
+    /// until then (store cold) the INITIAL fit-to-schematic-bounds — byte-identical
+    /// to the pre-P2.2d static fit, so the default board-focused capture is
+    /// unchanged. `None` when there is no companion schematic scene / Schematic pane.
+    pub(super) fn schematic_camera_for_render(&self) -> Option<CameraState> {
+        let leaf = self.schematic_leaf_id()?;
+        let bounds = self.schematic_bounds()?;
+        Some(
+            self.pane_cameras
+                .camera(leaf)
+                .unwrap_or_else(|| CameraState::fit_to_bounds(&bounds)),
+        )
+    }
+
     /// The workspace leaf pane whose frame contains screen point `(x, y)`, tiling
     /// the current shell exactly as the renderer does. Backs click-to-focus
     /// (decision 021): a press outside every pane (sidebars/dock/menu) returns
@@ -424,5 +519,138 @@ impl Runtime {
                 self.push_terminal_line(format!("terminal resize failed: {err}"));
             }
         }
+    }
+}
+
+/// P2.2d input-routing decision, factored pure so the routing is unit-tested
+/// without a live `Runtime` (which owns the GPU/PTY and can't be built headless):
+/// pan/zoom/fit drive the schematic pane's warm camera iff the focused leaf IS the
+/// schematic leaf, otherwise the board scene camera. `Runtime::focused_camera_is_schematic`
+/// is the sole caller; the input handlers branch on it.
+fn focused_is_schematic(
+    focused: datum_gui_protocol::PaneId,
+    schematic_leaf: Option<datum_gui_protocol::PaneId>,
+) -> bool {
+    schematic_leaf == Some(focused)
+}
+
+#[cfg(test)]
+mod focused_camera_routing_tests {
+    use super::focused_is_schematic;
+    use crate::pane_cameras::PaneCameras;
+    use datum_gui_protocol::{PaneId, SceneBounds};
+    use datum_gui_render::{CameraState, RectPx};
+
+    fn bounds() -> SceneBounds {
+        SceneBounds {
+            min_x: 0,
+            min_y: 0,
+            max_x: 2_000_000,
+            max_y: 1_000_000,
+        }
+    }
+
+    fn viewport() -> RectPx {
+        RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 800.0,
+            height: 600.0,
+        }
+    }
+
+    #[test]
+    fn routing_decision_follows_focus() {
+        // The focused schematic leaf routes input to the schematic camera; any
+        // other focus (a board leaf, or no schematic pane at all) routes to board.
+        assert!(focused_is_schematic(PaneId(1), Some(PaneId(1))));
+        assert!(!focused_is_schematic(PaneId(0), Some(PaneId(1))));
+        assert!(!focused_is_schematic(PaneId(0), None));
+    }
+
+    /// The crux of P2.2d: a runtime pan/zoom can't be screenshotted, so lock the
+    /// routing here. This mirrors the two `handle_*` branches EXACTLY — the board
+    /// camera is the `Runtime`'s active `camera`; the schematic camera lives warm in
+    /// `PaneCameras` keyed by the schematic leaf. With the schematic focused the
+    /// gesture must mutate ONLY the schematic warm camera; with a board leaf focused
+    /// ONLY the board camera. `focused_is_schematic` (tested above) selects the branch.
+    #[test]
+    fn zoom_updates_only_the_focused_panes_camera() {
+        let schematic_leaf = PaneId(1);
+        let mut board = CameraState::fit_to_bounds(&bounds());
+        // Schematic camera seeded warm at its own initial fit, exactly as the render
+        // path and the first interaction do.
+        let mut cameras = PaneCameras::new(PaneId(0), board);
+        cameras.entry_or_insert_with(schematic_leaf, || CameraState::fit_to_bounds(&bounds()));
+        let board_before = board;
+        let schematic_before = cameras.camera(schematic_leaf).unwrap();
+
+        // --- Schematic focused: zoom drives the schematic warm camera only. ---
+        assert!(focused_is_schematic(schematic_leaf, Some(schematic_leaf)));
+        cameras
+            .entry_or_insert_with(schematic_leaf, || CameraState::fit_to_bounds(&bounds()))
+            .zoom_about_screen_point(viewport(), &bounds(), 400.0, 300.0, 1.5);
+        let schematic_after = cameras.camera(schematic_leaf).unwrap();
+        assert_ne!(
+            schematic_after.zoom, schematic_before.zoom,
+            "schematic zoom must change when the schematic pane is focused"
+        );
+        assert_eq!(
+            board, board_before,
+            "board camera must NOT move while the schematic pane is focused"
+        );
+
+        // --- Board focused: zoom drives the board camera only. ---
+        assert!(!focused_is_schematic(PaneId(0), Some(schematic_leaf)));
+        let schematic_held = cameras.camera(schematic_leaf).unwrap();
+        board.zoom_about_screen_point(viewport(), &bounds(), 400.0, 300.0, 1.5);
+        assert_ne!(
+            board.zoom, board_before.zoom,
+            "board zoom must change when a board leaf is focused"
+        );
+        assert_eq!(
+            cameras.camera(schematic_leaf).unwrap(),
+            schematic_held,
+            "schematic camera must NOT move while a board leaf is focused"
+        );
+    }
+
+    /// Pan mirror of the crux: a focused-schematic pan moves the schematic warm
+    /// camera's center and leaves the board camera untouched, and vice versa.
+    #[test]
+    fn pan_updates_only_the_focused_panes_camera() {
+        let schematic_leaf = PaneId(1);
+        let mut board = CameraState::fit_to_bounds(&bounds());
+        let mut cameras = PaneCameras::new(PaneId(0), board);
+        cameras.entry_or_insert_with(schematic_leaf, || CameraState::fit_to_bounds(&bounds()));
+        let board_before = board;
+        let schematic_before = cameras.camera(schematic_leaf).unwrap();
+
+        cameras
+            .entry_or_insert_with(schematic_leaf, || CameraState::fit_to_bounds(&bounds()))
+            .pan_pixels(viewport(), &bounds(), 40.0, 25.0);
+        let schematic_after = cameras.camera(schematic_leaf).unwrap();
+        assert_ne!(
+            (schematic_after.center_x_nm, schematic_after.center_y_nm),
+            (schematic_before.center_x_nm, schematic_before.center_y_nm),
+            "schematic center must move on a focused-schematic pan"
+        );
+        assert_eq!(
+            board, board_before,
+            "board camera must NOT move on a focused-schematic pan"
+        );
+
+        let schematic_held = cameras.camera(schematic_leaf).unwrap();
+        board.pan_pixels(viewport(), &bounds(), 40.0, 25.0);
+        assert_ne!(
+            (board.center_x_nm, board.center_y_nm),
+            (board_before.center_x_nm, board_before.center_y_nm),
+            "board center must move on a focused-board pan"
+        );
+        assert_eq!(
+            cameras.camera(schematic_leaf).unwrap(),
+            schematic_held,
+            "schematic camera must NOT move on a focused-board pan"
+        );
     }
 }
