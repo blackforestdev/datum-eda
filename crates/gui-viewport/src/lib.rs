@@ -7,15 +7,18 @@
 //! the decision-014 compile-time fence: the engine, daemon, protocol, and
 //! persisted formats never depend on it (UVT-002).
 //!
-//! ## Slice S0
+//! ## Slices S0 → S1a
 //!
-//! This is the first slice of the crate: the [`StrokeWeightModel`] (spec §4)
-//! plus scaffold skeletons for [`ViewportProfile`] / [`GridConfig`] (spec §1.3,
-//! §5) that later slices (S1+) populate. It introduces no consumer wiring and
-//! no external dependencies — std only.
+//! S0 landed the [`WeightClass`] stroke model (spec §4) plus the
+//! [`ViewportProfile`] / [`GridConfig`] scaffold (spec §1.3, §5). S1a lands the
+//! first real mechanism and first consumer wiring: the shared
+//! [`grid::GridEngine`] (spec §5), onto which gui-render's board grid repoints
+//! byte-identically. The crate stays std-only (UVT-002).
 
-pub mod stroke;
+pub mod grid;
 pub mod profile;
+pub mod stroke;
 
-pub use profile::{GridConfig, GridMode, ViewportProfile};
+pub use grid::{AxisProjection, GridBounds, GridEngine, GridLine, GridViewport};
+pub use profile::{GridConfig, GridMode, GridTier, ViewportProfile};
 pub use stroke::WeightClass;

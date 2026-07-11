@@ -3,33 +3,85 @@ use super::{
     world_stroke_nm, BoardSurfaceRole, DetailTier, PointNm, Projection, Quad, RectPx,
     SCHEMATIC_GRID_MAJOR, SCHEMATIC_GRID_MINOR,
 };
+use datum_gui_viewport::{
+    AxisProjection, GridBounds, GridConfig, GridEngine, GridMode, GridTier, GridViewport,
+    WeightClass,
+};
 
+/// The board's metric grid, now computed by the shared [`GridEngine`] (spec §5,
+/// slice S1a). `push_scene_grid` builds the abstract engine inputs from the live
+/// [`Projection`] — a per-surface [`GridConfig`] (the exact metric pitch tiers,
+/// 1 device-px class-A weight, and board grid colour tokens) plus the per-axis
+/// world-nm→screen-px affine — and re-emits the returned line specs as `Quad`s.
+/// The engine reproduces the previous immediate-mode pixel-axis-rect output
+/// byte-for-byte; only the mechanism moved.
+///
+/// The board grid config maps 1:1 onto `detail_tier`, whose `Coarse`/`Normal`/
+/// `Fine` discriminants (0/1/2) index `tiers`:
+///
+/// | tier   | idx | major   | minor   |
+/// |--------|-----|---------|---------|
+/// | Coarse | 0   | 10 mm   | (none)  |
+/// | Normal | 1   |  5 mm   | 2.5 mm  |
+/// | Fine   | 2   | 2.5 mm  | 1.25 mm |
 pub(crate) fn push_scene_grid(out: &mut Vec<Quad>, projection: &Projection) {
-    let detail = detail_tier(projection);
-    let major_pitch_nm = match detail {
-        DetailTier::Fine => 2_500_000,
-        DetailTier::Normal => 5_000_000,
-        DetailTier::Coarse => 10_000_000,
+    let config = GridConfig {
+        mode: GridMode::Square,
+        weight: WeightClass::ScreenConstant(1.0),
+        minor_color: board_surface_color(BoardSurfaceRole::GridMinor),
+        major_color: board_surface_color(BoardSurfaceRole::GridMajor),
+        tiers: vec![
+            GridTier {
+                major_pitch_nm: 10_000_000,
+                minor_pitch_nm: None,
+            },
+            GridTier {
+                major_pitch_nm: 5_000_000,
+                minor_pitch_nm: Some(2_500_000),
+            },
+            GridTier {
+                major_pitch_nm: 2_500_000,
+                minor_pitch_nm: Some(1_250_000),
+            },
+        ],
+        origin_nm: None,
     };
-    let minor_pitch_nm = match detail {
-        DetailTier::Fine => Some(1_250_000),
-        DetailTier::Normal => Some(2_500_000),
-        DetailTier::Coarse => None,
+    let tier = detail_tier(projection) as usize;
+    let viewport = GridViewport {
+        x: projection.viewport.x,
+        y: projection.viewport.y,
+        width: projection.viewport.width,
+        height: projection.viewport.height,
     };
-    if let Some(minor_pitch) = minor_pitch_nm {
-        push_grid_axis_lines(
-            out,
-            projection,
-            minor_pitch,
-            board_surface_color(BoardSurfaceRole::GridMinor),
-        );
+    let bounds = GridBounds {
+        min_x: projection.bounds.min_x,
+        min_y: projection.bounds.min_y,
+        max_x: projection.bounds.max_x,
+        max_y: projection.bounds.max_y,
+    };
+    // Per-axis affine reproducing `Projection::project_point` exactly: the board
+    // shares one scale but a distinct offset/origin per axis.
+    let x_axis = AxisProjection {
+        scale: projection.scale,
+        offset: projection.offset_x,
+        origin_nm: projection.bounds.min_x,
+    };
+    let y_axis = AxisProjection {
+        scale: projection.scale,
+        offset: projection.offset_y,
+        origin_nm: projection.bounds.min_y,
+    };
+    for line in GridEngine::compute(&config, tier, viewport, bounds, x_axis, y_axis) {
+        out.push(Quad::from_rect(
+            RectPx {
+                x: line.x,
+                y: line.y,
+                width: line.width,
+                height: line.height,
+            },
+            line.color,
+        ));
     }
-    push_grid_axis_lines(
-        out,
-        projection,
-        major_pitch_nm,
-        board_surface_color(BoardSurfaceRole::GridMajor),
-    );
 }
 
 /// Subtle SQUARE grid underlay for the companion schematic pane (P2.2f). Unlike
@@ -119,55 +171,3 @@ fn push_schematic_grid_world_lines(
     }
 }
 
-fn push_grid_axis_lines(
-    out: &mut Vec<Quad>,
-    projection: &Projection,
-    pitch_nm: i64,
-    color: [f32; 3],
-) {
-    if pitch_nm <= 0 {
-        return;
-    }
-    let start_x = floor_multiple(projection.bounds.min_x, pitch_nm);
-    let end_x = ceil_multiple(projection.bounds.max_x, pitch_nm);
-    let mut x = start_x;
-    while x <= end_x {
-        let x_px = projection
-            .project_point(PointNm {
-                x,
-                y: projection.bounds.min_y,
-            })
-            .0;
-        out.push(Quad::from_rect(
-            RectPx {
-                x: x_px,
-                y: projection.viewport.y,
-                width: 1.0,
-                height: projection.viewport.height,
-            },
-            color,
-        ));
-        x += pitch_nm;
-    }
-    let start_y = floor_multiple(projection.bounds.min_y, pitch_nm);
-    let end_y = ceil_multiple(projection.bounds.max_y, pitch_nm);
-    let mut y = start_y;
-    while y <= end_y {
-        let y_px = projection
-            .project_point(PointNm {
-                x: projection.bounds.min_x,
-                y,
-            })
-            .1;
-        out.push(Quad::from_rect(
-            RectPx {
-                x: projection.viewport.x,
-                y: y_px,
-                width: projection.viewport.width,
-                height: 1.0,
-            },
-            color,
-        ));
-        y += pitch_nm;
-    }
-}
