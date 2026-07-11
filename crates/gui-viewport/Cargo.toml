@@ -1,0 +1,6 @@
+[package]
+name = "datum-gui-viewport"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

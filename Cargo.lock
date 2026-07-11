@@ -761,6 +761,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "datum-gui-viewport"
+version = "0.1.0"
+
+[[package]]
 name = "datum-verb-registry"
 version = "0.1.0"
 dependencies = [
