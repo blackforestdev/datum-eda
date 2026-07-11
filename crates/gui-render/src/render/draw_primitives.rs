@@ -548,10 +548,11 @@ fn push_component_graphic_primitive_world(
             return;
         }
     }
-    let width_nm = world_stroke_nm(
-        graphic.width_nm.map(width_to_px).unwrap_or(1.1) * width_scale,
-        reference_projection,
-    );
+    let width_nm = board_graphic_nominal_nm(
+        graphic.layer_id.as_deref().unwrap_or("F.SilkS"),
+        graphic.width_nm,
+    ) as f32
+        * width_scale;
     let path = if graphic.closed {
         close_path(&graphic.path)
     } else {
@@ -593,7 +594,7 @@ fn push_board_graphic_primitive_world(
     out: &mut Vec<Quad>,
     graphic: &BoardGraphicPrimitive,
     color: [f32; 3],
-    reference_projection: &Projection,
+    _reference_projection: &Projection,
 ) {
     if graphic.primitive_kind == "polygon" && graphic.path.len() >= 3 {
         push_world_polygon_fill_contours(out, &graphic.path, &graphic.holes, color);
@@ -601,11 +602,7 @@ fn push_board_graphic_primitive_world(
             return;
         }
     }
-    let width_nm = world_stroke_nm(
-        graphic.width_nm.map(width_to_px).unwrap_or(1.1),
-        reference_projection,
-    )
-    .max(1.0);
+    let width_nm = board_graphic_nominal_nm(&graphic.layer_id, graphic.width_nm) as f32;
     let path = if graphic.primitive_kind == "polygon" {
         close_path(&graphic.path)
     } else {
@@ -633,7 +630,7 @@ fn push_board_text_geometry_world(
     text_geometry: &BoardTextGeometryPrimitive,
     glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
     color: [f32; 3],
-    reference_projection: &Projection,
+    _reference_projection: &Projection,
 ) {
     if let Some(transform) = text_geometry.world_transform_nm
         && !text_geometry.glyphs.is_empty() {
@@ -647,7 +644,7 @@ fn push_board_text_geometry_world(
         push_world_polyline_segments(
             out,
             &[stroke.from, stroke.to],
-            (stroke.width_nm as f32).max(world_stroke_nm(1.0, reference_projection)),
+            stroke.width_nm.max(1) as f32,
             color,
         );
     }
@@ -790,4 +787,3 @@ fn schematic_layer_world_color(layer_name: &str) -> Option<[f32; 3]> {
         _ => return None,
     })
 }
-

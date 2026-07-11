@@ -82,10 +82,10 @@ fn push_retained_scene_geometry(
                     dim_unrelated_active(state) && !selected && !related,
                 )
             };
-            let track_width_nm = (track.width_nm as f32).max(world_stroke_nm(
-                if selected { 3.0 } else { 2.0 },
-                reference_projection,
-            ));
+            let track_width_nm = AuthoredStrokePrimitive::CopperTrace {
+                width_nm: track.width_nm,
+            }
+            .nominal_nm() as f32;
             push_world_polyline_segments(out, &track.path, track_width_nm, color);
             let half = (track_width_nm * 0.5).round() as i64;
             for point in &track.path {
@@ -614,7 +614,7 @@ fn push_retained_board_graphic_batches(
             push_world_polyline_segments_capped(
                 out,
                 &outline.path,
-                world_stroke_nm(1.6, reference_projection),
+                EDGE_CUT_NM as f32,
                 board_surface_color(BoardSurfaceRole::Edge),
             );
         }
@@ -899,4 +899,3 @@ fn push_retained_world_hit_regions(
         });
     }
 }
-

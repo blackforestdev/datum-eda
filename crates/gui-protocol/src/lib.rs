@@ -25,7 +25,7 @@ use kicad_scene_import::{
     push_board_text_scene_primitives, trace_protocol_timing,
 };
 mod schematic_scene_import;
-pub use schematic_scene_import::load_kicad_schematic_workspace_state;
+pub use schematic_scene_import::{SchematicHitKind, load_kicad_schematic_workspace_state};
 mod artifact_preview_viewport;
 pub use artifact_preview_viewport::ArtifactPreviewViewportState;
 mod context_envelope;
@@ -142,6 +142,7 @@ pub struct BoardGraphicPrimitive {
     #[serde(default)]
     pub width_nm: Option<i64>,
 }
+
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UnroutedPrimitive {

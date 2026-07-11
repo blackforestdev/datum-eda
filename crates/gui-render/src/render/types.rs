@@ -86,6 +86,7 @@ pub struct PreparedScene {
     pub layout: ShellLayout,
     pub hit_regions: Vec<HitRegion>,
     pub scene_viewport: RectPx,
+    board_pane_id: datum_gui_protocol::PaneId,
     scene_bounds: datum_gui_protocol::SceneBounds,
     camera: CameraState,
     panel_vertices: Vec<Vertex>,
@@ -105,6 +106,7 @@ pub struct PreparedScene {
     // here — the schematic renders all of its batches (its layers are always
     // visible, not board-layer-toggle governed).
     schematic_scene_viewport: Option<RectPx>,
+    schematic_pane_id: Option<datum_gui_protocol::PaneId>,
     schematic_bounds: datum_gui_protocol::SceneBounds,
     schematic_camera: CameraState,
     // S4 (HoverEngine): the immediate screen-space interaction overlays are class-A
@@ -130,7 +132,7 @@ pub struct PreparedScene {
 pub struct RetainedScene {
     world_vertices: Vec<Vertex>,
     world_batches: Vec<RetainedWorldBatch>,
-    world_hit_regions: Vec<WorldHitRegion>,
+    world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -140,26 +142,8 @@ struct RetainedWorldBatch {
     len: u32,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct WorldHitRegion {
-    target: HitTarget,
-    layer_id: Option<String>,
-    shape: WorldHitShape,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-enum WorldHitShape {
-    Rect(datum_gui_protocol::RectNm),
-    Polyline {
-        path: Vec<PointNm>,
-        half_width_nm: f32,
-    },
-    Polygon(Vec<PointNm>),
-    Circle {
-        center: PointNm,
-        radius_nm: f32,
-    },
-}
+type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;
+type WorldHitShape = datum_gui_viewport::HitShape;
 
 #[derive(Debug, Clone, PartialEq)]
 struct Projection {
@@ -445,11 +429,4 @@ enum BoardSurfaceRole {
     GridMajor,
     GridMinor,
     Edge,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum DetailTier {
-    Coarse,
-    Normal,
-    Fine,
 }

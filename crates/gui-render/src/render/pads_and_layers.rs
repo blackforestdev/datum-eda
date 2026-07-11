@@ -157,7 +157,7 @@ fn pad_corner_radius_nm(
     pad: &datum_gui_protocol::PadPrimitive,
     width_nm: f32,
     height_nm: f32,
-    reference_projection: &Projection,
+    _reference_projection: &Projection,
     inset_nm: f32,
 ) -> f32 {
     let width_nm = (width_nm - inset_nm * 2.0).max(1.0);
@@ -168,7 +168,7 @@ fn pad_corner_radius_nm(
         "roundrect" | "round_rect" => {
             let ratio = (pad.roundrect_rratio_ppm as f32 / 1_000_000.0).clamp(0.0, 0.5);
             let radius = width_nm.min(height_nm) * ratio;
-            radius.max(world_stroke_nm(1.0, reference_projection))
+            radius.max(1.0)
         }
         _ => 0.0,
     }
@@ -1090,15 +1090,3 @@ fn world_length_to_px(length_nm: i64, projection: &Projection) -> f32 {
 fn component_silk_color(layer_id: Option<&str>) -> [f32; 3] {
     resolve_layer_appearance(layer_id).silkscreen
 }
-
-fn detail_tier(projection: &Projection) -> DetailTier {
-    let px_per_mm = world_length_to_px(1_000_000, projection);
-    if px_per_mm >= 18.0 {
-        DetailTier::Fine
-    } else if px_per_mm >= 8.0 {
-        DetailTier::Normal
-    } else {
-        DetailTier::Coarse
-    }
-}
-

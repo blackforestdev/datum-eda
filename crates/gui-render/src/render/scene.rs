@@ -50,6 +50,8 @@ impl PreparedScene {
         let mut text_runs = Vec::new();
         let mut hit_regions = Vec::new();
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
+        let (board_pane_id, schematic_pane_id) =
+            coordinate_hit::surface_pane_ids(&layout, &state.ui.layout);
         // The board scene renders only when a Board leaf exists to host it (the
         // common Board|Schematic layout always has one; an all-Schematic layout does
         // not). Independent of focus, so the PCB persists in its pane while another
@@ -210,6 +212,7 @@ impl PreparedScene {
             layout,
             hit_regions,
             scene_viewport,
+            board_pane_id,
             scene_bounds: state.scene.bounds.clone(),
             camera,
             panel_vertices,
@@ -221,6 +224,7 @@ impl PreparedScene {
             visible_world_ranges,
             text_runs,
             schematic_scene_viewport,
+            schematic_pane_id,
             schematic_bounds,
             schematic_camera,
             schematic_hover_bounds_nm: schematic_hover_bounds,
@@ -389,7 +393,7 @@ impl RetainedScene {
         Self {
             world_vertices,
             world_batches,
-            world_hit_regions,
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         }
     }
 
@@ -459,17 +463,14 @@ impl RetainedScene {
             state,
         );
         let world_vertices = quads_to_vertices(&world_quads);
-        // S3 / UVT-004: the schematic pane gets real hit regions for the first
-        // time — placed symbols emit selectable world hit shapes tagged with their
-        // stable projected identity, mirroring how the board tags authored objects.
-        // Wires/labels stay non-interactive this slice (symbols are the S5/S7
-        // selection/menu target); the world geometry above is unchanged.
+        // S3 / UVT-004: build typed schematic hit shapes independently from the
+        // current tool's selection eligibility.
         let mut world_hit_regions = Vec::new();
-        coordinate_hit::push_schematic_symbol_hit_regions(&mut world_hit_regions, schematic_scene);
+        coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
         Some(Self {
             world_vertices,
             world_batches,
-            world_hit_regions,
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         })
     }
 

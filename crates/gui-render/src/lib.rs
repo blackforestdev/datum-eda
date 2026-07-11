@@ -48,6 +48,9 @@ include!("render/retained.rs");
 include!("render/overlay.rs");
 mod dim_policy;
 pub(crate) use dim_policy::*;
+#[path = "render/stroke_policy.rs"]
+mod stroke_policy;
+pub(crate) use stroke_policy::*;
 
 include!("render/draw_primitives.rs");
 include!("render/pads_and_layers.rs");
@@ -62,7 +65,7 @@ pub(crate) use via::push_via_primitive_world;
 #[path = "render/gpu_data.rs"]
 mod gpu_data;
 pub use gpu_data::Vertex;
-pub(crate) use gpu_data::{quads_to_vertices, SceneUniform, ScreenUniform};
+pub(crate) use gpu_data::{SceneUniform, ScreenUniform, quads_to_vertices};
 #[path = "render/render_helpers.rs"]
 mod render_helpers;
 pub(crate) use render_helpers::{

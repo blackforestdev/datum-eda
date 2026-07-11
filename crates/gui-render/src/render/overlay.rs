@@ -478,36 +478,6 @@ fn point_in_rect(point: PointNm, rect: datum_gui_protocol::RectNm) -> bool {
     point.x >= rect.min_x && point.x <= rect.max_x && point.y >= rect.min_y && point.y <= rect.max_y
 }
 
-fn point_in_polygon_world(path: &[PointNm], point: PointNm) -> bool {
-    if path.len() < 3 {
-        return false;
-    }
-    let mut inside = false;
-    let px = point.x as f64;
-    let py = point.y as f64;
-    let mut j = path.len() - 1;
-    for i in 0..path.len() {
-        let xi = path[i].x as f64;
-        let yi = path[i].y as f64;
-        let xj = path[j].x as f64;
-        let yj = path[j].y as f64;
-        let crosses_y = (yi > py) != (yj > py);
-        if crosses_y {
-            let denom = yj - yi;
-            if denom.abs() <= f64::EPSILON {
-                j = i;
-                continue;
-            }
-            let x_at_y = (xj - xi) * (py - yi) / denom + xi;
-            if px < x_at_y {
-                inside = !inside;
-            }
-        }
-        j = i;
-    }
-    inside
-}
-
 fn board_text_hit_rect(text: &BoardTextPrimitive) -> datum_gui_protocol::RectNm {
     let lines: Vec<&str> = text.text.lines().collect();
     let line_count = lines.len().max(1) as f64;
@@ -556,32 +526,6 @@ fn board_text_hit_rect(text: &BoardTextPrimitive) -> datum_gui_protocol::RectNm 
     }
 }
 
-fn polyline_contains_world_point(path: &[PointNm], point: PointNm, half_width_nm: f32) -> bool {
-    let px = point.x as f32;
-    let py = point.y as f32;
-    let threshold_sq = half_width_nm * half_width_nm;
-    path.windows(2).any(|segment| {
-        let ax = segment[0].x as f32;
-        let ay = segment[0].y as f32;
-        let bx = segment[1].x as f32;
-        let by = segment[1].y as f32;
-        let dx = bx - ax;
-        let dy = by - ay;
-        let len_sq = dx * dx + dy * dy;
-        if len_sq <= 1.0 {
-            let ddx = px - ax;
-            let ddy = py - ay;
-            return ddx * ddx + ddy * ddy <= threshold_sq;
-        }
-        let t = (((px - ax) * dx + (py - ay) * dy) / len_sq).clamp(0.0, 1.0);
-        let cx = ax + dx * t;
-        let cy = ay + dy * t;
-        let ddx = px - cx;
-        let ddy = py - cy;
-        ddx * ddx + ddy * ddy <= threshold_sq
-    })
-}
-
 fn component_graphic_matches_active_action(
     graphic: &ComponentGraphicPrimitive,
     scene: &BoardReviewSceneV1,
@@ -592,4 +536,3 @@ fn component_graphic_matches_active_action(
             && component_overlaps_active_action(component, state)
     })
 }
-

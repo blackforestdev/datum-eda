@@ -352,42 +352,6 @@ fn layer_appearance_distinguishes_top_and_bottom_copper() {
 }
 
 #[test]
-fn detail_tier_changes_with_projected_board_scale() {
-    let viewport = RectPx {
-        x: 0.0,
-        y: 0.0,
-        width: 1200.0,
-        height: 800.0,
-    };
-    let fine_bounds = datum_gui_protocol::SceneBounds {
-        min_x: 0,
-        min_y: 0,
-        max_x: 20_000_000,
-        max_y: 10_000_000,
-    };
-    let coarse_bounds = datum_gui_protocol::SceneBounds {
-        min_x: 0,
-        min_y: 0,
-        max_x: 300_000_000,
-        max_y: 200_000_000,
-    };
-
-    let fine_projection = Projection::new(
-        viewport,
-        &fine_bounds,
-        CameraState::fit_to_bounds(&fine_bounds),
-    );
-    let coarse_projection = Projection::new(
-        viewport,
-        &coarse_bounds,
-        CameraState::fit_to_bounds(&coarse_bounds),
-    );
-
-    assert_eq!(detail_tier(&fine_projection), DetailTier::Fine);
-    assert_eq!(detail_tier(&coarse_projection), DetailTier::Coarse);
-}
-
-#[test]
 fn debug_datum_test_q1_q2_component_geometry() {
     let request = datum_gui_protocol::LiveReviewRequest {
         project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),

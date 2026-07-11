@@ -1012,24 +1012,11 @@ mod tests {
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
 
         assert!(
-            retained.world_hit_regions.iter().any(|region| {
+            retained.world_hit_index.regions().iter().any(|region| {
                 matches!(&region.target, HitTarget::AuthoredObject(id) if id == &pad.object_id)
             }),
             "pad hit region should select the pad object for read-only inspection"
         );
-    }
-
-    #[test]
-    fn polygon_hit_shape_contains_zone_interior_only() {
-        let polygon = vec![
-            PointNm { x: 0, y: 0 },
-            PointNm { x: 100, y: 0 },
-            PointNm { x: 100, y: 100 },
-            PointNm { x: 0, y: 100 },
-        ];
-
-        assert!(point_in_polygon_world(&polygon, PointNm { x: 50, y: 50 }));
-        assert!(!point_in_polygon_world(&polygon, PointNm { x: 150, y: 50 }));
     }
 
     #[test]

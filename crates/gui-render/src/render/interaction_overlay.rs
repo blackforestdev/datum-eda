@@ -273,7 +273,8 @@ pub(crate) fn board_hover_bounds(
     id: &str,
 ) -> Option<datum_gui_protocol::RectNm> {
     retained
-        .world_hit_regions
+        .world_hit_index
+        .regions()
         .iter()
         .find(|region| match &region.target {
             HitTarget::AuthoredObject(target) | HitTarget::ReviewAction(target) => target == id,

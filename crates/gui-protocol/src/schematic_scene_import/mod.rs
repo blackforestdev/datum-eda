@@ -21,6 +21,34 @@ use layers::*;
 use power::*;
 use symbols::*;
 
+/// Typed interaction role attached by schematic projection. It describes the
+/// authored primitive independently from the active tool's selection policy.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SchematicHitKind {
+    Symbol,
+    Pin,
+    Wire,
+    Bus,
+    Label,
+    Junction,
+    NoConnect,
+}
+
+impl BoardGraphicPrimitive {
+    pub fn schematic_hit_kind(&self) -> Option<SchematicHitKind> {
+        match self.object_kind.as_str() {
+            "schematic_symbol" => Some(SchematicHitKind::Symbol),
+            "schematic_pin" => Some(SchematicHitKind::Pin),
+            "schematic_wire" => Some(SchematicHitKind::Wire),
+            "schematic_bus" => Some(SchematicHitKind::Bus),
+            "schematic_label" => Some(SchematicHitKind::Label),
+            "schematic_junction" => Some(SchematicHitKind::Junction),
+            "schematic_no_connect" => Some(SchematicHitKind::NoConnect),
+            _ => None,
+        }
+    }
+}
+
 pub fn load_kicad_schematic_workspace_state(schematic_file: &Path) -> Result<ReviewWorkspaceState> {
     let source = schematic_file.canonicalize().with_context(|| {
         format!(
@@ -93,6 +121,7 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     let mut points = Vec::new();
     let mut text = SchematicTextSink::default();
     push_root_sheet_graphics(root_sheet, &schematic, &mut graphics, &mut points, &mut text);
+    tag_schematic_hit_kinds(root_sheet, &mut graphics);
     let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
     // P2.2f: the schematic pane has NO sheet border (the prototype draws none), so
     // the projection no longer emits the gold `Edge.Cuts` padded-bounds frame. The
@@ -129,6 +158,41 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     scene.source_revision = format!("schematic:{project_uuid}:sheet:{sheet_uuid}");
     scene.layers = schematic_scene_layers();
     Ok((scene, schematic_file.to_path_buf()))
+}
+
+/// Attach explicit interaction metadata while the typed schematic model is still
+/// available. Consumers never need to reverse-engineer identities or layer names.
+fn tag_schematic_hit_kinds(sheet: &Sheet, graphics: &mut [BoardGraphicPrimitive]) {
+    let mut kinds = std::collections::BTreeMap::new();
+    for wire in sheet.wires.values() {
+        kinds.insert(wire.uuid.to_string(), "schematic_wire");
+    }
+    for bus in sheet.buses.values() {
+        kinds.insert(bus.uuid.to_string(), "schematic_bus");
+    }
+    for symbol in sheet.symbols.values() {
+        kinds.insert(symbol.uuid.to_string(), "schematic_symbol");
+        for pin in &symbol.pins {
+            kinds.insert(pin.uuid.to_string(), "schematic_pin");
+        }
+    }
+    for label in sheet.labels.values() {
+        kinds.insert(label.uuid.to_string(), "schematic_label");
+    }
+    for port in sheet.ports.values() {
+        kinds.insert(port.uuid.to_string(), "schematic_label");
+    }
+    for junction in sheet.junctions.values() {
+        kinds.insert(junction.uuid.to_string(), "schematic_junction");
+    }
+    for marker in sheet.noconnects.values() {
+        kinds.insert(marker.uuid.to_string(), "schematic_no_connect");
+    }
+    for graphic in graphics {
+        if let Some(kind) = kinds.get(&graphic.source_object_uuid) {
+            graphic.object_kind = (*kind).to_string();
+        }
+    }
 }
 
 fn root_sheet(schematic: &Schematic) -> Option<&Sheet> {

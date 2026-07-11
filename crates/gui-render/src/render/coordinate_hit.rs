@@ -10,9 +10,8 @@
 //   * `RetainedScene::hit_test_authored_world` (board, filtered) and
 //     `hit_test_world` (schematic, unfiltered) — one scan core, so the board path
 //     stays byte-identical while the schematic surface gets a filter-free twin.
-//   * `push_schematic_symbol_hit_regions` — the schematic pane's first-ever hit
-//     regions, one per placed symbol, tagged with the symbol's stable projected
-//     identity (mirroring how the board tags authored objects).
+//   * `push_schematic_hit_regions` — typed retained regions for the schematic
+//     primitives that participate in editor interaction.
 //
 // It is a real `#[path] mod` child of the crate root (declared in `scene.rs`), so
 // as a DESCENDANT of the module that defines them it can still reach the private
@@ -21,6 +20,24 @@
 // out to keep `scene.rs` under its ceiling with real (non-`include!`) extraction.
 
 use super::*;
+
+pub(crate) fn surface_pane_ids(
+    shell: &ShellLayout,
+    layout: &datum_gui_protocol::WorkspaceLayout,
+) -> (datum_gui_protocol::PaneId, Option<datum_gui_protocol::PaneId>) {
+    let panes = shell.viewport_panes(layout);
+    let pane_for = |content| {
+        panes
+            .panes
+            .iter()
+            .find(|pane| pane.content == content)
+            .map(|pane| pane.id)
+    };
+    (
+        pane_for(datum_gui_protocol::PaneContent::Board).unwrap_or(layout.focused),
+        pane_for(datum_gui_protocol::PaneContent::Schematic),
+    )
+}
 
 impl PreparedScene {
     /// Resolve a screen point to a world point in the pane that contains it, and
@@ -35,16 +52,59 @@ impl PreparedScene {
         if self.scene_viewport.contains(x, y) {
             let board_field = inset_rect(self.scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(board_field, &self.scene_bounds, self.camera);
-            return Some((projection.screen_to_world(x, y), SceneSurface::Board));
+            let viewport = editor_viewport(
+                self.board_pane_id,
+                SceneSurface::Board,
+                &projection,
+            );
+            return viewport
+                .screen_to_world(datum_gui_protocol::ScreenPointPx { x, y })
+                .map(|point| (point, SceneSurface::Board));
         }
         if let Some(schematic_viewport) = self.schematic_scene_viewport
             && schematic_viewport.contains(x, y)
         {
             let field = inset_rect(schematic_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(field, &self.schematic_bounds, self.schematic_camera);
-            return Some((projection.screen_to_world(x, y), SceneSurface::Schematic));
+            let viewport = editor_viewport(
+                self.schematic_pane_id.unwrap_or(self.board_pane_id),
+                SceneSurface::Schematic,
+                &projection,
+            );
+            return viewport
+                .screen_to_world(datum_gui_protocol::ScreenPointPx { x, y })
+                .map(|point| (point, SceneSurface::Schematic));
         }
         None
+    }
+}
+
+fn editor_viewport(
+    pane_id: datum_gui_protocol::PaneId,
+    surface: SceneSurface,
+    projection: &Projection,
+) -> datum_gui_viewport::EditorViewport {
+    datum_gui_viewport::EditorViewport {
+        pane_id,
+        surface: match surface {
+            SceneSurface::Board => datum_gui_protocol::PaneContent::Board,
+            SceneSurface::Schematic => datum_gui_protocol::PaneContent::Schematic,
+        },
+        screen: datum_gui_viewport::ScreenRectPx {
+            x: projection.viewport.x,
+            y: projection.viewport.y,
+            width: projection.viewport.width,
+            height: projection.viewport.height,
+        },
+        world: datum_gui_protocol::RectNm {
+            min_x: projection.bounds.min_x,
+            min_y: projection.bounds.min_y,
+            max_x: projection.bounds.max_x,
+            max_y: projection.bounds.max_y,
+        },
+        scale_px_per_nm: projection.scale,
+        offset_x_px: projection.offset_x,
+        offset_y_px: projection.offset_y,
     }
 }
 
@@ -87,61 +147,42 @@ impl RetainedScene {
         point: PointNm,
         layer_pass: impl Fn(&WorldHitRegion) -> bool,
     ) -> Option<&HitTarget> {
-        self.world_hit_regions
-            .iter()
-            .rev()
-            .find(|region| layer_pass(region) && region.shape.contains(point))
-            .map(|region| &region.target)
+        self.world_hit_index.hit_test(point, layer_pass).target
     }
 }
 
-impl WorldHitShape {
-    fn contains(&self, point: PointNm) -> bool {
-        match self {
-            Self::Rect(rect) => point_in_rect(point, *rect),
-            Self::Polyline {
-                path,
-                half_width_nm,
-            } => polyline_contains_world_point(path, point, *half_width_nm),
-            Self::Polygon(path) => point_in_polygon_world(path, point),
-            Self::Circle { center, radius_nm } => {
-                let dx = point.x as f32 - center.x as f32;
-                let dy = point.y as f32 - center.y as f32;
-                dx * dx + dy * dy <= radius_nm * radius_nm
-            }
-        }
-    }
-}
-
-/// Emit one selectable world hit region per placed schematic SYMBOL from the
-/// projected schematic scene (S3 / UVT-004 — the schematic pane's first hit
-/// regions). Symbol bodies project as `board_graphics` whose `object_id` is
-/// `schematic-symbol:<uuid>` — the stable projected identity, the schematic
-/// mirror of a board authored object's `object_id`. The pin lines/terminals carry
-/// the distinct `schematic-symbol-pin*` ids and are deliberately NOT hit targets
-/// this slice (symbols are the required S5/S7 target; wires/labels may follow).
-/// The body outline is an axis-aligned rectangle, so its path bounding box is an
-/// exact hit rect — the same `WorldHitShape::Rect` the board uses for a component
-/// body, so no parallel hit model is introduced.
-pub(crate) fn push_schematic_symbol_hit_regions(
+/// Emit retained shapes from explicit schematic interaction metadata. Selection
+/// eligibility remains a tool concern; hit construction covers ordinary symbols,
+/// pins, wires, buses, labels, junctions, and no-connect markers.
+pub(crate) fn push_schematic_hit_regions(
     out: &mut Vec<WorldHitRegion>,
     scene: &BoardReviewSceneV1,
 ) {
     for graphic in &scene.board_graphics {
-        if !graphic.object_id.starts_with("schematic-symbol:") {
-            continue;
-        }
-        let Some(bounds) = bounding_rect_nm(&graphic.path) else {
+        let Some(kind) = graphic.schematic_hit_kind() else {
             continue;
         };
+        if graphic.path.is_empty() {
+            continue;
+        }
+        let width = graphic.width_nm.unwrap_or(100_000) as f32;
+        let shape = match kind {
+            datum_gui_protocol::SchematicHitKind::Symbol
+            | datum_gui_protocol::SchematicHitKind::Label => {
+                WorldHitShape::Rect(bounding_rect_nm(&graphic.path).expect("non-empty path"))
+            }
+            datum_gui_protocol::SchematicHitKind::Junction if graphic.path.len() >= 3 => {
+                WorldHitShape::Polygon(graphic.path.clone())
+            }
+            _ => WorldHitShape::Polyline {
+                path: graphic.path.clone(),
+                half_width_nm: (width * 0.5).max(150_000.0),
+            },
+        };
         out.push(WorldHitRegion {
-            // Tag with the symbol's projected identity, exactly as the board tags
-            // its authored objects — so S5 selection routes the same way.
             target: HitTarget::AuthoredObject(graphic.object_id.clone()),
-            // Schematic layers are always visible; `hit_test_world` does not filter,
-            // and `None` keeps the region live under any (board) layer predicate too.
             layer_id: None,
-            shape: WorldHitShape::Rect(bounds),
+            shape,
         });
     }
 }
@@ -256,16 +297,48 @@ mod coordinate_hit_tests {
         let retained = RetainedScene::from_workspace_schematic_for_surface(&state, 1600, 1000, 1.0)
             .expect("a Schematic pane + projected scene must yield a retained scene");
         assert!(
-            !retained.world_hit_regions.is_empty(),
+            !retained.world_hit_index.regions().is_empty(),
             "projected schematic symbols must emit world hit regions (was always empty pre-S3)"
         );
-        assert!(
-            retained.world_hit_regions.iter().all(|region| matches!(
-                &region.target,
-                HitTarget::AuthoredObject(id) if id.starts_with("schematic-symbol:")
-            )),
-            "every schematic hit region targets a symbol identity"
-        );
+        let targets: std::collections::BTreeSet<_> = retained
+            .world_hit_index
+            .regions()
+            .iter()
+            .filter_map(|region| match &region.target {
+                HitTarget::AuthoredObject(id) => Some(id.as_str()),
+                _ => None,
+            })
+            .collect();
+        let schematic = state
+            .schematic_scene
+            .as_ref()
+            .expect("fixture must retain its projected schematic scene");
+        let eligible: Vec<_> = schematic
+            .board_graphics
+            .iter()
+            .filter(|graphic| graphic.schematic_hit_kind().is_some())
+            .collect();
+        assert!(!eligible.is_empty(), "typed hit metadata must not be vacuous");
+        for graphic in eligible {
+            assert!(
+                targets.contains(graphic.object_id.as_str()),
+                "typed schematic primitive {} must have a hit region",
+                graphic.object_id
+            );
+        }
+        for expected in [
+            datum_gui_protocol::SchematicHitKind::Symbol,
+            datum_gui_protocol::SchematicHitKind::Pin,
+            datum_gui_protocol::SchematicHitKind::Wire,
+        ] {
+            assert!(
+                schematic
+                    .board_graphics
+                    .iter()
+                    .any(|graphic| graphic.schematic_hit_kind() == Some(expected)),
+                "simple schematic must exercise {expected:?} metadata"
+            );
+        }
     }
 
     /// (b) A screen point inside the SCHEMATIC pane resolves to a world point via
@@ -415,7 +488,8 @@ mod coordinate_hit_tests {
         let mut state = schematic_workspace_state();
         let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
         let board_id = board
-            .world_hit_regions
+            .world_hit_index
+            .regions()
             .iter()
             .find_map(|region| match &region.target {
                 HitTarget::AuthoredObject(id) | HitTarget::ReviewAction(id) => Some(id.clone()),
