@@ -340,7 +340,11 @@ pub(super) fn terminal_launch_context_from_state(
         selection_context: DatumSelectionContext::from_selection(&state.selection),
         cursor_context: DatumCursorContext {
             screen_px: None,
-            hovered_object_id: state.ui.hovered_object_id.clone(),
+            hovered_object_id: state
+                .ui
+                .hovered_object
+                .as_ref()
+                .map(|hover| hover.object_id.clone()),
             active_dock_tab: state
                 .ui
                 .active_dock_tab

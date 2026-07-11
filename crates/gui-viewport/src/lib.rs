@@ -7,18 +7,22 @@
 //! the decision-014 compile-time fence: the engine, daemon, protocol, and
 //! persisted formats never depend on it (UVT-002).
 //!
-//! ## Slices S0 → S1a
+//! ## Landed slices
 //!
 //! S0 landed the [`WeightClass`] stroke model (spec §4) plus the
 //! [`ViewportProfile`] / [`GridConfig`] scaffold (spec §1.3, §5). S1a lands the
 //! first real mechanism and first consumer wiring: the shared
 //! [`grid::GridEngine`] (spec §5), onto which gui-render's board grid repoints
-//! byte-identically. The crate stays std-only (UVT-002).
+//! byte-identically. S4 adds [`InteractionEngine`] plus typed per-surface hover
+//! and cursor policy. Its only non-std boundary dependency is consumer-side GUI
+//! protocol state (UVT-002).
 
 pub mod grid;
+pub mod interaction;
 pub mod profile;
 pub mod stroke;
 
 pub use grid::{AxisProjection, GridBounds, GridEngine, GridLine, GridViewport};
-pub use profile::{GridConfig, GridMode, GridTier, ViewportProfile};
+pub use interaction::InteractionEngine;
+pub use profile::{CursorConfig, GridConfig, GridMode, GridTier, HoverConfig, ViewportProfile};
 pub use stroke::WeightClass;

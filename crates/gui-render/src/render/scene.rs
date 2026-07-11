@@ -6,7 +6,7 @@
 // this physical file (`src/render/`), not the include! host.
 #[path = "coordinate_hit.rs"]
 mod coordinate_hit;
-pub use coordinate_hit::{resolve_pane_hover, PaneHover};
+pub use coordinate_hit::resolve_pane_hover;
 
 // S4 immediate interaction overlays (hover pre-highlight + cursor crosshair) and
 // the extracted segmented status-bar renderer. Both are real `#[path] mod`
@@ -46,6 +46,7 @@ impl PreparedScene {
         let mut menu_overlay_text_runs = Vec::new();
         let mut viewport_underlay_quads = Vec::new();
         let mut viewport_overlay_quads = Vec::new();
+        let mut board_interaction_quads = Vec::new();
         let mut text_runs = Vec::new();
         let mut hit_regions = Vec::new();
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
@@ -58,27 +59,25 @@ impl PreparedScene {
             .scene_leaf()
             .is_some();
 
-        // S4 HoverEngine: resolve the hovered object's world bbox in the surface it
-        // belongs to. The projected id namespace already encodes the surface — a
-        // schematic symbol body is tagged `schematic-symbol:<uuid>` — so hover is
-        // routed to the right pane's camera without a redundant stored surface
-        // field. `None` (nothing hovered) in the offscreen capture, so the hover
-        // rings are empty and the board frame stays byte-identical.
-        let hovered_id = state.ui.hovered_object_id.as_deref();
-        let board_hover_bounds = hovered_id
-            .filter(|id| !id.starts_with(interaction_overlay::SCHEMATIC_SYMBOL_PREFIX))
-            .and_then(|id| interaction_overlay::board_hover_bounds(retained_scene, id));
-        let schematic_hover_bounds = hovered_id
-            .filter(|id| id.starts_with(interaction_overlay::SCHEMATIC_SYMBOL_PREFIX))
-            .and_then(|id| {
-                state
-                    .schematic_scene
-                    .as_ref()
-                    .and_then(|scene| interaction_overlay::schematic_symbol_bounds(scene, id))
-            });
+        // Route hover by its typed pane ownership. Object identifiers remain
+        // opaque; adding a new object kind cannot silently move it to Board.
+        let board_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Board)
+                .then(|| interaction_overlay::board_hover_bounds(retained_scene, &hover.object_id))
+                .flatten()
+        });
+        let schematic_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Schematic)
+                .then(|| {
+                    state.schematic_scene.as_ref().and_then(|scene| {
+                        interaction_overlay::schematic_symbol_bounds(scene, &hover.object_id)
+                    })
+                })
+                .flatten()
+        });
         // S4 cursor crosshair (decision 023 UVT-005): live cursor in device-pixel
         // SCREEN space + user-selected style; `None` in capture stays byte-identical.
-        let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x as f32, p.y as f32));
+        let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x, p.y));
         let crosshair_style = state.ui.crosshair_style;
 
         panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
@@ -133,7 +132,7 @@ impl PreparedScene {
             let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
             interaction_overlay::push_pane_interaction(
-                &mut viewport_overlay_quads,
+                &mut board_interaction_quads,
                 &board_projection,
                 scene_viewport,
                 board_hover_bounds,
@@ -156,6 +155,7 @@ impl PreparedScene {
         let menu_overlay_vertices = quads_to_vertices(&menu_overlay_quads);
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
+        let board_interaction_vertices = quads_to_vertices(&board_interaction_quads);
         let visible_world_ranges = if board_scene_active {
             retained_scene.visible_world_ranges(state)
         } else {
@@ -192,7 +192,12 @@ impl PreparedScene {
         // S4: the schematic grid + interaction overlays share ONE immediate
         // screen-space underlay buffer (spec §1.2 / S1b), rebuilt against the pane's
         // warm camera in `set_schematic_camera` so grid weight + crosshair track it.
-        let schematic_underlay_vertices = interaction_overlay::build_schematic_underlay_vertices(
+        let schematic_underlay_vertices = interaction_overlay::build_schematic_grid_vertices(
+            schematic_scene_viewport,
+            &schematic_bounds,
+            schematic_camera,
+        );
+        let schematic_overlay_vertices = interaction_overlay::build_schematic_interaction_vertices(
             schematic_scene_viewport,
             &schematic_bounds,
             schematic_camera,
@@ -212,6 +217,7 @@ impl PreparedScene {
             menu_overlay_text_runs,
             viewport_underlay_vertices,
             viewport_overlay_vertices,
+            board_interaction_vertices,
             visible_world_ranges,
             text_runs,
             schematic_scene_viewport,
@@ -221,38 +227,18 @@ impl PreparedScene {
             crosshair_cursor_screen,
             crosshair_style,
             schematic_underlay_vertices,
+            schematic_overlay_vertices,
         }
     }
 
-    /// Override the companion schematic pass camera (P2.2d — interactive schematic
-    /// camera). Construction seeds `schematic_camera` with fit-to-schematic-bounds
-    /// (the INITIAL framing, byte-identical to the pre-P2.2d static fit); the
-    /// gui-app supplies the schematic pane's WARM camera here so the owner's
-    /// pan/zoom on the focused schematic pane persists frame-to-frame, exactly like
-    /// the board camera. A no-op when the layout has no schematic pass (the field
-    /// is never read — see `schematic_scene_viewport`). Only the gui-app render/
-    /// capture path calls this; the golden/test path keeps the fit default.
-    pub fn set_schematic_camera(&mut self, camera: CameraState) {
-        self.schematic_camera = camera;
-        // S4: the schematic grid + interaction overlays are immediate screen-space
-        // and must track the warm camera, so rebuild the shared underlay against it
-        // (the S1b grid alone did this implicitly by living in gpu.rs; now the whole
-        // underlay is prepared here so the hover ring/crosshair follow the same
-        // camera). Empty of interaction quads when cursor/hover are absent.
-        self.schematic_underlay_vertices = interaction_overlay::build_schematic_underlay_vertices(
-            self.schematic_scene_viewport,
-            &self.schematic_bounds,
-            self.schematic_camera,
-            self.schematic_hover_bounds_nm,
-            self.crosshair_cursor_screen,
-            self.crosshair_style,
-        );
-    }
-
-    /// The immediate screen-space schematic underlay (grid + S4 interaction
-    /// overlays), uploaded and drawn scissored to the schematic pane in gpu.rs.
+    /// The immediate pre-world schematic grid underlay. S4 interaction chrome
+    /// uses a separate post-world buffer with the same pane scissor.
     fn schematic_underlay_vertices(&self) -> &[Vertex] {
         &self.schematic_underlay_vertices
+    }
+
+    fn schematic_overlay_vertices(&self) -> &[Vertex] {
+        &self.schematic_overlay_vertices
     }
 
     pub fn hit_test(&self, x: f32, y: f32) -> Option<&HitTarget> {
@@ -295,6 +281,10 @@ impl PreparedScene {
 
     fn viewport_overlay_vertices(&self) -> &[Vertex] {
         &self.viewport_overlay_vertices
+    }
+
+    fn board_interaction_vertices(&self) -> &[Vertex] {
+        &self.board_interaction_vertices
     }
 
     fn visible_world_ranges(&self) -> &[Range<u32>] {
@@ -577,11 +567,17 @@ fn render_phase1_shell_chrome(
     let rev_label = if short_rev.is_empty() {
         truncate_text(&state.scene.project_name, 30)
     } else {
-        format!("{} \u{00B7} rev {}", truncate_text(&state.scene.project_name, 24), short_rev)
+        format!(
+            "{} \u{00B7} rev {}",
+            truncate_text(&state.scene.project_name, 24),
+            short_rev
+        )
     };
-    let rev_text_w =
-        estimated_text_run_width_px(&rev_label, design_tokens::typography::DATA_SIZE, TextFace::Mono)
-            - 16.0;
+    let rev_text_w = estimated_text_run_width_px(
+        &rev_label,
+        design_tokens::typography::DATA_SIZE,
+        TextFace::Mono,
+    ) - 16.0;
     let pill_pad_x = design_tokens::spacing::SP_03;
     let pill_pad_y = design_tokens::spacing::SP_02;
     let pill_h = design_tokens::typography::DATA_SIZE + pill_pad_y * 2.0;
@@ -666,7 +662,6 @@ fn render_scene(
     let _ = layout;
 }
 
-
 fn push_scene_underlay(
     out: &mut Vec<Quad>,
     scene: &BoardReviewSceneV1,
@@ -746,11 +741,9 @@ fn is_hovered(state: &ReviewWorkspaceState, object_id: &str) -> bool {
     if !matches!(state.selection, SelectionTarget::None) {
         return false;
     }
-    state
-        .ui
-        .hovered_object_id
-        .as_deref()
-        .is_some_and(|id| id == object_id)
+    state.ui.hovered_object.as_ref().is_some_and(|hover| {
+        hover.surface == datum_gui_protocol::PaneContent::Board && hover.object_id == object_id
+    })
 }
 
 fn unrouted_matches_active_action(
@@ -844,4 +837,3 @@ fn component_object_id_for_uuid<'a>(
         (component.component_uuid == component_uuid).then_some(component.object_id.as_str())
     })
 }
-

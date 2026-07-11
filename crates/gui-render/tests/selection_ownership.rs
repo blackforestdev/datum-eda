@@ -10,7 +10,9 @@
 
 use std::path::PathBuf;
 
-use datum_gui_protocol::{LiveReviewRequest, RectNm, ReviewWorkspaceState, SelectionTarget};
+use datum_gui_protocol::{
+    HoverTarget, LiveReviewRequest, PaneContent, RectNm, ReviewWorkspaceState, SelectionTarget,
+};
 use datum_gui_render::{RetainedScene, Vertex};
 
 fn datum_test_request() -> LiveReviewRequest {
@@ -226,7 +228,10 @@ fn datum_test_hover_is_preview_only_and_does_not_overwrite_selection() {
     state.select_authored_object(&q2_object_id);
     let selected_only = RetainedScene::from_workspace(&state, 1280, 800);
 
-    state.ui.hovered_object_id = Some(c1_object_id);
+    state.ui.hovered_object = Some(HoverTarget {
+        object_id: c1_object_id,
+        surface: PaneContent::Board,
+    });
     let selected_with_hover = RetainedScene::from_workspace(&state, 1280, 800);
 
     assert_eq!(

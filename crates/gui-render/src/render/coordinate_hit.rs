@@ -164,18 +164,7 @@ fn bounding_rect_nm(path: &[PointNm]) -> Option<datum_gui_protocol::RectNm> {
     })
 }
 
-/// The hover resolved for the pane a screen point lands in (S4 HoverEngine): the
-/// hovered object's identity, the surface it lives on, and the live cursor while it
-/// is over any scene surface. All fields are `None` off every scene pane (over
-/// chrome), so the caller clears hover + crosshair state.
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct PaneHover {
-    pub object_id: Option<String>,
-    pub surface: Option<datum_gui_protocol::PaneContent>,
-    pub cursor: Option<(f32, f32)>,
-}
-
-/// Resolve hover for the FOCUSED/containing pane at screen point `(x, y)`, in that
+/// Resolve hover for the pointer-containing pane at screen point `(x, y)`, in that
 /// pane's OWN camera/space (UVT-004): screen→world picks the surface, then the
 /// matching per-pane world hit-test names the object. This is the per-surface hover
 /// S4 unblocks — a schematic-pane cursor over a symbol now resolves that symbol's
@@ -189,7 +178,7 @@ pub fn resolve_pane_hover(
     state: &ReviewWorkspaceState,
     x: f32,
     y: f32,
-) -> PaneHover {
+) -> datum_gui_protocol::ViewportInteraction {
     let hit_id = |target: Option<&HitTarget>| match target {
         Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id.clone()),
         _ => None,
@@ -197,26 +186,27 @@ pub fn resolve_pane_hover(
     match prepared.world_point_at_screen(x, y) {
         Some((world_point, SceneSurface::Board)) => {
             let object_id = hit_id(board_retained.hit_test_authored_world(world_point, state));
-            PaneHover {
-                surface: object_id
-                    .is_some()
-                    .then_some(datum_gui_protocol::PaneContent::Board),
+            datum_gui_viewport::InteractionEngine::resolve(
+                datum_gui_protocol::PaneContent::Board,
+                datum_gui_protocol::ScreenPointPx { x, y },
                 object_id,
-                cursor: Some((x, y)),
-            }
+                datum_gui_viewport::HoverConfig::default(),
+                datum_gui_viewport::CursorConfig::default(),
+            )
         }
         Some((world_point, SceneSurface::Schematic)) => {
-            let object_id =
-                hit_id(schematic_retained.and_then(|retained| retained.hit_test_world(world_point)));
-            PaneHover {
-                surface: object_id
-                    .is_some()
-                    .then_some(datum_gui_protocol::PaneContent::Schematic),
+            let object_id = hit_id(
+                schematic_retained.and_then(|retained| retained.hit_test_world(world_point)),
+            );
+            datum_gui_viewport::InteractionEngine::resolve(
+                datum_gui_protocol::PaneContent::Schematic,
+                datum_gui_protocol::ScreenPointPx { x, y },
                 object_id,
-                cursor: Some((x, y)),
-            }
+                datum_gui_viewport::HoverConfig::default(),
+                datum_gui_viewport::CursorConfig::default(),
+            )
         }
-        None => PaneHover::default(),
+        None => datum_gui_viewport::InteractionEngine::clear(),
     }
 }
 
@@ -361,7 +351,8 @@ mod coordinate_hit_tests {
     fn schematic_cursor_over_symbol_resolves_symbol_identity() {
         let state = schematic_workspace_state();
         let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
-        let schematic = RetainedScene::from_workspace_schematic_for_surface(&state, 1600, 1000, 1.0);
+        let schematic =
+            RetainedScene::from_workspace_schematic_for_surface(&state, 1600, 1000, 1.0);
         let prepared = prepared_for(&state, &board);
 
         let (symbol_id, symbol_center) = {
@@ -382,11 +373,14 @@ mod coordinate_hit_tests {
 
         let hover = resolve_pane_hover(&prepared, &board, schematic.as_ref(), &state, sx, sy);
         assert_eq!(
-            hover.object_id.as_deref(),
+            hover.hover.as_ref().map(|target| target.object_id.as_str()),
             Some(symbol_id.as_str()),
             "a schematic-pane cursor over a symbol resolves that symbol's identity"
         );
-        assert_eq!(hover.surface, Some(datum_gui_protocol::PaneContent::Schematic));
+        assert_eq!(
+            hover.hover.map(|target| target.surface),
+            Some(datum_gui_protocol::PaneContent::Schematic)
+        );
     }
 
     /// S4 (b, schematic): hovering a schematic symbol emits the class-A hover
@@ -397,17 +391,20 @@ mod coordinate_hit_tests {
         let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
 
         let baseline = prepared_for(&state, &board);
-        let base_rings = count_color(baseline.schematic_underlay_vertices(), HOVER_HIGHLIGHT);
+        let base_rings = count_color(baseline.schematic_overlay_vertices(), HOVER_HIGHLIGHT);
 
         let symbol_id = {
             let scene = state.schematic_scene.as_ref().unwrap();
             first_symbol(scene).0.to_string()
         };
-        state.ui.hovered_object_id = Some(symbol_id);
+        state.ui.hovered_object = Some(datum_gui_protocol::HoverTarget {
+            object_id: symbol_id,
+            surface: datum_gui_protocol::PaneContent::Schematic,
+        });
         let hovered = prepared_for(&state, &board);
         assert!(
-            count_color(hovered.schematic_underlay_vertices(), HOVER_HIGHLIGHT) > base_rings,
-            "a hovered schematic symbol adds a hover ring to the schematic underlay"
+            count_color(hovered.schematic_overlay_vertices(), HOVER_HIGHLIGHT) > base_rings,
+            "a hovered schematic symbol adds a hover ring to the schematic overlay"
         );
     }
 
@@ -426,12 +423,41 @@ mod coordinate_hit_tests {
             })
             .expect("the board fixture must expose at least one hoverable object");
 
-        let base_rings = count_color(prepared_for(&state, &board).viewport_overlay_vertices(), HOVER_HIGHLIGHT);
-        state.ui.hovered_object_id = Some(board_id);
+        let base_rings = count_color(
+            prepared_for(&state, &board).board_interaction_vertices(),
+            HOVER_HIGHLIGHT,
+        );
+        state.ui.hovered_object = Some(datum_gui_protocol::HoverTarget {
+            object_id: board_id,
+            surface: datum_gui_protocol::PaneContent::Board,
+        });
         let hovered = prepared_for(&state, &board);
         assert!(
-            count_color(hovered.viewport_overlay_vertices(), HOVER_HIGHLIGHT) > base_rings,
+            count_color(hovered.board_interaction_vertices(), HOVER_HIGHLIGHT) > base_rings,
             "a hovered board object adds a hover ring to the board overlay"
         );
+    }
+
+    /// Cursor motion is a high-frequency overlay update. It must neither resolve
+    /// authored geometry again nor disturb static prepared buffers.
+    #[test]
+    fn interaction_refresh_preserves_retained_and_static_scene_work() {
+        let mut state = schematic_workspace_state();
+        let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
+        let mut prepared = prepared_for(&state, &board);
+        let resolves_before = retained_scene_resolve_count();
+        let world_ranges_before = prepared.visible_world_ranges.clone();
+        let grid_before = prepared.schematic_underlay_vertices.clone();
+
+        state.ui.cursor_pos = Some(datum_gui_protocol::ScreenPointPx { x: 320.0, y: 240.0 });
+        prepared.refresh_interaction(&state, &board);
+
+        assert_eq!(
+            retained_scene_resolve_count(),
+            resolves_before,
+            "pointer chrome must not resolve retained world geometry"
+        );
+        assert_eq!(prepared.visible_world_ranges, world_ranges_before);
+        assert_eq!(prepared.schematic_underlay_vertices, grid_before);
     }
 }

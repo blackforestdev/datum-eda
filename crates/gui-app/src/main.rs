@@ -3,11 +3,12 @@ use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
 use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
-    BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
-    MarkingMenuState, PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent,
-    TerminalCommandHandoff, WorkspaceTool, ensure_known_good_demo_request,
-    load_board_editor_workspace_state, load_kicad_schematic_workspace_state,
-    load_live_workspace_state, materialize_kicad_board_request,
+    BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, HoverTarget, LiveDesignSession,
+    LiveReviewRequest, MarkingMenuState, PaneContent, PointNm, RectNm, SceneBounds, SessionCommand,
+    SessionEvent, TerminalCommandHandoff, WorkspaceTool,
+    ensure_known_good_demo_request, load_board_editor_workspace_state,
+    load_kicad_schematic_workspace_state, load_live_workspace_state,
+    materialize_kicad_board_request,
 };
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
@@ -34,6 +35,7 @@ mod app_shell;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
+mod interaction_refresh;
 mod pane_cameras;
 mod pane_resize;
 mod production_status_refresh;
@@ -270,9 +272,10 @@ impl ApplicationHandler for App {
         event: WindowEvent,
     ) {
         if let Some(window) = self.window
-            && window.id() != window_id {
-                return;
-            }
+            && window.id() != window_id
+        {
+            return;
+        }
         if let Some(label) = window_event_diagnostic_label(&event) {
             append_gui_verbose_diagnostic_line(format!("window event {label}"));
         }
@@ -319,6 +322,18 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(focused) => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.report_terminal_focus_event(focused);
+                    if !focused && runtime.clear_interaction_overlay() {
+                        self.request_redraw_if_needed();
+                    }
+                }
+            }
+            WindowEvent::CursorLeft { .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.last_cursor_pos = None;
+                    if runtime.clear_interaction_overlay() {
+                        self.request_redraw_if_needed();
+                    }
+                    self.apply_cursor(None);
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
@@ -326,6 +341,7 @@ impl ApplicationHandler for App {
                     let next_pos = (position.x as f32, position.y as f32);
                     runtime.last_cursor_pos = Some(next_pos);
                     if runtime.report_terminal_mouse_motion() {
+                        runtime.clear_interaction_overlay();
                         self.request_redraw_if_needed();
                         return;
                     }
@@ -348,6 +364,8 @@ impl ApplicationHandler for App {
                     {
                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
                         changed = runtime.update_hover(next_pos) || changed;
+                    } else {
+                        changed = runtime.clear_interaction_overlay() || changed;
                     }
                     // Resize-cursor affordance: read the divider orientation under
                     // the cursor (or the active drag's) before the runtime borrow
@@ -649,8 +667,7 @@ impl ApplicationHandler for App {
                         return;
                     }
                     // Clear input first; only close dock if input is already empty.
-                    let input_was_empty =
-                        runtime.current_dock_input().is_none_or(|s| s.is_empty());
+                    let input_was_empty = runtime.current_dock_input().is_none_or(|s| s.is_empty());
                     if input_was_empty {
                         if runtime.close_active_dock() {
                             self.request_redraw_if_needed();
@@ -895,10 +912,11 @@ impl ApplicationHandler for App {
                 ..
             } if text.eq_ignore_ascii_case("f") => {
                 if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none() {
-                        runtime.fit_camera();
-                        self.request_redraw_if_needed();
-                    }
+                    && runtime.workspace().ui.active_dock_tab.is_none()
+                {
+                    runtime.fit_camera();
+                    self.request_redraw_if_needed();
+                }
             }
             WindowEvent::KeyboardInput {
                 event:
@@ -1700,20 +1718,6 @@ impl Runtime {
         }
     }
 
-    fn cache_retained_scene(&mut self, key: RetainedSceneCacheKey, retained: RetainedScene) {
-        if let Some(index) = self
-            .retained_scene_cache
-            .iter()
-            .position(|(cached_key, _)| cached_key == &key)
-        {
-            self.retained_scene_cache.remove(index);
-        }
-        self.retained_scene_cache.push((key, retained));
-        if self.retained_scene_cache.len() > RETAINED_SCENE_CACHE_LIMIT {
-            self.retained_scene_cache.remove(0);
-        }
-    }
-
     fn restore_cached_retained_scene(&mut self) -> bool {
         let key = self.retained_scene_cache_key();
         if let Some(index) = self
@@ -1726,30 +1730,6 @@ impl Runtime {
             return true;
         }
         false
-    }
-
-    fn invalidate_scene_for_session_change(&mut self, previous_key: RetainedSceneCacheKey) {
-        if let Some(retained) = self.retained_scene.take() {
-            self.cache_retained_scene(previous_key, retained);
-        }
-        self.prepared_scene = None;
-        self.schematic_retained_scene = None;
-        self.scene_dirty = true;
-        self.restore_cached_retained_scene();
-    }
-
-    fn invalidate_scene(&mut self) {
-        self.retained_scene = None;
-        self.retained_scene_cache.clear();
-        self.prepared_scene = None;
-        self.schematic_retained_scene = None;
-        self.scene_dirty = true;
-    }
-
-    fn invalidate_frame(&mut self) {
-        self.prepared_scene = None;
-        self.schematic_retained_scene = None;
-        self.scene_dirty = true;
     }
 
     fn push_terminal_line(&mut self, line: String) {
@@ -2621,7 +2601,10 @@ impl Runtime {
         {
             self.swap_pane_focus(|layout| layout.focused = pane_id);
             self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
-            self.trace_click(format!("primary click ({x:.1}, {y:.1}) focus-swapped to pane {}", pane_id.0));
+            self.trace_click(format!(
+                "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
+                pane_id.0
+            ));
             return true;
         }
         let prepared_started = std::time::Instant::now();
@@ -2742,7 +2725,7 @@ impl Runtime {
                     object_id.clone(),
                 ));
                 if handled {
-                    self.session.workspace_mut().ui.hovered_object_id = None;
+                    self.session.workspace_mut().ui.hovered_object = None;
                     self.log_review_event(format!("selected authored object {object_id}"));
                 }
                 handled
@@ -2765,7 +2748,11 @@ impl Runtime {
                                 finding,
                             )
                         });
-                    self.session.workspace_mut().ui.hovered_object_id = target.clone();
+                    self.session.workspace_mut().ui.hovered_object =
+                        target.clone().map(|object_id| HoverTarget {
+                            object_id,
+                            surface: PaneContent::Board,
+                        });
                     if let Some(target) = target {
                         let fit = self.fit_scene_object(&target);
                         self.log_review_event(format!(
@@ -3093,7 +3080,6 @@ impl Runtime {
             eprintln!("[datum-timing] {message}");
         }
     }
-
 }
 
 fn padded_rect_bounds(rect: RectNm, padding_nm: i64) -> SceneBounds {

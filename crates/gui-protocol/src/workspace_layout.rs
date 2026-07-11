@@ -7,7 +7,7 @@
 //! enter `commit()`/the design journal and are not typed design Operations. They
 //! project over the resolved model; they never mutate it.
 
-use crate::{ArtifactPreviewViewportState, PointNm, TerminalLaneState};
+use crate::{ArtifactPreviewViewportState, TerminalLaneState};
 use std::collections::BTreeMap;
 
 /// The user-selected cursor-crosshair presentation for every drawing surface
@@ -24,6 +24,35 @@ pub enum CrosshairStyle {
     Local,
     /// No cursor crosshair.
     None,
+}
+
+/// A position in window device-pixel coordinates.
+///
+/// This deliberately cannot be substituted for [`crate::PointNm`]: pointer
+/// input and immediate overlays are screen-space consumer state, while
+/// `PointNm` represents authored world geometry.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ScreenPointPx {
+    pub x: f32,
+    pub y: f32,
+}
+
+/// Typed ownership of the object currently under the pointer.
+///
+/// Keeping the surface beside the opaque object identifier prevents renderers
+/// from inferring ownership from identifier prefixes.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HoverTarget {
+    pub object_id: String,
+    pub surface: PaneContent,
+}
+
+/// Complete transient pointer state produced by the shared viewport
+/// interaction mechanism for one surface.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct ViewportInteraction {
+    pub cursor: Option<ScreenPointPx>,
+    pub hover: Option<HoverTarget>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -61,13 +90,13 @@ pub struct WorkspaceUiState {
     pub active_menu: Option<String>,
     pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
-    pub hovered_object_id: Option<String>,
+    pub hovered_object: Option<HoverTarget>,
     /// The live cursor position in DEVICE-PIXEL SCREEN space (not world nm),
-    /// stored in a `PointNm` per decision-023 spec §2. `None` when the cursor is
+    /// stored in its own screen-space type. `None` when the cursor is
     /// off-window — the offscreen visual-test capture, so the crosshair overlay
     /// stays empty and the board frame is byte-identical. Consumer/session state,
     /// never journaled (like camera or hover).
-    pub cursor_pos: Option<PointNm>,
+    pub cursor_pos: Option<ScreenPointPx>,
     /// The user-selected cursor-crosshair style (View menu). Session UI
     /// preference, never journaled; defaults to `FullViewport`.
     pub crosshair_style: CrosshairStyle,
@@ -343,7 +372,10 @@ impl WorkspaceLayout {
         if leaves.is_empty() {
             return;
         }
-        let idx = leaves.iter().position(|id| *id == self.focused).unwrap_or(0);
+        let idx = leaves
+            .iter()
+            .position(|id| *id == self.focused)
+            .unwrap_or(0);
         self.focused = leaves[(idx + 1) % leaves.len()];
     }
 
@@ -353,7 +385,10 @@ impl WorkspaceLayout {
         if leaves.is_empty() {
             return;
         }
-        let idx = leaves.iter().position(|id| *id == self.focused).unwrap_or(0);
+        let idx = leaves
+            .iter()
+            .position(|id| *id == self.focused)
+            .unwrap_or(0);
         self.focused = leaves[(idx + leaves.len() - 1) % leaves.len()];
     }
 
@@ -420,9 +455,10 @@ impl WorkspaceLayout {
     /// Drop `zoomed` if it names a leaf that no longer exists.
     fn clear_stale_zoom(&mut self) {
         if let Some(z) = self.zoomed
-            && !self.leaves().contains(&z) {
-                self.zoomed = None;
-            }
+            && !self.leaves().contains(&z)
+        {
+            self.zoomed = None;
+        }
     }
 }
 
@@ -742,22 +778,32 @@ mod tests {
         for _ in 0..5 {
             let before = layout.next_id;
             layout.split_focused(SplitOrientation::Vertical);
-            assert_eq!(layout.next_id, before + 1, "counter advances by exactly one");
+            assert_eq!(
+                layout.next_id,
+                before + 1,
+                "counter advances by exactly one"
+            );
             // The id just handed out equals the pre-alloc counter value.
             let newest = PaneId(before);
             assert!(!seen.contains(&newest), "ids must be unique: {newest:?}");
-            assert!(layout.leaves().contains(&newest), "new leaf must be in the tree");
+            assert!(
+                layout.leaves().contains(&newest),
+                "new leaf must be in the tree"
+            );
             seen.push(newest);
         }
         // Ids handed out were 1,2,3,4,5 in order (0 was the initial leaf).
-        assert_eq!(seen, vec![
-            PaneId(0),
-            PaneId(1),
-            PaneId(2),
-            PaneId(3),
-            PaneId(4),
-            PaneId(5),
-        ]);
+        assert_eq!(
+            seen,
+            vec![
+                PaneId(0),
+                PaneId(1),
+                PaneId(2),
+                PaneId(3),
+                PaneId(4),
+                PaneId(5),
+            ]
+        );
     }
 
     fn root_ratio(layout: &WorkspaceLayout) -> f32 {

@@ -93,6 +93,7 @@ pub struct PreparedScene {
     menu_overlay_text_runs: Vec<TextRun>,
     viewport_underlay_vertices: Vec<Vertex>,
     viewport_overlay_vertices: Vec<Vertex>,
+    board_interaction_vertices: Vec<Vertex>,
     visible_world_ranges: Vec<Range<u32>>,
     text_runs: Vec<TextRun>,
     // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
@@ -122,6 +123,7 @@ pub struct PreparedScene {
     crosshair_cursor_screen: Option<(f32, f32)>,
     crosshair_style: datum_gui_protocol::CrosshairStyle,
     schematic_underlay_vertices: Vec<Vertex>,
+    schematic_overlay_vertices: Vec<Vertex>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -451,4 +453,3 @@ enum DetailTier {
     Normal,
     Fine,
 }
-

@@ -25,7 +25,11 @@ impl Runtime {
                 self.schematic_scene_viewport()?,
             ));
         }
-        Some((None, self.workspace().scene.bounds.clone(), self.scene_viewport()))
+        Some((
+            None,
+            self.workspace().scene.bounds.clone(),
+            self.scene_viewport(),
+        ))
     }
 
     /// A mutable handle to the camera behind `slot` — the active board camera
@@ -239,7 +243,10 @@ impl Runtime {
     /// changes — e.g. focus moving to a *different* board pane in a multi-board
     /// split — at which point the outgoing board's framing is stashed warm and the
     /// incoming board's warm camera (fit only if never seen) is activated.
-    pub(super) fn swap_pane_focus(&mut self, f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout)) {
+    pub(super) fn swap_pane_focus(
+        &mut self,
+        f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout),
+    ) {
         let outgoing_scene = self.scene_leaf_id();
         f(&mut self.session.workspace_mut().ui.layout);
         let incoming_scene = self.scene_leaf_id();
@@ -247,9 +254,11 @@ impl Runtime {
             && outgoing != incoming
         {
             let bounds = self.workspace().scene.bounds.clone();
-            self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
-                CameraState::fit_to_bounds(&bounds)
-            });
+            self.camera = self
+                .pane_cameras
+                .focus_to(outgoing, self.camera, incoming, || {
+                    CameraState::fit_to_bounds(&bounds)
+                });
         }
         self.invalidate_frame();
     }
@@ -294,9 +303,11 @@ impl Runtime {
             && outgoing != incoming
         {
             let bounds = self.workspace().scene.bounds.clone();
-            self.camera = self.pane_cameras.focus_to(outgoing, self.camera, incoming, || {
-                CameraState::fit_to_bounds(&bounds)
-            });
+            self.camera = self
+                .pane_cameras
+                .focus_to(outgoing, self.camera, incoming, || {
+                    CameraState::fit_to_bounds(&bounds)
+                });
         }
         self.invalidate_frame();
     }
@@ -332,7 +343,11 @@ impl Runtime {
     /// orientation of the divider gutter under the cursor, if any. `None` means the
     /// default cursor. Backs the hover affordance that signals a gutter is
     /// draggable (a vertical split reads east-west, a horizontal split north-south).
-    pub(super) fn divider_resize_cursor(&self, x: f32, y: f32) -> Option<datum_gui_protocol::SplitOrientation> {
+    pub(super) fn divider_resize_cursor(
+        &self,
+        x: f32,
+        y: f32,
+    ) -> Option<datum_gui_protocol::SplitOrientation> {
         if let Some(drag) = &self.divider_drag {
             return Some(drag.orientation);
         }
@@ -588,34 +603,45 @@ impl Runtime {
                 pos.1,
             )
         };
-        // The hovered id carries its surface in its namespace (a schematic symbol is
-        // `schematic-symbol:<uuid>`), so storing the id alone is enough for the
-        // renderer to route the hover pre-highlight to the right pane's camera.
-        //
-        // S4 cursor crosshair (decision 023 UVT-005): record the live cursor in
+        // Preserve the resolver's typed pane ownership beside the opaque object id;
+        // rendering must never infer a surface from identifier spelling. S4 cursor
+        // crosshair (decision 023 UVT-005): record the live cursor in
         // device-pixel SCREEN space so the renderer can draw the crosshair through
-        // it. A moved cursor invalidates the scene only when a crosshair is actually
-        // shown, so an off (`None`) crosshair costs no extra rebuilds; hover changes
-        // always invalidate.
-        let new_cursor = Some(PointNm {
-            x: pos.0 as i64,
-            y: pos.1 as i64,
-        });
+        // it. These are transient overlay changes: authored board and schematic
+        // retained geometry must remain warm while the pointer moves.
+        let new_cursor = resolved.cursor;
+        let new_hover = resolved.hover;
         let cursor_moved = self.session.workspace().ui.cursor_pos != new_cursor;
-        let hover_changed = self.session.workspace().ui.hovered_object_id != resolved.object_id;
+        let hover_changed = self.session.workspace().ui.hovered_object != new_hover;
         if cursor_moved {
             self.session.workspace_mut().ui.cursor_pos = new_cursor;
         }
         if hover_changed {
-            self.session.workspace_mut().ui.hovered_object_id = resolved.object_id;
+            self.session.workspace_mut().ui.hovered_object = new_hover;
         }
-        let crosshair_live = self.session.workspace().ui.crosshair_style
-            != datum_gui_protocol::CrosshairStyle::None;
+        let crosshair_live =
+            self.session.workspace().ui.crosshair_style != datum_gui_protocol::CrosshairStyle::None;
         if hover_changed || (cursor_moved && crosshair_live) {
-            self.invalidate_scene();
+            self.refresh_interaction_overlay();
             return true;
         }
         false
+    }
+
+    /// Clear pointer-driven chrome when the cursor leaves an authoring surface or
+    /// a modal/terminal interaction captures it. Keeping stale hover/crosshair
+    /// state visible is misleading; clearing it still preserves retained geometry.
+    pub(super) fn clear_interaction_overlay(&mut self) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        // Do not combine these `take`s with short-circuiting `||`: both fields must
+        // be cleared even when the cursor field was populated.
+        let had_cursor = ui.cursor_pos.take().is_some();
+        let had_hover = ui.hovered_object.take().is_some();
+        let changed = had_cursor || had_hover;
+        if changed {
+            self.refresh_interaction_overlay();
+        }
+        changed
     }
 
     pub(super) fn cursor_in_dock(&self) -> bool {

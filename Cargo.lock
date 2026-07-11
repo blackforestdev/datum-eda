@@ -764,6 +764,9 @@ dependencies = [
 [[package]]
 name = "datum-gui-viewport"
 version = "0.1.0"
+dependencies = [
+ "datum-gui-protocol",
+]
 
 [[package]]
 name = "datum-verb-registry"

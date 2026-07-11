@@ -65,11 +65,45 @@ impl Default for GridConfig {
     }
 }
 
+/// Per-surface participation in the shared hover mechanism.
+///
+/// Object geometry remains surface-owned, but whether that surface contributes
+/// hit regions and receives pre-highlight is profile policy rather than a
+/// renderer branch.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HoverConfig {
+    /// Whether pointer hit-testing and hover pre-highlight are active.
+    pub enabled: bool,
+}
+
+impl Default for HoverConfig {
+    fn default() -> Self {
+        Self { enabled: true }
+    }
+}
+
+/// Per-surface participation in the shared cursor-overlay mechanism.
+///
+/// The user's selected presentation (full viewport, local, or hidden) is
+/// session state. This profile flag only states whether the surface supports
+/// that shared mechanism.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CursorConfig {
+    /// Whether the shared cursor overlay may be drawn on this surface.
+    pub enabled: bool,
+}
+
+impl Default for CursorConfig {
+    fn default() -> Self {
+        Self { enabled: true }
+    }
+}
+
 /// Per-surface profile scaffold (spec §1.3).
 ///
-/// SCAFFOLD: only the grid config and the stroke primitive→weight-class map are
-/// wired here; the camera / snap / hover / selection / tool / menu / readout /
-/// layer configs land with their engines in slices S1b+. Kept intentionally
+/// SCAFFOLD: grid, stroke, hover, and cursor policy are wired here; camera, snap,
+/// selection, tool, menu, readout, and layer configs land with their engines in
+/// later slices. Kept intentionally
 /// minimal so no field is speculative mechanism.
 #[derive(Debug, Clone, Default)]
 pub struct ViewportProfile {
@@ -80,4 +114,20 @@ pub struct ViewportProfile {
     /// each entry pairs a stringly-named primitive with its resolved class until
     /// the typed primitive enum lands.
     pub stroke: Vec<(String, WeightClass)>,
+    /// Participation in shared pointer hit-testing and pre-highlight.
+    pub hover: HoverConfig,
+    /// Participation in the shared cursor overlay.
+    pub cursor: CursorConfig,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn interaction_mechanisms_are_enabled_by_default() {
+        let profile = ViewportProfile::default();
+        assert!(profile.hover.enabled);
+        assert!(profile.cursor.enabled);
+    }
 }

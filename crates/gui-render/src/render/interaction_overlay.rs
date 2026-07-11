@@ -29,11 +29,74 @@ const HOVER_MARGIN_PX: f32 = 3.0;
 /// Half-length of each crosshair arm (a small LOCAL crosshair at the cursor, the
 /// least-intrusive option — see the design flag in the slice report).
 const CROSSHAIR_ARM_PX: f32 = 14.0;
-/// The projected-id namespace prefix that marks a schematic symbol body (mirrors
-/// `push_schematic_symbol_hit_regions`); the hovered surface is inferred from it,
-/// so the hover pre-highlight is routed to the schematic camera without a
-/// redundant stored surface field.
-pub(crate) const SCHEMATIC_SYMBOL_PREFIX: &str = "schematic-symbol:";
+
+impl PreparedScene {
+    /// Override the companion schematic pass camera while keeping its immediate
+    /// grid and interaction buffers projected through the same warm camera.
+    pub fn set_schematic_camera(&mut self, camera: CameraState) {
+        self.schematic_camera = camera;
+        self.schematic_underlay_vertices = build_schematic_grid_vertices(
+            self.schematic_scene_viewport,
+            &self.schematic_bounds,
+            self.schematic_camera,
+        );
+        self.schematic_overlay_vertices = build_schematic_interaction_vertices(
+            self.schematic_scene_viewport,
+            &self.schematic_bounds,
+            self.schematic_camera,
+            self.schematic_hover_bounds_nm,
+            self.crosshair_cursor_screen,
+            self.crosshair_style,
+        );
+    }
+
+    /// Refresh high-frequency pointer chrome without rebuilding retained world
+    /// geometry or reconstructing the prepared shell.
+    pub fn refresh_interaction(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        board_retained: &RetainedScene,
+    ) {
+        let board_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Board)
+                .then(|| board_hover_bounds(board_retained, &hover.object_id))
+                .flatten()
+        });
+        self.schematic_hover_bounds_nm = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Schematic)
+                .then(|| {
+                    state
+                        .schematic_scene
+                        .as_ref()
+                        .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
+                })
+                .flatten()
+        });
+        self.crosshair_cursor_screen = state.ui.cursor_pos.map(|point| (point.x, point.y));
+        self.crosshair_style = state.ui.crosshair_style;
+
+        let board_field = inset_rect(self.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+        let board_projection = Projection::new(board_field, &self.scene_bounds, self.camera);
+        let mut board = Vec::new();
+        push_pane_interaction(
+            &mut board,
+            &board_projection,
+            self.scene_viewport,
+            board_hover,
+            self.crosshair_cursor_screen,
+            self.crosshair_style,
+        );
+        self.board_interaction_vertices = quads_to_vertices(&board);
+        self.schematic_overlay_vertices = build_schematic_interaction_vertices(
+            self.schematic_scene_viewport,
+            &self.schematic_bounds,
+            self.schematic_camera,
+            self.schematic_hover_bounds_nm,
+            self.crosshair_cursor_screen,
+            self.crosshair_style,
+        );
+    }
+}
 
 /// Push the class-A hover pre-highlight ring for a screen-space bounding rect.
 fn push_hover_ring(out: &mut Vec<Quad>, screen_rect: RectPx, scale_px_per_nm: f32) {
@@ -43,7 +106,12 @@ fn push_hover_ring(out: &mut Vec<Quad>, screen_rect: RectPx, scale_px_per_nm: f3
         width: screen_rect.width + HOVER_MARGIN_PX * 2.0,
         height: screen_rect.height + HOVER_MARGIN_PX * 2.0,
     };
-    push_rect_border(out, ring, HOVER_HIGHLIGHT, HOVER_WEIGHT.resolve_px(scale_px_per_nm));
+    push_rect_border(
+        out,
+        ring,
+        HOVER_HIGHLIGHT,
+        HOVER_WEIGHT.resolve_px(scale_px_per_nm),
+    );
 }
 
 /// Push a small `Local` class-A crosshair centred on `cursor`: a short cross that
@@ -137,10 +205,24 @@ pub(crate) fn push_pane_interaction(
     }
 }
 
-/// Build the schematic pane's immediate screen-space underlay: the S1b grid plus
-/// the S4 interaction overlays (hover ring + crosshair), all class-A
-/// `ScreenConstant`. Returns empty vertices when there is no Schematic pane.
-pub(crate) fn build_schematic_underlay_vertices(
+/// Build the schematic pane's immediate screen-space grid underlay.
+pub(crate) fn build_schematic_grid_vertices(
+    schematic_scene_viewport: Option<RectPx>,
+    schematic_bounds: &datum_gui_protocol::SceneBounds,
+    schematic_camera: CameraState,
+) -> Vec<Vertex> {
+    let mut quads = Vec::new();
+    if let Some(viewport) = schematic_scene_viewport {
+        let field = inset_rect(viewport, 10.0, 10.0, 10.0, 10.0);
+        let projection = Projection::new(field, schematic_bounds, schematic_camera);
+        push_schematic_grid(&mut quads, &projection);
+    }
+    quads_to_vertices(&quads)
+}
+
+/// Build schematic hover/cursor chrome separately from the grid so the renderer
+/// can composite it after world geometry, exactly like the board overlay.
+pub(crate) fn build_schematic_interaction_vertices(
     schematic_scene_viewport: Option<RectPx>,
     schematic_bounds: &datum_gui_protocol::SceneBounds,
     schematic_camera: CameraState,
@@ -152,7 +234,6 @@ pub(crate) fn build_schematic_underlay_vertices(
     if let Some(viewport) = schematic_scene_viewport {
         let field = inset_rect(viewport, 10.0, 10.0, 10.0, 10.0);
         let projection = Projection::new(field, schematic_bounds, schematic_camera);
-        push_schematic_grid(&mut quads, &projection);
         push_pane_interaction(
             &mut quads,
             &projection,
@@ -322,12 +403,20 @@ mod interaction_overlay_tests {
             Some(cursor),
             CrosshairStyle::FullViewport,
         );
-        assert_eq!(count_color(&quads, HOVER_HIGHLIGHT), 0, "no ring without hover");
+        assert_eq!(
+            count_color(&quads, HOVER_HIGHLIGHT),
+            0,
+            "no ring without hover"
+        );
         let arms: Vec<_> = quads
             .iter()
             .filter(|quad| quad.color == CURSOR_CROSSHAIR)
             .collect();
-        assert_eq!(arms.len(), 2, "a full crosshair is one horizontal + one vertical hairline");
+        assert_eq!(
+            arms.len(),
+            2,
+            "a full crosshair is one horizontal + one vertical hairline"
+        );
         let vp = viewport();
         let mut spans_width = false;
         let mut spans_height = false;
@@ -368,7 +457,11 @@ mod interaction_overlay_tests {
             .iter()
             .filter(|quad| quad.color == CURSOR_CROSSHAIR)
             .collect();
-        assert_eq!(arms.len(), 2, "a local crosshair is one horizontal + one vertical arm");
+        assert_eq!(
+            arms.len(),
+            2,
+            "a local crosshair is one horizontal + one vertical arm"
+        );
         let vp = viewport();
         for arm in &arms {
             let (min_x, min_y, max_x, max_y) = quad_bbox(arm);
@@ -405,7 +498,14 @@ mod interaction_overlay_tests {
         let cursor = (300.0, 250.0);
         let arm_extent = |style| {
             let mut quads = Vec::new();
-            push_pane_interaction(&mut quads, &projection(), viewport(), None, Some(cursor), style);
+            push_pane_interaction(
+                &mut quads,
+                &projection(),
+                viewport(),
+                None,
+                Some(cursor),
+                style,
+            );
             quads
                 .iter()
                 .filter(|q| q.color == CURSOR_CROSSHAIR)
@@ -457,14 +557,16 @@ mod interaction_overlay_tests {
             Some((10.0, 10.0)),
             CrosshairStyle::FullViewport,
         );
-        assert!(quads.is_empty(), "a cursor outside the pane emits no crosshair");
+        assert!(
+            quads.is_empty(),
+            "a cursor outside the pane emits no crosshair"
+        );
     }
 
-    /// (c, wiring) The crosshair flows into the schematic pane's shared underlay
-    /// buffer (grid + interaction) when a cursor is supplied.
+    /// (c, wiring) Schematic interaction chrome is isolated from the grid buffer.
     #[test]
-    fn crosshair_flows_into_the_schematic_underlay() {
-        let baseline = build_schematic_underlay_vertices(
+    fn crosshair_flows_into_the_schematic_overlay_only() {
+        let baseline = build_schematic_interaction_vertices(
             Some(viewport()),
             &bounds(),
             CameraState::fit_to_bounds(&bounds()),
@@ -472,7 +574,7 @@ mod interaction_overlay_tests {
             None,
             CrosshairStyle::FullViewport,
         );
-        let with_cursor = build_schematic_underlay_vertices(
+        let with_cursor = build_schematic_interaction_vertices(
             Some(viewport()),
             &bounds(),
             CameraState::fit_to_bounds(&bounds()),
@@ -486,7 +588,19 @@ mod interaction_overlay_tests {
             .count();
         assert!(
             with_cursor.len() > baseline.len() && crosshair_verts > 0,
-            "the crosshair adds class-A vertices to the schematic underlay"
+            "the crosshair adds class-A vertices to the schematic overlay"
+        );
+        let grid = build_schematic_grid_vertices(
+            Some(viewport()),
+            &bounds(),
+            CameraState::fit_to_bounds(&bounds()),
+        );
+        assert_eq!(
+            grid.iter()
+                .filter(|vertex| vertex.color == CURSOR_CROSSHAIR)
+                .count(),
+            0,
+            "the pre-world grid must never contain interaction chrome"
         );
     }
 }

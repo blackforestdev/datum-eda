@@ -17,6 +17,9 @@ pub struct Renderer {
     // pipeline, scissored to the schematic pane) — never a retained world buffer.
     schematic_underlay_vertex_buffer: Option<wgpu::Buffer>,
     schematic_underlay_vertex_capacity: usize,
+    // S4 hover/cursor chrome is a post-world overlay, never part of the grid.
+    schematic_overlay_vertex_buffer: Option<wgpu::Buffer>,
+    schematic_overlay_vertex_capacity: usize,
     font_system: FontSystem,
     swash_cache: SwashCache,
     viewport: Viewport,
@@ -34,6 +37,8 @@ pub struct Renderer {
     viewport_underlay_vertex_capacity: usize,
     viewport_overlay_vertex_buffer: Option<wgpu::Buffer>,
     viewport_overlay_vertex_capacity: usize,
+    board_interaction_vertex_buffer: Option<wgpu::Buffer>,
+    board_interaction_vertex_capacity: usize,
     menu_overlay_vertex_buffer: Option<wgpu::Buffer>,
     menu_overlay_vertex_capacity: usize,
     world_vertex_buffer: Option<wgpu::Buffer>,
@@ -46,11 +51,11 @@ pub struct Renderer {
     msaa_samples: u32,
 }
 
-// Glyph-buffer cache helpers (`cached_text_buffer_indices` / `ensure_text_buffer`)
-// are extracted into a real sibling module to keep `gpu.rs` under its source-health
-// ceiling; they remain inherent `Renderer` methods, reached here unchanged.
+// Real child modules keep cache and per-frame upload inventories independently governed.
 #[path = "text_buffer_cache.rs"]
 mod text_buffer_cache;
+#[path = "gpu_vertex_upload.rs"]
+mod gpu_vertex_upload;
 
 impl Renderer {
     pub fn new(
@@ -354,6 +359,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_world_vertex_capacity: 0,
             schematic_underlay_vertex_buffer: None,
             schematic_underlay_vertex_capacity: 0,
+            schematic_overlay_vertex_buffer: None,
+            schematic_overlay_vertex_capacity: 0,
             font_system,
             swash_cache,
             viewport,
@@ -368,6 +375,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_underlay_vertex_capacity: 0,
             viewport_overlay_vertex_buffer: None,
             viewport_overlay_vertex_capacity: 0,
+            board_interaction_vertex_buffer: None,
+            board_interaction_vertex_capacity: 0,
             menu_overlay_vertex_buffer: None,
             menu_overlay_vertex_capacity: 0,
             world_vertex_buffer: None,
@@ -425,6 +434,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
         let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
+        let board_interaction_vertices = prepared.board_interaction_vertices();
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let visible_world_ranges = prepared.visible_world_ranges();
@@ -436,19 +446,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let schematic_pass = match (prepared.schematic_scene_viewport, schematic_retained) {
             (Some(scene_viewport), Some(sr)) if !sr.world_vertices().is_empty() => {
                 let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
-                let proj = Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
+                let proj =
+                    Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
                 Some((scene_viewport, field, proj, sr))
             }
             _ => None,
         };
-        // Slice S4 (was S1b): the schematic grid AND the immediate interaction
-        // overlays (hover pre-highlight ring + cursor crosshair) are prepared
-        // together as ONE screen-space underlay in `PreparedScene` — rebuilt
-        // against the warm schematic camera in `set_schematic_camera` — so every
-        // one keeps a fixed device-pixel (class-A `ScreenConstant`) weight at any
-        // zoom instead of being baked into the retained world buffer. The
-        // interaction quads are empty in the offscreen capture (no cursor/hover).
+        // S4 grid and interaction overlays remain immediate screen-space geometry;
+        // offscreen captures supply neither cursor nor hover quads.
         let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
+        let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
         queue.write_buffer(
             &self.uniform_buffer,
             0,
@@ -491,59 +498,19 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             );
         }
         let upload_started = std::time::Instant::now();
-        Self::upload_vertices(
+        self.upload_frame_vertices(
             device,
             queue,
-            &mut self.panel_vertex_buffer,
-            &mut self.panel_vertex_capacity,
-            "datum-gui-render-panel-vertex-buffer",
             panel_vertices,
-        );
-        Self::upload_vertices(
-            device,
-            queue,
-            &mut self.viewport_underlay_vertex_buffer,
-            &mut self.viewport_underlay_vertex_capacity,
-            "datum-gui-render-viewport-underlay-vertex-buffer",
             viewport_underlay_vertices,
-        );
-        Self::upload_vertices(
-            device,
-            queue,
-            &mut self.viewport_overlay_vertex_buffer,
-            &mut self.viewport_overlay_vertex_capacity,
-            "datum-gui-render-viewport-overlay-vertex-buffer",
             viewport_overlay_vertices,
-        );
-        Self::upload_vertices(
-            device,
-            queue,
-            &mut self.menu_overlay_vertex_buffer,
-            &mut self.menu_overlay_vertex_capacity,
-            "datum-gui-render-menu-overlay-vertex-buffer",
+            board_interaction_vertices,
             menu_overlay_vertices,
+            world_vertices,
+            schematic_pass.as_ref().map(|(_, _, _, scene)| *scene),
+            schematic_underlay_vertices,
+            schematic_overlay_vertices,
         );
-        self.sync_world_vertices(device, queue, world_vertices);
-        if let Some((_, _, _, sr)) = schematic_pass.as_ref() {
-            Self::upload_vertices(
-                device,
-                queue,
-                &mut self.schematic_world_vertex_buffer,
-                &mut self.schematic_world_vertex_capacity,
-                "datum-gui-render-schematic-world-vertex-buffer",
-                sr.world_vertices(),
-            );
-        }
-        if !schematic_underlay_vertices.is_empty() {
-            Self::upload_vertices(
-                device,
-                queue,
-                &mut self.schematic_underlay_vertex_buffer,
-                &mut self.schematic_underlay_vertex_capacity,
-                "datum-gui-render-schematic-underlay-vertex-buffer",
-                schematic_underlay_vertices,
-            );
-        }
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
@@ -668,6 +635,22 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                     pass.set_bind_group(0, &self.uniform_bind_group, &[]);
                 }
             }
+            // Interaction chrome is intentionally composited after schematic world
+            // geometry, matching the board overlay and preventing filled symbols
+            // from obscuring hover/cursor feedback.
+            if !schematic_overlay_vertices.is_empty()
+                && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
+                && let Some(buffer) = self.schematic_overlay_vertex_buffer.as_ref()
+            {
+                pass.set_scissor_rect(
+                    scene_viewport.x.max(0.0).floor() as u32,
+                    scene_viewport.y.max(0.0).floor() as u32,
+                    scene_viewport.width.max(1.0).ceil() as u32,
+                    scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(0, buffer.slice(..));
+                pass.draw(0..schematic_overlay_vertices.len() as u32, 0..1);
+            }
             if !viewport_overlay_vertices.is_empty() {
                 pass.set_scissor_rect(
                     prepared.scene_viewport.x.max(0.0).floor() as u32,
@@ -683,6 +666,22 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                         .slice(..),
                 );
                 pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
+            }
+            if !board_interaction_vertices.is_empty() {
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.board_interaction_vertex_buffer
+                        .as_ref()
+                        .expect("board interaction vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
             }
             // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
             // composited AFTER the main text pass (below) so it occludes not only
@@ -897,4 +896,3 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         Ok(())
     }
 }
-

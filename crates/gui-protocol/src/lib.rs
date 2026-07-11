@@ -50,11 +50,7 @@ pub use terminal_lane::{
     TerminalLaneState, TerminalStyleSpan, TerminalStyledLine, TerminalTabState, TerminalTextStyle,
 };
 mod workspace_layout;
-pub use workspace_layout::{
-    ConsoleLaneState, CrosshairStyle, DockTab, MarkingMenuState, PaneContent, PaneId, PaneNode,
-    SplitChild, SplitOrientation, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset,
-    WorkspaceUiState, PANE_RATIO_MAX, PANE_RATIO_MIN,
-};
+pub use workspace_layout::{ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState, PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild, SplitOrientation, ViewportInteraction, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState};
 mod production_proposals;
 pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
@@ -1651,7 +1647,7 @@ impl ReviewWorkspaceState {
                 active_menu: None,
                 marking_menu: None,
                 dock_height_px: 220,
-                hovered_object_id: None,
+                hovered_object: None,
                 cursor_pos: None,
                 crosshair_style: CrosshairStyle::default(),
                 filters: WorkspaceFilterState {
@@ -2553,10 +2549,10 @@ fn load_check_run_review_state(
     if let Ok(context) = run_cli_json::<Value>(
         cli,
         &["context", "refresh", "--project-root", &project_root],
-    )
-        && let Some(state) = check_runs::check_run_review_state_from_context_value(&context) {
-            return Ok(state);
-        }
+    ) && let Some(state) = check_runs::check_run_review_state_from_context_value(&context)
+    {
+        return Ok(state);
+    }
     run_cli_json(cli, &["check", "run", &project_root])
         .or_else(|_| Ok(CheckRunReviewState::default()))
 }
@@ -3668,9 +3664,10 @@ fn load_selected_candidate_path(
     let refs: Vec<&str> = args.iter().map(String::as_str).collect();
     let explain: CandidateExplainPayload = run_cli_json(cli, &refs)?;
     if let Some(path) = explain.selected_path
-        && path.points.len() >= 2 {
-            return Ok(Some(path.points));
-        }
+        && path.points.len() >= 2
+    {
+        return Ok(Some(path.points));
+    }
     if let Some(span) = explain.selected_span {
         return Ok(Some(vec![span.from, span.to]));
     }
@@ -4725,16 +4722,17 @@ fn component_bounds(
         .filter(|graphic| {
             graphic
                 .layer_id
-                .as_deref().is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
+                .as_deref()
+                .is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
         })
         .collect();
     let texts: Vec<&ComponentTextPrimitive> = texts
         .iter()
         .copied()
         .filter(|text| {
-            text
-                .layer_id
-                .as_deref().is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
+            text.layer_id
+                .as_deref()
+                .is_none_or(|layer_id| inferred_scene_layer_name(layer_id) != "Edge.Cuts")
         })
         .collect();
     if pads.is_empty() && graphics.is_empty() && texts.is_empty() {
@@ -5504,10 +5502,7 @@ mod tests {
             state.select_authored_object(&object_id),
             "reference-resolved object_id should confirm scene membership"
         );
-        assert_eq!(
-            state.selection,
-            SelectionTarget::AuthoredObject(object_id)
-        );
+        assert_eq!(state.selection, SelectionTarget::AuthoredObject(object_id));
     }
 
     #[test]

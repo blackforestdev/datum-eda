@@ -136,7 +136,7 @@ impl Runtime {
         if self.session.workspace().ui.crosshair_style != style {
             self.session.workspace_mut().ui.crosshair_style = style;
             self.log_review_event(format!("crosshair style {style:?}"));
-            self.invalidate_scene();
+            self.refresh_interaction_overlay();
         }
         true
     }
