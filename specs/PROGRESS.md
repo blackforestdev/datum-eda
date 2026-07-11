@@ -128,7 +128,11 @@
    Governing: decision 019 + **decision 021 (pane tiling)** +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 2c. **Universal Editor-Interaction & Viewport Toolkit — SPEC LANDED, build staged
-   (governed by decision 023 + `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`).**
+   (governed by decision 023 + `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`;
+   the Layer-1 component of `docs/DATUM_SHARED_TOOLING_TAXONOMY.md`, the controlling
+   four-domain catalogue of Datum's full shared editor tooling — Layer 0 substrate
+   unified, Layer 1 = this, Layers 2–4 = selection-identity/property-inspector/
+   one-Measure/geometry-solver-library/etc. as future per-capability specs).**
    The schematic grid rendered divergently from the board grid (weights thicken on
    zoom); investigation found the whole per-viewport interaction class (tool-mode,
    hover, selection, marquee, context menu, coordinate readout, cursor, snap,

@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/DATUM_SHARED_TOOLING_TAXONOMY.md",
     "docs/IPC_FOOTPRINT_SYSTEM.md",
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md",
     "docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md",
@@ -90,6 +91,7 @@
     "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md": {"class": "pending", "remediation": "Ratified resolutions log (e.g. IPC-7351B basis) should be consolidated into numbered decision records (010). Do not add new ratifications here."},
     "docs/IPC_FOOTPRINT_SYSTEM.md": {"class": "governed", "progress_anchor": "docs/IPC_FOOTPRINT_SYSTEM.md"},
     "docs/ALTIUM_LESSONS.md": {"class": "governed", "notes": "Competitive UX research — the professional-PCB UX benchmark (Properties Panel, keyboard routing, granular ECO, rule-query-as-command) feeding decision 019 / DATUM_GUI_PRODUCT_SPEC. Reference research; architectural lineage per CLAUDE.md."},
+    "docs/DATUM_SHARED_TOOLING_TAXONOMY.md": {"class": "governed", "controlling": true, "progress_anchor": "Active Frontier step 2b (Universal Viewport Toolkit)", "notes": "The controlling catalogue of Datum's shared editor tooling across all editors (schematic/board/footprint/symbol/library/rules/manufacturing): what should be shared, what already is (Layer 0 substrate: unified), what is forked/absent (Layer 1 interaction: decision 023), and what could be shared as Datum grows (Layers 2-4: selection-identity model, data-driven property inspector, one Measure, align/transform, one geometry-solver library, shared param-schema registry, arrays/conversion-wheels/silk-primitives/footprint-symbol-personas). Research-derived from a four-domain survey (Datum internal + EDA + mechanical/parametric CAD + creative/multi-context). Recommends the editor-as-persona model (shared services kernel below, thin persona above) and 9 cross-domain design rules; RECOMMENDS only -- each shared capability that ratifies mechanism needs its own numbered decision record + governed spec when buildable. Decision 023 re-seats as its Layer-1 component. Not a rival roadmap: sequencing lives in the Active Frontier."},
     "docs/HORIZON_ANALYSIS.md": {"class": "governed", "notes": "Architectural-lineage study (Horizon EDA pool model + tool-lifecycle interaction + project-manager/editor cross-probe). Reference research per CLAUDE.md lineage; input to GUI interaction model."},
     "docs/EAGLE_BLUEPRINT.md": {"class": "governed", "notes": "Architectural-lineage study (Eagle engine + interactive command-line paradigm, CCMDDrive). Reference research per CLAUDE.md lineage; input to GUI command/palette model."},
     "docs/COMPETITIVE_ANALYSIS.md": {"class": "governed", "notes": "Competitive EDA landscape/positioning (KiCad/Altium/Horizon/OrCAD/PADS) — UX justification and what-to-avoid. Reference research."},
