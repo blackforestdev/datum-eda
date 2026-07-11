@@ -153,8 +153,12 @@
    *Unblocks:* **P2.3 cross-probe rides on S3+S5** (schematic selection/hit-test);
    native authoring (step 6) reuses snap/commit; paper-space snap (step 7) reuses the
    SnapEngine. *State:* **decision 023 + governed spec + deep-research sections
-   LANDED; Phase-B build (S0–S11) is separately-authorized execution, schematic-first,
-   each slice board-golden-safe + source-health-ratcheted.** Governing: decision 023 +
+   LANDED. Phase-B build in progress (schematic-first, each slice board-golden-safe +
+   source-health-ratcheted): S0 (gui-viewport crate + StrokeWeightModel) LANDED; S1a
+   (shared GridEngine, board repointed byte-identical) LANDED; S1b (schematic grid
+   screen-constant via the shared engine — THE grid divergence bug fixed, shell golden
+   re-blessed) LANDED. Next: S2 CameraEngine routing collapse → S3 CoordinateHit
+   keystone → S4–S9 interaction engines → S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
