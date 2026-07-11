@@ -1,5 +1,37 @@
 use super::*;
 
+#[test]
+fn resolving_grid_lod_never_rebuilds_retained_geometry() {
+    let bounds = datum_gui_protocol::SceneBounds {
+        min_x: 0,
+        min_y: 0,
+        max_x: 10_000_000,
+        max_y: 10_000_000,
+    };
+    let viewport = RectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 800.0,
+        height: 600.0,
+    };
+    let before = retained_scene_resolve_count();
+    let first = resolve_surface_grid_lod(
+        SceneSurface::Board,
+        viewport,
+        &bounds,
+        CameraState::fit_to_bounds(&bounds),
+        datum_gui_viewport::GridLodState::default(),
+    );
+    let _next = resolve_surface_grid_lod(
+        SceneSurface::Board,
+        viewport,
+        &bounds,
+        CameraState::fit_to_bounds(&bounds),
+        first,
+    );
+    assert_eq!(retained_scene_resolve_count(), before);
+}
+
 // Slice S1b: the companion schematic pass draws a subtle SQUARE grid as an
 // IMMEDIATE screen-space pass (shared `GridEngine`, `ScreenConstant` weight).
 // This is a structural check that `push_schematic_grid` produces grid geometry

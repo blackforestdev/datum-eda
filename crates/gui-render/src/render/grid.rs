@@ -64,7 +64,31 @@ static SCHEMATIC_PROFILE: LazyLock<ViewportProfile> = LazyLock::new(|| ViewportP
     ..ViewportProfile::default()
 });
 
-fn emit_immediate_grid(out: &mut Vec<Quad>, projection: &Projection, profile: &ViewportProfile) {
+/// Resolve governed grid LOD for one concrete surface projection. Runtime owns
+/// `previous_lod` by pane identity; the renderer owns profile and projection
+/// details, so neither layer duplicates the other's policy.
+pub fn resolve_surface_grid_lod(
+    surface: crate::SceneSurface,
+    viewport: crate::RectPx,
+    bounds: &datum_gui_protocol::SceneBounds,
+    camera: crate::CameraState,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    let field = crate::inset_rect(viewport, 10.0, 10.0, 10.0, 10.0);
+    let projection = crate::Projection::new(field, bounds, camera);
+    let profile = match surface {
+        crate::SceneSurface::Board => &*BOARD_PROFILE,
+        crate::SceneSurface::Schematic => &*SCHEMATIC_PROFILE,
+    };
+    GridEngine::resolve_lod(&profile.grid, projection.scale, previous_lod)
+}
+
+fn emit_immediate_grid(
+    out: &mut Vec<Quad>,
+    projection: &Projection,
+    profile: &ViewportProfile,
+    previous_lod: GridLodState,
+) -> GridLodState {
     let viewport = GridViewport {
         x: projection.viewport.x,
         y: projection.viewport.y,
@@ -81,9 +105,9 @@ fn emit_immediate_grid(out: &mut Vec<Quad>, projection: &Projection, profile: &V
         offset: projection.offset_y,
         origin_nm: projection.bounds.min_y,
     };
-    let lod = GridEngine::resolve_lod(&profile.grid, projection.scale, GridLodState::default());
+    let lod = GridEngine::resolve_lod(&profile.grid, projection.scale, previous_lod);
     let Some(tier) = lod.tier else {
-        return;
+        return lod;
     };
     out.extend(
         GridEngine::compute(&profile.grid, tier, viewport, x_axis, y_axis)
@@ -100,12 +124,29 @@ fn emit_immediate_grid(out: &mut Vec<Quad>, projection: &Projection, profile: &V
                 )
             }),
     );
+    lod
+}
+
+pub(crate) fn push_scene_grid_with_lod(
+    out: &mut Vec<Quad>,
+    projection: &Projection,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    emit_immediate_grid(out, projection, &BOARD_PROFILE, previous_lod)
+}
+
+pub(crate) fn push_schematic_grid_with_lod(
+    out: &mut Vec<Quad>,
+    projection: &Projection,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    emit_immediate_grid(out, projection, &SCHEMATIC_PROFILE, previous_lod)
 }
 
 pub(crate) fn push_scene_grid(out: &mut Vec<Quad>, projection: &Projection) {
-    emit_immediate_grid(out, projection, &BOARD_PROFILE);
+    let _ = push_scene_grid_with_lod(out, projection, GridLodState::default());
 }
 
 pub(crate) fn push_schematic_grid(out: &mut Vec<Quad>, projection: &Projection) {
-    emit_immediate_grid(out, projection, &SCHEMATIC_PROFILE);
+    let _ = push_schematic_grid_with_lod(out, projection, GridLodState::default());
 }

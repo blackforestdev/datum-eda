@@ -82,10 +82,21 @@ pub enum SceneSurface {
     Schematic,
 }
 #[derive(Debug, Clone, PartialEq)]
+pub struct PreparedSurfacePass {
+    pub pane_id: datum_gui_protocol::PaneId,
+    pub surface: SceneSurface,
+    pub scene_viewport: RectPx,
+    pub bounds: datum_gui_protocol::SceneBounds,
+    pub camera: CameraState,
+    pub grid_lod_previous: datum_gui_viewport::GridLodState,
+    pub grid_lod_resolved: datum_gui_viewport::GridLodState,
+}
+#[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
     pub layout: ShellLayout,
     pub hit_regions: Vec<HitRegion>,
     pub scene_viewport: RectPx,
+    surface_passes: Vec<PreparedSurfacePass>,
     board_pane_id: datum_gui_protocol::PaneId,
     scene_bounds: datum_gui_protocol::SceneBounds,
     camera: CameraState,

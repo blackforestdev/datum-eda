@@ -286,10 +286,12 @@ impl Runtime {
         self.camera = CameraState::fit_to_bounds(&bounds);
         let content = self.workspace().ui.layout.focused_content();
         self.pane_cameras.reset(focused, content, self.camera);
+        self.pane_grid_lod.reset();
         self.invalidate_frame();
     }
 
     pub(super) fn pane_set_focused_content(&mut self, content: datum_gui_protocol::PaneContent) {
+        let retargeted_pane = self.workspace().ui.layout.focused;
         let outgoing_board = self.scene_leaf_id();
         let outgoing_camera = self.camera;
         self.session
@@ -297,6 +299,7 @@ impl Runtime {
             .ui
             .layout
             .set_focused_content(content);
+        self.pane_grid_lod.retarget(retargeted_pane, content);
         let incoming_board = self.scene_leaf_id();
         if outgoing_board != incoming_board {
             let bounds = self.workspace().scene.bounds.clone();

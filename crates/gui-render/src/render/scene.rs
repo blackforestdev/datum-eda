@@ -210,11 +210,13 @@ impl PreparedScene {
             crosshair_cursor_screen,
             crosshair_style,
         );
+        let surface_passes = coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
 
         Self {
             layout,
             hit_regions,
             scene_viewport,
+            surface_passes,
             board_pane_id,
             scene_bounds: state.scene.bounds.clone(),
             camera,

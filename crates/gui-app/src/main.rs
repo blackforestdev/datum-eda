@@ -37,6 +37,7 @@ mod board_text_terminal_commands;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod pane_cameras;
+mod pane_grid_lod;
 mod pane_resize;
 mod production_status_refresh;
 mod retained_scene_cache_key;
@@ -1102,6 +1103,7 @@ struct Runtime {
     camera: CameraState,
     /// Warm per-leaf view cameras keyed by `PaneId` (decision 021, P2.1b).
     pane_cameras: PaneCameras,
+    pane_grid_lod: pane_grid_lod::PaneGridLod,
     last_cursor_pos: Option<(f32, f32)>,
     middle_drag_active: bool,
     right_drag_active: bool,
@@ -1141,10 +1143,6 @@ fn terminal_scrollback_page_step(workspace: &datum_gui_protocol::ReviewWorkspace
 }
 
 impl Runtime {
-    fn workspace(&self) -> &datum_gui_protocol::ReviewWorkspaceState {
-        self.session.workspace()
-    }
-
     async fn new(
         window: &'static Window,
         launch_state: LaunchState,
@@ -1256,6 +1254,7 @@ impl Runtime {
             session: LiveDesignSession::new(state),
             camera,
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
+            pane_grid_lod: pane_grid_lod::PaneGridLod::default(),
             last_cursor_pos: None,
             middle_drag_active: false,
             right_drag_active: false,
@@ -1409,6 +1408,7 @@ impl Runtime {
             if let Some(camera) = schematic_camera {
                 prepared.set_schematic_camera(camera);
             }
+            self.apply_prepared_grid_lod(&mut prepared);
             self.prepared_scene = Some(prepared);
             prepared_build_ms = prepared_started.elapsed().as_millis();
             append_gui_verbose_diagnostic_line(format!(
@@ -1577,6 +1577,7 @@ impl Runtime {
             if let Some(camera) = schematic_camera {
                 prepared.set_schematic_camera(camera);
             }
+            self.apply_prepared_grid_lod(&mut prepared);
             self.prepared_scene = Some(prepared);
         }
         if self.schematic_retained_scene.is_none() {
@@ -1693,7 +1694,7 @@ impl Runtime {
                 self.scale_factor,
             )
         });
-        self.prepared_scene.get_or_insert_with(|| {
+        if self.prepared_scene.is_none() {
             self.scene_dirty = false;
             let mut prepared = PreparedScene::from_workspace_for_surface(
                 self.session.workspace(),
@@ -1706,8 +1707,12 @@ impl Runtime {
             if let Some(camera) = schematic_camera {
                 prepared.set_schematic_camera(camera);
             }
-            prepared
-        })
+            self.apply_prepared_grid_lod(&mut prepared);
+            self.prepared_scene = Some(prepared);
+        }
+        self.prepared_scene
+            .as_ref()
+            .expect("prepared scene initialized above")
     }
 
     fn retained_scene_cache_key(&self) -> RetainedSceneCacheKey {

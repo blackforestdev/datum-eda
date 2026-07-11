@@ -31,10 +31,25 @@ const HOVER_MARGIN_PX: f32 = 3.0;
 const CROSSHAIR_ARM_PX: f32 = 14.0;
 
 impl PreparedScene {
+    pub(crate) fn interaction_viewport(&self, surface: SceneSurface) -> Option<RectPx> {
+        let (x, y) = self.crosshair_cursor_screen?;
+        self.surface_passes
+            .iter()
+            .find(|pass| pass.surface == surface && pass.scene_viewport.contains(x, y))
+            .map(|pass| pass.scene_viewport)
+    }
+
     /// Override the companion schematic pass camera while keeping its immediate
     /// grid and interaction buffers projected through the same warm camera.
     pub fn set_schematic_camera(&mut self, camera: CameraState) {
         self.schematic_camera = camera;
+        if let Some(pass) = self
+            .surface_passes
+            .iter_mut()
+            .find(|pass| pass.surface == SceneSurface::Schematic)
+        {
+            pass.camera = camera;
+        }
         self.schematic_underlay_vertices = build_schematic_grid_vertices(
             self.schematic_scene_viewport,
             &self.schematic_bounds,
@@ -75,26 +90,39 @@ impl PreparedScene {
         self.crosshair_cursor_screen = state.ui.cursor_pos.map(|point| (point.x, point.y));
         self.crosshair_style = state.ui.crosshair_style;
 
-        let board_field = inset_rect(self.scene_viewport, 10.0, 10.0, 10.0, 10.0);
-        let board_projection = Projection::new(board_field, &self.scene_bounds, self.camera);
         let mut board = Vec::new();
-        push_pane_interaction(
-            &mut board,
-            &board_projection,
-            self.scene_viewport,
-            board_hover,
-            self.crosshair_cursor_screen,
-            self.crosshair_style,
-        );
+        let active = self.crosshair_cursor_screen.and_then(|(x, y)| {
+            self.surface_passes
+                .iter()
+                .find(|pass| pass.scene_viewport.contains(x, y))
+                .cloned()
+        });
+        if let Some(pass) = active.as_ref().filter(|pass| pass.surface == SceneSurface::Board) {
+            let field = inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+            let projection = Projection::new(field, &pass.bounds, pass.camera);
+            push_pane_interaction(
+                &mut board,
+                &projection,
+                pass.scene_viewport,
+                board_hover,
+                self.crosshair_cursor_screen,
+                self.crosshair_style,
+            );
+        }
         self.board_interaction_vertices = quads_to_vertices(&board);
-        self.schematic_overlay_vertices = build_schematic_interaction_vertices(
-            self.schematic_scene_viewport,
-            &self.schematic_bounds,
-            self.schematic_camera,
-            self.schematic_hover_bounds_nm,
-            self.crosshair_cursor_screen,
-            self.crosshair_style,
-        );
+        self.schematic_overlay_vertices = active
+            .as_ref()
+            .filter(|pass| pass.surface == SceneSurface::Schematic)
+            .map_or_else(Vec::new, |pass| {
+                build_schematic_interaction_vertices(
+                    Some(pass.scene_viewport),
+                    &pass.bounds,
+                    pass.camera,
+                    self.schematic_hover_bounds_nm,
+                    self.crosshair_cursor_screen,
+                    self.crosshair_style,
+                )
+            });
     }
 }
 

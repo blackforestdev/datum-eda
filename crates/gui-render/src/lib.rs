@@ -60,10 +60,15 @@ include!("render/draw_primitives.rs");
 include!("render/pads_and_layers.rs");
 include!("render/geometry.rs");
 include!("render/gpu.rs");
+#[path = "render/gpu_surface_pass.rs"]
+mod gpu_surface_pass;
+#[path = "render/surface_grid_pass.rs"]
+mod surface_grid_pass;
 #[path = "render/gpu_surface.rs"]
 mod gpu_surface;
 #[path = "render/grid.rs"]
 mod grid;
+pub use grid::resolve_surface_grid_lod;
 pub(crate) use grid::{push_scene_grid, push_schematic_grid};
 #[path = "render/via.rs"]
 mod via;

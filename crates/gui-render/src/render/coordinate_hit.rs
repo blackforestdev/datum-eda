@@ -39,6 +39,42 @@ pub(crate) fn surface_pane_ids(
     )
 }
 
+pub(crate) fn build_surface_passes(
+    shell: &ShellLayout,
+    state: &ReviewWorkspaceState,
+    board_camera: CameraState,
+    schematic_camera: CameraState,
+) -> Vec<PreparedSurfacePass> {
+    shell
+        .viewport_panes(&state.ui.layout)
+        .panes
+        .iter()
+        .filter_map(|pane| {
+            let (surface, bounds, camera) = match pane.content {
+                datum_gui_protocol::PaneContent::Board => (
+                    SceneSurface::Board,
+                    state.scene.bounds.clone(),
+                    board_camera,
+                ),
+                datum_gui_protocol::PaneContent::Schematic => (
+                    SceneSurface::Schematic,
+                    state.schematic_scene.as_ref()?.bounds.clone(),
+                    schematic_camera,
+                ),
+            };
+            Some(PreparedSurfacePass {
+                pane_id: pane.id,
+                surface,
+                scene_viewport: pane.rect.scene,
+                bounds,
+                camera,
+                grid_lod_previous: datum_gui_viewport::GridLodState::default(),
+                grid_lod_resolved: datum_gui_viewport::GridLodState::default(),
+            })
+        })
+        .collect()
+}
+
 impl PreparedScene {
     /// Resolve a screen point to a world point in the pane that contains it, and
     /// report which surface that is (UVT-004). The board branch is byte-identical
@@ -49,33 +85,43 @@ impl PreparedScene {
     /// disjoint tiled panes, so the board-first order only decides points that
     /// land in neither (both miss). A future pane is one more arm here.
     pub fn world_point_at_screen(&self, x: f32, y: f32) -> Option<(PointNm, SceneSurface)> {
-        if self.scene_viewport.contains(x, y) {
-            let board_field = inset_rect(self.scene_viewport, 10.0, 10.0, 10.0, 10.0);
-            let projection = Projection::new(board_field, &self.scene_bounds, self.camera);
-            let viewport = editor_viewport(
-                self.board_pane_id,
-                SceneSurface::Board,
-                &projection,
-            );
-            return viewport
+        self.surface_passes.iter().find_map(|pass| {
+            let field = inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+            let projection = Projection::new(field, &pass.bounds, pass.camera);
+            editor_viewport(pass.pane_id, pass.surface, &projection)
                 .screen_to_world(datum_gui_protocol::ScreenPointPx { x, y })
-                .map(|point| (point, SceneSurface::Board));
-        }
-        if let Some(schematic_viewport) = self.schematic_scene_viewport
-            && schematic_viewport.contains(x, y)
+                .map(|point| (point, pass.surface))
+        })
+    }
+
+    pub fn surface_passes(&self) -> &[PreparedSurfacePass] {
+        &self.surface_passes
+    }
+
+    pub fn set_surface_camera(&mut self, pane_id: datum_gui_protocol::PaneId, camera: CameraState) {
+        if let Some(pass) = self
+            .surface_passes
+            .iter_mut()
+            .find(|pass| pass.pane_id == pane_id)
         {
-            let field = inset_rect(schematic_viewport, 10.0, 10.0, 10.0, 10.0);
-            let projection = Projection::new(field, &self.schematic_bounds, self.schematic_camera);
-            let viewport = editor_viewport(
-                self.schematic_pane_id.unwrap_or(self.board_pane_id),
-                SceneSurface::Schematic,
-                &projection,
-            );
-            return viewport
-                .screen_to_world(datum_gui_protocol::ScreenPointPx { x, y })
-                .map(|point| (point, SceneSurface::Schematic));
+            pass.camera = camera;
         }
-        None
+    }
+
+    pub fn set_surface_grid_lod(
+        &mut self,
+        pane_id: datum_gui_protocol::PaneId,
+        previous: datum_gui_viewport::GridLodState,
+        resolved: datum_gui_viewport::GridLodState,
+    ) {
+        if let Some(pass) = self
+            .surface_passes
+            .iter_mut()
+            .find(|pass| pass.pane_id == pane_id)
+        {
+            pass.grid_lod_previous = previous;
+            pass.grid_lod_resolved = resolved;
+        }
     }
 }
 
@@ -250,6 +296,10 @@ pub fn resolve_pane_hover(
         None => datum_gui_viewport::InteractionEngine::clear(),
     }
 }
+
+#[cfg(test)]
+#[path = "coordinate_hit_duplicate_tests.rs"]
+mod coordinate_hit_duplicate_tests;
 
 #[cfg(test)]
 mod coordinate_hit_tests {

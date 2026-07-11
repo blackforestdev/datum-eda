@@ -5,9 +5,11 @@ pub struct Renderer {
     uniform_bind_group: wgpu::BindGroup,
     uniform_buffer: wgpu::Buffer,
     scene_bind_group: wgpu::BindGroup,
-    scene_uniform_buffer: wgpu::Buffer,
+    scene_bind_group_layout: wgpu::BindGroupLayout,
+    surface_scene_uniforms: Vec<(wgpu::Buffer, wgpu::BindGroup)>,
+    surface_grid_vertex_buffer: Option<wgpu::Buffer>,
+    surface_grid_vertex_capacity: usize,
     schematic_scene_bind_group: wgpu::BindGroup,
-    schematic_scene_uniform_buffer: wgpu::Buffer,
     schematic_world_vertex_buffer: Option<wgpu::Buffer>,
     schematic_world_vertex_capacity: usize,
     schematic_world_stroke_buffer: Option<wgpu::Buffer>,
@@ -353,9 +355,11 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             uniform_bind_group,
             uniform_buffer,
             scene_bind_group,
-            scene_uniform_buffer,
+            scene_bind_group_layout,
+            surface_scene_uniforms: Vec::new(),
+            surface_grid_vertex_buffer: None,
+            surface_grid_vertex_capacity: 0,
             schematic_scene_bind_group,
-            schematic_scene_uniform_buffer,
             schematic_world_vertex_buffer: None,
             schematic_world_vertex_capacity: 0,
             schematic_world_stroke_buffer: None,
@@ -422,8 +426,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let world_strokes = retained.world_strokes();
         let visible_world_stroke_ranges = prepared.visible_world_stroke_ranges();
         let visible_world_ranges = prepared.visible_world_ranges();
-        let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
-        let projection = Projection::new(board_field, &prepared.scene_bounds, prepared.camera);
         // P2.2a: resolve the additive companion schematic pass. Active only when
         // the layout carries a Schematic pane (`schematic_scene_viewport`) AND a
         // projected schematic RetainedScene was threaded in with geometry to draw.
@@ -440,6 +442,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         // offscreen captures supply neither cursor nor hover quads.
         let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
+        let (surface_grid_vertices, surface_grid_batches) =
+            surface_grid_pass::build_surface_grids(prepared);
+        self.prepare_surface_uniforms(device, queue, prepared, width, height);
         queue.write_buffer(
             &self.uniform_buffer,
             0,
@@ -448,39 +453,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 _pad: [0.0, 0.0],
             }),
         );
-        queue.write_buffer(
-            &self.scene_uniform_buffer,
-            0,
-            bytemuck::bytes_of(&SceneUniform {
-                resolution: [width as f32, height as f32, 0.0, 0.0],
-                viewport_origin: [board_field.x, board_field.y, 0.0, 0.0],
-                viewport_size: [board_field.width, board_field.height, 0.0, 0.0],
-                camera_center_scale: [
-                    prepared.camera.center_x_nm,
-                    prepared.camera.center_y_nm,
-                    projection.scale,
-                    0.0,
-                ],
-            }),
-        );
-        // Companion schematic uniform (distinct backing buffer — see field docs).
-        if let Some((_, field, proj, _)) = schematic_pass.as_ref() {
-            queue.write_buffer(
-                &self.schematic_scene_uniform_buffer,
-                0,
-                bytemuck::bytes_of(&SceneUniform {
-                    resolution: [width as f32, height as f32, 0.0, 0.0],
-                    viewport_origin: [field.x, field.y, 0.0, 0.0],
-                    viewport_size: [field.width, field.height, 0.0, 0.0],
-                    camera_center_scale: [
-                        prepared.schematic_camera.center_x_nm,
-                        prepared.schematic_camera.center_y_nm,
-                        proj.scale,
-                        0.0,
-                    ],
-                }),
-            );
-        }
         let upload_started = std::time::Instant::now();
         self.upload_frame_vertices(
             device,
@@ -495,6 +467,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_underlay_vertices,
             schematic_overlay_vertices,
         );
+        Self::upload_vertices(device, queue, &mut self.surface_grid_vertex_buffer,
+            &mut self.surface_grid_vertex_capacity, "datum-surface-grid-vertex-buffer",
+            &surface_grid_vertices);
         self.sync_world_strokes(device, queue, world_strokes);
         if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
             self.sync_schematic_world_strokes(device, queue, scene.world_strokes());
@@ -539,7 +514,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 );
                 pass.draw(0..panel_vertices.len() as u32, 0..1);
             }
-            if !viewport_underlay_vertices.is_empty() {
+            if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
                 pass.set_scissor_rect(
                     prepared.scene_viewport.x.max(0.0).floor() as u32,
                     prepared.scene_viewport.y.max(0.0).floor() as u32,
@@ -555,7 +530,12 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 );
                 pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
             }
-            if !world_vertices.is_empty() && !visible_world_ranges.is_empty() {
+            self.draw_surface_grids(&mut pass, &surface_grid_batches);
+            self.draw_surface_world_passes(&mut pass, prepared, retained, schematic_retained);
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            if prepared.surface_passes().is_empty()
+                && !world_vertices.is_empty() && !visible_world_ranges.is_empty() {
                 pass.set_pipeline(&self.world_pipeline);
                 pass.set_bind_group(0, &self.scene_bind_group, &[]);
                 pass.set_scissor_rect(
@@ -577,7 +557,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
-            if !world_strokes.is_empty() {
+            if prepared.surface_passes().is_empty() && !world_strokes.is_empty() {
                 draw_world_strokes(&mut pass, &self.world_stroke_pipeline, &self.scene_bind_group,
                     self.world_stroke_buffer.as_ref().expect("world stroke buffer"),
                     prepared.scene_viewport, visible_world_stroke_ranges);
@@ -590,7 +570,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // zoom, scissored to the schematic pane's scene rect. Painted BEFORE the
             // schematic world pass below so wires/symbols sit on top of the grid,
             // preserving the old draw order the retained bake had.
-            if !schematic_underlay_vertices.is_empty()
+            if prepared.surface_passes().is_empty() && !schematic_underlay_vertices.is_empty()
                 && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
                 && let Some(buffer) = self.schematic_underlay_vertex_buffer.as_ref()
             {
@@ -609,7 +589,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // scene rect so it can never touch pane A. The board pass above is
             // completely unchanged. Restores the screen pipeline afterward for the
             // overlay/menu passes.
-            if let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
+            if prepared.surface_passes().is_empty()
+                && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
                 let ranges = sr.all_world_ranges();
                 if !ranges.is_empty()
                     && let Some(buffer) = self.schematic_world_vertex_buffer.as_ref()
@@ -641,7 +622,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // geometry, matching the board overlay and preventing filled symbols
             // from obscuring hover/cursor feedback.
             if !schematic_overlay_vertices.is_empty()
-                && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
+                && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
                 && let Some(buffer) = self.schematic_overlay_vertex_buffer.as_ref()
             {
                 pass.set_scissor_rect(
@@ -670,11 +651,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
             }
             if !board_interaction_vertices.is_empty() {
+                let interaction_viewport = prepared
+                    .interaction_viewport(SceneSurface::Board)
+                    .unwrap_or(prepared.scene_viewport);
                 pass.set_scissor_rect(
-                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                    interaction_viewport.x.max(0.0).floor() as u32,
+                    interaction_viewport.y.max(0.0).floor() as u32,
+                    interaction_viewport.width.max(1.0).ceil() as u32,
+                    interaction_viewport.height.max(1.0).ceil() as u32,
                 );
                 pass.set_vertex_buffer(
                     0,
