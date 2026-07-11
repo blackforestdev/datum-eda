@@ -27,6 +27,7 @@ use super::*;
 
 mod connectivity_mutations;
 mod connectivity_queries;
+mod connectivity_run_impls;
 mod helpers;
 mod proposals;
 mod queries;

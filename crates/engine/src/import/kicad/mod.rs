@@ -10,6 +10,7 @@ use crate::substrate::{ImportKey, ImportMapEntry};
 mod board_objects;
 mod footprint;
 mod net_refs;
+mod pad_expansion;
 mod parser_helpers;
 mod schematic_bus;
 mod schematic_graphics;

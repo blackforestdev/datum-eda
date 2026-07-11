@@ -268,17 +268,6 @@
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
-    "crates/cli/src/commands/schematic/connectivity_mutations.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 1026
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
     "crates/cli/src/commands/schematic/symbol_mutations.rs": {
       "kind": "rust-production",
       "limits": {
@@ -590,7 +579,7 @@
     "crates/engine/src/import/kicad/skeleton.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1239
+        "pre_test_lines": 1058
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -700,7 +689,7 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3432
+        "pre_test_lines": 3304
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -722,8 +711,8 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 5871,
-        "inline_test_lines": 1966
+        "pre_test_lines": 5821,
+        "inline_test_lines": 1869
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -745,7 +734,7 @@
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 839
+        "pre_test_lines": 793
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -767,7 +756,7 @@
     "crates/gui-render/src/render/gpu.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1026
+        "pre_test_lines": 988
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -778,7 +767,7 @@
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1229
+        "pre_test_lines": 1116
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -800,7 +789,7 @@
     "crates/gui-render/src/render/scene.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1053
+        "pre_test_lines": 894
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -811,7 +800,7 @@
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 1445
+        "file_lines": 1239
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

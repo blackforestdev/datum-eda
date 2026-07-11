@@ -40,6 +40,9 @@ pub mod visual_runner;
 
 include!("render/layout.rs");
 include!("render/types.rs");
+#[path = "render/pane_chrome.rs"]
+mod pane_chrome;
+use pane_chrome::render_viewport_panes;
 include!("render/scene.rs");
 include!("render/retained.rs");
 include!("render/overlay.rs");
@@ -50,6 +53,16 @@ include!("render/draw_primitives.rs");
 include!("render/pads_and_layers.rs");
 include!("render/geometry.rs");
 include!("render/gpu.rs");
+#[path = "render/grid.rs"]
+mod grid;
+pub(crate) use grid::{push_scene_grid, push_schematic_grid};
+#[path = "render/via.rs"]
+mod via;
+pub(crate) use via::push_via_primitive_world;
+#[path = "render/gpu_data.rs"]
+mod gpu_data;
+pub use gpu_data::Vertex;
+pub(crate) use gpu_data::{quads_to_vertices, SceneUniform, ScreenUniform};
 include!("render/test_support.rs");
 #[cfg(test)]
 mod layout_invariant_tests;
@@ -61,3 +74,6 @@ mod render_contract_tests;
 mod terminal_dock_contract_tests;
 
 include!("render/tests.rs");
+#[cfg(test)]
+#[path = "render/board_text_mesh_tests.rs"]
+mod board_text_mesh_tests;
