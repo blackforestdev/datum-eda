@@ -47,8 +47,9 @@ pub(crate) fn push_board_graphic_semantic_stroke(out: &mut Vec<super::Quad>,
     }
     let path = if graphic.primitive_kind == "polygon" { super::close_path(&graphic.path) }
         else { graphic.path.clone() };
-    push_world_stroke_path(strokes, &path, color,
-        super::board_graphic_nominal_nm(&graphic.layer_id, graphic.width_nm), 1.0);
+    let (nominal_nm, min_px) = super::semantic_graphic_kind(&graphic.object_id,
+        &graphic.layer_id, graphic.width_nm).nominal_and_floor();
+    push_world_stroke_path(strokes, &path, color, nominal_nm, min_px);
 }
 
 pub(crate) const WORLD_STROKE_SHADER: &str = r#"
