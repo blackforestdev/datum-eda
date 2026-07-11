@@ -12,7 +12,7 @@ use datum_gui_protocol::{
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
 use datum_gui_render::{
-    CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, ShellLayout,
+    CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, SceneSurface, ShellLayout,
 };
 use std::collections::BTreeMap;
 use std::io::Write;
@@ -2410,7 +2410,10 @@ impl Runtime {
             return false;
         }
         let prepared = self.prepared_scene();
-        let Some(world) = prepared.world_point_at_screen(screen_pos.0, screen_pos.1) else {
+        // Authoring is a board-scene gesture; only the board surface drives it.
+        let Some((world, SceneSurface::Board)) =
+            prepared.world_point_at_screen(screen_pos.0, screen_pos.1)
+        else {
             return false;
         };
         let target_object_id = self.authoring_target_object_id(world);
@@ -2616,7 +2619,14 @@ impl Runtime {
             ));
             return self.select_hit_target(&target);
         }
-        if let Some(world_point) = world_point {
+        if let Some((world_point, SceneSurface::Schematic)) = world_point {
+            // S3/UVT-004 plumbing: a focused schematic-pane click now resolves a
+            // world point in the schematic camera AND hit-tests the symbol regions.
+            // Firing selection off it is S5, so this resolves+traces only; the board
+            // path below stays byte-identical.
+            return self.resolve_schematic_primary_click((x, y), world_point);
+        }
+        if let Some((world_point, SceneSurface::Board)) = world_point {
             let retained_started = std::time::Instant::now();
             let retained_target = {
                 let retained = self.retained_scene.get_or_insert_with(|| {
@@ -2987,53 +2997,6 @@ impl Runtime {
 
     fn marking_menu_active(&self) -> bool {
         self.workspace().ui.marking_menu.is_some()
-    }
-
-    fn open_marking_menu_at_cursor(&mut self) -> bool {
-        let Some((x, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        if self.cursor_in_dock() {
-            return false;
-        }
-        let world_point = {
-            let prepared = self.prepared_scene();
-            prepared.world_point_at_screen(x, y)
-        };
-        let Some(world_point) = world_point else {
-            return false;
-        };
-        let retained_target = {
-            let retained = self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                )
-            });
-            retained
-                .hit_test_authored_world(world_point, self.session.workspace())
-                .cloned()
-        };
-        let target_object_id = match retained_target {
-            Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
-            _ => None,
-        };
-        let menu_key = marking_menu_key_for_target(target_object_id.as_deref());
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.active_menu = None;
-        ui.marking_menu = Some(MarkingMenuState {
-            menu_key,
-            target_object_id,
-            anchor_x_px: x.round() as i32,
-            anchor_y_px: y.round() as i32,
-            preview_slot: None,
-            gesture_dx_px: 0,
-            gesture_dy_px: 0,
-        });
-        self.invalidate_frame();
-        true
     }
 
     fn update_marking_menu_preview(&mut self, pos: (f32, f32)) -> bool {

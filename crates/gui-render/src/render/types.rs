@@ -69,6 +69,18 @@ pub struct HitRegion {
     pub target: HitTarget,
     pub rect: RectPx,
 }
+
+/// Which pane's scene a resolved screen point / world hit belongs to (UVT-004,
+/// the CoordinateHit keystone). `world_point_at_screen` resolves the FOCUSED-vs-
+/// containing pane and reports the surface so callers route the follow-up world
+/// hit-test to the matching retained scene (the board `RetainedScene` vs the
+/// companion schematic one) in that surface's own camera/space. Board is the
+/// only interactive surface pre-S3; Schematic is the new one this slice unblocks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SceneSurface {
+    Board,
+    Schematic,
+}
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
     pub layout: ShellLayout,

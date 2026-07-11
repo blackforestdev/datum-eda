@@ -463,6 +463,94 @@ impl Runtime {
             .leaf_at(x, y)
     }
 
+    /// Open the radial marking menu at the cursor (right-click). A board-scene
+    /// affordance today; the schematic context menu is S7, so a schematic-pane or
+    /// out-of-pane point returns false (S3 only makes the schematic point
+    /// resolvable, via `world_point_at_screen` / `schematic_world_hit`).
+    pub(super) fn open_marking_menu_at_cursor(&mut self) -> bool {
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        if self.cursor_in_dock() {
+            return false;
+        }
+        let world_point = {
+            let prepared = self.prepared_scene();
+            prepared.world_point_at_screen(x, y)
+        };
+        let Some((world_point, SceneSurface::Board)) = world_point else {
+            return false;
+        };
+        let retained_target = {
+            let retained = self.retained_scene.get_or_insert_with(|| {
+                RetainedScene::from_workspace_for_surface(
+                    self.session.workspace(),
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                )
+            });
+            retained
+                .hit_test_authored_world(world_point, self.session.workspace())
+                .cloned()
+        };
+        let target_object_id = match retained_target {
+            Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
+            _ => None,
+        };
+        let menu_key = marking_menu_key_for_target(target_object_id.as_deref());
+        let ui = &mut self.session.workspace_mut().ui;
+        ui.active_menu = None;
+        ui.marking_menu = Some(MarkingMenuState {
+            menu_key,
+            target_object_id,
+            anchor_x_px: x.round() as i32,
+            anchor_y_px: y.round() as i32,
+            preview_slot: None,
+            gesture_dx_px: 0,
+            gesture_dy_px: 0,
+        });
+        self.invalidate_frame();
+        true
+    }
+
+    /// S3/UVT-004: resolve a primary click that `world_point_at_screen` reported on
+    /// the SCHEMATIC surface. It hit-tests the schematic symbol regions in the
+    /// schematic camera's space and traces the resolved identity — the coordinate +
+    /// hit plumbing S5 (selection) and S7 (context menu) build on. Selection is
+    /// deliberately NOT fired here, so it returns `false` (unhandled) and leaves the
+    /// board path untouched.
+    pub(super) fn resolve_schematic_primary_click(
+        &mut self,
+        screen: (f32, f32),
+        world_point: PointNm,
+    ) -> bool {
+        let hit = self.schematic_world_hit(world_point);
+        self.trace_click(format!(
+            "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (selection deferred to S5)",
+            screen.0, screen.1, world_point.x, world_point.y
+        ));
+        false
+    }
+
+    /// Hit-test a schematic-pane world point against the companion schematic scene's
+    /// symbol hit regions (built lazily like the board's, and reused when the render
+    /// path already resolved it). `None` when there is no schematic scene/pane.
+    pub(super) fn schematic_world_hit(&mut self, world_point: PointNm) -> Option<HitTarget> {
+        if self.schematic_retained_scene.is_none() {
+            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.scale_factor,
+            );
+        }
+        self.schematic_retained_scene
+            .as_ref()?
+            .hit_test_world(world_point)
+            .cloned()
+    }
+
     pub(super) fn update_hover(&mut self, pos: (f32, f32)) -> bool {
         let prepared = self.prepared_scene();
         let new_hover = match prepared.hit_test(pos.0, pos.1) {

@@ -1,3 +1,12 @@
+// Per-pane coordinate + hit resolution (UVT-004 keystone) is extracted into a
+// real child module — a descendant of this crate-root scope, so it still reaches
+// the private `PreparedScene`/`RetainedScene` fields and the private
+// `WorldHitShape`/`WorldHitRegion` types. Declared here (not in lib.rs) so lib.rs
+// stays untouched and this file carries the extraction. `#[path]` resolves beside
+// this physical file (`src/render/`), not the include! host.
+#[path = "coordinate_hit.rs"]
+mod coordinate_hit;
+
 impl PreparedScene {
     pub fn from_workspace(
         state: &ReviewWorkspaceState,
@@ -171,14 +180,8 @@ impl PreparedScene {
             .map(|region| &region.target)
     }
 
-    pub fn world_point_at_screen(&self, x: f32, y: f32) -> Option<PointNm> {
-        if !self.scene_viewport.contains(x, y) {
-            return None;
-        }
-        let board_field = inset_rect(self.scene_viewport, 10.0, 10.0, 10.0, 10.0);
-        let projection = Projection::new(board_field, &self.scene_bounds, self.camera);
-        Some(projection.screen_to_world(x, y))
-    }
+    // `world_point_at_screen` (per-pane screen->world resolve, UVT-004) lives in
+    // the `coordinate_hit` include-module alongside the world hit-test.
 
     fn panel_vertices(&self) -> &[Vertex] {
         &self.panel_vertices
@@ -383,10 +386,17 @@ impl RetainedScene {
             state,
         );
         let world_vertices = quads_to_vertices(&world_quads);
+        // S3 / UVT-004: the schematic pane gets real hit regions for the first
+        // time — placed symbols emit selectable world hit shapes tagged with their
+        // stable projected identity, mirroring how the board tags authored objects.
+        // Wires/labels stay non-interactive this slice (symbols are the S5/S7
+        // selection/menu target); the world geometry above is unchanged.
+        let mut world_hit_regions = Vec::new();
+        coordinate_hit::push_schematic_symbol_hit_regions(&mut world_hit_regions, schematic_scene);
         Some(Self {
             world_vertices,
             world_batches,
-            world_hit_regions: Vec::new(),
+            world_hit_regions,
         })
     }
 
@@ -425,49 +435,10 @@ impl RetainedScene {
             .collect()
     }
 
-    pub fn hit_test_authored_world(
-        &self,
-        point: PointNm,
-        state: &ReviewWorkspaceState,
-    ) -> Option<&HitTarget> {
-        // Board hit-testing is scoped by scene-rect containment upstream
-        // (`world_point_at_screen` returns None outside the board leaf's rect), so a
-        // click in the Schematic pane never reaches board geometry — and a click in
-        // the board pane DOES hit it even while another pane is focused (view/inspect
-        // the board while working elsewhere).
-        if !authored_visible(state) {
-            return None;
-        }
-        self.world_hit_regions
-            .iter()
-            .rev()
-            .find(|region| {
-                region
-                    .layer_id
-                    .as_deref()
-                    .is_none_or(|layer_id| layer_visible(state, layer_id))
-                    && region.shape.contains(point)
-            })
-            .map(|region| &region.target)
-    }
-}
-
-impl WorldHitShape {
-    fn contains(&self, point: PointNm) -> bool {
-        match self {
-            Self::Rect(rect) => point_in_rect(point, *rect),
-            Self::Polyline {
-                path,
-                half_width_nm,
-            } => polyline_contains_world_point(path, point, *half_width_nm),
-            Self::Polygon(path) => point_in_polygon_world(path, point),
-            Self::Circle { center, radius_nm } => {
-                let dx = point.x as f32 - center.x as f32;
-                let dy = point.y as f32 - center.y as f32;
-                dx * dx + dy * dy <= radius_nm * radius_nm
-            }
-        }
-    }
+    // `hit_test_authored_world` (board) and `hit_test_world` (schematic,
+    // unfiltered) live in the `coordinate_hit` include-module, sharing one scan
+    // core so the board path stays byte-identical while the schematic surface
+    // gets a filter-free twin.
 }
 
 fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
