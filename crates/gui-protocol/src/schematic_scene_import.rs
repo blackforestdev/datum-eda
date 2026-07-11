@@ -1,6 +1,12 @@
 use anyhow::{Context, Result};
+use eda_engine::board::BoardText;
 use eda_engine::ir::geometry::Point;
-use eda_engine::schematic::{Schematic, SchematicPrimitive, Sheet};
+use eda_engine::schematic::{PlacedSymbol, Schematic, SchematicPrimitive, Sheet, SymbolPin};
+use eda_engine::text::{
+    TextFamilyId, TextFamilySource, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign,
+    default_stroke_width_nm,
+};
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use uuid::Uuid;
 
@@ -8,10 +14,31 @@ use super::*;
 
 const SCHEMATIC_DRAWING_LAYER: &str = "L37";
 const SCHEMATIC_FRAME_LAYER: &str = "L44";
+// Integer twin of `SCHEMATIC_DRAWING_LAYER` for `BoardText.layer` (`layer_id`
+// maps 37 -> "L37"); text geometries must land on the same schematic layer as
+// the wire/symbol graphics so they share visibility.
+const SCHEMATIC_DRAWING_LAYER_INT: i32 = 37;
 const SCHEMATIC_STROKE_NM: i64 = 120_000;
 const SYMBOL_HALF_WIDTH_NM: i64 = 1_600_000;
 const SYMBOL_HALF_HEIGHT_NM: i64 = 900_000;
 const JUNCTION_RADIUS_NM: i64 = 180_000;
+// Symbol projection fidelity (P2.2b). All nm in the schematic's own coordinate
+// space; pins carry absolute positions (rotation baked in at import), so the
+// body is derived from the pin envelope and pin lines connect body edge ->
+// terminal (where wires already meet).
+const PIN_STROKE_NM: i64 = 100_000;
+const PIN_TERMINAL_RADIUS_NM: i64 = 90_000;
+const MIN_BODY_HALF_NM: i64 = 500_000;
+const MIN_PIN_STUB_NM: i64 = 300_000;
+const MAX_PIN_STUB_NM: i64 = 2_000_000;
+const REFDES_HEIGHT_NM: i64 = 900_000;
+const VALUE_HEIGHT_NM: i64 = 720_000;
+const PIN_NAME_HEIGHT_NM: i64 = 520_000;
+const PIN_NUMBER_HEIGHT_NM: i64 = 420_000;
+const LABEL_TEXT_HEIGHT_NM: i64 = 640_000;
+const SYMBOL_TEXT_GAP_NM: i64 = 320_000;
+const PIN_NAME_INSET_NM: i64 = 260_000;
+const PIN_NUMBER_OUTSET_NM: i64 = 180_000;
 const LABEL_HALF_WIDTH_NM: i64 = 1_100_000;
 const LABEL_HALF_HEIGHT_NM: i64 = 300_000;
 const PORT_HALF_WIDTH_NM: i64 = 1_300_000;
@@ -91,7 +118,9 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
 
     let mut graphics = Vec::new();
     let mut points = Vec::new();
-    push_root_sheet_graphics(root_sheet, &schematic, &mut graphics, &mut points);
+    let mut text = SchematicTextSink::default();
+    push_root_sheet_graphics(root_sheet, &schematic, &mut graphics, &mut points, &mut text);
+    let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
     let outline = schematic_outline(&points);
     let mut scene = build_board_review_scene(
         &inspect,
@@ -105,9 +134,9 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
         Vec::new(),
         Vec::new(),
         graphics,
-        Vec::new(),
-        Vec::new(),
-        Vec::new(),
+        board_texts,
+        board_text_geometries,
+        glyph_mesh_assets,
         Vec::new(),
         Vec::new(),
         SCHEMATIC_FRAME_LAYER.to_string(),
@@ -134,11 +163,98 @@ fn root_sheet(schematic: &Schematic) -> Option<&Sheet> {
         })
 }
 
+/// Accumulates schematic annotation text (refdes/value, pin names/numbers, net
+/// labels, port/sheet names) as real rendered glyph geometry. The projection
+/// reuses the board text pipeline (`push_board_text_scene_primitives`) so the
+/// world renderer draws the exact same glyph meshes it draws for board silk;
+/// this stays projection-only — no renderer changes.
+#[derive(Default)]
+struct SchematicTextSink {
+    texts: Vec<BoardTextPrimitive>,
+    geometries: Vec<BoardTextGeometryPrimitive>,
+    mesh_assets: BTreeMap<GlyphMeshHandlePrimitive, GlyphMeshAssetPrimitive>,
+}
+
+impl SchematicTextSink {
+    #[allow(clippy::too_many_arguments)]
+    fn push(
+        &mut self,
+        points: &mut Vec<PointNm>,
+        object_uuid: Uuid,
+        object_key: &str,
+        content: &str,
+        anchor: PointNm,
+        height_nm: i64,
+        h_align: TextHAlign,
+        v_align: TextVAlign,
+    ) {
+        let content = content.trim();
+        if content.is_empty() {
+            return;
+        }
+        points.push(anchor);
+        let board_text = BoardText {
+            uuid: text_uuid(object_uuid, object_key),
+            text: content.to_string(),
+            position: Point {
+                x: anchor.x,
+                y: anchor.y,
+            },
+            rotation: 0,
+            layer: SCHEMATIC_DRAWING_LAYER_INT,
+            render_intent: TextRenderIntent::Annotation,
+            family: TextFamilyId::default(),
+            family_source: TextFamilySource::default(),
+            style: TextStyleId::default(),
+            height_nm,
+            stroke_width_nm: default_stroke_width_nm(height_nm),
+            h_align,
+            v_align,
+            mirrored: false,
+            keep_upright: true,
+            line_spacing_ratio_ppm: 1_000_000,
+            italic: false,
+            bold: false,
+            style_class: None,
+        };
+        push_board_text_scene_primitives(
+            &board_text,
+            &mut self.texts,
+            &mut self.geometries,
+            &mut self.mesh_assets,
+        );
+    }
+
+    fn into_parts(
+        self,
+    ) -> (
+        Vec<BoardTextPrimitive>,
+        Vec<BoardTextGeometryPrimitive>,
+        Vec<GlyphMeshAssetPrimitive>,
+    ) {
+        (
+            self.texts,
+            self.geometries,
+            self.mesh_assets.into_values().collect(),
+        )
+    }
+}
+
+/// Deterministic, collision-resistant text UUID derived from the owning object
+/// and a per-text role key (e.g. `refdes`, `pin-name:3`).
+fn text_uuid(object_uuid: Uuid, key: &str) -> Uuid {
+    Uuid::new_v5(
+        &Uuid::NAMESPACE_URL,
+        format!("datum:schematic-projection-text:{object_uuid}:{key}").as_bytes(),
+    )
+}
+
 fn push_root_sheet_graphics(
     sheet: &Sheet,
     schematic: &Schematic,
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
 ) {
     for wire in sorted_values(&sheet.wires) {
         push_line_graphic(
@@ -152,32 +268,16 @@ fn push_root_sheet_graphics(
         );
     }
     for drawing in sorted_values(&sheet.drawings) {
-        push_drawing_graphic(graphics, points, drawing);
+        push_drawing_graphic(graphics, points, text, drawing);
     }
     for symbol in sorted_values(&sheet.symbols) {
-        let label = if symbol.reference.is_empty() {
-            symbol
-                .lib_id
-                .clone()
-                .unwrap_or_else(|| "symbol".to_string())
-        } else {
-            symbol.reference.clone()
-        };
-        push_rect_graphic(
-            graphics,
-            points,
-            format!("schematic-symbol:{}", symbol.uuid),
-            symbol.uuid,
-            symbol.position,
-            SYMBOL_HALF_WIDTH_NM,
-            SYMBOL_HALF_HEIGHT_NM,
-            Some(label),
-        );
+        push_symbol_graphics(graphics, points, text, symbol);
     }
     for label in sorted_values(&sheet.labels) {
         push_rect_graphic(
             graphics,
             points,
+            text,
             format!("schematic-label:{}", label.uuid),
             label.uuid,
             label.position,
@@ -190,6 +290,7 @@ fn push_root_sheet_graphics(
         push_rect_graphic(
             graphics,
             points,
+            text,
             format!("schematic-port:{}", port.uuid),
             port.uuid,
             port.position,
@@ -218,16 +319,18 @@ fn push_root_sheet_graphics(
             NOCONNECT_HALF_NM,
         );
     }
-    for text in sorted_values(&sheet.texts) {
-        push_rect_graphic(
-            graphics,
+    for schematic_text in sorted_values(&sheet.texts) {
+        // Free schematic text is annotation, not a boxed object: emit it as real
+        // text at its own position rather than a bare labelled rect.
+        text.push(
             points,
-            format!("schematic-text:{}", text.uuid),
-            text.uuid,
-            text.position,
-            LABEL_HALF_WIDTH_NM,
-            LABEL_HALF_HEIGHT_NM,
-            Some(text.text.clone()),
+            schematic_text.uuid,
+            "schematic-text",
+            &schematic_text.text,
+            point_nm(schematic_text.position),
+            LABEL_TEXT_HEIGHT_NM,
+            TextHAlign::Left,
+            TextVAlign::Center,
         );
     }
     for instance in sorted_values(&schematic.sheet_instances) {
@@ -237,6 +340,7 @@ fn push_root_sheet_graphics(
         push_rect_graphic(
             graphics,
             points,
+            text,
             format!("schematic-sheet-instance:{}", instance.uuid),
             instance.uuid,
             instance.position,
@@ -245,6 +349,238 @@ fn push_root_sheet_graphics(
             Some(instance.name.clone()),
         );
     }
+}
+
+/// Projects one placed symbol at full fidelity: an IEC rectangular body sized
+/// from the pin envelope, a pin line + terminal marker per pin, refdes/value
+/// text near the body, and pin name/number text. Pins carry absolute positions
+/// (rotation baked in at import), so the body is derived from where the pins sit
+/// relative to the symbol origin and every pin line meets the terminal a wire
+/// already connects to.
+fn push_symbol_graphics(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    symbol: &PlacedSymbol,
+) {
+    let center = point_nm(symbol.position);
+    let (half_w, half_h) = symbol_body_half_extents(center, &symbol.pins);
+
+    // 1. IEC rectangular body.
+    push_rect_graphic(
+        graphics,
+        points,
+        text,
+        format!("schematic-symbol:{}", symbol.uuid),
+        symbol.uuid,
+        symbol.position,
+        half_w,
+        half_h,
+        None,
+    );
+
+    // 2. Pin lines + terminal markers, 4. pin name/number text.
+    for (index, pin) in symbol.pins.iter().enumerate() {
+        push_symbol_pin(graphics, points, text, symbol.uuid, center, half_w, half_h, index, pin);
+    }
+
+    // 3. Refdes above the body, value below it.
+    let refdes = if symbol.reference.is_empty() {
+        symbol.lib_id.clone().unwrap_or_default()
+    } else {
+        symbol.reference.clone()
+    };
+    text.push(
+        points,
+        symbol.uuid,
+        "refdes",
+        &refdes,
+        PointNm {
+            x: center.x,
+            y: center.y - half_h - SYMBOL_TEXT_GAP_NM,
+        },
+        REFDES_HEIGHT_NM,
+        TextHAlign::Center,
+        TextVAlign::Bottom,
+    );
+    text.push(
+        points,
+        symbol.uuid,
+        "value",
+        &symbol.value,
+        PointNm {
+            x: center.x,
+            y: center.y + half_h + SYMBOL_TEXT_GAP_NM,
+        },
+        VALUE_HEIGHT_NM,
+        TextHAlign::Center,
+        TextVAlign::Top,
+    );
+}
+
+/// Derives the symbol body half-extents from the pin envelope. Pins that stick
+/// out horizontally (|dx| >= |dy|) set the width inset by a pin stub; the body
+/// must still enclose the perpendicular spread of the other pins so no pin
+/// origin falls inside a face it does not belong to.
+fn symbol_body_half_extents(center: PointNm, pins: &[SymbolPin]) -> (i64, i64) {
+    if pins.is_empty() {
+        return (SYMBOL_HALF_WIDTH_NM, SYMBOL_HALF_HEIGHT_NM);
+    }
+    let mut stick_x = 0_i64; // furthest horizontal pin reach
+    let mut stick_y = 0_i64; // furthest vertical pin reach
+    let mut enclose_x = 0_i64; // widest x spread among vertical pins
+    let mut enclose_y = 0_i64; // tallest y spread among horizontal pins
+    for pin in pins {
+        let dx = (pin.position.x - center.x).abs();
+        let dy = (pin.position.y - center.y).abs();
+        if dx >= dy {
+            stick_x = stick_x.max(dx);
+            enclose_y = enclose_y.max(dy);
+        } else {
+            stick_y = stick_y.max(dy);
+            enclose_x = enclose_x.max(dx);
+        }
+    }
+    let pin_stub = (stick_x.max(stick_y) / 3).clamp(MIN_PIN_STUB_NM, MAX_PIN_STUB_NM);
+    let half_w = if stick_x > 0 {
+        (stick_x - pin_stub).max(MIN_BODY_HALF_NM).max(enclose_x)
+    } else {
+        MIN_BODY_HALF_NM.max(enclose_x)
+    };
+    let half_h = if stick_y > 0 {
+        (stick_y - pin_stub).max(MIN_BODY_HALF_NM).max(enclose_y)
+    } else {
+        MIN_BODY_HALF_NM.max(enclose_y)
+    };
+    (half_w, half_h)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn push_symbol_pin(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    symbol_uuid: Uuid,
+    center: PointNm,
+    half_w: i64,
+    half_h: i64,
+    index: usize,
+    pin: &SymbolPin,
+) {
+    let terminal = point_nm(pin.position);
+    let dx = terminal.x - center.x;
+    let dy = terminal.y - center.y;
+    let horizontal = dx.abs() >= dy.abs();
+
+    // Body-edge attach point for this pin, on the face it exits.
+    let (edge, name_anchor, name_h, name_v, number_anchor, number_h, number_v) = if horizontal {
+        let sign = if dx >= 0 { 1 } else { -1 };
+        let edge = PointNm {
+            x: center.x + sign * half_w,
+            y: terminal.y,
+        };
+        // Name inside the body next to the edge; number outside on the stub.
+        let (name_h, number_h) = if sign >= 0 {
+            (TextHAlign::Right, TextHAlign::Left)
+        } else {
+            (TextHAlign::Left, TextHAlign::Right)
+        };
+        (
+            edge,
+            PointNm {
+                x: edge.x - sign * PIN_NAME_INSET_NM,
+                y: terminal.y,
+            },
+            name_h,
+            TextVAlign::Center,
+            PointNm {
+                x: edge.x + sign * PIN_NUMBER_OUTSET_NM,
+                y: terminal.y,
+            },
+            number_h,
+            TextVAlign::Bottom,
+        )
+    } else {
+        let sign = if dy >= 0 { 1 } else { -1 };
+        let edge = PointNm {
+            x: terminal.x,
+            y: center.y + sign * half_h,
+        };
+        let (name_v, number_v) = if sign >= 0 {
+            (TextVAlign::Top, TextVAlign::Bottom)
+        } else {
+            (TextVAlign::Bottom, TextVAlign::Top)
+        };
+        (
+            edge,
+            PointNm {
+                x: terminal.x,
+                y: edge.y - sign * PIN_NAME_INSET_NM,
+            },
+            TextHAlign::Center,
+            name_v,
+            PointNm {
+                x: terminal.x,
+                y: edge.y + sign * PIN_NUMBER_OUTSET_NM,
+            },
+            TextHAlign::Center,
+            number_v,
+        )
+    };
+
+    // Pin line body-edge -> terminal, only when the terminal actually sits
+    // outside the body face (degenerate/inner pins get just a marker).
+    let outside = if horizontal {
+        (terminal.x - edge.x).signum() == dx.signum() && terminal.x != edge.x
+    } else {
+        (terminal.y - edge.y).signum() == dy.signum() && terminal.y != edge.y
+    };
+    if outside {
+        let path = vec![edge, terminal];
+        points.extend(path.iter().copied());
+        graphics.push(BoardGraphicPrimitive {
+            object_id: format!("schematic-symbol-pin:{}:{index}", symbol_uuid),
+            object_kind: "schematic_graphic".to_string(),
+            primitive_kind: "line".to_string(),
+            source_object_uuid: pin.uuid.to_string(),
+            layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
+            path,
+            holes: Vec::new(),
+            width_nm: Some(PIN_STROKE_NM),
+        });
+    }
+
+    // Terminal marker at the wire attach point.
+    push_circle_graphic(
+        graphics,
+        points,
+        format!("schematic-symbol-pin-terminal:{}:{index}", symbol_uuid),
+        pin.uuid,
+        pin.position,
+        PIN_TERMINAL_RADIUS_NM,
+    );
+
+    // Pin name (inside the body) and pin number (outside on the stub).
+    text.push(
+        points,
+        symbol_uuid,
+        &format!("pin-name:{index}"),
+        &pin.name,
+        name_anchor,
+        PIN_NAME_HEIGHT_NM,
+        name_h,
+        name_v,
+    );
+    text.push(
+        points,
+        symbol_uuid,
+        &format!("pin-number:{index}"),
+        &pin.number,
+        number_anchor,
+        PIN_NUMBER_HEIGHT_NM,
+        number_h,
+        number_v,
+    );
 }
 
 fn sorted_values<T>(map: &std::collections::HashMap<Uuid, T>) -> Vec<&T> {
@@ -256,6 +592,7 @@ fn sorted_values<T>(map: &std::collections::HashMap<Uuid, T>) -> Vec<&T> {
 fn push_drawing_graphic(
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
     drawing: &SchematicPrimitive,
 ) {
     match drawing {
@@ -276,6 +613,7 @@ fn push_drawing_graphic(
             push_rect_graphic(
                 graphics,
                 points,
+                text,
                 format!("schematic-drawing-rect:{uuid}"),
                 *uuid,
                 center,
@@ -362,15 +700,37 @@ fn push_line_graphic(
 fn push_rect_graphic(
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
     object_id: String,
     source_uuid: Uuid,
     center: Point,
     half_width_nm: i64,
     half_height_nm: i64,
-    _label: Option<String>,
+    label: Option<String>,
 ) {
     let center = point_nm(center);
-    let path = vec![
+    // Boxed schematic objects (net labels, hierarchical ports, sheet instances)
+    // carry a name; render it centered in the box instead of discarding it.
+    if let Some(label) = label {
+        text.push(
+            points,
+            source_uuid,
+            "rect-label",
+            &label,
+            center,
+            LABEL_TEXT_HEIGHT_NM,
+            TextHAlign::Center,
+            TextVAlign::Center,
+        );
+    }
+    // IEC bodies (and boxed net-label / port / sheet-instance frames) render as
+    // HOLLOW rects: a light stroke outline over the dark canvas, matching the
+    // prototype's `#12141a` interior + `--sym` stroke. The world renderer FILLS
+    // any `"polygon"` primitive with the layer color, which would read as an
+    // opaque light block and bury the pin-name text inside it. Emitting the four
+    // edges as a CLOSED `"polyline"` outline (renderer strokes, never fills) lets
+    // the dark canvas show through so the interior text stays legible.
+    let corners = [
         PointNm {
             x: center.x - half_width_nm,
             y: center.y - half_height_nm,
@@ -388,11 +748,16 @@ fn push_rect_graphic(
             y: center.y + half_height_nm,
         },
     ];
-    points.extend(path.iter().copied());
+    points.extend(corners.iter().copied());
+    // Explicitly close the loop: the renderer only auto-closes `"polygon"`
+    // primitives, so a polyline outline must repeat its first corner to draw the
+    // fourth edge.
+    let mut path = corners.to_vec();
+    path.push(corners[0]);
     graphics.push(BoardGraphicPrimitive {
         object_id,
         object_kind: "schematic_graphic".to_string(),
-        primitive_kind: "polygon".to_string(),
+        primitive_kind: "polyline".to_string(),
         source_object_uuid: source_uuid.to_string(),
         layer_id: SCHEMATIC_DRAWING_LAYER.to_string(),
         path,
@@ -565,7 +930,60 @@ mod tests {
                 .board_graphics
                 .iter()
                 .any(|graphic| graphic.object_id.starts_with("schematic-symbol:")),
-            "schematic symbols should have first-pass visible placeholders"
+            "schematic symbols should project an IEC rectangular body"
+        );
+    }
+
+    #[test]
+    fn symbols_project_pins_terminals_and_annotation_text() {
+        let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+        let state = load_kicad_schematic_workspace_state(&schematic)
+            .expect("simple schematic should load as a review scene");
+        let scene = &state.scene;
+
+        // 2. Pin lines + terminal markers now project alongside the body, so the
+        //    symbol reads as more than a bare box and wires meet real pins.
+        assert!(
+            scene
+                .board_graphics
+                .iter()
+                .any(|g| g.object_id.starts_with("schematic-symbol-pin:")),
+            "each symbol pin should project a pin line from body edge to terminal"
+        );
+        assert!(
+            scene
+                .board_graphics
+                .iter()
+                .any(|g| g.object_id.starts_with("schematic-symbol-pin-terminal:")),
+            "each symbol pin should project a terminal marker at its wire attach point"
+        );
+
+        // 3/4. Refdes/value and pin name/number now render as real glyph text
+        //      geometry (not discarded labels).
+        assert!(
+            scene
+                .board_texts
+                .iter()
+                .any(|t| t.object_kind == "board_text"),
+            "symbol annotation text (refdes/value/pin names) should project as real text"
+        );
+        assert!(
+            !scene.board_text_geometries.is_empty(),
+            "projected schematic text must carry renderable glyph geometry"
+        );
+        assert!(
+            !scene.glyph_mesh_assets.is_empty(),
+            "projected schematic text must carry glyph mesh assets for the world renderer"
+        );
+        // Text geometry must land on the schematic drawing layer so it shares
+        // visibility with the wires/symbol bodies.
+        assert!(
+            scene
+                .board_text_geometries
+                .iter()
+                .all(|g| g.layer_id == SCHEMATIC_DRAWING_LAYER),
+            "schematic text geometry must sit on the schematic drawing layer"
         );
     }
 }
