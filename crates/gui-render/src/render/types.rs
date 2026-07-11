@@ -106,8 +106,7 @@ pub struct PreparedScene {
     viewport_underlay_vertices: Vec<Vertex>,
     viewport_overlay_vertices: Vec<Vertex>,
     board_interaction_vertices: Vec<Vertex>,
-    visible_world_ranges: Vec<Range<u32>>,
-    visible_world_stroke_ranges: Vec<Range<u32>>,
+    visible_draw_commands: Vec<RetainedDrawCommand>,
     text_runs: Vec<TextRun>,
     // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
     // `Some` only when the layout has a Schematic pane AND the workspace carries a
@@ -143,24 +142,15 @@ pub struct PreparedScene {
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
     world_vertices: Vec<Vertex>,
-    world_batches: Vec<RetainedWorldBatch>,
     world_strokes: Vec<WorldStrokeInstance>,
-    world_stroke_batches: Vec<RetainedStrokeBatch>,
+    draw_commands: Vec<RetainedDrawCommand>,
     world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct RetainedWorldBatch {
-    layer_id: Option<String>,
-    start: u32,
-    len: u32,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct RetainedStrokeBatch {
-    layer_id: Option<String>,
-    start: u32,
-    len: u32,
+enum RetainedDrawCommand {
+    Quads { layer_id: Option<String>, range: Range<u32> },
+    Strokes { layer_id: Option<String>, range: Range<u32> },
 }
 
 type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;

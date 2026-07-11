@@ -42,53 +42,41 @@ pub(crate) fn prepare_surface_uniforms(&mut self, device: &wgpu::Device, queue: 
 pub(crate) fn draw_surface_world_passes<'a>(
     &'a self, pass: &mut wgpu::RenderPass<'a>,
     prepared: &PreparedScene,
-    board: &RetainedScene,
     schematic: Option<&RetainedScene>,
 ) {
     for (surface, (_, bind_group)) in prepared.surface_passes().iter().zip(&self.surface_scene_uniforms) {
-        let (retained, vertex_buffer, stroke_buffer, ranges, stroke_ranges) =
+        let (vertex_buffer, stroke_buffer, commands) =
             match surface.surface {
                 SceneSurface::Board => (
-                    board,
                     self.world_vertex_buffer.as_ref(),
                     self.world_stroke_buffer.as_ref(),
-                    prepared.visible_world_ranges().to_vec(),
-                    prepared.visible_world_stroke_ranges().to_vec(),
+                    prepared.visible_draw_commands().to_vec(),
                 ),
                 SceneSurface::Schematic => {
                     let Some(retained) = schematic else { continue };
                     (
-                        retained,
                         self.schematic_world_vertex_buffer.as_ref(),
                         self.schematic_world_stroke_buffer.as_ref(),
-                        retained.all_world_ranges(),
-                        retained.all_world_stroke_ranges(),
+                        retained.all_draw_commands().to_vec(),
                     )
                 }
             };
-        if !retained.world_vertices().is_empty()
-            && !ranges.is_empty()
-            && let Some(buffer) = vertex_buffer
-        {
-            pass.set_pipeline(&self.world_pipeline);
-            pass.set_bind_group(0, bind_group, &[]);
-            set_scissor(pass, surface.scene_viewport);
-            pass.set_vertex_buffer(0, buffer.slice(..));
-            for range in ranges {
-                pass.draw(range, 0..1);
+        for command in commands {
+            match command {
+                RetainedDrawCommand::Quads { range, .. } => {
+                    let Some(buffer) = vertex_buffer else { continue };
+                    pass.set_pipeline(&self.world_pipeline);
+                    pass.set_bind_group(0, bind_group, &[]);
+                    set_scissor(pass, surface.scene_viewport);
+                    pass.set_vertex_buffer(0, buffer.slice(..));
+                    pass.draw(range, 0..1);
+                }
+                RetainedDrawCommand::Strokes { range, .. } => {
+                    let Some(buffer) = stroke_buffer else { continue };
+                    draw_world_strokes(pass, &self.world_stroke_pipeline, bind_group,
+                        buffer, surface.scene_viewport, &[range]);
+                }
             }
-        }
-        if !retained.world_strokes().is_empty()
-            && let Some(buffer) = stroke_buffer
-        {
-            draw_world_strokes(
-                pass,
-                &self.world_stroke_pipeline,
-                bind_group,
-                buffer,
-                surface.scene_viewport,
-                &stroke_ranges,
-            );
         }
     }
 }

@@ -424,8 +424,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let world_strokes = retained.world_strokes();
-        let visible_world_stroke_ranges = prepared.visible_world_stroke_ranges();
-        let visible_world_ranges = prepared.visible_world_ranges();
         // P2.2a: resolve the additive companion schematic pass. Active only when
         // the layout carries a Schematic pane (`schematic_scene_viewport`) AND a
         // projected schematic RetainedScene was threaded in with geometry to draw.
@@ -531,36 +529,33 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
             }
             self.draw_surface_grids(&mut pass, &surface_grid_batches);
-            self.draw_surface_world_passes(&mut pass, prepared, retained, schematic_retained);
+            self.draw_surface_world_passes(&mut pass, prepared, schematic_retained);
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            if prepared.surface_passes().is_empty()
-                && !world_vertices.is_empty() && !visible_world_ranges.is_empty() {
-                pass.set_pipeline(&self.world_pipeline);
-                pass.set_bind_group(0, &self.scene_bind_group, &[]);
-                pass.set_scissor_rect(
-                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(
-                    0,
-                    self.world_vertex_buffer
-                        .as_ref()
-                        .expect("world vertex buffer should exist")
-                        .slice(..),
-                );
-                for range in visible_world_ranges {
-                    pass.draw(range.clone(), 0..1);
+            if prepared.surface_passes().is_empty() {
+                for command in prepared.visible_draw_commands() {
+                    match command {
+                        RetainedDrawCommand::Quads { range, .. } => {
+                            let Some(buffer) = self.world_vertex_buffer.as_ref() else { continue };
+                            pass.set_pipeline(&self.world_pipeline);
+                            pass.set_bind_group(0, &self.scene_bind_group, &[]);
+                            pass.set_scissor_rect(
+                                prepared.scene_viewport.x.max(0.0).floor() as u32,
+                                prepared.scene_viewport.y.max(0.0).floor() as u32,
+                                prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                                prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                            );
+                            pass.set_vertex_buffer(0, buffer.slice(..));
+                            pass.draw(range.clone(), 0..1);
+                        }
+                        RetainedDrawCommand::Strokes { range, .. } => {
+                            let Some(buffer) = self.world_stroke_buffer.as_ref() else { continue };
+                            draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
+                                &self.scene_bind_group, buffer, prepared.scene_viewport,
+                                std::slice::from_ref(range));
+                        }
+                    }
                 }
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            }
-            if prepared.surface_passes().is_empty() && !world_strokes.is_empty() {
-                draw_world_strokes(&mut pass, &self.world_stroke_pipeline, &self.scene_bind_group,
-                    self.world_stroke_buffer.as_ref().expect("world stroke buffer"),
-                    prepared.scene_viewport, visible_world_stroke_ranges);
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
@@ -591,32 +586,31 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // overlay/menu passes.
             if prepared.surface_passes().is_empty()
                 && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
-                let ranges = sr.all_world_ranges();
-                if !ranges.is_empty()
-                    && let Some(buffer) = self.schematic_world_vertex_buffer.as_ref()
-                {
-                    pass.set_pipeline(&self.world_pipeline);
-                    pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
-                    pass.set_scissor_rect(
-                        scene_viewport.x.max(0.0).floor() as u32,
-                        scene_viewport.y.max(0.0).floor() as u32,
-                        scene_viewport.width.max(1.0).ceil() as u32,
-                        scene_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(0, buffer.slice(..));
-                    for range in ranges {
-                        pass.draw(range, 0..1);
+                for command in sr.all_draw_commands() {
+                    match command {
+                        RetainedDrawCommand::Quads { range, .. } => {
+                            let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() else { continue };
+                            pass.set_pipeline(&self.world_pipeline);
+                            pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
+                            pass.set_scissor_rect(
+                                scene_viewport.x.max(0.0).floor() as u32,
+                                scene_viewport.y.max(0.0).floor() as u32,
+                                scene_viewport.width.max(1.0).ceil() as u32,
+                                scene_viewport.height.max(1.0).ceil() as u32,
+                            );
+                            pass.set_vertex_buffer(0, buffer.slice(..));
+                            pass.draw(range.clone(), 0..1);
+                        }
+                        RetainedDrawCommand::Strokes { range, .. } => {
+                            let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() else { continue };
+                            draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
+                                &self.schematic_scene_bind_group, buffer, *scene_viewport,
+                                std::slice::from_ref(range));
+                        }
                     }
-                    pass.set_pipeline(&self.pipeline);
-                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
                 }
-                let stroke_ranges = sr.all_world_stroke_ranges();
-                if let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() {
-                    draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
-                        &self.schematic_scene_bind_group, buffer, *scene_viewport, &stroke_ranges);
-                    pass.set_pipeline(&self.pipeline);
-                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                }
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
             // Interaction chrome is intentionally composited after schematic world
             // geometry, matching the board overlay and preventing filled symbols

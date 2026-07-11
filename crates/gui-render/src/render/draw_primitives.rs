@@ -506,7 +506,6 @@ fn push_component_graphic_primitive(
 fn push_component_graphic_primitive_world(
     out: &mut Vec<Quad>,
     strokes: &mut Vec<WorldStrokeInstance>,
-    stroke_batches: &mut Vec<RetainedStrokeBatch>,
     graphic: &ComponentGraphicPrimitive,
     scene_layers: &[datum_gui_protocol::SceneLayer],
     selected: bool,
@@ -577,11 +576,8 @@ fn push_component_graphic_primitive_world(
     if graphic.render_role == "component_mechanical" {
         push_world_polyline_segments(out, &path, w, color);
     } else {
-        let start = strokes.len();
         push_world_stroke_path(strokes, &path, color,
             graphic.width_nm.unwrap_or(SILK_LINE_NM), 1.0);
-        scene_retained_access::finish_retained_stroke_batch(stroke_batches,
-            graphic.layer_id.clone(), start, strokes.len());
         return;
     }
     // Round-cap each vertex so that separate fp_line segments sharing an

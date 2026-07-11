@@ -20,7 +20,7 @@
 fn push_retained_scene_geometry(
     out: &mut Vec<Quad>,
     strokes: &mut Vec<WorldStrokeInstance>,
-    stroke_batches: &mut Vec<RetainedStrokeBatch>,
+    draw_commands: &mut Vec<RetainedDrawCommand>,
     scene: &BoardReviewSceneV1,
     reference_projection: &Projection,
     state: &ReviewWorkspaceState,
@@ -49,15 +49,16 @@ fn push_retained_scene_geometry(
                 );
             let dimmed = dim_unrelated_active(state) && !related;
             if zone.polygon.len() >= 4 {
+                let quad_start = out.len();
+                let stroke_start = strokes.len();
                 let za = layer_app(&zone.layer_id);
                 let (fill_color, outline_color) = (za.zone_fill, za.zone_outline);
                 push_world_polygon_fill(out, &zone.polygon, dim_authored_color(fill_color, dimmed));
-                let start = strokes.len();
                 let zone_weight = AuthoredStrokePrimitive::CopperZoneOutline;
                 push_world_stroke_path(strokes, &close_path(&zone.polygon),
                     dim_authored_color(outline_color, dimmed), zone_weight.nominal_nm(), 1.0);
-                scene_retained_access::finish_retained_stroke_batch(stroke_batches,
-                    Some(zone.layer_id.clone()), start, strokes.len());
+                scene_retained_access::finish_retained_draw_commands(draw_commands,
+                    Some(zone.layer_id.clone()), quad_start, out.len(), stroke_start, strokes.len());
             }
         }
         for track in &scene.tracks {
@@ -90,13 +91,8 @@ fn push_retained_scene_geometry(
             .nominal_nm() as f32;
             let start = strokes.len();
             push_world_stroke_path(strokes, &track.path, color, track_width_nm as i64, 1.0);
-            if strokes.len() > start {
-                stroke_batches.push(RetainedStrokeBatch {
-                    layer_id: Some(track.layer_id.clone()),
-                    start: start as u32,
-                    len: (strokes.len() - start) as u32,
-                });
-            }
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                Some(track.layer_id.clone()), out.len(), out.len(), start, strokes.len());
         }
         for pad in &scene.pads {
             if !authored_visible(state) {
@@ -124,6 +120,7 @@ fn push_retained_scene_geometry(
                 if !layer_visible(state, render_layer) {
                     continue;
                 }
+                let quad_start = out.len();
                 push_pad_primitive_world(
                     out,
                     pad,
@@ -139,6 +136,8 @@ fn push_retained_scene_geometry(
                     dimmed,
                     reference_projection,
                 );
+                scene_retained_access::finish_retained_draw_commands(draw_commands,
+                    Some(render_layer.to_string()), quad_start, out.len(), strokes.len(), strokes.len());
             }
         }
         for via in &scene.vias {
@@ -168,6 +167,7 @@ fn push_retained_scene_geometry(
                     &via.source_object_uuid,
                 );
             let dimmed = dim_unrelated_active(state) && !selected && !related;
+            let quad_start = out.len();
             push_via_primitive_world(
                 out,
                 via,
@@ -176,6 +176,8 @@ fn push_retained_scene_geometry(
                 dimmed,
                 reference_projection,
             );
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                Some(display_layer.to_string()), quad_start, out.len(), strokes.len(), strokes.len());
         }
     }
     trace_retained_stage("copper", copper_started, copper_before, out.len());
@@ -249,6 +251,7 @@ fn push_retained_scene_geometry(
                     continue;
                 }
                 let derived = derived_process_pad(pad, layer_id, *kind, &scene.pad_expansion_setup);
+                let quad_start = out.len();
                 push_pad_primitive_world(
                     out,
                     &derived,
@@ -262,6 +265,8 @@ fn push_retained_scene_geometry(
                     false,
                     reference_projection,
                 );
+                scene_retained_access::finish_retained_draw_commands(draw_commands,
+                    Some(layer_id.clone()), quad_start, out.len(), strokes.len(), strokes.len());
             }
         }
         process_pad_elapsed += process_started.elapsed();
@@ -294,10 +299,11 @@ fn push_retained_scene_geometry(
                         if id == &format!("component:{}", graphic.component_uuid)
                 ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             let selected = false;
+            let quad_start = out.len();
+            let stroke_start = strokes.len();
             push_component_graphic_primitive_world(
                 out,
                 strokes,
-                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -305,6 +311,8 @@ fn push_retained_scene_geometry(
                 dim_unrelated_active(state) && !selected_component && !related,
                 reference_projection,
             );
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                graphic.layer_id.clone(), quad_start, out.len(), stroke_start, strokes.len());
         }
         mechanical_elapsed += mechanical_started.elapsed();
         mechanical_quads += out.len().saturating_sub(mechanical_before);
@@ -330,10 +338,11 @@ fn push_retained_scene_geometry(
                     SelectionTarget::AuthoredObject(ref id)
                         if id == &format!("component:{}", graphic.component_uuid)
                 ) || component_is_selection_active(&graphic.component_uuid, scene, state);
+            let quad_start = out.len();
+            let stroke_start = strokes.len();
             push_component_graphic_primitive_world(
                 out,
                 strokes,
-                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -341,6 +350,8 @@ fn push_retained_scene_geometry(
                 dim_unrelated_active(state) && !selected && !related,
                 reference_projection,
             );
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                graphic.layer_id.clone(), quad_start, out.len(), stroke_start, strokes.len());
         }
         silkscreen_elapsed += silkscreen_started.elapsed();
         silkscreen_quads += out.len().saturating_sub(silkscreen_before);
@@ -383,7 +394,6 @@ fn push_retained_scene_geometry(
             push_component_graphic_primitive_world(
                 out,
                 strokes,
-                stroke_batches,
                 graphic,
                 sl,
                 false,
@@ -421,7 +431,6 @@ fn push_retained_scene_geometry(
             push_component_graphic_primitive_world(
                 out,
                 strokes,
-                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -548,6 +557,8 @@ fn push_retained_scene_geometry(
             }
         }
     }
+    scene_retained_access::finish_retained_draw_commands(draw_commands, None,
+        unrouted_before, out.len(), strokes.len(), strokes.len());
     trace_retained_stage("unrouted", unrouted_started, unrouted_before, out.len());
     let outline_started = std::time::Instant::now();
     let outline_before = out.len();
@@ -556,9 +567,8 @@ fn push_retained_scene_geometry(
 
 fn push_retained_board_graphic_batches(
     out: &mut Vec<Quad>,
-    batches: &mut Vec<RetainedWorldBatch>,
     strokes: &mut Vec<WorldStrokeInstance>,
-    stroke_batches: &mut Vec<RetainedStrokeBatch>,
+    draw_commands: &mut Vec<RetainedDrawCommand>,
     scene: &BoardReviewSceneV1,
     _reference_projection: &Projection,
     state: &ReviewWorkspaceState,
@@ -576,63 +586,47 @@ fn push_retained_board_graphic_batches(
     let trace_graphics = std::env::var_os("DATUM_TRACE_GRAPHICS").is_some();
 
     for stage in POST_COPPER_STAGES {
-        let mut active_layer: Option<String> = None;
-        let mut active_color = [0.0, 0.0, 0.0];
-        let mut active_start = out.len();
         for gfx in scene
             .board_graphics
             .iter()
             .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
         {
-            if active_layer.as_deref() != Some(gfx.layer_id.as_str()) {
-                scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
-                active_layer = Some(gfx.layer_id.clone());
-                active_color =
-                    board_graphic_world_color(&gfx.layer_id, sl, dim_unrelated_active(state));
-                active_start = out.len();
-            }
+            let quad_start = out.len();
+            let command_stroke_start = strokes.len();
+            let active_color = board_graphic_world_color(
+                &gfx.layer_id, sl, dim_unrelated_active(state));
             if trace_graphics {
                 let graphic_started = std::time::Instant::now();
                 let graphic_before = out.len();
-                let stroke_start = strokes.len();
                 push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
-                scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(gfx.layer_id.clone()), stroke_start, strokes.len());
                 trace_graphic_timing(
                     gfx,
                     graphic_started,
                     out.len().saturating_sub(graphic_before),
                 );
             } else {
-                let stroke_start = strokes.len();
                 push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
-                scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(gfx.layer_id.clone()), stroke_start, strokes.len());
             }
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                Some(gfx.layer_id.clone()), quad_start, out.len(), command_stroke_start, strokes.len());
         }
-        scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
-        let mut outline_layer: Option<String> = None;
-        let mut outline_start = out.len();
         for outline in scene
             .outline
             .iter()
             .filter(|outline| render_stage_for_layer(&outline.layer_id, sl) == stage)
         {
-            if outline_layer.as_deref() != Some(outline.layer_id.as_str()) {
-                scene_retained_access::finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
-                outline_layer = Some(outline.layer_id.clone());
-                outline_start = out.len();
-            }
-            let stroke_start = strokes.len();
+            let command_stroke_start = strokes.len();
             push_world_stroke_path(strokes, &outline.path,
                 board_surface_color(BoardSurfaceRole::Edge), EDGE_CUT_NM, 1.0);
-            scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(outline.layer_id.clone()), stroke_start, strokes.len());
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                Some(outline.layer_id.clone()), out.len(), out.len(), command_stroke_start, strokes.len());
         }
-        scene_retained_access::finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
     }
 }
 
 fn push_retained_board_text_geometry_batches(
     out: &mut Vec<Quad>,
-    batches: &mut Vec<RetainedWorldBatch>,
+    draw_commands: &mut Vec<RetainedDrawCommand>,
     scene: &BoardReviewSceneV1,
     reference_projection: &Projection,
     state: &ReviewWorkspaceState,
@@ -648,9 +642,6 @@ fn push_retained_board_text_geometry_batches(
         .map(|asset| (asset.handle, asset))
         .collect();
     for stage in POST_COPPER_STAGES {
-        let mut active_layer: Option<String> = None;
-        let mut active_start = out.len();
-        let mut active_color = [0.0, 0.0, 0.0];
         for text_geometry in scene
             .board_text_geometries
             .iter()
@@ -660,23 +651,17 @@ fn push_retained_board_text_geometry_batches(
                 continue;
             }
             let text_color = board_graphic_world_color(&text_geometry.layer_id, sl, dimmed);
-            if active_layer.as_deref() != Some(text_geometry.layer_id.as_str())
-                || active_color != text_color
-            {
-                scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
-                active_layer = Some(text_geometry.layer_id.clone());
-                active_color = text_color;
-                active_start = out.len();
-            }
+            let quad_start = out.len();
             push_board_text_geometry_world(
                 out,
                 text_geometry,
                 &glyph_mesh_assets,
-                active_color,
+                text_color,
                 reference_projection,
             );
+            scene_retained_access::finish_retained_draw_commands(draw_commands,
+                Some(text_geometry.layer_id.clone()), quad_start, out.len(), 0, 0);
         }
-        scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
     }
 }
 

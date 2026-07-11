@@ -158,14 +158,6 @@ impl PreparedScene {
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
         let board_interaction_vertices = quads_to_vertices(&board_interaction_quads);
-        let visible_world_ranges = if board_scene_active {
-            retained_scene.visible_world_ranges(state)
-        } else {
-            Vec::new()
-        };
-        let visible_world_stroke_ranges = if board_scene_active {
-            retained_scene.visible_world_stroke_ranges(state)
-        } else { Vec::new() };
         // P2.2a: describe the companion schematic pass. It is active only when the
         // layout has a Schematic pane AND the workspace carries a projected
         // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
@@ -193,6 +185,11 @@ impl PreparedScene {
                     (None, inert, camera)
                 }
             };
+        let visible_draw_commands = if board_scene_active {
+            retained_scene.visible_draw_commands(state)
+        } else {
+            Vec::new()
+        };
 
         // S4: the schematic grid + interaction overlays share ONE immediate
         // screen-space underlay buffer (spec §1.2 / S1b), rebuilt against the pane's
@@ -226,8 +223,7 @@ impl PreparedScene {
             viewport_underlay_vertices,
             viewport_overlay_vertices,
             board_interaction_vertices,
-            visible_world_ranges,
-            visible_world_stroke_ranges,
+            visible_draw_commands,
             text_runs,
             schematic_scene_viewport,
             schematic_pane_id,
@@ -297,12 +293,8 @@ impl PreparedScene {
         &self.board_interaction_vertices
     }
 
-    fn visible_world_ranges(&self) -> &[Range<u32>] {
-        &self.visible_world_ranges
-    }
-
-    fn visible_world_stroke_ranges(&self) -> &[Range<u32>] {
-        &self.visible_world_stroke_ranges
+    fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {
+        &self.visible_draw_commands
     }
 }
 
@@ -351,38 +343,30 @@ impl RetainedScene {
             CameraState::fit_to_bounds(&state.scene.bounds),
         );
         let mut world_quads = Vec::new();
-        let mut world_batches = Vec::new();
         let mut world_strokes = Vec::new();
-        let mut world_stroke_batches = Vec::new();
+        let mut draw_commands = Vec::new();
         let mut world_hit_regions = Vec::new();
         let geometry_started = std::time::Instant::now();
-        push_retained_scene_geometry(&mut world_quads, &mut world_strokes, &mut world_stroke_batches,
+        push_retained_scene_geometry(&mut world_quads, &mut world_strokes, &mut draw_commands,
             &state.scene, &reference_projection, state);
-        if !world_quads.is_empty() {
-            world_batches.push(RetainedWorldBatch {
-                layer_id: None,
-                start: 0,
-                len: (world_quads.len() * 6) as u32,
-            });
-        }
         let board_graphics_started = std::time::Instant::now();
         let board_graphics_before = world_quads.len();
         push_retained_board_text_geometry_batches(
             &mut world_quads,
-            &mut world_batches,
+            &mut draw_commands,
             &state.scene,
             &reference_projection,
             state,
         );
         push_retained_board_graphic_batches(
             &mut world_quads,
-            &mut world_batches,
             &mut world_strokes,
-            &mut world_stroke_batches,
+            &mut draw_commands,
             &state.scene,
             &reference_projection,
             state,
         );
+        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &state.scene.layers);
         trace_render_timing(format!(
             "retained text+board_graphics batches={}ms/{}q",
             board_graphics_started.elapsed().as_millis(),
@@ -407,9 +391,8 @@ impl RetainedScene {
         ));
         Self {
             world_vertices,
-            world_batches,
             world_strokes,
-            world_stroke_batches,
+            draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         }
     }
@@ -445,9 +428,8 @@ impl RetainedScene {
             CameraState::fit_to_bounds(&schematic_scene.bounds),
         );
         let mut world_quads = Vec::new();
-        let mut world_batches = Vec::new();
         let mut world_strokes = Vec::new();
-        let mut world_stroke_batches = Vec::new();
+        let mut draw_commands = Vec::new();
         // Slice S1b: the schematic grid is NO LONGER baked here. It used to be pushed
         // FIRST as world-nm lines so scene geometry painted over it, but world-baked
         // lines are re-scaled by the live schematic camera and thicken on zoom-in.
@@ -457,34 +439,27 @@ impl RetainedScene {
         push_retained_scene_geometry(
             &mut world_quads,
             &mut world_strokes,
-            &mut world_stroke_batches,
+            &mut draw_commands,
             schematic_scene,
             &reference_projection,
             state,
         );
-        if !world_quads.is_empty() {
-            world_batches.push(RetainedWorldBatch {
-                layer_id: None,
-                start: 0,
-                len: (world_quads.len() * 6) as u32,
-            });
-        }
         push_retained_board_text_geometry_batches(
             &mut world_quads,
-            &mut world_batches,
+            &mut draw_commands,
             schematic_scene,
             &reference_projection,
             state,
         );
         push_retained_board_graphic_batches(
             &mut world_quads,
-            &mut world_batches,
             &mut world_strokes,
-            &mut world_stroke_batches,
+            &mut draw_commands,
             schematic_scene,
             &reference_projection,
             state,
         );
+        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &schematic_scene.layers);
         let world_vertices = quads_to_vertices(&world_quads);
         // S3 / UVT-004: build typed schematic hit shapes independently from the
         // current tool's selection eligibility.
@@ -492,9 +467,8 @@ impl RetainedScene {
         coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
         Some(Self {
             world_vertices,
-            world_batches,
             world_strokes,
-            world_stroke_batches,
+            draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         })
     }

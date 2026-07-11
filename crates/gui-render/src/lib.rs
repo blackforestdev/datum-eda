@@ -94,6 +94,8 @@ mod lib_extra_tests;
 #[cfg(test)]
 mod render_contract_tests;
 #[cfg(test)]
+mod retained_draw_order_tests;
+#[cfg(test)]
 mod terminal_dock_contract_tests;
 
 include!("render/tests.rs");

@@ -570,7 +570,7 @@ mod coordinate_hit_tests {
         let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
         let mut prepared = prepared_for(&state, &board);
         let resolves_before = retained_scene_resolve_count();
-        let world_ranges_before = prepared.visible_world_ranges.clone();
+        let draw_commands_before = prepared.visible_draw_commands.clone();
         let grid_before = prepared.schematic_underlay_vertices.clone();
 
         state.ui.cursor_pos = Some(datum_gui_protocol::ScreenPointPx { x: 320.0, y: 240.0 });
@@ -581,7 +581,7 @@ mod coordinate_hit_tests {
             resolves_before,
             "pointer chrome must not resolve retained world geometry"
         );
-        assert_eq!(prepared.visible_world_ranges, world_ranges_before);
+        assert_eq!(prepared.visible_draw_commands, draw_commands_before);
         assert_eq!(prepared.schematic_underlay_vertices, grid_before);
     }
 }
