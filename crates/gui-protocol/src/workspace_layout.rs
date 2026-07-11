@@ -7,8 +7,24 @@
 //! enter `commit()`/the design journal and are not typed design Operations. They
 //! project over the resolved model; they never mutate it.
 
-use crate::{ArtifactPreviewViewportState, TerminalLaneState};
+use crate::{ArtifactPreviewViewportState, PointNm, TerminalLaneState};
 use std::collections::BTreeMap;
+
+/// The user-selected cursor-crosshair presentation for every drawing surface
+/// (decision 023 UVT-005, spec §2). This is a session UI preference — the same
+/// class as camera or pane layout — and is NEVER journaled. Selectable live from
+/// the View menu; `FullViewport` is the default.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum CrosshairStyle {
+    /// Horizontal + vertical hairlines spanning the focused pane's viewport
+    /// through the cursor (class-A ScreenConstant 1px).
+    #[default]
+    FullViewport,
+    /// A small cross at the cursor (class-A ScreenConstant 1px).
+    Local,
+    /// No cursor crosshair.
+    None,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DockTab {
@@ -46,6 +62,15 @@ pub struct WorkspaceUiState {
     pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
     pub hovered_object_id: Option<String>,
+    /// The live cursor position in DEVICE-PIXEL SCREEN space (not world nm),
+    /// stored in a `PointNm` per decision-023 spec §2. `None` when the cursor is
+    /// off-window — the offscreen visual-test capture, so the crosshair overlay
+    /// stays empty and the board frame is byte-identical. Consumer/session state,
+    /// never journaled (like camera or hover).
+    pub cursor_pos: Option<PointNm>,
+    /// The user-selected cursor-crosshair style (View menu). Session UI
+    /// preference, never journaled; defaults to `FullViewport`.
+    pub crosshair_style: CrosshairStyle,
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
     pub console: ConsoleLaneState,

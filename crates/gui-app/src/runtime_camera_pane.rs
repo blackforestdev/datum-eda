@@ -591,8 +591,27 @@ impl Runtime {
         // The hovered id carries its surface in its namespace (a schematic symbol is
         // `schematic-symbol:<uuid>`), so storing the id alone is enough for the
         // renderer to route the hover pre-highlight to the right pane's camera.
-        if self.session.workspace().ui.hovered_object_id != resolved.object_id {
+        //
+        // S4 cursor crosshair (decision 023 UVT-005): record the live cursor in
+        // device-pixel SCREEN space so the renderer can draw the crosshair through
+        // it. A moved cursor invalidates the scene only when a crosshair is actually
+        // shown, so an off (`None`) crosshair costs no extra rebuilds; hover changes
+        // always invalidate.
+        let new_cursor = Some(PointNm {
+            x: pos.0 as i64,
+            y: pos.1 as i64,
+        });
+        let cursor_moved = self.session.workspace().ui.cursor_pos != new_cursor;
+        let hover_changed = self.session.workspace().ui.hovered_object_id != resolved.object_id;
+        if cursor_moved {
+            self.session.workspace_mut().ui.cursor_pos = new_cursor;
+        }
+        if hover_changed {
             self.session.workspace_mut().ui.hovered_object_id = resolved.object_id;
+        }
+        let crosshair_live = self.session.workspace().ui.crosshair_style
+            != datum_gui_protocol::CrosshairStyle::None;
+        if hover_changed || (cursor_moved && crosshair_live) {
             self.invalidate_scene();
             return true;
         }

@@ -76,6 +76,10 @@ impl PreparedScene {
                     .as_ref()
                     .and_then(|scene| interaction_overlay::schematic_symbol_bounds(scene, id))
             });
+        // S4 cursor crosshair (decision 023 UVT-005): live cursor in device-pixel
+        // SCREEN space + user-selected style; `None` in capture stays byte-identical.
+        let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x as f32, p.y as f32));
+        let crosshair_style = state.ui.crosshair_style;
 
         panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
         panel_quads.push(Quad::from_rect(layout.left_sidebar, APP_BG));
@@ -124,9 +128,8 @@ impl PreparedScene {
                 &mut text_runs,
                 &mut hit_regions,
             );
-            // S4: board hover ring + crosshair as an IMMEDIATE screen-space overlay
-            // ON TOP of the selection overlay, projected with the board camera and
-            // scissored (in gpu.rs) to the board scene rect. Class-A ScreenConstant.
+            // S4: board hover ring + crosshair, an IMMEDIATE class-A screen-space
+            // overlay projected with the board camera (scissored to rect in gpu.rs).
             let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
             interaction_overlay::push_pane_interaction(
@@ -134,12 +137,8 @@ impl PreparedScene {
                 &board_projection,
                 scene_viewport,
                 board_hover_bounds,
-                // Live crosshair cursor is deferred this slice (see slice report):
-                // threading the live cursor through render state would touch the
-                // gui-protocol monolith, which sits at its exact source-health
-                // ceiling. The crosshair builder + its test exist; `None` here means
-                // no live crosshair is emitted yet.
-                None,
+                crosshair_cursor_screen,
+                crosshair_style,
             );
         }
         render_marking_menu(
@@ -191,17 +190,15 @@ impl PreparedScene {
             };
 
         // S4: the schematic grid + interaction overlays share ONE immediate
-        // screen-space underlay buffer (spec §1.2 / S1b). Built here with the FIT
-        // schematic camera; `set_schematic_camera` rebuilds it when the gui-app
-        // supplies the pane's warm camera, so the grid weight and overlays track
-        // the live schematic view. Empty of interaction quads in the capture.
+        // screen-space underlay buffer (spec §1.2 / S1b), rebuilt against the pane's
+        // warm camera in `set_schematic_camera` so grid weight + crosshair track it.
         let schematic_underlay_vertices = interaction_overlay::build_schematic_underlay_vertices(
             schematic_scene_viewport,
             &schematic_bounds,
             schematic_camera,
             schematic_hover_bounds,
-            // Live crosshair cursor deferred (see slice report / board branch).
-            None,
+            crosshair_cursor_screen,
+            crosshair_style,
         );
 
         Self {
@@ -221,6 +218,8 @@ impl PreparedScene {
             schematic_bounds,
             schematic_camera,
             schematic_hover_bounds_nm: schematic_hover_bounds,
+            crosshair_cursor_screen,
+            crosshair_style,
             schematic_underlay_vertices,
         }
     }
@@ -245,8 +244,8 @@ impl PreparedScene {
             &self.schematic_bounds,
             self.schematic_camera,
             self.schematic_hover_bounds_nm,
-            // Live crosshair cursor deferred (see slice report / board branch).
-            None,
+            self.crosshair_cursor_screen,
+            self.crosshair_style,
         );
     }
 

@@ -14,6 +14,7 @@
 // via `use super::*` exactly as the sibling `coordinate_hit` module does.
 
 use super::*;
+use datum_gui_protocol::CrosshairStyle;
 use datum_gui_viewport::WeightClass;
 
 /// Hover pre-highlight ring weight — spec §4.2 "Hover pre-highlight | A | 1.5 px".
@@ -45,8 +46,9 @@ fn push_hover_ring(out: &mut Vec<Quad>, screen_rect: RectPx, scale_px_per_nm: f3
     push_rect_border(out, ring, HOVER_HIGHLIGHT, HOVER_WEIGHT.resolve_px(scale_px_per_nm));
 }
 
-/// Push a small local class-A crosshair centred on `cursor`.
-fn push_crosshair(out: &mut Vec<Quad>, cursor: (f32, f32), scale_px_per_nm: f32) {
+/// Push a small `Local` class-A crosshair centred on `cursor`: a short cross that
+/// marks the cursor without dividing the view.
+fn push_local_crosshair(out: &mut Vec<Quad>, cursor: (f32, f32), scale_px_per_nm: f32) {
     let (cx, cy) = cursor;
     let w = CROSSHAIR_WEIGHT.resolve_px(scale_px_per_nm);
     // Horizontal arm.
@@ -71,6 +73,40 @@ fn push_crosshair(out: &mut Vec<Quad>, cursor: (f32, f32), scale_px_per_nm: f32)
     ));
 }
 
+/// Push a `FullViewport` class-A crosshair: horizontal + vertical hairlines that
+/// span the whole focused pane `viewport` through `cursor` (the CAD "full
+/// crosshair"). Class-A ScreenConstant, so the 1px hairlines never scale with
+/// zoom.
+fn push_full_crosshair(
+    out: &mut Vec<Quad>,
+    cursor: (f32, f32),
+    viewport: RectPx,
+    scale_px_per_nm: f32,
+) {
+    let (cx, cy) = cursor;
+    let w = CROSSHAIR_WEIGHT.resolve_px(scale_px_per_nm);
+    // Horizontal hairline spanning the viewport width.
+    out.push(Quad::from_rect(
+        RectPx {
+            x: viewport.x,
+            y: cy - w * 0.5,
+            width: viewport.width,
+            height: w,
+        },
+        CURSOR_CROSSHAIR,
+    ));
+    // Vertical hairline spanning the viewport height.
+    out.push(Quad::from_rect(
+        RectPx {
+            x: cx - w * 0.5,
+            y: viewport.y,
+            width: w,
+            height: viewport.height,
+        },
+        CURSOR_CROSSHAIR,
+    ));
+}
+
 /// Append the immediate interaction overlays for ONE pane, in that pane's own
 /// screen space: a hover ring for `hover_bounds` (projected through the pane's live
 /// camera) and a crosshair at `cursor` when it lies inside `viewport`. Emits
@@ -81,15 +117,23 @@ pub(crate) fn push_pane_interaction(
     viewport: RectPx,
     hover_bounds: Option<datum_gui_protocol::RectNm>,
     cursor: Option<(f32, f32)>,
+    crosshair_style: CrosshairStyle,
 ) {
     let scale = projection.scale;
     if let Some(bounds) = hover_bounds {
         push_hover_ring(out, projection.project_rect(bounds), scale);
     }
+    // The cursor crosshair is a user preference (decision 023 UVT-005): the View
+    // menu picks the style, `None` emits nothing. The pane containment gate keeps
+    // the crosshair inside the focused pane it belongs to.
     if let Some(cursor) = cursor
         && viewport.contains(cursor.0, cursor.1)
     {
-        push_crosshair(out, cursor, scale);
+        match crosshair_style {
+            CrosshairStyle::FullViewport => push_full_crosshair(out, cursor, viewport, scale),
+            CrosshairStyle::Local => push_local_crosshair(out, cursor, scale),
+            CrosshairStyle::None => {}
+        }
     }
 }
 
@@ -102,13 +146,21 @@ pub(crate) fn build_schematic_underlay_vertices(
     schematic_camera: CameraState,
     hover_bounds: Option<datum_gui_protocol::RectNm>,
     cursor: Option<(f32, f32)>,
+    crosshair_style: CrosshairStyle,
 ) -> Vec<Vertex> {
     let mut quads = Vec::new();
     if let Some(viewport) = schematic_scene_viewport {
         let field = inset_rect(viewport, 10.0, 10.0, 10.0, 10.0);
         let projection = Projection::new(field, schematic_bounds, schematic_camera);
         push_schematic_grid(&mut quads, &projection);
-        push_pane_interaction(&mut quads, &projection, viewport, hover_bounds, cursor);
+        push_pane_interaction(
+            &mut quads,
+            &projection,
+            viewport,
+            hover_bounds,
+            cursor,
+            crosshair_style,
+        );
     }
     quads_to_vertices(&quads)
 }
@@ -237,7 +289,14 @@ mod interaction_overlay_tests {
             max_x: 4_000_000,
             max_y: 4_000_000,
         };
-        push_pane_interaction(&mut quads, &projection(), viewport(), Some(hover), None);
+        push_pane_interaction(
+            &mut quads,
+            &projection(),
+            viewport(),
+            Some(hover),
+            None,
+            CrosshairStyle::FullViewport,
+        );
         assert!(
             count_color(&quads, HOVER_HIGHLIGHT) >= 4,
             "a hover ring is 4 border rects in the hover colour"
@@ -249,36 +308,140 @@ mod interaction_overlay_tests {
         );
     }
 
-    /// (c, builder) The crosshair emits class-A arms centred ON the cursor, and no
-    /// hover ring. Proves the crosshair overlay is emitted at the cursor position.
+    /// (c, builder) The default `FullViewport` crosshair emits two class-A hairlines
+    /// that SPAN the pane viewport and straddle the cursor.
     #[test]
-    fn cursor_emits_a_crosshair_at_the_cursor() {
+    fn full_viewport_crosshair_spans_the_pane() {
         let mut quads = Vec::new();
         let cursor = (300.0, 250.0);
-        push_pane_interaction(&mut quads, &projection(), viewport(), None, Some(cursor));
+        push_pane_interaction(
+            &mut quads,
+            &projection(),
+            viewport(),
+            None,
+            Some(cursor),
+            CrosshairStyle::FullViewport,
+        );
         assert_eq!(count_color(&quads, HOVER_HIGHLIGHT), 0, "no ring without hover");
         let arms: Vec<_> = quads
             .iter()
             .filter(|quad| quad.color == CURSOR_CROSSHAIR)
             .collect();
-        assert_eq!(arms.len(), 2, "a crosshair is one horizontal + one vertical arm");
-        for arm in arms {
+        assert_eq!(arms.len(), 2, "a full crosshair is one horizontal + one vertical hairline");
+        let vp = viewport();
+        let mut spans_width = false;
+        let mut spans_height = false;
+        for arm in &arms {
             let (min_x, min_y, max_x, max_y) = quad_bbox(arm);
             assert!(
                 min_x <= cursor.0 && cursor.0 <= max_x && min_y <= cursor.1 && cursor.1 <= max_y,
-                "each crosshair arm straddles the cursor point"
+                "each hairline straddles the cursor point"
+            );
+            if (max_x - min_x) >= vp.width - 0.5 {
+                spans_width = true;
+            }
+            if (max_y - min_y) >= vp.height - 0.5 {
+                spans_height = true;
+            }
+        }
+        assert!(
+            spans_width && spans_height,
+            "FullViewport spans the pane width (H hairline) and height (V hairline)"
+        );
+    }
+
+    /// (c, builder) The `Local` crosshair emits a SMALL cross centred on the cursor
+    /// that does NOT span the viewport.
+    #[test]
+    fn local_crosshair_is_a_small_cross_at_the_cursor() {
+        let mut quads = Vec::new();
+        let cursor = (300.0, 250.0);
+        push_pane_interaction(
+            &mut quads,
+            &projection(),
+            viewport(),
+            None,
+            Some(cursor),
+            CrosshairStyle::Local,
+        );
+        let arms: Vec<_> = quads
+            .iter()
+            .filter(|quad| quad.color == CURSOR_CROSSHAIR)
+            .collect();
+        assert_eq!(arms.len(), 2, "a local crosshair is one horizontal + one vertical arm");
+        let vp = viewport();
+        for arm in &arms {
+            let (min_x, min_y, max_x, max_y) = quad_bbox(arm);
+            assert!(
+                min_x <= cursor.0 && cursor.0 <= max_x && min_y <= cursor.1 && cursor.1 <= max_y,
+                "each arm straddles the cursor point"
+            );
+            assert!(
+                (max_x - min_x) < vp.width && (max_y - min_y) < vp.height,
+                "a local cross is short — it does not span the pane"
             );
         }
     }
 
+    /// (c, builder) The `None` style emits no crosshair even with a cursor present.
+    #[test]
+    fn none_style_emits_no_crosshair() {
+        let mut quads = Vec::new();
+        push_pane_interaction(
+            &mut quads,
+            &projection(),
+            viewport(),
+            None,
+            Some((300.0, 250.0)),
+            CrosshairStyle::None,
+        );
+        assert!(quads.is_empty(), "CrosshairStyle::None emits nothing");
+    }
+
+    /// Switching `crosshair_style` switches the emitted geometry: FullViewport arms
+    /// are strictly longer than the Local ones for the same cursor.
+    #[test]
+    fn switching_style_switches_modes() {
+        let cursor = (300.0, 250.0);
+        let arm_extent = |style| {
+            let mut quads = Vec::new();
+            push_pane_interaction(&mut quads, &projection(), viewport(), None, Some(cursor), style);
+            quads
+                .iter()
+                .filter(|q| q.color == CURSOR_CROSSHAIR)
+                .map(|q| {
+                    let (min_x, min_y, max_x, max_y) = quad_bbox(q);
+                    (max_x - min_x).max(max_y - min_y)
+                })
+                .fold(0.0_f32, f32::max)
+        };
+        assert!(
+            arm_extent(CrosshairStyle::FullViewport) > arm_extent(CrosshairStyle::Local),
+            "FullViewport hairlines outspan the Local cross"
+        );
+        assert_eq!(arm_extent(CrosshairStyle::None), 0.0, "None emits nothing");
+    }
+
+    /// The default is `FullViewport` (decision 023 spec §2).
+    #[test]
+    fn default_crosshair_style_is_full_viewport() {
+        assert_eq!(CrosshairStyle::default(), CrosshairStyle::FullViewport);
+    }
+
     /// The empty-in-capture guarantee: with neither hover nor cursor (the offscreen
     /// visual-test state), the builder emits nothing — so the board stays byte-
-    /// identical.
+    /// identical, regardless of the selected style.
     #[test]
     fn no_inputs_emit_nothing() {
-        let mut quads = Vec::new();
-        push_pane_interaction(&mut quads, &projection(), viewport(), None, None);
-        assert!(quads.is_empty(), "no cursor + no hover => no overlay quads");
+        for style in [
+            CrosshairStyle::FullViewport,
+            CrosshairStyle::Local,
+            CrosshairStyle::None,
+        ] {
+            let mut quads = Vec::new();
+            push_pane_interaction(&mut quads, &projection(), viewport(), None, None, style);
+            assert!(quads.is_empty(), "no cursor + no hover => no overlay quads");
+        }
     }
 
     /// A cursor OUTSIDE the pane viewport draws no crosshair (it belongs to another
@@ -286,7 +449,14 @@ mod interaction_overlay_tests {
     #[test]
     fn cursor_outside_viewport_draws_no_crosshair() {
         let mut quads = Vec::new();
-        push_pane_interaction(&mut quads, &projection(), viewport(), None, Some((10.0, 10.0)));
+        push_pane_interaction(
+            &mut quads,
+            &projection(),
+            viewport(),
+            None,
+            Some((10.0, 10.0)),
+            CrosshairStyle::FullViewport,
+        );
         assert!(quads.is_empty(), "a cursor outside the pane emits no crosshair");
     }
 
@@ -294,14 +464,21 @@ mod interaction_overlay_tests {
     /// buffer (grid + interaction) when a cursor is supplied.
     #[test]
     fn crosshair_flows_into_the_schematic_underlay() {
-        let baseline =
-            build_schematic_underlay_vertices(Some(viewport()), &bounds(), CameraState::fit_to_bounds(&bounds()), None, None);
+        let baseline = build_schematic_underlay_vertices(
+            Some(viewport()),
+            &bounds(),
+            CameraState::fit_to_bounds(&bounds()),
+            None,
+            None,
+            CrosshairStyle::FullViewport,
+        );
         let with_cursor = build_schematic_underlay_vertices(
             Some(viewport()),
             &bounds(),
             CameraState::fit_to_bounds(&bounds()),
             None,
             Some((300.0, 250.0)),
+            CrosshairStyle::FullViewport,
         );
         let crosshair_verts = with_cursor
             .iter()

@@ -183,6 +183,21 @@
           "label": "Layout: Board + Schematic",
           "icon": "panels",
           "gui_local": "view.preset_board_schematic"
+        },
+        {
+          "label": "Crosshair: Full Viewport",
+          "icon": "select",
+          "gui_local": "view.cursor.full"
+        },
+        {
+          "label": "Crosshair: Small Cross",
+          "icon": "select",
+          "gui_local": "view.cursor.small"
+        },
+        {
+          "label": "Crosshair: None",
+          "icon": "select",
+          "gui_local": "view.cursor.none"
         }
       ]
     },

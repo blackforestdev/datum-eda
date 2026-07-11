@@ -41,6 +41,7 @@ mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_pane;
 mod runtime_terminal_context;
+mod runtime_view_actions;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
 mod terminal_check_context;
@@ -932,6 +933,27 @@ impl ApplicationHandler for App {
                     && runtime.workspace().ui.active_dock_tab.is_none()
                 {
                     runtime.pane_toggle_zoom();
+                    self.request_redraw_if_needed();
+                }
+            }
+            // Cycle the cursor-crosshair style (decision 023 UVT-005:
+            // FullViewport -> Local -> None). `C` is free of the tool keys
+            // (s/b/v/m/x/r), fit (f/t), and zoom (z); gated to no-active-dock so it
+            // never eats terminal input. Session UI preference, never journaled.
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("c") => {
+                if let Some(runtime) = &mut self.runtime
+                    && runtime.workspace().ui.active_dock_tab.is_none()
+                    && !runtime.modifiers.control_key()
+                {
+                    runtime.cycle_crosshair_style();
                     self.request_redraw_if_needed();
                 }
             }
@@ -3064,106 +3086,6 @@ impl Runtime {
         self.push_terminal_line(format!("{menu_name}/{label} disabled: {reason}"));
         self.invalidate_frame();
         true
-    }
-
-    fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
-        match action {
-            "view.fit" => {
-                self.fit_camera();
-                self.log_review_event("menu view.fit".to_string());
-                true
-            }
-            "view.zoom_in" => {
-                self.zoom_view_from_menu(1.2);
-                self.log_review_event("menu view.zoom_in".to_string());
-                true
-            }
-            "view.zoom_out" => {
-                self.zoom_view_from_menu(1.0 / 1.2);
-                self.log_review_event("menu view.zoom_out".to_string());
-                true
-            }
-            "terminal.toggle" => {
-                if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-                    self.close_active_dock()
-                } else {
-                    self.set_active_dock(DockTab::Terminal)
-                }
-            }
-            // Workspace pane ops (decision 021). These reach the same warm pane-op
-            // path the FEEL breakpoint proves is zero-re-resolve. The menu manifest
-            // does not emit these ids yet (that is the later bindings pass); wiring
-            // them here keeps the ops reachable through the one action dispatch.
-            "view.split_vertical" => {
-                self.pane_split_focused(datum_gui_protocol::SplitOrientation::Vertical);
-                self.log_review_event("menu view.split_vertical".to_string());
-                true
-            }
-            "view.split_horizontal" => {
-                self.pane_split_focused(datum_gui_protocol::SplitOrientation::Horizontal);
-                self.log_review_event("menu view.split_horizontal".to_string());
-                true
-            }
-            "view.close_pane" => {
-                self.pane_close_focused();
-                self.log_review_event("menu view.close_pane".to_string());
-                true
-            }
-            "view.focus_next" => {
-                self.pane_focus_next();
-                self.log_review_event("menu view.focus_next".to_string());
-                true
-            }
-            "view.focus_prev" => {
-                self.pane_focus_prev();
-                self.log_review_event("menu view.focus_prev".to_string());
-                true
-            }
-            "view.maximize_pane" => {
-                self.pane_toggle_zoom();
-                self.log_review_event("menu view.maximize_pane".to_string());
-                true
-            }
-            "view.preset_single" => {
-                self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::Single);
-                self.log_review_event("menu view.preset_single".to_string());
-                true
-            }
-            "view.preset_board_schematic" => {
-                self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::BoardSchematic);
-                self.log_review_event("menu view.preset_board_schematic".to_string());
-                true
-            }
-            "view.fill_board" => {
-                self.pane_set_focused_content(datum_gui_protocol::PaneContent::Board);
-                self.log_review_event("menu view.fill_board".to_string());
-                true
-            }
-            "view.fill_schematic" => {
-                self.pane_set_focused_content(datum_gui_protocol::PaneContent::Schematic);
-                self.log_review_event("menu view.fill_schematic".to_string());
-                true
-            }
-            _ => {
-                self.push_terminal_line(format!("menu action {action} is view-local but unwired"));
-                self.invalidate_frame();
-                true
-            }
-        }
-    }
-
-    fn zoom_view_from_menu(&mut self, zoom_delta: f32) {
-        let prepared = self.prepared_scene();
-        let scene_viewport = prepared.scene_viewport;
-        let bounds = self.workspace().scene.bounds.clone();
-        self.camera.zoom_about_screen_point(
-            scene_viewport,
-            &bounds,
-            scene_viewport.x + scene_viewport.width * 0.5,
-            scene_viewport.y + scene_viewport.height * 0.5,
-            zoom_delta,
-        );
-        self.invalidate_scene();
     }
 
     fn trace_timing(&self, message: String) {
