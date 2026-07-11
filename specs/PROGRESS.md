@@ -157,8 +157,10 @@
    source-health-ratcheted): S0 (gui-viewport crate + StrokeWeightModel) LANDED; S1a
    (shared GridEngine, board repointed byte-identical) LANDED; S1b (schematic grid
    screen-constant via the shared engine — THE grid divergence bug fixed, shell golden
-   re-blessed) LANDED. Next: S2 CameraEngine routing collapse → S3 CoordinateHit
-   keystone → S4–S9 interaction engines → S10–S11 snap/quantize.** Governing: decision 023 +
+   re-blessed) LANDED; S2 (camera routing collapse into one focused_viewport path,
+   byte-identical) LANDED. Next: **S3 CoordinateHit keystone** (per-pane hit-test;
+   schematic gains hit regions — unblocks selection/menu) → S4–S9 interaction engines
+   → S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
