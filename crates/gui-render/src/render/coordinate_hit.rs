@@ -164,6 +164,62 @@ fn bounding_rect_nm(path: &[PointNm]) -> Option<datum_gui_protocol::RectNm> {
     })
 }
 
+/// The hover resolved for the pane a screen point lands in (S4 HoverEngine): the
+/// hovered object's identity, the surface it lives on, and the live cursor while it
+/// is over any scene surface. All fields are `None` off every scene pane (over
+/// chrome), so the caller clears hover + crosshair state.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct PaneHover {
+    pub object_id: Option<String>,
+    pub surface: Option<datum_gui_protocol::PaneContent>,
+    pub cursor: Option<(f32, f32)>,
+}
+
+/// Resolve hover for the FOCUSED/containing pane at screen point `(x, y)`, in that
+/// pane's OWN camera/space (UVT-004): screen→world picks the surface, then the
+/// matching per-pane world hit-test names the object. This is the per-surface hover
+/// S4 unblocks — a schematic-pane cursor over a symbol now resolves that symbol's
+/// identity (impossible pre-S3). Board hover is unchanged: same board hit-test,
+/// same layer filtering via `state`. Factored as a free function (no `Runtime`) so
+/// the per-pane resolution is unit-tested against the real fixture scenes.
+pub fn resolve_pane_hover(
+    prepared: &PreparedScene,
+    board_retained: &RetainedScene,
+    schematic_retained: Option<&RetainedScene>,
+    state: &ReviewWorkspaceState,
+    x: f32,
+    y: f32,
+) -> PaneHover {
+    let hit_id = |target: Option<&HitTarget>| match target {
+        Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id.clone()),
+        _ => None,
+    };
+    match prepared.world_point_at_screen(x, y) {
+        Some((world_point, SceneSurface::Board)) => {
+            let object_id = hit_id(board_retained.hit_test_authored_world(world_point, state));
+            PaneHover {
+                surface: object_id
+                    .is_some()
+                    .then_some(datum_gui_protocol::PaneContent::Board),
+                object_id,
+                cursor: Some((x, y)),
+            }
+        }
+        Some((world_point, SceneSurface::Schematic)) => {
+            let object_id =
+                hit_id(schematic_retained.and_then(|retained| retained.hit_test_world(world_point)));
+            PaneHover {
+                surface: object_id
+                    .is_some()
+                    .then_some(datum_gui_protocol::PaneContent::Schematic),
+                object_id,
+                cursor: Some((x, y)),
+            }
+        }
+        None => PaneHover::default(),
+    }
+}
+
 #[cfg(test)]
 mod coordinate_hit_tests {
     // A descendant of the crate root (the `include!` module), so it reaches the
@@ -281,5 +337,101 @@ mod coordinate_hit_tests {
             .hit_test_world(symbol_center)
             .expect("the symbol's world center must land inside its hit region");
         assert_eq!(hit, &HitTarget::AuthoredObject(symbol_id));
+    }
+
+    fn prepared_for(state: &ReviewWorkspaceState, board: &RetainedScene) -> PreparedScene {
+        PreparedScene::from_workspace_for_surface(
+            state,
+            1600,
+            1000,
+            1.0,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            board,
+        )
+    }
+
+    fn count_color(vertices: &[Vertex], color: [f32; 3]) -> usize {
+        vertices.iter().filter(|v| v.color == color).count()
+    }
+
+    /// S4 (a): a SCHEMATIC-pane cursor over a symbol now resolves that symbol's
+    /// identity and the Schematic surface — impossible pre-S3, when hover was a
+    /// single board-only global. This is the per-surface hover the slice unblocks.
+    #[test]
+    fn schematic_cursor_over_symbol_resolves_symbol_identity() {
+        let state = schematic_workspace_state();
+        let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
+        let schematic = RetainedScene::from_workspace_schematic_for_surface(&state, 1600, 1000, 1.0);
+        let prepared = prepared_for(&state, &board);
+
+        let (symbol_id, symbol_center) = {
+            let scene = state.schematic_scene.as_ref().unwrap();
+            let (id, center) = first_symbol(scene);
+            (id.to_string(), center)
+        };
+        // Project the symbol's world centre to a schematic-pane SCREEN point through
+        // the same fit projection `PreparedScene` seeds, then resolve hover there.
+        let schematic_viewport = prepared.schematic_scene_viewport.unwrap();
+        let field = inset_rect(schematic_viewport, 10.0, 10.0, 10.0, 10.0);
+        let projection = Projection::new(
+            field,
+            &state.schematic_scene.as_ref().unwrap().bounds,
+            CameraState::fit_to_bounds(&state.schematic_scene.as_ref().unwrap().bounds),
+        );
+        let (sx, sy) = projection.project_point(symbol_center);
+
+        let hover = resolve_pane_hover(&prepared, &board, schematic.as_ref(), &state, sx, sy);
+        assert_eq!(
+            hover.object_id.as_deref(),
+            Some(symbol_id.as_str()),
+            "a schematic-pane cursor over a symbol resolves that symbol's identity"
+        );
+        assert_eq!(hover.surface, Some(datum_gui_protocol::PaneContent::Schematic));
+    }
+
+    /// S4 (b, schematic): hovering a schematic symbol emits the class-A hover
+    /// pre-highlight ring into the SCHEMATIC pane's underlay buffer (not the board).
+    #[test]
+    fn schematic_hover_ring_lands_in_the_schematic_underlay() {
+        let mut state = schematic_workspace_state();
+        let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
+
+        let baseline = prepared_for(&state, &board);
+        let base_rings = count_color(baseline.schematic_underlay_vertices(), HOVER_HIGHLIGHT);
+
+        let symbol_id = {
+            let scene = state.schematic_scene.as_ref().unwrap();
+            first_symbol(scene).0.to_string()
+        };
+        state.ui.hovered_object_id = Some(symbol_id);
+        let hovered = prepared_for(&state, &board);
+        assert!(
+            count_color(hovered.schematic_underlay_vertices(), HOVER_HIGHLIGHT) > base_rings,
+            "a hovered schematic symbol adds a hover ring to the schematic underlay"
+        );
+    }
+
+    /// S4 (b, board): hovering a board object emits the hover ring into the BOARD
+    /// overlay buffer, proving per-pane routing of the same overlay.
+    #[test]
+    fn board_hover_ring_lands_in_the_board_overlay() {
+        let mut state = schematic_workspace_state();
+        let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
+        let board_id = board
+            .world_hit_regions
+            .iter()
+            .find_map(|region| match &region.target {
+                HitTarget::AuthoredObject(id) | HitTarget::ReviewAction(id) => Some(id.clone()),
+                _ => None,
+            })
+            .expect("the board fixture must expose at least one hoverable object");
+
+        let base_rings = count_color(prepared_for(&state, &board).viewport_overlay_vertices(), HOVER_HIGHLIGHT);
+        state.ui.hovered_object_id = Some(board_id);
+        let hovered = prepared_for(&state, &board);
+        assert!(
+            count_color(hovered.viewport_overlay_vertices(), HOVER_HIGHLIGHT) > base_rings,
+            "a hovered board object adds a hover ring to the board overlay"
+        );
     }
 }

@@ -551,16 +551,48 @@ impl Runtime {
             .cloned()
     }
 
+    /// S4 / UVT-004 per-surface hover: resolve hover in whichever pane the cursor
+    /// is over, in that pane's OWN camera/space (via the S3 `world_point_at_screen`
+    /// keystone + the matching per-pane world hit-test), and store the hovered
+    /// target together with its surface plus the live cursor. Board hover is
+    /// unchanged; a schematic-pane cursor over a symbol now resolves that symbol's
+    /// identity (impossible pre-S3, when this wrote a single board-only global) and
+    /// the renderer projects the hover pre-highlight with the matching camera.
     pub(super) fn update_hover(&mut self, pos: (f32, f32)) -> bool {
-        let prepared = self.prepared_scene();
-        let new_hover = match prepared.hit_test(pos.0, pos.1) {
-            Some(HitTarget::AuthoredObject(id)) => Some(id.clone()),
-            Some(HitTarget::ReviewAction(id)) => Some(id.clone()),
-            _ => None,
+        // Ensure the caches exist: the prepared build also builds the board
+        // retained scene; the companion schematic retained scene is built here.
+        let _ = self.prepared_scene();
+        if self.schematic_retained_scene.is_none() {
+            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.scale_factor,
+            );
+        }
+        let resolved = {
+            let prepared = self
+                .prepared_scene
+                .as_ref()
+                .expect("prepared scene built above");
+            let board_retained = self
+                .retained_scene
+                .as_ref()
+                .expect("board retained scene built with prepared");
+            datum_gui_render::resolve_pane_hover(
+                prepared,
+                board_retained,
+                self.schematic_retained_scene.as_ref(),
+                self.session.workspace(),
+                pos.0,
+                pos.1,
+            )
         };
-        let current = &self.session.workspace().ui.hovered_object_id;
-        if &new_hover != current {
-            self.session.workspace_mut().ui.hovered_object_id = new_hover;
+        // The hovered id carries its surface in its namespace (a schematic symbol is
+        // `schematic-symbol:<uuid>`), so storing the id alone is enough for the
+        // renderer to route the hover pre-highlight to the right pane's camera.
+        if self.session.workspace().ui.hovered_object_id != resolved.object_id {
+            self.session.workspace_mut().ui.hovered_object_id = resolved.object_id;
             self.invalidate_scene();
             return true;
         }

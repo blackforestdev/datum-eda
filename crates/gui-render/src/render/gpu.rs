@@ -46,60 +46,13 @@ pub struct Renderer {
     msaa_samples: u32,
 }
 
+// Glyph-buffer cache helpers (`cached_text_buffer_indices` / `ensure_text_buffer`)
+// are extracted into a real sibling module to keep `gpu.rs` under its source-health
+// ceiling; they remain inherent `Renderer` methods, reached here unchanged.
+#[path = "text_buffer_cache.rs"]
+mod text_buffer_cache;
+
 impl Renderer {
-    fn cached_text_buffer_indices(
-        &mut self,
-        text_runs: &[TextRun],
-        width: u32,
-        height: u32,
-    ) -> (Vec<usize>, TextBufferCacheStats) {
-        let mut indices = Vec::with_capacity(text_runs.len());
-        let mut stats = TextBufferCacheStats::default();
-        for run in text_runs {
-            let (index, missed) = self.ensure_text_buffer(run, width, height);
-            if missed {
-                stats.misses += 1;
-            } else {
-                stats.hits += 1;
-            }
-            indices.push(index);
-        }
-        (indices, stats)
-    }
-
-    fn ensure_text_buffer(&mut self, run: &TextRun, width: u32, height: u32) -> (usize, bool) {
-        let key = text_buffer_key(run, width, height);
-        if let Some(index) = self
-            .text_buffer_cache
-            .iter()
-            .position(|entry| entry.key == key)
-        {
-            return (index, false);
-        }
-        let mut buffer = Buffer::new(
-            &mut self.font_system,
-            Metrics::new(run.size, run.size * 1.22),
-        );
-        let (buffer_width, buffer_height) = text_buffer_extent(run, width, height);
-        buffer.set_size(
-            &mut self.font_system,
-            Some(buffer_width as f32),
-            Some(buffer_height as f32),
-        );
-        let attrs = text_attrs(run.face);
-        buffer.set_text(
-            &mut self.font_system,
-            &run.text,
-            &attrs,
-            Shaping::Basic,
-            None,
-        );
-        buffer.shape_until_scroll(&mut self.font_system, false);
-        self.text_buffer_cache
-            .push(CachedTextBuffer { key, buffer });
-        (self.text_buffer_cache.len() - 1, true)
-    }
-
     pub fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -488,16 +441,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             }
             _ => None,
         };
-        // Slice S1b: the schematic grid as an IMMEDIATE screen-space pass. Built
-        // from the (warm) schematic projection so it tracks the schematic camera,
-        // with a class-A ScreenConstant weight so its line width is a fixed device
-        // pixel at any zoom — no longer baked into the retained world buffer where
-        // it would thicken on zoom-in.
-        let mut schematic_grid_quads = Vec::new();
-        if let Some((_, _, proj, _)) = schematic_pass.as_ref() {
-            push_schematic_grid(&mut schematic_grid_quads, proj);
-        }
-        let schematic_grid_vertices = quads_to_vertices(&schematic_grid_quads);
+        // Slice S4 (was S1b): the schematic grid AND the immediate interaction
+        // overlays (hover pre-highlight ring + cursor crosshair) are prepared
+        // together as ONE screen-space underlay in `PreparedScene` — rebuilt
+        // against the warm schematic camera in `set_schematic_camera` — so every
+        // one keeps a fixed device-pixel (class-A `ScreenConstant`) weight at any
+        // zoom instead of being baked into the retained world buffer. The
+        // interaction quads are empty in the offscreen capture (no cursor/hover).
+        let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
         queue.write_buffer(
             &self.uniform_buffer,
             0,
@@ -583,14 +534,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 sr.world_vertices(),
             );
         }
-        if !schematic_grid_vertices.is_empty() {
+        if !schematic_underlay_vertices.is_empty() {
             Self::upload_vertices(
                 device,
                 queue,
                 &mut self.schematic_underlay_vertex_buffer,
                 &mut self.schematic_underlay_vertex_capacity,
                 "datum-gui-render-schematic-underlay-vertex-buffer",
-                &schematic_grid_vertices,
+                schematic_underlay_vertices,
             );
         }
         let upload_elapsed = upload_started.elapsed();
@@ -677,7 +628,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // zoom, scissored to the schematic pane's scene rect. Painted BEFORE the
             // schematic world pass below so wires/symbols sit on top of the grid,
             // preserving the old draw order the retained bake had.
-            if !schematic_grid_vertices.is_empty()
+            if !schematic_underlay_vertices.is_empty()
                 && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
                 && let Some(buffer) = self.schematic_underlay_vertex_buffer.as_ref()
             {
@@ -688,7 +639,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                     scene_viewport.height.max(1.0).ceil() as u32,
                 );
                 pass.set_vertex_buffer(0, buffer.slice(..));
-                pass.draw(0..schematic_grid_vertices.len() as u32, 0..1);
+                pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
             }
             // P2.2a: additive companion schematic world pass. Reuses the same world
             // pipeline, but with the schematic's own bind group (schematic camera +

@@ -106,6 +106,15 @@ pub struct PreparedScene {
     schematic_scene_viewport: Option<RectPx>,
     schematic_bounds: datum_gui_protocol::SceneBounds,
     schematic_camera: CameraState,
+    // S4 (HoverEngine): the immediate screen-space interaction overlays are class-A
+    // `ScreenConstant` chrome — driven by live hover, so they are empty in the
+    // offscreen visual-test capture, keeping the board frame byte-identical. Board
+    // hover folds straight into `viewport_overlay_vertices` at construction; the
+    // schematic hover rides `schematic_underlay_vertices`, rebuilt when the warm
+    // schematic camera is applied (`set_schematic_camera`) — hence the hovered
+    // symbol's world bbox is retained here to re-project it against that camera.
+    schematic_hover_bounds_nm: Option<datum_gui_protocol::RectNm>,
+    schematic_underlay_vertices: Vec<Vertex>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -343,6 +352,12 @@ const BOTTOM_PASTE_OPENING: [f32; 3] = design_tokens::content::PASTE;
 const AUTHOR_BASE: [f32; 3] = design_tokens::content::PAD;
 const AUTHOR_RELATED: [f32; 3] = design_tokens::content::VIA;
 const AUTHOR_SELECTED: [f32; 3] = design_tokens::content::SELECTION;
+// S4 interaction overlays (spec §4.2): the hover pre-highlight reads a lighter
+// tone than the committed selection (`SELECTION` == `ACCENT`), so `ACCENT_HOVER`
+// is exactly "lighter than selection"; the cursor crosshair is a subtle muted
+// hairline. Both are class-A `ScreenConstant` chrome — never fab geometry.
+const HOVER_HIGHLIGHT: [f32; 3] = design_tokens::chrome::ACCENT_HOVER;
+const CURSOR_CROSSHAIR: [f32; 3] = design_tokens::chrome::TEXT_MUTED;
 const PROPOSAL_BASE: [f32; 3] = design_tokens::chrome::STATUS_WARN;
 const PROPOSAL_FOCUS: [f32; 3] = design_tokens::chrome::ACCENT_HOVER;
 const PROPOSAL_UNDERLAY: [f32; 3] = design_tokens::chrome::ACCENT_TINT;

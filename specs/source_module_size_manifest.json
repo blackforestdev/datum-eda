@@ -756,7 +756,7 @@
     "crates/gui-render/src/render/gpu.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 949
+        "pre_test_lines": 900
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -789,7 +789,7 @@
     "crates/gui-render/src/render/scene.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 865
+        "pre_test_lines": 848
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

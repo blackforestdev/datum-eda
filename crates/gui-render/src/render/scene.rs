@@ -6,6 +6,19 @@
 // this physical file (`src/render/`), not the include! host.
 #[path = "coordinate_hit.rs"]
 mod coordinate_hit;
+pub use coordinate_hit::{resolve_pane_hover, PaneHover};
+
+// S4 immediate interaction overlays (hover pre-highlight + cursor crosshair) and
+// the extracted segmented status-bar renderer. Both are real `#[path] mod`
+// children of the crate root (this file is `include!`d at the root), so they reach
+// the private `Projection`/`WorldHit*` types and the crate-root render helpers via
+// `use super::*`, exactly like `coordinate_hit`. Declared here so `scene.rs` (not
+// `lib.rs`) carries the extraction, keeping each file under its source-health
+// ceiling with real (non-`include!`) module boundaries.
+#[path = "interaction_overlay.rs"]
+mod interaction_overlay;
+#[path = "status_bar.rs"]
+mod status_bar;
 
 impl PreparedScene {
     pub fn from_workspace(
@@ -44,6 +57,25 @@ impl PreparedScene {
             .viewport_panes(&state.ui.layout)
             .scene_leaf()
             .is_some();
+
+        // S4 HoverEngine: resolve the hovered object's world bbox in the surface it
+        // belongs to. The projected id namespace already encodes the surface — a
+        // schematic symbol body is tagged `schematic-symbol:<uuid>` — so hover is
+        // routed to the right pane's camera without a redundant stored surface
+        // field. `None` (nothing hovered) in the offscreen capture, so the hover
+        // rings are empty and the board frame stays byte-identical.
+        let hovered_id = state.ui.hovered_object_id.as_deref();
+        let board_hover_bounds = hovered_id
+            .filter(|id| !id.starts_with(interaction_overlay::SCHEMATIC_SYMBOL_PREFIX))
+            .and_then(|id| interaction_overlay::board_hover_bounds(retained_scene, id));
+        let schematic_hover_bounds = hovered_id
+            .filter(|id| id.starts_with(interaction_overlay::SCHEMATIC_SYMBOL_PREFIX))
+            .and_then(|id| {
+                state
+                    .schematic_scene
+                    .as_ref()
+                    .and_then(|scene| interaction_overlay::schematic_symbol_bounds(scene, id))
+            });
 
         panel_quads.push(Quad::from_rect(layout.top_menu_bar, APP_BG));
         panel_quads.push(Quad::from_rect(layout.left_sidebar, APP_BG));
@@ -91,6 +123,23 @@ impl PreparedScene {
                 &mut viewport_overlay_quads,
                 &mut text_runs,
                 &mut hit_regions,
+            );
+            // S4: board hover ring + crosshair as an IMMEDIATE screen-space overlay
+            // ON TOP of the selection overlay, projected with the board camera and
+            // scissored (in gpu.rs) to the board scene rect. Class-A ScreenConstant.
+            let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+            let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
+            interaction_overlay::push_pane_interaction(
+                &mut viewport_overlay_quads,
+                &board_projection,
+                scene_viewport,
+                board_hover_bounds,
+                // Live crosshair cursor is deferred this slice (see slice report):
+                // threading the live cursor through render state would touch the
+                // gui-protocol monolith, which sits at its exact source-health
+                // ceiling. The crosshair builder + its test exist; `None` here means
+                // no live crosshair is emitted yet.
+                None,
             );
         }
         render_marking_menu(
@@ -141,6 +190,20 @@ impl PreparedScene {
                 }
             };
 
+        // S4: the schematic grid + interaction overlays share ONE immediate
+        // screen-space underlay buffer (spec §1.2 / S1b). Built here with the FIT
+        // schematic camera; `set_schematic_camera` rebuilds it when the gui-app
+        // supplies the pane's warm camera, so the grid weight and overlays track
+        // the live schematic view. Empty of interaction quads in the capture.
+        let schematic_underlay_vertices = interaction_overlay::build_schematic_underlay_vertices(
+            schematic_scene_viewport,
+            &schematic_bounds,
+            schematic_camera,
+            schematic_hover_bounds,
+            // Live crosshair cursor deferred (see slice report / board branch).
+            None,
+        );
+
         Self {
             layout,
             hit_regions,
@@ -157,6 +220,8 @@ impl PreparedScene {
             schematic_scene_viewport,
             schematic_bounds,
             schematic_camera,
+            schematic_hover_bounds_nm: schematic_hover_bounds,
+            schematic_underlay_vertices,
         }
     }
 
@@ -170,6 +235,25 @@ impl PreparedScene {
     /// capture path calls this; the golden/test path keeps the fit default.
     pub fn set_schematic_camera(&mut self, camera: CameraState) {
         self.schematic_camera = camera;
+        // S4: the schematic grid + interaction overlays are immediate screen-space
+        // and must track the warm camera, so rebuild the shared underlay against it
+        // (the S1b grid alone did this implicitly by living in gpu.rs; now the whole
+        // underlay is prepared here so the hover ring/crosshair follow the same
+        // camera). Empty of interaction quads when cursor/hover are absent.
+        self.schematic_underlay_vertices = interaction_overlay::build_schematic_underlay_vertices(
+            self.schematic_scene_viewport,
+            &self.schematic_bounds,
+            self.schematic_camera,
+            self.schematic_hover_bounds_nm,
+            // Live crosshair cursor deferred (see slice report / board branch).
+            None,
+        );
+    }
+
+    /// The immediate screen-space schematic underlay (grid + S4 interaction
+    /// overlays), uploaded and drawn scissored to the schematic pane in gpu.rs.
+    fn schematic_underlay_vertices(&self) -> &[Vertex] {
+        &self.schematic_underlay_vertices
     }
 
     pub fn hit_test(&self, x: f32, y: f32) -> Option<&HitTarget> {
@@ -533,113 +617,12 @@ fn render_phase1_shell_chrome(
         panel_quads,
         text_runs,
     );
-    render_status_bar(state, layout, panel_quads, text_runs);
+    status_bar::render_status_bar(state, layout, panel_quads, text_runs);
 }
 
 // Workspace pane-chrome rendering (viewport panes, per-pane headers, and
 // non-live placeholders) lives in the `pane_chrome` submodule; entry point
 // `render_viewport_panes` is imported at the crate root.
-
-/// Segmented status bar (Design Book .status): labelled key/value segments with
-/// full-height dividers, a flex gap, and a right-aligned build/version run. The
-/// focus value reads accent; a DRC segment reads STATUS_WARN and is hidden at
-/// zero findings.
-fn render_status_bar(
-    state: &ReviewWorkspaceState,
-    layout: &ShellLayout,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
-) {
-    let sb = layout.status_bar;
-    // Single top-edge hairline (no boxed 4-side border).
-    panel_quads.push(Quad::from_rect(
-        RectPx {
-            x: sb.x,
-            y: sb.y,
-            width: sb.width,
-            height: 1.0,
-        },
-        PANEL_CARD_BORDER,
-    ));
-    let text_y = sb.y + design_tokens::spacing::SP_02 + 1.0;
-    let lab_size = design_tokens::typography::CAPTION_SIZE;
-    let val_size = design_tokens::typography::DATA_SIZE;
-    let gap = design_tokens::spacing::SP_02 + 2.0;
-    let seg_pad = design_tokens::spacing::SP_04;
-    let text_w = |text: &str, size: f32| estimated_text_run_width_px(text, size, TextFace::Mono) - 16.0;
-    let divider = |panel_quads: &mut Vec<Quad>, x: f32| {
-        panel_quads.push(Quad::from_rect(
-            RectPx {
-                x,
-                y: sb.y,
-                width: 1.0,
-                height: sb.height,
-            },
-            PANEL_CARD_BORDER,
-        ));
-    };
-
-    let sel = match &state.selection {
-        SelectionTarget::None => "none".to_string(),
-        SelectionTarget::ReviewAction(id)
-        | SelectionTarget::AuthoredObject(id)
-        | SelectionTarget::CheckFinding(id) => truncate_text(suffix_id(id), 8),
-    };
-    let tool = workspace_tool_label(state.tool);
-    let layers = state.scene.layers.len().to_string();
-    // Reflect the actually-focused document, not a hardcoded value — focusing the
-    // Schematic pane must read "Schematic" here (context-follows-focus).
-    let focus_label = match state.ui.layout.focused_content() {
-        datum_gui_protocol::PaneContent::Board => "Board",
-        datum_gui_protocol::PaneContent::Schematic => "Schematic",
-    };
-    let left: [(&str, &str, [f32; 3]); 4] = [
-        ("focus", focus_label, TEXT_ACCENT),
-        ("Tool", tool, TEXT_SECONDARY),
-        ("Sel", sel.as_str(), TEXT_SECONDARY),
-        ("Layers", layers.as_str(), TEXT_SECONDARY),
-    ];
-    let mut x = sb.x + seg_pad;
-    for (i, (label, value, color)) in left.iter().enumerate() {
-        if i > 0 {
-            divider(panel_quads, x - seg_pad * 0.5);
-        }
-        draw_text(label, x, text_y, lab_size, TEXT_MUTED, TextFace::Mono, text_runs);
-        let lw = text_w(label, lab_size) + gap;
-        draw_text(value, x + lw, text_y, val_size, *color, TextFace::Mono, text_runs);
-        x += lw + text_w(value, val_size) + seg_pad;
-    }
-
-    // Right cluster (right-to-left): version, rev, DRC.
-    let version = "Datum EDA \u{2014} design pass";
-    let mut rx = sb.x + sb.width - 13.0 - text_w(version, val_size);
-    draw_text(version, rx, text_y, val_size, TEXT_MUTED, TextFace::Mono, text_runs);
-
-    let short_rev: String = state.scene.source_revision.chars().take(6).collect();
-    if !short_rev.is_empty() {
-        let lw = text_w("rev", lab_size) + gap;
-        rx -= seg_pad + lw + text_w(&short_rev, val_size);
-        divider(panel_quads, rx - seg_pad * 0.5);
-        draw_text("rev", rx, text_y, lab_size, TEXT_MUTED, TextFace::Mono, text_runs);
-        draw_text(&short_rev, rx + lw, text_y, val_size, TEXT_SECONDARY, TextFace::Mono, text_runs);
-    }
-
-    let findings = state.supervision.checks.finding_count;
-    if findings > 0 {
-        let drc = format!("DRC {}", findings);
-        rx -= seg_pad + text_w(&drc, val_size);
-        divider(panel_quads, rx - seg_pad * 0.5);
-        draw_text(
-            &drc,
-            rx,
-            text_y,
-            val_size,
-            design_tokens::chrome::STATUS_WARN,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
-}
 
 // Render helper threads many quad/text-run/hit-region sinks.
 #[allow(clippy::too_many_arguments)]
