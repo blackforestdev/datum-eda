@@ -154,11 +154,15 @@
    native authoring (step 6) reuses snap/commit; paper-space snap (step 7) reuses the
    SnapEngine. *State:* **decision 023 + governed spec + deep-research sections
    LANDED. Phase-B build in progress (schematic-first, each slice board-golden-safe +
-   source-health-ratcheted): **S0–S3 LANDED status RETRACTED pending production
-   correction.** Required gates: S0 full §4.2 primitive adoption; S1 visible/bounded
-   grid + governed LOD/profile consumption; S2 typed camera identity and unified
-   pointer/focused routing/lifecycle; S3 shared indexed EditorViewport with typed
-   schematic hit metadata. **S4 (hover + crosshair) — LANDED
+   source-health-ratcheted): **S0–S3 LANDED status RESTORED after production
+   correction.** S0 routes active authored primitives through explicit semantic
+   weight policies and resolves minimum pixel floors from the live GPU projection.
+   S1 emits only visible, overflow-safe, capped grid geometry and retains governed
+   LOD hysteresis independently for every pane/content identity. S2 owns typed warm
+   cameras through the shared CameraEngine and routes pointer versus focused commands
+   without surface fallback. S3 uses the shared indexed EditorViewport with typed
+   schematic hit metadata, deterministic query budgets, and one independently
+   projected/rendered surface pass per visible pane. **S4 (hover + crosshair) — LANDED
    status RESTORED after production correction:** cursor/hover refresh only dedicated
    post-world interaction buffers while both retained scenes and `PreparedScene` stay warm;
    screen coordinates and hover ownership are typed; identifier-prefix inference is removed;
@@ -166,8 +170,8 @@
    zero-retained-resolve/static-buffer regression covers pointer refresh. Hover/cursor policy
    and state construction now live in `gui-viewport`. Pointer previews target the containing
    pane while command/tool gestures target the focused pane, as clarified in UVT-004.
-   Remaining scale work: replace the O(n) hit-region scan with a spatial index under a measured
-   large-design budget. Next: **S5 selection/marquee** → S6 tool-mode →
+   The hit path is spatially indexed and covered by deterministic large-design and
+   candidate-budget regressions. Next: **S5 selection/marquee** → S6 tool-mode →
    **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
