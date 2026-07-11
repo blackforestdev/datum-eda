@@ -9,7 +9,7 @@ use datum_gui_protocol::{PaneContent, PaneId};
 use datum_gui_viewport::GridLodState;
 use std::collections::BTreeMap;
 
-use super::Runtime;
+use super::{CameraState, PaneCameras, Runtime};
 
 #[derive(Debug, Default)]
 pub(crate) struct PaneGridLod {
@@ -31,11 +31,34 @@ impl Runtime {
                 datum_gui_render::SceneSurface::Board => PaneContent::Board,
                 datum_gui_render::SceneSurface::Schematic => PaneContent::Schematic,
             };
-            if let Some(camera) = self.pane_cameras.camera(pass.pane_id, content) {
+            if let Some(camera) = camera_for_render(
+                self.scene_leaf_id(),
+                self.camera,
+                &self.pane_cameras,
+                pass.pane_id,
+                content,
+            ) {
                 prepared.set_surface_camera(pass.pane_id, camera);
             }
         }
         self.pane_grid_lod.apply_to_prepared(prepared);
+    }
+}
+
+/// Resolve the single authoritative camera for a rendered pane. The active
+/// Board camera lives in `Runtime::camera`; only inactive Board panes and all
+/// other surfaces read their independent camera from the warm pane store.
+fn camera_for_render(
+    active_board: Option<PaneId>,
+    active_camera: CameraState,
+    warm: &PaneCameras,
+    pane: PaneId,
+    content: PaneContent,
+) -> Option<CameraState> {
+    if content == PaneContent::Board && active_board == Some(pane) {
+        Some(active_camera)
+    } else {
+        warm.camera(pane, content)
     }
 }
 
@@ -169,6 +192,55 @@ mod tests {
         );
         assert_eq!(lod.previous(PaneId(1), PaneContent::Board).tier, Some(0));
         assert_eq!(lod.previous(PaneId(2), PaneContent::Board).tier, Some(2));
+    }
+
+    #[test]
+    fn active_board_render_uses_live_zoom_instead_of_stale_warm_camera() {
+        let pane = PaneId(1);
+        let stale = CameraState {
+            center_x_nm: 10.0,
+            center_y_nm: 20.0,
+            zoom: 1.0,
+        };
+        let zoomed = CameraState { zoom: 2.4, ..stale };
+        let warm = PaneCameras::new(pane, PaneContent::Board, stale);
+
+        assert_eq!(
+            camera_for_render(Some(pane), zoomed, &warm, pane, PaneContent::Board),
+            Some(zoomed)
+        );
+    }
+
+    #[test]
+    fn inactive_duplicate_board_keeps_its_independent_warm_camera() {
+        let active = PaneId(1);
+        let inactive = PaneId(2);
+        let active_camera = CameraState {
+            center_x_nm: 10.0,
+            center_y_nm: 20.0,
+            zoom: 2.4,
+        };
+        let inactive_camera = CameraState {
+            center_x_nm: 30.0,
+            center_y_nm: 40.0,
+            zoom: 0.75,
+        };
+        let mut warm = PaneCameras::new(active, PaneContent::Board, CameraState {
+            zoom: 1.0,
+            ..active_camera
+        });
+        warm.inherit(inactive, PaneContent::Board, inactive_camera);
+
+        assert_eq!(
+            camera_for_render(
+                Some(active),
+                active_camera,
+                &warm,
+                inactive,
+                PaneContent::Board,
+            ),
+            Some(inactive_camera)
+        );
     }
 
     #[test]
