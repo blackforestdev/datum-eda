@@ -19,6 +19,8 @@
 ///   layer identity stays visible (see `resolve_layer_appearance_with_scene`).
 fn push_retained_scene_geometry(
     out: &mut Vec<Quad>,
+    strokes: &mut Vec<WorldStrokeInstance>,
+    stroke_batches: &mut Vec<RetainedStrokeBatch>,
     scene: &BoardReviewSceneV1,
     reference_projection: &Projection,
     state: &ReviewWorkspaceState,
@@ -50,12 +52,12 @@ fn push_retained_scene_geometry(
                 let za = layer_app(&zone.layer_id);
                 let (fill_color, outline_color) = (za.zone_fill, za.zone_outline);
                 push_world_polygon_fill(out, &zone.polygon, dim_authored_color(fill_color, dimmed));
-                push_world_polyline_mitered(
-                    out,
-                    &close_path(&zone.polygon),
-                    world_stroke_nm(2.0, reference_projection),
-                    dim_authored_color(outline_color, dimmed),
-                );
+                let start = strokes.len();
+                let zone_weight = AuthoredStrokePrimitive::CopperZoneOutline;
+                push_world_stroke_path(strokes, &close_path(&zone.polygon),
+                    dim_authored_color(outline_color, dimmed), zone_weight.nominal_nm(), 1.0);
+                scene_retained_access::finish_retained_stroke_batch(stroke_batches,
+                    Some(zone.layer_id.clone()), start, strokes.len());
             }
         }
         for track in &scene.tracks {
@@ -86,20 +88,14 @@ fn push_retained_scene_geometry(
                 width_nm: track.width_nm,
             }
             .nominal_nm() as f32;
-            push_world_polyline_segments(out, &track.path, track_width_nm, color);
-            let half = (track_width_nm * 0.5).round() as i64;
-            for point in &track.path {
-                push_world_ellipse_nm(
-                    out,
-                    datum_gui_protocol::RectNm {
-                        min_x: point.x - half,
-                        min_y: point.y - half,
-                        max_x: point.x + half,
-                        max_y: point.y + half,
-                    },
-                    color,
-                    64,
-                );
+            let start = strokes.len();
+            push_world_stroke_path(strokes, &track.path, color, track_width_nm as i64, 1.0);
+            if strokes.len() > start {
+                stroke_batches.push(RetainedStrokeBatch {
+                    layer_id: Some(track.layer_id.clone()),
+                    start: start as u32,
+                    len: (strokes.len() - start) as u32,
+                });
             }
         }
         for pad in &scene.pads {
@@ -300,6 +296,8 @@ fn push_retained_scene_geometry(
             let selected = false;
             push_component_graphic_primitive_world(
                 out,
+                strokes,
+                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -334,6 +332,8 @@ fn push_retained_scene_geometry(
                 ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             push_component_graphic_primitive_world(
                 out,
+                strokes,
+                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -382,6 +382,8 @@ fn push_retained_scene_geometry(
             }
             push_component_graphic_primitive_world(
                 out,
+                strokes,
+                stroke_batches,
                 graphic,
                 sl,
                 false,
@@ -418,6 +420,8 @@ fn push_retained_scene_geometry(
         {
             push_component_graphic_primitive_world(
                 out,
+                strokes,
+                stroke_batches,
                 graphic,
                 sl,
                 selected,
@@ -553,8 +557,10 @@ fn push_retained_scene_geometry(
 fn push_retained_board_graphic_batches(
     out: &mut Vec<Quad>,
     batches: &mut Vec<RetainedWorldBatch>,
+    strokes: &mut Vec<WorldStrokeInstance>,
+    stroke_batches: &mut Vec<RetainedStrokeBatch>,
     scene: &BoardReviewSceneV1,
-    reference_projection: &Projection,
+    _reference_projection: &Projection,
     state: &ReviewWorkspaceState,
 ) {
     if !authored_visible(state) {
@@ -579,7 +585,7 @@ fn push_retained_board_graphic_batches(
             .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
         {
             if active_layer.as_deref() != Some(gfx.layer_id.as_str()) {
-                finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+                scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
                 active_layer = Some(gfx.layer_id.clone());
                 active_color =
                     board_graphic_world_color(&gfx.layer_id, sl, dim_unrelated_active(state));
@@ -588,17 +594,21 @@ fn push_retained_board_graphic_batches(
             if trace_graphics {
                 let graphic_started = std::time::Instant::now();
                 let graphic_before = out.len();
-                push_board_graphic_primitive_world(out, gfx, active_color, reference_projection);
+                let stroke_start = strokes.len();
+                push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
+                scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(gfx.layer_id.clone()), stroke_start, strokes.len());
                 trace_graphic_timing(
                     gfx,
                     graphic_started,
                     out.len().saturating_sub(graphic_before),
                 );
             } else {
-                push_board_graphic_primitive_world(out, gfx, active_color, reference_projection);
+                let stroke_start = strokes.len();
+                push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
+                scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(gfx.layer_id.clone()), stroke_start, strokes.len());
             }
         }
-        finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+        scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
         let mut outline_layer: Option<String> = None;
         let mut outline_start = out.len();
         for outline in scene
@@ -607,18 +617,16 @@ fn push_retained_board_graphic_batches(
             .filter(|outline| render_stage_for_layer(&outline.layer_id, sl) == stage)
         {
             if outline_layer.as_deref() != Some(outline.layer_id.as_str()) {
-                finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
+                scene_retained_access::finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
                 outline_layer = Some(outline.layer_id.clone());
                 outline_start = out.len();
             }
-            push_world_polyline_segments_capped(
-                out,
-                &outline.path,
-                EDGE_CUT_NM as f32,
-                board_surface_color(BoardSurfaceRole::Edge),
-            );
+            let stroke_start = strokes.len();
+            push_world_stroke_path(strokes, &outline.path,
+                board_surface_color(BoardSurfaceRole::Edge), EDGE_CUT_NM, 1.0);
+            scene_retained_access::finish_retained_stroke_batch(stroke_batches, Some(outline.layer_id.clone()), stroke_start, strokes.len());
         }
-        finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
+        scene_retained_access::finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
     }
 }
 
@@ -655,7 +663,7 @@ fn push_retained_board_text_geometry_batches(
             if active_layer.as_deref() != Some(text_geometry.layer_id.as_str())
                 || active_color != text_color
             {
-                finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+                scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
                 active_layer = Some(text_geometry.layer_id.clone());
                 active_color = text_color;
                 active_start = out.len();
@@ -668,24 +676,8 @@ fn push_retained_board_text_geometry_batches(
                 reference_projection,
             );
         }
-        finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+        scene_retained_access::finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
     }
-}
-
-fn finish_retained_quad_batch(
-    batches: &mut Vec<RetainedWorldBatch>,
-    layer_id: Option<String>,
-    start_quads: usize,
-    end_quads: usize,
-) {
-    if end_quads <= start_quads {
-        return;
-    }
-    batches.push(RetainedWorldBatch {
-        layer_id,
-        start: (start_quads * 6) as u32,
-        len: ((end_quads - start_quads) * 6) as u32,
-    });
 }
 
 fn trace_retained_stage(

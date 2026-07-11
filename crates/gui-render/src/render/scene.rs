@@ -163,6 +163,9 @@ impl PreparedScene {
         } else {
             Vec::new()
         };
+        let visible_world_stroke_ranges = if board_scene_active {
+            retained_scene.visible_world_stroke_ranges(state)
+        } else { Vec::new() };
         // P2.2a: describe the companion schematic pass. It is active only when the
         // layout has a Schematic pane AND the workspace carries a projected
         // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
@@ -222,6 +225,7 @@ impl PreparedScene {
             viewport_overlay_vertices,
             board_interaction_vertices,
             visible_world_ranges,
+            visible_world_stroke_ranges,
             text_runs,
             schematic_scene_viewport,
             schematic_pane_id,
@@ -294,6 +298,10 @@ impl PreparedScene {
     fn visible_world_ranges(&self) -> &[Range<u32>] {
         &self.visible_world_ranges
     }
+
+    fn visible_world_stroke_ranges(&self) -> &[Range<u32>] {
+        &self.visible_world_stroke_ranges
+    }
 }
 
 thread_local! {
@@ -342,9 +350,12 @@ impl RetainedScene {
         );
         let mut world_quads = Vec::new();
         let mut world_batches = Vec::new();
+        let mut world_strokes = Vec::new();
+        let mut world_stroke_batches = Vec::new();
         let mut world_hit_regions = Vec::new();
         let geometry_started = std::time::Instant::now();
-        push_retained_scene_geometry(&mut world_quads, &state.scene, &reference_projection, state);
+        push_retained_scene_geometry(&mut world_quads, &mut world_strokes, &mut world_stroke_batches,
+            &state.scene, &reference_projection, state);
         if !world_quads.is_empty() {
             world_batches.push(RetainedWorldBatch {
                 layer_id: None,
@@ -364,6 +375,8 @@ impl RetainedScene {
         push_retained_board_graphic_batches(
             &mut world_quads,
             &mut world_batches,
+            &mut world_strokes,
+            &mut world_stroke_batches,
             &state.scene,
             &reference_projection,
             state,
@@ -393,6 +406,8 @@ impl RetainedScene {
         Self {
             world_vertices,
             world_batches,
+            world_strokes,
+            world_stroke_batches,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         }
     }
@@ -429,6 +444,8 @@ impl RetainedScene {
         );
         let mut world_quads = Vec::new();
         let mut world_batches = Vec::new();
+        let mut world_strokes = Vec::new();
+        let mut world_stroke_batches = Vec::new();
         // Slice S1b: the schematic grid is NO LONGER baked here. It used to be pushed
         // FIRST as world-nm lines so scene geometry painted over it, but world-baked
         // lines are re-scaled by the live schematic camera and thicken on zoom-in.
@@ -437,6 +454,8 @@ impl RetainedScene {
         // this retained WORLD buffer holds only real geometry (wires/symbols/text).
         push_retained_scene_geometry(
             &mut world_quads,
+            &mut world_strokes,
+            &mut world_stroke_batches,
             schematic_scene,
             &reference_projection,
             state,
@@ -458,6 +477,8 @@ impl RetainedScene {
         push_retained_board_graphic_batches(
             &mut world_quads,
             &mut world_batches,
+            &mut world_strokes,
+            &mut world_stroke_batches,
             schematic_scene,
             &reference_projection,
             state,
@@ -470,43 +491,10 @@ impl RetainedScene {
         Some(Self {
             world_vertices,
             world_batches,
+            world_strokes,
+            world_stroke_batches,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         })
-    }
-
-    pub fn world_vertices(&self) -> &[Vertex] {
-        &self.world_vertices
-    }
-
-    /// Every batch's vertex range, unfiltered — the draw list for the static
-    /// companion schematic pass (P2.2a). The schematic's layers are not the
-    /// board's layer-toggle set, so all of its geometry renders; `state`-filtered
-    /// `visible_world_ranges` is the BOARD path.
-    pub fn all_world_ranges(&self) -> Vec<Range<u32>> {
-        self.world_batches
-            .iter()
-            .map(|batch| batch.start..batch.start + batch.len)
-            .collect()
-    }
-
-    fn visible_world_ranges(&self, state: &ReviewWorkspaceState) -> Vec<Range<u32>> {
-        // Note: whether the board world renders AT ALL (i.e. a board leaf exists to
-        // host it) is gated by the caller in `from_workspace_for_surface`; here we
-        // only filter which layer batches are visible. The scene is scissored to the
-        // BOARD leaf's rect, so the PCB stays in its pane independent of focus.
-        if !authored_visible(state) {
-            return Vec::new();
-        }
-        self.world_batches
-            .iter()
-            .filter(|batch| {
-                batch
-                    .layer_id
-                    .as_deref()
-                    .is_none_or(|layer_id| layer_visible(state, layer_id))
-            })
-            .map(|batch| batch.start..batch.start + batch.len)
-            .collect()
     }
 
     // `hit_test_authored_world` (board) and `hit_test_world` (schematic,

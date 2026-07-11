@@ -13,6 +13,7 @@ path = "src/main.rs"
 [dependencies]
 datum-gui-protocol = { path = "../gui-protocol" }
 datum-gui-render = { path = "../gui-render" }
+datum-gui-viewport = { path = "../gui-viewport" }
 anyhow.workspace = true
 arboard.workspace = true
 clap.workspace = true

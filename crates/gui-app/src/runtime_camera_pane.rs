@@ -7,6 +7,7 @@
 
 use super::*;
 use datum_gui_render::RectPx;
+use datum_gui_viewport::{CameraConfig, CameraEngine};
 
 #[derive(Clone)]
 struct CameraViewport {
@@ -15,6 +16,7 @@ struct CameraViewport {
     bounds: SceneBounds,
     viewport: RectPx,
     active_board: bool,
+    camera: CameraConfig,
 }
 
 impl Runtime {
@@ -37,6 +39,7 @@ impl Runtime {
             viewport: leaf.rect.scene,
             active_board: leaf.content == datum_gui_protocol::PaneContent::Board
                 && panes.scene_leaf_id() == Some(pane),
+            camera: datum_gui_viewport::ViewportProfile::default().camera,
         })
     }
 
@@ -98,8 +101,14 @@ impl Runtime {
             }
         }
         let fit = CameraState::fit_to_bounds(&route.bounds);
-        self.camera_slot_mut(&route, || fit)
-            .pan_pixels(route.viewport, &route.bounds, dx, dy);
+        CameraEngine::pan_pixels(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            dx,
+            dy,
+        );
         self.invalidate_frame();
         true
     }
@@ -117,8 +126,15 @@ impl Runtime {
             return false;
         }
         let fit = CameraState::fit_to_bounds(&route.bounds);
-        self.camera_slot_mut(&route, || fit)
-            .zoom_about_screen_point(route.viewport, &route.bounds, x, y, delta);
+        CameraEngine::zoom_about_screen_point(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            x,
+            y,
+            delta,
+        );
         self.invalidate_frame();
         true
     }
@@ -130,8 +146,15 @@ impl Runtime {
         let x = route.viewport.x + route.viewport.width * 0.5;
         let y = route.viewport.y + route.viewport.height * 0.5;
         let fit = CameraState::fit_to_bounds(&route.bounds);
-        self.camera_slot_mut(&route, || fit)
-            .zoom_about_screen_point(route.viewport, &route.bounds, x, y, delta);
+        CameraEngine::zoom_about_screen_point(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            x,
+            y,
+            delta,
+        );
         self.invalidate_frame();
         true
     }

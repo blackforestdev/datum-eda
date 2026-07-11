@@ -7,6 +7,7 @@
 //! read the remaining config.
 
 use crate::stroke::WeightClass;
+use crate::CameraConfig;
 
 /// Grid layout mode (spec §5): a square grid uses one pitch on both axes; a
 /// rectangular grid allows an independent pitch per axis.
@@ -121,6 +122,8 @@ impl Default for CursorConfig {
 /// minimal so no field is speculative mechanism.
 #[derive(Debug, Clone, Default)]
 pub struct ViewportProfile {
+    /// Pan/zoom limits consumed by the shared camera mechanism.
+    pub camera: CameraConfig,
     /// Grid pitch tiers, mode, weight, and colours (spec §5).
     pub grid: GridConfig,
     /// Stroke primitive → weight-class map placeholder (spec §4.2). Populated by

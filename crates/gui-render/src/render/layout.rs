@@ -42,47 +42,9 @@ impl RectPx {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct CameraState {
-    pub center_x_nm: f32,
-    pub center_y_nm: f32,
-    pub zoom: f32,
-}
-
-impl CameraState {
-    pub fn fit_to_bounds(bounds: &datum_gui_protocol::SceneBounds) -> Self {
-        Self {
-            center_x_nm: ((bounds.min_x + bounds.max_x) as f32) * 0.5,
-            center_y_nm: ((bounds.min_y + bounds.max_y) as f32) * 0.5,
-            zoom: 1.0,
-        }
-    }
-
-    pub fn pan_pixels(
-        &mut self,
-        viewport: RectPx,
-        bounds: &datum_gui_protocol::SceneBounds,
-        delta_x_px: f32,
-        delta_y_px: f32,
-    ) {
-        let projection = Projection::new(viewport, bounds, *self);
-        self.center_x_nm -= delta_x_px / projection.scale;
-        self.center_y_nm -= delta_y_px / projection.scale;
-    }
-
-    pub fn zoom_about_screen_point(
-        &mut self,
-        viewport: RectPx,
-        bounds: &datum_gui_protocol::SceneBounds,
-        screen_x: f32,
-        screen_y: f32,
-        zoom_delta: f32,
-    ) {
-        let before = Projection::new(viewport, bounds, *self).screen_to_world(screen_x, screen_y);
-        self.zoom = (self.zoom * zoom_delta).clamp(0.35, 8.0);
-        let after = Projection::new(viewport, bounds, *self).screen_to_world(screen_x, screen_y);
-        self.center_x_nm += before.x as f32 - after.x as f32;
-        self.center_y_nm += before.y as f32 - after.y as f32;
+impl From<RectPx> for datum_gui_viewport::CameraViewport {
+    fn from(value: RectPx) -> Self {
+        Self { x: value.x, y: value.y, width: value.width, height: value.height }
     }
 }
 
@@ -651,4 +613,3 @@ fn solve_shell_layout_with_taffy(
         status_bar: rect_for(&taffy, status_bar)?,
     })
 }
-

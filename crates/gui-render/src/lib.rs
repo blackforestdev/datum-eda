@@ -17,6 +17,8 @@ use taffy::prelude::*;
 use uuid::Uuid;
 use wgpu::util::DeviceExt;
 
+pub use datum_gui_viewport::CameraState;
+
 mod bottom_dock;
 #[cfg(feature = "visual")]
 pub mod design_artboards;
@@ -44,6 +46,8 @@ include!("render/types.rs");
 mod pane_chrome;
 use pane_chrome::render_viewport_panes;
 include!("render/scene.rs");
+#[path = "render/scene_retained_access.rs"]
+mod scene_retained_access;
 include!("render/retained.rs");
 include!("render/overlay.rs");
 mod dim_policy;
@@ -56,6 +60,8 @@ include!("render/draw_primitives.rs");
 include!("render/pads_and_layers.rs");
 include!("render/geometry.rs");
 include!("render/gpu.rs");
+#[path = "render/gpu_surface.rs"]
+mod gpu_surface;
 #[path = "render/grid.rs"]
 mod grid;
 pub(crate) use grid::{push_scene_grid, push_schematic_grid};
@@ -66,6 +72,9 @@ pub(crate) use via::push_via_primitive_world;
 mod gpu_data;
 pub use gpu_data::Vertex;
 pub(crate) use gpu_data::{SceneUniform, ScreenUniform, quads_to_vertices};
+#[path = "render/gpu_strokes.rs"]
+mod gpu_strokes;
+pub(crate) use gpu_strokes::*;
 #[path = "render/render_helpers.rs"]
 mod render_helpers;
 pub(crate) use render_helpers::{

@@ -18,6 +18,7 @@
 //! protocol state (UVT-002).
 
 pub mod editor;
+pub mod camera;
 pub mod grid;
 pub mod hit;
 pub mod interaction;
@@ -25,6 +26,7 @@ pub mod profile;
 pub mod stroke;
 
 pub use editor::{EditorViewport, ScreenRectPx};
+pub use camera::{CameraConfig, CameraEngine, CameraState, CameraViewport};
 pub use grid::{
     AxisProjection, GRID_COARSEN_PX, GRID_HIDE_FLOOR_PX, GRID_REFINE_PX, GridEngine, GridLine,
     GridLodState, GridViewport, MAX_GRID_PRIMITIVES,

@@ -374,6 +374,7 @@ fn push_component_primitive(
     body
 }
 
+#[cfg(test)]
 #[allow(dead_code)]
 fn push_component_primitive_world(
     out: &mut Vec<Quad>,
@@ -501,8 +502,11 @@ fn push_component_graphic_primitive(
     push_polyline_segments(out, &path, projection, color, width.max(1.0));
 }
 
+#[allow(clippy::too_many_arguments)]
 fn push_component_graphic_primitive_world(
     out: &mut Vec<Quad>,
+    strokes: &mut Vec<WorldStrokeInstance>,
+    stroke_batches: &mut Vec<RetainedStrokeBatch>,
     graphic: &ComponentGraphicPrimitive,
     scene_layers: &[datum_gui_protocol::SceneLayer],
     selected: bool,
@@ -570,46 +574,20 @@ fn push_component_graphic_primitive_world(
         return;
     }
     let w = width_nm.max(1.0);
-    push_world_polyline_segments(out, &path, w, color);
+    if graphic.render_role == "component_mechanical" {
+        push_world_polyline_segments(out, &path, w, color);
+    } else {
+        let start = strokes.len();
+        push_world_stroke_path(strokes, &path, color,
+            graphic.width_nm.unwrap_or(SILK_LINE_NM), 1.0);
+        scene_retained_access::finish_retained_stroke_batch(stroke_batches,
+            graphic.layer_id.clone(), start, strokes.len());
+        return;
+    }
     // Round-cap each vertex so that separate fp_line segments sharing an
     // endpoint don't leave diagonal gaps at 90-degree corners. Each cap is
     // a small filled circle matching the stroke width.
     let half = (w * 0.5) as i64;
-    for pt in &path {
-        push_world_ellipse_nm(
-            out,
-            datum_gui_protocol::RectNm {
-                min_x: pt.x - half,
-                min_y: pt.y - half,
-                max_x: pt.x + half,
-                max_y: pt.y + half,
-            },
-            color,
-            16,
-        );
-    }
-}
-
-fn push_board_graphic_primitive_world(
-    out: &mut Vec<Quad>,
-    graphic: &BoardGraphicPrimitive,
-    color: [f32; 3],
-    _reference_projection: &Projection,
-) {
-    if graphic.primitive_kind == "polygon" && graphic.path.len() >= 3 {
-        push_world_polygon_fill_contours(out, &graphic.path, &graphic.holes, color);
-        if graphic.width_nm.is_none() {
-            return;
-        }
-    }
-    let width_nm = board_graphic_nominal_nm(&graphic.layer_id, graphic.width_nm) as f32;
-    let path = if graphic.primitive_kind == "polygon" {
-        close_path(&graphic.path)
-    } else {
-        graphic.path.clone()
-    };
-    push_world_polyline_segments(out, &path, width_nm, color);
-    let half = (width_nm * 0.5) as i64;
     for pt in &path {
         push_world_ellipse_nm(
             out,

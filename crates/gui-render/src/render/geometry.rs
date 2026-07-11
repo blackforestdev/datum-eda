@@ -462,6 +462,8 @@ fn push_world_polyline_segments(
     }
 }
 
+#[cfg(test)]
+#[allow(dead_code)]
 fn push_world_polyline_mitered(
     out: &mut Vec<Quad>,
     path: &[PointNm],
@@ -1371,4 +1373,3 @@ fn text_prepare_signature(
             .collect(),
     }
 }
-

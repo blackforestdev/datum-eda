@@ -96,6 +96,7 @@ pub struct PreparedScene {
     viewport_overlay_vertices: Vec<Vertex>,
     board_interaction_vertices: Vec<Vertex>,
     visible_world_ranges: Vec<Range<u32>>,
+    visible_world_stroke_ranges: Vec<Range<u32>>,
     text_runs: Vec<TextRun>,
     // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
     // `Some` only when the layout has a Schematic pane AND the workspace carries a
@@ -132,11 +133,20 @@ pub struct PreparedScene {
 pub struct RetainedScene {
     world_vertices: Vec<Vertex>,
     world_batches: Vec<RetainedWorldBatch>,
+    world_strokes: Vec<WorldStrokeInstance>,
+    world_stroke_batches: Vec<RetainedStrokeBatch>,
     world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RetainedWorldBatch {
+    layer_id: Option<String>,
+    start: u32,
+    len: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RetainedStrokeBatch {
     layer_id: Option<String>,
     start: u32,
     len: u32,
@@ -209,12 +219,6 @@ impl Projection {
         length_nm as f32 * self.scale
     }
 
-    fn screen_to_world(&self, x: f32, y: f32) -> PointNm {
-        PointNm {
-            x: ((x - self.offset_x) / self.scale + self.bounds.min_x as f32).round() as i64,
-            y: ((y - self.offset_y) / self.scale + self.bounds.min_y as f32).round() as i64,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

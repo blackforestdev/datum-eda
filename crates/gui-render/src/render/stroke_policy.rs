@@ -21,6 +21,7 @@ pub(crate) const JUNCTION_DOT_NM: i64 = 400_000;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum AuthoredStrokePrimitive {
     CopperTrace { width_nm: i64 },
+    CopperZoneOutline,
     BoardSilkLine,
     EdgeCut,
     SchematicWire,
@@ -43,6 +44,7 @@ impl AuthoredStrokePrimitive {
                 nominal_nm: width_nm.max(1),
                 min_px: 1.0,
             },
+            Self::CopperZoneOutline => authored(EDGE_CUT_NM, 1.0),
             Self::BoardSilkLine => authored(SILK_LINE_NM, 1.0),
             Self::EdgeCut => authored(EDGE_CUT_NM, 1.0),
             Self::SchematicWire | Self::BusEntry | Self::NoConnectMarker => {
@@ -89,6 +91,7 @@ mod tests {
     fn every_governed_authored_stroke_has_exactly_one_non_chrome_class() {
         let governed = [
             AuthoredStrokePrimitive::CopperTrace { width_nm: 203_200 },
+            AuthoredStrokePrimitive::CopperZoneOutline,
             AuthoredStrokePrimitive::BoardSilkLine,
             AuthoredStrokePrimitive::EdgeCut,
             AuthoredStrokePrimitive::SchematicWire,

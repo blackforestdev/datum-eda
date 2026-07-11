@@ -1,23 +1,21 @@
 pub struct Renderer {
     pipeline: wgpu::RenderPipeline,
     world_pipeline: wgpu::RenderPipeline,
+    world_stroke_pipeline: wgpu::RenderPipeline,
     uniform_bind_group: wgpu::BindGroup,
     uniform_buffer: wgpu::Buffer,
     scene_bind_group: wgpu::BindGroup,
     scene_uniform_buffer: wgpu::Buffer,
-    // P2.2a: the static companion schematic world pass needs its OWN uniform +
-    // bind group (a distinct buffer from the board's), because both uniform writes
-    // land at submit time — sharing one buffer would make both passes read the
-    // last-written camera/viewport. The board buffers above are untouched.
     schematic_scene_bind_group: wgpu::BindGroup,
     schematic_scene_uniform_buffer: wgpu::Buffer,
     schematic_world_vertex_buffer: Option<wgpu::Buffer>,
     schematic_world_vertex_capacity: usize,
-    // Slice S1b: immediate screen-space schematic grid (drawn with the screen
-    // pipeline, scissored to the schematic pane) — never a retained world buffer.
+    schematic_world_stroke_buffer: Option<wgpu::Buffer>,
+    schematic_world_stroke_capacity: usize,
+    schematic_world_stroke_source_ptr: usize,
+    schematic_world_stroke_source_len: usize,
     schematic_underlay_vertex_buffer: Option<wgpu::Buffer>,
     schematic_underlay_vertex_capacity: usize,
-    // S4 hover/cursor chrome is a post-world overlay, never part of the grid.
     schematic_overlay_vertex_buffer: Option<wgpu::Buffer>,
     schematic_overlay_vertex_capacity: usize,
     font_system: FontSystem,
@@ -25,9 +23,6 @@ pub struct Renderer {
     viewport: Viewport,
     atlas: TextAtlas,
     text_renderer: TextRenderer,
-    // Dedicated renderer for the open menu dropdown's own text, prepared and
-    // rendered in a FINAL pass on top of the dropdown card so it is never
-    // occluded and never disturbs the main text renderer's prepared state.
     menu_overlay_text_renderer: TextRenderer,
     text_buffer_cache: Vec<CachedTextBuffer>,
     last_text_prepare_signature: Option<TextPrepareSignature>,
@@ -45,13 +40,16 @@ pub struct Renderer {
     world_vertex_capacity: usize,
     world_vertex_source_ptr: usize,
     world_vertex_source_len: usize,
+    world_stroke_buffer: Option<wgpu::Buffer>,
+    world_stroke_capacity: usize,
+    world_stroke_source_ptr: usize,
+    world_stroke_source_len: usize,
     msaa_view: Option<wgpu::TextureView>,
     msaa_size: (u32, u32),
     msaa_format: wgpu::TextureFormat,
     msaa_samples: u32,
 }
 
-// Real child modules keep cache and per-frame upload inventories independently governed.
 #[path = "text_buffer_cache.rs"]
 mod text_buffer_cache;
 #[path = "gpu_vertex_upload.rs"]
@@ -320,6 +318,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             multiview_mask: None,
             cache: None,
         });
+        let world_stroke_pipeline = create_world_stroke_pipeline(
+            device, &world_pipeline_layout, format, msaa_samples);
         let mut font_system = FontSystem::new();
         load_datum_fonts(&mut font_system);
         let swash_cache = SwashCache::new();
@@ -349,6 +349,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         Self {
             pipeline,
             world_pipeline,
+            world_stroke_pipeline,
             uniform_bind_group,
             uniform_buffer,
             scene_bind_group,
@@ -357,6 +358,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_scene_uniform_buffer,
             schematic_world_vertex_buffer: None,
             schematic_world_vertex_capacity: 0,
+            schematic_world_stroke_buffer: None,
+            schematic_world_stroke_capacity: 0,
+            schematic_world_stroke_source_ptr: 0,
+            schematic_world_stroke_source_len: 0,
             schematic_underlay_vertex_buffer: None,
             schematic_underlay_vertex_capacity: 0,
             schematic_overlay_vertex_buffer: None,
@@ -383,38 +388,15 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             world_vertex_capacity: 0,
             world_vertex_source_ptr: 0,
             world_vertex_source_len: 0,
+            world_stroke_buffer: None,
+            world_stroke_capacity: 0,
+            world_stroke_source_ptr: 0,
+            world_stroke_source_len: 0,
             msaa_view: None,
             msaa_size: (0, 0),
             msaa_format: format,
             msaa_samples,
         }
-    }
-
-    fn ensure_msaa(
-        &mut self,
-        device: &wgpu::Device,
-        width: u32,
-        height: u32,
-    ) -> &wgpu::TextureView {
-        if self.msaa_size != (width, height) || self.msaa_view.is_none() {
-            let texture = device.create_texture(&wgpu::TextureDescriptor {
-                label: Some("datum-gui-render-msaa"),
-                size: wgpu::Extent3d {
-                    width: width.max(1),
-                    height: height.max(1),
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: self.msaa_samples,
-                dimension: wgpu::TextureDimension::D2,
-                format: self.msaa_format,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-                view_formats: &[],
-            });
-            self.msaa_view = Some(texture.create_view(&wgpu::TextureViewDescriptor::default()));
-            self.msaa_size = (width, height);
-        }
-        self.msaa_view.as_ref().unwrap()
     }
 
     // Render helper threads many quad/text-run/hit-region sinks.
@@ -437,6 +419,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let board_interaction_vertices = prepared.board_interaction_vertices();
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
+        let world_strokes = retained.world_strokes();
+        let visible_world_stroke_ranges = prepared.visible_world_stroke_ranges();
         let visible_world_ranges = prepared.visible_world_ranges();
         let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
         let projection = Projection::new(board_field, &prepared.scene_bounds, prepared.camera);
@@ -511,6 +495,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_underlay_vertices,
             schematic_overlay_vertices,
         );
+        self.sync_world_strokes(device, queue, world_strokes);
+        if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
+            self.sync_schematic_world_strokes(device, queue, scene.world_strokes());
+        }
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
@@ -589,6 +577,13 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
+            if !world_strokes.is_empty() {
+                draw_world_strokes(&mut pass, &self.world_stroke_pipeline, &self.scene_bind_group,
+                    self.world_stroke_buffer.as_ref().expect("world stroke buffer"),
+                    prepared.scene_viewport, visible_world_stroke_ranges);
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
             // Slice S1b: immediate schematic grid. Drawn with the SCREEN pipeline
             // (active here — restored after the board world pass, or the default) so
             // its pixel-rect lines keep a fixed device-pixel weight at any schematic
@@ -631,6 +626,13 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                     for range in ranges {
                         pass.draw(range, 0..1);
                     }
+                    pass.set_pipeline(&self.pipeline);
+                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+                }
+                let stroke_ranges = sr.all_world_stroke_ranges();
+                if let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() {
+                    draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
+                        &self.schematic_scene_bind_group, buffer, *scene_viewport, &stroke_ranges);
                     pass.set_pipeline(&self.pipeline);
                     pass.set_bind_group(0, &self.uniform_bind_group, &[]);
                 }

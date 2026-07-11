@@ -480,6 +480,7 @@ fn push_inferred_package_body_from_pads(
     );
 }
 
+#[cfg(test)]
 #[allow(dead_code)]
 fn push_inferred_package_body_from_pads_world(
     out: &mut Vec<Quad>,
@@ -550,6 +551,7 @@ fn push_inferred_package_body_from_pads_world(
     }
 }
 
+#[cfg(test)]
 #[allow(dead_code)]
 fn push_selected_component_body_from_graphic_world(
     out: &mut Vec<Quad>,

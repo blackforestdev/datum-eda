@@ -97,7 +97,6 @@ fn schematic_grid_weight_is_screen_constant_across_zoom() {
             zoom,
             center_x_nm: 0.0,
             center_y_nm: 0.0,
-            ..CameraState::fit_to_bounds(&bounds)
         };
         let projection = Projection::new(viewport, &bounds, camera);
         let mut out = Vec::new();
