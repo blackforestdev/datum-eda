@@ -357,4 +357,148 @@ mod tests {
             y: center.y
         }));
     }
+
+    #[test]
+    fn topmost_order_is_preserved_across_bvh_branches() {
+        let mut regions = (0..64)
+            .map(|order| HitRegion {
+                target: order,
+                layer_id: None,
+                shape: rect(order * 100, 0, order * 100 + 20, 20),
+            })
+            .collect::<Vec<_>>();
+        // These overlap but sort into different branches because their AABB
+        // centres are far apart. Retained order, not BVH traversal, must win.
+        regions.push(HitRegion {
+            target: 64,
+            layer_id: None,
+            shape: rect(-10_000, -10_000, 10_000, 10_000),
+        });
+        regions.push(HitRegion {
+            target: 65,
+            layer_id: None,
+            shape: rect(5, 5, 15, 15),
+        });
+        let index = SpatialHitIndex::new(regions);
+
+        let query = index.hit_test(PointNm { x: 10, y: 10 }, |_| true);
+        assert_eq!(query.target, Some(&65));
+        assert!(!query.budget_exhausted);
+    }
+
+    #[test]
+    fn hidden_topmost_region_yields_to_next_visible_region() {
+        let index = SpatialHitIndex::new(vec![
+            HitRegion {
+                target: "visible-bottom",
+                layer_id: Some("visible".to_string()),
+                shape: rect(0, 0, 100, 100),
+            },
+            HitRegion {
+                target: "hidden-top",
+                layer_id: Some("hidden".to_string()),
+                shape: rect(0, 0, 100, 100),
+            },
+        ]);
+
+        let query = index.hit_test(PointNm { x: 50, y: 50 }, |region| {
+            region.layer_id.as_deref() != Some("hidden")
+        });
+        assert_eq!(query.target, Some(&"visible-bottom"));
+        assert_eq!(query.examined, 2);
+    }
+
+    #[test]
+    fn hundred_thousand_sparse_regions_have_deterministic_bounded_candidates() {
+        const REGION_COUNT: i64 = 100_000;
+        let regions = (0..REGION_COUNT)
+            .map(|index| {
+                let x = index * 1_000;
+                HitRegion {
+                    target: index,
+                    layer_id: None,
+                    shape: rect(x, -10, x + 100, 10),
+                }
+            })
+            .collect();
+        let index = SpatialHitIndex::with_budget(regions, 8);
+        let point = PointNm {
+            x: 54_321 * 1_000 + 50,
+            y: 0,
+        };
+
+        for _ in 0..4 {
+            let query = index.hit_test(point, |_| true);
+            assert_eq!(query.target, Some(&54_321));
+            assert_eq!(query.examined, 1);
+            assert!(!query.budget_exhausted);
+        }
+    }
+
+    #[test]
+    fn budget_exhaustion_is_explicit_and_never_returns_a_lower_unexamined_hit() {
+        let regions = (0..32)
+            .map(|order| HitRegion {
+                target: order,
+                layer_id: Some(if order == 0 { "visible" } else { "hidden" }.to_string()),
+                shape: rect(0, 0, 100, 100),
+            })
+            .collect();
+        let index = SpatialHitIndex::with_budget(regions, 5);
+
+        let query = index.hit_test(PointNm { x: 50, y: 50 }, |region| {
+            region.layer_id.as_deref() == Some("visible")
+        });
+        assert_eq!(query.target, None);
+        assert_eq!(query.examined, 5);
+        assert!(query.budget_exhausted);
+    }
+
+    #[test]
+    fn extreme_coordinate_polyline_and_polygon_hits_are_stable() {
+        let origin = i64::MAX - 1_000_000;
+        let line = HitShape::Polyline {
+            path: vec![
+                PointNm { x: origin, y: origin },
+                PointNm {
+                    x: origin + 100_000,
+                    y: origin,
+                },
+            ],
+            half_width_nm: 2_000.0,
+        };
+        assert!(line.contains(PointNm {
+            x: origin + 50_000,
+            y: origin + 1_000,
+        }));
+        assert!(!line.contains(PointNm {
+            x: origin + 50_000,
+            y: origin + 4_000,
+        }));
+
+        let low = i64::MIN + 1_000_000;
+        let polygon = HitShape::Polygon(vec![
+            PointNm { x: low, y: low },
+            PointNm {
+                x: low + 100_000,
+                y: low,
+            },
+            PointNm {
+                x: low + 100_000,
+                y: low + 100_000,
+            },
+            PointNm {
+                x: low,
+                y: low + 100_000,
+            },
+        ]);
+        assert!(polygon.contains(PointNm {
+            x: low + 50_000,
+            y: low + 50_000,
+        }));
+        assert!(!polygon.contains(PointNm {
+            x: low + 150_000,
+            y: low + 50_000,
+        }));
+    }
 }
