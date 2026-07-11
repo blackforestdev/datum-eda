@@ -74,13 +74,20 @@ pub(crate) mod content {
 /// copy. The schematic colour path in `draw_primitives` maps `Schematic.*`
 /// layer names to these.
 pub(crate) mod schematic {
-    use super::{Rgb, chrome, content};
+    use super::{Rgb, chrome, content, srgb};
 
     pub(crate) const WIRE: Rgb = content::COPPER_IN1; // --wire #4FA75A
     pub(crate) const SYMBOL: Rgb = content::RATSNEST; // --sym  #AEB4BB
     pub(crate) const REFDES: Rgb = chrome::TEXT_PRIMARY; // --tx   #E4E7EB
     pub(crate) const PIN_NAME: Rgb = chrome::TEXT_SECONDARY; // --tx2 #B2B8C3
     pub(crate) const VALUE: Rgb = chrome::TEXT_MUTED; // --tx3  #717885
+    // Schematic canvas grid (P2.2f). A subtle SQUARE line grid, one whisper above
+    // the schematic substrate — the prototype's `#sgrid` (`schematic-editor.html`)
+    // is a single uniform `#141821`; MINOR matches it exactly and MAJOR sits a
+    // touch stronger so the coarse tier reads as a sensible pitch without ever
+    // competing with the green wires.
+    pub(crate) const GRID_MINOR: Rgb = srgb(0x14, 0x18, 0x21); // --sgrid #141821
+    pub(crate) const GRID_MAJOR: Rgb = srgb(0x18, 0x1C, 0x27);
 }
 
 pub(crate) mod typography {

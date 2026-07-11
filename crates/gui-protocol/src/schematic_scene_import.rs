@@ -32,7 +32,9 @@ const SCHEMATIC_VALUE_TEXT_LAYER_INT: i32 = 211;
 const SCHEMATIC_PIN_NAME_TEXT_LAYER_INT: i32 = 212;
 const SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT: i32 = 213;
 const SCHEMATIC_ANNOTATION_TEXT_LAYER_INT: i32 = 214;
-const SCHEMATIC_FRAME_LAYER: &str = "L44";
+// P2.2f removed the schematic sheet frame: there is no longer an `Edge.Cuts`
+// (`L44`) padded-bounds outline primitive in the schematic projection. A proper
+// title-block frame is future work.
 const SCHEMATIC_STROKE_NM: i64 = 120_000;
 const SYMBOL_HALF_WIDTH_NM: i64 = 1_600_000;
 const SYMBOL_HALF_HEIGHT_NM: i64 = 900_000;
@@ -136,10 +138,18 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     let mut text = SchematicTextSink::default();
     push_root_sheet_graphics(root_sheet, &schematic, &mut graphics, &mut points, &mut text);
     let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
-    let outline = schematic_outline(&points);
+    // P2.2f: the schematic pane has NO sheet border (the prototype draws none), so
+    // the projection no longer emits the gold `Edge.Cuts` padded-bounds frame. The
+    // padded envelope still drives the fit-to-bounds camera, so we compute it and
+    // set it as `scene.bounds` directly, but pass an EMPTY outline to the builder
+    // so no frame primitive renders. A proper title-block frame is future work.
+    let envelope = schematic_bounds(&points);
     let mut scene = build_board_review_scene(
         &inspect,
-        outline,
+        OutlinePayload {
+            vertices: Vec::new(),
+            closed: false,
+        },
         Vec::new(),
         Vec::new(),
         Vec::new(),
@@ -154,8 +164,9 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
         glyph_mesh_assets,
         Vec::new(),
         Vec::new(),
-        SCHEMATIC_FRAME_LAYER.to_string(),
+        String::new(),
     );
+    scene.bounds = envelope;
     scene.kind = "schematic_review_scene".to_string();
     scene.scene_id = format!("schematic-review-scene:{sheet_uuid}");
     scene.board_name = root_sheet.name.clone();
@@ -890,7 +901,12 @@ fn push_cross_graphic(
     });
 }
 
-fn schematic_outline(points: &[PointNm]) -> OutlinePayload {
+/// The schematic scene's fit-to-bounds envelope: the full geometry extent padded
+/// on every side. Since P2.2f dropped the rendered `Edge.Cuts` frame (which used
+/// to carry this extent via `scene.outline`), this padded envelope is computed
+/// directly and assigned to `scene.bounds` so the schematic pane still fits the
+/// whole sheet without projecting a visible border.
+fn schematic_bounds(points: &[PointNm]) -> SceneBounds {
     let (min_x, min_y, max_x, max_y) = if points.is_empty() {
         (
             -SCHEMATIC_BOUNDS_PAD_NM,
@@ -905,25 +921,22 @@ fn schematic_outline(points: &[PointNm]) -> OutlinePayload {
         let max_y = points.iter().map(|point| point.y).max().unwrap() + SCHEMATIC_BOUNDS_PAD_NM;
         (min_x, min_y, max_x, max_y)
     };
-    OutlinePayload {
-        vertices: vec![
-            PointNm { x: min_x, y: min_y },
-            PointNm { x: max_x, y: min_y },
-            PointNm { x: max_x, y: max_y },
-            PointNm { x: min_x, y: max_y },
-        ],
-        closed: true,
+    SceneBounds {
+        min_x,
+        min_y,
+        max_x,
+        max_y,
     }
 }
 
 /// The schematic scene's layer table. Each per-net-role layer carries a
 /// `Schematic.*` NAME the renderer's schematic colour path maps to a prototype
-/// token (`docs/gui/prototypes/schematic-editor.html`); the frame keeps the
-/// board `Edge.Cuts` identity (gold) until P2.2f removes it. All schematic
-/// names resolve to the top-silk render stage (see `render_stage_for_layer`) so
-/// they draw in the post-copper pass; within that stage the projection's
-/// insertion order (wires -> symbols -> junctions -> annotations) is the draw
-/// order.
+/// token (`docs/gui/prototypes/schematic-editor.html`). P2.2f dropped the former
+/// `Edge.Cuts` frame layer — the schematic pane has no sheet border. All
+/// schematic names resolve to the top-silk render stage (see
+/// `render_stage_for_layer`) so they draw in the post-copper pass; within that
+/// stage the projection's insertion order (wires -> symbols -> junctions ->
+/// annotations) is the draw order.
 fn schematic_scene_layers() -> Vec<SceneLayer> {
     let role = |layer_id: &str, name: &str, render_order: u32| SceneLayer {
         layer_id: layer_id.to_string(),
@@ -933,13 +946,6 @@ fn schematic_scene_layers() -> Vec<SceneLayer> {
         visible_by_default: true,
     };
     vec![
-        SceneLayer {
-            layer_id: SCHEMATIC_FRAME_LAYER.to_string(),
-            name: "Edge.Cuts".to_string(),
-            kind: "mechanical".to_string(),
-            render_order: 0,
-            visible_by_default: true,
-        },
         role(SCHEMATIC_WIRE_LAYER, "Schematic.Wire", 1),
         role(SCHEMATIC_SYMBOL_LAYER, "Schematic.Symbol", 2),
         role(SCHEMATIC_JUNCTION_LAYER, "Schematic.Junction", 3),
@@ -1071,8 +1077,7 @@ mod tests {
             .map(|g| g.layer_id.as_str())
             .collect();
         assert!(
-            !text_layers.contains(SCHEMATIC_FRAME_LAYER)
-                && !text_layers.contains("L37"),
+            !text_layers.contains("L44") && !text_layers.contains("L37"),
             "schematic text must no longer sit on the frame or the old F.SilkS layer"
         );
         assert!(
@@ -1143,6 +1148,44 @@ mod tests {
         assert!(
             !names.contains("F.SilkS"),
             "the retired monochrome F.SilkS schematic layer must be gone"
+        );
+    }
+
+    #[test]
+    fn schematic_projection_emits_no_sheet_frame() {
+        // P2.2f: the schematic pane has no sheet border. The projection must not
+        // emit the former gold `Edge.Cuts` (`L44`) padded-bounds outline, and the
+        // scene layer table must no longer register that frame layer — while the
+        // fit-to-bounds envelope (scene.bounds) stays a real, non-degenerate rect
+        // covering the padded sheet extent.
+        let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+        let state = load_kicad_schematic_workspace_state(&schematic)
+            .expect("simple schematic should load as a review scene");
+        let scene = &state.scene;
+
+        assert!(
+            scene
+                .outline
+                .iter()
+                .all(|outline| outline.path.is_empty()),
+            "schematic scene must emit no rendered sheet-frame outline path"
+        );
+        assert!(
+            scene.layers.iter().all(|layer| layer.name != "Edge.Cuts"),
+            "schematic scene must no longer register the Edge.Cuts frame layer"
+        );
+        assert!(
+            scene
+                .board_graphics
+                .iter()
+                .all(|g| g.layer_id != "L44"),
+            "no schematic graphic may sit on the retired L44 frame layer"
+        );
+        assert!(
+            scene.bounds.max_x > scene.bounds.min_x && scene.bounds.max_y > scene.bounds.min_y,
+            "the schematic fit-to-bounds envelope must remain a real rect, got {:?}",
+            scene.bounds
         );
     }
 }

@@ -334,6 +334,12 @@ impl RetainedScene {
         );
         let mut world_quads = Vec::new();
         let mut world_batches = Vec::new();
+        // Schematic grid underlay (P2.2f): a subtle square field drawn FIRST so all
+        // scene geometry (green wires, grey symbols, annotation text) paints over
+        // it. Baked into the static companion world buffer against the schematic's
+        // own fit-to-bounds reference projection — the board grid (immediate-mode
+        // `push_scene_underlay`) is untouched.
+        push_schematic_grid(&mut world_quads, &reference_projection);
         push_retained_scene_geometry(
             &mut world_quads,
             schematic_scene,

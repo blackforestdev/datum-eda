@@ -302,6 +302,11 @@ const BOARD_OUTER_FIELD: [f32; 3] = design_tokens::chrome::CANVAS;
 const BOARD_INNER_FIELD: [f32; 3] = design_tokens::content::BOARD_SUBSTRATE;
 const BOARD_GRID_MAJOR: [f32; 3] = design_tokens::content::BOARD_GRID_MAJOR;
 const BOARD_GRID_MINOR: [f32; 3] = design_tokens::content::BOARD_GRID_MINOR;
+// Schematic-pane grid (P2.2f). The companion schematic pass draws its own square
+// underlay; these mirror the schematic prototype's `#sgrid` whisper and never
+// touch the board grid path.
+const SCHEMATIC_GRID_MAJOR: [f32; 3] = design_tokens::schematic::GRID_MAJOR;
+const SCHEMATIC_GRID_MINOR: [f32; 3] = design_tokens::schematic::GRID_MINOR;
 const BOARD_EDGE: [f32; 3] = design_tokens::content::EDGE;
 const TEXT_PRIMARY: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
 const TEXT_SECONDARY: [f32; 3] = design_tokens::chrome::TEXT_SECONDARY;
