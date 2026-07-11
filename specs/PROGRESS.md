@@ -105,8 +105,10 @@
    LANDED; P2.1 split-view first slice (two-pane LAYOUT + headers + focus +
    placeholder pane B) LANDED; P2.1 pane-tiling depth (dynamic single/split/close/
    nesting + Zoom + independent per-pane cameras + divider-drag resize) LANDED;
-   P2.2–P2.4 spec'd, build deferred to authorized execution** (real schematic
-   content in pane B is the next slice, still DEFERRED).
+   P2.2 schematic render in pane B LANDED (multi-scene + per-element colour +
+   interactive focused-pane camera + typed-object geometry + square grid);
+   P2.3–P2.4 spec'd, build deferred to authorized execution** (cross-probe is the
+   next slice, still DEFERRED).
    **Pane model — decision 021** (`docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`):
    the split view is the first implementation of a **recursive binary tile tree**,
    tile-first + View-menu-managed, with **Zoom/maximize** and deliberate **Float/detach**
@@ -116,10 +118,13 @@
    viewports. Reference: `docs/gui/prototypes/workspace-panes.html`. Near-term slice
    ordering under 021: **dynamic single/split + Zoom + divider-drag resize** (resolves
    "board-only / schematic-only / both" as a user choice and lets the owner set any
-   split ratio) — **LANDED** → **P2.2 schematic render in pane B — IN PROGRESS**
-   (multi-scene + symbol structure landed; re-specced 2026-07-10 to match
-   `schematic-editor.html` — colour fidelity / interactive camera / typed-object
-   geometry / grid are the completion build; see `DATUM_GUI_PHASE_2_SPEC.md` P2.2).
+   split ratio) — **LANDED** → **P2.2 schematic render in pane B — LANDED**
+   (multi-scene + symbol structure, then re-specced 2026-07-10 to match
+   `schematic-editor.html` and completed 2026-07-10: P2.2c per-element colour /
+   P2.2d interactive focused-pane camera / P2.2e typed-object geometry (bus, power,
+   label kinds) / P2.2f square grid + frame removal; render fidelity reviewed
+   complete-to-spec, shell golden re-blessed; see `DATUM_GUI_PHASE_2_SPEC.md` P2.2)
+   → **P2.3 cross-probe — NEXT** (one selection identity projected into both panes).
    Governing: decision 019 + **decision 021 (pane tiling)** +
    `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
