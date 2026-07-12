@@ -228,16 +228,19 @@ later tuning requires usability evidence and a governed spec change.
 - In the schematic workspace, clicking a pin selects its parent symbol and pin
   anchors contribute to parent-symbol region selection. In the symbol editor
   workspace, a pin is independently selectable.
-- Copper zones are excluded from rectangle and lasso acquisition. A zone is
-  selected by direct primary click or explicitly through right-button drag →
-  `Select` → the user-legible zone entry (name/net/layer); conflict-menu
-  `Select All` may include it. Zone outline, fill, islands, and thermal geometry
-  project one authored zone identity rather than independent selectable
-  objects. Connected/global electrical selection may include the zone because
-  that is a logical expansion, not geometric region acquisition.
-- Independently selectable filled graphics are likewise excluded from rectangle
-  and lasso acquisition. They use the same canonical paths as zones: direct
-  primary click when topmost, or an explicit user-legible entry (and optional
+- Copper zones do not qualify from a partial rectangle/lasso overlap; they
+  qualify only when **100 percent** of their authored filled area (including all
+  islands) is enclosed. Otherwise a zone is selected by direct primary click or
+  explicitly through right-button drag → `Select` → the user-legible zone entry
+  (name/net/layer); conflict-menu `Select All` may include it. Zone outline,
+  fill, islands, and thermal geometry project one authored zone identity rather
+  than independent selectable objects. Connected/global electrical selection
+  may include the zone because that is a logical expansion, not geometric
+  region acquisition.
+- Independently selectable filled graphics use the same rule: no partial
+  rectangle/lasso acquisition, but complete enclosure of **100 percent** of the
+  authored filled area qualifies. They also remain available through direct
+  primary click when topmost or an explicit user-legible entry (and optional
   `Select All` membership) under right-button drag → `Select`. Their outline and
   fill project one authored graphic identity.
 - Vias, junctions, no-connect markers, and other point-like objects qualify
@@ -322,13 +325,36 @@ partial edit. Selection never unlocks an object implicitly.
   projection and selection highlight disappear with the hidden geometry, while
   the Inspector and status surface report that selected members are hidden.
   Restoring visibility restores their selection projection.
-- Hidden selected objects cannot be manipulated or modified. A mutation whose
-  selection contains hidden members is refused as a whole rather than silently
-  editing only visible members. The hidden members may be removed explicitly
-  through a non-canvas selection consumer, or the complete selection may be
-  cleared with `Escape`.
+- Hidden selected objects cannot normally be manipulated or modified. A
+  mutation whose ordinary/local selection contains hidden members is refused as
+  a whole rather than silently editing only visible members. The explicit
+  `Ctrl+A` global-selection scope in §2.2.9 is the sole exception. Hidden members
+  may be removed explicitly through a non-canvas selection consumer, or the
+  complete selection may be cleared with `Escape`.
 
-#### 2.2.9 Still open before final review
+#### 2.2.9 Explicit global Select All
+
+`Ctrl+A` replaces the prior selection with every authored object in the focused
+workspace document. It is the sole global-selection authority and deliberately
+supersedes ordinary canvas eligibility: it includes hidden objects, objects
+excluded by object-class filters, copper pours/zones, filled graphics, and all
+other authored workspace geometry. Pads and pins still collapse to their parent
+footprint/symbol in board/schematic workspaces. Grid, page chrome, hover,
+findings, proposals, and other non-authored overlays are not authored objects
+and are excluded.
+
+The explicit global scope permits manipulation of hidden selected members.
+Locked members are included and visibly distinguished but remain immutable; any
+mutation over the global selection is refused as a whole until every affected
+locked object is explicitly unlocked or removed. Datum MUST NOT silently leave
+locked members behind while moving the remainder.
+
+This exception belongs only to `Ctrl+A`. A zoomed-out rectangle/lasso remains a
+local geometric selection and follows §2.2.4, including the 100-percent rule for
+zones and filled areas. It MUST NOT acquire global-selection authority merely
+because it visually surrounds the complete design.
+
+#### 2.2.10 Still open before final review
 
 The continuing owner review must still resolve at least: qualification for
 non-footprint/non-symbol geometry; selection set identity, ordering, and
