@@ -26,7 +26,7 @@ impl Runtime {
     }
 
     pub(super) fn cancel_active_pan(&mut self) -> bool {
-        if !self.pan_gesture.owns_space_key() {
+        if !self.pan_gesture.space_is_held() {
             return false;
         }
         self.pan_gesture.cancel();
@@ -49,9 +49,10 @@ impl Runtime {
 impl PanGestureState {
     /// Route a window-system Space event to the pan gesture.
     ///
-    /// Ownership is decided by the pointer location on the initial press. Once
-    /// claimed, repeats and the eventual release remain ours even if the pointer
-    /// crosses into a dock before release.
+    /// Space-down state is recorded independently of event ownership. Ownership
+    /// only decides whether this keyboard event is consumed (so a dock/text owner
+    /// can still receive Space); primary press later decides whether a viewport
+    /// pan actually begins from an editor scene.
     pub(crate) fn handle_space_key(
         &mut self,
         physical_key: PhysicalKey,
@@ -61,26 +62,26 @@ impl PanGestureState {
         pointer_in_scene: bool,
     ) -> bool {
         let is_space = matches!(physical_key, PhysicalKey::Code(KeyCode::Space))
-            || matches!(logical_key, Key::Named(NamedKey::Space));
+            || matches!(logical_key, Key::Named(NamedKey::Space))
+            || matches!(logical_key, Key::Character(text) if text.as_str() == " ");
         if !is_space {
             return false;
         }
 
         match state {
-            ElementState::Pressed if repeat => self.space_key_owned,
+            ElementState::Pressed if repeat => {
+                self.set_space(true);
+                self.space_key_owned
+            }
             ElementState::Pressed => {
                 self.space_key_owned = pointer_in_scene;
-                if self.space_key_owned {
-                    self.set_space(true);
-                }
+                self.set_space(true);
                 self.space_key_owned
             }
             ElementState::Released => {
                 let owned = self.space_key_owned;
-                if owned {
-                    self.set_space(false);
-                    self.space_key_owned = false;
-                }
+                self.set_space(false);
+                self.space_key_owned = false;
                 owned
             }
         }
@@ -124,10 +125,9 @@ impl PanGestureState {
         self.active
     }
 
-    pub(crate) fn owns_space_key(&self) -> bool {
-        self.space_key_owned
+    pub(crate) fn space_is_held(&self) -> bool {
+        self.space_held
     }
-
 }
 
 #[cfg(test)]
@@ -233,17 +233,12 @@ mod tests {
     fn open_dock_does_not_prevent_scene_pointer_from_claiming_space() {
         let mut state = PanGestureState::default();
 
-        assert!(route_space(
-            &mut state,
-            ElementState::Pressed,
-            false,
-            true
-        ));
+        assert!(route_space(&mut state, ElementState::Pressed, false, true));
         assert!(state.primary_pressed(true));
     }
 
     #[test]
-    fn pointer_in_dock_leaves_space_for_the_dock() {
+    fn pointer_in_dock_leaves_space_event_for_the_dock_and_dock_press_inactive() {
         let mut state = PanGestureState::default();
 
         assert!(!route_space(
@@ -252,18 +247,46 @@ mod tests {
             false,
             false
         ));
-        assert!(!state.primary_pressed(true));
+        assert!(!state.primary_pressed(false));
+    }
+
+    #[test]
+    fn missing_cursor_at_space_down_can_activate_on_later_scene_press() {
+        let mut state = PanGestureState::default();
+
+        // No cached cursor means the key event is not consumed, but the physical
+        // chord remains known. The primary event owns its actual hit location.
+        assert!(!route_space(
+            &mut state,
+            ElementState::Pressed,
+            false,
+            false
+        ));
+        assert!(state.primary_pressed(true));
+        assert!(state.is_active());
+        assert!(state.primary_released());
+    }
+
+    #[test]
+    fn missing_scene_geometry_keeps_primary_press_inactive() {
+        let mut state = PanGestureState::default();
+        assert!(!route_space(
+            &mut state,
+            ElementState::Pressed,
+            false,
+            false
+        ));
+
+        // Runtime supplies false when a Schematic leaf has no resolved bounds.
+        assert!(!state.primary_pressed(false));
+        assert!(!state.is_active());
+        assert!(!state.primary_released());
     }
 
     #[test]
     fn claimed_release_clears_space_after_pointer_moves_into_dock() {
         let mut state = PanGestureState::default();
-        assert!(route_space(
-            &mut state,
-            ElementState::Pressed,
-            false,
-            true
-        ));
+        assert!(route_space(&mut state, ElementState::Pressed, false, true));
 
         assert!(route_space(
             &mut state,
@@ -277,19 +300,14 @@ mod tests {
     #[test]
     fn cancel_while_space_is_held_prevents_a_later_primary_press() {
         let mut state = PanGestureState::default();
-        assert!(route_space(
-            &mut state,
-            ElementState::Pressed,
-            false,
-            true
-        ));
+        assert!(route_space(&mut state, ElementState::Pressed, false, true));
 
         state.cancel();
         assert!(!state.primary_pressed(true));
     }
 
     #[test]
-    fn key_repeat_preserves_initial_space_ownership() {
+    fn key_repeat_preserves_event_ownership_without_losing_the_held_chord() {
         let mut scene_owned = PanGestureState::default();
         assert!(route_space(
             &mut scene_owned,
@@ -318,7 +336,7 @@ mod tests {
             true,
             true
         ));
-        assert!(!dock_owned.primary_pressed(true));
+        assert!(dock_owned.primary_pressed(true));
     }
 
     #[test]
@@ -336,6 +354,15 @@ mod tests {
         assert!(logical.handle_space_key(
             PhysicalKey::Unidentified(NativeKeyCode::Unidentified),
             &Key::Named(NamedKey::Space),
+            ElementState::Pressed,
+            false,
+            true,
+        ));
+
+        let mut logical_character = PanGestureState::default();
+        assert!(logical_character.handle_space_key(
+            PhysicalKey::Unidentified(NativeKeyCode::Unidentified),
+            &Key::Character(" ".into()),
             ElementState::Pressed,
             false,
             true,

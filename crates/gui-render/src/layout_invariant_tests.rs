@@ -368,6 +368,51 @@ fn leaf_at_maps_points_for_click_to_focus() {
     }
 }
 
+/// The app's editor-target gate first resolves the containing leaf and then
+/// requires the pointer to be inside that leaf's drawable scene. Exercise that
+/// exact geometry with real Board and loaded Schematic content, rather than only
+/// probing the larger pane frames used by click-to-focus.
+#[test]
+fn default_board_and_loaded_schematic_scene_centers_are_editor_targets() {
+    use datum_gui_protocol::PaneContent;
+
+    let schematic = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+    let projected = datum_gui_protocol::load_kicad_schematic_workspace_state(&schematic)
+        .expect("simple schematic fixture should load");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.schematic_scene = Some(projected.scene);
+
+    let logical_w = 1280u32;
+    let logical_h = 800u32;
+    for scale in SCALES {
+        let pw = ((logical_w as f32) * scale).round() as u32;
+        let ph = ((logical_h as f32) * scale).round() as u32;
+        let panes = ShellLayout::for_surface(pw, ph, scale, None)
+            .viewport_panes(&state.ui.layout);
+
+        for content in [PaneContent::Board, PaneContent::Schematic] {
+            let leaf = panes
+                .panes
+                .iter()
+                .find(|leaf| leaf.content == content)
+                .unwrap_or_else(|| panic!("default layout must contain {content:?}"));
+            let scene = leaf.rect.scene;
+            let center = (scene.x + scene.width * 0.5, scene.y + scene.height * 0.5);
+
+            assert!(
+                scene.contains(center.0, center.1),
+                "{content:?} scene center must be drawable at scale {scale}"
+            );
+            assert_eq!(
+                panes.leaf_at(center.0, center.1),
+                Some(leaf.id),
+                "{content:?} scene center must resolve to its pane at scale {scale}"
+            );
+        }
+    }
+}
+
 /// Divider-drag resize (decision 021): each divider carries the path of the Split
 /// it controls, its orientation, and the full split frame, and `divider_at` hits
 /// the (grab-widened) gutter. This is the render-side contract the runtime relies
