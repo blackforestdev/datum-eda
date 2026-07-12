@@ -34,6 +34,11 @@ in every resolving active/inactive workspace. Only pane chrome/tool availability
 changes with GUI mutation authority. Related cross-probe geometry is a distinct
 subordinate role, not a dimmed form of selection.
 
+Owner-ratified related rule: preserve the related object's exact authored
+appearance. Do not brighten/recolor/glow it. An explicit relationship context
+may mildly dim unrelated geometry, leaving related objects at baseline; the
+Inspector carries durable relationship explanation.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

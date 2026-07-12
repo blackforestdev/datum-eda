@@ -190,14 +190,18 @@ subject. All visible resolved electrical projections (wire/label/port/pin
 terminal, track/via/pad connection/zone/airwire) receive full selection; parent
 symbol/footprint bodies remain related rather than selected.
 
+Owner decision closed 2026-07-12: merely related objects retain exact authored
+appearance—no brightening, recolor, glow, or selection accent. During explicit
+relationship context, unrelated geometry may dim mildly while related geometry
+stays baseline; durable explanation belongs in Inspector.
+
 Still required:
 
-1. Related-highlight visual distinct from selection and hover.
-2. Focus-member and locked-member markers.
-3. Proposal/diagnostic/selection collision precedence.
-4. Bus ownership/expansion.
-5. Standalone text and point-object treatments.
-6. Dense-selection attenuation/budget fallback.
+1. Focus-member and locked-member markers.
+2. Proposal/diagnostic/selection collision precedence.
+3. Bus ownership/expansion.
+4. Standalone text and point-object treatments.
+5. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 

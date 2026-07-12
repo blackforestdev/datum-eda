@@ -558,6 +558,14 @@ by connectivity alone; they remain merely related. Hidden members remain hidden
 and are summarized by the net Inspector rather than expanded into an enormous
 primitive selection set.
 
+Merely related geometry retains its exact authored baseline and receives no
+accent, internal glow, recoloring, or luminance lift. In an explicit
+relationship/cross-probe context, unrelated geometry may dim slightly so the
+unchanged related baseline remains legible by figure/ground. Related objects are
+not selected, have no transform handles, and are not counted as selection
+members. Direct selection promotes them normally. The current ungoverned
+via-coloured `AUTHOR_RELATED` presentation is migration debt, not the target.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the

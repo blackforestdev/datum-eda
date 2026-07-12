@@ -117,6 +117,22 @@ selection/active only.
 - Hidden-layer net geometry stays hidden. The net Inspector reports hidden and
   per-kind member counts without materializing thousands of primitive selection
   members. `Escape` clears the Global Net subject as one selection.
+
+### 2.3 Related context **[LOCKED]**
+
+- A merely related object retains its exact authored semantic/material colours,
+  stroke, fill, and opacity. Relatedness MUST NOT brighten, recolor, glow, or use
+  the selection accent; doing so can be confused with selection, hover, active
+  layer, net colouring, or diagnostic severity.
+- During an explicit relationship/cross-probe context, unrelated geometry may
+  dim slightly while related geometry remains at its normal baseline. Dimming
+  strength must preserve design legibility and layer/material recognition.
+- Related objects receive no transform handles and are not counted as selected.
+  Direct selection promotes the object to the full selection treatment. Hover
+  may show its normal transient preview; selection wins if states overlap.
+- The Inspector explains persistent relationships. A small nonpersistent
+  chain/link cursor affordance may appear while hovering related geometry, but
+  persistent canvas badges are prohibited for ordinary related state.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

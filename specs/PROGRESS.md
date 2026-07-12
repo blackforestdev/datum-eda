@@ -192,6 +192,9 @@
    Triple-click Global Net is one semantic selection subject whose complete
    visible resolved electrical projection glows across schematic/PCB, while
    connected parent symbol/footprint bodies remain related rather than selected.
+   Related objects retain exact authored appearance; explicit relationship view
+   may mildly dim unrelated context but never brightens/recolors/glows the related
+   object or reuses the selection accent.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in
