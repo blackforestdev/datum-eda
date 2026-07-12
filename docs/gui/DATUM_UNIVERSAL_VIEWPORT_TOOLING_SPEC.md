@@ -137,6 +137,11 @@ progress; unresolved behavior remains explicitly open until the final review.
 S5 implementation MUST NOT begin from this incomplete subsection before that
 review closes it.
 
+Research basis and derived classification:
+`research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md` →
+`DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`. DNP in that material is one
+illustrative compound attribute, not a privileged or exhaustive edit surface.
+
 #### 2.2.1 Normal selection and clearing
 
 - Primary-clicking an eligible object selects it. Primary-clicking another
@@ -394,8 +399,8 @@ first UUID, render candidate, or set member.
 
 With exactly one member, the Inspector subject is that authored object. With
 multiple members, the Inspector subject is a first-class **temporary compound
-selection**, presented with a user-legible session label such as
-`Compound Selection — Group 014`. It exposes group attributes rather than
+selection**, presented with a user-legible label such as
+`Compound Selection — 14 objects`. It exposes compound attributes rather than
 pretending that one focus member represents the whole set. The attribute surface
 includes at least member count and types, combined bounds, group reference and
 position, workspace/layer/net coverage, common-versus-mixed state, hidden and
@@ -447,9 +452,11 @@ BOM, Exclude from Board, Exclude from Simulation, and variant fitted/not-fitted
 state.
 
 Further compatible batch attributes are an intended extension point rather than
-an excuse for partial mutation. The high-value v1 inventory remains open for a
-broader research pass across PCB, schematic, library, variant/manufacturing,
-text/graphics, connectivity, and persistent-group surfaces before owner review.
+an excuse for partial mutation. The broader PCB, schematic, library,
+variant/manufacturing, text/graphics, connectivity, and persistent-group
+research inventory and classification are preserved in
+`GUI_COMPOUND_SELECTION_RESEARCH.md`; individual domain surfaces still require
+owner ratification before entering an implementation boundary.
 
 #### 2.2.11 Cross-workspace projection and GUI mutation authority
 
@@ -515,7 +522,30 @@ click commits the destination and `Escape` cancels, restoring every original
 position. Every invocation resolves the same translation:
 `new_position = original_position + (destination - reference)`.
 
-#### 2.2.13 Still open before final review
+#### 2.2.13 S5A/S5B delivery boundary
+
+S5 is split so the selection experience does not claim mutation authority the
+engine does not possess:
+
+- **S5A — selection and compound inspection:** the ratified acquisition,
+  lifecycle, membership, projection, visibility, region, compound subject,
+  scope, Common/`Mixed`/Unavailable presentation, and read-only derived/blocker
+  reporting contract.
+- **S5B — selection authority substrate:** persistent authored Group identity
+  and operations; universal lock vocabulary or an explicit capability matrix;
+  typed field-level batch patch/operation contracts; atomic preflight; and the
+  ratified compatible translation/rotation/schematic-mirror transforms.
+- **Later domain tools:** topology-, rule-, library-, variant-, manufacturing-,
+  hierarchy-, annotation-, padstack-, zone-, track/via-, production-, and
+  copy/delete-closure surfaces classified by the research-derived guidance.
+
+`Compound Selection` is reserved for ephemeral selection/session state;
+`Group <name>` is reserved for a persistent authored object created explicitly.
+S5A MUST retain typed extension seams for S5B/later without presenting those
+later capabilities as landed. S5 execution remains unauthorized until final
+owner review and a numbered selection-identity decision ratify this mechanism.
+
+#### 2.2.14 Still open before final review
 
 The continuing owner review must still resolve at least: Inspector/status/
 terminal projection for multiple members; hover-versus-selection visual

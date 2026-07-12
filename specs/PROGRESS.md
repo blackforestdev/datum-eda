@@ -171,7 +171,15 @@
    and state construction now live in `gui-viewport`. Pointer previews target the containing
    pane while command/tool gestures target the focused pane, as clarified in UVT-004.
    The hit path is spatially indexed and covered by deterministic large-design and
-   candidate-budget regressions. Next: **S5 selection/marquee** → S6 tool-mode →
+   candidate-budget regressions. **S5 specification design is IN PROGRESS; build
+   remains unauthorized:** owner-ratified gesture/selection/compound behavior is
+   being captured in `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` §2.2; the broader
+   attribute audit is durably tracked in
+   `research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md` through
+   `DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`; and the researched delivery
+   boundary is S5A selection+compound inspection → S5B persistent-group/universal-
+   lock/typed-batch authority → later domain tools. Final review plus a numbered
+   selection-identity decision are required before execution. Then: S6 tool-mode →
    **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.

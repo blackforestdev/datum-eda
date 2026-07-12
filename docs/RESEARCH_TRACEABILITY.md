@@ -28,6 +28,7 @@ Primary research source for this mapping:
 - `docs/gui/VISUAL_LANGUAGE.md`
 - `docs/gui/TECHNICAL_PRINCIPLES.md`
 - `docs/gui/M7_DECISION_PROPOSALS.md`
+- `research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md`
 
 Primary roadmap/spec anchors:
 - `PLAN.md`
@@ -57,6 +58,7 @@ Primary roadmap/spec anchors:
 | Research findings about standards and compliance must not remain implicit; each researched standard family needs a controlling disposition. | `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md`; `specs/PROGRAM_SPEC.md` `Standards And Compliance Governance` | Active governance contract | Prevents future spec drift where research exists but no controlling spec states whether Datum implements, defers, references, or excludes the standard. |
 | Datum needs first-class IPC footprint-basis ownership rather than loose "IPC-aware" claims. | `docs/IPC_FOOTPRINT_SYSTEM.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md` `Footprint And Library Contracts` | Planned in controlling spec | The library and footprint subsystem must preserve source assumptions, deviation tracking, and import-audit behavior before stronger IPC claims are credible. |
 | Native schematic authoring needs an explicit standards policy for symbol style, designators, and title-block metadata. | `research/standards-audit/STANDARDS_AUDIT.md` Domain 3; `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md` `Schematic And Capture Contracts` | Planned in controlling spec | This closes the blind spot where imported symbols inherit style but native symbols have no stated compliance posture. |
+| Multi-selection must become a typed compound Inspector subject with explicit Common/`Mixed`/Unavailable fields, per-type scopes, exact affected counts, and atomic refusal; persistent groups, universal locks, and specialized electrical/manufacturing edits require honest substrate/domain boundaries. | `research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md` → `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md` → `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` §2.2 | Research integrated into the in-progress S5 specification; implementation not authorized | S5A selection/inspection precedes S5B group/lock/batch authority; topology-, rule-, library-, variant-, manufacturing-, and hierarchy-sensitive edits remain dedicated later tools until their typed contracts land. |
 
 ## Sequencing Integrity Notes
 

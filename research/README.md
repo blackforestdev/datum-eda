@@ -77,6 +77,7 @@ directory does not sit in git unloved.
 | PCB text rendering             | `pcb-text-rendering/`           | `PCB_TEXT_RENDERING_RESEARCH.md`              | delivered  | (pending — driver: M7-IMP-014)                                    |
 | Parametric DXF-native footprint editor | `parametric-footprint-editor/` | `PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md`     | delivered  | (pending)                                                         |
 | GUI visual regression          | `gui-visual-regression/`        | `GUI_VISUAL_REGRESSION_RESEARCH.md`           | delivered  | (pending)                                                         |
+| GUI compound selection/editing | `gui-compound-selection/`       | `GUI_COMPOUND_SELECTION_RESEARCH.md`          | integrated | `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`           |
 
 ## Future Research (Backlog)
 
