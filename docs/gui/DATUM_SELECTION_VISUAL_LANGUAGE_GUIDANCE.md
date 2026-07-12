@@ -39,6 +39,10 @@ appearance. Do not brighten/recolor/glow it. An explicit relationship context
 may mildly dim unrelated geometry, leaving related objects at baseline; the
 Inspector carries durable relationship explanation.
 
+Owner-ratified compound-focus rule: do not render a second persistent canvas
+state. All selected members look equally selected; Inspector identifies optional
+focus, and reference-requiring commands own a temporary explicit marker.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

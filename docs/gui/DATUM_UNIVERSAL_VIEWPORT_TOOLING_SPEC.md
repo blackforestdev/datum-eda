@@ -566,6 +566,13 @@ not selected, have no transform handles, and are not counted as selection
 members. Direct selection promotes them normally. The current ungoverned
 via-coloured `AUTHOR_RELATED` presentation is migration debt, not the target.
 
+Within a compound selection, the optional focus member has no persistent extra
+canvas styling: every member uses the same full selection treatment. Focus is
+identified in Inspector/session state only and grants no mutation authority.
+Commands needing a geometric reference display a temporary command-owned marker
+while armed. Focus removal leaves no focus and never promotes another member by
+identity/render order.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the

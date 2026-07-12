@@ -133,6 +133,18 @@ selection/active only.
 - The Inspector explains persistent relationships. A small nonpersistent
   chain/link cursor affordance may appear while hovering related geometry, but
   persistent canvas badges are prohibited for ordinary related state.
+
+### 2.4 Compound focus member **[LOCKED]**
+
+- Every visible member of a compound selection receives the same full selection
+  treatment. The optional focus member MUST NOT receive a thicker/brighter glow,
+  different colour, second halo, or persistent canvas badge; it is not “more
+  selected” and has no additional mutation authority.
+- The Inspector member inventory identifies the focus member. Hover uses normal
+  selected-object cursor affordance without adding visual state.
+- A command that genuinely needs a geometric reference renders its own explicit
+  temporary reference marker while armed. Removing the focus member leaves no
+  focus and MUST NOT visually promote an arbitrary remaining member.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

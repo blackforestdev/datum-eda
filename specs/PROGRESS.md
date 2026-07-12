@@ -195,6 +195,8 @@
    Related objects retain exact authored appearance; explicit relationship view
    may mildly dim unrelated context but never brightens/recolors/glows the related
    object or reuses the selection accent.
+   Optional compound focus has no stronger canvas styling; Inspector identifies
+   it and reference-requiring commands own a temporary marker.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

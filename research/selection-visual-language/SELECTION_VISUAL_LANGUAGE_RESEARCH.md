@@ -195,9 +195,13 @@ appearance—no brightening, recolor, glow, or selection accent. During explicit
 relationship context, unrelated geometry may dim mildly while related geometry
 stays baseline; durable explanation belongs in Inspector.
 
+Owner decision closed 2026-07-12: an optional compound focus member receives no
+extra persistent canvas treatment. Inspector/session state identifies it;
+commands that need a reference render a temporary command-owned marker.
+
 Still required:
 
-1. Focus-member and locked-member markers.
+1. Locked-member markers.
 2. Proposal/diagnostic/selection collision precedence.
 3. Bus ownership/expansion.
 4. Standalone text and point-object treatments.
