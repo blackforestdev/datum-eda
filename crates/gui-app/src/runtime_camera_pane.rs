@@ -461,6 +461,16 @@ impl Runtime {
             .leaf_at(x, y)
     }
 
+    /// Whether the current pointer is inside an editor pane's drawable scene,
+    /// excluding pane chrome, split gutters, side panels, and the dock.
+    pub(super) fn cursor_in_editor_scene(&self) -> bool {
+        let Some(pos) = self.last_cursor_pos else {
+            return false;
+        };
+        self.pointer_viewport(pos)
+            .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
+    }
+
     /// Open the radial marking menu at the cursor (right-click). A board-scene
     /// affordance today; the schematic context menu is S7, so a schematic-pane or
     /// out-of-pane point returns false (S3 only makes the schematic point

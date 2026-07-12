@@ -36,6 +36,7 @@ mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
 mod interaction_refresh;
+mod pan_gesture;
 mod pane_cameras;
 mod pane_grid_lod;
 mod pane_resize;
@@ -68,6 +69,7 @@ use board_text_terminal_commands::{
 };
 pub(crate) use gui_runtime_support::*;
 use pane_cameras::PaneCameras;
+use pan_gesture::PanGestureState;
 use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
@@ -324,6 +326,9 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(focused) => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.report_terminal_focus_event(focused);
+                    if !focused {
+                        runtime.pan_gesture.cancel();
+                    }
                     if !focused && runtime.clear_interaction_overlay() {
                         self.request_redraw_if_needed();
                     }
@@ -332,6 +337,7 @@ impl ApplicationHandler for App {
             WindowEvent::CursorLeft { .. } => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.last_cursor_pos = None;
+                    runtime.pan_gesture.cancel();
                     if runtime.clear_interaction_overlay() {
                         self.request_redraw_if_needed();
                     }
@@ -355,15 +361,14 @@ impl ApplicationHandler for App {
                         changed = runtime.handle_divider_drag(next_pos);
                     } else if runtime.marking_menu_active() {
                         changed = runtime.update_marking_menu_preview(next_pos);
-                    } else if runtime.middle_drag_active || runtime.right_drag_active {
+                    } else if runtime.pan_gesture.is_active() {
                         changed = previous_pos
                             .is_some_and(|previous| runtime.handle_pan_drag(previous, next_pos));
                     }
                     // Update hover state
                     if !runtime.dock_drag_active
                         && runtime.divider_drag.is_none()
-                        && !runtime.middle_drag_active
-                        && !runtime.right_drag_active
+                        && !runtime.pan_gesture.is_active()
                         && !runtime.marking_menu_active()
                     {
                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
@@ -413,39 +418,15 @@ impl ApplicationHandler for App {
             }
             WindowEvent::MouseInput {
                 state,
-                button: MouseButton::Middle,
+                button: button @ (MouseButton::Middle | MouseButton::Right),
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
-                    if runtime.report_terminal_mouse_button(MouseButton::Middle, state) {
+                    if runtime.report_terminal_mouse_button(button, state) {
                         return;
                     }
-                    runtime.middle_drag_active = state == ElementState::Pressed;
-                }
-            }
-            WindowEvent::MouseInput {
-                state,
-                button: MouseButton::Right,
-                ..
-            } => {
-                if let Some(runtime) = &mut self.runtime {
-                    if runtime.report_terminal_mouse_button(MouseButton::Right, state) {
-                        return;
-                    }
-                    match state {
-                        ElementState::Pressed => {
-                            if runtime.open_marking_menu_at_cursor() {
-                                self.request_redraw_if_needed();
-                            } else {
-                                runtime.right_drag_active = true;
-                            }
-                        }
-                        ElementState::Released => {
-                            runtime.right_drag_active = false;
-                            if runtime.dismiss_marking_menu() {
-                                self.request_redraw_if_needed();
-                            }
-                        }
+                    if button == MouseButton::Right && runtime.handle_context_menu_button(state) {
+                        self.request_redraw_if_needed();
                     }
                 }
             }
@@ -458,6 +439,13 @@ impl ApplicationHandler for App {
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
                     {
+                        return;
+                    }
+                    let pointer_in_scene = runtime.cursor_in_editor_scene();
+                    if runtime.pan_gesture.primary_pressed(pointer_in_scene) {
+                        if runtime.clear_interaction_overlay() {
+                            self.request_redraw_if_needed();
+                        }
                         return;
                     }
                     // Check if clicking dock resize handle
@@ -490,6 +478,10 @@ impl ApplicationHandler for App {
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
                     {
+                        return;
+                    }
+                    if runtime.pan_gesture.primary_released() {
+                        self.request_redraw_if_needed();
                         return;
                     }
                     if was_divider_drag {
@@ -595,6 +587,17 @@ impl ApplicationHandler for App {
                     self.request_redraw_if_needed();
                 }
             }
+            WindowEvent::KeyboardInput { event, .. }
+                if self.runtime.as_mut().is_some_and(|runtime| {
+                    runtime.workspace().ui.active_dock_tab.is_none()
+                        && runtime.handle_pan_key(&event)
+                }) => {}
+            WindowEvent::KeyboardInput {
+                event: KeyEvent {
+                    logical_key: Key::Named(NamedKey::Escape),
+                    state: ElementState::Released, ..
+                }, ..
+            } if self.runtime.as_mut().is_some_and(Runtime::cancel_active_pan) => {}
             WindowEvent::KeyboardInput {
                 event:
                     KeyEvent {
@@ -1105,8 +1108,7 @@ struct Runtime {
     pane_cameras: PaneCameras,
     pane_grid_lod: pane_grid_lod::PaneGridLod,
     last_cursor_pos: Option<(f32, f32)>,
-    middle_drag_active: bool,
-    right_drag_active: bool,
+    pan_gesture: PanGestureState,
     dock_drag_active: bool,
     /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
     /// view state; never journaled.
@@ -1256,8 +1258,7 @@ impl Runtime {
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
             pane_grid_lod: pane_grid_lod::PaneGridLod::default(),
             last_cursor_pos: None,
-            middle_drag_active: false,
-            right_drag_active: false,
+            pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
             divider_drag: None,
             terminal_mouse_button: None,

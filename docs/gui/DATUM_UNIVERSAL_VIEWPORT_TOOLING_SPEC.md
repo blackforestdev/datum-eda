@@ -366,8 +366,9 @@ overflow, mark-ahead), and the CI-validated data model `menu_model.json`
 The runtime (`ContextMenuEngine`) must add what is missing today:
 1. **Per-surface content** resolved from the focused `EditorViewport`'s hit-test +
    selection + `MenuKeyNamespace` — replacing the board-only `pcb.*` key function
-   (`main.rs:3431`) and the board-coordinate gate that currently makes a schematic
-   right-click fall through to a pan (`main.rs:415`).
+   (`main.rs:3431`) and the remaining board-coordinate gate. The former
+   schematic right-click fallback to pan is removed: right-click is now reserved
+   for this per-surface menu even before schematic menu content lands.
 2. **Multi-select = intersection** of per-type menus (`workspace().selection`,
    ignored today).
 3. **Verb execution on leaf-select** — replacing `MarkingMenuItem => dismiss`
