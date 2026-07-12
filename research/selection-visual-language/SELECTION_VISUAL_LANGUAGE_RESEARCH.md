@@ -199,13 +199,18 @@ Owner decision closed 2026-07-12: an optional compound focus member receives no
 extra persistent canvas treatment. Inspector/session state identifies it;
 commands that need a reference render a temporary command-owned marker.
 
+Owner decision closed 2026-07-12: locked objects are slightly neutral-greyed,
+retain full selection, suppress transform handles, use a locked cursor, and show
+a small anchor padlock when selected/hovered. The glyph is gated by icon-set
+declaration, the Rendering Study contact sheet/style, and HUMAN review; dense
+compounds avoid repeated-icon clutter and report counts in Inspector.
+
 Still required:
 
-1. Locked-member markers.
-2. Proposal/diagnostic/selection collision precedence.
-3. Bus ownership/expansion.
-4. Standalone text and point-object treatments.
-5. Dense-selection attenuation/budget fallback.
+1. Proposal/diagnostic/selection collision precedence.
+2. Bus ownership/expansion.
+3. Standalone text and point-object treatments.
+4. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 

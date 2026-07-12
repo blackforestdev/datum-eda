@@ -145,6 +145,25 @@ selection/active only.
 - A command that genuinely needs a geometric reference renders its own explicit
   temporary reference marker while armed. Removing the focus member leaves no
   focus and MUST NOT visually promote an arbitrary remaining member.
+
+### 2.5 Locked selection **[LOCKED]**
+
+- Locked objects remain legible but are persistently slightly desaturated/greyed.
+  Lock is a neutral constraint, never warning/error colour and never hidden.
+- Selecting a locked object retains the complete normal selection treatment. A
+  small screen-space padlock glyph appears at the selected or hovered object's
+  authored anchor, the cursor communicates immutable manipulation, and transform
+  handles are suppressed. High-contrast mode uses the crisp glyph plus a
+  governed hatch/notch rather than relying on greying.
+- Dense compound selections keep per-object locked greying while padlock glyphs
+  are limited to hovered/explicitly focused members; Inspector reports the exact
+  locked count. This prevents a field of repeated icons.
+- The padlock glyph is a governed visual asset, not an ad-hoc Unicode character
+  or improvised SVG. Before implementation it MUST be declared in
+  `docs/gui/icon_set.json`, follow the 24px / 1.7-stroke / round-cap-and-join
+  language, appear in the `rendering-study.html` icon contact sheet, and pass
+  same-size prototype/HUMAN review. A missing governed glyph disables the glyph
+  cue rather than authorizing a visually divergent fallback.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

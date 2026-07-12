@@ -209,6 +209,11 @@ State is never color-alone (colorblind-safe, WCAG non-color-reliance):
   (24px grid, `currentColor`, round caps): route/track, via, zone/pour, pad,
   net/ratsnest, layer-stack, DRC marker, teardrop, keepout. **Still to author:**
   diff-pair, length-tune, and others as features land.
+- **State glyphs are equally governed.** The S5 locked-selection padlock may come
+  from the declared base subset or a Datum-authored asset, but it MUST be listed
+  in `docs/gui/icon_set.json` and the `rendering-study.html` icon contact sheet,
+  use the 24px keyline / 1.7 stroke / round caps+joins, and never be substituted
+  by an arbitrary Unicode glyph or one-off canvas SVG.
 - **Asset structure (to build — the current gap).** Today only *fonts* have an
   asset structure (`crates/engine/src/text/registry.rs` → glyph pipeline); icons
   are loose SVGs with no loader/registry/render path, and no base chrome set is

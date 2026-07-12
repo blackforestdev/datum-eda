@@ -197,6 +197,10 @@
    object or reuses the selection accent.
    Optional compound focus has no stronger canvas styling; Inspector identifies
    it and reference-requiring commands own a temporary marker.
+   Locked objects are slightly neutral-greyed, retain normal selection, suppress
+   handles, and use a selected/hovered anchor padlock only after the glyph is
+   declared in `icon_set.json`, added to the Rendering Study contact sheet/style,
+   and HUMAN-reviewed; dense compounds rely on Inspector locked counts.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

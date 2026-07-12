@@ -43,6 +43,12 @@ Owner-ratified compound-focus rule: do not render a second persistent canvas
 state. All selected members look equally selected; Inspector identifies optional
 focus, and reference-requiring commands own a temporary explicit marker.
 
+Owner-ratified locked rule: persistent slight neutral desaturation/greying plus
+full selection when selected, no transform handles, locked cursor, and a small
+anchor padlock for selected/hovered objects. The glyph cannot ship until declared
+in `icon_set.json`, aligned with and added to the Rendering Study contact sheet,
+and visually reviewed; dense compounds rely on greying plus Inspector count.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

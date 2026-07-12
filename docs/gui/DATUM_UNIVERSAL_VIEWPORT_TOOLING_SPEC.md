@@ -573,6 +573,14 @@ Commands needing a geometric reference display a temporary command-owned marker
 while armed. Focus removal leaves no focus and never promotes another member by
 identity/render order.
 
+Locked is orthogonal to selection: the authored presentation remains slightly
+desaturated/greyed, full selection remains intact, transform handles are absent,
+and a small screen-space padlock appears at the selected/hovered authored anchor.
+Dense compounds limit repeated glyphs while Inspector reports locked count.
+The padlock is blocked on visual-system governance: `icon_set.json` declaration,
+the Rendering Book 24px/1.7-stroke/round-cap language, icon-contact-sheet entry,
+and HUMAN prototype review are prerequisites; no Unicode/one-off fallback.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the
