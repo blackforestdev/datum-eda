@@ -382,8 +382,19 @@ keyboard/console/direct invocation reports the atomic refusal to `stdout`. The
 user must explicitly unlock or remove every affected locked member before the
 move can begin.
 
-The movement reference-point rule for non-drag invocations remains open for the
-continuing owner review.
+Movement uses one immediate reference-point rule and does not prompt for an
+additional AutoCAD-style base point:
+
+- direct drag uses the primary-press world position;
+- `M` and action-console `Move` use the current canvas cursor world position;
+- local-menu `Move Selection` uses the menu invocation world position; and
+- the reference need not lie on visible geometry, so `Ctrl+A` selections with
+  hidden members remain movable.
+
+Movement begins immediately. Snapping applies to that reference point; primary
+click commits the destination and `Escape` cancels, restoring every original
+position. Every invocation resolves the same translation:
+`new_position = original_position + (destination - reference)`.
 
 #### 2.2.11 Still open before final review
 
