@@ -722,7 +722,7 @@ primitive frozen against the reference (not live) projection.
 | Grid major line | A | 1.0 px | — | heavier tone, same stroke |
 | Grid axis / origin | A | 1.5 px | — | accent, still zoom-invariant |
 | Grid dot / cross | A | 1.0 px | — | KiCad parity |
-| Selection highlight | A | 2.0 px halo | — | existing overlay emphasis floor |
+| Selection highlight | A | 2.0 px crisp object-shaped cue + subordinate internal glow | — | slight owned-geometry lift; semantic/material hue retained |
 | Hover pre-highlight | A | 1.5 px | — | lighter than selection |
 | Cursor crosshair | A | 1.0 px | — | |
 | Snapped-cursor glyph | A | 1.5 px | — | at the snapped point |

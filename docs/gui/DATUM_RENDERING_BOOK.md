@@ -67,12 +67,35 @@ selection/active only.
   rounded-rects (`#151922` fill, `#3A414D` border on dark) — the board-editor pill,
   not a hollow tag.
 - **Ref/value typography** in the project typeface (§5). Designators tabular.
-- **Selection highlights the whole symbol.** Body stroke, pins, terminal dots, and
-  all symbol text render in the accent (`--sel`) under one soft glow — a
-  half-highlighted symbol (body accented, pins left in the default colour) is a
-  defect. Attached nets keep their normal wire colour (they are not part of the
-  selected symbol). Selection is **screen-only presentation state** — never
-  geometry, never journaled, never in any export (Law 1 fence).
+- **Selection highlights the whole symbol.** Body stroke, pins, terminal dots,
+  and all symbol text receive one slight, coherent luminance lift plus the
+  selection-accent (`--sel`) internal soft glow. The authored/semantic colours
+  remain recognizable beneath the presentation; selection does not bleach the
+  object into one replacement hue. A half-highlighted symbol (body treated,
+  pins/text left at rest) is a defect. The dark body fill remains dark. Attached
+  nets keep their normal wire colour (they are not part of the selected symbol).
+  Selection is **screen-only presentation state** — never geometry, never
+  journaled, never in any export (Law 1 fence).
+
+### 2.1 Selection construction across authored object families **[LOCKED]**
+
+- Selection follows the selected identity's actual visible silhouette/path, not
+  a generic bounding box unless bounds are the object's semantic presentation.
+- Every owned visible presentation primitive receives the same slight luminance
+  lift. The `#CE5A92` accent supplies the internal glow and governed crisp
+  screen-space cue; glow is supplementary rather than the only signal.
+- PCB copper, pads, vias, silk, edge, drills, and other material/layer geometry
+  retain recognizable base hues and voids beneath the treatment. Tracks use an
+  exact-path casing/glow; pads/vias use their real silhouettes; zones retain
+  layer fill and treat the authored boundary. A selected footprint treats its
+  owned visible presentation coherently but does not select connected traces.
+- Schematic wires/buses/labels/text follow their actual paths/shapes. Symbol
+  bodies retain their dark fill while the complete owned symbol presentation is
+  lifted and internally glowed.
+- The crisp selection channel has a governed **2 physical-pixel** footprint.
+  High-contrast mode replaces subtle glow with a crisp object-shaped boundary.
+  Selection never pulses, changes hit/qualification bounds, or enters retained
+  authored/CAM/export geometry.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

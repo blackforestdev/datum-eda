@@ -12,6 +12,9 @@ selection-identity decision.
 
 - Selection uses the established cross-surface `#CE5A92` accent and soft
   internal-glow language.
+- Owner-ratified construction: slightly brighten every owned visible
+  presentation primitive while preserving its semantic/material hue, then add
+  the accent internal glow and crisp object-shaped screen-space cue.
 - Do not replace it with a generic bounding-box-only CAD selection style.
 - Selecting an owned compound identity highlights its complete visible
   presentation coherently; connected or merely related geometry is excluded

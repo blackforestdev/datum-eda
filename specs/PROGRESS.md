@@ -184,6 +184,9 @@
    `dat-s5-selection-visual-contract-zid`, with its audit integrated through
    `research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md` and
    `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; owner build-out is in progress.
+   The foundational construction is now locked: slight whole-owned-geometry
+   brightening with semantic/material hue retained, plus `#CE5A92` internal glow
+   and a crisp object-shaped 2-physical-pixel screen-space cue.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

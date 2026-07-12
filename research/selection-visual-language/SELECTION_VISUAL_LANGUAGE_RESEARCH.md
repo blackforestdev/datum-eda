@@ -177,15 +177,20 @@ zoom invariant, pane clipped, and excluded from hit/qualification bounds.
 
 ## Owner decisions still required
 
-1. Selection accent/glow construction for semantic versus material geometry.
-2. Full-strength selection projection in inactive workspaces.
-3. Membership versus related visuals for global-net pins/labels/pads/zones.
-4. Related-highlight visual distinct from selection and hover.
-5. Focus-member and locked-member markers.
-6. Proposal/diagnostic/selection collision precedence.
-7. Bus ownership/expansion.
-8. Standalone text and point-object treatments.
-9. Dense-selection attenuation/budget fallback.
+Owner decision closed 2026-07-12: slightly brighten the complete owned visible
+symbol/footprint/object presentation while preserving semantic/material hues,
+then add the selection-accent internal glow and crisp object-shaped 2px channel.
+
+Still required:
+
+1. Full-strength selection projection in inactive workspaces.
+2. Membership versus related visuals for global-net pins/labels/pads/zones.
+3. Related-highlight visual distinct from selection and hover.
+4. Focus-member and locked-member markers.
+5. Proposal/diagnostic/selection collision precedence.
+6. Bus ownership/expansion.
+7. Standalone text and point-object treatments.
+8. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 
