@@ -814,14 +814,17 @@ fires its verb); HUMAN (radial matches `context-menu-marking-menu.html`).*
 ## 7. Coordinate readout & Application Status Bar field ownership
 
 Add the currently-absent readout: cursor X/Y → display units, dx/dy vs a settable
-origin, per the Application Status Bar already specified in `DATUM_GUI_DESIGN_SPEC.md`
-("cursor X/Y (mm) · grid"). Status fields (Tool/Sel/Layers) are owned by the
-**focused** editor, not the global board state (`scene.rs:617` already routes the
-document label per focus — extend to the other fields). v1 = X/Y + dx/dy + grid +
-units; deferred = Z/dist/polar/Space-to-zero (KiCad full readout).
+origin. Its global-bar placement is **REOPENED**, not implied by the prototype:
+`DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md` requires fast-changing pointer/snap/
+gesture feedback near the pointer-containing pane and persistent editor state
+near its pane. Keyboard/tool authority still follows the focused editor. If any
+pane-derived value is also mirrored globally, it must name its PaneId/surface and
+must not become the sole feedback path. v1 readout vocabulary = X/Y + dx/dy +
+grid + units; deferred = Z/dist/polar/Space-to-zero (KiCad full readout).
 
-*Disposition: TO-ENFORCE — a test that readout tracks the focused pane's cursor in
-that pane's units.*
+*Disposition: HUMAN + TO-ENFORCE after owner placement decision — containing-
+pane projection/units, focus-versus-pointer ownership, split/duplicate-pane
+ambiguity, and no-global-only feedback tests.*
 
 ---
 

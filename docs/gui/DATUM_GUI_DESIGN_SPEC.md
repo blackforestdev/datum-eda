@@ -72,8 +72,12 @@ the same change.
 - **Icon scale/style**: line/stroke glyphs — pane tools ~16–20px, tree/panel
   ~15px; every tool carries a single-key accelerator; tooltips mandatory on
   icon-only controls; never icon-only for critical actions.
-- **Status bar**: cursor X/Y (mm) · active tool · selection · grid · active layer
-  · DRC count · model revision.
+- **Application Status Bar — REOPENED:** the prototype's cursor/tool/selection/
+  grid/layer/check/revision inventory is not ratified content. Proximity research
+  (`DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md`) found that fast-changing editor
+  feedback may violate Datum's focus ethos when placed only at the global bottom
+  edge. Owner review must choose removal versus a minimal calm retained bar;
+  pane-local/canvas-local feedback remains required either way.
 
 ## Workspace & Mode Model
 
