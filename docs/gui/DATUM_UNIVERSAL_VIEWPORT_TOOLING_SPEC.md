@@ -535,7 +535,10 @@ the governed lighter hover preview without altering the selected set.
 This precedence is screen-space consumer state and MUST NOT invalidate or
 rebuild retained authored geometry. Locked, cross-workspace, focus-member,
 related-highlight, and diagnostic overlaps remain under the continuing visual
-precedence review.
+precedence review. Research inventory and integration guidance:
+`research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md` →
+`DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; tracked by
+`dat-s5-selection-visual-contract-zid`.
 
 #### 2.2.14 S5A/S5B delivery boundary
 

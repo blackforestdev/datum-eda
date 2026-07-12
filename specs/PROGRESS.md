@@ -179,7 +179,12 @@
    `DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`; and the researched delivery
    boundary is S5A selection+compound inspection → S5B persistent-group/universal-
    lock/typed-batch authority → later domain tools. Final review plus a numbered
-   selection-identity decision are required before execution. The global bottom
+   selection-identity decision are required before execution. The incomplete
+   per-object/state selection glow contract is tracked by
+   `dat-s5-selection-visual-contract-zid`, with its audit integrated through
+   `research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md` and
+   `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; owner build-out is in progress.
+   The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in
    `research/application-status-bar/APPLICATION_STATUS_BAR_RESEARCH.md` through
