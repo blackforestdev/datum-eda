@@ -215,6 +215,26 @@
    **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
+2c. **Native terminal emulator — build the embedded terminal to pro-grade
+   (Ghostty/Alacritty-class).** Own the cell-grid state model on Datum's existing
+   VT parser + xterm codec (~60% already built): a real cell grid with full
+   color/attributes, Unicode width, scrollback, and reflow, running agents and
+   shells across multi-tab PTYs, with the sanctioned context back-door preserved.
+   The VT core is swappable behind a stable `Grid → (Quad, TextRun)` render
+   interface, so the build is reversible (`alacritty_terminal` as fallback).
+   Guardrails: link `unicode-width`/`unicode-segmentation`, gate on
+   `vttest`/`esctest2`, decline the graphics ceiling (no sixel/kitty/iTerm2).
+   **Phase 0 (foundation) is the immediate buildable slice:** one keyboard-focus
+   authority (fixes the P1 — workspace hotkeys leaking into the PTY, un-typeable
+   terminal — reconciling with decision 021 pane focus), the `portable-pty` swap,
+   and the render interface; then Phase 1 cell grid → Phase 2 width+scrollback →
+   Phase 3 reflow → Phase 4 damage+polish. The terminal is never a GUI write path
+   (TE-006); the board-text CLI-string-into-PTY path re-homes on steps 4/5.
+   *Dependency:* none for Phase 0 (independent of the board build); Phases 1–3
+   chain. *Unblocks:* a trustworthy terminal surface and correct keyboard routing
+   across all editors. *State:* **specified, ready for Phase 0 execution;** tracked
+   as the `terminal-emulator` epic in beads. Governing: decision 024 +
+   `research/terminal-redesign/TERMINAL_REDESIGN_ARCHITECTURE.md`.
 3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
    today).** Build the radial marking-menu / context-menu surface realizing
    `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
