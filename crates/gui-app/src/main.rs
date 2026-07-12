@@ -363,7 +363,7 @@ impl ApplicationHandler for App {
                         changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.pan_gesture.is_active() {
                         changed = previous_pos
-                            .is_some_and(|previous| runtime.handle_pan_drag(previous, next_pos));
+                            .is_some_and(|previous| runtime.advance_primary_pan(previous, next_pos));
                     }
                     // Update hover state
                     if !runtime.dock_drag_active
@@ -441,8 +441,7 @@ impl ApplicationHandler for App {
                     {
                         return;
                     }
-                    let pointer_in_scene = runtime.cursor_in_editor_scene();
-                    if runtime.pan_gesture.primary_pressed(pointer_in_scene) {
+                    if runtime.begin_primary_pan() {
                         if runtime.clear_interaction_overlay() {
                             self.request_redraw_if_needed();
                         }
@@ -480,7 +479,7 @@ impl ApplicationHandler for App {
                     {
                         return;
                     }
-                    if runtime.pan_gesture.primary_released() {
+                    if runtime.finish_primary_pan() {
                         self.request_redraw_if_needed();
                         return;
                     }
