@@ -228,9 +228,21 @@ later tuning requires usability evidence and a governed spec change.
 - In the schematic workspace, clicking a pin selects its parent symbol and pin
   anchors contribute to parent-symbol region selection. In the symbol editor
   workspace, a pin is independently selectable.
+- Copper zones are excluded from rectangle and lasso acquisition. A zone is
+  selected by direct primary click or explicitly through right-button drag →
+  `Select` → the user-legible zone entry (name/net/layer); conflict-menu
+  `Select All` may include it. Zone outline, fill, islands, and thermal geometry
+  project one authored zone identity rather than independent selectable
+  objects. Connected/global electrical selection may include the zone because
+  that is a logical expansion, not geometric region acquisition.
+- Vias, junctions, no-connect markers, and other point-like objects qualify
+  when their center or electrical connection anchor lies inside the region.
 
-Qualification rules for other area, linear, and point object classes remain
-open pending the continuing section review.
+Qualification rules for line/path objects and independently selectable filled
+graphics/text remain open for focused precedent research and the continuing
+owner review. Filled graphics here means authored non-zone shapes with an
+interior (for example PCB logo/documentation polygons, rectangles, or circles);
+schematic symbol-body fills remain projections of their parent symbol.
 
 #### 2.2.5 Progressive electrical selection scope
 
