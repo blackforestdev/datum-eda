@@ -522,7 +522,22 @@ click commits the destination and `Escape` cancels, restoring every original
 position. Every invocation resolves the same translation:
 `new_position = original_position + (destination - reference)`.
 
-#### 2.2.13 S5A/S5B delivery boundary
+#### 2.2.13 Visual-state precedence (owner review in progress)
+
+**Selection wins over hover.** The selected state remains the authoritative
+visual whenever selection and hover target the same object. Hover MUST NOT
+recolor, obscure, thicken, weaken, replace, or otherwise visually compete with
+the selection highlight. Hovering an already-selected object changes only the
+cursor or interaction affordance needed for the available gesture; it does not
+add a second object halo. Hovering a different eligible object continues to show
+the governed lighter hover preview without altering the selected set.
+
+This precedence is screen-space consumer state and MUST NOT invalidate or
+rebuild retained authored geometry. Locked, cross-workspace, focus-member,
+related-highlight, and diagnostic overlaps remain under the continuing visual
+precedence review.
+
+#### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the
 engine does not possess:
@@ -545,7 +560,7 @@ S5A MUST retain typed extension seams for S5B/later without presenting those
 later capabilities as landed. S5 execution remains unauthorized until final
 owner review and a numbered selection-identity decision ratify this mechanism.
 
-#### 2.2.14 Still open before final review
+#### 2.2.15 Still open before final review
 
 The continuing owner review must still resolve at least: Inspector/status/
 terminal projection for multiple members; hover-versus-selection visual
