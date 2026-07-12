@@ -187,6 +187,9 @@ in one submenu to preserve the short-menu discipline).
   two modes*: **hold ~280 ms → labeled wheel draws** (novice); **flick immediately
   in a direction → command fires, nothing draws** (expert, eyes stay on the
   board). The novice drag *is* the expert flick — continuous skill transfer.
+  Right-click/right-drag is exclusively owned by this menu on every 2D editor;
+  it MUST NOT fall through to viewport pan. Pan uses `Space`+primary-button drag,
+  while middle-button drag is reserved for 3D-view rotation.
 - **≤8 items per wheel; the 4 cardinal (N/E/S/W) carry the most-frequent verbs**
   (only cardinals are reliably reproducible blind); diagonals carry secondary
   actions. **Never place a destructive/irreversible action on a diagonal — keep

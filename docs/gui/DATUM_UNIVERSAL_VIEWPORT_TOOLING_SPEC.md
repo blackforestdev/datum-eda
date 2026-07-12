@@ -26,11 +26,24 @@ slice), or **HUMAN** (reference-image / eyeball review).
 Every drawing surface is an `EditorViewport` (never a bare "viewport" —
 decision-021 workspace pane and decision-020 paper-space viewport are distinct).
 Screen↔world projection and hit-testing resolve in the target surface's own
-camera/space. Pointer preview, wheel zoom, and drag-pan target the pane containing
-the pointer; keyboard/menu commands and active-tool gestures target the focused
-pane. A focus-changing click continues dispatch in that pane. Camera state is
+camera/space. Pointer preview, wheel zoom, and `Space`+primary-button drag-pan
+target the pane containing the pointer; keyboard/menu commands and active-tool
+gestures target the focused pane. A focus-changing click continues dispatch in
+that pane. Camera state is
 keyed by `(PaneId, surface/document identity)`, so duplicate views remain
 independent and content replacement cannot inherit another coordinate space.
+
+`Space`+primary-button drag is the exclusive 2D pan activation on every drawing
+surface. `Space` MUST already be held when the primary button is pressed; it MUST
+NOT steal an in-progress selection or authoring drag. Right-click/right-drag is
+reserved exclusively for the local/marking menu (§6), and the middle button is
+reserved for 3D-view rotation rather than 2D pan. Pan ends on primary-button
+release, `Space` release, `Escape`, focus/window deactivation, or pointer-capture
+loss; every termination clears capture and suppresses click, selection, and tool
+commit for that pan gesture. Text-entry focus owns `Space` normally and MUST NOT
+arm pan. A `Space` tap without a primary drag remains available to the focused
+active tool (including route-corner rotation); key repeat MUST NOT synthesize a
+tap command.
 
 *Disposition: TO-ENFORCE — routing/lifecycle tests with distinct surface bounds,
 duplicate panes, content replacement, missing scenes, and same-click dispatch;

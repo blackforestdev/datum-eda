@@ -84,8 +84,17 @@ space. Pointer-preview interactions (hover, cursor, prospective context) target
 the drawing pane containing the pointer; keyboard commands and active-tool
 gestures target the focused drawing pane. A click MAY focus its containing pane
 and MUST dispatch that same click after focus changes; a second click MUST NOT be
-required. Wheel zoom and drag-pan are pointer gestures and target the containing
-pane. No interaction capability may hard-code a single
+required. Wheel zoom and `Space`+primary-button drag-pan are pointer gestures and
+target the containing pane. This chord is the exclusive 2D pan activation:
+`Space` MUST be held before primary-button press, right-click/right-drag MUST be
+reserved exclusively for the local context menu, and middle-button drag MUST be
+reserved for 3D-view rotation. It MUST NOT steal an already-active selection or
+authoring drag. Pan terminates on primary-button release, `Space` release,
+`Escape`, focus/window deactivation, or pointer-capture loss, suppressing the
+corresponding click/selection/tool commit and clearing capture. Text-entry focus
+owns `Space` and does not arm pan; a `Space` tap without a primary drag remains an
+active-tool command, with key repeat ignored for tap dispatch. No interaction
+capability may hard-code a single
 surface's viewport or camera as the sole coordinate authority. Every surface,
 including every non-board surface, MUST be able to map a screen point to world
 and hit-test its own geometry.
