@@ -5,7 +5,7 @@ Status: governed spec (active)
 Governed by **decision `PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING`** (the
 ratified law). This document is the *how*: it may strengthen but not weaken 023.
 It **extends** — and does not restate — the existing surface it plugs into:
-`docs/gui/DATUM_GUI_DESIGN_SPEC.md` (status-bar readout), `DATUM_RENDERING_BOOK.md`
+`docs/gui/DATUM_GUI_DESIGN_SPEC.md` (Application Status Bar readout), `DATUM_RENDERING_BOOK.md`
 (stroke hierarchy, grid colour, filled-outline text, selection-is-screen-only),
 `DATUM_GUI_PARAMETRIC_TOOLING.md` (tri-modal verbs, align `reference: grid`),
 `DATUM_GUI_CONTEXT_MENU_CONTENT.md` + `research/gui-context-menus/CONTEXT_MENU_RESEARCH.md`
@@ -343,7 +343,7 @@ partial edit. Selection never unlocks an object implicitly.
 - Hiding an already-selected object preserves its selection identity; a
   visibility change MUST NOT implicitly clear or remove selection. Its canvas
   projection and selection highlight disappear with the hidden geometry, while
-  the Inspector and status surface report that selected members are hidden.
+  the Inspector and Application Status Bar report that selected members are hidden.
   Restoring visibility restores their selection projection.
 - Hidden selected objects cannot normally be manipulated or modified. A
   mutation whose ordinary/local selection contains hidden members is refused as
@@ -811,10 +811,10 @@ fires its verb); HUMAN (radial matches `context-menu-marking-menu.html`).*
 
 ---
 
-## 7. Coordinate readout & status-bar field ownership
+## 7. Coordinate readout & Application Status Bar field ownership
 
 Add the currently-absent readout: cursor X/Y → display units, dx/dy vs a settable
-origin, per the status bar already specified in `DATUM_GUI_DESIGN_SPEC.md`
+origin, per the Application Status Bar already specified in `DATUM_GUI_DESIGN_SPEC.md`
 ("cursor X/Y (mm) · grid"). Status fields (Tool/Sel/Layers) are owned by the
 **focused** editor, not the global board state (`scene.rs:617` already routes the
 document label per focus — extend to the other fields). v1 = X/Y + dx/dy + grid +

@@ -215,7 +215,7 @@ marker**.
   sheet; the review target is per-element fidelity (colour, symbol, grid), verified
   by zooming in.
   *NOT P2.2 — do not absorb:* net selection/highlight/glow + cross-probe = **P2.3**;
-  the net-centric inspector, the Sheets hierarchy panel, and schematic status-bar
+  the net-centric inspector, the Sheets hierarchy panel, and Application Status Bar
   segments (Sheet/Grid/ERC) = **P2.4**; a schematic whose `.kicad_sch` only
   skeleton-imports (e.g. DOA2526) is the separate **schematic-import track**,
   upstream of render — P2.2 renders faithfully whatever the importer produces.
@@ -252,7 +252,7 @@ marker**.
   (context-follows-focus already routes the inspector to the focused pane); and
   (3) the **Sheets hierarchy panel** — when a schematic pane is focused, the left
   Layers slot shows the sheet hierarchy (the model exposes one root sheet today; a
-  multi-sheet panel + selection lands here), plus the schematic status-bar segments
+  multi-sheet panel + selection lands here), plus the Application Status Bar's schematic-context segments
   (Sheet n/m, Grid, ERC count). Read-only fields only; editable fields stay Phase-3
   gated on the write path. ERC *findings* feed from the ERC engine (the P2.2e ERC
   *marker geometry* renders whatever findings exist).

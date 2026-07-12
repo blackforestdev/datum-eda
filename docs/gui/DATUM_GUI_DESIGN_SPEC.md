@@ -51,7 +51,7 @@ the same change.
 - **Shell composition** (left→right, top→bottom): menu bar · left column
   (Project tree over Layers) · **central board/schematic pane field
   (protagonist)** with per-pane header tools · right column (Inspector) · bottom
-  dock (Terminal only — multi-tab, 32px collapsed) · status bar. Approximate
+  dock (Terminal only — multi-tab, 32px collapsed) · Application Status Bar. Approximate
   widths: left ~228px, right ~300px.
 - **Color-application law**: chrome uses only `bg/surface.01–03/border/text`
   tokens; the only chrome color allowed onto the canvas is `--acc` (#CE5A92) as

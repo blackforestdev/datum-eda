@@ -77,7 +77,7 @@ The recovered GUI shell must include:
 - checks/issues panel;
 - manufacturing/output panel;
 - bottom or side terminal area with real PTY sessions;
-- status bar for selection, coordinates, active tool, model revision, check
+- Application Status Bar for selection, coordinates, active tool, model revision, check
   status, and background activity.
 
 Minimum top menu:

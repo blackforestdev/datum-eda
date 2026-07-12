@@ -179,7 +179,10 @@
    `DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`; and the researched delivery
    boundary is S5A selection+compound inspection → S5B persistent-group/universal-
    lock/typed-batch authority → later domain tools. Final review plus a numbered
-   selection-identity decision are required before execution. Then: S6 tool-mode →
+   selection-identity decision are required before execution. The global bottom
+   strip is now canonically named the **Application Status Bar**; its information
+   role remains under focused proximity/attention research rather than assumed
+   from the prototype. Then: S6 tool-mode →
    **S7 context menu** → S8 readout → S9 layer-vis →
    S10–S11 snap/quantize.** Governing: decision 023 +
    `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
