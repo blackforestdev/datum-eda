@@ -129,6 +129,163 @@ One shared mechanism each; the per-surface variation is only the `…Config`.
 - Timing benchmarks on representative large designs supplement deterministic
   work gates; wall-clock timing alone MUST NOT be the CI correctness oracle.
 
+### 2.2 S5 selection and marquee contract (owner-ratified, design in progress)
+
+This subsection is the durable working authority for S5. It records only
+owner-ratified behavior while the section-by-section design review is in
+progress; unresolved behavior remains explicitly open until the final review.
+S5 implementation MUST NOT begin from this incomplete subsection before that
+review closes it.
+
+#### 2.2.1 Normal selection and clearing
+
+- Primary-clicking an eligible object selects it. Primary-clicking another
+  eligible object replaces the selection with that object.
+- A primary click in an unfocused pane focuses that pane and performs the
+  selection in the same click.
+- Primary-clicking empty canvas preserves the selection. Datum MUST NOT require
+  the user to find or reveal blank canvas in order to leave selection.
+- `Escape` is the sole explicit clear-selection command. If a temporary gesture
+  or operation is active, the first `Escape` cancels that operation while
+  preserving the prior selection; a subsequent `Escape`, with no gesture or
+  operation active, clears the complete selection.
+- Selection references stable authored identity rather than an incidental
+  rendered primitive identity and drives the Inspector and cross-probe
+  projection.
+
+#### 2.2.2 Add, remove, and region gesture grammar
+
+Datum has one modifier meaning per selection action; synonymous modifier paths
+are prohibited:
+
+- plain primary click replaces with one object;
+- `Shift`+primary click adds one object; applying it to an already-selected
+  object leaves that object selected;
+- `Ctrl`+primary click removes one object; applying it to an unselected object
+  is a no-op;
+- `Shift`+primary drag opens an additive selection region. With no prior
+  selection it creates the selection; otherwise it extends the selection;
+- `Ctrl`+primary drag opens a subtractive selection region and removes matching
+  members from the prior selection; and
+- plain primary drag does not open a selection region and remains available for
+  direct object manipulation.
+
+`Shift`+`Ctrl` is not a third selection operation. `Escape` clears the complete
+selection rather than removing one member at a time.
+
+Selection-region activation uses a **4 physical-device-pixel** movement
+threshold. Below the threshold the input remains a modified click; at or beyond
+the threshold it becomes a region gesture. The initial direction locks the
+region shape for the gesture: rightward motion creates a rectangle and leftward
+motion creates a freeform lasso. The shape MUST NOT switch mid-gesture. Releasing
+primary commits the region result. `Escape`, focus loss, capture loss, pane
+closure, or content replacement cancels the gesture and preserves the prior
+selection.
+
+`Space` held before primary press owns pan and prevents region activation.
+Pressing `Space` after a region gesture begins MUST NOT steal it. A region
+gesture remains owned by its originating pane.
+
+#### 2.2.3 Region feedback and selection auto-pan
+
+An active rectangle or lasso renders a temporary high-contrast animated dashed
+"dancing ants" boundary in the immediate screen-space overlay. The boundary is
+one physical device pixel, is clipped to its originating pane, has no persistent
+occluding fill, and disappears immediately on commit or cancellation. Under a
+reduced-motion preference the boundary remains dashed but does not animate.
+Additive and subtractive gestures MUST be visibly distinguishable without
+depending on animation alone. Region feedback is consumer/session state: it is
+never journaled, persisted, exported, or emitted into manufacturing output.
+
+Dragging an active region into the **24 physical-device-pixel** edge band starts
+selection auto-pan. Speed increases toward and beyond the edge; exact
+acceleration and maximum speed are implementation tuning values, not alternate
+gesture grammar. Auto-pan moves only the originating pane's camera, supports
+diagonal motion at corners, stops when the pointer returns inside the edge band,
+and does not transfer focus or gesture ownership to an adjacent pane. The
+rectangle/lasso remains anchored in world space so geometry revealed by
+auto-pan participates in the final result. Cancellation stops auto-pan and
+preserves the prior selection.
+
+#### 2.2.4 Region qualification and workspace granularity
+
+Region qualification uses a strict **greater-than-50-percent** rule. Exactly
+50 percent is a non-selection. This is the fixed S5-v1 rule, not a preference;
+later tuning requires usability evidence and a governed spec change.
+
+- A PCB footprint with pads qualifies only when a strict majority of its pad
+  center anchors lie inside the rectangle/lasso. Thus an SOIC-8 requires five
+  pads; three or four do not qualify. A padless footprint falls back to its
+  placement anchor. Silkscreen, courtyard, fabrication graphics, and
+  reference/value text do not enlarge this test.
+- A schematic symbol with pins qualifies only when a strict majority of its pin
+  connection anchors lie inside the rectangle/lasso. Thus a 14-pin symbol
+  requires eight pins. A pinless symbol falls back to its placement anchor;
+  symbol graphics and text do not enlarge this test.
+- In the board workspace, clicking a pad selects its parent footprint and pad
+  anchors contribute to parent-footprint region selection. In the footprint
+  editor workspace, a pad is independently selectable.
+- In the schematic workspace, clicking a pin selects its parent symbol and pin
+  anchors contribute to parent-symbol region selection. In the symbol editor
+  workspace, a pin is independently selectable.
+
+Qualification rules for other area, linear, and point object classes remain
+open pending the continuing section review.
+
+#### 2.2.5 Progressive electrical selection scope
+
+Electrical geometry uses progressive click depth:
+
+- single click selects the local authored section under the pointer;
+- double click replaces that with the physically connected run containing the
+  section; and
+- triple click replaces that with every occurrence carrying the same resolved
+  logical net identity across the complete design.
+
+On schematics, the global scope includes disconnected and cross-sheet
+occurrences joined by the same resolved label. On boards, it includes all
+conductive/connective geometry assigned to the net throughout the board. This
+behavior applies to every net, not only power nets. Net classes are not a click
+depth. Parent footprints and symbols may render related context but are not
+silently added to an electrical selection.
+
+Click-depth expansion is progressive and immediate: section, then connected
+run, then global net. Pointer movement beyond the click threshold or a changed
+hit target starts a new sequence.
+
+#### 2.2.6 Overlap resolution through the local menu
+
+Normal primary click remains fast and selects the deterministic topmost eligible
+candidate. Datum MUST NOT introduce a separate automatic ambiguity popup or
+click-cycling path. Right-button drag invokes the governed local/marking menu;
+its `Select` branch exposes every eligible conflicting candidate under the
+pointer using user-legible reference, pad/pin, net, layer, and type labels.
+Candidate hover pre-highlights that candidate. The menu offers both individual
+selection and `Select All`; releasing outside or pressing `Escape` dismisses it
+without changing selection. Candidate order is deterministic by visible layer,
+object priority, then stable identity.
+
+#### 2.2.7 Locked objects
+
+Locked objects remain selectable and inspectable but MUST NOT be modified. They
+have a persistent visible distinction (for example subdued/greyed authored
+geometry); selection retains the normal highlight while also preserving an
+unambiguous lock indication. A refused mutation writes one concise `stdout`
+message identifying the locked object and command. A mutation over a mixed
+locked/unlocked selection fails as a whole rather than silently applying a
+partial edit. Selection never unlocks an object implicitly.
+
+#### 2.2.8 Still open before final review
+
+The continuing owner review must still resolve at least: hidden/layer-filtered
+selection state; qualification for non-footprint/non-symbol geometry; selection
+set identity, ordering, and primary-member semantics; Inspector/status/terminal
+projection for multiple members; hover-versus-selection visual precedence;
+bounded rectangle/lasso query and exhaustion behavior; model-revision/object-
+deletion lifetime; and exact conformance tests. The final review will reconcile
+the older M7 singleton wording, P2.3 cross-probe, the Layer-2 selection-identity
+decision boundary, and the §4 overlay language before S5 is authorized.
+
 ---
 
 ## 3. Snap & Quantize
