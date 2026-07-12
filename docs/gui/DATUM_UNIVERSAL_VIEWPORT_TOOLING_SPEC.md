@@ -405,10 +405,32 @@ subject.
 
 The compound exists only as selection/session state and disappears when the
 selection is cleared; creating it is never journaled and does not silently add
-an authored project group. A future explicit `Create Group` command may convert
-the current compound into a named persistent authored group through the normal
-operation/journal path. Which compound attributes are editable in S5 remains
-open for the continuing owner review.
+an authored project group. An explicit `Group` command converts the current
+compound into a named persistent authored `Group XXX` through the normal typed
+operation/journal path; ordinary multi-selection never performs that conversion
+implicitly.
+
+The compound Inspector's ratified editable baseline is:
+
+- **Position X/Y:** editing either coordinate translates every member by the
+  displayed delta as one atomic Move operation;
+- **Rotation:** rotates every compatible member atomically around the displayed
+  group reference;
+- **Mirror horizontal / vertical:** available in the schematic editor for a
+  compatible symbol selection and applied atomically within that schematic
+  workspace;
+- **Lock / unlock:** one explicit atomic group command with the affected-member
+  count; and
+- **Group:** creates the persistent authored `Group XXX` described above.
+
+Derived bounds, counts, and coverage remain legible even when not editable.
+Further compatible batch attributes are an intended extension point rather than
+an excuse for partial mutation. For example, multiple PCB parts may support an
+atomic do-not-populate change. Every such field requires a typed operation,
+whole-selection applicability/preflight, undo/redo, and an explicit governed
+contract; an incompatible or mixed selection MUST NOT silently skip members.
+The high-value v1 batch-attribute inventory remains open for focused product
+research and owner review.
 
 #### 2.2.11 Cross-workspace projection and GUI mutation authority
 
