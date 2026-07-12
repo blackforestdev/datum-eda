@@ -235,14 +235,19 @@ later tuning requires usability evidence and a governed spec change.
   project one authored zone identity rather than independent selectable
   objects. Connected/global electrical selection may include the zone because
   that is a logical expansion, not geometric region acquisition.
+- Independently selectable filled graphics are likewise excluded from rectangle
+  and lasso acquisition. They use the same canonical paths as zones: direct
+  primary click when topmost, or an explicit user-legible entry (and optional
+  `Select All` membership) under right-button drag → `Select`. Their outline and
+  fill project one authored graphic identity.
 - Vias, junctions, no-connect markers, and other point-like objects qualify
   when their center or electrical connection anchor lies inside the region.
 
-Qualification rules for line/path objects and independently selectable filled
-graphics/text remain open for focused precedent research and the continuing
-owner review. Filled graphics here means authored non-zone shapes with an
-interior (for example PCB logo/documentation polygons, rectangles, or circles);
-schematic symbol-body fills remain projections of their parent symbol.
+Qualification rules for line/path objects and text remain open for focused
+precedent research and the continuing owner review. Filled graphics here means
+authored non-zone shapes with an interior (for example PCB logo/documentation
+polygons, rectangles, or circles); schematic symbol-body fills remain
+projections of their parent symbol.
 
 #### 2.2.5 Progressive electrical selection scope
 
