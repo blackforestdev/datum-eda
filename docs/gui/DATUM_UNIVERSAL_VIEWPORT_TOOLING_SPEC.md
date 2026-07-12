@@ -261,11 +261,26 @@ rendered-length percentage:
 
 This endpoint rule follows the researched EDA/CAD containment precedent while
 retaining Datum's strict-majority contract without an unfamiliar or visually
-ambiguous path-length integration. Text qualification remains open for the
-continuing owner review. Filled graphics here means authored non-zone shapes
-with an interior (for example PCB logo/documentation polygons, rectangles, or
-circles); schematic symbol-body fills remain projections of their parent
-symbol.
+ambiguous path-length integration.
+
+Standalone text and labels qualify when more than 50 percent of their oriented
+layout rectangle lies inside the rectangle/lasso; exactly 50 percent does not.
+The test uses actual rotated layout bounds rather than an axis-aligned expansion
+or per-glyph ink. Glyph outlines, inter-glyph whitespace, font changes, and
+selection halos do not change qualification. Schematic net labels follow their
+visible layout bounds; their electrical connection anchor does not independently
+force region selection.
+
+Reference/value text owned by a footprint or symbol is neither independently
+selected nor counted toward its parent's qualification in board/schematic
+workspaces. In footprint/symbol editor workspaces that owned text becomes an
+independent authored target and follows the same strict-majority oriented-layout
+rule. Direct primary click and the local `Select` menu remain the precise paths
+for difficult text cases.
+
+Filled graphics here means authored non-zone shapes with an interior (for
+example PCB logo/documentation polygons, rectangles, or circles); schematic
+symbol-body fills remain projections of their parent symbol.
 
 #### 2.2.5 Progressive electrical selection scope
 
