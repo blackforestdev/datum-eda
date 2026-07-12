@@ -275,16 +275,37 @@ message identifying the locked object and command. A mutation over a mixed
 locked/unlocked selection fails as a whole rather than silently applying a
 partial edit. Selection never unlocks an object implicitly.
 
-#### 2.2.8 Still open before final review
+#### 2.2.8 Hidden geometry and layer visibility
 
-The continuing owner review must still resolve at least: hidden/layer-filtered
-selection state; qualification for non-footprint/non-symbol geometry; selection
-set identity, ordering, and primary-member semantics; Inspector/status/terminal
-projection for multiple members; hover-versus-selection visual precedence;
-bounded rectangle/lasso query and exhaustion behavior; model-revision/object-
-deletion lifetime; and exact conformance tests. The final review will reconcile
-the older M7 singleton wording, P2.3 cross-probe, the Layer-2 selection-identity
-decision boundary, and the §4 overlay language before S5 is authorized.
+- Geometry on a hidden layer cannot be newly selected by primary click,
+  rectangle, lasso, conflict-menu `Select All`, or electrical selection
+  expansion. Objects excluded by an active object-class selection filter are
+  likewise ineligible.
+- Dimmed but still-visible geometry remains eligible unless its object class is
+  filtered out. Hidden and locked are distinct states: locked objects remain
+  available for inspection, while hidden objects cannot be acquired from the
+  canvas.
+- Hiding an already-selected object preserves its selection identity; a
+  visibility change MUST NOT implicitly clear or remove selection. Its canvas
+  projection and selection highlight disappear with the hidden geometry, while
+  the Inspector and status surface report that selected members are hidden.
+  Restoring visibility restores their selection projection.
+- Hidden selected objects cannot be manipulated or modified. A mutation whose
+  selection contains hidden members is refused as a whole rather than silently
+  editing only visible members. The hidden members may be removed explicitly
+  through a non-canvas selection consumer, or the complete selection may be
+  cleared with `Escape`.
+
+#### 2.2.9 Still open before final review
+
+The continuing owner review must still resolve at least: qualification for
+non-footprint/non-symbol geometry; selection set identity, ordering, and
+primary-member semantics; Inspector/status/terminal projection for multiple
+members; hover-versus-selection visual precedence; bounded rectangle/lasso
+query and exhaustion behavior; model-revision/object-deletion lifetime; and
+exact conformance tests. The final review will reconcile the older M7 singleton
+wording, P2.3 cross-probe, the Layer-2 selection-identity decision boundary, and
+the §4 overlay language before S5 is authorized.
 
 ---
 
