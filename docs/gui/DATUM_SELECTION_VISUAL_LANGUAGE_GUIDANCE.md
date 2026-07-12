@@ -49,6 +49,9 @@ with overlay-retention evidence rather than treated as final behavior.
 - Sections, connected runs, global nets, compounds, persistent groups, and
   related cross-probe projections are distinct semantic scopes and must not be
   conflated by one visual role.
+- Owner-ratified Global Net scope is one semantic selection subject whose full
+  visible electrical projection receives selection treatment across schematic
+  and PCB. Connected parent symbol/footprint bodies remain related, not selected.
 - Hidden selected geometry remains hidden. Locked selected geometry retains
   selection plus a non-color constraint cue and no transform handles.
 - Derived zone fills, projected graphics, dimensions, groups, locks, and other

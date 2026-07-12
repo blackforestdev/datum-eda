@@ -185,15 +185,19 @@ Owner decision closed 2026-07-12: the actual shared selection projects at full,
 identical strength in active and inactive workspaces. Only the magenta pane
 frame/focus header/tool availability communicates GUI mutation authority.
 
+Owner decision closed 2026-07-12: triple-click selects one semantic Global Net
+subject. All visible resolved electrical projections (wire/label/port/pin
+terminal, track/via/pad connection/zone/airwire) receive full selection; parent
+symbol/footprint bodies remain related rather than selected.
+
 Still required:
 
-1. Membership versus related visuals for global-net pins/labels/pads/zones.
-2. Related-highlight visual distinct from selection and hover.
-3. Focus-member and locked-member markers.
-4. Proposal/diagnostic/selection collision precedence.
-5. Bus ownership/expansion.
-6. Standalone text and point-object treatments.
-7. Dense-selection attenuation/budget fallback.
+1. Related-highlight visual distinct from selection and hover.
+2. Focus-member and locked-member markers.
+3. Proposal/diagnostic/selection collision precedence.
+4. Bus ownership/expansion.
+5. Standalone text and point-object treatments.
+6. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 

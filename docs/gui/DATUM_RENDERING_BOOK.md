@@ -102,6 +102,21 @@ selection/active only.
   authority. The magenta pane frame plus focus dot/header and enabled tools are
   the sole authority cues; changing active workspace changes authority without
   changing selection membership or appearance.
+
+### 2.2 Electrical selection scopes **[LOCKED]**
+
+- Triple-click selects one semantic **Global Net** subject, not an incidental
+  compound list of every render primitive. Every visible projection belonging
+  to that resolved net receives the full governed selection treatment:
+  schematic wires, matching labels/ports, pin connection terminals/stubs, PCB
+  tracks, vias, connected pad regions, net-owned zone boundary/fill, and the
+  relevant airwire/ratsnest projection.
+- Parent schematic symbol bodies and PCB footprints do not become selected merely
+  because they connect to the net. They remain eligible for the separate related
+  treatment, never the full selection glow.
+- Hidden-layer net geometry stays hidden. The net Inspector reports hidden and
+  per-kind member counts without materializing thousands of primitive selection
+  members. `Escape` clears the Global Net subject as one selection.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

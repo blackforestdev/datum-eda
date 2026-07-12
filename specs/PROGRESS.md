@@ -189,6 +189,9 @@
    and a crisp object-shaped 2-physical-pixel screen-space cue. Actual selection
    now also projects at identical full strength in active/inactive workspaces;
    pane frame/header/tool enablement alone communicates GUI mutation authority.
+   Triple-click Global Net is one semantic selection subject whose complete
+   visible resolved electrical projection glows across schematic/PCB, while
+   connected parent symbol/footprint bodies remain related rather than selected.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

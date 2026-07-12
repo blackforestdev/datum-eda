@@ -549,6 +549,15 @@ the pointer-containing inactive pane, but selection wins on the same object.
 Merely related/cross-probed geometry is not an actual member and requires the
 separate subordinate visual role still under review.
 
+A triple-click Global Net selection is one semantic selection subject. Its full
+selection projection includes every visible resolved electrical representation
+of that net across workspaces—wires, labels/ports, pin terminals/stubs, tracks,
+vias, connected pad regions, net-owned zone boundary/fill, and relevant
+airwire/ratsnest geometry. Parent symbol bodies and footprints are not selected
+by connectivity alone; they remain merely related. Hidden members remain hidden
+and are summarized by the net Inspector rather than expanded into an enormous
+primitive selection set.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the
