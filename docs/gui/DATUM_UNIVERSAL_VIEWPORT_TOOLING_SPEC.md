@@ -540,6 +540,15 @@ precedence review. Research inventory and integration guidance:
 `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; tracked by
 `dat-s5-selection-visual-contract-zid`.
 
+An actual shared selection uses the same full governed selection treatment in
+every active or inactive workspace where it resolves. Pane inactivity MUST NOT
+dim or restyle selected objects. The magenta pane frame, focus dot/header, and
+tool enablement alone communicate which workspace has GUI mutation authority.
+Focus change preserves selection membership/appearance. Hover may still follow
+the pointer-containing inactive pane, but selection wins on the same object.
+Merely related/cross-probed geometry is not an actual member and requires the
+separate subordinate visual role still under review.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the

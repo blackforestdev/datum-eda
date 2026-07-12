@@ -96,6 +96,12 @@ selection/active only.
   High-contrast mode replaces subtle glow with a crisp object-shaped boundary.
   Selection never pulses, changes hit/qualification bounds, or enters retained
   authored/CAM/export geometry.
+- A shared selection projects with the **same full brightening, internal glow,
+  and crisp cue in every workspace where its identity resolves**, whether that
+  pane is active or inactive. Object intensity MUST NOT encode GUI mutation
+  authority. The magenta pane frame plus focus dot/header and enabled tools are
+  the sole authority cues; changing active workspace changes authority without
+  changing selection membership or appearance.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

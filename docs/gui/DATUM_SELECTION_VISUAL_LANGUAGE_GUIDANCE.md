@@ -29,6 +29,11 @@ channels. Selection wins over hover on the same object. Workspace focus remains
 the pane frame/header mutation-authority cue and must not be inferred from object
 highlight intensity.
 
+Owner-ratified projection rule: an actual selection has identical full treatment
+in every resolving active/inactive workspace. Only pane chrome/tool availability
+changes with GUI mutation authority. Related cross-probe geometry is a distinct
+subordinate role, not a dimmed form of selection.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

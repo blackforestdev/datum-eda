@@ -181,16 +181,19 @@ Owner decision closed 2026-07-12: slightly brighten the complete owned visible
 symbol/footprint/object presentation while preserving semantic/material hues,
 then add the selection-accent internal glow and crisp object-shaped 2px channel.
 
+Owner decision closed 2026-07-12: the actual shared selection projects at full,
+identical strength in active and inactive workspaces. Only the magenta pane
+frame/focus header/tool availability communicates GUI mutation authority.
+
 Still required:
 
-1. Full-strength selection projection in inactive workspaces.
-2. Membership versus related visuals for global-net pins/labels/pads/zones.
-3. Related-highlight visual distinct from selection and hover.
-4. Focus-member and locked-member markers.
-5. Proposal/diagnostic/selection collision precedence.
-6. Bus ownership/expansion.
-7. Standalone text and point-object treatments.
-8. Dense-selection attenuation/budget fallback.
+1. Membership versus related visuals for global-net pins/labels/pads/zones.
+2. Related-highlight visual distinct from selection and hover.
+3. Focus-member and locked-member markers.
+4. Proposal/diagnostic/selection collision precedence.
+5. Bus ownership/expansion.
+6. Standalone text and point-object treatments.
+7. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 
