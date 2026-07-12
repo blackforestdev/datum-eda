@@ -243,11 +243,26 @@ later tuning requires usability evidence and a governed spec change.
 - Vias, junctions, no-connect markers, and other point-like objects qualify
   when their center or electrical connection anchor lies inside the region.
 
-Qualification rules for line/path objects and text remain open for focused
-precedent research and the continuing owner review. Filled graphics here means
-authored non-zone shapes with an interior (for example PCB logo/documentation
-polygons, rectangles, or circles); schematic symbol-body fills remain
-projections of their parent symbol.
+Line/path qualification follows authored topology anchors rather than a
+rendered-length percentage:
+
+- a straight authored section qualifies only when both endpoints lie inside the
+  rectangle/lasso (the strict majority of two anchors is two);
+- a curved authored section qualifies when at least two of its start, authored
+  midpoint, and end anchors lie inside;
+- a connected multi-section run is not region-tested as one path: every
+  authored section qualifies independently, while double/triple click provide
+  the explicit connected-run/global-net expansion; and
+- rendered stroke width, selection halo, viewport clipping, and dash phase do
+  not inflate or otherwise change the anchor test.
+
+This endpoint rule follows the researched EDA/CAD containment precedent while
+retaining Datum's strict-majority contract without an unfamiliar or visually
+ambiguous path-length integration. Text qualification remains open for the
+continuing owner review. Filled graphics here means authored non-zone shapes
+with an interior (for example PCB logo/documentation polygons, rectangles, or
+circles); schematic symbol-body fills remain projections of their parent
+symbol.
 
 #### 2.2.5 Progressive electrical selection scope
 
