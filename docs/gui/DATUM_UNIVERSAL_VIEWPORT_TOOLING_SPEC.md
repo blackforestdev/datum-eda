@@ -369,7 +369,7 @@ local geometric selection and follows §2.2.4, including the 100-percent rule fo
 zones and filled areas. It MUST NOT acquire global-selection authority merely
 because it visually surrounds the complete design.
 
-#### 2.2.10 Selection membership and optional focus member
+#### 2.2.10 Selection membership, focus, and compound Inspector subject
 
 The selection is a typed stable-identity set, not a scalar target or an
 internally ordered list with implicit authority. Deterministic iteration and
@@ -387,12 +387,28 @@ member**:
   group with no focus; and
 - `Ctrl+A` creates a global group with no focus member.
 
-The Inspector may show focused-object detail when a focus member exists;
-otherwise it shows a group summary. Any command that genuinely needs a
-reference object must obtain an explicit reference through that command's
-interaction rather than choosing the first UUID, render candidate, or set
-member. Focus is consumer/session state and does not give its member additional
-mutation authority.
+Focus is consumer/session state and does not give its member additional mutation
+authority. Any command that genuinely needs a reference object must obtain an
+explicit reference through that command's interaction rather than choosing the
+first UUID, render candidate, or set member.
+
+With exactly one member, the Inspector subject is that authored object. With
+multiple members, the Inspector subject is a first-class **temporary compound
+selection**, presented with a user-legible session label such as
+`Compound Selection — Group 014`. It exposes group attributes rather than
+pretending that one focus member represents the whole set. The attribute surface
+includes at least member count and types, combined bounds, group reference and
+position, workspace/layer/net coverage, common-versus-mixed state, hidden and
+locked counts, and an expandable member inventory. An optional focus member may
+be identified within that compound without replacing the compound Inspector
+subject.
+
+The compound exists only as selection/session state and disappears when the
+selection is cleared; creating it is never journaled and does not silently add
+an authored project group. A future explicit `Create Group` command may convert
+the current compound into a named persistent authored group through the normal
+operation/journal path. Which compound attributes are editable in S5 remains
+open for the continuing owner review.
 
 #### 2.2.11 Cross-workspace projection and GUI mutation authority
 
