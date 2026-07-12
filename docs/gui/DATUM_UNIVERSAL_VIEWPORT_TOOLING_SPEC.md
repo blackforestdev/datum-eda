@@ -354,7 +354,38 @@ local geometric selection and follows §2.2.4, including the 100-percent rule fo
 zones and filled areas. It MUST NOT acquire global-selection authority merely
 because it visually surrounds the complete design.
 
-#### 2.2.10 Still open before final review
+#### 2.2.10 Moving the selection: one verb, four invocation surfaces
+
+Movement requires an existing selection. The fast direct-manipulation sequence
+is: primary click to select, then a subsequent primary press-and-drag on a
+visible selected member to move the complete selection. Datum MUST NOT collapse
+an initial selection click into an accidental move. The movement drag begins
+only after the pointer crosses the governed 4-physical-pixel threshold.
+
+The same move verb is exposed through four deliberate interaction surfaces:
+
+1. primary-drag a visible selected member;
+2. enter `Move` in the future action console;
+3. press the `M` hotkey; or
+4. invoke right-button drag → `Move Selection` in the local menu.
+
+These are projections of one command, not independent move implementations.
+They MUST share selection input, snapping, preview, validation, cancellation,
+commit, and journal behavior. The local-menu route remains available even when
+hidden global-selection members make direct dragging impractical, and the
+action-console vocabulary must not create private mutation semantics.
+
+If any selected member is locked, no invocation begins a partial move. The
+selection is preserved, locked members remain visibly distinguished, the local
+menu action is disabled where preflight state is available, and an attempted
+keyboard/console/direct invocation reports the atomic refusal to `stdout`. The
+user must explicitly unlock or remove every affected locked member before the
+move can begin.
+
+The movement reference-point rule for non-drag invocations remains open for the
+continuing owner review.
+
+#### 2.2.11 Still open before final review
 
 The continuing owner review must still resolve at least: qualification for
 non-footprint/non-symbol geometry; selection set identity, ordering, and
