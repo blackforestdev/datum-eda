@@ -369,7 +369,29 @@ local geometric selection and follows §2.2.4, including the 100-percent rule fo
 zones and filled areas. It MUST NOT acquire global-selection authority merely
 because it visually surrounds the complete design.
 
-#### 2.2.10 Moving the selection: one verb, four invocation surfaces
+#### 2.2.10 Cross-workspace projection and GUI mutation authority
+
+A selection is project-workspace state and projects into every open workspace
+that can resolve a related representation. Selecting PCB geometry therefore
+also renders the corresponding schematic selection projection, and selecting
+schematic geometry renders the corresponding PCB projection. For example,
+triple-clicking a resolved net in the schematic displays that global-net
+selection on the board as well as the schematic. This is one shared design
+selection projected across editors, not two unrelated private selections.
+
+Exactly one GUI workspace is active at a time. Its governed magenta workspace
+frame is the visible mutation-authority indicator. Selection may remain visibly
+projected in inactive workspaces, but GUI gestures, hotkeys, the action console,
+and local authoring commands MUST NOT modify an inactive workspace. The user
+must navigate/focus the board before editing the board projection, or focus the
+schematic before editing the schematic projection. Changing active workspace
+does not by itself clear the shared selection.
+
+This active-workspace restriction governs GUI authority only. It does not
+replace engine validation or redefine explicit CLI/MCP operations, whose target
+documents and authority remain part of their typed command contracts.
+
+#### 2.2.11 Moving the selection: one verb, four invocation surfaces
 
 Movement requires an existing selection. The fast direct-manipulation sequence
 is: primary click to select, then a subsequent primary press-and-drag on a
@@ -411,16 +433,15 @@ click commits the destination and `Escape` cancels, restoring every original
 position. Every invocation resolves the same translation:
 `new_position = original_position + (destination - reference)`.
 
-#### 2.2.11 Still open before final review
+#### 2.2.12 Still open before final review
 
-The continuing owner review must still resolve at least: qualification for
-non-footprint/non-symbol geometry; selection set identity, ordering, and
-primary-member semantics; Inspector/status/terminal projection for multiple
-members; hover-versus-selection visual precedence; bounded rectangle/lasso
-query and exhaustion behavior; model-revision/object-deletion lifetime; and
-exact conformance tests. The final review will reconcile the older M7 singleton
-wording, P2.3 cross-probe, the Layer-2 selection-identity decision boundary, and
-the §4 overlay language before S5 is authorized.
+The continuing owner review must still resolve at least: selection set identity,
+ordering, and primary-member semantics; Inspector/status/terminal projection
+for multiple members; hover-versus-selection visual precedence; bounded
+rectangle/lasso query and exhaustion behavior; model-revision/object-deletion
+lifetime; and exact conformance tests. The final review will reconcile the older
+M7 singleton wording, P2.3 cross-probe, the Layer-2 selection-identity decision
+boundary, and the §4 overlay language before S5 is authorized.
 
 ---
 
