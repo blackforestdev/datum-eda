@@ -210,11 +210,14 @@ selection cue, then topmost semantic diagnostic marker. Selecting a proposal or
 diagnostic adds selection without erasing proposal/severity identity; no channel
 is flattened into plain magenta.
 
+Owner decision closed 2026-07-12: bus click depth is local section → connected
+run → semantic hierarchical bus. Spine, owned name/label, and attached entries
+project as one subject; scalar member nets remain independent.
+
 Still required:
 
-1. Bus ownership/expansion.
-2. Standalone text and point-object treatments.
-3. Dense-selection attenuation/budget fallback.
+1. Standalone text and point-object treatments.
+2. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 

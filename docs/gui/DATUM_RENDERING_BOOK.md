@@ -117,6 +117,14 @@ selection/active only.
 - Hidden-layer net geometry stays hidden. The net Inspector reports hidden and
   per-kind member counts without materializing thousands of primitive selection
   members. `Escape` clears the Global Net subject as one selection.
+- Bus click depth is section → physically connected bus run → semantic bus
+  identity across the schematic hierarchy. A selected bus projects its visible
+  spine, owned bus name/label, and attached bus-entry geometry together. Scalar
+  member wires/nets remain independent and do not receive bus selection merely
+  through membership; clicking a member wire follows its own section/run/global-
+  net hierarchy. Bus entries are not separately counted when projected through
+  their owning bus, but remain independently selectable in an editor mode that
+  grants entry-level authority.
 
 ### 2.3 Related context **[LOCKED]**
 

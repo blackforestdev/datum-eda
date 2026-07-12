@@ -558,6 +558,15 @@ by connectivity alone; they remain merely related. Hidden members remain hidden
 and are summarized by the net Inspector rather than expanded into an enormous
 primitive selection set.
 
+Bus selection has its own hierarchy: single click selects the local authored
+section, double click the physically connected bus run, and triple click the
+semantic bus identity across schematic hierarchy. Its projection includes the
+visible bus spine, owned name/label, and attached entry geometry as one subject.
+Scalar member wires/nets remain independent; selecting them follows normal net
+click depth and does not select the parent bus. Entry-level independent selection
+exists only in a workspace/tool with that editing authority. Inspector lists
+member nets and hidden/cross-sheet occurrences without glowing every member net.
+
 Merely related geometry retains its exact authored baseline and receives no
 accent, internal glow, recoloring, or luminance lift. In an explicit
 relationship/cross-probe context, unrelated geometry may dim slightly so the

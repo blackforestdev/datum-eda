@@ -204,6 +204,8 @@
    Proposal/diagnostic collision order is authored base → proposal ghost/dual
    stroke → selection cue → topmost semantic diagnostic marker; selecting a
    proposal/finding preserves its uncommitted/severity identity.
+   Bus selection is section → connected run → semantic hierarchical bus; owned
+   spine/name/entries project together while scalar member nets remain independent.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in
