@@ -201,6 +201,9 @@
    handles, and use a selected/hovered anchor padlock only after the glyph is
    declared in `icon_set.json`, added to the Rendering Study contact sheet/style,
    and HUMAN-reviewed; dense compounds rely on Inspector locked counts.
+   Proposal/diagnostic collision order is authored base → proposal ghost/dual
+   stroke → selection cue → topmost semantic diagnostic marker; selecting a
+   proposal/finding preserves its uncommitted/severity identity.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

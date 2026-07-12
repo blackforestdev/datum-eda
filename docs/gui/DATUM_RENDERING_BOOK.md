@@ -164,6 +164,26 @@ selection/active only.
   language, appear in the `rendering-study.html` icon contact sheet, and pass
   same-size prototype/HUMAN review. A missing governed glyph disables the glyph
   cue rather than authorizing a visually divergent fallback.
+
+### 2.6 Proposal, diagnostic, and selection compositing **[LOCKED]**
+
+The channels remain orthogonal and simultaneously legible:
+
+1. authored material/semantic geometry is the base;
+2. proposed geometry retains its governed ghost/dual-stroke treatment;
+3. selection retains its owned-object brightening/internal-glow/crisp cue; and
+4. diagnostic markers render topmost with their semantic warning/error shape
+   and colour.
+
+- Selection of authored geometry does not hide an overlapping proposal; a
+  proposal cannot cover or replace the authored selection boundary.
+- Selecting a proposal preserves its uncommitted proposal/ghost identity and
+  adds the selection cue; it MUST NOT masquerade as committed authored geometry.
+- Selecting a diagnostic preserves the semantic-coloured marker core and adds
+  the selection cue around the marker. Selection MUST NOT recolor diagnostic
+  severity into plain magenta.
+- Shape/pattern carries the distinction in addition to hue, including under
+  high-contrast and colour-vision-deficiency review.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

@@ -581,6 +581,14 @@ The padlock is blocked on visual-system governance: `icon_set.json` declaration,
 the Rendering Book 24px/1.7-stroke/round-cap language, icon-contact-sheet entry,
 and HUMAN prototype review are prerequisites; no Unicode/one-off fallback.
 
+Proposal, diagnostic, and selection are orthogonal channels. Authored geometry
+is the base; proposed geometry retains its ghost/dual stroke; selection remains
+an identifiable object-shaped brightening/glow/cue; diagnostic marker shape and
+semantic hue render topmost. Selecting a proposal or diagnostic adds selection
+without erasing uncommitted/severity identity. No channel may recolor another
+into plain selection magenta, and proposal overlap cannot erase an authored
+selection boundary.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the

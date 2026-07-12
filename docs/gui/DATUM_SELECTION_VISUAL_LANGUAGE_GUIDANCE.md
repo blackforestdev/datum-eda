@@ -49,6 +49,11 @@ anchor padlock for selected/hovered objects. The glyph cannot ship until declare
 in `icon_set.json`, aligned with and added to the Rendering Study contact sheet,
 and visually reviewed; dense compounds rely on greying plus Inspector count.
 
+Owner-ratified collision rule: authored base → proposal ghost/dual stroke →
+selection cue → topmost diagnostic marker. Selecting proposal/diagnostic adds
+selection without erasing proposal status or semantic severity; shape/pattern
+keeps every channel distinct beyond hue.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

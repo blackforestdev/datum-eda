@@ -205,12 +205,16 @@ a small anchor padlock when selected/hovered. The glyph is gated by icon-set
 declaration, the Rendering Study contact sheet/style, and HUMAN review; dense
 compounds avoid repeated-icon clutter and report counts in Inspector.
 
+Owner decision closed 2026-07-12: authored base, proposal ghost/dual stroke,
+selection cue, then topmost semantic diagnostic marker. Selecting a proposal or
+diagnostic adds selection without erasing proposal/severity identity; no channel
+is flattened into plain magenta.
+
 Still required:
 
-1. Proposal/diagnostic/selection collision precedence.
-2. Bus ownership/expansion.
-3. Standalone text and point-object treatments.
-4. Dense-selection attenuation/budget fallback.
+1. Bus ownership/expansion.
+2. Standalone text and point-object treatments.
+3. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 
