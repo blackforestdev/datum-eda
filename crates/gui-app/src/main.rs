@@ -500,6 +500,11 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::KeyboardInput { event, .. }
+                if self
+                    .runtime
+                    .as_mut()
+                    .is_some_and(|runtime| runtime.handle_pan_key(&event)) => {}
+            WindowEvent::KeyboardInput { event, .. }
                 if self.runtime.as_ref().is_some_and(|runtime| {
                     terminal_raw_input_should_handle(
                         runtime.terminal_accepts_raw_input(),
@@ -587,11 +592,6 @@ impl ApplicationHandler for App {
                     self.request_redraw_if_needed();
                 }
             }
-            WindowEvent::KeyboardInput { event, .. }
-                if self.runtime.as_mut().is_some_and(|runtime| {
-                    runtime.workspace().ui.active_dock_tab.is_none()
-                        && runtime.handle_pan_key(&event)
-                }) => {}
             WindowEvent::KeyboardInput {
                 event: KeyEvent {
                     logical_key: Key::Named(NamedKey::Escape),
