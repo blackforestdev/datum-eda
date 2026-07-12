@@ -424,13 +424,32 @@ The compound Inspector's ratified editable baseline is:
 - **Group:** creates the persistent authored `Group XXX` described above.
 
 Derived bounds, counts, and coverage remain legible even when not editable.
+The Inspector provides an explicit scope selector without changing canvas
+selection: `All N` followed by per-type scopes such as `Parts 8`, `Traces 4`, or
+`Symbols 6`. `All N` exposes only typed semantic properties applicable to every
+member. A per-type scope deliberately narrows the target set and may expose
+additional compatible properties for that type; every proposed edit states its
+scope and affected count (for example, `Set DNP on 8 of 12 selected objects`).
+Returning to `All N` restores the compound view with the same selection.
+
+A common value renders normally; divergent values render explicitly as
+`Mixed`, never as blank or an arbitrary member's value. Replacing `Mixed` with a
+concrete value is an intentional request to assign that value to every member of
+the declared scope. Compatibility is based on typed semantic property identity,
+value domain, units, and mutation verb—not a coincidentally shared display
+label. A field is unavailable when the complete declared scope cannot accept it.
+
+Every batch edit preflights its complete declared scope and commits as one typed
+atomic operation with undo/redo. Locked, stale, incompatible, constrained, or
+otherwise invalid members cause an explained whole-operation refusal; Datum
+MUST NOT silently skip them. DNP remains semantically distinct from Exclude from
+BOM, Exclude from Board, Exclude from Simulation, and variant fitted/not-fitted
+state.
+
 Further compatible batch attributes are an intended extension point rather than
-an excuse for partial mutation. For example, multiple PCB parts may support an
-atomic do-not-populate change. Every such field requires a typed operation,
-whole-selection applicability/preflight, undo/redo, and an explicit governed
-contract; an incompatible or mixed selection MUST NOT silently skip members.
-The high-value v1 batch-attribute inventory remains open for focused product
-research and owner review.
+an excuse for partial mutation. The high-value v1 inventory remains open for a
+broader research pass across PCB, schematic, library, variant/manufacturing,
+text/graphics, connectivity, and persistent-group surfaces before owner review.
 
 #### 2.2.11 Cross-workspace projection and GUI mutation authority
 
