@@ -252,7 +252,9 @@ impl ApplicationHandler for App {
             )
             .unwrap_or_else(|err| fatal_gui_error(event_loop, "window creation failed", err));
         append_gui_diagnostic_line("window created");
-        window.set_ime_allowed(true);
+        // Hold chords require raw press/release events; focused rich-text fields
+        // may opt into IME explicitly when that ownership model lands.
+        window.set_ime_allowed(false);
         let window_ref: &'static Window = Box::leak(Box::new(window));
         append_gui_diagnostic_line("runtime creation begin");
         let runtime = pollster::block_on(Runtime::new(

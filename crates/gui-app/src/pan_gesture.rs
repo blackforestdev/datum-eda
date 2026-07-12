@@ -56,7 +56,8 @@ impl Runtime {
     pub(super) fn finish_primary_pan(&mut self) -> bool {
         let suppress_click = self.pan_gesture.primary_released();
         append_gui_verbose_diagnostic_line(format!(
-            "pan primary released suppress_click={suppress_click}"
+            "pan primary released cursor={:?} suppress_click={suppress_click}",
+            self.last_cursor_pos
         ));
         suppress_click
     }
