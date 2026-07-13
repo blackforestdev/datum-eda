@@ -54,6 +54,11 @@ selection cue → topmost diagnostic marker. Selecting proposal/diagnostic adds
 selection without erasing proposal status or semantic severity; shape/pattern
 keeps every channel distinct beyond hue.
 
+Owner-ratified small-object rule: standalone text treats actual glyphs without a
+persistent box; junction/via retain semantic/material core and add a ring/glow;
+no-connect treats its full X; Symbol Editor pin treats complete pin presentation.
+Low-zoom/high-contrast fallbacks use minimum crisp screen-space cues.
+
 ## Architecture correction
 
 S5 must migrate PCB selected recoloring/weight out of retained authored buffers

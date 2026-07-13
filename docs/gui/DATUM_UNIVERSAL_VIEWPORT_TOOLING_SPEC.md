@@ -598,6 +598,15 @@ without erasing uncommitted/severity identity. No channel may recolor another
 into plain selection magenta, and proposal overlap cannot erase an authored
 selection boundary.
 
+Standalone text selection follows actual rendered glyph geometry—no persistent
+generic bbox—with edit handles only under the text tool and a low-zoom minimum
+cue at the authored anchor. Point selections preserve semantic cores: junction
+wire-coloured center + accent ring/glow; no-connect complete X/flag; via material
+and drill void + silhouette ring/glow. Symbol Editor pin selection treats the
+complete stub/terminal/name/number without siblings/body. Tiny/high-contrast
+fallbacks are crisp screen-space rings/outlines that never alter authored/hit
+geometry.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the

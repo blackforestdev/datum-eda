@@ -214,10 +214,14 @@ Owner decision closed 2026-07-12: bus click depth is local section → connected
 run → semantic hierarchical bus. Spine, owned name/label, and attached entries
 project as one subject; scalar member nets remain independent.
 
+Owner decision closed 2026-07-12: text treats actual glyphs without a persistent
+bbox; junction/via preserve semantic/material core plus ring/glow; no-connect
+treats its complete X/flag; Symbol Editor pin treats stub/terminal/name/number;
+tiny/high-contrast cases use minimum crisp screen-space cues.
+
 Still required:
 
-1. Standalone text and point-object treatments.
-2. Dense-selection attenuation/budget fallback.
+1. Dense-selection attenuation/budget fallback.
 
 ## Primary Datum sources
 

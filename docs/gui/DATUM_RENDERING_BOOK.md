@@ -192,6 +192,24 @@ The channels remain orthogonal and simultaneously legible:
   severity into plain magenta.
 - Shape/pattern carries the distinction in addition to hue, including under
   high-contrast and colour-vision-deficiency review.
+
+### 2.7 Text and point-object selection **[LOCKED]**
+
+- Standalone text brightens its actual rendered glyph geometry and receives the
+  internal glow; no persistent generic layout rectangle is drawn. Layout bounds
+  remain hit/region-qualification geometry only. Anchor/rotation/resize handles
+  appear solely while the text-edit tool is active. At low zoom, a minimum
+  screen-space cue appears at the authored text anchor without enlarging glyphs.
+- A selected junction preserves its filled wire-coloured center and adds a crisp
+  accent outer ring/internal glow. A no-connect marker treats the complete X/flag
+  without selecting its parent symbol. A via preserves material colour and drill
+  void with the cue around its actual silhouette.
+- In the Symbol Editor, an independently selected pin treats its complete stub,
+  terminal, name, and number while sibling pins and symbol body remain normal.
+- Tiny point objects receive a minimum screen-space cue without changing authored
+  geometry or hit bounds. High-contrast mode uses crisp rings/outlines rather
+  than relying on glow. These forms preserve the visual distinction between
+  junction, terminal, via, and no-connect even while selected.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

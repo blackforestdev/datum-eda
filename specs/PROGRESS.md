@@ -206,6 +206,9 @@
    proposal/finding preserves its uncommitted/severity identity.
    Bus selection is section → connected run → semantic hierarchical bus; owned
    spine/name/entries project together while scalar member nets remain independent.
+   Standalone text uses glyph selection without a persistent bbox; point objects
+   preserve semantic cores/silhouettes with crisp low-zoom/high-contrast cues,
+   and Symbol Editor independent pins treat stub/terminal/name/number only.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in
