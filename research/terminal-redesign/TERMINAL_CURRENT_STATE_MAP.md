@@ -187,7 +187,7 @@ conflates:
 - **`dat-pan-invocation-decision`** — unchanged; independent viewport decision.
 
 ## The real structural insight for the redesign
-The board-text CLI-string-into-PTF path and the "output lane" instinct are the same
+The board-text CLI-string-into-PTY path and the "output lane" instinct are the same
 mistake from two directions: **treating the shell as the app's I/O bus.** Doctrine's
 answer already exists on paper — the **Command Console** (in) + **typed Operations /
 `commit()`** (write) + **files-and-viewers** (out) — it's just unbuilt, so the terminal

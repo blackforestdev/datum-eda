@@ -102,7 +102,7 @@ damage set drives which rows re-emit.
 - **`portable-pty` swap** (retain thin `killpg`).
 - Stand up the **`Grid → (Quad, TextRun)` render interface** and the font-measured cell
   metric — even over the current model first, to lock the interface.
-- Route **Codex's pan-trace out of the PTF screen** (`dat-pan-trace-terminal-pollution`) —
+- Route **Codex's pan-trace out of the PTY screen** (`dat-pan-trace-terminal-pollution`) —
   a doctrine fix regardless of the rest.
 
 **Phase 1 — The cell grid (the core build):**
