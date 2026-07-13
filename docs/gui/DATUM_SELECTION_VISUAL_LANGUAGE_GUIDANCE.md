@@ -95,6 +95,10 @@ with overlay-retention evidence rather than treated as final behavior.
   geometry.
 - Visible overlay emission must be deterministic and bounded; large selections
   cannot silently truncate.
+- Owner-ratified dense-selection policy: 65,536 detailed overlay primitives per
+  pane/frame, sub-2px minimum cues, then whole-pane exact union-mask fallback.
+  Large screen coverage may reduce soft glow only; crisp cue/material identity
+  and complete membership remain.
 
 ## Decision posture
 

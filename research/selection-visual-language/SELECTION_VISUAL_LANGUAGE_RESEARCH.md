@@ -219,9 +219,16 @@ bbox; junction/via preserve semantic/material core plus ring/glow; no-connect
 treats its complete X/flag; Symbol Editor pin treats stub/terminal/name/number;
 tiny/high-contrast cases use minimum crisp screen-space cues.
 
+Owner decision closed 2026-07-12: dense/global/panelized selections cull first,
+simplify sub-2px objects, allow 65,536 detailed overlay primitives per pane/frame,
+then switch the entire pane to an exact visible-silhouette union mask. No partial
+truncation/bbox; high coverage reduces soft glow only; 100k fixture governs.
+
 Still required:
 
-1. Dense-selection attenuation/budget fallback.
+All visual design forks identified by this research have owner direction. The
+remaining work is specification reconciliation, prototype/reference confirmation,
+and enforceable conformance closure.
 
 ## Primary Datum sources
 

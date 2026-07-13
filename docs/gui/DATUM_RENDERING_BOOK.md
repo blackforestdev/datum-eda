@@ -210,6 +210,26 @@ The channels remain orthogonal and simultaneously legible:
   geometry or hit bounds. High-contrast mode uses crisp rings/outlines rather
   than relying on glow. These forms preserve the visual distinction between
   junction, terminal, via, and no-connect even while selected.
+
+### 2.8 Dense, global, and panelized selection LOD **[LOCKED]**
+
+- Selection rendering culls hidden, offscreen, and pane-clipped projections
+  first without changing membership. A selected object projected below two
+  physical pixels uses one minimum point cue rather than detailed glow.
+- Normal class-specific cues emit at most **65,536 detailed overlay primitives
+  per pane per frame**. If the complete visible selection would exceed the
+  budget, the whole pane switches atomically to an exact screen-space union mask
+  of visible selected silhouettes. It MUST NOT draw an arbitrary partial subset
+  or substitute a bounding rectangle.
+- When selected coverage occupies a large share of the pane, the soft glow
+  radius/opacity reduces deterministically while the crisp 2px cue and authored
+  material/layer colours remain. Exact coverage knees are implementation-tuning
+  values that require benchmark + HUMAN visual evidence; they cannot change
+  membership or the 65,536 hard budget.
+- Inspector reports complete selection count and aggregate visual-LOD state.
+  Selection-mask/LOD changes update only post-world overlay resources and reuse
+  warm buffers. A representative 100,000-object/panelized fixture governs
+  deterministic fallback, capacity stability, and zero unbounded growth.
 - **Symbol standard — LOCKED: IEC 60617 rectangular.** The resistor — and the IEC
   rectangular convention generally — is the Datum house standard: cleaner,
   grid-aligned, and international. ANSI/IEEE 315 zigzag is **not** the canonical

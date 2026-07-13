@@ -209,6 +209,10 @@
    Standalone text uses glyph selection without a persistent bbox; point objects
    preserve semantic cores/silhouettes with crisp low-zoom/high-contrast cues,
    and Symbol Editor independent pins treat stub/terminal/name/number only.
+   Dense/global/panelized selection is capped at 65,536 detailed overlay
+   primitives per pane/frame after sub-2px simplification, then switches the
+   complete pane to an exact visible-silhouette union mask—never partial/bbox;
+   a 100k-object fixture will gate deterministic bounded behavior.
    The global bottom
    strip is now canonically named the **Application Status Bar**; its information
    role has completed focused proximity/attention research in

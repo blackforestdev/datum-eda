@@ -607,6 +607,15 @@ complete stub/terminal/name/number without siblings/body. Tiny/high-contrast
 fallbacks are crisp screen-space rings/outlines that never alter authored/hit
 geometry.
 
+Dense/global/panelized selection uses a deterministic per-pane LOD. Cull hidden,
+offscreen, and clipped projections; simplify sub-2-physical-pixel objects to one
+minimum cue; emit at most **65,536 detailed overlay primitives per pane/frame**.
+Overflow switches the entire pane to an exact screen-space union mask of all
+visible selected silhouettes—never partial truncation or a bbox. High screen
+coverage reduces only soft-glow radius/opacity while preserving crisp cue and
+authored colours. Inspector reports complete count + aggregate LOD. A 100k-object
+fixture gates deterministic fallback, warm-buffer reuse, and bounded capacity.
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the
