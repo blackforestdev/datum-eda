@@ -39,7 +39,7 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
       "dependencies": [],
@@ -596,9 +596,9 @@
         "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Make the human task-detail output a verbatim response contract with fixed order and explicit one-active-step, no-inferred-parallelism semantics.",
       "dependencies": [],
@@ -611,56 +611,56 @@
           {
             "id": "DP-C01",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Encode one-active-step and no-inferred-parallelism execution semantics.",
             "depends_on": [],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C01"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           },
           {
             "id": "DP-C02",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Encode verbatim stdout, fixed order and numbering, no regrouping, and no supplementation presentation semantics.",
             "depends_on": ["DP-C01"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C02"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           },
           {
             "id": "DP-C03",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Expose identical execution and presentation policies in human and JSON task details.",
             "depends_on": ["DP-C02"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C03"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           },
           {
             "id": "DP-C04",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Require agents to return task-detail stdout byte-for-byte for ordinary completion-step queries.",
             "depends_on": ["DP-C03"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C04"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           },
           {
             "id": "DP-C05",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Lock exact rendered order and wording and reject weakened policies with hermetic tests.",
             "depends_on": ["DP-C03", "DP-C04"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C05"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           },
           {
             "id": "DP-C06",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Run governance and source-health gates, close this correction with proof, and explicitly restore S5 as canonical next.",
             "depends_on": ["DP-C05"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C06"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
           }
         ],
         "post_completion": {
@@ -671,17 +671,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
-        "claimed_at": "2026-08-13T19:36:32Z",
-        "heartbeat_at": "2026-08-13T19:36:32Z",
-        "expires_at": "2026-08-14T03:36:32Z",
-        "scope": ["canonical task-detail presentation contract"],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "e12b7a41136347e43c3ef261d8db1d64805df31a"
-      }
+      "landing_commit": "b5e065810e5ef0b2700742c32f08526518a77223"
     }
   ]
 }
