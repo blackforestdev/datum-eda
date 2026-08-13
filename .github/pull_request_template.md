@@ -20,11 +20,16 @@
       extraction (no `include!`, forwarding, continuation, or compression-only split).
 - [ ] No new source file exceeds its decision-022 normal budget and no new
       legacy-ledger entry was added.
+- [ ] If roadmap or tracker state changed: `active_frontier.json`, its generated
+      `PROGRESS.md` projection, beads export, governing docs, and claim/closure
+      evidence were synchronized under decision 025.
 - [ ] If lane state is `closed` or `blocked-awaiting-contract`: this PR includes one explicit next branch decision (`define-contract` or `switch-slice`) and does not continue same-lane exploratory audit work.
 - [ ] If lane state is `blocked-awaiting-contract`: this PR includes a single `fallback_slice` target.
 - [ ] I ran required local gates:
   - `python3 scripts/test_source_health_governance.py`
   - `python3 scripts/check_source_health.py --base-ref <trusted-base-sha>`
+  - `python3 scripts/test_project_status.py`
+  - `python3 scripts/project_status.py check`
   - `bash scripts/run_drift_gates.sh`
   - `cargo test --workspace`
 

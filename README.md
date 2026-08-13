@@ -49,8 +49,11 @@ Product flow and roadmap sequencing follow one native authority:
 
 Controlling product doctrine: `docs/DATUM_PRODUCT_MECHANICS.md`, the decision
 records in `docs/decisions/` (including `PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR`),
-and the per-domain tool contracts in `docs/contracts/`. Status sources of truth:
-[`specs/PROGRESS.md`](specs/PROGRESS.md) and `specs/SPEC_PARITY.md`.
+and the per-domain tool contracts in `docs/contracts/`. The scheduled roadmap
+authority is [`specs/active_frontier.json`](specs/active_frontier.json), rendered
+for people in [`specs/PROGRESS.md`](specs/PROGRESS.md); obtain the deterministic
+next task with `python3 scripts/project_status.py next`. Implementation inventory
+parity remains in `specs/SPEC_PARITY.md`.
 
 Canonical scope terminology is defined in
 [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) (`Product identity`,

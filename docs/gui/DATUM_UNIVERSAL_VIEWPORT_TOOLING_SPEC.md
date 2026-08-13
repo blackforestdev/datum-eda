@@ -641,10 +641,12 @@ owner review and a numbered selection-identity decision ratify this mechanism.
 
 #### 2.2.15 Still open before final review
 
-The continuing owner review must still resolve at least: Inspector/status/
-terminal projection for multiple members; hover-versus-selection visual
-precedence; bounded rectangle/lasso query and exhaustion behavior; model-
-revision/object-deletion lifetime; and exact conformance tests. The final review
+The continuing owner review must still resolve Inspector/terminal projection
+for multiple members (the Application Status Bar itself is a separate deferred
+owner decision), bounded rectangle/lasso query and exhaustion behavior, model-
+revision/object-deletion lifetime, and exact conformance tests. Selection-over-
+hover visual precedence is already locked in §2.2.13 and is not an open choice.
+The final review
 will reconcile the older M7 singleton wording, P2.3 cross-probe, the Layer-2
 selection-identity decision boundary, and the §4 overlay language before S5 is
 authorized.

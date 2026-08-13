@@ -49,7 +49,7 @@ they support the product; they do not define its identity.
   `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..023`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..025`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -78,17 +78,21 @@ change you MUST:
    unblocks, and its state. A spec describing future work that does not appear in
    the Active Frontier is not done being written.
 
-**Roadmap wayfinding (the bullseye rule).** The single canonical answer to
-"what is the next logical development step / specification?" is the **Active
-Frontier** at the top of `specs/PROGRESS.md` — an ordered, dependency-aware list
-whose every entry links to its governing spec/decision. A freshly spawned agent
-must be able to read that section *alone* and return the correct next step.
-Before proposing or starting work, read the Active Frontier; before finishing any
-spec or course-correction, update it. Roadmap intent lives in ONE place — the
-Frontier links down to detail; other docs (including this file's "Current Status"
-and PROGRESS's lower sections) must not restate the next-step ordering as a rival
-copy that drifts. If your work will not place cleanly into the Frontier, the
-sequencing is wrong — fix that before writing more prose.
+**Roadmap wayfinding (the bullseye rule).** Decision 025 makes
+`specs/active_frontier.json` the canonical structured roadmap. The Active
+Frontier at the top of `specs/PROGRESS.md` is its generated human projection.
+The single canonical answer to "what is the next logical development task?" is:
+
+```bash
+python3 scripts/project_status.py next
+```
+
+Run it before proposing or claiming work; it validates the roadmap against
+beads, governing documents, dependencies, authorization, and claim freshness.
+Never infer the answer from `br ready`, recent commits, issue priority, or prose
+outside the generated Frontier. Update the manifest and regenerate the projection
+in the same change as any roadmap change. Other docs, including this file's
+"Current Status" and PROGRESS's lower sections, must not restate rival ordering.
 
 Behavioral invariants are enforced by the PG-* proof gates
 (`run_migration_proof_gates.sh`) and the write-fence gates
@@ -106,16 +110,17 @@ the higher layer wins and the lower doc is the one to fix):
 
 ## Current Status
 The project has been course-corrected from a milestone-driven roadmap to the
-product-mechanics model above. Status sources of truth: `specs/PROGRESS.md`,
+product-mechanics model above. Status sources of truth: the structured
+`specs/active_frontier.json`, its generated `specs/PROGRESS.md` projection,
 `specs/SPEC_PARITY.md` (machine-checked inventory shapes), and the
 product-mechanics docs.
 
-- **Active focus:** GUI product-model recovery toward a testable program
+- **Active product area:** GUI product-model recovery toward a testable program
   (decision 019) — the recovered application shell, board-render fidelity, and
   the GUI→engine write path that lets menu/editor actions author typed operations
-  directly (not terminal CLI strings). **The authoritative, ordered next steps
-  are the Active Frontier at the top of `specs/PROGRESS.md`; read that, don't
-  re-derive the roadmap from this prose.** Its foundation, the product-mechanics
+  directly (not terminal CLI strings). This is product context, not task
+  ordering; use `python3 scripts/project_status.py next` for the current task.
+  Its foundation, the product-mechanics
   **substrate** (typed `Operation` enum + single `commit()` + journal +
   `ProjectResolver` + stable `ObjectId`/`ComponentInstance` +
   `model_revision` + Import Map), is now the **universal native write
@@ -317,7 +322,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..023 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..025 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +
@@ -356,7 +361,8 @@ project/
 │   └── gui-app/            # winit shell for the GUI
 ├── mcp-server/             # MCP server (Python, talks to engine via IPC)
 ├── specs/                  # Controlling formal specifications
-│   ├── PROGRESS.md         # Authoritative status tracker (current vs target)
+│   ├── active_frontier.json # Canonical scheduled roadmap + next-task state
+│   ├── PROGRESS.md         # Generated Frontier + implementation evidence
 │   ├── SPEC_PARITY.md + spec_parity_manifest.json  # Code-derived inventory
 │   │                       #   digests (gated by check_spec_parity.py)
 │   ├── PROGRAM_SPEC.md / INTEGRATED_PROGRAM_SPEC.md / ENGINE_SPEC.md

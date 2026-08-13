@@ -70,12 +70,25 @@ br sync --flush-only                         # export DB -> issues.jsonl (before
 ### The tracker is intake, not the roadmap
 
 `br` is the backlog/pool. The single canonical answer to "what is the next
-development step" remains the **Active Frontier** at the top of
-`specs/PROGRESS.md` (the bullseye rule in `CLAUDE.md`). When a tracked item
+development task" is returned by the decision-025 project-state selector:
+
+```bash
+python3 scripts/project_status.py next
+```
+
+The selector validates `specs/active_frontier.json` against the generated
+Active Frontier in `specs/PROGRESS.md`, `.beads/issues.jsonl`, governing docs,
+hard blockers, authorization, and claim freshness. `br ready` reports tracker
+availability only; it never determines roadmap order. When a tracked item
 graduates into committed work — especially anything that ratifies mechanism or
 touches a spec — it still gets its Frontier placement and the full spec
 governance (`specs/PROGRESS.md` row, manifest classification, decision record if
 it ratifies mechanism). Link the issue to the spec/decision it feeds.
+
+Claim scheduled work by updating both the Frontier claim lease and the beads
+status/assignee in one transaction, then export with `br sync --flush-only`.
+An assignee without a valid unexpired Frontier claim is not live ownership. See
+`docs/PROJECT_STATE_POLICY.md`.
 
 ---
 

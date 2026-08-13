@@ -6,8 +6,11 @@ This file is the execution plan and sequencing guide.
 It is not a live status ledger.
 
 Status source of truth:
-- `specs/PROGRESS.md` is the only authoritative status tracker.
-- Status changes must be recorded in `specs/PROGRESS.md` first.
+- `specs/active_frontier.json` is the canonical scheduled roadmap and next-task
+  authority; query it through `python3 scripts/project_status.py next`.
+- The Active Frontier in `specs/PROGRESS.md` is generated from that manifest.
+- Roadmap changes must update the manifest, beads, and generated projection in
+  the same change under decision 025.
 - This file may describe planned execution order and priorities, but must not
   introduce independent completion claims.
 - If `PLAN.md` conflicts with `specs/PROGRESS.md` or `specs/progress/*.md`,
@@ -52,28 +55,30 @@ Structural debt retirement was tracked in `docs/STABILIZATION_PLAN.md` (now
 historical). The size-budget gate system behind it was retired 2026-07-02;
 decomposition is now organic and governance-triggered, not gate-scheduled.
 
-## Active Execution Window
+## Product Execution Posture
 
-Current focus (post-correction, committed course): the canonical mutation
+Committed product course: the canonical mutation
 substrate (typed `Operation` + single `commit()` + journal +
 `ProjectResolver`) has landed and write-surface convergence is COMPLETE — the
 engine native-write facade authors every native operation batch (see
-`specs/PROGRESS.md`). On that substrate, the active product frontier is
+`specs/PROGRESS.md`). On that substrate, the product direction is
 **native authoring**: governed library → schematic capture → PCB layout →
 manufacturing output, with full AI augmentation through the same
-deterministic primitives.
+deterministic primitives. This posture does not choose the current task; the
+decision-025 selector does.
 
 Boundaries of the window:
 1. KiCad import is FROZEN. The M7 spike imports a board with sufficient
    fidelity; import is a one-time converter, not a fidelity track, and never
    gates native maturity.
-2. The GUI editor (interactive authoring in the GUI, wired to the engine) is
-   a named later phase of the committed sequence — real, but after the
-   native-authoring foundation (substrate convergence is done).
+2. The GUI editor (interactive authoring in the GUI, wired to the engine) is a
+   real named product phase. Its specification, read-only surfaces, shared
+   tooling, and write-path prerequisites may be scheduled alongside native
+   foundation work only as recorded in the structured Frontier.
 3. Legacy milestones stay closed/frozen: `M0`–`M5` closed for scope, `M6`
    strategy reporting frozen pending evidence runs; regression fixes only.
-4. Use `specs/PROGRESS.md` as the source for the next bounded slice; do not
-   let local worktree momentum redefine roadmap priority.
+4. Use `python3 scripts/project_status.py next` for the next bounded slice; do
+   not let local worktree momentum redefine roadmap priority.
 
 Tier A substrate close-out and Tier B library foundation are tracked in
 `specs/PROGRESS.md`: component-instance proposal twins are the governed

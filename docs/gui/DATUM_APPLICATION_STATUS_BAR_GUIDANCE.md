@@ -1,6 +1,6 @@
 # Datum Application Status Bar Guidance
 
-Status: governed research-derived guidance; owner decision open
+Status: governed research-derived guidance; owner decision deferred
 
 Research basis:
 `research/application-status-bar/APPLICATION_STATUS_BAR_RESEARCH.md`.
@@ -54,5 +54,7 @@ and narrow-window review. Any pane-derived global field must identify its owner.
 ## Decision posture
 
 Research favors either removal or a minimal independently hideable global bar,
-not a dense CAD-style toggle dashboard. Owner review must choose the bar's
-retention and contents before S5 status reporting is specified or implemented.
+not a dense CAD-style toggle dashboard. The owner decision is deliberately
+deferred (`dat-application-status-bar-decision-qcz`); S5 selection work may
+continue, but no change to the bar's retention or contents may be implemented
+until that issue is explicitly resumed and resolved.

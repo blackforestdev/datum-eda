@@ -77,7 +77,7 @@ The recovered GUI shell must include:
 - checks/issues panel;
 - manufacturing/output panel;
 - bottom or side terminal area with real PTY sessions;
-- Application Status Bar candidate (retention and contents reopened under
+- Application Status Bar candidate (retention and contents deferred under
   `DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md`); selection, coordinates, and active
   tool MUST remain legible near their engaged pane regardless, while model/check/
   background state needs a durable global route whether or not the strip remains.

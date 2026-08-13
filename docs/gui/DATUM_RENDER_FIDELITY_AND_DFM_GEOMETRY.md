@@ -115,7 +115,7 @@ manufacturing envelope — not luck, and not user effort.
 
 ## Roadmap placement (un-orphaned)
 
-- **Active Frontier step 6 (native authoring depth)** owns the DFM Geometry Solver
+- **Frontier `NATIVE-AUTHORING`** owns the DFM Geometry Solver
   as a named dependency; it depends on the routing kernel (done), the
   `ImpedanceSpec` solver (deferred), and the Rendering Book defaults.
 - **This doc is the foundation the Datum Rendering Book builds on.** The Rendering

@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+  "claim_ttl_hours": 8,
+  "frontier": [
+    {
+      "key": "STATE-ALIGNMENT",
+      "order": 0,
+      "title": "Align project-state authority and tooling",
+      "issue_id": "dat-project-management-alignment-pua",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+        "docs/PROJECT_STATE_POLICY.md",
+        "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md"
+      ],
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance.",
+      "dependencies": [],
+      "unblocks": ["one reproducible roadmap answer for every agent"],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
+        "claimed_at": "2026-08-13T18:18:03Z",
+        "heartbeat_at": "2026-08-13T18:31:52Z",
+        "expires_at": "2026-08-14T02:31:52Z",
+        "scope": ["project-state governance, manifests, tracker reconciliation, and validation tooling"],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "f94b45fa0f91c76b999b2cf141bd2d777c242ff1"
+      }
+    },
+    {
+      "key": "UVT-S5-SPEC",
+      "order": 1,
+      "title": "Complete the S5 selection contract and identity decision",
+      "issue_id": "dat-s5-selection-visual-contract-zid",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+        "docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md"
+      ],
+      "state": "specified",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized.",
+      "dependencies": [],
+      "unblocks": ["UVT S5A execution", "GUI Phase 2 P2.3 cross-probe"]
+    },
+    {
+      "key": "TERMINAL-EPIC",
+      "order": 2,
+      "title": "Deliver the native terminal emulator",
+      "issue_id": "dat-terminal-emulator-epic-jzv",
+      "related_issue_ids": [
+        "dat-terminal-focus-authority-6aw",
+        "dat-terminal-dual-input-model-75y",
+        "dat-pan-trace-terminal-pollution-0j0",
+        "dat-terminal-emulator-epic-jzv.1",
+        "dat-terminal-emulator-epic-jzv.2",
+        "dat-terminal-emulator-epic-jzv.3",
+        "dat-terminal-emulator-epic-jzv.4",
+        "dat-terminal-emulator-epic-jzv.5",
+        "dat-terminal-emulator-epic-jzv.6"
+      ],
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "planned",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain.",
+      "dependencies": [],
+      "unblocks": ["trustworthy embedded shell and agent surface"]
+    },
+    {
+      "key": "TERMINAL-P0-FOCUS",
+      "order": 3,
+      "title": "Establish terminal keyboard-focus authority",
+      "issue_id": "dat-terminal-focus-authority-6aw",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
+      ],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect.",
+      "dependencies": [],
+      "unblocks": ["terminal Phase 1 barrier"]
+    },
+    {
+      "key": "TERMINAL-P0-INPUT",
+      "order": 4,
+      "title": "Collapse the rival terminal input models",
+      "issue_id": "dat-terminal-dual-input-model-75y",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only.",
+      "dependencies": [],
+      "unblocks": ["terminal Phase 1 barrier"]
+    },
+    {
+      "key": "TERMINAL-P0-DIAGNOSTICS",
+      "order": 5,
+      "title": "Remove pan diagnostics from the PTY screen",
+      "issue_id": "dat-pan-trace-terminal-pollution-0j0",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+        "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md"
+      ],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Stop application diagnostics from corrupting the foreign-shell PTY presentation.",
+      "dependencies": [],
+      "unblocks": ["terminal Phase 1 barrier"]
+    },
+    {
+      "key": "TERMINAL-P0-PTY",
+      "order": 6,
+      "title": "Replace the hand-rolled PTY with portable-pty",
+      "issue_id": "dat-terminal-emulator-epic-jzv.1",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Swap unsafe libc PTY setup for portable-pty while retaining process-group signal behavior.",
+      "dependencies": [],
+      "unblocks": ["terminal Phase 1 barrier"]
+    },
+    {
+      "key": "TERMINAL-P0-RENDER",
+      "order": 7,
+      "title": "Stand up the terminal grid render interface",
+      "issue_id": "dat-terminal-emulator-epic-jzv.2",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Lock the Grid-to-Quad/TextRun boundary and font-measured cell metrics before replacing the backing state model.",
+      "dependencies": [],
+      "unblocks": ["terminal Phase 1 cell grid"]
+    },
+    {
+      "key": "TERMINAL-P1-GRID",
+      "order": 8,
+      "title": "Build the terminal cell-grid state model",
+      "issue_id": "dat-terminal-emulator-epic-jzv.3",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Replace the string/RLE terminal state with a lossless attributed cell grid after every mandatory Phase 0 task lands.",
+      "dependencies": [
+        "dat-pan-trace-terminal-pollution-0j0",
+        "dat-terminal-dual-input-model-75y",
+        "dat-terminal-emulator-epic-jzv.1",
+        "dat-terminal-emulator-epic-jzv.2",
+        "dat-terminal-focus-authority-6aw"
+      ],
+      "unblocks": ["terminal Phase 2", "terminal Phase 4"]
+    },
+    {
+      "key": "TERMINAL-P2-WIDTH",
+      "order": 9,
+      "title": "Add Unicode width and scrollback separation",
+      "issue_id": "dat-terminal-emulator-epic-jzv.4",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Add grapheme-aware cell width, bounded scrollback, and correct alternate-screen behavior after the cell grid lands.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.3"],
+      "unblocks": ["terminal Phase 3 reflow"]
+    },
+    {
+      "key": "TERMINAL-P3-REFLOW",
+      "order": 10,
+      "title": "Implement terminal reflow on resize",
+      "issue_id": "dat-terminal-emulator-epic-jzv.5",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Rewrap logical lines while preserving cursor, wide-cell, scroll-region, and scrollback invariants.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.4"],
+      "unblocks": ["terminal Phase 4 polish"]
+    },
+    {
+      "key": "TERMINAL-P4-POLISH",
+      "order": 11,
+      "title": "Add terminal damage tracking and protocol polish",
+      "issue_id": "dat-terminal-emulator-epic-jzv.6",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Complete the declared terminal sequence with damage tracking and bounded DEC/OSC support.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.5"],
+      "unblocks": ["terminal epic verification"]
+    },
+    {
+      "key": "CONSOLE-READONLY",
+      "order": 12,
+      "title": "Build the read-only Command Console display",
+      "issue_id": "dat-output-lane-t6v",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
+      ],
+      "state": "specified",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track.",
+      "dependencies": [],
+      "unblocks": ["visible GUI action narration and diagnostics"]
+    },
+    {
+      "key": "GUI-SURFACE-SPECS",
+      "order": 13,
+      "title": "Complete schematic and library GUI surface specifications",
+      "issue_id": "dat-gui-surface-specs-usb",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
+      "dependencies": [],
+      "unblocks": ["native schematic and library authoring surfaces"]
+    },
+    {
+      "key": "UVT-S5A-BUILD",
+      "order": 14,
+      "title": "Build UVT S5A selection and compound inspection",
+      "issue_id": "dat-uvt-s5a-build-1wv",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized.",
+      "dependencies": ["dat-s5-selection-visual-contract-zid"],
+      "unblocks": ["GUI Phase 2 P2.3 cross-probe"]
+    },
+    {
+      "key": "GUI-P2-CROSSPROBE",
+      "order": 15,
+      "title": "Build GUI Phase 2 P2.3 cross-probe",
+      "issue_id": "dat-gui-p2-cross-probe-27z",
+      "governing_docs": [
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized.",
+      "dependencies": ["dat-uvt-s5a-build-1wv"],
+      "unblocks": ["full dual-pane component inspector", "native authoring depth"]
+    },
+    {
+      "key": "GUI-P2-INSPECTOR",
+      "order": 16,
+      "title": "Build GUI Phase 2 P2.4 full inspector",
+      "issue_id": "dat-gui-p2-full-inspector-0ye",
+      "governing_docs": ["docs/gui/DATUM_GUI_PHASE_2_SPEC.md"],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands.",
+      "dependencies": ["dat-gui-p2-cross-probe-27z"],
+      "unblocks": ["complete read-only Phase 2 inspection surface"]
+    },
+    {
+      "key": "GUI-MARKING-MENU",
+      "order": 17,
+      "title": "Build the inert marking-menu shell",
+      "issue_id": "dat-marking-menu-shell-g0w",
+      "governing_docs": [
+        "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
+        "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md"
+      ],
+      "state": "specified",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
+      "dependencies": [],
+      "unblocks": ["GUI write-path menu wiring"]
+    },
+    {
+      "key": "GUI-WRITE-PATH",
+      "order": 18,
+      "title": "Enable the GUI journaled write path",
+      "issue_id": "dat-gui-write-path-qiu",
+      "governing_docs": [
+        "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution.",
+      "dependencies": ["dat-marking-menu-shell-g0w", "dat-output-lane-t6v"],
+      "unblocks": ["journaled GUI authoring", "marking-menu operation wiring"]
+    },
+    {
+      "key": "NATIVE-AUTHORING",
+      "order": 19,
+      "title": "Build native schematic and PCB authoring depth",
+      "issue_id": "dat-native-authoring-depth-sf9",
+      "governing_docs": [
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+        "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land.",
+      "dependencies": [
+        "dat-gui-p2-cross-probe-27z",
+        "dat-gui-surface-specs-usb",
+        "dat-gui-write-path-qiu"
+      ],
+      "unblocks": ["full manual native schematic-to-PCB workflow"]
+    },
+    {
+      "key": "DOC-SYSTEM-SPEC",
+      "order": 20,
+      "title": "Specify the documentation-system object model",
+      "issue_id": "dat-documentation-system-spec-y8z",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"],
+      "state": "specified",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
+      "dependencies": [],
+      "unblocks": ["schematic and fabrication documentation implementation"]
+    }
+  ]
+}

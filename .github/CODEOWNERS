@@ -13,3 +13,12 @@
 /specs/spec_parity_manifest.json @blackforestdev
 /specs/SPEC_PARITY.md @blackforestdev
 /scripts/check_spec_parity.py @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md @blackforestdev
+/docs/PROJECT_STATE_POLICY.md @blackforestdev
+/specs/active_frontier.json @blackforestdev
+/specs/PROGRESS.md @blackforestdev
+/.beads/issues.jsonl @blackforestdev
+/scripts/project_status.py @blackforestdev
+/scripts/test_project_status.py @blackforestdev
+/AGENTS.md @blackforestdev
+/CLAUDE.md @blackforestdev

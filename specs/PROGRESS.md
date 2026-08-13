@@ -15,370 +15,73 @@
 > Detail lives in the sections below — this list is the single entry point.
 > Update it in the SAME change as any spec creation or course-correction.
 
-0. **Immutable source-health governance restoration — LANDED.** Decision 022
-   restores repository-wide 700-line production/test
-   tripwires, 350-line inline-test limits, exact zero-headroom legacy ceilings,
-   merge-base downward ratchets, touched-monolith burn-down, automatic untracked
-   child discovery, and logical `include!` measurement. The operational policy,
-   comprehensive checker, hermetic checker tests, full clean-HEAD debt baseline,
-   CODEOWNERS surface, and CI/base-SHA enforcement land as one governed recovery
-   track. *Dependency:* audit of the July 2 governance retirement and July 9
-   flag-ledger replacement complete. *Unblocks:* safe continuation of every
-   feature frontier item without further silent monolith growth. *State:*
-   **LANDED:** controlling decision + operational policy, 96-path/97-metric exact
-   clean-HEAD debt ledger, tracked+untracked whole-repository discovery,
-   recursive literal-`include!` measurement, merge-base immutability and
-   touched-monolith extraction checks, 13 hermetic regressions, parity inventory,
-   CI trusted-base wiring, PR declarations, and CODEOWNERS protection. Governing:
-   decision 022 + `docs/SOURCE_HEALTH_POLICY.md`.
-1. **Deepen the GUI product specification for the surfaces not yet designed.**
-   The **board editor surface is defined and buildable** — its "how" is captured
-   in `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, the controlling visual prototype
-   `docs/gui/prototypes/board-editor.html` (pro-audio/Bitwig-Ableton idiom, built
-   from the Design Book tokens), the complete data-driven menu specification
-   (`docs/gui/menu_model.json` + `.csv`, gated by `check_menu_model.py`), the
-   context-menu system (`docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md` on
-   `research/gui-context-menus/CONTEXT_MENU_RESEARCH.md`), and the deep-verb /
-   tri-modal tooling model (`docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`). **This
-   does NOT gate step 2** — the board build has everything it needs. What remains
-   to *define* is the **other surfaces** (schematic editor, library browser) and
-   the still-open design decisions in the design spec (dock-vs-overlay,
-   `open-decisions.html`). The **Datum visual identity** for symbols/footprints/
-   silk/icons is now captured and largely locked in the **Datum Rendering Book**
-   (`docs/gui/DATUM_RENDERING_BOOK.md`, owner-approved through the
-   `docs/gui/prototypes/rendering-study.html` prototype; symbol standard locked to
-   IEC rectangular, and IBM Plex is wired into the engine text registry).
-   `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` remains the governed policy contract; the
-   design spec + prototypes are what turn each surface into a buildable design.
-   Governing: decision 019 + `DATUM_GUI_PRODUCT_SPEC.md` + decisions 014/015.
-   State: **ongoing per-surface design work, parallel to the board build; scope
-   shaped with the owner.** Gates only the schematic/library surfaces (step 6),
-   not the board shell (steps 2–3).
-2. **GUI Phase 1 build — application shell + board render fidelity (GO, buildable
-   today).** Build the shell + board render on the `datum-test` fixture,
-   read-only, with screenshot goldens + owner review; needs **no** write-path.
-   **Precise executable spec: `docs/gui/DATUM_GUI_PHASE_1_SPEC.md`** (deliverables
-   D1–D7, reuse map, acceptance gates, binding Do-NOT list) realizing
-   `docs/gui/prototypes/board-editor.html`. Reads work via `run_cli_json`. This is
-   the rail for the first GUI build — point a code agent here. **Conformance rail:**
-   `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` makes each prototype claim an actionable
-   per-region checklist with an honest check disposition (ENFORCED / TO-ENFORCE /
-   HUMAN) so the build is driven to match the prototype and drift is caught; it also
-   carries the machine-layer gap register (checks to add) and the open-reconciliation
-   register (owner calls) for this slice. It is the **pilot** for the
-   spec-actionability discipline (every GUI-spec claim carries one honest check
-   disposition) and the **template** for a future doc-by-doc pass that applies the
-   same discipline to the marking-menu (step 3), command console (step 4), and
-   schematic/library (step 6) surfaces as each reaches buildable definition
-   (`DATUM_GUI_CONFORMANCE_SPEC.md` §7). **Human-review loop:**
-   `docs/gui/reference/` (README + `board-editor.png`) is the HUMAN layer of that
-   conformance rail — the committed reference image plus the region-by-region eyeball
-   protocol against the build's chrome goldens
-   (`crates/gui-render/testdata/golden/board/datum-test.scale-*.golden.png`); no check
-   there pixel-diffs wgpu against the HTML prototype.
-2b. **GUI Phase 2 — dual-pane + populated inspector (governed by
-   `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`).** The second GUI build phase: bring the
-   `datum-test` shell to the *full* `board-editor.html` composition — a populated
-   component inspector beside a split Board+Schematic view whose panes cross-probe
-   the same selection. Sequenced in dependency order in the spec: **P2.0** populated
-   single-pane component inspector (LANDED — the parity capture presets a component
-   selection via the `--select <refdes>` launch flag, repointing the poor empty
-   `--demo-known-good` target onto the prototype's single-pane composition,
-   ENFORCED by `check_gui_visual_parity.py` against the shell golden) → **P2.1**
-   split Board+Schematic dual-pane layout (**first slice LANDED** — the central
-   viewport is a real two-pane split: Board pane A focused (accent frame + focus
-   dot + active tools + the board world scene) | Schematic pane B unfocused (muted
-   header, dimmed tools) over a labeled "Schematic (coming)" placeholder canvas,
-   with per-pane headers, a divider gutter, and single-source focus driving
-   context-follows-focus; `ShellLayout::viewport_panes()` + invariant tests +
-   re-blessed shell/board goldens; pane B world geometry / focus-switch / cross-probe
-   remain later slices) → **P2.2** schematic pane populated
-   read-only from the engine (reuses `load_kicad_schematic_workspace_state`) →
-   **P2.3** cross-probe (one selection identity projected into both panes via the
-   existing `SelectionTarget`/`context_envelope::from_selection` substrate) →
-   **P2.4** full Identity/Placement/Checks inspector sections. Each carries an
-   honest check disposition (ENFORCED / TO-ENFORCE / HUMAN); P2.2–P2.4 remain
-   **spec-only — build is a separately-authorized execution phase**. *Dependency:*
-   Phase-1 shell + board fidelity (step 2) landed. *Unblocks:* the schematic /
-   library authoring surfaces (step 6), which build on the read-only schematic pane
-   and cross-probe substrate. *State:* **P2.0 populated single-pane inspector
-   LANDED; P2.1 split-view first slice (two-pane LAYOUT + headers + focus +
-   placeholder pane B) LANDED; P2.1 pane-tiling depth (dynamic single/split/close/
-   nesting + Zoom + independent per-pane cameras + divider-drag resize) LANDED;
-   P2.2 schematic render in pane B LANDED (multi-scene + per-element colour +
-   interactive focused-pane camera + typed-object geometry + square grid);
-   P2.3–P2.4 spec'd, build deferred to authorized execution** (cross-probe is the
-   next slice, still DEFERRED).
-   **Pane model — decision 021** (`docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`):
-   the split view is the first implementation of a **recursive binary tile tree**,
-   tile-first + View-menu-managed, with **Zoom/maximize** and deliberate **Float/detach**
-   as bounded overlay modes. The hard-coded P2.1 fixed split becomes dynamic panes
-   (single-pane default → split/close → nesting → divider-drag resize); layout is
-   consumer/workspace state, never journaled. Distinct from decision-020 paper-space
-   viewports. Reference: `docs/gui/prototypes/workspace-panes.html`. Near-term slice
-   ordering under 021: **dynamic single/split + Zoom + divider-drag resize** (resolves
-   "board-only / schematic-only / both" as a user choice and lets the owner set any
-   split ratio) — **LANDED** → **P2.2 schematic render in pane B — LANDED**
-   (multi-scene + symbol structure, then re-specced 2026-07-10 to match
-   `schematic-editor.html` and completed 2026-07-10: P2.2c per-element colour /
-   P2.2d interactive focused-pane camera / P2.2e typed-object geometry (bus, power,
-   label kinds) / P2.2f square grid + frame removal; render fidelity reviewed
-   complete-to-spec, shell golden re-blessed; see `DATUM_GUI_PHASE_2_SPEC.md` P2.2)
-   → **P2.3 cross-probe — NEXT** (one selection identity projected into both panes).
-   Governing: decision 019 + **decision 021 (pane tiling)** +
-   `DATUM_GUI_PHASE_2_SPEC.md` on `DATUM_GUI_PHASE_1_SPEC` + `DATUM_GUI_CONFORMANCE_SPEC`.
-2c. **Universal Editor-Interaction & Viewport Toolkit — SPEC LANDED, build staged
-   (governed by decision 023 + `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`;
-   the Layer-1 component of `docs/DATUM_SHARED_TOOLING_TAXONOMY.md`, the controlling
-   four-domain catalogue of Datum's full shared editor tooling — Layer 0 substrate
-   unified, Layer 1 = this, Layers 2–4 = selection-identity/property-inspector/
-   one-Measure/geometry-solver-library/etc. as future per-capability specs).**
-   The schematic grid rendered divergently from the board grid (weights thicken on
-   zoom); investigation found the whole per-viewport interaction class (tool-mode,
-   hover, selection, marquee, context menu, coordinate readout, cursor, snap,
-   keybinding) is board-only or absent for the schematic, funneling through two
-   board-only chokepoints — a structural per-editor fork of shared tooling, the Lean
-   anti-pattern. Decision **023** ratifies one consumer-side backbone every surface
-   *configures* via a `ViewportProfile` (grid/camera/coord-hit/snap/stroke-weight/
-   hover/selection/tool-mode/context-menu/readout/layer-visibility); the governed
-   spec fixes the weight-class table + the min-px floor bug + a unified 20px LOD knee,
-   the two-tier snap resolver, and quantize-to-grid as align `reference: grid`.
-   *Sequencing (spine):* **S0** init `gui-viewport` crate + StrokeWeightModel → **S1**
-   unify GridEngine, screen-constant weight, both panes (**fixes the grid bug**) →
-   **S2** CameraEngine routing collapse → **S3 CoordinateHit keystone** (per-pane
-   hit-test; schematic hit regions) → {S4 hover, S5 selection+marquee, S6 tool-mode,
-   **S7 context menu** (per-surface, verb-firing — the "local menu works across
-   editors" ask), S8 readout, S9 layer-visibility} → S10 SnapEngine → S11 quantize
-   verb. *Dependency:* P2.2 landed; S7 authoring verbs + S11 ride the write-path step.
-   *Unblocks:* **P2.3 cross-probe rides on S3+S5** (schematic selection/hit-test);
-   native authoring (step 6) reuses snap/commit; paper-space snap (step 7) reuses the
-   SnapEngine. *State:* **decision 023 + governed spec + deep-research sections
-   LANDED. Phase-B build in progress (schematic-first, each slice board-golden-safe +
-   source-health-ratcheted): **S0–S3 LANDED status RESTORED after production
-   correction.** S0 routes active authored primitives through explicit semantic
-   weight policies and resolves minimum pixel floors from the live GPU projection.
-   S1 emits only visible, overflow-safe, capped grid geometry and retains governed
-   LOD hysteresis independently for every pane/content identity. S2 owns typed warm
-   cameras through the shared CameraEngine and routes pointer versus focused commands
-   without surface fallback. S3 uses the shared indexed EditorViewport with typed
-   schematic hit metadata, deterministic query budgets, and one independently
-   projected/rendered surface pass per visible pane. **S4 (hover + crosshair) — LANDED
-   status RESTORED after production correction:** cursor/hover refresh only dedicated
-   post-world interaction buffers while both retained scenes and `PreparedScene` stay warm;
-   screen coordinates and hover ownership are typed; identifier-prefix inference is removed;
-   CursorLeft, focus loss, terminal capture, and modal drags clear transient state; and a
-   zero-retained-resolve/static-buffer regression covers pointer refresh. Hover/cursor policy
-   and state construction now live in `gui-viewport`. Pointer previews target the containing
-   pane while command/tool gestures target the focused pane, as clarified in UVT-004.
-   The hit path is spatially indexed and covered by deterministic large-design and
-   candidate-budget regressions. **S5 specification design is IN PROGRESS; build
-   remains unauthorized:** owner-ratified gesture/selection/compound behavior is
-   being captured in `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` §2.2; the broader
-   attribute audit is durably tracked in
-   `research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md` through
-   `DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`; and the researched delivery
-   boundary is S5A selection+compound inspection → S5B persistent-group/universal-
-   lock/typed-batch authority → later domain tools. Final review plus a numbered
-   selection-identity decision are required before execution. The incomplete
-   per-object/state selection glow contract is tracked by
-   `dat-s5-selection-visual-contract-zid`, with its audit integrated through
-   `research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md` and
-   `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; owner build-out is in progress.
-   The foundational construction is now locked: slight whole-owned-geometry
-   brightening with semantic/material hue retained, plus `#CE5A92` internal glow
-   and a crisp object-shaped 2-physical-pixel screen-space cue. Actual selection
-   now also projects at identical full strength in active/inactive workspaces;
-   pane frame/header/tool enablement alone communicates GUI mutation authority.
-   Triple-click Global Net is one semantic selection subject whose complete
-   visible resolved electrical projection glows across schematic/PCB, while
-   connected parent symbol/footprint bodies remain related rather than selected.
-   Related objects retain exact authored appearance; explicit relationship view
-   may mildly dim unrelated context but never brightens/recolors/glows the related
-   object or reuses the selection accent.
-   Optional compound focus has no stronger canvas styling; Inspector identifies
-   it and reference-requiring commands own a temporary marker.
-   Locked objects are slightly neutral-greyed, retain normal selection, suppress
-   handles, and use a selected/hovered anchor padlock only after the glyph is
-   declared in `icon_set.json`, added to the Rendering Study contact sheet/style,
-   and HUMAN-reviewed; dense compounds rely on Inspector locked counts.
-   Proposal/diagnostic collision order is authored base → proposal ghost/dual
-   stroke → selection cue → topmost semantic diagnostic marker; selecting a
-   proposal/finding preserves its uncommitted/severity identity.
-   Bus selection is section → connected run → semantic hierarchical bus; owned
-   spine/name/entries project together while scalar member nets remain independent.
-   Standalone text uses glyph selection without a persistent bbox; point objects
-   preserve semantic cores/silhouettes with crisp low-zoom/high-contrast cues,
-   and Symbol Editor independent pins treat stub/terminal/name/number only.
-   Dense/global/panelized selection is capped at 65,536 detailed overlay
-   primitives per pane/frame after sub-2px simplification, then switches the
-   complete pane to an exact visible-silhouette union mask—never partial/bbox;
-   a 100k-object fixture will gate deterministic bounded behavior.
-   The global bottom
-   strip is now canonically named the **Application Status Bar**; its information
-   role has completed focused proximity/attention research in
-   `research/application-status-bar/APPLICATION_STATUS_BAR_RESEARCH.md` through
-   `DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md`; retention and contents are
-   reopened for owner review rather than assumed from the prototype. Then: S6 tool-mode →
-   **S7 context menu** → S8 readout → S9 layer-vis →
-   S10–S11 snap/quantize.** Governing: decision 023 +
-   `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` on decisions 014/020/021/022.
-2c. **Native terminal emulator — build the embedded terminal to pro-grade
-   (Ghostty/Alacritty-class).** Own the cell-grid state model on Datum's existing
-   VT parser + xterm codec (~60% already built): a real cell grid with full
-   color/attributes, Unicode width, scrollback, and reflow, running agents and
-   shells across multi-tab PTYs, with the sanctioned context back-door preserved.
-   The VT core is swappable behind a stable `Grid → (Quad, TextRun)` render
-   interface, so the build is reversible (`alacritty_terminal` as fallback).
-   Guardrails: link `unicode-width`/`unicode-segmentation`, gate on
-   `vttest`/`esctest2`, decline the graphics ceiling (no sixel/kitty/iTerm2).
-   **Phase 0 (foundation) is the immediate buildable slice:** one keyboard-focus
-   authority (fixes the P1 — workspace hotkeys leaking into the PTY, un-typeable
-   terminal — reconciling with decision 021 pane focus), the `portable-pty` swap,
-   and the render interface; then Phase 1 cell grid → Phase 2 width+scrollback →
-   Phase 3 reflow → Phase 4 damage+polish. The terminal is never a GUI write path
-   (TE-006); the board-text CLI-string-into-PTY path re-homes on steps 4/5.
-   *Dependency:* none for Phase 0 (independent of the board build); Phases 1–3
-   chain. *Unblocks:* a trustworthy terminal surface and correct keyboard routing
-   across all editors. *State:* **specified, ready for Phase 0 execution;** tracked
-   as the `terminal-emulator` epic in beads. Governing: decision 024 +
-   `research/terminal-redesign/TERMINAL_REDESIGN_ARCHITECTURE.md`.
-3. **Marking-menu shell — read-only, rendered from `menu_model.json` (buildable
-   today).** Build the radial marking-menu / context-menu surface realizing
-   `docs/gui/prototypes/context-menu-marking-menu.html`, rendered *from* the
-   `menu_model` manifest (same data the menu bar uses): cardinal/secondary/overflow
-   layout, submenu wheels, icons from `icon_set.json`, per-object content per
-   `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`. **Inert in this step** — items
-   render and preview their gesture but do **not** invoke operations; `not_built`
-   and mutating items are visibly disabled, exactly as Phase 1 handles the menu
-   bar. This proves the interaction model and IA without the write path. **Ops
-   wiring** (marking-menu items → journaled operations) is deferred to step 5.
-   Governing: decision 019 + `DATUM_GUI_CONTEXT_MENU_CONTENT.md` +
-   `DATUM_GUI_PARAMETRIC_TOOLING.md`.
-4. **Command console — the editor command line (AutoCAD/Eagle command-echo).**
-   The visible home for GUI-action narration, split by write-path dependency:
-   **(a) read-only command-echo console (buildable now, on the Phase-1 shell):**
-   the surface that displays GUI-action echoes (fit board, layer toggle, selection,
-   view zoom, ...). The narration is **already decoupled** from the real PTY terminal
-   into an invisible console sink (`ConsoleLaneState` on `WorkspaceUiState`, fed by
-   `log_review_event` → `push_console_line`); this step gives that sink its visible
-   surface. Needs **no** write-path. **(b) authoring command console (gated on the
-   write-path, step 5):** typed mutating verbs entered at the command line, emitting
-   journaled typed `Operation`s exactly as the marking menu and menu bar will. The
-   integrated terminal stays a real shell that GUI actions never write to (decision
-   005). Governing: decision 019 + decision 005 (embedded-terminal doctrine) +
-   `docs/gui/DATUM_GUI_DESIGN_SPEC.md` § "Command Surfaces".
-5. **GUI write-path enablement** — the four-item backend plumbing that lets the
-   GUI author journaled operations directly (and wires the step-3 marking menu to
-   real ops). Plan already written: `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`
-   (decisions 019 + 017), sequence P0 → W1 → W2 → W3. Needed once *authoring*
-   surfaces are built (after the read-only Phase 1 + marking-menu shell), NOT
-   before. State: **planned; not the immediate step.**
-6. **Native authoring depth (queued):** schematic and PCB editor surfaces
-   emitting typed operations over the write path. Contracts:
-   `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`,
-   `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`. Depends on steps 1–5.
-   **Named engine dependency:** the **DFM Geometry Solver** (pad rounding · trace
-   corner treatment · teardrops — author topology, derive manufacturable geometry
-   rule-driven per net-class through `commit()`), governed by
-   `docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md` under its two invariants
-   (Law 1 render/CAM single-source fidelity, gated; Law 2 beauty-by-default). Sits
-   on the landed routing kernel + the deferred `ImpedanceSpec` solver + the
-   forthcoming Datum Rendering Book. Execution requires authorization.
-7. **Documentation system (design landed, spec queued):** paper space / model space
-   separation + **viewports** (decision 020) with the title block (Rendering Book §8) as
-   the paper-space frame. The design foundation is locked — content foundation,
-   Direction-B visual language, Grauwert typography, the dimensioned/proportional-scaling
-   guideline, and the field-formula + doc-control template architecture
-   (`research/documentation-system/`). **Next:** a spec pass for the
-   `Sheet` / `Viewport` / annotation / `SheetSet` object model + v1 scope (schematic paper
-   space vs the fab-drawing sheet template first). Pairs with native authoring (step 6) —
-   it is how the authored model becomes documentation. Governing:
-   `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` + Rendering Book §8.
+<!-- ACTIVE FRONTIER:START -->
+> Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Also in flight (governance, parallel):** `specs/PROGRAM_SPEC.md` reconciled to
-the product-mechanics model (2026-07-06); Tier E `GuiSupervisionSnapshot` strip
-to be rescoped per the leverage audit (keep EDA counts as a status bar, drop
-journal-tip/read-only provenance telemetry). **Shell visual-parity gate (landed):**
-`scripts/check_gui_visual_parity.py` makes Phase-1 whole-shell composition parity a
-real failing, same-engine regression gate against the owner-approved shell golden
-`crates/gui-render/testdata/golden/shell/datum-shell.golden.png` (wired through
-`check_gui_conformance.py` → `run_drift_gates.sh`), closing the paperwork defect
-where visual parity was an unenforced HUMAN row; see
-`docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md` §0.1/§2/§4 (G9). **Source-health
-governance recovery (landed):** decision 022 supersedes the
-permissive 1,500-line flag ledger with blocking repository-wide normal budgets,
-zero-headroom legacy ceilings, merge-base downward ratchets, touched-monolith
-burn-down, and logical-module measurement; see Active Frontier step 0. **GUI
-Phase 2 spec (governed, spec-only):**
-`docs/gui/DATUM_GUI_PHASE_2_SPEC.md` sequences the second GUI build phase —
-populated component inspector + dual-pane Board+Schematic + cross-probe — extending
-`DATUM_GUI_PHASE_1_SPEC` under the `DATUM_GUI_CONFORMANCE_SPEC` check-disposition
-discipline; P2.0 (populated single-pane inspector via the `--select` capture
-repoint) has landed and is ENFORCED by `check_gui_visual_parity.py`, the P2.1
-split-view first slice (two-pane LAYOUT + per-pane headers + focus + placeholder
-pane B) has landed and re-blessed the shell/board goldens, and P2.2–P2.4 are
-specified with build deferred to authorized execution. Ordering lives in the
-Active Frontier (step 2b); this row is status only.
-
----
-
-Last updated: 2026-07-06 — GUI product-model recovery planning opened under
-decision 019. `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`
-ratifies the recovered desktop product model, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`
-is the single governed GUI product spec, and
-`docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` classifies the existing GUI code as
-keep/adapt/replace/delete/missing before further implementation. Tier E GUI
-supervision/status reflection remains implementation evidence, but it is no
-longer the active product target. The active GUI target is now Phase 1
-application shell + board render fidelity: the `datum-test` fixture with real
-footprint/pad/track geometry and screenshot-golden review. Earlier
-write-surface convergence remains COMPLETE (wave commits `dff7c2c..c567698`):
-the engine native-write facade (`crates/engine/src/api/native_write/`, 11
-families) authors every native operation batch, genesis is engine-owned, the
-daemon reaches the substrate via `native.write`/`native.describe`, and the CLI
-flat namespace was dissolved into `args/` + `commands/<family>/` + `context/` +
-`main_tests/` with the exec layer deleted. (2026-07-02: governance apparatus
-slimmed to behavioral gates plus spec-governance coverage/classification.)
-(2026-07-09: GUI-action narration decoupled from the integrated PTY terminal —
-`log_review_event` now feeds an invisible `ConsoleLaneState` sink via
-`push_console_line` instead of the terminal display buffer, honoring the decision
-005 doctrine that the terminal is a real shell GUI actions never write to. The
-command console that will make this sink visible is sequenced as Frontier step 4.)
-
-**Current-vs-target framing**:
-- **Current implementation evidence**: the historical milestone tables below
-  remain truthful records of the implementation slices that have landed.
-- **Active target**: GUI product-model recovery planning and Phase 1 app
-  shell + board render fidelity, without claiming editor readiness.
-- **Not the North Star**: legacy M0-M7 milestone completion rows are retained as
-  evidence, but they no longer define the next implementation priority.
-
-**Active milestone**: GUI product-model recovery planning. Decision 019
-supersedes the M7 route-review shell as the GUI planning target and anchors a
-single product spec plus one code-leverage audit. The first implementation
-phase is an application shell and board-render fidelity baseline that a human
-can run, load, inspect, and review against screenshot goldens.
-**Active product driver**: restore Datum as a human-driven desktop EDA
-application while preserving the substrate rule that GUI edits emit typed
-operations/proposals through engine commit/journal paths, not terminal-injected
-CLI macros.
-**Frozen**: M6 (strategy reporting layer landed; pending repeated evidence
-runs from the checked-in baseline gate).
-**Closed for scope**: M0–M5.
-**Spec stubs awaiting implementation**: Standards Audit Batch 1 — see
-section "Standards Audit Batch 1 — Spec Stubs Awaiting Implementation"
-below.
-
-Machine-checked inventory shapes live in `specs/SPEC_PARITY.md` (gated by
-`scripts/check_spec_parity.py`, wired into `scripts/run_drift_gates.sh`).
-Surfaces currently locked: `mcp_runtime_methods`, `cli_project_commands`,
-`engine_text_modules`, `m7_text_visual_fixtures`, `workspace_crates`,
-`daemon_dispatch_methods`, `engine_api_pub_fns`, `standards_check_surface`,
-`pool_library_surface`, `erc_pin_taxonomy_surface`,
-`schematic_connectivity_surface`, `zone_fill_surface`,
-`gui_supervision_surface`.
-
----
+- **Align project-state authority and tooling** (`STATE-ALIGNMENT`; `dat-project-management-alignment-pua`).
+   Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* one reproducible roadmap answer for every agent. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`.
+- **Complete the S5 selection contract and identity decision** (`UVT-S5-SPEC`; `dat-s5-selection-visual-contract-zid`).
+   Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized. *state `specified`; authorization `planning`.*
+   *Dependencies:* none. *Unblocks:* UVT S5A execution, GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.
+- **Deliver the native terminal emulator** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
+   Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain. *state `planned`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* trustworthy embedded shell and agent surface. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Establish terminal keyboard-focus authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
+   Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect. *state `ready`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
+- **Collapse the rival terminal input models** (`TERMINAL-P0-INPUT`; `dat-terminal-dual-input-model-75y`).
+   Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only. *state `ready`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Remove pan diagnostics from the PTY screen** (`TERMINAL-P0-DIAGNOSTICS`; `dat-pan-trace-terminal-pollution-0j0`).
+   Stop application diagnostics from corrupting the foreign-shell PTY presentation. *state `ready`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`.
+- **Replace the hand-rolled PTY with portable-pty** (`TERMINAL-P0-PTY`; `dat-terminal-emulator-epic-jzv.1`).
+   Swap unsafe libc PTY setup for portable-pty while retaining process-group signal behavior. *state `ready`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Stand up the terminal grid render interface** (`TERMINAL-P0-RENDER`; `dat-terminal-emulator-epic-jzv.2`).
+   Lock the Grid-to-Quad/TextRun boundary and font-measured cell metrics before replacing the backing state model. *state `ready`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* terminal Phase 1 cell grid. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Build the terminal cell-grid state model** (`TERMINAL-P1-GRID`; `dat-terminal-emulator-epic-jzv.3`).
+   Replace the string/RLE terminal state with a lossless attributed cell grid after every mandatory Phase 0 task lands. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`, `dat-terminal-dual-input-model-75y`, `dat-terminal-emulator-epic-jzv.1`, `dat-terminal-emulator-epic-jzv.2`, `dat-terminal-focus-authority-6aw`. *Unblocks:* terminal Phase 2, terminal Phase 4. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Add Unicode width and scrollback separation** (`TERMINAL-P2-WIDTH`; `dat-terminal-emulator-epic-jzv.4`).
+   Add grapheme-aware cell width, bounded scrollback, and correct alternate-screen behavior after the cell grid lands. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.3`. *Unblocks:* terminal Phase 3 reflow. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Implement terminal reflow on resize** (`TERMINAL-P3-REFLOW`; `dat-terminal-emulator-epic-jzv.5`).
+   Rewrap logical lines while preserving cursor, wide-cell, scroll-region, and scrollback invariants. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.4`. *Unblocks:* terminal Phase 4 polish. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Add terminal damage tracking and protocol polish** (`TERMINAL-P4-POLISH`; `dat-terminal-emulator-epic-jzv.6`).
+   Complete the declared terminal sequence with damage tracking and bounded DEC/OSC support. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.5`. *Unblocks:* terminal epic verification. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Build the read-only Command Console display** (`CONSOLE-READONLY`; `dat-output-lane-t6v`).
+   Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track. *state `specified`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* visible GUI action narration and diagnostics. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
+- **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
+   Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* native schematic and library authoring surfaces. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+- **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
+   Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`.
+- **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
+   Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* full dual-pane component inspector, native authoring depth. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
+- **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
+   Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* complete read-only Phase 2 inspection surface. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`.
+- **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).
+   Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go. *state `specified`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
+- **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
+   Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-output-lane-t6v`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
+- **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
+   Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
+- **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
+   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `specified`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* schematic and fabrication documentation implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
+<!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage
 
@@ -472,7 +175,7 @@ legacy fence + MCP provenance `11f74bb`, CLI reorganization `57e2a07..c567698`).
 | Tier B library foundation | [x] | `LibraryBinding` is now a Rust type carried by authored `ComponentInstance` shards, with resolver/commit validation and backward-compatible `part_ref` projection. IPC-7351B generation now has two engine-owned vertical slices: two-terminal chips and SOIC, both exposed through journaled CLI writes, proposal creation, MCP aliases, generated registry/catalog entries, and LibraryGraph basis/process-policy validation. A Datum-authored native baseline fixture under `crates/test-harness/testdata/library/native_authored_baseline_v1` proves governed native pool data for Unit, Symbol, Entity, Package, Footprint, Padstack, Part, and first-class PinPadMap without ratifying a bundled-library packaging decision. Public tool count was 337/337 after the SOIC library/proposal tools were added; Tier D raises it to 338 with `datum.pcb.align_components`. |
 | Tier D PCB/manufacturing depth | [~] | The PCB 13-tool logical matrix is now machine-gated by `scripts/check_pcb_layout_tool_matrix.py`: it maps the 46 concrete `datum.pcb.*` verbs plus `datum.check.fill_zones`/`datum.check.run` back to the contract buckets, requires `datum.pcb.align_components` as one mode-parameterized batch tool, rejects per-mode align/distribute tools, and keeps `fill_zones` as derived generated evidence. Engine `build_align_board_packages` emits multiple `SetBoardPackagePosition` operations in one guarded `OperationBatch`; CLI/MCP parity tests prove locked-component skip reporting and one undoable batch. Native zone fill remains the bounded generated-evidence solver already shipped (`SetZoneFill`/`DeleteZoneFill`, Unfilled/Stale/Unsupported honesty); the full polygon-boolean/thermal/antipad pour solver remains future product depth. |
 | Tier E GUI supervision/status surface | [~] | Native GUI board scenes now load through `ProjectResolver::resolve()` plus `DesignModel::materialized_source_shard_value(BoardRoot)` instead of raw promoted `board/board.json`, so journal-materialized board state is visible even when the promoted shard is stale. `ReviewWorkspaceState` now carries `datum_gui_supervision_snapshot_v1`, summarizing project identity, model revision, journal cursor/tip, source-shard health, scene object counts, check status, and production/proposal/artifact counts. The Outputs data lane renders a read-only `ENGINE SUPERVISION` block from that snapshot. This is supervision/status reflection only: GUI authoring remains terminal-mediated or future work, and the GUI does not construct or commit `OperationBatch` directly. |
-| GUI product-model recovery planning | [~] | Decision 019 ratifies the recovered GUI product model and makes `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` plus `docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` the governed planning surface. The current implementation is still the M7-derived review shell; the next implementation phase is Phase 1 application shell + board-render fidelity with the `datum-test` fixture, real footprint/pad/track geometry, screenshot goldens, and owner review. GUI editor actions must emit typed engine operations/proposals directly through the substrate; terminal command injection is explicitly disallowed as an editor implementation path. |
+| GUI product-model recovery planning | [~] | Decision 019 ratifies the recovered GUI product model and makes `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` plus `docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` the governed planning surface. Phase 1 and read-only Phase 2 through P2.2 have landed; remaining scheduled GUI work and authorization live only in the generated Active Frontier. GUI editor actions must emit typed engine operations/proposals directly through the substrate; terminal command injection is explicitly disallowed as an editor implementation path. |
 | GUI menu→mechanism bindings | [x] | `docs/gui/DATUM_GUI_MENU_BINDINGS.md` (governed) maps every product-spec menu command to its real backing verb/native-write builder/CLI, tagged live / engine-ready-GUI-blocked / not-built, from a four-source capability inventory (verb registry, native-write facade, CLI, daemon + tool surface, 2026-07-05). Records the File-menu semantics gap (no native save/open/close) and authoring gaps (schematic wire/junction edit, route-apply facade migration, forward-annotation action coverage). |
 | GUI menu_model manifest + gate | [x] | `docs/gui/menu_model.json` — data-driven menu bar + per-object marking menus (149 entries), each bound to a real `datum.*` verb / `gui_local` / `not_built`. Gated by `scripts/check_menu_model.py` (wired into `run_drift_gates.sh`): every `verb` reference must exist in the registry catalog; marking-menu structural invariants enforced (cardinal N/E/S/W, secondary diagonals, destructive never on a diagonal). 101 verb-backed, 36 not-built (= the authoring buildout worklist). Realizes the design-spec Modularity principle (add/remove a row, not rewrite); full per-object content in `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`. |
 | GUI write-path enablement (four-item plumbing) | [ ] | `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md` (governed) bounds the plumbing that unblocks every engine-ready/GUI-blocked authoring item: W1 register remaining native-write families with `native.write` (7→full set), W2 add a `Dispatch::NativeWrite` variant to the verb registry (decision 017), W3 expose verb/param-schema enumeration on the daemon (`specs/MCP_API_SPEC.md`), W4 give `gui-app` a daemon client + GUI action model (decision 019 Editor Authority). Sequenced P0 thin proof (rename via the 7 already-wired verbs) → W1 → W2 → W3. Planning only; execution unauthorized. |
@@ -498,10 +201,10 @@ locked against the real CLI by `crates/cli/tests/verb_registry_roundtrip.rs`.
 | All public `datum.*` verbs registry-owned; hand-written MCP public catalog entries deleted | [x] | 17 public `datum.*` prefixes migrated via `MIGRATED_PREFIXES` (338 of 338 public tools generated); hidden compatibility tools remain fenced outside the generated public loader; taxonomy/count gates keep their invariants |
 | CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [~] | GUI terminal catalog is now a registry projection (`datum-gui-protocol` renders the 50 `terminal` verbs; hand-written table and regex parity test deleted, templates locked byte-identical by gui-protocol tests + clap round-trip); CLI clap and daemon dispatch remain target projections |
 
-### Next Production Goals — Current / Target Ledger
+### Production Goals — Current / Target Ledger
 
-This ledger is the active parity surface for the next library/schematic
-foundation goals. Claims here are intentionally partial unless code evidence,
+This ledger is an implementation-evidence surface for library/schematic
+foundation goals, not a task-ordering source. Claims here are intentionally partial unless code evidence,
 tests, and public surfaces exist.
 
 | Goal | Current Evidence | Target / Non-overclaim Boundary |
@@ -520,7 +223,7 @@ tests, and public surfaces exist.
 
 | Substrate Area | Status | Current Evidence | Target / Readiness Definition |
 |----------------|--------|------------------|-------------------------------|
-| Native library foundation | [~] | Engine pool structs, resolver-visible pool shard discovery, generic pool-library journal operations, typed CLI library producers, MCP `datum.library.*` aliases, model blob handling, and first dependency validation slices exist. `LibraryBinding` is now a Rust type on `ComponentInstance`, projects backward-compatible `part_ref` data, and rejects stale/mismatched binding payloads in resolver and commit validation. `Footprint` is now a real engine pool type instead of a package-compatible validation alias, journaled footprint payloads validate against the `Footprint` struct, `project validate` reads `pool/footprints`, checks `Footprint.package` and footprint-pad `padstack` refs, and `PinPadMap.footprint` mappings validate against footprint pads when present. `Package` now supports body-only package records with package-family/code/mounting/body-dimension/terminal fields while legacy package `pads`/`courtyard`/`silkscreen` fields remain readable for import/materialization compatibility. Board-component pool materialization and engine runtime board pad regeneration now prefer first-class `Footprint` land-pattern pads through `Part.default_footprint`, `PinPadMap.footprint`, or a unique package-matching footprint before falling back to legacy `Package.pads`; regression coverage proves canonical footprint geometry wins when both shapes exist. Typed CLI/MCP authoring now creates first-class `Footprint` objects, sets `Footprint.pads` directly, and authors Footprint silkscreen lines/rectangles/circles/polygons while rejecting missing packages, missing padstacks, blank pad names, invalid geometry, and nonpositive widths/layer ids. Engine-owned IPC-7351B two-terminal chip and SOIC generators now emit real `Footprint` objects, generated `Padstack`s, structured `IpcFootprintBasis`, density-dependent toe/heel/side/courtyard values, and explicit mask/paste process policy from deterministic functions; `project generate-ipc7351b-two-terminal-chip`, `project generate-ipc7351b-soic`, `proposal generate-ipc7351b-two-terminal-chip`, and `proposal generate-ipc7351b-soic` cover journaled writes and proposal batches, MCP exposes matching `datum.library.generate_ipc7351b_*` and `datum.proposal.generate_ipc7351b_*` aliases, and `LibraryGraph` reports IPC basis, derived aperture, and mask/paste policy mismatches through validation diagnostics. Legacy `set-pool-package-pad`, `set-pool-package-courtyard-*`, and `add-pool-package-silkscreen-*` compatibility now require exactly one package-linked Footprint and write `Footprint.pads` / `Footprint.courtyard` / `Footprint.silkscreen`, leaving `Package.pads` / `Package.courtyard` / `Package.silkscreen` unchanged. The first `LibraryGraph` dependency diagnostic seam now lives in the engine and is projected by `project validate`. Typed CLI/MCP authoring now creates and updates first-class `PinPadMap` objects directly, with optional same-batch default binding to `Part.default_pin_pad_map`; runtime compatibility and component-pad net remapping now prefer that first-class map when valid, and legacy-named part pad-map commands bridge to it instead of writing `Part.pad_map`. A Datum-authored native baseline fixture now proves governed Unit/Symbol/Entity/Package/Footprint/Padstack/Part/PinPadMap data resolves and validates without import-derived content. The current implementation is not yet the full product target: broader IPC family coverage, check-run finding/deviation/export consumption, legacy `Part.pad_map` fallback retirement, footprint graphics/process-policy authoring beyond pads/courtyards/silkscreen lines/rectangles/circles/polygons, graph-owned resolver/commit validation tiers, importer migration away from legacy package geometry, and pool layering/materialization policy remain incomplete. | A governed native library graph is engine-owned and consumed by CLI/MCP/GUI: `Package` models component body/terminal data, `Footprint` models PCB land patterns, `Padstack` models copper/drill/mask/paste process policy, `PinPadMap` is first-class binding data, `Part` pins default library choices by revision, `ModelAttachment` carries hash/provenance/review state, and commit/resolver/validate tiers are explicit. This remains the next implementation axis before board-editor expansion, now with Tier B foundation slices landed. |
+| Native library foundation | [~] | Engine pool structs, resolver-visible pool shard discovery, generic pool-library journal operations, typed CLI library producers, MCP `datum.library.*` aliases, model blob handling, and first dependency validation slices exist. `LibraryBinding` is now a Rust type on `ComponentInstance`, projects backward-compatible `part_ref` data, and rejects stale/mismatched binding payloads in resolver and commit validation. `Footprint` is now a real engine pool type instead of a package-compatible validation alias, journaled footprint payloads validate against the `Footprint` struct, `project validate` reads `pool/footprints`, checks `Footprint.package` and footprint-pad `padstack` refs, and `PinPadMap.footprint` mappings validate against footprint pads when present. `Package` now supports body-only package records with package-family/code/mounting/body-dimension/terminal fields while legacy package `pads`/`courtyard`/`silkscreen` fields remain readable for import/materialization compatibility. Board-component pool materialization and engine runtime board pad regeneration now prefer first-class `Footprint` land-pattern pads through `Part.default_footprint`, `PinPadMap.footprint`, or a unique package-matching footprint before falling back to legacy `Package.pads`; regression coverage proves canonical footprint geometry wins when both shapes exist. Typed CLI/MCP authoring now creates first-class `Footprint` objects, sets `Footprint.pads` directly, and authors Footprint silkscreen lines/rectangles/circles/polygons while rejecting missing packages, missing padstacks, blank pad names, invalid geometry, and nonpositive widths/layer ids. Engine-owned IPC-7351B two-terminal chip and SOIC generators now emit real `Footprint` objects, generated `Padstack`s, structured `IpcFootprintBasis`, density-dependent toe/heel/side/courtyard values, and explicit mask/paste process policy from deterministic functions; `project generate-ipc7351b-two-terminal-chip`, `project generate-ipc7351b-soic`, `proposal generate-ipc7351b-two-terminal-chip`, and `proposal generate-ipc7351b-soic` cover journaled writes and proposal batches, MCP exposes matching `datum.library.generate_ipc7351b_*` and `datum.proposal.generate_ipc7351b_*` aliases, and `LibraryGraph` reports IPC basis, derived aperture, and mask/paste policy mismatches through validation diagnostics. Legacy `set-pool-package-pad`, `set-pool-package-courtyard-*`, and `add-pool-package-silkscreen-*` compatibility now require exactly one package-linked Footprint and write `Footprint.pads` / `Footprint.courtyard` / `Footprint.silkscreen`, leaving `Package.pads` / `Package.courtyard` / `Package.silkscreen` unchanged. The first `LibraryGraph` dependency diagnostic seam now lives in the engine and is projected by `project validate`. Typed CLI/MCP authoring now creates and updates first-class `PinPadMap` objects directly, with optional same-batch default binding to `Part.default_pin_pad_map`; runtime compatibility and component-pad net remapping now prefer that first-class map when valid, and legacy-named part pad-map commands bridge to it instead of writing `Part.pad_map`. A Datum-authored native baseline fixture now proves governed Unit/Symbol/Entity/Package/Footprint/Padstack/Part/PinPadMap data resolves and validates without import-derived content. The current implementation is not yet the full product target: broader IPC family coverage, check-run finding/deviation/export consumption, legacy `Part.pad_map` fallback retirement, footprint graphics/process-policy authoring beyond pads/courtyards/silkscreen lines/rectangles/circles/polygons, graph-owned resolver/commit validation tiers, importer migration away from legacy package geometry, and pool layering/materialization policy remain incomplete. | A governed native library graph is engine-owned and consumed by CLI/MCP/GUI: `Package` models component body/terminal data, `Footprint` models PCB land patterns, `Padstack` models copper/drill/mask/paste process policy, `PinPadMap` is first-class binding data, `Part` pins default library choices by revision, `ModelAttachment` carries hash/provenance/review state, and commit/resolver/validate tiers are explicit. Remaining work is product depth; its scheduling authority is the generated Active Frontier rather than this evidence ledger. |
 | ProjectResolver | [~] | First engine-owned scaffold landed in `crates/engine/src/substrate/mod.rs`: `ProjectResolver::resolve()` reads native project roots, assembles deterministic source-shard metadata, emits diagnostics, replays the accepted journal prefix, exposes materialized source-shard values, and is exposed through `project query <root> resolve-debug`. Core board query helpers for components, pads, routing objects/nets, net classes, dimensions, text, keepouts, outline, stackup, diagnostics, and routing substrate now read the resolver-materialized board state rather than only promoted `board.json`, with stale-promoted-file regressions for stackup, pads, route preflight, route corridor, route-path candidate, route-path candidate explain, board name summary, project name summary, rules query, and forward-annotation proposal component comparisons. All `command_project_route_path_candidate*` route solver surfaces now load resolver-materialized board state before running their solvers, including bounded via-count variants, authored-copper variants, authored-via-chain variants, orthogonal dogleg/two-bend variants, and orthogonal-graph multi-via variants; focused route-path candidate regressions prove the migrated surfaces still pass. Board materialization now preserves native `pad_expansion_setup` so standards/process-aperture DRC sees the authored pad mask/paste policy. Project manifest materialization now replays journaled project-name edits into summary readback, and rules-root materialization now replays journaled rules replacement into `project query design-rules`. Board-component mutation readbacks, board-pad mutation validation/readback, and package-materialization pre-reads now use resolver-materialized board state after journaled writes; board-pad stale-promoted regression coverage proves a pad created through the journal can still be queried and edited after promoted `board.json` is reverted. Schematic wire, junction, and no-connect query surfaces now read resolver-materialized sheet shards rather than promoted sheet JSON, with stale-promoted-sheet regressions proving journaled schematic connectivity remains queryable before deletion. Native `project validate` now validates resolver-materialized project, schematic, board, rules, sheet, and definition JSON shards rather than promoted files; focused coverage restores stale promoted schematic root, sheet, and board files after journaled sheet/wire/board-text edits and still reports a clean valid project. Initial fabrication read paths also moved: Gerber outline and Gerber copper export, validation, and semantic comparison now use resolver-materialized board state with stale-promoted-file regressions; copper CAM derives pads/tracks/zones/vias from one resolved board snapshot per command. Gerber soldermask, paste, silkscreen, and mechanical export, validation, and semantic comparison now load resolver-materialized board state; export has stale-promoted-file regressions for mask, paste, silkscreen, and mechanical layers. Gerber plan/set discovery now derives the planned artifact set from resolver-materialized stackup state with a stale-promoted-file plan regression. Native CSV drill, Excellon drill, and drill hole-class reporting now read one resolver-materialized board snapshot, with stale-promoted-file export regressions for CSV and Excellon drill. Manufacturing report/manifest/inspect/export/validate/compare wrappers now load resolver-materialized board state for wrapper metadata and default artifact naming; manifest has a stale-promoted-file regression. Native project summary now reads resolver-materialized project and board state for product identity. It does not yet own imported KiCad/Eagle resolution, dependency policy, remaining mutation routing, or the remaining fabrication/export read surfaces. | One resolver owns project roots, source discovery, dependency resolution, identity lookup, and deterministic diagnostics across native, imported, CLI, MCP, and GUI paths. |
 | Source shards | [~] | First source-shard metadata exists for native project manifests, schematic roots/sheets, board roots, rules roots, pools, proposal metadata, output jobs, manufacturing plans, panel projections, output-job runs, artifact runs, check runs, ZoneFill records, and artifact metadata, including stable shard IDs, relative paths, schema versions, content hashes, authority class, and dirty-state field. Resolver-visible native pool shards now include `units`, `symbols`, `entities`, `parts`, `packages`, `footprints`, `padstacks`, and `pin_pad_maps`, with discovered root object kinds reflecting the pool subdirectory rather than the generic object fallback. Pool shards now require concrete `SourceShardTaxon` metadata for those eight pool families while preserving `SourceShardKind::Pool` for journal/replay matching; unknown `pool/*` shard families are rejected at the ownership boundary, and resolver, CLI `resolve-debug`, and MCP `datum.query.source_shards` regressions prove `PoolSymbol` taxonomy is exposed alongside dirty-state reporting. Authored production shards now carry concrete `SourceShardTaxon` metadata for `ManufacturingPlan`, `PanelProjection`, and `OutputJob`; resolver recovery and CLI `resolve-debug` regressions prove those taxons remain visible alongside `Missing` dirty-state when the promoted `.datum` files are recovered from the journal. Authored identity/relationship sidecars, sidecar metadata, and generated evidence now also derive concrete `SourceShardTaxon` metadata for `ComponentInstance`, `Relationship`, `VariantOverlay`, `ImportMap`, `ProposalMetadata`, `ForwardAnnotationReview`, `OutputJobRun`, `ArtifactRun`, `CheckRun`, `ZoneFill`, and `ArtifactMetadata` through the shared value/byte-backed source-shard builders; public `resolve-debug` coverage proves missing journal-recovered `ArtifactMetadata` and `ForwardAnnotationReview` shards expose those taxons alongside authority and dirty-state. `project validate` now checks declared pool directories for root `schema_version`, filename/payload UUID parity, and the first logical library reference graph across units, symbols, entity gates, packages, padstacks, parts, and pin-pad maps while leaving full footprint cross-reference validation out of scope. Journaled raw pool-library create/set now also rejects authored pool shards without `schema_version: 1`, deserializes `units`, `symbols`, `entities`, `parts`, `packages`, `footprints`, and `padstacks` through the engine's canonical pool structs before staging, validates the first `pin_pad_maps` envelope shape, and rejects malformed footprint geometry through the current package-compatible footprint schema. New native scaffolds now emit explicit `RulesRoot` `uuid` / `object_revision` identity while older rules roots without identity remain readable. Resolver and `resolve-debug` now distinguish authored design shards from generated evidence and sidecar metadata, with native authored shards locked as clean authored-design evidence. Generic `SourceShardKind::Unknown` and `SourceShardAuthority::Unknown` have been retired; source shards must now use a concrete family/authority, while `dirty_state=Unknown` remains only for unreadable promoted files. Dirty-state mutation tracking beyond clean resolved files, recovery semantics, richer semantic library editors, and future shard families are not complete. | Project state is decomposed into source shards with explicit ownership, load order, dirty-state tracking, and recovery semantics. |
 | ObjectId / ObjectRevision / ModelRevision | [~] | Resolver discovers UUID-bearing JSON objects as `DomainObject`s, reads persisted `object_revision` when present, computes deterministic `ModelRevision` from sorted shard hashes and object revisions, and now has an explicit compare-and-swap guard path through `Operation::GuardObjectRevision { object_id, expected_object_revision }`. `commit_journaled()` validates object revision guards before staging, strips guard operations from the durable journal payload, and rejects stale guards without mutating or staging writes. Object revisions bump through the engine operation-application path for project/rules, board/package/layout/routing, schematic root/sheet/definition/instance objects, ComponentInstance, relationship/variant, pool/library, and production records as those typed operation families land. Public CLI guard emission now covers board component value/reference/move/part/package/layer/rotation/locked/delete, board layout/routing/pad/netclass/dimension helper paths, schematic connectivity/text/drawing helper paths, ComponentInstance set/delete, manufacturing plan/panel projection/output job set/delete, project name, whole-root and granular project-rule edits, generic batch-file proposals, and production proposal builders. Engine regressions cover stale model revision rejection, matching/stale object revision guards, object revision bumps, and guard stripping; CLI regressions prove guarded component edits do not persist guard operations. Remaining work is broader collaboration/diff semantics and extending guard emission as new authored operation families appear, not the first revision substrate. | Every mutable product object has stable identity, per-object revision, and model revision semantics suitable for diff, undo/redo, proposal/apply, collaboration, and artifact provenance. |
