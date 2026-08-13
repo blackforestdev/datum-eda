@@ -21,8 +21,11 @@ PRESENTATION_POLICY_KEYS = {
 }
 STEP_KEYS = {
     "id", "kind", "status", "action", "depends_on", "requirement_refs",
-    "completion_evidence",
+    "completion_evidence", "owner_input",
 }
+STEP_REQUIRED_KEYS = STEP_KEYS - {"owner_input"}
+OWNER_INPUT_KEYS = {"response_format", "requests"}
+OWNER_REQUEST_KEYS = {"id", "question", "recommended_response", "source_ref"}
 EVIDENCE_KEYS = {"path", "marker"}
 POST_KEYS = {
     "effects", "unblocks_issue_ids", "selection", "authorizes_successor",
@@ -148,7 +151,7 @@ def validate_completion(
     acceptance_ids = ACCEPTANCE_ID_RE.findall(acceptance) if isinstance(acceptance, str) else []
     for index, step in enumerate(steps, 1):
         label = f"{key}: completion.steps[{index}]"
-        if not _closed_shape(step, STEP_KEYS, STEP_KEYS, label, failures):
+        if not _closed_shape(step, STEP_KEYS, STEP_REQUIRED_KEYS, label, failures):
             continue
         assert isinstance(step, dict)
         step_id = step.get("id")
@@ -169,6 +172,11 @@ def validate_completion(
             failures.append(
                 f"{step_id}: execution step is forbidden by {item.get('authorization')} authorization"
             )
+        owner_input = step.get("owner_input")
+        if kind == "owner_decision":
+            _validate_owner_input(root, key, step_id, owner_input, governing_docs, failures)
+        elif owner_input is not None:
+            failures.append(f"{step_id}: owner_input is only allowed on owner_decision steps")
         step_status = step.get("status")
         if step_status not in {"pending", "in_progress", "complete"}:
             failures.append(f"{step_id}: invalid step status {step_status!r}")
@@ -352,6 +360,59 @@ def selected_completion_step(item: dict[str, Any]) -> dict[str, Any] | None:
     )
 
 
+def _validate_owner_input(
+    root: Path, key: str, step_id: str, owner_input: Any,
+    governing_docs: set[str], failures: list[str],
+) -> None:
+    label = f"{step_id}: owner_input"
+    if not _closed_shape(owner_input, OWNER_INPUT_KEYS, OWNER_INPUT_KEYS, label, failures):
+        return
+    assert isinstance(owner_input, dict)
+    if not _text(owner_input.get("response_format")):
+        failures.append(f"{label}.response_format must be non-empty")
+    requests = owner_input.get("requests")
+    if not isinstance(requests, list) or not requests:
+        failures.append(f"{label}.requests must be a non-empty list")
+        return
+    request_ids: list[str] = []
+    for index, request in enumerate(requests, 1):
+        request_label = f"{label}.requests[{index}]"
+        if not _closed_shape(
+            request, OWNER_REQUEST_KEYS, OWNER_REQUEST_KEYS, request_label, failures
+        ):
+            continue
+        assert isinstance(request, dict)
+        request_id = request.get("id")
+        if not _text(request_id):
+            failures.append(f"{request_label}.id must be non-empty")
+        else:
+            request_ids.append(request_id)
+        for field in ("question", "recommended_response"):
+            if not _text(request.get(field)):
+                failures.append(f"{request_label}.{field} must be non-empty")
+        source_ref = request.get("source_ref")
+        if not _closed_shape(
+            source_ref, EVIDENCE_KEYS, EVIDENCE_KEYS,
+            f"{request_label}.source_ref", failures,
+        ):
+            continue
+        assert isinstance(source_ref, dict)
+        path, marker = source_ref.get("path"), source_ref.get("marker")
+        if path not in governing_docs:
+            failures.append(f"{request_label}.source_ref path is not governing: {path}")
+            continue
+        try:
+            source = (root / path).read_text(encoding="utf-8")
+        except OSError:
+            failures.append(f"{request_label}.source_ref document does not exist: {path}")
+            continue
+        token = f"<!-- OWNER:{key}:{step_id}:{marker} -->"
+        if source.count(token) != 1:
+            failures.append(f"{request_label}.source_ref must resolve exactly once: {token}")
+    if len(request_ids) != len(set(request_ids)):
+        failures.append(f"{label} request IDs must be unique")
+
+
 def claim_instruction(item: dict[str, Any], issue: dict[str, Any]) -> str:
     """Return claim-safe work-start guidance from validated operational state."""
     selected = selected_completion_step(item)
@@ -397,6 +458,7 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "outcome": item["completion"]["outcome"],
         "canonical_next_step_id": item["completion"]["canonical_next_step_id"],
         "owner_input_required": bool(selected and selected.get("kind") == "owner_decision"),
+        "owner_input": selected.get("owner_input") if selected else None,
         "execution_policy": item["completion"]["execution_policy"],
         "presentation_policy": item["completion"]["presentation_policy"],
         "steps": item["completion"]["steps"],
@@ -430,6 +492,12 @@ def render_completion(view: dict[str, Any]) -> str:
             "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
             "project owner's decisions before any claim or edit."
         )
+        owner_input = view["owner_input"]
+        lines.append(f"Owner response format: {owner_input['response_format']}")
+        lines.append("Owner decisions requested:")
+        for request in owner_input["requests"]:
+            lines.append(f"- [{request['id']}] {request['question']}")
+            lines.append(f"  Recommended: {request['recommended_response']}")
     lines.append("Steps:")
     for index, step in enumerate(view["steps"], 1):
         dependencies = ", ".join(step["depends_on"]) or "none"

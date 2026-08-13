@@ -103,7 +103,8 @@ remembered project state.
 
 **Owner-boundary rule:** when `next` or `details` reports `Owner boundary:
 INPUT REQUIRED`, immediately alert the project owner that autonomous work has
-stopped and identify the selected decision step. Do not claim the bead, edit
+stopped and present the selector's complete ordered decision packet and response
+format byte-for-byte. Do not claim the bead, edit
 files, choose a candidate disposition, skip ahead, or silently treat owner
 approval as implied. Resume only after the owner supplies the required choice;
 the same governance transaction records its durable review evidence, completes

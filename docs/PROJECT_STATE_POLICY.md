@@ -57,7 +57,9 @@ completion queries.
 When the selected completion step has kind `owner_decision`, the Frontier item
 MUST carry `owner_decision` authorization and MUST NOT be `in_progress` or carry
 an agent claim. Human and JSON `next`/`details` output MUST expose an owner-input
-boundary. Agents alert the owner, identify the selected decision, and stop
+boundary plus a closed-shape ordered decision packet: stable request ID,
+question, recommended response, exactly resolving governed source marker, and
+one explicit response format. Agents alert the owner, present that packet, and stop
 without claiming, editing, choosing a disposition, or advancing. After explicit
 input, one governance transaction records durable review evidence, completes
 the owner step, selects the next dependency-ready step, and changes item

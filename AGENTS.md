@@ -92,7 +92,8 @@ state.
 
 **Owner-boundary rule:** if selector stdout says `Owner boundary: INPUT
 REQUIRED`, alert the owner that the boundary has been reached and name the
-selected decision step, then stop. Never claim or edit the task, decide on the
+selected decision step, present the selector's ordered decision packet and
+response format byte-for-byte, then stop. Never claim or edit the task, decide on the
 owner's behalf, or advance to another step. Work resumes only after explicit
 owner input is recorded and the Frontier authorization/substep is advanced in
 the same governance transaction.

@@ -191,8 +191,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
         failures.append(f"unknown active-frontier keys: {', '.join(sorted(unknown_root))}")
     if missing_root:
         failures.append(f"missing active-frontier keys: {', '.join(sorted(missing_root))}")
-    if manifest.get("schema_version") != 4:
-        failures.append("schema_version must be 4")
+    if manifest.get("schema_version") != 5:
+        failures.append("schema_version must be 5")
     if not nonempty(manifest.get("policy_decision")):
         failures.append("policy_decision must be non-empty")
     ttl = manifest.get("claim_ttl_hours")
@@ -478,6 +478,12 @@ def render_next(view: dict[str, Any]) -> str:
             "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
             "project owner's decisions before any claim or edit."
         )
+        owner_input = selected["owner_input"]
+        lines.append(f"Owner response format: {owner_input['response_format']}")
+        lines.append("Owner decisions requested:")
+        for request in owner_input["requests"]:
+            lines.append(f"- [{request['id']}] {request['question']}")
+            lines.append(f"  Recommended: {request['recommended_response']}")
     lines.append(view["summary"])
     return "\n".join(lines)
 

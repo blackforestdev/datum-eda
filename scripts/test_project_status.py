@@ -43,7 +43,7 @@ class ProjectStatusTest(unittest.TestCase):
             self.issue("dat-intake", "open", labels=["roadmap:intake"]),
         ]
         self.manifest = {
-            "schema_version": 4,
+            "schema_version": 5,
             "policy_decision": self.doc,
             "claim_ttl_hours": 24,
             "frontier": [self.item()],
@@ -156,13 +156,11 @@ class ProjectStatusTest(unittest.TestCase):
     def assert_failure(self, needle: str, now: datetime | None = None) -> None:
         found = self.failures(now)
         self.assertTrue(any(needle in failure for failure in found), found)
-
     def test_valid_state_and_intake_only_issue_pass(self) -> None:
         failures, state = status.validate(self.root)
         self.assertEqual([], failures)
         self.assertEqual("dat-next", state["next"]["issue_id"])
         self.assertNotIn("dat-intake", {item["issue_id"] for item in self.manifest["frontier"]})
-
     def test_next_supports_human_and_json_output(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output):
@@ -192,7 +190,6 @@ class ProjectStatusTest(unittest.TestCase):
             self.assertEqual(
                 "TEST-C01", payload["next"]["completion"]["canonical_next_step_id"]
             )
-
     def test_details_supports_human_and_json_output(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output):
@@ -226,7 +223,6 @@ class ProjectStatusTest(unittest.TestCase):
             details["execution_policy"]["dependency_independence_authorizes_parallelism"]
         )
         self.assertEqual("stdout_verbatim", details["presentation_policy"]["mode"])
-
     def test_details_named_key_and_issue_id_resolve_identically(self) -> None:
         payloads = []
         for target in ("alignment", "dat-next"):
@@ -241,24 +237,49 @@ class ProjectStatusTest(unittest.TestCase):
             self.assertEqual(1, status.main([
                 "--root", str(self.root), "details", "unknown", "--json",
             ]))
-
     def test_owner_boundary_alerts_and_forbids_agent_claim(self) -> None:
         item = self.manifest["frontier"][0]
         item.update({"state": "specified", "authorization": "owner_decision"})
         item["completion"]["steps"][0]["kind"] = "owner_decision"
+        item["completion"]["steps"][0]["owner_input"] = {
+            "response_format": "Reply approve or revise.",
+            "requests": [{
+                "id": "OPEN-1", "question": "Approve the candidate?",
+                "recommended_response": "Approve.",
+                "source_ref": {"path": self.doc, "marker": "OPEN-1"},
+            }],
+        }
+        (self.root / self.doc).write_text(
+            (self.root / self.doc).read_text(encoding="utf-8")
+            + "\n<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n",
+            encoding="utf-8",
+        )
         self.assertEqual([], self.failures())
         issue = self.issues[0]
         details = status.completion_view(item, issue)
         self.assertTrue(details["owner_input_required"])
         self.assertIn("OWNER BOUNDARY REACHED", details["work_start"])
         self.assertIn("Owner boundary: INPUT REQUIRED", status.render_completion(details))
+        self.assertIn("Owner response format: Reply approve or revise.", status.render_completion(details))
+        self.assertIn("[OPEN-1] Approve the candidate?", status.render_completion(details))
         next_output = status.render_next(status.next_view(item, issue))
         self.assertIn("Owner boundary: INPUT REQUIRED", next_output)
         self.assertIn("must stop", next_output)
-
+        self.assertIn("[OPEN-1] Approve the candidate?", next_output)
     def test_selected_step_kind_requires_matching_item_authorization(self) -> None:
         item = self.manifest["frontier"][0]
         item["completion"]["steps"][0]["kind"] = "owner_decision"
+        item["completion"]["steps"][0]["owner_input"] = {
+            "response_format": "Reply approve or revise.",
+            "requests": [{
+                "id": "OPEN-1", "question": "Approve?", "recommended_response": "Approve.",
+                "source_ref": {"path": self.doc, "marker": "OPEN-1"},
+            }],
+        }
+        (self.root / self.doc).write_text(
+            (self.root / self.doc).read_text(encoding="utf-8")
+            + "\n<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n", encoding="utf-8",
+        )
         self.assert_failure("selected owner_decision step requires item authorization owner_decision")
         item.update({"state": "specified", "authorization": "owner_decision"})
         self.issues[0] = self.issue(
@@ -276,11 +297,14 @@ class ProjectStatusTest(unittest.TestCase):
             "owner-decision boundary cannot carry an agent claim",
             datetime(2026, 8, 13, 12, tzinfo=timezone.utc),
         )
-
+    def test_owner_decision_requires_resolvable_input_packet(self) -> None:
+        item = self.manifest["frontier"][0]
+        item.update({"state": "specified", "authorization": "owner_decision"})
+        item["completion"]["steps"][0]["kind"] = "owner_decision"
+        self.assert_failure("owner_input must be an object")
     def test_canonical_next_requires_completion_plan(self) -> None:
         del self.manifest["frontier"][0]["completion"]
         self.assert_failure("canonical next requires a completion plan")
-
     def test_completion_rejects_weakened_presentation_and_execution_policy(self) -> None:
         completion = self.manifest["frontier"][0]["completion"]
         completion["execution_policy"]["max_in_progress_steps"] = 2
@@ -303,7 +327,6 @@ class ProjectStatusTest(unittest.TestCase):
             "presentation mode must be stdout_verbatim",
         ):
             self.assertTrue(any(needle in value for value in found), found)
-
     def test_completion_rejects_bad_step_dependency_and_acceptance(self) -> None:
         step = self.manifest["frontier"][0]["completion"]["steps"][0]
         step["depends_on"] = ["LATER"]
@@ -311,7 +334,6 @@ class ProjectStatusTest(unittest.TestCase):
         found = self.failures()
         self.assertTrue(any("must name an earlier step" in value for value in found), found)
         self.assertTrue(any("acceptance criteria" in value for value in found), found)
-
     def test_acceptance_ids_use_exact_tokens_not_prefix_matches(self) -> None:
         first = self.manifest["frontier"][0]["completion"]["steps"][0]
         second = copy.deepcopy(first)
@@ -327,25 +349,21 @@ class ProjectStatusTest(unittest.TestCase):
             encoding="utf-8",
         )
         self.assertEqual([], self.failures())
-
     def test_planning_completion_rejects_execution_step(self) -> None:
         self.manifest["frontier"][0].update({
             "state": "specified", "authorization": "planning",
         })
         self.assert_failure("execution step is forbidden by planning authorization")
-
     def test_completion_rejects_missing_and_uncovered_evidence_markers(self) -> None:
         reference = self.manifest["frontier"][0]["completion"]["steps"][0]["requirement_refs"][0]
         reference["marker"] = "MISSING"
         found = self.failures()
         self.assertTrue(any("must occur exactly once" in value for value in found), found)
         self.assertTrue(any("uncovered governing requirement" in value for value in found), found)
-
     def test_completion_rejects_duplicate_step_ids(self) -> None:
         step = copy.deepcopy(self.manifest["frontier"][0]["completion"]["steps"][0])
         self.manifest["frontier"][0]["completion"]["steps"].append(step)
         self.assert_failure("completion step ids must be unique")
-
     def test_completion_requires_one_dependency_ready_canonical_substep(self) -> None:
         completion = self.manifest["frontier"][0]["completion"]
         del completion["canonical_next_step_id"]
@@ -362,7 +380,6 @@ class ProjectStatusTest(unittest.TestCase):
         self.assert_failure("completed plan requires canonical_next_step_id null")
         completion["canonical_next_step_id"] = None
         self.assert_failure("canonical task requires an incomplete selected substep")
-
     def test_canonical_substep_must_match_active_step(self) -> None:
         completion = self.manifest["frontier"][0]["completion"]
         first = self.manifest["frontier"][0]["completion"]["steps"][0]
@@ -379,7 +396,6 @@ class ProjectStatusTest(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_failure("must identify the in_progress step")
-
     def test_completion_progress_requires_proof_and_completed_dependencies(self) -> None:
         first = self.manifest["frontier"][0]["completion"]["steps"][0]
         second = copy.deepcopy(first)
@@ -395,7 +411,6 @@ class ProjectStatusTest(unittest.TestCase):
         found = self.failures()
         self.assertTrue(any("requires completed dependency" in value for value in found), found)
         self.assertTrue(any("requires completion evidence" in value for value in found), found)
-
     def test_completion_rejects_bogus_proof(self) -> None:
         step = self.manifest["frontier"][0]["completion"]["steps"][0]
         step.update({
@@ -403,7 +418,6 @@ class ProjectStatusTest(unittest.TestCase):
             "completion_evidence": [{"kind": "commit", "revision": "not-a-commit"}],
         })
         self.assert_failure("commit does not resolve")
-
     def test_completion_rejects_non_string_proof_kind_cleanly(self) -> None:
         step = self.manifest["frontier"][0]["completion"]["steps"][0]
         step.update({
@@ -411,7 +425,6 @@ class ProjectStatusTest(unittest.TestCase):
             "completion_evidence": [{"kind": [], "revision": self.head()}],
         })
         self.assert_failure("has invalid kind")
-
     def test_landed_item_requires_all_completion_steps_complete(self) -> None:
         self.issues[0]["status"] = "closed"
         self.manifest["frontier"][0].update({
@@ -422,7 +435,6 @@ class ProjectStatusTest(unittest.TestCase):
         second = self.item(key="second", issue_id="dat-intake", order=1)
         self.manifest["frontier"].append(second)
         self.assert_failure("landed item requires every completion step to be complete")
-
     def test_repository_s5_contract_has_exhaustive_stable_ids(self) -> None:
         repository = MODULE_PATH.parents[1]
         manifest = json.loads(
@@ -435,6 +447,10 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertEqual("owner_decision", s5["authorization"])
         steps = {step["id"]: step for step in s5["completion"]["steps"]}
         self.assertEqual("owner_decision", steps["S5-C01A"]["kind"])
+        self.assertEqual(
+            [f"OPEN-{number}" for number in range(1, 15)],
+            [request["id"] for request in steps["S5-C01A"]["owner_input"]["requests"]],
+        )
         for step_id in ("S5-C02", "S5-C03", "S5-C04", "S5-C05", "S5-C08", "S5-C09"):
             self.assertIn("S5-C01A", steps[step_id]["depends_on"])
         spec = (
@@ -456,14 +472,12 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertEqual(expected, rendered_ids)
         self.assertIn("Next completion step: [S5-C01A]", rendered)
         self.assertIn("does not authorize parallel work", rendered)
-
     def test_duplicate_next_and_order_fail(self) -> None:
         duplicate = self.item(key="second", issue_id="dat-intake")
         self.manifest["frontier"].append(duplicate)
         found = self.failures()
         self.assertTrue(any("duplicate frontier order" in value for value in found), found)
         self.assertTrue(any("exactly one canonical_next" in value for value in found), found)
-
     def test_duplicate_keys_primary_issues_and_tracker_ids_fail(self) -> None:
         duplicate = self.item(order=1, canonical_next=False)
         self.manifest["frontier"].append(duplicate)
@@ -472,18 +486,15 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertTrue(any("duplicate frontier key" in value for value in found), found)
         self.assertTrue(any("duplicate primary frontier issue" in value for value in found), found)
         self.assertTrue(any("duplicate tracker issue id" in value for value in found), found)
-
     def test_orphan_document_and_issue_fail(self) -> None:
         self.manifest["frontier"][0]["governing_docs"] = ["docs/missing.md"]
         self.manifest["frontier"][0]["issue_id"] = "dat-missing"
         found = self.failures()
         self.assertTrue(any("document does not exist" in value for value in found), found)
         self.assertTrue(any("tracker issue does not exist" in value for value in found), found)
-
     def test_unclassified_document_fails(self) -> None:
         self.governance["entries"].clear()
         self.assert_failure("governing document is not active/classified")
-
     def test_stale_claim_fails(self) -> None:
         self.issues[0] = self.issue(
             "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
@@ -503,7 +514,6 @@ class ProjectStatusTest(unittest.TestCase):
             },
         })
         self.assert_failure("claim expired", datetime(2026, 8, 13, 12, tzinfo=timezone.utc))
-
     def test_fresh_claim_passes(self) -> None:
         self.issues[0] = self.issue(
             "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
@@ -529,7 +539,6 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertEqual("in_progress", payload["next"]["tracker_status"])
         self.assertEqual("codex", payload["next"]["assignee"])
         self.assertTrue(payload["next"]["live_claim"])
-
     def test_hard_blocker_rejects_ready_next(self) -> None:
         self.issues.append(self.issue("dat-blocker", "open", labels=["roadmap:intake"]))
         self.issues[0]["dependencies"] = [{
@@ -538,7 +547,6 @@ class ProjectStatusTest(unittest.TestCase):
         self.manifest["frontier"][0]["dependencies"] = ["dat-blocker"]
         self.assert_failure("unresolved hard blockers")
         self.assert_failure("canonical next is not actionable")
-
     def test_related_and_parent_edges_are_nonblocking(self) -> None:
         self.issues.extend([
             self.issue("dat-related", "open", labels=["roadmap:intake"]),
@@ -549,61 +557,49 @@ class ProjectStatusTest(unittest.TestCase):
             {"issue_id": "dat-next", "depends_on_id": "dat-parent", "type": "parent-child"},
         ]
         self.assertEqual([], self.failures())
-
     def test_deferred_next_fails(self) -> None:
         self.issues[0]["status"] = "deferred"
         self.manifest["frontier"][0]["state"] = "deferred"
         found = self.failures()
         self.assertTrue(any("deferred item cannot be canonical next" in value for value in found), found)
         self.assertTrue(any("canonical next is not actionable" in value for value in found), found)
-
     def test_dependency_mismatch_fails(self) -> None:
         self.issues.append(self.issue("dat-blocker", "closed"))
         self.issues[0]["dependencies"] = [{
             "issue_id": "dat-next", "depends_on_id": "dat-blocker", "type": "blocks"
         }]
         self.assert_failure("dependency mismatch")
-
     def test_scheduled_issue_without_frontier_record_fails(self) -> None:
         self.issues[1]["labels"] = ["roadmap:frontier"]
         self.assert_failure("scheduled tracker issue is absent from frontier")
-
     def test_non_closed_issue_requires_one_roadmap_label(self) -> None:
         self.issues[1]["labels"] = []
         self.assert_failure("must have exactly one roadmap label")
-
     def test_multiple_roadmap_labels_fail(self) -> None:
         self.issues[1]["labels"] = ["roadmap:intake", "roadmap:frontier"]
         self.assert_failure("must have exactly one roadmap label")
-
     def test_deferred_status_and_label_must_match_both_directions(self) -> None:
         self.issues[1].update({"status": "deferred", "labels": ["roadmap:intake"]})
         self.assert_failure("deferred status/label mismatch")
         self.issues[1].update({"status": "open", "labels": ["roadmap:deferred"]})
         self.assert_failure("deferred status/label mismatch")
-
     def test_intake_issue_cannot_be_primary_frontier_item(self) -> None:
         self.manifest["frontier"][0]["issue_id"] = "dat-intake"
         self.issues[0]["labels"] = []
         self.assert_failure("intake-only tracker issue cannot be a frontier item")
-
     def test_specified_planning_item_may_be_next(self) -> None:
         self.manifest["frontier"][0].update({"state": "specified", "authorization": "planning"})
         self.manifest["frontier"][0]["completion"]["steps"][0]["kind"] = "planning"
         self.assertEqual([], self.failures())
-
     def test_planned_execution_item_cannot_be_next(self) -> None:
         self.manifest["frontier"][0]["state"] = "planned"
         self.assert_failure("planned canonical next requires planning or owner_decision")
-
     def test_ready_without_separate_authorization_may_be_next(self) -> None:
         self.manifest["frontier"][0]["authorization"] = "none"
         self.assertEqual([], self.failures())
-
     def test_ready_planning_authorization_fails(self) -> None:
         self.manifest["frontier"][0]["authorization"] = "planning"
         self.assert_failure("authorization planning is invalid for state ready")
-
     def test_overlapping_active_claims_fail(self) -> None:
         head = self.head()
         claim = {
@@ -630,7 +626,6 @@ class ProjectStatusTest(unittest.TestCase):
         self.assert_failure(
             "overlapping active claims", datetime(2026, 8, 13, 12, tzinfo=timezone.utc)
         )
-
     def test_unresolvable_claimed_head_fails(self) -> None:
         self.issues[0] = self.issue(
             "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
@@ -649,7 +644,6 @@ class ProjectStatusTest(unittest.TestCase):
         self.assert_failure(
             "claimed head does not resolve", datetime(2026, 8, 13, 12, tzinfo=timezone.utc)
         )
-
     def test_stale_render_fails_and_render_repairs_it(self) -> None:
         progress = self.root / "specs/PROGRESS.md"
         progress.write_text(progress.read_text().replace("CANONICAL NEXT", "OLD NEXT"))
@@ -663,12 +657,10 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertFalse(current)
         self.assertEqual("updated", result)
         self.assertTrue(status.render_status(self.root, False)[0])
-
     def test_render_uses_stable_keys_without_numbered_list(self) -> None:
         block = status.render_block(self.manifest)
         self.assertIn("(`alignment`; `dat-next`)", block)
         self.assertNotIn("0. **", block)
-
     def test_landed_requires_closed_issue_and_real_commit(self) -> None:
         revision = self.head()
         decision = self.root / self.doc

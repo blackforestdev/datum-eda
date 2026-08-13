@@ -731,10 +731,12 @@ specification/ratification transaction, never S5A implementation.
   TO-ENFORCE until they land with S5A; specification-phase evidence closes now.
 
 <!-- REQ:UVT-S5-SPEC:S5-C11 -->
+<!-- OWNER:UVT-S5-SPEC:S5-C11:S5-FINAL-REVIEW -->
 - **S5-C11 — owner review.** Review C01–C10, record explicit approval with no
   remaining S5 choice, and leave the Application Status Bar deferred.
 
 <!-- REQ:UVT-S5-SPEC:S5-C12 -->
+<!-- OWNER:UVT-S5-SPEC:S5-C12:S5-RATIFICATION -->
 - **S5-C12 — selection-identity decision.** Allocate the next available decision
   number at creation time, cite the complete contract/evidence, ratify Layer-2
   identity and the S5A/S5B boundary, and keep implementation separately authorized.
@@ -1325,67 +1327,81 @@ the named propagation step then reconciles that approved choice into its
 contract and evidence. S5-C11 only performs final review and cannot introduce a
 new choice after C02–C10 are complete.
 
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-1 -->
 - **OPEN-1 — ladder origins.** §2.2.5 defines the section→run→net ladder for
   clicks on track/wire sections only; via / pad(footprint) / zone-fill /
   label click-origins are unstated. *Candidate:* ratify ladder origins as
   track/wire sections exclusively; clicks on other net members stay
   object-only (matches the §2.2.5 wording; keeps one predictable origin
   class). *Decision:* S5-C01A. *Propagation:* S5-C07.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-2 -->
 - **OPEN-2 — board-workspace component-owned graphics.** Ownership of
   component-owned graphics in the board workspace is spec-silent.
   *Candidate:* ratify the current code behavior — sub-graphics hit-map to
   the parent component; Edge.Cuts component graphics excluded from hit
   regions. *Decision:* S5-C01A. *Propagation:* S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-3 -->
 - **OPEN-3 — owned text beyond reference/value.** The editors' owned-text
   independence is ratified for reference/value only; user/fab owned text is
   silent. *Candidate:* same independent-target + oriented-rect rule for all
   owned text kinds in the definition editors. *Decision:* S5-C01A.
   *Propagation:* S5-C04/S5-C07.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-4 -->
 - **OPEN-4 — Footprint/Symbol Editor child region rules + composition.**
   Pad region qualification, pin-compound region qualification, and
   pad-number-text composition are unstated. *Candidate:* point-like
   center/connection-anchor rule for pads; anchor-qualifies-the-compound for
   pins; pad geometry + pad-number text as one subject (RB §2.7 pin analogy).
   *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C07.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-5 -->
 - **OPEN-5 — editor-workspace owned graphics.** Whether the generic
   path/filled rules extend to Footprint/Symbol Editor owned graphics (and
   schematic drawing cross-pane/overlay specifics). *Candidate:* extend the
   generic §2.2.4 rules as independent authored targets in definition
   editors. *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-6 -->
 - **OPEN-6 — definition↔instance projection.** Whether selecting a
   pad/text/graphic/pin *definition* in a library editor projects onto placed
   instances. *Candidate:* merely-related under RB §2.3 (exact authored
   appearance, no accent), never same-identity. *Decision:* S5-C01A.
   *Propagation:* S5-C07.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-7 -->
 - **OPEN-7 — junction Global-Net membership.** Junctions are absent from the
   enumerated net-member list. *Candidate:* include the junction dot as an
   owned member of the Global Net projection (it is resolved conductive
   geometry). *Decision:* S5-C01A. *Propagation:* S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-8 -->
 - **OPEN-8 — bus region rule + hierarchy projection.** Region qualification
   for spine/entries and member-pane specifics of semantic-bus projection.
   *Candidate:* generic path rule for spine and entries; hierarchy projection
   follows the Global Net cross-pane law with bus-distinct typing. *Decision:*
   S5-C01A. *Propagation:* S5-C02/S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-9 -->
 - **OPEN-9 — schematic-text compound fields.** The typed compound field
   table covers PCB text only. *Candidate:* mirror the PCB text row
   (style/height/stroke/alignment/visibility where typed). *Decision:* S5-C01A.
   *Propagation:* S5-C04.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-10 -->
 - **OPEN-10 — dimension class.** Spec-silent, no scene projection.
   *Candidate:* author path-rule qualification for extension/dimension lines
   + oriented-rect for dimension text, or formally defer the class from S5A.
   *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C04/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-11 -->
 - **OPEN-11 — hierarchical sheet representation.** Spec-silent, untyped.
   *Candidate:* filled-graphic-style rect qualification for the sheet body
   with sheet pins as children, or formally defer from S5A. *Decision:* S5-C01A.
   *Propagation:* S5-C02/S5-C04/S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-12 -->
 - **OPEN-12 — non-authored subject semantics.** Region/scope/hidden/locked/
   compound rules for proposal, review, and diagnostic subjects are declared
   SILENT by §2.2. *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C03/S5-C04/
   S5-C07/S5-C08.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-13 -->
 - **OPEN-13 — field visibility vs layer visibility.** Text-field visibility
   as a typed property vs §2.2.8 hidden-selection semantics; and whether
   definition-editor children carry lock attributes. *Decision:* S5-C01A.
   *Propagation:* S5-C03/S5-C05.
+<!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-14 -->
 - **OPEN-14 — dense/tiny fallback for non-authored channels.** RB §2.8 is
   stated for selection overlay over authored geometry; application to
   proposal/review/diagnostic channels is unstated. *Decision:* S5-C01A.
