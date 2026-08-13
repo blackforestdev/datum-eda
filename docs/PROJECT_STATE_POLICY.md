@@ -46,6 +46,14 @@ and MUST be returned byte-for-byte. It reports both the selected Frontier task
 and that task's `canonical_next_step_id`; agents must not infer, substitute, or
 append another dependency-ready substep.
 
+Every such answer requires a fresh invocation in the current repository during
+the current user turn. Prior conversation, memory, cached output, an earlier
+tool call, direct manifest reading, tracker readiness, and commit history MUST
+NOT substitute for the selector. A selector execution or validation failure is
+a blocking project-state failure: report it and do not manufacture an answer.
+The same fresh-invocation rule applies to `details` for current or named task
+completion queries.
+
 For every “how do we finish/complete this task?” query, agents MUST run
 `details` (no target for current; stable key/issue ID for a named task) and
 reproduce its ordered steps, work-start instruction, requirements, evidence,

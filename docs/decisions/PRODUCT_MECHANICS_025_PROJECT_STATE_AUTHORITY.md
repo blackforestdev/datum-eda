@@ -30,6 +30,13 @@ or prose outside the generated Frontier. Ordinary human answers MUST reproduce
 its stdout byte-for-byte, including the canonical completion substep, without
 supplementation or inferred alternatives.
 
+The command MUST be freshly invoked in the current repository during every user
+turn that asks for next-task or completion-plan state. Memory, cached output,
+prior conversation or tool calls, direct manifest inspection, tracker output,
+and commit history MUST NOT substitute for that invocation. If execution or
+validation fails, the agent MUST report the failure and MUST NOT infer an
+answer.
+
 The deterministic answer to “how do we complete the current task?” is produced
 by `python3 scripts/project_status.py details`; a stable Frontier key or issue ID
 may select a named scheduled task. With no target it selects the same canonical

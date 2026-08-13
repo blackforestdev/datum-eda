@@ -82,6 +82,14 @@ For an ordinary next-task query, return this command's stdout byte-for-byte as
 the entire answer. Its `Next completion step` is authoritative; never append or
 substitute a substep inferred from ordering or dependency readiness.
 
+**Fresh-invocation rule:** run the applicable selector from this repository in
+every user turn asking what is next or how to complete a task, including repeated
+questions in the same session. Do not answer from memory, cached output,
+conversation summaries, prior tool calls, manual manifest inspection, tracker
+readiness (`br ready`), or commit history. If the selector fails or cannot be
+run, report the failure and stop without guessing or reconstructing project
+state.
+
 For every “how/steps to finish or complete the current task?” query, use:
 
 ```bash

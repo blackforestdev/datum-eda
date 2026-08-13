@@ -92,6 +92,15 @@ the entire answer. It includes the sole selected completion substep; do not
 append an inferred alternative from step order, dependency readiness, or prior
 conversation.
 
+**Fresh-invocation rule:** execute the applicable `project_status.py` command
+from the current repository during every user turn that asks what is next or how
+to complete a task—even when the same question was answered earlier in the
+session. Memory, cached stdout, conversation summaries, prior tool results,
+manual manifest inspection, `br ready`, and recent commits are never substitutes
+for a fresh successful invocation. If the command cannot run or validation
+fails, report that failure and stop; do not guess, reconstruct, or fall back to
+remembered project state.
+
 For “how/steps to finish or complete the current task?” run:
 
 ```bash
