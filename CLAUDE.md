@@ -87,6 +87,11 @@ The single canonical answer to "what is the next logical development task?" is:
 python3 scripts/project_status.py next
 ```
 
+For an ordinary next-task query, return this command's stdout byte-for-byte as
+the entire answer. It includes the sole selected completion substep; do not
+append an inferred alternative from step order, dependency readiness, or prior
+conversation.
+
 For “how/steps to finish or complete the current task?” run:
 
 ```bash

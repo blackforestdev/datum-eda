@@ -78,6 +78,10 @@ development task" is returned by the decision-025 project-state selector:
 python3 scripts/project_status.py next
 ```
 
+For an ordinary next-task query, return this command's stdout byte-for-byte as
+the entire answer. Its `Next completion step` is authoritative; never append or
+substitute a substep inferred from ordering or dependency readiness.
+
 For every “how/steps to finish or complete the current task?” query, use:
 
 ```bash

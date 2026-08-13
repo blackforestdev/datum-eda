@@ -41,6 +41,11 @@ them with stale conversational ownership or earlier tracker output.
 `render` updates only the region between `<!-- ACTIVE FRONTIER:START -->` and
 `<!-- ACTIVE FRONTIER:END -->`; `check-render` rejects projection drift.
 
+For an ordinary “what is next?” query, stdout from `next` is the entire answer
+and MUST be returned byte-for-byte. It reports both the selected Frontier task
+and that task's `canonical_next_step_id`; agents must not infer, substitute, or
+append another dependency-ready substep.
+
 For every “how do we finish/complete this task?” query, agents MUST run
 `details` (no target for current; stable key/issue ID for a named task) and
 reproduce its ordered steps, work-start instruction, requirements, evidence,

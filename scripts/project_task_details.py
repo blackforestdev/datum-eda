@@ -291,6 +291,8 @@ def validate_completion(
     if not incomplete_steps:
         if canonical_step is not None:
             failures.append(f"{key}: completed plan requires canonical_next_step_id null")
+        if item.get("canonical_next"):
+            failures.append(f"{key}: canonical task requires an incomplete selected substep")
     elif not _text(canonical_step):
         failures.append(f"{key}: incomplete plan requires one canonical_next_step_id")
     elif canonical_step not in statuses:

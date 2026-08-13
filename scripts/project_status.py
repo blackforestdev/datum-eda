@@ -451,6 +451,25 @@ def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
     return view
 
 
+def render_next(view: dict[str, Any]) -> str:
+    """Render the task and its one selected substep without inviting inference."""
+    assignee = view["assignee"] or "unassigned"
+    live_claim = "active" if view["live_claim"] else "none"
+    completion = view["completion"]
+    step_id = completion["canonical_next_step_id"]
+    selected = next(step for step in completion["steps"] if step["id"] == step_id)
+    return (
+        "Presentation contract: return this stdout byte-for-byte; do not preface, "
+        "summarize, infer a different substep, or supplement it.\n"
+        f"Next task: {view['title']} ({view['issue_id']})\n"
+        f"State: {view['state']}; authorization: {view['authorization']}\n"
+        f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
+        f"live claim: {live_claim}\n"
+        f"Next completion step: [{step_id}] {selected['action']}\n"
+        f"{view['summary']}"
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -483,13 +502,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "next":
             item = state["next"]
             view = next_view(item, state["issues"][item["issue_id"]])
-            assignee = view["assignee"] or "unassigned"
-            live_claim = "active" if view["live_claim"] else "none"
-            emit({"ok": True, "next": view}, as_json,
-                 f"Next task: {item['title']} ({item['issue_id']})\n"
-                 f"State: {item['state']}; authorization: {item['authorization']}\n"
-                 f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
-                 f"live claim: {live_claim}\n{item['summary']}")
+            emit({"ok": True, "next": view}, as_json, render_next(view))
         else:
             item = state["next"]
             if args.target:

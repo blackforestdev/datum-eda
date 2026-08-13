@@ -168,8 +168,15 @@ class ProjectStatusTest(unittest.TestCase):
         with redirect_stdout(output):
             self.assertEqual(0, status.main(["--root", str(self.root), "next"]))
         human = output.getvalue()
+        self.assertTrue(human.startswith(
+            "Presentation contract: return this stdout byte-for-byte;"
+        ))
         self.assertIn("dat-next", human)
         self.assertIn("Tracker: open; assignee: unassigned; live claim: none", human)
+        self.assertIn(
+            "Next completion step: [TEST-C01] Complete the fixture requirement.", human
+        )
+        self.assertIn("do not preface, summarize, infer a different substep, or supplement it", human)
 
         for arguments in (
             ["--root", str(self.root), "next", "--json"],
@@ -182,6 +189,9 @@ class ProjectStatusTest(unittest.TestCase):
             self.assertEqual("open", payload["next"]["tracker_status"])
             self.assertIsNone(payload["next"]["assignee"])
             self.assertFalse(payload["next"]["live_claim"])
+            self.assertEqual(
+                "TEST-C01", payload["next"]["completion"]["canonical_next_step_id"]
+            )
 
     def test_details_supports_human_and_json_output(self) -> None:
         output = io.StringIO()
@@ -316,7 +326,7 @@ class ProjectStatusTest(unittest.TestCase):
         completion["canonical_next_step_id"] = "TEST-C01"
         self.assert_failure("completed plan requires canonical_next_step_id null")
         completion["canonical_next_step_id"] = None
-        self.assertEqual([], self.failures())
+        self.assert_failure("canonical task requires an incomplete selected substep")
 
     def test_canonical_substep_must_match_active_step(self) -> None:
         completion = self.manifest["frontier"][0]["completion"]

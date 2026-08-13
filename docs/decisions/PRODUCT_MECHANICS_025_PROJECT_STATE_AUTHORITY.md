@@ -26,7 +26,9 @@ python3 scripts/project_status.py next
 
 `--json` changes presentation, not selection. Agents MUST use this command
 instead of inferring priority from recent commits, `br ready`, issue priority,
-or prose outside the generated Frontier.
+or prose outside the generated Frontier. Ordinary human answers MUST reproduce
+its stdout byte-for-byte, including the canonical completion substep, without
+supplementation or inferred alternatives.
 
 The deterministic answer to “how do we complete the current task?” is produced
 by `python3 scripts/project_status.py details`; a stable Frontier key or issue ID
