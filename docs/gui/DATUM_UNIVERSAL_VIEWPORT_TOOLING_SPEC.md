@@ -736,6 +736,641 @@ specification/ratification transaction, never S5A implementation.
   advanced in the same governance transaction. Run project-state, governance,
   conformance, and source-health gates.
 
+#### 2.2.16 S5-C01 selection identity/class matrix (reconciled)
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C01-MATRIX -->
+
+This is the exhaustive cross-editor selection identity/class matrix required by
+S5-C01: every mandatory selectable class of the PCB board editor, Footprint
+Editor, Schematic editor, and Symbol Editor, plus the cross-cutting
+proposal/review/diagnostic subjects. It reconciles the ratified rules of
+§2.2.1–2.2.14, the Rendering Book selection law, the compound/Inspector
+guidance, and the **code truth** of typed scene authority. Where the governing
+corpus is silent, the cell says `OPEN-n` and the open-reconciliation register
+at the end of this section carries the candidate resolution — silence is
+recorded, never papered over. Code citations (file:line) describe the substrate
+at commit `d598bd8` and are evidence, not normative contract; document
+citations are normative.
+
+**Verdict predicate (applies to every row).** A row closes with two
+independent verdicts, so "supported" can never blur specification with
+implementation:
+
+- `spec:` **ratified** (every cell closed by governing text) / **partial**
+  (one or more cells `OPEN-n`) / **silent** (the corpus defines no selection
+  rules for the class).
+- `substrate:` **live** (typed scene identity with a working hit/selection
+  path) / **typed-only** (typed identity exists; acquisition unwired or hit
+  region absent) / **absent** (no typed scene identity at all).
+
+A row is *supported* when `spec` is ratified or partial AND the class is an
+S5A acquisition subject; *unsupported* or *deferred* rows say so explicitly
+with the owning closure item. Schematic click selection is deliberately
+unwired pending S5A (`resolve_schematic_primary_click` returns false,
+`crates/gui-app/src/runtime_camera_pane.rs:525-542`); `typed-only` on
+schematic rows reflects that gate, not an accident.
+
+**Citation key.** UVT §n = this spec; RB §n = `DATUM_RENDERING_BOOK.md`;
+CONF = `DATUM_GUI_CONFORMANCE_SPEC.md` S5 rows; P2 = `DATUM_GUI_PHASE_2_SPEC.md`;
+COMP = `DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md` (+
+`research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md`);
+SVL = `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md` (+ its research file).
+
+**Shared baselines.** Every row inherits these four baselines; cells state
+only class deltas. A baseline never silently closes a cell the corpus left
+open — such cells carry `OPEN-n` markers regardless.
+
+- **B-CLICK** (UVT §2.2.6): click selects the deterministic topmost eligible
+  candidate; overlap resolves through the right-button-drag local Select menu
+  with user-legible labels; no ambiguity popup, no click-cycling.
+- **B-HL** (UVT §2.2.7/2.2.8/2.2.9): hidden-layer or class-filtered geometry
+  is ineligible for NEW selection by click, region, menu Select All, or
+  electrical expansion; hiding an already-selected object preserves selection
+  identity and the Inspector reports hidden members; locked objects stay
+  selectable + inspectable, never modifiable — slight neutral greying, full
+  selection treatment retained, no transform handles, whole-selection refusal
+  on mixed mutation with one concise explanation; the anchor padlock glyph is
+  governance-blocked pending `icon_set.json` declaration (RB §2.5); Ctrl+A
+  supersedes eligibility filters (UVT §2.2.9).
+- **B-OV** (RB §2.1; UVT §2.2.13): the universal three-part treatment on the
+  actual visible silhouette — slight luminance lift on every owned primitive,
+  `#CE5A92` internal soft glow, crisp object-shaped 2.0-physical-px
+  screen-space cue; never a generic bounding box; identical full strength in
+  every resolving pane, active or inactive; selection wins over hover, never
+  pulses, never color-alone; high-contrast mode substitutes crisp
+  rings/outlines for glow; screen-only — retained buffers, CAM/export
+  geometry, and hit bounds never change.
+- **B-LOD** (RB §2.8; UVT §2.2.13): sub-2px member projections collapse to
+  one minimum screen-space cue; 65,536 detailed-overlay-primitive cap per
+  pane/frame, then atomic whole-pane exact visible-silhouette union-mask
+  fallback — never partial/bbox truncation; the 100k-object fixture gates
+  determinism.
+- **B-INS** (CONF; P2; UVT §2.2.10; COMP): single subject → Inspector title
+  ref + kind + SELECTED chip with Identity/Placement/Checks sections;
+  compound subject → "Compound Selection — N objects" with member count/types,
+  combined bounds, hidden/locked/incompatible counts with exact blocker
+  explanation, `All N` + per-type scopes, Common/`Mixed`/Unavailable field
+  rendering; S5A Inspector is read-only.
+
+##### PCB board editor
+
+- **Board footprint (placed component instance).**
+  *Ownership:* parent owns children — a click on any owned pad selects the
+  parent footprint; pad anchors feed parent region qualification; owned
+  reference/value text is neither independently selectable nor counted; Ctrl+A
+  collapses pads to the parent (UVT §2.2.4/2.2.9). Child independence in the
+  Footprint Editor workspace is ratified for pads and owned reference/value
+  text only (UVT §2.2.4); owned-graphics independence is spec-silent
+  (`OPEN-2`). *Qualification:* B-CLICK; region qualifies on a strict majority
+  (>50%) of pad center anchors inside (padless → placement anchor);
+  silkscreen, courtyard, fab graphics, and ref/value text never enlarge the
+  test (UVT §2.2.4). *Scope:* object-only; never silently added to electrical
+  selections — under Global Net the body is merely related (UVT §2.2.5/2.2.13;
+  RB §2.2); whether double/triple-click via a pad walks the net ladder is
+  `OPEN-1`. *Projection:* whole coherent presentation lifts as one subject;
+  connected traces NOT selected (RB §2.1); component↔symbol cross-pane is a
+  merely-related mapping — exact authored appearance, no accent, Inspector
+  explains (RB §2.3; P2; CONF). *Hidden/locked:* B-HL. *Overlay:* B-OV +
+  B-LOD. *Inspector:* B-INS; compound `Parts N`; candidate common fields
+  value/rotation/lock; side/flip, DNP/variant, annotation, fields go to
+  dedicated authority (COMP). *Scene authority:* `ComponentBounds`
+  (`crates/gui-protocol/src/lib.rs:234`, object_kind `component`), rect hit
+  region + sub-graphics hit-mapping to the component id
+  (`crates/gui-render/src/render/retained.rs:743/:754/:814/:827`); selected as
+  flat `SelectionTarget::AuthoredObject(String)` (`lib.rs:440-445`) — no typed
+  object class; `ComponentTextPrimitive` has no hit region.
+  *Verdict:* spec **partial** (`OPEN-1`, `OPEN-2`); substrate **live**.
+- **Track section / connected run.**
+  *Ownership:* the authored section is its own subject; run and net are
+  progressive scopes, not ownership containers — a run is never region-tested
+  as one path (UVT §2.2.4/2.2.5). *Qualification:* B-CLICK; region path rule —
+  straight section needs BOTH endpoints inside; curved needs ≥2 of
+  start/authored-midpoint/end; every section qualifies independently; stroke
+  width, halo, clipping, dash phase never alter the test (UVT §2.2.4).
+  *Scope:* the ratified ladder — single = section, double = physically
+  connected run, triple = design-wide resolved net; every net; net classes are
+  not a click depth; pointer movement past threshold restarts (UVT §2.2.5).
+  *Projection:* exact authored path per member section, no giant bbox
+  (RB §2.1/2.2); at net depth the same semantic identity projects into the
+  schematic pane (UVT §2.2.11; P2). *Hidden/locked:* B-HL. *Overlay:* B-OV +
+  B-LOD; the current retained-world selected-recolor path is migration debt —
+  S5 moves selection to the typed post-world overlay (SVL). *Inspector:*
+  B-INS; compound `Traces N`; net/topology/cleanup via dedicated tools
+  (COMP). *Scene authority:* `TrackPrimitive` (`lib.rs:285`), polyline hit
+  region (`retained.rs:694`), click wired
+  (`crates/gui-app/src/main.rs:2648-2691/:2738`); ABSENT: any typed run/net
+  scope subject — `AuthoredObject(String)` holds one flat id, no click-depth
+  machinery. *Verdict:* spec **ratified**; substrate **live** (section) /
+  **absent** (run/net scope subjects).
+- **Via.**
+  *Ownership:* independent point-like subject; Global Net member without
+  becoming a separately counted selection (UVT §2.2.13; RB §2.2).
+  *Qualification:* B-CLICK; region point rule — center/connection anchor
+  inside (UVT §2.2.4). *Scope:* object-only for direct acquisition; via-origin
+  click-depth is `OPEN-1`. *Projection:* own silhouette; full member treatment
+  under a Global Net subject (RB §2.2). *Hidden/locked:* B-HL. *Overlay:*
+  B-OV + B-LOD; semantic core preserved — via material colour + drill void
+  with silhouette ring; must stay distinguishable from junction/terminal/
+  no-connect while selected (RB §2.7). *Inspector:* B-INS; span/type, net,
+  tenting, padstack via dedicated authority (COMP). *Scene authority:*
+  `ViaPrimitive` (`lib.rs:297`), circle hit region (`retained.rs:707`).
+  *Verdict:* spec **partial** (`OPEN-1`); substrate **live**.
+- **Zone / copper pour.**
+  *Ownership:* outline, fill, islands, and thermal geometry project ONE
+  authored zone identity — none independent (UVT §2.2.4); net-owned
+  boundary/fill is a Global Net member (UVT §2.2.13). *Qualification:*
+  B-CLICK (direct when topmost, or explicit Select-menu entry with
+  name/net/layer label); region — NO partial qualification; 100% enclosure of
+  the authored filled area including islands (UVT §2.2.4). *Scope:*
+  object-only geometric acquisition; logical inclusion via electrical
+  expansion only (UVT §2.2.4); fill-origin click-depth is `OPEN-1`.
+  *Projection:* one zone identity — boundary treated, layer fill retained
+  (RB §2.1); same-identity Global Net participation (UVT §2.2.13).
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD; large-coverage glow
+  radius/opacity reduces deterministically while the crisp cue and material
+  colours remain (RB §2.1/2.8). *Inspector:* B-INS; fill is derived geometry —
+  inspectable, never written back; net/layer/priority/refill via dedicated
+  tools (COMP). *Scene authority:* `ZonePrimitive` (`lib.rs:311`), polygon
+  hit region (`retained.rs:775`). *Verdict:* spec **partial** (`OPEN-1`);
+  substrate **live**.
+- **Standalone board text.**
+  *Ownership:* own subject; component-owned ref/value text belongs to the
+  footprint row's child rule (UVT §2.2.4). *Qualification:* B-CLICK + Select
+  menu as the precise path; region — >50% of the ORIENTED layout rectangle;
+  exactly 50% fails; rotated layout bounds, never axis-aligned expansion or
+  per-glyph ink (UVT §2.2.4). *Scope:* object-only. *Projection:* selection
+  follows actual rendered glyph geometry; the layout rectangle is
+  hit/qualification geometry only, never a persistent visual (RB §2.7).
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD; glyph brightening + glow,
+  NO persistent layout rectangle; handles only while the text-edit tool is
+  active; low zoom → minimum cue at the authored anchor (RB §2.7); the current
+  loose bbox halo is fallback-only implementation debt (SVL). *Inspector:*
+  B-INS; common fields style/height/stroke/alignment/visibility where typed;
+  content formulas dedicated (COMP). *Scene authority:* `BoardTextPrimitive`
+  (`crates/gui-protocol/src/board_text_primitives.rs:5`), rect hit region
+  (`retained.rs:842`); glyph meshes hit only via the sibling rect;
+  `ComponentTextPrimitive` rendered with NO hit region and suppresses the
+  parent fallback rect (`retained.rs:735-752`). *Verdict:* spec **ratified**;
+  substrate **live**.
+- **Filled graphic (standalone authored shape with interior).**
+  *Ownership:* outline + fill project one authored identity (UVT §2.2.4);
+  symbol/footprint-owned fills are parent projections, excluded here.
+  *Qualification:* B-CLICK (direct when topmost, or explicit Select-menu
+  entry); region — no partial acquisition; 100% enclosure of the authored
+  filled area (UVT §2.2.4). *Scope:* object-only; Ctrl+A includes it
+  (UVT §2.2.9); no electrical membership. *Projection:* one identity, board-
+  local. *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD. *Inspector:* B-INS;
+  NO candidate common fields until authored graphic identities converge
+  (COMP). *Scene authority:* `BoardGraphicPrimitive` (`lib.rs:131`), polyline
+  hit region only (`retained.rs:856`); ABSENT: a filled-graphic class distinct
+  from strokes and any interior hit shape — the ratified interior-click/
+  enclosure semantics have no substrate. *Verdict:* spec **ratified**;
+  substrate **live** (outline hit only; interior hit + filled identity
+  absent).
+- **Line / arc / outline graphic (stroke-only, incl. board outline).**
+  *Ownership:* standalone graphics are their own subjects. Component-owned
+  graphics: board-workspace ownership is spec-silent — current code hit-maps
+  them to the parent component and skips Edge.Cuts component graphics
+  (`retained.rs:814/:827/:790-798`); that behavior is the candidate rule,
+  pending ratification (`OPEN-2`). *Qualification:* B-CLICK; region path rule
+  as for track sections (UVT §2.2.4). *Scope:* object-only. *Projection:*
+  exact authored path, board-local. *Hidden/locked:* B-HL. *Overlay:* B-OV +
+  B-LOD. *Inspector:* B-INS; no common fields until identities converge
+  (COMP). *Scene authority:* `BoardGraphicPrimitive` (`lib.rs:131`) +
+  `OutlinePolyline` (`lib.rs:217`), polyline hit regions
+  (`retained.rs:856/:869`). *Verdict:* spec **partial** (`OPEN-2`); substrate
+  **live**.
+- **Dimension (board measurement annotation).**
+  Every selection cell is spec-silent: UVT §2.2.4–2.2.13 never mention
+  dimensions; the class exists only as a mandatory S5-C01 row. No candidate
+  generic rule has been assigned (path rule for extension lines +
+  oriented-rect for text is the open question, `OPEN-10`). Inspector guidance
+  exists only at compound level: measured value is derived, never written
+  back; endpoints/units/precision via dedicated tools (COMP). *Scene
+  authority:* ABSENT — the engine type exists
+  (`crates/engine/src/board/dimension.rs`) but is never projected into any
+  scene: no primitive, no object_kind, no hit region. *Verdict:* spec
+  **silent**; substrate **absent** — **unsupported** pending `OPEN-10`
+  ratification (author the rules or formally defer the class).
+- **Global Net (PCB projection).**
+  *Ownership:* ONE semantic subject, not a compound of primitives (RB §2.2);
+  members are all conductive/connective geometry on the resolved net —
+  tracks, vias, connected pad regions, net-owned zone boundary/fill, and
+  ratsnest projection (UVT §2.2.5/2.2.13); parent footprints/symbol bodies
+  are never selected by connectivity — merely related. *Qualification:*
+  triple-click on net geometry only (third ladder tier, UVT §2.2.5); region
+  gestures NEVER acquire net/global scope (UVT §2.2.9). *Scope:* IS the
+  global ladder tier; every net; net classes are not a click depth.
+  *Projection:* same-identity across panes — every visible resolved
+  electrical representation glows with full member treatment; Escape clears
+  the whole subject as one selection (UVT §2.2.11/2.2.13; RB §2.2; P2).
+  *Hidden/locked:* B-HL — hidden members stay hidden, summarized by Inspector
+  count, never materialized (UVT §2.2.13; CONF). *Overlay:* B-OV + B-LOD —
+  the dense-LOD law is the governing scale mechanism for this subject.
+  *Inspector:* net-centric Net/Members/Checks(ERC) view; per-kind and
+  hidden-member counts; netclass values display-only (P2; CONF; COMP).
+  *Scene authority:* ABSENT — `SelectionTarget::AuthoredObject(String)`
+  carries one flat id; no net-subject type, no ladder wiring (board click
+  emits single-object select only, `main.rs:2648-2691`); ratsnest
+  `UnroutedPrimitive` (`lib.rs:148`) rendered with NO hit region
+  (`retained.rs:444-493`). *Verdict:* spec **ratified**; substrate **absent**
+  — the largest spec-vs-substrate gap in this matrix; blocks P2.3.
+- **Airwire / ratsnest geometry.**
+  Ratified here to close the class explicitly: derived ratsnest geometry is
+  **never an independent selection subject** — it has no authored identity to
+  select. It participates in selection ONLY as projected member geometry of a
+  Global Net subject (UVT §2.2.13), where it receives member treatment under
+  B-OV/B-LOD. Click/region gestures never acquire an airwire directly;
+  Ctrl+A excludes it as non-authored (UVT §2.2.9). *Scene authority:*
+  `UnroutedPrimitive` (`lib.rs:148`), rendered, no hit region — consistent
+  with this ratification. *Verdict:* spec **ratified** (this row); substrate
+  **typed-only**; **unsupported as an independent subject by design**.
+
+##### Footprint Editor
+
+- **Pad (independent authored target).**
+  *Ownership:* independently selectable in this workspace (UVT §2.2.4) — the
+  definition editor's authority; no parent collapse. Whether pad-number text
+  is part of the pad subject (by analogy with the RB §2.7 pin construction)
+  is unstated (`OPEN-4`). *Qualification:* B-CLICK with pad-pin labels in the
+  Select menu; region rule UNSPECIFIED — the point-like center-anchor rule is
+  the candidate but §2.2.4 never names pads point-like (`OPEN-4`). *Scope:*
+  object-only — no resolved-net ladder in a library-definition context.
+  *Projection:* definition→placed-instance mapping (same-identity vs
+  merely-related) is unstated (`OPEN-6`); RB §2.3 related law bounds whatever
+  is decided. *Hidden/locked:* B-HL; many families carry no lock attribute
+  today — universal lock vocabulary is S5B (COMP). *Overlay:* B-OV + B-LOD;
+  pad silhouette with copper colour + drill void preserved (RB §2.1/2.7).
+  *Inspector:* B-INS; `Pads N`; common fields later typed
+  net/mask/paste/rotation; shape/padstack/drill/number via dedicated tools
+  (COMP). *Scene authority:* ABSENT — no Footprint Editor surface exists:
+  `PaneContent` and `SceneSurface` are exactly { Board, Schematic }
+  (`crates/gui-protocol/src/workspace_layout.rs:174-177`,
+  `crates/gui-render/src/render/types.rs:80-83`); the only pad type is the
+  board-review `PadPrimitive` (`lib.rs:249`). *Verdict:* spec **partial**
+  (`OPEN-4`, `OPEN-6`); substrate **absent**.
+- **Owned text (reference/value ratified; other owned text open).**
+  *Ownership:* footprint-owned reference/value text is an independent
+  authored target in this workspace; in the board workspace it is a parent
+  projection, not selectable, not counted (UVT §2.2.4). Owned user/fab text
+  beyond reference/value is a real class (imported designs carry it; the
+  board scene already renders owned-text roles beyond ref/value) but is
+  spec-silent (`OPEN-3`). *Qualification:* strict-majority oriented-layout
+  rule, ratified for owned text by the §2.2.4 Footprint Editor clause;
+  B-CLICK. *Scope:* object-only. *Projection:* definition↔instance text
+  mapping unstated (`OPEN-6`). *Hidden/locked:* B-HL; field-visibility vs
+  layer-visibility semantics unreconciled (`OPEN-13`). *Overlay:* B-OV +
+  B-LOD; RB §2.7 text law (glyph geometry, no persistent rectangle, edit-tool
+  handles only). *Inspector:* B-INS; style/height/stroke/alignment/visibility
+  where typed (COMP). *Scene authority:* ABSENT — no editor surface; nearest
+  type `ComponentTextPrimitive` (`lib.rs:182`) is board-side, no hit region.
+  *Verdict:* spec **partial** (`OPEN-3`, `OPEN-6`, `OPEN-13`); substrate
+  **absent**.
+- **Owned graphics (strokes and filled shapes).**
+  Named only by the mandatory S5-C01 row; §2.2 body is silent on editor-side
+  ownership, qualification, and projection. Candidate resolution: extend the
+  generic path + filled-graphic rules of §2.2.4 to this workspace as
+  independent authored targets (`OPEN-5`); board-workspace sub-graphics
+  remain parent projections (`OPEN-2`). Graphics are not uniformly backed by
+  authored engine identities (COMP), which blocks stable identity bookkeeping
+  until that converges. *Hidden/locked:* B-HL once admitted. *Overlay:*
+  generic B-OV + B-LOD (no class-specific RB text). *Inspector:* B-INS; no
+  common fields until identities converge (COMP). *Scene authority:* ABSENT —
+  no editor surface; board-side `ComponentGraphicPrimitive` (`lib.rs:168`)
+  hit-maps to the parent component. *Verdict:* spec **silent** (`OPEN-5`);
+  substrate **absent** — **deferred** until `OPEN-5` ratifies the rules.
+
+##### Schematic editor
+
+- **Symbol.**
+  *Ownership:* symbol is the parent unit — a pin click selects the parent;
+  pin anchors feed parent qualification; owned ref/value text not
+  independently selectable; body fills remain parent projections; Ctrl+A
+  collapses pins to parent (UVT §2.2.4/2.2.9); pin independence exists only
+  in the Symbol Editor. *Qualification:* B-CLICK; region — strict >50%
+  majority of pin connection anchors (pinless → placement anchor); graphics/
+  text never enlarge the test (UVT §2.2.4). *Scope:* object-only; under
+  Global Net the body is merely related (UVT §2.2.5/2.2.13). *Projection:*
+  whole-symbol coherent subject — body stroke, pin stubs, terminal dots, ALL
+  symbol text lift together; "a half-highlighted symbol is a defect"; dark
+  body fill stays dark; attached nets keep normal wire colour (RB §2/2.1);
+  component↔symbol cross-pane is merely-related (RB §2.3; P2; CONF).
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD. *Inspector:* B-INS;
+  `Symbols N`; value/transform-display where typed; reference uniqueness/
+  bindings/units/variants via dedicated tools; mirror is S5B (COMP;
+  UVT §2.2.10). *Scene authority:* `SchematicHitKind::Symbol`
+  (`crates/gui-protocol/src/schematic_scene_import/mod.rs:27-35`, object_kind
+  `schematic_symbol`), rect hit region via `push_schematic_hit_regions`
+  (`crates/gui-render/src/render/coordinate_hit.rs:203-234`); pins tagged
+  `schematic-symbol-pin:{uuid}:{idx}`; selection flattens to
+  `AuthoredObject(String)`; click unwired pending S5A. *Verdict:* spec
+  **ratified**; substrate **typed-only**.
+- **Wire (section / connected run).**
+  *Ownership:* independent authored sections; run/net are click-depth scopes,
+  not ownership (UVT §2.2.4/2.2.5). *Qualification:* B-CLICK; region path
+  rule (both-endpoints / ≥2-of-3 anchors) (UVT §2.2.4). *Scope:* ratified
+  ladder — section / physically connected run / global resolved net including
+  disconnected cross-sheet occurrences joined by the same resolved label
+  (UVT §2.2.5). *Projection:* exact authored path; same-identity Global Net
+  member; named P2.3 cross-probe highlight target (RB §2.1/2.2; P2).
+  *Hidden/locked:* B-HL — electrical expansion cannot newly select hidden
+  geometry (UVT §2.2.8). *Overlay:* B-OV + B-LOD. *Inspector:* B-INS; wires
+  carry NO generic common properties — topology-aware operations are
+  dedicated tools (COMP); net-tier selection projects the Net/Members/Checks
+  view (P2). *Scene authority:* `SchematicHitKind::Wire`, polyline hit
+  region (`coordinate_hit.rs:203-234`); ABSENT: typed section/run/net scope
+  identity or click-depth machinery. *Verdict:* spec **ratified**; substrate
+  **typed-only** (section) / **absent** (scope machinery).
+- **Global Net (schematic projection).**
+  As the PCB Global Net row, from the schematic side: ONE semantic subject
+  owning schematic wires, matching labels/ports, and pin connection
+  terminals/stubs plus the board members; acquired by triple-click on a wire
+  section; never region-acquirable; Escape clears the whole subject; hidden
+  members summarized by count; parent bodies merely related
+  (UVT §2.2.5/2.2.11/2.2.13; RB §2.2; CONF). The P2.3 worked example of
+  same-identity cross-probe (P2). *Inspector:* Net/Members/Checks(ERC) view
+  (P2). *Scene authority:* ABSENT — no net-subject type, no ladder, no
+  cross-pane projection type anywhere in gui-protocol/gui-render/gui-app.
+  *Verdict:* spec **ratified**; substrate **absent** — S5A must land it
+  before the P2.3 cross-probe build.
+- **Bus (section / run / semantic hierarchical bus).**
+  *Ownership:* the bus owns spine + owned name/label + attached bus-entry
+  geometry as ONE subject; scalar member wires/nets remain independent
+  subjects — member selection never selects the parent bus and members never
+  glow via bus membership; entries are not separately counted
+  (UVT §2.2.13; RB §2.2). *Qualification:* B-CLICK = local authored bus
+  section; region rule for spine/entries unstated — extending the generic
+  path rule is the candidate (`OPEN-8`). *Scope:* own three-tier ladder:
+  section / physically connected run / semantic bus identity across the
+  hierarchy (UVT §2.2.13); typed Bus projection is distinct from scalar
+  Global Net (CONF). *Projection:* joint spine+name+entries subject;
+  member-pane specifics of hierarchy projection unstated (`OPEN-8`).
+  *Hidden/locked:* B-HL; Inspector carries member AND hidden counts (CONF).
+  *Overlay:* B-OV + B-LOD on the joint subject; members stay at authored
+  baseline. *Inspector:* member nets listed, not glowed; bus
+  name/members/segments via dedicated tools (UVT §2.2.13; COMP). *Scene
+  authority:* `SchematicHitKind::Bus`, polyline hit region; ABSENT: bus
+  entries remain untyped `schematic_graphic` with no hit region; no
+  run/semantic scope identity. *Verdict:* spec **partial** (`OPEN-8`);
+  substrate **typed-only** (spine) / **absent** (entries, scopes).
+- **Label / port.**
+  *Ownership:* independent authored targets; a bus-owned name/label belongs
+  to the bus subject; labels/ports become owned Global Net members when the
+  net is selected (UVT §2.2.13). *Qualification:* region — visible layout
+  bounds under the strict >50% oriented-rectangle rule; the connection anchor
+  does NOT independently force selection (UVT §2.2.4); B-CLICK. *Scope:*
+  object-only for direct click; label-origin ladder behavior is `OPEN-1`.
+  *Projection:* label/port geometry itself (glyphs + pill, dark fill
+  retained, RB §2.1); same-identity Global Net member; named P2.3 highlight
+  target (P2). *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD. *Inspector:*
+  B-INS; rename/kind/direction via dedicated tools with hierarchy validation
+  (COMP). *Scene authority:* `SchematicHitKind::Label`, rect hit region;
+  port is typed as `Label` — the port class survives only in the
+  `schematic-port:{uuid}` id prefix and must be properly typed during S5A.
+  *Verdict:* spec **partial** (`OPEN-1`); substrate **typed-only** (port
+  class untyped).
+- **Junction.**
+  *Ownership:* independent point-like authored object; selecting it never
+  selects attached wires (UVT §2.2.4). *Qualification:* point rule —
+  center/connection anchor inside (UVT §2.2.4); B-CLICK. *Scope:*
+  object-only. *Projection:* the junction dot alone — wire-coloured filled
+  center preserved + accent ring; junction/pin-terminal/via/no-connect stay
+  mutually distinguishable while selected (RB §2.7); Global Net membership is
+  unstated — junctions are absent from the enumerated member list
+  (`OPEN-7`). *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD tiny-object
+  law (RB §2.7). *Inspector:* position/status display only;
+  connectivity-aware placement/removal are dedicated tools (COMP). *Scene
+  authority:* `SchematicHitKind::Junction`, polygon hit region. *Verdict:*
+  spec **partial** (`OPEN-7`); substrate **typed-only**.
+- **No-connect marker.**
+  *Ownership:* independent point-like object; never selects the parent
+  symbol (RB §2.7). *Qualification:* point rule; B-CLICK. *Scope:*
+  object-only — it marks absence of connectivity. *Projection:* the complete
+  X/flag semantic core as one subject (UVT §2.2.13; RB §2.7).
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD tiny-object law.
+  *Inspector:* position/status display only (COMP). *Scene authority:*
+  `SchematicHitKind::NoConnect`, polyline hit region. *Verdict:* spec
+  **ratified**; substrate **typed-only**.
+- **Text (standalone).**
+  *Ownership:* independent authored target; symbol-owned ref/value text is a
+  parent projection here (UVT §2.2.4). *Qualification:* >50% oriented layout
+  rectangle; B-CLICK + Select menu for difficult cases (UVT §2.2.4).
+  *Scope:* object-only. *Projection:* rendered glyph geometry; layout rect is
+  hit geometry only (RB §2.7). *Hidden/locked:* B-HL. *Overlay:* B-OV +
+  B-LOD; RB §2.7 text law. *Inspector:* B-INS; the compound field table
+  types text fields only for the PCB class list — schematic-text compound
+  fields unstated (`OPEN-9`). *Scene authority:* ABSENT — free schematic
+  text flows through `SchematicTextSink` into `board_texts`
+  (`schematic_scene_import/mod.rs:278-292`) but schematic hit regions are
+  built only from `board_graphics`
+  (`crates/gui-render/src/render/scene.rs:464-474`); `SchematicHitKind` has
+  no Text variant. *Verdict:* spec **partial** (`OPEN-9`); substrate
+  **absent**.
+- **Drawing / graphic.**
+  *Ownership:* standalone drawings are independent targets; symbol-body
+  fills are explicitly excluded — parent projections (UVT §2.2.4).
+  *Qualification:* generic rules govern — path rule for strokes,
+  filled-graphic rule (100% enclosure) for filled shapes (UVT §2.2.4).
+  *Scope:* object-only. *Projection:* filled shapes project outline + fill
+  as one identity; class-specific cross-pane projection unstated (`OPEN-5`).
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD; no class-specific RB
+  silhouette text (`OPEN-5`). *Inspector:* B-INS; no common fields until
+  authored identities converge (COMP). *Scene authority:* ABSENT —
+  schematic drawings emit as untyped `schematic_graphic`;
+  `schematic_hit_kind()` returns None → no hit regions. *Verdict:* spec
+  **partial** (`OPEN-5`); substrate **absent**.
+- **Hierarchical sheet representation.**
+  Every selection cell is spec-silent: §2.2.4–2.2.13 never address sheets —
+  no ownership rule (are sheet pins/ports children?), no qualification
+  family, no scope, no projection, no descend-into-sheet interaction
+  (`OPEN-11`). The Sheets panel (P2) is navigation, not a selection-subject
+  Inspector projection. *Scene authority:* ABSENT — sheet instances emit as
+  plain `schematic_graphic` rects with id `schematic-sheet-instance:{uuid}`
+  (`schematic_scene_import/mod.rs:293-310`), no hit kind, no hit region.
+  *Verdict:* spec **silent**; substrate **absent** — **unsupported** pending
+  `OPEN-11` ratification (author the rules or formally defer).
+
+##### Symbol Editor
+
+- **Pin (independent child subject: stub + terminal + name + number as ONE
+  subject).**
+  *Ownership:* workspace granularity flips ownership — schematic workspace:
+  pin click selects the parent symbol; Symbol Editor: the pin is
+  independently selectable and the subject is the complete
+  stub/terminal/name/number, explicitly without sibling pins or the body
+  (UVT §2.2.4/2.2.13; RB §2.7); name/number text are children of the pin
+  subject. *Qualification:* B-CLICK (pad-pin labels); region rule
+  UNSPECIFIED — the point-like connection-anchor rule is the nearest generic
+  coverage but the subject spans four primitives; whether the anchor alone
+  qualifies the compound subject is unstated (`OPEN-4`). *Scope:*
+  object-only — no electrical expansion from a pin *definition*.
+  *Projection:* stub/terminal/name/number as one owned identity; siblings
+  and body at rest (RB §2.7); projection onto placed instances unstated
+  (`OPEN-6`). *Hidden/locked:* B-HL; whether a pin definition carries a lock
+  attribute is unstated (COMP; `OPEN-13`). *Overlay:* B-OV + B-LOD; pin
+  terminal stays distinct from junction/via/no-connect while selected
+  (RB §2.7). *Inspector:* B-INS; library pins read placed projection; pin
+  table / library authoring are dedicated tools (COMP). *Scene authority:*
+  ABSENT — no Symbol Editor surface, scene kind, or hit vocabulary exists
+  anywhere (`PaneContent`/`SceneSurface` = { Board, Schematic }); nearest is
+  schematic-surface `SchematicHitKind::Pin`, which resolves to the parent
+  symbol. *Verdict:* spec **partial** (`OPEN-4`, `OPEN-6`); substrate
+  **absent**.
+- **Owned text (reference/value ratified; other owned text open).**
+  As the Footprint Editor owned-text row, for symbol-owned text: independent
+  authored target in this workspace under the strict-majority oriented-layout
+  rule (UVT §2.2.4); pin name/number text is NOT this class — it belongs to
+  the pin subject (RB §2.7). Owned text beyond reference/value fields is
+  spec-silent (`OPEN-3`); definition↔instance field projection unstated
+  (`OPEN-6`); field-visibility vs layer-visibility semantics unreconciled
+  (`OPEN-13`). *Overlay:* B-OV + B-LOD; RB §2.7 text law. *Inspector:*
+  B-INS; symbol fields expose visibility/position after typed ops; the field
+  table is a dedicated tool (COMP). *Scene authority:* ABSENT — no editor
+  surface; no owned-text selection identity exists anywhere. *Verdict:* spec
+  **partial** (`OPEN-3`, `OPEN-6`, `OPEN-13`); substrate **absent**.
+- **Owned graphics (body strokes, lines/arcs, filled shapes).**
+  As the Footprint Editor owned-graphics row: mandatory S5-C01 row, but §2.2
+  is silent on editor-side qualification/ownership/projection; the schematic
+  rule explicitly excludes symbol-body fills from the filled-graphic class,
+  so the generic rules cannot be assumed to extend (`OPEN-5`); the RB dark-
+  body-fill retention rule is stated for whole-symbol selection, not
+  editor-side fills. Authored engine identity for graphics is not uniform
+  (COMP). *Scene authority:* ABSENT — no editor surface; symbol drawings
+  emit as untyped `schematic_graphic`, no hit region. *Verdict:* spec
+  **silent** (`OPEN-5`); substrate **absent** — **deferred** until `OPEN-5`
+  ratifies the rules.
+
+##### Cross-cutting non-authored subjects (all editors)
+
+- **Proposal object (uncommitted route/production proposal, ghost/dual-stroke).**
+  *Ownership:* a click owns the whole proposal ACTION, not a geometric
+  primitive — every overlay primitive carries `proposal_action_id` and
+  resolves to one `HitTarget::ReviewAction` (code truth); per-primitive
+  qualification does not exist; spec-side ownership is declared SILENT by
+  §2.2, owned by S5-C01/S5-C07 (`OPEN-12`). *Qualification:* click live
+  today via screen-space `HitRegion` rects
+  (`crates/gui-render/src/render/overlay.rs:243/:259`); region qualification
+  SILENT (`OPEN-12`) — the §2.2.4 anchor rules are defined for authored
+  classes only and must not be assumed here. *Scope:* one action = one
+  subject; ladder inapplicable (`OPEN-12`). *Projection:* compositing law —
+  authored base → proposal ghost/dual-stroke → selection cue → topmost
+  diagnostic; selecting ADDS the cue without erasing uncommitted identity;
+  no channel recolors another into selection magenta (RB §2.6;
+  UVT §2.2.13); cross-pane projection unstated (`OPEN-12`); production
+  proposals have no world-scene identity at all (data-panel summary +
+  chrome hit only). *Hidden/locked:* excluded from Ctrl+A as non-authored
+  (UVT §2.2.9); hidden/locked semantics SILENT (`OPEN-12`). *Overlay:*
+  ghost/dual-stroke identity retained under selection (RB §2.6); B-LOD
+  application to non-authored channels unstated (`OPEN-14`). *Inspector:*
+  review lane projects the active action; compound membership for
+  non-authored subjects sits outside the §2.2.10 model (`OPEN-12`). *Scene
+  authority:* `ProposalOverlayPrimitive` (`lib.rs:322-334`);
+  `SelectionTarget::ReviewAction(String)` + `SessionCommand::SelectReviewAction`
+  (`lib.rs:440-445/:628-661`); ABSENT: retained-world hit regions; any typed
+  world identity for production proposals. *Verdict:* spec **partial**
+  (compositing ratified; acquisition semantics `OPEN-12`); substrate
+  **live** (route-proposal action selection end-to-end).
+- **Review subject (dashed evidence geometry of a review action).**
+  *Ownership:* parent = the review action; evidence polylines are typed
+  children (`ReviewPrimitive.evidence_key`) and are never independently
+  selectable — no hit region of any kind; the owning action is reachable
+  only through review-lane chrome rows. Spec-side rules SILENT (`OPEN-12`).
+  *Projection:* dashed evidence keyed to the ACTIVE action; RB §2.6
+  orthogonal-channel law binds any selection cue over it. *Hidden/locked:*
+  excluded from Ctrl+A (UVT §2.2.9); rest SILENT (`OPEN-12`). *Overlay:*
+  B-LOD application unstated (`OPEN-14`). *Scene authority:*
+  `ReviewPrimitive` (`lib.rs:337-342`), rendered
+  (`overlay.rs:265-291`); ABSENT: any hit region for evidence geometry.
+  *Verdict:* spec **partial** (compositing ratified; rest `OPEN-12`);
+  substrate **typed-only** — **unsupported for canvas acquisition today**.
+- **Diagnostic / finding marker (ERC/DRC check finding).**
+  *Ownership:* the finding is its own selection identity (check-finding
+  fingerprint), NOT a child of the diagnosed authored object — target
+  cross-resolution (`check_finding_scene_target_object_id`,
+  `crates/gui-protocol/src/check_runs.rs:194-202`) is a fit/hover
+  navigation aid, not ownership; click ownership otherwise SILENT
+  (`OPEN-12`). *Qualification:* dead today — `HitTarget::CheckFinding`
+  exists and is handled (`types.rs:43`; `main.rs:2747`) but is constructed
+  nowhere; region rules SILENT (`OPEN-12`). *Projection:* marker shape +
+  semantic severity hue render TOPMOST; selecting ADDS selection without
+  erasing severity; shape, not hue alone, carries distinction (RB §2.6;
+  UVT §2.2.13). *Hidden/locked:* excluded from Ctrl+A (UVT §2.2.9);
+  target-hidden behavior SILENT (`OPEN-12`). *Overlay:* B-LOD application
+  unstated (`OPEN-14`); no marker is rendered in-scene today. *Inspector:*
+  renders an already-selected finding; compound membership for mixed
+  finding+authored selections unstated (`OPEN-12`). *Scene authority:*
+  `SelectionTarget::CheckFinding(String)` + `SessionCommand::SelectCheckFinding`
+  (`lib.rs:440-445/:641`); ABSENT: any scene marker primitive and any live
+  pointer path. *Verdict:* spec **partial** (compositing ratified; rest
+  `OPEN-12`); substrate **typed-only** — **unsupported for canvas
+  acquisition today**.
+
+##### Open-reconciliation register (S5-C01)
+
+Every `OPEN-n` above is an explicit, tracked reconciliation decision. Each
+carries a research-grounded candidate resolution; none is silently resolved.
+Owner ratification happens at S5-C11 unless a later step is named as owner.
+
+- **OPEN-1 — ladder origins.** §2.2.5 defines the section→run→net ladder for
+  clicks on track/wire sections only; via / pad(footprint) / zone-fill /
+  label click-origins are unstated. *Candidate:* ratify ladder origins as
+  track/wire sections exclusively; clicks on other net members stay
+  object-only (matches the §2.2.5 wording; keeps one predictable origin
+  class). *Owner:* S5-C11.
+- **OPEN-2 — board-workspace component-owned graphics.** Ownership of
+  component-owned graphics in the board workspace is spec-silent.
+  *Candidate:* ratify the current code behavior — sub-graphics hit-map to
+  the parent component; Edge.Cuts component graphics excluded from hit
+  regions. *Owner:* S5-C11.
+- **OPEN-3 — owned text beyond reference/value.** The editors' owned-text
+  independence is ratified for reference/value only; user/fab owned text is
+  silent. *Candidate:* same independent-target + oriented-rect rule for all
+  owned text kinds in the definition editors. *Owner:* S5-C11.
+- **OPEN-4 — Footprint/Symbol Editor child region rules + composition.**
+  Pad region qualification, pin-compound region qualification, and
+  pad-number-text composition are unstated. *Candidate:* point-like
+  center/connection-anchor rule for pads; anchor-qualifies-the-compound for
+  pins; pad geometry + pad-number text as one subject (RB §2.7 pin analogy).
+  *Owner:* S5-C11.
+- **OPEN-5 — editor-workspace owned graphics.** Whether the generic
+  path/filled rules extend to Footprint/Symbol Editor owned graphics (and
+  schematic drawing cross-pane/overlay specifics). *Candidate:* extend the
+  generic §2.2.4 rules as independent authored targets in definition
+  editors. *Owner:* S5-C11.
+- **OPEN-6 — definition↔instance projection.** Whether selecting a
+  pad/text/graphic/pin *definition* in a library editor projects onto placed
+  instances. *Candidate:* merely-related under RB §2.3 (exact authored
+  appearance, no accent), never same-identity. *Owner:* S5-C07.
+- **OPEN-7 — junction Global-Net membership.** Junctions are absent from the
+  enumerated net-member list. *Candidate:* include the junction dot as an
+  owned member of the Global Net projection (it is resolved conductive
+  geometry). *Owner:* S5-C11.
+- **OPEN-8 — bus region rule + hierarchy projection.** Region qualification
+  for spine/entries and member-pane specifics of semantic-bus projection.
+  *Candidate:* generic path rule for spine and entries; hierarchy projection
+  follows the Global Net cross-pane law with bus-distinct typing. *Owner:*
+  S5-C11.
+- **OPEN-9 — schematic-text compound fields.** The typed compound field
+  table covers PCB text only. *Candidate:* mirror the PCB text row
+  (style/height/stroke/alignment/visibility where typed). *Owner:* S5-C04.
+- **OPEN-10 — dimension class.** Spec-silent, no scene projection.
+  *Candidate:* author path-rule qualification for extension/dimension lines
+  + oriented-rect for dimension text, or formally defer the class from S5A.
+  *Owner:* S5-C11.
+- **OPEN-11 — hierarchical sheet representation.** Spec-silent, untyped.
+  *Candidate:* filled-graphic-style rect qualification for the sheet body
+  with sheet pins as children, or formally defer from S5A. *Owner:* S5-C11.
+- **OPEN-12 — non-authored subject semantics.** Region/scope/hidden/locked/
+  compound rules for proposal, review, and diagnostic subjects are declared
+  SILENT by §2.2. *Owner:* S5-C07 (identity model), with S5-C11 review.
+- **OPEN-13 — field visibility vs layer visibility.** Text-field visibility
+  as a typed property vs §2.2.8 hidden-selection semantics; and whether
+  definition-editor children carry lock attributes. *Owner:* S5-C03/S5-C05
+  reconciliation, with S5-C11 review.
+- **OPEN-14 — dense/tiny fallback for non-authored channels.** RB §2.8 is
+  stated for selection overlay over authored geometry; application to
+  proposal/review/diagnostic channels is unstated. *Owner:* S5-C11.
+
 ---
 
 ## 3. Snap & Quantize

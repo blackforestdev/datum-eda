@@ -19,7 +19,9 @@
       "parallel": false,
       "summary": "Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance.",
       "dependencies": [],
-      "unblocks": ["one reproducible roadmap answer for every agent"],
+      "unblocks": [
+        "one reproducible roadmap answer for every agent"
+      ],
       "landing_commit": "2a9bb34"
     },
     {
@@ -43,28 +45,58 @@
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
       "dependencies": [],
-      "unblocks": ["dat-uvt-s5a-build-1wv"],
+      "unblocks": [
+        "dat-uvt-s5a-build-1wv"
+      ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
           {
             "id": "S5-C01",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Reconcile the exhaustive cross-editor selection identity/class matrix, including parent/child ownership, scopes, projections, eligibility, overlays, inspection, and explicit unsupported classes.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C01"}],
-            "completion_evidence": []
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C01-MATRIX"
+              }
+            ]
           },
           {
             "id": "S5-C02",
             "kind": "planning",
             "status": "pending",
             "action": "Specify deterministic bounded rectangle/lasso queries, exhaustion behavior, auto-pan inclusion, and future assertions.",
-            "depends_on": ["S5-C01"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C02"}],
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C02"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -72,8 +104,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Specify selection and focus lifetime across revisions, replacement, deletion, pane/document replacement, stale identity, and partial resolution.",
-            "depends_on": ["S5-C01"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C03"}],
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C03"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -81,8 +120,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Define complete single/multi Inspector and terminal/action-console/AI context projections without depending on the deferred status bar.",
-            "depends_on": ["S5-C01"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C04"}],
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C04"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -90,8 +136,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Reconcile every contract to the read-only S5A boundary and defer move, rotate, mirror, lock, group, and editable fields to S5B or later.",
-            "depends_on": ["S5-C01"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C05"}],
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C05"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -99,8 +152,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Reconcile locked and invalid-member handling to explained whole-operation refusal with no silent skip or partial mutation.",
-            "depends_on": ["S5-C05"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C06"}],
+            "depends_on": [
+              "S5-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C06"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -108,8 +168,16 @@
             "kind": "planning",
             "status": "pending",
             "action": "Reconcile singleton history, semantic identities, same-identity versus related cross-probe projection, and the S5A-to-P2.3 dependency.",
-            "depends_on": ["S5-C01", "S5-C05"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C07"}],
+            "depends_on": [
+              "S5-C01",
+              "S5-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C07"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -117,8 +185,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Reconcile all rendering language to the exact immediate-overlay selection law while preserving retained, CAM/export, and hit geometry.",
-            "depends_on": ["S5-C01"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C08"}],
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C08"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -126,8 +201,17 @@
             "kind": "planning",
             "status": "pending",
             "action": "Complete fixed-size prototype and accessibility evidence, including the governed padlock asset and all compound/collision/dense/cross-pane cases.",
-            "depends_on": ["S5-C01", "S5-C07", "S5-C08"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C09"}],
+            "depends_on": [
+              "S5-C01",
+              "S5-C07",
+              "S5-C08"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C09"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -135,8 +219,22 @@
             "kind": "planning",
             "status": "pending",
             "action": "Give every S5 machine and HUMAN claim an exact honest file/assertion or reference/golden/review disposition.",
-            "depends_on": ["S5-C02", "S5-C03", "S5-C04", "S5-C05", "S5-C06", "S5-C07", "S5-C08", "S5-C09"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C10"}],
+            "depends_on": [
+              "S5-C02",
+              "S5-C03",
+              "S5-C04",
+              "S5-C05",
+              "S5-C06",
+              "S5-C07",
+              "S5-C08",
+              "S5-C09"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C10"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -144,8 +242,15 @@
             "kind": "owner_decision",
             "status": "pending",
             "action": "Conduct final owner review of S5-C01 through S5-C10, record approval, and leave the Application Status Bar deferred.",
-            "depends_on": ["S5-C10"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C11"}],
+            "depends_on": [
+              "S5-C10"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C11"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -153,8 +258,15 @@
             "kind": "owner_decision",
             "status": "pending",
             "action": "Allocate the next available decision number at creation time and ratify Layer-2 selection identity plus the S5A/S5B boundary without authorizing implementation.",
-            "depends_on": ["S5-C11"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C12"}],
+            "depends_on": [
+              "S5-C11"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C12"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -162,14 +274,26 @@
             "kind": "governance",
             "status": "pending",
             "action": "Synchronize governance, traceability, Frontier projection, and beads; close S5 with evidence, run all gates, and explicitly choose the successor.",
-            "depends_on": ["S5-C12"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-C13"}],
+            "depends_on": [
+              "S5-C12"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C13"
+              }
+            ],
             "completion_evidence": []
           }
         ],
         "post_completion": {
-          "effects": ["dat-uvt-s5a-build-1wv loses its S5 hard blocker.", "P2.3 remains blocked on the separately implemented S5A slice."],
-          "unblocks_issue_ids": ["dat-uvt-s5a-build-1wv"],
+          "effects": [
+            "dat-uvt-s5a-build-1wv loses its S5 hard blocker.",
+            "P2.3 remains blocked on the separately implemented S5A slice."
+          ],
+          "unblocks_issue_ids": [
+            "dat-uvt-s5a-build-1wv"
+          ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -192,14 +316,18 @@
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.6"
       ],
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "planned",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": true,
       "summary": "Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain.",
       "dependencies": [],
-      "unblocks": ["trustworthy embedded shell and agent surface"]
+      "unblocks": [
+        "trustworthy embedded shell and agent surface"
+      ]
     },
     {
       "key": "TERMINAL-P0-FOCUS",
@@ -216,21 +344,27 @@
       "parallel": true,
       "summary": "Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect.",
       "dependencies": [],
-      "unblocks": ["terminal Phase 1 barrier"]
+      "unblocks": [
+        "terminal Phase 1 barrier"
+      ]
     },
     {
       "key": "TERMINAL-P0-INPUT",
       "order": 4,
       "title": "Collapse the rival terminal input models",
       "issue_id": "dat-terminal-dual-input-model-75y",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": true,
       "summary": "Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only.",
       "dependencies": [],
-      "unblocks": ["terminal Phase 1 barrier"]
+      "unblocks": [
+        "terminal Phase 1 barrier"
+      ]
     },
     {
       "key": "TERMINAL-P0-DIAGNOSTICS",
@@ -247,42 +381,54 @@
       "parallel": true,
       "summary": "Stop application diagnostics from corrupting the foreign-shell PTY presentation.",
       "dependencies": [],
-      "unblocks": ["terminal Phase 1 barrier"]
+      "unblocks": [
+        "terminal Phase 1 barrier"
+      ]
     },
     {
       "key": "TERMINAL-P0-PTY",
       "order": 6,
       "title": "Replace the hand-rolled PTY with portable-pty",
       "issue_id": "dat-terminal-emulator-epic-jzv.1",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": true,
       "summary": "Swap unsafe libc PTY setup for portable-pty while retaining process-group signal behavior.",
       "dependencies": [],
-      "unblocks": ["terminal Phase 1 barrier"]
+      "unblocks": [
+        "terminal Phase 1 barrier"
+      ]
     },
     {
       "key": "TERMINAL-P0-RENDER",
       "order": 7,
       "title": "Stand up the terminal grid render interface",
       "issue_id": "dat-terminal-emulator-epic-jzv.2",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": true,
       "summary": "Lock the Grid-to-Quad/TextRun boundary and font-measured cell metrics before replacing the backing state model.",
       "dependencies": [],
-      "unblocks": ["terminal Phase 1 cell grid"]
+      "unblocks": [
+        "terminal Phase 1 cell grid"
+      ]
     },
     {
       "key": "TERMINAL-P1-GRID",
       "order": 8,
       "title": "Build the terminal cell-grid state model",
       "issue_id": "dat-terminal-emulator-epic-jzv.3",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
@@ -295,49 +441,70 @@
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-focus-authority-6aw"
       ],
-      "unblocks": ["terminal Phase 2", "terminal Phase 4"]
+      "unblocks": [
+        "terminal Phase 2",
+        "terminal Phase 4"
+      ]
     },
     {
       "key": "TERMINAL-P2-WIDTH",
       "order": 9,
       "title": "Add Unicode width and scrollback separation",
       "issue_id": "dat-terminal-emulator-epic-jzv.4",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
       "summary": "Add grapheme-aware cell width, bounded scrollback, and correct alternate-screen behavior after the cell grid lands.",
-      "dependencies": ["dat-terminal-emulator-epic-jzv.3"],
-      "unblocks": ["terminal Phase 3 reflow"]
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.3"
+      ],
+      "unblocks": [
+        "terminal Phase 3 reflow"
+      ]
     },
     {
       "key": "TERMINAL-P3-REFLOW",
       "order": 10,
       "title": "Implement terminal reflow on resize",
       "issue_id": "dat-terminal-emulator-epic-jzv.5",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
       "summary": "Rewrap logical lines while preserving cursor, wide-cell, scroll-region, and scrollback invariants.",
-      "dependencies": ["dat-terminal-emulator-epic-jzv.4"],
-      "unblocks": ["terminal Phase 4 polish"]
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.4"
+      ],
+      "unblocks": [
+        "terminal Phase 4 polish"
+      ]
     },
     {
       "key": "TERMINAL-P4-POLISH",
       "order": 11,
       "title": "Add terminal damage tracking and protocol polish",
       "issue_id": "dat-terminal-emulator-epic-jzv.6",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
       "summary": "Complete the declared terminal sequence with damage tracking and bounded DEC/OSC support.",
-      "dependencies": ["dat-terminal-emulator-epic-jzv.5"],
-      "unblocks": ["terminal epic verification"]
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.5"
+      ],
+      "unblocks": [
+        "terminal epic verification"
+      ]
     },
     {
       "key": "CONSOLE-READONLY",
@@ -355,7 +522,9 @@
       "parallel": true,
       "summary": "Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track.",
       "dependencies": [],
-      "unblocks": ["visible GUI action narration and diagnostics"]
+      "unblocks": [
+        "visible GUI action narration and diagnostics"
+      ]
     },
     {
       "key": "GUI-SURFACE-SPECS",
@@ -372,7 +541,9 @@
       "parallel": true,
       "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
       "dependencies": [],
-      "unblocks": ["native schematic and library authoring surfaces"]
+      "unblocks": [
+        "native schematic and library authoring surfaces"
+      ]
     },
     {
       "key": "UVT-S5A-BUILD",
@@ -388,8 +559,12 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized.",
-      "dependencies": ["dat-s5-selection-visual-contract-zid"],
-      "unblocks": ["GUI Phase 2 P2.3 cross-probe"]
+      "dependencies": [
+        "dat-s5-selection-visual-contract-zid"
+      ],
+      "unblocks": [
+        "GUI Phase 2 P2.3 cross-probe"
+      ]
     },
     {
       "key": "GUI-P2-CROSSPROBE",
@@ -405,22 +580,33 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized.",
-      "dependencies": ["dat-uvt-s5a-build-1wv"],
-      "unblocks": ["full dual-pane component inspector", "native authoring depth"]
+      "dependencies": [
+        "dat-uvt-s5a-build-1wv"
+      ],
+      "unblocks": [
+        "full dual-pane component inspector",
+        "native authoring depth"
+      ]
     },
     {
       "key": "GUI-P2-INSPECTOR",
       "order": 16,
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "issue_id": "dat-gui-p2-full-inspector-0ye",
-      "governing_docs": ["docs/gui/DATUM_GUI_PHASE_2_SPEC.md"],
+      "governing_docs": [
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md"
+      ],
       "state": "blocked",
       "authorization": "planning",
       "canonical_next": false,
       "parallel": false,
       "summary": "Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands.",
-      "dependencies": ["dat-gui-p2-cross-probe-27z"],
-      "unblocks": ["complete read-only Phase 2 inspection surface"]
+      "dependencies": [
+        "dat-gui-p2-cross-probe-27z"
+      ],
+      "unblocks": [
+        "complete read-only Phase 2 inspection surface"
+      ]
     },
     {
       "key": "GUI-MARKING-MENU",
@@ -437,7 +623,9 @@
       "parallel": true,
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "dependencies": [],
-      "unblocks": ["GUI write-path menu wiring"]
+      "unblocks": [
+        "GUI write-path menu wiring"
+      ]
     },
     {
       "key": "GUI-WRITE-PATH",
@@ -454,8 +642,14 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution.",
-      "dependencies": ["dat-marking-menu-shell-g0w", "dat-output-lane-t6v"],
-      "unblocks": ["journaled GUI authoring", "marking-menu operation wiring"]
+      "dependencies": [
+        "dat-marking-menu-shell-g0w",
+        "dat-output-lane-t6v"
+      ],
+      "unblocks": [
+        "journaled GUI authoring",
+        "marking-menu operation wiring"
+      ]
     },
     {
       "key": "NATIVE-AUTHORING",
@@ -476,21 +670,27 @@
         "dat-gui-surface-specs-usb",
         "dat-gui-write-path-qiu"
       ],
-      "unblocks": ["full manual native schematic-to-PCB workflow"]
+      "unblocks": [
+        "full manual native schematic-to-PCB workflow"
+      ]
     },
     {
       "key": "DOC-SYSTEM-SPEC",
       "order": 20,
       "title": "Specify the documentation-system object model",
       "issue_id": "dat-documentation-system-spec-y8z",
-      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
+      ],
       "state": "specified",
       "authorization": "planning",
       "canonical_next": false,
       "parallel": true,
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "dependencies": [],
-      "unblocks": ["schematic and fabrication documentation implementation"]
+      "unblocks": [
+        "schematic and fabrication documentation implementation"
+      ]
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
@@ -507,7 +707,9 @@
       "parallel": false,
       "summary": "Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership.",
       "dependencies": [],
-      "unblocks": ["memory-independent next-task narration"],
+      "unblocks": [
+        "memory-independent next-task narration"
+      ],
       "landing_commit": "8e8f30e3ab197d169650de884a88ade295e76254"
     },
     {
@@ -528,8 +730,18 @@
       "unblocks": [],
       "completion": {
         "outcome": "Decision-025 project state deterministically answers both which task is next and the complete governed steps required to finish it.",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
           {
             "id": "TD-C01",
@@ -537,48 +749,110 @@
             "status": "complete",
             "action": "Extend the project-state authority with a closed-shape, evidence-linked completion-plan contract.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C01"}],
-            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "TD-C01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e3e2c24"
+              }
+            ]
           },
           {
             "id": "TD-C02",
             "kind": "execution",
             "status": "complete",
             "action": "Implement one validated details command with equivalent ordered human and JSON output.",
-            "depends_on": ["TD-C01"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C02"}],
-            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
+            "depends_on": [
+              "TD-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "TD-C02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e3e2c24"
+              }
+            ]
           },
           {
             "id": "TD-C03",
             "kind": "governance",
             "status": "complete",
             "action": "Reconcile the complete S5 closure plan across its Frontier record, bead, and controlling documents.",
-            "depends_on": ["TD-C01"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C03"}],
-            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
+            "depends_on": [
+              "TD-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "TD-C03"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e3e2c24"
+              }
+            ]
           },
           {
             "id": "TD-C04",
             "kind": "execution",
             "status": "complete",
             "action": "Add adversarial hermetic coverage and run governance, project-state, and source-health gates.",
-            "depends_on": ["TD-C02", "TD-C03"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C04"}],
-            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
+            "depends_on": [
+              "TD-C02",
+              "TD-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "TD-C04"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e3e2c24"
+              }
+            ]
           },
           {
             "id": "TD-C05",
             "kind": "governance",
             "status": "complete",
             "action": "Land the tooling, close this bead with evidence, and explicitly restore S5 as canonical next.",
-            "depends_on": ["TD-C04"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C05"}],
-            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
+            "depends_on": [
+              "TD-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "TD-C05"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e3e2c24"
+              }
+            ]
           }
         ],
         "post_completion": {
-          "effects": ["Canonical completion plans become mandatory for selected work.", "The reconciled S5 specification task becomes selectable again."],
+          "effects": [
+            "Canonical completion plans become mandatory for selected work.",
+            "The reconciled S5 specification task becomes selectable again."
+          ],
           "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -605,8 +879,18 @@
       "unblocks": [],
       "completion": {
         "outcome": "Claude and Codex return the same canonical task-detail presentation without regrouping, renumbering, supplementation, or inferred concurrency.",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
           {
             "id": "DP-C01",
@@ -614,57 +898,131 @@
             "status": "complete",
             "action": "Encode one-active-step and no-inferred-parallelism execution semantics.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C01"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           },
           {
             "id": "DP-C02",
             "kind": "governance",
             "status": "complete",
             "action": "Encode verbatim stdout, fixed order and numbering, no regrouping, and no supplementation presentation semantics.",
-            "depends_on": ["DP-C01"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C02"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "depends_on": [
+              "DP-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           },
           {
             "id": "DP-C03",
             "kind": "execution",
             "status": "complete",
             "action": "Expose identical execution and presentation policies in human and JSON task details.",
-            "depends_on": ["DP-C02"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C03"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "depends_on": [
+              "DP-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C03"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           },
           {
             "id": "DP-C04",
             "kind": "governance",
             "status": "complete",
             "action": "Require agents to return task-detail stdout byte-for-byte for ordinary completion-step queries.",
-            "depends_on": ["DP-C03"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C04"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "depends_on": [
+              "DP-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C04"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           },
           {
             "id": "DP-C05",
             "kind": "execution",
             "status": "complete",
             "action": "Lock exact rendered order and wording and reject weakened policies with hermetic tests.",
-            "depends_on": ["DP-C03", "DP-C04"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C05"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "depends_on": [
+              "DP-C03",
+              "DP-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C05"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           },
           {
             "id": "DP-C06",
             "kind": "governance",
             "status": "complete",
             "action": "Run governance and source-health gates, close this correction with proof, and explicitly restore S5 as canonical next.",
-            "depends_on": ["DP-C05"],
-            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C06"}],
-            "completion_evidence": [{"kind": "commit", "revision": "b5e0658"}]
+            "depends_on": [
+              "DP-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/PROJECT_STATE_POLICY.md",
+                "marker": "DP-C06"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "b5e0658"
+              }
+            ]
           }
         ],
         "post_completion": {
-          "effects": ["Canonical task-detail responses become presentation-stable across agents.", "S5 returns as the explicitly selected canonical task."],
+          "effects": [
+            "Canonical task-detail responses become presentation-stable across agents.",
+            "S5 returns as the explicitly selected canonical task."
+          ],
           "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
