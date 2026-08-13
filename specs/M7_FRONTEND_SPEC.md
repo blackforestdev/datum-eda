@@ -118,7 +118,12 @@ Post-spike validation items for this area:
 
 ### 1.5 Explicit Selection Model For M7 v1
 
-`M7` v1 uses a single-selection model only.
+Historical M7 evidence follows. Its single-selection restriction describes that
+landed slice only and is explicitly superseded for current/future work by UVT
+S5 (`DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` §2.2); it is not current
+selection authority.
+
+`M7` v1 used a single-selection model only.
 
 Selectable object classes:
 - authored `component`

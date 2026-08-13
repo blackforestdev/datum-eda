@@ -30,7 +30,10 @@ class ProjectStatusTest(unittest.TestCase):
         (self.root / ".beads").mkdir()
         (self.root / "docs/decisions").mkdir(parents=True)
         self.doc = "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md"
-        (self.root / self.doc).write_text("# Decision\n", encoding="utf-8")
+        (self.root / self.doc).write_text(
+            "# Decision\n\n<!-- REQ:alignment:TEST-C01 -->\nRequirement.\n",
+            encoding="utf-8",
+        )
         self.governance = {
             "entries": {self.doc: {"class": "doctrine", "controlling": True}}
         }
@@ -39,7 +42,7 @@ class ProjectStatusTest(unittest.TestCase):
             self.issue("dat-intake", "open", labels=["roadmap:intake"]),
         ]
         self.manifest = {
-            "schema_version": 1,
+            "schema_version": 2,
             "policy_decision": self.doc,
             "claim_ttl_hours": 24,
             "frontier": [self.item()],
@@ -67,6 +70,7 @@ class ProjectStatusTest(unittest.TestCase):
             "issue_type": "task",
             "labels": labels or [],
             "dependencies": dependencies or [],
+            "acceptance_criteria": "TEST-C01: Complete the fixture requirement.",
         }
         if assignee is not None:
             value["assignee"] = assignee
@@ -86,7 +90,26 @@ class ProjectStatusTest(unittest.TestCase):
             "parallel": False,
             "summary": "Make every agent return the same next task.",
             "dependencies": [],
-            "unblocks": ["feature work"],
+            "unblocks": [],
+            "completion": {
+                "outcome": "The aligned fixture is complete.",
+                "steps": [{
+                    "id": "TEST-C01",
+                    "kind": "execution",
+                    "status": "pending",
+                    "action": "Complete the fixture requirement.",
+                    "depends_on": [],
+                    "requirement_refs": [{"path": self.doc, "marker": "TEST-C01"}],
+                    "completion_evidence": [],
+                }],
+                "post_completion": {
+                    "effects": ["The dependent feature becomes unblocked."],
+                    "unblocks_issue_ids": [],
+                    "selection": "explicit_frontier_update",
+                    "authorizes_successor": False,
+                    "selects_successor": False,
+                },
+            },
         }
         value.update(updates)
         return value
@@ -145,6 +168,121 @@ class ProjectStatusTest(unittest.TestCase):
             self.assertEqual("open", payload["next"]["tracker_status"])
             self.assertIsNone(payload["next"]["assignee"])
             self.assertFalse(payload["next"]["live_claim"])
+
+    def test_details_supports_human_and_json_output(self) -> None:
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(0, status.main(["--root", str(self.root), "details"]))
+        human = output.getvalue()
+        self.assertIn("[TEST-C01] (execution; pending) Complete the fixture requirement.", human)
+        self.assertIn("atomically claim", human)
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(0, status.main([
+                "--root", str(self.root), "details", "--json",
+            ]))
+        details = json.loads(output.getvalue())["details"]
+        self.assertEqual(["TEST-C01"], [step["id"] for step in details["steps"]])
+        self.assertEqual("unassigned", details["assignee"] or "unassigned")
+
+    def test_details_named_key_and_issue_id_resolve_identically(self) -> None:
+        payloads = []
+        for target in ("alignment", "dat-next"):
+            output = io.StringIO()
+            with redirect_stdout(output):
+                self.assertEqual(0, status.main([
+                    "--root", str(self.root), "details", target, "--json",
+                ]))
+            payloads.append(json.loads(output.getvalue())["details"])
+        self.assertEqual(payloads[0], payloads[1])
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(1, status.main([
+                "--root", str(self.root), "details", "unknown", "--json",
+            ]))
+
+    def test_canonical_next_requires_completion_plan(self) -> None:
+        del self.manifest["frontier"][0]["completion"]
+        self.assert_failure("canonical next requires a completion plan")
+
+    def test_completion_rejects_bad_step_dependency_and_acceptance(self) -> None:
+        step = self.manifest["frontier"][0]["completion"]["steps"][0]
+        step["depends_on"] = ["LATER"]
+        self.issues[0]["acceptance_criteria"] = "No stable requirement id."
+        found = self.failures()
+        self.assertTrue(any("must name an earlier step" in value for value in found), found)
+        self.assertTrue(any("acceptance criteria" in value for value in found), found)
+
+    def test_planning_completion_rejects_execution_step(self) -> None:
+        self.manifest["frontier"][0].update({
+            "state": "specified", "authorization": "planning",
+        })
+        self.assert_failure("execution step is forbidden by planning authorization")
+
+    def test_completion_rejects_missing_and_uncovered_evidence_markers(self) -> None:
+        reference = self.manifest["frontier"][0]["completion"]["steps"][0]["requirement_refs"][0]
+        reference["marker"] = "MISSING"
+        found = self.failures()
+        self.assertTrue(any("must occur exactly once" in value for value in found), found)
+        self.assertTrue(any("uncovered governing requirement" in value for value in found), found)
+
+    def test_completion_rejects_duplicate_step_ids(self) -> None:
+        step = copy.deepcopy(self.manifest["frontier"][0]["completion"]["steps"][0])
+        self.manifest["frontier"][0]["completion"]["steps"].append(step)
+        self.assert_failure("completion step ids must be unique")
+
+    def test_completion_progress_requires_proof_and_completed_dependencies(self) -> None:
+        first = self.manifest["frontier"][0]["completion"]["steps"][0]
+        second = copy.deepcopy(first)
+        second.update({"id": "TEST-C02", "status": "complete", "depends_on": ["TEST-C01"]})
+        second["requirement_refs"] = [{"path": self.doc, "marker": "TEST-C02"}]
+        self.manifest["frontier"][0]["completion"]["steps"].append(second)
+        self.issues[0]["acceptance_criteria"] += " TEST-C02: Complete the second requirement."
+        (self.root / self.doc).write_text(
+            (self.root / self.doc).read_text(encoding="utf-8")
+            + "\n<!-- REQ:alignment:TEST-C02 -->\nSecond requirement.\n",
+            encoding="utf-8",
+        )
+        found = self.failures()
+        self.assertTrue(any("requires completed dependency" in value for value in found), found)
+        self.assertTrue(any("requires completion evidence" in value for value in found), found)
+
+    def test_completion_rejects_bogus_proof(self) -> None:
+        step = self.manifest["frontier"][0]["completion"]["steps"][0]
+        step.update({
+            "status": "complete",
+            "completion_evidence": [{"kind": "commit", "revision": "not-a-commit"}],
+        })
+        self.assert_failure("commit does not resolve")
+
+    def test_completion_rejects_non_string_proof_kind_cleanly(self) -> None:
+        step = self.manifest["frontier"][0]["completion"]["steps"][0]
+        step.update({
+            "status": "complete",
+            "completion_evidence": [{"kind": [], "revision": self.head()}],
+        })
+        self.assert_failure("has invalid kind")
+
+    def test_landed_item_requires_all_completion_steps_complete(self) -> None:
+        self.issues[0]["status"] = "closed"
+        self.manifest["frontier"][0].update({
+            "state": "landed", "authorization": "none", "canonical_next": False,
+            "landing_commit": self.head(),
+        })
+        self.issues[1]["labels"] = ["roadmap:frontier"]
+        second = self.item(key="second", issue_id="dat-intake", order=1)
+        self.manifest["frontier"].append(second)
+        self.assert_failure("landed item requires every completion step to be complete")
+
+    def test_repository_s5_contract_has_exhaustive_stable_ids(self) -> None:
+        repository = MODULE_PATH.parents[1]
+        manifest = json.loads(
+            (repository / "specs/active_frontier.json").read_text(encoding="utf-8")
+        )
+        s5 = next(item for item in manifest["frontier"] if item["key"] == "UVT-S5-SPEC")
+        expected = [f"S5-C{number:02d}" for number in range(1, 14)]
+        self.assertEqual(expected, [step["id"] for step in s5["completion"]["steps"]])
+        self.assertFalse(s5["completion"]["post_completion"]["authorizes_successor"])
+        self.assertFalse(s5["completion"]["post_completion"]["selects_successor"])
 
     def test_duplicate_next_and_order_fail(self) -> None:
         duplicate = self.item(key="second", issue_id="dat-intake")
@@ -278,6 +416,7 @@ class ProjectStatusTest(unittest.TestCase):
 
     def test_specified_planning_item_may_be_next(self) -> None:
         self.manifest["frontier"][0].update({"state": "specified", "authorization": "planning"})
+        self.manifest["frontier"][0]["completion"]["steps"][0]["kind"] = "planning"
         self.assertEqual([], self.failures())
 
     def test_planned_execution_item_cannot_be_next(self) -> None:
@@ -359,7 +498,17 @@ class ProjectStatusTest(unittest.TestCase):
 
     def test_landed_requires_closed_issue_and_real_commit(self) -> None:
         revision = self.head()
+        decision = self.root / self.doc
+        decision.write_text(
+            decision.read_text(encoding="utf-8")
+            + "\n<!-- REQ:second:TEST-C01 -->\nSecond requirement.\n",
+            encoding="utf-8",
+        )
         self.issues[0]["status"] = "closed"
+        self.manifest["frontier"][0]["completion"]["steps"][0].update({
+            "status": "complete",
+            "completion_evidence": [{"kind": "commit", "revision": revision}],
+        })
         self.manifest["frontier"][0].update({
             "state": "landed", "authorization": "none", "canonical_next": False,
             "landing_commit": revision,

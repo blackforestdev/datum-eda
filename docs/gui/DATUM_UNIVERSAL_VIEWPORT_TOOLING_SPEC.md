@@ -343,7 +343,9 @@ partial edit. Selection never unlocks an object implicitly.
 - Hiding an already-selected object preserves its selection identity; a
   visibility change MUST NOT implicitly clear or remove selection. Its canvas
   projection and selection highlight disappear with the hidden geometry, while
-  the Inspector and Application Status Bar report that selected members are hidden.
+  the Inspector and approved contextual/command output report that selected
+  members are hidden. This does not depend on or decide the deferred Application
+  Status Bar.
   Restoring visibility restores their selection projection.
 - Hidden selected objects cannot normally be manipulated or modified. A
   mutation whose ordinary/local selection contains hidden members is refused as
@@ -410,12 +412,13 @@ subject.
 
 The compound exists only as selection/session state and disappears when the
 selection is cleared; creating it is never journaled and does not silently add
-an authored project group. An explicit `Group` command converts the current
-compound into a named persistent authored `Group XXX` through the normal typed
-operation/journal path; ordinary multi-selection never performs that conversion
-implicitly.
+an authored project group. An explicit future S5B `Group` command may convert
+the current compound into a named persistent authored `Group XXX` through the
+normal typed operation/journal path; ordinary multi-selection never performs
+that conversion implicitly, and S5A exposes no such mutation.
 
-The compound Inspector's ratified editable baseline is:
+The compound Inspector's S5A baseline is read-only. It presents these future
+compatible capabilities only as unavailable/explanatory extension seams:
 
 - **Position X/Y:** editing either coordinate translates every member by the
   displayed delta as one atomic Move operation;
@@ -444,7 +447,7 @@ the declared scope. Compatibility is based on typed semantic property identity,
 value domain, units, and mutation verb—not a coincidentally shared display
 label. A field is unavailable when the complete declared scope cannot accept it.
 
-Every batch edit preflights its complete declared scope and commits as one typed
+Every later S5B batch edit preflights its complete declared scope and commits as one typed
 atomic operation with undo/redo. Locked, stale, incompatible, constrained, or
 otherwise invalid members cause an explained whole-operation refusal; Datum
 MUST NOT silently skip them. DNP remains semantically distinct from Exclude from
@@ -480,7 +483,10 @@ This active-workspace restriction governs GUI authority only. It does not
 replace engine validation or redefine explicit CLI/MCP operations, whose target
 documents and authority remain part of their typed command contracts.
 
-#### 2.2.12 Moving the selection: one verb, four invocation surfaces
+#### 2.2.12 Future S5B moving contract: one verb, four invocation surfaces
+
+This section is a future S5B contract and is unavailable in read-only S5A. It
+defines the extension seam without authorizing implementation in S5A.
 
 Movement requires an existing selection. The fast direct-manipulation sequence
 is: primary click to select, then a subsequent primary press-and-drag on a
@@ -522,7 +528,7 @@ click commits the destination and `Escape` cancels, restoring every original
 position. Every invocation resolves the same translation:
 `new_position = original_position + (destination - reference)`.
 
-#### 2.2.13 Visual-state precedence (owner review in progress)
+#### 2.2.13 Visual-state precedence **[LOCKED]**
 
 **Selection wins over hover.** The selected state remains the authoritative
 visual whenever selection and hover target the same object. Hover MUST NOT
@@ -534,8 +540,8 @@ the governed lighter hover preview without altering the selected set.
 
 This precedence is screen-space consumer state and MUST NOT invalidate or
 rebuild retained authored geometry. Locked, cross-workspace, focus-member,
-related-highlight, and diagnostic overlaps remain under the continuing visual
-precedence review. Research inventory and integration guidance:
+related-highlight, and diagnostic overlap rules are locked by the Rendering
+Book §§2.1–2.8. Research inventory and integration guidance:
 `research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md` →
 `DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`; tracked by
 `dat-s5-selection-visual-contract-zid`.
@@ -546,8 +552,8 @@ dim or restyle selected objects. The magenta pane frame, focus dot/header, and
 tool enablement alone communicate which workspace has GUI mutation authority.
 Focus change preserves selection membership/appearance. Hover may still follow
 the pointer-containing inactive pane, but selection wins on the same object.
-Merely related/cross-probed geometry is not an actual member and requires the
-separate subordinate visual role still under review.
+Merely related/cross-probed geometry is not an actual member and uses the locked
+subordinate related-context role in the Rendering Book §2.3.
 
 A triple-click Global Net selection is one semantic selection subject. Its full
 selection projection includes every visible resolved electrical representation
@@ -639,17 +645,96 @@ S5A MUST retain typed extension seams for S5B/later without presenting those
 later capabilities as landed. S5 execution remains unauthorized until final
 owner review and a numbered selection-identity decision ratify this mechanism.
 
-#### 2.2.15 Still open before final review
+#### 2.2.15 Canonical S5 specification-closure requirements
 
-The continuing owner review must still resolve Inspector/terminal projection
-for multiple members (the Application Status Bar itself is a separate deferred
-owner decision), bounded rectangle/lasso query and exhaustion behavior, model-
-revision/object-deletion lifetime, and exact conformance tests. Selection-over-
-hover visual precedence is already locked in §2.2.13 and is not an open choice.
-The final review
-will reconcile the older M7 singleton wording, P2.3 cross-probe, the Layer-2
-selection-identity decision boundary, and the §4 overlay language before S5 is
-authorized.
+These stable IDs are exhaustive for the remaining S5 contract. The structured
+Frontier completion plan orders them and beads mirrors the IDs; neither may
+publish a smaller rival checklist. Completion authorizes only the
+specification/ratification transaction, never S5A implementation.
+
+<!-- REQ:UVT-S5-SPEC:S5-C01 -->
+- **S5-C01 — identity/class matrix.** Reconcile one exhaustive PCB, Footprint
+  Editor, Schematic, and Symbol Editor matrix covering selectable subject,
+  parent/child ownership, click/region qualification, section/run/global scope,
+  owned versus related projection, hidden/locked/filter behavior, overlay and
+  accessibility/LOD treatment, Inspector projection, and explicit unsupported
+  classes. Include authored geometry plus selectable proposal/review/diagnostic
+  identities; absence of typed scene authority must be stated, never omitted.
+  Mandatory rows are: PCB Board footprint, track section/run, via, zone, text,
+  filled graphic, line/arc/outline, dimension, and Global Net; Footprint Editor
+  pad and owned text/graphics; Schematic symbol, wire section/run, Global Net,
+  bus section/run/semantic bus, label/port, junction, no-connect, text, drawing,
+  and hierarchical sheet representation; Symbol Editor pin and owned
+  text/graphics; plus proposal, review, and diagnostic subjects. Each row must
+  be supported or explicitly marked unsupported/deferred.
+
+<!-- REQ:UVT-S5-SPEC:S5-C02 -->
+- **S5-C02 — bounded region queries.** Specify deterministic rectangle/lasso
+  candidate bounds, exhaustion result/fallback, auto-pan revealed geometry, no
+  unbounded scan, and exact future assertions.
+
+<!-- REQ:UVT-S5-SPEC:S5-C03 -->
+- **S5-C03 — lifetime.** Specify selection/focus behavior across model revision,
+  update/replacement/deletion, document or pane replacement, stale identities,
+  and partial cross-pane resolution.
+
+<!-- REQ:UVT-S5-SPEC:S5-C04 -->
+- **S5-C04 — compound outputs.** Define single/multi Inspector subjects,
+  `All N`/per-type scopes, Common/`Mixed`/Unavailable, counts/bounds/coverage,
+  hidden/locked/blocker reporting, and a stable-ID payload for terminal,
+  action-console, and AI context without depending on the deferred status bar.
+
+<!-- REQ:UVT-S5-SPEC:S5-C05 -->
+- **S5-C05 — S5A/S5B boundary.** Reconcile all wording to S5A acquisition,
+  lifecycle, projection, and read-only inspection. Move/rotate/mirror/lock/group
+  and editable fields remain S5B/later seams with no claimed mutation authority.
+
+<!-- REQ:UVT-S5-SPEC:S5-C06 -->
+- **S5-C06 — atomic refusal.** Reconcile quantize and parametric-tooling wording
+  so locked, stale, incompatible, constrained, or invalid members refuse the
+  whole later operation; no member is silently skipped.
+
+<!-- REQ:UVT-S5-SPEC:S5-C07 -->
+- **S5-C07 — identity and cross-probe.** Supersede current-use singleton wording,
+  define object/compound/run/Global-Net/Bus/proposal/review/diagnostic subjects,
+  distinguish same-identity projections from merely-related mappings, and align
+  P2.3 as dependent on completed S5A.
+
+<!-- REQ:UVT-S5-SPEC:S5-C08 -->
+- **S5-C08 — overlay law.** Reconcile §4 and retained-selection wording to one
+  class-A immediate overlay: exact 2-physical-pixel crisp object cue,
+  subordinate internal glow and owned-geometry lift, with retained bytes,
+  static buffers, CAM/export geometry, and hit bounds unchanged.
+
+<!-- REQ:UVT-S5-SPEC:S5-C09 -->
+- **S5-C09 — prototype/accessibility evidence.** Confirm or update fixed-size
+  Rendering Study and Schematic Editor references; add the governed padlock
+  asset/contact-sheet entry; cover compound, locked, maximal collision,
+  active/inactive panes, Global Net/Bus, text/points, and dense fallback under
+  normal, high-contrast, CVD, reduced-motion, zoom, and scale review.
+
+<!-- REQ:UVT-S5-SPEC:S5-C10 -->
+- **S5-C10 — conformance disposition.** Give every S5 machine claim an exact
+  future gate/test file and assertion and every HUMAN claim an exact reference,
+  committed golden, and review record. Build-dependent checks remain honestly
+  TO-ENFORCE until they land with S5A; specification-phase evidence closes now.
+
+<!-- REQ:UVT-S5-SPEC:S5-C11 -->
+- **S5-C11 — owner review.** Review C01–C10, record explicit approval with no
+  remaining S5 choice, and leave the Application Status Bar deferred.
+
+<!-- REQ:UVT-S5-SPEC:S5-C12 -->
+- **S5-C12 — selection-identity decision.** Allocate the next available decision
+  number at creation time, cite the complete contract/evidence, ratify Layer-2
+  identity and the S5A/S5B boundary, and keep implementation separately authorized.
+
+<!-- REQ:UVT-S5-SPEC:S5-C13 -->
+- **S5-C13 — synchronized closure.** Update governance/parity where applicable,
+  traceability/status prose, Frontier plus generated projection, and the bead;
+  close only with specification evidence. S5A becomes unblocked but is neither
+  automatically execution-authorized nor canonical—the selector is explicitly
+  advanced in the same governance transaction. Run project-state, governance,
+  conformance, and source-health gates.
 
 ---
 
@@ -748,7 +833,8 @@ align_components { path, components: [uuid,…], op: align,
     grid_origin: Point<i64 nm>, grid_spacing: Vector<i64 nm> }  // recorded in provenance
 ```
 
-Locked objects are skipped by the existing batch guard.
+Any locked member causes an explained whole-operation refusal by the shared
+batch guard; quantize never skips a selected member or partially succeeds.
 
 *Disposition: TO-ENFORCE — verb-registry parity (the new `reference: grid` value +
 menu verb) and a test that quantize preserves net connectivity; owner sign-off on

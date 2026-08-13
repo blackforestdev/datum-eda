@@ -19,6 +19,7 @@
 /specs/PROGRESS.md @blackforestdev
 /.beads/issues.jsonl @blackforestdev
 /scripts/project_status.py @blackforestdev
+/scripts/project_task_details.py @blackforestdev
 /scripts/test_project_status.py @blackforestdev
 /AGENTS.md @blackforestdev
 /CLAUDE.md @blackforestdev

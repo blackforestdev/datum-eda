@@ -225,15 +225,18 @@ marker**.
   Two coupled pieces: (1) **schematic-side net/object selection + highlight** — the
   prototype's `--acc` pink highlight with `netglow` on the selected net's wires,
   pins, and label (there is no schematic selection colour path today; it depends on
-  the P2.2c schematic colour path); and (2) **cross-probe** — selecting an object in
-  one pane highlights the linked object in the other (component ↔ its schematic
-  symbol; net ↔ its copper), built on the existing
+  the P2.2c schematic colour path); and (2) **cross-probe** — selecting an object
+  in one pane projects the same semantic identity in the other only where that
+  identity resolves (for example a Global Net across wires and copper). A merely
+  linked but distinct component/symbol mapping uses the subordinate
+  related-context role, not false selection. This is built on the existing
   `SelectionTarget`/`select_authored_object` substrate and
   `crates/gui-protocol/src/context_envelope.rs::from_selection` — one selection
   identity projected into both scenes. Read-only: selection/cross-probe are
   consumer-side projections, **not** journaled operations (CLAUDE.md:
   selection/hover are consumer-specific, never operations).
-  *Dependency:* P2.1 + P2.2 landed.
+  *Dependency:* P2.1 + P2.2 landed; S5A selection identity/projection must land
+  before this separately authorized P2.3 build.
   *Reuse:* `SelectionTarget`, `select_authored_object`,
   `context_envelope::from_selection`, and the Phase-1 canvas↔panel
   cross-highlight (D4) — extend the same selection substrate across panes.

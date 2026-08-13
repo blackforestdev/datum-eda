@@ -27,6 +27,8 @@ Use the deterministic selector for every “what is next?” query:
 ```bash
 python3 scripts/project_status.py next
 python3 scripts/project_status.py next --json
+python3 scripts/project_status.py details [<Frontier-key|issue-id>]
+python3 scripts/project_status.py details --json
 python3 scripts/project_status.py check
 python3 scripts/project_status.py check-render
 ```
@@ -38,6 +40,38 @@ Agents MUST present those joined facts as one answer and MUST NOT supplement
 them with stale conversational ownership or earlier tracker output.
 `render` updates only the region between `<!-- ACTIVE FRONTIER:START -->` and
 `<!-- ACTIVE FRONTIER:END -->`; `check-render` rejects projection drift.
+
+For every “how do we finish/complete this task?” query, agents MUST run
+`details` (no target for current; stable key/issue ID for a named task) and
+reproduce its ordered steps, work-start instruction, requirements, evidence,
+and post-completion policy without adding a reconstructed rival plan. The
+canonical item carries a closed-shape completion contract whose stable step IDs
+must appear exactly once in the bead acceptance criteria and whose evidence
+markers must resolve exactly once in its governed documents. Each step declares
+`planning`, `owner_decision`, `governance`, or `execution`; planning-authorized
+tasks cannot smuggle implementation into their completion plan.
+
+<!-- REQ:STATE-TASK-DETAILS:TD-C01 -->
+Completion-plan authority extends decision 025 without merging roadmap,
+tracker, or specification roles: the Frontier orders structured remaining work,
+beads mirrors its acceptance IDs, and governed documents own the requirements.
+
+<!-- REQ:STATE-TASK-DETAILS:TD-C02 -->
+The `details` command must validate the same state and select the same canonical
+item as `next`, with equivalent ordered content in human and JSON output.
+
+<!-- REQ:STATE-TASK-DETAILS:TD-C03 -->
+The first production plan must reconcile all S5 controlling requirements,
+tracker acceptance criteria, governing-document links, and transition effects.
+
+<!-- REQ:STATE-TASK-DETAILS:TD-C04 -->
+Hermetic regressions must reject missing plans, malformed steps, bad dependency
+order, missing acceptance IDs, and missing or uncovered evidence markers.
+
+<!-- REQ:STATE-TASK-DETAILS:TD-C05 -->
+Landing a completion-plan tooling task must close its bead, preserve durable
+evidence, and explicitly restore the selected successor; selection is never an
+automatic consequence of unblocking.
 
 ## Work-Item Workflow
 

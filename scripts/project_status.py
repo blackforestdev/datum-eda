@@ -18,6 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+from project_task_details import completion_view, render_completion, validate_completion
+
 
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
 END_MARKER = "<!-- ACTIVE FRONTIER:END -->"
@@ -38,7 +40,7 @@ ROOT_KEYS = {"schema_version", "policy_decision", "claim_ttl_hours", "frontier"}
 ITEM_KEYS = {
     "key", "order", "title", "issue_id", "related_issue_ids", "governing_docs",
     "state", "authorization", "canonical_next", "parallel", "summary",
-    "dependencies", "unblocks", "landing_commit", "claim",
+    "dependencies", "unblocks", "landing_commit", "claim", "completion",
 }
 REQUIRED_ITEM_KEYS = {
     "key", "order", "title", "issue_id", "governing_docs", "state",
@@ -187,8 +189,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
         failures.append(f"unknown active-frontier keys: {', '.join(sorted(unknown_root))}")
     if missing_root:
         failures.append(f"missing active-frontier keys: {', '.join(sorted(missing_root))}")
-    if manifest.get("schema_version") != 1:
-        failures.append("schema_version must be 1")
+    if manifest.get("schema_version") != 2:
+        failures.append("schema_version must be 2")
     if not nonempty(manifest.get("policy_decision")):
         failures.append("policy_decision must be non-empty")
     ttl = manifest.get("claim_ttl_hours")
@@ -324,6 +326,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
             failures.append(f"{label}: deferred item cannot be canonical next")
         if item.get("canonical_next"):
             next_items.append(item)
+            if "completion" not in item:
+                failures.append(f"{label}: canonical next requires a completion plan")
             if state in {"blocked", "deferred", "landed"} or unresolved:
                 failures.append(f"{label}: canonical next is not actionable")
             if state == "planned" and authorization not in {"planning", "owner_decision"}:
@@ -339,6 +343,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
         elif landing is not None:
             failures.append(f"{label}: landing_commit is only allowed for landed state")
         validate_claim(item, issue, ttl, moment, failures)
+        if "completion" in item:
+            failures.extend(validate_completion(root, item, issues, governed))
         claim = item.get("claim")
         if isinstance(claim, dict) and nonempty(claim.get("head")):
             if not git_commit_exists(root, claim["head"]):
@@ -400,6 +406,8 @@ def render_block(manifest: dict[str, Any]) -> str:
         unblocks = ", ".join(item["unblocks"]) or "none"
         docs = ", ".join(f"`{value}`" for value in item["governing_docs"])
         lines.append(f"   *Dependencies:* {dependencies}. *Unblocks:* {unblocks}. *Governing:* {docs}.")
+        if item["canonical_next"]:
+            lines.append("   *Completion plan:* `python3 scripts/project_status.py details`.")
     lines.extend([END_MARKER, ""])
     return "\n".join(lines)
 
@@ -448,13 +456,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--json", action="store_true", dest="json_global")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("check", "next", "render", "check-render"):
+    for name in ("check", "next", "details", "render", "check-render"):
         sub = commands.add_parser(name)
         sub.add_argument("--json", action="store_true", dest="json_command")
+        if name == "details":
+            sub.add_argument("target", nargs="?", help="Frontier key or issue id; defaults to next")
     args = parser.parse_args(argv)
     as_json = args.json_global or args.json_command
     root = args.root.resolve()
-    if args.command in {"check", "next"}:
+    if args.command in {"check", "next", "details"}:
         failures, state = validate(root)
         if not failures:
             try:
@@ -470,7 +480,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "check":
             emit({"ok": True, "frontier_count": len(state["manifest"]["frontier"])},
                  as_json, f"Project status check passed ({len(state['manifest']['frontier'])} frontier items).")
-        else:
+        elif args.command == "next":
             item = state["next"]
             view = next_view(item, state["issues"][item["issue_id"]])
             assignee = view["assignee"] or "unassigned"
@@ -480,6 +490,28 @@ def main(argv: list[str] | None = None) -> int:
                  f"State: {item['state']}; authorization: {item['authorization']}\n"
                  f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
                  f"live claim: {live_claim}\n{item['summary']}")
+        else:
+            item = state["next"]
+            if args.target:
+                matches = [
+                    candidate for candidate in state["manifest"]["frontier"]
+                    if args.target in {candidate["key"], candidate["issue_id"]}
+                ]
+                if len(matches) != 1:
+                    emit(
+                        {"ok": False, "failures": [f"unknown or ambiguous Frontier target: {args.target}"]},
+                        as_json, f"Project task details failed: unknown or ambiguous Frontier target: {args.target}", True,
+                    )
+                    return 1
+                item = matches[0]
+            if "completion" not in item:
+                emit(
+                    {"ok": False, "failures": [f"{item['key']}: no completion plan"]},
+                    as_json, f"Project task details failed: {item['key']} has no completion plan", True,
+                )
+                return 1
+            view = completion_view(item, state["issues"][item["issue_id"]])
+            emit({"ok": True, "details": view}, as_json, render_completion(view))
         return 0
     if args.command == "render":
         failures, _ = validate(root)

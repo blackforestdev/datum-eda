@@ -33,8 +33,9 @@ Selection states should distinguish:
 Terminal and AI lanes may consume the current selection context, but they must
 do so through explicit stable identifiers rather than hidden heuristics.
 
-For `M7` v1, single selection with a separate active review target is now
-locked.
+For historical `M7` v1, single selection with a separate active review target
+was locked for that slice. UVT S5 §2.2 supersedes it for current/future work
+with typed single and compound selection identities.
 
 ## Hover And Focus Rules
 

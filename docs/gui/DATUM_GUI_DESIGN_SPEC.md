@@ -56,9 +56,10 @@ the same change.
 - **Color-application law**: chrome uses only `bg/surface.01–03/border/text`
   tokens; the only chrome color allowed onto the canvas is `--acc` (#CE5A92) as
   selection. Copper/nets/pads/vias/ratsnest use the content tokens.
-- **Selection → Inspector binding**: single selection is the primary model;
-  selecting an object (magenta outline + glow on canvas) drives the Inspector and
-  cross-highlights panel ↔ canvas.
+- **Selection → Inspector binding**: one typed selection subject—single object
+  or S5 compound—is the primary model; selecting a subject drives the Inspector.
+  Same semantic identity projects across panes, while merely related mappings
+  use the subordinate related-context role.
 - **Inspector = Properties Panel**: context-sensitive to the selection;
   inline-editable rows (no dialogs); collapsible grouped sections (Identity /
   Placement / Nets / Checks); key-value rows with mono tabular values for

@@ -28,6 +28,12 @@ python3 scripts/project_status.py next
 instead of inferring priority from recent commits, `br ready`, issue priority,
 or prose outside the generated Frontier.
 
+The deterministic answer to “how do we complete the current task?” is produced
+by `python3 scripts/project_status.py details`; a stable Frontier key or issue ID
+may select a named scheduled task. With no target it selects the same canonical
+item as `next` and returns its validated ordered completion contract; agents MUST NOT
+replace it with a checklist reconstructed from prose.
+
 ## Why This Is Required
 
 Datum previously exposed several individually useful but mutually drifting
@@ -44,7 +50,7 @@ normative.
 
 ### PS-001: One roadmap authority
 
-`specs/active_frontier.json` MUST use schema version 1 and contain every
+`specs/active_frontier.json` MUST use schema version 2 and contain every
 scheduled roadmap item with a stable unique key, contiguous order, lifecycle
 state, authorization state, governing-document links, exact beads issue ID,
 hard dependencies, unblocks, summary, and explicit canonical-next/parallel
@@ -121,6 +127,21 @@ remain within normal source limits; touched legacy debt MUST burn down; generate
 or data-driven implementation MUST NOT evade physical or logical-module checks.
 No roadmap, tracker, claim, or emergency status can waive source-health gates.
 
+### PS-009: Canonical completion contract
+
+The selected non-landed item MUST carry one closed-shape ordered completion
+contract with an outcome, stable unique step IDs, work kinds, forward-valid
+dependencies, governed evidence markers, post-completion effects, and an
+explicit successor policy. Planning/owner-decision authorization MUST reject
+execution-kind steps. Every step ID MUST occur exactly once in the bead acceptance criteria;
+every namespaced requirement marker in its governing documents MUST be covered.
+`details` human and JSON output MUST preserve the same order and content.
+
+Work-start guidance is derived from validated claim state: open/unassigned work
+requires the synchronized Frontier-plus-beads claim transaction; a live claim
+requires other agents to stand down or coordinate an explicit handoff. Closing
+or unblocking work MUST NOT silently authorize or select its successor.
+
 ## Consequences
 
 A new agent can obtain one reproducible task recommendation, then inspect its
@@ -138,5 +159,8 @@ This decision is implemented when tests prove that:
 - stale or overlapping claims and tracker/roadmap contradictions fail checks;
 - intake-only issues cannot become the canonical next task;
 - blocked, deferred, and landed items are not selected as executable work, and
-  planning authorization cannot select feature execution; and
-- all project-state tooling passes decision 022 source-health enforcement.
+  planning authorization cannot select feature execution;
+- all project-state tooling passes decision 022 source-health enforcement;
+- human and JSON task details expose the same complete evidence-linked plan;
+- missing acceptance IDs and uncovered governed requirements fail checks; and
+- completion never implies automatic successor authorization or selection.

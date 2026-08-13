@@ -114,7 +114,8 @@ The following `M7` opening decisions are now treated as locked direction:
 - viewport-centered three-column shell with a bottom dock strip
 - fixed `M7` panel taxonomy: `Project`, `Filters`, `Inspector`, `Review`
 - route review starts from the first proposal action
-- single-selection model with a separate active review target
+- historical M7 single-selection model with a separate active review target
+  (superseded for current/future work by UVT S5 typed compound selection)
 - explicit authored/proposed/diagnostic visual-state separation
 - integrated bottom-docked terminal lane with read-only/supporting role
 - terminal-owned `AGENTS` assistance entry with explanation/review-support role

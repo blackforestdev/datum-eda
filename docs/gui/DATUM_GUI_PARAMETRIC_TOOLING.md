@@ -65,7 +65,9 @@ list of edges:
 - **distribute.mode**: `even_spacing | even_gaps | to_pitch(value)`  *(first-class,
   a peer discipline to align — not an afterthought)*
 - **reference**: `selection_bounds | primary_selection | named_object | board_origin | grid`
-One guarded `OperationBatch` (per-object `Set…Position`), skips locked. **Wedges are
+One guarded `OperationBatch` (per-object `Set…Position`) preflights the complete
+declared scope; any locked, stale, constrained, incompatible, or invalid member
+refuses the whole operation. No member is silently skipped. **Wedges are
 icon-driven** — each shows the alignment *result* (boxes snapping to an edge) so the
 horizontal/vertical word ambiguity never bites (no-manual). Marking menu = the
 compound mark `Align→axis→position` in one gesture; inspector = full schema; AI =

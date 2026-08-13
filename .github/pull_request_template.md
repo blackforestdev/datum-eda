@@ -30,6 +30,7 @@
   - `python3 scripts/check_source_health.py --base-ref <trusted-base-sha>`
   - `python3 scripts/test_project_status.py`
   - `python3 scripts/project_status.py check`
+  - `python3 scripts/project_status.py details`
   - `bash scripts/run_drift_gates.sh`
   - `cargo test --workspace`
 

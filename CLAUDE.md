@@ -87,6 +87,19 @@ The single canonical answer to "what is the next logical development task?" is:
 python3 scripts/project_status.py next
 ```
 
+For “how/steps to finish or complete the current task?” run:
+
+```bash
+python3 scripts/project_status.py details [<Frontier-key|issue-id>]
+```
+
+Omit the target for the current canonical task; pass a stable Frontier key or
+issue ID when the user names a scheduled task. Reproduce its ordered plan,
+work-start guidance, requirements, completion evidence, and successor policy
+without supplementing it from prose. If the plan appears incomplete, stop and
+repair the structured contract and governed requirement markers; do not invent
+a completion plan conversationally.
+
 Run it before proposing or claiming work; it validates the roadmap against
 beads, governing documents, dependencies, authorization, and claim freshness.
 Never infer the answer from `br ready`, recent commits, issue priority, or prose

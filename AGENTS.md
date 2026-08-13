@@ -43,7 +43,7 @@ br search "keyword"            # full-text search
 
 br q "short thing I just found"                        # quick capture -> prints ID
 br create "Title" -t bug -p 1 --slug my-slug -d "..."  # full create
-br update <id> --status in_progress                     # claim it
+br update <id> --claim                                  # beads half of a synchronized Frontier claim
 br close <id> --reason "landed in <commit>"             # finish it
 
 br dep add <issue> <depends-on> -t blocks   # <issue> waits until <depends-on> closes
@@ -61,7 +61,9 @@ br sync --flush-only                         # export DB -> issues.jsonl (before
 
 ### Working pattern
 
-1. **Start:** `br ready` to see unblocked work; claim with `br update <id> --status in_progress`.
+1. **Start:** use `project_status.py next/details`. Before editing scheduled work,
+   synchronize its structured Frontier lease with `br update <id> --claim` and
+   export in one transaction. Running the `br` command alone is not a valid claim.
 2. **Discover:** hit a bug or debt? `br q "..."` (or `br create`) and keep going.
    Wire a dependency if it blocks/relates to other work (`br dep add ...`).
 3. **Finish:** `br close <id> --reason "..."`, citing the commit where it landed.
@@ -75,6 +77,16 @@ development task" is returned by the decision-025 project-state selector:
 ```bash
 python3 scripts/project_status.py next
 ```
+
+For every “how/steps to finish or complete the current task?” query, use:
+
+```bash
+python3 scripts/project_status.py details [<Frontier-key|issue-id>]
+```
+
+Omit the target for the current task or pass a stable Frontier key/issue ID for
+a named scheduled task. Return its ordered plan, work-start instruction,
+requirements, completion evidence, and successor policy without reconstruction.
 
 The selector validates `specs/active_frontier.json` against the generated
 Active Frontier in `specs/PROGRESS.md`, `.beads/issues.jsonl`, governing docs,

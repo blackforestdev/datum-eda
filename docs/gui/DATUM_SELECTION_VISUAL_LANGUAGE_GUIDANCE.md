@@ -1,6 +1,6 @@
 # Datum Selection Visual-Language Guidance
 
-Status: governed research-derived guidance; owner decisions in progress
+Status: governed research-derived guidance; visual choices locked, S5 closure in progress
 
 Research basis:
 `research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md`.
@@ -102,6 +102,7 @@ with overlay-retention evidence rather than treated as final behavior.
 
 ## Decision posture
 
-The research report lists the remaining owner decisions. Amend the Rendering
-Book and prototypes section-by-section as those decisions are ratified, then add
-machine/HUMAN conformance evidence before closing the bead or authorizing S5.
+The visual choices catalogued here are owner-ratified in the Rendering Book.
+The remaining specification, evidence, review, and governance work is the
+exhaustive stable-ID checklist in the UVT spec §2.2.15. No smaller list in this
+guidance, a bead description, or conversational synthesis may replace it.
