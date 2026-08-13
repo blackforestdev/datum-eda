@@ -242,6 +242,41 @@ class ProjectStatusTest(unittest.TestCase):
                 "--root", str(self.root), "details", "unknown", "--json",
             ]))
 
+    def test_owner_boundary_alerts_and_forbids_agent_claim(self) -> None:
+        item = self.manifest["frontier"][0]
+        item.update({"state": "specified", "authorization": "owner_decision"})
+        item["completion"]["steps"][0]["kind"] = "owner_decision"
+        self.assertEqual([], self.failures())
+        issue = self.issues[0]
+        details = status.completion_view(item, issue)
+        self.assertTrue(details["owner_input_required"])
+        self.assertIn("OWNER BOUNDARY REACHED", details["work_start"])
+        self.assertIn("Owner boundary: INPUT REQUIRED", status.render_completion(details))
+        next_output = status.render_next(status.next_view(item, issue))
+        self.assertIn("Owner boundary: INPUT REQUIRED", next_output)
+        self.assertIn("must stop", next_output)
+
+    def test_selected_step_kind_requires_matching_item_authorization(self) -> None:
+        item = self.manifest["frontier"][0]
+        item["completion"]["steps"][0]["kind"] = "owner_decision"
+        self.assert_failure("selected owner_decision step requires item authorization owner_decision")
+        item.update({"state": "specified", "authorization": "owner_decision"})
+        self.issues[0] = self.issue(
+            "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
+        )
+        item.update({"state": "in_progress", "claim": {
+            "agent": "codex", "harness": "codex-cli", "session": "owner-boundary",
+            "worktree": ".", "head": self.head(),
+            "claimed_at": "2026-08-13T09:00:00Z",
+            "heartbeat_at": "2026-08-13T10:00:00Z",
+            "expires_at": "2026-08-14T10:00:00Z",
+            "scope": ["owner choice"],
+        }})
+        self.assert_failure(
+            "owner-decision boundary cannot carry an agent claim",
+            datetime(2026, 8, 13, 12, tzinfo=timezone.utc),
+        )
+
     def test_canonical_next_requires_completion_plan(self) -> None:
         del self.manifest["frontier"][0]["completion"]
         self.assert_failure("canonical next requires a completion plan")
@@ -397,6 +432,7 @@ class ProjectStatusTest(unittest.TestCase):
         expected = ["S5-C01", "S5-C01A"] + [f"S5-C{number:02d}" for number in range(2, 14)]
         self.assertEqual(expected, [step["id"] for step in s5["completion"]["steps"]])
         self.assertEqual("S5-C01A", s5["completion"]["canonical_next_step_id"])
+        self.assertEqual("owner_decision", s5["authorization"])
         steps = {step["id"]: step for step in s5["completion"]["steps"]}
         self.assertEqual("owner_decision", steps["S5-C01A"]["kind"])
         for step_id in ("S5-C02", "S5-C03", "S5-C04", "S5-C05", "S5-C08", "S5-C09"):

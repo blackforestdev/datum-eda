@@ -674,7 +674,10 @@ specification/ratification transaction, never S5A implementation.
   specification, prototype, or conformance step begins. The approved choices
   become inputs to C02–C10; those steps propagate them into their owning
   contracts and evidence. C11 is final review of an already resolved corpus,
-  not the first point at which matrix choices are made.
+  not the first point at which matrix choices are made. This step is an explicit
+  owner boundary: agents present the register and stop without choosing,
+  claiming specification work, or advancing until owner dispositions are
+  recorded.
 
 <!-- REQ:UVT-S5-SPEC:S5-C02 -->
 - **S5-C02 — bounded region queries.** Specify deterministic rectangle/lasso

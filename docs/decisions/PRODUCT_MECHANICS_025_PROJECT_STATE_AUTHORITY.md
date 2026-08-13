@@ -37,6 +37,14 @@ and commit history MUST NOT substitute for that invocation. If execution or
 validation fails, the agent MUST report the failure and MUST NOT infer an
 answer.
 
+A selected `owner_decision` completion step is a hard autonomy boundary. The
+parent item MUST expose `owner_decision` authorization, remain unclaimed, and
+produce an explicit owner-input alert in human and JSON selector output. Agents
+MUST notify the owner and stop; they MUST NOT claim, edit, choose a disposition,
+or advance to another step. Explicit owner input is recorded as durable review
+evidence before the same governance transaction completes the step, selects its
+successor, and changes authorization to match that successor.
+
 The deterministic answer to “how do we complete the current task?” is produced
 by `python3 scripts/project_status.py details`; a stable Frontier key or issue ID
 may select a named scheduled task. With no target it selects the same canonical

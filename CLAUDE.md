@@ -101,6 +101,15 @@ for a fresh successful invocation. If the command cannot run or validation
 fails, report that failure and stop; do not guess, reconstruct, or fall back to
 remembered project state.
 
+**Owner-boundary rule:** when `next` or `details` reports `Owner boundary:
+INPUT REQUIRED`, immediately alert the project owner that autonomous work has
+stopped and identify the selected decision step. Do not claim the bead, edit
+files, choose a candidate disposition, skip ahead, or silently treat owner
+approval as implied. Resume only after the owner supplies the required choice;
+the same governance transaction records its durable review evidence, completes
+the decision step, selects the successor substep, and changes authorization to
+match it.
+
 For “how/steps to finish or complete the current task?” run:
 
 ```bash

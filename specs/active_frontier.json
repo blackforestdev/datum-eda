@@ -40,7 +40,7 @@
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",

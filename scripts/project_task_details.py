@@ -315,6 +315,20 @@ def validate_completion(
             failures.append(
                 f"{key}: canonical_next_step_id must identify the in_progress step"
             )
+        selected_kind = selected.get("kind")
+        allowed_authorizations = {
+            "planning": {"planning"},
+            "governance": {"planning"},
+            "owner_decision": {"owner_decision"},
+            "execution": {"execution", "none"},
+        }.get(selected_kind)
+        if allowed_authorizations and item.get("authorization") not in allowed_authorizations:
+            failures.append(
+                f"{key}: selected {selected_kind} step requires item authorization "
+                f"{' or '.join(sorted(allowed_authorizations))}"
+            )
+        if selected_kind == "owner_decision" and item.get("state") == "in_progress":
+            failures.append(f"{key}: owner-decision boundary cannot carry an agent claim")
     if item.get("state") == "landed" and any(value != "complete" for value in statuses.values()):
         failures.append(f"{key}: landed item requires every completion step to be complete")
     for path in governing_docs:
@@ -328,8 +342,24 @@ def validate_completion(
     return failures
 
 
+def selected_completion_step(item: dict[str, Any]) -> dict[str, Any] | None:
+    """Return the explicitly selected incomplete step, if any."""
+    completion = item.get("completion", {})
+    step_id = completion.get("canonical_next_step_id")
+    return next(
+        (step for step in completion.get("steps", []) if step.get("id") == step_id),
+        None,
+    )
+
+
 def claim_instruction(item: dict[str, Any], issue: dict[str, Any]) -> str:
     """Return claim-safe work-start guidance from validated operational state."""
+    selected = selected_completion_step(item)
+    if selected and selected.get("kind") == "owner_decision":
+        return (
+            "OWNER BOUNDARY REACHED: project-owner input is required. Code agents "
+            "must not claim, edit, choose dispositions, or advance to another step."
+        )
     if item.get("state") == "in_progress":
         claim = item.get("claim", {})
         return (
@@ -353,6 +383,7 @@ def _commit_exists(root: Path, revision: str) -> bool:
 
 def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
     """Build the stable JSON view used by both text and JSON presentations."""
+    selected = selected_completion_step(item)
     return {
         "key": item["key"],
         "title": item["title"],
@@ -365,6 +396,7 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "work_start": claim_instruction(item, issue),
         "outcome": item["completion"]["outcome"],
         "canonical_next_step_id": item["completion"]["canonical_next_step_id"],
+        "owner_input_required": bool(selected and selected.get("kind") == "owner_decision"),
         "execution_policy": item["completion"]["execution_policy"],
         "presentation_policy": item["completion"]["presentation_policy"],
         "steps": item["completion"]["steps"],
@@ -393,6 +425,11 @@ def render_completion(view: dict[str, Any]) -> str:
     else:
         selected = next(step for step in view["steps"] if step["id"] == canonical_step)
         lines.append(f"Next completion step: [{canonical_step}] {selected['action']}")
+    if view["owner_input_required"]:
+        lines.append(
+            "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
+            "project owner's decisions before any claim or edit."
+        )
     lines.append("Steps:")
     for index, step in enumerate(view["steps"], 1):
         dependencies = ", ".join(step["depends_on"]) or "none"

@@ -18,7 +18,9 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from project_task_details import completion_view, render_completion, validate_completion
+from project_task_details import (
+    completion_view, render_completion, selected_completion_step, validate_completion,
+)
 
 
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
@@ -448,6 +450,10 @@ def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
     view["live_claim"] = item.get("state") == "in_progress" and isinstance(
         item.get("claim"), dict
     )
+    selected = selected_completion_step(item)
+    view["owner_input_required"] = bool(
+        selected and selected.get("kind") == "owner_decision"
+    )
     return view
 
 
@@ -458,16 +464,22 @@ def render_next(view: dict[str, Any]) -> str:
     completion = view["completion"]
     step_id = completion["canonical_next_step_id"]
     selected = next(step for step in completion["steps"] if step["id"] == step_id)
-    return (
+    lines = [
         "Presentation contract: return this stdout byte-for-byte; do not preface, "
-        "summarize, infer a different substep, or supplement it.\n"
-        f"Next task: {view['title']} ({view['issue_id']})\n"
-        f"State: {view['state']}; authorization: {view['authorization']}\n"
+        "summarize, infer a different substep, or supplement it.",
+        f"Next task: {view['title']} ({view['issue_id']})",
+        f"State: {view['state']}; authorization: {view['authorization']}",
         f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
-        f"live claim: {live_claim}\n"
-        f"Next completion step: [{step_id}] {selected['action']}\n"
-        f"{view['summary']}"
-    )
+        f"live claim: {live_claim}",
+        f"Next completion step: [{step_id}] {selected['action']}",
+    ]
+    if view["owner_input_required"]:
+        lines.append(
+            "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
+            "project owner's decisions before any claim or edit."
+        )
+    lines.append(view["summary"])
+    return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:

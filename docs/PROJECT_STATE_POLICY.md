@@ -54,6 +54,15 @@ a blocking project-state failure: report it and do not manufacture an answer.
 The same fresh-invocation rule applies to `details` for current or named task
 completion queries.
 
+When the selected completion step has kind `owner_decision`, the Frontier item
+MUST carry `owner_decision` authorization and MUST NOT be `in_progress` or carry
+an agent claim. Human and JSON `next`/`details` output MUST expose an owner-input
+boundary. Agents alert the owner, identify the selected decision, and stop
+without claiming, editing, choosing a disposition, or advancing. After explicit
+input, one governance transaction records durable review evidence, completes
+the owner step, selects the next dependency-ready step, and changes item
+authorization to that step's kind.
+
 For every “how do we finish/complete this task?” query, agents MUST run
 `details` (no target for current; stable key/issue ID for a named task) and
 reproduce its ordered steps, work-start instruction, requirements, evidence,
