@@ -90,6 +90,10 @@ status/assignee in one transaction, then export with `br sync --flush-only`.
 An assignee without a valid unexpired Frontier claim is not live ownership. See
 `docs/PROJECT_STATE_POLICY.md`.
 
+Treat the selector's task, lifecycle, authorization, tracker status, assignee,
+and live-claim fields as one complete answer. Do not supplement or contradict
+them with conversational memory, earlier `br` output, or commit momentum.
+
 ---
 
 ## Commit discipline (multiple agents work here in parallel)

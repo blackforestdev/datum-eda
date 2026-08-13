@@ -22,7 +22,7 @@
    Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* one reproducible roadmap answer for every agent. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`.
 - **Complete the S5 selection contract and identity decision** (`UVT-S5-SPEC`; `dat-s5-selection-visual-contract-zid`).
-   Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* UVT S5A execution, GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.
 - **Deliver the native terminal emulator** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
    Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain. *state `planned`; authorization `execution`; parallel lane.*
@@ -81,6 +81,9 @@
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
    Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `specified`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* schematic and fabrication documentation implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
+- **Expose operational ownership in canonical next-task output** (`STATE-NEXT-OWNERSHIP`; `dat-next-output-ownership-uqz`).
+   Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* memory-independent next-task narration. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage

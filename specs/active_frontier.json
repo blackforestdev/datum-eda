@@ -34,7 +34,7 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": false,
       "summary": "Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized.",
       "dependencies": [],
@@ -355,6 +355,34 @@
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "dependencies": [],
       "unblocks": ["schematic and fabrication documentation implementation"]
+    },
+    {
+      "key": "STATE-NEXT-OWNERSHIP",
+      "order": 21,
+      "title": "Expose operational ownership in canonical next-task output",
+      "issue_id": "dat-next-output-ownership-uqz",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+        "docs/PROJECT_STATE_POLICY.md"
+      ],
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership.",
+      "dependencies": [],
+      "unblocks": ["memory-independent next-task narration"],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
+        "claimed_at": "2026-08-13T18:52:35Z",
+        "heartbeat_at": "2026-08-13T18:52:35Z",
+        "expires_at": "2026-08-14T02:52:35Z",
+        "scope": ["canonical next-task operational-state output"],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "1b9c6ce8d648297c9ebab6527f4d7632bbd8bd20"
+      }
     }
   ]
 }

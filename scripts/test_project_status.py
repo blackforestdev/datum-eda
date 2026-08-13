@@ -127,15 +127,24 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertNotIn("dat-intake", {item["issue_id"] for item in self.manifest["frontier"]})
 
     def test_next_supports_human_and_json_output(self) -> None:
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(0, status.main(["--root", str(self.root), "next"]))
+        human = output.getvalue()
+        self.assertIn("dat-next", human)
+        self.assertIn("Tracker: open; assignee: unassigned; live claim: none", human)
+
         for arguments in (
-            ["--root", str(self.root), "next"],
             ["--root", str(self.root), "next", "--json"],
             ["--root", str(self.root), "--json", "next"],
         ):
             output = io.StringIO()
             with redirect_stdout(output):
                 self.assertEqual(0, status.main(arguments))
-            self.assertIn("dat-next", output.getvalue())
+            payload = json.loads(output.getvalue())
+            self.assertEqual("open", payload["next"]["tracker_status"])
+            self.assertIsNone(payload["next"]["assignee"])
+            self.assertFalse(payload["next"]["live_claim"])
 
     def test_duplicate_next_and_order_fail(self) -> None:
         duplicate = self.item(key="second", issue_id="dat-intake")
@@ -200,6 +209,15 @@ class ProjectStatusTest(unittest.TestCase):
             },
         })
         self.assertEqual([], self.failures(datetime(2026, 8, 13, 12, tzinfo=timezone.utc)))
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(0, status.main([
+                "--root", str(self.root), "next", "--json",
+            ]))
+        payload = json.loads(output.getvalue())
+        self.assertEqual("in_progress", payload["next"]["tracker_status"])
+        self.assertEqual("codex", payload["next"]["assignee"])
+        self.assertTrue(payload["next"]["live_claim"])
 
     def test_hard_blocker_rejects_ready_next(self) -> None:
         self.issues.append(self.issue("dat-blocker", "open", labels=["roadmap:intake"]))

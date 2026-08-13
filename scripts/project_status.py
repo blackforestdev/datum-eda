@@ -432,6 +432,17 @@ def emit(payload: dict[str, Any], as_json: bool, human: str, error: bool = False
         print(human, file=sys.stderr if error else sys.stdout)
 
 
+def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
+    """Join roadmap selection with the operational facts agents must report."""
+    view = dict(item)
+    view["tracker_status"] = issue.get("status")
+    view["assignee"] = issue.get("assignee")
+    view["live_claim"] = item.get("state") == "in_progress" and isinstance(
+        item.get("claim"), dict
+    )
+    return view
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -461,9 +472,14 @@ def main(argv: list[str] | None = None) -> int:
                  as_json, f"Project status check passed ({len(state['manifest']['frontier'])} frontier items).")
         else:
             item = state["next"]
-            emit({"ok": True, "next": item}, as_json,
+            view = next_view(item, state["issues"][item["issue_id"]])
+            assignee = view["assignee"] or "unassigned"
+            live_claim = "active" if view["live_claim"] else "none"
+            emit({"ok": True, "next": view}, as_json,
                  f"Next task: {item['title']} ({item['issue_id']})\n"
-                 f"State: {item['state']}; authorization: {item['authorization']}\n{item['summary']}")
+                 f"State: {item['state']}; authorization: {item['authorization']}\n"
+                 f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
+                 f"live claim: {live_claim}\n{item['summary']}")
         return 0
     if args.command == "render":
         failures, _ = validate(root)

@@ -33,6 +33,9 @@ python3 scripts/project_status.py check-render
 
 Use the project-state checker and standard drift battery before landing state
 changes. Text and JSON output MUST select the same stable Frontier item.
+They also report its current tracker status, assignee, and live-claim state.
+Agents MUST present those joined facts as one answer and MUST NOT supplement
+them with stale conversational ownership or earlier tracker output.
 `render` updates only the region between `<!-- ACTIVE FRONTIER:START -->` and
 `<!-- ACTIVE FRONTIER:END -->`; `check-render` rejects projection drift.
 

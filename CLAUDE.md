@@ -93,6 +93,9 @@ Never infer the answer from `br ready`, recent commits, issue priority, or prose
 outside the generated Frontier. Update the manifest and regenerate the projection
 in the same change as any roadmap change. Other docs, including this file's
 "Current Status" and PROGRESS's lower sections, must not restate rival ordering.
+The selector's lifecycle, authorization, tracker status, assignee, and live-claim
+fields are the complete operational answer; never append contrary state from
+conversation history or an earlier tracker read.
 
 Behavioral invariants are enforced by the PG-* proof gates
 (`run_migration_proof_gates.sh`) and the write-fence gates
