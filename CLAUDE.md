@@ -94,11 +94,12 @@ python3 scripts/project_status.py details [<Frontier-key|issue-id>]
 ```
 
 Omit the target for the current canonical task; pass a stable Frontier key or
-issue ID when the user names a scheduled task. Reproduce its ordered plan,
-work-start guidance, requirements, completion evidence, and successor policy
-without supplementing it from prose. If the plan appears incomplete, stop and
-repair the structured contract and governed requirement markers; do not invent
-a completion plan conversationally.
+issue ID when the user names a scheduled task. For an ordinary request for the
+steps, return the command's stdout byte-for-byte as the entire answer: no
+preface, summary, regrouping, renumbering, relabeling, inferred concurrency, or
+postscript. If the user explicitly asks for analysis too, reproduce stdout
+unchanged first and put analysis in a separate labeled section. If the plan
+appears incomplete, repair the structured contract; never invent a rival plan.
 
 Run it before proposing or claiming work; it validates the roadmap against
 beads, governing documents, dependencies, authorization, and claim freshness.

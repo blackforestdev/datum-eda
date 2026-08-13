@@ -8,7 +8,17 @@ from pathlib import Path
 from typing import Any
 
 
-COMPLETION_KEYS = {"outcome", "steps", "post_completion"}
+COMPLETION_KEYS = {
+    "outcome", "execution_policy", "presentation_policy", "steps",
+    "post_completion",
+}
+EXECUTION_POLICY_KEYS = {
+    "max_in_progress_steps", "dependency_independence_authorizes_parallelism",
+}
+PRESENTATION_POLICY_KEYS = {
+    "mode", "preserve_step_order", "preserve_step_numbering",
+    "allow_regrouping", "allow_supplementation", "allow_inferred_concurrency",
+}
 STEP_KEYS = {
     "id", "kind", "status", "action", "depends_on", "requirement_refs",
     "completion_evidence",
@@ -57,6 +67,34 @@ def validate_completion(
     assert isinstance(completion, dict)
     if not _text(completion.get("outcome")):
         failures.append(f"{key}: completion.outcome must be non-empty")
+    execution = completion.get("execution_policy")
+    if _closed_shape(
+        execution, EXECUTION_POLICY_KEYS, EXECUTION_POLICY_KEYS,
+        f"{key}: execution_policy", failures,
+    ):
+        assert isinstance(execution, dict)
+        if execution.get("max_in_progress_steps") != 1:
+            failures.append(f"{key}: max_in_progress_steps must be 1")
+        if execution.get("dependency_independence_authorizes_parallelism") is not False:
+            failures.append(
+                f"{key}: dependency independence must not authorize parallelism"
+            )
+    presentation = completion.get("presentation_policy")
+    if _closed_shape(
+        presentation, PRESENTATION_POLICY_KEYS, PRESENTATION_POLICY_KEYS,
+        f"{key}: presentation_policy", failures,
+    ):
+        assert isinstance(presentation, dict)
+        if presentation.get("mode") != "stdout_verbatim":
+            failures.append(f"{key}: presentation mode must be stdout_verbatim")
+        for name in ("preserve_step_order", "preserve_step_numbering"):
+            if presentation.get(name) is not True:
+                failures.append(f"{key}: presentation_policy.{name} must be true")
+        for name in (
+            "allow_regrouping", "allow_supplementation", "allow_inferred_concurrency",
+        ):
+            if presentation.get(name) is not False:
+                failures.append(f"{key}: presentation_policy.{name} must be false")
     post = completion.get("post_completion")
     if _closed_shape(post, POST_KEYS, POST_KEYS, f"{key}: post_completion", failures):
         assert isinstance(post, dict)
@@ -234,8 +272,13 @@ def validate_completion(
     if len(step_ids) != len(set(step_ids)):
         failures.append(f"{key}: completion step ids must be unique")
     active_steps = [step_id for step_id, value in statuses.items() if value == "in_progress"]
-    if len(active_steps) > 1:
-        failures.append(f"{key}: at most one completion step may be in_progress")
+    maximum_active = (
+        execution.get("max_in_progress_steps")
+        if isinstance(execution, dict) and execution.get("max_in_progress_steps") == 1
+        else 1
+    )
+    if len(active_steps) > maximum_active:
+        failures.append(f"{key}: at most {maximum_active} completion step may be in_progress")
     if item.get("state") == "landed" and any(value != "complete" for value in statuses.values()):
         failures.append(f"{key}: landed item requires every completion step to be complete")
     for path in governing_docs:
@@ -285,6 +328,8 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "live_claim": item.get("state") == "in_progress",
         "work_start": claim_instruction(item, issue),
         "outcome": item["completion"]["outcome"],
+        "execution_policy": item["completion"]["execution_policy"],
+        "presentation_policy": item["completion"]["presentation_policy"],
         "steps": item["completion"]["steps"],
         "post_completion": item["completion"]["post_completion"],
     }
@@ -295,6 +340,10 @@ def render_completion(view: dict[str, Any]) -> str:
     assignee = view["assignee"] or "unassigned"
     claim = "active" if view["live_claim"] else "none"
     lines = [
+        "Presentation contract: return this stdout byte-for-byte; do not preface, "
+        "summarize, regroup, renumber, or supplement it.",
+        "Execution policy: at most one completion step may be in_progress; "
+        "dependency independence does not authorize parallel work.",
         f"Task details: {view['title']} ({view['issue_id']})",
         f"State: {view['state']}; authorization: {view['authorization']}",
         f"Tracker: {view['tracker_status']}; assignee: {assignee}; live claim: {claim}",

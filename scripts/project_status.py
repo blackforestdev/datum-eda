@@ -189,8 +189,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
         failures.append(f"unknown active-frontier keys: {', '.join(sorted(unknown_root))}")
     if missing_root:
         failures.append(f"missing active-frontier keys: {', '.join(sorted(missing_root))}")
-    if manifest.get("schema_version") != 2:
-        failures.append("schema_version must be 2")
+    if manifest.get("schema_version") != 3:
+        failures.append("schema_version must be 3")
     if not nonempty(manifest.get("policy_decision")):
         failures.append("policy_decision must be non-empty")
     ttl = manifest.get("claim_ttl_hours")

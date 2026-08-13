@@ -51,6 +51,38 @@ markers must resolve exactly once in its governed documents. Each step declares
 `planning`, `owner_decision`, `governance`, or `execution`; planning-authorized
 tasks cannot smuggle implementation into their completion plan.
 
+For an ordinary request for the steps, stdout from `details` is the entire
+answer and MUST be returned byte-for-byte: no preface, summary, regrouping,
+renumbering, relabeling, or postscript. If the user explicitly requests analysis
+in addition to the steps, reproduce the stdout block unchanged before a clearly
+separate analysis. Dependency independence describes ordering validity only; it
+does not authorize parallel agents or concurrent step execution.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C01 -->
+Every completion contract fixes `max_in_progress_steps` to one and states that
+dependency independence does not authorize parallelism.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C02 -->
+Every completion contract requires `stdout_verbatim`, preserves manifest step
+order and numbering, and forbids regrouping, supplementation, and inferred
+concurrency.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C03 -->
+Human task details render the canonical presentation and execution policy before
+the task; JSON exposes the same closed-shape policy objects.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C04 -->
+Claude and AGENTS-aware tools must return task-detail stdout byte-for-byte for
+ordinary completion-step queries, with no surrounding narrative.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C05 -->
+Hermetic tests lock exact policy wording, manifest order, numbering, and JSON
+parity and reject any weakened or unknown policy value.
+
+<!-- REQ:STATE-DETAIL-PRESENTATION:DP-C06 -->
+The correction closes only after project-state, governance, and source-health
+proof, followed by an explicit Frontier handoff back to S5.
+
 <!-- REQ:STATE-TASK-DETAILS:TD-C01 -->
 Completion-plan authority extends decision 025 without merging roadmap,
 tracker, or specification roles: the Frontier orders structured remaining work,

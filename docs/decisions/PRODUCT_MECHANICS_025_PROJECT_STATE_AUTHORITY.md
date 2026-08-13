@@ -50,7 +50,7 @@ normative.
 
 ### PS-001: One roadmap authority
 
-`specs/active_frontier.json` MUST use schema version 2 and contain every
+`specs/active_frontier.json` MUST use schema version 3 and contain every
 scheduled roadmap item with a stable unique key, contiguous order, lifecycle
 state, authorization state, governing-document links, exact beads issue ID,
 hard dependencies, unblocks, summary, and explicit canonical-next/parallel
@@ -141,6 +141,13 @@ Work-start guidance is derived from validated claim state: open/unassigned work
 requires the synchronized Frontier-plus-beads claim transaction; a live claim
 requires other agents to stand down or coordinate an explicit handoff. Closing
 or unblocking work MUST NOT silently authorize or select its successor.
+
+Each completion contract also carries closed-shape execution and presentation
+policies. Exactly one step may be `in_progress`; dependency independence MUST
+NOT be represented as authorization for parallel work. The ordinary human
+answer is `details` stdout byte-for-byte: manifest order and numbering are
+preserved, and regrouping, supplementation, and inferred concurrency are
+forbidden. JSON MUST expose the same policies.
 
 ## Consequences
 

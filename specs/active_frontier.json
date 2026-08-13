@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
   "claim_ttl_hours": 8,
   "frontier": [
@@ -39,13 +39,15 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
       "dependencies": [],
       "unblocks": ["dat-uvt-s5a-build-1wv"],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
           {
             "id": "S5-C01",
@@ -526,6 +528,8 @@
       "unblocks": [],
       "completion": {
         "outcome": "Decision-025 project state deterministically answers both which task is next and the complete governed steps required to finish it.",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
           {
             "id": "TD-C01",
@@ -582,6 +586,102 @@
         }
       },
       "landing_commit": "e3e2c24"
+    },
+    {
+      "key": "STATE-DETAIL-PRESENTATION",
+      "order": 23,
+      "title": "Make task-detail presentation verbatim and non-concurrent",
+      "issue_id": "dat-task-detail-presentation-bjk",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+        "docs/PROJECT_STATE_POLICY.md"
+      ],
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Make the human task-detail output a verbatim response contract with fixed order and explicit one-active-step, no-inferred-parallelism semantics.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Claude and Codex return the same canonical task-detail presentation without regrouping, renumbering, supplementation, or inferred concurrency.",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {
+            "id": "DP-C01",
+            "kind": "governance",
+            "status": "in_progress",
+            "action": "Encode one-active-step and no-inferred-parallelism execution semantics.",
+            "depends_on": [],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C01"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DP-C02",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Encode verbatim stdout, fixed order and numbering, no regrouping, and no supplementation presentation semantics.",
+            "depends_on": ["DP-C01"],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C02"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DP-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Expose identical execution and presentation policies in human and JSON task details.",
+            "depends_on": ["DP-C02"],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C03"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DP-C04",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Require agents to return task-detail stdout byte-for-byte for ordinary completion-step queries.",
+            "depends_on": ["DP-C03"],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C04"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DP-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Lock exact rendered order and wording and reject weakened policies with hermetic tests.",
+            "depends_on": ["DP-C03", "DP-C04"],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C05"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DP-C06",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Run governance and source-health gates, close this correction with proof, and explicitly restore S5 as canonical next.",
+            "depends_on": ["DP-C05"],
+            "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "DP-C06"}],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": ["Canonical task-detail responses become presentation-stable across agents.", "S5 returns as the explicitly selected canonical task."],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
+        "claimed_at": "2026-08-13T19:36:32Z",
+        "heartbeat_at": "2026-08-13T19:36:32Z",
+        "expires_at": "2026-08-14T03:36:32Z",
+        "scope": ["canonical task-detail presentation contract"],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "e12b7a41136347e43c3ef261d8db1d64805df31a"
+      }
     }
   ]
 }

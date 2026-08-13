@@ -7,6 +7,7 @@ import copy
 import importlib.util
 import io
 import json
+import re
 import subprocess
 import tempfile
 import unittest
@@ -42,7 +43,7 @@ class ProjectStatusTest(unittest.TestCase):
             self.issue("dat-intake", "open", labels=["roadmap:intake"]),
         ]
         self.manifest = {
-            "schema_version": 2,
+            "schema_version": 3,
             "policy_decision": self.doc,
             "claim_ttl_hours": 24,
             "frontier": [self.item()],
@@ -93,6 +94,18 @@ class ProjectStatusTest(unittest.TestCase):
             "unblocks": [],
             "completion": {
                 "outcome": "The aligned fixture is complete.",
+                "execution_policy": {
+                    "max_in_progress_steps": 1,
+                    "dependency_independence_authorizes_parallelism": False,
+                },
+                "presentation_policy": {
+                    "mode": "stdout_verbatim",
+                    "preserve_step_order": True,
+                    "preserve_step_numbering": True,
+                    "allow_regrouping": False,
+                    "allow_supplementation": False,
+                    "allow_inferred_concurrency": False,
+                },
                 "steps": [{
                     "id": "TEST-C01",
                     "kind": "execution",
@@ -174,6 +187,15 @@ class ProjectStatusTest(unittest.TestCase):
         with redirect_stdout(output):
             self.assertEqual(0, status.main(["--root", str(self.root), "details"]))
         human = output.getvalue()
+        lines = human.splitlines()
+        self.assertEqual(
+            "Presentation contract: return this stdout byte-for-byte; do not preface, "
+            "summarize, regroup, renumber, or supplement it.", lines[0],
+        )
+        self.assertEqual(
+            "Execution policy: at most one completion step may be in_progress; "
+            "dependency independence does not authorize parallel work.", lines[1],
+        )
         self.assertIn("[TEST-C01] (execution; pending) Complete the fixture requirement.", human)
         self.assertIn("atomically claim", human)
         output = io.StringIO()
@@ -184,6 +206,11 @@ class ProjectStatusTest(unittest.TestCase):
         details = json.loads(output.getvalue())["details"]
         self.assertEqual(["TEST-C01"], [step["id"] for step in details["steps"]])
         self.assertEqual("unassigned", details["assignee"] or "unassigned")
+        self.assertEqual(1, details["execution_policy"]["max_in_progress_steps"])
+        self.assertFalse(
+            details["execution_policy"]["dependency_independence_authorizes_parallelism"]
+        )
+        self.assertEqual("stdout_verbatim", details["presentation_policy"]["mode"])
 
     def test_details_named_key_and_issue_id_resolve_identically(self) -> None:
         payloads = []
@@ -203,6 +230,29 @@ class ProjectStatusTest(unittest.TestCase):
     def test_canonical_next_requires_completion_plan(self) -> None:
         del self.manifest["frontier"][0]["completion"]
         self.assert_failure("canonical next requires a completion plan")
+
+    def test_completion_rejects_weakened_presentation_and_execution_policy(self) -> None:
+        completion = self.manifest["frontier"][0]["completion"]
+        completion["execution_policy"]["max_in_progress_steps"] = 2
+        completion["execution_policy"]["dependency_independence_authorizes_parallelism"] = True
+        completion["presentation_policy"]["allow_regrouping"] = True
+        completion["presentation_policy"]["allow_supplementation"] = True
+        completion["presentation_policy"]["allow_inferred_concurrency"] = True
+        completion["presentation_policy"]["preserve_step_order"] = False
+        completion["presentation_policy"]["preserve_step_numbering"] = False
+        completion["presentation_policy"]["mode"] = "paraphrase"
+        found = self.failures()
+        for needle in (
+            "max_in_progress_steps must be 1",
+            "dependency independence must not authorize parallelism",
+            "presentation_policy.allow_regrouping must be false",
+            "presentation_policy.allow_supplementation must be false",
+            "presentation_policy.allow_inferred_concurrency must be false",
+            "presentation_policy.preserve_step_order must be true",
+            "presentation_policy.preserve_step_numbering must be true",
+            "presentation mode must be stdout_verbatim",
+        ):
+            self.assertTrue(any(needle in value for value in found), found)
 
     def test_completion_rejects_bad_step_dependency_and_acceptance(self) -> None:
         step = self.manifest["frontier"][0]["completion"]["steps"][0]
@@ -283,6 +333,14 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertEqual(expected, [step["id"] for step in s5["completion"]["steps"]])
         self.assertFalse(s5["completion"]["post_completion"]["authorizes_successor"])
         self.assertFalse(s5["completion"]["post_completion"]["selects_successor"])
+        issues, failures = status.load_issues(repository / ".beads/issues.jsonl")
+        self.assertEqual([], failures)
+        rendered = status.render_completion(status.completion_view(s5, issues[s5["issue_id"]]))
+        rendered_ids = [
+            match.group(1) for match in re.finditer(r"^\d+\. \[(S5-C\d+)\]", rendered, re.MULTILINE)
+        ]
+        self.assertEqual(expected, rendered_ids)
+        self.assertIn("does not authorize parallel work", rendered)
 
     def test_duplicate_next_and_order_fail(self) -> None:
         duplicate = self.item(key="second", issue_id="dat-intake")

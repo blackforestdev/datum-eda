@@ -22,9 +22,8 @@
    Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* one reproducible roadmap answer for every agent. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`.
 - **Complete the S5 selection contract and identity decision** (`UVT-S5-SPEC`; `dat-s5-selection-visual-contract-zid`).
-   Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`, `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`, `docs/gui/DATUM_RENDERING_BOOK.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`, `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Deliver the native terminal emulator** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
    Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain. *state `planned`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* trustworthy embedded shell and agent surface. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
@@ -88,6 +87,10 @@
 - **Make canonical task completion plans deterministic** (`STATE-TASK-DETAILS`; `dat-task-completion-alignment-4jp`).
    Add validated structured completion plans and one deterministic task-details query so agents cannot omit controlling requirements or infer post-completion ordering. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
+- **Make task-detail presentation verbatim and non-concurrent** (`STATE-DETAIL-PRESENTATION`; `dat-task-detail-presentation-bjk`).
+   Make the human task-detail output a verbatim response contract with fixed order and explicit one-active-step, no-inferred-parallelism semantics. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage

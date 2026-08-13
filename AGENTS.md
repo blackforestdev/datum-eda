@@ -85,8 +85,10 @@ python3 scripts/project_status.py details [<Frontier-key|issue-id>]
 ```
 
 Omit the target for the current task or pass a stable Frontier key/issue ID for
-a named scheduled task. Return its ordered plan, work-start instruction,
-requirements, completion evidence, and successor policy without reconstruction.
+a named scheduled task. For an ordinary steps query, return command stdout
+byte-for-byte as the entire answer, with no preface, regrouping, renumbering,
+inferred concurrency, supplementation, or postscript. Explicitly requested
+analysis follows only after the unchanged stdout in a separate labeled section.
 
 The selector validates `specs/active_frontier.json` against the generated
 Active Frontier in `specs/PROGRESS.md`, `.beads/issues.jsonl`, governing docs,
