@@ -39,7 +39,7 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
       "dependencies": [],
@@ -517,9 +517,9 @@
         "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Add validated structured completion plans and one deterministic task-details query so agents cannot omit controlling requirements or infer post-completion ordering.",
       "dependencies": [],
@@ -530,47 +530,47 @@
           {
             "id": "TD-C01",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Extend the project-state authority with a closed-shape, evidence-linked completion-plan contract.",
             "depends_on": [],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C01"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
           },
           {
             "id": "TD-C02",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Implement one validated details command with equivalent ordered human and JSON output.",
             "depends_on": ["TD-C01"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C02"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
           },
           {
             "id": "TD-C03",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Reconcile the complete S5 closure plan across its Frontier record, bead, and controlling documents.",
             "depends_on": ["TD-C01"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C03"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
           },
           {
             "id": "TD-C04",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Add adversarial hermetic coverage and run governance, project-state, and source-health gates.",
             "depends_on": ["TD-C02", "TD-C03"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C04"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
           },
           {
             "id": "TD-C05",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Land the tooling, close this bead with evidence, and explicitly restore S5 as canonical next.",
             "depends_on": ["TD-C04"],
             "requirement_refs": [{"path": "docs/PROJECT_STATE_POLICY.md", "marker": "TD-C05"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "e3e2c24"}]
           }
         ],
         "post_completion": {
@@ -581,17 +581,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
-        "claimed_at": "2026-08-13T19:07:07Z",
-        "heartbeat_at": "2026-08-13T19:07:07Z",
-        "expires_at": "2026-08-14T03:07:07Z",
-        "scope": ["canonical task completion-plan authority"],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "745681d6a041e4983c380b9c22b13639660bdee4"
-      }
+      "landing_commit": "e3e2c24"
     }
   ]
 }
