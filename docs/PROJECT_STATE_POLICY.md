@@ -51,6 +51,13 @@ markers must resolve exactly once in its governed documents. Each step declares
 `planning`, `owner_decision`, `governance`, or `execution`; planning-authorized
 tasks cannot smuggle implementation into their completion plan.
 
+The contract also names exactly one `canonical_next_step_id` whenever
+incomplete work remains. It must identify a pending or in-progress step whose
+dependencies are complete; an active step and the canonical step must be
+identical. A `null` value is valid only after every step is complete. Manifest
+order remains presentation order, but order or dependency readiness alone never
+selects among multiple candidates.
+
 For an ordinary request for the steps, stdout from `details` is the entire
 answer and MUST be returned byte-for-byte: no preface, summary, regrouping,
 renumbering, relabeling, or postscript. If the user explicitly requests analysis
@@ -61,6 +68,9 @@ does not authorize parallel agents or concurrent step execution.
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C01 -->
 Every completion contract fixes `max_in_progress_steps` to one and states that
 dependency independence does not authorize parallelism.
+
+Every incomplete completion contract selects exactly one dependency-ready
+canonical next substep, and human/JSON details expose the same selection.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C02 -->
 Every completion contract requires `stdout_verbatim`, preserves manifest step

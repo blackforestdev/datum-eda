@@ -50,7 +50,7 @@ normative.
 
 ### PS-001: One roadmap authority
 
-`specs/active_frontier.json` MUST use schema version 3 and contain every
+`specs/active_frontier.json` MUST use schema version 4 and contain every
 scheduled roadmap item with a stable unique key, contiguous order, lifecycle
 state, authorization state, governing-document links, exact beads issue ID,
 hard dependencies, unblocks, summary, and explicit canonical-next/parallel
@@ -131,8 +131,9 @@ No roadmap, tracker, claim, or emergency status can waive source-health gates.
 
 The selected non-landed item MUST carry one closed-shape ordered completion
 contract with an outcome, stable unique step IDs, work kinds, forward-valid
-dependencies, governed evidence markers, post-completion effects, and an
-explicit successor policy. Planning/owner-decision authorization MUST reject
+dependencies, exactly one explicit canonical next substep while work remains,
+governed evidence markers, post-completion effects, and an explicit successor
+policy. Planning/owner-decision authorization MUST reject
 execution-kind steps. Every step ID MUST occur exactly once in the bead acceptance criteria;
 every namespaced requirement marker in its governing documents MUST be covered.
 `details` human and JSON output MUST preserve the same order and content.
@@ -143,8 +144,11 @@ requires other agents to stand down or coordinate an explicit handoff. Closing
 or unblocking work MUST NOT silently authorize or select its successor.
 
 Each completion contract also carries closed-shape execution and presentation
-policies. Exactly one step may be `in_progress`; dependency independence MUST
-NOT be represented as authorization for parallel work. The ordinary human
+policies. Exactly one step may be `in_progress`; if present, it MUST be the
+canonical next substep. The canonical substep MUST be pending or in progress
+with every dependency complete, and becomes `null` only when every step is
+complete. Dependency independence MUST NOT be represented as authorization for
+parallel work. The ordinary human
 answer is `details` stdout byte-for-byte: manifest order and numbering are
 preserved, and regrouping, supplementation, and inferred concurrency are
 forbidden. JSON MUST expose the same policies.
@@ -169,5 +173,6 @@ This decision is implemented when tests prove that:
   planning authorization cannot select feature execution;
 - all project-state tooling passes decision 022 source-health enforcement;
 - human and JSON task details expose the same complete evidence-linked plan;
+- incomplete plans expose exactly one dependency-ready canonical next substep;
 - missing acceptance IDs and uncovered governed requirements fail checks; and
 - completion never implies automatic successor authorization or selection.

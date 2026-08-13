@@ -43,7 +43,7 @@ class ProjectStatusTest(unittest.TestCase):
             self.issue("dat-intake", "open", labels=["roadmap:intake"]),
         ]
         self.manifest = {
-            "schema_version": 3,
+            "schema_version": 4,
             "policy_decision": self.doc,
             "claim_ttl_hours": 24,
             "frontier": [self.item()],
@@ -94,6 +94,7 @@ class ProjectStatusTest(unittest.TestCase):
             "unblocks": [],
             "completion": {
                 "outcome": "The aligned fixture is complete.",
+                "canonical_next_step_id": "TEST-C01",
                 "execution_policy": {
                     "max_in_progress_steps": 1,
                     "dependency_independence_authorizes_parallelism": False,
@@ -197,6 +198,9 @@ class ProjectStatusTest(unittest.TestCase):
             "dependency independence does not authorize parallel work.", lines[1],
         )
         self.assertIn("[TEST-C01] (execution; pending) Complete the fixture requirement.", human)
+        self.assertIn(
+            "Next completion step: [TEST-C01] Complete the fixture requirement.", human
+        )
         self.assertIn("atomically claim", human)
         output = io.StringIO()
         with redirect_stdout(output):
@@ -205,6 +209,7 @@ class ProjectStatusTest(unittest.TestCase):
             ]))
         details = json.loads(output.getvalue())["details"]
         self.assertEqual(["TEST-C01"], [step["id"] for step in details["steps"]])
+        self.assertEqual("TEST-C01", details["canonical_next_step_id"])
         self.assertEqual("unassigned", details["assignee"] or "unassigned")
         self.assertEqual(1, details["execution_policy"]["max_in_progress_steps"])
         self.assertFalse(
@@ -262,6 +267,22 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertTrue(any("must name an earlier step" in value for value in found), found)
         self.assertTrue(any("acceptance criteria" in value for value in found), found)
 
+    def test_acceptance_ids_use_exact_tokens_not_prefix_matches(self) -> None:
+        first = self.manifest["frontier"][0]["completion"]["steps"][0]
+        second = copy.deepcopy(first)
+        second.update({"id": "TEST-C01A", "depends_on": ["TEST-C01"]})
+        second["requirement_refs"] = [{"path": self.doc, "marker": "TEST-C01A"}]
+        self.manifest["frontier"][0]["completion"]["steps"].append(second)
+        self.issues[0]["acceptance_criteria"] = (
+            "TEST-C01: Complete the fixture. TEST-C01A: A distinct later requirement."
+        )
+        (self.root / self.doc).write_text(
+            (self.root / self.doc).read_text(encoding="utf-8")
+            + "\n<!-- REQ:alignment:TEST-C01A -->\nLater requirement.\n",
+            encoding="utf-8",
+        )
+        self.assertEqual([], self.failures())
+
     def test_planning_completion_rejects_execution_step(self) -> None:
         self.manifest["frontier"][0].update({
             "state": "specified", "authorization": "planning",
@@ -279,6 +300,40 @@ class ProjectStatusTest(unittest.TestCase):
         step = copy.deepcopy(self.manifest["frontier"][0]["completion"]["steps"][0])
         self.manifest["frontier"][0]["completion"]["steps"].append(step)
         self.assert_failure("completion step ids must be unique")
+
+    def test_completion_requires_one_dependency_ready_canonical_substep(self) -> None:
+        completion = self.manifest["frontier"][0]["completion"]
+        del completion["canonical_next_step_id"]
+        self.assert_failure("canonical_next_step_id")
+        completion["canonical_next_step_id"] = "MISSING"
+        self.assert_failure("canonical completion step does not exist")
+
+        first = completion["steps"][0]
+        first.update({
+            "status": "complete",
+            "completion_evidence": [{"kind": "commit", "revision": self.head()}],
+        })
+        completion["canonical_next_step_id"] = "TEST-C01"
+        self.assert_failure("completed plan requires canonical_next_step_id null")
+        completion["canonical_next_step_id"] = None
+        self.assertEqual([], self.failures())
+
+    def test_canonical_substep_must_match_active_step(self) -> None:
+        completion = self.manifest["frontier"][0]["completion"]
+        first = self.manifest["frontier"][0]["completion"]["steps"][0]
+        first["status"] = "in_progress"
+        second = copy.deepcopy(first)
+        second.update({"id": "TEST-C02", "status": "pending"})
+        second["requirement_refs"] = [{"path": self.doc, "marker": "TEST-C02"}]
+        completion["steps"].append(second)
+        completion["canonical_next_step_id"] = "TEST-C02"
+        self.issues[0]["acceptance_criteria"] += " TEST-C02: Complete the second requirement."
+        (self.root / self.doc).write_text(
+            (self.root / self.doc).read_text(encoding="utf-8")
+            + "\n<!-- REQ:alignment:TEST-C02 -->\nSecond requirement.\n",
+            encoding="utf-8",
+        )
+        self.assert_failure("must identify the in_progress step")
 
     def test_completion_progress_requires_proof_and_completed_dependencies(self) -> None:
         first = self.manifest["frontier"][0]["completion"]["steps"][0]
@@ -329,17 +384,31 @@ class ProjectStatusTest(unittest.TestCase):
             (repository / "specs/active_frontier.json").read_text(encoding="utf-8")
         )
         s5 = next(item for item in manifest["frontier"] if item["key"] == "UVT-S5-SPEC")
-        expected = [f"S5-C{number:02d}" for number in range(1, 14)]
+        expected = ["S5-C01", "S5-C01A"] + [f"S5-C{number:02d}" for number in range(2, 14)]
         self.assertEqual(expected, [step["id"] for step in s5["completion"]["steps"]])
+        self.assertEqual("S5-C01A", s5["completion"]["canonical_next_step_id"])
+        steps = {step["id"]: step for step in s5["completion"]["steps"]}
+        self.assertEqual("owner_decision", steps["S5-C01A"]["kind"])
+        for step_id in ("S5-C02", "S5-C03", "S5-C04", "S5-C05", "S5-C08", "S5-C09"):
+            self.assertIn("S5-C01A", steps[step_id]["depends_on"])
+        spec = (
+            repository / "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md"
+        ).read_text(encoding="utf-8")
+        open_register = spec.split("##### Open-reconciliation register (S5-C01)", 1)[1]
+        self.assertNotIn("*Owner:* S5-C11", open_register)
+        self.assertIn("S5-C11 only performs final review", open_register)
         self.assertFalse(s5["completion"]["post_completion"]["authorizes_successor"])
         self.assertFalse(s5["completion"]["post_completion"]["selects_successor"])
         issues, failures = status.load_issues(repository / ".beads/issues.jsonl")
         self.assertEqual([], failures)
         rendered = status.render_completion(status.completion_view(s5, issues[s5["issue_id"]]))
         rendered_ids = [
-            match.group(1) for match in re.finditer(r"^\d+\. \[(S5-C\d+)\]", rendered, re.MULTILINE)
+            match.group(1) for match in re.finditer(
+                r"^\d+\. \[(S5-C\d+[A-Z]?)\]", rendered, re.MULTILINE
+            )
         ]
         self.assertEqual(expected, rendered_ids)
+        self.assertIn("Next completion step: [S5-C01A]", rendered)
         self.assertIn("does not authorize parallel work", rendered)
 
     def test_duplicate_next_and_order_fail(self) -> None:
@@ -567,6 +636,7 @@ class ProjectStatusTest(unittest.TestCase):
             "status": "complete",
             "completion_evidence": [{"kind": "commit", "revision": revision}],
         })
+        self.manifest["frontier"][0]["completion"]["canonical_next_step_id"] = None
         self.manifest["frontier"][0].update({
             "state": "landed", "authorization": "none", "canonical_next": False,
             "landing_commit": revision,

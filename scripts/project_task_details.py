@@ -10,7 +10,7 @@ from typing import Any
 
 COMPLETION_KEYS = {
     "outcome", "execution_policy", "presentation_policy", "steps",
-    "post_completion",
+    "canonical_next_step_id", "post_completion",
 }
 EXECUTION_POLICY_KEYS = {
     "max_in_progress_steps", "dependency_independence_authorizes_parallelism",
@@ -29,6 +29,7 @@ POST_KEYS = {
     "selects_successor",
 }
 MARKER_RE = re.compile(r"<!-- REQ:([A-Za-z0-9-]+):([A-Za-z0-9-]+) -->")
+ACCEPTANCE_ID_RE = re.compile(r"(?<![A-Za-z0-9-])([A-Za-z0-9-]+):")
 
 
 def _text(value: Any) -> bool:
@@ -144,6 +145,7 @@ def validate_completion(
     statuses: dict[str, str] = {}
     governing_docs = set(item.get("governing_docs", []))
     acceptance = issue.get("acceptance_criteria", "")
+    acceptance_ids = ACCEPTANCE_ID_RE.findall(acceptance) if isinstance(acceptance, str) else []
     for index, step in enumerate(steps, 1):
         label = f"{key}: completion.steps[{index}]"
         if not _closed_shape(step, STEP_KEYS, STEP_KEYS, label, failures):
@@ -154,7 +156,7 @@ def validate_completion(
             failures.append(f"{label}.id must be non-empty")
             continue
         step_ids.append(step_id)
-        if acceptance.count(step_id) != 1:
+        if acceptance_ids.count(step_id) != 1:
             failures.append(
                 f"{key}: bead acceptance criteria must contain {step_id} exactly once"
             )
@@ -271,6 +273,11 @@ def validate_completion(
                 covered.add((path, marker))
     if len(step_ids) != len(set(step_ids)):
         failures.append(f"{key}: completion step ids must be unique")
+    if acceptance_ids != step_ids:
+        failures.append(
+            f"{key}: bead acceptance step IDs must exactly match completion order "
+            f"(acceptance={acceptance_ids}, completion={step_ids})"
+        )
     active_steps = [step_id for step_id, value in statuses.items() if value == "in_progress"]
     maximum_active = (
         execution.get("max_in_progress_steps")
@@ -279,6 +286,33 @@ def validate_completion(
     )
     if len(active_steps) > maximum_active:
         failures.append(f"{key}: at most {maximum_active} completion step may be in_progress")
+    canonical_step = completion.get("canonical_next_step_id")
+    incomplete_steps = [step_id for step_id in step_ids if statuses.get(step_id) != "complete"]
+    if not incomplete_steps:
+        if canonical_step is not None:
+            failures.append(f"{key}: completed plan requires canonical_next_step_id null")
+    elif not _text(canonical_step):
+        failures.append(f"{key}: incomplete plan requires one canonical_next_step_id")
+    elif canonical_step not in statuses:
+        failures.append(f"{key}: canonical completion step does not exist: {canonical_step}")
+    else:
+        if statuses[canonical_step] not in {"pending", "in_progress"}:
+            failures.append(f"{key}: canonical completion step must be pending or in_progress")
+        selected = next(step for step in steps if step.get("id") == canonical_step)
+        dependencies = selected.get("depends_on", [])
+        if isinstance(dependencies, list):
+            unresolved = [
+                dependency for dependency in dependencies
+                if statuses.get(dependency) != "complete"
+            ]
+            if unresolved:
+                failures.append(
+                    f"{key}: canonical completion step has incomplete dependencies: {unresolved}"
+                )
+        if active_steps and active_steps != [canonical_step]:
+            failures.append(
+                f"{key}: canonical_next_step_id must identify the in_progress step"
+            )
     if item.get("state") == "landed" and any(value != "complete" for value in statuses.values()):
         failures.append(f"{key}: landed item requires every completion step to be complete")
     for path in governing_docs:
@@ -328,6 +362,7 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "live_claim": item.get("state") == "in_progress",
         "work_start": claim_instruction(item, issue),
         "outcome": item["completion"]["outcome"],
+        "canonical_next_step_id": item["completion"]["canonical_next_step_id"],
         "execution_policy": item["completion"]["execution_policy"],
         "presentation_policy": item["completion"]["presentation_policy"],
         "steps": item["completion"]["steps"],
@@ -349,8 +384,14 @@ def render_completion(view: dict[str, Any]) -> str:
         f"Tracker: {view['tracker_status']}; assignee: {assignee}; live claim: {claim}",
         f"Work start: {view['work_start']}",
         f"Completion outcome: {view['outcome']}",
-        "Steps:",
     ]
+    canonical_step = view["canonical_next_step_id"]
+    if canonical_step is None:
+        lines.append("Next completion step: none; every completion step is complete.")
+    else:
+        selected = next(step for step in view["steps"] if step["id"] == canonical_step)
+        lines.append(f"Next completion step: [{canonical_step}] {selected['action']}")
+    lines.append("Steps:")
     for index, step in enumerate(view["steps"], 1):
         dependencies = ", ".join(step["depends_on"]) or "none"
         refs = ", ".join(

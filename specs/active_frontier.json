@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
   "claim_ttl_hours": 8,
   "frontier": [
@@ -50,6 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
+        "canonical_next_step_id": "S5-C01A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -84,12 +85,28 @@
             ]
           },
           {
+            "id": "S5-C01A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Resolve every OPEN-1 through OPEN-14 matrix choice before dependent specification and evidence work begins.",
+            "depends_on": [
+              "S5-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "S5-C01A"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "S5-C02",
             "kind": "planning",
             "status": "pending",
             "action": "Specify deterministic bounded rectangle/lasso queries, exhaustion behavior, auto-pan inclusion, and future assertions.",
             "depends_on": [
-              "S5-C01"
+              "S5-C01A"
             ],
             "requirement_refs": [
               {
@@ -105,7 +122,7 @@
             "status": "pending",
             "action": "Specify selection and focus lifetime across revisions, replacement, deletion, pane/document replacement, stale identity, and partial resolution.",
             "depends_on": [
-              "S5-C01"
+              "S5-C01A"
             ],
             "requirement_refs": [
               {
@@ -121,7 +138,7 @@
             "status": "pending",
             "action": "Define complete single/multi Inspector and terminal/action-console/AI context projections without depending on the deferred status bar.",
             "depends_on": [
-              "S5-C01"
+              "S5-C01A"
             ],
             "requirement_refs": [
               {
@@ -137,7 +154,7 @@
             "status": "pending",
             "action": "Reconcile every contract to the read-only S5A boundary and defer move, rotate, mirror, lock, group, and editable fields to S5B or later.",
             "depends_on": [
-              "S5-C01"
+              "S5-C01A"
             ],
             "requirement_refs": [
               {
@@ -169,7 +186,7 @@
             "status": "pending",
             "action": "Reconcile singleton history, semantic identities, same-identity versus related cross-probe projection, and the S5A-to-P2.3 dependency.",
             "depends_on": [
-              "S5-C01",
+              "S5-C01A",
               "S5-C05"
             ],
             "requirement_refs": [
@@ -186,7 +203,7 @@
             "status": "pending",
             "action": "Reconcile all rendering language to the exact immediate-overlay selection law while preserving retained, CAM/export, and hit geometry.",
             "depends_on": [
-              "S5-C01"
+              "S5-C01A"
             ],
             "requirement_refs": [
               {
@@ -202,7 +219,7 @@
             "status": "pending",
             "action": "Complete fixed-size prototype and accessibility evidence, including the governed padlock asset and all compound/collision/dense/cross-pane cases.",
             "depends_on": [
-              "S5-C01",
+              "S5-C01A",
               "S5-C07",
               "S5-C08"
             ],
@@ -730,6 +747,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Decision-025 project state deterministically answers both which task is next and the complete governed steps required to finish it.",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -879,6 +897,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Claude and Codex return the same canonical task-detail presentation without regrouping, renumbering, supplementation, or inferred concurrency.",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false

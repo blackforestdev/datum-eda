@@ -89,6 +89,9 @@ a named scheduled task. For an ordinary steps query, return command stdout
 byte-for-byte as the entire answer, with no preface, regrouping, renumbering,
 inferred concurrency, supplementation, or postscript. Explicitly requested
 analysis follows only after the unchanged stdout in a separate labeled section.
+The printed `Next completion step` is the sole selected subtask. Other
+dependency-ready steps are not alternate “next” work and must not be offered as
+parallel candidates.
 
 The selector validates `specs/active_frontier.json` against the generated
 Active Frontier in `specs/PROGRESS.md`, `.beads/issues.jsonl`, governing docs,

@@ -100,6 +100,9 @@ preface, summary, regrouping, renumbering, relabeling, inferred concurrency, or
 postscript. If the user explicitly asks for analysis too, reproduce stdout
 unchanged first and put analysis in a separate labeled section. If the plan
 appears incomplete, repair the structured contract; never invent a rival plan.
+The printed `Next completion step` is the sole subtask-selection authority;
+dependency-ready alternatives are not additional next steps and must not be
+offered as parallel or interchangeable choices.
 
 Run it before proposing or claiming work; it validates the roadmap against
 beads, governing documents, dependencies, authorization, and claim freshness.
