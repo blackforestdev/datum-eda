@@ -13,24 +13,14 @@
         "docs/PROJECT_STATE_POLICY.md",
         "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance.",
       "dependencies": [],
       "unblocks": ["one reproducible roadmap answer for every agent"],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
-        "claimed_at": "2026-08-13T18:18:03Z",
-        "heartbeat_at": "2026-08-13T18:31:52Z",
-        "expires_at": "2026-08-14T02:31:52Z",
-        "scope": ["project-state governance, manifests, tracker reconciliation, and validation tooling"],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f94b45fa0f91c76b999b2cf141bd2d777c242ff1"
-      }
+      "landing_commit": "2a9bb34"
     },
     {
       "key": "UVT-S5-SPEC",
@@ -44,7 +34,7 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Reconcile the per-class matrix, prototype/reference evidence, conformance gates, and final owner review before ratifying selection identity; S5 execution remains unauthorized.",
       "dependencies": [],
