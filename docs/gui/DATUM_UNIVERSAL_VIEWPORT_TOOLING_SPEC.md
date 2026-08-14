@@ -729,6 +729,19 @@ coverage reduces only soft-glow radius/opacity while preserving crisp cue and
 authored colours. Inspector reports complete count + aggregate LOD. A 100k-object
 fixture gates deterministic fallback, warm-buffer reuse, and bounded capacity.
 
+**Dense law over non-authored channels (owner-resolved, S5-C01A / OPEN-14,
+2026-08-14):** the selection-cue budget and fallback above are **one per-pane
+mechanism wherever the cue draws** — including over proposal, review, and
+diagnostic geometry; there is never a second parallel LOD system, so the
+65,536 bound stays a hard guarantee under maximal collision. The union-mask
+fallback replaces the **selection cue channel only**: proposal
+ghost/dual-stroke, diagnostic marker shape and severity hue, and review
+evidence keep rendering in their compositing positions and are never
+flattened, absorbed, or recolored by the mask — the no-channel-flattening law
+extended to the degraded regime. The 100k-object fixture MUST include a
+maximal-collision variant (dense authored selection + active proposals +
+findings) gating this identity preservation (S5-C09/S5-C10 evidence scope).
+
 #### 2.2.14 S5A/S5B delivery boundary
 
 S5 is split so the selection experience does not claim mutation authority the
@@ -1421,7 +1434,8 @@ open — such cells carry `OPEN-n` markers regardless.
   hidden/locked semantics ride the channel lifecycle, not §2.2.7/2.2.8.
   *Overlay:*
   ghost/dual-stroke identity retained under selection (RB §2.6); B-LOD
-  application to non-authored channels unstated (`OPEN-14`). *Inspector:*
+  one shared budget/fallback with channel identity preserved (OPEN-14
+  resolved, §2.2.13 dense clause). *Inspector:*
   review lane projects the active action; compound membership for
   non-authored subjects is deferred until the channel has complete typed
   scene authority and S5-C03 lifetime rules exist (OPEN-12 resolved). *Scene
@@ -1442,7 +1456,8 @@ open — such cells carry `OPEN-n` markers regardless.
   orthogonal-channel law binds any selection cue over it. *Hidden/locked:*
   excluded from Ctrl+A (UVT §2.2.9) and region acquisition (OPEN-12
   resolved). *Overlay:*
-  B-LOD application unstated (`OPEN-14`). *Scene authority:*
+  B-LOD: one shared budget/fallback, channel identity preserved (OPEN-14
+  resolved, §2.2.13 dense clause). *Scene authority:*
   `ReviewPrimitive` (`lib.rs:337-342`), rendered
   (`overlay.rs:265-291`); ABSENT: any hit region for evidence geometry.
   *Verdict:* spec **ratified** (OPEN-12 resolved: lane-only explicit
@@ -1463,7 +1478,9 @@ open — such cells carry `OPEN-n` markers regardless.
   UVT §2.2.13). *Hidden/locked:* excluded from Ctrl+A (UVT §2.2.9);
   target-hidden behavior deferred with mixed-compound semantics (OPEN-12).
   *Overlay:* B-LOD application
-  unstated (`OPEN-14`); no marker is rendered in-scene today. *Inspector:*
+  one shared budget/fallback with marker shape/severity preserved (OPEN-14
+  resolved, §2.2.13 dense clause); no marker is rendered in-scene today.
+  *Inspector:*
   renders an already-selected finding; compound membership for mixed
   finding+authored selections deferred until typed scene authority and
   S5-C03 lifetime rules exist (OPEN-12 resolved). *Scene authority:*
@@ -1476,12 +1493,17 @@ open — such cells carry `OPEN-n` markers regardless.
 
 ##### Open-reconciliation register (S5-C01)
 
-Every `OPEN-n` above is an explicit, tracked reconciliation decision. Each
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
+**GATE CLOSED (owner session, 2026-08-14): all fourteen OPEN choices are
+RESOLVED below** — OPEN-1 revised; OPEN-2 through OPEN-9 and OPEN-12 through
+OPEN-14 approved as recommended; OPEN-10 and OPEN-11 ratified deferrals with
+recorded re-entry conditions. Each entry carries its resolution, reason, and
+normative recording; the named propagation steps (C02–C09) reconcile the
+approved choices into their contracts and evidence. S5-C11 only performs
+final review and cannot introduce a new choice after C02–C10 are complete.
+
+Every `OPEN-n` below is an explicit, tracked reconciliation decision. Each
 carries a research-grounded candidate resolution; none is silently resolved.
-Every choice is decided at the S5-C01A owner gate before dependent work starts;
-the named propagation step then reconciles that approved choice into its
-contract and evidence. S5-C11 only performs final review and cannot introduce a
-new choice after C02–C10 are complete.
 
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-1 -->
 - **OPEN-1 — ladder origins.** §2.2.5 defines the section→run→net ladder for
@@ -1688,6 +1710,16 @@ new choice after C02–C10 are complete.
   stated for selection overlay over authored geometry; application to
   proposal/review/diagnostic channels is unstated. *Decision:* S5-C01A.
   *Propagation:* S5-C08/S5-C09.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.13 dense-over-non-authored clause). *Reason:* the 65,536 cap is a
+  hard per-pane guarantee only if there is exactly one selection-cue budget
+  wherever the cue draws — a second LOD system would allow combined
+  overdraw past the bound in the worst case the cap was built for; the
+  union-mask fallback replaces the selection cue channel only, never
+  flattening proposal ghost, marker shape/severity, or review identity
+  (the no-channel-flattening law extended to the degraded regime); the
+  100k fixture gains a mandatory maximal-collision variant gated in
+  S5-C09/S5-C10.
 
 ---
 

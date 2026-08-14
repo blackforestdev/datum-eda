@@ -40,7 +40,7 @@
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
@@ -50,7 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C01A",
+        "canonical_next_step_id": "S5-C02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -87,7 +87,7 @@
           {
             "id": "S5-C01A",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Resolve every OPEN-1 through OPEN-14 matrix choice before dependent specification and evidence work begins.",
             "depends_on": [
               "S5-C01"
@@ -98,7 +98,13 @@
                 "marker": "S5-C01A"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve all recommended`, or list exceptions as `OPEN-n: revise — <replacement>` or `OPEN-n: defer — <reason>`.",
               "requests": [
