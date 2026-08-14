@@ -1981,6 +1981,21 @@ per-class gaps this replaces.
   (structural: no P2.3 code path predates the S5A subject types)
   (`identity_p23_consumes_vocabulary`).
 
+#### 2.2.21 S5-C09 evidence review record
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C09-REVIEW -->
+
+**Owner-approved, 2026-08-14.** The S5 visual-contract evidence batch is
+reviewed and blessed: `docs/gui/prototypes/selection-study.html` with its
+committed fixed-size reference `docs/gui/reference/selection-study.png`
+(1680×3400, nine panels covering construction, compound, locked+padlock,
+maximal collision, pane parity, Global Net/Bus, text/points, dense fallback,
+and accessibility/zoom variants); the rendering-study contact-sheet extension;
+and the `selection-lock-anchor` padlock glyph candidate, whose design is
+approved with the SVG asset remaining `to_author` for the S5A build. The
+HUMAN review protocol for these panels lives in `docs/gui/reference/README.md`
+§"Selection Study reference (S5)".
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->

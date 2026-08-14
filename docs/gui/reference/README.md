@@ -228,3 +228,20 @@ this loop (Chromium could not complete its namespace/seccomp startup there), so 
 `board-editor.png.PENDING` placeholder held the slot rather than a fabricated
 image. The owner then captured the reference directly from a browser and deleted
 the placeholder — the state this section now records.
+
+## Selection Study reference (S5)
+
+**Status: CAPTURED + OWNER-APPROVED (2026-08-14).** `selection-study.png` is the
+committed fixed-size reference of `docs/gui/prototypes/selection-study.html`
+(headless capture, 1680 × 3400), approved by the owner in the S5-C09 review
+batch together with the rendering-study contact-sheet extension carrying the
+`selection-lock-anchor` padlock glyph candidate. It is the HUMAN layer for the
+S5 selection visual contract (UVT §2.2.13/§2.2.16/§4.4): the per-panel eyeball
+protocol covers construction (lift/glow/2 px cue vs hover), compound equality,
+locked + anchor padlock, maximal channel collision, active/inactive pane
+parity, Global Net and semantic Bus subjects, text/point objects with the
+tiny-object fallback, the dense union-mask fallback, and the
+high-contrast/CVD/reduced-motion and zoom-invariance variants. As everywhere in
+this loop, the reference is reviewed by eye against the build's own goldens —
+never pixel-diffed cross-engine. The padlock asset itself remains `to_author`
+in `icon_set.json`; its design is approved, its SVG lands with the S5A build.
