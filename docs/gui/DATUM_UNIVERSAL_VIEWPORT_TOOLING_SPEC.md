@@ -1491,6 +1491,99 @@ open — such cells carry `OPEN-n` markers regardless.
   **typed-only** — canvas marker rendering and the pointer path remain
   unbuilt.
 
+#### 2.2.17 S5-C02 bounded region query contract
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->
+
+This contract makes every rectangle/lasso membership query (§2.2.2 gestures,
+§2.2.4/§2.2.16 per-class qualification) deterministic, bounded, and atomic.
+It governs the query engine, not the gestures: §2.2.2/§2.2.3 own how a region
+is drawn; this section owns how its membership is computed.
+
+**1. Exactness law.** Committed region membership is an **exact, total
+function of four inputs**: the resolved design revision, the final
+world-space region geometry, the per-class qualification rules, and the
+eligibility state (layer/class visibility per §2.2.7/2.2.8, OPEN-12
+authored-only scope). It is NEVER a function of pan path, frame timing,
+preview budgets, camera/zoom during the gesture, screen visibility of
+candidates, or check/proposal state. There is no such thing as a partial or
+truncated region selection: budgets bound **work per frame**, never **result
+correctness**.
+
+**2. Candidate bounds — no unbounded scan.** Candidate enumeration runs
+through the shared spatial index (`SpatialHitIndex`,
+`crates/gui-viewport/src/hit.rs` — the S3 AABB hierarchy): the region's
+world-space AABB prunes the tree, and only AABB-intersecting candidates are
+examined. Examined-candidate count is proportional to geometry intersecting
+the region's AABB, never to total design size, for any sub-scene region. The
+query tests **per-class qualification anchors** (pad centers, pin connection
+anchors, path endpoints/authored midpoints, placement anchors, oriented text
+layout rectangles, authored zone filled areas) as world geometry — never
+rendered pixels.
+
+**3. Lasso geometry.** The lasso polygon closes automatically (last vertex
+to first) on evaluation. Point-anchor tests use the **even-odd rule**
+point-in-polygon. The oriented-text >50% rule evaluates the area fraction of
+the oriented layout rectangle inside the region exactly (polygon clipping),
+for both rectangle and lasso regions; exactly 50% remains a non-selection.
+Zone/filled-graphic 100%-enclosure requires the complete authored filled
+area including islands inside the region polygon. A gesture below the 4px
+activation threshold is not a region (§2.2.2); a degenerate zero-area world
+region selects nothing.
+
+**4. Evaluation and exhaustion.** Two budgets with distinct roles, one
+shared principle — feedback may degrade, membership may arrive late,
+correctness never changes:
+
+- **Preview budget (per frame):** live marquee candidate feedback is
+  time-sliced. On per-frame exhaustion the preview degrades
+  deterministically — region boundary plus a running count, with dense
+  preview following the §2.2.13 dense law (including union-mask fallback,
+  OPEN-14). Preview degradation is presentation state and never journaled.
+- **Query completion (on release):** membership evaluation runs to
+  completion, spanning frames when the candidate set exceeds the per-frame
+  examination bound (cf. the S3 point-query budget
+  `DEFAULT_HIT_QUERY_BUDGET = 4096`, `crates/gui-viewport/src/hit.rs`; the
+  region examination bound is its own governed constant in the same
+  module). While evaluation spans frames the preview shows an explicit
+  evaluating state. Commit yields the exact set — **all or nothing**:
+  exhaustion never produces a silently partial selection, and cancellation
+  (`Escape`, focus/capture loss, pane closure, content replacement —
+  §2.2.2) discards the evaluation and preserves the prior selection.
+
+**5. Auto-pan inclusion.** The region is anchored in world space (§2.2.3);
+membership is computed from the **final** world-space region geometry.
+Geometry revealed by auto-pan — or never rendered onscreen at any point
+during the gesture — participates identically. Two gestures ending with the
+same final region geometry over the same design revision produce identical
+membership regardless of pan path, pan speed, or zoom changes mid-gesture.
+
+**6. Future assertions (TO-ENFORCE; consumed by S5-C10).** Exact assertion
+contract for the S5A build; test homes are indicative (`gui-viewport` region
+module) and finalized at build time:
+
+- **A1 determinism** — same revision + same final region ⇒ identical
+  membership set across runs (`region_membership_deterministic`).
+- **A2 pruned enumeration** — a small region on the 100k-object fixture
+  examines only AABB-intersecting candidates; examined count is asserted
+  against the index-pruned bound, never total object count
+  (`region_query_prunes_by_aabb`).
+- **A3 oracle exactness** — rect and lasso membership equal a brute-force
+  per-class oracle on the 100k fixture (`region_membership_matches_oracle`).
+- **A4 auto-pan equivalence** — a panned gesture and a directly-specified
+  equal final region produce identical membership
+  (`region_autopan_membership_equivalence`).
+- **A5 atomicity under pressure** — commit under budget pressure yields the
+  exact set; cancellation mid-evaluation preserves the prior selection
+  (`region_commit_atomic_under_budget`).
+- **A6 per-class qualification** — majority-anchor, both-endpoints/2-of-3,
+  100%-enclosure, oriented-rect >50% (including exactly-50% rejection), and
+  point-anchor cases per §2.2.4/§2.2.16
+  (`region_class_qualification_cases`).
+- **A7 non-authored exclusion** — regions never acquire proposal, review,
+  or diagnostic subjects regardless of overlay density
+  (`region_excludes_non_authored`).
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
