@@ -2164,7 +2164,8 @@ carries a research-grounded candidate resolution; none is silently resolved.
   forbids speccing ahead of design. Re-entry condition: Rendering Book
   dimension construction + typed scene projection, expected with the
   decision-020 documentation-system spec pass (which may re-home
-  dimensions in paper space).
+  dimensions in paper space). Re-entry tracked:
+  `dat-dimension-selection-reentry-kxk` (deferred, rides decision 020).
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-11 -->
 - **OPEN-11 — hierarchical sheet representation.** Spec-silent, untyped.
   *Candidate:* filled-graphic-style rect qualification for the sheet body
@@ -2180,7 +2181,8 @@ carries a research-grounded candidate resolution; none is silently resolved.
   visible-but-inert bodies are acceptable in read-only S5A. Ratified now:
   double click on a sheet body is reserved for descend-into-sheet.
   Re-entry: schematic-surface design pass + typed sheet/sheet-pin scene
-  authority.
+  authority. Re-entry tracked: `dat-sheet-interaction-reentry-9ee`
+  (deferred, rides the schematic-surface design pass).
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-12 -->
 - **OPEN-12 — non-authored subject semantics.** Region/scope/hidden/locked/
   compound rules for proposal, review, and diagnostic subjects are declared
