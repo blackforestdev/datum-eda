@@ -232,6 +232,11 @@
    "glyph": "folder-open",
    "status": "mapped"
   },
+  "fullscreen-stage": {
+   "source": "tabler",
+   "glyph": "arrows-maximize",
+   "status": "mapped"
+  },
   "generate": {
    "source": "tabler",
    "glyph": "generate",
@@ -321,6 +326,11 @@
    "source": "eda",
    "asset": "pad.svg",
    "status": "exists"
+  },
+  "pane-zoom": {
+   "source": "tabler",
+   "glyph": "maximize",
+   "status": "mapped"
   },
   "panel": {
    "source": "tabler",

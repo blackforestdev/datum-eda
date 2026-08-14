@@ -138,3 +138,53 @@ space — follows focus; layout is consumer state, not journaled). Same word
   deferred until the tiling+zoom foundation is real.
 - **Layout persistence scope** — per-project, per-user-global, or named layouts.
 - **Preset layouts** — which named presets ship (Single · Board+Schematic · …).
+
+## Amendment: Full-Screen Stage (owner-directed, 2026-08-14)
+
+<!-- REQ:VIEWPORT-FULLSCREEN:FS-LAW -->
+
+Maximum working space is a **two-tier ladder over the same pane tree**, and it
+is universal: every viewport content — board editor, schematic, footprint
+editor, symbol editor, model-space, paper-space, and future pane contents —
+gets both tiers by construction, because they are pane behaviors, never
+per-editor features.
+
+- **Tier 1 — Zoom (ratified above, landed in P2.1):** the focused pane
+  temporarily fills the whole *workspace*; application chrome (menu bar,
+  dock, Inspector, panels) remains.
+- **Tier 2 — Full-Screen Stage (this amendment):** the focused pane fills the
+  entire *application window* and **all chrome hides** — menu bar, dock,
+  Inspector, panels, pane headers. Nothing persistent overlays the canvas;
+  the viewport's own immediate overlays (selection, marquee, readout) render
+  normally. The field pattern is Blender's maximize-vs-fullscreen-area pair
+  and VS Code's maximize-group-vs-zen-mode pair: two distinct reaches for
+  space, both transient view states.
+
+**Invocation surfaces (three, one verb each — Lean):**
+
+1. **Pane-header button:** every pane header carries a maximize affordance —
+   click toggles Tier-1 Zoom; `Shift`+click toggles Tier-2 Stage. In Stage
+   there are no headers: exit is by hotkey or `Escape`.
+2. **Hotkeys:** `Shift+F11` toggles Zoom; `F11` toggles Full-Screen Stage
+   (the universal fullscreen key). Both act on the focused pane and are
+   instant round-trips — press again to return to the exact prior layout.
+3. **View menu:** `Zoom Pane` and `Full-Screen Stage` entries in the
+   data-driven menu model, same verbs, gated like every menu entry.
+
+**Laws:**
+
+- Both tiers are **consumer/workspace view state over the unchanged tile
+  tree** — the split layout, ratios, and focus survive the round-trip
+  exactly; entering and leaving is never journaled, persisted only as
+  workspace preference alongside zoom/focus state.
+- `Escape` in Stage exits Stage before performing any other Escape meaning
+  (selection-clear ordering defers to the S5 contract once a selection
+  exists: Escape clears an active gesture, then Stage, then selection).
+- Stage never changes engine state, camera framing, or selection — the same
+  scene, camera, and selection render at the larger size.
+- OS-level window fullscreen remains the platform's own affordance and is
+  orthogonal; Stage works identically in a windowed or OS-fullscreen window.
+
+Build rider: tracked as a pane-system rider (`dat-viewport-fullscreen-stage`
+bead); Tier-1 invocation surfaces and the Tier-2 stage land together on the
+landed P2.1 zoom substrate.

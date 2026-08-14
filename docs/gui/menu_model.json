@@ -117,6 +117,18 @@
           "shortcut": "Ctrl+-"
         },
         {
+          "label": "Zoom Pane",
+          "icon": "pane-zoom",
+          "gui_local": "view.pane_zoom",
+          "shortcut": "Shift+F11"
+        },
+        {
+          "label": "Full-Screen Stage",
+          "icon": "fullscreen-stage",
+          "gui_local": "view.fullscreen_stage",
+          "shortcut": "F11"
+        },
+        {
           "label": "Layer Visibility",
           "icon": "layers",
           "gui_local": "view.layers"

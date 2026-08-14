@@ -16,9 +16,24 @@ menubar,Edit,,,6,Preferences…,settings,,,preferences store,,,
 menubar,View,,,0,Fit to Board,fit,,view.fit,,,,F
 menubar,View,,,1,Zoom In,zoom-in,,view.zoom_in,,,,Ctrl++
 menubar,View,,,2,Zoom Out,zoom-out,,view.zoom_out,,,,Ctrl+-
-menubar,View,,,3,Layer Visibility,layers,,view.layers,,,,
-menubar,View,,,4,Panels,panels,,view.panels,,,,
-menubar,View,,,5,Reset Workspace,reset,,view.reset,,,,
+menubar,View,,,3,Zoom Pane,pane-zoom,,view.pane_zoom,,,,Shift+F11
+menubar,View,,,4,Full-Screen Stage,fullscreen-stage,,view.fullscreen_stage,,,,F11
+menubar,View,,,5,Layer Visibility,layers,,view.layers,,,,
+menubar,View,,,6,Panels,panels,,view.panels,,,,
+menubar,View,,,7,Reset Workspace,reset,,view.reset,,,,
+menubar,View,,,8,Split Vertical,panels,,view.split_vertical,,,,
+menubar,View,,,9,Split Horizontal,layout,,view.split_horizontal,,,,
+menubar,View,,,10,Close Pane,close,,view.close_pane,,,,
+menubar,View,,,11,Maximize Pane,fit,,view.maximize_pane,,,,Z
+menubar,View,,,12,Focus Next Pane,crossprobe,,view.focus_next,,,,Tab
+menubar,View,,,13,Focus Previous Pane,select,,view.focus_prev,,,,Shift+Tab
+menubar,View,,,14,Fill Pane: Board,outline,,view.fill_board,,,,
+menubar,View,,,15,Fill Pane: Schematic,symbol,,view.fill_schematic,,,,
+menubar,View,,,16,Layout: Single,panel,,view.preset_single,,,,
+menubar,View,,,17,Layout: Board + Schematic,panels,,view.preset_board_schematic,,,,
+menubar,View,,,18,Crosshair: Full Viewport,select,,view.cursor.full,,,,
+menubar,View,,,19,Crosshair: Small Cross,select,,view.cursor.small,,,,
+menubar,View,,,20,Crosshair: None,select,,view.cursor.none,,,,
 menubar,Place,schematic,,0,Symbol,symbol,datum.schematic.place_symbol,,,,,
 menubar,Place,schematic,,1,Wire,wire,datum.schematic.draw_wire,,,,,W
 menubar,Place,schematic,,2,Label,label,datum.schematic.place_label,,,,,
