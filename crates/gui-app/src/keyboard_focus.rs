@@ -88,18 +88,22 @@ pub(crate) fn key_route(
 
 /// Whether clicking this hit target is deliberate keyboard entry into the
 /// terminal (T0-C02; decision 027 FT-008; spec §5 interaction contract):
-/// the SHELL CONTENT cell rectangle itself, plus the session actions whose
-/// resulting behavior expects terminal typing — switching to a session,
-/// opening a new one, and renaming (the rename editor routes through
-/// terminal-owned line editing). Chrome that merely opens/observes the dock
-/// (the tab strip) or ends/suspends a session (restart/detach/close) no
-/// longer arms focus — the over-broad TF-01 entry rule was the silent
-/// focus-steal defect diagnosed on dat-terminal-focus-authority-6aw.
-/// Opening the dock programmatically never steals keys.
+/// the SHELL CONTENT cell rectangle itself, the dock TERMINAL TAB (owner
+/// decision 2026-08-14, bead dat-pan-trace-terminal-pollution-0j0: clicking
+/// the terminal tab is a deliberate "go to the terminal" gesture whose
+/// resulting behavior expects terminal typing — ghostty/kitty style), plus
+/// the session actions whose resulting behavior expects terminal typing —
+/// switching to a session, opening a new one, and renaming (the rename editor
+/// routes through terminal-owned line editing). Chrome that ends/suspends a
+/// session (restart/detach/close) still never arms focus — the over-broad
+/// TF-01 entry rule was the silent focus-steal defect diagnosed on
+/// dat-terminal-focus-authority-6aw. Opening the dock programmatically never
+/// steals keys.
 pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
     matches!(
         target,
         HitTarget::TerminalScreen
+            | HitTarget::TerminalTab
             | HitTarget::TerminalSessionTab(_)
             | HitTarget::TerminalSessionNew
             | HitTarget::TerminalSessionRenameActive
@@ -596,8 +600,12 @@ mod tests {
     #[test]
     fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
         // T0-C02: SHELL CONTENT (the cell rectangle) is deliberate entry, as
-        // are session actions that expect typing next.
+        // are session actions that expect typing next. The dock terminal TAB
+        // is also deliberate entry (owner decision 2026-08-14, bead
+        // dat-pan-trace-terminal-pollution-0j0: tab-click focuses the
+        // terminal, ghostty/kitty style).
         assert!(hit_target_is_terminal_entry(&HitTarget::TerminalScreen));
+        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalTab));
         assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionTab(
             "terminal-a".to_string()
         )));
@@ -605,10 +613,10 @@ mod tests {
         assert!(hit_target_is_terminal_entry(
             &HitTarget::TerminalSessionRenameActive
         ));
-        // Opening/observing chrome and session-ending controls never arm
-        // focus (spec §5: opening the terminal leaves editor focus unchanged).
+        // Session-ending/suspending controls never arm focus (spec §5: a
+        // control click gives focus only when the resulting behavior expects
+        // terminal typing).
         for target in [
-            HitTarget::TerminalTab,
             HitTarget::TerminalSessionRestartActive,
             HitTarget::TerminalSessionDetachActive,
             HitTarget::TerminalSessionCloseActive,

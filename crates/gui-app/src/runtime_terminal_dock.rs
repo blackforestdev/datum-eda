@@ -1,7 +1,8 @@
 //! Runtime dock/terminal viewport geometry (T0-C02, decomposed from
 //! `runtime_camera_pane.rs` under source-size governance / decision 022):
-//! dock cursor/resize-drag handling plus the terminal screen-cell geometry
-//! seam — the ONE shared solver both the renderer and the PTY size derive
+//! dock tab ownership (open/close, moved from `main.rs` under the same
+//! governance), dock cursor/resize-drag handling plus the terminal
+//! screen-cell geometry seam — the ONE shared solver both the renderer and the PTY size derive
 //! from (`DATUM_NATIVE_TERMINAL_SPEC.md` §2.3; decision 027 FT-001/FT-008).
 //! A child module of the crate root, so it sees `Runtime`'s private
 //! fields/methods via `use super::*` exactly as the inline impl did.
@@ -9,6 +10,41 @@
 use super::*;
 
 impl Runtime {
+    pub(super) fn set_active_dock(&mut self, tab: DockTab) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        if ui.active_dock_tab == Some(tab) {
+            return false;
+        }
+        let dock_was_open = ui.active_dock_tab.is_some();
+        ui.active_dock_tab = Some(tab);
+        if dock_was_open {
+            self.invalidate_frame();
+        } else {
+            self.invalidate_scene();
+        }
+        if matches!(tab, DockTab::Terminal) {
+            self.resize_terminal_to_dock();
+            self.refresh_terminal_activity_summary();
+        }
+        true
+    }
+
+    pub(super) fn close_active_dock(&mut self) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        if ui.active_dock_tab.is_none() {
+            return false;
+        }
+        ui.active_dock_tab = None;
+        // TF-01: keyboard focus must not outlive the surface that owns it —
+        // a closed dock with Terminal focus would swallow keys into a hidden
+        // line editor. Closing the dock hands ownership back to the editor.
+        if self.keyboard_focus == KeyboardFocus::Terminal {
+            self.keyboard_focus = KeyboardFocus::Editor;
+        }
+        self.invalidate_scene();
+        true
+    }
+
     pub(super) fn cursor_in_dock(&self) -> bool {
         let Some((_, y)) = self.last_cursor_pos else {
             return false;

@@ -1229,41 +1229,6 @@ impl Runtime {
     // diagnostics, and lifecycle messages route through `log_review_event`
     // (console sink) or terminal chrome, never the grid.
 
-    fn set_active_dock(&mut self, tab: DockTab) -> bool {
-        let ui = &mut self.session.workspace_mut().ui;
-        if ui.active_dock_tab == Some(tab) {
-            return false;
-        }
-        let dock_was_open = ui.active_dock_tab.is_some();
-        ui.active_dock_tab = Some(tab);
-        if dock_was_open {
-            self.invalidate_frame();
-        } else {
-            self.invalidate_scene();
-        }
-        if matches!(tab, DockTab::Terminal) {
-            self.resize_terminal_to_dock();
-            self.refresh_terminal_activity_summary();
-        }
-        true
-    }
-
-    fn close_active_dock(&mut self) -> bool {
-        let ui = &mut self.session.workspace_mut().ui;
-        if ui.active_dock_tab.is_none() {
-            return false;
-        }
-        ui.active_dock_tab = None;
-        // TF-01: keyboard focus must not outlive the surface that owns it —
-        // a closed dock with Terminal focus would swallow keys into a hidden
-        // line editor. Closing the dock hands ownership back to the editor.
-        if self.keyboard_focus == KeyboardFocus::Terminal {
-            self.keyboard_focus = KeyboardFocus::Editor;
-        }
-        self.invalidate_scene();
-        true
-    }
-
     pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
         self.keyboard_focus
     }
@@ -2435,7 +2400,16 @@ impl Runtime {
             HitTarget::EditSelectedBoardTextAlignment => {
                 self.begin_selected_board_text_alignment_edit()
             }
-            HitTarget::TerminalTab => self.set_active_dock(DockTab::Terminal),
+            HitTarget::TerminalTab => {
+                // Owner decision 2026-08-14 (bead
+                // dat-pan-trace-terminal-pollution-0j0): tab-click is
+                // deliberate terminal entry, so the click stays handled even
+                // when the dock is already showing the terminal —
+                // `select_hit_target` then arms focus via
+                // `hit_target_is_terminal_entry`.
+                self.set_active_dock(DockTab::Terminal);
+                true
+            }
             HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
             HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
             HitTarget::TerminalSessionRenameActive => self.rename_active_terminal_session(),
