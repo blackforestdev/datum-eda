@@ -160,13 +160,27 @@ The first executable gate launches a deterministic real shell, sends unique
 commands through the same focus/input/PTY path used by the product, pumps output
 through the terminal core, and proves from renderer-facing state that:
 
-1. prompt and command output are visible in order;
-2. every typed byte reaches the child exactly once;
-3. no activity span, diagnostic, lifecycle message, or GUI command echo appears
-   in terminal cells;
-4. clicking the cell rectangle focuses the terminal and clicking the viewport
-   returns editor focus; and
-5. terminal row/column size matches the visible cell rectangle.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C01 -->
+1. **T0-C01 — foreign-shell screen authority.** Remove every application-owned
+   row and non-PTY grid writer. Route activity, diagnostics, lifecycle messages,
+   and GUI command echoes to chrome, the Command Console, notifications, or logs.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C02 -->
+2. **T0-C02 — truthful viewport geometry.** Give the terminal cell rectangle its
+   own hit target and derive PTY rows/columns from that exact visible rectangle;
+   application summaries consume zero cell rows.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C03 -->
+3. **T0-C03 — real-shell canary.** Launch a deterministic real shell through the
+   production path and prove prompt and command output are visible in order and
+   every typed byte reaches the child exactly once.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C04 -->
+4. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
+   session lifecycle, and diagnostic paths cannot write to or displace terminal
+   cells, while cell/canvas clicks transfer focus through the one authority.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C05 -->
+<!-- OWNER:TERMINAL-T0-SHELL-TRUTH:T0-C05:T0-ACCEPT -->
+5. **T0-C05 — owner acceptance.** The owner runs `ls` and a unique `printf`
+   payload in the production Datum terminal and confirms that only the real shell
+   screen is visible, input is usable, and focus exits back to the editor.
 
 TF-01 may remain historical evidence for focus-owner extraction, but no issue or
 Frontier row may claim the user-visible terminal defect repaired before this gate.

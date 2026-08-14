@@ -565,33 +565,19 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Replace the terminal-lite/custom-core plan with a governed fully fledged native terminal product, mature-core adoption, complete daily-driver capability matrix, and production agent/CLI/MCP proof.",
       "dependencies": [],
       "unblocks": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "terminal-contract-2026-08-14",
-        "claimed_at": "2026-08-14T19:27:25Z",
-        "heartbeat_at": "2026-08-14T19:27:25Z",
-        "expires_at": "2026-08-15T03:27:25Z",
-        "scope": [
-          "terminal-product-contract",
-          "terminal-roadmap",
-          "tracker-reconciliation"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "824ef49a5c8754ded9139d6a073dc836925d8905"
-      },
+      "landing_commit": "6bc6a081bb26944a316e26311d3759bdda6a72ec",
       "completion": {
         "outcome": "Datum's terminal roadmap targets a fully fledged native terminal over a mature core, with exclusive PTY screen truth, complete session/interaction/protocol/accessibility coverage, safe Datum CLI/MCP/agent integration, and measurable production gates.",
-        "canonical_next_step_id": "NTC-C05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -644,11 +630,11 @@
           {
             "id": "NTC-C05",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Regenerate projections, pass all governance/source-health gates, close with evidence, and explicitly select T0.",
             "depends_on": ["NTC-C04"],
             "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C05"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "commit", "revision": "6bc6a081bb26944a316e26311d3759bdda6a72ec"}]
           }
         ],
         "post_completion": {
@@ -700,9 +686,9 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path.",
       "dependencies": ["dat-full-native-terminal-contract-e2d"],
@@ -712,7 +698,27 @@
         "dat-terminal-emulator-epic-jzv.1",
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
-      ]
+      ],
+      "completion": {
+        "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
+        "canonical_next_step_id": "T0-C01",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {"id": "T0-C01", "kind": "execution", "status": "pending", "action": "Remove every non-PTY writer and application-owned row from the terminal grid, routing Datum output to its governed non-terminal surfaces.", "depends_on": [], "requirement_refs": [{"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-C01"}], "completion_evidence": []},
+          {"id": "T0-C02", "kind": "execution", "status": "pending", "action": "Make the exact visible cell rectangle the terminal hit target and PTY row/column authority, with no summary rows consuming its space.", "depends_on": ["T0-C01"], "requirement_refs": [{"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-C02"}], "completion_evidence": []},
+          {"id": "T0-C03", "kind": "execution", "status": "pending", "action": "Add a production-path real-shell canary proving ordered visible prompt/output and exact-once input delivery.", "depends_on": ["T0-C01", "T0-C02"], "requirement_refs": [{"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-C03"}], "completion_evidence": []},
+          {"id": "T0-C04", "kind": "execution", "status": "pending", "action": "Lock regressions for focus transfer, workspace shortcuts, diagnostics, lifecycle messages, and Datum telemetry never corrupting or displacing shell cells.", "depends_on": ["T0-C03"], "requirement_refs": [{"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-C04"}], "completion_evidence": []},
+          {"id": "T0-C05", "kind": "owner_decision", "status": "pending", "action": "Obtain owner hands-on acceptance with ls and a unique printf payload in the production Datum terminal.", "depends_on": ["T0-C04"], "requirement_refs": [{"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-C05"}], "completion_evidence": [], "owner_input": {"response_format": "Run the stated production-terminal check, then reply `approve T0 shell truth`, or `reject T0 shell truth — <observed failure>`.", "requests": [{"id": "T0-ACCEPT", "question": "Does the production Datum terminal show normal ls and unique printf output, accept usable input exactly once, contain no Datum activity/diagnostic rows, and return focus to the editor?", "recommended_response": "Approve only after personally running ls and a unique printf payload in the production Datum terminal and observing all stated behavior.", "source_ref": {"path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md", "marker": "T0-ACCEPT"}}]}}
+        ],
+        "post_completion": {
+          "effects": ["The five T1/T2 foundation issues lose their T0 blocker; none is auto-authorized or auto-selected."],
+          "unblocks_issue_ids": ["dat-terminal-focus-authority-6aw", "dat-terminal-dual-input-model-75y", "dat-terminal-emulator-epic-jzv.1", "dat-terminal-emulator-epic-jzv.2", "dat-terminal-emulator-epic-jzv.3"],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-P0-FOCUS",
