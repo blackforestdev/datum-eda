@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C03",
+        "canonical_next_step_id": "T0-C04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -996,7 +996,7 @@
           {
             "id": "T0-C03",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Add a production-path real-shell canary proving ordered visible prompt/output and exact-once input delivery.",
             "depends_on": [
               "T0-C01",
@@ -1008,7 +1008,12 @@
                 "marker": "T0-C03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e297cf517987917e88312e8ed195c0c6537f5a55"
+              }
+            ]
           },
           {
             "id": "T0-C04",
