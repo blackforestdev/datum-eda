@@ -640,6 +640,20 @@ click depth and does not select the parent bus. Entry-level independent selectio
 exists only in a workspace/tool with that editing authority. Inspector lists
 member nets and hidden/cross-sheet occurrences without glowing every member net.
 
+**Bus region qualification and hierarchy projection (owner-resolved, S5-C01A /
+OPEN-8, 2026-08-14):** bus sections region-qualify by the generic line/path
+anchor rule (straight: both endpoints inside; curved: ≥2 of
+start/authored-midpoint/end), each section independently. **Entries never
+enlarge a bus section's region test**, and a region containing only entry
+geometry acquires nothing — entries are owned member geometry, never
+origination geometry. The semantic-bus tier projects **Global-Net-style across
+all schematic sheets and panes** — spine runs, bus name/labels, and attached
+entries as one subject with hidden/cross-sheet occurrences summarized by
+Inspector counts — carried by **bus-distinct typing** (never a disguised
+scalar-net list). **A bus has no board-side projection**: buses resolve to
+individual nets on the board, so copper participates only through a member
+net's own ladder, keeping Bus and Global Net subjects distinct.
+
 Merely related geometry retains its exact authored baseline and receives no
 accent, internal glow, recoloring, or luminance lift. In an explicit
 relationship/cross-probe context, unrelated geometry may dim slightly so the
@@ -1187,20 +1201,23 @@ open — such cells carry `OPEN-n` markers regardless.
   subjects — member selection never selects the parent bus and members never
   glow via bus membership; entries are not separately counted
   (UVT §2.2.13; RB §2.2). *Qualification:* B-CLICK = local authored bus
-  section; region rule for spine/entries unstated — extending the generic
-  path rule is the candidate (`OPEN-8`). *Scope:* own three-tier ladder:
+  section; region — generic path rule per section; entries never enlarge
+  the test and entry-only regions acquire nothing (OPEN-8 resolved,
+  §2.2.13). *Scope:* own three-tier ladder:
   section / physically connected run / semantic bus identity across the
   hierarchy (UVT §2.2.13); typed Bus projection is distinct from scalar
   Global Net (CONF). *Projection:* joint spine+name+entries subject;
-  member-pane specifics of hierarchy projection unstated (`OPEN-8`).
+  semantic tier projects Global-Net-style across all schematic sheets/panes
+  with bus-distinct typing; no board-side projection — buses resolve to
+  individual nets on copper (OPEN-8 resolved, §2.2.13).
   *Hidden/locked:* B-HL; Inspector carries member AND hidden counts (CONF).
   *Overlay:* B-OV + B-LOD on the joint subject; members stay at authored
   baseline. *Inspector:* member nets listed, not glowed; bus
   name/members/segments via dedicated tools (UVT §2.2.13; COMP). *Scene
   authority:* `SchematicHitKind::Bus`, polyline hit region; ABSENT: bus
   entries remain untyped `schematic_graphic` with no hit region; no
-  run/semantic scope identity. *Verdict:* spec **partial** (`OPEN-8`);
-  substrate **typed-only** (spine) / **absent** (entries, scopes).
+  run/semantic scope identity. *Verdict:* spec **ratified** (OPEN-8
+  resolved); substrate **typed-only** (spine) / **absent** (entries, scopes).
 - **Label / port.**
   *Ownership:* independent authored targets; a bus-owned name/label belongs
   to the bus subject; labels/ports become owned Global Net members when the
@@ -1528,6 +1545,15 @@ new choice after C02–C10 are complete.
   *Candidate:* generic path rule for spine and entries; hierarchy projection
   follows the Global Net cross-pane law with bus-distinct typing. *Decision:*
   S5-C01A. *Propagation:* S5-C02/S5-C07/S5-C08.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.13 bus clause). *Reason:* pure rule-reuse — path rule per section;
+  entries follow the ratified owned-geometry pattern (never enlarge the
+  test, never originate acquisition); the semantic tier reuses the Global
+  Net projection shape (all schematic sheets/panes, Inspector count
+  summarization) under bus-distinct typing so a Bus subject is never a
+  disguised scalar-net list. Clarified: no board-side bus projection —
+  buses resolve to individual nets on copper, keeping Bus and Global Net
+  subjects distinct.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-9 -->
 - **OPEN-9 — schematic-text compound fields.** The typed compound field
   table covers PCB text only. *Candidate:* mirror the PCB text row
