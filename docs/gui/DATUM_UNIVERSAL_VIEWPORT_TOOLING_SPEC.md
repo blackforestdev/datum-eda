@@ -1875,6 +1875,112 @@ indicative:
 - **O7 read-only surface** — S5A Inspector/envelope expose no mutation
   entry point (`outputs_readonly_boundary`).
 
+#### 2.2.20 S5-C07 selection identity and cross-probe contract
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->
+
+This contract defines what a selection **is** — the Layer-2 selection-identity
+model the numbered decision (S5-C12) ratifies. It supersedes every singleton
+reading in §2.2: wherever older wording says "the selected object", it now
+means "the selection subject" as defined here. The substrate's current
+singleton `SelectionTarget` (`None` / `AuthoredObject(String)` /
+`ReviewAction` / `CheckFinding`, `crates/gui-protocol/src/lib.rs:440-445`) is
+the acknowledged predecessor this vocabulary replaces in the S5A build.
+
+**1. Subject vocabulary.** The project-workspace selection is exactly one
+subject at a time, drawn from a closed typed vocabulary:
+
+- **None.**
+- **Object** — one stable authored identity of any §2.2.16 matrix class,
+  carrying its typed class (the flat-string era ends: port≠label,
+  track≠graphic at the type level).
+- **Compound** — a set of two or more stable authored identities with
+  optional focus (§2.2.10). Membership is enumerated, not derived.
+  Non-authored identities are not members (OPEN-12).
+- **Run** — a derived connectivity scope: the physically continuous
+  connected component (copper run, wire run, or bus run) through an origin
+  section, per the OPEN-1 origin classes. Identified by origin kind +
+  resolved derivation; membership is **derived per revision**, never an
+  enumerated set (§2.2.18.3 re-derivation law applies).
+- **Global Net** — the resolved net identity; membership derived per
+  revision across all workspaces (§2.2.13).
+- **Bus** — the semantic hierarchical bus identity (§2.2.13, OPEN-8);
+  bus sections are Object subjects and bus runs are Run subjects with a bus
+  origin — three tiers, three subject kinds, one ladder.
+- **Proposal** — a review-action identity; **Review** — the same action
+  addressed through its evidence surface (evidence children are never
+  independent subjects); **Diagnostic** — a check-finding fingerprint.
+  All three are non-authored: explicit-only acquisition (OPEN-12),
+  lifecycle-bound (§2.2.18.8).
+
+Enumerated (Object/Compound) and derived (Run/Global Net/Bus) subjects
+differ in exactly one way: derived subjects store an identity and re-derive
+membership at each revision; enumerated subjects store identities and drop
+what stops resolving. Both obey the same §2.2.18 lifetime law.
+
+**2. Same-identity vs merely-related — the formal distinction.**
+
+- **Same-identity projection:** two pane renderings project the same
+  subject iff they resolve the **identical subject identity** at the same
+  `model_revision` — one identity, two cameras. Every resolving pane
+  renders the full selection treatment at identical strength (§2.2.11;
+  RB §2.1).
+- **Merely-related mapping:** a relation between **different identities**
+  — two identities, one relation. Related geometry keeps its exact
+  authored baseline: no accent, no glow, no lift, not counted, no handles;
+  direct selection promotes it normally (RB §2.3).
+
+The known mappings, classified once:
+
+| Mapping | Classification |
+|---|---|
+| Net member geometry across panes (tracks/wires/vias/pads/junctions/labels of one resolved net) | same-identity (one Global Net subject) |
+| Semantic bus spine/name/entries across sheets | same-identity (one Bus subject) |
+| Component ↔ placed symbol (cross-probe) | merely-related (binding relation) |
+| Library definition ↔ placed instances | merely-related (OPEN-6) |
+| Bus ↔ scalar member nets | merely-related (§2.2.13) |
+| Net ↔ parent footprint/symbol bodies | merely-related (§2.2.13) |
+| Check finding ↔ its target authored object | merely-related (navigation aid, §2.2.16) |
+| Proposal ↔ the authored geometry it would produce | merely-related (uncommitted overlay) |
+
+No mapping may be reclassified by a build; adding a mapping requires adding
+it here.
+
+**3. P2.3 alignment.** The Phase-2 cross-probe slice (P2.3, "one selection
+identity projected into both panes") is the first build consumer of this
+model and **depends on completed S5A** — the typed subject vocabulary, the
+schematic selection substrate (S3+S5A), and the same-identity projection
+law — not merely on this specification. P2.3's board↔schematic behavior is
+exactly: same-identity subjects project fully in both panes; the
+component↔symbol mapping renders related-context only, with the Inspector
+explaining the relation (`DATUM_GUI_PHASE_2_SPEC.md` P2.3 reads under this
+contract).
+
+**4. Substrate obligations (S5A build).** The typed successor of
+`SelectionTarget` must represent: class-typed object identities (restoring
+the port class lost to `Label` typing and freeing `AuthoredObject` from flat
+strings), compound sets with focus, derived Run/Global-Net/Bus subjects,
+and the non-authored kinds — matching the §2.2.19 envelope `subject_kind`
+vocabulary one-to-one. The §2.2.16 scene-authority column enumerates the
+per-class gaps this replaces.
+
+**5. Future assertions (TO-ENFORCE; consumed by S5-C10).**
+
+- **I1 vocabulary round-trip** — the typed subject enum, the envelope
+  `subject_kind`, and this section's vocabulary are one-to-one; no consumer
+  invents a subject kind (`identity_vocabulary_roundtrip`).
+- **I2 same-identity equality** — a subject resolving in N panes renders N
+  full-strength projections of one identity; deselecting in any pane clears
+  all (`identity_same_projection_equality`).
+- **I3 related never selected** — merely-related geometry receives no
+  selection token/treatment under any mapping in the table
+  (`identity_related_baseline_only`).
+- **I4 derived determinism** — Run/Global-Net/Bus membership derivation is
+  deterministic per (identity, revision) (`identity_derived_membership`).
+- **I5 P2.3 gate** — the cross-probe build consumes the typed vocabulary
+  (structural: no P2.3 code path predates the S5A subject types)
+  (`identity_p23_consumes_vocabulary`).
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
