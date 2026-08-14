@@ -611,12 +611,23 @@
    "class": "doctrine",
    "controlling": true,
    "progress_anchor": "FULL-NATIVE-TERMINAL-CONTRACT",
-   "notes": "Amends decision 024 to require a fully fledged daily-driver embedded terminal over a pinned mature VT/state core, exclusive PTY screen truth, complete native UX/protocol/security/accessibility coverage, and verified Datum CLI/MCP/code-agent operation."
+   "notes": "Amends decision 024 to require a fully fledged daily-driver embedded terminal over a pinned mature VT/state core, exclusive PTY screen truth, complete native UX/protocol/security/accessibility coverage, and verified Datum CLI/MCP/code-agent operation. Decision 028 controls the agent discovery and interoperability plane."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md": {
+   "class": "doctrine",
+   "controlling": true,
+   "progress_anchor": "TERMINAL-AGENT-INTEROP-CONTRACT",
+   "notes": "Extends decision 027 FT-009 with native client adapters, protected discovery, standard MCP primitives, pinned context and revision fences, scoped authority, portable workflow parity, and product round-trip proof."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",
-   "notes": "Buildable NT-CAP-01..18 product contract and T0-T4 verification sequence under decision 027."
+   "notes": "Buildable NT-CAP-01..18 product contract and T0-T4e verification sequence under decisions 027 and 028."
+  },
+  "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md": {
+   "class": "governed",
+   "progress_anchor": "TERMINAL-AGENT-INTEROP-CONTRACT",
+   "notes": "Buildable agent adapter, standard MCP, pinned-context authority, portable-workflow parity, and production verification contract under decision 028."
   }
  }
 }

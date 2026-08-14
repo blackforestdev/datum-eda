@@ -330,8 +330,9 @@ Minimum project competency:
 
 Datum's terminal must be a real embedded terminal, not a fake command lane.
 
-Product Mechanics 027 and `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md` are the
-controlling implementation contract. They resolve the quality question below:
+Product Mechanics 027–028, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, and
+`docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md` are the controlling
+implementation contract. They resolve the quality and discovery questions below:
 the product target is a fully fledged daily-driver embedded terminal over a
 pinned mature emulation core, not a bespoke terminal-lite widget. A focus fix,
 PTY transport, parser, cell grid, or command-console surface is only a bounded
@@ -369,6 +370,9 @@ Datum project, with Datum-specific environment variables available where
 appropriate. For example, a terminal-launched agent should be able to discover
 the active project root, run Datum CLI commands, talk to Datum MCP surfaces if
 configured, inspect files, and use normal Linux tooling without leaving Datum.
+Supported agent launchers must use each client's native MCP and instruction
+discovery, immutable pinned Datum context, and scoped capability grants. Prompt
+injection and environment variables are hints, not proof of integration.
 
 The assistant may help a user compose or understand terminal commands, but the
 terminal itself remains a normal user-controlled shell.
@@ -508,10 +512,12 @@ Any code agent working on Datum should apply these rules before choosing work:
 5. Do not create a new editing path that bypasses the canonical transaction
    model.
 6. Do not treat a viewer or review surface as equivalent to an editor.
-7. Implement the terminal through the decision-027 T0–T4 sequence. Only PTY
+7. Implement the terminal through the decision-027/028 T0–T4e sequence. Only PTY
    output may mutate terminal cells; Datum notices use non-terminal surfaces.
    Do not substitute fake command text, an activity feed, or a private bespoke
    emulator core for the governed full-terminal product.
+   Do not claim agent integration until the T4a–T4d discovery, standard MCP,
+   pinned-context/authority, and portable-workflow slices pass.
 8. Do not treat a built-in assistant tab as the primary AI architecture. The
    primary architecture is Datum primitives plus real terminal/CLI/MCP access
    that lets users run whichever agents or tools they choose.

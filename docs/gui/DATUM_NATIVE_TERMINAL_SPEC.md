@@ -2,8 +2,9 @@
 
 Status: active target contract
 
-Authority: Product Mechanics 005, 024 as amended by 027. On conflict, decision
-027 controls.
+Authority: Product Mechanics 005 and 024 as amended by 027 and 028. Decision
+027 controls terminal-emulation quality; decision 028 controls agent discovery
+and interoperability.
 
 ## 1. Product acceptance statement
 
@@ -88,7 +89,7 @@ needs Datum integration and acceptance evidence.
 | NT-CAP-14 | Sessions | Tabs, splits, rename/title, new-in-cwd, restart, close/kill confirmation, attach/detach, maximized terminal, process-exit state |
 | NT-CAP-15 | Profiles/appearance | Shell/argv/cwd/env templates, font/fallback/size, theme/palette, cursor, scrollback, bell and protocol-security settings |
 | NT-CAP-16 | Accessibility | Keyboard-only control, screen-reader text/cursor/selection/search exposure, high contrast, non-color cues, reduced motion |
-| NT-CAP-17 | Agent/tool integration | Codex, Claude Code, Cursor/local agent CLIs and arbitrary TUIs run unmodified; `datum-eda` and authenticated Datum MCP are discoverable per session |
+| NT-CAP-17 | Agent/tool integration | Codex, Claude Code, Cursor/local agent CLIs and arbitrary TUIs run unmodified; each supported adapter natively discovers `datum-eda`, standard authenticated Datum MCP, pinned context, scoped authority, and portable workflows per decision 028 |
 | NT-CAP-18 | Security | Untrusted escape isolation; explicit OSC 52, URI, paste and process-close policies; no secrets in tracked context/telemetry; no escape-driven GUI mutation |
 
 ## 4. Datum CLI, MCP, and agent pipeline
@@ -112,7 +113,10 @@ Each session receives at minimum:
 
 The discovery document contains capabilities and connection metadata, not user
 credentials or copied secrets. Long-running agents can refresh context after the
-model revision changes.
+model revision changes. Environment metadata and a launch prompt alone do not
+constitute agent integration: `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`
+controls native adapter registration, standard MCP primitives, live versus
+pinned context, scoped authority, workflow parity, and proof.
 
 ### 4.2 One mutation path remains absolute
 
@@ -229,9 +233,16 @@ accessibility, and Datum-shell integration.
   focus/input/IME/mouse, selection/clipboard, accessibility foundation.
 - **T3 Daily-driver surface:** scrollback/reflow/search/links/graphics,
   tabs/splits/profiles/themes, lifecycle and security UX.
-- **T4 Datum integration + proof:** context refresh, CLI/MCP discovery, named
-  agents/apps, conformance/performance/security/accessibility matrices and owner
-  acceptance.
+- **T4a Launcher/discovery:** client-native adapters, protected ephemeral
+  configuration, version/health checks, lifecycle, and explicit launch.
+- **T4b MCP interoperability:** standard stdio broker, optional secured
+  loopback transport, tools, resources, templates, subscriptions, and prompts.
+- **T4c Context/authority:** immutable pinned context, revision fences, scoped
+  capabilities, credentials, audit, and structured stale-state handling.
+- **T4d Workflow parity:** canonical portable workflow inventory, checked client
+  projections, OSC metadata boundary, and named agent round-trip evidence.
+- **T4e Production verification:** full terminal, agent, conformance,
+  performance, security, accessibility, and owner acceptance matrix.
 
-Every slice is a bounded tracked execution unit. Only T4 verification closes the
-native-terminal epic.
+Every slice is a bounded tracked execution unit. Only T4e verification closes
+the native-terminal epic.

@@ -49,7 +49,7 @@ they support the product; they do not define its identity.
   `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..027`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..028`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -178,16 +178,19 @@ product-mechanics docs.
   write authority) → library →
   native authoring + GUI surface. The GUI build-out is a named, real phase of
   this sequence — **not** an implied "M8 later".
-- **Terminal product boundary:** Product Mechanics 027 and
-  `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md` control the embedded terminal. The
+- **Terminal product boundary:** Product Mechanics 027–028,
+  `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, and
+  `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md` control the embedded terminal
+  and its agent interoperability plane. The
   target is a fully fledged daily-driver terminal over a pinned mature
   `TerminalCore`, with exclusive PTY screen truth and verified support for
   normal shells, TUIs, Codex, Claude Code, Cursor-compatible CLI agents, and
   local agents. TF-01..TF-05 cover focus/input only; a focus fix, parser, PTY,
   cell grid, or Command Console must never be reported as completion of the
   terminal product. Delivery is T0 shell truth → T1 core/transport → T2 native
-  renderer/input → T3 daily-driver UX/protocols → T4 agent and production
-  proof.
+  renderer/input → T3 daily-driver UX/protocols → T4a–T4d discovery/MCP/
+  context/workflow interoperability → T4e production proof. An inherited
+  environment variable or suggested launch prompt is not agent discovery.
 - **Frozen:** KiCad import. The M7 spike already imports a board with enough
   fidelity to recognize all design aspects; that is sufficient — no further
   import work until native authoring is real. Native is always the authority;
@@ -376,7 +379,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..025 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..028 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +

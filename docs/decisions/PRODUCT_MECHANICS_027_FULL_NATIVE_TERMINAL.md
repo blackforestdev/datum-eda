@@ -96,6 +96,10 @@ views, and performance are in scope.
   descriptor when available. Context can be refreshed without restarting the
   shell. The terminal grants no private mutation power: `datum-eda`, MCP, and
   typed engine operations remain the only design-authority paths.
+  Product Mechanics 028 controls discovery and interoperability: a bootstrap
+  environment variable or suggested launch prompt is not sufficient. Supported
+  clients must receive native MCP registration, immutable pinned context,
+  scoped authority, portable workflows, and production round-trip proof.
 - **FT-010 — security boundary.** Paste, OSC 52, hyperlinks, file/URI opening,
   shell integration, environment injection, remote terminfo setup, and process
   termination have explicit trust and confirmation policies. Secrets are not
@@ -136,9 +140,11 @@ The implementation sequence is intentionally product-vertical:
 4. **T3 daily-driver surface and protocols:** finish scrollback/search,
    hyperlinks, graphics, tabs/splits/profiles/themes, shell/terminfo integration,
    lifecycle, security prompts, and detachable/maximized terminal UX.
-5. **T4 Datum-agent integration and production proof:** verify the CLI/MCP/context
-   path and the named agent/application matrix; meet conformance, latency,
-   throughput, memory, security, visual, and accessibility gates.
+5. **T4 Datum-agent integration and production proof:** implement the
+   decision-028 launcher/discovery, standard MCP, pinned-context/authority, and
+   portable-workflow slices; then verify the named agent/application matrix and
+   meet conformance, latency, throughput, memory, security, visual, and
+   accessibility gates.
 
 No later stage may be represented as optional "polish" when it contains a
 capability required by this decision.

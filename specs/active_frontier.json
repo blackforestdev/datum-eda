@@ -727,38 +727,215 @@
         "dat-terminal-emulator-epic-jzv.3",
         "dat-terminal-emulator-epic-jzv.4",
         "dat-terminal-emulator-epic-jzv.5",
-        "dat-terminal-emulator-epic-jzv.6"
+        "dat-terminal-emulator-epic-jzv.6",
+        "dat-terminal-emulator-epic-jzv.7",
+        "dat-terminal-emulator-epic-jzv.8",
+        "dat-terminal-emulator-epic-jzv.9",
+        "dat-terminal-emulator-epic-jzv.10",
+        "dat-terminal-emulator-epic-jzv.11"
       ],
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
       "state": "planned",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Deliver T0-T4: shell-screen truth, mature core and PTY, native rendering/input, daily-driver UX/protocols, and verified Datum CLI/MCP/code-agent operation.",
+      "summary": "Deliver T0-T4e: shell-screen truth, mature core and PTY, native rendering/input, daily-driver UX/protocols, native agent discovery/MCP/context/workflows, and final production proof.",
       "dependencies": [],
       "unblocks": [
         "trustworthy daily-driver embedded terminal and agent surface"
       ]
     },
     {
-      "key": "TERMINAL-T0-SHELL-TRUTH",
+      "key": "TERMINAL-AGENT-INTEROP-CONTRACT",
       "order": 4,
+      "title": "Ratify terminal agent discovery and interoperability",
+      "issue_id": "dat-terminal-emulator-epic-jzv.7",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
+      ],
+      "state": "in_progress",
+      "authorization": "planning",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Replace prompt-memory discovery with client-native adapters, standard MCP, pinned context, scoped authority, portable workflows, and production interoperability proof before terminal execution continues.",
+      "dependencies": [],
+      "unblocks": [
+        "dat-pan-trace-terminal-pollution-0j0",
+        "dat-terminal-emulator-epic-jzv.8",
+        "dat-terminal-emulator-epic-jzv.9"
+      ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "terminal-agent-interop-2026-08-14",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "bf906cfe598ea5efe0dfe9843f67da05bd1922c6",
+        "claimed_at": "2026-08-14T20:49:37Z",
+        "heartbeat_at": "2026-08-14T20:55:42Z",
+        "expires_at": "2026-08-15T04:55:42Z",
+        "scope": [
+          "terminal-agent-interoperability-contract"
+        ]
+      },
+      "completion": {
+        "outcome": "Datum has a governed and implementation-tracked agent interoperability plane that makes fresh code agents discover project context, standard MCP, scoped authority, and portable workflows without memory or prompt injection.",
+        "canonical_next_step_id": "AIC-C05",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "AIC-C01",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Audit the existing context envelope, prompt-based launch hints, CLI/MCP surface, and missing cross-client discovery and proof boundaries.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "AIC-C01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "EVIDENCE:TERMINAL-AGENT-INTEROP:AIC-C01-AUDIT"
+              }
+            ]
+          },
+          {
+            "id": "AIC-C02",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Ratify decision 028 and the governed terminal agent interoperability specification.",
+            "depends_on": [
+              "AIC-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "AIC-C02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "Datum Terminal Agent Interoperability Specification"
+              }
+            ]
+          },
+          {
+            "id": "AIC-C03",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Create bounded T4a launcher, T4b MCP, T4c context-authority, and T4d workflow-parity implementation issues under the terminal epic.",
+            "depends_on": [
+              "AIC-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "AIC-C03"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "EVIDENCE:TERMINAL-AGENT-INTEROP:AIC-C03-TRACKER"
+              }
+            ]
+          },
+          {
+            "id": "AIC-C04",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Make the Frontier and hard tracker graph require the full interoperability chain before T4e can close the terminal epic.",
+            "depends_on": [
+              "AIC-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "AIC-C04"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "EVIDENCE:TERMINAL-AGENT-INTEROP:AIC-C04-GRAPH"
+              }
+            ]
+          },
+          {
+            "id": "AIC-C05",
+            "kind": "governance",
+            "status": "in_progress",
+            "action": "Pass project-state, governance, parity, and source-health gates; close with commit evidence; then return the canonical selector to T0-C02.",
+            "depends_on": [
+              "AIC-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+                "marker": "AIC-C05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T0 resumes at T0-C02 while the separately scheduled T4a-T4d implementation slices remain gated by their terminal prerequisites."
+          ],
+          "unblocks_issue_ids": [
+            "dat-pan-trace-terminal-pollution-0j0",
+            "dat-terminal-emulator-epic-jzv.8",
+            "dat-terminal-emulator-epic-jzv.9"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "TERMINAL-T0-SHELL-TRUTH",
+      "order": 5,
       "title": "Restore foreign-shell screen authority and visible-output proof",
       "issue_id": "dat-pan-trace-terminal-pollution-0j0",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "blocked",
       "authorization": "execution",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": false,
       "summary": "Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path.",
       "dependencies": [
-        "dat-full-native-terminal-contract-e2d"
+        "dat-full-native-terminal-contract-e2d",
+        "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
         "dat-terminal-focus-authority-6aw",
@@ -901,7 +1078,7 @@
     },
     {
       "key": "TERMINAL-P0-FOCUS",
-      "order": 5,
+      "order": 6,
       "title": "Complete terminal focus and input authority",
       "issue_id": "dat-terminal-focus-authority-6aw",
       "governing_docs": [
@@ -1038,7 +1215,7 @@
     },
     {
       "key": "TERMINAL-T1-INPUT",
-      "order": 6,
+      "order": 7,
       "title": "Collapse the rival terminal input models",
       "issue_id": "dat-terminal-dual-input-model-75y",
       "governing_docs": [
@@ -1059,7 +1236,7 @@
     },
     {
       "key": "TERMINAL-T1-PTY",
-      "order": 7,
+      "order": 8,
       "title": "Replace terminal transport with portable-pty",
       "issue_id": "dat-terminal-emulator-epic-jzv.1",
       "governing_docs": [
@@ -1080,7 +1257,7 @@
     },
     {
       "key": "TERMINAL-T1-CORE",
-      "order": 8,
+      "order": 9,
       "title": "Integrate the mature TerminalCore adapter",
       "issue_id": "dat-terminal-emulator-epic-jzv.2",
       "governing_docs": [
@@ -1101,7 +1278,7 @@
     },
     {
       "key": "TERMINAL-T2-NATIVE",
-      "order": 9,
+      "order": 10,
       "title": "Complete native renderer, focus, input, IME and text interaction",
       "issue_id": "dat-terminal-emulator-epic-jzv.3",
       "governing_docs": [
@@ -1121,12 +1298,14 @@
         "dat-terminal-focus-authority-6aw"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.4"
+        "dat-terminal-emulator-epic-jzv.4",
+        "dat-terminal-emulator-epic-jzv.8",
+        "dat-terminal-emulator-epic-jzv.9"
       ]
     },
     {
       "key": "TERMINAL-T3-UX",
-      "order": 10,
+      "order": 11,
       "title": "Deliver scrollback, reflow, search, links and daily-driver session UX",
       "issue_id": "dat-terminal-emulator-epic-jzv.4",
       "governing_docs": [
@@ -1147,7 +1326,7 @@
     },
     {
       "key": "TERMINAL-T3-PROTOCOLS",
-      "order": 11,
+      "order": 12,
       "title": "Complete modern protocols, graphics, security and accessibility",
       "issue_id": "dat-terminal-emulator-epic-jzv.5",
       "governing_docs": [
@@ -1163,25 +1342,123 @@
         "dat-terminal-emulator-epic-jzv.4"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.6"
+        "dat-terminal-emulator-epic-jzv.6",
+        "dat-terminal-emulator-epic-jzv.11"
       ]
     },
     {
-      "key": "TERMINAL-T4-VERIFY",
-      "order": 12,
-      "title": "Verify Datum CLI/MCP/agent integration and production terminal quality",
-      "issue_id": "dat-terminal-emulator-epic-jzv.6",
+      "key": "TERMINAL-T4A-AGENT-LAUNCH",
+      "order": 13,
+      "title": "Build agent launcher and discovery adapters",
+      "issue_id": "dat-terminal-emulator-epic-jzv.8",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Close only after quantified conformance/performance/security/accessibility evidence and real Codex, Claude, local-agent, CLI/MCP, shell and TUI acceptance.",
+      "summary": "Implement native discovery adapters and datum-eda agent list/doctor/launch with protected per-session configuration for Codex, Claude Code, Cursor-compatible CLI, and generic local agents.",
       "dependencies": [
-        "dat-terminal-emulator-epic-jzv.5"
+        "dat-terminal-emulator-epic-jzv.3",
+        "dat-terminal-emulator-epic-jzv.7"
+      ],
+      "unblocks": [
+        "dat-terminal-emulator-epic-jzv.10"
+      ]
+    },
+    {
+      "key": "TERMINAL-T4B-MCP",
+      "order": 14,
+      "title": "Provide the standard MCP broker, resources, and prompts",
+      "issue_id": "dat-terminal-emulator-epic-jzv.9",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Expose Datum through a protocol-clean MCP stdio broker, optional secured loopback transport, typed tools, stable resources, templates, notifications, and portable prompts.",
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.3",
+        "dat-terminal-emulator-epic-jzv.7"
+      ],
+      "unblocks": [
+        "dat-terminal-emulator-epic-jzv.10"
+      ]
+    },
+    {
+      "key": "TERMINAL-T4C-CONTEXT-AUTHORITY",
+      "order": 15,
+      "title": "Enforce pinned context and scoped agent authority",
+      "issue_id": "dat-terminal-emulator-epic-jzv.10",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Separate live and immutable pinned context, fence mutations by revision, and grant short-lived inspect/propose/apply-approved authority with complete audit provenance.",
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.8",
+        "dat-terminal-emulator-epic-jzv.9"
+      ],
+      "unblocks": [
+        "dat-terminal-emulator-epic-jzv.11"
+      ]
+    },
+    {
+      "key": "TERMINAL-T4D-WORKFLOW-PARITY",
+      "order": 16,
+      "title": "Project portable workflows and verify agent parity",
+      "issue_id": "dat-terminal-emulator-epic-jzv.11",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip.",
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.5",
+        "dat-terminal-emulator-epic-jzv.10"
+      ],
+      "unblocks": [
+        "dat-terminal-emulator-epic-jzv.6"
+      ]
+    },
+    {
+      "key": "TERMINAL-T4-VERIFY",
+      "order": 17,
+      "title": "Verify full terminal and agent interoperability",
+      "issue_id": "dat-terminal-emulator-epic-jzv.6",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation.",
+      "dependencies": [
+        "dat-terminal-emulator-epic-jzv.5",
+        "dat-terminal-emulator-epic-jzv.11"
       ],
       "unblocks": [
         "terminal epic verification and closure"
@@ -1189,7 +1466,7 @@
     },
     {
       "key": "CONSOLE-READONLY",
-      "order": 13,
+      "order": 18,
       "title": "Build the read-only Command Console display",
       "issue_id": "dat-output-lane-t6v",
       "governing_docs": [
@@ -1209,7 +1486,7 @@
     },
     {
       "key": "GUI-SURFACE-SPECS",
-      "order": 14,
+      "order": 19,
       "title": "Complete schematic and library GUI surface specifications",
       "issue_id": "dat-gui-surface-specs-usb",
       "governing_docs": [
@@ -1228,7 +1505,7 @@
     },
     {
       "key": "UVT-S5A-BUILD",
-      "order": 15,
+      "order": 20,
       "title": "Build UVT S5A selection and compound inspection",
       "issue_id": "dat-uvt-s5a-build-1wv",
       "governing_docs": [
@@ -1249,7 +1526,7 @@
     },
     {
       "key": "GUI-P2-CROSSPROBE",
-      "order": 16,
+      "order": 21,
       "title": "Build GUI Phase 2 P2.3 cross-probe",
       "issue_id": "dat-gui-p2-cross-probe-27z",
       "governing_docs": [
@@ -1271,7 +1548,7 @@
     },
     {
       "key": "GUI-P2-INSPECTOR",
-      "order": 17,
+      "order": 22,
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "issue_id": "dat-gui-p2-full-inspector-0ye",
       "governing_docs": [
@@ -1291,7 +1568,7 @@
     },
     {
       "key": "GUI-MARKING-MENU",
-      "order": 18,
+      "order": 23,
       "title": "Build the inert marking-menu shell",
       "issue_id": "dat-marking-menu-shell-g0w",
       "governing_docs": [
@@ -1310,7 +1587,7 @@
     },
     {
       "key": "GUI-WRITE-PATH",
-      "order": 19,
+      "order": 24,
       "title": "Enable the GUI journaled write path",
       "issue_id": "dat-gui-write-path-qiu",
       "governing_docs": [
@@ -1334,7 +1611,7 @@
     },
     {
       "key": "NATIVE-AUTHORING",
-      "order": 20,
+      "order": 25,
       "title": "Build native schematic and PCB authoring depth",
       "issue_id": "dat-native-authoring-depth-sf9",
       "governing_docs": [
@@ -1357,7 +1634,7 @@
     },
     {
       "key": "DOC-SYSTEM-SPEC",
-      "order": 21,
+      "order": 26,
       "title": "Specify the documentation-system object model",
       "issue_id": "dat-documentation-system-spec-y8z",
       "governing_docs": [
@@ -1375,7 +1652,7 @@
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
-      "order": 22,
+      "order": 27,
       "title": "Expose operational ownership in canonical next-task output",
       "issue_id": "dat-next-output-ownership-uqz",
       "governing_docs": [
@@ -1395,7 +1672,7 @@
     },
     {
       "key": "STATE-TASK-DETAILS",
-      "order": 23,
+      "order": 28,
       "title": "Make canonical task completion plans deterministic",
       "issue_id": "dat-task-completion-alignment-4jp",
       "governing_docs": [
@@ -1545,7 +1822,7 @@
     },
     {
       "key": "STATE-DETAIL-PRESENTATION",
-      "order": 24,
+      "order": 29,
       "title": "Make task-detail presentation verbatim and non-concurrent",
       "issue_id": "dat-task-detail-presentation-bjk",
       "governing_docs": [
