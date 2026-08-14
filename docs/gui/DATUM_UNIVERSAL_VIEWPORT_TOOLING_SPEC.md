@@ -250,6 +250,18 @@ later tuning requires usability evidence and a governed spec change.
   plus pad-number text project as one pad subject** (the RB §2.7 pin
   construction analogy); pad-number text is therefore excluded from the
   owned-text class, exactly as pin name/number text is.
+- **Non-authored subjects (owner-resolved, S5-C01A / OPEN-12, 2026-08-14):**
+  proposal actions, review evidence, and check findings are acquired by
+  **explicit pointing only** — their overlay hit geometry, lane rows, or
+  checks/Inspector surfaces. **Region gestures (rectangle/lasso) and Ctrl+A
+  never acquire non-authored subjects**: a region is a spatial query over
+  authored design geometry, and its result must be a function of design
+  content, never of which checks ran or which proposals are pending. Mixed
+  compounds (non-authored + authored members) are deferred until each
+  channel has complete typed scene authority and the S5-C03 lifetime rules
+  exist — transient subjects (findings die on recheck, proposals on
+  commit/discard) cannot yet be bookkept by the §2.2.10 stable-identity
+  compound model.
 - **Definition-editor owned graphics (owner-resolved, S5-C01A / OPEN-5,
   2026-08-14):** inside the Footprint and Symbol Editors, owned graphics —
   body strokes, silk artwork, lines/arcs, and filled shapes — are
@@ -1373,63 +1385,77 @@ open — such cells carry `OPEN-n` markers regardless.
   primitive — every overlay primitive carries `proposal_action_id` and
   resolves to one `HitTarget::ReviewAction` (code truth); per-primitive
   qualification does not exist; spec-side ownership is declared SILENT by
-  §2.2, owned by S5-C01/S5-C07 (`OPEN-12`). *Qualification:* click live
+  §2.2; resolved: the whole proposal ACTION is the subject, acquired by
+  explicit pointing only (OPEN-12 resolved, §2.2.4). *Qualification:* click live
   today via screen-space `HitRegion` rects
   (`crates/gui-render/src/render/overlay.rs:243/:259`); region qualification
-  SILENT (`OPEN-12`) — the §2.2.4 anchor rules are defined for authored
-  classes only and must not be assumed here. *Scope:* one action = one
-  subject; ladder inapplicable (`OPEN-12`). *Projection:* compositing law —
+  resolved: region gestures NEVER acquire proposal subjects — regions are
+  spatial queries over authored geometry only (OPEN-12 resolved, §2.2.4). *Scope:* one action = one
+  subject; ladder inapplicable; explicit-only acquisition (OPEN-12
+  resolved). *Projection:* compositing law —
   authored base → proposal ghost/dual-stroke → selection cue → topmost
   diagnostic; selecting ADDS the cue without erasing uncommitted identity;
   no channel recolors another into selection magenta (RB §2.6;
-  UVT §2.2.13); cross-pane projection unstated (`OPEN-12`); production
+  UVT §2.2.13); cross-pane projection deferred with mixed-compound
+  semantics (OPEN-12); production
   proposals have no world-scene identity at all (data-panel summary +
   chrome hit only). *Hidden/locked:* excluded from Ctrl+A as non-authored
-  (UVT §2.2.9); hidden/locked semantics SILENT (`OPEN-12`). *Overlay:*
+  (UVT §2.2.9) and from region acquisition (OPEN-12 resolved);
+  hidden/locked semantics ride the channel lifecycle, not §2.2.7/2.2.8.
+  *Overlay:*
   ghost/dual-stroke identity retained under selection (RB §2.6); B-LOD
   application to non-authored channels unstated (`OPEN-14`). *Inspector:*
   review lane projects the active action; compound membership for
-  non-authored subjects sits outside the §2.2.10 model (`OPEN-12`). *Scene
+  non-authored subjects is deferred until the channel has complete typed
+  scene authority and S5-C03 lifetime rules exist (OPEN-12 resolved). *Scene
   authority:* `ProposalOverlayPrimitive` (`lib.rs:322-334`);
   `SelectionTarget::ReviewAction(String)` + `SessionCommand::SelectReviewAction`
   (`lib.rs:440-445/:628-661`); ABSENT: retained-world hit regions; any typed
   world identity for production proposals. *Verdict:* spec **partial**
-  (compositing ratified; acquisition semantics `OPEN-12`); substrate
+  **ratified** (OPEN-12 resolved: explicit-only acquisition; mixed
+  compounds deferred); substrate
   **live** (route-proposal action selection end-to-end).
 - **Review subject (dashed evidence geometry of a review action).**
   *Ownership:* parent = the review action; evidence polylines are typed
   children (`ReviewPrimitive.evidence_key`) and are never independently
   selectable — no hit region of any kind; the owning action is reachable
-  only through review-lane chrome rows. Spec-side rules SILENT (`OPEN-12`).
+  only through review-lane chrome rows — the ratified explicit-only path
+  (OPEN-12 resolved); evidence geometry is never independently acquirable.
   *Projection:* dashed evidence keyed to the ACTIVE action; RB §2.6
   orthogonal-channel law binds any selection cue over it. *Hidden/locked:*
-  excluded from Ctrl+A (UVT §2.2.9); rest SILENT (`OPEN-12`). *Overlay:*
+  excluded from Ctrl+A (UVT §2.2.9) and region acquisition (OPEN-12
+  resolved). *Overlay:*
   B-LOD application unstated (`OPEN-14`). *Scene authority:*
   `ReviewPrimitive` (`lib.rs:337-342`), rendered
   (`overlay.rs:265-291`); ABSENT: any hit region for evidence geometry.
-  *Verdict:* spec **partial** (compositing ratified; rest `OPEN-12`);
-  substrate **typed-only** — **unsupported for canvas acquisition today**.
+  *Verdict:* spec **ratified** (OPEN-12 resolved: lane-only explicit
+  acquisition); substrate **typed-only**.
 - **Diagnostic / finding marker (ERC/DRC check finding).**
   *Ownership:* the finding is its own selection identity (check-finding
   fingerprint), NOT a child of the diagnosed authored object — target
   cross-resolution (`check_finding_scene_target_object_id`,
   `crates/gui-protocol/src/check_runs.rs:194-202`) is a fit/hover
   navigation aid, not ownership; click ownership otherwise SILENT
-  (`OPEN-12`). *Qualification:* dead today — `HitTarget::CheckFinding`
+  ; resolved: the finding is acquired by explicit pointing only — marker,
+  lane, or checks surface (OPEN-12 resolved). *Qualification:* dead today — `HitTarget::CheckFinding`
   exists and is handled (`types.rs:43`; `main.rs:2747`) but is constructed
-  nowhere; region rules SILENT (`OPEN-12`). *Projection:* marker shape +
+  nowhere; region gestures never acquire findings (OPEN-12 resolved).
+  *Projection:* marker shape +
   semantic severity hue render TOPMOST; selecting ADDS selection without
   erasing severity; shape, not hue alone, carries distinction (RB §2.6;
   UVT §2.2.13). *Hidden/locked:* excluded from Ctrl+A (UVT §2.2.9);
-  target-hidden behavior SILENT (`OPEN-12`). *Overlay:* B-LOD application
+  target-hidden behavior deferred with mixed-compound semantics (OPEN-12).
+  *Overlay:* B-LOD application
   unstated (`OPEN-14`); no marker is rendered in-scene today. *Inspector:*
   renders an already-selected finding; compound membership for mixed
-  finding+authored selections unstated (`OPEN-12`). *Scene authority:*
+  finding+authored selections deferred until typed scene authority and
+  S5-C03 lifetime rules exist (OPEN-12 resolved). *Scene authority:*
   `SelectionTarget::CheckFinding(String)` + `SessionCommand::SelectCheckFinding`
   (`lib.rs:440-445/:641`); ABSENT: any scene marker primitive and any live
-  pointer path. *Verdict:* spec **partial** (compositing ratified; rest
-  `OPEN-12`); substrate **typed-only** — **unsupported for canvas
-  acquisition today**.
+  pointer path. *Verdict:* spec **ratified** (OPEN-12 resolved:
+  explicit-only acquisition; mixed compounds deferred); substrate
+  **typed-only** — canvas marker rendering and the pointer path remain
+  unbuilt.
 
 ##### Open-reconciliation register (S5-C01)
 
@@ -1616,6 +1642,15 @@ new choice after C02–C10 are complete.
   compound rules for proposal, review, and diagnostic subjects are declared
   SILENT by §2.2. *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C03/S5-C04/
   S5-C07/S5-C08.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.4 non-authored-subjects clause). *Reason:* explicit-only acquisition
+  keeps the live proposal path intact and matches how workflow objects are
+  addressed; region/Ctrl+A exclusion preserves the determinism S5-C02
+  requires — a spatial query's result must be a function of design content,
+  never of which checks ran or which proposals are pending; mixed-compound
+  deferral is a lifetime problem — transient subjects cannot be bookkept by
+  the §2.2.10 stable-identity model until typed scene authority and the
+  S5-C03 lifetime rules exist. Nothing usable today is removed.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-13 -->
 - **OPEN-13 — field visibility vs layer visibility.** Text-field visibility
   as a typed property vs §2.2.8 hidden-selection semantics; and whether
