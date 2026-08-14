@@ -1996,6 +1996,43 @@ approved with the SVG asset remaining `to_author` for the S5A build. The
 HUMAN review protocol for these panels lives in `docs/gui/reference/README.md`
 §"Selection Study reference (S5)".
 
+#### 2.2.22 S5-C11 final owner review record
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C11-REVIEW -->
+
+**Owner approval: `approve final S5 contract`, 2026-08-14.** The completed
+S5-C01 through S5-C10 corpus is reviewed and approved: the identity/class
+matrix with all fourteen OPEN choices resolved at the S5-C01A gate; the
+bounded region query, lifetime, compound output, identity/cross-probe
+contracts; the read-only S5A boundary and atomic refusal laws; the
+immediate-overlay law; the owner-approved visual evidence
+(`docs/gui/reference/selection-study.png`, §2.2.21); and the complete
+disposition ledger (`DATUM_GUI_CONFORMANCE_SPEC.md` §8). The review
+confirmed no unresolved S5 choice remains and the flagged C03 lifetime
+choices (no-resurrection-on-undo; no-substitution-on-recreate) stand as
+specified.
+
+**Review round-trip:** the first review pass returned `revise` — the owner
+required durable tracker coverage for the ratified deferrals before
+approval. Satisfied and re-reviewed:
+
+- **Board dimensions (OPEN-10) and hierarchical sheets (OPEN-11) are
+  deliberate exclusions from S5A — not completed selection capabilities.**
+- Dimension re-entry is tracked by **`dat-dimension-selection-reentry-kxk`**
+  (deferred; blocked by `dat-documentation-system-spec-y8z`, the
+  decision-020 documentation-system spec pass).
+- Hierarchical-sheet re-entry is tracked by
+  **`dat-sheet-interaction-reentry-9ee`** (deferred; blocked by
+  `dat-gui-surface-specs-usb`, the schematic/library surface design pass),
+  carrying the binding descend double-click reservation.
+- Both beads record the exact dual re-entry conditions and reference their
+  OPEN register entries; the register cites them back.
+
+**The Application Status Bar remains deferred** — untouched by every S5
+contract, with outputs explicitly complete without it (§2.2.19). S5A
+execution remains unauthorized pending the S5-C12 numbered decision and
+separate execution authorization.
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
