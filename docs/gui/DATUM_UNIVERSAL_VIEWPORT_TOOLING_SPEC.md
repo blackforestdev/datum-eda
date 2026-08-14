@@ -308,6 +308,19 @@ Click-depth expansion is progressive and immediate: section, then connected
 run, then global net. Pointer movement beyond the click threshold or a changed
 hit target starts a new sequence.
 
+**Ladder origins (owner-resolved, S5-C01A / OPEN-1, 2026-08-14).** The click
+ladder originates on **directly-selectable conductive geometry** — track/wire
+sections, vias, and zone/pour copper: geometry where the single click selects
+the conductive object itself, so each deeper tier widens the same subject
+(the run is the physically continuous copper/wire connected component through
+the origin). **Pads and labels/ports are excluded as origins** and remain
+object-only: a pad's single click is ratified to select the parent footprint
+(§2.2.4), so ladder tiers cannot nest from it; a label's double click is
+reserved for future edit-in-place (S5B). Neither loses net acquisition — the
+explicit `Select Net` verb in the right-button-drag local Select menu and the
+marking menu provides it from every net member. This is a gesture-scoping
+rule, not a capability boundary.
+
 #### 2.2.6 Overlap resolution through the local menu
 
 Normal primary click remains fast and selects the deterministic topmost eligible
@@ -839,8 +852,9 @@ open — such cells carry `OPEN-n` markers regardless.
   silkscreen, courtyard, fab graphics, and ref/value text never enlarge the
   test (UVT §2.2.4). *Scope:* object-only; never silently added to electrical
   selections — under Global Net the body is merely related (UVT §2.2.5/2.2.13;
-  RB §2.2); whether double/triple-click via a pad walks the net ladder is
-  `OPEN-1`. *Projection:* whole coherent presentation lifts as one subject;
+  RB §2.2); pad clicks never originate the click ladder — tier 1 is the parent
+  footprint, so tiers cannot nest; the explicit `Select Net` verb covers net
+  acquisition from a pad (OPEN-1 resolved, §2.2.5 origins). *Projection:* whole coherent presentation lifts as one subject;
   connected traces NOT selected (RB §2.1); component↔symbol cross-pane is a
   merely-related mapping — exact authored appearance, no accent, Inspector
   explains (RB §2.3; P2; CONF). *Hidden/locked:* B-HL. *Overlay:* B-OV +
@@ -852,7 +866,8 @@ open — such cells carry `OPEN-n` markers regardless.
   (`crates/gui-render/src/render/retained.rs:743/:754/:814/:827`); selected as
   flat `SelectionTarget::AuthoredObject(String)` (`lib.rs:440-445`) — no typed
   object class; `ComponentTextPrimitive` has no hit region.
-  *Verdict:* spec **partial** (`OPEN-1`, `OPEN-2`); substrate **live**.
+  *Verdict:* spec **partial** (`OPEN-2`; OPEN-1 resolved); substrate
+  **live**.
 - **Track section / connected run.**
   *Ownership:* the authored section is its own subject; run and net are
   progressive scopes, not ownership containers — a run is never region-tested
@@ -879,15 +894,17 @@ open — such cells carry `OPEN-n` markers regardless.
   *Ownership:* independent point-like subject; Global Net member without
   becoming a separately counted selection (UVT §2.2.13; RB §2.2).
   *Qualification:* B-CLICK; region point rule — center/connection anchor
-  inside (UVT §2.2.4). *Scope:* object-only for direct acquisition; via-origin
-  click-depth is `OPEN-1`. *Projection:* own silhouette; full member treatment
+  inside (UVT §2.2.4). *Scope:* full ladder origin — directly-selectable
+  conductive geometry (OPEN-1 resolved, §2.2.5 origins): double = the
+  physically connected copper run through the via, triple = the resolved
+  net. *Projection:* own silhouette; full member treatment
   under a Global Net subject (RB §2.2). *Hidden/locked:* B-HL. *Overlay:*
   B-OV + B-LOD; semantic core preserved — via material colour + drill void
   with silhouette ring; must stay distinguishable from junction/terminal/
   no-connect while selected (RB §2.7). *Inspector:* B-INS; span/type, net,
   tenting, padstack via dedicated authority (COMP). *Scene authority:*
   `ViaPrimitive` (`lib.rs:297`), circle hit region (`retained.rs:707`).
-  *Verdict:* spec **partial** (`OPEN-1`); substrate **live**.
+  *Verdict:* spec **ratified** (OPEN-1 resolved); substrate **live**.
 - **Zone / copper pour.**
   *Ownership:* outline, fill, islands, and thermal geometry project ONE
   authored zone identity — none independent (UVT §2.2.4); net-owned
@@ -896,7 +913,8 @@ open — such cells carry `OPEN-n` markers regardless.
   name/net/layer label); region — NO partial qualification; 100% enclosure of
   the authored filled area including islands (UVT §2.2.4). *Scope:*
   object-only geometric acquisition; logical inclusion via electrical
-  expansion only (UVT §2.2.4); fill-origin click-depth is `OPEN-1`.
+  expansion only (UVT §2.2.4); zone/pour copper is a full ladder origin
+  (OPEN-1 resolved, §2.2.5 origins).
   *Projection:* one zone identity — boundary treated, layer fill retained
   (RB §2.1); same-identity Global Net participation (UVT §2.2.13).
   *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD; large-coverage glow
@@ -904,8 +922,8 @@ open — such cells carry `OPEN-n` markers regardless.
   colours remain (RB §2.1/2.8). *Inspector:* B-INS; fill is derived geometry —
   inspectable, never written back; net/layer/priority/refill via dedicated
   tools (COMP). *Scene authority:* `ZonePrimitive` (`lib.rs:311`), polygon
-  hit region (`retained.rs:775`). *Verdict:* spec **partial** (`OPEN-1`);
-  substrate **live**.
+  hit region (`retained.rs:775`). *Verdict:* spec **ratified** (OPEN-1
+  resolved); substrate **live**.
 - **Standalone board text.**
   *Ownership:* own subject; component-owned ref/value text belongs to the
   footprint row's child rule (UVT §2.2.4). *Qualification:* B-CLICK + Select
@@ -1132,7 +1150,9 @@ open — such cells carry `OPEN-n` markers regardless.
   net is selected (UVT §2.2.13). *Qualification:* region — visible layout
   bounds under the strict >50% oriented-rectangle rule; the connection anchor
   does NOT independently force selection (UVT §2.2.4); B-CLICK. *Scope:*
-  object-only for direct click; label-origin ladder behavior is `OPEN-1`.
+  object-only — labels never originate the ladder; double click is reserved
+  for S5B edit-in-place and the `Select Net` verb covers net acquisition
+  (OPEN-1 resolved, §2.2.5 origins).
   *Projection:* label/port geometry itself (glyphs + pill, dark fill
   retained, RB §2.1); same-identity Global Net member; named P2.3 highlight
   target (P2). *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD. *Inspector:*
@@ -1140,8 +1160,8 @@ open — such cells carry `OPEN-n` markers regardless.
   (COMP). *Scene authority:* `SchematicHitKind::Label`, rect hit region;
   port is typed as `Label` — the port class survives only in the
   `schematic-port:{uuid}` id prefix and must be properly typed during S5A.
-  *Verdict:* spec **partial** (`OPEN-1`); substrate **typed-only** (port
-  class untyped).
+  *Verdict:* spec **ratified** (OPEN-1 resolved); substrate **typed-only**
+  (port class untyped).
 - **Junction.**
   *Ownership:* independent point-like authored object; selecting it never
   selects attached wires (UVT §2.2.4). *Qualification:* point rule —
@@ -1334,6 +1354,18 @@ new choice after C02–C10 are complete.
   track/wire sections exclusively; clicks on other net members stay
   object-only (matches the §2.2.5 wording; keeps one predictable origin
   class). *Decision:* S5-C01A. *Propagation:* S5-C07.
+  *RESOLVED (owner, 2026-08-14): revised* — the ladder originates on all
+  **directly-selectable conductive geometry**: track/wire sections, vias,
+  and zone/pour copper (recorded as the §2.2.5 origins clause). *Reason:*
+  the run tier is well-defined from any continuous-copper origin (the
+  physically connected component through the click point), so the
+  track/wire-only candidate was needlessly restrictive; the owner's intent
+  is "triple-click any net copper selects the whole net". **Pads and
+  labels/ports stay excluded** for structural, not stylistic, reasons: a
+  pad's tier-1 click is ratified as the parent footprint (§2.2.4), so
+  ladder tiers cannot nest from it; a label's double click is reserved for
+  S5B edit-in-place. Both keep net acquisition through the explicit
+  `Select Net` verb — a gesture-scoping rule, not a capability boundary.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-2 -->
 - **OPEN-2 — board-workspace component-owned graphics.** Ownership of
   component-owned graphics in the board workspace is spec-silent.

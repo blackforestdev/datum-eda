@@ -87,7 +87,7 @@
           {
             "id": "S5-C01A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Resolve every OPEN-1 through OPEN-14 matrix choice before dependent specification and evidence work begins.",
             "depends_on": [
               "S5-C01"
@@ -106,85 +106,127 @@
                   "id": "OPEN-1",
                   "question": "Which object classes may originate the section-to-run-to-net click ladder?",
                   "recommended_response": "Approve track and wire sections exclusively; all other net-member clicks remain object-only.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-1"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-1"
+                  }
                 },
                 {
                   "id": "OPEN-2",
                   "question": "How do component-owned graphics behave in the board workspace?",
                   "recommended_response": "Approve current behavior: sub-graphics select the parent component and component Edge.Cuts graphics have no hit region.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-2"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-2"
+                  }
                 },
                 {
                   "id": "OPEN-3",
                   "question": "Are owned user and fabrication text independently selectable in definition editors?",
                   "recommended_response": "Approve independent selection with the same strict-majority oriented-layout rule as reference/value text.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-3"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-3"
+                  }
                 },
                 {
                   "id": "OPEN-4",
                   "question": "What region and composition rules govern pads and pins in definition editors?",
                   "recommended_response": "Approve center-anchor qualification for pads, connection-anchor qualification for the complete pin subject, and pad geometry plus pad-number text as one subject.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-4"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-4"
+                  }
                 },
                 {
                   "id": "OPEN-5",
                   "question": "Are owned graphics independent authored targets in Footprint and Symbol Editors?",
                   "recommended_response": "Approve extending the generic path and filled-graphic rules to definition-editor owned graphics.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-5"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-5"
+                  }
                 },
                 {
                   "id": "OPEN-6",
                   "question": "How does a selected library definition relate to its placed instances?",
                   "recommended_response": "Approve merely-related projection with exact authored appearance and no selection accent; never treat definition and instance as the same identity.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-6"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-6"
+                  }
                 },
                 {
                   "id": "OPEN-7",
                   "question": "Is a junction dot an owned member of a Global Net selection?",
                   "recommended_response": "Approve inclusion because the junction is resolved conductive geometry.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-7"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-7"
+                  }
                 },
                 {
                   "id": "OPEN-8",
                   "question": "What region and hierarchy-projection rules govern buses?",
                   "recommended_response": "Approve the generic path rule for spine and entries and Global-Net-style hierarchy projection with bus-distinct typing.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-8"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-8"
+                  }
                 },
                 {
                   "id": "OPEN-9",
                   "question": "Which common fields does compound schematic text expose?",
                   "recommended_response": "Approve the PCB text field set where typed: style, height, stroke, alignment, and visibility.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-9"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-9"
+                  }
                 },
                 {
                   "id": "OPEN-10",
                   "question": "Should board dimensions enter S5A despite having no scene projection?",
                   "recommended_response": "Defer dimensions from S5A until typed scene projection exists; do not ratify unimplementable acquisition rules now.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-10"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-10"
+                  }
                 },
                 {
                   "id": "OPEN-11",
                   "question": "Should hierarchical sheet representations enter S5A despite being untyped and unhittable?",
                   "recommended_response": "Defer sheet-body selection from S5A until typed sheet and sheet-pin scene authority exists.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-11"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-11"
+                  }
                 },
                 {
                   "id": "OPEN-12",
                   "question": "What S5A acquisition scope applies to proposal, review, and diagnostic subjects?",
                   "recommended_response": "Keep existing explicit action/lane selection, exclude non-authored subjects from region and Ctrl+A acquisition, and defer mixed compound semantics until each channel has complete typed scene authority.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-12"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-12"
+                  }
                 },
                 {
                   "id": "OPEN-13",
                   "question": "How do field visibility and definition-child locking relate to canvas visibility and lock semantics?",
                   "recommended_response": "Treat field visibility as a typed property distinct from layer hiding; invisible fields are not canvas-acquirable, and definition children remain without lock authority until S5B types it.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-13"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-13"
+                  }
                 },
                 {
                   "id": "OPEN-14",
                   "question": "How does dense/tiny fallback apply when selection overlays proposal, review, or diagnostic channels?",
                   "recommended_response": "Apply the same deterministic selection-cue cap and whole-pane union-mask fallback after preserving each channel's semantic shape, severity, and proposal/review identity.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "OPEN-14"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "OPEN-14"
+                  }
                 }
               ]
             }
@@ -365,7 +407,10 @@
                   "id": "S5-FINAL-REVIEW",
                   "question": "Does the completed C01-C10 corpus contain no unresolved S5 choice and preserve the deferred Application Status Bar boundary?",
                   "recommended_response": "Approve the complete reviewed S5 contract only if every specification-phase requirement and evidence disposition is closed.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-FINAL-REVIEW"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "S5-FINAL-REVIEW"
+                  }
                 }
               ]
             }
@@ -392,7 +437,10 @@
                   "id": "S5-RATIFICATION",
                   "question": "Should the next available numbered decision ratify the reviewed Layer-2 selection identity and S5A/S5B boundary without authorizing implementation?",
                   "recommended_response": "Ratify the reviewed contract under the next number available at creation time while keeping S5A execution separately unauthorized.",
-                  "source_ref": {"path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md", "marker": "S5-RATIFICATION"}
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                    "marker": "S5-RATIFICATION"
+                  }
                 }
               ]
             }
