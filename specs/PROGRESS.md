@@ -22,15 +22,15 @@
    Install the structured roadmap, deterministic next-task selector, cross-ledger checks, and reconciled tracker state without weakening source-health governance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* one reproducible roadmap answer for every agent. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`.
 - **Complete the S5 selection contract and identity decision** (`UVT-S5-SPEC`; `dat-s5-selection-visual-contract-zid`).
-   Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`, `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`, `docs/gui/DATUM_RENDERING_BOOK.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`, `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Deliver the native terminal emulator** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
    Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain. *state `planned`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* trustworthy embedded shell and agent surface. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
 - **Establish terminal keyboard-focus authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
-   Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
+   Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect. *state `ready`; authorization `execution`; **CANONICAL NEXT**; parallel lane.*
+   *Dependencies:* none. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Collapse the rival terminal input models** (`TERMINAL-P0-INPUT`; `dat-terminal-dual-input-model-75y`).
    Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only. *state `ready`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
@@ -62,7 +62,7 @@
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* native schematic and library authoring surfaces. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `blocked`; authorization `planning`.*
+   Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `planning`.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*

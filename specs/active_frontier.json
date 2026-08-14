@@ -41,7 +41,7 @@
         "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md"
       ],
       "state": "landed",
-      "authorization": "planning",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
@@ -51,7 +51,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C13",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -600,8 +600,119 @@
       "summary": "Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect.",
       "dependencies": [],
       "unblocks": [
-        "terminal Phase 1 barrier"
-      ]
+        "dat-terminal-emulator-epic-jzv.3"
+      ],
+      "completion": {
+        "outcome": "One explicit keyboard-focus authority routes every key: the terminal is typeable when focused, workspace hotkeys never leak into the PTY, focus reporting and the visible cursor affordance follow terminal focus, and leak regressions lock the behavior.",
+        "canonical_next_step_id": "TF-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "TF-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Replace dock-visibility gating with one explicit keyboard-focus owner (Editor(pane) | Terminal | Overlay) in the gui-app router; opening the dock never steals keys.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+                "marker": "TF-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TF-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Wire deliberate terminal focus entry (click in terminal screen / focus command) and exit (Escape, canvas click), reconciled with decision-021 pane focus.",
+            "depends_on": [
+              "TF-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+                "marker": "TF-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TF-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Rewire the focus-in/focus-out escape reporting from window focus to terminal focus.",
+            "depends_on": [
+              "TF-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+                "marker": "TF-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TF-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Render the visible focus affordance: block cursor when the terminal owns keys, hollow otherwise (terminal-study prototype).",
+            "depends_on": [
+              "TF-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+                "marker": "TF-04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TF-05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Move workspace hotkeys to key-Press once routing is fixed and add leaked-keystroke / un-typeable-terminal regression tests.",
+            "depends_on": [
+              "TF-02",
+              "TF-03",
+              "TF-04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+                "marker": "TF-05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The P1 un-typeable-terminal defect is repaired.",
+            "dat-terminal-emulator-epic-jzv.3 (Phase 1 cell grid) loses this Phase 0 blocker.",
+            "TERMINAL-P0-INPUT/DIAGNOSTICS/PTY/RENDER proceed under the Phase 0 barrier."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.3"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-P0-INPUT",

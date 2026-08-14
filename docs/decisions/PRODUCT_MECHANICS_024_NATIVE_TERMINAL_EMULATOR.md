@@ -144,3 +144,27 @@ explicitly declined as outside an EDA app's remit. The one job this decision
 *removes* from the terminal — being the GUI's CLI-string write path — is
 re-homed on the typed write-path/Command Console track, restoring the
 one-mutation-path law.
+
+## Phase 0 requirement anchors (TERMINAL-P0-FOCUS)
+
+The keyboard-focus-authority repair is tracked as the canonical Phase 0
+frontier item; its completion-plan steps anchor here:
+
+<!-- REQ:TERMINAL-P0-FOCUS:TF-01 -->
+- **TF-01 — one keyboard-focus owner.** Replace dock-visibility gating in the
+  gui-app keyboard router with one explicit focus authority
+  (Editor(pane) | Terminal | Overlay); opening the dock never steals keys.
+<!-- REQ:TERMINAL-P0-FOCUS:TF-02 -->
+- **TF-02 — explicit enter/leave.** Terminal focus is entered deliberately
+  (click in the terminal screen / focus command) and left deliberately
+  (Escape, canvas click); reconciled with decision-021 pane focus.
+<!-- REQ:TERMINAL-P0-FOCUS:TF-03 -->
+- **TF-03 — focus reporting.** The \x1b[I/\x1b[O focus-in/out sequences
+  report TERMINAL focus, not window focus.
+<!-- REQ:TERMINAL-P0-FOCUS:TF-04 -->
+- **TF-04 — visible focus affordance.** Block cursor when the terminal owns
+  keys, hollow when it does not (terminal-study prototype).
+<!-- REQ:TERMINAL-P0-FOCUS:TF-05 -->
+- **TF-05 — hotkey timing + leak regressions.** Workspace hotkeys fire on
+  Press once routing is fixed; regression tests cover the leaked-keystroke
+  and un-typeable-terminal cases.
