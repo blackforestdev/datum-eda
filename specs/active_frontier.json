@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C02",
+        "canonical_next_step_id": "T0-C03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -975,7 +975,7 @@
           {
             "id": "T0-C02",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Make the exact visible cell rectangle the terminal hit target and PTY row/column authority, with no summary rows consuming its space.",
             "depends_on": [
               "T0-C01"
@@ -986,7 +986,12 @@
                 "marker": "T0-C02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d955eb7510804387e51471ee17dfcfaba8acfe7d"
+              }
+            ]
           },
           {
             "id": "T0-C03",
