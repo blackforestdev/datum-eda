@@ -395,7 +395,7 @@
           {
             "id": "S5-C09",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete fixed-size prototype and accessibility evidence, including the governed padlock asset and all compound/collision/dense/cross-pane cases.",
             "depends_on": [
               "S5-C01A",
