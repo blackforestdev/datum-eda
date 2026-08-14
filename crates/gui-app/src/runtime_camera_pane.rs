@@ -518,6 +518,9 @@ impl Runtime {
             gesture_dx_px: 0,
             gesture_dy_px: 0,
         });
+        // TF-01: while open, the marking menu is a transient Overlay keyboard
+        // owner; `dismiss_marking_menu` restores Editor ownership.
+        self.set_keyboard_focus(crate::keyboard_focus::KeyboardFocus::Overlay);
         self.invalidate_frame();
         true
     }

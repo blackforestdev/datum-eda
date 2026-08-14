@@ -36,6 +36,7 @@ mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
 mod interaction_refresh;
+mod keyboard_focus;
 mod pan_gesture;
 mod pane_cameras;
 mod pane_grid_lod;
@@ -68,6 +69,7 @@ use board_text_terminal_commands::{
     board_text_quick_edit_terminal_command,
 };
 pub(crate) use gui_runtime_support::*;
+use keyboard_focus::KeyboardFocus;
 use pane_cameras::PaneCameras;
 use pan_gesture::PanGestureState;
 use pane_resize::DividerDrag;
@@ -500,543 +502,8 @@ impl ApplicationHandler for App {
                     runtime.modifiers = modifiers.state();
                 }
             }
-            WindowEvent::KeyboardInput { event, .. }
-                if self
-                    .runtime
-                    .as_mut()
-                    .is_some_and(|runtime| runtime.handle_pan_key(&event)) => {}
-            WindowEvent::KeyboardInput { event, .. }
-                if self.runtime.as_ref().is_some_and(|runtime| {
-                    terminal_raw_input_should_handle(
-                        runtime.terminal_accepts_raw_input(),
-                        runtime.is_paste_shortcut(&event),
-                        runtime.is_copy_shortcut(&event),
-                    )
-                }) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.handle_terminal_key_input(&event)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput { event, .. }
-                if self.runtime.as_ref().is_some_and(|runtime| {
-                    runtime.workspace().ui.active_dock_tab.is_some()
-                        && runtime.is_paste_shortcut(&event)
-                }) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.paste_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput { event, .. }
-                if self.runtime.as_ref().is_some_and(|runtime| {
-                    runtime.workspace().ui.active_dock_tab.is_some()
-                        && runtime.is_copy_shortcut(&event)
-                }) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.copy_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput { event, .. }
-                if self.runtime.as_ref().is_some_and(|runtime| {
-                    runtime.workspace().ui.active_dock_tab.is_some()
-                        && runtime.is_cut_shortcut(&event)
-                }) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.cut_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Pressed,
-                        ..
-                    },
-                ..
-            } if self.runtime.as_ref().is_some_and(|runtime| {
-                runtime.dock_accepts_text_input() && !runtime.modifiers.control_key()
-            }) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.append_dock_text(text)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Space),
-                        state: ElementState::Pressed,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.dock_accepts_text_input()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.append_dock_text(" ")
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event: KeyEvent {
-                    logical_key: Key::Named(NamedKey::Escape),
-                    state: ElementState::Released, ..
-                }, ..
-            } if self.runtime.as_mut().is_some_and(Runtime::cancel_active_pan) => {}
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Backspace),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.backspace_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Enter),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.submit_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Escape),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.marking_menu_active()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.dismiss_marking_menu()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Escape),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime {
-                    if runtime.cancel_terminal_rename() {
-                        self.request_redraw_if_needed();
-                        return;
-                    }
-                    // Clear input first; only close dock if input is already empty.
-                    let input_was_empty = runtime.current_dock_input().is_none_or(|s| s.is_empty());
-                    if input_was_empty {
-                        if runtime.close_active_dock() {
-                            self.request_redraw_if_needed();
-                        }
-                    } else {
-                        let ui = &mut runtime.session.workspace_mut().ui;
-                        match ui.active_dock_tab {
-                            Some(DockTab::Terminal) => {
-                                ui.terminal.input.clear();
-                                ui.terminal.cursor = 0;
-                            }
-                            None => {}
-                        }
-                        runtime.invalidate_frame();
-                        self.request_redraw_if_needed();
-                    }
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::ArrowLeft),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.move_dock_cursor(-1)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::ArrowRight),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.move_dock_cursor(1)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Home),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.move_dock_cursor_to_edge(true)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::End),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.move_dock_cursor_to_edge(false)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Tab),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
-            {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.complete_dock_input()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            // Pane focus cycling (decision 021): Tab -> next leaf, Shift+Tab ->
-            // previous leaf, when the dock does not own the keyboard. Reuses the
-            // FEEL warm-camera focus swap; workspace view state, never journaled.
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Tab),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if self
-                .runtime
-                .as_ref()
-                .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_none()) =>
-            {
-                if let Some(runtime) = &mut self.runtime {
-                    if runtime.modifiers.shift_key() {
-                        runtime.pane_focus_prev();
-                    } else {
-                        runtime.pane_focus_next();
-                    }
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("s") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::Select)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("b") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardText)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("v") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardVia)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("m") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::Move)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("x") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::Delete)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("r") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.set_workspace_tool(WorkspaceTool::DrawBoardTrack)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("f") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                {
-                    runtime.fit_camera();
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("t") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.fit_review_target()
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            // Maximize / restore the focused pane (decision 021 zoom). `Z` is free
-            // of the tool keys (s/b/v/m/x/r), fit (f), and review-nav ([ ]); gated
-            // to no-active-dock so it never eats terminal input. Workspace view
-            // state (transient zoom over the tile tree), never journaled.
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("z") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                {
-                    runtime.pane_toggle_zoom();
-                    self.request_redraw_if_needed();
-                }
-            }
-            // Cycle the cursor-crosshair style (decision 023 UVT-005:
-            // FullViewport -> Local -> None). `C` is free of the tool keys
-            // (s/b/v/m/x/r), fit (f/t), and zoom (z); gated to no-active-dock so it
-            // never eats terminal input. Session UI preference, never journaled.
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text.eq_ignore_ascii_case("c") => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && !runtime.modifiers.control_key()
-                {
-                    runtime.cycle_crosshair_style();
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text == "[" => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.dispatch_session_command(SessionCommand::SelectPreviousReviewAction)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } if text == "]" => {
-                if let Some(runtime) = &mut self.runtime
-                    && runtime.workspace().ui.active_dock_tab.is_none()
-                    && runtime.dispatch_session_command(SessionCommand::SelectNextReviewAction)
-                {
-                    self.request_redraw_if_needed();
-                }
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        logical_key: Key::Named(NamedKey::Escape),
-                        state: ElementState::Released,
-                        ..
-                    },
-                ..
-            } => {
-                if let Some(runtime) = &mut self.runtime {
-                    if runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture) {
-                        self.request_redraw_if_needed();
-                        return;
-                    }
-                    if !matches!(
-                        runtime.workspace().selection,
-                        datum_gui_protocol::SelectionTarget::None
-                    ) && runtime.dispatch_session_command(SessionCommand::ClearSelection)
-                    {
-                        self.request_redraw_if_needed();
-                    }
-                }
+            WindowEvent::KeyboardInput { event, .. } => {
+                keyboard_focus::handle_keyboard_input(self, &event);
             }
             WindowEvent::RedrawRequested => {
                 if let Some(runtime) = &mut self.runtime {
@@ -1138,6 +605,11 @@ struct Runtime {
     terminal_production_refresh_attempts: u8,
     terminal_rename_session_id: Option<String>,
     clipboard: Option<Clipboard>,
+    /// The single keyboard-focus owner (TF-01, decision 024 Phase 0). Keyboard
+    /// routing consults this — never dock visibility. Opening a dock must not
+    /// change it; deliberate entry/exit gestures (terminal clicks, canvas
+    /// clicks, Escape) do.
+    keyboard_focus: KeyboardFocus,
 }
 
 fn terminal_scrollback_page_step(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> usize {
@@ -1280,6 +752,7 @@ impl Runtime {
             terminal_production_refresh_attempts: 0,
             terminal_rename_session_id: None,
             clipboard: Clipboard::new().ok(),
+            keyboard_focus: KeyboardFocus::default(),
         };
         runtime.sync_terminal_tabs();
         runtime.resize_terminal_to_dock();
@@ -1784,16 +1257,37 @@ impl Runtime {
             return false;
         }
         ui.active_dock_tab = None;
+        // TF-01: keyboard focus must not outlive the surface that owns it —
+        // a closed dock with Terminal focus would swallow keys into a hidden
+        // line editor. Closing the dock hands ownership back to the editor.
+        if self.keyboard_focus == KeyboardFocus::Terminal {
+            self.keyboard_focus = KeyboardFocus::Editor;
+        }
         self.invalidate_scene();
         true
     }
 
+    pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
+        self.keyboard_focus
+    }
+
+    pub(crate) fn set_keyboard_focus(&mut self, focus: KeyboardFocus) {
+        self.keyboard_focus = focus;
+    }
+
     fn dock_accepts_text_input(&self) -> bool {
-        self.workspace().ui.active_dock_tab.is_some()
+        self.keyboard_focus == KeyboardFocus::Terminal
+            && self.workspace().ui.active_dock_tab.is_some()
     }
 
     fn terminal_accepts_raw_input(&self) -> bool {
-        matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
+        // Focus AND terminal tab visible: raw input still needs the terminal to
+        // exist on screen (TF-01).
+        keyboard_focus::key_route(
+            self.keyboard_focus,
+            keyboard_focus::KeyClass::RawPty,
+            matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)),
+        ) == keyboard_focus::RouteDecision::Terminal
             && self.terminal_rename_session_id.is_none()
             && self.terminal_sessions.active_attached()
     }
@@ -2610,16 +2104,19 @@ impl Runtime {
         // Focus and dispatch are one gesture: after activating a different pane,
         // continue resolving this same click in that pane's camera/content.
         let mut focus_changed = false;
-        if let Some(pane_id) = self.pane_at_screen(x, y)
-            && pane_id != self.workspace().ui.layout.focused
-        {
-            self.swap_pane_focus(|layout| layout.focused = pane_id);
-            self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
-            self.trace_click(format!(
-                "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
-                pane_id.0
-            ));
-            focus_changed = true;
+        if let Some(pane_id) = self.pane_at_screen(x, y) {
+            // TF-01 deliberate exit: a canvas click is editor keyboard entry,
+            // releasing any terminal/overlay key ownership before dispatch.
+            self.set_keyboard_focus(KeyboardFocus::Editor);
+            if pane_id != self.workspace().ui.layout.focused {
+                self.swap_pane_focus(|layout| layout.focused = pane_id);
+                self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
+                self.trace_click(format!(
+                    "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
+                    pane_id.0
+                ));
+                focus_changed = true;
+            }
         }
         let prepared_started = std::time::Instant::now();
         let (prepared_target, world_point) = {
@@ -2716,6 +2213,12 @@ impl Runtime {
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
         let started = std::time::Instant::now();
         let handled = self.select_hit_target_inner(target);
+        // TF-01 deliberate entry: clicking the terminal dock's tab strip,
+        // session controls, or activity summary hands key ownership to the
+        // terminal. Programmatic dock opens never do.
+        if handled && keyboard_focus::hit_target_is_terminal_entry(target) {
+            self.set_keyboard_focus(KeyboardFocus::Terminal);
+        }
         self.trace_timing(format!(
             "select target {target:?} handled={handled} {}ms",
             started.elapsed().as_millis()
@@ -3044,6 +2547,9 @@ impl Runtime {
             return false;
         }
         self.session.workspace_mut().ui.marking_menu = None;
+        // TF-01: the marking menu is a transient Overlay key owner; dismissing
+        // it restores keyboard ownership to the editor.
+        self.keyboard_focus = KeyboardFocus::Editor;
         self.invalidate_frame();
         true
     }
