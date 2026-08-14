@@ -50,7 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C04",
+        "canonical_next_step_id": "S5-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -284,7 +284,7 @@
           {
             "id": "S5-C04",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Define complete single/multi Inspector and terminal/action-console/AI context projections without depending on the deferred status bar.",
             "depends_on": [
               "S5-C01A"
@@ -295,7 +295,13 @@
                 "marker": "S5-C04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT"
+              }
+            ]
           },
           {
             "id": "S5-C05",

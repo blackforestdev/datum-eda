@@ -1694,6 +1694,101 @@ indicative, finalized at build time:
   resolution while Inspector totals stay global
   (`lifetime_partial_pane_projection`).
 
+#### 2.2.19 S5-C04 compound output contract
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->
+
+This contract defines everything a selection projects **out** — to the
+Inspector, to the action console's textual echo, and to the typed context
+payload consumed by the terminal back-door and AI collaborators. §2.2.10
+owns how membership and focus are formed; this section owns what consumers
+see. It depends on no part of the deferred Application Status Bar.
+
+**1. One projection, three consumers — shared by construction.** The
+Inspector view, the console echo, and the context payload all derive from
+**one typed selection-projection structure**. No consumer computes its own
+membership summary; divergent counts between surfaces are a defect by
+definition. (The status bar, if later retained, becomes a fourth consumer
+of the same structure — never a rival computation.)
+
+**2. Single-subject projection.** Exactly one member: the Inspector subject
+is that object — identity header (reference, kind, `SELECTED` chip) with
+Identity/Placement/Checks sections and the class-specific rows ratified in
+the §2.2.16 matrix. Semantic subjects project their own views: Global Net →
+Net/Members/Checks(ERC) with per-kind and hidden-member counts; Bus →
+member nets and hidden/cross-sheet occurrence counts (§2.2.13). Non-authored
+subjects project their producing artifact (review action, check finding)
+per OPEN-12.
+
+**3. Compound projection.** Multiple members form the temporary compound
+subject (`Compound Selection — N objects`, §2.2.10) with:
+
+- **Scopes:** `All N` plus one per-type scope per member class present
+  (`Parts 6`, `Traces 14`, …). Scope selection is a **view filter** over the
+  compound — it never changes selection membership. Per-type scopes expose
+  the class field tables ratified in the matrix (including OPEN-9 schematic
+  text); `All N` exposes only class-independent aggregates.
+- **Field states, exact semantics:** **Common** — every in-scope member has
+  the same typed value; the value is shown. **Mixed** — the field is typed
+  for every in-scope member but values differ; shown as `Mixed`, NEVER an
+  arbitrary member's value. **Unavailable** — the field is not typed for
+  every in-scope member (or is blocked); shown with the reason. S5A renders
+  all field states read-only.
+- **Aggregates:** member count and types; combined world-space bounds of
+  member projections; workspace/layer/net coverage; and the expandable
+  stable-identity member inventory (§2.2.10).
+- **Blocker reporting:** hidden count, locked count, and
+  incompatible/blocker count each carry an **exact explanation** — which
+  members and why — matching the §2.2.7/2.2.8 whole-refusal law so a later
+  refused mutation is never a surprise the outputs failed to disclose.
+
+**4. Stable-ID context payload.** The typed envelope
+(`DatumSelectionContext`, `crates/gui-protocol/src/context_envelope.rs` —
+today a singleton `{kind, id}`) extends to the full subject vocabulary as
+**one serializable payload shared verbatim by the terminal back-door, the
+action console, and AI context**:
+
+- `subject_kind`: `none` | `authored_object` | `compound` | `global_net` |
+  `bus` | `review_action` | `check_finding`;
+- `subject_id`: the semantic/artifact identity where the kind has one;
+- `model_revision`: the revision the projection was resolved against
+  (§2.2.18 anchoring);
+- `summary`: total member count, per-type counts, hidden and locked counts;
+- `focus_id`: the optional focus member;
+- `member_ids`: the full stable-identity list in deterministic
+  stable-identity order (§2.2.10) up to a **governed cap of 256 ids**;
+  beyond the cap the list is omitted, `truncated: true` is set, and
+  consumers rely on `summary` or query explicitly — the payload is bounded
+  by contract, never by silent cutoff.
+
+The payload is a read-only observation: carrying it grants no mutation
+authority; any consumer acting on its identities goes through typed
+operations whose targets re-validate at commit time under the §2.2.18
+stale-identity law (drop-and-report, never fuzzy match).
+
+**5. Future assertions (TO-ENFORCE; consumed by S5-C10).** Test homes
+indicative:
+
+- **O1 single-source projection** — Inspector, console echo, and envelope
+  derive from one structure; counts can never diverge
+  (`outputs_single_projection_source`).
+- **O2 field-state oracle** — Common/Mixed/Unavailable computed correctly
+  against a brute-force oracle over mixed compounds
+  (`outputs_field_state_semantics`).
+- **O3 scope filtering** — per-type scopes expose exactly the in-scope
+  class fields; scope switching never mutates membership
+  (`outputs_scope_view_filter`).
+- **O4 blocker disclosure** — hidden/locked/incompatible counts carry exact
+  member/reason explanations consistent with later whole-refusal
+  (`outputs_blocker_reporting`).
+- **O5 envelope bound + determinism** — stable ordering, 256-id cap with
+  `truncated` marker, serialization round-trip
+  (`outputs_envelope_bounded_deterministic`).
+- **O6 status-bar independence** — every output is complete with no status
+  bar present (`outputs_no_status_bar_dependency`).
+- **O7 read-only surface** — S5A Inspector/envelope expose no mutation
+  entry point (`outputs_readonly_boundary`).
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
