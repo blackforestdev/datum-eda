@@ -418,6 +418,20 @@ partial edit. Selection never unlocks an object implicitly.
   may be removed explicitly through a non-canvas selection consumer, or the
   complete selection may be cleared with `Escape`.
 
+**Field visibility and definition-child lock (owner-resolved, S5-C01A /
+OPEN-13, 2026-08-14):** field visibility is an **authored, journaled design
+property**, distinct from this section's layer/class visibility, which is
+consumer view state and never journaled; the two mechanisms never conflate.
+The governing acquisition rule is **canvas acquisition requires rendered
+geometry**: an invisible field renders no glyphs and is therefore not
+canvas-acquirable by construction — it is found and managed through the field
+table and Inspector. If a definition editor later renders invisible fields
+ghosted (a view option), they become acquirable automatically because they
+are rendered; no rule change is needed. **Definition children (pads, pins,
+owned text, owned graphics) carry no lock semantics in S5A** — the locked-
+object law applies only where a typed lock exists; the universal lock
+vocabulary arrives with S5B and is not faked before its substrate.
+
 #### 2.2.9 Explicit global Select All
 
 `Ctrl+A` replaces the prior selection with every authored object in the focused
@@ -1136,12 +1150,13 @@ open — such cells carry `OPEN-n` markers regardless.
   B-CLICK. *Scope:* object-only. *Projection:* definition↔instance text
   mapping: merely related, never same-identity (OPEN-6 resolved,
   §2.2.11). *Hidden/locked:* B-HL; field-visibility vs
-  layer-visibility semantics unreconciled (`OPEN-13`). *Overlay:* B-OV +
+  layer-visibility semantics resolved: distinct mechanisms; canvas
+  acquisition requires rendered geometry (OPEN-13, §2.2.8). *Overlay:* B-OV +
   B-LOD; RB §2.7 text law (glyph geometry, no persistent rectangle, edit-tool
   handles only). *Inspector:* B-INS; style/height/stroke/alignment/visibility
   where typed (COMP). *Scene authority:* ABSENT — no editor surface; nearest
   type `ComponentTextPrimitive` (`lib.rs:182`) is board-side, no hit region.
-  *Verdict:* spec **partial** (`OPEN-13`; OPEN-3/OPEN-6 resolved); substrate
+  *Verdict:* spec **ratified** (OPEN-3/OPEN-6/OPEN-13 resolved); substrate
   **absent**.
 - **Owned graphics (strokes and filled shapes).**
   *Ownership:* independent authored targets in this workspace (OPEN-5
@@ -1343,7 +1358,8 @@ open — such cells carry `OPEN-n` markers regardless.
   and body at rest (RB §2.7); projection onto placed instances unstated
   : merely related, never same-identity (OPEN-6 resolved, §2.2.11).
   *Hidden/locked:* B-HL; whether a pin definition carries a lock
-  attribute is unstated (COMP; `OPEN-13`). *Overlay:* B-OV + B-LOD; pin
+  attribute: none in S5A — lock vocabulary arrives with S5B (OPEN-13
+  resolved, §2.2.8). *Overlay:* B-OV + B-LOD; pin
   terminal stays distinct from junction/via/no-connect while selected
   (RB §2.7). *Inspector:* B-INS; library pins read placed projection; pin
   table / library authoring are dedicated tools (COMP). *Scene authority:*
@@ -1361,11 +1377,12 @@ open — such cells carry `OPEN-n` markers regardless.
   Definition↔instance field projection unstated
   resolved as merely related (OPEN-6, §2.2.11); field-visibility vs
   layer-visibility semantics unreconciled
-  (`OPEN-13`). *Overlay:* B-OV + B-LOD; RB §2.7 text law. *Inspector:*
+  resolved: distinct mechanisms; canvas acquisition requires rendered
+  geometry (OPEN-13, §2.2.8). *Overlay:* B-OV + B-LOD; RB §2.7 text law. *Inspector:*
   B-INS; symbol fields expose visibility/position after typed ops; the field
   table is a dedicated tool (COMP). *Scene authority:* ABSENT — no editor
   surface; no owned-text selection identity exists anywhere. *Verdict:* spec
-  **partial** (`OPEN-13`; OPEN-3/OPEN-6 resolved); substrate **absent**.
+  **ratified** (OPEN-3/OPEN-6/OPEN-13 resolved); substrate **absent**.
 - **Owned graphics (body strokes, lines/arcs, filled shapes).**
   As the Footprint Editor owned-graphics row: independent authored targets
   in this workspace under the generic path + filled-graphic rules (OPEN-5
@@ -1656,6 +1673,16 @@ new choice after C02–C10 are complete.
   as a typed property vs §2.2.8 hidden-selection semantics; and whether
   definition-editor children carry lock attributes. *Decision:* S5-C01A.
   *Propagation:* S5-C03/S5-C05.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.8 field-visibility/lock clause). *Reason:* field visibility is an
+  authored, journaled design property while layer visibility is
+  never-journaled consumer view state — conflating them violates the
+  one-mutation-path doctrine in one direction or the other; the ratified
+  formulation "canvas acquisition requires rendered geometry" makes
+  invisible fields unacquirable by construction and self-maintains if a
+  ghost-view editor option later renders them; definition children carry no
+  lock semantics in S5A because the universal lock vocabulary is S5B's
+  delivery boundary and is not faked before its substrate.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-14 -->
 - **OPEN-14 — dense/tiny fallback for non-authored channels.** RB §2.8 is
   stated for selection overlay over authored geometry; application to
