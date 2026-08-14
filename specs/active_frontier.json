@@ -50,7 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C03",
+        "canonical_next_step_id": "S5-C04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -262,7 +262,7 @@
           {
             "id": "S5-C03",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Specify selection and focus lifetime across revisions, replacement, deletion, pane/document replacement, stale identity, and partial resolution.",
             "depends_on": [
               "S5-C01A"
@@ -273,7 +273,13 @@
                 "marker": "S5-C03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT"
+              }
+            ]
           },
           {
             "id": "S5-C04",

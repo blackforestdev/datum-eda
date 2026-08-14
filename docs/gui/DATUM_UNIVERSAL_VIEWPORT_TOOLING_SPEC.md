@@ -1584,6 +1584,116 @@ module) and finalized at build time:
   or diagnostic subjects regardless of overlay density
   (`region_excludes_non_authored`).
 
+#### 2.2.18 S5-C03 selection and focus lifetime contract
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->
+
+This contract defines what happens to a selection — and its optional compound
+focus member — when the world changes underneath it. One principle governs
+every rule: **selection is consumer state holding stable authored identities;
+it is a projection over the current resolved model, never a snapshot of past
+geometry, and it never resolves ambiguity by guessing.**
+
+**1. Identity anchoring.** A selection member is a stable identity
+(`ObjectId`-backed authored id; resolved net/bus identity for semantic
+subjects; action/finding identity for non-authored subjects) — never an
+index, a coordinate, or a geometry snapshot. Selection state records the
+`model_revision` against which it last resolved.
+
+**2. Re-resolution on every revision.** Every `model_revision` change — from
+any surface: GUI commit, CLI, MCP, agent, undo/redo — triggers re-resolution
+of the selection against the new resolved model:
+
+- an identity that still resolves **stays selected**, projecting the new
+  geometry/properties (identity-preserving edits keep selection by
+  substrate law: mutating operations preserve `ObjectId`);
+- an identity that no longer resolves is **dropped** — silently on canvas,
+  **reported** in the Inspector (membership counts update; a compound
+  subject reports members removed by revision); no phantom members ever
+  survive re-resolution;
+- **no substitution and no resurrection:** delete-and-recreate produces a
+  new identity that is never auto-selected in place of the old one, and an
+  identity restored by undo does **not** re-enter a selection it was
+  dropped from — undo restores model state, never consumer selection
+  state. Selection resurrection would couple consumer state to the journal
+  and make selection content depend on edit history rather than on the
+  four-input exactness law (§2.2.17).
+
+**3. Semantic subjects re-derive wholly.** A Global Net or Bus subject
+stores the resolved net/bus identity only; its member projection is derived
+fresh at each revision and never cached across revisions. If the identity
+survives (rename with stable id: survives), membership follows the new
+resolution; if the net/bus ceases to resolve, the subject dissolves to an
+empty selection, reported. Members are never individually dropped from a
+semantic subject — the projection is always exactly the current resolution.
+
+**4. Compound focus.** Focus is a reference to a current member. If the
+focused member is dropped by re-resolution (or the member leaves the
+selection), focus clears to none — **no auto-promotion** of another member
+(consistent with the ratified conformance row: removing focus promotes
+none). Focus never survives the member it referenced.
+
+**5. Pane and document lifecycle.** Selection is project-workspace state
+(§2.2.11), not per-pane state:
+
+- closing a pane never clears or reduces the selection — remaining panes
+  keep projecting it;
+- replacing a pane's **content** (board↔schematic, sheet navigation)
+  cancels any active gesture in that pane (§2.2.2) but preserves the
+  committed selection; the new content projects whatever members it
+  resolves;
+- replacing the **project/document** drops the selection entirely —
+  selection identities are scoped to one resolved project and never leak
+  across projects; there is no cross-project selection state.
+
+**6. Stale identities never fault.** A selection identity arriving from any
+consumer (saved workspace state, terminal/AI context payload, cross-session
+restore) that does not resolve against the current model is dropped with a
+reported count — never an error, never a crash, never a partial-resolution
+guess, never a fuzzy match. The only lawful responses to an unresolvable
+identity are *drop and report*.
+
+**7. Partial cross-pane resolution.** Each pane projects exactly the members
+its content resolves; a pane that resolves none of the selection shows no
+projection — this is normal state, not an error. The Inspector reports the
+selection's **total** membership independent of any single pane's
+resolution, with hidden/unresolved-in-view members carried as counts
+(§2.2.13 hidden-member law). The selection's identity and membership are
+global; only its *projection* is per-pane.
+
+**8. Non-authored subject lifetime.** Per OPEN-12: a proposal-action
+selection dissolves when its action commits or is discarded; a check-finding
+selection dissolves when a check run invalidates its fingerprint (a new run
+reproducing the same fingerprint preserves selection). Dissolution clears to
+empty and is reported. Non-authored lifetimes are bound to their producing
+artifact's lifecycle, never to the design journal.
+
+**9. Future assertions (TO-ENFORCE; consumed by S5-C10).** Test homes
+indicative, finalized at build time:
+
+- **L1 revision re-resolution** — surviving identities stay selected with
+  updated projection; dropped identities disappear with Inspector report
+  (`lifetime_reresolution_on_revision`).
+- **L2 no phantom members** — post-revision selection never contains an
+  unresolvable identity (`lifetime_no_phantom_members`).
+- **L3 identity-preserving edits** — property/geometry mutation preserves
+  selection membership (`lifetime_edit_preserves_selection`).
+- **L4 no resurrection** — undo of a deletion does not restore dropped
+  members; recreate does not substitute (`lifetime_no_resurrection`).
+- **L5 semantic re-derivation** — net/bus subjects derive membership fresh
+  per revision; dissolve-to-empty when unresolvable
+  (`lifetime_semantic_subject_rederivation`).
+- **L6 focus no-auto-promotion** — dropping the focused member clears
+  focus to none (`lifetime_focus_clears_no_promotion`).
+- **L7 pane lifecycle** — pane close preserves selection; content
+  replacement cancels gestures but preserves committed selection; project
+  replacement drops it (`lifetime_pane_document_lifecycle`).
+- **L8 stale identity safety** — unresolvable incoming identities drop
+  with report, no fault, no fuzzy match (`lifetime_stale_identity_drop`).
+- **L9 partial projection** — per-pane projection equals per-pane
+  resolution while Inspector totals stay global
+  (`lifetime_partial_pane_projection`).
+
 ##### Open-reconciliation register (S5-C01)
 
 <!-- EVIDENCE:UVT-S5-SPEC:S5-C01A-RESOLVED -->
