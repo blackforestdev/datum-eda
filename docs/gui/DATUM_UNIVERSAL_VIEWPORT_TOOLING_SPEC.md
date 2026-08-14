@@ -806,6 +806,51 @@ by the sweep:
 - **B3 no handle geometry** — no transform-handle overlay renders in S5A
   for any selection state (`boundary_no_handles_in_s5a`).
 
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C06-ATOMIC -->
+**Atomic refusal law (S5-C06, 2026-08-14).** One law governs every later
+operation invoked over a selection, from any surface (S5B transforms,
+quantize/align, parametric deep verbs, batch fields, domain tools):
+
+- **Preflight, then all-or-nothing.** Before emitting any `Operation`, the
+  shared batch guard preflights every member. A member that is **locked**,
+  **stale** (fails §2.2.18 re-validation), **incompatible** (the operation
+  is not typed for its class), **constrained** (a rule or solver constraint
+  forbids the result), or **invalid** (fails engine validation) causes the
+  **whole operation to refuse**. No member is silently skipped, no partial
+  mutation is committed, and no journal entry is produced by a refusal.
+- **Explained, never mute.** A refusal names the blocking members and the
+  blocker kind per member, using the same blocker vocabulary the outputs
+  contract already disclosed (§2.2.19 O4) — a refused operation is never a
+  surprise the Inspector did not already show. The explanation states how
+  to proceed (unlock explicitly, remove members, narrow scope).
+- **No implicit repair.** Refusal never auto-unlocks, auto-drops, or
+  auto-narrows the selection to make the operation succeed; the user (or
+  agent) modifies the selection or the blockers explicitly and re-invokes.
+  The sole ratified exception remains §2.2.9 `Ctrl+A` hidden-member
+  manipulation, which is explicit global scope by definition.
+- **Same law for agents.** Operations arriving via CLI/MCP over a
+  selection-derived id set refuse identically with the same typed blocker
+  report — no surface gets a lenient partial-application mode.
+
+Reconciled wording: §3.3 quantize (widened from locked-only to the full
+five-blocker enumeration); `DATUM_GUI_PARAMETRIC_TOOLING.md` (already
+carries the full enumeration — confirmed conformant); §2.2.7/2.2.9/2.2.10
+whole-refusal clauses (confirmed as instances of this law).
+
+**Atomicity assertions (TO-ENFORCE; consumed by S5-C10):**
+
+- **R1 whole refusal** — one blocked member of any of the five kinds
+  refuses the entire operation with zero journal effect
+  (`refusal_whole_operation_no_journal`).
+- **R2 blocker disclosure parity** — the refusal report matches the
+  §2.2.19 blocker vocabulary and names every blocking member
+  (`refusal_report_matches_outputs`).
+- **R3 no implicit repair** — refusal never mutates selection membership
+  or lock state (`refusal_no_implicit_repair`).
+- **R4 surface parity** — GUI, CLI, and MCP invocations over the same
+  selection state produce identical refusal reports
+  (`refusal_surface_parity`).
+
 #### 2.2.15 Canonical S5 specification-closure requirements
 
 These stable IDs are exhaustive for the remaining S5 contract. The structured
@@ -2157,8 +2202,9 @@ align_components { path, components: [uuid,…], op: align,
     grid_origin: Point<i64 nm>, grid_spacing: Vector<i64 nm> }  // recorded in provenance
 ```
 
-Any locked member causes an explained whole-operation refusal by the shared
-batch guard; quantize never skips a selected member or partially succeeds.
+Any locked, stale, incompatible, constrained, or invalid member causes an
+explained whole-operation refusal by the shared batch guard (§2.2.14 atomic
+refusal law); quantize never skips a selected member or partially succeeds.
 
 *Disposition: TO-ENFORCE — verb-registry parity (the new `reference: grid` value +
 menu verb) and a test that quantize preserves net connectivity; owner sign-off on
