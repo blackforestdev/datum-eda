@@ -37,10 +37,11 @@
         "docs/gui/DATUM_RENDERING_BOOK.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
         "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
-        "docs/PROJECT_STATE_POLICY.md"
+        "docs/PROJECT_STATE_POLICY.md",
+        "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md"
       ],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
@@ -50,7 +51,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C12",
+        "canonical_next_step_id": "S5-C13",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -484,7 +485,7 @@
           {
             "id": "S5-C12",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Allocate the next available decision number at creation time and ratify Layer-2 selection identity plus the S5A/S5B boundary without authorizing implementation.",
             "depends_on": [
               "S5-C11"
@@ -495,7 +496,13 @@
                 "marker": "S5-C12"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "decision",
+                "path": "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C12-DECISION"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `ratify`, or `revise — <required decision correction>`.",
               "requests": [
