@@ -1296,15 +1296,22 @@ open — such cells carry `OPEN-n` markers regardless.
   `schematic_hit_kind()` returns None → no hit regions. *Verdict:* spec
   **ratified** (OPEN-5 resolved); substrate **absent**.
 - **Hierarchical sheet representation.**
-  Every selection cell is spec-silent: §2.2.4–2.2.13 never address sheets —
-  no ownership rule (are sheet pins/ports children?), no qualification
-  family, no scope, no projection, no descend-into-sheet interaction
-  (`OPEN-11`). The Sheets panel (P2) is navigation, not a selection-subject
-  Inspector projection. *Scene authority:* ABSENT — sheet instances emit as
-  plain `schematic_graphic` rects with id `schematic-sheet-instance:{uuid}`
-  (`schematic_scene_import/mod.rs:293-310`), no hit kind, no hit region.
-  *Verdict:* spec **silent**; substrate **absent** — **unsupported** pending
-  `OPEN-11` ratification (author the rules or formally defer).
+  **Deferred from S5A by owner ratification (OPEN-11 resolved,
+  2026-08-14).** Sheets render today (plain `schematic_graphic` rects, id
+  `schematic-sheet-instance:{uuid}`, `schematic_scene_import/mod.rs:293-310`)
+  but carry no hit kind and no typed identity, and the selection subject is
+  undesigned in three directions: no Rendering Book sheet construction, no
+  typed sheet-pin children, and cross-sheet instance identity unaddressed.
+  Sheet interaction is navigation-dominated — the descend/breadcrumb model
+  belongs to the schematic-surface design pass, which precedes selection
+  rules. Visible-but-inert sheet bodies are acceptable in read-only S5A; the
+  Sheets panel (P2) provides list navigation. **Gesture reservation
+  (ratified now):** double click on a sheet body is reserved for
+  descend-into-sheet and no future step may bind it otherwise. **Re-entry
+  condition:** author sheet selection rules when the schematic-surface
+  design pass defines the sheet construction and navigation model AND typed
+  sheet + sheet-pin scene authority exists. *Verdict:* spec **ratified
+  deferral**; substrate **absent** — **unsupported in S5A by design**.
 
 ##### Symbol Editor
 
@@ -1593,6 +1600,17 @@ new choice after C02–C10 are complete.
   *Candidate:* filled-graphic-style rect qualification for the sheet body
   with sheet pins as children, or formally defer from S5A. *Decision:* S5-C01A.
   *Propagation:* S5-C02/S5-C04/S5-C07/S5-C08.
+  *RESOLVED (owner, 2026-08-14): deferred from S5A* (recorded in the sheet
+  matrix row as a ratified deferral). *Reason:* the subject is undesigned in
+  three directions — no Rendering Book sheet construction, no typed
+  sheet-pin children, cross-sheet instance identity unaddressed — and sheet
+  interaction is navigation-dominated, belonging to the schematic-surface
+  design pass; ratifying selection gestures before the navigation model is
+  designed invites OPEN-1-class gesture collisions. Sheets render today, so
+  visible-but-inert bodies are acceptable in read-only S5A. Ratified now:
+  double click on a sheet body is reserved for descend-into-sheet.
+  Re-entry: schematic-surface design pass + typed sheet/sheet-pin scene
+  authority.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-12 -->
 - **OPEN-12 — non-authored subject semantics.** Region/scope/hidden/locked/
   compound rules for proposal, review, and diagnostic subjects are declared
