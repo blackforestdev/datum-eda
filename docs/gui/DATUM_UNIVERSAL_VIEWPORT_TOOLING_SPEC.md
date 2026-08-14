@@ -250,6 +250,18 @@ later tuning requires usability evidence and a governed spec change.
   plus pad-number text project as one pad subject** (the RB §2.7 pin
   construction analogy); pad-number text is therefore excluded from the
   owned-text class, exactly as pin name/number text is.
+- **Definition-editor owned graphics (owner-resolved, S5-C01A / OPEN-5,
+  2026-08-14):** inside the Footprint and Symbol Editors, owned graphics —
+  body strokes, silk artwork, lines/arcs, and filled shapes — are
+  **independent authored targets** qualified by the existing generic rules:
+  the line/path anchor rule for strokes and the filled-graphic rule (100%
+  enclosure; direct click; Select-menu entry) for filled shapes, including
+  the symbol body fill, which is the authored object in its editor. In
+  board/schematic workspaces owned graphics remain parent projections
+  (OPEN-2), completing one uniform law: every child class is a parent
+  projection in placement workspaces and an independent target in its
+  definition editor. Standalone schematic drawings carry the same generic
+  construction with no cross-pane twin.
 - Copper zones do not qualify from a partial rectangle/lasso overlap; they
   qualify only when **100 percent** of their authored filled area (including all
   islands) is enclosed. Otherwise a zone is selected by direct primary click or
@@ -1085,18 +1097,20 @@ open — such cells carry `OPEN-n` markers regardless.
   *Verdict:* spec **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate
   **absent**.
 - **Owned graphics (strokes and filled shapes).**
-  Named only by the mandatory S5-C01 row; §2.2 body is silent on editor-side
-  ownership, qualification, and projection. Candidate resolution: extend the
-  generic path + filled-graphic rules of §2.2.4 to this workspace as
-  independent authored targets (`OPEN-5`); board-workspace sub-graphics
-  remain parent projections (OPEN-2 resolved). Graphics are not uniformly backed by
-  authored engine identities (COMP), which blocks stable identity bookkeeping
-  until that converges. *Hidden/locked:* B-HL once admitted. *Overlay:*
-  generic B-OV + B-LOD (no class-specific RB text). *Inspector:* B-INS; no
-  common fields until identities converge (COMP). *Scene authority:* ABSENT —
-  no editor surface; board-side `ComponentGraphicPrimitive` (`lib.rs:168`)
-  hit-maps to the parent component. *Verdict:* spec **silent** (`OPEN-5`);
-  substrate **absent** — **deferred** until `OPEN-5` ratifies the rules.
+  *Ownership:* independent authored targets in this workspace (OPEN-5
+  resolved, §2.2.4 definition-editor owned-graphics clause); board-workspace
+  sub-graphics remain parent projections (OPEN-2 resolved).
+  *Qualification:* the existing generic rules — path anchor rule for
+  strokes/arcs, filled-graphic rule (100% enclosure; direct click;
+  Select-menu entry) for filled shapes (UVT §2.2.4). *Scope:* object-only.
+  Graphics are not uniformly backed by authored engine identities (COMP),
+  which blocks stable identity bookkeeping until that converges.
+  *Hidden/locked:* B-HL. *Overlay:* generic B-OV + B-LOD (no class-specific
+  RB text). *Inspector:* B-INS; no common fields until identities converge
+  (COMP). *Scene authority:* ABSENT — no editor surface; board-side
+  `ComponentGraphicPrimitive` (`lib.rs:168`) hit-maps to the parent
+  component. *Verdict:* spec **ratified** (OPEN-5 resolved); substrate
+  **absent**.
 
 ##### Schematic editor
 
@@ -1232,13 +1246,14 @@ open — such cells carry `OPEN-n` markers regardless.
   *Qualification:* generic rules govern — path rule for strokes,
   filled-graphic rule (100% enclosure) for filled shapes (UVT §2.2.4).
   *Scope:* object-only. *Projection:* filled shapes project outline + fill
-  as one identity; class-specific cross-pane projection unstated (`OPEN-5`).
-  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD; no class-specific RB
-  silhouette text (`OPEN-5`). *Inspector:* B-INS; no common fields until
+  as one identity; sheet-local documentation geometry with no cross-pane
+  twin (OPEN-5 resolved). *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD —
+  the generic construction is the ratified treatment (OPEN-5 resolved).
+  *Inspector:* B-INS; no common fields until
   authored identities converge (COMP). *Scene authority:* ABSENT —
   schematic drawings emit as untyped `schematic_graphic`;
   `schematic_hit_kind()` returns None → no hit regions. *Verdict:* spec
-  **partial** (`OPEN-5`); substrate **absent**.
+  **ratified** (OPEN-5 resolved); substrate **absent**.
 - **Hierarchical sheet representation.**
   Every selection cell is spec-silent: §2.2.4–2.2.13 never address sheets —
   no ownership rule (are sheet pins/ports children?), no qualification
@@ -1290,16 +1305,16 @@ open — such cells carry `OPEN-n` markers regardless.
   surface; no owned-text selection identity exists anywhere. *Verdict:* spec
   **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate **absent**.
 - **Owned graphics (body strokes, lines/arcs, filled shapes).**
-  As the Footprint Editor owned-graphics row: mandatory S5-C01 row, but §2.2
-  is silent on editor-side qualification/ownership/projection; the schematic
-  rule explicitly excludes symbol-body fills from the filled-graphic class,
-  so the generic rules cannot be assumed to extend (`OPEN-5`); the RB dark-
-  body-fill retention rule is stated for whole-symbol selection, not
-  editor-side fills. Authored engine identity for graphics is not uniform
-  (COMP). *Scene authority:* ABSENT — no editor surface; symbol drawings
-  emit as untyped `schematic_graphic`, no hit region. *Verdict:* spec
-  **silent** (`OPEN-5`); substrate **absent** — **deferred** until `OPEN-5`
-  ratifies the rules.
+  As the Footprint Editor owned-graphics row: independent authored targets
+  in this workspace under the generic path + filled-graphic rules (OPEN-5
+  resolved, §2.2.4) — **including the symbol body fill, which is the
+  authored object in its editor**; on the schematic the body fill remains a
+  parent projection and the RB dark-body-fill retention rule continues to
+  describe whole-symbol selection, not editor-side fill selection. Authored
+  engine identity for graphics is not uniform (COMP). *Scene authority:*
+  ABSENT — no editor surface; symbol drawings emit as untyped
+  `schematic_graphic`, no hit region. *Verdict:* spec **ratified** (OPEN-5
+  resolved); substrate **absent**.
 
 ##### Cross-cutting non-authored subjects (all editors)
 
@@ -1443,7 +1458,17 @@ new choice after C02–C10 are complete.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-5 -->
 - **OPEN-5 — editor-workspace owned graphics.** Whether the generic
   path/filled rules extend to Footprint/Symbol Editor owned graphics (and
-  schematic drawing cross-pane/overlay specifics). *Candidate:* extend the
+  schematic drawing cross-pane/overlay specifics). *RESOLVED (owner,
+  2026-08-14): approved as recommended* (recorded as the §2.2.4
+  definition-editor owned-graphics clause). *Reason:* manual-first — silk
+  artwork and symbol bodies cannot be authored without selecting them;
+  reuses the ratified generic predicates instead of inventing per-editor
+  rules; completes the uniform child law (parent projection in placement
+  workspaces, independent target in the definition editor); the symbol-body
+  fill is the authored object in its editor while the schematic-side
+  dark-fill law continues to describe whole-symbol selection. Substrate
+  remains honestly absent (no editor surfaces; graphics identity
+  convergence pending per COMP). *Candidate was:* extend the
   generic §2.2.4 rules as independent authored targets in definition
   editors. *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C07/S5-C08.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-6 -->
