@@ -290,6 +290,16 @@ independent authored target and follows the same strict-majority oriented-layout
 rule. Direct primary click and the local `Select` menu remain the precise paths
 for difficult text cases.
 
+**All owned text kinds (owner-resolved, S5-C01A / OPEN-3, 2026-08-14):** the
+definition-editor independence above applies to **every** owned text kind —
+reference/value, user text, fabrication notes, and additional symbol fields —
+under the same strict-majority oriented-layout rule; there is one text
+qualification law, never a per-kind variant. In board/schematic workspaces all
+owned text kinds alike remain parent projections (not selectable, not
+counted). Hidden-field editor behavior is governed by the OPEN-13 resolution;
+the field table (key add/delete/reorder) remains a dedicated tool — canvas
+selection governs the placed text subject.
+
 Filled graphics here means authored non-zone shapes with an interior (for
 example PCB logo/documentation polygons, rectangles, or circles); schematic
 symbol-body fills remain projections of their parent symbol.
@@ -1047,13 +1057,12 @@ open — such cells carry `OPEN-n` markers regardless.
   `crates/gui-render/src/render/types.rs:80-83`); the only pad type is the
   board-review `PadPrimitive` (`lib.rs:249`). *Verdict:* spec **partial**
   (`OPEN-4`, `OPEN-6`); substrate **absent**.
-- **Owned text (reference/value ratified; other owned text open).**
-  *Ownership:* footprint-owned reference/value text is an independent
-  authored target in this workspace; in the board workspace it is a parent
-  projection, not selectable, not counted (UVT §2.2.4). Owned user/fab text
-  beyond reference/value is a real class (imported designs carry it; the
-  board scene already renders owned-text roles beyond ref/value) but is
-  spec-silent (`OPEN-3`). *Qualification:* strict-majority oriented-layout
+- **Owned text (all kinds).**
+  *Ownership:* every footprint-owned text kind — reference/value, user text,
+  fab notes — is an independent authored target in this workspace (OPEN-3
+  resolved, §2.2.4 all-owned-text clause); in the board workspace all owned
+  text alike is a parent projection, not selectable, not counted
+  (UVT §2.2.4). *Qualification:* strict-majority oriented-layout
   rule, ratified for owned text by the §2.2.4 Footprint Editor clause;
   B-CLICK. *Scope:* object-only. *Projection:* definition↔instance text
   mapping unstated (`OPEN-6`). *Hidden/locked:* B-HL; field-visibility vs
@@ -1062,7 +1071,7 @@ open — such cells carry `OPEN-n` markers regardless.
   handles only). *Inspector:* B-INS; style/height/stroke/alignment/visibility
   where typed (COMP). *Scene authority:* ABSENT — no editor surface; nearest
   type `ComponentTextPrimitive` (`lib.rs:182`) is board-side, no hit region.
-  *Verdict:* spec **partial** (`OPEN-3`, `OPEN-6`, `OPEN-13`); substrate
+  *Verdict:* spec **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate
   **absent**.
 - **Owned graphics (strokes and filled shapes).**
   Named only by the mandatory S5-C01 row; §2.2 body is silent on editor-side
@@ -1256,18 +1265,19 @@ open — such cells carry `OPEN-n` markers regardless.
   schematic-surface `SchematicHitKind::Pin`, which resolves to the parent
   symbol. *Verdict:* spec **partial** (`OPEN-4`, `OPEN-6`); substrate
   **absent**.
-- **Owned text (reference/value ratified; other owned text open).**
-  As the Footprint Editor owned-text row, for symbol-owned text: independent
+- **Owned text (all kinds).**
+  As the Footprint Editor owned-text row, for symbol-owned text: every owned
+  text kind — reference/value and all additional fields — is an independent
   authored target in this workspace under the strict-majority oriented-layout
-  rule (UVT §2.2.4); pin name/number text is NOT this class — it belongs to
-  the pin subject (RB §2.7). Owned text beyond reference/value fields is
-  spec-silent (`OPEN-3`); definition↔instance field projection unstated
+  rule (OPEN-3 resolved, §2.2.4 all-owned-text clause); pin name/number text
+  is NOT this class — it belongs to the pin subject (RB §2.7).
+  Definition↔instance field projection unstated
   (`OPEN-6`); field-visibility vs layer-visibility semantics unreconciled
   (`OPEN-13`). *Overlay:* B-OV + B-LOD; RB §2.7 text law. *Inspector:*
   B-INS; symbol fields expose visibility/position after typed ops; the field
   table is a dedicated tool (COMP). *Scene authority:* ABSENT — no editor
   surface; no owned-text selection identity exists anywhere. *Verdict:* spec
-  **partial** (`OPEN-3`, `OPEN-6`, `OPEN-13`); substrate **absent**.
+  **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate **absent**.
 - **Owned graphics (body strokes, lines/arcs, filled shapes).**
   As the Footprint Editor owned-graphics row: mandatory S5-C01 row, but §2.2
   is silent on editor-side qualification/ownership/projection; the schematic
@@ -1394,6 +1404,14 @@ new choice after C02–C10 are complete.
   silent. *Candidate:* same independent-target + oriented-rect rule for all
   owned text kinds in the definition editors. *Decision:* S5-C01A.
   *Propagation:* S5-C04/S5-C07.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.4 all-owned-text clause). *Reason:* manual-first makes definition-
+  editor selectability non-optional — unreachable-by-hand text cannot be
+  authored; one text qualification law avoids per-kind divergence (Lean);
+  KiCad/Altium library editors select all owned text without role
+  distinction. Board/schematic parent-projection behavior is unchanged for
+  every kind. Hidden-field semantics stay with OPEN-13; the field table
+  stays a dedicated tool.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-4 -->
 - **OPEN-4 — Footprint/Symbol Editor child region rules + composition.**
   Pad region qualification, pin-compound region qualification, and
