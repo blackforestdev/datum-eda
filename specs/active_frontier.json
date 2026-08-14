@@ -761,9 +761,9 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Replace prompt-memory discovery with client-native adapters, standard MCP, pinned context, scoped authority, portable workflows, and production interoperability proof before terminal execution continues.",
       "dependencies": [],
@@ -772,22 +772,10 @@
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "terminal-agent-interop-2026-08-14",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "bf906cfe598ea5efe0dfe9843f67da05bd1922c6",
-        "claimed_at": "2026-08-14T20:49:37Z",
-        "heartbeat_at": "2026-08-14T20:55:42Z",
-        "expires_at": "2026-08-15T04:55:42Z",
-        "scope": [
-          "terminal-agent-interoperability-contract"
-        ]
-      },
+      "landing_commit": "3d261b5",
       "completion": {
         "outcome": "Datum has a governed and implementation-tracked agent interoperability plane that makes fresh code agents discover project context, standard MCP, scoped authority, and portable workflows without memory or prompt injection.",
-        "canonical_next_step_id": "AIC-C05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -890,7 +878,7 @@
           {
             "id": "AIC-C05",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Pass project-state, governance, parity, and source-health gates; close with commit evidence; then return the canonical selector to T0-C02.",
             "depends_on": [
               "AIC-C04"
@@ -901,7 +889,12 @@
                 "marker": "AIC-C05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "3d261b5"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -928,9 +921,9 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path.",
       "dependencies": [
