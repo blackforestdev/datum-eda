@@ -24,37 +24,40 @@
 - **Complete the S5 selection contract and identity decision** (`UVT-S5-SPEC`; `dat-s5-selection-visual-contract-zid`).
    Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`, `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`, `docs/gui/DATUM_RENDERING_BOOK.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`, `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`.
-- **Deliver the native terminal emulator** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
-   Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain. *state `planned`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* trustworthy embedded shell and agent surface. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Establish terminal keyboard-focus authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
-   Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect. *state `ready`; authorization `execution`; **CANONICAL NEXT**; parallel lane.*
-   *Dependencies:* none. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
+- **Course-correct the full native terminal product contract** (`FULL-NATIVE-TERMINAL-CONTRACT`; `dat-full-native-terminal-contract-e2d`).
+   Replace the terminal-lite/custom-core plan with a governed fully fledged native terminal product, mature-core adoption, complete daily-driver capability matrix, and production agent/CLI/MCP proof. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* dat-pan-trace-terminal-pollution-0j0. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
-- **Collapse the rival terminal input models** (`TERMINAL-P0-INPUT`; `dat-terminal-dual-input-model-75y`).
-   Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Remove pan diagnostics from the PTY screen** (`TERMINAL-P0-DIAGNOSTICS`; `dat-pan-trace-terminal-pollution-0j0`).
-   Stop application diagnostics from corrupting the foreign-shell PTY presentation. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`.
-- **Replace the hand-rolled PTY with portable-pty** (`TERMINAL-P0-PTY`; `dat-terminal-emulator-epic-jzv.1`).
-   Swap unsafe libc PTY setup for portable-pty while retaining process-group signal behavior. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* terminal Phase 1 barrier. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Stand up the terminal grid render interface** (`TERMINAL-P0-RENDER`; `dat-terminal-emulator-epic-jzv.2`).
-   Lock the Grid-to-Quad/TextRun boundary and font-measured cell metrics before replacing the backing state model. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* terminal Phase 1 cell grid. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Build the terminal cell-grid state model** (`TERMINAL-P1-GRID`; `dat-terminal-emulator-epic-jzv.3`).
-   Replace the string/RLE terminal state with a lossless attributed cell grid after every mandatory Phase 0 task lands. *state `blocked`; authorization `execution`.*
-   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`, `dat-terminal-dual-input-model-75y`, `dat-terminal-emulator-epic-jzv.1`, `dat-terminal-emulator-epic-jzv.2`, `dat-terminal-focus-authority-6aw`. *Unblocks:* terminal Phase 2, terminal Phase 4. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Add Unicode width and scrollback separation** (`TERMINAL-P2-WIDTH`; `dat-terminal-emulator-epic-jzv.4`).
-   Add grapheme-aware cell width, bounded scrollback, and correct alternate-screen behavior after the cell grid lands. *state `blocked`; authorization `execution`.*
-   *Dependencies:* `dat-terminal-emulator-epic-jzv.3`. *Unblocks:* terminal Phase 3 reflow. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Implement terminal reflow on resize** (`TERMINAL-P3-REFLOW`; `dat-terminal-emulator-epic-jzv.5`).
-   Rewrap logical lines while preserving cursor, wide-cell, scroll-region, and scrollback invariants. *state `blocked`; authorization `execution`.*
-   *Dependencies:* `dat-terminal-emulator-epic-jzv.4`. *Unblocks:* terminal Phase 4 polish. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
-- **Add terminal damage tracking and protocol polish** (`TERMINAL-P4-POLISH`; `dat-terminal-emulator-epic-jzv.6`).
-   Complete the declared terminal sequence with damage tracking and bounded DEC/OSC support. *state `blocked`; authorization `execution`.*
-   *Dependencies:* `dat-terminal-emulator-epic-jzv.5`. *Unblocks:* terminal epic verification. *Governing:* `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`.
+- **Deliver the fully fledged Datum-native terminal** (`TERMINAL-EPIC`; `dat-terminal-emulator-epic-jzv`).
+   Deliver T0-T4: shell-screen truth, mature core and PTY, native rendering/input, daily-driver UX/protocols, and verified Datum CLI/MCP/code-agent operation. *state `planned`; authorization `execution`.*
+   *Dependencies:* none. *Unblocks:* trustworthy daily-driver embedded terminal and agent surface. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Restore foreign-shell screen authority and visible-output proof** (`TERMINAL-T0-SHELL-TRUTH`; `dat-pan-trace-terminal-pollution-0j0`).
+   Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-full-native-terminal-contract-e2d`. *Unblocks:* dat-terminal-focus-authority-6aw, dat-terminal-dual-input-model-75y, dat-terminal-emulator-epic-jzv.1, dat-terminal-emulator-epic-jzv.2, dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Complete terminal focus and input authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
+   Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
+- **Collapse the rival terminal input models** (`TERMINAL-T1-INPUT`; `dat-terminal-dual-input-model-75y`).
+   Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Replace terminal transport with portable-pty** (`TERMINAL-T1-PTY`; `dat-terminal-emulator-epic-jzv.1`).
+   Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Integrate the mature TerminalCore adapter** (`TERMINAL-T1-CORE`; `dat-terminal-emulator-epic-jzv.2`).
+   Pin libghostty-vt behind Datum's closed adapter and prohibit extension of the bespoke emulator as a rival core. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Complete native renderer, focus, input, IME and text interaction** (`TERMINAL-T2-NATIVE`; `dat-terminal-emulator-epic-jzv.3`).
+   Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`, `dat-terminal-dual-input-model-75y`, `dat-terminal-emulator-epic-jzv.1`, `dat-terminal-emulator-epic-jzv.2`, `dat-terminal-focus-authority-6aw`. *Unblocks:* dat-terminal-emulator-epic-jzv.4. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Deliver scrollback, reflow, search, links and daily-driver session UX** (`TERMINAL-T3-UX`; `dat-terminal-emulator-epic-jzv.4`).
+   Deliver complete scrollback/reflow/search/link behavior plus tabs, splits, profiles, themes, fonts, lifecycle, maximize/detach, shell and terminfo integration. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.3`. *Unblocks:* dat-terminal-emulator-epic-jzv.5. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Complete modern protocols, graphics, security and accessibility** (`TERMINAL-T3-PROTOCOLS`; `dat-terminal-emulator-epic-jzv.5`).
+   Close synchronized output, OSC 8/52, kitty keyboard, kitty graphics/sixel, security policy, and complete accessibility behavior. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.4`. *Unblocks:* dat-terminal-emulator-epic-jzv.6. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+- **Verify Datum CLI/MCP/agent integration and production terminal quality** (`TERMINAL-T4-VERIFY`; `dat-terminal-emulator-epic-jzv.6`).
+   Close only after quantified conformance/performance/security/accessibility evidence and real Codex, Claude, local-agent, CLI/MCP, shell and TUI acceptance. *state `blocked`; authorization `execution`.*
+   *Dependencies:* `dat-terminal-emulator-epic-jzv.5`. *Unblocks:* terminal epic verification and closure. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
 - **Build the read-only Command Console display** (`CONSOLE-READONLY`; `dat-output-lane-t6v`).
    Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track. *state `specified`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* visible GUI action narration and diagnostics. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.

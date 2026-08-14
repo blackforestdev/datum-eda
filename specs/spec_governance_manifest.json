@@ -336,7 +336,7 @@
    "class": "doctrine",
    "controlling": true,
    "progress_anchor": "TERMINAL-EPIC",
-   "notes": "Ratifies building the embedded terminal to a pro-grade native emulator by owning the Grid<Cell> state model on the existing VT parser + xterm codec (keeps parser/codec, TE-002). TE-001..009: real shell / higher bar (reaffirms 005); swappable adopt-agnostic core behind a Grid->(Quad,TextRun) render interface; three guardrails (unicode-width/unicode-segmentation, vttest/esctest2, no graphics ceiling); one keyboard-focus authority reconciling dock-visibility/keyboard-focus/window-focus and pane-focus (021); GUI never writes to the PTY (reaffirms 005/ConsoleLaneState, re-homes the board-text CLI-string path on the write-path track); cell grid is a gui-app concern not gui-protocol; portable-pty; phased conformance-gated delivery. Detail: research/terminal-redesign/ + tracked as the terminal-emulator epic in beads."
+   "notes": "Original native-terminal direction retained for real-shell, focus, PTY and adapter boundaries, but amended by decision 027: the bespoke Grid<Cell> build mandate, graphics exclusion and terminal-lite phase ceiling are superseded by mature-core adoption and the full product contract."
   },
   "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md": {
    "class": "doctrine",
@@ -606,6 +606,17 @@
    "controlling": true,
    "progress_anchor": "UVT-S5-SPEC",
    "notes": "Ratifies the Layer-2 selection-identity doctrine on the S5 closure corpus: closed typed subject vocabulary (None/Object/Compound/Run/GlobalNet/Bus/Proposal/Review/Diagnostic) superseding the singleton SelectionTarget; the same-identity vs merely-related law with a closed eight-mapping classification table (amendment required to reclassify); the S5A read-only delivery boundary with S5B seams disabled-with-reason; and the five-blocker atomic whole-refusal law with GUI/CLI/MCP parity. Authorizes NO implementation; dimensions and hierarchical sheets remain deliberate S5A exclusions tracked by re-entry beads; Application Status Bar remains deferred. Evidence: UVT 2.2.16-2.2.22 + 4.4, conformance ledger section 8, owner-approved selection-study reference, dat-s5-selection-visual-contract-zid bead trail."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md": {
+   "class": "doctrine",
+   "controlling": true,
+   "progress_anchor": "FULL-NATIVE-TERMINAL-CONTRACT",
+   "notes": "Amends decision 024 to require a fully fledged daily-driver embedded terminal over a pinned mature VT/state core, exclusive PTY screen truth, complete native UX/protocol/security/accessibility coverage, and verified Datum CLI/MCP/code-agent operation."
+  },
+  "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
+   "class": "governed",
+   "progress_anchor": "TERMINAL-EPIC",
+   "notes": "Buildable NT-CAP-01..18 product contract and T0-T4 verification sequence under decision 027."
   }
  }
 }

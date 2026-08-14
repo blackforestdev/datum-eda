@@ -330,6 +330,13 @@ Minimum project competency:
 
 Datum's terminal must be a real embedded terminal, not a fake command lane.
 
+Product Mechanics 027 and `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md` are the
+controlling implementation contract. They resolve the quality question below:
+the product target is a fully fledged daily-driver embedded terminal over a
+pinned mature emulation core, not a bespoke terminal-lite widget. A focus fix,
+PTY transport, parser, cell grid, or command-console surface is only a bounded
+implementation slice and cannot satisfy this section by itself.
+
 It should feel like a native terminal application such as Ghostty, Konsole, or
 similar professional Linux terminals.
 
@@ -501,8 +508,10 @@ Any code agent working on Datum should apply these rules before choosing work:
 5. Do not create a new editing path that bypasses the canonical transaction
    model.
 6. Do not treat a viewer or review surface as equivalent to an editor.
-7. Do not implement terminal features as fake command text unless they are on
-   the path to a real PTY-backed terminal.
+7. Implement the terminal through the decision-027 T0–T4 sequence. Only PTY
+   output may mutate terminal cells; Datum notices use non-terminal surfaces.
+   Do not substitute fake command text, an activity feed, or a private bespoke
+   emulator core for the governed full-terminal product.
 8. Do not treat a built-in assistant tab as the primary AI architecture. The
    primary architecture is Datum primitives plus real terminal/CLI/MCP access
    that lets users run whichever agents or tools they choose.
@@ -521,9 +530,7 @@ rewrites or major new implementation:
    surface?
 5. Should a built-in assistant surface exist before the real terminal and
    CLI/MCP agent workflow are product-real?
-6. What terminal implementation quality is required before the terminal can be
-   considered product-real?
-7. Which current M7/import-fidelity work should be frozen, completed, or
+6. Which current M7/import-fidelity work should be frozen, completed, or
    demoted after this mechanics model is accepted?
 
 ## Immediate Implication

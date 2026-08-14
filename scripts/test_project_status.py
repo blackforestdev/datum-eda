@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -443,9 +443,11 @@ class ProjectStatusTest(unittest.TestCase):
         s5 = next(item for item in manifest["frontier"] if item["key"] == "UVT-S5-SPEC")
         expected = ["S5-C01", "S5-C01A"] + [f"S5-C{number:02d}" for number in range(2, 14)]
         self.assertEqual(expected, [step["id"] for step in s5["completion"]["steps"]])
-        self.assertEqual("S5-C01A", s5["completion"]["canonical_next_step_id"])
-        self.assertEqual("owner_decision", s5["authorization"])
+        self.assertIsNone(s5["completion"]["canonical_next_step_id"])
+        self.assertEqual("landed", s5["state"])
+        self.assertEqual("none", s5["authorization"])
         steps = {step["id"]: step for step in s5["completion"]["steps"]}
+        self.assertTrue(all(step["status"] == "complete" for step in steps.values()))
         self.assertEqual("owner_decision", steps["S5-C01A"]["kind"])
         self.assertEqual(
             [f"OPEN-{number}" for number in range(1, 15)],
@@ -458,7 +460,7 @@ class ProjectStatusTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         open_register = spec.split("##### Open-reconciliation register (S5-C01)", 1)[1]
         self.assertNotIn("*Owner:* S5-C11", open_register)
-        self.assertIn("S5-C11 only performs final review", open_register)
+        self.assertRegex(open_register, r"S5-C11 only performs\s+final review")
         self.assertFalse(s5["completion"]["post_completion"]["authorizes_successor"])
         self.assertFalse(s5["completion"]["post_completion"]["selects_successor"])
         issues, failures = status.load_issues(repository / ".beads/issues.jsonl")
@@ -470,7 +472,7 @@ class ProjectStatusTest(unittest.TestCase):
             )
         ]
         self.assertEqual(expected, rendered_ids)
-        self.assertIn("Next completion step: [S5-C01A]", rendered)
+        self.assertIn("Next completion step: none; every completion step is complete.", rendered)
         self.assertIn("does not authorize parallel work", rendered)
     def test_duplicate_next_and_order_fail(self) -> None:
         duplicate = self.item(key="second", issue_id="dat-intake")
@@ -515,6 +517,7 @@ class ProjectStatusTest(unittest.TestCase):
         })
         self.assert_failure("claim expired", datetime(2026, 8, 13, 12, tzinfo=timezone.utc))
     def test_fresh_claim_passes(self) -> None:
+        moment = datetime.now(timezone.utc)
         self.issues[0] = self.issue(
             "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
         )
@@ -523,13 +526,13 @@ class ProjectStatusTest(unittest.TestCase):
             "claim": {
                 "agent": "codex", "harness": "codex-cli", "session": "session-1",
                 "worktree": ".", "head": self.head(),
-                "claimed_at": "2026-08-13T09:00:00Z",
-                "heartbeat_at": "2026-08-13T10:00:00Z",
-                "expires_at": "2026-08-14T10:00:00Z",
+                "claimed_at": (moment - timedelta(hours=2)).isoformat(),
+                "heartbeat_at": (moment - timedelta(hours=1)).isoformat(),
+                "expires_at": (moment + timedelta(hours=1)).isoformat(),
                 "scope": ["scripts/project_status.py", "scripts/test_project_status.py"],
             },
         })
-        self.assertEqual([], self.failures(datetime(2026, 8, 13, 12, tzinfo=timezone.utc)))
+        self.assertEqual([], self.failures(moment))
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(0, status.main([

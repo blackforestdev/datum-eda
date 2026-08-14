@@ -556,55 +556,42 @@
       "landing_commit": "67f76973642ea7085c4822cbde2866e082655241"
     },
     {
-      "key": "TERMINAL-EPIC",
+      "key": "FULL-NATIVE-TERMINAL-CONTRACT",
       "order": 2,
-      "title": "Deliver the native terminal emulator",
-      "issue_id": "dat-terminal-emulator-epic-jzv",
-      "related_issue_ids": [
-        "dat-terminal-focus-authority-6aw",
-        "dat-terminal-dual-input-model-75y",
-        "dat-pan-trace-terminal-pollution-0j0",
-        "dat-terminal-emulator-epic-jzv.1",
-        "dat-terminal-emulator-epic-jzv.2",
-        "dat-terminal-emulator-epic-jzv.3",
-        "dat-terminal-emulator-epic-jzv.4",
-        "dat-terminal-emulator-epic-jzv.5",
-        "dat-terminal-emulator-epic-jzv.6"
-      ],
+      "title": "Course-correct the full native terminal product contract",
+      "issue_id": "dat-full-native-terminal-contract-e2d",
       "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md"
       ],
-      "state": "planned",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": true,
-      "summary": "Execute the decision-024 terminal plan through the explicitly tracked Phase 0 barrier and Phase 1-4 chain.",
-      "dependencies": [],
-      "unblocks": [
-        "trustworthy embedded shell and agent surface"
-      ]
-    },
-    {
-      "key": "TERMINAL-P0-FOCUS",
-      "order": 3,
-      "title": "Establish terminal keyboard-focus authority",
-      "issue_id": "dat-terminal-focus-authority-6aw",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
-      ],
-      "state": "ready",
-      "authorization": "execution",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
-      "parallel": true,
-      "summary": "Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect.",
+      "parallel": false,
+      "summary": "Replace the terminal-lite/custom-core plan with a governed fully fledged native terminal product, mature-core adoption, complete daily-driver capability matrix, and production agent/CLI/MCP proof.",
       "dependencies": [],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
+        "dat-pan-trace-terminal-pollution-0j0"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "terminal-contract-2026-08-14",
+        "claimed_at": "2026-08-14T19:27:25Z",
+        "heartbeat_at": "2026-08-14T19:27:25Z",
+        "expires_at": "2026-08-15T03:27:25Z",
+        "scope": [
+          "terminal-product-contract",
+          "terminal-roadmap",
+          "tracker-reconciliation"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "824ef49a5c8754ded9139d6a073dc836925d8905"
+      },
       "completion": {
-        "outcome": "One explicit keyboard-focus authority routes every key: the terminal is typeable when focused, workspace hotkeys never leak into the PTY, focus reporting and the visible cursor affordance follow terminal focus, and leak regressions lock the behavior.",
-        "canonical_next_step_id": "TF-02",
+        "outcome": "Datum's terminal roadmap targets a fully fledged native terminal over a mature core, with exclusive PTY screen truth, complete session/interaction/protocol/accessibility coverage, safe Datum CLI/MCP/agent integration, and measurable production gates.",
+        "canonical_next_step_id": "NTC-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -619,100 +606,57 @@
         },
         "steps": [
           {
-            "id": "TF-01",
-            "kind": "execution",
+            "id": "NTC-C01",
+            "kind": "planning",
             "status": "complete",
-            "action": "Replace dock-visibility gating with one explicit keyboard-focus owner (Editor(pane) | Terminal | Overlay) in the gui-app router; opening the dock never steals keys.",
+            "action": "Audit the owner-observed terminal/product gap against decisions, code, tracker, and the full competitive capability target.",
             "depends_on": [],
-            "requirement_refs": [
-              {
-                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-                "marker": "TF-01"
-              }
-            ],
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "81f70b4d3f2ed14e1eb424a9f139a72a2b8d55ed"
-              }
-            ]
+            "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C01"}],
+            "completion_evidence": [{"kind": "document", "path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "EVIDENCE:FULL-NATIVE-TERMINAL-CONTRACT:NTC-C01-AUDIT"}]
           },
           {
-            "id": "TF-02",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Wire deliberate terminal focus entry (click in terminal screen / focus command) and exit (Escape, canvas click), reconciled with decision-021 pane focus.",
-            "depends_on": [
-              "TF-01"
-            ],
-            "requirement_refs": [
-              {
-                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-                "marker": "TF-02"
-              }
-            ],
-            "completion_evidence": []
+            "id": "NTC-C02",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Ratify decision 027 and the governed full native-terminal product specification.",
+            "depends_on": ["NTC-C01"],
+            "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C02"}],
+            "completion_evidence": [{"kind": "document", "path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "EVIDENCE:FULL-NATIVE-TERMINAL-CONTRACT:NTC-C02-CONTRACT"}]
           },
           {
-            "id": "TF-03",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Rewire the focus-in/focus-out escape reporting from window focus to terminal focus.",
-            "depends_on": [
-              "TF-01"
-            ],
-            "requirement_refs": [
-              {
-                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-                "marker": "TF-03"
-              }
-            ],
-            "completion_evidence": []
+            "id": "NTC-C03",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Reconcile the terminal epic, T0-T4 beads, hard dependencies, and deterministic Frontier sequence.",
+            "depends_on": ["NTC-C02"],
+            "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C03"}],
+            "completion_evidence": [{"kind": "document", "path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "EVIDENCE:FULL-NATIVE-TERMINAL-CONTRACT:NTC-C03-GRAPH"}]
           },
           {
-            "id": "TF-04",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Render the visible focus affordance: block cursor when the terminal owns keys, hollow otherwise (terminal-study prototype).",
-            "depends_on": [
-              "TF-01"
-            ],
-            "requirement_refs": [
-              {
-                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-                "marker": "TF-04"
-              }
-            ],
-            "completion_evidence": []
+            "id": "NTC-C04",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Repair TF-01 usability claims and guidance so narrow slices cannot masquerade as terminal completion.",
+            "depends_on": ["NTC-C03"],
+            "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C04"}],
+            "completion_evidence": [{"kind": "document", "path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "EVIDENCE:FULL-NATIVE-TERMINAL-CONTRACT:NTC-C04-CLAIMS"}]
           },
           {
-            "id": "TF-05",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Move workspace hotkeys to key-Press once routing is fixed and add leaked-keystroke / un-typeable-terminal regression tests.",
-            "depends_on": [
-              "TF-02",
-              "TF-03",
-              "TF-04"
-            ],
-            "requirement_refs": [
-              {
-                "path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-                "marker": "TF-05"
-              }
-            ],
+            "id": "NTC-C05",
+            "kind": "governance",
+            "status": "in_progress",
+            "action": "Regenerate projections, pass all governance/source-health gates, close with evidence, and explicitly select T0.",
+            "depends_on": ["NTC-C04"],
+            "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "marker": "NTC-C05"}],
             "completion_evidence": []
           }
         ],
         "post_completion": {
           "effects": [
-            "The P1 un-typeable-terminal defect is repaired.",
-            "dat-terminal-emulator-epic-jzv.3 (Phase 1 cell grid) loses this Phase 0 blocker.",
-            "TERMINAL-P0-INPUT/DIAGNOSTICS/PTY/RENDER proceed under the Phase 0 barrier."
+            "dat-pan-trace-terminal-pollution-0j0 loses the contract-correction blocker and becomes the T0 shell-truth slice.",
+            "Later terminal phases remain separately selected and authorized."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": ["dat-pan-trace-terminal-pollution-0j0"],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -720,91 +664,148 @@
       }
     },
     {
-      "key": "TERMINAL-P0-INPUT",
-      "order": 4,
-      "title": "Collapse the rival terminal input models",
-      "issue_id": "dat-terminal-dual-input-model-75y",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+      "key": "TERMINAL-EPIC",
+      "order": 3,
+      "title": "Deliver the fully fledged Datum-native terminal",
+      "issue_id": "dat-terminal-emulator-epic-jzv",
+      "related_issue_ids": [
+        "dat-terminal-focus-authority-6aw",
+        "dat-terminal-dual-input-model-75y",
+        "dat-pan-trace-terminal-pollution-0j0",
+        "dat-terminal-emulator-epic-jzv.1",
+        "dat-terminal-emulator-epic-jzv.2",
+        "dat-terminal-emulator-epic-jzv.3",
+        "dat-terminal-emulator-epic-jzv.4",
+        "dat-terminal-emulator-epic-jzv.5",
+        "dat-terminal-emulator-epic-jzv.6"
       ],
-      "state": "ready",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+      ],
+      "state": "planned",
       "authorization": "execution",
       "canonical_next": false,
-      "parallel": true,
-      "summary": "Keep raw PTY input as the sole attached input model and make detached terminal state explicitly read-only.",
+      "parallel": false,
+      "summary": "Deliver T0-T4: shell-screen truth, mature core and PTY, native rendering/input, daily-driver UX/protocols, and verified Datum CLI/MCP/code-agent operation.",
       "dependencies": [],
-      "unblocks": [
-        "terminal Phase 1 barrier"
-      ]
+      "unblocks": ["trustworthy daily-driver embedded terminal and agent surface"]
     },
     {
-      "key": "TERMINAL-P0-DIAGNOSTICS",
-      "order": 5,
-      "title": "Remove pan diagnostics from the PTY screen",
+      "key": "TERMINAL-T0-SHELL-TRUTH",
+      "order": 4,
+      "title": "Restore foreign-shell screen authority and visible-output proof",
       "issue_id": "dat-pan-trace-terminal-pollution-0j0",
       "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
-        "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md"
-      ],
-      "state": "ready",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": true,
-      "summary": "Stop application diagnostics from corrupting the foreign-shell PTY presentation.",
-      "dependencies": [],
-      "unblocks": [
-        "terminal Phase 1 barrier"
-      ]
-    },
-    {
-      "key": "TERMINAL-P0-PTY",
-      "order": 6,
-      "title": "Replace the hand-rolled PTY with portable-pty",
-      "issue_id": "dat-terminal-emulator-epic-jzv.1",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
-      ],
-      "state": "ready",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": true,
-      "summary": "Swap unsafe libc PTY setup for portable-pty while retaining process-group signal behavior.",
-      "dependencies": [],
-      "unblocks": [
-        "terminal Phase 1 barrier"
-      ]
-    },
-    {
-      "key": "TERMINAL-P0-RENDER",
-      "order": 7,
-      "title": "Stand up the terminal grid render interface",
-      "issue_id": "dat-terminal-emulator-epic-jzv.2",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
-      ],
-      "state": "ready",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": true,
-      "summary": "Lock the Grid-to-Quad/TextRun boundary and font-measured cell metrics before replacing the backing state model.",
-      "dependencies": [],
-      "unblocks": [
-        "terminal Phase 1 cell grid"
-      ]
-    },
-    {
-      "key": "TERMINAL-P1-GRID",
-      "order": 8,
-      "title": "Build the terminal cell-grid state model",
-      "issue_id": "dat-terminal-emulator-epic-jzv.3",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Replace the string/RLE terminal state with a lossless attributed cell grid after every mandatory Phase 0 task lands.",
+      "summary": "Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path.",
+      "dependencies": ["dat-full-native-terminal-contract-e2d"],
+      "unblocks": [
+        "dat-terminal-focus-authority-6aw",
+        "dat-terminal-dual-input-model-75y",
+        "dat-terminal-emulator-epic-jzv.1",
+        "dat-terminal-emulator-epic-jzv.2",
+        "dat-terminal-emulator-epic-jzv.3"
+      ]
+    },
+    {
+      "key": "TERMINAL-P0-FOCUS",
+      "order": 5,
+      "title": "Complete terminal focus and input authority",
+      "issue_id": "dat-terminal-focus-authority-6aw",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired.",
+      "dependencies": ["dat-pan-trace-terminal-pollution-0j0"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.3"],
+      "completion": {
+        "outcome": "One explicit focus/input authority correctly routes the real terminal content rectangle, without claiming terminal product completeness or visible-shell correctness supplied by other slices.",
+        "canonical_next_step_id": "TF-02",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {"id": "TF-01", "kind": "execution", "status": "complete", "action": "Establish one keyboard-focus owner and make dock visibility irrelevant to routing; this is focus-router evidence only.", "depends_on": [], "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md", "marker": "TF-01"}], "completion_evidence": [{"kind": "commit", "revision": "81f70b4d3f2ed14e1eb424a9f139a72a2b8d55ed"}]},
+          {"id": "TF-02", "kind": "execution", "status": "pending", "action": "Wire deliberate focus entry on the actual terminal cell rectangle and exit through Escape/canvas click.", "depends_on": ["TF-01"], "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md", "marker": "TF-02"}], "completion_evidence": []},
+          {"id": "TF-03", "kind": "execution", "status": "pending", "action": "Rewire focus-in/focus-out escape reporting from window focus to terminal focus.", "depends_on": ["TF-01"], "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md", "marker": "TF-03"}], "completion_evidence": []},
+          {"id": "TF-04", "kind": "execution", "status": "pending", "action": "Render a visible block/hollow cursor focus affordance without replacing application-selected cursor shape.", "depends_on": ["TF-01"], "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md", "marker": "TF-04"}], "completion_evidence": []},
+          {"id": "TF-05", "kind": "execution", "status": "pending", "action": "Move workspace hotkeys to Press and lock routing/leak behavior with focused end-to-end tests.", "depends_on": ["TF-02", "TF-03", "TF-04"], "requirement_refs": [{"path": "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md", "marker": "TF-05"}], "completion_evidence": []}
+        ],
+        "post_completion": {
+          "effects": ["The terminal focus/input slice is complete; visible-shell and full-product claims remain owned by T0 and T4."],
+          "unblocks_issue_ids": ["dat-terminal-emulator-epic-jzv.3"],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "TERMINAL-T1-INPUT",
+      "order": 6,
+      "title": "Collapse the rival terminal input models",
+      "issue_id": "dat-terminal-dual-input-model-75y",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit.",
+      "dependencies": ["dat-pan-trace-terminal-pollution-0j0"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.3"]
+    },
+    {
+      "key": "TERMINAL-T1-PTY",
+      "order": 7,
+      "title": "Replace terminal transport with portable-pty",
+      "issue_id": "dat-terminal-emulator-epic-jzv.1",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions.",
+      "dependencies": ["dat-pan-trace-terminal-pollution-0j0"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.3"]
+    },
+    {
+      "key": "TERMINAL-T1-CORE",
+      "order": 8,
+      "title": "Integrate the mature TerminalCore adapter",
+      "issue_id": "dat-terminal-emulator-epic-jzv.2",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Pin libghostty-vt behind Datum's closed adapter and prohibit extension of the bespoke emulator as a rival core.",
+      "dependencies": ["dat-pan-trace-terminal-pollution-0j0"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.3"]
+    },
+    {
+      "key": "TERMINAL-T2-NATIVE",
+      "order": 9,
+      "title": "Complete native renderer, focus, input, IME and text interaction",
+      "issue_id": "dat-terminal-emulator-epic-jzv.3",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
         "dat-terminal-dual-input-model-75y",
@@ -812,74 +813,53 @@
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-focus-authority-6aw"
       ],
-      "unblocks": [
-        "terminal Phase 2",
-        "terminal Phase 4"
-      ]
+      "unblocks": ["dat-terminal-emulator-epic-jzv.4"]
     },
     {
-      "key": "TERMINAL-P2-WIDTH",
-      "order": 9,
-      "title": "Add Unicode width and scrollback separation",
-      "issue_id": "dat-terminal-emulator-epic-jzv.4",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
-      ],
-      "state": "blocked",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": false,
-      "summary": "Add grapheme-aware cell width, bounded scrollback, and correct alternate-screen behavior after the cell grid lands.",
-      "dependencies": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
-      "unblocks": [
-        "terminal Phase 3 reflow"
-      ]
-    },
-    {
-      "key": "TERMINAL-P3-REFLOW",
+      "key": "TERMINAL-T3-UX",
       "order": 10,
-      "title": "Implement terminal reflow on resize",
-      "issue_id": "dat-terminal-emulator-epic-jzv.5",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
-      ],
+      "title": "Deliver scrollback, reflow, search, links and daily-driver session UX",
+      "issue_id": "dat-terminal-emulator-epic-jzv.4",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Rewrap logical lines while preserving cursor, wide-cell, scroll-region, and scrollback invariants.",
-      "dependencies": [
-        "dat-terminal-emulator-epic-jzv.4"
-      ],
-      "unblocks": [
-        "terminal Phase 4 polish"
-      ]
+      "summary": "Deliver complete scrollback/reflow/search/link behavior plus tabs, splits, profiles, themes, fonts, lifecycle, maximize/detach, shell and terminfo integration.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.3"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.5"]
     },
     {
-      "key": "TERMINAL-P4-POLISH",
+      "key": "TERMINAL-T3-PROTOCOLS",
       "order": 11,
-      "title": "Add terminal damage tracking and protocol polish",
-      "issue_id": "dat-terminal-emulator-epic-jzv.6",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md"
-      ],
+      "title": "Complete modern protocols, graphics, security and accessibility",
+      "issue_id": "dat-terminal-emulator-epic-jzv.5",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
       "state": "blocked",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Complete the declared terminal sequence with damage tracking and bounded DEC/OSC support.",
-      "dependencies": [
-        "dat-terminal-emulator-epic-jzv.5"
-      ],
-      "unblocks": [
-        "terminal epic verification"
-      ]
+      "summary": "Close synchronized output, OSC 8/52, kitty keyboard, kitty graphics/sixel, security policy, and complete accessibility behavior.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.4"],
+      "unblocks": ["dat-terminal-emulator-epic-jzv.6"]
+    },
+    {
+      "key": "TERMINAL-T4-VERIFY",
+      "order": 12,
+      "title": "Verify Datum CLI/MCP/agent integration and production terminal quality",
+      "issue_id": "dat-terminal-emulator-epic-jzv.6",
+      "governing_docs": ["docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md", "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Close only after quantified conformance/performance/security/accessibility evidence and real Codex, Claude, local-agent, CLI/MCP, shell and TUI acceptance.",
+      "dependencies": ["dat-terminal-emulator-epic-jzv.5"],
+      "unblocks": ["terminal epic verification and closure"]
     },
     {
       "key": "CONSOLE-READONLY",
-      "order": 12,
+      "order": 13,
       "title": "Build the read-only Command Console display",
       "issue_id": "dat-output-lane-t6v",
       "governing_docs": [
@@ -899,7 +879,7 @@
     },
     {
       "key": "GUI-SURFACE-SPECS",
-      "order": 13,
+      "order": 14,
       "title": "Complete schematic and library GUI surface specifications",
       "issue_id": "dat-gui-surface-specs-usb",
       "governing_docs": [
@@ -918,7 +898,7 @@
     },
     {
       "key": "UVT-S5A-BUILD",
-      "order": 14,
+      "order": 15,
       "title": "Build UVT S5A selection and compound inspection",
       "issue_id": "dat-uvt-s5a-build-1wv",
       "governing_docs": [
@@ -939,7 +919,7 @@
     },
     {
       "key": "GUI-P2-CROSSPROBE",
-      "order": 15,
+      "order": 16,
       "title": "Build GUI Phase 2 P2.3 cross-probe",
       "issue_id": "dat-gui-p2-cross-probe-27z",
       "governing_docs": [
@@ -961,7 +941,7 @@
     },
     {
       "key": "GUI-P2-INSPECTOR",
-      "order": 16,
+      "order": 17,
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "issue_id": "dat-gui-p2-full-inspector-0ye",
       "governing_docs": [
@@ -981,7 +961,7 @@
     },
     {
       "key": "GUI-MARKING-MENU",
-      "order": 17,
+      "order": 18,
       "title": "Build the inert marking-menu shell",
       "issue_id": "dat-marking-menu-shell-g0w",
       "governing_docs": [
@@ -1000,7 +980,7 @@
     },
     {
       "key": "GUI-WRITE-PATH",
-      "order": 18,
+      "order": 19,
       "title": "Enable the GUI journaled write path",
       "issue_id": "dat-gui-write-path-qiu",
       "governing_docs": [
@@ -1024,7 +1004,7 @@
     },
     {
       "key": "NATIVE-AUTHORING",
-      "order": 19,
+      "order": 20,
       "title": "Build native schematic and PCB authoring depth",
       "issue_id": "dat-native-authoring-depth-sf9",
       "governing_docs": [
@@ -1047,7 +1027,7 @@
     },
     {
       "key": "DOC-SYSTEM-SPEC",
-      "order": 20,
+      "order": 21,
       "title": "Specify the documentation-system object model",
       "issue_id": "dat-documentation-system-spec-y8z",
       "governing_docs": [
@@ -1065,7 +1045,7 @@
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
-      "order": 21,
+      "order": 22,
       "title": "Expose operational ownership in canonical next-task output",
       "issue_id": "dat-next-output-ownership-uqz",
       "governing_docs": [
@@ -1085,7 +1065,7 @@
     },
     {
       "key": "STATE-TASK-DETAILS",
-      "order": 22,
+      "order": 23,
       "title": "Make canonical task completion plans deterministic",
       "issue_id": "dat-task-completion-alignment-4jp",
       "governing_docs": [
@@ -1235,7 +1215,7 @@
     },
     {
       "key": "STATE-DETAIL-PRESENTATION",
-      "order": 23,
+      "order": 24,
       "title": "Make task-detail presentation verbatim and non-concurrent",
       "issue_id": "dat-task-detail-presentation-bjk",
       "governing_docs": [

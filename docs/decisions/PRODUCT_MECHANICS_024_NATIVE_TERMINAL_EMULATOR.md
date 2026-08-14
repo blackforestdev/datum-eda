@@ -2,6 +2,11 @@
 
 Status: ratified doctrine
 
+Amended by `PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`. Decision 027
+supersedes this document's bespoke cell-grid build mandate, graphics exclusion,
+and terminal-lite delivery ceiling while preserving its real-shell, focus,
+PTY-separation, adapter, and no-GUI-write-bridge rules.
+
 ## Decision
 
 Datum's embedded terminal is built up to a **pro-grade native terminal emulator**

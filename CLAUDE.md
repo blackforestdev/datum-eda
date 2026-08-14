@@ -49,7 +49,7 @@ they support the product; they do not define its identity.
   `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..025`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..027`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -178,6 +178,16 @@ product-mechanics docs.
   write authority) → library →
   native authoring + GUI surface. The GUI build-out is a named, real phase of
   this sequence — **not** an implied "M8 later".
+- **Terminal product boundary:** Product Mechanics 027 and
+  `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md` control the embedded terminal. The
+  target is a fully fledged daily-driver terminal over a pinned mature
+  `TerminalCore`, with exclusive PTY screen truth and verified support for
+  normal shells, TUIs, Codex, Claude Code, Cursor-compatible CLI agents, and
+  local agents. TF-01..TF-05 cover focus/input only; a focus fix, parser, PTY,
+  cell grid, or Command Console must never be reported as completion of the
+  terminal product. Delivery is T0 shell truth → T1 core/transport → T2 native
+  renderer/input → T3 daily-driver UX/protocols → T4 agent and production
+  proof.
 - **Frozen:** KiCad import. The M7 spike already imports a board with enough
   fidelity to recognize all design aspects; that is sufficient — no further
   import work until native authoring is real. Native is always the authority;
@@ -434,8 +444,10 @@ is landed and authoritative — what remains is depth on top of it:
 - Full IPC footprint-system depth beyond the landed IPC-7351B two-terminal and
   SOIC slices: broader families, deviation/check-run/export consumption, and
   import-audit integration.
-- Full GUI editor (substrate + read-only review + PTY terminal lane exist;
-  interactive editing not exposed end-to-end). Product-real assistant.
+- Full GUI editor (substrate + read-only review exist; interactive editing is
+  not exposed end-to-end). The current PTY lane is not yet the decision-027
+  fully fledged terminal and must not be described as one. Product-real
+  assistant.
 - Native copper-pour zone fill (imported fills only today).
 - 3D viewer, panelization, STEP/IDF/ODB++/IPC-2581 export — spec stubs landed
   in Standards Audit Batch 1, implementation deferred.
