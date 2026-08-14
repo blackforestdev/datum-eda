@@ -50,10 +50,23 @@ pub struct TerminalStyledLine {
     pub spans: Vec<TerminalStyleSpan>,
 }
 
+/// Split mutable borrow of the terminal screen grid, obtainable only through
+/// [`TerminalLaneState::pty_grid_mut`]. See that method for the screen-authority
+/// invariant that governs every use of this type.
+pub struct TerminalPtyGrid<'a> {
+    pub lines: &'a mut Vec<String>,
+    pub styled_lines: &'a mut Vec<TerminalStyledLine>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
-    pub lines: Vec<String>,
-    pub styled_lines: Vec<TerminalStyledLine>,
+    /// Terminal screen grid rows. PRIVATE by design: terminal cell content may
+    /// be mutated only by bytes emitted by the active PTY and interpreted by
+    /// the terminal core (T0-C01 in DATUM_NATIVE_TERMINAL_SPEC.md; FT-001 in
+    /// decision 027). All mutation goes through [`Self::pty_grid_mut`].
+    lines: Vec<String>,
+    /// Styled projection of `lines`; same screen-authority invariant applies.
+    styled_lines: Vec<TerminalStyledLine>,
     pub activity_summary: Vec<String>,
     pub tabs: Vec<TerminalTabState>,
     pub active_session_id: Option<String>,
@@ -76,6 +89,36 @@ pub struct TerminalLaneState {
     pub mouse_coordinate_encoding: Option<String>,
     pub scroll_offset: usize,
     pub status: String,
+}
+
+impl TerminalLaneState {
+    /// Read-only view of the terminal screen grid rows.
+    pub fn grid_lines(&self) -> &[String] {
+        &self.lines
+    }
+
+    /// Read-only view of the styled terminal screen grid rows.
+    pub fn grid_styled_lines(&self) -> &[TerminalStyledLine] {
+        &self.styled_lines
+    }
+
+    /// Sole mutation gateway into the terminal screen grid.
+    ///
+    /// Screen-authority invariant (T0-C01, DATUM_NATIVE_TERMINAL_SPEC.md;
+    /// FT-001, docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md):
+    /// the only legal caller is the terminal core's PTY-byte interpretation
+    /// path (`TerminalScreen::apply_bytes_with_responses` and its helpers).
+    /// Datum notices, diagnostics, activity summaries, lifecycle messages, and
+    /// GUI command echoes must never enter the grid — they belong to terminal
+    /// chrome, notifications, logs, or the console sink
+    /// (`WorkspaceUiState::push_console_line`). Test code may call this only to
+    /// simulate PTY-derived screen content.
+    pub fn pty_grid_mut(&mut self) -> TerminalPtyGrid<'_> {
+        TerminalPtyGrid {
+            lines: &mut self.lines,
+            styled_lines: &mut self.styled_lines,
+        }
+    }
 }
 
 impl Default for TerminalLaneState {

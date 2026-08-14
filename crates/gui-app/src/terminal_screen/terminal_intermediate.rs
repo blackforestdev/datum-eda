@@ -5,8 +5,10 @@ pub(super) fn apply_escape_intermediate(byte: u8, marker: &[u8], state: &mut Ter
         return;
     }
     let row = "E".repeat(state.columns.max(1) as usize);
-    state.lines = vec![row.clone(); state.rows.max(1) as usize];
-    state.styled_lines = state
+    let rows = state.rows.max(1) as usize;
+    let grid = state.pty_grid_mut();
+    *grid.lines = vec![row.clone(); rows];
+    *grid.styled_lines = grid
         .lines
         .iter()
         .map(|text| TerminalStyledLine {

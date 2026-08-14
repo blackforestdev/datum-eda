@@ -35,12 +35,12 @@ impl Runtime {
         {
             Ok(session_id) => {
                 let session_id = session_id.to_string();
-                self.push_terminal_line(format!("opened terminal session {session_id}"));
+                self.log_review_event(format!("opened terminal session {session_id}"));
                 self.set_active_dock(DockTab::Terminal);
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
             }
-            Err(err) => self.push_terminal_line(format!("terminal session open failed: {err}")),
+            Err(err) => self.log_review_event(format!("terminal session open failed: {err}")),
         }
         true
     }
@@ -75,10 +75,10 @@ impl Runtime {
         }
         match self.terminal_sessions.rename(&session_id, label.clone()) {
             Ok(()) => {
-                self.push_terminal_line(format!("renamed active terminal session {label}"));
+                self.log_review_event(format!("renamed active terminal session {label}"));
                 self.clear_terminal_rename_editor();
             }
-            Err(err) => self.push_terminal_line(format!("terminal session rename failed: {err}")),
+            Err(err) => self.log_review_event(format!("terminal session rename failed: {err}")),
         }
         true
     }
@@ -87,7 +87,7 @@ impl Runtime {
         if self.terminal_rename_session_id.is_none() {
             return false;
         }
-        self.push_terminal_line("terminal session rename canceled".to_string());
+        self.log_review_event("terminal session rename canceled".to_string());
         self.clear_terminal_rename_editor();
         true
     }
@@ -114,7 +114,7 @@ impl Runtime {
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
             }
-            Err(err) => self.push_terminal_line(format!("terminal session close failed: {err}")),
+            Err(err) => self.log_review_event(format!("terminal session close failed: {err}")),
         }
         true
     }
@@ -126,10 +126,10 @@ impl Runtime {
             .detach_active(&mut self.session.workspace_mut().ui.terminal)
         {
             Ok(()) => {
-                self.push_terminal_line("detached active terminal session".to_string());
+                self.log_review_event("detached active terminal session".to_string());
                 self.sync_terminal_tabs();
             }
-            Err(err) => self.push_terminal_line(format!("terminal session detach failed: {err}")),
+            Err(err) => self.log_review_event(format!("terminal session detach failed: {err}")),
         }
         true
     }

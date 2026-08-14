@@ -677,7 +677,7 @@ impl Runtime {
             }
             Err(err) => {
                 append_gui_diagnostic_line(format!("terminal resize failed: {err}"));
-                self.push_terminal_line(format!("terminal resize failed: {err}"));
+                self.log_review_event(format!("terminal resize failed: {err}"));
             }
         }
     }

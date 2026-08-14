@@ -509,10 +509,10 @@ pub(super) fn restart_terminal_session(
     *session = spawn_terminal_session(context)?;
     *screen = TerminalScreen::default();
     state.status = "running".to_string();
-    state.lines.push(format!(
-        "terminal restarted; context {}",
-        session.context_path.display()
-    ));
+    // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
+    // write a notice row into the terminal grid — the grid holds only PTY
+    // output. Session status is visible through chrome (`state.status`); the
+    // narration goes to the console sink at the Runtime call site.
     state.scroll_offset = 0;
     Ok(())
 }
@@ -694,6 +694,9 @@ fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
     Ok(())
 }
 
+#[cfg(test)]
+#[path = "terminal_screen_authority_tests.rs"]
+mod terminal_screen_authority_tests;
 #[cfg(test)]
 #[path = "terminal_session_context_tests.rs"]
 mod terminal_session_context_tests;

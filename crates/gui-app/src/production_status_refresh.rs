@@ -162,7 +162,7 @@ impl Runtime {
                 self.terminal_production_refresh_due = None;
                 self.terminal_production_refresh_attempts = 0;
                 self.invalidate_scene();
-                self.push_terminal_line("workspace scene/status refreshed".to_string());
+                self.log_review_event("workspace scene/status refreshed".to_string());
                 true
             }
             Ok(ProductionStatusRefresh::Unchanged) => {
@@ -184,7 +184,7 @@ impl Runtime {
                 self.terminal_workspace_refresh_pending = false;
                 self.terminal_production_refresh_due = None;
                 self.terminal_production_refresh_attempts = 0;
-                self.push_terminal_line(format!("production status refresh failed: {err}"));
+                self.log_review_event(format!("production status refresh failed: {err}"));
                 true
             }
         }
@@ -206,7 +206,7 @@ impl Runtime {
                         );
                     for response in responses {
                         if let Err(err) = self.terminal_sessions.active().write_bytes(&response) {
-                            self.push_terminal_line(format!(
+                            self.log_review_event(format!(
                                 "terminal status response failed: {err}"
                             ));
                         }
@@ -239,7 +239,7 @@ impl Runtime {
                     );
                     self.session.workspace_mut().ui.terminal.status = status.clone();
                     self.sync_terminal_tabs();
-                    self.push_terminal_line(format!("terminal {status}"));
+                    self.log_review_event(format!("terminal {status}"));
                     if (self.terminal_production_refresh_pending
                         || self.terminal_workspace_refresh_pending)
                         && self.terminal_production_refresh_due.is_none()
@@ -255,7 +255,7 @@ impl Runtime {
                         return false;
                     }
                     self.terminal_disconnected_reported = true;
-                    self.push_terminal_line("terminal session ended".to_string());
+                    self.log_review_event("terminal session ended".to_string());
                     return true;
                 }
             }

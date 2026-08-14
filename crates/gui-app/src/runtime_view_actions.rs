@@ -106,7 +106,7 @@ impl Runtime {
             "view.cursor.small" => self.set_crosshair_style(CrosshairStyle::Local),
             "view.cursor.none" => self.set_crosshair_style(CrosshairStyle::None),
             other => {
-                self.push_terminal_line(format!("menu action {other} is view-local but unwired"));
+                self.log_review_event(format!("menu action {other} is view-local but unwired"));
                 self.invalidate_frame();
                 true
             }

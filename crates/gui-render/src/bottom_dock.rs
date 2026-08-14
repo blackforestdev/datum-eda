@@ -418,7 +418,7 @@ fn render_terminal_lane(
         y += 4.0;
     }
     let max_lines = ((rect.y + rect.height - y - 10.0) / 16.0).floor().max(1.0) as usize;
-    let total = state.ui.terminal.lines.len();
+    let total = state.ui.terminal.grid_lines().len();
     let scroll = state
         .ui
         .terminal
@@ -428,13 +428,13 @@ fn render_terminal_lane(
     for (line_index, line) in state
         .ui
         .terminal
-        .lines
+        .grid_lines()
         .iter()
         .enumerate()
         .skip(tail_start)
         .take(max_lines)
     {
-        if let Some(styled_line) = state.ui.terminal.styled_lines.get(line_index) {
+        if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
             render_terminal_styled_line(styled_line, line, rect.x + 12.0, y, text_runs);
         } else {
             draw_text(

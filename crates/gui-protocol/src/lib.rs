@@ -47,7 +47,8 @@ pub use source_shard_status::{
 };
 mod terminal_lane;
 pub use terminal_lane::{
-    TerminalLaneState, TerminalStyleSpan, TerminalStyledLine, TerminalTabState, TerminalTextStyle,
+    TerminalLaneState, TerminalPtyGrid, TerminalStyleSpan, TerminalStyledLine, TerminalTabState,
+    TerminalTextStyle,
 };
 mod workspace_layout;
 pub use workspace_layout::{ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState, PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild, SplitOrientation, ViewportInteraction, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState};
@@ -1659,35 +1660,11 @@ impl ReviewWorkspaceState {
                     active_layer_id,
                     layer_visibility,
                 },
-                terminal: TerminalLaneState {
-                    lines: vec![
-                        "datum terminal ready".to_string(),
-                        "shell session starts in the active project root".to_string(),
-                    ],
-                    styled_lines: Vec::new(),
-                    activity_summary: Vec::new(),
-                    tabs: Vec::new(),
-                    active_session_id: None,
-                    rename_session_id: None,
-                    title: None,
-                    current_working_directory: None,
-                    bell_count: 0,
-                    input: String::new(),
-                    cursor: 0,
-                    columns: 80,
-                    rows: 24,
-                    screen_cursor_row: 0,
-                    screen_cursor_col: 0,
-                    screen_cursor_visible: true,
-                    screen_cursor_style: None,
-                    application_cursor_keys: false,
-                    application_keypad: false,
-                    focus_event_reporting: false,
-                    mouse_reporting_mode: None,
-                    mouse_coordinate_encoding: None,
-                    scroll_offset: 0,
-                    status: "running".to_string(),
-                },
+                // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001:
+                // the terminal grid starts EMPTY. No seeded "ready" rows — the
+                // only writer of terminal cells is PTY output interpreted by
+                // the terminal core; session status belongs to panel chrome.
+                terminal: TerminalLaneState::default(),
                 console: ConsoleLaneState::default(),
                 artifact_preview: ArtifactPreviewViewportState::default(),
                 layout: WorkspaceLayout::default(),
@@ -4893,6 +4870,9 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 mod kicad_text_import_tests;
 
 #[cfg(test)]
+mod terminal_screen_authority_tests;
+
+#[cfg(test)]
 mod tests {
     use super::kicad_scene_import::*;
     use super::*;
@@ -4903,7 +4883,7 @@ mod tests {
     #[test]
     fn gui_action_narration_lands_in_console_never_on_terminal() {
         let mut state = load_fixture_workspace_state();
-        let terminal_before = state.ui.terminal.lines.clone();
+        let terminal_before = state.ui.terminal.grid_lines().to_vec();
 
         let echo = "fit board".to_string();
         state.ui.push_console_line(echo.clone());
@@ -4916,11 +4896,11 @@ mod tests {
         // The real PTY terminal display buffer is byte-for-byte unchanged and
         // never carries the GUI-action echo.
         assert_eq!(
-            state.ui.terminal.lines, terminal_before,
+            state.ui.terminal.grid_lines(), terminal_before,
             "GUI-action narration must not mutate the terminal display buffer"
         );
         assert!(
-            !state.ui.terminal.lines.contains(&echo),
+            !state.ui.terminal.grid_lines().contains(&echo),
             "GUI-action narration must never appear in the terminal lane"
         );
     }

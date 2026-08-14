@@ -613,7 +613,7 @@ struct Runtime {
 }
 
 fn terminal_scrollback_page_step(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> usize {
-    let visible_hint = workspace.ui.terminal.lines.len().min(24);
+    let visible_hint = workspace.ui.terminal.grid_lines().len().min(24);
     visible_hint.saturating_sub(1).max(1)
 }
 
@@ -1222,15 +1222,11 @@ impl Runtime {
         false
     }
 
-    fn push_terminal_line(&mut self, line: String) {
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.terminal.lines.push(line);
-        if ui.terminal.lines.len() > 240 {
-            ui.terminal.lines.drain(0..ui.terminal.lines.len() - 240);
-        }
-        ui.terminal.scroll_offset = 0;
-        self.invalidate_frame();
-    }
+    // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
+    // deliberately NO `push_terminal_line` here. Terminal cells are mutated
+    // only by PTY bytes interpreted by the terminal core; Datum notices,
+    // diagnostics, and lifecycle messages route through `log_review_event`
+    // (console sink) or terminal chrome, never the grid.
 
     fn set_active_dock(&mut self, tab: DockTab) -> bool {
         let ui = &mut self.session.workspace_mut().ui;
@@ -1304,13 +1300,13 @@ impl Runtime {
             TerminalKeyAction::Write(bytes) => self.write_terminal_bytes(&bytes),
             TerminalKeyAction::Interrupt => {
                 if !self.terminal_sessions.active_attached() {
-                    self.push_terminal_line(
+                    self.log_review_event(
                         "terminal session is detached; activate the tab to reattach".to_string(),
                     );
                     return true;
                 }
                 if let Err(err) = self.terminal_sessions.active().interrupt() {
-                    self.push_terminal_line(format!("terminal interrupt failed: {err}"));
+                    self.log_review_event(format!("terminal interrupt failed: {err}"));
                 }
                 true
             }
@@ -1349,7 +1345,7 @@ impl Runtime {
 
     fn scroll_terminal_scrollback(&mut self, delta: usize) {
         let terminal = &mut self.session.workspace_mut().ui.terminal;
-        let max = terminal.lines.len();
+        let max = terminal.grid_lines().len();
         terminal.scroll_offset = (terminal.scroll_offset + delta).min(max);
         self.invalidate_frame();
     }
@@ -1362,7 +1358,7 @@ impl Runtime {
 
     fn scroll_terminal_scrollback_to_top(&mut self) {
         let terminal = &mut self.session.workspace_mut().ui.terminal;
-        terminal.scroll_offset = terminal.lines.len();
+        terminal.scroll_offset = terminal.grid_lines().len();
         self.invalidate_frame();
     }
 
@@ -1373,7 +1369,7 @@ impl Runtime {
 
     fn write_terminal_bytes(&mut self, bytes: &[u8]) -> bool {
         if !self.terminal_sessions.active_attached() {
-            self.push_terminal_line(
+            self.log_review_event(
                 "terminal session is detached; activate the tab to reattach".to_string(),
             );
             return true;
@@ -1382,7 +1378,7 @@ impl Runtime {
             self.mark_terminal_production_refresh_pending();
         }
         if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.push_terminal_line(format!("terminal write failed: {err}"));
+            self.log_review_event(format!("terminal write failed: {err}"));
         }
         true
     }
@@ -1395,7 +1391,7 @@ impl Runtime {
         }
         let bytes = terminal_focus_event_sequence(focused);
         if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.push_terminal_line(format!("terminal focus report failed: {err}"));
+            self.log_review_event(format!("terminal focus report failed: {err}"));
         }
     }
 
@@ -1519,7 +1515,7 @@ impl Runtime {
 
     fn write_terminal_mouse_report(&mut self, bytes: &[u8]) {
         if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.push_terminal_line(format!("terminal mouse report failed: {err}"));
+            self.log_review_event(format!("terminal mouse report failed: {err}"));
         }
     }
 
@@ -1529,7 +1525,7 @@ impl Runtime {
             .terminate_active(&mut self.session.workspace_mut().ui.terminal)
         {
             Ok(()) => {}
-            Err(err) => self.push_terminal_line(format!("terminal terminate failed: {err}")),
+            Err(err) => self.log_review_event(format!("terminal terminate failed: {err}")),
         }
         self.sync_terminal_tabs();
         self.invalidate_frame();
@@ -1540,8 +1536,11 @@ impl Runtime {
             &mut self.session.workspace_mut().ui.terminal,
             &self.terminal_launch_context,
         ) {
-            Ok(()) => self.resize_terminal_to_dock(),
-            Err(err) => self.push_terminal_line(format!("terminal restart failed: {err}")),
+            Ok(()) => {
+                self.log_review_event("terminal session restarted");
+                self.resize_terminal_to_dock();
+            }
+            Err(err) => self.log_review_event(format!("terminal restart failed: {err}")),
         }
         self.terminal_disconnected_reported = false;
         self.terminal_production_refresh_pending = false;
@@ -1554,7 +1553,7 @@ impl Runtime {
 
     fn activate_terminal_session(&mut self, session_id: &str) -> bool {
         if let Err(err) = self.terminal_sessions.activate(session_id) {
-            self.push_terminal_line(format!("terminal session activate failed: {err}"));
+            self.log_review_event(format!("terminal session activate failed: {err}"));
             return true;
         }
         let _ = refresh_terminal_session_context_from_state(
@@ -1649,10 +1648,10 @@ impl Runtime {
                 return false;
             };
             if self.write_clipboard_text(&text).is_err() {
-                self.push_terminal_line("clipboard copy failed".to_string());
+                self.log_review_event("clipboard copy failed".to_string());
                 return true;
             }
-            self.push_terminal_line("terminal scrollback copied".to_string());
+            self.log_review_event("terminal scrollback copied".to_string());
             return true;
         }
         let Some(input) = self
@@ -1664,7 +1663,7 @@ impl Runtime {
             return false;
         };
         if self.write_clipboard_text(&input).is_err() {
-            self.push_terminal_line("clipboard copy failed".to_string());
+            self.log_review_event("clipboard copy failed".to_string());
         }
         false
     }
@@ -1679,7 +1678,7 @@ impl Runtime {
             return false;
         };
         if self.write_clipboard_text(&text).is_err() {
-            self.push_terminal_line("clipboard cut failed".to_string());
+            self.log_review_event("clipboard cut failed".to_string());
             return true;
         }
         if let Some(input) = self.current_dock_input_mut() {
@@ -1691,7 +1690,7 @@ impl Runtime {
 
     fn paste_dock_input(&mut self) -> bool {
         let Ok(text) = self.read_clipboard_text() else {
-            self.push_terminal_line("clipboard paste failed".to_string());
+            self.log_review_event("clipboard paste failed".to_string());
             return false;
         };
         if text.is_empty() {
@@ -1900,7 +1899,7 @@ impl Runtime {
 
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
         if !matches!(tool, WorkspaceTool::Select) {
-            self.push_terminal_line(format!(
+            self.log_review_event(format!(
                 "{} is disabled in the Phase 1 read-only GUI",
                 tool.label()
             ));
@@ -1966,7 +1965,7 @@ impl Runtime {
                     .workspace_mut()
                     .finish_place_board_via_handoff(world)
                 else {
-                    self.push_terminal_line("place via requires a board net context".to_string());
+                    self.log_review_event("place via requires a board net context".to_string());
                     self.invalidate_frame();
                     return true;
                 };
@@ -1980,7 +1979,7 @@ impl Runtime {
                     .workspace_mut()
                     .finish_place_board_text_handoff(world)
                 else {
-                    self.push_terminal_line("place text requires project backing".to_string());
+                    self.log_review_event("place text requires project backing".to_string());
                     self.invalidate_frame();
                     return true;
                 };
@@ -1994,7 +1993,7 @@ impl Runtime {
                     .workspace_mut()
                     .finish_move_component_handoff(world)
                 else {
-                    self.push_terminal_line(
+                    self.log_review_event(
                         "move requires a selected component target".to_string(),
                     );
                     self.invalidate_frame();
@@ -2006,23 +2005,23 @@ impl Runtime {
             }
             WorkspaceTool::Move => {
                 let Some(target) = target_object_id.clone() else {
-                    self.push_terminal_line("move requires clicking a component first".to_string());
+                    self.log_review_event("move requires clicking a component first".to_string());
                     return true;
                 };
                 if !target.starts_with("component:") {
-                    self.push_terminal_line("move currently supports components only".to_string());
+                    self.log_review_event("move currently supports components only".to_string());
                     return true;
                 }
             }
             WorkspaceTool::Delete => {
                 let Some(target) = target_object_id else {
-                    self.push_terminal_line(
+                    self.log_review_event(
                         "delete requires an authored object target".to_string(),
                     );
                     return true;
                 };
                 let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {
-                    self.push_terminal_line(format!("delete unsupported target {target}"));
+                    self.log_review_event(format!("delete unsupported target {target}"));
                     return true;
                 };
                 self.queue_authoring_terminal_handoff(handoff, "delete-authored-object");
@@ -2070,7 +2069,7 @@ impl Runtime {
             .is_some_and(|backing| backing.request.board_file.is_some())
         {
             self.set_active_dock(DockTab::Terminal);
-            self.push_terminal_line(
+            self.log_review_event(
                 "authoring tools require a native Datum project; open with --project-root instead of --board <kicad_pcb>"
                     .to_string(),
             );
@@ -2084,7 +2083,7 @@ impl Runtime {
             &handoff,
         )
         .unwrap_or_else(|err| {
-            self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+            self.log_review_event(format!("terminal handoff prepare failed: {err}"));
             handoff.command.clone()
         });
         let mut bytes = command.into_bytes();
@@ -2447,8 +2446,7 @@ impl Runtime {
             HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
             HitTarget::TerminalActivitySummary(summary) => {
                 self.set_active_dock(DockTab::Terminal);
-                self.push_terminal_line(format!("selected terminal activity span: {summary}"));
-                self.log_review_event("selected terminal activity span".to_string());
+                self.log_review_event(format!("selected terminal activity span: {summary}"));
                 true
             }
             HitTarget::ProductionArtifact(artifact_id) => {
@@ -2477,7 +2475,7 @@ impl Runtime {
                     handoff,
                 )
                 .unwrap_or_else(|err| {
-                    self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+                    self.log_review_event(format!("terminal handoff prepare failed: {err}"));
                     handoff.command.clone()
                 });
                 let mut bytes = command.into_bytes();
@@ -2494,7 +2492,7 @@ impl Runtime {
                     handoff,
                 )
                 .unwrap_or_else(|err| {
-                    self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+                    self.log_review_event(format!("terminal handoff prepare failed: {err}"));
                     handoff.command.clone()
                 });
                 let mut bytes = command.into_bytes();
@@ -2577,7 +2575,7 @@ impl Runtime {
             });
         self.session.workspace_mut().ui.active_menu = None;
         let Some(item) = item else {
-            self.push_terminal_line(format!("menu item {menu_name}/{label} unavailable"));
+            self.log_review_event(format!("menu item {menu_name}/{label} unavailable"));
             self.invalidate_frame();
             return true;
         };
@@ -2590,7 +2588,7 @@ impl Runtime {
             .or(item.verb.as_deref())
             .or(item.submenu.as_deref())
             .unwrap_or("disabled in Phase 1");
-        self.push_terminal_line(format!("{menu_name}/{label} disabled: {reason}"));
+        self.log_review_event(format!("{menu_name}/{label} disabled: {reason}"));
         self.invalidate_frame();
         true
     }

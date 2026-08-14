@@ -69,7 +69,7 @@ impl Runtime {
         match active {
             DockTab::Terminal => {
                 if scroll_lines > 0.0 {
-                    let max = ui.terminal.lines.len();
+                    let max = ui.terminal.grid_lines().len();
                     ui.terminal.scroll_offset = (ui.terminal.scroll_offset + delta).min(max);
                 } else {
                     ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);

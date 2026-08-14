@@ -4,7 +4,7 @@ use datum_gui_protocol::{SelectionTarget, TERMINAL_COMMAND_CATALOG_VERSION};
 use std::fs;
 use std::time::Duration;
 impl TerminalLaunchContext {
-    fn for_project_root(project_root: &std::path::Path) -> Self {
+    pub(crate) fn for_project_root(project_root: &std::path::Path) -> Self {
         Self {
             project_root: project_root.to_path_buf(),
             project_id: None,
@@ -292,11 +292,12 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     assert_eq!(tab.restart_count, 1);
     assert!(tab.active);
     assert!(tab.attached);
+    // T0-C01 / decision 027 FT-001: restart is a lifecycle event; it must not
+    // write a notice row into the grid — narration goes to the console sink.
+    let restarted_rows = terminal_state.grid_lines().join("\n");
     assert!(
-        terminal_state
-            .lines
-            .iter()
-            .any(|line| line.contains("terminal restarted; context"))
+        !restarted_rows.contains("terminal restarted"),
+        "restart lifecycle message must not enter the terminal grid"
     );
     let latest_context_path = root.join(".datum/gui-terminal-context.json");
     let latest_context: serde_json::Value =

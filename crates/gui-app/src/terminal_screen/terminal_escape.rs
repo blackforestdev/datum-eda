@@ -192,10 +192,11 @@ impl EscapeState {
             }
             b'Z' => responses.push(b"\x1b[?1;2c".to_vec()),
             b'c' => {
-                state.lines.clear();
-                state.lines.push(String::new());
-                state.styled_lines.clear();
-                state.styled_lines.push(TerminalStyledLine::default());
+                let grid = state.pty_grid_mut();
+                grid.lines.clear();
+                grid.lines.push(String::new());
+                grid.styled_lines.clear();
+                grid.styled_lines.push(TerminalStyledLine::default());
                 *cursor_row = 0;
                 *cursor_col = 0;
                 *saved_cursor = None;
@@ -653,16 +654,17 @@ fn enter_alternate_screen(
 ) {
     if alternate_screen.is_none() {
         *alternate_screen = Some(SavedTerminalScreen {
-            lines: state.lines.clone(),
-            styled_lines: state.styled_lines.clone(),
+            lines: state.grid_lines().to_vec(),
+            styled_lines: state.grid_styled_lines().to_vec(),
             cursor_row: *cursor_row,
             cursor_col: *cursor_col,
         });
     }
-    state.lines.clear();
-    state.lines.push(String::new());
-    state.styled_lines.clear();
-    state.styled_lines.push(TerminalStyledLine::default());
+    let grid = state.pty_grid_mut();
+    grid.lines.clear();
+    grid.lines.push(String::new());
+    grid.styled_lines.clear();
+    grid.styled_lines.push(TerminalStyledLine::default());
     *cursor_row = 0;
     *cursor_col = 0;
 }
@@ -674,9 +676,10 @@ fn restore_alternate_screen(
     alternate_screen: &mut Option<SavedTerminalScreen>,
 ) {
     if let Some(saved) = alternate_screen.take() {
-        state.lines = saved.lines;
-        state.styled_lines = saved.styled_lines;
-        *cursor_row = saved.cursor_row.min(state.lines.len().saturating_sub(1));
+        let grid = state.pty_grid_mut();
+        *grid.lines = saved.lines;
+        *grid.styled_lines = saved.styled_lines;
+        *cursor_row = saved.cursor_row.min(grid.lines.len().saturating_sub(1));
         *cursor_col = saved.cursor_col;
         ensure_row(state);
     }

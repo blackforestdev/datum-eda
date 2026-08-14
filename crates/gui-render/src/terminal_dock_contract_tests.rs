@@ -245,8 +245,8 @@ fn terminal_dock_renders_styled_terminal_spans_as_colored_runs() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
-    state.ui.terminal.lines = vec!["ERR ok".to_string()];
-    state.ui.terminal.styled_lines = vec![datum_gui_protocol::TerminalStyledLine {
+    *state.ui.terminal.pty_grid_mut().lines = vec!["ERR ok".to_string()];
+    *state.ui.terminal.pty_grid_mut().styled_lines = vec![datum_gui_protocol::TerminalStyledLine {
         text: "ERR ok".to_string(),
         spans: vec![datum_gui_protocol::TerminalStyleSpan {
             start: 0,
@@ -295,8 +295,8 @@ fn terminal_dock_uses_inverse_background_as_visible_terminal_span_color() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
-    state.ui.terminal.lines = vec!["INV ok".to_string()];
-    state.ui.terminal.styled_lines = vec![datum_gui_protocol::TerminalStyledLine {
+    *state.ui.terminal.pty_grid_mut().lines = vec!["INV ok".to_string()];
+    *state.ui.terminal.pty_grid_mut().styled_lines = vec![datum_gui_protocol::TerminalStyledLine {
         text: "INV ok".to_string(),
         spans: vec![datum_gui_protocol::TerminalStyleSpan {
             start: 0,
@@ -345,7 +345,7 @@ fn terminal_dock_renders_protocol_screen_cursor_when_visible() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
-    state.ui.terminal.lines = vec!["prompt".to_string()];
+    *state.ui.terminal.pty_grid_mut().lines = vec!["prompt".to_string()];
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
     state.ui.terminal.screen_cursor_visible = true;
@@ -370,7 +370,7 @@ fn terminal_dock_renders_protocol_cursor_shape() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
-    state.ui.terminal.lines = vec!["prompt".to_string()];
+    *state.ui.terminal.pty_grid_mut().lines = vec!["prompt".to_string()];
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
     state.ui.terminal.screen_cursor_visible = true;
@@ -400,7 +400,7 @@ fn terminal_dock_suppresses_protocol_screen_cursor_when_hidden() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
-    state.ui.terminal.lines = vec!["prompt".to_string()];
+    *state.ui.terminal.pty_grid_mut().lines = vec!["prompt".to_string()];
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
     state.ui.terminal.screen_cursor_visible = false;

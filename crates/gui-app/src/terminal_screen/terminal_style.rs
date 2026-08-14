@@ -3,16 +3,17 @@ use datum_gui_protocol::{
 };
 
 pub(super) fn sync_styled_lines(state: &mut TerminalLaneState) {
-    while state.styled_lines.len() < state.lines.len() {
-        state.styled_lines.push(TerminalStyledLine::default());
+    let grid = state.pty_grid_mut();
+    while grid.styled_lines.len() < grid.lines.len() {
+        grid.styled_lines.push(TerminalStyledLine::default());
     }
-    if state.styled_lines.len() > state.lines.len() {
-        state.styled_lines.truncate(state.lines.len());
+    if grid.styled_lines.len() > grid.lines.len() {
+        grid.styled_lines.truncate(grid.lines.len());
     }
-    for (index, line) in state.lines.iter().enumerate() {
-        state.styled_lines[index].text = line.clone();
+    for (index, line) in grid.lines.iter().enumerate() {
+        grid.styled_lines[index].text = line.clone();
         let line_len = line.chars().count();
-        state.styled_lines[index]
+        grid.styled_lines[index]
             .spans
             .retain(|span| span.start < span.end && span.end <= line_len);
     }
@@ -30,7 +31,7 @@ pub(super) fn set_style_at(
         return;
     }
     clear_style_range(state, row_index, column, column.saturating_add(1));
-    let Some(row) = state.styled_lines.get_mut(row_index) else {
+    let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) else {
         return;
     };
     row.spans.push(TerminalStyleSpan {
@@ -60,7 +61,7 @@ pub(super) fn clear_style_range(
     if start >= end {
         return;
     }
-    let Some(row) = state.styled_lines.get_mut(row_index) else {
+    let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) else {
         return;
     };
     let mut retained = Vec::new();
@@ -114,7 +115,7 @@ pub(super) fn shift_style_spans_for_insert(
     column: usize,
     count: usize,
 ) {
-    let Some(row) = state.styled_lines.get_mut(row_index) else {
+    let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) else {
         return;
     };
     for span in &mut row.spans {
@@ -135,7 +136,7 @@ pub(super) fn shift_style_spans_for_delete(
 ) {
     let end = column.saturating_add(count);
     clear_style_range(state, row_index, column, end);
-    let Some(row) = state.styled_lines.get_mut(row_index) else {
+    let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) else {
         return;
     };
     for span in &mut row.spans {

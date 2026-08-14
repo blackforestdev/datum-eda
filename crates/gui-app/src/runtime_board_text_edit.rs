@@ -116,7 +116,7 @@ impl Runtime {
             "prefill",
             &command,
         ) {
-            self.push_terminal_line(format!("terminal handoff event write failed: {err}"));
+            self.log_review_event(format!("terminal handoff event write failed: {err}"));
         }
         self.write_terminal_bytes(command.as_bytes());
         self.invalidate_frame();

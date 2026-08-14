@@ -100,7 +100,9 @@ impl TerminalScreen {
     ) -> Vec<Vec<u8>> {
         let mut responses = Vec::new();
         ensure_row(state);
-        self.cursor_row = self.cursor_row.min(state.lines.len().saturating_sub(1));
+        self.cursor_row = self
+            .cursor_row
+            .min(state.grid_lines().len().saturating_sub(1));
         for byte in bytes {
             if self.escape.consume(
                 *byte,
@@ -205,7 +207,9 @@ impl TerminalScreen {
                 }
             }
             trim_rows(state);
-            self.cursor_row = self.cursor_row.min(state.lines.len().saturating_sub(1));
+            self.cursor_row = self
+                .cursor_row
+                .min(state.grid_lines().len().saturating_sub(1));
         }
         self.sync_cursor_state(state);
         state.scroll_offset = 0;
@@ -352,7 +356,7 @@ impl TerminalTabStops {
 }
 
 pub(super) fn terminal_scrollback_copy_text(state: &TerminalLaneState) -> Option<String> {
-    let mut lines = state.lines.as_slice();
+    let mut lines = state.grid_lines();
     while matches!(lines.last(), Some(line) if line.is_empty()) {
         lines = &lines[..lines.len().saturating_sub(1)];
     }
@@ -363,23 +367,29 @@ pub(super) fn terminal_scrollback_copy_text(state: &TerminalLaneState) -> Option
 }
 
 fn ensure_row(state: &mut TerminalLaneState) {
-    if state.lines.is_empty() {
-        state.lines.push(String::new());
+    let grid = state.pty_grid_mut();
+    if grid.lines.is_empty() {
+        grid.lines.push(String::new());
     }
     sync_styled_lines(state);
 }
 
 fn ensure_row_at(state: &mut TerminalLaneState, row: usize) {
     ensure_row(state);
-    while state.lines.len() <= row {
-        state.lines.push(String::new());
+    let grid = state.pty_grid_mut();
+    while grid.lines.len() <= row {
+        grid.lines.push(String::new());
     }
     sync_styled_lines(state);
 }
 
 pub(super) fn row_mut_at(state: &mut TerminalLaneState, row: usize) -> &mut String {
     ensure_row_at(state, row);
-    state.lines.get_mut(row).expect("terminal row should exist")
+    state
+        .pty_grid_mut()
+        .lines
+        .get_mut(row)
+        .expect("terminal row should exist")
 }
 
 fn put_char_at(row: &mut String, column: usize, ch: char) {
@@ -503,7 +513,7 @@ pub(super) fn truncate_row_at_with_style(
     column: usize,
 ) {
     truncate_row_at(row_mut_at(state, row_index), column);
-    if let Some(row) = state.styled_lines.get_mut(row_index) {
+    if let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) {
         row.spans.retain_mut(|span| {
             if span.start >= column {
                 return false;
@@ -532,15 +542,18 @@ pub(super) fn clear_row_to_cursor_with_style(
 
 pub(super) fn clear_from_cursor_to_end(state: &mut TerminalLaneState, row: usize, column: usize) {
     truncate_row_at_with_style(state, row, column);
-    state.lines.truncate(row.saturating_add(1));
-    state.styled_lines.truncate(state.lines.len());
+    let grid = state.pty_grid_mut();
+    grid.lines.truncate(row.saturating_add(1));
+    let kept = grid.lines.len();
+    grid.styled_lines.truncate(kept);
 }
 
 pub(super) fn clear_start_to_cursor(state: &mut TerminalLaneState, row: usize, column: usize) {
-    let end_row = row.min(state.lines.len().saturating_sub(1));
+    let end_row = row.min(state.grid_lines().len().saturating_sub(1));
+    let grid = state.pty_grid_mut();
     for index in 0..end_row {
-        state.lines[index].clear();
-        if let Some(styled) = state.styled_lines.get_mut(index) {
+        grid.lines[index].clear();
+        if let Some(styled) = grid.styled_lines.get_mut(index) {
             styled.text.clear();
             styled.spans.clear();
         }
@@ -553,7 +566,7 @@ fn reverse_index(
     cursor_row: &mut usize,
     scroll_region: &Option<(usize, usize)>,
 ) {
-    let (top, bottom) = scroll_region.unwrap_or((0, state.lines.len().saturating_sub(1)));
+    let (top, bottom) = scroll_region.unwrap_or((0, state.grid_lines().len().saturating_sub(1)));
     ensure_row_at(state, bottom);
     if *cursor_row == top {
         scroll_region_down(state, top, bottom);
@@ -577,10 +590,11 @@ fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
 }
 
 fn trim_rows(state: &mut TerminalLaneState) {
-    if state.lines.len() > MAX_TERMINAL_ROWS {
-        let overflow = state.lines.len() - MAX_TERMINAL_ROWS;
-        state.lines.drain(0..overflow);
-        state.styled_lines.drain(0..overflow);
+    let grid = state.pty_grid_mut();
+    if grid.lines.len() > MAX_TERMINAL_ROWS {
+        let overflow = grid.lines.len() - MAX_TERMINAL_ROWS;
+        grid.lines.drain(0..overflow);
+        grid.styled_lines.drain(0..overflow);
     }
     sync_styled_lines(state);
 }

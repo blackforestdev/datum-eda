@@ -69,7 +69,7 @@ pub(super) fn apply_erase_line(
         1 => clear_row_to_cursor_with_style(state, row_index, column),
         2 => {
             row_mut_at(state, row_index).clear();
-            if let Some(styled) = state.styled_lines.get_mut(row_index) {
+            if let Some(styled) = state.pty_grid_mut().styled_lines.get_mut(row_index) {
                 styled.text.clear();
                 styled.spans.clear();
             }
@@ -124,8 +124,9 @@ pub(super) fn apply_erase_display(
         0 => clear_from_cursor_to_end(state, row_index, column),
         1 => clear_start_to_cursor(state, row_index, column),
         2 | 3 => {
-            state.lines.clear();
-            state.styled_lines.clear();
+            let grid = state.pty_grid_mut();
+            grid.lines.clear();
+            grid.styled_lines.clear();
             ensure_row_at(state, row_index);
         }
         _ => {}
@@ -182,13 +183,14 @@ pub(super) fn insert_lines_at(
         return;
     };
     let count = count.min(bottom - row + 1);
+    let grid = state.pty_grid_mut();
     for target in (row + count..=bottom).rev() {
-        state.lines[target] = state.lines[target - count].clone();
-        state.styled_lines[target] = state.styled_lines[target - count].clone();
+        grid.lines[target] = grid.lines[target - count].clone();
+        grid.styled_lines[target] = grid.styled_lines[target - count].clone();
     }
     for target in row..row + count {
-        state.lines[target].clear();
-        state.styled_lines[target] = TerminalStyledLine::default();
+        grid.lines[target].clear();
+        grid.styled_lines[target] = TerminalStyledLine::default();
     }
     sync_styled_lines(state);
 }
@@ -205,13 +207,14 @@ pub(super) fn delete_lines_at(
     };
     let count = count.min(bottom - row + 1);
     let shift_end = bottom + 1 - count;
+    let grid = state.pty_grid_mut();
     for target in row..shift_end {
-        state.lines[target] = state.lines[target + count].clone();
-        state.styled_lines[target] = state.styled_lines[target + count].clone();
+        grid.lines[target] = grid.lines[target + count].clone();
+        grid.styled_lines[target] = grid.styled_lines[target + count].clone();
     }
     for target in shift_end..=bottom {
-        state.lines[target].clear();
-        state.styled_lines[target] = TerminalStyledLine::default();
+        grid.lines[target].clear();
+        grid.styled_lines[target] = TerminalStyledLine::default();
     }
     sync_styled_lines(state);
 }
@@ -261,23 +264,25 @@ pub(super) fn scroll_active_region_down(
 
 pub(super) fn scroll_region_up(state: &mut TerminalLaneState, top: usize, bottom: usize) {
     ensure_row_at(state, bottom);
+    let grid = state.pty_grid_mut();
     for row in top..bottom {
-        state.lines[row] = state.lines[row + 1].clone();
-        state.styled_lines[row] = state.styled_lines[row + 1].clone();
+        grid.lines[row] = grid.lines[row + 1].clone();
+        grid.styled_lines[row] = grid.styled_lines[row + 1].clone();
     }
-    state.lines[bottom].clear();
-    state.styled_lines[bottom] = TerminalStyledLine::default();
+    grid.lines[bottom].clear();
+    grid.styled_lines[bottom] = TerminalStyledLine::default();
     sync_styled_lines(state);
 }
 
 pub(super) fn scroll_region_down(state: &mut TerminalLaneState, top: usize, bottom: usize) {
     ensure_row_at(state, bottom);
+    let grid = state.pty_grid_mut();
     for row in (top + 1..=bottom).rev() {
-        state.lines[row] = state.lines[row - 1].clone();
-        state.styled_lines[row] = state.styled_lines[row - 1].clone();
+        grid.lines[row] = grid.lines[row - 1].clone();
+        grid.styled_lines[row] = grid.styled_lines[row - 1].clone();
     }
-    state.lines[top].clear();
-    state.styled_lines[top] = TerminalStyledLine::default();
+    grid.lines[top].clear();
+    grid.styled_lines[top] = TerminalStyledLine::default();
     sync_styled_lines(state);
 }
 
@@ -306,7 +311,7 @@ fn visible_screen_region(state: &TerminalLaneState, rows: Option<usize>) -> (usi
     (
         0,
         rows.map(|rows| rows.saturating_sub(1))
-            .unwrap_or_else(|| state.lines.len().saturating_sub(1)),
+            .unwrap_or_else(|| state.grid_lines().len().saturating_sub(1)),
     )
 }
 
