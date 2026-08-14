@@ -535,6 +535,19 @@ This active-workspace restriction governs GUI authority only. It does not
 replace engine validation or redefine explicit CLI/MCP operations, whose target
 documents and authority remain part of their typed command contracts.
 
+**Definition↔instance projection (owner-resolved, S5-C01A / OPEN-6,
+2026-08-14):** a library **definition** (pad, pin, owned text/field, owned
+graphic, footprint, symbol) and its **placed instances** are different
+identity domains joined by a library binding — never one same-identity
+subject. Selecting a definition in a Footprint/Symbol Editor projects placed
+instances as **merely related** under the RB §2.3 law: exact authored
+appearance, no selection accent, no glow, not counted as selected. Full
+same-identity cross-pane projection remains reserved for the same resolved
+design object viewed through multiple panes (e.g. the Global Net subject).
+The Inspector and the explicit relationship view carry usage instead
+("used by N instances"; mild unrelated-dim only). This mirrors the ratified
+merely-related treatment of component↔placed-symbol cross-probe.
+
 #### 2.2.12 Future S5B moving contract: one verb, four invocation surfaces
 
 This section is a future S5B contract and is unavailable in read-only S5A. It
@@ -1068,8 +1081,8 @@ open — such cells carry `OPEN-n` markers regardless.
   *Scope:*
   object-only — no resolved-net ladder in a library-definition context.
   *Projection:* definition→placed-instance mapping (same-identity vs
-  merely-related) is unstated (`OPEN-6`); RB §2.3 related law bounds whatever
-  is decided. *Hidden/locked:* B-HL; many families carry no lock attribute
+  merely-related): placed instances project as merely related — exact
+  authored appearance, no accent (OPEN-6 resolved, §2.2.11). *Hidden/locked:* B-HL; many families carry no lock attribute
   today — universal lock vocabulary is S5B (COMP). *Overlay:* B-OV + B-LOD;
   pad silhouette with copper colour + drill void preserved (RB §2.1/2.7).
   *Inspector:* B-INS; `Pads N`; common fields later typed
@@ -1079,7 +1092,7 @@ open — such cells carry `OPEN-n` markers regardless.
   (`crates/gui-protocol/src/workspace_layout.rs:174-177`,
   `crates/gui-render/src/render/types.rs:80-83`); the only pad type is the
   board-review `PadPrimitive` (`lib.rs:249`). *Verdict:* spec **partial**
-  (`OPEN-6`; OPEN-4 resolved); substrate **absent**.
+  **ratified** (OPEN-4/OPEN-6 resolved); substrate **absent**.
 - **Owned text (all kinds).**
   *Ownership:* every footprint-owned text kind — reference/value, user text,
   fab notes — is an independent authored target in this workspace (OPEN-3
@@ -1088,13 +1101,14 @@ open — such cells carry `OPEN-n` markers regardless.
   (UVT §2.2.4). *Qualification:* strict-majority oriented-layout
   rule, ratified for owned text by the §2.2.4 Footprint Editor clause;
   B-CLICK. *Scope:* object-only. *Projection:* definition↔instance text
-  mapping unstated (`OPEN-6`). *Hidden/locked:* B-HL; field-visibility vs
+  mapping: merely related, never same-identity (OPEN-6 resolved,
+  §2.2.11). *Hidden/locked:* B-HL; field-visibility vs
   layer-visibility semantics unreconciled (`OPEN-13`). *Overlay:* B-OV +
   B-LOD; RB §2.7 text law (glyph geometry, no persistent rectangle, edit-tool
   handles only). *Inspector:* B-INS; style/height/stroke/alignment/visibility
   where typed (COMP). *Scene authority:* ABSENT — no editor surface; nearest
   type `ComponentTextPrimitive` (`lib.rs:182`) is board-side, no hit region.
-  *Verdict:* spec **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate
+  *Verdict:* spec **partial** (`OPEN-13`; OPEN-3/OPEN-6 resolved); substrate
   **absent**.
 - **Owned graphics (strokes and filled shapes).**
   *Ownership:* independent authored targets in this workspace (OPEN-5
@@ -1281,7 +1295,8 @@ open — such cells carry `OPEN-n` markers regardless.
   object-only — no electrical expansion from a pin *definition*.
   *Projection:* stub/terminal/name/number as one owned identity; siblings
   and body at rest (RB §2.7); projection onto placed instances unstated
-  (`OPEN-6`). *Hidden/locked:* B-HL; whether a pin definition carries a lock
+  : merely related, never same-identity (OPEN-6 resolved, §2.2.11).
+  *Hidden/locked:* B-HL; whether a pin definition carries a lock
   attribute is unstated (COMP; `OPEN-13`). *Overlay:* B-OV + B-LOD; pin
   terminal stays distinct from junction/via/no-connect while selected
   (RB §2.7). *Inspector:* B-INS; library pins read placed projection; pin
@@ -1289,7 +1304,7 @@ open — such cells carry `OPEN-n` markers regardless.
   ABSENT — no Symbol Editor surface, scene kind, or hit vocabulary exists
   anywhere (`PaneContent`/`SceneSurface` = { Board, Schematic }); nearest is
   schematic-surface `SchematicHitKind::Pin`, which resolves to the parent
-  symbol. *Verdict:* spec **partial** (`OPEN-6`; OPEN-4 resolved); substrate
+  symbol. *Verdict:* spec **ratified** (OPEN-4/OPEN-6 resolved); substrate
   **absent**.
 - **Owned text (all kinds).**
   As the Footprint Editor owned-text row, for symbol-owned text: every owned
@@ -1298,12 +1313,13 @@ open — such cells carry `OPEN-n` markers regardless.
   rule (OPEN-3 resolved, §2.2.4 all-owned-text clause); pin name/number text
   is NOT this class — it belongs to the pin subject (RB §2.7).
   Definition↔instance field projection unstated
-  (`OPEN-6`); field-visibility vs layer-visibility semantics unreconciled
+  resolved as merely related (OPEN-6, §2.2.11); field-visibility vs
+  layer-visibility semantics unreconciled
   (`OPEN-13`). *Overlay:* B-OV + B-LOD; RB §2.7 text law. *Inspector:*
   B-INS; symbol fields expose visibility/position after typed ops; the field
   table is a dedicated tool (COMP). *Scene authority:* ABSENT — no editor
   surface; no owned-text selection identity exists anywhere. *Verdict:* spec
-  **partial** (`OPEN-6`, `OPEN-13`; OPEN-3 resolved); substrate **absent**.
+  **partial** (`OPEN-13`; OPEN-3/OPEN-6 resolved); substrate **absent**.
 - **Owned graphics (body strokes, lines/arcs, filled shapes).**
   As the Footprint Editor owned-graphics row: independent authored targets
   in this workspace under the generic path + filled-graphic rules (OPEN-5
@@ -1477,6 +1493,17 @@ new choice after C02–C10 are complete.
   instances. *Candidate:* merely-related under RB §2.3 (exact authored
   appearance, no accent), never same-identity. *Decision:* S5-C01A.
   *Propagation:* S5-C07.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.11 definition↔instance clause). *Reason:* definitions and instances
+  are different identity domains joined by a library binding — same-identity
+  projection is reserved for one resolved design object in multiple panes;
+  the tighter component↔placed-symbol coupling is already ratified
+  merely-related; a selection cue on instances would falsely imply instance
+  mutation authority (definition edits propagate through library-update
+  flows, not selection); class-wide glow (every 0402 pad instance) is
+  Global-Net-scale noise for a local edit. Usage lives in the Inspector
+  ("used by N instances") and the explicit relationship view. S5-C07 folds
+  this into the formal same-identity vs merely-related definition.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-7 -->
 - **OPEN-7 — junction Global-Net membership.** Junctions are absent from the
   enumerated net-member list. *Candidate:* include the junction dot as an
