@@ -2399,6 +2399,54 @@ a min-px clamp (which would smear a sub-pixel glyph).
   deliberately heavier for emphasis; not the geometry floor, never applied to copper.
 - Junction/terminal **dots = 3.0 px floor** (a sub-3-px disc reads as a stray pixel).
 
+### 4.4 Selection immediate-overlay law (S5-C08)
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->
+
+Selection rendering is **exclusively class-A immediate overlay**. The complete
+three-part treatment — the exact 2.0-physical-px crisp object-shaped cue, the
+subordinate `#CE5A92` internal glow, and the slight owned-geometry luminance
+lift — is computed every frame in the post-world immediate pass against the
+live camera. The lift is achieved by **re-compositing the owned geometry into
+the overlay pass with the lift applied**, never by touching retained color
+data. Four invariants hold for every selection state change (select, deselect,
+membership change, focus change, subject change):
+
+1. **Retained bytes unchanged** — no selection state change resolves, maps,
+   or rewrites any retained world vertex/instance/color buffer (the S4
+   zero-retained-resolve law extended from hover to all selection state).
+2. **Static buffers stay static** — select/deselect cycles cause zero buffer
+   re-uploads; only dedicated immediate-overlay buffers refresh.
+3. **CAM/export geometry byte-identical** — manufacturing output is
+   invariant under any selection state (render==CAM Law 1; selection is
+   screen-only presentation, RB §2.1).
+4. **Hit bounds unchanged** — selection never inflates or alters hit or
+   region-qualification geometry (§2.2.17 anchors are authored world
+   geometry).
+
+The current retained-world selected-recolor path (board track/component
+recoloring inside retained buffers) is **named migration debt**: the S5A
+build removes it in favor of this law, and the existing retained-selection
+tests are replaced by the assertions below (they currently pin the debt).
+Composition order and dense/tiny degradation follow §2.2.13 and the OPEN-14
+resolution — one selection-cue budget wherever the cue draws, channel
+identity never flattened.
+
+**Overlay assertions (TO-ENFORCE; consumed by S5-C10):**
+
+- **V1 zero retained resolve** — no selection state change touches retained
+  buffers (`overlay_zero_retained_resolve_on_selection`).
+- **V2 static-buffer stability** — repeated select/deselect cycles produce
+  zero re-uploads outside immediate-overlay buffers
+  (`overlay_static_buffers_across_selection`).
+- **V3 CAM invariance** — CAM/export output is byte-identical with and
+  without any selection active (`overlay_cam_byte_identity`).
+- **V4 hit invariance** — hit/region qualification results are identical
+  under any selection state (`overlay_hit_geometry_invariant`).
+- **V5 class-A zoom invariance** — the crisp cue measures 2.0 physical px
+  across a zoom sweep; the lift/glow follow owned geometry scale
+  (`overlay_cue_zoom_invariant`).
+
 *Disposition: TO-ENFORCE — every §4.2 primitive has an assignment/consumer gate;
 class-B/C width floors in device px against the live projection; HUMAN — zoom
 test, grid + selection weight constant. Model-only scaffolding is not LANDED.*
