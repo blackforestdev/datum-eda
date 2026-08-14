@@ -143,6 +143,31 @@ never invokes an engine operation.
   active. Paste supports bracketed-paste mode and warns or confirms according to
   the configured multiline-paste policy.
 
+### 5.1 User-visible operational feedback
+
+Feedback placement follows consequence, not implementation convenience:
+
+- A detached terminal displays a persistent terminal-local `Detached — input
+  disabled` state with a reattach affordance. The content surface is read-only;
+  typing produces no PTY bytes and never falls back to a hidden line editor.
+- An explicit successful copy may display a brief terminal-local confirmation
+  and accessibility announcement. Routine copy success may otherwise remain
+  silent according to profile policy.
+- Clipboard-read/write failure, rejected paste, and paste-security refusal use
+  visible warning/error feedback through the notification backbone. A blocking
+  confirmation remains local to the initiating terminal.
+- PTY write failure displays persistent terminal-local error chrome with
+  retry/restart actions. It also publishes structured diagnostic detail to the
+  Notices/log surfaces when available.
+- Routine narration and historical diagnostics may flow to `ConsoleLaneState`
+  for the read-only Command Console. Interaction-blocking state and failed user
+  actions may not exist only in that presently invisible sink.
+
+No item above writes into, overlays, or reserves a row in the terminal cell
+rectangle. T0-C02 owns only truthful cell geometry; detached lifecycle belongs
+to the input/session slices, clipboard behavior to interaction/notification
+integration, and PTY failure handling to transport/session lifecycle.
+
 ## 6. Security contract
 
 Terminal output is hostile input. The adapter/core boundary must prevent escape
@@ -214,7 +239,17 @@ frame pacing during output, damage upload volume, memory per scrollback line,
 resize/reflow time, startup time, and multi-session scaling. Budgets are fixed
 before final verification and run against checked-in deterministic fixtures.
 
-### 7.4 Human acceptance
+### 7.4 Visual-parity failure disposition
+
+A failing committed visual-parity gate is a product defect even when it predates
+the current slice. The defect record must preserve the exact baseline commit,
+reproduction command, expected image, actual image, diff image, changed-pixel
+ratio, and suspected rendering boundary. Implementers do not use `--bless` to
+unblock unrelated work. They either restore the intended output or present the
+artifacts for explicit owner review of an intentional replacement. Only that
+review authorizes a new golden.
+
+### 7.5 Human acceptance
 
 The owner verifies at least: shell prompt/typing, long output, colors, Vim or
 Neovim, tmux, an interactive code agent, copy/paste/selection, search, resize,

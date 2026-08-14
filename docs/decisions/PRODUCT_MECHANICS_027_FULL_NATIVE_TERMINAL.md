@@ -60,6 +60,10 @@ views, and performance are in scope.
   requested executable, process group, cwd, environment, size, lifecycle, and
   independent terminal state. Job control, signals, long-running processes,
   pipelines, SSH, multiplexers, and alternate-screen programs must work.
+  A detached session is visibly marked in persistent terminal-local chrome and
+  accepts no input bytes until reattached. A PTY write failure is immediately
+  visible in persistent terminal-local error chrome with retry/restart actions;
+  detailed Notice/log publication is additional evidence, never a substitute.
 - **FT-004 — complete text model.** The terminal supports Unicode grapheme
   clusters, combining marks, wide cells, emoji sequences, font fallback, complex
   shaping where the selected core exposes it, configurable fonts and sizes,
@@ -78,6 +82,10 @@ views, and performance are in scope.
   configurable; resize reflows logical lines; search supports next/previous,
   case sensitivity, regular expressions, and match visibility; hyperlinks and
   detected paths are actionable through explicit user gestures.
+  A successful explicit copy may use a brief terminal-local confirmation plus
+  an accessibility announcement. Clipboard and paste failures, multiline-paste
+  refusals, and security-policy refusals require visible warning/error feedback.
+  None of this feedback may consume terminal cells.
 - **FT-007 — native session UX.** Datum supports multiple terminal tabs, splits,
   tab naming/title updates, restart, close/kill confirmation, attach/detach where
   the process model supports it, profiles, themes, font zoom, cwd-aware new
@@ -117,6 +125,10 @@ views, and performance are in scope.
   Code, and at least one local agent. Renderer throughput, input-to-present
   latency, memory per retained line, and sustained-output behavior have explicit
   budgets and reproducible fixtures.
+  A visual-parity failure is never resolved by silently blessing a golden.
+  Expected, actual, and diff artifacts plus the baseline commit and reproduction
+  command must first identify the change as an unintended regression or an
+  intentional owner-reviewed replacement. Only the latter permits `--bless`.
 - **FT-013 — no partial-product substitution.** A focus fix, PTY swap, parser test,
   cell grid, or command-console surface is not a completed native terminal. Each
   is only evidence for its named slice. The epic closes only when the full
