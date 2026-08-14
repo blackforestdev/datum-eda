@@ -39,8 +39,8 @@
         "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
@@ -50,7 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C10",
+        "canonical_next_step_id": "S5-C11",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -419,7 +419,7 @@
           {
             "id": "S5-C10",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Give every S5 machine and HUMAN claim an exact honest file/assertion or reference/golden/review disposition.",
             "depends_on": [
               "S5-C02",
@@ -437,7 +437,13 @@
                 "marker": "S5-C10"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C10-DISPOSITION"
+              }
+            ]
           },
           {
             "id": "S5-C11",
@@ -528,24 +534,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "claude",
-        "harness": "claude-code",
-        "session": "claude-session-015g6GKEMFfJrYeMDQzpWPzb",
-        "claimed_at": "2026-08-14T07:22:20Z",
-        "heartbeat_at": "2026-08-14T07:22:20Z",
-        "expires_at": "2026-08-14T15:22:20Z",
-        "scope": [
-          "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
-          "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
-          "docs/gui/reference/",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "d195cc09422e9425cc98aad3ba7e569445d46e1c"
       }
     },
     {

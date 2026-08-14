@@ -203,16 +203,16 @@ here: golden capture framing (item 1) and overlay-text overflow (item 2).
 | Canvas is the deepest stage, distinct from chrome | `.pane{background:var(--canvas)}` `#0B0C0E` | `CANVAS` / board-field surface | P1 | ENFORCED | `check_gui_design_tokens.py` (CANVAS value) |
 | Layer render stack order (back→front, group ladder) | copper under silk under edge (visual) | `scene_layer_stack_priority` ladder | P1 | ENFORCED | `render_contract_tests.rs::render_stack_policy_follows_declared_contract` |
 | Copper built from tokens, not raw literals | `--cu-f/--cu-b` widths, glow | material-first copper from `design_tokens::content` | P1 | ENFORCED | `check_gui_design_tokens.py` copper-consumption guard (`from_copper_material([…])` fence) |
-| Selection = slight whole-owned-object luminance lift + accent internal glow, with material/semantic hue retained (cross-probed U1) | `stroke:var(--acc)` + `#glow` filter is the visual target, interpreted through Rendering Book §2.1 | immediate object-shaped selection overlay (retained-world recolor is migration debt) | S5 | ENFORCED (accent value) / TO-ENFORCE (overlay retention) / HUMAN (look) | value: `check_gui_design_tokens.py`; retention: S5 state/renderer gate; look: ref image vs golden |
-| Active/inactive resolving panes show identical full selection; only pane frame/focus header/tool availability grants GUI mutation authority | schematic/board cross-projection uses the same glow while `.pane.focus` frames pane A | shared selection projected through each pane camera; focus chrome remains pane-only | S5 | TO-ENFORCE / HUMAN | state test: focus change preserves selection overlay signature per identity while moving focus frame; same-size schematic-editor reference review |
-| Global Net is one semantic subject whose complete visible electrical projection glows across schematic/PCB; connected parent bodies remain related | selected `SPI2_SCK` wire/label and cross-probed PCB copper | typed global-net projection over visible wire/label/port/pin-terminal/track/via/pad/zone/airwire roles | S5 | TO-ENFORCE / HUMAN | projection membership test + split-pane global-net golden/reference review; hidden-member Inspector count |
-| Related objects keep exact authored appearance; explicit relationship view may dim only unrelated context | related parent remains baseline; no second accent vocabulary | retire via-coloured `AUTHOR_RELATED`; governed legible unrelated-dim channel + Inspector relationship explanation | S5 | TO-ENFORCE / HUMAN | token/state test prohibits related recolor/lift/glow; dense board/schematic legibility review |
-| Optional compound focus member has no stronger/different persistent canvas visual | n/a (compound deferred in prototype) | equal member selection overlays; focus only in Inspector/session; command-owned temporary reference marker | S5 | TO-ENFORCE / HUMAN | selection overlay signatures equal across focused/unfocused members; removing focus promotes none |
-| Locked selection = slight neutral greying + normal selection + no handles + governed anchor padlock/cursor | not yet in prototype | typed lock channel; padlock blocked on icon_set declaration/contact-sheet entry/HUMAN review; dense compounds use Inspector count | S5 | TO-ENFORCE / HUMAN | lock/selection coexistence + no-handle state tests; icon-set/contact-sheet gate; high-contrast and dense-selection review |
-| Authored/proposal/selection/diagnostic collision preserves every channel; semantic marker topmost | proposal ghost and warn glyph visual vocabulary | ordered orthogonal overlays; selected proposal/diagnostic retains proposal/severity core plus selection cue | S5 | TO-ENFORCE / HUMAN | maximal-collision golden/state test + high-contrast/CVD review; no channel flattened to magenta |
-| Bus scope expands section → connected run → hierarchical bus; owned spine/name/entries glow, scalar member nets do not | selected bus spine/name visual | typed Bus selection projection distinct from scalar Global Net | S5 | TO-ENFORCE / HUMAN | bus click-depth/membership tests + multi-sheet bus golden; Inspector member/hidden counts |
-| Text uses glyph selection without persistent bbox; junction/via/no-connect/pin preserve semantic silhouette/core with crisp tiny-object fallback | Rendering Study whole-symbol text/terminal treatment | typed glyph/path/ring overlays; text handles only in edit tool; Symbol Editor child-pin scope | S5 | TO-ENFORCE / HUMAN | per-class min/mid/max zoom + high-contrast snapshots; authored/hit geometry unchanged |
-| Dense/global/panelized selection: sub-2px cue, 65,536 detail cap, then exact whole-pane union-mask fallback; never partial/bbox | n/a | deterministic visible-overlay LOD + Inspector aggregate-LOD state | S5 | TO-ENFORCE / HUMAN | 100k-object fixture; cap/fallback determinism, warm capacity, full membership, high-coverage legibility |
+| Selection = slight whole-owned-object luminance lift + accent internal glow, with material/semantic hue retained (cross-probed U1) | `stroke:var(--acc)` + `#glow` filter is the visual target, interpreted through Rendering Book §2.1 | immediate object-shaped selection overlay (retained-world recolor is migration debt) | S5 | ENFORCED (accent value) / TO-ENFORCE (overlay retention) / HUMAN (look) | value: `check_gui_design_tokens.py`; retention: ledger §8.1 V1–V5; look: `selection-study.png` panel 1 (§8.2) |
+| Active/inactive resolving panes show identical full selection; only pane frame/focus header/tool availability grants GUI mutation authority | schematic/board cross-projection uses the same glow while `.pane.focus` frames pane A | shared selection projected through each pane camera; focus chrome remains pane-only | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I2; `selection-study.png` panel 5 (§8.2) |
+| Global Net is one semantic subject whose complete visible electrical projection glows across schematic/PCB; connected parent bodies remain related | selected `SPI2_SCK` wire/label and cross-probed PCB copper | typed global-net projection over visible wire/label/port/pin-terminal/track/via/pad/zone/airwire roles | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I4 + L5 + O4; `selection-study.png` panel 6 (§8.2) |
+| Related objects keep exact authored appearance; explicit relationship view may dim only unrelated context | related parent remains baseline; no second accent vocabulary | retire via-coloured `AUTHOR_RELATED`; governed legible unrelated-dim channel + Inspector relationship explanation | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I3; `selection-study.png` panel 6 (§8.2) |
+| Optional compound focus member has no stronger/different persistent canvas visual | n/a (compound deferred in prototype) | equal member selection overlays; focus only in Inspector/session; command-owned temporary reference marker | S5 | TO-ENFORCE / HUMAN | ledger §8.1 L6 + O3; `selection-study.png` panel 2 (§8.2) |
+| Locked selection = slight neutral greying + normal selection + no handles + governed anchor padlock/cursor | not yet in prototype | typed lock channel; padlock blocked on icon_set declaration/contact-sheet entry/HUMAN review; dense compounds use Inspector count | S5 | TO-ENFORCE / HUMAN | ledger §8.1 R1/R3 + B3; icon gate CLOSED (declared+sheet+approved); `selection-study.png` panel 3 (§8.2) |
+| Authored/proposal/selection/diagnostic collision preserves every channel; semantic marker topmost | proposal ghost and warn glyph visual vocabulary | ordered orthogonal overlays; selected proposal/diagnostic retains proposal/severity core plus selection cue | S5 | TO-ENFORCE / HUMAN | ledger §8.1 D2; `selection-study.png` panels 4+9 (§8.2) |
+| Bus scope expands section → connected run → hierarchical bus; owned spine/name/entries glow, scalar member nets do not | selected bus spine/name visual | typed Bus selection projection distinct from scalar Global Net | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I4 + A6; `selection-study.png` panel 6 (§8.2) |
+| Text uses glyph selection without persistent bbox; junction/via/no-connect/pin preserve semantic silhouette/core with crisp tiny-object fallback | Rendering Study whole-symbol text/terminal treatment | typed glyph/path/ring overlays; text handles only in edit tool; Symbol Editor child-pin scope | S5 | TO-ENFORCE / HUMAN | ledger §8.1 A6 + V4/V5; `selection-study.png` panels 7+9 (§8.2) |
+| Dense/global/panelized selection: sub-2px cue, 65,536 detail cap, then exact whole-pane union-mask fallback; never partial/bbox | n/a | deterministic visible-overlay LOD + Inspector aggregate-LOD state | S5 | TO-ENFORCE / HUMAN | ledger §8.1 D1; `selection-study.png` panel 8 (§8.2) |
 | **Golden captures the board fit-to-bounds** (item 1) | mockup shows board filling the pane | `camera_for_manifest` centers scene bounds and uses fit zoom | P1 | ENFORCED | `visual_runner.rs::conformance_golden_camera_frames_board_fit_to_bounds` |
 | **Overlay hint stays within the viewport** (item 2) | n/a (mockup has no overflowing hint) | hint is clipped to `layout.viewport` | P1 | ENFORCED | `layout_invariant_tests.rs::shell_and_hit_regions_hold_layout_invariants_across_scale_matrix` |
 | Board-field border color | grid `#171A20`, edge `--edge` | board-field border uses `design_tokens::content::EDGE`; retired raw literal linted | P1 | ENFORCED | `scripts/check_gui_design_tokens.py` ad-hoc chrome literal guard |
@@ -465,3 +465,74 @@ conformance rail. This spec is the **template and precedent** for that pass; it 
 not itself perform it. Sequencing for the rollout lives in the Active Frontier
 (`specs/PROGRESS.md`), which threads each surface's conformance rail behind the
 build slice it governs.
+
+## 8. S5 disposition ledger (S5-C10)
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C10-DISPOSITION -->
+
+Every S5 claim closes here with exactly one honest disposition. Machine
+claims are **TO-ENFORCE**: each names its exact future test home and
+assertion, landing with the S5A build slice; a test-home relocation requires
+updating this ledger in the same change. HUMAN claims are **CLOSED for the
+specification phase**: each cites the committed reference
+`docs/gui/reference/selection-study.png` (owner-approved 2026-08-14, review
+record `DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md` §2.2.21) by panel number,
+with re-review at S5A landing against the build's own goldens (never
+cross-engine pixel-diff). The `selection-lock-anchor` icon gate is closed:
+declared in `icon_set.json`, on the contact sheet, design owner-approved
+(asset `to_author`, lands with S5A).
+
+### 8.1 Machine assertions (TO-ENFORCE, land with S5A)
+
+| ID | Assertion (governing §) | Test home |
+|---|---|---|
+| A1 | Region membership deterministic per (revision, final region) — UVT §2.2.17 | `crates/gui-viewport/src/region.rs::region_membership_deterministic` |
+| A2 | Region enumeration AABB-pruned, never O(total) — §2.2.17 | `crates/gui-viewport/src/region.rs::region_query_prunes_by_aabb` |
+| A3 | Rect+lasso membership equals brute-force oracle (100k fixture) — §2.2.17 | `crates/gui-viewport/src/region.rs::region_membership_matches_oracle` |
+| A4 | Auto-pan gesture ≡ directly-specified equal region — §2.2.17 | `crates/gui-viewport/src/region.rs::region_autopan_membership_equivalence` |
+| A5 | Commit atomic under budget pressure; cancel preserves prior — §2.2.17 | `crates/gui-viewport/src/region.rs::region_commit_atomic_under_budget` |
+| A6 | Per-class qualification cases incl. exactly-50% rejection — §2.2.4/§2.2.16 | `crates/gui-viewport/src/region.rs::region_class_qualification_cases` |
+| A7 | Regions never acquire non-authored subjects — OPEN-12 | `crates/gui-viewport/src/region.rs::region_excludes_non_authored` |
+| L1 | Re-resolution on every model_revision — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_reresolution_on_revision` |
+| L2 | No phantom members post-revision — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_no_phantom_members` |
+| L3 | Identity-preserving edits keep selection — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_edit_preserves_selection` |
+| L4 | No resurrection on undo; no substitution on recreate — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_no_resurrection` |
+| L5 | Semantic subjects re-derive wholly; dissolve-to-empty — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_semantic_subject_rederivation` |
+| L6 | Focus clears with no auto-promotion — §2.2.18/§2.2.10 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_focus_clears_no_promotion` |
+| L7 | Pane close preserves; content swap cancels gestures only; project swap drops — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_pane_document_lifecycle` |
+| L8 | Stale identities drop-and-report, never fault or fuzzy-match — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_stale_identity_drop` |
+| L9 | Per-pane projection = per-pane resolution; Inspector totals global — §2.2.18 | `crates/gui-viewport/src/selection_lifetime.rs::lifetime_partial_pane_projection` |
+| O1 | One projection structure feeds Inspector/console/envelope — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_single_projection_source` |
+| O2 | Common/Mixed/Unavailable vs oracle — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_field_state_semantics` |
+| O3 | Scopes are view filters; never mutate membership — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_scope_view_filter` |
+| O4 | Blocker counts carry exact member/reason disclosure — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_blocker_reporting` |
+| O5 | Envelope stable order, 256-id cap + truncated marker, round-trip — §2.2.19 | `crates/gui-protocol/src/context_envelope.rs::outputs_envelope_bounded_deterministic` |
+| O6 | Outputs complete with no status bar — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_no_status_bar_dependency` |
+| O7 | S5A outputs expose no mutation entry — §2.2.19 | `crates/gui-protocol/src/selection_projection.rs::outputs_readonly_boundary` |
+| B1 | No code path from any selection surface to an Operation — §2.2.14 | `crates/gui-app/src/main_tests/boundary.rs::boundary_no_mutation_entry` |
+| B2 | S5B seams render disabled-with-reason — §2.2.14 | `crates/gui-app/src/main_tests/boundary.rs::boundary_seams_disabled_with_reason` |
+| B3 | No transform-handle geometry in S5A — §2.2.14 | `crates/gui-render/src/render/overlay.rs::boundary_no_handles_in_s5a` |
+| R1 | Any of five blocker kinds ⇒ whole refusal, zero journal — §2.2.14 atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_whole_operation_no_journal` |
+| R2 | Refusal report matches §2.2.19 blocker vocabulary — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_report_matches_outputs` |
+| R3 | Refusal never implicitly repairs selection/locks — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_no_implicit_repair` |
+| R4 | GUI/CLI/MCP refusal parity — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_surface_parity` |
+| V1 | Zero retained-resolve on any selection state change — UVT §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_zero_retained_resolve_on_selection` |
+| V2 | Static buffers static across select/deselect — §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_static_buffers_across_selection` |
+| V3 | CAM/export byte-identical under selection — §4.4 / Law 1 | `crates/gui-render/src/render/overlay.rs::overlay_cam_byte_identity` |
+| V4 | Hit/region results invariant under selection — §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_hit_geometry_invariant` |
+| V5 | Cue 2.0 physical px across zoom sweep — §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_cue_zoom_invariant` |
+| I1 | Subject vocabulary one-to-one across enum/envelope/spec — §2.2.20 | `crates/gui-protocol/src/lib.rs::identity_vocabulary_roundtrip` |
+| I2 | Same-identity projects full strength in all resolving panes — §2.2.20 | `crates/gui-render/src/render/scene.rs::identity_same_projection_equality` |
+| I3 | Merely-related never receives selection treatment — §2.2.20 table | `crates/gui-render/src/render/scene.rs::identity_related_baseline_only` |
+| I4 | Run/Global-Net/Bus derivation deterministic per (identity, revision) — §2.2.20 | `crates/gui-protocol/src/lib.rs::identity_derived_membership` |
+| I5 | P2.3 cross-probe consumes the typed vocabulary (structural) — §2.2.20 | `crates/gui-app/src/main_tests/boundary.rs::identity_p23_consumes_vocabulary` |
+| D1 | Dense cap/union-mask determinism, warm capacity, full membership (100k fixture) — §2.2.13/RB §2.8 | `crates/gui-render/src/render/visual_runner.rs::dense_cap_union_mask_determinism` |
+| D2 | Maximal-collision dense variant preserves channel identity — OPEN-14 | `crates/gui-render/src/render/visual_runner.rs::dense_maximal_collision_channels` |
+
+### 8.2 HUMAN claims (closed for the specification phase)
+
+Reference: `docs/gui/reference/selection-study.png`; review record UVT §2.2.21.
+Panels: 1 construction · 2 compound · 3 locked+padlock · 4 maximal collision ·
+5 pane parity · 6 Global Net/Bus · 7 text/points · 8 dense fallback ·
+9 accessibility/zoom. Each S5 board-pane row in §2.5 names its panel; S5A
+landing re-reviews each panel against the build's own goldens.
