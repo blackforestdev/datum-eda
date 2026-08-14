@@ -230,6 +230,13 @@ later tuning requires usability evidence and a governed spec change.
 - In the board workspace, clicking a pad selects its parent footprint and pad
   anchors contribute to parent-footprint region selection. In the footprint
   editor workspace, a pad is independently selectable.
+- **Component-owned graphics (owner-resolved, S5-C01A / OPEN-2, 2026-08-14):**
+  in the board workspace, clicking a footprint's owned silkscreen, courtyard,
+  or fabrication graphic selects the **parent footprint** — the same ownership
+  collapse as pads (and graphics still never enlarge the region test).
+  Footprint-contributed **Edge.Cuts geometry carries no hit region**: board
+  outline clicks always resolve to the board-level outline authority, never to
+  a component. Child-level graphic selection is definition-editor authority.
 - In the schematic workspace, clicking a pin selects its parent symbol and pin
   anchors contribute to parent-symbol region selection. In the symbol editor
   workspace, a pin is independently selectable.
@@ -846,8 +853,9 @@ open — such cells carry `OPEN-n` markers regardless.
   reference/value text is neither independently selectable nor counted; Ctrl+A
   collapses pads to the parent (UVT §2.2.4/2.2.9). Child independence in the
   Footprint Editor workspace is ratified for pads and owned reference/value
-  text only (UVT §2.2.4); owned-graphics independence is spec-silent
-  (`OPEN-2`). *Qualification:* B-CLICK; region qualifies on a strict majority
+  text only (UVT §2.2.4); board-workspace clicks on owned graphics select the
+  parent footprint and component Edge.Cuts geometry carries no hit region
+  (OPEN-2 resolved, §2.2.4). *Qualification:* B-CLICK; region qualifies on a strict majority
   (>50%) of pad center anchors inside (padless → placement anchor);
   silkscreen, courtyard, fab graphics, and ref/value text never enlarge the
   test (UVT §2.2.4). *Scope:* object-only; never silently added to electrical
@@ -866,7 +874,7 @@ open — such cells carry `OPEN-n` markers regardless.
   (`crates/gui-render/src/render/retained.rs:743/:754/:814/:827`); selected as
   flat `SelectionTarget::AuthoredObject(String)` (`lib.rs:440-445`) — no typed
   object class; `ComponentTextPrimitive` has no hit region.
-  *Verdict:* spec **partial** (`OPEN-2`; OPEN-1 resolved); substrate
+  *Verdict:* spec **ratified** (OPEN-1/OPEN-2 resolved); substrate
   **live**.
 - **Track section / connected run.**
   *Ownership:* the authored section is its own subject; run and net are
@@ -960,17 +968,16 @@ open — such cells carry `OPEN-n` markers regardless.
   absent).
 - **Line / arc / outline graphic (stroke-only, incl. board outline).**
   *Ownership:* standalone graphics are their own subjects. Component-owned
-  graphics: board-workspace ownership is spec-silent — current code hit-maps
-  them to the parent component and skips Edge.Cuts component graphics
-  (`retained.rs:814/:827/:790-798`); that behavior is the candidate rule,
-  pending ratification (`OPEN-2`). *Qualification:* B-CLICK; region path rule
+  graphics: clicks select the parent footprint and component Edge.Cuts
+  geometry carries no hit region (OPEN-2 resolved, §2.2.4 — ratifies the
+  code behavior at `retained.rs:814/:827/:790-798`). *Qualification:* B-CLICK; region path rule
   as for track sections (UVT §2.2.4). *Scope:* object-only. *Projection:*
   exact authored path, board-local. *Hidden/locked:* B-HL. *Overlay:* B-OV +
   B-LOD. *Inspector:* B-INS; no common fields until identities converge
   (COMP). *Scene authority:* `BoardGraphicPrimitive` (`lib.rs:131`) +
   `OutlinePolyline` (`lib.rs:217`), polyline hit regions
-  (`retained.rs:856/:869`). *Verdict:* spec **partial** (`OPEN-2`); substrate
-  **live**.
+  (`retained.rs:856/:869`). *Verdict:* spec **ratified** (OPEN-2 resolved);
+  substrate **live**.
 - **Dimension (board measurement annotation).**
   Every selection cell is spec-silent: UVT §2.2.4–2.2.13 never mention
   dimensions; the class exists only as a mandatory S5-C01 row. No candidate
@@ -1062,7 +1069,7 @@ open — such cells carry `OPEN-n` markers regardless.
   ownership, qualification, and projection. Candidate resolution: extend the
   generic path + filled-graphic rules of §2.2.4 to this workspace as
   independent authored targets (`OPEN-5`); board-workspace sub-graphics
-  remain parent projections (`OPEN-2`). Graphics are not uniformly backed by
+  remain parent projections (OPEN-2 resolved). Graphics are not uniformly backed by
   authored engine identities (COMP), which blocks stable identity bookkeeping
   until that converges. *Hidden/locked:* B-HL once admitted. *Overlay:*
   generic B-OV + B-LOD (no class-specific RB text). *Inspector:* B-INS; no
@@ -1372,6 +1379,15 @@ new choice after C02–C10 are complete.
   *Candidate:* ratify the current code behavior — sub-graphics hit-map to
   the parent component; Edge.Cuts component graphics excluded from hit
   regions. *Decision:* S5-C01A. *Propagation:* S5-C07/S5-C08.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.4 component-owned-graphics clause). *Reason:* the parent collapse is
+  the field consensus (KiCad/Altium select the owning footprint) and extends
+  the already-ratified §2.2.4 ownership model — on the board, the footprint
+  is the object; child graphic editing is definition-editor authority. The
+  Edge.Cuts hit exclusion protects board-level outline authority: a
+  footprint contributing outline geometry must never capture outline clicks.
+  Useful consequence: silk-dense, pad-sparse parts become clickable by
+  their silk while the region test stays pad-anchor-based.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-3 -->
 - **OPEN-3 — owned text beyond reference/value.** The editors' owned-text
   independence is ratified for reference/value only; user/fab owned text is
