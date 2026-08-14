@@ -172,8 +172,9 @@ are prohibited:
   selection it creates the selection; otherwise it extends the selection;
 - `Ctrl`+primary drag opens a subtractive selection region and removes matching
   members from the prior selection; and
-- plain primary drag does not open a selection region and remains available for
-  direct object manipulation.
+- plain primary drag does not open a selection region; it is **reserved** for
+  direct object manipulation under the S5B movement contract (§2.2.12) — in
+  read-only S5A the gesture binds no object-manipulation behavior.
 
 `Shift`+`Ctrl` is not a third selection operation. `Escape` clears the complete
 selection rather than removing one member at a time.
@@ -764,6 +765,46 @@ engine does not possess:
 S5A MUST retain typed extension seams for S5B/later without presenting those
 later capabilities as landed. S5 execution remains unauthorized until final
 owner review and a numbered selection-identity decision ratify this mechanism.
+
+<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->
+**Boundary reconciliation (S5-C05, 2026-08-14).** The complete §2.2 corpus is
+reconciled to this boundary under one **global reading rule**: any wording in
+§2.2 that names moving, dragging-to-move, rotation, mirroring, lock/unlock
+commands, `Group` creation, editable/batch fields, transform handles, or the
+text-edit tool specifies **S5B-or-later** behavior — S5A ships acquisition,
+lifecycle (§2.2.18), projection, and read-only inspection/outputs (§2.2.19)
+only, and claims no mutation authority anywhere. Specifics fixed or confirmed
+by the sweep:
+
+- §2.2.2 plain primary drag: rewritten — the gesture is *reserved* for the
+  S5B movement contract and binds no S5A behavior.
+- §2.2.7/2.2.8/2.2.9 locked/hidden mutation-refusal language (whole-refusal,
+  no implicit unlock, hidden-member manipulation): these are **laws
+  constraining future mutations**, not S5A capability claims; their atomic
+  semantics are S5-C06's contract.
+- §2.2.10 compound capability rows (rotation, lock/unlock, batch fields):
+  confirmed already presented as unavailable/explanatory extension seams —
+  the required S5A rendering is *visible, disabled, with reason*, exactly as
+  Phase 1 renders `not_built` menu items.
+- §2.2.12: confirmed titled and scoped as the future S5B moving contract,
+  unavailable in S5A.
+- §2.2.13/§2.2.16 references to transform handles and the text-edit tool
+  (text rows, RB §2.7 language): the tools and handles are S5B-or-later; in
+  S5A no handle geometry renders for any selection state.
+- §2.2.16 matrix: every row's mutation-adjacent cell (lock behavior, batch
+  fields, dedicated tools) reads under the global rule; OPEN-13 already
+  ratifies no S5A child-lock vocabulary.
+
+**Boundary assertions (TO-ENFORCE; consumed by S5-C10):**
+
+- **B1 no mutation entry** — the S5A build exposes no code path from any
+  selection surface (canvas, Inspector, console, envelope) to a design
+  `Operation` (`boundary_no_mutation_entry`).
+- **B2 seams render disabled-with-reason** — S5B seam capabilities render
+  visible, disabled, and explained; never active, never hidden
+  (`boundary_seams_disabled_with_reason`).
+- **B3 no handle geometry** — no transform-handle overlay renders in S5A
+  for any selection state (`boundary_no_handles_in_s5a`).
 
 #### 2.2.15 Canonical S5 specification-closure requirements
 

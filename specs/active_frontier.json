@@ -50,7 +50,7 @@
       ],
       "completion": {
         "outcome": "The complete S5 selection identity and visual contract is owner-reviewed, ratified by the next available numbered decision, and closed with evidence without authorizing S5A implementation.",
-        "canonical_next_step_id": "S5-C05",
+        "canonical_next_step_id": "S5-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -306,7 +306,7 @@
           {
             "id": "S5-C05",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Reconcile every contract to the read-only S5A boundary and defer move, rotate, mirror, lock, group, and editable fields to S5B or later.",
             "depends_on": [
               "S5-C01A"
@@ -317,7 +317,13 @@
                 "marker": "S5-C05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+                "marker": "EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY"
+              }
+            ]
           },
           {
             "id": "S5-C06",
