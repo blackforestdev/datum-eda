@@ -39,7 +39,11 @@ pub enum HitTarget {
     TerminalSessionRestartActive,
     TerminalSessionDetachActive,
     TerminalSessionCloseActive,
-    TerminalActivitySummary(String),
+    /// The exact visible terminal cell rectangle (T0-C02): clicking SHELL
+    /// CONTENT is deliberate terminal keyboard entry. Cell coordinates for a
+    /// click are derived from the same shared geometry that produced the
+    /// region rect (`datum_gui_viewport::terminal_screen_geometry`).
+    TerminalScreen,
     CheckFinding(String),
     ProductionArtifact(String),
     ProductionArtifactFile(String),

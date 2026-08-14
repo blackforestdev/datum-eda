@@ -87,19 +87,22 @@ pub(crate) fn key_route(
 }
 
 /// Whether clicking this hit target is deliberate keyboard entry into the
-/// terminal: the dock's tab strip, session controls, and activity summary.
-/// Opening the dock programmatically never steals keys; clicking it does.
+/// terminal (T0-C02; decision 027 FT-008; spec §5 interaction contract):
+/// the SHELL CONTENT cell rectangle itself, plus the session actions whose
+/// resulting behavior expects terminal typing — switching to a session,
+/// opening a new one, and renaming (the rename editor routes through
+/// terminal-owned line editing). Chrome that merely opens/observes the dock
+/// (the tab strip) or ends/suspends a session (restart/detach/close) no
+/// longer arms focus — the over-broad TF-01 entry rule was the silent
+/// focus-steal defect diagnosed on dat-terminal-focus-authority-6aw.
+/// Opening the dock programmatically never steals keys.
 pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
     matches!(
         target,
-        HitTarget::TerminalTab
+        HitTarget::TerminalScreen
             | HitTarget::TerminalSessionTab(_)
             | HitTarget::TerminalSessionNew
             | HitTarget::TerminalSessionRenameActive
-            | HitTarget::TerminalSessionRestartActive
-            | HitTarget::TerminalSessionDetachActive
-            | HitTarget::TerminalSessionCloseActive
-            | HitTarget::TerminalActivitySummary(_)
     )
 }
 
@@ -499,7 +502,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{KeyClass, KeyboardFocus, RouteDecision, key_route};
+    use super::{
+        KeyClass, KeyboardFocus, RouteDecision, hit_target_is_terminal_entry, key_route,
+    };
+    use datum_gui_render::HitTarget;
 
     #[test]
     fn default_focus_is_editor() {
@@ -583,6 +589,34 @@ mod tests {
                     visible
                 ),
                 RouteDecision::ReleaseToEditor
+            );
+        }
+    }
+
+    #[test]
+    fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
+        // T0-C02: SHELL CONTENT (the cell rectangle) is deliberate entry, as
+        // are session actions that expect typing next.
+        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalScreen));
+        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionTab(
+            "terminal-a".to_string()
+        )));
+        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionNew));
+        assert!(hit_target_is_terminal_entry(
+            &HitTarget::TerminalSessionRenameActive
+        ));
+        // Opening/observing chrome and session-ending controls never arm
+        // focus (spec §5: opening the terminal leaves editor focus unchanged).
+        for target in [
+            HitTarget::TerminalTab,
+            HitTarget::TerminalSessionRestartActive,
+            HitTarget::TerminalSessionDetachActive,
+            HitTarget::TerminalSessionCloseActive,
+            HitTarget::DockResizeHandle,
+        ] {
+            assert!(
+                !hit_target_is_terminal_entry(&target),
+                "{target:?} must not arm terminal keyboard focus"
             );
         }
     }

@@ -209,6 +209,176 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
 }
 
 #[test]
+fn terminal_screen_rect_is_the_dedicated_content_hit_target() {
+    // T0-C02: the exact visible cell rectangle is exposed as its own hit
+    // target, sized from the one shared geometry, inside the dock content.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    let shell = ShellLayout::for_window(1280, 800, Some(260));
+    let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
+    let region = prepared
+        .hit_regions
+        .iter()
+        .find(|region| region.target == HitTarget::TerminalScreen)
+        .expect("terminal dock should expose the screen cell-rectangle hit target");
+    assert_eq!(region.rect, geometry.screen.into());
+    let content: RectPx = geometry.content.into();
+    assert!(
+        region.rect.x >= content.x
+            && region.rect.y >= content.y
+            && region.rect.x + region.rect.width <= content.x + content.width
+            && region.rect.y + region.rect.height <= content.y + content.height,
+        "screen rect must never overflow the dock content rect"
+    );
+    let center = prepared.hit_test(
+        region.rect.x + region.rect.width * 0.5,
+        region.rect.y + region.rect.height * 0.5,
+    );
+    assert_eq!(center, Some(&HitTarget::TerminalScreen));
+}
+
+#[test]
+fn terminal_lane_draws_exactly_the_shared_geometry_row_count() {
+    // T0-C02: the renderer draws exactly the rows the shared geometry solved
+    // — the same count the PTY resize path derives — so drawn rows always
+    // equal PTY rows and the screen never spills below the content rect.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    *state.ui.terminal.pty_grid_mut().lines = (0..40)
+        .map(|index| format!("pty-canary-{index:02}"))
+        .collect();
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    let shell = ShellLayout::for_window(1280, 800, Some(260));
+    let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
+    let drawn = prepared
+        .text_runs
+        .iter()
+        .filter(|run| run.text.starts_with("pty-canary-"))
+        .count();
+    assert_eq!(
+        drawn, geometry.rows as usize,
+        "drawn terminal rows must equal the shared-geometry row authority"
+    );
+    let screen: RectPx = geometry.screen.into();
+    for run in prepared
+        .text_runs
+        .iter()
+        .filter(|run| run.text.starts_with("pty-canary-"))
+    {
+        assert!(
+            run.y >= screen.y && run.y < screen.y + screen.height,
+            "terminal grid row at y={} must stay inside the screen rect",
+            run.y
+        );
+    }
+}
+
+#[test]
+fn terminal_lane_renders_no_activity_summary_rows() {
+    // T0-C02 / owner directive (dat-pan-trace-terminal-pollution-0j0):
+    // application summaries consume zero terminal rows and zero lane space.
+    // Activity data may exist in state, but the lane renders none of it.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    state.ui.terminal.activity_summary =
+        vec!["#3 command datum.artifact.generate in:7B out:12B".to_string()];
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    assert!(
+        !prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("ACTIVITY")),
+        "terminal lane must not render an activity block"
+    );
+    assert!(
+        !prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("datum.artifact.generate")),
+        "terminal lane must not render activity summary lines"
+    );
+}
+
+#[test]
+fn terminal_dock_does_not_render_output_lane_findings() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 300;
+    state.checks = datum_gui_protocol::check_run_review_state_from_json(
+        r#"{
+          "contract": "check_run_v1",
+          "check_run_id": "00000000-0000-0000-0000-00000000chk2",
+          "profile_id": "standards",
+          "status": "error",
+          "finding_count": 1,
+          "findings": [{
+            "finding_id": "00000000-0000-0000-0000-00000000f002",
+            "source": "drc",
+            "code": "pad_mask_expansion_missing",
+            "severity": "error",
+            "fingerprint": "sha256:process-aperture",
+            "domain": "drc",
+            "rule_id": "process_aperture_policy",
+            "status": "active",
+            "evidence": [{
+              "evidence_kind": "standards_basis",
+              "basis_id": "datum.process_aperture_and_geometry.current"
+            }]
+          }]
+        }"#,
+    )
+    .expect("check-run fixture should decode");
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    assert!(
+        !prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("BASIS DATUM.PROCESS_APERTURE")),
+        "Phase 1 terminal dock must not render the retired Output lane"
+    );
+}
+
+#[test]
 fn dock_exposes_terminal_tab_only() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);

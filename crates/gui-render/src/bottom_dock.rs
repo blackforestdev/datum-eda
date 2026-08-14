@@ -1,4 +1,8 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalStyledLine};
+use datum_gui_viewport::{
+    TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry,
+    terminal_screen_geometry,
+};
 
 use super::{
     HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_ACCENT,
@@ -231,23 +235,58 @@ pub(super) fn render_bottom_tabs(
     panel_quads.push(Quad::from_rect(content_rect, PANEL_BG));
     push_rect_border(panel_quads, content_rect, PANEL_CARD_BORDER, 1.0);
     match active_tab {
-        DockTab::Terminal => render_terminal_lane(state, content_rect, text_runs, hit_regions),
+        DockTab::Terminal => {
+            // T0-C02: the exact visible cell rectangle is the space and
+            // row/column authority — the same shared geometry the PTY resize
+            // path uses (datum_gui_viewport::terminal_screen_geometry), so the
+            // rows drawn here always equal the rows the PTY was told.
+            let geometry = terminal_screen_geometry(layout.bottom_strip.into());
+            render_terminal_lane(state, &geometry, text_runs, hit_regions);
+        }
     }
 }
 
 fn render_terminal_lane(
     state: &ReviewWorkspaceState,
-    rect: RectPx,
+    geometry: &TerminalScreenGeometry,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    if let Some(header) = geometry.header {
+        render_terminal_header(state, header.into(), text_runs);
+    }
+    if let Some(sessions_row) = geometry.sessions_row {
+        render_terminal_sessions_row(state, sessions_row.into(), text_runs, hit_regions);
+    }
+    render_terminal_screen(state, geometry, text_runs, hit_regions);
+}
+
+/// Terminal chrome header band: lane title plus PTY session status/meta and
+/// the copy/scroll/paste shortcut hint. Chrome only — never terminal cells
+/// (T0-C01/T0-C02; decision 027 FT-001).
+fn render_terminal_header(
+    state: &ReviewWorkspaceState,
+    rect: RectPx,
+    text_runs: &mut Vec<TextRun>,
+) {
     draw_text(
         "PROJECT TERMINAL",
-        rect.x + 12.0,
-        rect.y + 12.0,
+        rect.x,
+        rect.y,
         12.0,
         TEXT_SECONDARY,
         TextFace::Ui,
+        text_runs,
+    );
+    let hint = "COPY SCROLLBACK CTRL+SHIFT+C  SCROLL SHIFT+PGUP/PGDN  PASTE CTRL+V";
+    let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
+    draw_text(
+        hint,
+        rect.x + rect.width - hint_w,
+        rect.y + 1.0,
+        10.5,
+        TEXT_MUTED,
+        TextFace::Mono,
         text_runs,
     );
     let mut session_label = if let Some(title) = state.ui.terminal.title.as_deref() {
@@ -289,27 +328,31 @@ fn render_terminal_lane(
     }
     draw_text(
         &session_label,
-        rect.x + 12.0,
-        rect.y + 28.0,
+        rect.x,
+        rect.y + 16.0,
         10.5,
         TEXT_MUTED,
         TextFace::Mono,
         text_runs,
     );
-    draw_text(
-        "COPY SCROLLBACK CTRL+SHIFT+C  SCROLL SHIFT+PGUP/PGDN  PASTE CTRL+V",
-        rect.x + 12.0,
-        rect.y + 43.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    let mut y = rect.y + 77.0;
+}
+
+/// Terminal chrome sessions band: session controls, tabs, and the inline
+/// rename affordance. Application summaries (ACTIVITY SPANS) are gone from
+/// the lane entirely — summaries belong to chrome/console surfaces and must
+/// consume zero cell rows (T0-C02; owner directive on
+/// dat-pan-trace-terminal-pollution-0j0).
+fn render_terminal_sessions_row(
+    state: &ReviewWorkspaceState,
+    rect: RectPx,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
     if !state.ui.terminal.tabs.is_empty() {
+        let y = rect.y + 2.0;
         draw_text(
             "SESSIONS",
-            rect.x + 12.0,
+            rect.x,
             y,
             10.5,
             TEXT_MUTED,
@@ -373,51 +416,43 @@ fn render_terminal_lane(
                 },
             });
             x += (label.len() as f32 * 7.0 + 18.0).min(160.0);
-            if x > rect.x + rect.width - 72.0 {
+            if x > rect.x + rect.width - 60.0 {
                 break;
             }
         }
-        y += 18.0;
         if state.ui.terminal.rename_session_id.is_some() {
+            let hint = "RENAMING TERMINAL TAB  ENTER SAVE  ESC CANCEL";
+            let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
             draw_text(
-                "RENAMING TERMINAL TAB  ENTER SAVE  ESC CANCEL",
-                rect.x + 12.0,
+                hint,
+                rect.x + rect.width - hint_w,
                 y,
                 10.5,
                 TEXT_MUTED,
                 TextFace::Mono,
                 text_runs,
             );
-            y += 16.0;
         }
     }
-    if !state.ui.terminal.activity_summary.is_empty() {
-        draw_text(
-            "ACTIVITY SPANS",
-            rect.x + 12.0,
-            y,
-            10.5,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-        y += 16.0;
-        for line in state.ui.terminal.activity_summary.iter().take(4) {
-            draw_text(
-                &truncate_text(line, 180),
-                rect.x + 12.0,
-                y,
-                10.5,
-                TEXT_SECONDARY,
-                TextFace::Mono,
-                text_runs,
-            );
-            push_activity_hit_region(hit_regions, rect, y, line);
-            y += 15.0;
-        }
-        y += 4.0;
-    }
-    let max_lines = ((rect.y + rect.height - y - 10.0) / 16.0).floor().max(1.0) as usize;
+}
+
+/// The terminal SCREEN: the exact visible cell rectangle, drawing precisely
+/// `geometry.rows` grid rows of `geometry.columns` cells — the same numbers
+/// the PTY was resized to — and exposing the rectangle as the dedicated
+/// terminal-content hit target (T0-C02).
+fn render_terminal_screen(
+    state: &ReviewWorkspaceState,
+    geometry: &TerminalScreenGeometry,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
+    let screen: RectPx = geometry.screen.into();
+    hit_regions.push(HitRegion {
+        target: HitTarget::TerminalScreen,
+        rect: screen,
+    });
+    let max_lines = geometry.rows as usize;
+    let max_columns = geometry.columns as usize;
     let total = state.ui.terminal.grid_lines().len();
     let scroll = state
         .ui
@@ -425,6 +460,7 @@ fn render_terminal_lane(
         .scroll_offset
         .min(total.saturating_sub(max_lines));
     let tail_start = total.saturating_sub(max_lines + scroll);
+    let mut y = screen.y;
     for (line_index, line) in state
         .ui
         .terminal
@@ -435,11 +471,11 @@ fn render_terminal_lane(
         .take(max_lines)
     {
         if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
-            render_terminal_styled_line(styled_line, line, rect.x + 12.0, y, text_runs);
+            render_terminal_styled_line(styled_line, line, screen.x, y, max_columns, text_runs);
         } else {
             draw_text(
-                &truncate_text(line, 180),
-                rect.x + 12.0,
+                &truncate_text(line, max_columns),
+                screen.x,
                 y,
                 11.0,
                 TEXT_PANEL_VALUE,
@@ -449,11 +485,11 @@ fn render_terminal_lane(
         }
         if state.ui.terminal.screen_cursor_visible
             && state.ui.terminal.screen_cursor_row == line_index
-            && state.ui.terminal.screen_cursor_col <= 180
+            && state.ui.terminal.screen_cursor_col < max_columns
         {
-            render_terminal_screen_cursor(&state.ui.terminal, rect.x + 12.0, y, text_runs);
+            render_terminal_screen_cursor(&state.ui.terminal, screen.x, y, text_runs);
         }
-        y += 16.0;
+        y += TERMINAL_CELL_HEIGHT_PX;
     }
 }
 
@@ -470,7 +506,7 @@ fn render_terminal_screen_cursor(
     };
     draw_text(
         glyph,
-        origin_x + terminal.screen_cursor_col as f32 * 7.9,
+        origin_x + terminal.screen_cursor_col as f32 * TERMINAL_CELL_WIDTH_PX,
         y,
         11.0,
         TEXT_PRIMARY,
@@ -484,6 +520,7 @@ fn render_terminal_styled_line(
     fallback_line: &str,
     x: f32,
     y: f32,
+    max_columns: usize,
     text_runs: &mut Vec<TextRun>,
 ) {
     let text = if styled_line.text.is_empty() {
@@ -491,7 +528,7 @@ fn render_terminal_styled_line(
     } else {
         &styled_line.text
     };
-    let visible_len = text.chars().count().min(180);
+    let visible_len = text.chars().count().min(max_columns);
     if visible_len == 0 {
         draw_text("", x, y, 11.0, TEXT_PANEL_VALUE, TextFace::Mono, text_runs);
         return;
@@ -547,7 +584,7 @@ fn draw_terminal_fragment(
         .collect::<String>();
     draw_text(
         &fragment,
-        origin_x + start as f32 * 7.9,
+        origin_x + start as f32 * TERMINAL_CELL_WIDTH_PX,
         y,
         11.0,
         color,
@@ -586,7 +623,7 @@ fn render_terminal_session_controls(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> f32 {
-    let mut x = rect.x + 78.0;
+    let mut x = rect.x + 66.0;
     for (label, target) in [
         ("+NEW", HitTarget::TerminalSessionNew),
         ("RENAME", HitTarget::TerminalSessionRenameActive),
@@ -607,18 +644,6 @@ fn render_terminal_session_controls(
         x += label.len() as f32 * 7.0 + 16.0;
     }
     x + 4.0
-}
-
-fn push_activity_hit_region(hit_regions: &mut Vec<HitRegion>, rect: RectPx, y: f32, summary: &str) {
-    hit_regions.push(HitRegion {
-        target: HitTarget::TerminalActivitySummary(summary.to_string()),
-        rect: RectPx {
-            x: rect.x + 12.0,
-            y: y - 2.0,
-            width: (rect.width - 24.0).max(0.0),
-            height: 14.0,
-        },
-    });
 }
 
 fn split_at_cursor(input: &str, cursor: usize) -> (&str, &str) {
@@ -646,5 +671,20 @@ mod tests {
             layout.content.x + layout.content.width
                 <= shell.bottom_strip.x + shell.bottom_strip.width
         );
+    }
+
+    #[test]
+    fn shared_terminal_geometry_agrees_with_dock_content_rect() {
+        // T0-C02 guard: the shared geometry derives the dock content rect from
+        // the bottom strip with the same constants the dock solver uses; if
+        // either side drifts, renderer and PTY budgets diverge again.
+        for dock_height in [120, 220, 320] {
+            let shell = ShellLayout::for_window(1280, 800, Some(dock_height));
+            let solved = solve_bottom_dock_layout_with_taffy(&shell)
+                .expect("bottom dock layout should solve");
+            let geometry = terminal_screen_geometry(shell.bottom_strip.into());
+            let content: RectPx = geometry.content.into();
+            assert_eq!(content, solved.content, "dock {dock_height}px");
+        }
     }
 }

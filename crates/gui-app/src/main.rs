@@ -47,6 +47,7 @@ mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
 mod runtime_terminal_context;
+mod runtime_terminal_dock;
 mod runtime_view_actions;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
@@ -2212,9 +2213,9 @@ impl Runtime {
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
         let started = std::time::Instant::now();
         let handled = self.select_hit_target_inner(target);
-        // TF-01 deliberate entry: clicking the terminal dock's tab strip,
-        // session controls, or activity summary hands key ownership to the
-        // terminal. Programmatic dock opens never do.
+        // T0-C02 deliberate entry (spec §5): clicking the terminal SCREEN cell
+        // rectangle — or a session action that expects terminal typing next —
+        // hands key ownership to the terminal. Programmatic dock opens never do.
         if handled && keyboard_focus::hit_target_is_terminal_entry(target) {
             self.set_keyboard_focus(KeyboardFocus::Terminal);
         }
@@ -2444,11 +2445,7 @@ impl Runtime {
             }
             HitTarget::TerminalSessionDetachActive => self.detach_active_terminal_session(),
             HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
-            HitTarget::TerminalActivitySummary(summary) => {
-                self.set_active_dock(DockTab::Terminal);
-                self.log_review_event(format!("selected terminal activity span: {summary}"));
-                true
-            }
+            HitTarget::TerminalScreen => self.click_terminal_screen(),
             HitTarget::ProductionArtifact(artifact_id) => {
                 let handled = self.dispatch_session_command(
                     SessionCommand::FocusProductionArtifact(artifact_id.clone()),

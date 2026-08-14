@@ -346,3 +346,6 @@ mod tests {
         assert!((x1 - (x0 + a) - design_tokens::spacing::SP_01).abs() < 1e-6);
     }
 }
+
+#[cfg(test)]
+mod menu_overlay_contract_tests;

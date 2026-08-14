@@ -24,6 +24,7 @@ pub mod hit;
 pub mod interaction;
 pub mod profile;
 pub mod stroke;
+pub mod terminal_grid_geometry;
 
 pub use editor::{EditorViewport, ScreenRectPx};
 pub use camera::{CameraConfig, CameraEngine, CameraState, CameraViewport};
@@ -37,3 +38,7 @@ pub use profile::{
     CursorConfig, GridConfig, GridMark, GridMode, GridTier, HoverConfig, ViewportProfile,
 };
 pub use stroke::WeightClass;
+pub use terminal_grid_geometry::{
+    TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TERMINAL_MIN_ROWS, TerminalScreenGeometry,
+    terminal_screen_geometry,
+};

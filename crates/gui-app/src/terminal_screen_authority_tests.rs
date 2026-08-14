@@ -42,6 +42,18 @@ fn terminal_grid_holds_only_pty_rows_across_session_lifecycle_events() {
         "PTY-derived canary rows should be visible in the grid"
     );
 
+    // T0-C02: the renderer draws the tail `geometry.rows` grid rows from the
+    // SAME shared geometry that sizes the PTY, so at the default dock every
+    // canary row above falls inside the drawn range.
+    let shell = datum_gui_render::ShellLayout::for_surface(1280, 800, 1.0, Some(220));
+    let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
+    assert!(
+        pty_rows.len() <= geometry.rows as usize,
+        "real PTY output rows ({}) must lie within the drawn row range ({})",
+        pty_rows.len(),
+        geometry.rows
+    );
+
     // Session lifecycle and GUI-side refresh events that previously wrote the
     // grid.
     registry.sync_lane_tabs(&mut state);

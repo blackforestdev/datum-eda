@@ -48,6 +48,18 @@ impl From<RectPx> for datum_gui_viewport::CameraViewport {
     }
 }
 
+impl From<RectPx> for datum_gui_viewport::ScreenRectPx {
+    fn from(value: RectPx) -> Self {
+        Self { x: value.x, y: value.y, width: value.width, height: value.height }
+    }
+}
+
+impl From<datum_gui_viewport::ScreenRectPx> for RectPx {
+    fn from(value: datum_gui_viewport::ScreenRectPx) -> Self {
+        Self { x: value.x, y: value.y, width: value.width, height: value.height }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct ShellLayout {
     pub top_menu_bar: RectPx,

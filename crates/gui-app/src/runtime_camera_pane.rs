@@ -1,9 +1,11 @@
 //! Runtime view operations (decomposition of the gui-app monolith, decision
 //! 021 / source-size governance): camera fit/pan/zoom, workspace-pane focus/
-//! split/close/zoom/preset, divider-drag resize, layout/hit-test helpers, and
-//! the dock resize drag. Split out of `main.rs`'s `impl Runtime`; behavior
-//! unchanged. A child module of the crate root, so it sees `Runtime`'s private
-//! fields/methods via `use super::*` exactly as the inline impl did.
+//! split/close/zoom/preset, divider-drag resize, and layout/hit-test helpers.
+//! Split out of `main.rs`'s `impl Runtime`; behavior unchanged. The dock
+//! resize drag and terminal screen-cell geometry live in
+//! `runtime_terminal_dock.rs` (T0-C02). A child module of the crate root, so
+//! it sees `Runtime`'s private fields/methods via `use super::*` exactly as
+//! the inline impl did.
 
 use super::*;
 use datum_gui_render::RectPx;
@@ -640,45 +642,4 @@ impl Runtime {
         changed
     }
 
-    pub(super) fn cursor_in_dock(&self) -> bool {
-        let Some((_, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        let layout = self.current_layout();
-        y >= layout.bottom_strip.y
-    }
-
-    pub(super) fn handle_dock_resize_drag(&mut self, next_cursor_pos: (f32, f32)) -> bool {
-        let window_height = self.config.height as f32;
-        let new_height_physical =
-            (window_height - next_cursor_pos.1).clamp(32.0, window_height * 0.6);
-        let new_height_logical = new_height_physical / self.scale_factor.max(0.01);
-        let new_height_logical = new_height_logical as u32;
-        if self.workspace().ui.dock_height_px == new_height_logical {
-            return false;
-        }
-        self.session.workspace_mut().ui.dock_height_px = new_height_logical;
-        self.resize_terminal_to_dock();
-        self.invalidate_scene();
-        true
-    }
-
-    pub(super) fn resize_terminal_to_dock(&mut self) {
-        let bottom_height = self.current_layout().bottom_strip.height;
-        let cols = ((self.config.width as f32 - 24.0) / 7.5).floor().max(20.0) as u16;
-        let rows = ((bottom_height - 76.0) / 16.0).floor().max(4.0) as u16;
-        append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
-        match self.terminal_sessions.resize_active(cols, rows) {
-            Ok(()) => {
-                let terminal = &mut self.session.workspace_mut().ui.terminal;
-                terminal.columns = cols;
-                terminal.rows = rows;
-                append_gui_verbose_diagnostic_line("terminal resize end");
-            }
-            Err(err) => {
-                append_gui_diagnostic_line(format!("terminal resize failed: {err}"));
-                self.log_review_event(format!("terminal resize failed: {err}"));
-            }
-        }
-    }
 }
