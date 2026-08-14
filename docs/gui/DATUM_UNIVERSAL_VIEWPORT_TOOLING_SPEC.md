@@ -622,7 +622,9 @@ subordinate related-context role in the Rendering Book §2.3.
 
 A triple-click Global Net selection is one semantic selection subject. Its full
 selection projection includes every visible resolved electrical representation
-of that net across workspaces—wires, labels/ports, pin terminals/stubs, tracks,
+of that net across workspaces—wires, **junction dots (owner-resolved, S5-C01A /
+OPEN-7, 2026-08-14: authored conductive geometry, an owned member with full
+member treatment)**, labels/ports, pin terminals/stubs, tracks,
 vias, connected pad regions, net-owned zone boundary/fill, and relevant
 airwire/ratsnest geometry. Parent symbol bodies and footprints are not selected
 by connectivity alone; they remain merely related. Hidden members remain hidden
@@ -1223,13 +1225,15 @@ open — such cells carry `OPEN-n` markers regardless.
   center/connection anchor inside (UVT §2.2.4); B-CLICK. *Scope:*
   object-only. *Projection:* the junction dot alone — wire-coloured filled
   center preserved + accent ring; junction/pin-terminal/via/no-connect stay
-  mutually distinguishable while selected (RB §2.7); Global Net membership is
-  unstated — junctions are absent from the enumerated member list
-  (`OPEN-7`). *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD tiny-object
+  mutually distinguishable while selected (RB §2.7); the junction dot is an
+  owned member of the Global Net projection with full member treatment
+  (OPEN-7 resolved, §2.2.13 member list) while remaining an independent
+  object-only subject for direct acquisition — the same dual role as vias.
+  *Hidden/locked:* B-HL. *Overlay:* B-OV + B-LOD tiny-object
   law (RB §2.7). *Inspector:* position/status display only;
   connectivity-aware placement/removal are dedicated tools (COMP). *Scene
   authority:* `SchematicHitKind::Junction`, polygon hit region. *Verdict:*
-  spec **partial** (`OPEN-7`); substrate **typed-only**.
+  spec **ratified** (OPEN-7 resolved); substrate **typed-only**.
 - **No-connect marker.**
   *Ownership:* independent point-like object; never selects the parent
   symbol (RB §2.7). *Qualification:* point rule; B-CLICK. *Scope:*
@@ -1509,6 +1513,15 @@ new choice after C02–C10 are complete.
   enumerated net-member list. *Candidate:* include the junction dot as an
   owned member of the Global Net projection (it is resolved conductive
   geometry). *Decision:* S5-C01A. *Propagation:* S5-C07/S5-C08.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded in the
+  §2.2.13 member enumeration). *Reason:* the member list's criterion is
+  visible resolved electrical representation, and the authored junction dot
+  qualifies plainly — the list already includes derived ratsnest geometry
+  and pin terminals/stubs, which are equally rendering conventions of
+  connectivity; an unglowed dot amid glowing wires reads as a rendering
+  defect against the whole-subject coherence law. The junction keeps its
+  ratified object-only direct-acquisition behavior — dual role as with
+  vias; tiny-object and dense-LOD laws cover the cost.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-8 -->
 - **OPEN-8 — bus region rule + hierarchy projection.** Region qualification
   for spine/entries and member-pane specifics of semantic-bus projection.
