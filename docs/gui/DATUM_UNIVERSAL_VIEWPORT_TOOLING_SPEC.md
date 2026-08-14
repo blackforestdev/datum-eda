@@ -1266,14 +1266,15 @@ open — such cells carry `OPEN-n` markers regardless.
   rectangle; B-CLICK + Select menu for difficult cases (UVT §2.2.4).
   *Scope:* object-only. *Projection:* rendered glyph geometry; layout rect is
   hit geometry only (RB §2.7). *Hidden/locked:* B-HL. *Overlay:* B-OV +
-  B-LOD; RB §2.7 text law. *Inspector:* B-INS; the compound field table
-  types text fields only for the PCB class list — schematic-text compound
-  fields unstated (`OPEN-9`). *Scene authority:* ABSENT — free schematic
+  B-LOD; RB §2.7 text law. *Inspector:* B-INS; compound schematic text
+  mirrors the PCB text field set where typed — style, height, stroke,
+  alignment, visibility; content stays dedicated (OPEN-9 resolved; one
+  text vocabulary program-wide, folded into S5-C04). *Scene authority:* ABSENT — free schematic
   text flows through `SchematicTextSink` into `board_texts`
   (`schematic_scene_import/mod.rs:278-292`) but schematic hit regions are
   built only from `board_graphics`
   (`crates/gui-render/src/render/scene.rs:464-474`); `SchematicHitKind` has
-  no Text variant. *Verdict:* spec **partial** (`OPEN-9`); substrate
+  no Text variant. *Verdict:* spec **ratified** (OPEN-9 resolved); substrate
   **absent**.
 - **Drawing / graphic.**
   *Ownership:* standalone drawings are independent targets; symbol-body
@@ -1559,6 +1560,14 @@ new choice after C02–C10 are complete.
   table covers PCB text only. *Candidate:* mirror the PCB text row
   (style/height/stroke/alignment/visibility where typed). *Decision:* S5-C01A.
   *Propagation:* S5-C04.
+  *RESOLVED (owner, 2026-08-14): approved as recommended.* *Reason:* text
+  is one model program-wide (Rendering Book typography + engine text
+  registry), so the Inspector field vocabulary must not fork per editor —
+  the shared-backbone law; the field set carries no PCB-specific semantics
+  (layer/side consequences were already dedicated); "where typed" keeps the
+  vocabulary honest until typed ops exist; content editing stays a
+  dedicated tool on both surfaces. Folded into the S5-C04 compound-outputs
+  contract.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-10 -->
 - **OPEN-10 — dimension class.** Spec-silent, no scene projection.
   *Candidate:* author path-rule qualification for extension/dimension lines
