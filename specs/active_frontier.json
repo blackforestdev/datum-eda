@@ -604,7 +604,7 @@
       ],
       "completion": {
         "outcome": "One explicit keyboard-focus authority routes every key: the terminal is typeable when focused, workspace hotkeys never leak into the PTY, focus reporting and the visible cursor affordance follow terminal focus, and leak regressions lock the behavior.",
-        "canonical_next_step_id": "TF-01",
+        "canonical_next_step_id": "TF-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -621,7 +621,7 @@
           {
             "id": "TF-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Replace dock-visibility gating with one explicit keyboard-focus owner (Editor(pane) | Terminal | Overlay) in the gui-app router; opening the dock never steals keys.",
             "depends_on": [],
             "requirement_refs": [
@@ -630,7 +630,12 @@
                 "marker": "TF-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "81f70b4d3f2ed14e1eb424a9f139a72a2b8d55ed"
+              }
+            ]
           },
           {
             "id": "TF-02",
