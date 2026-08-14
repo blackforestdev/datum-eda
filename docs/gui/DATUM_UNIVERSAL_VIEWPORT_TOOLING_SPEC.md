@@ -1040,17 +1040,22 @@ open — such cells carry `OPEN-n` markers regardless.
   (`retained.rs:856/:869`). *Verdict:* spec **ratified** (OPEN-2 resolved);
   substrate **live**.
 - **Dimension (board measurement annotation).**
-  Every selection cell is spec-silent: UVT §2.2.4–2.2.13 never mention
-  dimensions; the class exists only as a mandatory S5-C01 row. No candidate
-  generic rule has been assigned (path rule for extension lines +
-  oriented-rect for text is the open question, `OPEN-10`). Inspector guidance
-  exists only at compound level: measured value is derived, never written
-  back; endpoints/units/precision via dedicated tools (COMP). *Scene
-  authority:* ABSENT — the engine type exists
-  (`crates/engine/src/board/dimension.rs`) but is never projected into any
-  scene: no primitive, no object_kind, no hit region. *Verdict:* spec
-  **silent**; substrate **absent** — **unsupported** pending `OPEN-10`
-  ratification (author the rules or formally defer the class).
+  **Deferred from S5A by owner ratification (OPEN-10 resolved,
+  2026-08-14).** The class is not an S5A selection subject: the engine type
+  exists (`crates/engine/src/board/dimension.rs`) but is never projected
+  into any scene — not rendered, no primitive, no object_kind, no hit
+  region — and the Rendering Book defines no dimension visual construction,
+  so acquisition rules would specify selection for undesigned geometry and
+  could carry no honest check disposition. Unrendered geometry cannot
+  region-qualify by construction; no special-casing needed. **Re-entry
+  condition:** author dimension selection rules when the Rendering Book
+  defines the dimension construction AND typed scene projection exists —
+  expected alongside the decision-020 documentation-system spec pass, which
+  may re-home dimensions in paper space. Inspector guidance retained for
+  that future pass: measured value is derived, never written back;
+  endpoints/units/precision via dedicated tools (COMP). *Verdict:* spec
+  **ratified deferral**; substrate **absent** — **unsupported in S5A by
+  design**.
 - **Global Net (PCB projection).**
   *Ownership:* ONE semantic subject, not a compound of primitives (RB §2.2);
   members are all conductive/connective geometry on the resolved net —
@@ -1573,6 +1578,16 @@ new choice after C02–C10 are complete.
   *Candidate:* author path-rule qualification for extension/dimension lines
   + oriented-rect for dimension text, or formally defer the class from S5A.
   *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C04/S5-C08.
+  *RESOLVED (owner, 2026-08-14): deferred from S5A* (recorded in the
+  dimension matrix row as a ratified deferral). *Reason:* the class is not
+  even rendered — no scene projection, and no Rendering Book dimension
+  construction exists — so acquisition rules would specify selection for
+  undesigned geometry and could carry no honest S5-C10 check disposition
+  (no golden, no state test possible); sequencing-by-product-readiness
+  forbids speccing ahead of design. Re-entry condition: Rendering Book
+  dimension construction + typed scene projection, expected with the
+  decision-020 documentation-system spec pass (which may re-home
+  dimensions in paper space).
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-11 -->
 - **OPEN-11 — hierarchical sheet representation.** Spec-silent, untyped.
   *Candidate:* filled-graphic-style rect qualification for the sheet body
