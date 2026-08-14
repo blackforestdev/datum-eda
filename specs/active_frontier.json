@@ -40,9 +40,9 @@
         "docs/PROJECT_STATE_POLICY.md",
         "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md"
       ],
-      "state": "specified",
+      "state": "landed",
       "authorization": "planning",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": false,
       "summary": "Complete the exhaustive stable-ID S5 closure contract: identity matrix, bounded queries, lifetime, compound outputs, authority/atomicity/cross-probe/overlay reconciliation, evidence, owner review, decision, and synchronized governance; S5A execution remains unauthorized.",
       "dependencies": [],
@@ -521,7 +521,7 @@
           {
             "id": "S5-C13",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Synchronize governance, traceability, Frontier projection, and beads; close S5 with evidence, run all gates, and explicitly choose the successor.",
             "depends_on": [
               "S5-C12"
@@ -532,7 +532,12 @@
                 "marker": "S5-C13"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "67f76973642ea7085c4822cbde2866e082655241"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -547,7 +552,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "67f76973642ea7085c4822cbde2866e082655241"
     },
     {
       "key": "TERMINAL-EPIC",
@@ -589,7 +595,7 @@
       ],
       "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": true,
       "summary": "Replace dock-visibility routing with one explicit keyboard-focus owner and repair the P1 un-typeable-terminal defect.",
       "dependencies": [],
@@ -803,7 +809,7 @@
         "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
         "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "specified",
       "authorization": "planning",
       "canonical_next": false,
       "parallel": false,
