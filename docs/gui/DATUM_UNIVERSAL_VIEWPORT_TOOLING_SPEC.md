@@ -240,6 +240,16 @@ later tuning requires usability evidence and a governed spec change.
 - In the schematic workspace, clicking a pin selects its parent symbol and pin
   anchors contribute to parent-symbol region selection. In the symbol editor
   workspace, a pin is independently selectable.
+- **Definition-editor child qualification and composition (owner-resolved,
+  S5-C01A / OPEN-4, 2026-08-14):** in the Footprint Editor a pad region-
+  qualifies when its **center anchor** lies inside the rectangle/lasso; in the
+  Symbol Editor a pin region-qualifies when its **connection anchor** lies
+  inside — one anchor qualifies the complete compound pin subject
+  (stub/terminal/name/number). Both follow the anchor family: no per-class
+  area tests, and name/number text never enlarges the test. **Pad geometry
+  plus pad-number text project as one pad subject** (the RB §2.7 pin
+  construction analogy); pad-number text is therefore excluded from the
+  owned-text class, exactly as pin name/number text is.
 - Copper zones do not qualify from a partial rectangle/lasso overlap; they
   qualify only when **100 percent** of their authored filled area (including all
   islands) is enclosed. Otherwise a zone is selected by direct primary click or
@@ -1038,11 +1048,12 @@ open — such cells carry `OPEN-n` markers regardless.
 
 - **Pad (independent authored target).**
   *Ownership:* independently selectable in this workspace (UVT §2.2.4) — the
-  definition editor's authority; no parent collapse. Whether pad-number text
-  is part of the pad subject (by analogy with the RB §2.7 pin construction)
-  is unstated (`OPEN-4`). *Qualification:* B-CLICK with pad-pin labels in the
-  Select menu; region rule UNSPECIFIED — the point-like center-anchor rule is
-  the candidate but §2.2.4 never names pads point-like (`OPEN-4`). *Scope:*
+  definition editor's authority; no parent collapse. Pad geometry + pad-number
+  text project as ONE pad subject; pad-number text is excluded from the
+  owned-text class (OPEN-4 resolved, §2.2.4). *Qualification:* B-CLICK with
+  pad-pin labels in the Select menu; region — the pad center anchor inside
+  the rectangle/lasso qualifies (OPEN-4 resolved, §2.2.4 anchor family).
+  *Scope:*
   object-only — no resolved-net ladder in a library-definition context.
   *Projection:* definition→placed-instance mapping (same-identity vs
   merely-related) is unstated (`OPEN-6`); RB §2.3 related law bounds whatever
@@ -1056,7 +1067,7 @@ open — such cells carry `OPEN-n` markers regardless.
   (`crates/gui-protocol/src/workspace_layout.rs:174-177`,
   `crates/gui-render/src/render/types.rs:80-83`); the only pad type is the
   board-review `PadPrimitive` (`lib.rs:249`). *Verdict:* spec **partial**
-  (`OPEN-4`, `OPEN-6`); substrate **absent**.
+  (`OPEN-6`; OPEN-4 resolved); substrate **absent**.
 - **Owned text (all kinds).**
   *Ownership:* every footprint-owned text kind — reference/value, user text,
   fab notes — is an independent authored target in this workspace (OPEN-3
@@ -1248,10 +1259,10 @@ open — such cells carry `OPEN-n` markers regardless.
   independently selectable and the subject is the complete
   stub/terminal/name/number, explicitly without sibling pins or the body
   (UVT §2.2.4/2.2.13; RB §2.7); name/number text are children of the pin
-  subject. *Qualification:* B-CLICK (pad-pin labels); region rule
-  UNSPECIFIED — the point-like connection-anchor rule is the nearest generic
-  coverage but the subject spans four primitives; whether the anchor alone
-  qualifies the compound subject is unstated (`OPEN-4`). *Scope:*
+  subject. *Qualification:* B-CLICK (pad-pin labels); region — the pin
+  connection anchor inside the rectangle/lasso qualifies the complete
+  compound subject; name/number text never enlarges the test (OPEN-4
+  resolved, §2.2.4 anchor family). *Scope:*
   object-only — no electrical expansion from a pin *definition*.
   *Projection:* stub/terminal/name/number as one owned identity; siblings
   and body at rest (RB §2.7); projection onto placed instances unstated
@@ -1263,7 +1274,7 @@ open — such cells carry `OPEN-n` markers regardless.
   ABSENT — no Symbol Editor surface, scene kind, or hit vocabulary exists
   anywhere (`PaneContent`/`SceneSurface` = { Board, Schematic }); nearest is
   schematic-surface `SchematicHitKind::Pin`, which resolves to the parent
-  symbol. *Verdict:* spec **partial** (`OPEN-4`, `OPEN-6`); substrate
+  symbol. *Verdict:* spec **partial** (`OPEN-6`; OPEN-4 resolved); substrate
   **absent**.
 - **Owned text (all kinds).**
   As the Footprint Editor owned-text row, for symbol-owned text: every owned
@@ -1419,6 +1430,16 @@ new choice after C02–C10 are complete.
   center/connection-anchor rule for pads; anchor-qualifies-the-compound for
   pins; pad geometry + pad-number text as one subject (RB §2.7 pin analogy).
   *Decision:* S5-C01A. *Propagation:* S5-C02/S5-C07.
+  *RESOLVED (owner, 2026-08-14): approved as recommended* (recorded as the
+  §2.2.4 definition-editor child clause). *Reason:* §2.2.4's architecture is
+  deliberately anchor-based — area tests exist only as ratified exceptions
+  (zones/filled at 100%, text oriented-rect) — so pad center-anchor and pin
+  connection-anchor keep the one qualification family and stay deterministic
+  at density; the connection anchor is the pin's only unambiguous single
+  point and text bounds must never drive selection; pad-number text is the
+  pad's identity rendering (pin construction analogy) and is excluded from
+  the owned-text class. Known trade accepted: a large pad whose center lies
+  outside a region does not qualify.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-5 -->
 - **OPEN-5 — editor-workspace owned graphics.** Whether the generic
   path/filled rules extend to Footprint/Symbol Editor owned graphics (and
