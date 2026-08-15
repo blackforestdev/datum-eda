@@ -34,7 +34,7 @@
    Replace prompt-memory discovery with client-native adapters, standard MCP, pinned context, scoped authority, portable workflows, and production interoperability proof before terminal execution continues. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-pan-trace-terminal-pollution-0j0, dat-terminal-emulator-epic-jzv.8, dat-terminal-emulator-epic-jzv.9. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
 - **Restore foreign-shell screen authority and visible-output proof** (`TERMINAL-T0-SHELL-TRUTH`; `dat-pan-trace-terminal-pollution-0j0`).
-   Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-full-native-terminal-contract-e2d`, `dat-terminal-emulator-epic-jzv.7`. *Unblocks:* dat-terminal-focus-authority-6aw, dat-terminal-dual-input-model-75y, dat-terminal-emulator-epic-jzv.1, dat-terminal-emulator-epic-jzv.2, dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Complete terminal focus and input authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
