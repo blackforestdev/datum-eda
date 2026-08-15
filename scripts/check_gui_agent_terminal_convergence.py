@@ -67,6 +67,26 @@ def check_terminal_focus_reporting(
         failures.append("terminal cursor focus projection must mutate only with keyboard focus")
 
 
+def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
+    """Keep editor actions on initial Press and outside terminal ownership."""
+    if "workspace_action_should_fire(focus, dock_visible, event.state, event.repeat)" not in authority:
+        failures.append("workspace hotkeys must use the focus-aware initial-Press predicate")
+    timing_body = authority.split("pub(crate) fn workspace_action_should_fire", 1)
+    if len(timing_body) != 2:
+        return
+    timing_body = timing_body[1].split("\n}", 1)[0]
+    for marker in ("ElementState::Pressed", "!repeat", "KeyClass::WorkspaceHotkey"):
+        if marker not in timing_body:
+            failures.append(f"workspace hotkey timing predicate is missing {marker}")
+    dispatch_tail = authority.split("// Pane focus cycling", 1)
+    if len(dispatch_tail) == 2:
+        dispatch_tail = dispatch_tail[1].split("    if escape_released", 1)[0]
+        if dispatch_tail.count("workspace_action_pressed") != 2:
+            failures.append("pane and character hotkeys must share the Press predicate")
+        if "ElementState::Released" in dispatch_tail:
+            failures.append("workspace hotkey dispatch must not fire on key release")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -84,6 +104,7 @@ def main() -> int:
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
+    check_workspace_hotkey_timing(keyboard_focus, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:

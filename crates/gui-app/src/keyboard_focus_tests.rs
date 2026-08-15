@@ -1,8 +1,9 @@
 use super::{
     KeyClass, KeyboardFocus, RouteDecision, focus_after_canvas_click,
     focus_after_hit_target, hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
-    terminal_focus_report_transition,
+    terminal_focus_report_transition, workspace_action_should_fire,
 };
+use winit::event::ElementState;
 use datum_gui_render::HitTarget;
 
 #[test]
@@ -43,6 +44,38 @@ fn editor_focus_routes_hotkeys_and_never_to_terminal() {
             key_route(KeyboardFocus::Editor, KeyClass::RawPty, visible),
             RouteDecision::Unrouted
         );
+    }
+}
+
+#[test]
+fn workspace_actions_fire_once_on_editor_press_and_never_under_terminal_focus() {
+    for visible in [false, true] {
+        assert!(workspace_action_should_fire(
+            KeyboardFocus::Editor,
+            visible,
+            ElementState::Pressed,
+            false,
+        ));
+        assert!(!workspace_action_should_fire(
+            KeyboardFocus::Editor,
+            visible,
+            ElementState::Released,
+            false,
+        ));
+        assert!(!workspace_action_should_fire(
+            KeyboardFocus::Editor,
+            visible,
+            ElementState::Pressed,
+            true,
+        ));
+        for state in [ElementState::Pressed, ElementState::Released] {
+            assert!(!workspace_action_should_fire(
+                KeyboardFocus::Terminal,
+                visible,
+                state,
+                false,
+            ));
+        }
     }
 }
 

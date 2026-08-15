@@ -17,6 +17,39 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_workspace_hotkeys_are_press_timed_through_one_focus_predicate(self) -> None:
+        valid = """
+pub(crate) fn workspace_action_should_fire(focus: KeyboardFocus, visible: bool,
+    state: ElementState, repeat: bool) -> bool {
+    state == ElementState::Pressed && !repeat
+        && key_route(focus, KeyClass::WorkspaceHotkey, visible) == RouteDecision::Editor
+}
+let workspace_action_pressed =
+    workspace_action_should_fire(focus, dock_visible, event.state, event.repeat);
+// Pane focus cycling
+if tab && workspace_action_pressed { next(); }
+if character && workspace_action_pressed { apply(); }
+    if escape_released {}
+"""
+        failures: list[str] = []
+        guard.check_workspace_hotkey_timing(valid, failures)
+        self.assertEqual([], failures)
+
+        invalid = valid.replace("ElementState::Pressed", "ElementState::Released")
+        guard.check_workspace_hotkey_timing(invalid, failures)
+        self.assertIn(
+            "workspace hotkey timing predicate is missing ElementState::Pressed", failures
+        )
+
+        failures = []
+        invalid = valid.replace(
+            "if tab && workspace_action_pressed { next(); }",
+            "if tab && event.state == ElementState::Released "
+            "&& workspace_action_pressed { next(); }",
+        )
+        guard.check_workspace_hotkey_timing(invalid, failures)
+        self.assertIn("workspace hotkey dispatch must not fire on key release", failures)
+
     def test_terminal_focus_reports_have_one_keyboard_owner(self) -> None:
         valid = """
             WindowEvent::Focused(focused) => { if !focused {} }

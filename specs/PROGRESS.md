@@ -37,7 +37,7 @@
    Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-full-native-terminal-contract-e2d`, `dat-terminal-emulator-epic-jzv.7`. *Unblocks:* dat-terminal-focus-authority-6aw, dat-terminal-dual-input-model-75y, dat-terminal-emulator-epic-jzv.1, dat-terminal-emulator-epic-jzv.2, dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
 - **Complete terminal focus and input authority** (`TERMINAL-P0-FOCUS`; `dat-terminal-focus-authority-6aw`).
-   Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
+   Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Collapse the rival terminal input models** (`TERMINAL-T1-INPUT`; `dat-terminal-dual-input-model-75y`).

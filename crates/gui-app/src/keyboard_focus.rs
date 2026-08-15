@@ -163,6 +163,21 @@ fn terminal_owns_keyboard(focus: KeyboardFocus) -> bool {
     focus == KeyboardFocus::Terminal
 }
 
+/// Workspace commands fire once on the initial key press. Terminal ownership
+/// never satisfies this predicate, so the same physical hotkey is PTY input
+/// rather than a leaked editor action (TF-05).
+pub(crate) fn workspace_action_should_fire(
+    focus: KeyboardFocus,
+    terminal_tab_visible: bool,
+    state: ElementState,
+    repeat: bool,
+) -> bool {
+    state == ElementState::Pressed
+        && !repeat
+        && key_route(focus, KeyClass::WorkspaceHotkey, terminal_tab_visible)
+            == RouteDecision::Editor
+}
+
 impl Runtime {
     pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
         self.keyboard_focus
@@ -201,6 +216,8 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some());
     let editor_owns_hotkeys =
         key_route(focus, KeyClass::WorkspaceHotkey, dock_visible) == RouteDecision::Editor;
+    let workspace_action_pressed =
+        workspace_action_should_fire(focus, dock_visible, event.state, event.repeat);
     let terminal_owns_line_edit =
         key_route(focus, KeyClass::DockLineEdit, dock_visible) == RouteDecision::Terminal;
     let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
@@ -415,8 +432,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     // previous leaf, when the dock does not own the keyboard. Reuses the
     // FEEL warm-camera focus swap; workspace view state, never journaled.
     if matches!(event.logical_key, Key::Named(NamedKey::Tab))
-        && event.state == ElementState::Released
-        && editor_owns_hotkeys
+        && workspace_action_pressed
     {
         if let Some(runtime) = &mut app.runtime {
             if runtime.modifiers.shift_key() {
@@ -429,7 +445,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         return true;
     }
     if let Key::Character(text) = &event.logical_key
-        && event.state == ElementState::Released
+        && workspace_action_pressed
         && let Some(action) = crate::workspace_keyboard::character_action(
             text,
             app.runtime

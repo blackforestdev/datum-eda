@@ -1130,7 +1130,7 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1242,7 +1242,7 @@
           {
             "id": "TF-05",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Move workspace hotkeys to Press and lock routing/leak behavior with focused end-to-end tests.",
             "depends_on": [
               "TF-02",
@@ -1269,6 +1269,20 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-tf-05-20260814",
+        "claimed_at": "2026-08-14T21:27:44-07:00",
+        "heartbeat_at": "2026-08-14T21:27:44-07:00",
+        "expires_at": "2026-08-15T05:27:44-07:00",
+        "scope": [
+          "TF-05 workspace hotkey Press timing",
+          "TF-05 focused terminal leak regressions"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "a9c457e1f53effb2b792aa7c37ab35a73ce3919e"
       }
     },
     {

@@ -11,10 +11,12 @@
 use super::*;
 use crate::keyboard_focus::{
     KeyClass, KeyboardFocus, RouteDecision, hit_target_is_terminal_entry, key_route,
+    workspace_action_should_fire,
 };
 use datum_gui_render::HitTarget;
 use std::fs;
 use std::time::{Duration, Instant};
+use winit::event::ElementState;
 
 use super::terminal_screen_authority_tests::DATUM_LIFECYCLE_PHRASES;
 
@@ -540,6 +542,12 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
     let hotkeys = ["s", "b", "v", "m", "x", "r", "f", "t", "z", "c", "[", "]"];
     for key in hotkeys {
         for visible in [false, true] {
+            assert!(workspace_action_should_fire(
+                KeyboardFocus::Editor,
+                visible,
+                ElementState::Pressed,
+                false,
+            ));
             assert_ne!(
                 key_route(KeyboardFocus::Editor, KeyClass::RawPty, visible),
                 RouteDecision::Terminal,
@@ -561,6 +569,12 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
         key_route(KeyboardFocus::Terminal, KeyClass::RawPty, true),
         RouteDecision::Terminal
     );
+    assert!(!workspace_action_should_fire(
+        KeyboardFocus::Terminal,
+        true,
+        ElementState::Pressed,
+        false,
+    ));
     let mut keyboard_bytes = 0usize;
     for key in hotkeys {
         registry
