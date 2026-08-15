@@ -99,6 +99,17 @@ TERM identity change, P05 job-control behavior, P06 stress closure, later securi
 or performance budgets, a visual golden, or release acceptance. Any later budget
 change requires explicit owner evidence; an agent may not silently tune it.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P04B-VERIFIED -->
+DTC-P04B landed in `bd464f1b600b10e321bfe717c3537ee7dd3029ba`.
+Datum's owned Linux transport now provides literal argv/cwd/environment launch,
+descriptor and canonical-termios hygiene, lossless bounded nonblocking output,
+atomic bounded input, typed launch/runtime failures, and work-conserving fair
+draining across active and inactive sessions. Deterministic tests cover every
+owner-approved P04-L1 through P04-L4 bound, partial/EINTR/EAGAIN/HUP/EIO paths,
+closed-stdio spawning, control priority, persistent round-robin order, and exact
+byte preservation. No dependency, TERM claim, or DTC-P05 job-control behavior
+was introduced.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
