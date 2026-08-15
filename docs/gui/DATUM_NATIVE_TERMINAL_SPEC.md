@@ -41,6 +41,34 @@ Vendor structures never cross into engine or `gui-protocol`. Terminal state is
 process-local consumer state in `gui-app`; the engine never persists it as design
 truth.
 
+The T1b mature-core integration closes through these ordered requirements. T1b
+makes the dependency and closed adapter buildable and proven; T2 owns production
+screen cutover, renderer/input integration, parity, and deletion of the bespoke
+screen/parser:
+
+- <!-- REQ:TERMINAL-T1-CORE:CORE-01 --> **CORE-01 — dependency and provenance.**
+  Pin and reproducibly build `libghostty-vt`; record its version, source,
+  license, feature set, and Datum compatibility constraints. A blocking
+  integration defect requires recorded evidence and an owner boundary before
+  selecting the permitted `alacritty_terminal` fallback.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-02 --> **CORE-02 — closed adapter contract.**
+  Define Datum-owned input, reply, render/damage, mode/event, selection,
+  scrollback/search, and snapshot types. Vendor-private structures remain inside
+  the `gui-app` adapter and never enter the engine or `gui-protocol`.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-03 --> **CORE-03 — capability integration.**
+  Implement feed, resize, replies, cursor/modes, title/CWD/bell, palette,
+  hyperlink/graphics state, selection coordinates, scrollback/search,
+  input encoders, reset, and teardown through the closed adapter without
+  extending the bespoke screen as a rival core.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-04 --> **CORE-04 — deterministic corpus.**
+  Drive the adapter with checked-in VT byte streams and assert deterministic
+  snapshots for cells/styles, replies, damage, Unicode width, modes, alternate
+  screen, scrollback, title/CWD/bell, hyperlinks, and supported graphics state.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-05 --> **CORE-05 — gate and T2 handoff.** Pass
+  dependency/license, adapter-boundary, snapshot, source-health, governance, and
+  strict build gates; record the exact T2 production-cutover seam. Do not claim
+  the current bespoke screen retired until T2 parity and deletion evidence land.
+
 ### 2.2 Session transport
 
 Each terminal tab or split binds one `TerminalSession` to one `TerminalCore`.

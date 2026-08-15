@@ -925,7 +925,6 @@
         "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.1",
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
       ],
@@ -1101,10 +1100,9 @@
         ],
         "post_completion": {
           "effects": [
-            "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
+            "The remaining T1b/T2 foundation issues lose their T0 blocker; the completed transport and focus slices retain historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.1",
             "dat-terminal-emulator-epic-jzv.2",
             "dat-terminal-emulator-epic-jzv.3"
           ],
@@ -1394,9 +1392,9 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions.",
       "dependencies": [
@@ -1407,7 +1405,7 @@
       ],
       "completion": {
         "outcome": "portable-pty exclusively owns Datum's process transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "PTY-05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1506,7 +1504,7 @@
           {
             "id": "PTY-05",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Delete hand-rolled PTY ownership, lock the transport/core separation with drift guards, and pass terminal, governance, source-health, and platform-aware integration gates.",
             "depends_on": [
               "PTY-03",
@@ -1518,7 +1516,12 @@
                 "marker": "PTY-05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "2a2b6cef5d9b41624844152e4d9934af412a5a09"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -1533,21 +1536,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-pty-05-20260814",
-        "claimed_at": "2026-08-14T23:10:13-07:00",
-        "heartbeat_at": "2026-08-14T23:10:13-07:00",
-        "expires_at": "2026-08-15T07:10:13-07:00",
-        "scope": [
-          "PTY-05 raw transport ownership retirement audit",
-          "PTY-05 transport and terminal-core drift guards",
-          "PTY-05 platform-aware integration and closure gates"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "b23fa9e43d8f1eb4f7b2db7cf787f820f8ea7756"
-      }
+      "landing_commit": "2a2b6cef5d9b41624844152e4d9934af412a5a09"
     },
     {
       "key": "TERMINAL-T1-CORE",
@@ -1560,7 +1549,7 @@
       ],
       "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Pin libghostty-vt behind Datum's closed adapter and prohibit extension of the bespoke emulator as a rival core.",
       "dependencies": [
@@ -1568,7 +1557,114 @@
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.3"
-      ]
+      ],
+      "completion": {
+        "outcome": "A pinned mature terminal core builds behind a closed Datum adapter with deterministic compatibility evidence and an explicit T2 production-cutover seam, without extending the bespoke screen as a rival core.",
+        "canonical_next_step_id": "CORE-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "CORE-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Pin and reproducibly build libghostty-vt; record version, source, license, features, and compatibility constraints, stopping at an owner boundary before any evidence-gated fallback.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Define the closed Datum-owned adapter contract and keep every vendor-private structure out of the engine and gui-protocol.",
+            "depends_on": [
+              "CORE-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Integrate the mature core's feed, resize, replies, render/damage, modes/events, selection, scrollback/search, input encoding, reset, and teardown capabilities through the adapter.",
+            "depends_on": [
+              "CORE-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove deterministic adapter snapshots over checked-in VT streams for cells/styles, replies, damage, Unicode width, modes, alternate screen, scrollback, metadata, links, and supported graphics.",
+            "depends_on": [
+              "CORE-03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Pass dependency, license, adapter-boundary, snapshot, source-health, governance, and strict build gates and record the exact T2 production-cutover handoff.",
+            "depends_on": [
+              "CORE-04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T2 loses the mature-core blocker; production cutover remains a separate task that must be explicitly selected."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.3"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T2-NATIVE",
