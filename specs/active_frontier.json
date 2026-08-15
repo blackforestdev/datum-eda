@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1485,7 +1485,7 @@
           {
             "id": "PTY-04",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prove concurrent terminal-session isolation across input, output, resize, detach, reattach, exit, and teardown.",
             "depends_on": [
               "PTY-02"
@@ -1527,6 +1527,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-pty-04-20260814",
+        "claimed_at": "2026-08-14T23:01:41-07:00",
+        "heartbeat_at": "2026-08-14T23:01:41-07:00",
+        "expires_at": "2026-08-15T07:01:41-07:00",
+        "scope": [
+          "PTY-04 concurrent input and output isolation proof",
+          "PTY-04 resize detach and reattach isolation proof",
+          "PTY-04 exit and teardown isolation proof"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "5f2d2c0bf6b5b3bb152db1c3e934f6b50c5d1906"
       }
     },
     {

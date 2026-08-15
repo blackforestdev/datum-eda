@@ -110,6 +110,7 @@ fn spawn_terminal_process_argv(
     terminal_context.process_group_id = Some(process_group_id);
     write_terminal_context_files(&terminal_context, context)?;
     let stdin = Arc::new(Mutex::new(writer));
+    let exited = Arc::new(AtomicBool::new(false));
     let (tx, rx) = mpsc::channel();
     let reader_tx = tx.clone();
     let reader_wake = terminal_wake.clone();
@@ -129,8 +130,10 @@ fn spawn_terminal_process_argv(
             }
         }
     });
+    let wait_exited = Arc::clone(&exited);
     thread::spawn(move || {
         let code = child.wait().ok().map(|status| status.exit_code() as i32);
+        wait_exited.store(true, Ordering::Release);
         publish_terminal_event(&tx, TerminalEvent::Exited(code), || terminal_wake.request());
     });
     Ok(TerminalSession {
@@ -143,6 +146,7 @@ fn spawn_terminal_process_argv(
         context_id: terminal_context.context_id,
         master,
         process_group_id,
+        exited,
         active_execution_id: Arc::new(Mutex::new(None)),
         finished_scan_offset: std::cell::Cell::new(0),
     })
