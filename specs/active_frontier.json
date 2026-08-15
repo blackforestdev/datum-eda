@@ -1401,10 +1401,29 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "429f38923a70128776aba3aa4621c82b65998d76",
+        "claimed_at": "2026-08-15T22:26:31Z",
+        "heartbeat_at": "2026-08-15T22:26:31Z",
+        "expires_at": "2026-08-16T06:26:31Z",
+        "scope": [
+          "DTC-P04B",
+          "crates/gui-app/src/terminal_process.rs",
+          "crates/gui-app/src/terminal_transport/",
+          "crates/gui-app/src/terminal_session.rs",
+          "crates/gui-app/src/terminal_session_drain/",
+          "crates/gui-app/src/production_status_refresh.rs",
+          "DTC-P04B tests and terminal transport guards"
+        ]
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1415,7 +1434,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P04A",
+        "canonical_next_step_id": "DTC-P04B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1451,7 +1470,7 @@
           {
             "id": "DTC-P04A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Ratify the exact bounded output, input, GUI-turn drain, fairness, and concurrent-session budgets before launch and I/O implementation.",
             "depends_on": [
               "DTC-P03"
@@ -1462,7 +1481,13 @@
                 "marker": "DTC-P04A"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P04A-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve P04-L4`, or `P04-L4: revise — <replacement>` or `P04-L4: defer — <reason>`.",
               "requests": [
@@ -1481,7 +1506,7 @@
           {
             "id": "DTC-P04B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete arbitrary argv, cwd/environment/credentials, descriptor hygiene, termios, partial nonblocking I/O, ratified bounded queues/backpressure, inactive-session draining, and typed error surfaces.",
             "depends_on": [
               "DTC-P04A"

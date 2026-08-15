@@ -81,10 +81,18 @@ only the active session is visibly projected. These laws are not tuning hints.
   round-robin across every live session from a persistent fairness cursor. Check
   each session's exit/error state before granting a noisy session another data
   quantum; remaining work schedules exactly one successor wake.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L4 --> **P04-L4 — aggregate session bound.** Recommended: at most 16 concurrent
-  terminal sessions. Refuse the seventeenth before PTY allocation with visible
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L4 --> **P04-L4 — aggregate session bound.** Owner-approved 2026-08-15: at most 16
+  concurrent terminal sessions. Refuse the seventeenth before PTY allocation with visible
   terminal-local feedback. This permits twice the required eight-session release
-  proof while bounding pending payload memory to 32 MiB across output and input.
+  proof while bounding pending payload memory to 128 MiB across the approved
+  4 MiB output and 4 MiB input allowances.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P04A-OWNER-APPROVED -->
+The project owner approved P04-L1 at 256 chunks / 16 KiB / 4 MiB output,
+P04-L2 at 64 requests / 4 MiB aggregate and single input, P04-L3 at the
+existing 128-event / 64 KiB fair global GUI-turn drain, and P04-L4 at 16 live
+sessions. These dispositions authorize DTC-P04B only under the lossless,
+nonblocking, atomic-admission, fair-drain laws above.
 
 Approving these limits authorizes only DTC-P04B. It does not approve a dependency,
 TERM identity change, P05 job-control behavior, P06 stress closure, later security
