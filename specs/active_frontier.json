@@ -921,7 +921,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C03A",
+        "canonical_next_step_id": "T0-C04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1018,7 +1018,7 @@
           {
             "id": "T0-C03A",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Wake the waiting GUI with one coalesced pending notification, keep raw shell Enter from triggering workspace reload, bound and reschedule drain work, batch style/activity/render synchronization, and prove immediate post-output input plus sustained-output latency before C04.",
             "depends_on": [
               "T0-C03"
@@ -1029,7 +1029,25 @@
                 "marker": "T0-C03A"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "718de302d071c2c596e04164584ba3c30d5df312"
+              },
+              {
+                "kind": "commit",
+                "revision": "03257eeecc2e495d93cbce51ae7471d92fa8fb9d"
+              },
+              {
+                "kind": "commit",
+                "revision": "d046f43ba98b2e58a7678761133335d5c919e6d4"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T0-SHELL-TRUTH:T0-C03A-OWNER-ACCEPTED"
+              }
+            ]
           },
           {
             "id": "T0-C04",
@@ -1093,22 +1111,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-terminal-lag-t0-c03a-2026-08-15",
-        "claimed_at": "2026-08-15T00:10:00Z",
-        "heartbeat_at": "2026-08-15T00:10:00Z",
-        "expires_at": "2026-08-15T08:10:00Z",
-        "scope": [
-          "crates/gui-app/",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5cdf1f4f76ea0d849395b5ecf94c9ea1abdd4cf3"
       }
     },
     {

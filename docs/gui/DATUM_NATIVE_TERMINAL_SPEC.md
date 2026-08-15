@@ -214,6 +214,9 @@ through the terminal core, and proves from renderer-facing state that:
    probes record first-output latency, throughput, worst batch time, backlog
    completion, and immediate post-prompt input, followed by owner `ls -la` and
    sustained-output acceptance.
+<!-- EVIDENCE:TERMINAL-T0-SHELL-TRUTH:T0-C03A-OWNER-ACCEPTED -->
+Owner acceptance on 2026-08-14 confirmed that the final raw-Enter repair removes
+the post-command hang and restores responsive successive command entry.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C04 -->
 5. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
    session lifecycle, and diagnostic paths cannot write to or displace terminal
