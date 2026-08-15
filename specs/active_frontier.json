@@ -1591,10 +1591,6 @@
                 "kind": "document",
                 "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
                 "marker": "EVIDENCE:TERMINAL-T1-CORE:CORE-01-PIN"
-              },
-              {
-                "kind": "commit",
-                "revision": "c5fb46a"
               }
             ]
           },
