@@ -8,9 +8,14 @@ use std::fs;
 use std::time::{Duration, Instant};
 
 /// Non-PTY phrases that must never appear in terminal cells (T0-C01 /
-/// decision 027 FT-001) — shared by the lifecycle regression and the T0-C03
-/// production-path canary.
-const DATUM_LIFECYCLE_PHRASES: [&str; 7] = [
+/// decision 027 FT-001) — shared by the lifecycle regression, the T0-C03
+/// production-path canary, and the T0-C04 regression boundary
+/// (`terminal_regression_boundary_tests.rs`). One entry per narration-producing
+/// event class: session lifecycle, clipboard, PTY/transport failures, activity
+/// telemetry, pan/diagnostic traces, and production-status refresh. Substring
+/// matched against grid rows, so a phrase covers every message containing it
+/// (e.g. "terminal session" covers open/rename/detach/close/ended notices).
+pub(super) const DATUM_LIFECYCLE_PHRASES: [&str; 23] = [
     "opened terminal session",
     "terminal restarted",
     "renamed active terminal session",
@@ -18,6 +23,22 @@ const DATUM_LIFECYCLE_PHRASES: [&str; 7] = [
     "terminal session",
     "activity summary",
     "workspace scene/status refreshed",
+    "terminal write failed",
+    "terminal restart failed",
+    "terminal interrupt failed",
+    "terminal exited",
+    "terminated by signal",
+    "clipboard",
+    "scrollback copied",
+    "production status refresh failed",
+    "pan key physical=",
+    "pan primary pressed",
+    "terminal resize",
+    "queued authoring command",
+    "terminal status response failed",
+    "terminal handoff prepare failed",
+    "terminal mouse report failed",
+    "terminal focus report failed",
 ];
 
 #[test]

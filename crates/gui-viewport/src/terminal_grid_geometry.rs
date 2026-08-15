@@ -249,6 +249,44 @@ mod tests {
     }
 
     #[test]
+    fn every_affordable_row_goes_to_the_screen_with_no_summary_band() {
+        // T0-C04 regression boundary (DATUM_NATIVE_TERMINAL_SPEC.md §7.1):
+        // application summaries/telemetry consume zero cell rows. Across dock
+        // sizes and HiDPI scales, the space between the surviving chrome bands
+        // and the lane bottom belongs entirely to the screen — the leftover
+        // below the screen is less than one cell (no row is withheld for any
+        // application band), and the screen top sits exactly under the kept
+        // chrome (nothing else may displace shell cells).
+        for width in [800.0_f32, 1280.0, 2560.0] {
+            for height in [90.0_f32, 120.0, 150.0, 220.0, 320.0, 440.0, 600.0] {
+                let geometry = terminal_screen_geometry(strip(width, height));
+                let inner_x = geometry.content.x + LANE_PAD_X;
+                let inner_y = geometry.content.y + LANE_PAD_TOP;
+                let inner_height =
+                    (geometry.content.height - LANE_PAD_TOP - LANE_PAD_BOTTOM).max(0.0);
+                let chrome = geometry.header.map_or(0.0, |band| band.height)
+                    + geometry.sessions_row.map_or(0.0, |band| band.height);
+                assert_eq!(
+                    geometry.screen.y,
+                    inner_y + chrome,
+                    "{width}x{height}: screen must start exactly under the kept chrome"
+                );
+                assert_eq!(
+                    geometry.screen.x, inner_x,
+                    "{width}x{height}: no band may indent the screen"
+                );
+                let leftover =
+                    inner_y + inner_height - (geometry.screen.y + geometry.screen.height);
+                assert!(
+                    leftover < TERMINAL_CELL_HEIGHT_PX,
+                    "{width}x{height}: {leftover}px of lane space is withheld from \
+                     the grid — a full cell row was displaced"
+                );
+            }
+        }
+    }
+
+    #[test]
     fn cell_at_maps_screen_points_to_cells_and_rejects_chrome() {
         let geometry = terminal_screen_geometry(strip(1280.0, 220.0));
         let screen = geometry.screen;

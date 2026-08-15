@@ -603,6 +603,9 @@ impl Drop for TerminalSession {
 }
 
 #[cfg(test)]
+#[path = "terminal_regression_boundary_tests.rs"]
+mod terminal_regression_boundary_tests;
+#[cfg(test)]
 #[path = "terminal_screen_authority_tests.rs"]
 mod terminal_screen_authority_tests;
 #[cfg(test)]

@@ -542,6 +542,10 @@ fn consumes_release(event: &KeyEvent) -> bool {
 }
 
 #[cfg(test)]
+#[path = "terminal_workspace_hotkey_tests.rs"]
+mod terminal_workspace_hotkey_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     #[test]
