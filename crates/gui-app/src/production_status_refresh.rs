@@ -122,6 +122,11 @@ impl App {
 }
 
 impl Runtime {
+    pub(super) fn handle_terminal_output_wake(&mut self) -> bool {
+        self.terminal_sessions.acknowledge_output_poll();
+        self.poll_terminal_output()
+    }
+
     pub(super) fn mark_terminal_production_refresh_pending(&mut self) {
         self.terminal_production_refresh_pending = true;
         self.terminal_production_refresh_attempts = 0;

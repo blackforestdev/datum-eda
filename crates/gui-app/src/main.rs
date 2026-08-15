@@ -555,9 +555,7 @@ impl ApplicationHandler for App {
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
-        if let Some(runtime) = &mut self.runtime
-            && runtime.poll_terminal_output()
-        {
+        if self.runtime.as_mut().is_some_and(Runtime::handle_terminal_output_wake) {
             self.request_redraw_if_needed();
         }
     }

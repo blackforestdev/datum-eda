@@ -15,14 +15,48 @@ use std::{
         unix::process::CommandExt,
     },
     process::Command,
-    sync::{Arc, Mutex, mpsc},
+    sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
+        mpsc,
+    },
     thread,
 };
 use winit::event_loop::EventLoopProxy;
 
+#[derive(Clone)]
+pub(super) struct TerminalWakeGate {
+    proxy: Option<EventLoopProxy<()>>,
+    pending: Arc<AtomicBool>,
+}
+
+impl TerminalWakeGate {
+    pub(super) fn new(proxy: Option<EventLoopProxy<()>>) -> Self {
+        Self {
+            proxy,
+            pending: Arc::new(AtomicBool::new(false)),
+        }
+    }
+
+    pub(super) fn request(&self) {
+        request_coalesced_wake(&self.pending, || {
+            self.proxy
+                .as_ref()
+                .is_some_and(|proxy| proxy.send_event(()).is_ok())
+        });
+    }
+
+    /// Clear before draining. Output arriving concurrently can then schedule
+    /// exactly one successor event, avoiding both a lost wake and a queue full
+    /// of redundant events ahead of keyboard input.
+    pub(super) fn acknowledge(&self) {
+        self.pending.store(false, Ordering::Release);
+    }
+}
+
 pub(super) fn spawn_terminal_process(
     context: &TerminalLaunchContext,
-    terminal_event_proxy: Option<EventLoopProxy<()>>,
+    terminal_wake: TerminalWakeGate,
 ) -> Result<TerminalSession> {
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     let mut terminal_context = write_terminal_context(context)?;
@@ -74,7 +108,7 @@ pub(super) fn spawn_terminal_process(
     write_terminal_context_files(&terminal_context, context)?;
     let (tx, rx) = mpsc::channel();
     let reader_tx = tx.clone();
-    let reader_proxy = terminal_event_proxy.clone();
+    let reader_wake = terminal_wake.clone();
     thread::spawn(move || {
         let mut reader = reader;
         let mut buffer = [0_u8; 4096];
@@ -85,11 +119,7 @@ pub(super) fn spawn_terminal_process(
                     publish_terminal_event(
                         &reader_tx,
                         TerminalEvent::Output(buffer[..count].to_vec()),
-                        || {
-                            if let Some(proxy) = &reader_proxy {
-                                let _ = proxy.send_event(());
-                            }
-                        },
+                        || reader_wake.request(),
                     );
                 }
                 Err(_) => break,
@@ -98,11 +128,7 @@ pub(super) fn spawn_terminal_process(
     });
     thread::spawn(move || {
         let code = child.wait().ok().and_then(|status| status.code());
-        publish_terminal_event(&tx, TerminalEvent::Exited(code), || {
-            if let Some(proxy) = terminal_event_proxy {
-                let _ = proxy.send_event(());
-            }
-        });
+        publish_terminal_event(&tx, TerminalEvent::Exited(code), || terminal_wake.request());
     });
     Ok(TerminalSession {
         stdin,
@@ -117,6 +143,16 @@ pub(super) fn spawn_terminal_process(
         active_execution_id: Arc::new(Mutex::new(None)),
         finished_scan_offset: std::cell::Cell::new(0),
     })
+}
+
+fn request_coalesced_wake(pending: &AtomicBool, wake: impl FnOnce() -> bool) {
+    if pending
+        .compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire)
+        .is_ok()
+        && !wake()
+    {
+        pending.store(false, Ordering::Release);
+    }
 }
 
 /// Publish first, then wake the waiting GUI. Keeping these actions in one
@@ -230,5 +266,39 @@ mod tests {
             wakes.fetch_add(1, Ordering::SeqCst);
         });
         assert_eq!(wakes.load(Ordering::SeqCst), 0);
+    }
+
+    #[test]
+    fn burst_output_coalesces_to_one_pending_gui_wake() {
+        let pending = AtomicBool::new(false);
+        let wakes = AtomicUsize::new(0);
+        for _ in 0..10_000 {
+            request_coalesced_wake(&pending, || {
+                wakes.fetch_add(1, Ordering::SeqCst);
+                true
+            });
+        }
+        assert_eq!(wakes.load(Ordering::SeqCst), 1);
+
+        pending.store(false, Ordering::Release);
+        request_coalesced_wake(&pending, || {
+            wakes.fetch_add(1, Ordering::SeqCst);
+            true
+        });
+        assert_eq!(wakes.load(Ordering::SeqCst), 2);
+    }
+
+    #[test]
+    fn failed_gui_wake_releases_gate_for_retry() {
+        let pending = AtomicBool::new(false);
+        request_coalesced_wake(&pending, || false);
+        assert!(!pending.load(Ordering::Acquire));
+
+        let wakes = AtomicUsize::new(0);
+        request_coalesced_wake(&pending, || {
+            wakes.fetch_add(1, Ordering::SeqCst);
+            true
+        });
+        assert_eq!(wakes.load(Ordering::SeqCst), 1);
     }
 }

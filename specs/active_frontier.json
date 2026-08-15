@@ -1019,7 +1019,7 @@
             "id": "T0-C03A",
             "kind": "execution",
             "status": "in_progress",
-            "action": "Wake the waiting GUI on PTY output, bound and reschedule drain work, batch style/activity/render synchronization, and prove interactive plus sustained-output latency before C04.",
+            "action": "Wake the waiting GUI on PTY output with one coalesced pending notification, bound and reschedule drain work, batch style/activity/render synchronization, and prove immediate post-output input plus sustained-output latency before C04.",
             "depends_on": [
               "T0-C03"
             ],

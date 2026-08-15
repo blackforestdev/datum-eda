@@ -6,7 +6,7 @@ use crate::{
         write_terminal_context_files,
     },
     terminal_screen::TerminalScreen,
-    terminal_process::spawn_terminal_process,
+    terminal_process::{TerminalWakeGate, spawn_terminal_process},
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
 };
@@ -50,7 +50,7 @@ pub(super) struct TerminalSession {
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
     active_index: usize,
-    terminal_event_proxy: Option<EventLoopProxy<()>>,
+    terminal_wake: TerminalWakeGate,
 }
 
 struct TerminalSessionSlot {
@@ -97,7 +97,8 @@ impl TerminalSessionRegistry {
         context: &TerminalLaunchContext,
         terminal_event_proxy: Option<EventLoopProxy<()>>,
     ) -> Result<Self> {
-        let session = spawn_terminal_session_with_proxy(context, terminal_event_proxy.clone())?;
+        let terminal_wake = TerminalWakeGate::new(terminal_event_proxy);
+        let session = spawn_terminal_session_with_wake(context, terminal_wake.clone())?;
         Ok(Self {
             sessions: vec![TerminalSessionSlot {
                 session,
@@ -112,15 +113,14 @@ impl TerminalSessionRegistry {
                 activity: TerminalActivitySummaryCache::default(),
             }],
             active_index: 0,
-            terminal_event_proxy,
+            terminal_wake,
         })
     }
 
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
         let previous_active_index = self.active_index;
-        let session =
-            spawn_terminal_session_with_proxy(context, self.terminal_event_proxy.clone())?;
+        let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         self.sessions.push(TerminalSessionSlot {
             session,
             screen: TerminalScreen::default(),
@@ -279,7 +279,7 @@ impl TerminalSessionRegistry {
             &mut slot.screen,
             state,
             context,
-            self.terminal_event_proxy.clone(),
+            self.terminal_wake.clone(),
         )?;
         slot.status = state.status.clone();
         slot.attached = true;
@@ -297,9 +297,11 @@ impl TerminalSessionRegistry {
     }
 
     pub(super) fn request_output_poll(&self) {
-        if let Some(proxy) = &self.terminal_event_proxy {
-            let _ = proxy.send_event(());
-        }
+        self.terminal_wake.request();
+    }
+
+    pub(super) fn acknowledge_output_poll(&self) {
+        self.terminal_wake.acknowledge();
     }
 
     /// Refresh the active session's incremental activity summary and return
@@ -423,7 +425,14 @@ fn spawn_terminal_session_with_proxy(
     context: &TerminalLaunchContext,
     terminal_event_proxy: Option<EventLoopProxy<()>>,
 ) -> Result<TerminalSession> {
-    spawn_terminal_process(context, terminal_event_proxy)
+    spawn_terminal_session_with_wake(context, TerminalWakeGate::new(terminal_event_proxy))
+}
+
+fn spawn_terminal_session_with_wake(
+    context: &TerminalLaunchContext,
+    terminal_wake: TerminalWakeGate,
+) -> Result<TerminalSession> {
+    spawn_terminal_process(context, terminal_wake)
 }
 
 pub(super) fn refresh_terminal_session_context(
@@ -474,11 +483,11 @@ pub(super) fn restart_terminal_session(
     screen: &mut TerminalScreen,
     state: &mut TerminalLaneState,
     context: &TerminalLaunchContext,
-    terminal_event_proxy: Option<EventLoopProxy<()>>,
+    terminal_wake: TerminalWakeGate,
 ) -> Result<()> {
     mark_terminal_session_lifecycle(session, DatumToolSessionLifecycle::Restarted, None)?;
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
-    *session = spawn_terminal_session_with_proxy(context, terminal_event_proxy)?;
+    *session = spawn_terminal_session_with_wake(context, terminal_wake)?;
     *screen = TerminalScreen::default();
     state.status = "running".to_string();
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not

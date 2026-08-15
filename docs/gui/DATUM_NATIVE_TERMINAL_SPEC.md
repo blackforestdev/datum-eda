@@ -204,11 +204,13 @@ through the terminal core, and proves from renderer-facing state that:
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C03A -->
 4. **T0-C03A — responsive output delivery.** Before interaction-regression
    closure, PTY output must wake the waiting GUI without a user-generated event;
-   GUI-thread drain work must be bounded and explicitly rescheduled while backlog
-   remains; activity, style, and render projection must be synchronized once per
-   bounded batch rather than once per byte/chunk. Deterministic debug and release
-   probes record first-output latency, throughput, worst batch time, and backlog
-   completion, followed by owner `ls -la` and sustained-output acceptance.
+   PTY bursts must coalesce to at most one pending event-loop wake so stale wake
+   events cannot queue ahead of subsequent keyboard input. GUI-thread drain work
+   must be bounded and explicitly rescheduled while backlog remains; activity,
+   style, and render projection must be synchronized once per bounded batch rather
+   than once per byte/chunk. Deterministic debug and release probes record
+   first-output latency, throughput, worst batch time, and backlog completion,
+   followed by owner `ls -la` and sustained-output acceptance.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C04 -->
 5. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
    session lifecycle, and diagnostic paths cannot write to or displace terminal
