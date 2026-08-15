@@ -1560,7 +1560,7 @@
       ],
       "completion": {
         "outcome": "A pinned mature terminal core builds behind a closed Datum adapter with deterministic compatibility evidence and an explicit T2 production-cutover seam, without extending the bespoke screen as a rival core.",
-        "canonical_next_step_id": "CORE-01",
+        "canonical_next_step_id": "CORE-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1577,7 +1577,7 @@
           {
             "id": "CORE-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Pin and reproducibly build libghostty-vt; record version, source, license, features, and compatibility constraints, stopping at an owner boundary before any evidence-gated fallback.",
             "depends_on": [],
             "requirement_refs": [
@@ -1586,7 +1586,13 @@
                 "marker": "CORE-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:CORE-01-PIN"
+              }
+            ]
           },
           {
             "id": "CORE-02",
