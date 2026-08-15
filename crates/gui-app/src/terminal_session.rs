@@ -1,13 +1,12 @@
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_context::{
-        TerminalContext, read_session_created_unix_ms, tool_session_event_log_path, unix_time_ms,
-        update_terminal_lifecycle_file, write_terminal_context_files,
-    },
-    terminal_process::{
-        TerminalWakeGate, spawn_terminal_process, terminal_transport::INITIAL_TERMINAL_SIZE,
+        TerminalContext, read_session_created_unix_ms,
+        tool_session_event_log_path, unix_time_ms, update_terminal_lifecycle_file,
+        write_terminal_context_files,
     },
     terminal_screen::TerminalScreen,
+    terminal_process::{TerminalWakeGate, spawn_terminal_process},
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
 };
@@ -18,9 +17,11 @@ use datum_gui_protocol::{
     TerminalLaneState, TerminalTabState,
 };
 use std::io::{self, Write};
+use std::os::fd::RawFd;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
+use std::fs::File;
 use winit::event_loop::EventLoopProxy;
 
 pub(super) enum TerminalEvent {
@@ -29,14 +30,14 @@ pub(super) enum TerminalEvent {
 }
 
 pub(super) struct TerminalSession {
-    pub(super) stdin: Arc<Mutex<Box<dyn Write + Send>>>,
+    pub(super) stdin: Arc<Mutex<File>>,
     pub(super) rx: Receiver<TerminalEvent>,
     pub(super) context_path: PathBuf,
     pub(super) latest_context_path: PathBuf,
     pub(super) session_path: PathBuf,
     pub(super) session_id: String,
     pub(super) context_id: String,
-    pub(super) master: Box<dyn portable_pty::MasterPty + Send>,
+    pub(super) master_fd: RawFd,
     pub(super) process_group_id: libc::pid_t,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
@@ -107,8 +108,8 @@ impl TerminalSessionRegistry {
                 attached: true,
                 previous_session_id: None,
                 restart_count: 0,
-                columns: INITIAL_TERMINAL_SIZE.cols,
-                rows: INITIAL_TERMINAL_SIZE.rows,
+                columns: 80,
+                rows: 24,
                 activity: TerminalActivitySummaryCache::default(),
             }],
             active_index: 0,
@@ -128,8 +129,8 @@ impl TerminalSessionRegistry {
             attached: true,
             previous_session_id: None,
             restart_count: 0,
-            columns: INITIAL_TERMINAL_SIZE.cols,
-            rows: INITIAL_TERMINAL_SIZE.rows,
+            columns: 80,
+            rows: 24,
             activity: TerminalActivitySummaryCache::default(),
         });
         self.sessions[previous_active_index].attached = false;
@@ -581,14 +582,17 @@ impl TerminalSession {
     }
 
     pub(super) fn resize(&self, cols: u16, rows: u16) -> Result<()> {
-        self.master
-            .resize(portable_pty::PtySize {
-                rows,
-                cols,
-                pixel_width: 0,
-                pixel_height: 0,
-            })
-            .context("resize portable terminal PTY")
+        let size = libc::winsize {
+            ws_row: rows.max(1),
+            ws_col: cols.max(1),
+            ws_xpixel: 0,
+            ws_ypixel: 0,
+        };
+        let rc = unsafe { libc::ioctl(self.master_fd, libc::TIOCSWINSZ, &size) };
+        if rc < 0 {
+            return Err(io::Error::last_os_error()).context("resize terminal PTY");
+        }
+        Ok(())
     }
 }
 
