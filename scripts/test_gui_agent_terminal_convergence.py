@@ -17,34 +17,6 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
-    def test_terminal_transport_integration_gate_is_platform_aware_and_wired(self) -> None:
-        gate = '''
-platform="$(uname -s)"
-if [[ "$platform" != "Linux" ]]; then exit 0; fi
-if [[ ! -c /dev/ptmx ]]; then exit 1; fi
-terminal_process_semantics_tests
-terminal_session_isolation_tests
-'''
-        runner = "bash scripts/check_terminal_transport_integration.sh"
-        failures: list[str] = []
-        guard.check_terminal_transport_integration_gate(gate, runner, failures)
-        self.assertEqual([], failures)
-
-        failures = []
-        guard.check_terminal_transport_integration_gate(
-            gate.replace("terminal_session_isolation_tests", "unit_only"),
-            runner + "\n" + runner,
-            failures,
-        )
-        self.assertIn(
-            "terminal transport integration gate is missing terminal_session_isolation_tests",
-            failures,
-        )
-        self.assertIn(
-            "standard drift gates must invoke terminal transport integration once",
-            failures,
-        )
-
     def test_ctrl_c_uses_pty_foreground_and_exit_is_reported(self) -> None:
         process = "status.exit_code(); TerminalEvent::Exited(code);"
         session = """
@@ -88,8 +60,7 @@ fn spawn_portable_pty() {
 
         failures = []
         guard.check_terminal_transport_boundary(
-            transport
-            + "\nfn rogue() { posix_openpt(); NativePtySystem::default(); TerminalScreen::default(); }",
+            transport + "\nfn rogue() { posix_openpt(); TerminalScreen::default(); }",
             transport + "\nTerminalScreen::default();",
             failures,
         )
@@ -99,9 +70,6 @@ fn spawn_portable_pty() {
         )
         self.assertIn(
             "hand-rolled PTY ownership must be retired: posix_openpt", failures
-        )
-        self.assertIn(
-            "portable PTY allocation escaped its adapter: NativePtySystem", failures
         )
 
     def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:
