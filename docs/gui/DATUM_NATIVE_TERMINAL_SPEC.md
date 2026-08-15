@@ -49,6 +49,28 @@ defect is evidenced. It must preserve controlling-terminal setup, process groups
 signals, resize, exit status, inherited user credentials/environment, and
 independent concurrent sessions.
 
+The T1a transport replacement closes through these ordered implementation
+requirements:
+
+- <!-- REQ:TERMINAL-T1-PTY:PTY-01 --> **PTY-01 — boundary and dependency.**
+  Inventory the current platform-specific PTY ownership, pin `portable-pty`, and
+  establish a transport adapter that exposes process/session operations without
+  exposing terminal-cell semantics.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-02 --> **PTY-02 — complete transport swap.** Move
+  allocation, spawn, read, write, resize, cwd/environment, inherited credentials,
+  and arbitrary executable/argv launch through the adapter while preserving Datum
+  bootstrap context.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-03 --> **PTY-03 — process semantics.** Prove real
+  pipelines, process groups, Ctrl-C, explicit termination, shell exit status, and
+  child-exit reporting through production-path tests.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-04 --> **PTY-04 — session isolation.** Prove that
+  concurrent tabs remain independent across input, output, resize, detach,
+  reattach, exit, and teardown.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-05 --> **PTY-05 — retire and lock.** Delete the
+  hand-rolled PTY ownership path, add drift guards that keep cell parsing out of
+  transport, and pass the terminal, source-health, governance, and platform-aware
+  integration gates.
+
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.

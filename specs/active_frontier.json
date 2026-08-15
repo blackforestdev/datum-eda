@@ -925,7 +925,6 @@
         "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
-        "dat-terminal-dual-input-model-75y",
         "dat-terminal-emulator-epic-jzv.1",
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
@@ -1105,7 +1104,6 @@
             "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-dual-input-model-75y",
             "dat-terminal-emulator-epic-jzv.1",
             "dat-terminal-emulator-epic-jzv.2",
             "dat-terminal-emulator-epic-jzv.3"
@@ -1284,9 +1282,9 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit.",
       "dependencies": [
@@ -1297,7 +1295,7 @@
       ],
       "completion": {
         "outcome": "The terminal has one shell-input ingress: attached bytes go only to the PTY/TerminalCore, detached sessions are explicitly read-only, and chrome-local rename editing cannot become a rival shell buffer.",
-        "canonical_next_step_id": "TI-03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1354,7 +1352,7 @@
           {
             "id": "TI-03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Delete dead input state and lock attached exact-once, detached zero-byte/reattach, and rename-isolation behavior with production-path tests and drift guards.",
             "depends_on": [
               "TI-02"
@@ -1365,7 +1363,12 @@
                 "marker": "TI-03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "cc61a0dc7e1d5490586d15ef85b7fafc154ce02e"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -1380,21 +1383,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-ti-03-20260814",
-        "claimed_at": "2026-08-14T22:00:47-07:00",
-        "heartbeat_at": "2026-08-14T22:00:47-07:00",
-        "expires_at": "2026-08-15T06:00:47-07:00",
-        "scope": [
-          "TI-03 dead input-state removal",
-          "TI-03 production-path exact-once and zero-byte proofs",
-          "TI-03 convergence lock"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "3b2337917bee3013e21ed11191c1dce3a5b68242"
-      }
+      "landing_commit": "cc61a0dc7e1d5490586d15ef85b7fafc154ce02e"
     },
     {
       "key": "TERMINAL-T1-PTY",
@@ -1407,7 +1396,7 @@
       ],
       "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions.",
       "dependencies": [
@@ -1415,7 +1404,115 @@
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.3"
-      ]
+      ],
+      "completion": {
+        "outcome": "portable-pty exclusively owns Datum's process transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
+        "canonical_next_step_id": "PTY-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "PTY-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Inventory current PTY ownership, pin portable-pty, and establish a transport-only adapter boundary with no terminal-cell semantics.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "PTY-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PTY-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Move allocation, spawn, read, write, resize, launch context, credentials, cwd/environment, and arbitrary executable/argv through the portable-pty adapter.",
+            "depends_on": [
+              "PTY-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "PTY-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PTY-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove pipelines, process groups, Ctrl-C, explicit termination, exit status, and child-exit reporting through production-path tests.",
+            "depends_on": [
+              "PTY-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "PTY-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PTY-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove concurrent terminal-session isolation across input, output, resize, detach, reattach, exit, and teardown.",
+            "depends_on": [
+              "PTY-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "PTY-04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PTY-05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Delete hand-rolled PTY ownership, lock the transport/core separation with drift guards, and pass terminal, governance, source-health, and platform-aware integration gates.",
+            "depends_on": [
+              "PTY-03",
+              "PTY-04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "PTY-05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T2 loses the portable-pty blocker but remains blocked on the separately completed mature TerminalCore slice."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.3"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T1-CORE",
