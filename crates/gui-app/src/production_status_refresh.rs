@@ -127,13 +127,6 @@ impl Runtime {
         self.poll_terminal_output()
     }
 
-    pub(super) fn mark_terminal_production_refresh_pending(&mut self) {
-        self.terminal_production_refresh_pending = true;
-        self.terminal_production_refresh_attempts = 0;
-        self.terminal_production_refresh_due =
-            Some(Instant::now() + TERMINAL_PRODUCTION_REFRESH_DELAY);
-    }
-
     pub(super) fn mark_terminal_workspace_refresh_pending(&mut self) {
         self.terminal_workspace_refresh_pending = true;
         self.terminal_production_refresh_attempts = 0;

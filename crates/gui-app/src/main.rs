@@ -1258,7 +1258,7 @@ impl Runtime {
             application_cursor_keys,
             application_keypad,
         ) {
-            TerminalKeyAction::Write(bytes) => self.write_terminal_bytes(&bytes),
+            TerminalKeyAction::Write(bytes) => self.write_foreign_shell_bytes(&bytes),
             TerminalKeyAction::Interrupt => {
                 if !self.terminal_sessions.active_attached() {
                     self.log_review_event(
@@ -1328,15 +1328,12 @@ impl Runtime {
         self.invalidate_frame();
     }
 
-    fn write_terminal_bytes(&mut self, bytes: &[u8]) -> bool {
+    fn write_foreign_shell_bytes(&mut self, bytes: &[u8]) -> bool {
         if !self.terminal_sessions.active_attached() {
             self.log_review_event(
                 "terminal session is detached; activate the tab to reattach".to_string(),
             );
             return true;
-        }
-        if bytes.iter().any(|byte| matches!(byte, b'\n' | b'\r')) {
-            self.mark_terminal_production_refresh_pending();
         }
         if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
             self.log_review_event(format!("terminal write failed: {err}"));
@@ -1662,7 +1659,7 @@ impl Runtime {
                 &text,
                 self.terminal_sessions.active_bracketed_paste_enabled(),
             );
-            return self.write_terminal_bytes(&bytes);
+            return self.write_foreign_shell_bytes(&bytes);
         }
         self.append_dock_text(&text)
     }
@@ -2049,7 +2046,7 @@ impl Runtime {
         });
         let mut bytes = command.into_bytes();
         bytes.push(b'\r');
-        self.write_terminal_bytes(&bytes);
+        self.write_foreign_shell_bytes(&bytes);
         self.log_review_event(format!("queued authoring command {event_label}"));
     }
 
@@ -2446,7 +2443,7 @@ impl Runtime {
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
-                self.write_terminal_bytes(&bytes);
+                self.write_foreign_shell_bytes(&bytes);
                 self.log_review_event(format!("ran production output command {}", handoff.command));
                 true
             }
@@ -2463,7 +2460,7 @@ impl Runtime {
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
-                self.write_terminal_bytes(&bytes);
+                self.write_foreign_shell_bytes(&bytes);
                 self.log_review_event(format!(
                     "ran production terminal command {}",
                     handoff.command

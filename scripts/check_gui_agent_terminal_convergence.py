@@ -28,6 +28,21 @@ def main() -> int:
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
 
+    raw_write_marker = "    fn write_foreign_shell_bytes"
+    if raw_write_marker not in main:
+        failures.append("foreign-shell byte writer must remain an explicit runtime boundary")
+    else:
+        raw_write_body = main.split(raw_write_marker, 1)[1].split("\n    fn ", 1)[0]
+        if "mark_terminal_" in raw_write_body or "refresh_pending" in raw_write_body:
+            failures.append(
+                "raw foreign-shell input must not infer mutation or schedule workspace refresh"
+            )
+    authoring_marker = "    fn queue_authoring_terminal_handoff"
+    if authoring_marker not in main or "self.mark_terminal_workspace_refresh_pending();" not in main.split(
+        authoring_marker, 1
+    )[1].split("\n    fn ", 1)[0]:
+        failures.append("typed authoring handoffs must explicitly schedule workspace refresh")
+
     for path in RETIRED_BRIDGE_FILES:
         if path.exists():
             failures.append(

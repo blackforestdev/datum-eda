@@ -208,9 +208,12 @@ through the terminal core, and proves from renderer-facing state that:
    events cannot queue ahead of subsequent keyboard input. GUI-thread drain work
    must be bounded and explicitly rescheduled while backlog remains; activity,
    style, and render projection must be synchronized once per bounded batch rather
-   than once per byte/chunk. Deterministic debug and release probes record
-   first-output latency, throughput, worst batch time, and backlog completion,
-   followed by owner `ls -la` and sustained-output acceptance.
+   than once per byte/chunk. Raw foreign-shell Enter must never infer a Datum
+   mutation or schedule project/workspace reload; only an explicitly typed Datum
+   mutation handoff may request synchronization. Deterministic debug and release
+   probes record first-output latency, throughput, worst batch time, backlog
+   completion, and immediate post-prompt input, followed by owner `ls -la` and
+   sustained-output acceptance.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C04 -->
 5. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
    session lifecycle, and diagnostic paths cannot write to or displace terminal

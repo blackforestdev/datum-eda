@@ -118,7 +118,7 @@ impl Runtime {
         ) {
             self.log_review_event(format!("terminal handoff event write failed: {err}"));
         }
-        self.write_terminal_bytes(command.as_bytes());
+        self.write_foreign_shell_bytes(command.as_bytes());
         self.invalidate_frame();
         self.log_review_event(event.into());
         true
