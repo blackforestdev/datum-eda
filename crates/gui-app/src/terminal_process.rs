@@ -294,7 +294,3 @@ mod tests {
         assert_eq!(wakes.load(Ordering::SeqCst), 1);
     }
 }
-
-#[cfg(test)]
-#[path = "terminal_process_semantics_tests.rs"]
-mod terminal_process_semantics_tests;

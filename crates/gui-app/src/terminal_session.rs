@@ -565,10 +565,7 @@ impl TerminalSession {
     }
 
     pub(super) fn interrupt(&self) -> Result<()> {
-        // A terminal Ctrl-C is input, not an out-of-band signal to the shell's
-        // original process group. The PTY line discipline delivers SIGINT to
-        // whichever foreground pipeline currently owns the terminal.
-        self.write_bytes(b"\x03")
+        self.signal_process_group(libc::SIGINT, "interrupt terminal process group")
     }
 
     pub(super) fn terminate(&self) -> Result<()> {

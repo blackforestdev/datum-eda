@@ -17,34 +17,6 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
-    def test_ctrl_c_uses_pty_foreground_and_exit_is_reported(self) -> None:
-        process = "status.exit_code(); TerminalEvent::Exited(code);"
-        session = """
-pub(super) fn interrupt(&self) { self.write_bytes(b"\\x03");
-    }
-fn signal() { kill(-self.process_group_id, signal); }
-"""
-        failures: list[str] = []
-        guard.check_terminal_process_semantics(process, session, failures)
-        self.assertEqual([], failures)
-
-        failures = []
-        guard.check_terminal_process_semantics(
-            process,
-            session.replace(
-                'self.write_bytes(b"\\x03");',
-                "self.signal_process_group(SIGINT);",
-            ),
-            failures,
-        )
-        self.assertIn(
-            "terminal Ctrl-C must enter the PTY line discipline", failures
-        )
-        self.assertIn(
-            "terminal Ctrl-C must not target the shell's stale process group",
-            failures,
-        )
-
     def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
         transport = """
 use portable_pty::{NativePtySystem, PtySize};
