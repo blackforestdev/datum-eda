@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C04",
+        "canonical_next_step_id": "T0-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1052,7 +1052,7 @@
           {
             "id": "T0-C04",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Lock regressions for focus transfer, workspace shortcuts, diagnostics, lifecycle messages, and Datum telemetry never corrupting or displacing shell cells.",
             "depends_on": [
               "T0-C03A"
@@ -1063,7 +1063,12 @@
                 "marker": "T0-C04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "eb654f70af7779f9391289061597ba4d161eb61d"
+              }
+            ]
           },
           {
             "id": "T0-C05",
