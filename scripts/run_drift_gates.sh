@@ -14,8 +14,6 @@ python3 scripts/check_resolver_raw_loads.py
 python3 scripts/test_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_agent_terminal_convergence.py
 bash scripts/check_terminal_transport_integration.sh
-python3 scripts/test_build_libghostty_vt.py
-python3 scripts/build_libghostty_vt.py check
 python3 scripts/check_gui_design_tokens.py
 python3 scripts/check_gui_conformance.py
 # check_gui_conformance.py runs the composed-shell visual-parity gate

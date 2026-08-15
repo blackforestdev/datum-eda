@@ -69,48 +69,6 @@ screen/parser:
   strict build gates; record the exact T2 production-cutover seam. Do not claim
   the current bespoke screen retired until T2 parity and deletion evidence land.
 
-#### CORE-01 pinned dependency record
-
-<!-- EVIDENCE:TERMINAL-T1-CORE:CORE-01-PIN -->
-
-Datum pins `libghostty-vt` to Ghostty commit
-`794515ba60a8c6d537b5f3a427374b23b2673492` (upstream project version
-`1.3.2-dev`) and exposes the build as `1.3.2-dev.794515ba`. The corresponding
-source archive, public header, `build.zig.zon`, upstream MIT license, and Zig
-0.16.0 x86_64-Linux toolchain are checksum-locked in
-`third_party/libghostty-vt/lock.json`; the upstream MIT notice is retained next
-to that lock. `python3 scripts/build_libghostty_vt.py check` is the hermetic
-drift gate, and `python3 scripts/build_libghostty_vt.py build` fetches only the
-locked archives, performs the `x86_64-linux-gnu` `ReleaseSafe` build, and proves
-the installed C ABI with warnings denied.
-
-Every current upstream feature remains enabled: snapshot, formatter, selection,
-render state, input encoding, color, grid introspection, the glyph protocol, and
-Kitty graphics. The verified shared object links only the expected Linux runtime
-surface (`libc`, the ELF loader, `libpthread`, and `librt`); a static archive and
-pkg-config metadata are produced alongside it. The ABI probe reports the pinned
-version and confirms SIMD and Kitty-graphics support.
-
-The following are binding compatibility constraints for CORE-02 onward:
-
-- Ghostty has not tagged a `libghostty-vt` release and labels its C API unstable.
-  Datum therefore exposes no upstream structure or function outside its closed
-  adapter. An upgrade changes the exact source/compiler checksums and must pass
-  the adapter corpus before it can replace this pin.
-- `libghostty-vt` owns VT interpretation and renderer-facing terminal state. It
-  does not own Datum's PTY/process tree, tabs, splits, wgpu pixels, font shaping,
-  focus/input authority, accessibility, shell integration, or agent/MCP bridge.
-- CORE-01 verifies x86_64 Linux. A second host or target requires its own
-  checksum-pinned Zig archive and build/ABI proof; it may not silently reuse this
-  host claim.
-- Artifact bytes may contain absolute cache/build paths. The reproducibility
-  authority is the locked source, toolchain, dependency hashes, features, build
-  options, tests, and ABI behavior—not an unportable binary SHA-256.
-
-The primary integration succeeded. No blocking `libghostty-vt` defect was found,
-so the evidence-gated `alacritty_terminal` fallback and its owner boundary are
-not active.
-
 ### 2.2 Session transport
 
 Each terminal tab or split binds one `TerminalSession` to one `TerminalCore`.

@@ -79,7 +79,6 @@ inheritance.
 | geo (Rust) | MIT/Apache 2.0 | None |
 | nlohmann/json | MIT | None (if any C++ interop needed) |
 | OpenCASCADE | LGPL v2.1 | Low — LGPL allows dynamic linking without infecting |
-| libghostty-vt | MIT | None — exact source/compiler pin and retained notice required |
 
 The Rust ecosystem is overwhelmingly MIT/Apache 2.0 dual-licensed.
 No significant license risk from Rust dependencies.
@@ -90,9 +89,3 @@ Commercial distribution requirement:
 - include MIT/Apache/BSD copyright and license text for shipped dependencies
 - keep solver/framework dependencies out of engine/protocol contracts unless
   explicitly ratified
-
-The embedded terminal core is pinned separately in
-`third_party/libghostty-vt/lock.json`. Datum retains the upstream MIT notice,
-keeps the unstable C API behind its private `TerminalCore` adapter, and treats
-any source commit, Zig compiler, feature-set, target, or build-mode change as a
-reviewed compatibility update rather than a floating dependency refresh.
