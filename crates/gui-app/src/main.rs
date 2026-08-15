@@ -326,7 +326,6 @@ impl ApplicationHandler for App {
             }
             WindowEvent::Focused(focused) => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.report_terminal_focus_event(focused);
                     if !focused {
                         runtime.pan_gesture.cancel();
                     }
@@ -1225,14 +1224,6 @@ impl Runtime {
     // only by PTY bytes interpreted by the terminal core; Datum notices,
     // diagnostics, and lifecycle messages route through `log_review_event`
     // (console sink) or terminal chrome, never the grid.
-
-    pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
-        self.keyboard_focus
-    }
-
-    pub(crate) fn set_keyboard_focus(&mut self, focus: KeyboardFocus) {
-        self.keyboard_focus = focus;
-    }
 
     fn dock_accepts_text_input(&self) -> bool {
         self.keyboard_focus == KeyboardFocus::Terminal
@@ -2514,7 +2505,7 @@ impl Runtime {
         self.session.workspace_mut().ui.marking_menu = None;
         // TF-01: the marking menu is a transient Overlay key owner; dismissing
         // it restores keyboard ownership to the editor.
-        self.keyboard_focus = KeyboardFocus::Editor;
+        self.set_keyboard_focus(KeyboardFocus::Editor);
         self.invalidate_frame();
         true
     }

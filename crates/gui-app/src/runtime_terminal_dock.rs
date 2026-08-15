@@ -39,7 +39,7 @@ impl Runtime {
         // a closed dock with Terminal focus would swallow keys into a hidden
         // line editor. Closing the dock hands ownership back to the editor.
         if self.keyboard_focus == KeyboardFocus::Terminal {
-            self.keyboard_focus = KeyboardFocus::Editor;
+            self.set_keyboard_focus(KeyboardFocus::Editor);
         }
         self.invalidate_scene();
         true

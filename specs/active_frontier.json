@@ -1130,7 +1130,7 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1200,7 +1200,7 @@
           {
             "id": "TF-03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Rewire focus-in/focus-out escape reporting from window focus to terminal focus.",
             "depends_on": [
               "TF-01"
@@ -1259,6 +1259,20 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-tf-03-20260814",
+        "claimed_at": "2026-08-14T20:55:49-07:00",
+        "heartbeat_at": "2026-08-14T20:55:49-07:00",
+        "expires_at": "2026-08-15T04:55:49-07:00",
+        "scope": [
+          "TF-03 terminal focus reporting authority",
+          "TF-03 CSI focus transition regressions"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "a82e3ec822dbee446f12b09a182be661428e0932"
       }
     },
     {

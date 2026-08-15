@@ -17,6 +17,35 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_terminal_focus_reports_have_one_keyboard_owner(self) -> None:
+        valid = """
+            WindowEvent::Focused(focused) => { if !focused {} }
+            WindowEvent::CursorLeft { .. } => {}
+    pub(crate) fn set_keyboard_focus(&mut self) {
+        let report = keyboard_focus::terminal_focus_report_transition(old, next);
+        self.keyboard_focus = next;
+    }
+    fn after() {}
+"""
+        window = """
+            WindowEvent::Focused(focused) => { if !focused {} }
+            WindowEvent::CursorLeft { .. } => {}
+"""
+        failures: list[str] = []
+        guard.check_terminal_focus_reporting(window, valid, valid, failures)
+        self.assertEqual([], failures)
+        invalid_window = window.replace(
+            "if !focused {}", "self.report_terminal_focus_event(focused);"
+        )
+        invalid_authority = valid.replace(
+            "self.keyboard_focus = next;", "self.keyboard_focus = next;\nself.keyboard_focus = old;"
+        )
+        guard.check_terminal_focus_reporting(
+            invalid_window, invalid_authority, invalid_authority, failures
+        )
+        self.assertIn("OS window focus must not emit terminal focus-report bytes", failures)
+        self.assertIn("keyboard focus must mutate only through set_keyboard_focus", failures)
+
     def test_only_protocol_declaration_terminal_core_and_tests_may_mutate_grid(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

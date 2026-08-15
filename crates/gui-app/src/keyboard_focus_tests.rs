@@ -1,6 +1,7 @@
 use super::{
     KeyClass, KeyboardFocus, RouteDecision, focus_after_canvas_click,
     focus_after_hit_target, hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
+    terminal_focus_report_transition,
 };
 use datum_gui_render::HitTarget;
 
@@ -171,4 +172,28 @@ fn overlay_focus_routes_nothing_through_the_focus_classes() {
             );
         }
     }
+}
+
+#[test]
+fn focus_reports_follow_terminal_keyboard_ownership_only() {
+    assert_eq!(
+        terminal_focus_report_transition(KeyboardFocus::Editor, KeyboardFocus::Terminal),
+        Some(true),
+    );
+    assert_eq!(
+        terminal_focus_report_transition(KeyboardFocus::Terminal, KeyboardFocus::Editor),
+        Some(false),
+    );
+    assert_eq!(
+        terminal_focus_report_transition(KeyboardFocus::Terminal, KeyboardFocus::Overlay),
+        Some(false),
+    );
+    assert_eq!(
+        terminal_focus_report_transition(KeyboardFocus::Editor, KeyboardFocus::Overlay),
+        None,
+    );
+    assert_eq!(
+        terminal_focus_report_transition(KeyboardFocus::Terminal, KeyboardFocus::Terminal),
+        None,
+    );
 }

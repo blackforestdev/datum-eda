@@ -147,6 +147,32 @@ pub(crate) fn pre_raw_escape_route(
     }
 }
 
+/// Return the child focus-report transition for a keyboard-owner change.
+/// OS-window activation is intentionally absent: only crossing the Terminal
+/// ownership boundary emits CSI I/O when the child enabled mode 1004.
+pub(crate) fn terminal_focus_report_transition(
+    previous: KeyboardFocus,
+    next: KeyboardFocus,
+) -> Option<bool> {
+    let was_terminal = previous == KeyboardFocus::Terminal;
+    let is_terminal = next == KeyboardFocus::Terminal;
+    (was_terminal != is_terminal).then_some(is_terminal)
+}
+
+impl Runtime {
+    pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
+        self.keyboard_focus
+    }
+
+    pub(crate) fn set_keyboard_focus(&mut self, focus: KeyboardFocus) {
+        let report = terminal_focus_report_transition(self.keyboard_focus, focus);
+        self.keyboard_focus = focus;
+        if let Some(focused) = report {
+            self.report_terminal_focus_event(focused);
+        }
+    }
+}
+
 /// Route one window keyboard event through the focus authority. Returns true
 /// when the event was consumed (a redraw may have been requested).
 pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {

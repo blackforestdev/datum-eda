@@ -2,10 +2,12 @@
 """Guard that GUI agent entry points stay inside the PTY terminal lane."""
 
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MAIN = ROOT / "crates" / "gui-app" / "src" / "main.rs"
+KEYBOARD_FOCUS = ROOT / "crates" / "gui-app" / "src" / "keyboard_focus.rs"
 BOTTOM_DOCK = ROOT / "crates" / "gui-render" / "src" / "bottom_dock.rs"
 LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
 TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
@@ -37,16 +39,46 @@ def check_terminal_grid_writers(failures: list[str]) -> None:
             )
 
 
+def check_terminal_focus_reporting(
+    main: str,
+    authority: str,
+    mutation_sources: str,
+    failures: list[str],
+) -> None:
+    """Bind child focus reports to the keyboard-owner setter, not window focus."""
+    window_marker = "            WindowEvent::Focused(focused) => {"
+    setter_marker = "    pub(crate) fn set_keyboard_focus"
+    if window_marker not in main or setter_marker not in authority:
+        failures.append("terminal focus-report authority markers are missing")
+        return
+    window_body = main.split(window_marker, 1)[1].split("            WindowEvent::", 1)[0]
+    setter_body = authority.split(setter_marker, 1)[1].split("\n    }", 1)[0]
+    if "report_terminal_focus_event" in window_body:
+        failures.append("OS window focus must not emit terminal focus-report bytes")
+    if "terminal_focus_report_transition" not in setter_body:
+        failures.append("keyboard-focus transitions must own terminal focus reporting")
+    assignments = re.findall(r"self\.keyboard_focus\s*=(?!=)", mutation_sources)
+    if len(assignments) != 1:
+        failures.append("keyboard focus must mutate only through set_keyboard_focus")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
     main = MAIN.read_text()
+    keyboard_focus = KEYBOARD_FOCUS.read_text()
+    focus_mutation_sources = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted((ROOT / "crates/gui-app/src").rglob("*.rs"))
+        if not path.name.endswith("_tests.rs")
+    )
     bottom_dock = BOTTOM_DOCK.read_text()
     launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""
     terminal_controls = TERMINAL_CONTROLS.read_text()
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
+    check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:
