@@ -1410,15 +1410,15 @@
         "harness": "codex-cli",
         "session": "019fc281-de4f-7d91-95d3-732c357af61b",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "2f32f00f14a8010132a22c991d7b7a5024eea1a1",
+        "head": "ffdaaddfef7e85a9f1e9adee4fcc8a7e93fb7486",
         "claimed_at": "2026-08-15T18:14:37Z",
-        "heartbeat_at": "2026-08-15T18:14:37Z",
-        "expires_at": "2026-08-16T02:14:37Z",
+        "heartbeat_at": "2026-08-15T18:40:43Z",
+        "expires_at": "2026-08-16T02:40:43Z",
         "scope": [
-          "DTC-P03",
+          "DTC-P04",
           "crates/gui-app/src/terminal_process.rs",
           "crates/gui-app/src/terminal_transport/",
-          "DTC-P03 tests and convergence guards"
+          "DTC-P04 launch, I/O, queue, and lifecycle tests and guards"
         ]
       },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
@@ -1431,7 +1431,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P03",
+        "canonical_next_step_id": "DTC-P04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1448,7 +1448,7 @@
           {
             "id": "DTC-P03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Extract the bounded request, event, reader, session-handle, Linux PTY, spawn, and job-control ownership without changing behavior.",
             "depends_on": [],
             "requirement_refs": [
@@ -1457,12 +1457,17 @@
                 "marker": "DTC-P03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "ffdaaddfef7e85a9f1e9adee4fcc8a7e93fb7486"
+              }
+            ]
           },
           {
             "id": "DTC-P04",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete arbitrary argv, cwd/environment/credentials, descriptor hygiene, termios, partial nonblocking I/O, bounded queues, backpressure, inactive-session draining, and error surfaces.",
             "depends_on": [
               "DTC-P03"
