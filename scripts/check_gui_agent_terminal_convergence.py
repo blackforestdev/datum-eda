@@ -16,6 +16,8 @@ PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_re
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport.rs"
+TERMINAL_PROCESS = ROOT / "crates" / "gui-app" / "src" / "terminal_process.rs"
+TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal_session.rs"
 WORKSPACE_CARGO = ROOT / "Cargo.toml"
 GUI_APP_CARGO = ROOT / "crates" / "gui-app" / "Cargo.toml"
 RETIRED_BRIDGE_FILES = [
@@ -218,6 +220,30 @@ def check_terminal_transport_boundary(
         failures.append("production terminal process must spawn through portable-pty")
 
 
+def check_terminal_process_semantics(
+    process: str,
+    session: str,
+    failures: list[str],
+) -> None:
+    """Keep Ctrl-C foreground-aware and lifecycle exit reporting explicit."""
+    interrupt = session.split("pub(super) fn interrupt", 1)
+    if len(interrupt) != 2:
+        failures.append("terminal session must expose an interrupt boundary")
+    else:
+        interrupt_body = interrupt[1].split("\n    }", 1)[0]
+        if 'write_bytes(b"\\x03")' not in interrupt_body:
+            failures.append("terminal Ctrl-C must enter the PTY line discipline")
+        if "libc::SIGINT" in interrupt_body or ".signal_process_group(" in interrupt_body:
+            failures.append("terminal Ctrl-C must not target the shell's stale process group")
+    for marker in (
+        "kill(-self.process_group_id, signal)",
+        "TerminalEvent::Exited(code)",
+        "status.exit_code()",
+    ):
+        if marker not in session + process:
+            failures.append(f"terminal process semantics are missing {marker}")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -236,11 +262,14 @@ def main() -> int:
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
     terminal_transport = TERMINAL_TRANSPORT.read_text()
+    terminal_process = TERMINAL_PROCESS.read_text()
+    terminal_session = TERMINAL_SESSION.read_text()
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
+    check_terminal_process_semantics(terminal_process, terminal_session, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:

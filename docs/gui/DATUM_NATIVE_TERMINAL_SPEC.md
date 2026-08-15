@@ -96,6 +96,16 @@ reader, writer and resize authority only through `NativePtySystem`. No
 portable master and writer remain opaque session handles; VT bytes still flow
 to `TerminalScreen` only through the existing event consumer.
 
+PTY-03 fixes and proves the process-semantics boundary. A user Ctrl-C is the
+input byte `0x03` written through the PTY, so the terminal line discipline—not
+Datum's remembered shell identity—delivers `SIGINT` to whichever foreground
+pipeline currently owns the terminal. Explicit session termination remains a
+separate operation that sends `SIGTERM` to the recorded session process group.
+The portable child wait path preserves the exact exit status and emits it as
+`TerminalEvent::Exited`. Production-path tests exercise a real pipeline,
+process-group identity, foreground Ctrl-C, explicit group termination, and
+distinct exit codes 23, 130, and 42.
+
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.
