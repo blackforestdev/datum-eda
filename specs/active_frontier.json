@@ -1464,17 +1464,8 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P04 recommended limits`, or list exceptions as `P04-Ln: revise — <replacement>` or `P04-Ln: defer — <reason>`.",
+              "response_format": "Reply `approve P04-L2`, or `P04-L2: revise — <replacement>` or `P04-L2: defer — <reason>`.",
               "requests": [
-                {
-                  "id": "P04-L1",
-                  "question": "What bounds each session's PTY-output queue?",
-                  "recommended_response": "Approve 256 output chunks of at most 4,096 bytes and 1,048,576 queued payload bytes per session, with separately reserved exit and persistent-error state; saturation applies lossless kernel PTY backpressure.",
-                  "source_ref": {
-                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P04-L1"
-                  }
-                },
                 {
                   "id": "P04-L2",
                   "question": "What bounds each session's GUI-to-PTY input queue and a single paste/write?",
@@ -1482,24 +1473,6 @@
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                     "marker": "P04-L2"
-                  }
-                },
-                {
-                  "id": "P04-L3",
-                  "question": "What GUI-turn drain budget and fairness law applies across sessions?",
-                  "recommended_response": "Approve the existing global ceiling of 128 output events or 65,536 bytes per turn, spent work-conservingly round-robin across every live session with exit/error checks and one successor wake for remaining work.",
-                  "source_ref": {
-                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P04-L3"
-                  }
-                },
-                {
-                  "id": "P04-L4",
-                  "question": "What aggregate live-session bound prevents per-session queues from becoming globally unbounded?",
-                  "recommended_response": "Approve at most 16 concurrent terminal sessions; refuse the seventeenth before PTY allocation with visible terminal-local feedback.",
-                  "source_ref": {
-                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P04-L4"
                   }
                 }
               ]

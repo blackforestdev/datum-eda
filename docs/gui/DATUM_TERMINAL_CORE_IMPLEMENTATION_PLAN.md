@@ -61,12 +61,14 @@ request is accepted completely or rejected with typed terminal-local feedback.
 Inactive and detached sessions are drained fairly into their own screen/core;
 only the active session is visibly projected. These laws are not tuning hints.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L1 --> **P04-L1 — per-session output.** Recommended: 256 output chunks of at most
-  4,096 bytes each, capped at 1,048,576 queued payload bytes, plus separately
-  reserved exit and persistent-I/O-error state. At either payload limit the
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L1 --> **P04-L1 — per-session output.** Owner-approved 2026-08-15: 256 output
+  chunks of at most 16,384 bytes each, capped at 4,194,304 queued payload bytes,
+  plus separately reserved exit and persistent-I/O-error state. At either limit the
   reader stops; bytes are never dropped, truncated, decoded, coalesced, or
   reordered. Lower limits stall sustained producers sooner; higher limits
-  increase memory held by every hidden session.
+  increase memory held by every hidden session. The larger burst allowance is
+  for sustained build and code-agent output; it is not the logical scrollback or
+  model-context limit governed by later terminal-core packages.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L2 --> **P04-L2 — per-session input.** Recommended: at most 64 accepted requests and
   1,048,576 aggregate pending bytes. The aggregate limit is also the maximum
   single paste/write request. A request that would exceed either limit accepts
