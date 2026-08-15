@@ -1284,7 +1284,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1297,7 +1297,7 @@
       ],
       "completion": {
         "outcome": "The terminal has one shell-input ingress: attached bytes go only to the PTY/TerminalCore, detached sessions are explicitly read-only, and chrome-local rename editing cannot become a rival shell buffer.",
-        "canonical_next_step_id": "TI-02",
+        "canonical_next_step_id": "TI-03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1333,7 +1333,7 @@
           {
             "id": "TI-02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Remove the rival shell line editor so attached input is PTY-only, detached sessions are read-only with explicit reattach, and rename remains isolated chrome editing.",
             "depends_on": [
               "TI-01"
@@ -1344,7 +1344,12 @@
                 "marker": "TI-02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "94f8fcbf235a3984dcf03e7450de70e610a2e525"
+              }
+            ]
           },
           {
             "id": "TI-03",
@@ -1374,21 +1379,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-ti-02-20260814",
-        "claimed_at": "2026-08-14T21:51:51-07:00",
-        "heartbeat_at": "2026-08-14T21:51:51-07:00",
-        "expires_at": "2026-08-15T05:51:51-07:00",
-        "scope": [
-          "TI-02 single PTY shell ingress",
-          "TI-02 detached read-only reattach",
-          "TI-02 chrome rename isolation"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "32ab58b67ae9434a64922d08aa1df73e3f943744"
       }
     },
     {
