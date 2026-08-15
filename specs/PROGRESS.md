@@ -40,7 +40,7 @@
    Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md`, `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`.
 - **Collapse the rival terminal input models** (`TERMINAL-T1-INPUT`; `dat-terminal-dual-input-model-75y`).
-   Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Replace terminal transport with portable-pty** (`TERMINAL-T1-PTY`; `dat-terminal-emulator-epic-jzv.1`).
