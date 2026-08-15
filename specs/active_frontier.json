@@ -925,7 +925,6 @@
         "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
-        "dat-terminal-focus-authority-6aw",
         "dat-terminal-dual-input-model-75y",
         "dat-terminal-emulator-epic-jzv.1",
         "dat-terminal-emulator-epic-jzv.2",
@@ -1103,10 +1102,9 @@
         ],
         "post_completion": {
           "effects": [
-            "The five T1/T2 foundation issues lose their T0 blocker; none is auto-authorized or auto-selected."
+            "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-focus-authority-6aw",
             "dat-terminal-dual-input-model-75y",
             "dat-terminal-emulator-epic-jzv.1",
             "dat-terminal-emulator-epic-jzv.2",
@@ -1130,9 +1128,9 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired.",
       "dependencies": [
@@ -1143,7 +1141,7 @@
       ],
       "completion": {
         "outcome": "One explicit focus/input authority correctly routes the real terminal content rectangle, without claiming terminal product completeness or visible-shell correctness supplied by other slices.",
-        "canonical_next_step_id": "TF-05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1242,7 +1240,7 @@
           {
             "id": "TF-05",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Move workspace hotkeys to Press and lock routing/leak behavior with focused end-to-end tests.",
             "depends_on": [
               "TF-02",
@@ -1255,7 +1253,12 @@
                 "marker": "TF-05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "ed115c7c199fa6cbafe978d80142dbd985f47307"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -1270,20 +1273,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-tf-05-20260814",
-        "claimed_at": "2026-08-14T21:27:44-07:00",
-        "heartbeat_at": "2026-08-14T21:27:44-07:00",
-        "expires_at": "2026-08-15T05:27:44-07:00",
-        "scope": [
-          "TF-05 workspace hotkey Press timing",
-          "TF-05 focused terminal leak regressions"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "a9c457e1f53effb2b792aa7c37ab35a73ce3919e"
-      }
+      "landing_commit": "ed115c7c199fa6cbafe978d80142dbd985f47307"
     },
     {
       "key": "TERMINAL-T1-INPUT",
@@ -1296,7 +1286,7 @@
       ],
       "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit.",
       "dependencies": [
@@ -1304,7 +1294,82 @@
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.3"
-      ]
+      ],
+      "completion": {
+        "outcome": "The terminal has one shell-input ingress: attached bytes go only to the PTY/TerminalCore, detached sessions are explicitly read-only, and chrome-local rename editing cannot become a rival shell buffer.",
+        "canonical_next_step_id": "TI-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "TI-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Inventory every terminal input and cursor state field plus line-edit call site, then classify it as PTY/TerminalCore input, chrome-local editing, or dead legacy state.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "TI-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TI-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Remove the rival shell line editor so attached input is PTY-only, detached sessions are read-only with explicit reattach, and rename remains isolated chrome editing.",
+            "depends_on": [
+              "TI-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "TI-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "TI-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Delete dead input state and lock attached exact-once, detached zero-byte/reattach, and rename-isolation behavior with production-path tests and drift guards.",
+            "depends_on": [
+              "TI-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "TI-03"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T2 loses the rival-input-model blocker but remains blocked on the separately completed portable-pty and mature TerminalCore slices."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.3"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T1-PTY",

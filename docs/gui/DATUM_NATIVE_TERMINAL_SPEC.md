@@ -238,7 +238,30 @@ Datum-owned terminal rows, and returned keyboard focus to the Board editor.
 TF-01 may remain historical evidence for focus-owner extraction, but no issue or
 Frontier row may claim the user-visible terminal defect repaired before this gate.
 
-### 7.2 Compatibility matrix
+### 7.2 T1 input-model collapse
+
+The rolling foreign shell has one input ingress. The legacy dock line editor may
+remain only as explicitly scoped terminal chrome (for example, tab rename); it
+must never become a second shell input buffer.
+
+<!-- REQ:TERMINAL-T1-INPUT:TI-01 -->
+1. **TI-01 — inventory and boundary.** Inventory every terminal input/cursor
+   state field and line-edit call site. Classify each as PTY/TerminalCore input,
+   terminal-chrome editing, or dead legacy state, and make that classification
+   explicit in production structure and regression coverage.
+<!-- REQ:TERMINAL-T1-INPUT:TI-02 -->
+2. **TI-02 — one shell input model.** Attached sessions route keyboard, composed
+   text/IME, paste, and terminal protocols only to the PTY/TerminalCore path.
+   Detached sessions are read-only and expose an explicit reattach affordance;
+   typing while detached must not accumulate in a hidden buffer. Chrome-local
+   rename editing remains isolated and can never submit bytes to the shell.
+<!-- REQ:TERMINAL-T1-INPUT:TI-03 -->
+3. **TI-03 — deletion and proof.** Delete the rival shell line-editor paths and
+   dead state, then prove attached exact-once delivery, detached zero-byte
+   behavior plus reattach recovery, and rename isolation through production-path
+   tests and the terminal convergence guard.
+
+### 7.3 Compatibility matrix
 
 A checked-in machine-readable matrix must name the command, fixture/version,
 expected behavior, result artifact, and last verified core revision for:
@@ -256,14 +279,14 @@ expected behavior, result artifact, and last verified core revision for:
 Known upstream deltas are allowed only when documented, bounded, and owner-
 approved. "Not tested" never counts as parity.
 
-### 7.3 Performance matrix
+### 7.4 Performance matrix
 
 Release evidence records input-to-present latency, sustained PTY throughput,
 frame pacing during output, damage upload volume, memory per scrollback line,
 resize/reflow time, startup time, and multi-session scaling. Budgets are fixed
 before final verification and run against checked-in deterministic fixtures.
 
-### 7.4 Visual-parity failure disposition
+### 7.5 Visual-parity failure disposition
 
 A failing committed visual-parity gate is a product defect even when it predates
 the current slice. The defect record must preserve the exact baseline commit,
