@@ -1,13 +1,10 @@
-use crate::terminal_activity_snapshot::load_terminal_activity_summary_lines;
-
 use super::{DockTab, Runtime};
 
 impl Runtime {
     pub(super) fn refresh_terminal_activity_summary(&mut self) -> bool {
-        let next = match load_terminal_activity_summary_lines(
-            &self.terminal_sessions.active_event_log_path(),
-            4,
-        ) {
+        // Incremental read: O(new event-log bytes) per refresh (terminal
+        // performance slice) — never a full-log reload on the drain path.
+        let next = match self.terminal_sessions.active_activity_summary_lines(4) {
             Ok(lines) => lines,
             Err(err) => vec![format!("activity summary unavailable: {err}")],
         };

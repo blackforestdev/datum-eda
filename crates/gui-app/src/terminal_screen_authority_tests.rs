@@ -115,15 +115,19 @@ struct DrainCost {
     max_chunk: Duration,
 }
 
-/// Pump PTY output through the exact per-chunk sequence of
+/// Pump PTY output through the exact per-batch sequence of
 /// `Runtime::poll_terminal_output` (`production_status_refresh.rs`):
-/// `record_terminal_output_event` -> activity-summary reload ->
-/// `apply_bytes_with_responses` -> response write-back. `Runtime` itself owns
-/// a live wgpu surface and cannot be constructed in a unit test, so the
-/// canary drives the same production functions in the same order against the
-/// same session registry, screen, and lane state. Returns true once `stop`
-/// observes the goal state after a drained chunk (grid state only changes on
-/// chunk application).
+/// per chunk `record_terminal_output_event`, then per drain batch
+/// `apply_bytes_with_responses` -> response write-back -> ONE incremental
+/// activity-summary refresh (terminal performance slice: summary refresh and
+/// frame invalidation are batch-level, and the summary read is O(new log
+/// bytes) through the per-session cache). `Runtime` itself owns a live wgpu
+/// surface and cannot be constructed in a unit test, so the canary drives the
+/// same production functions in the same order against the same session
+/// registry, screen, and lane state; each received chunk is treated as its
+/// own drain batch (the worst case for batch-level costs). Returns true once
+/// `stop` observes the goal state after a drained batch (grid state only
+/// changes on batch application).
 fn drain_production_path(
     registry: &mut TerminalSessionRegistry,
     state: &mut TerminalLaneState,
@@ -150,14 +154,6 @@ fn drain_production_path(
             &bytes,
         );
         cost.event_log_append += step.elapsed();
-        // poll_terminal_output calls refresh_terminal_activity_summary per
-        // chunk; its cost is this full event-log reload.
-        let step = Instant::now();
-        let _ = crate::terminal_activity_snapshot::load_terminal_activity_summary_lines(
-            &registry.active_event_log_path(),
-            4,
-        );
-        cost.activity_summary += step.elapsed();
         let step = Instant::now();
         let responses = registry
             .active_screen_mut()
@@ -167,6 +163,11 @@ fn drain_production_path(
             *response_bytes_written += response.len();
             let _ = registry.active().write_bytes(&response);
         }
+        // poll_terminal_output refreshes the activity summary once per drain
+        // batch through the incremental per-session cache.
+        let step = Instant::now();
+        let _ = registry.active_activity_summary_lines(4);
+        cost.activity_summary += step.elapsed();
         cost.chunks += 1;
         cost.bytes += bytes.len();
         cost.max_chunk = cost.max_chunk.max(chunk_started.elapsed());
@@ -384,6 +385,34 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
     let probe_elapsed = probe_started.elapsed();
     let probe_chunks = cost.chunks - interactive_chunks;
     let probe_bytes = cost.bytes - interactive_bytes;
+
+    // Phase 4 (measurement only): the sustained 20k probe that could not
+    // finish before the terminal performance slice (quadratic per-chunk
+    // activity-summary reload + per-chunk full-scene invalidation).
+    let pre_20k_chunks = cost.chunks;
+    let pre_20k_bytes = cost.bytes;
+    registry
+        .active()
+        .write_bytes(b"seq 1 20000\r")
+        .expect("write sustained 20k throughput probe command");
+    let probe_20k_started = Instant::now();
+    let probe_20k_done = drain_production_path(
+        &mut registry,
+        &mut state,
+        &mut cost,
+        &mut response_bytes_written,
+        Instant::now() + Duration::from_secs(60),
+        &mut |state| {
+            state
+                .grid_lines()
+                .iter()
+                .any(|line| line.trim() == "20000")
+        },
+    );
+    let probe_20k_elapsed = probe_20k_started.elapsed();
+    let probe_20k_chunks = cost.chunks - pre_20k_chunks;
+    let probe_20k_bytes = cost.bytes - pre_20k_bytes;
+
     let event_log_len = fs::metadata(registry.active_event_log_path())
         .map(|meta| meta.len())
         .unwrap_or(0);
@@ -398,8 +427,12 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
          done={probe_done} in {probe_elapsed:?} ({probe_chunks} chunks, {probe_bytes} bytes)"
     );
     eprintln!(
+        "  sustained probe (seq 1 20000): done={probe_20k_done} in {probe_20k_elapsed:?} \
+         ({probe_20k_chunks} chunks, {probe_20k_bytes} bytes)"
+    );
+    eprintln!(
         "  drain totals: {} chunks, {} bytes; per-step totals: event-log append {:?}, \
-         activity-summary reload {:?}, apply_bytes {:?}; worst single chunk {:?}",
+         activity-summary refresh {:?}, apply_bytes {:?}; worst single chunk {:?}",
         cost.chunks,
         cost.bytes,
         cost.event_log_append,
@@ -408,9 +441,9 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
         cost.max_chunk
     );
     eprintln!(
-        "  event log at end: {event_log_len} bytes (activity-summary reload re-reads and \
-         re-parses ALL of it on EVERY drained chunk; poll_terminal_output additionally calls \
-         invalidate_frame per chunk, discarding the prepared scene for a full-panel rebuild)"
+        "  event log at end: {event_log_len} bytes (activity-summary refresh is incremental — \
+         O(new bytes) via the per-session cache; poll_terminal_output applies one coalesced \
+         byte batch and invalidates the frame once per drain batch)"
     );
     let _ = fs::remove_dir_all(&root);
 }

@@ -17,6 +17,7 @@ use super::{App, Runtime, append_gui_diagnostic_line};
 const TERMINAL_PRODUCTION_REFRESH_DELAY: Duration = Duration::from_millis(500);
 const TERMINAL_PRODUCTION_REFRESH_RETRY_LIMIT: u8 = 8;
 const TERMINAL_EVENT_DRAIN_LIMIT: usize = 128;
+const TERMINAL_BYTE_DRAIN_LIMIT: usize = 64 * 1024;
 
 pub(super) enum ProductionStatusRefresh {
     Changed,
@@ -191,26 +192,22 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        // Terminal performance slice (dat-pan-trace-terminal-pollution-0j0):
+        // activity-summary refresh and frame invalidation run ONCE per drain
+        // batch after every drained chunk is applied — never per chunk. The
+        // per-chunk work is bounded to the event-log append and the terminal
+        // core's byte interpretation.
         let mut changed = false;
-        for _ in 0..TERMINAL_EVENT_DRAIN_LIMIT {
+        let mut output_batch = Vec::new();
+        let mut summary_dirty = false;
+        let mut disconnected = false;
+        let mut drained_events = 0usize;
+        while drained_events < TERMINAL_EVENT_DRAIN_LIMIT {
             match self.terminal_sessions.active().rx.try_recv() {
                 Ok(TerminalEvent::Output(bytes)) => {
+                    drained_events += 1;
                     let _ = record_terminal_output_event(self.terminal_sessions.active(), &bytes);
-                    self.refresh_terminal_activity_summary();
-                    let responses = self
-                        .terminal_sessions
-                        .active_screen_mut()
-                        .apply_bytes_with_responses(
-                            &mut self.session.workspace_mut().ui.terminal,
-                            &bytes,
-                        );
-                    for response in responses {
-                        if let Err(err) = self.terminal_sessions.active().write_bytes(&response) {
-                            self.log_review_event(format!(
-                                "terminal status response failed: {err}"
-                            ));
-                        }
-                    }
+                    output_batch.extend_from_slice(&bytes);
                     if (self.terminal_production_refresh_pending
                         || self.terminal_workspace_refresh_pending)
                         && self.terminal_production_refresh_due.is_none()
@@ -218,10 +215,14 @@ impl Runtime {
                         self.terminal_production_refresh_due =
                             Some(Instant::now() + TERMINAL_PRODUCTION_REFRESH_DELAY);
                     }
-                    self.invalidate_frame();
+                    summary_dirty = true;
                     changed = true;
+                    if output_batch.len() >= TERMINAL_BYTE_DRAIN_LIMIT {
+                        break;
+                    }
                 }
                 Ok(TerminalEvent::Exited(code)) => {
+                    drained_events += 1;
                     let _ = mark_terminal_session_lifecycle(
                         self.terminal_sessions.active(),
                         DatumToolSessionLifecycle::Exited,
@@ -232,7 +233,6 @@ impl Runtime {
                         DatumToolSessionLifecycle::Exited,
                         code,
                     );
-                    self.refresh_terminal_activity_summary();
                     let status = code.map_or_else(
                         || "terminated by signal".to_string(),
                         |code| format!("exited {code}"),
@@ -247,22 +247,50 @@ impl Runtime {
                         self.terminal_production_refresh_due =
                             Some(Instant::now() + TERMINAL_PRODUCTION_REFRESH_DELAY);
                     }
+                    summary_dirty = true;
                     changed = true;
                 }
-                Err(TryRecvError::Empty) => return changed,
+                Err(TryRecvError::Empty) => break,
                 Err(TryRecvError::Disconnected) => {
-                    if self.terminal_disconnected_reported {
-                        return false;
-                    }
-                    self.terminal_disconnected_reported = true;
-                    self.log_review_event("terminal session ended".to_string());
-                    return true;
+                    disconnected = true;
+                    break;
                 }
             }
         }
-        append_gui_diagnostic_line(format!(
-            "terminal output drain capped at {TERMINAL_EVENT_DRAIN_LIMIT} events"
-        ));
+        let drain_capped = drained_events >= TERMINAL_EVENT_DRAIN_LIMIT
+            || output_batch.len() >= TERMINAL_BYTE_DRAIN_LIMIT;
+        if drain_capped {
+            append_gui_diagnostic_line(format!(
+                "terminal output drain capped at {TERMINAL_EVENT_DRAIN_LIMIT} events / \
+                 {TERMINAL_BYTE_DRAIN_LIMIT} bytes"
+            ));
+            self.terminal_sessions.request_output_poll();
+        }
+        if !output_batch.is_empty() {
+            let responses = self
+                .terminal_sessions
+                .active_screen_mut()
+                .apply_bytes_with_responses(
+                    &mut self.session.workspace_mut().ui.terminal,
+                    &output_batch,
+                );
+            for response in responses {
+                if let Err(err) = self.terminal_sessions.active().write_bytes(&response) {
+                    self.log_review_event(format!("terminal status response failed: {err}"));
+                }
+            }
+        }
+        if summary_dirty {
+            self.refresh_terminal_activity_summary();
+        }
+        if !output_batch.is_empty() {
+            self.invalidate_frame();
+        }
+        if disconnected && !self.terminal_disconnected_reported {
+            self.terminal_disconnected_reported = true;
+            self.log_review_event("terminal session ended".to_string());
+            changed = true;
+        }
         changed
     }
 }

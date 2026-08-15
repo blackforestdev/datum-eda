@@ -211,10 +211,38 @@ fn append_terminal_io_event(
 }
 
 fn terminal_command_execution_finished(session: &TerminalSession, execution_id: &str) -> bool {
-    let Ok(text) = std::fs::read_to_string(session.event_log_path()) else {
+    // Terminal performance slice: the event log is append-only, so a finish
+    // event can never appear in an already-scanned region. Scan only the
+    // bytes appended since the previous scan (the prior full-file reload was
+    // O(history) per drained output chunk while a command executed).
+    use std::io::{Read, Seek, SeekFrom};
+    let Ok(mut file) = std::fs::File::open(session.event_log_path()) else {
         return false;
     };
-    text.lines().rev().any(|line| {
+    let len = file.metadata().map(|meta| meta.len()).unwrap_or(0);
+    let mut offset = session.finished_scan_offset();
+    if len < offset {
+        // Log replaced or truncated underneath us: rescan from the start.
+        offset = 0;
+    }
+    if len == offset || file.seek(SeekFrom::Start(offset)).is_err() {
+        return false;
+    }
+    let mut new_bytes = Vec::new();
+    if file.read_to_end(&mut new_bytes).is_err() {
+        return false;
+    }
+    // Consume complete lines only; a torn trailing line is re-read once its
+    // writer has finished appending it.
+    let Some(consumable) = new_bytes
+        .iter()
+        .rposition(|byte| *byte == b'\n')
+        .map(|position| position + 1)
+    else {
+        return false;
+    };
+    let text = String::from_utf8_lossy(&new_bytes[..consumable]);
+    let finished = text.lines().any(|line| {
         let Ok(event) = serde_json::from_str::<serde_json::Value>(line) else {
             return false;
         };
@@ -224,7 +252,9 @@ fn terminal_command_execution_finished(session: &TerminalSession, execution_id: 
                 .and_then(serde_json::Value::as_str)
                 == Some(execution_id)
             && event.get("lifecycle").and_then(serde_json::Value::as_str) == Some("finished")
-    })
+    });
+    session.set_finished_scan_offset(offset + consumable as u64);
+    finished
 }
 
 fn terminal_text_preview(bytes: &[u8]) -> (String, bool) {

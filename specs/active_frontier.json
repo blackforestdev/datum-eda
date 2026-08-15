@@ -921,7 +921,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C04",
+        "canonical_next_step_id": "T0-C03A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1016,12 +1016,28 @@
             ]
           },
           {
+            "id": "T0-C03A",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Wake the waiting GUI on PTY output, bound and reschedule drain work, batch style/activity/render synchronization, and prove interactive plus sustained-output latency before C04.",
+            "depends_on": [
+              "T0-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "T0-C03A"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "T0-C04",
             "kind": "execution",
             "status": "pending",
             "action": "Lock regressions for focus transfer, workspace shortcuts, diagnostics, lifecycle messages, and Datum telemetry never corrupting or displacing shell cells.",
             "depends_on": [
-              "T0-C03"
+              "T0-C03A"
             ],
             "requirement_refs": [
               {
@@ -1077,6 +1093,22 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-terminal-lag-t0-c03a-2026-08-15",
+        "claimed_at": "2026-08-15T00:10:00Z",
+        "heartbeat_at": "2026-08-15T00:10:00Z",
+        "expires_at": "2026-08-15T08:10:00Z",
+        "scope": [
+          "crates/gui-app/",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "5cdf1f4f76ea0d849395b5ecf94c9ea1abdd4cf3"
       }
     },
     {

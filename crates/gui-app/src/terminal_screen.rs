@@ -14,7 +14,9 @@ use terminal_grid::{
     insert_blank_chars_at, scroll_region_down, scroll_region_up, shift_delete_style,
     shift_insert_style,
 };
-use terminal_style::{clear_style_range, set_style_at, sync_styled_lines};
+use terminal_style::{
+    clear_style_range, ensure_styled_line_count, set_style_at, sync_styled_lines,
+};
 
 const MAX_TERMINAL_ROWS: usize = 240;
 
@@ -198,6 +200,14 @@ impl TerminalScreen {
                         self.put_char(state, ' ');
                     }
                 }
+                byte @ 0x20..=0x7e if self.utf8_pending.is_empty() => {
+                    // Cheap win (terminal performance slice): printable ASCII
+                    // with no pending multi-byte sequence skips the per-byte
+                    // Vec allocation + UTF-8 revalidation in flush_utf8. With
+                    // bytes pending, fall through so the pending sequence
+                    // resolves first and output ordering is preserved.
+                    self.put_char(state, byte as char);
+                }
                 byte if byte >= 0x20 => {
                     self.utf8_pending.push(byte);
                     self.flush_utf8(state);
@@ -211,6 +221,7 @@ impl TerminalScreen {
                 .cursor_row
                 .min(state.grid_lines().len().saturating_sub(1));
         }
+        sync_styled_lines(state);
         self.sync_cursor_state(state);
         state.scroll_offset = 0;
         responses
@@ -371,7 +382,7 @@ fn ensure_row(state: &mut TerminalLaneState) {
     if grid.lines.is_empty() {
         grid.lines.push(String::new());
     }
-    sync_styled_lines(state);
+    ensure_styled_line_count(state);
 }
 
 fn ensure_row_at(state: &mut TerminalLaneState, row: usize) {
@@ -380,7 +391,7 @@ fn ensure_row_at(state: &mut TerminalLaneState, row: usize) {
     while grid.lines.len() <= row {
         grid.lines.push(String::new());
     }
-    sync_styled_lines(state);
+    ensure_styled_line_count(state);
 }
 
 pub(super) fn row_mut_at(state: &mut TerminalLaneState, row: usize) -> &mut String {
@@ -393,17 +404,20 @@ pub(super) fn row_mut_at(state: &mut TerminalLaneState, row: usize) -> &mut Stri
 }
 
 fn put_char_at(row: &mut String, column: usize, ch: char) {
+    // Cheap win (terminal performance slice): count the row once and encode
+    // the char on the stack — no per-byte String allocation for the common
+    // append case.
     let len = row.chars().count();
-    if column > len {
-        row.push_str(&" ".repeat(column - len));
-    }
-    if column == row.chars().count() {
+    if column >= len {
+        if column > len {
+            row.push_str(&" ".repeat(column - len));
+        }
         row.push(ch);
         return;
     }
     let start = char_to_byte_pos(row, column);
     let end = char_to_byte_pos(row, column + 1);
-    row.replace_range(start..end, &ch.to_string());
+    row.replace_range(start..end, ch.encode_utf8(&mut [0u8; 4]));
 }
 
 // Terminal helper threads many escape/screen-state parameters.
@@ -522,7 +536,6 @@ pub(super) fn truncate_row_at_with_style(
             span.start < span.end
         });
     }
-    sync_styled_lines(state);
 }
 
 fn clear_row_to_cursor(row: &mut String, column: usize) {
@@ -590,13 +603,18 @@ fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
 }
 
 fn trim_rows(state: &mut TerminalLaneState) {
+    // Cheap win (terminal performance slice): this runs per applied byte, so
+    // the no-overflow common case must be a bounds check only. Text/style
+    // projection is synchronized once per batch at the end of
+    // `apply_bytes_with_responses`; rows are trimmed from `lines` and
+    // `styled_lines` in lockstep, so indices stay aligned in between.
     let grid = state.pty_grid_mut();
-    if grid.lines.len() > MAX_TERMINAL_ROWS {
-        let overflow = grid.lines.len() - MAX_TERMINAL_ROWS;
-        grid.lines.drain(0..overflow);
-        grid.styled_lines.drain(0..overflow);
+    if grid.lines.len() <= MAX_TERMINAL_ROWS {
+        return;
     }
-    sync_styled_lines(state);
+    let overflow = grid.lines.len() - MAX_TERMINAL_ROWS;
+    grid.lines.drain(0..overflow);
+    grid.styled_lines.drain(0..overflow);
 }
 
 #[cfg(test)]

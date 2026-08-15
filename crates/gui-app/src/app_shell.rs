@@ -8,16 +8,21 @@ pub(super) struct App {
     /// `set_cursor` on a transition (no per-move spam).
     current_cursor: winit::window::CursorIcon,
     kwin_lifecycle_smoke_step: usize,
+    pub(super) terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
 }
 
 impl App {
-    pub(super) fn new(args: GuiArgs) -> Self {
+    pub(super) fn new(
+        args: GuiArgs,
+        terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
+    ) -> Self {
         Self {
             args,
             window: None,
             runtime: None,
             current_cursor: winit::window::CursorIcon::Default,
             kwin_lifecycle_smoke_step: 0,
+            terminal_event_proxy,
         }
     }
 
@@ -90,4 +95,22 @@ impl App {
         window.request_redraw();
         true
     }
+}
+
+pub(super) fn fatal_gui_error(
+    event_loop: &ActiveEventLoop,
+    context: &str,
+    err: impl std::fmt::Display,
+) -> ! {
+    append_gui_diagnostic_line(format!("fatal {context}: {err}"));
+    eprintln!("datum-gui error: {context}: {err}");
+    event_loop.exit();
+    std::process::exit(1);
+}
+
+pub(super) fn terminal_scrollback_page_step(
+    workspace: &datum_gui_protocol::ReviewWorkspaceState,
+) -> usize {
+    let visible_hint = workspace.ui.terminal.grid_lines().len().min(24);
+    visible_hint.saturating_sub(1).max(1)
 }

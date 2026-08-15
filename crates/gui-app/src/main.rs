@@ -58,13 +58,14 @@ mod terminal_context_io;
 mod terminal_input;
 mod terminal_journal_context;
 mod terminal_proposal_context;
+mod terminal_process;
 mod terminal_screen;
 mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
 use app_bootstrap::{GuiArgs, LaunchState};
-use app_shell::App;
+use app_shell::{App, fatal_gui_error, terminal_scrollback_page_step};
 use board_text_terminal_commands::{
     BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
     board_text_quick_edit_terminal_command,
@@ -129,7 +130,7 @@ fn main() -> Result<()> {
         return run_offscreen_visual_test(&args);
     }
     let event_loop = EventLoop::new().context("failed to create event loop")?;
-    let mut app = App::new(args);
+    let mut app = App::new(args, event_loop.create_proxy());
     event_loop.run_app(&mut app).context("failed to run app")
 }
 
@@ -213,13 +214,6 @@ fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
     anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
 }
 
-fn fatal_gui_error(event_loop: &ActiveEventLoop, context: &str, err: impl std::fmt::Display) -> ! {
-    append_gui_diagnostic_line(format!("fatal {context}: {err}"));
-    eprintln!("datum-gui error: {context}: {err}");
-    event_loop.exit();
-    std::process::exit(1);
-}
-
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         append_gui_diagnostic_line("resumed event");
@@ -239,7 +233,7 @@ impl ApplicationHandler for App {
         append_gui_diagnostic_line("launch state load begin");
         let launch_state = self
             .args
-            .load_launch_state()
+            .load_launch_state(Some(self.terminal_event_proxy.clone()))
             .unwrap_or_else(|err| fatal_gui_error(event_loop, "launch state load failed", err));
         append_gui_diagnostic_line("launch state load end");
         let (window_width, window_height) = self
@@ -559,6 +553,14 @@ impl ApplicationHandler for App {
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         self.poll_background_work(event_loop);
     }
+
+    fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
+        if let Some(runtime) = &mut self.runtime
+            && runtime.poll_terminal_output()
+        {
+            self.request_redraw_if_needed();
+        }
+    }
 }
 
 struct Runtime {
@@ -611,11 +613,6 @@ struct Runtime {
     /// change it; deliberate entry/exit gestures (terminal clicks, canvas
     /// clicks, Escape) do.
     keyboard_focus: KeyboardFocus,
-}
-
-fn terminal_scrollback_page_step(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> usize {
-    let visible_hint = workspace.ui.terminal.grid_lines().len().min(24);
-    visible_hint.saturating_sub(1).max(1)
 }
 
 impl Runtime {

@@ -201,13 +201,21 @@ through the terminal core, and proves from renderer-facing state that:
 3. **T0-C03 — real-shell canary.** Launch a deterministic real shell through the
    production path and prove prompt and command output are visible in order and
    every typed byte reaches the child exactly once.
+<!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C03A -->
+4. **T0-C03A — responsive output delivery.** Before interaction-regression
+   closure, PTY output must wake the waiting GUI without a user-generated event;
+   GUI-thread drain work must be bounded and explicitly rescheduled while backlog
+   remains; activity, style, and render projection must be synchronized once per
+   bounded batch rather than once per byte/chunk. Deterministic debug and release
+   probes record first-output latency, throughput, worst batch time, and backlog
+   completion, followed by owner `ls -la` and sustained-output acceptance.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C04 -->
-4. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
+5. **T0-C04 — regression boundary.** Prove workspace shortcuts, Datum telemetry,
    session lifecycle, and diagnostic paths cannot write to or displace terminal
    cells, while cell/canvas clicks transfer focus through the one authority.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C05 -->
 <!-- OWNER:TERMINAL-T0-SHELL-TRUTH:T0-C05:T0-ACCEPT -->
-5. **T0-C05 — owner acceptance.** The owner runs `ls` and a unique `printf`
+6. **T0-C05 — owner acceptance.** The owner runs `ls` and a unique `printf`
    payload in the production Datum terminal and confirms that only the real shell
    screen is visible, input is usable, and focus exits back to the editor.
 

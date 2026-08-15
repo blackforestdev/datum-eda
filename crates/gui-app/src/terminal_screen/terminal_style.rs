@@ -11,12 +11,31 @@ pub(super) fn sync_styled_lines(state: &mut TerminalLaneState) {
         grid.styled_lines.truncate(grid.lines.len());
     }
     for (index, line) in grid.lines.iter().enumerate() {
-        grid.styled_lines[index].text = line.clone();
-        let line_len = line.chars().count();
-        grid.styled_lines[index]
-            .spans
-            .retain(|span| span.start < span.end && span.end <= line_len);
+        let styled = &mut grid.styled_lines[index];
+        // Cheap win (terminal performance slice): this runs on the per-byte
+        // hot path, so unchanged rows must not re-allocate — compare before
+        // copying and skip span pruning entirely for unstyled rows.
+        if styled.text != *line {
+            styled.text.clone_from(line);
+        }
+        if !styled.spans.is_empty() {
+            let line_len = line.chars().count();
+            styled
+                .spans
+                .retain(|span| span.start < span.end && span.end <= line_len);
+        }
     }
+}
+
+/// Keep the style-row topology aligned while PTY bytes are being applied.
+/// Text projection is deliberately deferred to one `sync_styled_lines` call
+/// at the end of the batch; cloning every accumulated row for every byte was
+/// the dominant T0-C03A output-lag defect.
+pub(super) fn ensure_styled_line_count(state: &mut TerminalLaneState) {
+    let grid = state.pty_grid_mut();
+    grid.styled_lines
+        .resize_with(grid.lines.len(), TerminalStyledLine::default);
+    grid.styled_lines.truncate(grid.lines.len());
 }
 
 pub(super) fn set_style_at(
@@ -25,7 +44,7 @@ pub(super) fn set_style_at(
     column: usize,
     style: &TerminalTextStyle,
 ) {
-    sync_styled_lines(state);
+    ensure_styled_line_count(state);
     if style == &TerminalTextStyle::default() {
         clear_style_range(state, row_index, column, column.saturating_add(1));
         return;
@@ -64,6 +83,11 @@ pub(super) fn clear_style_range(
     let Some(row) = state.pty_grid_mut().styled_lines.get_mut(row_index) else {
         return;
     };
+    // Cheap win (terminal performance slice): unstyled rows are the common
+    // case on the per-byte hot path — nothing to clear, no allocation.
+    if row.spans.is_empty() {
+        return;
+    }
     let mut retained = Vec::new();
     for span in row.spans.drain(..) {
         if span.end <= start || span.start >= end {
@@ -151,6 +175,10 @@ pub(super) fn shift_style_spans_for_delete(
 }
 
 fn coalesce_style_spans(row: &mut TerminalStyledLine) {
+    // Zero or one span coalesces to itself; skip the sort and re-collection.
+    if row.spans.len() <= 1 {
+        return;
+    }
     row.spans.sort_by_key(|span| (span.start, span.end));
     let mut merged: Vec<TerminalStyleSpan> = Vec::new();
     for span in row.spans.drain(..) {

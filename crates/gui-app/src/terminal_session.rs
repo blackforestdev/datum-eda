@@ -1,11 +1,12 @@
 use crate::{
-    terminal_activity_snapshot::load_terminal_activity_summary_lines,
+    terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_context::{
-        DATUM_CLI, DATUM_LEGACY_CLI, TerminalContext, read_session_created_unix_ms,
+        TerminalContext, read_session_created_unix_ms,
         tool_session_event_log_path, unix_time_ms, update_terminal_lifecycle_file,
-        write_terminal_context, write_terminal_context_files,
+        write_terminal_context_files,
     },
     terminal_screen::TerminalScreen,
+    terminal_process::spawn_terminal_process,
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
 };
@@ -15,15 +16,13 @@ use datum_gui_protocol::{
     DatumSelectionContext, DatumToolSessionLifecycle, ProductionStatus, ReviewWorkspaceState,
     TerminalLaneState, TerminalTabState,
 };
-use std::io::{Read, Write};
-use std::os::fd::{FromRawFd, RawFd};
-use std::os::unix::process::CommandExt;
+use std::io::{self, Write};
+use std::os::fd::RawFd;
 use std::path::{Path, PathBuf};
-use std::process::Command;
-use std::sync::mpsc::{self, Receiver};
+use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
-use std::thread;
-use std::{ffi::CStr, fs::File, io};
+use std::fs::File;
+use winit::event_loop::EventLoopProxy;
 
 pub(super) enum TerminalEvent {
     Output(Vec<u8>),
@@ -34,18 +33,24 @@ pub(super) struct TerminalSession {
     pub(super) stdin: Arc<Mutex<File>>,
     pub(super) rx: Receiver<TerminalEvent>,
     pub(super) context_path: PathBuf,
-    latest_context_path: PathBuf,
-    session_path: PathBuf,
-    session_id: String,
-    context_id: String,
-    master_fd: RawFd,
-    process_group_id: libc::pid_t,
-    active_execution_id: Arc<Mutex<Option<String>>>,
+    pub(super) latest_context_path: PathBuf,
+    pub(super) session_path: PathBuf,
+    pub(super) session_id: String,
+    pub(super) context_id: String,
+    pub(super) master_fd: RawFd,
+    pub(super) process_group_id: libc::pid_t,
+    pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
+    /// Byte offset of the next unscanned event-log line for the
+    /// command-finished check (terminal performance slice): the log is
+    /// append-only, so each region is scanned at most once instead of
+    /// re-reading the whole file per drained output chunk.
+    pub(super) finished_scan_offset: std::cell::Cell<u64>,
 }
 
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
     active_index: usize,
+    terminal_event_proxy: Option<EventLoopProxy<()>>,
 }
 
 struct TerminalSessionSlot {
@@ -58,6 +63,10 @@ struct TerminalSessionSlot {
     restart_count: usize,
     columns: u16,
     rows: u16,
+    /// Incremental activity summary/event-count over this session's event log
+    /// (terminal performance slice): O(new bytes) per refresh instead of a
+    /// full-log reload. Self-resets when the slot's log path changes (restart).
+    activity: TerminalActivitySummaryCache,
 }
 
 #[derive(Debug, Clone)]
@@ -79,8 +88,16 @@ pub(super) struct TerminalLaunchContext {
 }
 
 impl TerminalSessionRegistry {
+    #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn spawn(context: &TerminalLaunchContext) -> Result<Self> {
-        let session = spawn_terminal_session(context)?;
+        Self::spawn_with_proxy(context, None)
+    }
+
+    pub(super) fn spawn_with_proxy(
+        context: &TerminalLaunchContext,
+        terminal_event_proxy: Option<EventLoopProxy<()>>,
+    ) -> Result<Self> {
+        let session = spawn_terminal_session_with_proxy(context, terminal_event_proxy.clone())?;
         Ok(Self {
             sessions: vec![TerminalSessionSlot {
                 session,
@@ -92,15 +109,18 @@ impl TerminalSessionRegistry {
                 restart_count: 0,
                 columns: 80,
                 rows: 24,
+                activity: TerminalActivitySummaryCache::default(),
             }],
             active_index: 0,
+            terminal_event_proxy,
         })
     }
 
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
         let previous_active_index = self.active_index;
-        let session = spawn_terminal_session(context)?;
+        let session =
+            spawn_terminal_session_with_proxy(context, self.terminal_event_proxy.clone())?;
         self.sessions.push(TerminalSessionSlot {
             session,
             screen: TerminalScreen::default(),
@@ -111,6 +131,7 @@ impl TerminalSessionRegistry {
             restart_count: 0,
             columns: 80,
             rows: 24,
+            activity: TerminalActivitySummaryCache::default(),
         });
         self.sessions[previous_active_index].attached = false;
         mark_terminal_session_lifecycle(
@@ -253,7 +274,13 @@ impl TerminalSessionRegistry {
     ) -> Result<()> {
         let slot = &mut self.sessions[self.active_index];
         let previous_session_id = slot.session.session_id().to_string();
-        restart_terminal_session(&mut slot.session, &mut slot.screen, state, context)?;
+        restart_terminal_session(
+            &mut slot.session,
+            &mut slot.screen,
+            state,
+            context,
+            self.terminal_event_proxy.clone(),
+        )?;
         slot.status = state.status.clone();
         slot.attached = true;
         slot.previous_session_id = Some(previous_session_id);
@@ -264,32 +291,61 @@ impl TerminalSessionRegistry {
         Ok(())
     }
 
+    #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn active_event_log_path(&self) -> PathBuf {
         self.active().event_log_path()
     }
 
-    pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
-        for (index, slot) in self.sessions.iter_mut().enumerate() {
-            if index == self.active_index {
-                slot.status = state.status.clone();
-            }
+    pub(super) fn request_output_poll(&self) {
+        if let Some(proxy) = &self.terminal_event_proxy {
+            let _ = proxy.send_event(());
         }
+    }
+
+    /// Refresh the active session's incremental activity summary and return
+    /// the formatted window — the production summary read
+    /// (`Runtime::refresh_terminal_activity_summary`), O(new log bytes) per
+    /// call (terminal performance slice).
+    pub(super) fn active_activity_summary_lines(
+        &mut self,
+        max_spans: usize,
+    ) -> Result<Vec<String>> {
+        let slot = &mut self.sessions[self.active_index];
+        let event_log_path = slot.session.event_log_path();
+        slot.activity.refresh(&event_log_path);
+        slot.activity.summary_lines(max_spans)
+    }
+
+    pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        let active_index = self.active_index;
         state.active_session_id = Some(self.active().session_id().to_string());
         let tabs = self
             .sessions
-            .iter()
+            .iter_mut()
             .enumerate()
-            .map(|(index, slot)| TerminalTabState {
-                session_id: slot.session.session_id().to_string(),
-                previous_session_id: slot.previous_session_id.clone(),
-                label: slot.label.clone(),
-                event_log_path: slot.session.event_log_path().display().to_string(),
-                activity_event_count: terminal_event_count(&slot.session.event_log_path()),
-                activity_summary: terminal_activity_summary(&slot.session.event_log_path(), 2),
-                active: index == self.active_index,
-                attached: slot.attached,
-                status: slot.status.clone(),
-                restart_count: slot.restart_count,
+            .map(|(index, slot)| {
+                if index == active_index {
+                    slot.status = state.status.clone();
+                }
+                let event_log_path = slot.session.event_log_path();
+                slot.activity.refresh(&event_log_path);
+                TerminalTabState {
+                    session_id: slot.session.session_id().to_string(),
+                    previous_session_id: slot.previous_session_id.clone(),
+                    label: slot.label.clone(),
+                    event_log_path: event_log_path.display().to_string(),
+                    activity_event_count: slot.activity.event_count(),
+                    activity_summary: slot.activity.summary_lines(2).unwrap_or_else(|err| {
+                        vec![format!(
+                            "activity summary unavailable for {}: {err}",
+                            event_log_path.display()
+                        )]
+                    }),
+                    active: index == active_index,
+                    attached: slot.attached,
+                    status: slot.status.clone(),
+                    restart_count: slot.restart_count,
+                }
             })
             .collect::<Vec<_>>();
         if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
@@ -305,21 +361,6 @@ impl TerminalSessionRegistry {
     pub(super) fn len(&self) -> usize {
         self.sessions.len()
     }
-}
-
-fn terminal_event_count(path: &Path) -> usize {
-    std::fs::read_to_string(path)
-        .map(|text| text.lines().filter(|line| !line.trim().is_empty()).count())
-        .unwrap_or(0)
-}
-
-fn terminal_activity_summary(path: &Path, max_spans: usize) -> Vec<String> {
-    load_terminal_activity_summary_lines(path, max_spans).unwrap_or_else(|err| {
-        vec![format!(
-            "activity summary unavailable for {}: {err}",
-            path.display()
-        )]
-    })
 }
 
 pub(super) fn terminal_launch_context_from_state(
@@ -373,86 +414,16 @@ pub(super) fn terminal_launch_context_from_state_with_cursor(
     context
 }
 
+#[cfg_attr(not(test), allow(dead_code))]
 pub(super) fn spawn_terminal_session(context: &TerminalLaunchContext) -> Result<TerminalSession> {
-    let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
-    let mut terminal_context = write_terminal_context(context)?;
-    let pty = open_pty_pair().context("open terminal PTY")?;
-    let reader = pty
-        .master
-        .try_clone()
-        .context("clone terminal PTY master for reader")?;
-    let stdin = Arc::new(Mutex::new(pty.master));
-    let slave_path = pty.slave_path;
-    let master_fd = pty.master_fd;
-    let mut command = Command::new(&shell);
-    command
-        .current_dir(&terminal_context.project_root)
-        .env("TERM", "xterm-256color")
-        .env("DATUM_PROJECT_ROOT", &context.project_root)
-        .env("DATUM_CLI", DATUM_CLI)
-        .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
-        .env("DATUM_CONTEXT_ID", &terminal_context.context_id)
-        .env("DATUM_SESSION_ID", &terminal_context.session_id)
-        .env("DATUM_DISCOVERY", &terminal_context.context_path)
-        .env(
-            "DATUM_TOOL_SESSION_EVENT_LOG",
-            tool_session_event_log_path(&terminal_context.session_path),
-        )
-        .env(
-            "DATUM_MODEL_REVISION",
-            terminal_context.model_revision.as_deref().unwrap_or(""),
-        )
-        .env("DATUM_TERMINAL_CONTEXT", &terminal_context.context_path)
-        .env("DATUM_TERMINAL_SESSION_ID", &terminal_context.session_id);
-    if let Some(project_id) = &terminal_context.project_id {
-        command.env("DATUM_PROJECT_ID", project_id);
-    }
-    if let Some(model_revision) = &terminal_context.model_revision {
-        command.env("DATUM_SOURCE_REVISION", model_revision);
-    }
-    unsafe {
-        command.pre_exec(move || configure_child_pty(&slave_path, master_fd));
-    }
-    let mut child = command.spawn().with_context(|| {
-        format!(
-            "spawn PTY terminal shell {shell} in {}",
-            terminal_context.project_root.display()
-        )
-    })?;
-    let process_group_id = child.id() as libc::pid_t;
-    terminal_context.process_group_id = Some(process_group_id as i32);
-    write_terminal_context_files(&terminal_context, context)?;
-    let (tx, rx) = mpsc::channel();
-    let reader_tx = tx.clone();
-    thread::spawn(move || {
-        let mut reader = reader;
-        let mut buffer = [0_u8; 4096];
-        loop {
-            match reader.read(&mut buffer) {
-                Ok(0) => break,
-                Ok(count) => {
-                    let _ = reader_tx.send(TerminalEvent::Output(buffer[..count].to_vec()));
-                }
-                Err(_) => break,
-            }
-        }
-    });
-    thread::spawn(move || {
-        let code = child.wait().ok().and_then(|status| status.code());
-        let _ = tx.send(TerminalEvent::Exited(code));
-    });
-    Ok(TerminalSession {
-        stdin,
-        rx,
-        context_path: terminal_context.context_path,
-        latest_context_path: terminal_context.latest_context_path,
-        session_path: terminal_context.session_path,
-        session_id: terminal_context.session_id,
-        context_id: terminal_context.context_id,
-        master_fd,
-        process_group_id,
-        active_execution_id: Arc::new(Mutex::new(None)),
-    })
+    spawn_terminal_session_with_proxy(context, None)
+}
+
+fn spawn_terminal_session_with_proxy(
+    context: &TerminalLaunchContext,
+    terminal_event_proxy: Option<EventLoopProxy<()>>,
+) -> Result<TerminalSession> {
+    spawn_terminal_process(context, terminal_event_proxy)
 }
 
 pub(super) fn refresh_terminal_session_context(
@@ -503,10 +474,11 @@ pub(super) fn restart_terminal_session(
     screen: &mut TerminalScreen,
     state: &mut TerminalLaneState,
     context: &TerminalLaunchContext,
+    terminal_event_proxy: Option<EventLoopProxy<()>>,
 ) -> Result<()> {
     mark_terminal_session_lifecycle(session, DatumToolSessionLifecycle::Restarted, None)?;
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
-    *session = spawn_terminal_session(context)?;
+    *session = spawn_terminal_session_with_proxy(context, terminal_event_proxy)?;
     *screen = TerminalScreen::default();
     state.status = "running".to_string();
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
@@ -577,6 +549,12 @@ impl TerminalSession {
             *active = None;
         }
     }
+    pub(super) fn finished_scan_offset(&self) -> u64 {
+        self.finished_scan_offset.get()
+    }
+    pub(super) fn set_finished_scan_offset(&self, offset: u64) {
+        self.finished_scan_offset.set(offset);
+    }
 
     pub(super) fn interrupt(&self) -> Result<()> {
         self.signal_process_group(libc::SIGINT, "interrupt terminal process group")
@@ -613,85 +591,6 @@ impl Drop for TerminalSession {
     fn drop(&mut self) {
         let _ = self.terminate();
     }
-}
-
-struct PtyPair {
-    master: File,
-    master_fd: RawFd,
-    slave_path: Vec<u8>,
-}
-
-fn open_pty_pair() -> Result<PtyPair> {
-    let master_fd = unsafe { libc::posix_openpt(libc::O_RDWR | libc::O_NOCTTY) };
-    if master_fd < 0 {
-        return Err(io::Error::last_os_error()).context("posix_openpt");
-    }
-    if unsafe { libc::grantpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe {
-            libc::close(master_fd);
-        }
-        return Err(error).context("grantpt");
-    }
-    if unsafe { libc::unlockpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe {
-            libc::close(master_fd);
-        }
-        return Err(error).context("unlockpt");
-    }
-    let slave_path = slave_path(master_fd)?;
-    let master = unsafe { File::from_raw_fd(master_fd) };
-    Ok(PtyPair {
-        master,
-        master_fd,
-        slave_path,
-    })
-}
-
-fn slave_path(master_fd: RawFd) -> Result<Vec<u8>> {
-    let mut buffer = [0 as libc::c_char; 128];
-    let rc = unsafe { libc::ptsname_r(master_fd, buffer.as_mut_ptr(), buffer.len()) };
-    if rc != 0 {
-        return Err(io::Error::from_raw_os_error(rc)).context("ptsname_r");
-    }
-    let path = unsafe { CStr::from_ptr(buffer.as_ptr()) };
-    Ok(path.to_bytes_with_nul().to_vec())
-}
-
-fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
-    if unsafe { libc::setsid() } < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    let slave_fd = unsafe { libc::open(slave_path.as_ptr().cast(), libc::O_RDWR) };
-    if slave_fd < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    if unsafe { libc::ioctl(slave_fd, libc::TIOCSCTTY, 0) } < 0 {
-        let error = io::Error::last_os_error();
-        unsafe {
-            libc::close(slave_fd);
-        }
-        return Err(error);
-    }
-    for fd in [libc::STDIN_FILENO, libc::STDOUT_FILENO, libc::STDERR_FILENO] {
-        if unsafe { libc::dup2(slave_fd, fd) } < 0 {
-            let error = io::Error::last_os_error();
-            unsafe {
-                libc::close(slave_fd);
-            }
-            return Err(error);
-        }
-    }
-    if slave_fd > libc::STDERR_FILENO {
-        unsafe {
-            libc::close(slave_fd);
-        }
-    }
-    unsafe {
-        libc::close(master_fd);
-    }
-    Ok(())
 }
 
 #[cfg(test)]

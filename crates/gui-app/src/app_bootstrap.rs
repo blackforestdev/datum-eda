@@ -250,7 +250,10 @@ impl GuiArgs {
         })
     }
 
-    pub(super) fn load_launch_state(&self) -> Result<LaunchState> {
+    pub(super) fn load_launch_state(
+        &self,
+        terminal_event_proxy: Option<winit::event_loop::EventLoopProxy<()>>,
+    ) -> Result<LaunchState> {
         let request_started = std::time::Instant::now();
         append_gui_diagnostic_line("request resolve begin");
         let request = self
@@ -327,8 +330,11 @@ impl GuiArgs {
             terminal_launch_context_from_state(&request.project_root, &state);
         let terminal_started = std::time::Instant::now();
         append_gui_diagnostic_line("terminal spawn begin");
-        let mut terminal_sessions = TerminalSessionRegistry::spawn(&terminal_launch_context)
-            .context("spawn integrated terminal lane")?;
+        let mut terminal_sessions = TerminalSessionRegistry::spawn_with_proxy(
+            &terminal_launch_context,
+            terminal_event_proxy,
+        )
+        .context("spawn integrated terminal lane")?;
         terminal_sessions.sync_lane_tabs(&mut state.ui.terminal);
         append_gui_diagnostic_line("terminal spawn end");
         trace_startup_timing(format!(

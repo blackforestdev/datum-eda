@@ -42,18 +42,18 @@ def main() -> int:
     for marker in ("AssistantTab", "OutputsTab", "DockTab::Assistant", "DockTab::Outputs"):
         if marker in main or marker in bottom_dock or marker in gui_protocol:
             failures.append(f"terminal-only dock must not contain {marker}")
-    activity_handler = (
-        "HitTarget::TerminalActivitySummary(summary) => {\n"
-        "                self.set_active_dock(DockTab::Terminal);"
-    )
-    if activity_handler not in main:
-        failures.append("terminal activity selection must focus DockTab::Terminal")
-    forbidden_activity_handler = (
-        "HitTarget::TerminalActivitySummary(summary) => {\n"
-        "                self.set_active_dock(DockTab::Assistant);"
-    )
-    if forbidden_activity_handler in main:
-        failures.append("terminal activity selection must not focus DockTab::Assistant")
+    # T0-C02 removes application activity summaries from the foreign-shell
+    # viewport entirely. The data remains available to the future Command
+    # Console, but must not reclaim terminal rows or a terminal hit target.
+    for surface, source in (
+        ("GUI runtime", main),
+        ("bottom dock", bottom_dock),
+        ("GUI protocol", gui_protocol),
+    ):
+        if "TerminalActivitySummary" in source:
+            failures.append(
+                f"{surface} must not expose a terminal activity-summary surface"
+            )
     if "mod terminal_agent_launcher;" in main:
         failures.append("agent launcher module must not be wired as a dock tab surface")
     forbidden_runtime_markers = [
