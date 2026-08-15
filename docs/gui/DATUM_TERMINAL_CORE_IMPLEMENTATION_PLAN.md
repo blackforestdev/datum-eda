@@ -45,9 +45,12 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P04B --> **DTC-P04B — launch and I/O.** Arbitrary argv, cwd/env/credentials,
   descriptor hygiene, termios, partial nonblocking I/O, the ratified bounded
   queues/backpressure, inactive-session draining, and typed error surfaces.
-- <!-- REQ:TERMINAL-T1-PTY:DTC-P05 --> **DTC-P05 — job control.** Foreground process groups, line-discipline control
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05A --> **DTC-P05A — lifecycle owner decision.** Ratify live-tab close behavior,
+  teardown signals and deadlines, app-shutdown posture, owned-process boundary,
+  and bounded Linux process-session discovery before job-control execution.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05B --> **DTC-P05B — job control.** Foreground process groups, line-discipline control
   characters, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit,
-  terminate/escalate/SIGHUP, and orphan-free teardown.
+  ratified terminate/escalate/SIGHUP behavior, and orphan-free teardown.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06 --> **DTC-P06 — session proof.** Concurrent input/output/resize/detach/reattach/
   exit/restart isolation, stress, performance, and dependency/source gates.
 
@@ -109,6 +112,42 @@ owner-approved P04-L1 through P04-L4 bound, partial/EINTR/EAGAIN/HUP/EIO paths,
 closed-stdio spawning, control priority, persistent round-robin order, and exact
 byte preservation. No dependency, TERM claim, or DTC-P05 job-control behavior
 was introduced.
+
+#### DTC-P05A owner packet
+
+DTC-P05B must follow native Linux foreground-TTY semantics, but decisions 005
+and 030 leave close UX, teardown security posture, numerical deadlines, and
+bounded process ownership to the project owner. A code agent must not claim or
+edit DTC-P05B until P05-O1 through P05-O6 are approved. The selector presents
+these decisions one at a time.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O1 --> **P05-O1 — live-tab close UX.** Recommended: closing an already-exited
+  tab is immediate. Closing a live tab presents `Detach` (default), `Terminate`,
+  and `Cancel`. Detach keeps the local PTY/process alive; Terminate starts the
+  ratified teardown without a second prompt. An ambiguous close never kills a
+  live process.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O2 --> **P05-O2 — graceful termination.** Recommended: Terminate atomically
+  enters `Terminating`, rejects new input/resize, sends SIGHUP to the controlling
+  session leader and current foreground process group once each, and continues
+  draining final output for 2,000 ms.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Recommended: after the HUP grace, send SIGTERM
+  to every still-owned process group; after another 2,000 ms send SIGKILL. Mark
+  `Closed` only after the leader is reaped and no owned member remains;
+  otherwise retain visible `TerminationFailed` state.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O4 --> **P05-O4 — app shutdown.** Recommended: tear down sessions concurrently
+  under one 6,000 ms global deadline. At deadline, durably report surviving
+  PID/PGID/session identities and exit; never silently detach. User-selected
+  Detach is local to normal app operation and does not promise survival after
+  Datum exits.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O5 --> **P05-O5 — ownership boundary.** Recommended: Datum owns the original
+  Linux terminal session and process groups that remain members of it. A process
+  that deliberately daemonizes into another session is outside that ownership;
+  remote SSH jobs and detached tmux servers follow their remote/server policy.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O6 --> **P05-O6 — discovery bound.** Recommended: inspect at most 4,096 Linux
+  process members and 4,096 distinct process groups per terminal session per
+  escalation scan. Exhaustion stops before signaling an incomplete set, leaves
+  visible `TerminationFailed`, and never truncates then claims orphan-free
+  closure.
 
 ### Core foundation
 

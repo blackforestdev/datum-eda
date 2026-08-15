@@ -1401,27 +1401,10 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "bd464f1b600b10e321bfe717c3537ee7dd3029ba",
-        "claimed_at": "2026-08-15T23:22:33Z",
-        "heartbeat_at": "2026-08-15T23:22:33Z",
-        "expires_at": "2026-08-16T07:22:33Z",
-        "scope": [
-          "DTC-P05",
-          "crates/gui-app/src/terminal_transport/",
-          "crates/gui-app/src/terminal_session.rs",
-          "DTC-P05 job-control, signal, resize, exit, and teardown tests",
-          "DTC-P05 terminal transport guards"
-        ]
-      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1432,7 +1415,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05",
+        "canonical_next_step_id": "DTC-P05A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1523,17 +1506,47 @@
             ]
           },
           {
-            "id": "DTC-P05",
-            "kind": "execution",
-            "status": "in_progress",
-            "action": "Complete foreground job control, line-discipline controls, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit, termination escalation, SIGHUP, and orphan-free teardown.",
+            "id": "DTC-P05A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Ratify live-tab close behavior, teardown signals and deadlines, app-shutdown posture, owned-process boundaries, and bounded process-session discovery.",
             "depends_on": [
               "DTC-P04B"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                "marker": "DTC-P05"
+                "marker": "DTC-P05A"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve P05-O1`, or `P05-O1: revise — <replacement>` or `P05-O1: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "P05-O1",
+                  "question": "What should closing a live terminal tab do?",
+                  "recommended_response": "Approve a three-way Detach (default) / Terminate / Cancel choice; exited tabs close immediately, and ambiguous close never kills a live process.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P05-O1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DTC-P05B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete foreground job control, line-discipline controls, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit, ratified termination escalation, SIGHUP, and orphan-free teardown.",
+            "depends_on": [
+              "DTC-P05A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P05B"
               }
             ],
             "completion_evidence": []
@@ -1544,7 +1557,7 @@
             "status": "pending",
             "action": "Prove concurrent input/output/resize/detach/reattach/exit/restart isolation, stress, performance, dependency authority, source health, and platform integration.",
             "depends_on": [
-              "DTC-P05"
+              "DTC-P05B"
             ],
             "requirement_refs": [
               {
