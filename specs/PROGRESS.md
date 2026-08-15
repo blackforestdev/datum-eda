@@ -43,7 +43,7 @@
    Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
 - **Replace terminal transport with portable-pty** (`TERMINAL-T1-PTY`; `dat-terminal-emulator-epic-jzv.1`).
-   Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Integrate the mature TerminalCore adapter** (`TERMINAL-T1-CORE`; `dat-terminal-emulator-epic-jzv.2`).

@@ -106,17 +106,6 @@ The portable child wait path preserves the exact exit status and emits it as
 process-group identity, foreground Ctrl-C, explicit group termination, and
 distinct exit codes 23, 130, and 42.
 
-PTY-04 proves registry-level isolation with two simultaneous production PTYs.
-Every slot retains its own input/output channel, dimensions, attachment state,
-exit state, and process group while another slot is active. Output continues
-while a tab is detached; reattachment restores that same live session rather
-than spawning or clearing it. The child-wait path records completion before it
-publishes `TerminalEvent::Exited`, so closing or dropping a naturally exited
-tab cannot signal a stale process-group identifier. The production-path proof
-covers distinct shell input/output, independent `stty size` results, detached
-output, reattachment, one tab exiting while its peer remains usable, safe close
-of the exited tab, and isolated termination of the survivor.
-
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.

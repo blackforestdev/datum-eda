@@ -20,10 +20,7 @@ use datum_gui_protocol::{
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::Receiver;
-use std::sync::{
-    Arc, Mutex,
-    atomic::{AtomicBool, Ordering},
-};
+use std::sync::{Arc, Mutex};
 use winit::event_loop::EventLoopProxy;
 
 pub(super) enum TerminalEvent {
@@ -41,7 +38,6 @@ pub(super) struct TerminalSession {
     pub(super) context_id: String,
     pub(super) master: Box<dyn portable_pty::MasterPty + Send>,
     pub(super) process_group_id: libc::pid_t,
-    pub(super) exited: Arc<AtomicBool>,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
     /// command-finished check (terminal performance slice): the log is
@@ -576,9 +572,6 @@ impl TerminalSession {
     }
 
     pub(super) fn terminate(&self) -> Result<()> {
-        if self.exited.load(Ordering::Acquire) {
-            return Ok(());
-        }
         self.signal_process_group(libc::SIGTERM, "terminate terminal process group")
     }
 
@@ -617,9 +610,6 @@ mod terminal_screen_authority_tests;
 #[cfg(test)]
 #[path = "terminal_session_context_tests.rs"]
 mod terminal_session_context_tests;
-#[cfg(test)]
-#[path = "terminal_session_isolation_tests.rs"]
-mod terminal_session_isolation_tests;
 #[cfg(test)]
 #[path = "terminal_session_tests.rs"]
 mod terminal_session_tests;
