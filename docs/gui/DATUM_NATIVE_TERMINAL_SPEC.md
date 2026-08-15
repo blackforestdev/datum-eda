@@ -230,6 +230,10 @@ the post-command hang and restores responsive successive command entry.
 6. **T0-C05 — owner acceptance.** The owner runs `ls` and a unique `printf`
    payload in the production Datum terminal and confirms that only the real shell
    screen is visible, input is usable, and focus exits back to the editor.
+<!-- EVIDENCE:TERMINAL-T0-SHELL-TRUTH:T0-C05-OWNER-ACCEPTED -->
+Owner acceptance on 2026-08-14 confirmed a fresh build displayed normal `ls`
+output and one unique `printf` payload, returned a usable shell prompt without
+Datum-owned terminal rows, and returned keyboard focus to the Board editor.
 
 TF-01 may remain historical evidence for focus-owner extraction, but no issue or
 Frontier row may claim the user-visible terminal defect repaired before this gate.

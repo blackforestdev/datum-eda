@@ -571,9 +571,7 @@
       "parallel": false,
       "summary": "Replace the terminal-lite/custom-core plan with a governed fully fledged native terminal product, mature-core adoption, complete daily-driver capability matrix, and production agent/CLI/MCP proof.",
       "dependencies": [],
-      "unblocks": [
-        "dat-pan-trace-terminal-pollution-0j0"
-      ],
+      "unblocks": [],
       "landing_commit": "6bc6a081bb26944a316e26311d3759bdda6a72ec",
       "completion": {
         "outcome": "Datum's terminal roadmap targets a fully fledged native terminal over a mature core, with exclusive PTY screen truth, complete session/interaction/protocol/accessibility coverage, safe Datum CLI/MCP/agent integration, and measurable production gates.",
@@ -704,9 +702,7 @@
             "dat-pan-trace-terminal-pollution-0j0 loses the contract-correction blocker and becomes the T0 shell-truth slice.",
             "Later terminal phases remain separately selected and authorized."
           ],
-          "unblocks_issue_ids": [
-            "dat-pan-trace-terminal-pollution-0j0"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -768,7 +764,6 @@
       "summary": "Replace prompt-memory discovery with client-native adapters, standard MCP, pinned context, scoped authority, portable workflows, and production interoperability proof before terminal execution continues.",
       "dependencies": [],
       "unblocks": [
-        "dat-pan-trace-terminal-pollution-0j0",
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
       ],
@@ -902,7 +897,6 @@
             "T0 resumes at T0-C02 while the separately scheduled T4a-T4d implementation slices remain gated by their terminal prerequisites."
           ],
           "unblocks_issue_ids": [
-            "dat-pan-trace-terminal-pollution-0j0",
             "dat-terminal-emulator-epic-jzv.8",
             "dat-terminal-emulator-epic-jzv.9"
           ],
@@ -921,9 +915,9 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Make PTY-derived state the sole terminal-cell authority and prove real typed shell output through the production display path.",
       "dependencies": [
@@ -939,7 +933,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1073,7 +1067,7 @@
           {
             "id": "T0-C05",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Obtain owner hands-on acceptance with ls and a unique printf payload in the production Datum terminal.",
             "depends_on": [
               "T0-C04"
@@ -1084,7 +1078,13 @@
                 "marker": "T0-C05"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T0-SHELL-TRUTH:T0-C05-OWNER-ACCEPTED"
+              }
+            ],
             "owner_input": {
               "response_format": "Run the stated production-terminal check, then reply `approve T0 shell truth`, or `reject T0 shell truth — <observed failure>`.",
               "requests": [
@@ -1116,7 +1116,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "1d6d49ae554bc3515e39c38cc1675b77a3da8e0f"
     },
     {
       "key": "TERMINAL-P0-FOCUS",
@@ -1129,9 +1130,9 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Preserve TF-01 as focus-owner extraction only, then complete content focus, focus reports, cursor affordance, key timing, and leak tests without claiming the whole terminal repaired.",
       "dependencies": [
@@ -1264,7 +1265,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
@@ -1285,7 +1286,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
@@ -1306,7 +1307,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
