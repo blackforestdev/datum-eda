@@ -15,7 +15,7 @@
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, NamedKey};
 
-use datum_gui_protocol::{DockTab, SessionCommand};
+use datum_gui_protocol::SessionCommand;
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
@@ -131,6 +131,22 @@ pub(crate) fn focus_after_hit_target(
     }
 }
 
+/// Resolve the one focus-exit event that must run before raw PTY routing.
+/// The press still reaches the child as ESC; the release transfers ownership
+/// back to the editor after terminal-local rename/input state is dismissed.
+pub(crate) fn pre_raw_escape_route(
+    focus: KeyboardFocus,
+    terminal_visible: bool,
+    escape_released: bool,
+) -> Option<RouteDecision> {
+    if escape_released {
+        let route = key_route(focus, KeyClass::EscapeWithEmptyInput, terminal_visible);
+        (route == RouteDecision::ReleaseToEditor).then_some(route)
+    } else {
+        None
+    }
+}
+
 /// Route one window keyboard event through the focus authority. Returns true
 /// when the event was consumed (a redraw may have been requested).
 pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
@@ -149,6 +165,30 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         key_route(focus, KeyClass::WorkspaceHotkey, dock_visible) == RouteDecision::Editor;
     let terminal_owns_line_edit =
         key_route(focus, KeyClass::DockLineEdit, dock_visible) == RouteDecision::Terminal;
+    let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
+        && event.state == ElementState::Released;
+
+    // TF-02: focus-exit ordering is part of the authority. Raw PTY routing
+    // owns the Escape press, but must not consume its release before this arm.
+    if pre_raw_escape_route(focus, dock_visible, escape_released).is_some() {
+        if let Some(runtime) = &mut app.runtime {
+            if runtime.cancel_terminal_rename() {
+                app.request_redraw_if_needed();
+                return true;
+            }
+            let input_was_empty = runtime.current_dock_input().is_none_or(|s| s.is_empty());
+            if input_was_empty {
+                runtime.set_keyboard_focus(KeyboardFocus::Editor);
+            } else {
+                let terminal = &mut runtime.session.workspace_mut().ui.terminal;
+                terminal.input.clear();
+                terminal.cursor = 0;
+            }
+            runtime.invalidate_frame();
+            app.request_redraw_if_needed();
+        }
+        return true;
+    }
 
     // Space pan chord — an editor gesture, so it runs only when the editor owns
     // keys; it must never swallow Space typed into the terminal (TF-01).
@@ -240,8 +280,6 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
-        && event.state == ElementState::Released;
     if escape_released && app.runtime.as_mut().is_some_and(Runtime::cancel_active_pan) {
         return true;
     }
@@ -277,39 +315,6 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             && runtime.dismiss_marking_menu()
         {
             app.request_redraw_if_needed();
-        }
-        return true;
-    }
-    if escape_released && terminal_owns_line_edit {
-        if let Some(runtime) = &mut app.runtime {
-            if runtime.cancel_terminal_rename() {
-                app.request_redraw_if_needed();
-                return true;
-            }
-            // Clear input first; only release key ownership back to the editor
-            // if input is already empty (TF-01: focus and visibility are
-            // separate — the dock stays open).
-            let input_was_empty = runtime.current_dock_input().is_none_or(|s| s.is_empty());
-            if input_was_empty {
-                if key_route(focus, KeyClass::EscapeWithEmptyInput, dock_visible)
-                    == RouteDecision::ReleaseToEditor
-                {
-                    runtime.set_keyboard_focus(KeyboardFocus::Editor);
-                    runtime.invalidate_frame();
-                    app.request_redraw_if_needed();
-                }
-            } else {
-                let ui = &mut runtime.session.workspace_mut().ui;
-                match ui.active_dock_tab {
-                    Some(DockTab::Terminal) => {
-                        ui.terminal.input.clear();
-                        ui.terminal.cursor = 0;
-                    }
-                    None => {}
-                }
-                runtime.invalidate_frame();
-                app.request_redraw_if_needed();
-            }
         }
         return true;
     }

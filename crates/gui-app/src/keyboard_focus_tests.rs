@@ -1,6 +1,6 @@
 use super::{
     KeyClass, KeyboardFocus, RouteDecision, focus_after_canvas_click,
-    focus_after_hit_target, hit_target_is_terminal_entry, key_route,
+    focus_after_hit_target, hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
 };
 use datum_gui_render::HitTarget;
 
@@ -86,6 +86,21 @@ fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
             RouteDecision::ReleaseToEditor
         );
     }
+    assert_eq!(
+        pre_raw_escape_route(KeyboardFocus::Terminal, true, true),
+        Some(RouteDecision::ReleaseToEditor),
+        "Escape release must be classified before attached-shell raw routing",
+    );
+    assert_eq!(
+        pre_raw_escape_route(KeyboardFocus::Terminal, true, false),
+        None,
+        "Escape press remains raw PTY input",
+    );
+    assert_eq!(
+        pre_raw_escape_route(KeyboardFocus::Editor, true, true),
+        None,
+        "editor Escape is not a terminal focus exit",
+    );
 }
 
 #[test]

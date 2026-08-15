@@ -1130,7 +1130,7 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1179,7 +1179,7 @@
           {
             "id": "TF-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Wire deliberate focus entry on the actual terminal cell rectangle and exit through Escape/canvas click.",
             "depends_on": [
               "TF-01"
@@ -1254,6 +1254,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-tf-02-20260814",
+        "claimed_at": "2026-08-14T20:51:49-07:00",
+        "heartbeat_at": "2026-08-14T20:51:49-07:00",
+        "expires_at": "2026-08-15T04:51:49-07:00",
+        "scope": [
+          "TF-02 terminal content focus entry",
+          "TF-02 Escape and canvas focus exit",
+          "TF-02 production focus regressions"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "4456e989a0c243b49c9bfc56e15c5b27d8f09c6b"
       }
     },
     {
