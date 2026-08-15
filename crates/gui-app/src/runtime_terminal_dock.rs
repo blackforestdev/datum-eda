@@ -36,8 +36,8 @@ impl Runtime {
         }
         ui.active_dock_tab = None;
         // TF-01: keyboard focus must not outlive the surface that owns it —
-        // a closed dock with Terminal focus would swallow keys into a hidden
-        // line editor. Closing the dock hands ownership back to the editor.
+        // a closed dock with Terminal focus would swallow keys without a
+        // visible recipient. Closing the dock hands ownership back to the editor.
         if self.keyboard_focus == KeyboardFocus::Terminal {
             self.set_keyboard_focus(KeyboardFocus::Editor);
         }

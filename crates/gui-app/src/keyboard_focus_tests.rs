@@ -15,7 +15,7 @@ fn default_focus_is_editor() {
 fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
     for visible in [false, true] {
         assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::DockLineEdit, visible),
+            key_route(KeyboardFocus::Terminal, KeyClass::LegacyDockLineEdit, visible),
             RouteDecision::Terminal
         );
         assert_eq!(
@@ -37,7 +37,7 @@ fn editor_focus_routes_hotkeys_and_never_to_terminal() {
             RouteDecision::Editor
         );
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::DockLineEdit, visible),
+            key_route(KeyboardFocus::Editor, KeyClass::LegacyDockLineEdit, visible),
             RouteDecision::Unrouted
         );
         assert_eq!(
@@ -87,9 +87,9 @@ fn dock_visibility_never_changes_routing_except_raw_pty() {
         KeyboardFocus::Overlay,
     ] {
         for class in [
-            KeyClass::DockLineEdit,
+            KeyClass::LegacyDockLineEdit,
             KeyClass::WorkspaceHotkey,
-            KeyClass::EscapeWithEmptyInput,
+            KeyClass::EscapeWithEmptyRename,
         ] {
             assert_eq!(
                 key_route(focus, class, false),
@@ -114,7 +114,7 @@ fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
         assert_eq!(
             key_route(
                 KeyboardFocus::Terminal,
-                KeyClass::EscapeWithEmptyInput,
+                KeyClass::EscapeWithEmptyRename,
                 visible
             ),
             RouteDecision::ReleaseToEditor
@@ -195,9 +195,9 @@ fn overlay_focus_routes_nothing_through_the_focus_classes() {
     for visible in [false, true] {
         for class in [
             KeyClass::RawPty,
-            KeyClass::DockLineEdit,
+            KeyClass::LegacyDockLineEdit,
             KeyClass::WorkspaceHotkey,
-            KeyClass::EscapeWithEmptyInput,
+            KeyClass::EscapeWithEmptyRename,
         ] {
             assert_eq!(
                 key_route(KeyboardFocus::Overlay, class, visible),

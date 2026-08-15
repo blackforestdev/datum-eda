@@ -370,8 +370,10 @@ fn render_terminal_sessions_row(
                 .as_deref()
                 .is_some_and(|session_id| session_id == tab.session_id);
             let label = if renaming {
-                let (before, after) =
-                    split_at_cursor(&state.ui.terminal.input, state.ui.terminal.cursor);
+                let (before, after) = split_at_cursor(
+                    &state.ui.terminal.rename_input,
+                    state.ui.terminal.rename_cursor,
+                );
                 format!(
                     "[{}|{}]",
                     truncate_text(before, 12),

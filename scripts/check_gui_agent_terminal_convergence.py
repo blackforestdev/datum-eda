@@ -14,6 +14,7 @@ TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_cont
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
+TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -87,6 +88,50 @@ def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
             failures.append("workspace hotkey dispatch must not fire on key release")
 
 
+def check_terminal_input_identity(
+    terminal_lane: str,
+    production_sources: str,
+    failures: list[str],
+) -> None:
+    """Keep shell, screen-cursor, and chrome-rename state distinguishable."""
+    for marker in (
+        "pub rename_input: String",
+        "pub rename_cursor: usize",
+        "pub screen_cursor_row: usize",
+        "pub screen_cursor_col: usize",
+    ):
+        if marker not in terminal_lane:
+            failures.append(f"terminal input classification is missing {marker}")
+    if re.search(r"pub\s+(?:input|cursor)\s*:", terminal_lane):
+        failures.append("terminal protocol must not expose generic input/cursor fields")
+    for marker in (".terminal.input", ".terminal.cursor"):
+        if marker in production_sources:
+            failures.append(f"terminal production code must not use generic {marker}")
+    for marker in (
+        "fn dock_accepts_text_input",
+        "fn append_dock_text",
+        "fn dock_tab_accepts_edit",
+        "fn current_dock_input",
+        "fn current_dock_input_mut",
+        "fn backspace_dock_input",
+        "fn move_dock_cursor",
+        "fn move_dock_cursor_to_edge",
+        "fn complete_dock_input",
+        "fn submit_dock_input",
+        "KeyClass::DockLineEdit",
+        "KeyClass::EscapeWithEmptyInput",
+    ):
+        if marker in production_sources:
+            failures.append(f"terminal chrome editor must not use generic marker {marker}")
+    rename_marker = "fn append_terminal_rename_text"
+    if rename_marker not in production_sources:
+        failures.append("terminal rename editor must expose an explicit text boundary")
+    else:
+        rename_body = production_sources.split(rename_marker, 1)[1].split("\n    fn ", 1)[0]
+        if "write_foreign_shell_bytes" in rename_body:
+            failures.append("terminal rename text must never reach the foreign shell")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -103,8 +148,10 @@ def main() -> int:
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
+    terminal_lane = TERMINAL_LANE.read_text()
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
+    check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:

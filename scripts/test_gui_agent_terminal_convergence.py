@@ -17,6 +17,48 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_terminal_input_state_has_explicit_authorities(self) -> None:
+        terminal_lane = """
+pub rename_input: String,
+pub rename_cursor: usize,
+pub screen_cursor_row: usize,
+pub screen_cursor_col: usize,
+"""
+        production = """
+fn append_terminal_rename_text(&mut self, text: &str) -> bool {
+    self.ui.terminal.rename_input.push_str(text);
+    true
+}
+    fn after() {}
+"""
+        failures: list[str] = []
+        guard.check_terminal_input_identity(terminal_lane, production, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        invalid_lane = terminal_lane + "pub input: String;\npub cursor: usize;\n"
+        invalid_production = production.replace(
+            "self.ui.terminal.rename_input.push_str(text);",
+            "self.ui.terminal.input.push_str(text);\n"
+            "    self.write_foreign_shell_bytes(text.as_bytes());",
+        ) + "\nfn append_dock_text() {}\n"
+        guard.check_terminal_input_identity(
+            invalid_lane, invalid_production, failures
+        )
+        self.assertIn(
+            "terminal protocol must not expose generic input/cursor fields", failures
+        )
+        self.assertIn(
+            "terminal production code must not use generic .terminal.input", failures
+        )
+        self.assertIn(
+            "terminal chrome editor must not use generic marker fn append_dock_text",
+            failures,
+        )
+        self.assertIn(
+            "terminal rename text must never reach the foreign shell", failures
+        )
+
     def test_workspace_hotkeys_are_press_timed_through_one_focus_predicate(self) -> None:
         valid = """
 pub(crate) fn workspace_action_should_fire(focus: KeyboardFocus, visible: bool,

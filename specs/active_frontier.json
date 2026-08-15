@@ -1284,7 +1284,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1314,7 +1314,7 @@
           {
             "id": "TI-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Inventory every terminal input and cursor state field plus line-edit call site, then classify it as PTY/TerminalCore input, chrome-local editing, or dead legacy state.",
             "depends_on": [],
             "requirement_refs": [
@@ -1369,6 +1369,20 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-ti-01-20260814",
+        "claimed_at": "2026-08-14T21:42:36-07:00",
+        "heartbeat_at": "2026-08-14T21:42:36-07:00",
+        "expires_at": "2026-08-15T05:42:36-07:00",
+        "scope": [
+          "TI-01 terminal input-state inventory",
+          "TI-01 production classification and regressions"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "0c59726370a48b52872910a0be13239f7d1617eb"
       }
     },
     {

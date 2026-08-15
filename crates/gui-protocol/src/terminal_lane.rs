@@ -74,8 +74,10 @@ pub struct TerminalLaneState {
     pub title: Option<String>,
     pub current_working_directory: Option<String>,
     pub bell_count: usize,
-    pub input: String,
-    pub cursor: usize,
+    /// Chrome-local terminal-tab rename text. Never a shell-input buffer.
+    pub rename_input: String,
+    /// Character cursor for `rename_input`; unrelated to the PTY screen cursor.
+    pub rename_cursor: usize,
     pub columns: u16,
     pub rows: u16,
     pub screen_cursor_row: usize,
@@ -136,8 +138,8 @@ impl Default for TerminalLaneState {
             title: None,
             current_working_directory: None,
             bell_count: 0,
-            input: String::new(),
-            cursor: 0,
+            rename_input: String::new(),
+            rename_cursor: 0,
             columns: 80,
             rows: 24,
             screen_cursor_row: 0,

@@ -85,8 +85,8 @@ fn editor_focus_fires_hotkeys_and_no_key_class_routes_to_the_pty() {
         );
         for class in [
             KeyClass::RawPty,
-            KeyClass::DockLineEdit,
-            KeyClass::EscapeWithEmptyInput,
+            KeyClass::LegacyDockLineEdit,
+            KeyClass::EscapeWithEmptyRename,
         ] {
             assert_eq!(
                 key_route(KeyboardFocus::Editor, class, visible),

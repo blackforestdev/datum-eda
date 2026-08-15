@@ -182,8 +182,8 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
     }
 
     state.ui.terminal.rename_session_id = Some("terminal-a".to_string());
-    state.ui.terminal.input = "layout edit".to_string();
-    state.ui.terminal.cursor = 6;
+    state.ui.terminal.rename_input = "layout edit".to_string();
+    state.ui.terminal.rename_cursor = 6;
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let prepared = PreparedScene::from_workspace(
         &state,

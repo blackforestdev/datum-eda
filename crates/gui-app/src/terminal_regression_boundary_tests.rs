@@ -184,9 +184,9 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
 fn only_escape_with_empty_input_releases_terminal_focus() {
     let all_classes = [
         KeyClass::RawPty,
-        KeyClass::DockLineEdit,
+        KeyClass::LegacyDockLineEdit,
         KeyClass::WorkspaceHotkey,
-        KeyClass::EscapeWithEmptyInput,
+        KeyClass::EscapeWithEmptyRename,
     ];
     for visible in [false, true] {
         for class in all_classes {
@@ -194,7 +194,7 @@ fn only_escape_with_empty_input_releases_terminal_focus() {
                 == RouteDecision::ReleaseToEditor;
             assert_eq!(
                 released,
-                class == KeyClass::EscapeWithEmptyInput,
+                class == KeyClass::EscapeWithEmptyRename,
                 "release-to-editor must be exactly the empty-input Escape class \
                  (got a release for {class:?}, visible={visible})"
             );

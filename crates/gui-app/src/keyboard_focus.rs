@@ -3,7 +3,7 @@
 //!
 //! Keyboard routing consults WHO OWNS KEYS — never whether a dock is visible.
 //! Opening the terminal dock must not steal the keyboard, and workspace hotkeys
-//! must not type into a hidden line editor. `Editor` delegates pane identity to
+//! must not type into a hidden shell buffer. `Editor` delegates pane identity to
 //! the existing single-source pane focus (`workspace().ui.layout.focused`)
 //! rather than duplicating it — one source of truth for pane focus (decision
 //! 021). `Overlay` = transient key owners (marking menu today; more in TF-02+).
@@ -39,14 +39,14 @@ pub(crate) enum KeyClass {
     /// that also requires the terminal tab to exist on screen (raw input has
     /// nowhere visible to land otherwise).
     RawPty,
-    /// Dock line-editor editing/navigation keys: text, space, backspace,
-    /// enter, arrows, home/end, tab-complete, and clipboard shortcuts.
-    DockLineEdit,
+    /// Residual pre-PTY line-editor dispatch. Chrome rename still uses part of
+    /// it, while TI-02 removes its shell/clipboard routing and TI-03 deletes it.
+    LegacyDockLineEdit,
     /// Workspace hotkeys: tool keys, fit, zoom, crosshair, pane cycling,
     /// review navigation, and the Space pan chord.
     WorkspaceHotkey,
-    /// Escape released while the dock line editor is already empty.
-    EscapeWithEmptyInput,
+    /// Escape released while the terminal rename editor is already empty.
+    EscapeWithEmptyRename,
 }
 
 /// The routing outcome for a key class under a focus owner.
@@ -75,8 +75,10 @@ pub(crate) fn key_route(
             RouteDecision::Terminal
         }
         (KeyboardFocus::Terminal, KeyClass::RawPty) => RouteDecision::Unrouted,
-        (KeyboardFocus::Terminal, KeyClass::DockLineEdit) => RouteDecision::Terminal,
-        (KeyboardFocus::Terminal, KeyClass::EscapeWithEmptyInput) => RouteDecision::ReleaseToEditor,
+        (KeyboardFocus::Terminal, KeyClass::LegacyDockLineEdit) => RouteDecision::Terminal,
+        (KeyboardFocus::Terminal, KeyClass::EscapeWithEmptyRename) => {
+            RouteDecision::ReleaseToEditor
+        }
         (KeyboardFocus::Terminal, KeyClass::WorkspaceHotkey) => RouteDecision::Unrouted,
         (KeyboardFocus::Editor, KeyClass::WorkspaceHotkey) => RouteDecision::Editor,
         (KeyboardFocus::Editor, _) => RouteDecision::Unrouted,
@@ -140,7 +142,7 @@ pub(crate) fn pre_raw_escape_route(
     escape_released: bool,
 ) -> Option<RouteDecision> {
     if escape_released {
-        let route = key_route(focus, KeyClass::EscapeWithEmptyInput, terminal_visible);
+        let route = key_route(focus, KeyClass::EscapeWithEmptyRename, terminal_visible);
         (route == RouteDecision::ReleaseToEditor).then_some(route)
     } else {
         None
@@ -218,8 +220,8 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         key_route(focus, KeyClass::WorkspaceHotkey, dock_visible) == RouteDecision::Editor;
     let workspace_action_pressed =
         workspace_action_should_fire(focus, dock_visible, event.state, event.repeat);
-    let terminal_owns_line_edit =
-        key_route(focus, KeyClass::DockLineEdit, dock_visible) == RouteDecision::Terminal;
+    let terminal_owns_legacy_line_edit =
+        key_route(focus, KeyClass::LegacyDockLineEdit, dock_visible) == RouteDecision::Terminal;
     let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
         && event.state == ElementState::Released;
 
@@ -231,13 +233,15 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
                 app.request_redraw_if_needed();
                 return true;
             }
-            let input_was_empty = runtime.current_dock_input().is_none_or(|s| s.is_empty());
+            let input_was_empty = runtime
+                .current_terminal_rename_input()
+                .is_none_or(|s| s.is_empty());
             if input_was_empty {
                 runtime.set_keyboard_focus(KeyboardFocus::Editor);
             } else {
                 let terminal = &mut runtime.session.workspace_mut().ui.terminal;
-                terminal.input.clear();
-                terminal.cursor = 0;
+                terminal.rename_input.clear();
+                terminal.rename_cursor = 0;
             }
             runtime.invalidate_frame();
             app.request_redraw_if_needed();
@@ -269,40 +273,40 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    if terminal_owns_line_edit
+    if terminal_owns_legacy_line_edit
         && app
             .runtime
             .as_ref()
             .is_some_and(|runtime| runtime.is_paste_shortcut(event))
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.paste_dock_input()
+            && runtime.paste_terminal_input()
         {
             app.request_redraw_if_needed();
         }
         return true;
     }
-    if terminal_owns_line_edit
+    if terminal_owns_legacy_line_edit
         && app
             .runtime
             .as_ref()
             .is_some_and(|runtime| runtime.is_copy_shortcut(event))
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.copy_dock_input()
+            && runtime.copy_terminal_scrollback()
         {
             app.request_redraw_if_needed();
         }
         return true;
     }
-    if terminal_owns_line_edit
+    if terminal_owns_legacy_line_edit
         && app
             .runtime
             .as_ref()
             .is_some_and(|runtime| runtime.is_cut_shortcut(event))
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.cut_dock_input()
+            && runtime.cut_terminal_rename_input()
         {
             app.request_redraw_if_needed();
         }
@@ -311,11 +315,12 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     if let Key::Character(text) = &event.logical_key
         && event.state == ElementState::Pressed
         && app.runtime.as_ref().is_some_and(|runtime| {
-            runtime.dock_accepts_text_input() && !runtime.modifiers.control_key()
+            runtime.terminal_rename_accepts_text_input()
+                && !runtime.modifiers.control_key()
         })
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.append_dock_text(text)
+            && runtime.append_terminal_rename_text(text)
         {
             app.request_redraw_if_needed();
         }
@@ -326,10 +331,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         && app
             .runtime
             .as_ref()
-            .is_some_and(|runtime| runtime.dock_accepts_text_input())
+            .is_some_and(|runtime| runtime.terminal_rename_accepts_text_input())
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.append_dock_text(" ")
+            && runtime.append_terminal_rename_text(" ")
         {
             app.request_redraw_if_needed();
         }
@@ -340,10 +345,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Backspace))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.backspace_dock_input()
+            && runtime.backspace_terminal_rename_input()
         {
             app.request_redraw_if_needed();
         }
@@ -351,10 +356,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Enter))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.submit_dock_input()
+            && runtime.submit_terminal_rename_input()
         {
             app.request_redraw_if_needed();
         }
@@ -375,10 +380,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::ArrowLeft))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.move_dock_cursor(-1)
+            && runtime.move_terminal_rename_cursor(-1)
         {
             app.request_redraw_if_needed();
         }
@@ -386,10 +391,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::ArrowRight))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.move_dock_cursor(1)
+            && runtime.move_terminal_rename_cursor(1)
         {
             app.request_redraw_if_needed();
         }
@@ -397,10 +402,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Home))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.move_dock_cursor_to_edge(true)
+            && runtime.move_terminal_rename_cursor_to_edge(true)
         {
             app.request_redraw_if_needed();
         }
@@ -408,10 +413,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::End))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.move_dock_cursor_to_edge(false)
+            && runtime.move_terminal_rename_cursor_to_edge(false)
         {
             app.request_redraw_if_needed();
         }
@@ -419,10 +424,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Tab))
         && event.state == ElementState::Released
-        && terminal_owns_line_edit
+        && terminal_owns_legacy_line_edit
     {
         if let Some(runtime) = &mut app.runtime
-            && runtime.complete_dock_input()
+            && runtime.complete_terminal_rename_input()
         {
             app.request_redraw_if_needed();
         }

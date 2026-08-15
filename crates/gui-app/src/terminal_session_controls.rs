@@ -49,8 +49,8 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         ui.active_dock_tab = Some(DockTab::Terminal);
         ui.terminal.rename_session_id = Some(session_id);
-        ui.terminal.input = label;
-        ui.terminal.cursor = ui.terminal.input.chars().count();
+        ui.terminal.rename_input = label;
+        ui.terminal.rename_cursor = ui.terminal.rename_input.chars().count();
         self.invalidate_frame();
         true
     }
@@ -64,7 +64,7 @@ impl Runtime {
             .workspace()
             .ui
             .terminal
-            .input
+            .rename_input
             .trim()
             .to_string();
         if label.is_empty() {
@@ -93,8 +93,8 @@ impl Runtime {
         self.terminal_rename_session_id = None;
         let ui = &mut self.session.workspace_mut().ui;
         ui.terminal.rename_session_id = None;
-        ui.terminal.input.clear();
-        ui.terminal.cursor = 0;
+        ui.terminal.rename_input.clear();
+        ui.terminal.rename_cursor = 0;
         self.sync_terminal_tabs();
         self.invalidate_frame();
     }

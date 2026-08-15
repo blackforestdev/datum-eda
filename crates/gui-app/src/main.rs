@@ -299,10 +299,10 @@ impl ApplicationHandler for App {
                 if self
                     .runtime
                     .as_ref()
-                    .is_some_and(|runtime| runtime.dock_accepts_text_input()) =>
+                    .is_some_and(|runtime| runtime.terminal_rename_accepts_text_input()) =>
             {
                 if let Some(runtime) = &mut self.runtime
-                    && runtime.append_dock_text(&text)
+                    && runtime.append_terminal_rename_text(&text)
                 {
                     self.request_redraw_if_needed();
                 }
@@ -1225,9 +1225,10 @@ impl Runtime {
     // diagnostics, and lifecycle messages route through `log_review_event`
     // (console sink) or terminal chrome, never the grid.
 
-    fn dock_accepts_text_input(&self) -> bool {
+    fn terminal_rename_accepts_text_input(&self) -> bool {
         self.keyboard_focus == KeyboardFocus::Terminal
-            && self.workspace().ui.active_dock_tab.is_some()
+            && matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
+            && self.terminal_rename_session_id.is_some()
     }
 
     fn terminal_accepts_raw_input(&self) -> bool {
@@ -1550,11 +1551,11 @@ impl Runtime {
             && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyX))
     }
 
-    fn append_dock_text(&mut self, text: &str) -> bool {
+    fn append_terminal_rename_text(&mut self, text: &str) -> bool {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !self.dock_tab_accepts_edit(active) {
+        if !self.terminal_rename_editor_active(active) {
             return false;
         }
         if text.chars().any(|ch| ch.is_control()) {
@@ -1562,7 +1563,10 @@ impl Runtime {
         }
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
-            DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Terminal => (
+                &mut ui.terminal.rename_input,
+                &mut ui.terminal.rename_cursor,
+            ),
         };
         let byte_pos = char_to_byte_pos(input, *cursor);
         input.insert_str(byte_pos, text);
@@ -1571,29 +1575,29 @@ impl Runtime {
         true
     }
 
-    fn dock_tab_accepts_edit(&self, active: DockTab) -> bool {
+    fn terminal_rename_editor_active(&self, active: DockTab) -> bool {
         matches!(active, DockTab::Terminal) && self.terminal_rename_session_id.is_some()
     }
 
-    fn current_dock_input(&self) -> Option<&str> {
+    fn current_terminal_rename_input(&self) -> Option<&str> {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
-                Some(self.workspace().ui.terminal.input.as_str())
+                Some(self.workspace().ui.terminal.rename_input.as_str())
             }
             _ => None,
         }
     }
 
-    fn current_dock_input_mut(&mut self) -> Option<&mut String> {
+    fn current_terminal_rename_input_mut(&mut self) -> Option<&mut String> {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
-                Some(&mut self.session.workspace_mut().ui.terminal.input)
+                Some(&mut self.session.workspace_mut().ui.terminal.rename_input)
             }
             _ => None,
         }
     }
 
-    fn copy_dock_input(&mut self) -> bool {
+    fn copy_terminal_scrollback(&mut self) -> bool {
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             let Some(text) = terminal_scrollback_copy_text(&self.workspace().ui.terminal) else {
                 return false;
@@ -1609,7 +1613,7 @@ impl Runtime {
             .workspace()
             .ui
             .active_dock_tab
-            .and_then(|_| self.current_dock_input_mut().map(|s| s.clone()))
+            .and_then(|_| self.current_terminal_rename_input_mut().map(|s| s.clone()))
         else {
             return false;
         };
@@ -1619,12 +1623,12 @@ impl Runtime {
         false
     }
 
-    fn cut_dock_input(&mut self) -> bool {
+    fn cut_terminal_rename_input(&mut self) -> bool {
         let Some(text) = self
             .workspace()
             .ui
             .active_dock_tab
-            .and_then(|_| self.current_dock_input_mut().map(|s| s.clone()))
+            .and_then(|_| self.current_terminal_rename_input_mut().map(|s| s.clone()))
         else {
             return false;
         };
@@ -1632,14 +1636,14 @@ impl Runtime {
             self.log_review_event("clipboard cut failed".to_string());
             return true;
         }
-        if let Some(input) = self.current_dock_input_mut() {
+        if let Some(input) = self.current_terminal_rename_input_mut() {
             input.clear();
         }
         self.invalidate_frame();
         true
     }
 
-    fn paste_dock_input(&mut self) -> bool {
+    fn paste_terminal_input(&mut self) -> bool {
         let Ok(text) = self.read_clipboard_text() else {
             self.log_review_event("clipboard paste failed".to_string());
             return false;
@@ -1654,7 +1658,7 @@ impl Runtime {
             );
             return self.write_foreign_shell_bytes(&bytes);
         }
-        self.append_dock_text(&text)
+        self.append_terminal_rename_text(&text)
     }
 
     fn read_clipboard_text(&mut self) -> Result<String> {
@@ -1712,16 +1716,19 @@ impl Runtime {
         Ok(())
     }
 
-    fn backspace_dock_input(&mut self) -> bool {
+    fn backspace_terminal_rename_input(&mut self) -> bool {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !self.dock_tab_accepts_edit(active) {
+        if !self.terminal_rename_editor_active(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
-            DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Terminal => (
+                &mut ui.terminal.rename_input,
+                &mut ui.terminal.rename_cursor,
+            ),
         };
         if *cursor > 0 {
             let byte_pos = char_to_byte_pos(input, *cursor - 1);
@@ -1734,16 +1741,16 @@ impl Runtime {
         false
     }
 
-    fn move_dock_cursor(&mut self, delta: i32) -> bool {
+    fn move_terminal_rename_cursor(&mut self, delta: i32) -> bool {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !self.dock_tab_accepts_edit(active) {
+        if !self.terminal_rename_editor_active(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
-            DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Terminal => (&ui.terminal.rename_input, &mut ui.terminal.rename_cursor),
         };
         let char_count = input.chars().count();
         let new_pos = (*cursor as i32 + delta).clamp(0, char_count as i32) as usize;
@@ -1755,16 +1762,16 @@ impl Runtime {
         false
     }
 
-    fn move_dock_cursor_to_edge(&mut self, home: bool) -> bool {
+    fn move_terminal_rename_cursor_to_edge(&mut self, home: bool) -> bool {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !self.dock_tab_accepts_edit(active) {
+        if !self.terminal_rename_editor_active(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
         let (input, cursor) = match active {
-            DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Terminal => (&ui.terminal.rename_input, &mut ui.terminal.rename_cursor),
         };
         let target = if home { 0 } else { input.chars().count() };
         if target != *cursor {
@@ -1775,16 +1782,9 @@ impl Runtime {
         false
     }
 
-    fn complete_dock_input(&mut self) -> bool {
+    fn complete_terminal_rename_input(&mut self) -> bool {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => false,
-            None => false,
-        }
-    }
-
-    fn submit_dock_input(&mut self) -> bool {
-        match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Terminal) => self.submit_terminal_rename_input(),
             None => false,
         }
     }

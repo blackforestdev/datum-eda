@@ -249,6 +249,20 @@ must never become a second shell input buffer.
    state field and line-edit call site. Classify each as PTY/TerminalCore input,
    terminal-chrome editing, or dead legacy state, and make that classification
    explicit in production structure and regression coverage.
+
+The TI-01 production inventory is closed as follows:
+
+| State or call-site family | Classification | Production boundary |
+|---|---|---|
+| `terminal_input` encoders, `terminal_accepts_raw_input`, `write_foreign_shell_bytes`, PTY replies | PTY/TerminalCore input | Encoded bytes go directly to the attached PTY; no GUI text buffer participates. |
+| `screen_cursor_row`, `screen_cursor_col`, visibility/style and terminal modes | PTY/TerminalCore projection | Written only from interpreted terminal state; these fields are not text-entry cursors. |
+| `rename_session_id`, `rename_input`, `rename_cursor`, and `*_terminal_rename_*` edit calls | terminal-chrome editing | The tab-label editor is explicitly named and must never call the foreign-shell writer. |
+| terminal scrollback copy | read-only terminal observation | Clipboard export reads the PTY-derived grid and is not an input model. |
+| generic `terminal.input` / `terminal.cursor`, generic `*_dock_input` calls, line completion/history, and non-rename buffered submit | dead legacy state | Generic fields/names are prohibited by the convergence guard; remaining no-op/unreachable branches are deleted by TI-02/TI-03. |
+
+`check_gui_agent_terminal_convergence.py` enforces the named protocol fields,
+rejects generic terminal input/cursor state and dock-editor call sites, and proves
+that the chrome rename insertion boundary cannot call the foreign-shell writer.
 <!-- REQ:TERMINAL-T1-INPUT:TI-02 -->
 2. **TI-02 — one shell input model.** Attached sessions route keyboard, composed
    text/IME, paste, and terminal protocols only to the PTY/TerminalCore path.
