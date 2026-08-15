@@ -40,14 +40,52 @@ read-only work.
 
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P03 --> **DTC-P03 — PTY boundary.** Extract request/event/reader/session-handle and
   Linux pty/spawn/job-control ownership without behavior change.
-- <!-- REQ:TERMINAL-T1-PTY:DTC-P04 --> **DTC-P04 — launch and I/O.** Arbitrary argv, cwd/env/credentials, descriptor
-  hygiene, termios, partial nonblocking I/O, bounded queues, backpressure,
-  inactive-session draining, and error surfaces.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P04A --> **DTC-P04A — transport-budget owner decision.** Ratify the exact output,
+  input, global-drain, and concurrent-session bounds below before P04 execution.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P04B --> **DTC-P04B — launch and I/O.** Arbitrary argv, cwd/env/credentials,
+  descriptor hygiene, termios, partial nonblocking I/O, the ratified bounded
+  queues/backpressure, inactive-session draining, and typed error surfaces.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05 --> **DTC-P05 — job control.** Foreground process groups, line-discipline control
   characters, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit,
   terminate/escalate/SIGHUP, and orphan-free teardown.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06 --> **DTC-P06 — session proof.** Concurrent input/output/resize/detach/reattach/
   exit/restart isolation, stress, performance, and dependency/source gates.
+
+#### DTC-P04A owner packet
+
+DTC-P04B introduces the transport's first normative memory, backpressure, and
+event-loop work budgets. Decision 030 reserves those numerical budgets to the
+project owner. Output remains lossless; saturation stops PTY reads and lets the
+kernel backpressure the child. Input admission is nonblocking and atomic: a
+request is accepted completely or rejected with typed terminal-local feedback.
+Inactive and detached sessions are drained fairly into their own screen/core;
+only the active session is visibly projected. These laws are not tuning hints.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L1 --> **P04-L1 — per-session output.** Recommended: 256 output chunks of at most
+  4,096 bytes each, capped at 1,048,576 queued payload bytes, plus separately
+  reserved exit and persistent-I/O-error state. At either payload limit the
+  reader stops; bytes are never dropped, truncated, decoded, coalesced, or
+  reordered. Lower limits stall sustained producers sooner; higher limits
+  increase memory held by every hidden session.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L2 --> **P04-L2 — per-session input.** Recommended: at most 64 accepted requests and
+  1,048,576 aggregate pending bytes. The aggregate limit is also the maximum
+  single paste/write request. A request that would exceed either limit accepts
+  zero bytes, is not input-logged, and returns a typed retryable backpressure
+  error. Accepted bytes retain FIFO order and are delivered exactly once.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L3 --> **P04-L3 — GUI-turn work.** Recommended: preserve the existing global ceiling
+  of 128 output events or 65,536 bytes per event-loop turn, spent work-conservingly
+  round-robin across every live session from a persistent fairness cursor. Check
+  each session's exit/error state before granting a noisy session another data
+  quantum; remaining work schedules exactly one successor wake.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L4 --> **P04-L4 — aggregate session bound.** Recommended: at most 16 concurrent
+  terminal sessions. Refuse the seventeenth before PTY allocation with visible
+  terminal-local feedback. This permits twice the required eight-session release
+  proof while bounding pending payload memory to 32 MiB across output and input.
+
+Approving these limits authorizes only DTC-P04B. It does not approve a dependency,
+TERM identity change, P05 job-control behavior, P06 stress closure, later security
+or performance budgets, a visual golden, or release acceptance. Any later budget
+change requires explicit owner evidence; an agent may not silently tune it.
 
 ### Core foundation
 

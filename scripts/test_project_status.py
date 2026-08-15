@@ -121,7 +121,6 @@ class ProjectStatusTest(unittest.TestCase):
         }
         value.update(updates)
         return value
-
     def write_fixture(self, render: bool = True) -> None:
         (self.root / "specs/spec_governance_manifest.json").write_text(
             json.dumps(self.governance), encoding="utf-8"
@@ -136,20 +135,32 @@ class ProjectStatusTest(unittest.TestCase):
         (self.root / "specs/PROGRESS.md").write_text(progress, encoding="utf-8")
         if render:
             status.render_status(self.root, True)
-
     def failures(self, now: datetime | None = None) -> list[str]:
         self.write_fixture()
         return status.validate(self.root, now)[0]
-
     def head(self) -> str:
         return subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=self.root, text=True,
             stdout=subprocess.PIPE, check=True,
         ).stdout.strip()
-
     def assert_failure(self, needle: str, now: datetime | None = None) -> None:
         found = self.failures(now)
         self.assertTrue(any(needle in failure for failure in found), found)
+    def configure_owner_boundary(self) -> dict:
+        item = self.manifest["frontier"][0]
+        item.update({"state": "specified", "authorization": "owner_decision"})
+        step = item["completion"]["steps"][0]
+        step["kind"] = "owner_decision"
+        step["owner_input"] = {
+            "response_format": "Reply approve or revise.",
+            "requests": [{
+                "id": "OPEN-1", "question": "Approve?", "recommended_response": "Approve.",
+                "source_ref": {"path": self.doc, "marker": "OPEN-1"},
+            }],
+        }
+        document = self.root / self.doc
+        document.write_text(document.read_text() + "\n<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n")
+        return item
     def test_valid_state_and_intake_only_issue_pass(self) -> None:
         failures, state = status.validate(self.root)
         self.assertEqual([], failures)
@@ -232,22 +243,18 @@ class ProjectStatusTest(unittest.TestCase):
                 "--root", str(self.root), "details", "unknown", "--json",
             ]))
     def test_owner_boundary_alerts_and_forbids_agent_claim(self) -> None:
-        item = self.manifest["frontier"][0]
-        item.update({"state": "specified", "authorization": "owner_decision"})
-        item["completion"]["steps"][0]["kind"] = "owner_decision"
-        item["completion"]["steps"][0]["owner_input"] = {
-            "response_format": "Reply approve or revise.",
-            "requests": [{
-                "id": "OPEN-1", "question": "Approve the candidate?",
-                "recommended_response": "Approve.",
-                "source_ref": {"path": self.doc, "marker": "OPEN-1"},
-            }],
-        }
-        (self.root / self.doc).write_text(
-            (self.root / self.doc).read_text(encoding="utf-8")
-            + "\n<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n",
-            encoding="utf-8",
-        )
+        item = self.configure_owner_boundary()
+        future = copy.deepcopy(item["completion"]["steps"][0])
+        future.update({
+            "id": "TEST-C02", "kind": "execution", "status": "pending",
+            "action": "Execute after approval.", "depends_on": ["TEST-C01"],
+            "requirement_refs": [{"path": self.doc, "marker": "TEST-C02"}],
+        })
+        future.pop("owner_input")
+        item["completion"]["steps"].append(future)
+        self.issues[0]["acceptance_criteria"] += " TEST-C02: Execute after approval."
+        document = self.root / self.doc
+        document.write_text(document.read_text() + "<!-- REQ:alignment:TEST-C02 -->\n")
         self.assertEqual([], self.failures())
         issue = self.issues[0]
         details = status.completion_view(item, issue)
@@ -255,25 +262,17 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertIn("OWNER BOUNDARY REACHED", details["work_start"])
         self.assertIn("Owner boundary: INPUT REQUIRED", status.render_completion(details))
         self.assertIn("Owner response format: Reply approve or revise.", status.render_completion(details))
-        self.assertIn("[OPEN-1] Approve the candidate?", status.render_completion(details))
+        self.assertIn("[OPEN-1] Approve?", status.render_completion(details))
         next_output = status.render_next(status.next_view(item, issue))
         self.assertIn("Owner boundary: INPUT REQUIRED", next_output)
         self.assertIn("must stop", next_output)
-        self.assertIn("[OPEN-1] Approve the candidate?", next_output)
+        self.assertIn("[OPEN-1] Approve?", next_output)
     def test_selected_step_kind_requires_matching_item_authorization(self) -> None:
-        item = self.manifest["frontier"][0]
-        item["completion"]["steps"][0]["kind"] = "owner_decision"
-        item["completion"]["steps"][0]["owner_input"] = {
-            "response_format": "Reply approve or revise.",
-            "requests": [{
-                "id": "OPEN-1", "question": "Approve?", "recommended_response": "Approve.",
-                "source_ref": {"path": self.doc, "marker": "OPEN-1"},
-            }],
-        }
+        item = self.configure_owner_boundary()
+        item.update({"state": "ready", "authorization": "execution"})
         (self.root / self.doc).write_text(
             (self.root / self.doc).read_text(encoding="utf-8")
-            + "\n<!-- REQ:alignment:TEST-C00 -->\nPrior execution.\n"
-            + "<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n", encoding="utf-8",
+            + "\n<!-- REQ:alignment:TEST-C00 -->\nPrior execution.\n", encoding="utf-8",
         )
         item["completion"]["steps"].insert(0, {
             "id": "TEST-C00", "kind": "execution", "status": "complete",
@@ -358,7 +357,8 @@ class ProjectStatusTest(unittest.TestCase):
         self.manifest["frontier"][0].update({
             "state": "specified", "authorization": "planning",
         })
-        self.assert_failure("execution step is forbidden by planning authorization")
+        self.assert_failure("selected execution step requires item authorization execution or none")
+
     def test_completion_rejects_missing_and_uncovered_evidence_markers(self) -> None:
         reference = self.manifest["frontier"][0]["completion"]["steps"][0]["requirement_refs"][0]
         reference["marker"] = "MISSING"

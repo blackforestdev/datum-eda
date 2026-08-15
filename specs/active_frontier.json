@@ -1401,26 +1401,10 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ffdaaddfef7e85a9f1e9adee4fcc8a7e93fb7486",
-        "claimed_at": "2026-08-15T18:14:37Z",
-        "heartbeat_at": "2026-08-15T18:40:43Z",
-        "expires_at": "2026-08-16T02:40:43Z",
-        "scope": [
-          "DTC-P04",
-          "crates/gui-app/src/terminal_process.rs",
-          "crates/gui-app/src/terminal_transport/",
-          "DTC-P04 launch, I/O, queue, and lifecycle tests and guards"
-        ]
-      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1431,7 +1415,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P04",
+        "canonical_next_step_id": "DTC-P04A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1465,17 +1449,74 @@
             ]
           },
           {
-            "id": "DTC-P04",
-            "kind": "execution",
-            "status": "in_progress",
-            "action": "Complete arbitrary argv, cwd/environment/credentials, descriptor hygiene, termios, partial nonblocking I/O, bounded queues, backpressure, inactive-session draining, and error surfaces.",
+            "id": "DTC-P04A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Ratify the exact bounded output, input, GUI-turn drain, fairness, and concurrent-session budgets before launch and I/O implementation.",
             "depends_on": [
               "DTC-P03"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                "marker": "DTC-P04"
+                "marker": "DTC-P04A"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve DTC-P04 recommended limits`, or list exceptions as `P04-Ln: revise — <replacement>` or `P04-Ln: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "P04-L1",
+                  "question": "What bounds each session's PTY-output queue?",
+                  "recommended_response": "Approve 256 output chunks of at most 4,096 bytes and 1,048,576 queued payload bytes per session, with separately reserved exit and persistent-error state; saturation applies lossless kernel PTY backpressure.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P04-L1"
+                  }
+                },
+                {
+                  "id": "P04-L2",
+                  "question": "What bounds each session's GUI-to-PTY input queue and a single paste/write?",
+                  "recommended_response": "Approve 64 accepted requests and 1,048,576 pending bytes per session, with a 1,048,576-byte single-request maximum and whole-request atomic rejection on saturation.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P04-L2"
+                  }
+                },
+                {
+                  "id": "P04-L3",
+                  "question": "What GUI-turn drain budget and fairness law applies across sessions?",
+                  "recommended_response": "Approve the existing global ceiling of 128 output events or 65,536 bytes per turn, spent work-conservingly round-robin across every live session with exit/error checks and one successor wake for remaining work.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P04-L3"
+                  }
+                },
+                {
+                  "id": "P04-L4",
+                  "question": "What aggregate live-session bound prevents per-session queues from becoming globally unbounded?",
+                  "recommended_response": "Approve at most 16 concurrent terminal sessions; refuse the seventeenth before PTY allocation with visible terminal-local feedback.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P04-L4"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DTC-P04B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete arbitrary argv, cwd/environment/credentials, descriptor hygiene, termios, partial nonblocking I/O, ratified bounded queues/backpressure, inactive-session draining, and typed error surfaces.",
+            "depends_on": [
+              "DTC-P04A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P04B"
               }
             ],
             "completion_evidence": []
@@ -1486,7 +1527,7 @@
             "status": "pending",
             "action": "Complete foreground job control, line-discipline controls, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit, termination escalation, SIGHUP, and orphan-free teardown.",
             "depends_on": [
-              "DTC-P04"
+              "DTC-P04B"
             ],
             "requirement_refs": [
               {

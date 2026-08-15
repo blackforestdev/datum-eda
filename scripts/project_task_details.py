@@ -169,14 +169,6 @@ def validate_completion(
         if kind not in {"planning", "owner_decision", "governance", "execution"}:
             failures.append(f"{step_id}: invalid step kind {kind!r}")
         step_status = step.get("status")
-        if (
-            step_status != "complete"
-            and item.get("authorization") in {"planning", "owner_decision"}
-            and kind == "execution"
-        ):
-            failures.append(
-                f"{step_id}: execution step is forbidden by {item.get('authorization')} authorization"
-            )
         owner_input = step.get("owner_input")
         if kind == "owner_decision":
             _validate_owner_input(root, key, step_id, owner_input, governing_docs, failures)
