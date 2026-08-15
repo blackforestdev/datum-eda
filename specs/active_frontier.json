@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1407,7 +1407,7 @@
       ],
       "completion": {
         "outcome": "portable-pty exclusively owns Datum's process transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "PTY-03",
+        "canonical_next_step_id": "PTY-04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1464,7 +1464,7 @@
           {
             "id": "PTY-03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove pipelines, process groups, Ctrl-C, explicit termination, exit status, and child-exit reporting through production-path tests.",
             "depends_on": [
               "PTY-02"
@@ -1475,7 +1475,12 @@
                 "marker": "PTY-03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d52e0c8d07b3f3e4d1e18b1e98a91a75c0471c76"
+              }
+            ]
           },
           {
             "id": "PTY-04",
@@ -1522,21 +1527,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-pty-03-20260814",
-        "claimed_at": "2026-08-14T22:53:25-07:00",
-        "heartbeat_at": "2026-08-14T22:53:25-07:00",
-        "expires_at": "2026-08-15T06:53:25-07:00",
-        "scope": [
-          "PTY-03 pipeline and process-group proof",
-          "PTY-03 Ctrl-C and explicit termination semantics",
-          "PTY-03 exit and child-reporting proof"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "690f99c10fc46656aac733d5230be7111fdc8792"
       }
     },
     {
