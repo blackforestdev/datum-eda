@@ -76,8 +76,8 @@ only the active session is visibly projected. These laws are not tuning hints.
   error. Accepted bytes retain FIFO order and are delivered exactly once. Larger
   payloads require a future bounded streaming-paste or file workflow rather than
   an unbounded in-memory request.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L3 --> **P04-L3 — GUI-turn work.** Recommended: preserve the existing global ceiling
-  of 128 output events or 65,536 bytes per event-loop turn, spent work-conservingly
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L3 --> **P04-L3 — GUI-turn work.** Owner-approved 2026-08-15: preserve the existing
+  global ceiling of 128 output events or 65,536 bytes per event-loop turn, spent work-conservingly
   round-robin across every live session from a persistent fairness cursor. Check
   each session's exit/error state before granting a noisy session another data
   quantum; remaining work schedules exactly one successor wake.
