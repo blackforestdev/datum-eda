@@ -69,11 +69,13 @@ only the active session is visibly projected. These laws are not tuning hints.
   increase memory held by every hidden session. The larger burst allowance is
   for sustained build and code-agent output; it is not the logical scrollback or
   model-context limit governed by later terminal-core packages.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L2 --> **P04-L2 — per-session input.** Recommended: at most 64 accepted requests and
-  1,048,576 aggregate pending bytes. The aggregate limit is also the maximum
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L2 --> **P04-L2 — per-session input.** Owner-approved 2026-08-15: at most 64 accepted
+  requests and 4,194,304 aggregate pending bytes. The aggregate limit is also the maximum
   single paste/write request. A request that would exceed either limit accepts
   zero bytes, is not input-logged, and returns a typed retryable backpressure
-  error. Accepted bytes retain FIFO order and are delivered exactly once.
+  error. Accepted bytes retain FIFO order and are delivered exactly once. Larger
+  payloads require a future bounded streaming-paste or file workflow rather than
+  an unbounded in-memory request.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P04A:P04-L3 --> **P04-L3 — GUI-turn work.** Recommended: preserve the existing global ceiling
   of 128 output events or 65,536 bytes per event-loop turn, spent work-conservingly
   round-robin across every live session from a persistent fairness cursor. Check
