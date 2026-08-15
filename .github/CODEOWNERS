@@ -15,6 +15,9 @@
 /scripts/check_spec_parity.py @blackforestdev
 /docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md @blackforestdev
 /docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md @blackforestdev
+/docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md @blackforestdev
+/docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md @blackforestdev
 /specs/third_party_dependency_policy.json @blackforestdev
 /scripts/check_dependency_authority.py @blackforestdev
 /scripts/test_dependency_authority.py @blackforestdev

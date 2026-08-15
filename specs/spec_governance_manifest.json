@@ -625,10 +625,26 @@
    "progress_anchor": "TERMINAL-EPIC",
    "notes": "Reserves new third-party dependency authority to an explicit numbered owner decision, freezes the inherited direct-dependency baseline, and requires Datum-owned terminal emulation and PTY/session source with no external fallback."
   },
+  "docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md": {
+   "class": "doctrine",
+   "controlling": true,
+   "progress_anchor": "TERMINAL-T1-CORE",
+   "notes": "Ratifies a std-only first-party datum-terminal-core crate, clean-room standards process, governed Unicode data, bounded-resource semantics, truthful capability identity, per-slice proof, one-way cutover, source-health module boundaries, and conductor-controlled execution."
+  },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",
-   "notes": "Buildable NT-CAP-01..18 product contract and T0-T4e verification sequence under decisions 027 and 028."
+   "notes": "Buildable NT-CAP-01..18 product contract and T0-T4e verification sequence under decisions 027 through 030; DTC-P00..P30 is the exhaustive first-party implementation decomposition."
+  },
+  "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md": {
+   "class": "governed",
+   "progress_anchor": "TERMINAL-T1-CORE",
+   "notes": "Primary-source standards and clean-room requirements baseline for the Datum-owned PTY, parser/state, Unicode, history/reflow, protocols, graphics, security, accessibility, and proof program."
+  },
+  "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md": {
+   "class": "governed",
+   "progress_anchor": "TERMINAL-T1-CORE",
+   "notes": "Authorized DTC-P00..P30 package DAG, per-package proof contract, source-health boundaries, conductor transaction, cutover law, and full-goal acceptance criteria."
   },
   "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md": {
    "class": "governed",

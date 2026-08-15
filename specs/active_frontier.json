@@ -1396,13 +1396,16 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
       "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "summary": "Restore and harden Datum-owned Linux PTY/session transport with no third-party terminal dependency.",
+      "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
@@ -1412,7 +1415,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "PTY-01",
+        "canonical_next_step_id": "DTC-P03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1427,80 +1430,63 @@
         },
         "steps": [
           {
-            "id": "PTY-01",
+            "id": "DTC-P03",
             "kind": "execution",
             "status": "pending",
-            "action": "Inventory the restored Linux PTY ownership and establish a transport-only Datum boundary with no terminal-cell semantics or third-party code.",
+            "action": "Extract the bounded request, event, reader, session-handle, Linux PTY, spawn, and job-control ownership without changing behavior.",
             "depends_on": [],
             "requirement_refs": [
               {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "PTY-01"
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P03"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "PTY-02",
+            "id": "DTC-P04",
             "kind": "execution",
             "status": "pending",
-            "action": "Move allocation, spawn, read, write, resize, launch context, credentials, cwd/environment, and arbitrary executable/argv through the Datum-owned transport boundary.",
+            "action": "Complete arbitrary argv, cwd/environment/credentials, descriptor hygiene, termios, partial nonblocking I/O, bounded queues, backpressure, inactive-session draining, and error surfaces.",
             "depends_on": [
-              "PTY-01"
+              "DTC-P03"
             ],
             "requirement_refs": [
               {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "PTY-02"
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P04"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "PTY-03",
+            "id": "DTC-P05",
             "kind": "execution",
             "status": "pending",
-            "action": "Prove pipelines, process groups, Ctrl-C, explicit termination, exit status, and child-exit reporting through production-path tests.",
+            "action": "Complete foreground job control, line-discipline controls, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit, termination escalation, SIGHUP, and orphan-free teardown.",
             "depends_on": [
-              "PTY-02"
+              "DTC-P04"
             ],
             "requirement_refs": [
               {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "PTY-03"
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P05"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "PTY-04",
+            "id": "DTC-P06",
             "kind": "execution",
             "status": "pending",
-            "action": "Prove concurrent terminal-session isolation across input, output, resize, detach, reattach, exit, and teardown.",
+            "action": "Prove concurrent input/output/resize/detach/reattach/exit/restart isolation, stress, performance, dependency authority, source health, and platform integration.",
             "depends_on": [
-              "PTY-02"
+              "DTC-P05"
             ],
             "requirement_refs": [
               {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "PTY-04"
-              }
-            ],
-            "completion_evidence": []
-          },
-          {
-            "id": "PTY-05",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Lock the Datum-owned transport/core separation with drift guards and pass dependency-authority, terminal, governance, source-health, and platform-aware integration gates.",
-            "depends_on": [
-              "PTY-03",
-              "PTY-04"
-            ],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "PTY-05"
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P06"
               }
             ],
             "completion_evidence": []
@@ -1528,7 +1514,10 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
       "state": "blocked",
       "authorization": "execution",
@@ -1544,7 +1533,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "CORE-01",
+        "canonical_next_step_id": "DTC-P07",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1559,73 +1548,138 @@
         },
         "steps": [
           {
-            "id": "CORE-01",
+            "id": "DTC-P07",
             "kind": "execution",
             "status": "pending",
-            "action": "Define the Datum-owned VT/state module architecture, protocol inventory, data ownership, source-health decomposition, and Datum-authored fixture provenance.",
+            "action": "Create the std-only first-party core and define closed cells, screen state, limits, replies, events, damage, and snapshot types.",
             "depends_on": [],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "CORE-01"
-              }
-            ],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P07"}],
             "completion_evidence": []
           },
           {
-            "id": "CORE-02",
+            "id": "DTC-P08",
             "kind": "execution",
             "status": "pending",
-            "action": "Define closed Datum-owned core types and keep terminal-private structures out of the engine and gui-protocol.",
-            "depends_on": ["CORE-01"],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "CORE-02"
-              }
-            ],
+            "action": "Implement the bounded incremental UTF-8 and ECMA-48 parser with typed actions and chunk-invariant recovery.",
+            "depends_on": ["DTC-P07"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P08"}],
             "completion_evidence": []
           },
           {
-            "id": "CORE-03",
+            "id": "DTC-P09",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement Datum-owned parsing, feed, resize, replies, render/damage, modes/events, selection, history/reflow/search, input encoding, reset, and teardown.",
-            "depends_on": ["CORE-02"],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "CORE-03"
-              }
-            ],
+            "action": "Implement the primary/alternate screen, cursor, margins, modes, edit/erase/scroll reducer, and cell-continuation invariants.",
+            "depends_on": ["DTC-P07", "DTC-P08"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P09"}],
             "completion_evidence": []
           },
           {
-            "id": "CORE-04",
+            "id": "DTC-P10",
             "kind": "execution",
             "status": "pending",
-            "action": "Prove deterministic core snapshots over checked-in Datum-authored VT streams for cells, styles, replies, damage, Unicode width, modes, history, metadata, links, and graphics.",
-            "depends_on": ["CORE-03"],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "CORE-04"
-              }
-            ],
+            "action": "Complete DEC/xterm SGR, colors, charsets, tabs, reports, private modes, palettes, metadata, and synchronized-output semantics.",
+            "depends_on": ["DTC-P09"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P10"}],
             "completion_evidence": []
           },
           {
-            "id": "CORE-05",
+            "id": "DTC-P11",
             "kind": "execution",
             "status": "pending",
-            "action": "Pass dependency-authority, module-boundary, snapshot, source-health, governance, and strict-build gates and record the exact T2 production-cutover handoff.",
-            "depends_on": ["CORE-04"],
-            "requirement_refs": [
-              {
-                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-                "marker": "CORE-05"
-              }
-            ],
+            "action": "Generate governed Unicode tables and implement grapheme, emoji, combining, width, wide-cell, shaping-boundary, and declared BiDi behavior.",
+            "depends_on": ["DTC-P07", "DTC-P09"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P12",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement bounded logical history, stable anchors, deterministic trimming, and resize reflow.",
+            "depends_on": ["DTC-P09", "DTC-P11"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P12"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P13",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement grapheme, word, logical/wrapped-line, block and all selection plus deterministic copy extraction.",
+            "depends_on": ["DTC-P11", "DTC-P12"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P13"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P14",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement incremental literal search and a bounded Datum-owned non-backtracking regex engine with stable matches.",
+            "depends_on": ["DTC-P11", "DTC-P12"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P14"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P15",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete legacy, application, kitty keyboard, mouse, focus, paste, IME-commit, reply, and coordinate-clipping protocols.",
+            "depends_on": ["DTC-P10", "DTC-P11"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P15"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P16",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement bounded OSC link, clipboard, shell-mark, palette, title, CWD, notification, progress, URI and paste-security events.",
+            "depends_on": ["DTC-P10"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P16"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P17",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement bounded Datum-owned Base64, checksums, Adler-32, zlib/DEFLATE, and PNG decoding.",
+            "depends_on": ["DTC-P07", "DTC-P08"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P17"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P18",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement bounded sixel grammar, raster/color semantics, placement, clipping, history, and teardown.",
+            "depends_on": ["DTC-P10", "DTC-P11"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P18"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P19",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement full bounded kitty graphics transfer, image, placement, animation, composition, deletion, history, and reply semantics.",
+            "depends_on": ["DTC-P10", "DTC-P11", "DTC-P16", "DTC-P17"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P19"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P20",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement complete damage events and immutable renderer-independent snapshots for text, cursor, palette, history, and graphics.",
+            "depends_on": ["DTC-P09", "DTC-P10", "DTC-P12", "DTC-P16", "DTC-P18", "DTC-P19"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P20"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P21",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Close the core with normative snapshots, chunk invariance, deterministic mutation/replay, hostile-input, resource, performance, offline, dependency, and source-health proof.",
+            "depends_on": ["DTC-P08", "DTC-P09", "DTC-P10", "DTC-P11", "DTC-P12", "DTC-P13", "DTC-P14", "DTC-P15", "DTC-P16", "DTC-P17", "DTC-P18", "DTC-P19", "DTC-P20"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P21"}],
             "completion_evidence": []
           }
         ],

@@ -2,10 +2,11 @@
 
 Status: active target contract
 
-Authority: Product Mechanics 005 and 024 as amended by 027, 028, and 029.
+Authority: Product Mechanics 005 and 024 as amended by 027, 028, 029, and 030.
 Decision 027 controls terminal-emulation quality; decision 028 controls agent
 discovery and interoperability; decision 029 controls implementation ownership
-and dependency authority.
+and dependency authority; decision 030 controls the first-party core
+architecture, clean-room process, and one-way cutover.
 
 ## 1. Product acceptance statement
 
@@ -23,7 +24,8 @@ Neither may impersonate the other.
 ### 2.1 TerminalCore
 
 `TerminalCore` is Datum-owned source split into bounded, cohesive modules under
-decision 022. It may not wrap, link, vendor, copy, download, or invoke a
+decisions 022 and 030 in the first-party `datum-terminal-core` workspace crate.
+It may not wrap, link, vendor, copy, download, or invoke a
 third-party terminal implementation or fallback. It owns terminal semantics
 and exposes:
 
@@ -39,30 +41,37 @@ Terminal-core structures never cross into engine or `gui-protocol`. Terminal sta
 process-local consumer state in `gui-app`; the engine never persists it as design
 truth.
 
+The complete standards baseline and bounded execution DAG live in
+`DATUM_TERMINAL_CORE_RESEARCH.md` and
+`DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md`. The DTC-P00..P30 identifiers are
+the exhaustive program decomposition; CORE-01..05 below are retained only as
+the T1b phase summary and must never be used to collapse those packages into an
+omnibus implementation change.
+
 The T1b Datum-core implementation closes through these ordered requirements.
 T1b builds and proves the core; T2 owns production screen cutover,
 renderer/input integration, parity, and deletion of the provisional
 screen/parser:
 
-- <!-- REQ:TERMINAL-T1-CORE:CORE-01 --> **CORE-01 — owned architecture and inventory.**
+- **CORE-01 — owned architecture and inventory.**
   Define the Datum-owned VT/state module boundary, protocol inventory, data
   ownership, source-health decomposition, and behavior-fixture provenance.
   Reject every external terminal implementation and fallback.
-- <!-- REQ:TERMINAL-T1-CORE:CORE-02 --> **CORE-02 — closed core contract.**
+- **CORE-02 — closed core contract.**
   Define Datum-owned input, reply, render/damage, mode/event, selection,
   scrollback/search, and snapshot types. Terminal-private structures remain
   inside `gui-app` and never enter the engine or `gui-protocol`.
-- <!-- REQ:TERMINAL-T1-CORE:CORE-03 --> **CORE-03 — semantic implementation.**
+- **CORE-03 — semantic implementation.**
   Implement Datum-owned parsing, feed, resize, replies, cursor/modes,
   title/CWD/bell, palette, hyperlink/graphics state, selection coordinates,
   scrollback/search, input encoders, reset, and teardown without retaining the
   provisional screen as a rival core.
-- <!-- REQ:TERMINAL-T1-CORE:CORE-04 --> **CORE-04 — deterministic corpus.**
+- **CORE-04 — deterministic corpus.**
   Drive the core with checked-in Datum-authored VT byte streams and assert
   deterministic snapshots for cells/styles, replies, damage, Unicode width,
   modes, alternate screen, scrollback, title/CWD/bell, hyperlinks, and governed
   graphics state.
-- <!-- REQ:TERMINAL-T1-CORE:CORE-05 --> **CORE-05 — gate and T2 handoff.** Pass
+- **CORE-05 — gate and T2 handoff.** Pass
   dependency-authority, module-boundary, snapshot, source-health, governance,
   and strict build gates; record the exact T2 production-cutover seam. Do not
   claim the provisional screen retired until T2 parity and deletion evidence
@@ -76,24 +85,25 @@ preserve controlling-terminal setup, process groups, signals, resize, exit
 status, inherited user credentials/environment, and independent concurrent
 sessions without a third-party PTY implementation.
 
-The T1a transport replacement closes through these ordered implementation
-requirements:
+The T1a transport replacement closes through DTC-P03..P06 in the governed
+implementation plan. PTY-01..05 below are retained only as a phase summary and
+must not be used as a rival execution sequence:
 
-- <!-- REQ:TERMINAL-T1-PTY:PTY-01 --> **PTY-01 — owned boundary and inventory.**
+- **PTY-01 — owned boundary and inventory.**
   Inventory the restored Linux PTY ownership and establish a Datum-owned
   transport boundary that exposes process/session operations without terminal
   cell semantics or third-party code.
-- <!-- REQ:TERMINAL-T1-PTY:PTY-02 --> **PTY-02 — complete transport swap.** Move
+- **PTY-02 — complete transport swap.** Move
   allocation, spawn, read, write, resize, cwd/environment, inherited credentials,
   and arbitrary executable/argv launch through the adapter while preserving Datum
   bootstrap context.
-- <!-- REQ:TERMINAL-T1-PTY:PTY-03 --> **PTY-03 — process semantics.** Prove real
+- **PTY-03 — process semantics.** Prove real
   pipelines, process groups, Ctrl-C, explicit termination, shell exit status, and
   child-exit reporting through production-path tests.
-- <!-- REQ:TERMINAL-T1-PTY:PTY-04 --> **PTY-04 — session isolation.** Prove that
+- **PTY-04 — session isolation.** Prove that
   concurrent tabs remain independent across input, output, resize, detach,
   reattach, exit, and teardown.
-- <!-- REQ:TERMINAL-T1-PTY:PTY-05 --> **PTY-05 — harden and lock.** Complete the
+- **PTY-05 — harden and lock.** Complete the
   Datum-owned PTY boundary, add drift guards that keep cell parsing out of
   transport, and pass terminal, dependency-authority, source-health,
   governance, and platform-aware integration gates.
