@@ -459,8 +459,7 @@ fn drain_output(
     while Instant::now() < deadline {
         let Ok(event) = registry
             .active()
-            .rx
-            .recv_timeout(Duration::from_millis(25))
+            .recv_event_timeout(Duration::from_millis(25))
         else {
             continue;
         };

@@ -15,7 +15,7 @@ RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_termin
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
-TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_process.rs"
+TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -192,7 +192,7 @@ def check_terminal_transport_boundary(
         if marker not in transport:
             failures.append(f"Datum PTY boundary is missing {marker}")
         elif production_sources.count(marker) != transport.count(marker):
-            failures.append(f"Datum PTY ownership escaped terminal_process.rs: {marker}")
+            failures.append(f"Datum PTY ownership escaped terminal_transport/: {marker}")
     if "TIOCSWINSZ" not in production_sources:
         failures.append("Datum PTY resize ownership is missing TIOCSWINSZ")
     for marker in ("TerminalScreen", "TerminalLaneState", "pty_grid_mut", "apply_bytes"):
@@ -225,7 +225,10 @@ def main() -> int:
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
-    terminal_transport = TERMINAL_TRANSPORT.read_text()
+    terminal_transport = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(TERMINAL_TRANSPORT.rglob("*.rs"))
+    )
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)

@@ -1401,10 +1401,26 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "019fc281-de4f-7d91-95d3-732c357af61b",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "2f32f00f14a8010132a22c991d7b7a5024eea1a1",
+        "claimed_at": "2026-08-15T18:14:37Z",
+        "heartbeat_at": "2026-08-15T18:14:37Z",
+        "expires_at": "2026-08-16T02:14:37Z",
+        "scope": [
+          "DTC-P03",
+          "crates/gui-app/src/terminal_process.rs",
+          "crates/gui-app/src/terminal_transport/",
+          "DTC-P03 tests and convergence guards"
+        ]
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1432,7 +1448,7 @@
           {
             "id": "DTC-P03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Extract the bounded request, event, reader, session-handle, Linux PTY, spawn, and job-control ownership without changing behavior.",
             "depends_on": [],
             "requirement_refs": [

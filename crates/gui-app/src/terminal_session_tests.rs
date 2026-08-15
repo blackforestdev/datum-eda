@@ -600,7 +600,7 @@ fn terminal_session_spawns_real_pty_shell() {
         .expect("write command to PTY");
     let mut output = String::new();
     for _ in 0..80 {
-        if let Ok(event) = session.rx.recv_timeout(Duration::from_millis(100)) {
+        if let Ok(event) = session.recv_event_timeout(Duration::from_millis(100)) {
             match event {
                 TerminalEvent::Output(bytes) => {
                     let _ = crate::terminal_session_events::record_terminal_output_event(
@@ -657,7 +657,7 @@ fn terminal_session_terminate_reports_signal_exit() {
     let mut ready = false;
     for _ in 0..50 {
         if let Ok(TerminalEvent::Output(bytes)) =
-            session.rx.recv_timeout(Duration::from_millis(100))
+            session.recv_event_timeout(Duration::from_millis(100))
             && String::from_utf8_lossy(&bytes).contains("datum-terminate-ready") {
                 ready = true;
                 break;
@@ -670,7 +670,8 @@ fn terminal_session_terminate_reports_signal_exit() {
     session.terminate().expect("terminate PTY session");
     let mut observed_exit_code = None;
     for _ in 0..120 {
-        if let Ok(TerminalEvent::Exited(code)) = session.rx.recv_timeout(Duration::from_millis(100))
+        if let Ok(TerminalEvent::Exited(code)) =
+            session.recv_event_timeout(Duration::from_millis(100))
         {
             observed_exit_code = Some(code);
             break;

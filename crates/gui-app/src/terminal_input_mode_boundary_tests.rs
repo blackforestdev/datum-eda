@@ -61,7 +61,7 @@ fn detached_and_rename_modes_write_zero_bytes_then_reattach_writes_once() {
         && !String::from_utf8_lossy(&output).contains("ti03-reattach-proof")
     {
         if let Ok(TerminalEvent::Output(bytes)) =
-            registry.active().rx.recv_timeout(Duration::from_millis(25))
+            registry.active().recv_event_timeout(Duration::from_millis(25))
         {
             output.extend(bytes);
         }

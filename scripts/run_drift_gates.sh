@@ -15,6 +15,8 @@ python3 scripts/check_dependency_authority.py
 python3 scripts/check_resolver_raw_loads.py
 python3 scripts/test_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_agent_terminal_convergence.py
+python3 scripts/test_terminal_transport_boundary.py
+python3 scripts/check_terminal_transport_boundary.py
 python3 scripts/check_gui_design_tokens.py
 python3 scripts/check_gui_conformance.py
 # check_gui_conformance.py runs the composed-shell visual-parity gate

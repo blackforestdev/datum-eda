@@ -21,6 +21,8 @@
 /specs/third_party_dependency_policy.json @blackforestdev
 /scripts/check_dependency_authority.py @blackforestdev
 /scripts/test_dependency_authority.py @blackforestdev
+/scripts/check_terminal_transport_boundary.py @blackforestdev
+/scripts/test_terminal_transport_boundary.py @blackforestdev
 /docs/PROJECT_STATE_POLICY.md @blackforestdev
 /specs/active_frontier.json @blackforestdev
 /specs/PROGRESS.md @blackforestdev

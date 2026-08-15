@@ -1,44 +1,35 @@
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_context::{
-        TerminalContext, read_session_created_unix_ms,
-        tool_session_event_log_path, unix_time_ms, update_terminal_lifecycle_file,
-        write_terminal_context_files,
+        TerminalContext, read_session_created_unix_ms, tool_session_event_log_path, unix_time_ms,
+        update_terminal_lifecycle_file, write_terminal_context_files,
     },
+    terminal_process::spawn_terminal_process,
     terminal_screen::TerminalScreen,
-    terminal_process::{TerminalWakeGate, spawn_terminal_process},
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
+    terminal_transport::{TerminalTransportSession, TerminalWakeGate},
 };
-use anyhow::{Context, Result};
+use anyhow::Result;
 use datum_gui_protocol::{
     CheckRunReviewState, DatumCursorContext, DatumProjectionContext, DatumSceneBoundsContext,
     DatumSelectionContext, DatumToolSessionLifecycle, ProductionStatus, ReviewWorkspaceState,
     TerminalLaneState, TerminalTabState,
 };
-use std::io::{self, Write};
-use std::os::fd::RawFd;
 use std::path::{Path, PathBuf};
-use std::sync::mpsc::Receiver;
+use std::sync::mpsc::TryRecvError;
 use std::sync::{Arc, Mutex};
-use std::fs::File;
 use winit::event_loop::EventLoopProxy;
 
-pub(super) enum TerminalEvent {
-    Output(Vec<u8>),
-    Exited(Option<i32>),
-}
+pub(super) use crate::terminal_transport::TerminalTransportEvent as TerminalEvent;
 
 pub(super) struct TerminalSession {
-    pub(super) stdin: Arc<Mutex<File>>,
-    pub(super) rx: Receiver<TerminalEvent>,
+    transport: TerminalTransportSession,
     pub(super) context_path: PathBuf,
     pub(super) latest_context_path: PathBuf,
     pub(super) session_path: PathBuf,
     pub(super) session_id: String,
     pub(super) context_id: String,
-    pub(super) master_fd: RawFd,
-    pub(super) process_group_id: libc::pid_t,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
     /// command-finished check (terminal performance slice): the log is
@@ -450,7 +441,7 @@ pub(super) fn refresh_terminal_session_context(
         model_revision: context.source_revision.clone(),
         created_unix_ms: read_session_created_unix_ms(&session.session_path)
             .unwrap_or_else(|| unix_time_ms().unwrap_or(0)),
-        process_group_id: Some(session.process_group_id),
+        process_group_id: Some(session.process_group_id()),
     };
     write_terminal_context_files(&terminal_context, context)
 }
@@ -507,32 +498,56 @@ pub(super) fn mark_terminal_session_lifecycle(
         &session.context_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id),
+        Some(session.process_group_id()),
     )?;
     update_terminal_lifecycle_file(
         &session.latest_context_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id),
+        Some(session.process_group_id()),
     )?;
     update_terminal_lifecycle_file(
         &session.session_path,
         lifecycle,
         process_exit_code,
-        Some(session.process_group_id),
+        Some(session.process_group_id()),
     )
 }
 
 impl TerminalSession {
+    pub(super) fn from_transport(
+        transport: TerminalTransportSession,
+        context: TerminalContext,
+    ) -> Self {
+        Self {
+            transport,
+            context_path: context.context_path,
+            latest_context_path: context.latest_context_path,
+            session_path: context.session_path,
+            session_id: context.session_id,
+            context_id: context.context_id,
+            active_execution_id: Arc::new(Mutex::new(None)),
+            finished_scan_offset: std::cell::Cell::new(0),
+        }
+    }
+
     pub(super) fn write_bytes(&self, bytes: &[u8]) -> Result<()> {
-        let mut stdin = self
-            .stdin
-            .lock()
-            .map_err(|_| anyhow::anyhow!("lock terminal PTY master"))?;
-        stdin.write_all(bytes).context("write terminal PTY input")?;
-        stdin.flush().context("flush terminal PTY input")?;
+        self.transport.write_bytes(bytes)?;
         let _ = record_terminal_input_event(self, bytes);
         Ok(())
+    }
+    pub(super) fn try_recv_event(&self) -> Result<TerminalEvent, TryRecvError> {
+        self.transport.try_recv_event()
+    }
+    #[cfg(test)]
+    pub(super) fn recv_event_timeout(
+        &self,
+        timeout: std::time::Duration,
+    ) -> Result<TerminalEvent, std::sync::mpsc::RecvTimeoutError> {
+        self.transport.recv_event_timeout(timeout)
+    }
+    pub(super) fn process_group_id(&self) -> libc::pid_t {
+        self.transport.process_group_id()
     }
     pub(super) fn session_id(&self) -> &str {
         &self.session_id
@@ -566,39 +581,15 @@ impl TerminalSession {
     }
 
     pub(super) fn interrupt(&self) -> Result<()> {
-        self.signal_process_group(libc::SIGINT, "interrupt terminal process group")
+        self.transport.interrupt()
     }
 
     pub(super) fn terminate(&self) -> Result<()> {
-        self.signal_process_group(libc::SIGTERM, "terminate terminal process group")
-    }
-
-    fn signal_process_group(&self, signal: libc::c_int, context: &str) -> Result<()> {
-        let rc = unsafe { libc::kill(-self.process_group_id, signal) };
-        if rc < 0 {
-            return Err(io::Error::last_os_error()).context(context.to_string());
-        }
-        Ok(())
+        self.transport.terminate()
     }
 
     pub(super) fn resize(&self, cols: u16, rows: u16) -> Result<()> {
-        let size = libc::winsize {
-            ws_row: rows.max(1),
-            ws_col: cols.max(1),
-            ws_xpixel: 0,
-            ws_ypixel: 0,
-        };
-        let rc = unsafe { libc::ioctl(self.master_fd, libc::TIOCSWINSZ, &size) };
-        if rc < 0 {
-            return Err(io::Error::last_os_error()).context("resize terminal PTY");
-        }
-        Ok(())
-    }
-}
-
-impl Drop for TerminalSession {
-    fn drop(&mut self) {
-        let _ = self.terminate();
+        self.transport.resize(cols, rows)
     }
 }
 

@@ -66,6 +66,7 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
+mod terminal_transport;
 mod workspace_keyboard;
 use app_bootstrap::{GuiArgs, LaunchState};
 use app_shell::{App, fatal_gui_error, terminal_scrollback_page_step};

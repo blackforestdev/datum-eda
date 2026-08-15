@@ -201,7 +201,7 @@ impl Runtime {
         let mut disconnected = false;
         let mut drained_events = 0usize;
         while drained_events < TERMINAL_EVENT_DRAIN_LIMIT {
-            match self.terminal_sessions.active().rx.try_recv() {
+            match self.terminal_sessions.active().try_recv_event() {
                 Ok(TerminalEvent::Output(bytes)) => {
                     drained_events += 1;
                     let _ = record_terminal_output_event(self.terminal_sessions.active(), &bytes);
