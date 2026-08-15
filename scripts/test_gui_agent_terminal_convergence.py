@@ -24,6 +24,7 @@ class TerminalGridWriterGuardTest(unittest.TestCase):
     pub(crate) fn set_keyboard_focus(&mut self) {
         let report = keyboard_focus::terminal_focus_report_transition(old, next);
         self.keyboard_focus = next;
+        self.workspace.ui.terminal.has_keyboard_focus = next.is_terminal();
     }
     fn after() {}
 """
@@ -38,13 +39,18 @@ class TerminalGridWriterGuardTest(unittest.TestCase):
             "if !focused {}", "self.report_terminal_focus_event(focused);"
         )
         invalid_authority = valid.replace(
-            "self.keyboard_focus = next;", "self.keyboard_focus = next;\nself.keyboard_focus = old;"
+            "self.keyboard_focus = next;",
+            "self.keyboard_focus = next;\nself.keyboard_focus = old;\n"
+            "self.workspace.ui.terminal.has_keyboard_focus = false;",
         )
         guard.check_terminal_focus_reporting(
             invalid_window, invalid_authority, invalid_authority, failures
         )
         self.assertIn("OS window focus must not emit terminal focus-report bytes", failures)
         self.assertIn("keyboard focus must mutate only through set_keyboard_focus", failures)
+        self.assertIn(
+            "terminal cursor focus projection must mutate only with keyboard focus", failures
+        )
 
     def test_only_protocol_declaration_terminal_core_and_tests_may_mutate_grid(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

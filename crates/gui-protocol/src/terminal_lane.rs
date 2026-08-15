@@ -82,6 +82,9 @@ pub struct TerminalLaneState {
     pub screen_cursor_col: usize,
     pub screen_cursor_visible: bool,
     pub screen_cursor_style: Option<String>,
+    /// Read-only projection of the gui-app keyboard-focus authority for cursor
+    /// presentation. The terminal child still owns cursor shape and visibility.
+    pub has_keyboard_focus: bool,
     pub application_cursor_keys: bool,
     pub application_keypad: bool,
     pub focus_event_reporting: bool,
@@ -141,6 +144,7 @@ impl Default for TerminalLaneState {
             screen_cursor_col: 0,
             screen_cursor_visible: true,
             screen_cursor_style: None,
+            has_keyboard_focus: false,
             application_cursor_keys: false,
             application_keypad: false,
             focus_event_reporting: false,

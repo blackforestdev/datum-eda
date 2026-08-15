@@ -1130,7 +1130,7 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1221,7 +1221,7 @@
           {
             "id": "TF-04",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Render a visible block/hollow cursor focus affordance without replacing application-selected cursor shape.",
             "depends_on": [
               "TF-01"
@@ -1264,6 +1264,20 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-tf-04-20260814",
+        "claimed_at": "2026-08-14T21:02:26-07:00",
+        "heartbeat_at": "2026-08-14T21:02:26-07:00",
+        "expires_at": "2026-08-15T05:02:26-07:00",
+        "scope": [
+          "TF-04 terminal cursor focus affordance",
+          "TF-04 cursor-shape preservation regressions"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "8e61d48865dbbe2ce9824a977002fd985efcc233"
       }
     },
     {

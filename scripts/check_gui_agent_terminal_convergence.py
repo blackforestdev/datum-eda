@@ -57,9 +57,14 @@ def check_terminal_focus_reporting(
         failures.append("OS window focus must not emit terminal focus-report bytes")
     if "terminal_focus_report_transition" not in setter_body:
         failures.append("keyboard-focus transitions must own terminal focus reporting")
+    if "has_keyboard_focus" not in setter_body:
+        failures.append("keyboard-focus setter must publish the terminal cursor focus projection")
     assignments = re.findall(r"self\.keyboard_focus\s*=(?!=)", mutation_sources)
     if len(assignments) != 1:
         failures.append("keyboard focus must mutate only through set_keyboard_focus")
+    projection_assignments = re.findall(r"\.has_keyboard_focus\s*=(?!=)", mutation_sources)
+    if len(projection_assignments) != 1:
+        failures.append("terminal cursor focus projection must mutate only with keyboard focus")
 
 
 def main() -> int:

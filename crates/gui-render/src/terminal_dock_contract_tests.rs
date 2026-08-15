@@ -521,7 +521,15 @@ fn terminal_dock_renders_protocol_screen_cursor_when_visible() {
     state.ui.terminal.screen_cursor_visible = true;
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
+    let visible = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    state.ui.terminal.screen_cursor_visible = false;
+    let hidden = PreparedScene::from_workspace(
         &state,
         1280,
         800,
@@ -529,9 +537,10 @@ fn terminal_dock_renders_protocol_screen_cursor_when_visible() {
         &retained,
     );
 
-    assert!(
-        prepared.text_runs.iter().any(|run| run.text == "█"),
-        "terminal dock should render the PTY screen cursor from protocol state"
+    assert_eq!(
+        visible.panel_vertices().len(),
+        hidden.panel_vertices().len() + 24,
+        "unfocused PTY cursor should add a four-quad hollow outline"
     );
 }
 
@@ -544,10 +553,19 @@ fn terminal_dock_renders_protocol_cursor_shape() {
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
     state.ui.terminal.screen_cursor_visible = true;
+    state.ui.terminal.has_keyboard_focus = true;
     state.ui.terminal.screen_cursor_style = Some("steady_bar".to_string());
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
+    let bar = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    state.ui.terminal.screen_cursor_style = None;
+    let block = PreparedScene::from_workspace(
         &state,
         1280,
         800,
@@ -555,13 +573,10 @@ fn terminal_dock_renders_protocol_cursor_shape() {
         &retained,
     );
 
-    assert!(
-        prepared.text_runs.iter().any(|run| run.text == "|"),
-        "terminal dock should render bar cursor style from protocol state"
-    );
-    assert!(
-        prepared.text_runs.iter().all(|run| run.text != "█"),
-        "bar cursor style should not fall back to block cursor"
+    assert_ne!(
+        bar.panel_vertices(),
+        block.panel_vertices(),
+        "child-selected bar geometry must not be replaced by a block cursor"
     );
 }
 
@@ -573,10 +588,18 @@ fn terminal_dock_suppresses_protocol_screen_cursor_when_hidden() {
     *state.ui.terminal.pty_grid_mut().lines = vec!["prompt".to_string()];
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
-    state.ui.terminal.screen_cursor_visible = false;
+    state.ui.terminal.screen_cursor_visible = true;
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
+    let visible = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    state.ui.terminal.screen_cursor_visible = false;
+    let hidden = PreparedScene::from_workspace(
         &state,
         1280,
         800,
@@ -585,7 +608,7 @@ fn terminal_dock_suppresses_protocol_screen_cursor_when_hidden() {
     );
 
     assert!(
-        prepared.text_runs.iter().all(|run| run.text != "█"),
+        hidden.panel_vertices().len() < visible.panel_vertices().len(),
         "terminal dock should honor hidden cursor mode"
     );
 }

@@ -159,6 +159,10 @@ pub(crate) fn terminal_focus_report_transition(
     (was_terminal != is_terminal).then_some(is_terminal)
 }
 
+fn terminal_owns_keyboard(focus: KeyboardFocus) -> bool {
+    focus == KeyboardFocus::Terminal
+}
+
 impl Runtime {
     pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
         self.keyboard_focus
@@ -167,6 +171,14 @@ impl Runtime {
     pub(crate) fn set_keyboard_focus(&mut self, focus: KeyboardFocus) {
         let report = terminal_focus_report_transition(self.keyboard_focus, focus);
         self.keyboard_focus = focus;
+        // Renderer projection only: KeyboardFocus remains the sole authority.
+        // Focus changes fill/outline the child-selected cursor shape; they do
+        // not replace DECSCUSR shape or DEC cursor visibility state (TF-04).
+        self.session
+            .workspace_mut()
+            .ui
+            .terminal
+            .has_keyboard_focus = terminal_owns_keyboard(focus);
         if let Some(focused) = report {
             self.report_terminal_focus_event(focused);
         }

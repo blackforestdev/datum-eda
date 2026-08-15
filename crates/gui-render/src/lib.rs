@@ -20,6 +20,7 @@ use wgpu::util::DeviceExt;
 pub use datum_gui_viewport::CameraState;
 
 mod bottom_dock;
+mod terminal_cursor;
 #[cfg(feature = "visual")]
 pub mod design_artboards;
 mod design_tokens;

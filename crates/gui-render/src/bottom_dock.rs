@@ -9,6 +9,7 @@ use super::{
     TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, design_tokens,
     draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
 };
+use crate::terminal_cursor::render_terminal_cursor;
 use taffy::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
@@ -241,7 +242,7 @@ pub(super) fn render_bottom_tabs(
             // path uses (datum_gui_viewport::terminal_screen_geometry), so the
             // rows drawn here always equal the rows the PTY was told.
             let geometry = terminal_screen_geometry(layout.bottom_strip.into());
-            render_terminal_lane(state, &geometry, text_runs, hit_regions);
+            render_terminal_lane(state, &geometry, panel_quads, text_runs, hit_regions);
         }
     }
 }
@@ -249,6 +250,7 @@ pub(super) fn render_bottom_tabs(
 fn render_terminal_lane(
     state: &ReviewWorkspaceState,
     geometry: &TerminalScreenGeometry,
+    panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
@@ -258,7 +260,7 @@ fn render_terminal_lane(
     if let Some(sessions_row) = geometry.sessions_row {
         render_terminal_sessions_row(state, sessions_row.into(), text_runs, hit_regions);
     }
-    render_terminal_screen(state, geometry, text_runs, hit_regions);
+    render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
 }
 
 /// Terminal chrome header band: lane title plus PTY session status/meta and
@@ -443,6 +445,7 @@ fn render_terminal_sessions_row(
 fn render_terminal_screen(
     state: &ReviewWorkspaceState,
     geometry: &TerminalScreenGeometry,
+    panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
@@ -487,32 +490,10 @@ fn render_terminal_screen(
             && state.ui.terminal.screen_cursor_row == line_index
             && state.ui.terminal.screen_cursor_col < max_columns
         {
-            render_terminal_screen_cursor(&state.ui.terminal, screen.x, y, text_runs);
+            render_terminal_cursor(&state.ui.terminal, screen.x, y, panel_quads);
         }
         y += TERMINAL_CELL_HEIGHT_PX;
     }
-}
-
-fn render_terminal_screen_cursor(
-    terminal: &datum_gui_protocol::TerminalLaneState,
-    origin_x: f32,
-    y: f32,
-    text_runs: &mut Vec<TextRun>,
-) {
-    let glyph = match terminal.screen_cursor_style.as_deref() {
-        Some("blinking_underline" | "steady_underline") => "_",
-        Some("blinking_bar" | "steady_bar") => "|",
-        _ => "█",
-    };
-    draw_text(
-        glyph,
-        origin_x + terminal.screen_cursor_col as f32 * TERMINAL_CELL_WIDTH_PX,
-        y,
-        11.0,
-        TEXT_PRIMARY,
-        TextFace::Mono,
-        text_runs,
-    );
 }
 
 fn render_terminal_styled_line(
