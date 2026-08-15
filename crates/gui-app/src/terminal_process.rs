@@ -1,3 +1,4 @@
+use self::terminal_transport::{configure_legacy_unix_child, open_legacy_unix_pty};
 use crate::{
     terminal_context::{
         DATUM_CLI, DATUM_LEGACY_CLI, tool_session_event_log_path, write_terminal_context,
@@ -7,13 +8,8 @@ use crate::{
 };
 use anyhow::{Context, Result};
 use std::{
-    ffi::CStr,
-    fs::File,
-    io::{self, Read},
-    os::{
-        fd::{FromRawFd, RawFd},
-        unix::process::CommandExt,
-    },
+    io::Read,
+    os::unix::process::CommandExt,
     process::Command,
     sync::{
         Arc, Mutex,
@@ -23,6 +19,9 @@ use std::{
     thread,
 };
 use winit::event_loop::EventLoopProxy;
+
+#[path = "terminal_transport.rs"]
+pub(super) mod terminal_transport;
 
 #[derive(Clone)]
 pub(super) struct TerminalWakeGate {
@@ -60,7 +59,7 @@ pub(super) fn spawn_terminal_process(
 ) -> Result<TerminalSession> {
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     let mut terminal_context = write_terminal_context(context)?;
-    let pty = open_pty_pair().context("open terminal PTY")?;
+    let pty = open_legacy_unix_pty().context("open terminal PTY")?;
     let reader = pty
         .master
         .try_clone()
@@ -95,7 +94,7 @@ pub(super) fn spawn_terminal_process(
         command.env("DATUM_SOURCE_REVISION", model_revision);
     }
     unsafe {
-        command.pre_exec(move || configure_child_pty(&slave_path, master_fd));
+        command.pre_exec(move || configure_legacy_unix_child(&slave_path, master_fd));
     }
     let mut child = command.spawn().with_context(|| {
         format!(
@@ -167,73 +166,6 @@ fn publish_terminal_event(
     if tx.send(event).is_ok() {
         wake();
     }
-}
-
-struct PtyPair {
-    master: File,
-    master_fd: RawFd,
-    slave_path: Vec<u8>,
-}
-
-fn open_pty_pair() -> Result<PtyPair> {
-    let master_fd = unsafe { libc::posix_openpt(libc::O_RDWR | libc::O_NOCTTY) };
-    if master_fd < 0 {
-        return Err(io::Error::last_os_error()).context("posix_openpt");
-    }
-    if unsafe { libc::grantpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(master_fd) };
-        return Err(error).context("grantpt");
-    }
-    if unsafe { libc::unlockpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(master_fd) };
-        return Err(error).context("unlockpt");
-    }
-    let slave_path = slave_path(master_fd)?;
-    let master = unsafe { File::from_raw_fd(master_fd) };
-    Ok(PtyPair {
-        master,
-        master_fd,
-        slave_path,
-    })
-}
-
-fn slave_path(master_fd: RawFd) -> Result<Vec<u8>> {
-    let mut buffer = [0 as libc::c_char; 128];
-    let rc = unsafe { libc::ptsname_r(master_fd, buffer.as_mut_ptr(), buffer.len()) };
-    if rc != 0 {
-        return Err(io::Error::from_raw_os_error(rc)).context("ptsname_r");
-    }
-    let path = unsafe { CStr::from_ptr(buffer.as_ptr()) };
-    Ok(path.to_bytes_with_nul().to_vec())
-}
-
-fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
-    if unsafe { libc::setsid() } < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    let slave_fd = unsafe { libc::open(slave_path.as_ptr().cast(), libc::O_RDWR) };
-    if slave_fd < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    if unsafe { libc::ioctl(slave_fd, libc::TIOCSCTTY, 0) } < 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(slave_fd) };
-        return Err(error);
-    }
-    for fd in [libc::STDIN_FILENO, libc::STDOUT_FILENO, libc::STDERR_FILENO] {
-        if unsafe { libc::dup2(slave_fd, fd) } < 0 {
-            let error = io::Error::last_os_error();
-            unsafe { libc::close(slave_fd) };
-            return Err(error);
-        }
-    }
-    if slave_fd > libc::STDERR_FILENO {
-        unsafe { libc::close(slave_fd) };
-    }
-    unsafe { libc::close(master_fd) };
-    Ok(())
 }
 
 #[cfg(test)]

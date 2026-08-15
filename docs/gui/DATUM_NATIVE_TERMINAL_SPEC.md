@@ -71,6 +71,23 @@ requirements:
   transport, and pass the terminal, source-health, governance, and platform-aware
   integration gates.
 
+PTY-01 freezes the migration inventory below. “Legacy” names are deliberate
+removal markers, not sanctioned long-term alternatives:
+
+| Responsibility | Current owner after PTY-01 | PTY-02 destination |
+|---|---|---|
+| PTY allocation, slave setup, controlling TTY, raw resize | `terminal_transport.rs` `LegacyUnixPty` helpers | `portable_pty::PtySystem` / `MasterPty` |
+| shell argv, cwd, environment and Datum discovery injection | `terminal_process.rs::spawn_terminal_process` | transport launch request + `CommandBuilder` |
+| master reader/writer and child wait threads | `terminal_process.rs` | portable master reader/writer + child handle |
+| input logging and terminal event publication | `TerminalSession::write_bytes` and `terminal_process.rs` | retained Datum wrappers around the portable handles |
+| process-group interrupt/terminate and exit code | `TerminalSession` plus the wait thread | portable child/killer adapter with platform proof |
+| tab attachment, restart, dimensions and independent screen state | `TerminalSessionRegistry` | unchanged registry over the new transport session |
+| VT parsing, cells, selection, rendering and chrome | `TerminalScreen`, protocol and renderer modules | explicitly outside transport; later TerminalCore/T2 work |
+
+The dependency is exactly pinned to `portable-pty` 0.9.0 at the workspace
+boundary. Updating that pin is an explicit compatibility change with the same
+transport tests; a loose semver range is not permitted.
+
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.

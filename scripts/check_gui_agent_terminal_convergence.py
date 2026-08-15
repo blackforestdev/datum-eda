@@ -15,6 +15,9 @@ RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_termin
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
+TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport.rs"
+WORKSPACE_CARGO = ROOT / "Cargo.toml"
+GUI_APP_CARGO = ROOT / "crates" / "gui-app" / "Cargo.toml"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -174,6 +177,34 @@ def check_terminal_input_mode(
                 failures.append(f"attached terminal byte gate is missing {marker}")
 
 
+def check_terminal_transport_boundary(
+    production_sources: str,
+    transport: str,
+    failures: list[str],
+) -> None:
+    """Keep the PTY migration seam transport-only and dependency-pinned."""
+    if 'portable-pty = "=0.9.0"' not in WORKSPACE_CARGO.read_text():
+        failures.append("portable-pty must remain pinned exactly to 0.9.0")
+    if "portable-pty.workspace = true" not in GUI_APP_CARGO.read_text():
+        failures.append("GUI terminal must consume the workspace portable-pty pin")
+    for marker in (
+        "portable_pty::PtySize",
+        "struct LegacyUnixPty",
+        "fn open_legacy_unix_pty",
+        "fn configure_legacy_unix_child",
+        "fn resize_legacy_unix_pty",
+    ):
+        if marker not in transport:
+            failures.append(f"terminal transport boundary is missing {marker}")
+    for marker in ("TerminalScreen", "TerminalLaneState", "pty_grid_mut", "apply_bytes"):
+        if marker in transport:
+            failures.append(f"terminal transport must not own cell/core marker {marker}")
+    outside_transport = production_sources.replace(transport, "")
+    for marker in ("posix_openpt", "grantpt", "unlockpt", "ptsname_r", "TIOCSCTTY", "TIOCSWINSZ"):
+        if marker in outside_transport:
+            failures.append(f"raw PTY ownership escaped terminal_transport: {marker}")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -191,10 +222,12 @@ def main() -> int:
     production_refresh = PRODUCTION_REFRESH.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
+    terminal_transport = TERMINAL_TRANSPORT.read_text()
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
+    check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:

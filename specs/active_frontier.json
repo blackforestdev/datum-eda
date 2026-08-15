@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1424,7 +1424,7 @@
           {
             "id": "PTY-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Inventory current PTY ownership, pin portable-pty, and establish a transport-only adapter boundary with no terminal-cell semantics.",
             "depends_on": [],
             "requirement_refs": [
@@ -1512,6 +1512,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-pty-01-20260814",
+        "claimed_at": "2026-08-14T22:26:41-07:00",
+        "heartbeat_at": "2026-08-14T22:26:41-07:00",
+        "expires_at": "2026-08-15T06:26:41-07:00",
+        "scope": [
+          "PTY-01 current transport inventory",
+          "PTY-01 portable-pty dependency pin",
+          "PTY-01 transport-only adapter boundary"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "61f218bd873cb5bfd87ffe31d44ec2b0fdd2f20f"
       }
     },
     {

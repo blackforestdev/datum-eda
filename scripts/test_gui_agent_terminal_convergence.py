@@ -17,6 +17,32 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
+        transport = """
+use portable_pty::PtySize;
+struct LegacyUnixPty;
+fn open_legacy_unix_pty() {}
+fn configure_legacy_unix_child() {}
+fn resize_legacy_unix_pty() {}
+"""
+        failures: list[str] = []
+        guard.check_terminal_transport_boundary(transport, transport, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_transport_boundary(
+            transport + "\nfn rogue() { posix_openpt(); TerminalScreen::default(); }",
+            transport + "\nTerminalScreen::default();",
+            failures,
+        )
+        self.assertIn(
+            "terminal transport must not own cell/core marker TerminalScreen",
+            failures,
+        )
+        self.assertIn(
+            "raw PTY ownership escaped terminal_transport: posix_openpt", failures
+        )
+
     def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:
         production = """
 enum TerminalInputOwner { AttachedPty, RenameChrome, DetachedReadOnly }
