@@ -14,6 +14,10 @@
 /specs/SPEC_PARITY.md @blackforestdev
 /scripts/check_spec_parity.py @blackforestdev
 /docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md @blackforestdev
+/specs/third_party_dependency_policy.json @blackforestdev
+/scripts/check_dependency_authority.py @blackforestdev
+/scripts/test_dependency_authority.py @blackforestdev
 /docs/PROJECT_STATE_POLICY.md @blackforestdev
 /specs/active_frontier.json @blackforestdev
 /specs/PROGRESS.md @blackforestdev

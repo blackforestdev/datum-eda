@@ -49,7 +49,7 @@ they support the product; they do not define its identity.
   `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..028`),
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..029`),
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
@@ -261,6 +261,13 @@ domain builds toward on the landed substrate.
   a separate phase: name it as execution and get explicit authorization
   before doing it. "Proof slice" / "proof gate" sections in the docs are
   specifications of what execution must later demonstrate, not to-dos.
+- **Dependency authority is owner-only.** Decision 029 forbids agents from
+  adding any new third-party code dependency without an explicit numbered
+  owner decision naming it and accepting its license obligations. Roadmap
+  authorization, a permissive license, technical merit, or “proceed” is not
+  approval. The terminal is stricter: its PTY/session and terminal-emulation
+  implementation must be Datum-owned; no external terminal crate, library,
+  source, build download, embedded executable, or fallback is permitted.
 - **Research before building — ten minutes in the library saves ten years in the
   lab.** Before committing to a foundational or cross-cutting architecture (a
   shared backbone, a data model, an editor's tool language), research the prior
@@ -379,7 +386,7 @@ project/
 │
 ├── docs/
 │   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..028 — ratified mechanism
+│   ├── decisions/          # PRODUCT_MECHANICS_000..029 — ratified mechanism
 │   │                       #   decision records (what + why + how)
 │   ├── contracts/          # Per-domain tool-contract implementation specs:
 │   │                       #   schematic/PCB/library/rules/manufacturing +

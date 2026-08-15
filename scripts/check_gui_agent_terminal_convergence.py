@@ -15,9 +15,7 @@ RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_termin
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
-TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport.rs"
-WORKSPACE_CARGO = ROOT / "Cargo.toml"
-GUI_APP_CARGO = ROOT / "crates" / "gui-app" / "Cargo.toml"
+TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_process.rs"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -182,40 +180,32 @@ def check_terminal_transport_boundary(
     transport: str,
     failures: list[str],
 ) -> None:
-    """Keep the PTY migration seam transport-only and dependency-pinned."""
-    if 'portable-pty = "=0.9.0"' not in WORKSPACE_CARGO.read_text():
-        failures.append("portable-pty must remain pinned exactly to 0.9.0")
-    if "portable-pty.workspace = true" not in GUI_APP_CARGO.read_text():
-        failures.append("GUI terminal must consume the workspace portable-pty pin")
+    """Keep Linux PTY ownership inside Datum and outside terminal semantics."""
     for marker in (
-        "portable_pty::",
-        "struct TerminalTransportLaunch",
-        "struct PortablePtyProcess",
-        "fn spawn_portable_pty",
-        "NativePtySystem",
-        ".openpty(",
-        ".spawn_command(",
-        ".try_clone_reader(",
-        ".take_writer(",
-    ):
-        if marker not in transport:
-            failures.append(f"terminal transport boundary is missing {marker}")
-    for marker in ("TerminalScreen", "TerminalLaneState", "pty_grid_mut", "apply_bytes"):
-        if marker in transport:
-            failures.append(f"terminal transport must not own cell/core marker {marker}")
-    for marker in (
-        "LegacyUnixPty",
         "posix_openpt",
         "grantpt",
         "unlockpt",
         "ptsname_r",
         "TIOCSCTTY",
-        "TIOCSWINSZ",
+        "configure_child_pty",
+    ):
+        if marker not in transport:
+            failures.append(f"Datum PTY boundary is missing {marker}")
+        elif production_sources.count(marker) != transport.count(marker):
+            failures.append(f"Datum PTY ownership escaped terminal_process.rs: {marker}")
+    if "TIOCSWINSZ" not in production_sources:
+        failures.append("Datum PTY resize ownership is missing TIOCSWINSZ")
+    for marker in ("TerminalScreen", "TerminalLaneState", "pty_grid_mut", "apply_bytes"):
+        if marker in transport:
+            failures.append(f"terminal transport must not own cell/core marker {marker}")
+    for marker in (
+        "libghostty",
+        "alacritty_terminal",
+        "portable_pty",
+        "portable-pty",
     ):
         if marker in production_sources:
-            failures.append(f"hand-rolled PTY ownership must be retired: {marker}")
-    if "spawn_portable_pty" not in production_sources:
-        failures.append("production terminal process must spawn through portable-pty")
+            failures.append(f"third-party terminal dependency must not remain: {marker}")
 
 
 def main() -> int:

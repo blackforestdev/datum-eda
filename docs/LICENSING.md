@@ -68,6 +68,13 @@ inheritance.
 
 ## Third-Party Dependencies
 
+Product Mechanics 029 is controlling: the existing dependency set is a frozen
+inherited baseline, not authorization for additions. No new third-party code
+dependency may be introduced without an explicit numbered owner decision naming
+the component and accepted obligations. The terminal implementation has no
+third-party exception; its PTY/session and terminal-emulation code are
+Datum-owned.
+
 | Dependency | License | Risk |
 |-----------|---------|------|
 | KiCad PNS router | GPL v3 | High — infects if linked. Mitigate with process isolation or deferral |

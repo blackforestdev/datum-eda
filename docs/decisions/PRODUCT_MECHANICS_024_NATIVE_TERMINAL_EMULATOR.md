@@ -60,22 +60,18 @@ safety net.
   PTY-backed shell (decision 005), now built to pro-grade emulator quality. It is
   not a fake command pane, a Datum-only console, an agent proxy, or a mutation
   bridge.
-- **TE-002 (build the state model, keep the parser/codec).** Datum owns the
-  `Grid<Cell>` state model; the existing VT parser and the `terminal_input.rs`
-  keyboard/mouse codec are **kept** and re-targeted, not rewritten. Writing a new
-  ANSI state machine from scratch is forbidden waste.
-- **TE-003 (swappable core, adopt-agnostic interface).** The VT core sits behind
-  a stable render interface (`Grid → (Quad, TextRun)`); the interface, the PTY
-  layer, and the focus authority MUST be independent of whether the core is
-  Datum's own grid or an adopted engine (`alacritty_terminal` today,
-  `libghostty-vt` to re-evaluate later). A build decision must not foreclose
-  swapping the core.
-- **TE-004 (the three guardrails).** A build MUST: link `unicode-width` +
-  `unicode-segmentation` rather than hand-roll Unicode width/grapheme; gate
-  correctness on the `vttest` + `esctest2` conformance suites (pro-grade is a
-  measured pass-rate, not a claim); and declare the graphics ceiling **out of
-  scope** — no sixel, iTerm2, or kitty graphics protocols; no per-terminal width
-  correction tables.
+- **TE-002 (Datum-owned state and parser).** Datum owns the `Grid<Cell>` state
+  model, VT parser, and keyboard/mouse codec. Existing provisional code is
+  retained only where it satisfies the amended contracts; terminal semantics
+  are expanded as bounded Datum modules under decisions 022, 027, and 029.
+- **TE-003 (stable Datum interface).** The Datum-owned VT core sits behind a
+  stable render interface (`Grid → (Quad, TextRun)`); the interface, PTY layer,
+  and focus authority do not expose core-private structures. External emulator
+  implementations and fallbacks are prohibited by decision 029.
+- **TE-004 (conformance guardrails).** The build gates correctness on governed
+  conformance suites and Datum-authored fixtures. Unicode width, grapheme,
+  graphics, and protocol behavior follow the full product ceiling in decision
+  027 and are implemented without new terminal-specific dependencies.
 - **TE-005 (one keyboard-focus authority).** Keyboard routing MUST flow through a
   single focus authority (`FocusTarget = Viewport(pane) | Terminal | TextField`),
   not emergent match-guard order over dock visibility. Dock **visibility**,
@@ -94,12 +90,11 @@ safety net.
   the engine never sees it; it is neither engine truth nor a scene projection.
   The gui-app↔gui-render boundary carries render primitives (`Quad`, `TextRun`)
   plus a small terminal-**chrome** type, not the cell content.
-- **TE-008 (PTY layer).** The hand-rolled libc PTY is replaced by `portable-pty`,
-  retaining only a thin `killpg` for process-group signals (Ctrl-C to child
-  pipelines). The context back-door (env + `.datum/` sidecars) is orthogonal and
-  preserved; only its host call is retargeted.
+- **TE-008 (PTY layer).** Datum owns its Linux PTY/session implementation over
+  operating-system interfaces, including process groups and signals. The
+  context back-door (env + `.datum/` sidecars) remains orthogonal.
 - **TE-009 (phased, shippable, conformance-gated).** Delivery is phased and each
-  phase is shippable: Phase 0 foundation (focus authority + `portable-pty` +
+  phase is shippable: Phase 0 foundation (focus authority + owned PTY boundary +
   render interface) → Phase 1 cell grid + lossless color → Phase 2 width +
   scrollback separation → Phase 3 reflow → Phase 4 damage tracking + DEC/OSC
   polish. Graphics is deferred out of scope. Tracked as the
@@ -137,15 +132,11 @@ document is the one to fix.
 ## Consequences
 
 Datum gains a real, native, pro-grade terminal that runs agents and shells with
-full colorization — reusing the ~60% it already built (parser + codec) and
-paying only the bounded cost of the data model, width, and reflow, disciplined by
-free conformance suites and the Unicode crates. The keyboard-focus authority
+full colorization—building and hardening its own terminal semantics under the
+full decision-027 acceptance matrix. The keyboard-focus authority
 fixes the terminal being un-typeable and hotkeys leaking into the PTY as a
-by-product of unification. Because the VT core is swappable behind a stable
-interface, the build is reversible — `alacritty_terminal` can be dropped in later
-with the surrounding work kept. The cost is the multi-month Phase 1–3 model
-rewrite plus a permanent Unicode-width maintenance tax; the graphics long tail is
-explicitly declined as outside an EDA app's remit. The one job this decision
+by-product of unification. The cost is the multi-month terminal-core build and
+permanent compatibility maintenance accepted by decision 029. The one job this decision
 *removes* from the terminal — being the GUI's CLI-string write path — is
 re-homed on the typed write-path/Command Console track, restoring the
 one-mutation-path law.

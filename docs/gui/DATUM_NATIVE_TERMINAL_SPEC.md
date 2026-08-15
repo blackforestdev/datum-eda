@@ -2,9 +2,10 @@
 
 Status: active target contract
 
-Authority: Product Mechanics 005 and 024 as amended by 027 and 028. Decision
-027 controls terminal-emulation quality; decision 028 controls agent discovery
-and interoperability.
+Authority: Product Mechanics 005 and 024 as amended by 027, 028, and 029.
+Decision 027 controls terminal-emulation quality; decision 028 controls agent
+discovery and interoperability; decision 029 controls implementation ownership
+and dependency authority.
 
 ## 1. Product acceptance statement
 
@@ -21,13 +22,10 @@ Neither may impersonate the other.
 
 ### 2.1 TerminalCore
 
-`TerminalCore` is a narrow Datum-owned adapter over a pinned mature emulator
-library. The production integration target is `libghostty-vt`; a pinned
-`alacritty_terminal` implementation is permitted only when a recorded bake-off
-shows a blocking libghostty integration defect and the fallback closes the same
-capability matrix or carries explicit owner-approved deltas.
-
-The adapter owns no terminal semantics. It exposes:
+`TerminalCore` is Datum-owned source split into bounded, cohesive modules under
+decision 022. It may not wrap, link, vendor, copy, download, or invoke a
+third-party terminal implementation or fallback. It owns terminal semantics
+and exposes:
 
 - `feed_pty(bytes)` and terminal-generated reply bytes;
 - `resize(columns, rows, pixel_width, pixel_height)`;
@@ -37,25 +35,54 @@ The adapter owns no terminal semantics. It exposes:
 - keyboard/mouse/paste/focus encoders where supplied by the core; and
 - reset, teardown, and deterministic test snapshots.
 
-Vendor structures never cross into engine or `gui-protocol`. Terminal state is
+Terminal-core structures never cross into engine or `gui-protocol`. Terminal state is
 process-local consumer state in `gui-app`; the engine never persists it as design
 truth.
+
+The T1b Datum-core implementation closes through these ordered requirements.
+T1b builds and proves the core; T2 owns production screen cutover,
+renderer/input integration, parity, and deletion of the provisional
+screen/parser:
+
+- <!-- REQ:TERMINAL-T1-CORE:CORE-01 --> **CORE-01 — owned architecture and inventory.**
+  Define the Datum-owned VT/state module boundary, protocol inventory, data
+  ownership, source-health decomposition, and behavior-fixture provenance.
+  Reject every external terminal implementation and fallback.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-02 --> **CORE-02 — closed core contract.**
+  Define Datum-owned input, reply, render/damage, mode/event, selection,
+  scrollback/search, and snapshot types. Terminal-private structures remain
+  inside `gui-app` and never enter the engine or `gui-protocol`.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-03 --> **CORE-03 — semantic implementation.**
+  Implement Datum-owned parsing, feed, resize, replies, cursor/modes,
+  title/CWD/bell, palette, hyperlink/graphics state, selection coordinates,
+  scrollback/search, input encoders, reset, and teardown without retaining the
+  provisional screen as a rival core.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-04 --> **CORE-04 — deterministic corpus.**
+  Drive the core with checked-in Datum-authored VT byte streams and assert
+  deterministic snapshots for cells/styles, replies, damage, Unicode width,
+  modes, alternate screen, scrollback, title/CWD/bell, hyperlinks, and governed
+  graphics state.
+- <!-- REQ:TERMINAL-T1-CORE:CORE-05 --> **CORE-05 — gate and T2 handoff.** Pass
+  dependency-authority, module-boundary, snapshot, source-health, governance,
+  and strict build gates; record the exact T2 production-cutover seam. Do not
+  claim the provisional screen retired until T2 parity and deletion evidence
+  land.
 
 ### 2.2 Session transport
 
 Each terminal tab or split binds one `TerminalSession` to one `TerminalCore`.
-The PTY transport uses `portable-pty` unless a platform-specific production
-defect is evidenced. It must preserve controlling-terminal setup, process groups,
-signals, resize, exit status, inherited user credentials/environment, and
-independent concurrent sessions.
+Datum owns the Linux PTY transport over operating-system PTY interfaces. It must
+preserve controlling-terminal setup, process groups, signals, resize, exit
+status, inherited user credentials/environment, and independent concurrent
+sessions without a third-party PTY implementation.
 
 The T1a transport replacement closes through these ordered implementation
 requirements:
 
-- <!-- REQ:TERMINAL-T1-PTY:PTY-01 --> **PTY-01 — boundary and dependency.**
-  Inventory the current platform-specific PTY ownership, pin `portable-pty`, and
-  establish a transport adapter that exposes process/session operations without
-  exposing terminal-cell semantics.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-01 --> **PTY-01 — owned boundary and inventory.**
+  Inventory the restored Linux PTY ownership and establish a Datum-owned
+  transport boundary that exposes process/session operations without terminal
+  cell semantics or third-party code.
 - <!-- REQ:TERMINAL-T1-PTY:PTY-02 --> **PTY-02 — complete transport swap.** Move
   allocation, spawn, read, write, resize, cwd/environment, inherited credentials,
   and arbitrary executable/argv launch through the adapter while preserving Datum
@@ -66,35 +93,27 @@ requirements:
 - <!-- REQ:TERMINAL-T1-PTY:PTY-04 --> **PTY-04 — session isolation.** Prove that
   concurrent tabs remain independent across input, output, resize, detach,
   reattach, exit, and teardown.
-- <!-- REQ:TERMINAL-T1-PTY:PTY-05 --> **PTY-05 — retire and lock.** Delete the
-  hand-rolled PTY ownership path, add drift guards that keep cell parsing out of
-  transport, and pass the terminal, source-health, governance, and platform-aware
-  integration gates.
+- <!-- REQ:TERMINAL-T1-PTY:PTY-05 --> **PTY-05 — harden and lock.** Complete the
+  Datum-owned PTY boundary, add drift guards that keep cell parsing out of
+  transport, and pass terminal, dependency-authority, source-health,
+  governance, and platform-aware integration gates.
 
-PTY-01 freezes the migration inventory below. “Legacy” names are deliberate
-removal markers, not sanctioned long-term alternatives:
+PTY-01 freezes the recovery inventory below:
 
 | Responsibility | Current owner after PTY-01 | PTY-02 destination |
 |---|---|---|
-| PTY allocation, slave setup, controlling TTY, raw resize | `terminal_transport.rs` `LegacyUnixPty` helpers | `portable_pty::PtySystem` / `MasterPty` |
-| shell argv, cwd, environment and Datum discovery injection | `terminal_process.rs::spawn_terminal_process` | transport launch request + `CommandBuilder` |
-| master reader/writer and child wait threads | `terminal_process.rs` | portable master reader/writer + child handle |
-| input logging and terminal event publication | `TerminalSession::write_bytes` and `terminal_process.rs` | retained Datum wrappers around the portable handles |
-| process-group interrupt/terminate and exit code | `TerminalSession` plus the wait thread | portable child/killer adapter with platform proof |
+| PTY allocation, slave setup, controlling TTY, raw resize | `terminal_process.rs` Linux PTY helpers | bounded Datum transport module |
+| shell argv, cwd, environment and Datum discovery injection | `terminal_process.rs::spawn_terminal_process` | Datum transport launch request |
+| master reader/writer and child wait threads | `terminal_process.rs` | Datum-owned session handles |
+| input logging and terminal event publication | `TerminalSession::write_bytes` and `terminal_process.rs` | retained Datum wrappers around owned handles |
+| process-group interrupt/terminate and exit code | `TerminalSession` plus the wait thread | Datum process/session adapter with platform proof |
 | tab attachment, restart, dimensions and independent screen state | `TerminalSessionRegistry` | unchanged registry over the new transport session |
 | VT parsing, cells, selection, rendering and chrome | `TerminalScreen`, protocol and renderer modules | explicitly outside transport; later TerminalCore/T2 work |
 
-The dependency is exactly pinned to `portable-pty` 0.9.0 at the workspace
-boundary. Updating that pin is an explicit compatibility change with the same
-transport tests; a loose semver range is not permitted.
-
-PTY-02 makes the table's destination column the production path. Datum now
-constructs one `TerminalTransportLaunch`, maps the complete argv/cwd/environment
-and discovery context into `CommandBuilder`, and obtains allocation, child,
-reader, writer and resize authority only through `NativePtySystem`. No
-`posix_openpt`, slave-device setup or raw resize ioctl remains in Datum. The
-portable master and writer remain opaque session handles; VT bytes still flow
-to `TerminalScreen` only through the existing event consumer.
+PTY-02 makes the table's destination column the production path. The bounded
+Datum transport owns allocation, child, reader, writer, resize, process-group,
+and teardown behavior. VT bytes still flow to `TerminalScreen` only through the
+existing event consumer.
 
 ### 2.3 Screen authority
 
@@ -115,15 +134,15 @@ The PTY row/column size is derived from that exact rectangle after chrome.
 
 ## 3. Capability matrix
 
-Every row is required for epic closure. A dependency-provided capability still
-needs Datum integration and acceptance evidence.
+Every row is required for epic closure and must be implemented and evidenced by
+Datum-owned terminal source.
 
 | ID | Capability | Required outcome |
 |---|---|---|
 | NT-CAP-01 | Shell/process | Real login/non-login shell templates, arbitrary executable/argv, job control, signals, pipelines, long-running processes, SSH and tmux |
 | NT-CAP-02 | VT state | xterm/DEC-compatible primary/alternate screen, margins, tabs, charsets, modes, attributes, cursor and device reports |
 | NT-CAP-03 | Color/style | 16/256/truecolor foreground/background, underline styles/colors, bold/dim/italic/blink/inverse/conceal/strike/overline without lossy string mapping |
-| NT-CAP-04 | Unicode/text | Grapheme clusters, combining marks, wide cells, emoji sequences, fallback fonts, shaping/BiDi where core-supported, deterministic width policy |
+| NT-CAP-04 | Unicode/text | Grapheme clusters, combining marks, wide cells, emoji sequences, fallback fonts, shaping/BiDi where implemented, deterministic width policy |
 | NT-CAP-05 | Rendering | GPU-backed clipped cell rendering, backgrounds, decorations, cursor styles/blink, damage-only updates, DPI/font-size changes, no fixed column truncation |
 | NT-CAP-06 | Keyboard/IME | Printable/control/meta keys, dead/composed keys, IME preedit/commit, app cursor/keypad, kitty keyboard where supported, configurable terminal bindings |
 | NT-CAP-07 | Mouse | X10/UTF-8/URXVT/SGR modes, motion/wheel, application capture, explicit modifier override for local selection and link interaction |
@@ -131,8 +150,8 @@ needs Datum integration and acceptance evidence.
 | NT-CAP-09 | Scrollback/reflow | Configurable bounded history, primary-screen history, alternate-screen isolation, logical-line reflow, anchor preservation and jump-to-bottom behavior |
 | NT-CAP-10 | Search | Forward/backward, case-sensitive/insensitive, literal/regex, wrap, all-match highlights, stable navigation while output arrives |
 | NT-CAP-11 | Links/files | OSC 8 hyperlinks, detected URL/path hints, modifier-click/open/copy, cwd-relative paths, untrusted-target confirmation policy |
-| NT-CAP-12 | Modern protocols | Focus reporting, synchronized output, OSC palettes/title/cwd, controlled OSC 52, kitty keyboard, notifications/progress where core-supported |
-| NT-CAP-13 | Graphics | Kitty graphics and sixel when provided by the selected core; image lifetime, clipping, scroll/resize behavior, memory bounds and disabled-by-policy mode |
+| NT-CAP-12 | Modern protocols | Focus reporting, synchronized output, OSC palettes/title/cwd, controlled OSC 52, kitty keyboard, and governed notifications/progress behavior |
+| NT-CAP-13 | Graphics | Datum-owned kitty graphics and sixel slices; image lifetime, clipping, scroll/resize behavior, memory bounds and disabled-by-policy mode |
 | NT-CAP-14 | Sessions | Tabs, splits, rename/title, new-in-cwd, restart, close/kill confirmation, attach/detach, maximized terminal, process-exit state |
 | NT-CAP-15 | Profiles/appearance | Shell/argv/cwd/env templates, font/fallback/size, theme/palette, cursor, scrollback, bell and protocol-security settings |
 | NT-CAP-16 | Accessibility | Keyboard-only control, screen-reader text/cursor/selection/search exposure, high contrast, non-color cues, reduced motion |
@@ -370,7 +389,7 @@ accessibility, and Datum-shell integration.
 
 - **T0 Shell truth:** exclusive PTY cell authority, correct content hit target,
   visible-output canary, honest TF claims.
-- **T1 Core + transport:** pinned mature core adapter, portable PTY, rival legacy
+- **T1 Core + transport:** Datum-owned terminal core and PTY, rival provisional
   state/input removal, independent sessions.
 - **T2 Renderer + interaction:** complete attributes/fonts/Unicode/damage,
   focus/input/IME/mouse, selection/clipboard, accessibility foundation.

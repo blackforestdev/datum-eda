@@ -11,17 +11,14 @@ agents, local agents, shells, editors, multiplexers, debuggers, and build tools�
 with the same behavioral expectations users bring to Ghostty, Konsole, and
 Alacritty.
 
-Datum owns the native product integration: terminal tabs, splits and detachable
-views inside the Datum shell; focus and input arbitration; wgpu presentation;
-project-context injection; and the secure bridge to `datum-eda` and Datum MCP.
-Datum does **not** make terminal emulation a proprietary core competency. It
-adopts and pins a mature permissively licensed VT/state core behind a narrow
-`TerminalCore` adapter. `libghostty-vt` is the primary integration target because
-it provides parsing, terminal state, Unicode behavior, scrollback, reflow, and
-renderer state as an embeddable library. A pinned `alacritty_terminal` adapter is
-the evidence-gated fallback if the libghostty API or build integration fails the
-declared production gates. Continuing Datum's bespoke string/RLE screen into a
-homegrown cell-grid/reflow engine is not an allowed fallback.
+Datum owns the complete native terminal implementation: terminal tabs, splits
+and detachable views; focus and input arbitration; PTY/session transport;
+VT/state semantics; cell, history, reflow and protocol behavior; wgpu
+presentation; project-context injection; and the secure bridge to `datum-eda`
+and Datum MCP. `TerminalCore` is a bounded Datum-owned module family, not an
+adapter around external emulator code. Product Mechanics 029 prohibits a
+third-party terminal crate, library, source tree, build download, embedded
+executable, or fallback.
 
 This decision amends Product Mechanics 024 where 024 required Datum to build and
 own the cell-grid state model, bounded the protocol ceiling below the owner's
@@ -32,11 +29,9 @@ bridge.
 
 ## Product Boundary
 
-"Native" means that the terminal is a first-class Datum surface with Datum-owned
-interaction, visual integration, lifecycle, and project context. It does not mean
-that Datum rewrites decades of terminal emulation. A mature embedded core is
-analogous to using a font shaper or GPU API: the dependency supplies correctness;
-Datum supplies the product.
+"Native" means that the terminal is a first-class Datum surface with
+Datum-owned semantics, state, interaction, visual integration, lifecycle, and
+project context. Other terminals are behavioral references only.
 
 Feature parity applies to terminal-session and terminal-surface capabilities.
 Standalone application packaging, operating-system auto-update, global dropdown
@@ -52,10 +47,11 @@ views, and performance are in scope.
   cells. Datum diagnostics, activity summaries, lifecycle messages, command
   echoes, and GUI notices never enter the terminal grid or consume terminal rows.
   They use terminal chrome, notifications, the Command Console, or logs.
-- **FT-002 — mature core, pinned and replaceable.** Datum integrates a pinned
-  mature core behind a closed adapter covering input bytes, resize, modes, damage,
-  selection coordinates, render-state extraction, title/CWD/bell events, and
-  replies to the PTY. No consumer depends directly on vendor-private structures.
+- **FT-002 — Datum-owned core and bounded interfaces.** Datum implements its
+  terminal core behind closed interfaces covering input bytes, resize, modes,
+  damage, selection coordinates, render-state extraction, title/CWD/bell events,
+  and replies to the PTY. Terminal semantics remain bounded, cohesive Datum
+  modules under source-health governance.
 - **FT-003 — real PTY and process tree.** Every session owns a real PTY, shell or
   requested executable, process group, cwd, environment, size, lifecycle, and
   independent terminal state. Job control, signals, long-running processes,
@@ -66,14 +62,14 @@ views, and performance are in scope.
   detailed Notice/log publication is additional evidence, never a substitute.
 - **FT-004 — complete text model.** The terminal supports Unicode grapheme
   clusters, combining marks, wide cells, emoji sequences, font fallback, complex
-  shaping where the selected core exposes it, configurable fonts and sizes,
+  shaping where the Datum implementation supports it, configurable fonts and sizes,
   device-scale changes, ligature policy, cursor styles, and lossless 24-bit color
   plus text attributes. Width is never inferred from Rust scalar count.
 - **FT-005 — modern compatibility ceiling.** The target includes xterm/DEC
   compatibility, bracketed paste, focus and mouse reporting, application cursor
   and keypad modes, synchronized output, OSC 8 hyperlinks, controlled OSC 52
-  clipboard, kitty keyboard protocol, and terminal graphics supported by the
-  selected mature core, including kitty graphics and sixel where available.
+  clipboard, kitty keyboard protocol, and governed terminal graphics,
+  including kitty graphics and sixel when their Datum-owned slices land.
   Unsupported protocol claims must be explicit, tested, and owner-approved; they
   may not disappear behind the word "polish."
 - **FT-006 — daily-driver interaction.** Pointer and keyboard selection support
@@ -142,10 +138,10 @@ The implementation sequence is intentionally product-vertical:
    cells; make terminal content itself focusable; land a real-shell visible-output
    canary. Preserve the valid TF-01 focus-owner extraction but do not claim the
    terminal usability defect repaired until this gate passes.
-2. **T1 core and transport:** pin and integrate `libghostty-vt` through
-   `TerminalCore`, retain an evidence-gated Alacritty fallback, and replace the
-   unsafe PTY with `portable-pty`. Delete the bespoke terminal state/parser path
-   after behavioral parity, rather than maintaining rival cores.
+2. **T1 core and transport:** harden Datum's Linux PTY/session boundary and
+   implement the Datum-owned `TerminalCore`. Replace the provisional
+   string/RLE screen incrementally after behavioral parity; do not maintain
+   rival cores and do not import an external implementation.
 3. **T2 native renderer and input:** adapt core render state to Datum's wgpu/text
    pipeline; complete focus, IME, keyboard, mouse, clipboard, selection, fonts,
    resize, damage, and accessibility.
@@ -164,10 +160,9 @@ capability required by this decision.
 ## Consequences
 
 Datum gains a terminal capable of hosting the same real work users perform in a
-dedicated terminal while remaining coherent with the EDA shell. The project
-stops paying the permanent correctness tax of a private emulator core and spends
-its engineering effort on the Datum-specific adapter, interaction, renderer,
-context, and verification layers.
+dedicated terminal while remaining coherent with the EDA shell. Under decision
+029, Datum accepts responsibility for terminal semantics as well as interaction,
+rendering, context, and verification.
 
 The existing TF-01 commit remains valid evidence only for establishing a single
 keyboard-focus owner. Its prior claim that it repaired the user-visible terminal

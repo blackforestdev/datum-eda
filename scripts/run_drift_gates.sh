@@ -10,6 +10,8 @@ python3 scripts/project_status.py check
 python3 scripts/check_spec_parity.py
 python3 scripts/check_alignment.py --run-gates
 python3 scripts/check_spec_governance.py
+python3 scripts/test_dependency_authority.py
+python3 scripts/check_dependency_authority.py
 python3 scripts/check_resolver_raw_loads.py
 python3 scripts/test_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_agent_terminal_convergence.py

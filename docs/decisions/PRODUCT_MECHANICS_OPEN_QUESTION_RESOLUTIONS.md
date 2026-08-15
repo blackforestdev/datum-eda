@@ -2233,7 +2233,7 @@ docs/DATUM_PRODUCT_MECHANICS.md "Interop Boundary And Import Posture".
   routes board mutations through the same `BOARD_COMMIT` object the GUI
   uses; no plugin-only unjournaled write path. VS Code resolves the
   default shell from `$SHELL` then OS user record then a platform default,
-  never refusing a terminal; portable-pty exposes system shell resolution.
+  never refusing a terminal; Datum's owned launcher preserves that behavior.
 - Engineering reason: A Unix socket gives a single long-lived resolved
   `DesignModel` (one `ProjectResolver` assembly, cached `model_revision`)
   so an agent's read/propose/apply loop sees a coherent revision without
@@ -2382,49 +2382,13 @@ docs/DATUM_PRODUCT_MECHANICS.md "Interop Boundary And Import Posture".
 ### Q: Which terminal emulation library/abstraction should Datum use, and what minimum copy/paste/selection is required to ship product-real?
 (005 Q1, 005 Q6)
 
-- Recommended path: Use Alacritty's terminal core crates —
-  `alacritty_terminal` (VTE/ANSI grid + state) paired with `portable-pty`
-  (wezterm) for PTY allocation — rendered through the existing wgpu/winit
-  substrate (`gui-render`/`gui-app`) for glyph drawing; do not build a VT
-  parser from scratch or embed a full external emulator process. Minimum
-  copy/paste/selection bar to ship product-real: (1) mouse-drag cell
-  selection with visible highlight; (2) copy to system clipboard;
-  (3) paste with bracketed-paste mode enabled (so multi-line pastes do not
-  auto-execute); (4) select-all and word/line double/triple-click
-  selection; (5) keyboard copy/paste bindings distinct from terminal
-  control sequences (Ctrl+Shift+C/V so Ctrl+C still sends SIGINT).
-  Scrollback and search are also required by the doc but are separate from
-  copy/paste.
-- Production example: Zed's built-in terminal is built on
-  `alacritty_terminal`; WezTerm uses `portable-pty` + termwiz; both are
-  production terminals. Alacritty's defaults are the canonical minimum:
-  VT-aware cell selection, bracketed paste by default, Ctrl+Shift+C/V that
-  do not collide with Ctrl+C SIGINT, triple-click line selection; xterm
-  established bracketed-paste mode (DECSET 2004) which
-  `alacritty_terminal` implements in the core Datum would consume.
-- Engineering reason: `alacritty_terminal` is the only mature Rust crate
-  cleanly separating VT/ANSI/grid state from rendering, mandatory because
-  Datum must render cells through its own wgpu pipeline
-  (visual-regression-gated per the Screenshot Goldens memory), not a
-  foreign GL context; `portable-pty` abstracts PTY allocation under a
-  non-copyleft (MIT) license satisfying the No-Copyleft-Integration rule —
-  both crates are permissively licensed for direct linking, unlike a GPL
-  emulator that would force subprocess/IPC isolation. Bracketed-paste is
-  the load-bearing safety requirement: pasting a multi-line block with a
-  newline into a naive terminal auto-executes every line — a real footgun
-  when an agent or user pastes a script that can run Datum CLI mutations;
-  distinct copy/paste bindings are mandatory to preserve Ctrl+C as SIGINT
-  (interactive/long-running process support needs working job-control
-  signals). `alacritty_terminal` already implements DECSET 2004, so this
-  is wiring, not new parser work.
-- Residual risk: Owner taste may prefer a different glyph stack — confirm
-  `alacritty_terminal` and `portable-pty` licenses (both MIT/Apache)
-  before linking and verify the wgpu cell renderer can hit
-  visual-regression goldens for ANSI color/cursor before declaring
-  product-real. System clipboard access on Wayland vs X11 differs — use a
-  clipboard crate (e.g. arboard) handling both and verify paste-into-shell
-  with bracketed mode against a real agent-paste scenario.
-- Ratification class: recommended-default-pending-ratification.
+- **Superseded by Product Mechanics 029.** Datum owns the terminal core and
+  Linux PTY/session implementation. No third-party terminal crate, library,
+  source, build download, embedded process, or fallback is permitted. The
+  copy/paste, selection, bracketed-paste, signal, and compatibility outcomes
+  remain required by decisions 027 and 029, but prior-art implementations are
+  behavioral references only.
+- Ratification class: superseded-owner-decision.
 
 ---
 

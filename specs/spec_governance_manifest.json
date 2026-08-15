@@ -611,13 +611,19 @@
    "class": "doctrine",
    "controlling": true,
    "progress_anchor": "FULL-NATIVE-TERMINAL-CONTRACT",
-   "notes": "Amends decision 024 to require a fully fledged daily-driver embedded terminal over a pinned mature VT/state core, exclusive PTY screen truth, complete native UX/protocol/security/accessibility coverage, and verified Datum CLI/MCP/code-agent operation. Decision 028 controls the agent discovery and interoperability plane."
+   "notes": "Amends decision 024 to require a fully fledged daily-driver embedded terminal with exclusive PTY screen truth, complete native UX/protocol/security/accessibility coverage, and verified Datum CLI/MCP/code-agent operation. Decision 029 requires the terminal core and PTY/session implementation to be Datum-owned."
   },
   "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md": {
    "class": "doctrine",
    "controlling": true,
    "progress_anchor": "TERMINAL-AGENT-INTEROP-CONTRACT",
    "notes": "Extends decision 027 FT-009 with native client adapters, protected discovery, standard MCP primitives, pinned context and revision fences, scoped authority, portable workflow parity, and product round-trip proof."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md": {
+   "class": "doctrine",
+   "controlling": true,
+   "progress_anchor": "TERMINAL-EPIC",
+   "notes": "Reserves new third-party dependency authority to an explicit numbered owner decision, freezes the inherited direct-dependency baseline, and requires Datum-owned terminal emulation and PTY/session source with no external fallback."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",

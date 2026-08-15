@@ -19,11 +19,9 @@ SPEC.loader.exec_module(guard)
 class TerminalGridWriterGuardTest(unittest.TestCase):
     def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
         transport = """
-use portable_pty::{NativePtySystem, PtySize};
-struct TerminalTransportLaunch;
-struct PortablePtyProcess;
-fn spawn_portable_pty() {
-    NativePtySystem.openpty().spawn_command().try_clone_reader().take_writer();
+fn open_pty_pair() {
+    posix_openpt(); grantpt(); unlockpt(); ptsname_r(); TIOCSCTTY(); TIOCSWINSZ();
+    configure_child_pty();
 }
 """
         failures: list[str] = []
@@ -32,7 +30,7 @@ fn spawn_portable_pty() {
 
         failures = []
         guard.check_terminal_transport_boundary(
-            transport + "\nfn rogue() { posix_openpt(); TerminalScreen::default(); }",
+            transport + "\nfn rogue() { portable_pty(); TerminalScreen::default(); }",
             transport + "\nTerminalScreen::default();",
             failures,
         )
@@ -41,7 +39,7 @@ fn spawn_portable_pty() {
             failures,
         )
         self.assertIn(
-            "hand-rolled PTY ownership must be retired: posix_openpt", failures
+            "third-party terminal dependency must not remain: portable_pty", failures
         )
 
     def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:

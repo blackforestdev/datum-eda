@@ -569,12 +569,12 @@
       "authorization": "none",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Replace the terminal-lite/custom-core plan with a governed fully fledged native terminal product, mature-core adoption, complete daily-driver capability matrix, and production agent/CLI/MCP proof.",
+      "summary": "Replace the terminal-lite plan with a governed fully fledged native terminal product, Datum-owned terminal semantics, complete daily-driver capability matrix, and production agent/CLI/MCP proof.",
       "dependencies": [],
       "unblocks": [],
       "landing_commit": "6bc6a081bb26944a316e26311d3759bdda6a72ec",
       "completion": {
-        "outcome": "Datum's terminal roadmap targets a fully fledged native terminal over a mature core, with exclusive PTY screen truth, complete session/interaction/protocol/accessibility coverage, safe Datum CLI/MCP/agent integration, and measurable production gates.",
+        "outcome": "Datum's terminal roadmap targets a fully fledged native terminal over a Datum-owned core and PTY/session layer, with exclusive PTY screen truth, complete session/interaction/protocol/accessibility coverage, safe Datum CLI/MCP/agent integration, and measurable production gates.",
         "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
@@ -733,6 +733,7 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
@@ -740,7 +741,7 @@
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Deliver T0-T4e: shell-screen truth, mature core and PTY, native rendering/input, daily-driver UX/protocols, native agent discovery/MCP/context/workflows, and final production proof.",
+      "summary": "Deliver T0-T4e: shell-screen truth, Datum-owned core and PTY, native rendering/input, daily-driver UX/protocols, native agent discovery/MCP/context/workflows, and final production proof.",
       "dependencies": [],
       "unblocks": [
         "trustworthy daily-driver embedded terminal and agent surface"
@@ -913,6 +914,7 @@
       "issue_id": "dat-pan-trace-terminal-pollution-0j0",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
       "state": "landed",
@@ -1280,6 +1282,7 @@
       "issue_id": "dat-terminal-dual-input-model-75y",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
       "state": "landed",
@@ -1373,7 +1376,7 @@
         ],
         "post_completion": {
           "effects": [
-            "T2 loses the rival-input-model blocker but remains blocked on the separately completed portable-pty and mature TerminalCore slices."
+            "T2 loses the rival-input-model blocker but remains blocked on the separately completed Datum-owned PTY and TerminalCore slices."
           ],
           "unblocks_issue_ids": [
             "dat-terminal-emulator-epic-jzv.3"
@@ -1388,26 +1391,28 @@
     {
       "key": "TERMINAL-T1-PTY",
       "order": 8,
-      "title": "Replace terminal transport with portable-pty",
+      "title": "Harden the Datum-owned PTY transport",
       "issue_id": "dat-terminal-emulator-epic-jzv.1",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "summary": "Adopt portable-pty while preserving process groups, signals, resize, credentials, context, and independent sessions.",
+      "summary": "Restore and harden Datum-owned Linux PTY/session transport with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
       "unblocks": [
+        "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
       ],
       "completion": {
-        "outcome": "portable-pty exclusively owns Datum's process transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "PTY-02",
+        "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
+        "canonical_next_step_id": "PTY-01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1424,8 +1429,8 @@
           {
             "id": "PTY-01",
             "kind": "execution",
-            "status": "complete",
-            "action": "Inventory current PTY ownership, pin portable-pty, and establish a transport-only adapter boundary with no terminal-cell semantics.",
+            "status": "pending",
+            "action": "Inventory the restored Linux PTY ownership and establish a transport-only Datum boundary with no terminal-cell semantics or third-party code.",
             "depends_on": [],
             "requirement_refs": [
               {
@@ -1433,18 +1438,13 @@
                 "marker": "PTY-01"
               }
             ],
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "3efcd994b94e82524d6d668a2ee9acf3f8751739"
-              }
-            ]
+            "completion_evidence": []
           },
           {
             "id": "PTY-02",
             "kind": "execution",
-            "status": "in_progress",
-            "action": "Move allocation, spawn, read, write, resize, launch context, credentials, cwd/environment, and arbitrary executable/argv through the portable-pty adapter.",
+            "status": "pending",
+            "action": "Move allocation, spawn, read, write, resize, launch context, credentials, cwd/environment, and arbitrary executable/argv through the Datum-owned transport boundary.",
             "depends_on": [
               "PTY-01"
             ],
@@ -1492,7 +1492,7 @@
             "id": "PTY-05",
             "kind": "execution",
             "status": "pending",
-            "action": "Delete hand-rolled PTY ownership, lock the transport/core separation with drift guards, and pass terminal, governance, source-health, and platform-aware integration gates.",
+            "action": "Lock the Datum-owned transport/core separation with drift guards and pass dependency-authority, terminal, governance, source-health, and platform-aware integration gates.",
             "depends_on": [
               "PTY-03",
               "PTY-04"
@@ -1508,7 +1508,130 @@
         ],
         "post_completion": {
           "effects": [
-            "T2 loses the portable-pty blocker but remains blocked on the separately completed mature TerminalCore slice."
+            "T1b loses the owned-transport blocker; T2 remains blocked on the separately completed Datum-owned TerminalCore slice."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.2",
+            "dat-terminal-emulator-epic-jzv.3"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "TERMINAL-T1-CORE",
+      "order": 9,
+      "title": "Build the Datum-owned TerminalCore",
+      "issue_id": "dat-terminal-emulator-epic-jzv.2",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+      ],
+      "state": "blocked",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
+      "dependencies": [
+        "dat-pan-trace-terminal-pollution-0j0",
+        "dat-terminal-emulator-epic-jzv.1"
+      ],
+      "unblocks": [
+        "dat-terminal-emulator-epic-jzv.3"
+      ],
+      "completion": {
+        "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
+        "canonical_next_step_id": "CORE-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "CORE-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Define the Datum-owned VT/state module architecture, protocol inventory, data ownership, source-health decomposition, and Datum-authored fixture provenance.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Define closed Datum-owned core types and keep terminal-private structures out of the engine and gui-protocol.",
+            "depends_on": ["CORE-01"],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement Datum-owned parsing, feed, resize, replies, render/damage, modes/events, selection, history/reflow/search, input encoding, reset, and teardown.",
+            "depends_on": ["CORE-02"],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove deterministic core snapshots over checked-in Datum-authored VT streams for cells, styles, replies, damage, Unicode width, modes, history, metadata, links, and graphics.",
+            "depends_on": ["CORE-03"],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CORE-05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Pass dependency-authority, module-boundary, snapshot, source-health, governance, and strict-build gates and record the exact T2 production-cutover handoff.",
+            "depends_on": ["CORE-04"],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "CORE-05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T2 loses the owned-core blocker; production cutover remains a separately selected task."
           ],
           "unblocks_issue_ids": [
             "dat-terminal-emulator-epic-jzv.3"
@@ -1517,43 +1640,7 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-pty-02-20260814",
-        "claimed_at": "2026-08-14T22:41:57-07:00",
-        "heartbeat_at": "2026-08-14T22:41:57-07:00",
-        "expires_at": "2026-08-15T06:41:57-07:00",
-        "scope": [
-          "PTY-02 portable-pty allocation and spawn",
-          "PTY-02 portable master read-write-resize",
-          "PTY-02 launch context and arbitrary argv"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "49de7a64252fb8f103c4ba369c07c19bf4b3da12"
       }
-    },
-    {
-      "key": "TERMINAL-T1-CORE",
-      "order": 9,
-      "title": "Integrate the mature TerminalCore adapter",
-      "issue_id": "dat-terminal-emulator-epic-jzv.2",
-      "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
-      ],
-      "state": "ready",
-      "authorization": "execution",
-      "canonical_next": false,
-      "parallel": false,
-      "summary": "Pin libghostty-vt behind Datum's closed adapter and prohibit extension of the bespoke emulator as a rival core.",
-      "dependencies": [
-        "dat-pan-trace-terminal-pollution-0j0"
-      ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ]
     },
     {
       "key": "TERMINAL-T2-NATIVE",

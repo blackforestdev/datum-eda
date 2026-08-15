@@ -164,3 +164,17 @@ br sync --flush-only                         # if you touched the tracker
 git add path/to/your/files .beads/issues.jsonl
 git commit -m "fix(...): … (dat-<id>)"       # no attribution trailer
 ```
+
+## Dependency boundary
+
+Product Mechanics 029 is controlling. Do not add, fetch, vendor, link, or
+otherwise introduce a new third-party code dependency unless the project owner
+has first ratified that exact dependency and its license obligations in a
+numbered decision. A task marked ready, an implementation specification, a
+permissive license, or a general instruction to proceed is not approval.
+
+The terminal has no third-party implementation exception: its emulator core,
+VT/state model, PTY/session layer, and fallbacks are Datum-owned. Other
+terminals are behavioral references only. Run
+`python3 scripts/check_dependency_authority.py` before landing dependency or
+terminal work.

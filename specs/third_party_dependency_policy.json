@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "authority": "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
+  "policy": "deny_new_without_numbered_owner_decision",
+  "terminal_policy": "datum_owned_no_third_party_terminal_dependencies",
+  "inherited_direct_external_dependencies": [
+    "anyhow",
+    "arboard",
+    "bytemuck",
+    "clap",
+    "glyphon",
+    "image",
+    "libc",
+    "lyon_path",
+    "lyon_tessellation",
+    "pollster",
+    "proptest",
+    "quick-xml",
+    "rusqlite",
+    "serde",
+    "serde_json",
+    "sha2",
+    "taffy",
+    "thiserror",
+    "ttf-parser",
+    "uuid",
+    "wgpu",
+    "winit"
+  ],
+  "forbidden_terminal_dependencies": [
+    "alacritty_terminal",
+    "libghostty-vt",
+    "portable-pty",
+    "portable_pty"
+  ]
+}
