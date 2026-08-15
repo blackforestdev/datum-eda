@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1407,7 +1407,7 @@
       ],
       "completion": {
         "outcome": "portable-pty exclusively owns Datum's process transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "PTY-01",
+        "canonical_next_step_id": "PTY-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1424,7 +1424,7 @@
           {
             "id": "PTY-01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Inventory current PTY ownership, pin portable-pty, and establish a transport-only adapter boundary with no terminal-cell semantics.",
             "depends_on": [],
             "requirement_refs": [
@@ -1433,7 +1433,12 @@
                 "marker": "PTY-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "3efcd994b94e82524d6d668a2ee9acf3f8751739"
+              }
+            ]
           },
           {
             "id": "PTY-02",
@@ -1512,21 +1517,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-pty-01-20260814",
-        "claimed_at": "2026-08-14T22:26:41-07:00",
-        "heartbeat_at": "2026-08-14T22:26:41-07:00",
-        "expires_at": "2026-08-15T06:26:41-07:00",
-        "scope": [
-          "PTY-01 current transport inventory",
-          "PTY-01 portable-pty dependency pin",
-          "PTY-01 transport-only adapter boundary"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "61f218bd873cb5bfd87ffe31d44ec2b0fdd2f20f"
       }
     },
     {
