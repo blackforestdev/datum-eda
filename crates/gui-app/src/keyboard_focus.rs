@@ -458,15 +458,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    if matches!(event.logical_key, Key::Named(NamedKey::Tab))
-        && event.state == ElementState::Released
-        && terminal_owns_rename
-    {
-        if let Some(runtime) = &mut app.runtime
-            && runtime.complete_terminal_rename_input()
-        {
-            app.request_redraw_if_needed();
-        }
+    if matches!(event.logical_key, Key::Named(NamedKey::Tab)) && terminal_owns_rename {
         return true;
     }
     if terminal_input_owner == TerminalInputOwner::DetachedReadOnly {

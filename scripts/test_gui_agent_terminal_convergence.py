@@ -24,6 +24,7 @@ pub(crate) fn terminal_input_owner() {
     use TerminalInputOwner::{AttachedPty, RenameChrome, DetachedReadOnly};
 }
 fn commit_terminal_ime_text() {}
+fn write_attached_terminal_bytes() { active_attached(); write_bytes(); }
 HitTarget::TerminalSessionReattachActive
 """
         bottom_dock = '("REATTACH", HitTarget::TerminalSessionReattachActive)'
@@ -33,12 +34,14 @@ HitTarget::TerminalSessionReattachActive
 
         failures = []
         guard.check_terminal_input_mode(
-            production.replace("DetachedReadOnly", "LegacyDockLineEdit"),
+            production.replace("DetachedReadOnly", "LegacyDockLineEdit")
+                + "\nfn complete_terminal_rename_input() {}\n",
             "",
             failures,
         )
         self.assertIn(
-            "legacy dock line-edit routing must not remain in production", failures
+            "dead terminal line-edit marker must not remain: LegacyDockLineEdit",
+            failures,
         )
         self.assertIn(
             "detached terminal chrome is missing \"REATTACH\"", failures

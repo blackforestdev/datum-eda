@@ -145,12 +145,18 @@ def check_terminal_input_mode(
         "DetachedReadOnly",
         "fn terminal_input_owner",
         "fn commit_terminal_ime_text",
+        "fn write_attached_terminal_bytes",
         "HitTarget::TerminalSessionReattachActive",
     ):
         if marker not in production_sources:
             failures.append(f"terminal input-mode authority is missing {marker}")
-    if "LegacyDockLineEdit" in production_sources:
-        failures.append("legacy dock line-edit routing must not remain in production")
+    for marker in (
+        "LegacyDockLineEdit",
+        "complete_terminal_rename_input",
+        "terminal_rename_editor_active",
+    ):
+        if marker in production_sources:
+            failures.append(f"dead terminal line-edit marker must not remain: {marker}")
     for marker in ("\"REATTACH\"", "TerminalSessionReattachActive"):
         if marker not in bottom_dock:
             failures.append(f"detached terminal chrome is missing {marker}")
@@ -160,6 +166,12 @@ def check_terminal_input_mode(
         for marker in ("RenameChrome", "AttachedPty", "DetachedReadOnly"):
             if marker not in mode_body:
                 failures.append(f"terminal input owner does not classify {marker}")
+    writer_marker = "fn write_attached_terminal_bytes"
+    if writer_marker in production_sources:
+        writer_body = production_sources.split(writer_marker, 1)[1].split("\n}", 1)[0]
+        for marker in ("active_attached", "write_bytes"):
+            if marker not in writer_body:
+                failures.append(f"attached terminal byte gate is missing {marker}")
 
 
 def main() -> int:
@@ -189,6 +201,8 @@ def main() -> int:
         failures.append("foreign-shell byte writer must remain an explicit runtime boundary")
     else:
         raw_write_body = main.split(raw_write_marker, 1)[1].split("\n    fn ", 1)[0]
+        if "write_attached_terminal_bytes" not in raw_write_body:
+            failures.append("foreign-shell writer must use the attached-session byte gate")
         if "mark_terminal_" in raw_write_body or "refresh_pending" in raw_write_body:
             failures.append(
                 "raw foreign-shell input must not infer mutation or schedule workspace refresh"

@@ -6,6 +6,17 @@
 
 use super::*;
 
+pub(super) fn write_attached_terminal_bytes(
+    registry: &TerminalSessionRegistry,
+    bytes: &[u8],
+) -> Result<bool> {
+    if !registry.active_attached() {
+        return Ok(false);
+    }
+    registry.active().write_bytes(bytes)?;
+    Ok(true)
+}
+
 impl Runtime {
     pub(super) fn terminal_input_owner(&self) -> keyboard_focus::TerminalInputOwner {
         keyboard_focus::terminal_input_owner(
@@ -37,3 +48,7 @@ impl Runtime {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_input_mode_boundary_tests.rs"]
+mod tests;

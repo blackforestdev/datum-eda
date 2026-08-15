@@ -1284,7 +1284,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1354,7 +1354,7 @@
           {
             "id": "TI-03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Delete dead input state and lock attached exact-once, detached zero-byte/reattach, and rename-isolation behavior with production-path tests and drift guards.",
             "depends_on": [
               "TI-02"
@@ -1379,6 +1379,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-ti-03-20260814",
+        "claimed_at": "2026-08-14T22:00:47-07:00",
+        "heartbeat_at": "2026-08-14T22:00:47-07:00",
+        "expires_at": "2026-08-15T06:00:47-07:00",
+        "scope": [
+          "TI-03 dead input-state removal",
+          "TI-03 production-path exact-once and zero-byte proofs",
+          "TI-03 convergence lock"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "3b2337917bee3013e21ed11191c1dce3a5b68242"
       }
     },
     {
