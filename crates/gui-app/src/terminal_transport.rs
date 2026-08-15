@@ -1,17 +1,16 @@
 //! Process transport boundary for Datum's embedded terminal.
 //!
-//! PTY-01 inventory: allocation, slave setup and window resize are transport
-//! concerns; process launch/read/write/wait still live in `terminal_process`
-//! until PTY-02 moves them behind `portable-pty`. Terminal parsing, cells,
-//! selection, chrome and Datum context projections must never enter this module.
+//! `portable-pty` exclusively owns PTY allocation, child spawn, master I/O and
+//! resize. Terminal parsing, cells, selection, chrome and Datum context
+//! projections must never enter this module.
 
 use anyhow::{Context, Result};
-use portable_pty::PtySize;
+use portable_pty::{Child, CommandBuilder, MasterPty, NativePtySystem, PtySize, PtySystem};
 use std::{
-    ffi::CStr,
-    fs::File,
-    io,
-    os::fd::{FromRawFd, RawFd},
+    collections::BTreeMap,
+    ffi::{OsStr, OsString},
+    io::{Read, Write},
+    path::{Path, PathBuf},
 };
 
 pub(crate) const INITIAL_TERMINAL_SIZE: PtySize = PtySize {
@@ -21,88 +20,90 @@ pub(crate) const INITIAL_TERMINAL_SIZE: PtySize = PtySize {
     pixel_height: 0,
 };
 
-/// Temporary Unix transport handle retained only for the PTY-02 migration.
-/// Keeping every raw descriptor operation here makes the replacement surface
-/// explicit and prevents the session/core layers from acquiring new PTY calls.
-pub(super) struct LegacyUnixPty {
-    pub(super) master: File,
-    pub(super) master_fd: RawFd,
-    pub(super) slave_path: Vec<u8>,
+/// Complete process-launch request at the transport boundary. The caller owns
+/// Datum-specific context construction; this type guarantees that cwd,
+/// inherited credentials/environment overrides and arbitrary argv all reach
+/// the same portable spawn path.
+#[derive(Debug, Clone)]
+pub(super) struct TerminalTransportLaunch {
+    program: OsString,
+    args: Vec<OsString>,
+    cwd: PathBuf,
+    env: BTreeMap<OsString, OsString>,
+    size: PtySize,
 }
 
-pub(super) fn open_legacy_unix_pty() -> Result<LegacyUnixPty> {
-    let master_fd = unsafe { libc::posix_openpt(libc::O_RDWR | libc::O_NOCTTY) };
-    if master_fd < 0 {
-        return Err(io::Error::last_os_error()).context("posix_openpt");
-    }
-    if unsafe { libc::grantpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(master_fd) };
-        return Err(error).context("grantpt");
-    }
-    if unsafe { libc::unlockpt(master_fd) } != 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(master_fd) };
-        return Err(error).context("unlockpt");
-    }
-    let slave_path = slave_path(master_fd)?;
-    let master = unsafe { File::from_raw_fd(master_fd) };
-    Ok(LegacyUnixPty {
-        master,
-        master_fd,
-        slave_path,
-    })
-}
-
-fn slave_path(master_fd: RawFd) -> Result<Vec<u8>> {
-    let mut buffer = [0 as libc::c_char; 128];
-    let rc = unsafe { libc::ptsname_r(master_fd, buffer.as_mut_ptr(), buffer.len()) };
-    if rc != 0 {
-        return Err(io::Error::from_raw_os_error(rc)).context("ptsname_r");
-    }
-    let path = unsafe { CStr::from_ptr(buffer.as_ptr()) };
-    Ok(path.to_bytes_with_nul().to_vec())
-}
-
-pub(super) fn configure_legacy_unix_child(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
-    if unsafe { libc::setsid() } < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    let slave_fd = unsafe { libc::open(slave_path.as_ptr().cast(), libc::O_RDWR) };
-    if slave_fd < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    if unsafe { libc::ioctl(slave_fd, libc::TIOCSCTTY, 0) } < 0 {
-        let error = io::Error::last_os_error();
-        unsafe { libc::close(slave_fd) };
-        return Err(error);
-    }
-    for fd in [libc::STDIN_FILENO, libc::STDOUT_FILENO, libc::STDERR_FILENO] {
-        if unsafe { libc::dup2(slave_fd, fd) } < 0 {
-            let error = io::Error::last_os_error();
-            unsafe { libc::close(slave_fd) };
-            return Err(error);
+impl TerminalTransportLaunch {
+    pub(super) fn new(program: impl AsRef<OsStr>, cwd: impl AsRef<Path>) -> Self {
+        Self {
+            program: program.as_ref().to_owned(),
+            args: Vec::new(),
+            cwd: cwd.as_ref().to_owned(),
+            env: BTreeMap::new(),
+            size: INITIAL_TERMINAL_SIZE,
         }
     }
-    if slave_fd > libc::STDERR_FILENO {
-        unsafe { libc::close(slave_fd) };
+
+    pub(super) fn args<I, S>(&mut self, args: I)
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<OsStr>,
+    {
+        self.args
+            .extend(args.into_iter().map(|arg| arg.as_ref().to_owned()));
     }
-    unsafe { libc::close(master_fd) };
-    Ok(())
+
+    pub(super) fn env(&mut self, key: impl AsRef<OsStr>, value: impl AsRef<OsStr>) {
+        self.env
+            .insert(key.as_ref().to_owned(), value.as_ref().to_owned());
+    }
+
+    #[cfg(test)]
+    pub(super) fn set_size(&mut self, size: PtySize) {
+        self.size = size;
+    }
+
+    fn command(&self) -> CommandBuilder {
+        let mut command = CommandBuilder::new(&self.program);
+        command.args(&self.args);
+        command.cwd(&self.cwd);
+        for (key, value) in &self.env {
+            command.env(key, value);
+        }
+        command
+    }
 }
 
-pub(crate) fn resize_legacy_unix_pty(master_fd: RawFd, size: PtySize) -> Result<()> {
-    let size = libc::winsize {
-        ws_row: size.rows.max(1),
-        ws_col: size.cols.max(1),
-        ws_xpixel: size.pixel_width,
-        ws_ypixel: size.pixel_height,
-    };
-    let rc = unsafe { libc::ioctl(master_fd, libc::TIOCSWINSZ, &size) };
-    if rc < 0 {
-        return Err(io::Error::last_os_error()).context("resize terminal PTY");
-    }
-    Ok(())
+pub(super) struct PortablePtyProcess {
+    pub(super) master: Box<dyn MasterPty + Send>,
+    pub(super) reader: Box<dyn Read + Send>,
+    pub(super) writer: Box<dyn Write + Send>,
+    pub(super) child: Box<dyn Child + Send + Sync>,
+}
+
+pub(super) fn spawn_portable_pty(launch: &TerminalTransportLaunch) -> Result<PortablePtyProcess> {
+    let pair = NativePtySystem::default()
+        .openpty(launch.size)
+        .context("allocate portable terminal PTY")?;
+    let child = pair
+        .slave
+        .spawn_command(launch.command())
+        .with_context(|| format!("spawn PTY child {:?}", launch.program))?;
+    drop(pair.slave);
+    let reader = pair
+        .master
+        .try_clone_reader()
+        .context("clone portable PTY master reader")?;
+    let writer = pair
+        .master
+        .take_writer()
+        .context("take portable PTY master writer")?;
+    Ok(PortablePtyProcess {
+        master: pair.master,
+        reader,
+        writer,
+        child,
+    })
 }
 
 #[cfg(test)]
@@ -110,7 +111,31 @@ mod tests {
     use super::*;
 
     #[test]
-    fn initial_size_uses_portable_pty_transport_shape() {
-        assert_eq!(INITIAL_TERMINAL_SIZE, PtySize::default());
+    fn launch_maps_arbitrary_argv_cwd_environment_and_size() {
+        let mut launch = TerminalTransportLaunch::new("/bin/printf", "/tmp");
+        launch.args(["%s", "portable"]);
+        launch.env("DATUM_TRANSPORT_PROBE", "mapped");
+        launch.set_size(PtySize {
+            rows: 31,
+            cols: 97,
+            pixel_width: 970,
+            pixel_height: 620,
+        });
+        let command = launch.command();
+        assert_eq!(
+            command.get_argv(),
+            &["/bin/printf", "%s", "portable"]
+                .into_iter()
+                .map(OsString::from)
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(command.get_cwd(), Some(&OsString::from("/tmp")));
+        assert_eq!(
+            command.get_env("DATUM_TRANSPORT_PROBE"),
+            Some(OsStr::new("mapped"))
+        );
+        assert!(command.get_controlling_tty());
+        assert_eq!(launch.size.rows, 31);
+        assert_eq!(launch.size.cols, 97);
     }
 }

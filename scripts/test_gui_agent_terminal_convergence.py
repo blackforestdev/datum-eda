@@ -19,11 +19,12 @@ SPEC.loader.exec_module(guard)
 class TerminalGridWriterGuardTest(unittest.TestCase):
     def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
         transport = """
-use portable_pty::PtySize;
-struct LegacyUnixPty;
-fn open_legacy_unix_pty() {}
-fn configure_legacy_unix_child() {}
-fn resize_legacy_unix_pty() {}
+use portable_pty::{NativePtySystem, PtySize};
+struct TerminalTransportLaunch;
+struct PortablePtyProcess;
+fn spawn_portable_pty() {
+    NativePtySystem.openpty().spawn_command().try_clone_reader().take_writer();
+}
 """
         failures: list[str] = []
         guard.check_terminal_transport_boundary(transport, transport, failures)
@@ -40,7 +41,7 @@ fn resize_legacy_unix_pty() {}
             failures,
         )
         self.assertIn(
-            "raw PTY ownership escaped terminal_transport: posix_openpt", failures
+            "hand-rolled PTY ownership must be retired: posix_openpt", failures
         )
 
     def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:

@@ -5,8 +5,7 @@ use crate::{
         update_terminal_lifecycle_file, write_terminal_context_files,
     },
     terminal_process::{
-        TerminalWakeGate, spawn_terminal_process,
-        terminal_transport::{INITIAL_TERMINAL_SIZE, resize_legacy_unix_pty},
+        TerminalWakeGate, spawn_terminal_process, terminal_transport::INITIAL_TERMINAL_SIZE,
     },
     terminal_screen::TerminalScreen,
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
@@ -18,9 +17,7 @@ use datum_gui_protocol::{
     DatumSelectionContext, DatumToolSessionLifecycle, ProductionStatus, ReviewWorkspaceState,
     TerminalLaneState, TerminalTabState,
 };
-use std::fs::File;
 use std::io::{self, Write};
-use std::os::fd::RawFd;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
@@ -32,14 +29,14 @@ pub(super) enum TerminalEvent {
 }
 
 pub(super) struct TerminalSession {
-    pub(super) stdin: Arc<Mutex<File>>,
+    pub(super) stdin: Arc<Mutex<Box<dyn Write + Send>>>,
     pub(super) rx: Receiver<TerminalEvent>,
     pub(super) context_path: PathBuf,
     pub(super) latest_context_path: PathBuf,
     pub(super) session_path: PathBuf,
     pub(super) session_id: String,
     pub(super) context_id: String,
-    pub(super) master_fd: RawFd,
+    pub(super) master: Box<dyn portable_pty::MasterPty + Send>,
     pub(super) process_group_id: libc::pid_t,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
@@ -584,15 +581,14 @@ impl TerminalSession {
     }
 
     pub(super) fn resize(&self, cols: u16, rows: u16) -> Result<()> {
-        resize_legacy_unix_pty(
-            self.master_fd,
-            portable_pty::PtySize {
+        self.master
+            .resize(portable_pty::PtySize {
                 rows,
                 cols,
                 pixel_width: 0,
                 pixel_height: 0,
-            },
-        )
+            })
+            .context("resize portable terminal PTY")
     }
 }
 

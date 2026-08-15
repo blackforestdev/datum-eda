@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1443,7 +1443,7 @@
           {
             "id": "PTY-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Move allocation, spawn, read, write, resize, launch context, credentials, cwd/environment, and arbitrary executable/argv through the portable-pty adapter.",
             "depends_on": [
               "PTY-01"
@@ -1517,6 +1517,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-pty-02-20260814",
+        "claimed_at": "2026-08-14T22:41:57-07:00",
+        "heartbeat_at": "2026-08-14T22:41:57-07:00",
+        "expires_at": "2026-08-15T06:41:57-07:00",
+        "scope": [
+          "PTY-02 portable-pty allocation and spawn",
+          "PTY-02 portable master read-write-resize",
+          "PTY-02 launch context and arbitrary argv"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "49de7a64252fb8f103c4ba369c07c19bf4b3da12"
       }
     },
     {

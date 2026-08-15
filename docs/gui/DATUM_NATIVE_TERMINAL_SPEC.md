@@ -88,6 +88,14 @@ The dependency is exactly pinned to `portable-pty` 0.9.0 at the workspace
 boundary. Updating that pin is an explicit compatibility change with the same
 transport tests; a loose semver range is not permitted.
 
+PTY-02 makes the table's destination column the production path. Datum now
+constructs one `TerminalTransportLaunch`, maps the complete argv/cwd/environment
+and discovery context into `CommandBuilder`, and obtains allocation, child,
+reader, writer and resize authority only through `NativePtySystem`. No
+`posix_openpt`, slave-device setup or raw resize ioctl remains in Datum. The
+portable master and writer remain opaque session handles; VT bytes still flow
+to `TerminalScreen` only through the existing event consumer.
+
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.

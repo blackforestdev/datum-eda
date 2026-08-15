@@ -1,4 +1,4 @@
-use self::terminal_transport::{configure_legacy_unix_child, open_legacy_unix_pty};
+use self::terminal_transport::{PortablePtyProcess, TerminalTransportLaunch, spawn_portable_pty};
 use crate::{
     terminal_context::{
         DATUM_CLI, DATUM_LEGACY_CLI, tool_session_event_log_path, write_terminal_context,
@@ -8,9 +8,8 @@ use crate::{
 };
 use anyhow::{Context, Result};
 use std::{
+    ffi::{OsStr, OsString},
     io::Read,
-    os::unix::process::CommandExt,
-    process::Command,
     sync::{
         Arc, Mutex,
         atomic::{AtomicBool, Ordering},
@@ -58,58 +57,63 @@ pub(super) fn spawn_terminal_process(
     terminal_wake: TerminalWakeGate,
 ) -> Result<TerminalSession> {
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
+    spawn_terminal_process_argv(context, terminal_wake, OsStr::new(&shell), &[])
+}
+
+fn spawn_terminal_process_argv(
+    context: &TerminalLaunchContext,
+    terminal_wake: TerminalWakeGate,
+    program: &OsStr,
+    args: &[OsString],
+) -> Result<TerminalSession> {
     let mut terminal_context = write_terminal_context(context)?;
-    let pty = open_legacy_unix_pty().context("open terminal PTY")?;
-    let reader = pty
-        .master
-        .try_clone()
-        .context("clone terminal PTY master for reader")?;
-    let stdin = Arc::new(Mutex::new(pty.master));
-    let slave_path = pty.slave_path;
-    let master_fd = pty.master_fd;
-    let mut command = Command::new(&shell);
-    command
-        .current_dir(&terminal_context.project_root)
-        .env("TERM", "xterm-256color")
-        .env("DATUM_PROJECT_ROOT", &context.project_root)
-        .env("DATUM_CLI", DATUM_CLI)
-        .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
-        .env("DATUM_CONTEXT_ID", &terminal_context.context_id)
-        .env("DATUM_SESSION_ID", &terminal_context.session_id)
-        .env("DATUM_DISCOVERY", &terminal_context.context_path)
-        .env(
-            "DATUM_TOOL_SESSION_EVENT_LOG",
-            tool_session_event_log_path(&terminal_context.session_path),
-        )
-        .env(
-            "DATUM_MODEL_REVISION",
-            terminal_context.model_revision.as_deref().unwrap_or(""),
-        )
-        .env("DATUM_TERMINAL_CONTEXT", &terminal_context.context_path)
-        .env("DATUM_TERMINAL_SESSION_ID", &terminal_context.session_id);
+    let mut launch = TerminalTransportLaunch::new(program, &terminal_context.project_root);
+    launch.args(args);
+    launch.env("TERM", "xterm-256color");
+    launch.env("DATUM_PROJECT_ROOT", &context.project_root);
+    launch.env("DATUM_CLI", DATUM_CLI);
+    launch.env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI);
+    launch.env("DATUM_CONTEXT_ID", &terminal_context.context_id);
+    launch.env("DATUM_SESSION_ID", &terminal_context.session_id);
+    launch.env("DATUM_DISCOVERY", &terminal_context.context_path);
+    launch.env(
+        "DATUM_TOOL_SESSION_EVENT_LOG",
+        tool_session_event_log_path(&terminal_context.session_path),
+    );
+    launch.env(
+        "DATUM_MODEL_REVISION",
+        terminal_context.model_revision.as_deref().unwrap_or(""),
+    );
+    launch.env("DATUM_TERMINAL_CONTEXT", &terminal_context.context_path);
+    launch.env("DATUM_TERMINAL_SESSION_ID", &terminal_context.session_id);
     if let Some(project_id) = &terminal_context.project_id {
-        command.env("DATUM_PROJECT_ID", project_id);
+        launch.env("DATUM_PROJECT_ID", project_id);
     }
     if let Some(model_revision) = &terminal_context.model_revision {
-        command.env("DATUM_SOURCE_REVISION", model_revision);
+        launch.env("DATUM_SOURCE_REVISION", model_revision);
     }
-    unsafe {
-        command.pre_exec(move || configure_legacy_unix_child(&slave_path, master_fd));
-    }
-    let mut child = command.spawn().with_context(|| {
+    let PortablePtyProcess {
+        master,
+        mut reader,
+        writer,
+        mut child,
+    } = spawn_portable_pty(&launch).with_context(|| {
         format!(
-            "spawn PTY terminal shell {shell} in {}",
+            "spawn portable PTY program {program:?} in {}",
             terminal_context.project_root.display()
         )
     })?;
-    let process_group_id = child.id() as libc::pid_t;
-    terminal_context.process_group_id = Some(process_group_id as i32);
+    let process_group_id = master
+        .process_group_leader()
+        .or_else(|| child.process_id().map(|pid| pid as libc::pid_t))
+        .context("portable PTY child has no process identifier")?;
+    terminal_context.process_group_id = Some(process_group_id);
     write_terminal_context_files(&terminal_context, context)?;
+    let stdin = Arc::new(Mutex::new(writer));
     let (tx, rx) = mpsc::channel();
     let reader_tx = tx.clone();
     let reader_wake = terminal_wake.clone();
     thread::spawn(move || {
-        let mut reader = reader;
         let mut buffer = [0_u8; 4096];
         loop {
             match reader.read(&mut buffer) {
@@ -126,7 +130,7 @@ pub(super) fn spawn_terminal_process(
         }
     });
     thread::spawn(move || {
-        let code = child.wait().ok().and_then(|status| status.code());
+        let code = child.wait().ok().map(|status| status.exit_code() as i32);
         publish_terminal_event(&tx, TerminalEvent::Exited(code), || terminal_wake.request());
     });
     Ok(TerminalSession {
@@ -137,7 +141,7 @@ pub(super) fn spawn_terminal_process(
         session_path: terminal_context.session_path,
         session_id: terminal_context.session_id,
         context_id: terminal_context.context_id,
-        master_fd,
+        master,
         process_group_id,
         active_execution_id: Arc::new(Mutex::new(None)),
         finished_scan_offset: std::cell::Cell::new(0),
@@ -171,7 +175,63 @@ fn publish_terminal_event(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
     use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn portable_spawn_preserves_arbitrary_argv_cwd_and_datum_context() {
+        let root =
+            std::env::temp_dir().join(format!("datum-portable-pty-spawn-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).expect("create portable PTY test root");
+        let context = TerminalLaunchContext::for_project_root(&root);
+        let args = [
+            OsString::from("-lc"),
+            OsString::from(
+                "printf 'argv-ok:%s\\n' \"$DATUM_CLI\"; printf 'cwd-ok:%s\\n' \"$PWD\"; printf 'context-ok:%s\\n' \"$DATUM_PROJECT_ROOT\"",
+            ),
+        ];
+        let session = spawn_terminal_process_argv(
+            &context,
+            TerminalWakeGate::new(None),
+            OsStr::new("/bin/sh"),
+            &args,
+        )
+        .expect("spawn arbitrary portable PTY command");
+
+        let deadline = Instant::now() + Duration::from_secs(8);
+        let mut output = Vec::new();
+        let mut exit = None;
+        while Instant::now() < deadline {
+            match session.rx.recv_timeout(Duration::from_millis(25)) {
+                Ok(TerminalEvent::Output(bytes)) => output.extend(bytes),
+                Ok(TerminalEvent::Exited(code)) => exit = Some(code),
+                Err(mpsc::RecvTimeoutError::Timeout) => {}
+                Err(error) => panic!("portable PTY event channel failed: {error}"),
+            }
+            let text = String::from_utf8_lossy(&output);
+            if exit.is_some()
+                && text.contains("argv-ok:datum-eda")
+                && text.contains(&format!("cwd-ok:{}", root.display()))
+                && text.contains(&format!("context-ok:{}", root.display()))
+            {
+                break;
+            }
+        }
+        let output = String::from_utf8_lossy(&output);
+        assert_eq!(exit, Some(Some(0)));
+        assert!(output.contains("argv-ok:datum-eda"), "{output}");
+        assert!(
+            output.contains(&format!("cwd-ok:{}", root.display())),
+            "{output}"
+        );
+        assert!(
+            output.contains(&format!("context-ok:{}", root.display())),
+            "{output}"
+        );
+        let _ = fs::remove_dir_all(&root);
+    }
 
     #[test]
     fn every_published_pty_event_wakes_the_consumer() {

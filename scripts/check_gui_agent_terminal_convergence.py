@@ -188,21 +188,34 @@ def check_terminal_transport_boundary(
     if "portable-pty.workspace = true" not in GUI_APP_CARGO.read_text():
         failures.append("GUI terminal must consume the workspace portable-pty pin")
     for marker in (
-        "portable_pty::PtySize",
-        "struct LegacyUnixPty",
-        "fn open_legacy_unix_pty",
-        "fn configure_legacy_unix_child",
-        "fn resize_legacy_unix_pty",
+        "portable_pty::",
+        "struct TerminalTransportLaunch",
+        "struct PortablePtyProcess",
+        "fn spawn_portable_pty",
+        "NativePtySystem",
+        ".openpty(",
+        ".spawn_command(",
+        ".try_clone_reader(",
+        ".take_writer(",
     ):
         if marker not in transport:
             failures.append(f"terminal transport boundary is missing {marker}")
     for marker in ("TerminalScreen", "TerminalLaneState", "pty_grid_mut", "apply_bytes"):
         if marker in transport:
             failures.append(f"terminal transport must not own cell/core marker {marker}")
-    outside_transport = production_sources.replace(transport, "")
-    for marker in ("posix_openpt", "grantpt", "unlockpt", "ptsname_r", "TIOCSCTTY", "TIOCSWINSZ"):
-        if marker in outside_transport:
-            failures.append(f"raw PTY ownership escaped terminal_transport: {marker}")
+    for marker in (
+        "LegacyUnixPty",
+        "posix_openpt",
+        "grantpt",
+        "unlockpt",
+        "ptsname_r",
+        "TIOCSCTTY",
+        "TIOCSWINSZ",
+    ):
+        if marker in production_sources:
+            failures.append(f"hand-rolled PTY ownership must be retired: {marker}")
+    if "spawn_portable_pty" not in production_sources:
+        failures.append("production terminal process must spawn through portable-pty")
 
 
 def main() -> int:
