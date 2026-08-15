@@ -18,8 +18,28 @@ RETIRED_BRIDGE_FILES = [
 ]
 
 
+def check_terminal_grid_writers(failures: list[str]) -> None:
+    """Keep the public cross-crate grid gateway inside PTY interpretation."""
+    declaration = Path("crates/gui-protocol/src/terminal_lane.rs")
+    terminal_core = Path("crates/gui-app/src/terminal_screen")
+    for path in sorted((ROOT / "crates").rglob("*.rs")):
+        source = path.read_text(encoding="utf-8")
+        if "pty_grid_mut(" not in source:
+            continue
+        relative = path.relative_to(ROOT)
+        is_test = relative.name.endswith("_tests.rs")
+        is_terminal_core = relative == Path("crates/gui-app/src/terminal_screen.rs") or (
+            terminal_core in relative.parents
+        )
+        if relative != declaration and not is_test and not is_terminal_core:
+            failures.append(
+                f"terminal grid mutation escaped PTY interpretation: {relative}"
+            )
+
+
 def main() -> int:
     failures: list[str] = []
+    check_terminal_grid_writers(failures)
     main = MAIN.read_text()
     bottom_dock = BOTTOM_DOCK.read_text()
     launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""

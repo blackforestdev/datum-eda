@@ -335,8 +335,9 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     let pty_styled = ui.terminal.grid_styled_lines().to_vec();
     let mut routed: Vec<String> = Vec::new();
     let mut narrate = |ui: &mut datum_gui_protocol::WorkspaceUiState, line: String| {
-        // Production routing: Runtime::log_review_event -> push_console_line.
-        ui.push_console_line(line.clone());
+        // The same capability-limited production route used by
+        // Runtime::log_review_event; its type cannot reach terminal state.
+        crate::terminal_narration::route_gui_narration(&mut ui.console, line.clone());
         routed.push(line);
     };
 

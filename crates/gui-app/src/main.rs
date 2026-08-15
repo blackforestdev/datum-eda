@@ -57,6 +57,7 @@ mod terminal_context_contract;
 mod terminal_context_io;
 mod terminal_input;
 mod terminal_journal_context;
+mod terminal_narration;
 mod terminal_proposal_context;
 mod terminal_process;
 mod terminal_screen;
@@ -64,6 +65,7 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
+mod workspace_keyboard;
 use app_bootstrap::{GuiArgs, LaunchState};
 use app_shell::{App, fatal_gui_error, terminal_scrollback_page_step};
 use board_text_terminal_commands::{
@@ -1802,10 +1804,10 @@ impl Runtime {
         // terminal. Route it to the invisible console sink. No repaint is forced
         // here — the sink has no visible surface, and every narrating action
         // already invalidates the frame independently.
-        self.session
-            .workspace_mut()
-            .ui
-            .push_console_line(message.into());
+        terminal_narration::route_gui_narration(
+            &mut self.session.workspace_mut().ui.console,
+            message,
+        );
     }
 
     fn apply_session_result(
@@ -2064,7 +2066,7 @@ impl Runtime {
         if let Some(pane_id) = self.pane_at_screen(x, y) {
             // TF-01 deliberate exit: a canvas click is editor keyboard entry,
             // releasing any terminal/overlay key ownership before dispatch.
-            self.set_keyboard_focus(KeyboardFocus::Editor);
+            self.set_keyboard_focus(keyboard_focus::focus_after_canvas_click());
             if pane_id != self.workspace().ui.layout.focused {
                 self.swap_pane_focus(|layout| layout.focused = pane_id);
                 self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
@@ -2173,8 +2175,10 @@ impl Runtime {
         // T0-C02 deliberate entry (spec §5): clicking the terminal SCREEN cell
         // rectangle — or a session action that expects terminal typing next —
         // hands key ownership to the terminal. Programmatic dock opens never do.
-        if handled && keyboard_focus::hit_target_is_terminal_entry(target) {
-            self.set_keyboard_focus(KeyboardFocus::Terminal);
+        let next_focus =
+            keyboard_focus::focus_after_hit_target(self.keyboard_focus, handled, target);
+        if next_focus != self.keyboard_focus {
+            self.set_keyboard_focus(next_focus);
         }
         self.trace_timing(format!(
             "select target {target:?} handled={handled} {}ms",

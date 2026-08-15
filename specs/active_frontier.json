@@ -921,7 +921,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -939,7 +939,7 @@
       ],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
-        "canonical_next_step_id": "T0-C05",
+        "canonical_next_step_id": "T0-C04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1052,7 +1052,7 @@
           {
             "id": "T0-C04",
             "kind": "execution",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Lock regressions for focus transfer, workspace shortcuts, diagnostics, lifecycle messages, and Datum telemetry never corrupting or displacing shell cells.",
             "depends_on": [
               "T0-C03A"
@@ -1063,12 +1063,7 @@
                 "marker": "T0-C04"
               }
             ],
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "eb654f70af7779f9391289061597ba4d161eb61d"
-              }
-            ]
+            "completion_evidence": []
           },
           {
             "id": "T0-C05",
@@ -1116,6 +1111,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-t0-c04-repair-20260814",
+        "claimed_at": "2026-08-14T20:23:11-07:00",
+        "heartbeat_at": "2026-08-14T20:23:11-07:00",
+        "expires_at": "2026-08-15T04:23:11-07:00",
+        "scope": [
+          "T0-C04 runtime-boundary regressions",
+          "project-state mixed execution-to-owner transition",
+          "terminal screen-authority drift guard"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "e64224292b3bc928b799760d22df7cd388cea010"
       }
     },
     {

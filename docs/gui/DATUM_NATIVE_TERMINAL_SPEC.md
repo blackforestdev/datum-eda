@@ -128,6 +128,10 @@ never invokes an engine operation.
 ## 5. Interaction contract
 
 - Opening the terminal leaves editor keyboard focus unchanged.
+- A programmatic `run in terminal` or typed command handoff may open the dock
+  and write its command, but it preserves the current keyboard owner. Follow-up
+  typing begins only after the user deliberately clicks the terminal tab or
+  cell rectangle; command injection is not an implicit focus gesture.
 - Clicking the terminal cell rectangle gives it keyboard focus.
 - Clicking a tab/control performs that action and gives focus only when the
   resulting behavior expects terminal typing.

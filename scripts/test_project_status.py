@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Hermetic regressions for project_status.py."""
-
 from __future__ import annotations
-
 import copy
 import importlib.util
 import io
@@ -14,15 +12,11 @@ import unittest
 from contextlib import redirect_stdout
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-
-
 MODULE_PATH = Path(__file__).with_name("project_status.py")
 SPEC = importlib.util.spec_from_file_location("project_status", MODULE_PATH)
 assert SPEC and SPEC.loader
 status = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(status)
-
-
 class ProjectStatusTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
@@ -278,10 +272,21 @@ class ProjectStatusTest(unittest.TestCase):
         }
         (self.root / self.doc).write_text(
             (self.root / self.doc).read_text(encoding="utf-8")
-            + "\n<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n", encoding="utf-8",
+            + "\n<!-- REQ:alignment:TEST-C00 -->\nPrior execution.\n"
+            + "<!-- OWNER:alignment:TEST-C01:OPEN-1 -->\n", encoding="utf-8",
+        )
+        item["completion"]["steps"].insert(0, {
+            "id": "TEST-C00", "kind": "execution", "status": "complete",
+            "action": "Complete prior execution.", "depends_on": [],
+            "requirement_refs": [{"path": self.doc, "marker": "TEST-C00"}],
+            "completion_evidence": [{"kind": "commit", "revision": self.head()}],
+        })
+        self.issues[0]["acceptance_criteria"] = (
+            "TEST-C00: Complete prior execution. TEST-C01: Complete owner review."
         )
         self.assert_failure("selected owner_decision step requires item authorization owner_decision")
         item.update({"state": "specified", "authorization": "owner_decision"})
+        self.assertEqual([], self.failures())
         self.issues[0] = self.issue(
             "dat-next", "in_progress", assignee="codex", labels=["roadmap:frontier"]
         )

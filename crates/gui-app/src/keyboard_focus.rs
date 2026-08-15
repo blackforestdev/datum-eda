@@ -15,7 +15,7 @@
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, NamedKey};
 
-use datum_gui_protocol::{DockTab, SessionCommand, WorkspaceTool};
+use datum_gui_protocol::{DockTab, SessionCommand};
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
@@ -108,6 +108,27 @@ pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
             | HitTarget::TerminalSessionNew
             | HitTarget::TerminalSessionRenameActive
     )
+}
+
+/// Apply the production click-focus law without duplicating it in handlers or
+/// tests. A canvas click always returns keys to the editor. A handled terminal
+/// entry target arms terminal focus; every other hit preserves the current
+/// owner. Programmatic command handoffs are observation targets, so they never
+/// steal keyboard focus.
+pub(crate) fn focus_after_canvas_click() -> KeyboardFocus {
+    KeyboardFocus::Editor
+}
+
+pub(crate) fn focus_after_hit_target(
+    current: KeyboardFocus,
+    handled: bool,
+    target: &HitTarget,
+) -> KeyboardFocus {
+    if handled && hit_target_is_terminal_entry(target) {
+        KeyboardFocus::Terminal
+    } else {
+        current
+    }
 }
 
 /// Route one window keyboard event through the focus authority. Returns true
@@ -366,124 +387,20 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if let Key::Character(text) = &event.logical_key
         && event.state == ElementState::Released
+        && let Some(action) = crate::workspace_keyboard::character_action(
+            text,
+            app.runtime
+                .as_ref()
+                .is_some_and(|runtime| runtime.modifiers.control_key()),
+        )
     {
-        if text.eq_ignore_ascii_case("s") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::Select)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
+        if let Some(runtime) = &mut app.runtime
+            && editor_owns_hotkeys
+            && crate::workspace_keyboard::apply(runtime, action)
+        {
+            app.request_redraw_if_needed();
         }
-        if text.eq_ignore_ascii_case("b") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardText)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("v") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardVia)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("m") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::Move)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("x") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::Delete)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("r") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.set_workspace_tool(WorkspaceTool::DrawBoardTrack)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("f") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-            {
-                runtime.fit_camera();
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text.eq_ignore_ascii_case("t") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.fit_review_target()
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        // Maximize / restore the focused pane (decision 021 zoom). `Z` is free
-        // of the tool keys (s/b/v/m/x/r), fit (f), and review-nav ([ ]); gated
-        // to no-active-dock so it never eats terminal input. Workspace view
-        // state (transient zoom over the tile tree), never journaled.
-        if text.eq_ignore_ascii_case("z") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-            {
-                runtime.pane_toggle_zoom();
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        // Cycle the cursor-crosshair style (decision 023 UVT-005:
-        // FullViewport -> Local -> None). `C` is free of the tool keys
-        // (s/b/v/m/x/r), fit (f/t), and zoom (z); gated to no-active-dock so it
-        // never eats terminal input. Session UI preference, never journaled.
-        if text.eq_ignore_ascii_case("c") {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && !runtime.modifiers.control_key()
-            {
-                runtime.cycle_crosshair_style();
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text == "[" {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.dispatch_session_command(SessionCommand::SelectPreviousReviewAction)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
-        if text == "]" {
-            if let Some(runtime) = &mut app.runtime
-                && editor_owns_hotkeys
-                && runtime.dispatch_session_command(SessionCommand::SelectNextReviewAction)
-            {
-                app.request_redraw_if_needed();
-            }
-            return true;
-        }
+        return true;
     }
     if escape_released {
         if let Some(runtime) = &mut app.runtime {
@@ -505,144 +422,5 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::{
-        KeyClass, KeyboardFocus, RouteDecision, hit_target_is_terminal_entry, key_route,
-    };
-    use datum_gui_render::HitTarget;
-
-    #[test]
-    fn default_focus_is_editor() {
-        assert_eq!(KeyboardFocus::default(), KeyboardFocus::Editor);
-    }
-
-    #[test]
-    fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
-        for visible in [false, true] {
-            assert_eq!(
-                key_route(KeyboardFocus::Terminal, KeyClass::DockLineEdit, visible),
-                RouteDecision::Terminal
-            );
-            assert_eq!(
-                key_route(KeyboardFocus::Terminal, KeyClass::WorkspaceHotkey, visible),
-                RouteDecision::Unrouted
-            );
-        }
-        assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::RawPty, true),
-            RouteDecision::Terminal
-        );
-    }
-
-    #[test]
-    fn editor_focus_routes_hotkeys_and_never_to_terminal() {
-        for visible in [false, true] {
-            assert_eq!(
-                key_route(KeyboardFocus::Editor, KeyClass::WorkspaceHotkey, visible),
-                RouteDecision::Editor
-            );
-            assert_eq!(
-                key_route(KeyboardFocus::Editor, KeyClass::DockLineEdit, visible),
-                RouteDecision::Unrouted
-            );
-            assert_eq!(
-                key_route(KeyboardFocus::Editor, KeyClass::RawPty, visible),
-                RouteDecision::Unrouted
-            );
-        }
-    }
-
-    #[test]
-    fn dock_visibility_never_changes_routing_except_raw_pty() {
-        for focus in [
-            KeyboardFocus::Editor,
-            KeyboardFocus::Terminal,
-            KeyboardFocus::Overlay,
-        ] {
-            for class in [
-                KeyClass::DockLineEdit,
-                KeyClass::WorkspaceHotkey,
-                KeyClass::EscapeWithEmptyInput,
-            ] {
-                assert_eq!(
-                    key_route(focus, class, false),
-                    key_route(focus, class, true),
-                    "dock visibility changed routing for {focus:?}/{class:?}"
-                );
-            }
-        }
-        // Raw PTY input is the one class that also needs the terminal tab on
-        // screen; without it the bytes have nowhere visible to land.
-        assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::RawPty, false),
-            RouteDecision::Unrouted
-        );
-        assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::RawPty, true),
-            RouteDecision::Terminal
-        );
-    }
-
-    #[test]
-    fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
-        for visible in [false, true] {
-            assert_eq!(
-                key_route(
-                    KeyboardFocus::Terminal,
-                    KeyClass::EscapeWithEmptyInput,
-                    visible
-                ),
-                RouteDecision::ReleaseToEditor
-            );
-        }
-    }
-
-    #[test]
-    fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
-        // T0-C02: SHELL CONTENT (the cell rectangle) is deliberate entry, as
-        // are session actions that expect typing next. The dock terminal TAB
-        // is also deliberate entry (owner decision 2026-08-14, bead
-        // dat-pan-trace-terminal-pollution-0j0: tab-click focuses the
-        // terminal, ghostty/kitty style).
-        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalScreen));
-        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalTab));
-        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionTab(
-            "terminal-a".to_string()
-        )));
-        assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionNew));
-        assert!(hit_target_is_terminal_entry(
-            &HitTarget::TerminalSessionRenameActive
-        ));
-        // Session-ending/suspending controls never arm focus (spec §5: a
-        // control click gives focus only when the resulting behavior expects
-        // terminal typing).
-        for target in [
-            HitTarget::TerminalSessionRestartActive,
-            HitTarget::TerminalSessionDetachActive,
-            HitTarget::TerminalSessionCloseActive,
-            HitTarget::DockResizeHandle,
-        ] {
-            assert!(
-                !hit_target_is_terminal_entry(&target),
-                "{target:?} must not arm terminal keyboard focus"
-            );
-        }
-    }
-
-    #[test]
-    fn overlay_focus_routes_nothing_through_the_focus_classes() {
-        for visible in [false, true] {
-            for class in [
-                KeyClass::RawPty,
-                KeyClass::DockLineEdit,
-                KeyClass::WorkspaceHotkey,
-                KeyClass::EscapeWithEmptyInput,
-            ] {
-                assert_eq!(
-                    key_route(KeyboardFocus::Overlay, class, visible),
-                    RouteDecision::Unrouted
-                );
-            }
-        }
-    }
-}
+#[path = "keyboard_focus_tests.rs"]
+mod tests;

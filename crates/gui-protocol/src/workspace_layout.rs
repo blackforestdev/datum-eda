@@ -84,6 +84,17 @@ pub struct ConsoleLaneState {
     pub lines: Vec<String>,
 }
 
+impl ConsoleLaneState {
+    /// Append one GUI-owned narration line while preserving the bounded sink.
+    pub fn push_line(&mut self, line: String) {
+        self.lines.push(line);
+        if self.lines.len() > 240 {
+            let overflow = self.lines.len() - 240;
+            self.lines.drain(0..overflow);
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
     pub active_dock_tab: Option<DockTab>,
@@ -113,11 +124,7 @@ impl WorkspaceUiState {
     /// Mirrors the terminal lane's 240-line cap but never touches the PTY lane:
     /// this is a model-only field with no visible surface yet.
     pub fn push_console_line(&mut self, line: String) {
-        self.console.lines.push(line);
-        if self.console.lines.len() > 240 {
-            let overflow = self.console.lines.len() - 240;
-            self.console.lines.drain(0..overflow);
-        }
+        self.console.push_line(line);
     }
 }
 
