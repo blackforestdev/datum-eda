@@ -1130,7 +1130,7 @@
         "docs/decisions/PRODUCT_MECHANICS_024_NATIVE_TERMINAL_EMULATOR.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "state": "in_progress",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1143,7 +1143,7 @@
       ],
       "completion": {
         "outcome": "One explicit focus/input authority correctly routes the real terminal content rectangle, without claiming terminal product completeness or visible-shell correctness supplied by other slices.",
-        "canonical_next_step_id": "TF-04",
+        "canonical_next_step_id": "TF-05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1221,7 +1221,7 @@
           {
             "id": "TF-04",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Render a visible block/hollow cursor focus affordance without replacing application-selected cursor shape.",
             "depends_on": [
               "TF-01"
@@ -1232,7 +1232,12 @@
                 "marker": "TF-04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "cf83fcf0b9b5c075a128209673313142bae5e0fc"
+              }
+            ]
           },
           {
             "id": "TF-05",
@@ -1264,20 +1269,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-tf-04-20260814",
-        "claimed_at": "2026-08-14T21:02:26-07:00",
-        "heartbeat_at": "2026-08-14T21:02:26-07:00",
-        "expires_at": "2026-08-15T05:02:26-07:00",
-        "scope": [
-          "TF-04 terminal cursor focus affordance",
-          "TF-04 cursor-shape preservation regressions"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "8e61d48865dbbe2ce9824a977002fd985efcc233"
       }
     },
     {
