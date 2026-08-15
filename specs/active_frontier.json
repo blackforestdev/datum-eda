@@ -1394,7 +1394,7 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -1506,7 +1506,7 @@
           {
             "id": "PTY-05",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Delete hand-rolled PTY ownership, lock the transport/core separation with drift guards, and pass terminal, governance, source-health, and platform-aware integration gates.",
             "depends_on": [
               "PTY-03",
@@ -1532,6 +1532,21 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-pty-05-20260814",
+        "claimed_at": "2026-08-14T23:10:13-07:00",
+        "heartbeat_at": "2026-08-14T23:10:13-07:00",
+        "expires_at": "2026-08-15T07:10:13-07:00",
+        "scope": [
+          "PTY-05 raw transport ownership retirement audit",
+          "PTY-05 transport and terminal-core drift guards",
+          "PTY-05 platform-aware integration and closure gates"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "b23fa9e43d8f1eb4f7b2db7cf787f820f8ea7756"
       }
     },
     {

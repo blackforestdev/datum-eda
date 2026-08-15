@@ -117,6 +117,16 @@ covers distinct shell input/output, independent `stty size` results, detached
 output, reattachment, one tab exiting while its peer remains usable, safe close
 of the exited tab, and isolated termination of the survivor.
 
+PTY-05 closes the transport migration. A repository-wide production-source
+audit contains no raw PTY allocation, slave setup, controlling-terminal, or
+resize ioctl owner; `NativePtySystem` is the sole allocator. The terminal
+convergence guard rejects reintroduced raw ownership, dependency drift, or cell
+and parser state in the transport module. The standard drift runner invokes a
+platform-aware integration gate: on Datum's Linux production target it requires
+`/dev/ptmx` and runs both real-PTY process-semantics and concurrent-session
+proofs; other platforms report an explicit non-production skip rather than
+pretending to provide Linux evidence.
+
 ### 2.3 Screen authority
 
 The only input to terminal cells is PTY output interpreted by `TerminalCore`.

@@ -20,6 +20,8 @@ TERMINAL_PROCESS = ROOT / "crates" / "gui-app" / "src" / "terminal_process.rs"
 TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal_session.rs"
 WORKSPACE_CARGO = ROOT / "Cargo.toml"
 GUI_APP_CARGO = ROOT / "crates" / "gui-app" / "Cargo.toml"
+TERMINAL_INTEGRATION_GATE = ROOT / "scripts" / "check_terminal_transport_integration.sh"
+DRIFT_GATES = ROOT / "scripts" / "run_drift_gates.sh"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -216,6 +218,9 @@ def check_terminal_transport_boundary(
     ):
         if marker in production_sources:
             failures.append(f"hand-rolled PTY ownership must be retired: {marker}")
+    for marker in ("NativePtySystem", ".openpty(", ".spawn_command("):
+        if production_sources.count(marker) != transport.count(marker):
+            failures.append(f"portable PTY allocation escaped its adapter: {marker}")
     if "spawn_portable_pty" not in production_sources:
         failures.append("production terminal process must spawn through portable-pty")
 
@@ -244,6 +249,26 @@ def check_terminal_process_semantics(
             failures.append(f"terminal process semantics are missing {marker}")
 
 
+def check_terminal_transport_integration_gate(
+    integration_gate: str,
+    drift_gates: str,
+    failures: list[str],
+) -> None:
+    """Keep real Linux PTY proofs explicit and wired into the standard gate."""
+    for marker in (
+        'platform="$(uname -s)"',
+        '[[ "$platform" != "Linux" ]]',
+        "[[ ! -c /dev/ptmx ]]",
+        "terminal_process_semantics_tests",
+        "terminal_session_isolation_tests",
+    ):
+        if marker not in integration_gate:
+            failures.append(f"terminal transport integration gate is missing {marker}")
+    invocation = "bash scripts/check_terminal_transport_integration.sh"
+    if drift_gates.count(invocation) != 1:
+        failures.append("standard drift gates must invoke terminal transport integration once")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -252,6 +277,11 @@ def main() -> int:
     focus_mutation_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted((ROOT / "crates/gui-app/src").rglob("*.rs"))
+        if not path.name.endswith("_tests.rs")
+    )
+    repository_production_sources = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted((ROOT / "crates").rglob("*.rs"))
         if not path.name.endswith("_tests.rs")
     )
     bottom_dock = BOTTOM_DOCK.read_text()
@@ -264,12 +294,19 @@ def main() -> int:
     terminal_transport = TERMINAL_TRANSPORT.read_text()
     terminal_process = TERMINAL_PROCESS.read_text()
     terminal_session = TERMINAL_SESSION.read_text()
+    terminal_integration_gate = TERMINAL_INTEGRATION_GATE.read_text()
+    drift_gates = DRIFT_GATES.read_text()
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
-    check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
+    check_terminal_transport_boundary(
+        repository_production_sources, terminal_transport, failures
+    )
     check_terminal_process_semantics(terminal_process, terminal_session, failures)
+    check_terminal_transport_integration_gate(
+        terminal_integration_gate, drift_gates, failures
+    )
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:
