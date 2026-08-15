@@ -38,6 +38,7 @@ pub enum HitTarget {
     TerminalSessionRenameActive,
     TerminalSessionRestartActive,
     TerminalSessionDetachActive,
+    TerminalSessionReattachActive,
     TerminalSessionCloseActive,
     /// The exact visible terminal cell rectangle (T0-C02): clicking SHELL
     /// CONTENT is deliberate terminal keyboard entry. Cell coordinates for a

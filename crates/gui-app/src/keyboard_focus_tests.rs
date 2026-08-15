@@ -1,7 +1,7 @@
 use super::{
-    KeyClass, KeyboardFocus, RouteDecision, focus_after_canvas_click,
+    KeyClass, KeyboardFocus, RouteDecision, TerminalInputOwner, focus_after_canvas_click,
     focus_after_hit_target, hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
-    terminal_focus_report_transition, workspace_action_should_fire,
+    terminal_focus_report_transition, terminal_input_owner, workspace_action_should_fire,
 };
 use winit::event::ElementState;
 use datum_gui_render::HitTarget;
@@ -12,10 +12,35 @@ fn default_focus_is_editor() {
 }
 
 #[test]
+fn terminal_input_owner_is_exclusive_and_detached_is_read_only() {
+    assert_eq!(
+        terminal_input_owner(KeyboardFocus::Terminal, true, true, false),
+        TerminalInputOwner::AttachedPty
+    );
+    assert_eq!(
+        terminal_input_owner(KeyboardFocus::Terminal, true, true, true),
+        TerminalInputOwner::RenameChrome,
+        "rename chrome must displace PTY input even while the session is attached"
+    );
+    assert_eq!(
+        terminal_input_owner(KeyboardFocus::Terminal, true, false, false),
+        TerminalInputOwner::DetachedReadOnly
+    );
+    assert_eq!(
+        terminal_input_owner(KeyboardFocus::Editor, true, true, false),
+        TerminalInputOwner::Unowned
+    );
+    assert_eq!(
+        terminal_input_owner(KeyboardFocus::Terminal, false, true, false),
+        TerminalInputOwner::Unowned
+    );
+}
+
+#[test]
 fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
     for visible in [false, true] {
         assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::LegacyDockLineEdit, visible),
+            key_route(KeyboardFocus::Terminal, KeyClass::TerminalRenameEdit, visible),
             RouteDecision::Terminal
         );
         assert_eq!(
@@ -37,7 +62,7 @@ fn editor_focus_routes_hotkeys_and_never_to_terminal() {
             RouteDecision::Editor
         );
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::LegacyDockLineEdit, visible),
+            key_route(KeyboardFocus::Editor, KeyClass::TerminalRenameEdit, visible),
             RouteDecision::Unrouted
         );
         assert_eq!(
@@ -87,7 +112,7 @@ fn dock_visibility_never_changes_routing_except_raw_pty() {
         KeyboardFocus::Overlay,
     ] {
         for class in [
-            KeyClass::LegacyDockLineEdit,
+            KeyClass::TerminalRenameEdit,
             KeyClass::WorkspaceHotkey,
             KeyClass::EscapeWithEmptyRename,
         ] {
@@ -148,6 +173,9 @@ fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
     assert!(hit_target_is_terminal_entry(
         &HitTarget::TerminalSessionRenameActive
     ));
+    assert!(hit_target_is_terminal_entry(
+        &HitTarget::TerminalSessionReattachActive
+    ));
     for target in [
         HitTarget::TerminalSessionRestartActive,
         HitTarget::TerminalSessionDetachActive,
@@ -195,7 +223,7 @@ fn overlay_focus_routes_nothing_through_the_focus_classes() {
     for visible in [false, true] {
         for class in [
             KeyClass::RawPty,
-            KeyClass::LegacyDockLineEdit,
+            KeyClass::TerminalRenameEdit,
             KeyClass::WorkspaceHotkey,
             KeyClass::EscapeWithEmptyRename,
         ] {

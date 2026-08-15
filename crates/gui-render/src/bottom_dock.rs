@@ -361,7 +361,20 @@ fn render_terminal_sessions_row(
             TextFace::Mono,
             text_runs,
         );
-        let mut x = render_terminal_session_controls(rect, y, text_runs, hit_regions);
+        let active_attached = state
+            .ui
+            .terminal
+            .tabs
+            .iter()
+            .find(|tab| tab.active)
+            .is_none_or(|tab| tab.attached);
+        let mut x = render_terminal_session_controls(
+            rect,
+            y,
+            active_attached,
+            text_runs,
+            hit_regions,
+        );
         for tab in state.ui.terminal.tabs.iter().take(6) {
             let renaming = state
                 .ui
@@ -603,15 +616,21 @@ fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: 
 fn render_terminal_session_controls(
     rect: RectPx,
     y: f32,
+    active_attached: bool,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> f32 {
     let mut x = rect.x + 66.0;
+    let attachment_control = if active_attached {
+        ("DETACH", HitTarget::TerminalSessionDetachActive)
+    } else {
+        ("REATTACH", HitTarget::TerminalSessionReattachActive)
+    };
     for (label, target) in [
         ("+NEW", HitTarget::TerminalSessionNew),
         ("RENAME", HitTarget::TerminalSessionRenameActive),
         ("RESTART", HitTarget::TerminalSessionRestartActive),
-        ("DETACH", HitTarget::TerminalSessionDetachActive),
+        attachment_control,
         ("CLOSE", HitTarget::TerminalSessionCloseActive),
     ] {
         draw_text(label, x, y, 10.5, TEXT_MUTED, TextFace::Mono, text_runs);

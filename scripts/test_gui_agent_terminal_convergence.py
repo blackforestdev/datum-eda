@@ -17,6 +17,33 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:
+        production = """
+enum TerminalInputOwner { AttachedPty, RenameChrome, DetachedReadOnly }
+pub(crate) fn terminal_input_owner() {
+    use TerminalInputOwner::{AttachedPty, RenameChrome, DetachedReadOnly};
+}
+fn commit_terminal_ime_text() {}
+HitTarget::TerminalSessionReattachActive
+"""
+        bottom_dock = '("REATTACH", HitTarget::TerminalSessionReattachActive)'
+        failures: list[str] = []
+        guard.check_terminal_input_mode(production, bottom_dock, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_input_mode(
+            production.replace("DetachedReadOnly", "LegacyDockLineEdit"),
+            "",
+            failures,
+        )
+        self.assertIn(
+            "legacy dock line-edit routing must not remain in production", failures
+        )
+        self.assertIn(
+            "detached terminal chrome is missing \"REATTACH\"", failures
+        )
+
     def test_terminal_input_state_has_explicit_authorities(self) -> None:
         terminal_lane = """
 pub rename_input: String,

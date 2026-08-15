@@ -130,4 +130,17 @@ impl Runtime {
         }
         true
     }
+
+    pub(super) fn reattach_active_terminal_session(&mut self) -> bool {
+        let session_id = self.terminal_sessions.active().session_id().to_string();
+        match self.terminal_sessions.activate(&session_id) {
+            Ok(()) => {
+                self.log_review_event("reattached active terminal session".to_string());
+                self.sync_terminal_tabs();
+                self.resize_terminal_to_dock();
+            }
+            Err(err) => self.log_review_event(format!("terminal session reattach failed: {err}")),
+        }
+        true
+    }
 }

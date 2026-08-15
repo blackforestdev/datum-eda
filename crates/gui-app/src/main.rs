@@ -48,6 +48,7 @@ mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
+mod runtime_terminal_input;
 mod runtime_view_actions;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
@@ -296,13 +297,10 @@ impl ApplicationHandler for App {
         }
         match event {
             WindowEvent::Ime(winit::event::Ime::Commit(text))
-                if self
-                    .runtime
-                    .as_ref()
-                    .is_some_and(|runtime| runtime.terminal_rename_accepts_text_input()) =>
+                if self.runtime.as_ref().is_some_and(Runtime::terminal_owns_input) =>
             {
                 if let Some(runtime) = &mut self.runtime
-                    && runtime.append_terminal_rename_text(&text)
+                    && runtime.commit_terminal_ime_text(&text)
                 {
                     self.request_redraw_if_needed();
                 }
@@ -1225,24 +1223,6 @@ impl Runtime {
     // diagnostics, and lifecycle messages route through `log_review_event`
     // (console sink) or terminal chrome, never the grid.
 
-    fn terminal_rename_accepts_text_input(&self) -> bool {
-        self.keyboard_focus == KeyboardFocus::Terminal
-            && matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
-            && self.terminal_rename_session_id.is_some()
-    }
-
-    fn terminal_accepts_raw_input(&self) -> bool {
-        // Focus AND terminal tab visible: raw input still needs the terminal to
-        // exist on screen (TF-01).
-        keyboard_focus::key_route(
-            self.keyboard_focus,
-            keyboard_focus::KeyClass::RawPty,
-            matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)),
-        ) == keyboard_focus::RouteDecision::Terminal
-            && self.terminal_rename_session_id.is_none()
-            && self.terminal_sessions.active_attached()
-    }
-
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
         let application_cursor_keys = self.workspace().ui.terminal.application_cursor_keys;
         let application_keypad = self.workspace().ui.terminal.application_keypad;
@@ -1651,14 +1631,20 @@ impl Runtime {
         if text.is_empty() {
             return false;
         }
-        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-            let bytes = terminal_paste_bytes(
-                &text,
-                self.terminal_sessions.active_bracketed_paste_enabled(),
-            );
-            return self.write_foreign_shell_bytes(&bytes);
+        match self.terminal_input_owner() {
+            keyboard_focus::TerminalInputOwner::AttachedPty => {
+                let bytes = terminal_paste_bytes(
+                    &text,
+                    self.terminal_sessions.active_bracketed_paste_enabled(),
+                );
+                self.write_foreign_shell_bytes(&bytes)
+            }
+            keyboard_focus::TerminalInputOwner::RenameChrome => {
+                self.append_terminal_rename_text(&text)
+            }
+            keyboard_focus::TerminalInputOwner::DetachedReadOnly => true,
+            keyboard_focus::TerminalInputOwner::Unowned => false,
         }
-        self.append_terminal_rename_text(&text)
     }
 
     fn read_clipboard_text(&mut self) -> Result<String> {
@@ -2405,6 +2391,7 @@ impl Runtime {
                 true
             }
             HitTarget::TerminalSessionDetachActive => self.detach_active_terminal_session(),
+            HitTarget::TerminalSessionReattachActive => self.reattach_active_terminal_session(),
             HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
             HitTarget::TerminalScreen => self.click_terminal_screen(),
             HitTarget::ProductionArtifact(artifact_id) => {

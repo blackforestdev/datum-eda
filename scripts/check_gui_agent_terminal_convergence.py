@@ -132,6 +132,36 @@ def check_terminal_input_identity(
             failures.append("terminal rename text must never reach the foreign shell")
 
 
+def check_terminal_input_mode(
+    production_sources: str,
+    bottom_dock: str,
+    failures: list[str],
+) -> None:
+    """Require one exclusive attached/rename/detached input-mode authority."""
+    for marker in (
+        "enum TerminalInputOwner",
+        "AttachedPty",
+        "RenameChrome",
+        "DetachedReadOnly",
+        "fn terminal_input_owner",
+        "fn commit_terminal_ime_text",
+        "HitTarget::TerminalSessionReattachActive",
+    ):
+        if marker not in production_sources:
+            failures.append(f"terminal input-mode authority is missing {marker}")
+    if "LegacyDockLineEdit" in production_sources:
+        failures.append("legacy dock line-edit routing must not remain in production")
+    for marker in ("\"REATTACH\"", "TerminalSessionReattachActive"):
+        if marker not in bottom_dock:
+            failures.append(f"detached terminal chrome is missing {marker}")
+    mode_marker = "pub(crate) fn terminal_input_owner"
+    if mode_marker in production_sources:
+        mode_body = production_sources.split(mode_marker, 1)[1].split("\n}", 1)[0]
+        for marker in ("RenameChrome", "AttachedPty", "DetachedReadOnly"):
+            if marker not in mode_body:
+                failures.append(f"terminal input owner does not classify {marker}")
+
+
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
@@ -152,6 +182,7 @@ def main() -> int:
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
+    check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
 
     raw_write_marker = "    fn write_foreign_shell_bytes"
     if raw_write_marker not in main:

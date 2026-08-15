@@ -166,6 +166,38 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             "terminal dock should expose {target:?}"
         );
     }
+    assert!(
+        !prepared
+            .hit_regions
+            .iter()
+            .any(|region| region.target == HitTarget::TerminalSessionReattachActive),
+        "attached session must not expose the reattach action"
+    );
+
+    state.ui.terminal.tabs[0].attached = false;
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let detached = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    assert!(
+        detached
+            .hit_regions
+            .iter()
+            .any(|region| region.target == HitTarget::TerminalSessionReattachActive),
+        "detached session must expose an explicit reattach action"
+    );
+    assert!(
+        !detached
+            .hit_regions
+            .iter()
+            .any(|region| region.target == HitTarget::TerminalSessionDetachActive),
+        "detached session must not expose an inapplicable detach action"
+    );
+    state.ui.terminal.tabs[0].attached = true;
     for command_id in [
         "datum.journal.list",
         "datum.journal.undo",

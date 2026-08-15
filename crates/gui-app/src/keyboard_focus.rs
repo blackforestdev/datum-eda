@@ -39,14 +39,41 @@ pub(crate) enum KeyClass {
     /// that also requires the terminal tab to exist on screen (raw input has
     /// nowhere visible to land otherwise).
     RawPty,
-    /// Residual pre-PTY line-editor dispatch. Chrome rename still uses part of
-    /// it, while TI-02 removes its shell/clipboard routing and TI-03 deletes it.
-    LegacyDockLineEdit,
+    /// Chrome-local terminal-tab rename keys; never foreign-shell input.
+    TerminalRenameEdit,
     /// Workspace hotkeys: tool keys, fit, zoom, crosshair, pane cycling,
     /// review navigation, and the Space pan chord.
     WorkspaceHotkey,
     /// Escape released while the terminal rename editor is already empty.
     EscapeWithEmptyRename,
+}
+
+/// Exclusive terminal input recipient (TI-02). The shell and rename editor can
+/// never be active recipients at the same time; detached sessions own no input.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum TerminalInputOwner {
+    AttachedPty,
+    RenameChrome,
+    DetachedReadOnly,
+    Unowned,
+}
+
+pub(crate) fn terminal_input_owner(
+    focus: KeyboardFocus,
+    terminal_tab_visible: bool,
+    attached: bool,
+    renaming: bool,
+) -> TerminalInputOwner {
+    if focus != KeyboardFocus::Terminal || !terminal_tab_visible {
+        return TerminalInputOwner::Unowned;
+    }
+    if renaming {
+        TerminalInputOwner::RenameChrome
+    } else if attached {
+        TerminalInputOwner::AttachedPty
+    } else {
+        TerminalInputOwner::DetachedReadOnly
+    }
 }
 
 /// The routing outcome for a key class under a focus owner.
@@ -63,8 +90,9 @@ pub(crate) enum RouteDecision {
 }
 
 /// The pure routing decision: who owns a key of `class` under `focus`.
-/// `terminal_tab_visible` matters ONLY for the raw-PTY class — dock visibility
-/// must never change any other routing outcome (the TF-01 invariant).
+/// `terminal_tab_visible` matters only for raw PTY routing; the remaining
+/// classes preserve the TF-01 focus contract while `terminal_input_owner`
+/// selects rename, attached PTY, or detached read-only behavior.
 pub(crate) fn key_route(
     focus: KeyboardFocus,
     class: KeyClass,
@@ -75,7 +103,7 @@ pub(crate) fn key_route(
             RouteDecision::Terminal
         }
         (KeyboardFocus::Terminal, KeyClass::RawPty) => RouteDecision::Unrouted,
-        (KeyboardFocus::Terminal, KeyClass::LegacyDockLineEdit) => RouteDecision::Terminal,
+        (KeyboardFocus::Terminal, KeyClass::TerminalRenameEdit) => RouteDecision::Terminal,
         (KeyboardFocus::Terminal, KeyClass::EscapeWithEmptyRename) => {
             RouteDecision::ReleaseToEditor
         }
@@ -109,6 +137,7 @@ pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
             | HitTarget::TerminalSessionTab(_)
             | HitTarget::TerminalSessionNew
             | HitTarget::TerminalSessionRenameActive
+            | HitTarget::TerminalSessionReattachActive
     )
 }
 
@@ -220,8 +249,15 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         key_route(focus, KeyClass::WorkspaceHotkey, dock_visible) == RouteDecision::Editor;
     let workspace_action_pressed =
         workspace_action_should_fire(focus, dock_visible, event.state, event.repeat);
-    let terminal_owns_legacy_line_edit =
-        key_route(focus, KeyClass::LegacyDockLineEdit, dock_visible) == RouteDecision::Terminal;
+    let terminal_input_owner = app
+        .runtime
+        .as_ref()
+        .map_or(TerminalInputOwner::Unowned, Runtime::terminal_input_owner);
+    let terminal_owns_attached_pty = terminal_input_owner == TerminalInputOwner::AttachedPty
+        && key_route(focus, KeyClass::RawPty, dock_visible) == RouteDecision::Terminal;
+    let terminal_owns_rename = terminal_input_owner == TerminalInputOwner::RenameChrome
+        && key_route(focus, KeyClass::TerminalRenameEdit, dock_visible)
+            == RouteDecision::Terminal;
     let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
         && event.state == ElementState::Released;
 
@@ -261,7 +297,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if app.runtime.as_ref().is_some_and(|runtime| {
         terminal_raw_input_should_handle(
-            runtime.terminal_accepts_raw_input(),
+            terminal_owns_attached_pty,
             runtime.is_paste_shortcut(event),
             runtime.is_copy_shortcut(event),
         )
@@ -273,7 +309,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    if terminal_owns_legacy_line_edit
+    if terminal_input_owner != TerminalInputOwner::Unowned
         && app
             .runtime
             .as_ref()
@@ -286,7 +322,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    if terminal_owns_legacy_line_edit
+    if terminal_input_owner != TerminalInputOwner::Unowned
         && app
             .runtime
             .as_ref()
@@ -299,7 +335,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
-    if terminal_owns_legacy_line_edit
+    if terminal_owns_rename
         && app
             .runtime
             .as_ref()
@@ -345,7 +381,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Backspace))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.backspace_terminal_rename_input()
@@ -356,7 +392,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Enter))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.submit_terminal_rename_input()
@@ -380,7 +416,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::ArrowLeft))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.move_terminal_rename_cursor(-1)
@@ -391,7 +427,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::ArrowRight))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.move_terminal_rename_cursor(1)
@@ -402,7 +438,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Home))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.move_terminal_rename_cursor_to_edge(true)
@@ -413,7 +449,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::End))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.move_terminal_rename_cursor_to_edge(false)
@@ -424,13 +460,16 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     }
     if matches!(event.logical_key, Key::Named(NamedKey::Tab))
         && event.state == ElementState::Released
-        && terminal_owns_legacy_line_edit
+        && terminal_owns_rename
     {
         if let Some(runtime) = &mut app.runtime
             && runtime.complete_terminal_rename_input()
         {
             app.request_redraw_if_needed();
         }
+        return true;
+    }
+    if terminal_input_owner == TerminalInputOwner::DetachedReadOnly {
         return true;
     }
     // Pane focus cycling (decision 021): Tab -> next leaf, Shift+Tab ->

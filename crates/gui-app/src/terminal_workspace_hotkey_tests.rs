@@ -85,7 +85,7 @@ fn editor_focus_fires_hotkeys_and_no_key_class_routes_to_the_pty() {
         );
         for class in [
             KeyClass::RawPty,
-            KeyClass::LegacyDockLineEdit,
+            KeyClass::TerminalRenameEdit,
             KeyClass::EscapeWithEmptyRename,
         ] {
             assert_eq!(

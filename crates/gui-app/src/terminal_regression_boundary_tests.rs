@@ -33,7 +33,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalTab
         | HitTarget::TerminalSessionTab(_)
         | HitTarget::TerminalSessionNew
-        | HitTarget::TerminalSessionRenameActive => true,
+        | HitTarget::TerminalSessionRenameActive
+        | HitTarget::TerminalSessionReattachActive => true,
         // Session-ending/suspending terminal chrome never arms focus.
         HitTarget::TerminalSessionRestartActive
         | HitTarget::TerminalSessionDetachActive
@@ -140,6 +141,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalSessionRenameActive,
         HitTarget::TerminalSessionRestartActive,
         HitTarget::TerminalSessionDetachActive,
+        HitTarget::TerminalSessionReattachActive,
         HitTarget::TerminalSessionCloseActive,
         HitTarget::TerminalScreen,
         HitTarget::CheckFinding(id()),
@@ -175,8 +177,8 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         entry_targets += usize::from(hit_target_is_terminal_entry(target));
     }
     assert_eq!(
-        entry_targets, 5,
-        "exactly the five deliberate targets may arm terminal keyboard focus"
+        entry_targets, 6,
+        "exactly the six deliberate targets may arm terminal keyboard focus"
     );
 }
 
@@ -184,7 +186,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
 fn only_escape_with_empty_input_releases_terminal_focus() {
     let all_classes = [
         KeyClass::RawPty,
-        KeyClass::LegacyDockLineEdit,
+        KeyClass::TerminalRenameEdit,
         KeyClass::WorkspaceHotkey,
         KeyClass::EscapeWithEmptyRename,
     ];
