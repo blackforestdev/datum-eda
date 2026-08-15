@@ -224,7 +224,8 @@ fn dock_geometry(dock_height: u32) -> datum_gui_viewport::TerminalScreenGeometry
 }
 
 fn test_root(tag: &str) -> std::path::PathBuf {
-    let root = std::env::temp_dir().join(format!("datum-terminal-t0c04-{tag}-{}", std::process::id()));
+    let root =
+        std::env::temp_dir().join(format!("datum-terminal-t0c04-{tag}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(&root).expect("terminal test root should create");
     root
@@ -241,8 +242,7 @@ fn focus_adjacent_operations_never_restart_or_clear_the_rolling_session() {
     // the grid byte-identical.
     let root = test_root("rolling");
     let context = TerminalLaunchContext::for_project_root(&root);
-    let mut registry =
-        TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
+    let mut registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
     let mut state = TerminalLaneState::default();
 
     // Simulated PTY-derived screen content (the one legal writer).
@@ -325,8 +325,7 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     // in chrome fields (status/tabs/activity), never in cells.
     let root = test_root("narration");
     let context = TerminalLaunchContext::for_project_root(&root);
-    let mut registry =
-        TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
+    let mut registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
     let mut ui = workspace_ui_state();
 
     let mut screen = crate::terminal_screen::TerminalScreen::default();
@@ -387,9 +386,18 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
 
     // PTY/transport failure narration classes.
     narrate(&mut ui, "terminal write failed: broken pipe".to_string());
-    narrate(&mut ui, "terminal status response failed: broken pipe".to_string());
-    narrate(&mut ui, "terminal focus report failed: broken pipe".to_string());
-    narrate(&mut ui, "terminal mouse report failed: broken pipe".to_string());
+    narrate(
+        &mut ui,
+        "terminal status response failed: broken pipe".to_string(),
+    );
+    narrate(
+        &mut ui,
+        "terminal focus report failed: broken pipe".to_string(),
+    );
+    narrate(
+        &mut ui,
+        "terminal mouse report failed: broken pipe".to_string(),
+    );
     narrate(
         &mut ui,
         "terminal session is detached; activate the tab to reattach".to_string(),
@@ -433,7 +441,11 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
         }
     }
     // Lifecycle/activity truth lives in chrome fields, not cells.
-    assert_eq!(ui.terminal.tabs.len(), 1, "close must leave one session tab");
+    assert_eq!(
+        ui.terminal.tabs.len(),
+        1,
+        "close must leave one session tab"
+    );
     for summary_line in &ui.terminal.activity_summary {
         assert!(
             !ui.terminal
@@ -466,10 +478,8 @@ fn drain_output(
         let TerminalEvent::Output(bytes) = event else {
             return false;
         };
-        let _ = crate::terminal_session_events::record_terminal_output_event(
-            registry.active(),
-            &bytes,
-        );
+        let _ =
+            crate::terminal_session_events::record_terminal_output_event(registry.active(), &bytes);
         let responses = registry
             .active_screen_mut()
             .apply_bytes_with_responses(state, &bytes);
@@ -494,7 +504,7 @@ fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
         .lines()
         .filter(|line| !line.trim().is_empty())
         .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-        .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input")
+        .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input_accepted")
         .map(|event| event["byte_count"].as_u64().unwrap_or(0) as usize)
         .sum()
 }
@@ -509,8 +519,7 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
     // never restarts or clears the rolling session.
     let root = test_root("hotkeys");
     let context = TerminalLaunchContext::for_project_root(&root);
-    let mut registry =
-        TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
+    let mut registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
     let mut state = TerminalLaneState::default();
     let geometry = dock_geometry(220);
     registry

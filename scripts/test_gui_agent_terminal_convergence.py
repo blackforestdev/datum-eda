@@ -20,7 +20,7 @@ class TerminalGridWriterGuardTest(unittest.TestCase):
     def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
         transport = """
 fn open_pty_pair() {
-    posix_openpt(); grantpt(); unlockpt(); ptsname_r(); TIOCSCTTY(); TIOCSWINSZ();
+    let _ = "/dev/ptmx"; grantpt(); unlockpt(); ptsname_r(); TIOCSCTTY(); TIOCSWINSZ();
     configure_child_pty();
 }
 """

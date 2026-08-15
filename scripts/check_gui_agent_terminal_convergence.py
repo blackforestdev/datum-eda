@@ -182,7 +182,7 @@ def check_terminal_transport_boundary(
 ) -> None:
     """Keep Linux PTY ownership inside Datum and outside terminal semantics."""
     for marker in (
-        "posix_openpt",
+        "/dev/ptmx",
         "grantpt",
         "unlockpt",
         "ptsname_r",

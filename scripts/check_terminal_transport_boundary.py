@@ -13,7 +13,7 @@ APP_SRC = Path("crates/gui-app/src")
 TRANSPORT = APP_SRC / "terminal_transport"
 
 OWNERS = {
-    "libc::posix_openpt": TRANSPORT / "linux/pty.rs",
+    'c"/dev/ptmx"': TRANSPORT / "linux/pty.rs",
     "libc::grantpt": TRANSPORT / "linux/pty.rs",
     "libc::unlockpt": TRANSPORT / "linux/pty.rs",
     "libc::ptsname_r": TRANSPORT / "linux/pty.rs",
@@ -22,10 +22,13 @@ OWNERS = {
     "libc::dup2": TRANSPORT / "linux/spawn.rs",
     "libc::TIOCSWINSZ": TRANSPORT / "linux/job_control.rs",
     "libc::kill": TRANSPORT / "linux/job_control.rs",
+    "libc::F_DUPFD_CLOEXEC": TRANSPORT / "linux/io.rs",
+    "libc::poll": TRANSPORT / "linux/io.rs",
+    "libc::tcgetattr": TRANSPORT / "linux/termios.rs",
+    "libc::tcsetattr": TRANSPORT / "linux/termios.rs",
 }
 
 IDENTIFIER_OWNERS = {
-    "posix_openpt": {TRANSPORT / "linux/pty.rs"},
     "grantpt": {TRANSPORT / "linux/pty.rs"},
     "unlockpt": {TRANSPORT / "linux/pty.rs"},
     "ptsname_r": {TRANSPORT / "linux/pty.rs"},
@@ -35,7 +38,9 @@ IDENTIFIER_OWNERS = {
     "dup2": {TRANSPORT / "linux/spawn.rs"},
     "TIOCSWINSZ": {TRANSPORT / "linux/job_control.rs"},
     "kill": {TRANSPORT / "linux/job_control.rs"},
-    "open_pty_pair": {TRANSPORT / "linux/pty.rs", TRANSPORT / "mod.rs"},
+    "open_pty_pair": {
+        TRANSPORT / "linux/pty.rs", TRANSPORT / "linux/termios.rs", TRANSPORT / "mod.rs",
+    },
     "attach_child_pty": {TRANSPORT / "linux/spawn.rs", TRANSPORT / "mod.rs"},
     "signal_process_group": {
         TRANSPORT / "linux/job_control.rs", TRANSPORT / "session_handle.rs",
@@ -46,12 +51,19 @@ REQUIRED_FILES = {
     "mod.rs": "prepare_terminal_transport",
     "request.rs": "struct TerminalTransportRequest",
     "event.rs": "enum TerminalTransportEvent",
-    "reader.rs": "spawn_event_threads",
+    "reader.rs": "spawn_reader",
+    "input.rs": "struct InputQueue",
+    "output.rs": "struct OutputBacklog",
+    "control.rs": "struct ControlBacklog",
+    "launch_error.rs": "enum TerminalLaunchStage",
+    "limits.rs": "MAX_OUTPUT_BYTES",
     "session_handle.rs": "struct TerminalTransportSession",
     "wake.rs": "struct TerminalWakeGate",
     "linux/pty.rs": "open_pty_pair",
     "linux/spawn.rs": "attach_child_pty",
     "linux/job_control.rs": "signal_process_group",
+    "linux/io.rs": "wait_readable",
+    "linux/termios.rs": "configure_interactive",
 }
 
 SEMANTIC_TOKENS = (
@@ -133,11 +145,17 @@ def check(root: Path) -> list[str]:
             )
 
     handle = transport_sources.get(TRANSPORT / "session_handle.rs", "")
-    if re.search(r"#\[derive\([^]]*Clone", handle):
+    handle_production = re.sub(
+        r"#\[cfg\(test\)\]\s*impl\s+TerminalTransportSession\s*\{.*\}\s*$",
+        "",
+        handle,
+        flags=re.DOTALL,
+    )
+    if re.search(r"#\[derive\([^]]*Clone", handle_production):
         failures.append("terminal transport owning handle must not be Clone")
     for struct_name in ("PreparedTerminalTransport", "TerminalTransportSession"):
         body_match = re.search(
-            rf"struct\s+{struct_name}\s*\{{(?P<body>.*?)\n\}}", handle, re.DOTALL
+            rf"struct\s+{struct_name}\s*\{{(?P<body>.*?)\n\}}", handle_production, re.DOTALL
         )
         if not body_match:
             failures.append(f"terminal transport handle is missing: {struct_name}")
@@ -147,10 +165,11 @@ def check(root: Path) -> list[str]:
 
     allowed_methods = {
         "process_group_id", "start", "try_recv_event", "recv_event_timeout",
+        "try_recv_control_event", "try_recv_output", "has_pending_event",
         "write_bytes", "interrupt", "terminate", "resize",
     }
     public_functions = list(re.finditer(
-        r"(?P<visibility>pub(?:\([^)]*\))?)\s+fn\s+(?P<name>\w+)\s*\(", handle
+        r"(?P<visibility>pub(?:\([^)]*\))?)\s+fn\s+(?P<name>\w+)\s*\(", handle_production
     ))
     constructors = [match for match in public_functions if match.group("name") == "new"]
     if len(constructors) != 2 or any(
@@ -164,8 +183,8 @@ def check(root: Path) -> list[str]:
             continue
         if name not in allowed_methods or visibility != "pub(crate)":
             failures.append(f"terminal transport exposes unapproved handle API: {visibility} fn {name}")
-        signature_end = handle.find("{", match.end())
-        signature = handle[match.start():signature_end if signature_end >= 0 else match.end()]
+        signature_end = handle_production.find("{", match.end())
+        signature = handle_production[match.start():signature_end if signature_end >= 0 else match.end()]
         if any(token in signature for token in ("File", "RawFd", "OwnedFd", "Receiver", "Arc<Mutex<File>>")):
             failures.append(f"terminal transport handle API exposes raw ownership: {name}")
 
@@ -182,6 +201,48 @@ def check(root: Path) -> list[str]:
     for marker in ("prepare_terminal_transport", "open_pty_pair", "into_command", ".spawn()"):
         if marker not in root_module:
             failures.append(f"terminal transport root lacks real orchestration marker: {marker}")
+
+    production_transport = "\n".join(
+        text.split("#[cfg(test)]", 1)[0] for text in transport_sources.values()
+    )
+    for marker in ("mpsc::channel()", ".write_all(", ".flush(", "from_utf8"):
+        if marker in production_transport:
+            failures.append(f"terminal transport contains unbounded or semantic I/O marker: {marker}")
+    reader = transport_sources.get(TRANSPORT / "reader.rs", "")
+    if not (0 <= reader.find("output.reserve()") < reader.find("reader.read_bytes(")):
+        failures.append("terminal reader must reserve owner-budgeted capacity before PTY read")
+    for marker in (
+        "reader_retries_eintr_and_would_block_without_losing_bytes_or_spinning",
+        "reader_drains_hup_tail_then_accepts_correlated_eio_as_eof",
+        "reader_reports_uncorrelated_eio_and_invalid_descriptor_once",
+    ):
+        if marker not in reader:
+            failures.append(f"terminal reader lacks deterministic transition proof: {marker}")
+    session_handle = transport_sources.get(TRANSPORT / "session_handle.rs", "")
+    if "try_enqueue(bytes.to_vec())" in session_handle:
+        failures.append("terminal input must reject oversized slices before allocation")
+    limits = transport_sources.get(TRANSPORT / "limits.rs", "")
+    expected_limits = {
+        "MAX_OUTPUT_CHUNKS": "256",
+        "MAX_OUTPUT_CHUNK_BYTES": "16 * 1024",
+        "MAX_OUTPUT_BYTES": "4 * 1024 * 1024",
+        "MAX_INPUT_REQUESTS": "64",
+        "MAX_INPUT_BYTES": "4 * 1024 * 1024",
+        "MAX_LIVE_SESSIONS": "16",
+        "GUI_DRAIN_EVENT_LIMIT": "128",
+        "GUI_DRAIN_BYTE_LIMIT": "64 * 1024",
+    }
+    for name, value in expected_limits.items():
+        if not re.search(rf"const\s+{name}:\s*usize\s*=\s*{re.escape(value)}\s*;", limits):
+            failures.append(f"owner-ratified terminal limit changed or missing: {name}")
+    drain = source_text.get(APP_SRC / "terminal_session_drain.rs", "")
+    for marker in ("fn drain_all", "next_drain_index", "try_recv_control_event", "try_recv_output"):
+        if marker not in drain:
+            failures.append(f"all-session terminal drain lacks fairness marker: {marker}")
+    if "control_priority_round_robin_cursor_and_exact_global_caps_are_literal" not in drain:
+        failures.append("all-session terminal drain lacks literal L3 proof")
+    if "active().try_recv_event" in "\n".join(outside_transport.values()):
+        failures.append("active-only terminal event draining must not return")
 
     return failures
 

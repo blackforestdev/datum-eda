@@ -5,10 +5,9 @@ use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
     BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, HoverTarget, LiveDesignSession,
     LiveReviewRequest, MarkingMenuState, PaneContent, PointNm, RectNm, SceneBounds, SessionCommand,
-    SessionEvent, TerminalCommandHandoff, WorkspaceTool,
-    ensure_known_good_demo_request, load_board_editor_workspace_state,
-    load_kicad_schematic_workspace_state, load_live_workspace_state,
-    materialize_kicad_board_request,
+    SessionEvent, TerminalCommandHandoff, WorkspaceTool, ensure_known_good_demo_request,
+    load_board_editor_workspace_state, load_kicad_schematic_workspace_state,
+    load_live_workspace_state, materialize_kicad_board_request,
 };
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
@@ -59,8 +58,8 @@ mod terminal_context_io;
 mod terminal_input;
 mod terminal_journal_context;
 mod terminal_narration;
-mod terminal_proposal_context;
 mod terminal_process;
+mod terminal_proposal_context;
 mod terminal_screen;
 mod terminal_session;
 mod terminal_session_context;
@@ -76,8 +75,8 @@ use board_text_terminal_commands::{
 };
 pub(crate) use gui_runtime_support::*;
 use keyboard_focus::KeyboardFocus;
-use pane_cameras::PaneCameras;
 use pan_gesture::PanGestureState;
+use pane_cameras::PaneCameras;
 use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
@@ -298,7 +297,10 @@ impl ApplicationHandler for App {
         }
         match event {
             WindowEvent::Ime(winit::event::Ime::Commit(text))
-                if self.runtime.as_ref().is_some_and(Runtime::terminal_owns_input) =>
+                if self
+                    .runtime
+                    .as_ref()
+                    .is_some_and(Runtime::terminal_owns_input) =>
             {
                 if let Some(runtime) = &mut self.runtime
                     && runtime.commit_terminal_ime_text(&text)
@@ -361,8 +363,9 @@ impl ApplicationHandler for App {
                     } else if runtime.marking_menu_active() {
                         changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.pan_gesture.is_active() {
-                        changed = previous_pos
-                            .is_some_and(|previous| runtime.advance_primary_pan(previous, next_pos));
+                        changed = previous_pos.is_some_and(|previous| {
+                            runtime.advance_primary_pan(previous, next_pos)
+                        });
                     }
                     // Update hover state
                     if !runtime.dock_drag_active
@@ -555,7 +558,11 @@ impl ApplicationHandler for App {
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
-        if self.runtime.as_mut().is_some_and(Runtime::handle_terminal_output_wake) {
+        if self
+            .runtime
+            .as_mut()
+            .is_some_and(Runtime::handle_terminal_output_wake)
+        {
             self.request_redraw_if_needed();
         }
     }
@@ -597,7 +604,6 @@ struct Runtime {
     schematic_retained_scene: Option<RetainedScene>,
     scene_dirty: bool,
     terminal_sessions: TerminalSessionRegistry,
-    terminal_disconnected_reported: bool,
     terminal_launch_context: TerminalLaunchContext,
     workspace_include_review: bool,
     terminal_production_refresh_pending: bool,
@@ -739,7 +745,6 @@ impl Runtime {
             schematic_retained_scene: None,
             scene_dirty: true,
             terminal_sessions,
-            terminal_disconnected_reported: false,
             terminal_launch_context,
             workspace_include_review,
             terminal_production_refresh_pending: false,
@@ -1310,7 +1315,12 @@ impl Runtime {
             Ok(false) => self.log_review_event(
                 "terminal session is detached; use REATTACH to resume input".to_string(),
             ),
-            Err(err) => self.log_review_event(format!("terminal write failed: {err}")),
+            Err(err) => {
+                let message = format!("terminal input refused: {err}");
+                self.session.workspace_mut().ui.terminal.status = message.clone();
+                self.log_review_event(message);
+                self.invalidate_frame();
+            }
         }
         true
     }
@@ -1474,7 +1484,6 @@ impl Runtime {
             }
             Err(err) => self.log_review_event(format!("terminal restart failed: {err}")),
         }
-        self.terminal_disconnected_reported = false;
         self.terminal_production_refresh_pending = false;
         self.terminal_workspace_refresh_pending = false;
         self.terminal_production_refresh_due = None;
@@ -1484,7 +1493,10 @@ impl Runtime {
     }
 
     fn activate_terminal_session(&mut self, session_id: &str) -> bool {
-        if let Err(err) = self.terminal_sessions.activate(session_id) {
+        if let Err(err) = self
+            .terminal_sessions
+            .activate_with_lane(session_id, &mut self.session.workspace_mut().ui.terminal)
+        {
             self.log_review_event(format!("terminal session activate failed: {err}"));
             return true;
         }
@@ -1886,9 +1898,7 @@ impl Runtime {
                     .workspace_mut()
                     .finish_move_component_handoff(world)
                 else {
-                    self.log_review_event(
-                        "move requires a selected component target".to_string(),
-                    );
+                    self.log_review_event("move requires a selected component target".to_string());
                     self.invalidate_frame();
                     return true;
                 };
@@ -1908,9 +1918,7 @@ impl Runtime {
             }
             WorkspaceTool::Delete => {
                 let Some(target) = target_object_id else {
-                    self.log_review_event(
-                        "delete requires an authored object target".to_string(),
-                    );
+                    self.log_review_event("delete requires an authored object target".to_string());
                     return true;
                 };
                 let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {

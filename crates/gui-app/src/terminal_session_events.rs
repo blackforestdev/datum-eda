@@ -146,13 +146,16 @@ pub(super) fn record_terminal_lifecycle_event(
     )
 }
 
-pub(super) fn record_terminal_input_event(session: &TerminalSession, bytes: &[u8]) -> Result<()> {
+pub(super) fn record_terminal_input_accepted_event(
+    session: &TerminalSession,
+    bytes: &[u8],
+) -> Result<()> {
     let execution_id = session.active_execution_id();
     append_terminal_io_event(
         &session.event_log_path(),
         session.session_id(),
         execution_id.as_deref(),
-        "input",
+        "input_accepted",
         bytes,
     )
 }

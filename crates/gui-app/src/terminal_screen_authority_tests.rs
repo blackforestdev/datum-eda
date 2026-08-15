@@ -169,10 +169,8 @@ fn drain_production_path(
         };
         let chunk_started = Instant::now();
         let step = Instant::now();
-        let _ = crate::terminal_session_events::record_terminal_output_event(
-            registry.active(),
-            &bytes,
-        );
+        let _ =
+            crate::terminal_session_events::record_terminal_output_event(registry.active(), &bytes);
         cost.event_log_append += step.elapsed();
         let step = Instant::now();
         let responses = registry
@@ -355,7 +353,7 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
     for line in event_log.lines().filter(|line| !line.trim().is_empty()) {
         let event: serde_json::Value =
             serde_json::from_str(line).expect("terminal event log line should parse");
-        if event["event"] == "terminal_io" && event["direction"] == "input" {
+        if event["event"] == "terminal_io" && event["direction"] == "input_accepted" {
             input_bytes_total += event["byte_count"].as_u64().unwrap_or(0) as usize;
             if event["text_preview"]
                 .as_str()
@@ -422,12 +420,7 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
         &mut cost,
         &mut response_bytes_written,
         Instant::now() + Duration::from_secs(60),
-        &mut |state| {
-            state
-                .grid_lines()
-                .iter()
-                .any(|line| line.trim() == "20000")
-        },
+        &mut |state| state.grid_lines().iter().any(|line| line.trim() == "20000"),
     );
     let probe_20k_elapsed = probe_20k_started.elapsed();
     let probe_20k_chunks = cost.chunks - pre_20k_chunks;

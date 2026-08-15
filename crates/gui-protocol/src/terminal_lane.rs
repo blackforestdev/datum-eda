@@ -97,6 +97,35 @@ pub struct TerminalLaneState {
 }
 
 impl TerminalLaneState {
+    /// Swap only the PTY-owned projection for one session. Global dock chrome,
+    /// tab identity, rename editing, activity summary, and keyboard focus stay
+    /// with the workspace while inactive sessions retain their own screen.
+    pub fn swap_session_projection(&mut self, other: &mut Self) {
+        macro_rules! swap_fields {
+            ($($field:ident),+ $(,)?) => { $(std::mem::swap(&mut self.$field, &mut other.$field);)+ };
+        }
+        swap_fields!(
+            lines,
+            styled_lines,
+            title,
+            current_working_directory,
+            bell_count,
+            columns,
+            rows,
+            screen_cursor_row,
+            screen_cursor_col,
+            screen_cursor_visible,
+            screen_cursor_style,
+            application_cursor_keys,
+            application_keypad,
+            focus_event_reporting,
+            mouse_reporting_mode,
+            mouse_coordinate_encoding,
+            scroll_offset,
+            status,
+        );
+    }
+
     /// Read-only view of the terminal screen grid rows.
     pub fn grid_lines(&self) -> &[String] {
         &self.lines
@@ -155,5 +184,50 @@ impl Default for TerminalLaneState {
             scroll_offset: 0,
             status: "running".to_string(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn session_projection_swap_preserves_workspace_chrome_and_focus() {
+        let mut active = TerminalLaneState {
+            lines: vec!["active".to_string()],
+            title: Some("active title".to_string()),
+            has_keyboard_focus: true,
+            rename_input: "rename".to_string(),
+            active_session_id: Some("active-id".to_string()),
+            activity_summary: vec!["activity".to_string()],
+            ..Default::default()
+        };
+        let chrome = (
+            active.has_keyboard_focus,
+            active.rename_input.clone(),
+            active.active_session_id.clone(),
+            active.activity_summary.clone(),
+        );
+        let mut parked = TerminalLaneState {
+            lines: vec!["parked".to_string()],
+            title: Some("parked title".to_string()),
+            ..Default::default()
+        };
+
+        active.swap_session_projection(&mut parked);
+
+        assert_eq!(active.grid_lines(), &["parked"]);
+        assert_eq!(active.title.as_deref(), Some("parked title"));
+        assert_eq!(parked.grid_lines(), &["active"]);
+        assert_eq!(parked.title.as_deref(), Some("active title"));
+        assert_eq!(
+            (
+                active.has_keyboard_focus,
+                active.rename_input,
+                active.active_session_id,
+                active.activity_summary
+            ),
+            chrome,
+        );
     }
 }

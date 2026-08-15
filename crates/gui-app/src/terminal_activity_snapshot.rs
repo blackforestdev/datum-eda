@@ -99,10 +99,7 @@ impl TerminalActivitySummaryCache {
         if file.seek(SeekFrom::Start(self.offset)).is_err()
             || file.read_to_end(&mut new_bytes).is_err()
         {
-            self.read_error = Some(format!(
-                "read terminal activity log {}",
-                path.display()
-            ));
+            self.read_error = Some(format!("read terminal activity log {}", path.display()));
             return;
         }
         // Consume complete lines only; a torn trailing line is re-read whole
@@ -268,7 +265,10 @@ impl ActivitySpanBuilder {
                 });
             }
             Some("terminal_io")
-                if event.get("direction").and_then(Value::as_str) == Some("input") =>
+                if matches!(
+                    event.get("direction").and_then(Value::as_str),
+                    Some("input" | "input_accepted")
+                ) =>
             {
                 if self
                     .current
@@ -376,7 +376,7 @@ fn add_terminal_io(span: &mut ActivitySpan, event: &Value) {
             .map(str::to_string);
     }
     match event.get("direction").and_then(Value::as_str) {
-        Some("input") => {
+        Some("input" | "input_accepted") => {
             span.input_bytes += byte_count;
             span.last_input_preview = preview;
         }

@@ -9,7 +9,7 @@ fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
         .unwrap_or_default()
         .lines()
         .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-        .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input")
+        .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input_accepted")
         .map(|event| event["byte_count"].as_u64().unwrap_or(0) as usize)
         .sum()
 }
@@ -60,8 +60,9 @@ fn detached_and_rename_modes_write_zero_bytes_then_reattach_writes_once() {
     while Instant::now() < deadline
         && !String::from_utf8_lossy(&output).contains("ti03-reattach-proof")
     {
-        if let Ok(TerminalEvent::Output(bytes)) =
-            registry.active().recv_event_timeout(Duration::from_millis(25))
+        if let Ok(TerminalEvent::Output(bytes)) = registry
+            .active()
+            .recv_event_timeout(Duration::from_millis(25))
         {
             output.extend(bytes);
         }

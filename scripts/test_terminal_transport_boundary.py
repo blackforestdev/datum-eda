@@ -29,7 +29,26 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             ),
             "request.rs": "struct TerminalTransportRequest {}",
             "event.rs": "enum TerminalTransportEvent { Output(Vec<u8>), Exited(Option<i32>) }",
-            "reader.rs": "fn spawn_event_threads() {}",
+            "reader.rs": (
+                "fn spawn_reader(){output.reserve();reader.read_bytes();}\n"
+                "fn reader_retries_eintr_and_would_block_without_losing_bytes_or_spinning(){}\n"
+                "fn reader_drains_hup_tail_then_accepts_correlated_eio_as_eof(){}\n"
+                "fn reader_reports_uncorrelated_eio_and_invalid_descriptor_once(){}"
+            ),
+            "input.rs": "struct InputQueue {}",
+            "output.rs": "struct OutputBacklog {}",
+            "control.rs": "struct ControlBacklog {}",
+            "launch_error.rs": "enum TerminalLaunchStage {}",
+            "limits.rs": (
+                "const MAX_OUTPUT_CHUNKS: usize = 256;\n"
+                "const MAX_OUTPUT_CHUNK_BYTES: usize = 16 * 1024;\n"
+                "const MAX_OUTPUT_BYTES: usize = 4 * 1024 * 1024;\n"
+                "const MAX_INPUT_REQUESTS: usize = 64;\n"
+                "const MAX_INPUT_BYTES: usize = 4 * 1024 * 1024;\n"
+                "const MAX_LIVE_SESSIONS: usize = 16;\n"
+                "const GUI_DRAIN_EVENT_LIMIT: usize = 128;\n"
+                "const GUI_DRAIN_BYTE_LIMIT: usize = 64 * 1024;"
+            ),
             "session_handle.rs": (
                 "pub(crate) struct PreparedTerminalTransport {\n    child: (),\n}\n"
                 "impl PreparedTerminalTransport { pub(super) fn new() {} "
@@ -38,13 +57,15 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
                 "    events: (),\n    master_fd: i32,\n    process_group_id: i32,\n}\n"
                 "impl TerminalTransportSession { pub(super) fn new() {} "
                 "pub(crate) fn try_recv_event() {} pub(crate) fn recv_event_timeout() {} "
+                "pub(crate) fn try_recv_control_event() {} pub(crate) fn try_recv_output() {} "
+                "pub(crate) fn has_pending_event() {} "
                 "pub(crate) fn process_group_id() {} pub(crate) fn write_bytes() {} "
                 "pub(crate) fn interrupt() {} pub(crate) fn terminate() {} "
                 "pub(crate) fn resize() {} }"
             ),
             "wake.rs": "struct TerminalWakeGate {}",
             "linux/pty.rs": (
-                "fn open_pty_pair(){libc::posix_openpt();libc::grantpt();"
+                "fn open_pty_pair(){let _=c\"/dev/ptmx\";libc::grantpt();"
                 "libc::unlockpt();libc::ptsname_r();}"
             ),
             "linux/spawn.rs": (
@@ -53,9 +74,20 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "linux/job_control.rs": (
                 "fn signal_process_group(){libc::kill();libc::TIOCSWINSZ;}"
             ),
+            "linux/io.rs": (
+                "fn wait_readable(){libc::F_DUPFD_CLOEXEC;libc::poll();}"
+            ),
+            "linux/termios.rs": (
+                "fn configure_interactive(){libc::tcgetattr();libc::tcsetattr();}"
+            ),
         }
         for relative, text in files.items():
             (transport / relative).write_text(text, encoding="utf-8")
+        (root / guard.APP_SRC / "terminal_session_drain.rs").write_text(
+            "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}\n"
+            "fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal(){}",
+            encoding="utf-8",
+        )
         return temporary, root
 
     def test_valid_multifile_boundary_passes(self) -> None:
@@ -133,7 +165,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "pub use request::*;", encoding="utf-8"
         )
         failures = guard.check(root)
-        self.assertTrue(any("libc::posix_openpt" in failure for failure in failures))
+        self.assertTrue(any('/dev/ptmx' in failure for failure in failures))
         self.assertTrue(any("real orchestration" in failure for failure in failures))
 
     def test_broad_linux_visibility_and_raw_constructor_fail(self) -> None:
@@ -180,6 +212,45 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("take_master" in failure for failure in failures))
         self.assertTrue(any("event_channel" in failure for failure in failures))
         self.assertTrue(any("into_parts" in failure for failure in failures))
+
+    def test_budget_increase_and_unbounded_channel_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        limits = root / guard.TRANSPORT / "limits.rs"
+        limits.write_text(
+            limits.read_text(encoding="utf-8").replace(
+                "MAX_OUTPUT_BYTES: usize = 4 * 1024 * 1024",
+                "MAX_OUTPUT_BYTES: usize = 8 * 1024 * 1024",
+            ),
+            encoding="utf-8",
+        )
+        reader = root / guard.TRANSPORT / "reader.rs"
+        reader.write_text(reader.read_text(encoding="utf-8") + "\nfn bad(){mpsc::channel();}", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("MAX_OUTPUT_BYTES" in failure for failure in failures))
+        self.assertTrue(any("mpsc::channel" in failure for failure in failures))
+
+    def test_active_only_drain_regression_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        rogue = root / guard.APP_SRC / "runtime.rs"
+        rogue.write_text("fn poll(){sessions.active().try_recv_event();}", encoding="utf-8")
+        self.assertIn("active-only terminal event draining must not return", guard.check(root))
+
+    def test_missing_reader_and_fairness_proofs_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        reader = root / guard.TRANSPORT / "reader.rs"
+        reader.write_text("fn spawn_reader(){reader.read_bytes();}", encoding="utf-8")
+        drain = root / guard.APP_SRC / "terminal_session_drain.rs"
+        drain.write_text(
+            "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}",
+            encoding="utf-8",
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("reserve" in failure for failure in failures))
+        self.assertTrue(any("transition proof" in failure for failure in failures))
+        self.assertIn("all-session terminal drain lacks literal L3 proof", failures)
 
 
 if __name__ == "__main__":

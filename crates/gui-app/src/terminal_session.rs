@@ -7,8 +7,10 @@ use crate::{
     terminal_process::spawn_terminal_process,
     terminal_screen::TerminalScreen,
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
-    terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
-    terminal_transport::{TerminalTransportSession, TerminalWakeGate},
+    terminal_session_events::{
+        record_terminal_input_accepted_event, record_terminal_lifecycle_event,
+    },
+    terminal_transport::{MAX_LIVE_SESSIONS, TerminalTransportSession, TerminalWakeGate},
 };
 use anyhow::Result;
 use datum_gui_protocol::{
@@ -17,7 +19,6 @@ use datum_gui_protocol::{
     TerminalLaneState, TerminalTabState,
 };
 use std::path::{Path, PathBuf};
-use std::sync::mpsc::TryRecvError;
 use std::sync::{Arc, Mutex};
 use winit::event_loop::EventLoopProxy;
 
@@ -42,6 +43,8 @@ pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
     active_index: usize,
     terminal_wake: TerminalWakeGate,
+    next_drain_index: usize,
+    projection_managed: bool,
 }
 
 struct TerminalSessionSlot {
@@ -58,6 +61,8 @@ struct TerminalSessionSlot {
     /// (terminal performance slice): O(new bytes) per refresh instead of a
     /// full-log reload. Self-resets when the slot's log path changes (restart).
     activity: TerminalActivitySummaryCache,
+    parked_lane: TerminalLaneState,
+    disconnected_reported: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -102,14 +107,19 @@ impl TerminalSessionRegistry {
                 columns: 80,
                 rows: 24,
                 activity: TerminalActivitySummaryCache::default(),
+                parked_lane: TerminalLaneState::default(),
+                disconnected_reported: false,
             }],
             active_index: 0,
             terminal_wake,
+            next_drain_index: 0,
+            projection_managed: false,
         })
     }
 
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
+        ensure_session_capacity(self.sessions.len())?;
         let previous_active_index = self.active_index;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         self.sessions.push(TerminalSessionSlot {
@@ -123,6 +133,8 @@ impl TerminalSessionRegistry {
             columns: 80,
             rows: 24,
             activity: TerminalActivitySummaryCache::default(),
+            parked_lane: TerminalLaneState::default(),
+            disconnected_reported: false,
         });
         self.sessions[previous_active_index].attached = false;
         mark_terminal_session_lifecycle(
@@ -139,6 +151,25 @@ impl TerminalSessionRegistry {
         mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         Ok(self.active().session_id())
+    }
+
+    pub(super) fn spawn_and_activate_with_lane(
+        &mut self,
+        context: &TerminalLaunchContext,
+        lane: &mut TerminalLaneState,
+    ) -> Result<String> {
+        let previous = self.active_index;
+        let session_id = self.spawn_and_activate(context)?.to_string();
+        lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
+        self.projection_managed = true;
+        debug_assert_eq!(
+            self.sessions[self.active_index]
+                .parked_lane
+                .grid_lines()
+                .len(),
+            0
+        );
+        Ok(session_id)
     }
 
     #[allow(dead_code)]
@@ -172,6 +203,26 @@ impl TerminalSessionRegistry {
         Ok(())
     }
 
+    pub(super) fn activate_with_lane(
+        &mut self,
+        session_id: &str,
+        lane: &mut TerminalLaneState,
+    ) -> Result<()> {
+        let previous = self.active_index;
+        let target = self
+            .sessions
+            .iter()
+            .position(|slot| slot.session.session_id() == session_id)
+            .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
+        self.activate(session_id)?;
+        if target != previous {
+            lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
+            lane.swap_session_projection(&mut self.sessions[target].parked_lane);
+        }
+        self.projection_managed = true;
+        Ok(())
+    }
+
     #[allow(dead_code)]
     pub(super) fn rename(&mut self, session_id: &str, label: impl Into<String>) -> Result<()> {
         let slot = self
@@ -200,6 +251,7 @@ impl TerminalSessionRegistry {
         self.sessions[self.active_index].attached
     }
 
+    #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn active_screen_mut(&mut self) -> &mut TerminalScreen {
         &mut self.sessions[self.active_index].screen
     }
@@ -253,7 +305,13 @@ impl TerminalSessionRegistry {
             self.active_index = self.sessions.len() - 1;
         }
         self.sessions[self.active_index].attached = true;
-        state.status = self.sessions[self.active_index].status.clone();
+        if self.projection_managed {
+            let mut discarded = TerminalLaneState::default();
+            state.swap_session_projection(&mut discarded);
+            state.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+        } else {
+            state.status = self.sessions[self.active_index].status.clone();
+        }
         self.sync_lane_tabs(state);
         Ok(())
     }
@@ -355,6 +413,16 @@ impl TerminalSessionRegistry {
         self.sessions.len()
     }
 }
+
+fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
+    if live_sessions >= MAX_LIVE_SESSIONS {
+        anyhow::bail!("terminal session limit reached ({MAX_LIVE_SESSIONS})");
+    }
+    Ok(())
+}
+
+#[path = "terminal_session_drain.rs"]
+mod drain;
 
 pub(super) fn terminal_launch_context_from_state(
     project_root: &Path,
@@ -533,11 +601,17 @@ impl TerminalSession {
 
     pub(super) fn write_bytes(&self, bytes: &[u8]) -> Result<()> {
         self.transport.write_bytes(bytes)?;
-        let _ = record_terminal_input_event(self, bytes);
+        let _ = record_terminal_input_accepted_event(self, bytes);
         Ok(())
     }
-    pub(super) fn try_recv_event(&self) -> Result<TerminalEvent, TryRecvError> {
-        self.transport.try_recv_event()
+    fn try_recv_control_event(&self) -> Option<TerminalEvent> {
+        self.transport.try_recv_control_event()
+    }
+    fn try_recv_output(&self, max_bytes: usize) -> Option<Vec<u8>> {
+        self.transport.try_recv_output(max_bytes)
+    }
+    fn has_pending_event(&self) -> bool {
+        self.transport.has_pending_event()
     }
     #[cfg(test)]
     pub(super) fn recv_event_timeout(

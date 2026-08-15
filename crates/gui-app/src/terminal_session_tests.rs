@@ -34,6 +34,7 @@ impl TerminalLaunchContext {
         }
     }
 }
+
 #[test]
 fn terminal_session_registry_tracks_active_session_contexts() {
     let root = std::env::temp_dir().join(format!("datum-terminal-registry-{}", std::process::id()));
@@ -208,7 +209,6 @@ fn terminal_session_registry_close_active_repoints_latest_context() {
     );
     let _ = fs::remove_dir_all(&root);
 }
-
 #[test]
 fn terminal_session_detach_preserves_running_session_until_reattach() {
     let root = std::env::temp_dir().join(format!("datum-terminal-detach-{}", std::process::id()));
@@ -292,8 +292,7 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     assert_eq!(tab.restart_count, 1);
     assert!(tab.active);
     assert!(tab.attached);
-    // T0-C01 / decision 027 FT-001: restart is a lifecycle event; it must not
-    // write a notice row into the grid — narration goes to the console sink.
+    // Decision 027 FT-001: restart narration goes to the console, never the grid.
     let restarted_rows = terminal_state.grid_lines().join("\n");
     assert!(
         !restarted_rows.contains("terminal restarted"),
@@ -614,6 +613,7 @@ fn terminal_session_spawns_real_pty_shell() {
                 TerminalEvent::Exited(code) => {
                     assert_eq!(code, Some(0));
                 }
+                TerminalEvent::Error(error) => panic!("unexpected transport error: {error:?}"),
             }
         }
     }
@@ -629,7 +629,7 @@ fn terminal_session_spawns_real_pty_shell() {
         "terminal event log should record I/O events: {event_log}"
     );
     assert!(
-        event_log.contains(r#""direction":"input""#),
+        event_log.contains(r#""direction":"input_accepted""#),
         "terminal event log should record PTY input: {event_log}"
     );
     assert!(
@@ -642,7 +642,6 @@ fn terminal_session_spawns_real_pty_shell() {
     );
     let _ = fs::remove_dir_all(&root);
 }
-
 #[test]
 fn terminal_session_terminate_reports_signal_exit() {
     let root =
@@ -658,10 +657,11 @@ fn terminal_session_terminate_reports_signal_exit() {
     for _ in 0..50 {
         if let Ok(TerminalEvent::Output(bytes)) =
             session.recv_event_timeout(Duration::from_millis(100))
-            && String::from_utf8_lossy(&bytes).contains("datum-terminate-ready") {
-                ready = true;
-                break;
-            }
+            && String::from_utf8_lossy(&bytes).contains("datum-terminate-ready")
+        {
+            ready = true;
+            break;
+        }
     }
     assert!(
         ready,

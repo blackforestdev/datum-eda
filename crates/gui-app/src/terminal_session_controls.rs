@@ -26,10 +26,10 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        match self
-            .terminal_sessions
-            .spawn_and_activate(&self.terminal_launch_context)
-        {
+        match self.terminal_sessions.spawn_and_activate_with_lane(
+            &self.terminal_launch_context,
+            &mut self.session.workspace_mut().ui.terminal,
+        ) {
             Ok(session_id) => {
                 let session_id = session_id.to_string();
                 self.log_review_event(format!("opened terminal session {session_id}"));
@@ -37,7 +37,11 @@ impl Runtime {
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
             }
-            Err(err) => self.log_review_event(format!("terminal session open failed: {err}")),
+            Err(err) => {
+                let message = format!("terminal session open failed: {err}");
+                self.session.workspace_mut().ui.terminal.status = message.clone();
+                self.log_review_event(message);
+            }
         }
         true
     }
@@ -133,7 +137,10 @@ impl Runtime {
 
     pub(super) fn reattach_active_terminal_session(&mut self) -> bool {
         let session_id = self.terminal_sessions.active().session_id().to_string();
-        match self.terminal_sessions.activate(&session_id) {
+        match self
+            .terminal_sessions
+            .activate_with_lane(&session_id, &mut self.session.workspace_mut().ui.terminal)
+        {
             Ok(()) => {
                 self.log_review_event("reattached active terminal session".to_string());
                 self.sync_terminal_tabs();

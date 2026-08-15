@@ -6,20 +6,16 @@ use std::{
 
 pub(in crate::terminal_transport) fn attach_child_pty(
     command: &mut Command,
-    slave_path: Vec<u8>,
+    slave_fd: RawFd,
     master_fd: RawFd,
 ) {
     unsafe {
-        command.pre_exec(move || configure_child_pty(&slave_path, master_fd));
+        command.pre_exec(move || configure_child_pty(slave_fd, master_fd));
     }
 }
 
-fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
+fn configure_child_pty(slave_fd: RawFd, master_fd: RawFd) -> io::Result<()> {
     if unsafe { libc::setsid() } < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    let slave_fd = unsafe { libc::open(slave_path.as_ptr().cast(), libc::O_RDWR) };
-    if slave_fd < 0 {
         return Err(io::Error::last_os_error());
     }
     if unsafe { libc::ioctl(slave_fd, libc::TIOCSCTTY, 0) } < 0 {
@@ -28,15 +24,24 @@ fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
         return Err(error);
     }
     for fd in [libc::STDIN_FILENO, libc::STDOUT_FILENO, libc::STDERR_FILENO] {
-        if unsafe { libc::dup2(slave_fd, fd) } < 0 {
-            let error = io::Error::last_os_error();
+        if let Err(error) = duplicate_to(slave_fd, fd) {
             unsafe { libc::close(slave_fd) };
             return Err(error);
         }
     }
-    if slave_fd > libc::STDERR_FILENO {
-        unsafe { libc::close(slave_fd) };
-    }
+    unsafe { libc::close(slave_fd) };
     unsafe { libc::close(master_fd) };
     Ok(())
+}
+
+fn duplicate_to(source: RawFd, target: RawFd) -> io::Result<()> {
+    loop {
+        if unsafe { libc::dup2(source, target) } >= 0 {
+            return Ok(());
+        }
+        let error = io::Error::last_os_error();
+        if error.kind() != io::ErrorKind::Interrupted {
+            return Err(error);
+        }
+    }
 }
