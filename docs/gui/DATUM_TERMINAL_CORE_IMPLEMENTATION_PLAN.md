@@ -132,15 +132,16 @@ these decisions one at a time.
   unattached local PTY session running; deliberately detached tmux servers remain
   under tmux authority. `Ctrl+C` remains the native PTY interrupt byte and is
   never overloaded as close confirmation.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O2 --> **P05-O2 — graceful termination.** Recommended: Terminate atomically
-  enters `Terminating`, rejects new input/resize, sends SIGHUP to the controlling
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O2 --> **P05-O2 — graceful termination.** Owner-approved 2026-08-15: Terminate
+  atomically enters `Terminating`, rejects new input/resize, sends SIGHUP to the controlling
   session leader and every verified process group still belonging to the owned
   Linux terminal session, pairs it with SIGCONT so stopped jobs can react, and
   continues draining final output for 2,000 ms.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Recommended: after the HUP grace, send SIGTERM
-  to every still-owned process group; after another 2,000 ms send SIGKILL. Mark
-  `Closed` only after the leader is reaped and no owned member remains;
-  otherwise retain visible `TerminationFailed` state.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Recommended: after the HUP grace, send
+  SIGTERM plus SIGCONT to every still-owned process group; after another 2,000 ms
+  send SIGKILL, then allow 2,000 ms for reap and empty-session verification. Mark
+  `Closed` only after the leader is reaped and no owned member remains; otherwise
+  retain visible `TerminationFailed` state with the surviving identities.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O4 --> **P05-O4 — app shutdown.** Recommended: tear down sessions concurrently
   under one 6,000 ms global deadline. At deadline, durably report surviving
   PID/PGID/session identities and exit; never silently detach. User-selected
@@ -160,6 +161,11 @@ these decisions one at a time.
 The project owner approved guarded terminate-only tab closure with no detached
 Datum PTY sessions, including click, repeated `Ctrl+Shift+W`, and typed
 `yes`+Enter confirmation paths. This evidence approves P05-O1 only.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O2-OWNER-APPROVED -->
+The project owner approved the 2,000 ms SIGHUP-plus-SIGCONT graceful phase across
+every verified process group in the owned Linux terminal session, with input and
+resize closed and final output still draining. This evidence approves P05-O2 only.
 
 ### Core foundation
 

@@ -1521,15 +1521,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve P05-O2`, or `P05-O2: revise — <replacement>` or `P05-O2: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O3`, or `P05-O3: revise — <replacement>` or `P05-O3: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P05-O2",
-                  "question": "How should graceful termination begin, and how long should Datum wait before escalation?",
-                  "recommended_response": "Approve entering Terminating, rejecting new input and resize, sending deduplicated SIGHUP plus SIGCONT to every verified process group in the owned Linux terminal session, continuing final-output drain, and waiting 2,000 ms before SIGTERM escalation.",
+                  "id": "P05-O3",
+                  "question": "What bounded SIGTERM-to-SIGKILL escalation and closure-verification policy should Datum use?",
+                  "recommended_response": "Approve SIGTERM plus SIGCONT to every still-owned process group after the HUP grace, SIGKILL after another 2,000 ms, then up to 2,000 ms for reap and empty-session verification; otherwise retain visible TerminationFailed with surviving identities.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P05-O2"
+                    "marker": "P05-O3"
                   }
                 }
               ]
