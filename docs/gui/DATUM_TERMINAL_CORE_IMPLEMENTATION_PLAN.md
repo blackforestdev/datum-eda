@@ -54,9 +54,13 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05C --> **DTC-P05C — agent-session usability repair.** Restore terminal-screen focus
   entry under child mouse reporting, terminal-specific governed glyph coverage,
   and bounded shaped-text caching under continuously changing agent output.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05E --> **DTC-P05E — application focus and hit-ownership convergence.** Clip every
+  editor-scene hit region to its visible viewport, prevent board/review targets
+  from shadowing terminal chrome, and make one application-level focus authority
+  govern terminal selection, mouse reporting, status projection, and Tab routing.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05D --> **DTC-P05D — owner production retest.** Accept a fresh-build Claude session
   only after click focus, Tab completion, box/Powerline glyphs, sustained output,
-  and post-output typing remain usable without a lockup.
+  and post-output typing remain usable without a lockup. Depends on DTC-P05E.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -250,6 +254,47 @@ per-session bounded output batching, output-before-exit ordering, one-record
 batch audit, terminal-only glyph shaping, and two-generation shaped-buffer
 residency are regression- and drift-guarded. Decision 031 records the owner's
 terminal typography exception and the exact adjacent OFL/provenance boundary.
+
+#### DTC-P05E application focus and hit-ownership convergence
+
+The DTC-P05D production retest was rejected on 2026-08-16 because clicking the
+terminal did not make Datum consistently recognize it as the selected surface;
+Tab could still cycle Board/Schematic panes. The dogfooded Claude session
+recorded its code-reading diagnosis in
+`research/TERMINAL_FOCUS_TAB_BUG_2026-08-16.md`. That evidence identifies a
+second concrete focus-entry defect: editor overlay hit regions are visually
+clipped but can extend beyond their pane, are inserted after terminal chrome,
+and therefore can win reverse-order hit testing inside the terminal dock.
+
+DTC-P05E has this bounded scope:
+
+1. Add a positive-area rectangle-intersection primitive and clip every hit
+   region emitted by the board/review scene to its owning scene viewport,
+   dropping empty intersections. Visible clipping and hit ownership must agree.
+2. Prove terminal screen and chrome hit targets cannot be shadowed by authored
+   objects or review actions under adversarial camera pan/zoom, dock height,
+   scale, or overlay placement.
+3. Make selected application surface explicit and singular: editor selection
+   retains its focused `PaneId`, terminal selection is equally representable,
+   and transient overlays remain exclusive owners. `PaneContent` remains
+   Board/Schematic because Terminal is a dock surface, not an editor document.
+4. Make terminal hit entry, status projection, mouse-report eligibility,
+   cursor/focus presentation, raw PTY routing, Tab/Shift+Tab handling, and focus
+   exit consume that same application-level authority.
+5. Add production-path regressions for editor focus -> terminal screen click ->
+   terminal selection -> Tab/Shift+Tab bytes, including mouse-reporting and
+   non-mouse-reporting children, plus outside-screen and editor-return cases.
+6. Preserve the DTC-P05C output batching, glyph, cache, job-control, queue,
+   lifecycle, and no-dependency boundaries unchanged.
+
+Terminal text selection and arbitrary-range copy are not falsely claimed by
+this repair. The current whole-scrollback copy and focus-gated paste behavior
+remain provisional; full selection/clipboard semantics stay in the scheduled
+TerminalCore/input work and must be tracked separately from this focus defect.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-REJECTED -->
+The owner's production rejection and the dogfooded Claude diagnosis authorize
+DTC-P05E execution but do not satisfy the subsequent DTC-P05D hands-on gate.
 
 <!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->

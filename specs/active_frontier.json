@@ -1402,11 +1402,26 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "dtc-p05e-focus-convergence",
+        "worktree": ".",
+        "head": "2976f137ca583cd272df5b9c105088d56b27a2d3",
+        "claimed_at": "2026-08-16T00:09:40-07:00",
+        "heartbeat_at": "2026-08-16T00:09:40-07:00",
+        "expires_at": "2026-08-16T08:09:40-07:00",
+        "scope": [
+          "editor-scene hit-region clipping and terminal chrome precedence",
+          "application-level terminal/editor focus convergence",
+          "terminal selection rendering and end-to-end Tab routing proof",
+          "explicitly preserve full terminal text selection/copy as later scope"
+        ]
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1417,7 +1432,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05D",
+        "canonical_next_step_id": "DTC-P05E",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1590,12 +1605,28 @@
             ]
           },
           {
-            "id": "DTC-P05D",
-            "kind": "owner_decision",
+            "id": "DTC-P05E",
+            "kind": "execution",
             "status": "in_progress",
-            "action": "Owner-test a fresh production Claude session for click focus, Tab completion, glyph readability, sustained output, and continued post-output input responsiveness.",
+            "action": "Clip editor-scene hit regions to their visible viewport, prevent board/review targets from shadowing terminal chrome, and converge terminal/editor selection under one application-level focus authority with production-path Tab routing proof.",
             "depends_on": [
               "DTC-P05C"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P05E"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P05D",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Owner-test a fresh production Claude session for click focus, Tab completion, glyph readability, sustained output, and continued post-output input responsiveness.",
+            "depends_on": [
+              "DTC-P05E"
             ],
             "requirement_refs": [
               {
