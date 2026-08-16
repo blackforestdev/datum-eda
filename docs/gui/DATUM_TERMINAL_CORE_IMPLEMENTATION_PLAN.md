@@ -134,8 +134,9 @@ these decisions one at a time.
   never overloaded as close confirmation.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O2 --> **P05-O2 — graceful termination.** Recommended: Terminate atomically
   enters `Terminating`, rejects new input/resize, sends SIGHUP to the controlling
-  session leader and current foreground process group once each, and continues
-  draining final output for 2,000 ms.
+  session leader and every verified process group still belonging to the owned
+  Linux terminal session, pairs it with SIGCONT so stopped jobs can react, and
+  continues draining final output for 2,000 ms.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Recommended: after the HUP grace, send SIGTERM
   to every still-owned process group; after another 2,000 ms send SIGKILL. Mark
   `Closed` only after the leader is reaped and no owned member remains;
