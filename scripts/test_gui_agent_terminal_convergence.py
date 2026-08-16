@@ -17,6 +17,35 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
+        terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"
+        terminal_tests = r'''
+fn claude_keyboard_controls_cannot_restore_a_stale_cursor() {
+    apply(b"\x1b[>1u\x1b[?u\x1b[<uclaude");
+}
+fn split_claude_keyboard_controls_are_cursor_state_invariant() {}
+'''
+        failures: list[str] = []
+        guard.check_claude_completion_controls(
+            terminal_escape, terminal_tests, failures
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_claude_completion_controls(
+            terminal_escape.replace(" if self.params.is_empty()", ""),
+            terminal_tests.replace(
+                "split_claude_keyboard_controls_are_cursor_state_invariant", "removed"
+            ),
+            failures,
+        )
+        self.assertIn(
+            "parameterized CSI u must not restore the terminal cursor", failures
+        )
+        self.assertTrue(
+            any("split_claude_keyboard_controls" in failure for failure in failures)
+        )
+
     def test_agent_tui_focus_batching_glyph_and_cache_contract_is_pinned(self) -> None:
         main = """
     fn window_event() {

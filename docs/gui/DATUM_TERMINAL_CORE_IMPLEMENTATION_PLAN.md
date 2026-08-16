@@ -58,9 +58,14 @@ read-only work.
   editor-scene hit region to its visible viewport, prevent board/review targets
   from shadowing terminal chrome, and make one application-level focus authority
   govern terminal selection, mouse reporting, status projection, and Tab routing.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05F --> **DTC-P05F — Claude completion compatibility repair.** Distinguish
+  Claude's kitty-keyboard push, pop, and query control sequences from the legacy
+  CSI cursor-restore command; prove literal HT delivery and visible completion in
+  an actual documented Claude completion context without claiming full kitty
+  keyboard support. Depends on DTC-P05E.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05D --> **DTC-P05D — owner production retest.** Accept a fresh-build Claude session
   only after click focus, Tab completion, box/Powerline glyphs, sustained output,
-  and post-output typing remain usable without a lockup. Depends on DTC-P05E.
+  and post-output typing remain usable without a lockup. Depends on DTC-P05F.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -302,14 +307,56 @@ routing. Production-path tests prove terminal clicks route Tab and Shift+Tab to
 the PTY without editor pane cycling for mouse-aware and ordinary children.
 
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-REJECTED -->
-The owner's production rejection and the dogfooded Claude diagnosis authorize
-DTC-P05E execution but do not satisfy the subsequent DTC-P05D hands-on gate.
+The owner's first production rejection and the dogfooded Claude diagnosis
+authorized DTC-P05E execution. The second production rejection on 2026-08-16
+confirmed focus now enters the terminal but reported that completion still did
+not work in Claude Code 2.1.233. The session audit log proves Datum delivered two
+literal HT bytes and Claude rendered a response to the first; however, the same
+Claude stream contains `CSI > 1 u`, `CSI < u`, and `CSI ? u`. The provisional
+parser currently treats every CSI `u`, including those private/intermediate
+forms, as legacy cursor restore. That can move the cursor to stale saved state
+while Claude paints or accepts a completion even though the key reached the PTY.
+
+#### DTC-P05F Claude completion compatibility repair
+
+DTC-P05F is a bounded compatibility correction, not an early claim of the full
+DTC-P15 kitty-keyboard protocol:
+
+1. Restrict legacy CSI `u` cursor restore to its parameter-free grammar. Kitty
+   keyboard push (`CSI > flags u`), pop (`CSI < number u`), and query
+   (`CSI ? u`) must never mutate cursor or screen state.
+2. Continue advertising no kitty-keyboard support in the provisional core: do
+   not reply to the query, track a mode stack, or change key encoding here.
+   Claude's requested flag `1` retains literal HT for Tab under the normative
+   protocol, so Datum must keep sending exactly `0x09`.
+3. Add chunk-invariant regressions using the observed Claude control stream to
+   prove push/pop/query cannot restore a stale cursor, while parameter-free CSI
+   `u` retains its existing restore behavior.
+4. Add a production-path completion fixture with a real completion candidate:
+   enter terminal focus, display a candidate, deliver one HT, and prove the
+   child response is parsed at the intended cursor without pane cycling or
+   cross-session leakage.
+5. Re-run DTC-P05D with a documented Claude context that actually offers a
+   completion: an `@` file suggestion, a `/` command menu, a generated prompt
+   suggestion, or shell-mode history/path completion. Pressing Tab on an empty
+   prompt without an active candidate is not a valid completion assertion.
+6. Preserve the P04 transport budgets, DTC-P05B lifecycle barriers, DTC-P05C
+   batching/font/cache repairs, DTC-P05E focus authority, dependency boundary,
+   and the separately scheduled complete kitty-keyboard work unchanged.
+
+The official kitty keyboard protocol specifies that enhancement flag `1`
+disambiguates escape codes but explicitly retains legacy bytes for Enter, Tab,
+and Backspace. The official Claude interactive reference documents Tab as an
+accept action only where a suggestion or completion is active. These behavioral
+references guide clean-room tests; no third-party source or dependency enters
+Datum.
 
 <!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->
 DTC-P05D remains pending until the project owner confirms a fresh production
 build can enter terminal focus by clicking a mouse-aware Claude session, use
-Tab completion without pane cycling, render the governed box/Powerline glyph
+Tab to accept a visible candidate in one of the documented completion contexts
+without pane cycling, render the governed box/Powerline glyph
 fixture legibly, sustain an agent session, and accept the next prompt without
 freezing. Implementation evidence alone cannot satisfy this hands-on gate.
 

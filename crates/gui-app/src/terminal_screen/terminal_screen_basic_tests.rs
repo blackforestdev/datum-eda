@@ -174,6 +174,52 @@ fn cursor_save_and_restore_supports_status_rewrites() {
 }
 
 #[test]
+fn claude_keyboard_controls_cannot_restore_a_stale_cursor() {
+    let mut screen = TerminalScreen::default();
+    let mut state = terminal_state();
+    screen.resize_grid(40, 4);
+
+    screen.apply_bytes(&mut state, b"prompt> \x1b[s\x1b[1;16H@");
+    assert_eq!((state.screen_cursor_row, state.screen_cursor_col), (0, 16));
+
+    // Claude Code 2.1.233 emits these kitty-keyboard push, query, and pop
+    // controls. Datum does not advertise that later protocol yet, so these are
+    // ignored. Most importantly, their final `u` is not the parameter-free
+    // CSI restore-cursor command.
+    let responses = screen.apply_bytes_with_responses(&mut state, b"\x1b[>1u\x1b[?u\x1b[<uclaude");
+    assert!(responses.is_empty());
+    assert_eq!((state.screen_cursor_row, state.screen_cursor_col), (0, 22));
+    assert_eq!(state.grid_lines(), vec!["prompt>        @claude"]);
+
+    screen.apply_bytes(&mut state, b"\x1b[u!");
+    assert_eq!(state.grid_lines(), vec!["prompt> !      @claude"]);
+}
+
+#[test]
+fn split_claude_keyboard_controls_are_cursor_state_invariant() {
+    fn render(chunks: &[&[u8]]) -> (Vec<String>, usize, usize) {
+        let mut screen = TerminalScreen::default();
+        let mut state = terminal_state();
+        screen.resize_grid(40, 4);
+        screen.apply_bytes(&mut state, b"candidate\x1b[s\x1b[2;8H");
+        for chunk in chunks {
+            screen.apply_bytes(&mut state, chunk);
+        }
+        (
+            state.grid_lines().to_vec(),
+            state.screen_cursor_row,
+            state.screen_cursor_col,
+        )
+    }
+
+    let whole = render(&[b"\x1b[>1u\x1b[?u\x1b[<uaccepted"]);
+    let split = render(&[b"\x1b[>", b"1u\x1b[", b"?u\x1b", b"[<", b"uaccepted"]);
+    assert_eq!(split, whole);
+    assert_eq!(whole.1, 1);
+    assert_eq!(whole.2, 15);
+}
+
+#[test]
 fn reverse_index_moves_cursor_up_without_scrolling() {
     let mut screen = TerminalScreen::default();
     let mut state = terminal_state();

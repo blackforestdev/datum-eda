@@ -24,6 +24,8 @@ RENDER_SCENE = ROOT / "crates" / "gui-render" / "src" / "render" / "scene.rs"
 HIT_CLIPPING = ROOT / "crates" / "gui-render" / "src" / "render" / "hit_clipping.rs"
 TERMINAL_FOCUS_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_focus_convergence_tests.rs"
 TERMINAL_HIT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_hit_ownership_tests.rs"
+TERMINAL_ESCAPE = ROOT / "crates" / "gui-app" / "src" / "terminal_screen" / "terminal_escape.rs"
+TERMINAL_SCREEN_BASIC_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_screen" / "terminal_screen_basic_tests.rs"
 RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
@@ -140,6 +142,23 @@ def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
             failures.append("pane and character hotkeys must share the Press predicate")
         if "ElementState::Released" in dispatch_tail:
             failures.append("workspace hotkey dispatch must not fire on key release")
+
+
+def check_claude_completion_controls(
+    terminal_escape: str,
+    terminal_screen_tests: str,
+    failures: list[str],
+) -> None:
+    """Keep kitty keyboard management distinct from legacy cursor restore."""
+    if "b'u' if self.params.is_empty()" not in terminal_escape:
+        failures.append("parameterized CSI u must not restore the terminal cursor")
+    for marker in (
+        "claude_keyboard_controls_cannot_restore_a_stale_cursor",
+        "split_claude_keyboard_controls_are_cursor_state_invariant",
+        'b"\\x1b[>1u\\x1b[?u\\x1b[<uclaude"',
+    ):
+        if marker not in terminal_screen_tests:
+            failures.append(f"Claude completion control proof is missing {marker}")
 
 
 def check_agent_tui_runtime(
@@ -349,6 +368,8 @@ def main() -> int:
     hit_clipping = HIT_CLIPPING.read_text()
     terminal_focus_tests = TERMINAL_FOCUS_TESTS.read_text()
     terminal_hit_tests = TERMINAL_HIT_TESTS.read_text()
+    terminal_escape = TERMINAL_ESCAPE.read_text()
+    terminal_screen_basic_tests = TERMINAL_SCREEN_BASIC_TESTS.read_text()
     terminal_transport = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted(TERMINAL_TRANSPORT.rglob("*.rs"))
@@ -370,6 +391,11 @@ def main() -> int:
         failures,
     )
     check_workspace_hotkey_timing(keyboard_focus, failures)
+    check_claude_completion_controls(
+        terminal_escape,
+        terminal_screen_basic_tests,
+        failures,
+    )
     check_agent_tui_runtime(
         main,
         runtime_terminal_dock,

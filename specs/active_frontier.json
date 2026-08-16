@@ -1402,11 +1402,23 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-dtc-p05f-20260816",
+        "claimed_at": "2026-08-16T17:28:55Z",
+        "heartbeat_at": "2026-08-16T17:28:55Z",
+        "expires_at": "2026-08-17T01:28:55Z",
+        "scope": [
+          "DTC-P05F Claude completion compatibility repair"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "08e48eccc05f7effd3e68d34d4a895b45313e29a"
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1417,7 +1429,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05D",
+        "canonical_next_step_id": "DTC-P05F",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1611,12 +1623,28 @@
             ]
           },
           {
-            "id": "DTC-P05D",
-            "kind": "owner_decision",
+            "id": "DTC-P05F",
+            "kind": "execution",
             "status": "in_progress",
-            "action": "Owner-test a fresh production Claude session for click focus, Tab completion, glyph readability, sustained output, and continued post-output input responsiveness.",
+            "action": "Stop Claude kitty-keyboard push, pop, and query controls from masquerading as cursor restore, and prove literal-HT completion in a real candidate context without claiming full kitty-keyboard support.",
             "depends_on": [
               "DTC-P05E"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P05F"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P05D",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Owner-test a fresh production Claude session using an active documented completion candidate for click focus, Tab acceptance, glyph readability, sustained output, and continued post-output input responsiveness.",
+            "depends_on": [
+              "DTC-P05F"
             ],
             "requirement_refs": [
               {
@@ -1631,7 +1659,7 @@
                 {
                   "id": "DTC-P05D",
                   "question": "Does the repaired production terminal remain focused, legible, and responsive through a sustained Claude session?",
-                  "recommended_response": "Approve only after clicking the Claude terminal makes Tab complete inside the child, box/Powerline glyphs render legibly, sustained animated output remains responsive, and the next prompt accepts input without freezing.",
+                  "recommended_response": "Approve only after clicking the Claude terminal and using Tab to accept a visible @ file, / command, generated prompt, or shell-mode path/history candidate inside the child; box/Powerline glyphs must remain legible, sustained animated output responsive, and the next prompt able to accept input without freezing.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                     "marker": "DTC-P05D"

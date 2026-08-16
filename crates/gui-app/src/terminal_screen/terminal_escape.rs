@@ -445,7 +445,7 @@ impl EscapeState {
                 ensure_row_at(state, *cursor_row);
             }
             b's' => *saved_cursor = Some((*cursor_row, *cursor_col)),
-            b'u' => {
+            b'u' if self.params.is_empty() => {
                 if let Some((row, col)) = *saved_cursor {
                     *cursor_row = row;
                     *cursor_col = col;
