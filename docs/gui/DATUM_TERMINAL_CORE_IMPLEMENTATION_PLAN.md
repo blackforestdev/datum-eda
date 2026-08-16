@@ -121,11 +121,17 @@ bounded process ownership to the project owner. A code agent must not claim or
 edit DTC-P05B until P05-O1 through P05-O6 are approved. The selector presents
 these decisions one at a time.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O1 --> **P05-O1 — live-tab close UX.** Recommended: closing an already-exited
-  tab is immediate. Closing a live tab presents `Detach` (default), `Terminate`,
-  and `Cancel`. Detach keeps the local PTY/process alive; Terminate starts the
-  ratified teardown without a second prompt. An ambiguous close never kills a
-  live process.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O1 --> **P05-O1 — live-tab close UX.** Owner-approved 2026-08-15: closing an
+  already-exited tab is immediate. Clicking a live tab's close control or pressing
+  `Ctrl+Shift+W` arms terminal-local confirmation without sending a signal. The
+  user confirms by clicking `Terminate`, repeating `Ctrl+Shift+W`, or typing
+  `yes` and pressing Enter; Escape or `Cancel` disarms it. The tab stays visibly
+  `Terminating` until Datum verifies that every process in its owned Linux
+  terminal session is gone, with an explicit `Force Kill` affordance if graceful
+  teardown stalls. Datum provides no detached-PTY mode and never leaves an
+  unattached local PTY session running; deliberately detached tmux servers remain
+  under tmux authority. `Ctrl+C` remains the native PTY interrupt byte and is
+  never overloaded as close confirmation.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O2 --> **P05-O2 — graceful termination.** Recommended: Terminate atomically
   enters `Terminating`, rejects new input/resize, sends SIGHUP to the controlling
   session leader and current foreground process group once each, and continues
@@ -148,6 +154,11 @@ these decisions one at a time.
   escalation scan. Exhaustion stops before signaling an incomplete set, leaves
   visible `TerminationFailed`, and never truncates then claims orphan-free
   closure.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O1-OWNER-APPROVED -->
+The project owner approved guarded terminate-only tab closure with no detached
+Datum PTY sessions, including click, repeated `Ctrl+Shift+W`, and typed
+`yes`+Enter confirmation paths. This evidence approves P05-O1 only.
 
 ### Core foundation
 

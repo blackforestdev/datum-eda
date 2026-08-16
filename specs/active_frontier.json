@@ -1521,15 +1521,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve P05-O1`, or `P05-O1: revise — <replacement>` or `P05-O1: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O2`, or `P05-O2: revise — <replacement>` or `P05-O2: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P05-O1",
-                  "question": "What should closing a live terminal tab do?",
-                  "recommended_response": "Approve a three-way Detach (default) / Terminate / Cancel choice; exited tabs close immediately, and ambiguous close never kills a live process.",
+                  "id": "P05-O2",
+                  "question": "How should graceful termination begin, and how long should Datum wait before escalation?",
+                  "recommended_response": "Approve entering Terminating, rejecting new input and resize, sending deduplicated SIGHUP plus SIGCONT to the owned session leader and current foreground process group, continuing final-output drain, and waiting 2,000 ms before SIGTERM escalation.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P05-O1"
+                    "marker": "P05-O2"
                   }
                 }
               ]
