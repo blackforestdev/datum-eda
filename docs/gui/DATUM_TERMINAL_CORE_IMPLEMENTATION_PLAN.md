@@ -152,7 +152,7 @@ these decisions one at a time.
   Linux terminal session and process groups that remain members of it. A process
   that deliberately daemonizes into another session is outside that ownership;
   remote SSH jobs and detached tmux servers follow their remote/server policy.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O6 --> **P05-O6 — discovery bound.** Recommended: inspect at most 4,096 Linux
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O6 --> **P05-O6 — discovery bound.** Owner-approved 2026-08-15: inspect at most 4,096 Linux
   process members and 4,096 distinct process groups per terminal session per
   escalation scan. Exhaustion stops before signaling an incomplete set, leaves
   visible `TerminationFailed`, and never truncates then claims orphan-free
@@ -187,6 +187,13 @@ whose Linux session ID remains the terminal's original session ID, across all
 of its process groups. A process that deliberately creates a different session
 is outside Datum ownership; detached tmux servers and remote SSH jobs remain
 under their server's lifecycle authority. This evidence approves P05-O5 only.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O6-OWNER-APPROVED -->
+The project owner approved at most 4,096 observed Linux process members and
+4,096 distinct process groups per terminal session per escalation scan.
+Exhaustion stops before signaling an incomplete set, leaves visible
+`TerminationFailed`, and never truncates discovery then claims orphan-free
+closure. This evidence approves P05-O6 and completes DTC-P05A.
 
 ### Core foundation
 

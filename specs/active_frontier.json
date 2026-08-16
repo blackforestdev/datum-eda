@@ -1401,10 +1401,31 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "856df412-d91f-4f46-81e6-45378ec66e8e",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "58f36335e92e56cf337f6812df539082a3431651",
+        "claimed_at": "2026-08-16T04:35:50Z",
+        "heartbeat_at": "2026-08-16T04:35:50Z",
+        "expires_at": "2026-08-16T12:35:50Z",
+        "scope": [
+          "DTC-P05B",
+          "crates/gui-app/src/terminal_transport/",
+          "crates/gui-app/src/terminal_session.rs",
+          "crates/gui-app/src/terminal_session_drain.rs",
+          "crates/gui-app/src/terminal_session_controls.rs",
+          "crates/gui-app/src/terminal_input.rs",
+          "crates/gui-app/src/main.rs",
+          "crates/gui-protocol/src/terminal_lane.rs",
+          "DTC-P05B tests and terminal transport/convergence guards"
+        ]
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1415,7 +1436,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05A",
+        "canonical_next_step_id": "DTC-P05B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1508,7 +1529,7 @@
           {
             "id": "DTC-P05A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Ratify live-tab close behavior, teardown signals and deadlines, app-shutdown posture, owned-process boundaries, and bounded process-session discovery.",
             "depends_on": [
               "DTC-P04B"
@@ -1519,7 +1540,13 @@
                 "marker": "DTC-P05A"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O6-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve P05-O6`, or `P05-O6: revise — <replacement>` or `P05-O6: defer — <reason>`.",
               "requests": [
@@ -1538,7 +1565,7 @@
           {
             "id": "DTC-P05B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete foreground job control, line-discipline controls, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit, ratified termination escalation, SIGHUP, and orphan-free teardown.",
             "depends_on": [
               "DTC-P05A"
