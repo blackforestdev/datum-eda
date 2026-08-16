@@ -137,7 +137,7 @@ these decisions one at a time.
   session leader and every verified process group still belonging to the owned
   Linux terminal session, pairs it with SIGCONT so stopped jobs can react, and
   continues draining final output for 2,000 ms.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Recommended: after the HUP grace, send
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O3 --> **P05-O3 — escalation.** Owner-approved 2026-08-15: after the HUP grace, send
   SIGTERM plus SIGCONT to every still-owned process group; after another 2,000 ms
   send SIGKILL, then allow 2,000 ms for reap and empty-session verification. Mark
   `Closed` only after the leader is reaped and no owned member remains; otherwise
@@ -166,6 +166,12 @@ Datum PTY sessions, including click, repeated `Ctrl+Shift+W`, and typed
 The project owner approved the 2,000 ms SIGHUP-plus-SIGCONT graceful phase across
 every verified process group in the owned Linux terminal session, with input and
 resize closed and final output still draining. This evidence approves P05-O2 only.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O3-OWNER-APPROVED -->
+The project owner approved the bounded six-second escalation ladder: 2,000 ms
+SIGHUP grace, 2,000 ms SIGTERM-plus-SIGCONT grace, and 2,000 ms for SIGKILL,
+reap, and empty-session verification. Unverified survivors remain visibly
+`TerminationFailed`. This evidence approves P05-O3 only.
 
 ### Core foundation
 

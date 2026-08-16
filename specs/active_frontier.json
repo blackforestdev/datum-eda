@@ -1521,15 +1521,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve P05-O3`, or `P05-O3: revise — <replacement>` or `P05-O3: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O4`, or `P05-O4: revise — <replacement>` or `P05-O4: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P05-O3",
-                  "question": "What bounded SIGTERM-to-SIGKILL escalation and closure-verification policy should Datum use?",
-                  "recommended_response": "Approve SIGTERM plus SIGCONT to every still-owned process group after the HUP grace, SIGKILL after another 2,000 ms, then up to 2,000 ms for reap and empty-session verification; otherwise retain visible TerminationFailed with surviving identities.",
+                  "id": "P05-O4",
+                  "question": "How should Datum tear down multiple terminal sessions when the application exits?",
+                  "recommended_response": "Approve concurrent teardown of every session under one global 6,000 ms deadline; at deadline durably report exact surviving PID, process-group, and session identities, never silently detach, then allow Datum to exit.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P05-O3"
+                    "marker": "P05-O4"
                   }
                 }
               ]
