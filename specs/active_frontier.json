@@ -1401,32 +1401,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "856df412-d91f-4f46-81e6-45378ec66e8e",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f7fc50f57fbd0e4bf6e1a1d9c2d8db1291865895",
-        "claimed_at": "2026-08-16T04:35:50Z",
-        "heartbeat_at": "2026-08-16T06:04:17Z",
-        "expires_at": "2026-08-16T14:04:17Z",
-        "scope": [
-          "DTC-P06",
-          "crates/gui-app/src/terminal_transport/",
-          "crates/gui-app/src/terminal_session.rs",
-          "crates/gui-app/src/terminal_session_drain.rs",
-          "crates/gui-app/src/terminal_session_controls.rs",
-          "crates/gui-app/src/terminal_input.rs",
-          "crates/gui-app/src/main.rs",
-          "crates/gui-protocol/src/terminal_lane.rs",
-          "DTC-P06 concurrent-session stress, performance, platform tests, and terminal transport/convergence guards"
-        ]
-      },
-      "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06 with no third-party terminal dependency.",
+      "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
@@ -1436,7 +1415,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06",
+        "canonical_next_step_id": "DTC-P06A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1588,17 +1567,95 @@
             ]
           },
           {
-            "id": "DTC-P06",
-            "kind": "execution",
-            "status": "in_progress",
-            "action": "Prove concurrent input/output/resize/detach/reattach/exit/restart isolation, stress, performance, dependency authority, source health, and platform integration.",
+            "id": "DTC-P06A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Ratify exact proof tiers, session load, latency, throughput, resource, storage, soak, platform, and evidence budgets before timed transport assertions are implemented.",
             "depends_on": [
               "DTC-P05B"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                "marker": "DTC-P06"
+                "marker": "DTC-P06A"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve P06-O1`, or `P06-O1: revise — <replacement>` or `P06-O1: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "P06-O1",
+                  "question": "What proof tiers and durations should govern long-running terminal transport verification?",
+                  "recommended_response": "Approve release-build proof with a ten-minute eight-session CI tier, a scheduled 24-hour single-session agent-style soak, a four-hour maximum-sixteen-session soak, 1,000 spawn/exit/restart cycles, and three consecutive clean scheduled runs before release evidence is accepted.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P06-O1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DTC-P06B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove eight real sessions isolate concurrent input/output/resize, inactive-tab drain/reactivation, exact exit, termination, and verified restart without any detached Datum PTY.",
+            "depends_on": [
+              "DTC-P06A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P06B"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P06C",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove bounded saturation, persistent fairness, lifecycle churn, maximum-session refusal, and zero cross-session bytes, owned-session survivors, or descriptor/thread growth.",
+            "depends_on": [
+              "DTC-P06B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P06C"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P06D",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Run the ratified release-build Linux latency, throughput, memory, resize, lifecycle, and long-session soak matrix with reproducible machine-readable evidence.",
+            "depends_on": [
+              "DTC-P06C"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P06D"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P06E",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Ratchet Linux platform, offline, dependency-authority, source-health, isolation, stress, performance, and bounded-storage gates; synchronize evidence and close the owned-transport slice.",
+            "depends_on": [
+              "DTC-P06D"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P06E"
               }
             ],
             "completion_evidence": []

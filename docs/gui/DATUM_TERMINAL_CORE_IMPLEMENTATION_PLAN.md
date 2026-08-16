@@ -51,8 +51,21 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05B --> **DTC-P05B — job control.** Foreground process groups, line-discipline control
   characters, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit,
   ratified terminate/escalate/SIGHUP behavior, and orphan-free teardown.
-- <!-- REQ:TERMINAL-T1-PTY:DTC-P06 --> **DTC-P06 — session proof.** Concurrent input/output/resize/detach/reattach/
-  exit/restart isolation, stress, performance, and dependency/source gates.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
+  session load, latency, throughput, resource, storage, soak, platform, and evidence
+  budgets before timed transport assertions are implemented.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P06B --> **DTC-P06B — session isolation.** Prove concurrent input/output/resize,
+  inactive-tab drain and reactivation, exit, termination, and verified restart
+  isolation across eight real sessions. Datum has no detached-PTY mode.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P06C --> **DTC-P06C — stress and resources.** Prove bounded queue saturation,
+  persistent fairness, lifecycle churn, maximum-session refusal, and absence of
+  cross-session bytes, owned-session survivors, or descriptor/thread growth.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P06D --> **DTC-P06D — measured Linux proof.** Run the owner-ratified release-build
+  latency, throughput, memory, resize, lifecycle, and long-session soak matrix
+  with reproducible machine-readable evidence.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P06E --> **DTC-P06E — transport closure.** Ratchet the Linux platform, offline,
+  dependency-authority, source-health, isolation, stress, and performance gates;
+  synchronize evidence and close the owned-transport slice.
 
 #### DTC-P04A owner packet
 
@@ -207,6 +220,33 @@ Close confirmation, Force/Retry/Cancel, concurrent application shutdown,
 fail-closed process discovery, deliberate new-session exclusion, and
 reader/writer/master-FD completion barriers are regression- and
 drift-guarded. No dependency or terminal capability identity changed.
+
+#### DTC-P06A owner packet
+
+DTC-P06 is transport/session proof, not terminal-core or application
+compatibility proof. Decision 030 reserves numerical performance and resource
+budgets to the project owner, so code agents must stop before timed assertions.
+The selector presents these decisions one at a time. P05-O1 already forbids a
+detached Datum PTY: P06 therefore proves inactive/background tabs remain owned,
+drain independently, and reactivate without contamination; it must never
+reintroduce detach/reattach APIs. Logical history/reflow remains DTC-P12 and
+shell/TUI/agent compatibility remains DTC-P28 through DTC-P30.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O1 --> **P06-O1 — proof tiers and duration.** Recommended: release builds are
+  normative. Run a bounded ten-minute eight-session proof in normal CI; a
+  scheduled 24-hour single-session agent-style soak plus a four-hour proof at
+  the governed maximum of sixteen sessions; and 1,000 spawn/exit/restart cycles.
+  Require three consecutive clean scheduled runs before release evidence is
+  accepted. Record the exact revision, seed, kernel, libc, CPU, RAM, display
+  backend, and raw samples. This duration is intended to expose slow leaks and
+  lifecycle drift from multi-million-token code-agent sessions; it does not cap
+  transcript or model-context length.
+
+Approving P06-O1 approves only the proof tiers and durations. It does not yet
+approve the session payload, latency, throughput, memory, descriptor/thread,
+resize, platform, or landing thresholds; those remain subsequent P06A owner
+decisions. No dependency, TERM identity, TerminalCore behavior, visual golden,
+or final release acceptance is authorized.
 
 ### Core foundation
 
