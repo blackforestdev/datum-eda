@@ -174,7 +174,7 @@ A typical end-of-unit sequence:
 git status                                   # see what changed; confirm ownership
 br sync --flush-only                         # if you touched the tracker
 git add path/to/your/files .beads/issues.jsonl
-git commit                                   # write a subject plus substantive body
+git commit                                   # write a subject plus substantive body; no attribution trailer
 ```
 
 Use this minimum message structure (without attribution trailers):
