@@ -292,6 +292,15 @@ this repair. The current whole-scrollback copy and focus-gated paste behavior
 remain provisional; full selection/clipboard semantics stay in the scheduled
 TerminalCore/input work and must be tracked separately from this focus defect.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05E-VERIFIED -->
+DTC-P05E landed in `6bffa395f7539ef5394a445ee8ba95e74da7c2b5`.
+Board/review hits are clipped to the same visible viewport used for rendering,
+and adversarial camera tests prove they cannot shadow terminal screen geometry.
+`ApplicationFocus` is now the single editor-pane, Terminal, or Overlay owner
+consumed by click entry, mouse reporting, cursor/status projection, and key
+routing. Production-path tests prove terminal clicks route Tab and Shift+Tab to
+the PTY without editor pane cycling for mouse-aware and ordinary children.
+
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-REJECTED -->
 The owner's production rejection and the dogfooded Claude diagnosis authorize
 DTC-P05E execution but do not satisfy the subsequent DTC-P05D hands-on gate.
