@@ -1526,7 +1526,7 @@
                 {
                   "id": "P05-O4",
                   "question": "How should Datum tear down multiple terminal sessions when the application exits?",
-                  "recommended_response": "Approve concurrent teardown of every session under one global 6,000 ms deadline; at deadline durably report exact surviving PID, process-group, and session identities, never silently detach, then allow Datum to exit.",
+                  "recommended_response": "Approve concurrent teardown under one global 6,000 ms deadline; Datum exits only after every owned session is verified empty, otherwise blocks controlled exit in visible TerminationFailed with exact survivor identities and Retry Termination / Cancel Shutdown actions, never silent detach or Exit Anyway.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                     "marker": "P05-O4"

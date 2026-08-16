@@ -143,10 +143,11 @@ these decisions one at a time.
   `Closed` only after the leader is reaped and no owned member remains; otherwise
   retain visible `TerminationFailed` state with the surviving identities.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O4 --> **P05-O4 — app shutdown.** Recommended: tear down sessions concurrently
-  under one 6,000 ms global deadline. At deadline, durably report surviving
-  PID/PGID/session identities and exit; never silently detach. User-selected
-  Detach is local to normal app operation and does not promise survival after
-  Datum exits.
+  under one 6,000 ms global deadline. Datum exits only after every owned session
+  is verified empty. If the deadline expires with survivors, block the controlled
+  application exit in visible `TerminationFailed`, durably report exact
+  PID/PGID/session identities, and offer `Retry Termination` or `Cancel Shutdown`;
+  never silently detach and provide no normal `Exit Anyway` path.
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O5 --> **P05-O5 — ownership boundary.** Recommended: Datum owns the original
   Linux terminal session and process groups that remain members of it. A process
   that deliberately daemonizes into another session is outside that ownership;
