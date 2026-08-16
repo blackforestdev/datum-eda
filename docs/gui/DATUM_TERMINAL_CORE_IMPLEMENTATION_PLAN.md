@@ -148,7 +148,7 @@ these decisions one at a time.
   application exit in visible `TerminationFailed`, durably report exact
   PID/PGID/session identities, and offer `Retry Termination` or `Cancel Shutdown`;
   never silently detach and provide no normal `Exit Anyway` path.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O5 --> **P05-O5 — ownership boundary.** Recommended: Datum owns the original
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O5 --> **P05-O5 — ownership boundary.** Owner-approved 2026-08-15: Datum owns the original
   Linux terminal session and process groups that remain members of it. A process
   that deliberately daemonizes into another session is outside that ownership;
   remote SSH jobs and detached tmux servers follow their remote/server policy.
@@ -180,6 +180,13 @@ global 6,000 ms deadline. Controlled exit is blocked until every owned terminal
 session is verified empty; survivors produce visible `TerminationFailed` with
 exact identities and Retry/Cancel actions, never silent detach or Exit Anyway.
 This evidence approves P05-O4 only.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O5-OWNER-APPROVED -->
+The project owner approved terminal teardown ownership of every live process
+whose Linux session ID remains the terminal's original session ID, across all
+of its process groups. A process that deliberately creates a different session
+is outside Datum ownership; detached tmux servers and remote SSH jobs remain
+under their server's lifecycle authority. This evidence approves P05-O5 only.
 
 ### Core foundation
 

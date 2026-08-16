@@ -1521,15 +1521,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve P05-O5`, or `P05-O5: revise — <replacement>` or `P05-O5: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O6`, or `P05-O6: revise — <replacement>` or `P05-O6: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P05-O5",
-                  "question": "Which processes belong to Datum's terminal teardown ownership boundary?",
-                  "recommended_response": "Approve ownership of every live process whose Linux session ID remains the terminal's original session ID, across all its process groups; a process that deliberately creates a different session is outside Datum ownership, including detached tmux servers and remote SSH jobs governed by their server.",
+                  "id": "P05-O6",
+                  "question": "What bound should constrain process-session discovery during each teardown escalation scan?",
+                  "recommended_response": "Approve inspection of at most 4,096 Linux process members and 4,096 distinct process groups per terminal session per escalation scan; exhaustion stops before signaling an incomplete set, leaves visible TerminationFailed, and never truncates discovery then claims orphan-free closure.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P05-O5"
+                    "marker": "P05-O6"
                   }
                 }
               ]
