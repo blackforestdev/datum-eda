@@ -195,6 +195,19 @@ Exhaustion stops before signaling an incomplete set, leaves visible
 `TerminationFailed`, and never truncates discovery then claims orphan-free
 closure. This evidence approves P05-O6 and completes DTC-P05A.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05B-VERIFIED -->
+DTC-P05B landed in `fdd64469bb53b038f0655252af06bb2286498c16`
+with final queued-input cancellation in
+`f7fc50f57fbd0e4bf6e1a1d9c2d8db1291865895`.
+Datum now routes native line-discipline control bytes to the foreground job,
+preserves stopped/continued pipelines and kernel `SIGWINCH`, reports exact
+code/signal/core exit identity only after final output, and applies the
+owner-ratified HUP/TERM/KILL lifecycle to the complete bounded Linux session.
+Close confirmation, Force/Retry/Cancel, concurrent application shutdown,
+fail-closed process discovery, deliberate new-session exclusion, and
+reader/writer/master-FD completion barriers are regression- and
+drift-guarded. No dependency or terminal capability identity changed.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
