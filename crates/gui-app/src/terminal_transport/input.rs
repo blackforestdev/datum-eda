@@ -120,6 +120,9 @@ impl InputQueue {
                 .wait(state)
                 .unwrap_or_else(|poisoned| poisoned.into_inner());
         }
+        if state.closed {
+            return None;
+        }
         state.requests.pop_front()
     }
 
@@ -162,11 +165,24 @@ impl InputQueue {
     }
 
     pub(super) fn close(&self) {
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        state.closed = true;
+        state.requests.clear();
+        state.queued_bytes = 0;
+        state.resident_bytes = 0;
+        state.request_count = 0;
+        drop(state);
+        self.available.notify_all();
+    }
+
+    fn is_closed(&self) -> bool {
         self.state
             .lock()
             .unwrap_or_else(|poisoned| poisoned.into_inner())
-            .closed = true;
-        self.available.notify_all();
+            .closed
     }
 }
 
@@ -177,7 +193,10 @@ pub(super) fn spawn_writer(
     _wake: TerminalWakeGate,
 ) {
     thread::spawn(move || {
-        let _ = write_input(FileWriter(writer), queue, control);
+        let finished = control.clone();
+        let writer = write_input(FileWriter(writer), queue, control);
+        drop(writer);
+        finished.writer_finished();
     });
 }
 
@@ -206,6 +225,9 @@ fn write_input<W: PtyWriteIo>(
         let accepted = request.accepted_bytes;
         let mut written = 0;
         while !request.chunks.is_empty() {
+            if queue.is_closed() {
+                return writer;
+            }
             match writer.write_bytes(request.current()) {
                 Ok(0) => {
                     let error =
@@ -223,6 +245,9 @@ fn write_input<W: PtyWriteIo>(
                 }
                 Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
                 Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                    if queue.is_closed() {
+                        return writer;
+                    }
                     if let Err(wait_error) = writer.wait_writable() {
                         let (requests, bytes) = queue.fail_and_close(request.remaining_bytes());
                         control.writer_failed(TerminalIoError::write(
@@ -277,7 +302,9 @@ mod tests {
     #[test]
     fn closed_input_rejects_without_accepting_a_prefix() {
         let queue = InputQueue::new();
+        queue.try_enqueue(&[1, 2, 3]).unwrap();
         queue.close();
+        assert!(queue.take().is_none(), "accepted queued input is canceled");
         assert_eq!(
             queue.try_enqueue(&[0, 0x1b, 0xff]),
             Err(TerminalInputError::Closed)
@@ -316,6 +343,7 @@ mod tests {
         steps: VecDeque<Step>,
         written: Vec<u8>,
         waits: usize,
+        close_when_script_finishes: Option<Arc<InputQueue>>,
     }
 
     impl PtyWriteIo for ScriptedWriter {
@@ -323,6 +351,11 @@ mod tests {
             match self.steps.pop_front().expect("scripted write step") {
                 Step::Write(count) => {
                     self.written.extend_from_slice(&bytes[..count]);
+                    if self.steps.is_empty()
+                        && let Some(queue) = self.close_when_script_finishes.take()
+                    {
+                        queue.close();
+                    }
                     Ok(count)
                 }
                 Step::Interrupted => Err(io::Error::from(io::ErrorKind::Interrupted)),
@@ -339,7 +372,6 @@ mod tests {
     fn writer_preserves_exact_bytes_across_partial_eintr_and_would_block() {
         let queue = Arc::new(InputQueue::new());
         queue.try_enqueue(b"abcdef").unwrap();
-        queue.close();
         let wake = TerminalWakeGate::new(None);
         let control = Arc::new(ControlBacklog::new(wake));
         let writer = ScriptedWriter {
@@ -351,6 +383,7 @@ mod tests {
             ]),
             written: Vec::new(),
             waits: 0,
+            close_when_script_finishes: Some(queue.clone()),
         };
         let writer = write_input(writer, queue, control);
         assert_eq!(writer.written, b"abcdef");
