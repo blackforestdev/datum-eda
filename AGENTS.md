@@ -149,10 +149,22 @@ changes.**
 - **No attribution of any kind.** Do **not** add `Co-Authored-By`, `Generated with`,
   or any trailer crediting an AI service. This is a hard rule from `CLAUDE.md`'s
   attribution policy and overrides any tool default.
-- **Well-annotated messages.** Follow the repo's conventional style
-  (`fix(viewport): …`, `docs(gui): …`, `chore(tracker): …`). Say what changed, why,
-  and — where relevant — its place in the roadmap. Cite the `dat-…` issue ID when a
-  commit advances or closes a tracked issue.
+- **No one-line commit messages.** Every commit must have a conventional subject
+  (`fix(viewport): …`, `docs(gui): …`, `chore(tracker): …`) followed by a
+  substantive body. A subject alone is never sufficient, including for small,
+  documentation-only, tracker, governance, and mechanical commits.
+- **Required commit body.** Explain the problem or reason, the concrete change,
+  and the verification performed. When governed work is involved, also name the
+  Frontier completion-step ID, relevant decision/spec boundary, dependency or
+  licensing impact, and the `dat-…` issue ID. A future contributor must be able
+  to understand the outcome and why it was safe without reconstructing it from
+  the diff. Do not use vague descriptions such as "fix terminal," "update code,"
+  "address feedback," "cleanup," or "complete next step."
+- **Milestone and closure commits.** Explicitly state the acceptance criteria
+  satisfied, important boundaries deliberately left unchanged, exact test/check
+  outcomes, and whether the referenced issue advances or closes. Governance-only
+  commits must identify the owner disposition and the resulting canonical next
+  step or authorization.
 - **Destructive git** (force-push, history rewrite, `--no-verify`) requires the
   owner's explicit say-so first.
 
@@ -162,7 +174,25 @@ A typical end-of-unit sequence:
 git status                                   # see what changed; confirm ownership
 br sync --flush-only                         # if you touched the tracker
 git add path/to/your/files .beads/issues.jsonl
-git commit -m "fix(...): … (dat-<id>)"       # no attribution trailer
+git commit                                   # write a subject plus substantive body
+```
+
+Use this minimum message structure (without attribution trailers):
+
+```text
+<type>(<scope>): <specific outcome>
+
+Problem:
+<what was incorrect, missing, unsafe, or blocked>
+
+Change:
+<what behavior or ownership changed>
+
+Proof:
+<tests, checks, builds, or owner evidence>
+
+Roadmap:
+<Frontier step, governing boundary, and dat-… issue impact>
 ```
 
 ## Dependency boundary
