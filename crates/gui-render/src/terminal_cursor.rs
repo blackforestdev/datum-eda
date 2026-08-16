@@ -54,13 +54,14 @@ fn cursor_rect(style: Option<&str>, x: f32, y: f32) -> RectPx {
 
 pub(super) fn render_terminal_cursor(
     terminal: &TerminalLaneState,
+    has_keyboard_focus: bool,
     origin_x: f32,
     y: f32,
     quads: &mut Vec<Quad>,
 ) {
     let x = origin_x + terminal.screen_cursor_col as f32 * TERMINAL_CELL_WIDTH_PX;
     let rect = cursor_rect(terminal.screen_cursor_style.as_deref(), x, y);
-    if terminal.has_keyboard_focus {
+    if has_keyboard_focus {
         quads.push(Quad::from_rect(rect, TEXT_ACCENT));
     } else {
         push_rect_border(quads, rect, TEXT_MUTED, CURSOR_STROKE_PX);
@@ -83,13 +84,12 @@ mod tests {
         );
 
         let mut unfocused = Vec::new();
-        render_terminal_cursor(&terminal, 10.0, 20.0, &mut unfocused);
+        render_terminal_cursor(&terminal, false, 10.0, 20.0, &mut unfocused);
         assert_eq!(unfocused.len(), 4, "unfocused cursor must be hollow");
         assert!(unfocused.iter().all(|quad| quad.color == TEXT_MUTED));
 
-        terminal.has_keyboard_focus = true;
         let mut focused = Vec::new();
-        render_terminal_cursor(&terminal, 10.0, 20.0, &mut focused);
+        render_terminal_cursor(&terminal, true, 10.0, 20.0, &mut focused);
         assert_eq!(focused, vec![Quad::from_rect(expected, TEXT_ACCENT)]);
     }
 

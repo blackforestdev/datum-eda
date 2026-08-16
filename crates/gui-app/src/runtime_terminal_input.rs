@@ -45,7 +45,7 @@ impl Runtime {
 
     pub(super) fn terminal_input_owner(&self) -> keyboard_focus::TerminalInputOwner {
         keyboard_focus::terminal_input_owner(
-            self.keyboard_focus,
+            self.application_focus(),
             matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
                 && !self.workspace().ui.terminal.tabs.is_empty(),
             self.terminal_sessions.active_attached(),

@@ -221,36 +221,81 @@ if character && workspace_action_pressed { apply(); }
         valid = """
             WindowEvent::Focused(focused) => { if !focused {} }
             WindowEvent::CursorLeft { .. } => {}
-    pub(crate) fn set_keyboard_focus(&mut self) {
+    pub(crate) fn set_application_focus(&mut self) {
         let report = keyboard_focus::terminal_focus_report_transition(old, next);
-        self.keyboard_focus = next;
-        self.workspace.ui.terminal.has_keyboard_focus = next.is_terminal();
+        self.workspace_mut().ui.focus = next;
     }
+    fn initialize(state: &mut State) { state.ui.focus = ApplicationFocus::default(); }
     fn after() {}
+"""
+        workspace_layout = """
+pub enum ApplicationFocus { Editor(PaneId), Terminal, Overlay }
 """
         window = """
             WindowEvent::Focused(focused) => { if !focused {} }
             WindowEvent::CursorLeft { .. } => {}
 """
         failures: list[str] = []
-        guard.check_terminal_focus_reporting(window, valid, valid, failures)
+        guard.check_terminal_focus_reporting(
+            window, valid, workspace_layout, "", valid, failures
+        )
         self.assertEqual([], failures)
         invalid_window = window.replace(
             "if !focused {}", "self.report_terminal_focus_event(focused);"
         )
-        invalid_authority = valid.replace(
-            "self.keyboard_focus = next;",
-            "self.keyboard_focus = next;\nself.keyboard_focus = old;\n"
-            "self.workspace.ui.terminal.has_keyboard_focus = false;",
-        )
+        invalid_authority = valid + "\nself.keyboard_focus = next;\n"
         guard.check_terminal_focus_reporting(
-            invalid_window, invalid_authority, invalid_authority, failures
+            invalid_window,
+            invalid_authority,
+            workspace_layout.replace("Terminal", "Shell"),
+            "pub has_keyboard_focus: bool,",
+            invalid_authority,
+            failures,
         )
         self.assertIn("OS window focus must not emit terminal focus-report bytes", failures)
-        self.assertIn("keyboard focus must mutate only through set_keyboard_focus", failures)
         self.assertIn(
-            "terminal cursor focus projection must mutate only with keyboard focus", failures
+            "runtime must not retain a rival keyboard-focus field", failures
         )
+        self.assertIn("terminal lane must not retain a rival focus projection", failures)
+
+    def test_editor_hits_are_clipped_and_terminal_focus_proofs_are_pinned(self) -> None:
+        layout = "pub fn intersect() { right > x; bottom > y; }"
+        scene = """
+let scene_hit_start = prepared.hit_regions.len();
+hit_clipping::clip_new_hit_regions();
+"""
+        clipping = ".drain(first_new_region..); region.rect.intersect(viewport);"
+        focus_tests = """
+fn non_mouse_child_click_selects_terminal_and_tab_never_cycles_editor_panes() {
+    workspace_action_should_fire(); terminal_tab_sequence();
+}
+fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
+"""
+        hit_tests = "fn editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras() {}"
+        failures: list[str] = []
+        guard.check_terminal_hit_ownership(
+            layout, scene, clipping, focus_tests, hit_tests, failures
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_hit_ownership(
+            layout.replace("intersect", "overlap"),
+            scene.replace("hit_clipping::clip_new_hit_regions", "leave_unclipped"),
+            clipping.replace(".drain(first_new_region..)", ".iter()"),
+            focus_tests.replace("terminal_tab_sequence", "pane_focus_next"),
+            "",
+            failures,
+        )
+        self.assertIn("viewport hit clipping is missing pub fn intersect", failures)
+        self.assertIn(
+            "editor scene hit clipping is missing hit_clipping::clip_new_hit_regions",
+            failures,
+        )
+        self.assertIn(
+            "terminal focus convergence proof is missing terminal_tab_sequence", failures
+        )
+        self.assertIn("adversarial editor-hit ownership proof is missing", failures)
 
     def test_only_protocol_declaration_terminal_core_and_tests_may_mutate_grid(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -503,7 +503,13 @@ fn render_terminal_screen(
             && state.ui.terminal.screen_cursor_row == line_index
             && state.ui.terminal.screen_cursor_col < max_columns
         {
-            render_terminal_cursor(&state.ui.terminal, screen.x, y, panel_quads);
+            render_terminal_cursor(
+                &state.ui.terminal,
+                state.ui.focus.is_terminal(),
+                screen.x,
+                y,
+                panel_quads,
+            );
         }
         y += TERMINAL_CELL_HEIGHT_PX;
     }

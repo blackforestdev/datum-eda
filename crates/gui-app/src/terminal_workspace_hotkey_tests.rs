@@ -6,7 +6,8 @@
 //! uses, so a mapping change and a routing change both fail here.
 
 use super::{terminal_character_sequence, terminal_space_sequence, terminal_tab_sequence};
-use crate::keyboard_focus::{KeyClass, KeyboardFocus, RouteDecision, key_route};
+use crate::keyboard_focus::{KeyClass, RouteDecision, key_route};
+use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
 use winit::keyboard::ModifiersState;
 
 /// Every character workspace hotkey the editor persona binds
@@ -79,7 +80,11 @@ fn tab_cycling_and_space_pan_keys_are_pty_bytes_under_terminal_focus() {
 fn editor_focus_fires_hotkeys_and_no_key_class_routes_to_the_pty() {
     for visible in [false, true] {
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::WorkspaceHotkey, visible),
+            key_route(
+                KeyboardFocus::Editor(PaneId(0)),
+                KeyClass::WorkspaceHotkey,
+                visible
+            ),
             RouteDecision::Editor,
             "editor focus must own workspace hotkeys"
         );
@@ -89,7 +94,7 @@ fn editor_focus_fires_hotkeys_and_no_key_class_routes_to_the_pty() {
             KeyClass::EscapeWithEmptyRename,
         ] {
             assert_eq!(
-                key_route(KeyboardFocus::Editor, class, visible),
+                key_route(KeyboardFocus::Editor(PaneId(0)), class, visible),
                 RouteDecision::Unrouted,
                 "under Editor focus {class:?} must never route toward the terminal"
             );

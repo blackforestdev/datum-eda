@@ -75,8 +75,8 @@ use board_text_terminal_commands::{
     BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
     board_text_quick_edit_terminal_command,
 };
+use datum_gui_protocol::ApplicationFocus;
 pub(crate) use gui_runtime_support::*;
-use keyboard_focus::KeyboardFocus;
 use pan_gesture::PanGestureState;
 use pane_cameras::PaneCameras;
 use pane_resize::DividerDrag;
@@ -609,11 +609,6 @@ struct Runtime {
     terminal_production_refresh_attempts: u8,
     terminal_rename_session_id: Option<String>,
     clipboard: Option<Clipboard>,
-    /// The single keyboard-focus owner (TF-01, decision 024 Phase 0). Keyboard
-    /// routing consults this — never dock visibility. Opening a dock must not
-    /// change it; deliberate entry/exit gestures (terminal clicks, canvas
-    /// clicks, Escape) do.
-    keyboard_focus: KeyboardFocus,
     application_shutdown_started: Option<std::time::Instant>,
     application_shutdown_blocked: bool,
 }
@@ -627,7 +622,7 @@ impl Runtime {
         let runtime_started = std::time::Instant::now();
         let LaunchState {
             request: _request,
-            state,
+            mut state,
             camera,
             terminal_launch_context,
             terminal_sessions,
@@ -636,6 +631,7 @@ impl Runtime {
         // The initially-focused leaf seeds the warm per-leaf camera store; its
         // camera is the fit camera the launch path already computed.
         let initial_focus = state.ui.layout.focused;
+        state.ui.focus = ApplicationFocus::Editor(initial_focus);
         let initial_content = state.ui.layout.focused_content();
         let initial_pane_camera = match initial_content {
             PaneContent::Board => camera,
@@ -752,7 +748,6 @@ impl Runtime {
             terminal_production_refresh_attempts: 0,
             terminal_rename_session_id: None,
             clipboard: Clipboard::new().ok(),
-            keyboard_focus: KeyboardFocus::default(),
             application_shutdown_started: None,
             application_shutdown_blocked: false,
         };
@@ -1414,7 +1409,7 @@ impl Runtime {
     fn terminal_mouse_reporting_active(&self) -> bool {
         let terminal = &self.workspace().ui.terminal;
         keyboard_focus::terminal_mouse_report_allowed(
-            self.keyboard_focus,
+            self.application_focus(),
             terminal.mouse_reporting_mode.is_some(),
             self.terminal_sessions.active_attached(),
             self.last_cursor_pos
@@ -1993,7 +1988,7 @@ impl Runtime {
         if let Some(pane_id) = self.pane_at_screen(x, y) {
             // TF-01 deliberate exit: a canvas click is editor keyboard entry,
             // releasing any terminal/overlay key ownership before dispatch.
-            self.set_keyboard_focus(keyboard_focus::focus_after_canvas_click());
+            self.set_application_focus(keyboard_focus::focus_after_canvas_click(pane_id));
             if pane_id != self.workspace().ui.layout.focused {
                 self.swap_pane_focus(|layout| layout.focused = pane_id);
                 self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
@@ -2103,9 +2098,9 @@ impl Runtime {
         // rectangle — or a session action that expects terminal typing next —
         // hands key ownership to the terminal. Programmatic dock opens never do.
         let next_focus =
-            keyboard_focus::focus_after_hit_target(self.keyboard_focus, handled, target);
-        if next_focus != self.keyboard_focus {
-            self.set_keyboard_focus(next_focus);
+            keyboard_focus::focus_after_hit_target(self.application_focus(), handled, target);
+        if next_focus != self.application_focus() {
+            self.set_application_focus(next_focus);
         }
         self.trace_timing(format!(
             "select target {target:?} handled={handled} {}ms",
@@ -2441,7 +2436,8 @@ impl Runtime {
         self.session.workspace_mut().ui.marking_menu = None;
         // TF-01: the marking menu is a transient Overlay key owner; dismissing
         // it restores keyboard ownership to the editor.
-        self.set_keyboard_focus(KeyboardFocus::Editor);
+        let pane = self.workspace().ui.layout.focused;
+        self.set_application_focus(ApplicationFocus::Editor(pane));
         self.invalidate_frame();
         true
     }

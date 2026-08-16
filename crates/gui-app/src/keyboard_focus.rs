@@ -15,22 +15,11 @@
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, KeyCode, NamedKey, PhysicalKey};
 
-use datum_gui_protocol::SessionCommand;
+use datum_gui_protocol::{ApplicationFocus, PaneId, SessionCommand};
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
 use crate::{Runtime, terminal_raw_input_should_handle};
-
-/// The single keyboard-focus owner. Exactly one of these owns key events at any
-/// time; dock visibility plays no role in the decision (the raw-PTY route is
-/// the one class that additionally requires the terminal tab on screen).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub(crate) enum KeyboardFocus {
-    #[default]
-    Editor,
-    Terminal,
-    Overlay,
-}
 
 /// What kind of keyboard traffic a key event represents, for routing purposes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -58,12 +47,12 @@ pub(crate) enum TerminalInputOwner {
 }
 
 pub(crate) fn terminal_input_owner(
-    focus: KeyboardFocus,
+    focus: ApplicationFocus,
     terminal_tab_visible: bool,
     _attached: bool,
     renaming: bool,
 ) -> TerminalInputOwner {
-    if focus != KeyboardFocus::Terminal || !terminal_tab_visible {
+    if focus != ApplicationFocus::Terminal || !terminal_tab_visible {
         return TerminalInputOwner::Unowned;
     }
     if renaming {
@@ -91,25 +80,25 @@ pub(crate) enum RouteDecision {
 /// classes preserve the TF-01 focus contract while `terminal_input_owner`
 /// selects rename, attached PTY, or detached read-only behavior.
 pub(crate) fn key_route(
-    focus: KeyboardFocus,
+    focus: ApplicationFocus,
     class: KeyClass,
     terminal_tab_visible: bool,
 ) -> RouteDecision {
     match (focus, class) {
-        (KeyboardFocus::Terminal, KeyClass::RawPty) if terminal_tab_visible => {
+        (ApplicationFocus::Terminal, KeyClass::RawPty) if terminal_tab_visible => {
             RouteDecision::Terminal
         }
-        (KeyboardFocus::Terminal, KeyClass::RawPty) => RouteDecision::Unrouted,
-        (KeyboardFocus::Terminal, KeyClass::TerminalRenameEdit) => RouteDecision::Terminal,
-        (KeyboardFocus::Terminal, KeyClass::EscapeWithEmptyRename) => {
+        (ApplicationFocus::Terminal, KeyClass::RawPty) => RouteDecision::Unrouted,
+        (ApplicationFocus::Terminal, KeyClass::TerminalRenameEdit) => RouteDecision::Terminal,
+        (ApplicationFocus::Terminal, KeyClass::EscapeWithEmptyRename) => {
             RouteDecision::ReleaseToEditor
         }
-        (KeyboardFocus::Terminal, KeyClass::WorkspaceHotkey) => RouteDecision::Unrouted,
-        (KeyboardFocus::Editor, KeyClass::WorkspaceHotkey) => RouteDecision::Editor,
-        (KeyboardFocus::Editor, _) => RouteDecision::Unrouted,
+        (ApplicationFocus::Terminal, KeyClass::WorkspaceHotkey) => RouteDecision::Unrouted,
+        (ApplicationFocus::Editor(_), KeyClass::WorkspaceHotkey) => RouteDecision::Editor,
+        (ApplicationFocus::Editor(_), _) => RouteDecision::Unrouted,
         // Overlay owners (marking menu) consume keys through their own guard
         // arms (e.g. the marking-menu Escape arm); no class routes here.
-        (KeyboardFocus::Overlay, _) => RouteDecision::Unrouted,
+        (ApplicationFocus::Overlay, _) => RouteDecision::Unrouted,
     }
 }
 
@@ -142,42 +131,42 @@ pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
 /// entry target arms terminal focus; every other hit preserves the current
 /// owner. Programmatic command handoffs are observation targets, so they never
 /// steal keyboard focus.
-pub(crate) fn focus_after_canvas_click() -> KeyboardFocus {
-    KeyboardFocus::Editor
+pub(crate) fn focus_after_canvas_click(pane: PaneId) -> ApplicationFocus {
+    ApplicationFocus::Editor(pane)
 }
 
 pub(crate) fn focus_after_hit_target(
-    current: KeyboardFocus,
+    current: ApplicationFocus,
     handled: bool,
     target: &HitTarget,
-) -> KeyboardFocus {
+) -> ApplicationFocus {
     if handled && hit_target_is_terminal_entry(target) {
-        KeyboardFocus::Terminal
+        ApplicationFocus::Terminal
     } else {
         current
     }
 }
 
 pub(crate) fn focus_before_terminal_mouse_press(
-    current: KeyboardFocus,
+    current: ApplicationFocus,
     terminal_visible: bool,
     child_mouse_reporting: bool,
     pointer_over_screen: bool,
-) -> KeyboardFocus {
+) -> ApplicationFocus {
     if terminal_visible && child_mouse_reporting && pointer_over_screen {
-        KeyboardFocus::Terminal
+        ApplicationFocus::Terminal
     } else {
         current
     }
 }
 
 pub(crate) fn terminal_mouse_report_allowed(
-    focus: KeyboardFocus,
+    focus: ApplicationFocus,
     child_mouse_reporting: bool,
     session_attached: bool,
     pointer_over_screen: bool,
 ) -> bool {
-    focus == KeyboardFocus::Terminal
+    focus == ApplicationFocus::Terminal
         && child_mouse_reporting
         && session_attached
         && pointer_over_screen
@@ -187,7 +176,7 @@ pub(crate) fn terminal_mouse_report_allowed(
 /// The press still reaches the child as ESC; the release transfers ownership
 /// back to the editor after terminal-local rename/input state is dismissed.
 pub(crate) fn pre_raw_escape_route(
-    focus: KeyboardFocus,
+    focus: ApplicationFocus,
     terminal_visible: bool,
     escape_released: bool,
 ) -> Option<RouteDecision> {
@@ -203,23 +192,19 @@ pub(crate) fn pre_raw_escape_route(
 /// OS-window activation is intentionally absent: only crossing the Terminal
 /// ownership boundary emits CSI I/O when the child enabled mode 1004.
 pub(crate) fn terminal_focus_report_transition(
-    previous: KeyboardFocus,
-    next: KeyboardFocus,
+    previous: ApplicationFocus,
+    next: ApplicationFocus,
 ) -> Option<bool> {
-    let was_terminal = previous == KeyboardFocus::Terminal;
-    let is_terminal = next == KeyboardFocus::Terminal;
+    let was_terminal = previous == ApplicationFocus::Terminal;
+    let is_terminal = next == ApplicationFocus::Terminal;
     (was_terminal != is_terminal).then_some(is_terminal)
-}
-
-fn terminal_owns_keyboard(focus: KeyboardFocus) -> bool {
-    focus == KeyboardFocus::Terminal
 }
 
 /// Workspace commands fire once on the initial key press. Terminal ownership
 /// never satisfies this predicate, so the same physical hotkey is PTY input
 /// rather than a leaked editor action (TF-05).
 pub(crate) fn workspace_action_should_fire(
-    focus: KeyboardFocus,
+    focus: ApplicationFocus,
     terminal_tab_visible: bool,
     state: ElementState,
     repeat: bool,
@@ -231,17 +216,13 @@ pub(crate) fn workspace_action_should_fire(
 }
 
 impl Runtime {
-    pub(crate) fn keyboard_focus(&self) -> KeyboardFocus {
-        self.keyboard_focus
+    pub(crate) fn application_focus(&self) -> ApplicationFocus {
+        self.workspace().ui.focus
     }
 
-    pub(crate) fn set_keyboard_focus(&mut self, focus: KeyboardFocus) {
-        let report = terminal_focus_report_transition(self.keyboard_focus, focus);
-        self.keyboard_focus = focus;
-        // Renderer projection only: KeyboardFocus remains the sole authority.
-        // Focus changes fill/outline the child-selected cursor shape; they do
-        // not replace DECSCUSR shape or DEC cursor visibility state (TF-04).
-        self.session.workspace_mut().ui.terminal.has_keyboard_focus = terminal_owns_keyboard(focus);
+    pub(crate) fn set_application_focus(&mut self, focus: ApplicationFocus) {
+        let report = terminal_focus_report_transition(self.application_focus(), focus);
+        self.session.workspace_mut().ui.focus = focus;
         if let Some(focused) = report {
             self.report_terminal_focus_event(focused);
         }
@@ -251,7 +232,11 @@ impl Runtime {
 /// Route one window keyboard event through the focus authority. Returns true
 /// when the event was consumed (a redraw may have been requested).
 pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
-    let Some(focus) = app.runtime.as_ref().map(|runtime| runtime.keyboard_focus()) else {
+    let Some(focus) = app
+        .runtime
+        .as_ref()
+        .map(|runtime| runtime.application_focus())
+    else {
         return false;
     };
     let confirms_armed_close = app.runtime.as_ref().is_some_and(|runtime| {
@@ -306,7 +291,8 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
                 .current_terminal_rename_input()
                 .is_none_or(|s| s.is_empty());
             if input_was_empty {
-                runtime.set_keyboard_focus(KeyboardFocus::Editor);
+                let pane = runtime.workspace().ui.layout.focused;
+                runtime.set_application_focus(ApplicationFocus::Editor(pane));
             } else {
                 let terminal = &mut runtime.session.workspace_mut().ui.terminal;
                 terminal.rename_input.clear();
@@ -559,6 +545,9 @@ fn armed_close_shortcut(
         && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyW))
 }
 
+#[cfg(test)]
+#[path = "terminal_focus_convergence_tests.rs"]
+mod convergence_tests;
 #[cfg(test)]
 #[path = "keyboard_focus_tests.rs"]
 mod tests;

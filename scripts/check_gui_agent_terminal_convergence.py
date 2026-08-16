@@ -18,6 +18,12 @@ TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain.r
 TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain_tests.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
+WORKSPACE_LAYOUT = ROOT / "crates" / "gui-protocol" / "src" / "workspace_layout.rs"
+RENDER_LAYOUT = ROOT / "crates" / "gui-render" / "src" / "render" / "layout.rs"
+RENDER_SCENE = ROOT / "crates" / "gui-render" / "src" / "render" / "scene.rs"
+HIT_CLIPPING = ROOT / "crates" / "gui-render" / "src" / "render" / "hit_clipping.rs"
+TERMINAL_FOCUS_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_focus_convergence_tests.rs"
+TERMINAL_HIT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_hit_ownership_tests.rs"
 RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
@@ -50,12 +56,14 @@ def check_terminal_grid_writers(failures: list[str]) -> None:
 def check_terminal_focus_reporting(
     main: str,
     authority: str,
+    workspace_layout: str,
+    terminal_lane: str,
     mutation_sources: str,
     failures: list[str],
 ) -> None:
-    """Bind child focus reports to the keyboard-owner setter, not window focus."""
+    """Keep one application focus authority for editors, terminal, and overlays."""
     window_marker = "            WindowEvent::Focused(focused) => {"
-    setter_marker = "    pub(crate) fn set_keyboard_focus"
+    setter_marker = "    pub(crate) fn set_application_focus"
     if window_marker not in main or setter_marker not in authority:
         failures.append("terminal focus-report authority markers are missing")
         return
@@ -64,15 +72,54 @@ def check_terminal_focus_reporting(
     if "report_terminal_focus_event" in window_body:
         failures.append("OS window focus must not emit terminal focus-report bytes")
     if "terminal_focus_report_transition" not in setter_body:
-        failures.append("keyboard-focus transitions must own terminal focus reporting")
-    if "has_keyboard_focus" not in setter_body:
-        failures.append("keyboard-focus setter must publish the terminal cursor focus projection")
-    assignments = re.findall(r"self\.keyboard_focus\s*=(?!=)", mutation_sources)
-    if len(assignments) != 1:
-        failures.append("keyboard focus must mutate only through set_keyboard_focus")
-    projection_assignments = re.findall(r"\.has_keyboard_focus\s*=(?!=)", mutation_sources)
-    if len(projection_assignments) != 1:
-        failures.append("terminal cursor focus projection must mutate only with keyboard focus")
+        failures.append("application-focus transitions must own terminal focus reporting")
+    for marker in (
+        "pub enum ApplicationFocus",
+        "Editor(PaneId)",
+        "Terminal",
+        "Overlay",
+    ):
+        if marker not in workspace_layout:
+            failures.append(f"shared application focus is missing {marker}")
+    if re.search(r"\bkeyboard_focus\s*:(?!:)", main) or "self.keyboard_focus" in mutation_sources:
+        failures.append("runtime must not retain a rival keyboard-focus field")
+    if "has_keyboard_focus" in terminal_lane:
+        failures.append("terminal lane must not retain a rival focus projection")
+    assignments = re.findall(r"\.ui\.focus\s*=(?!=)", mutation_sources)
+    if len(assignments) != 2:
+        failures.append(
+            "application focus must mutate only through initialization and set_application_focus"
+        )
+
+
+def check_terminal_hit_ownership(
+    render_layout: str,
+    render_scene: str,
+    hit_clipping: str,
+    focus_tests: str,
+    hit_tests: str,
+    failures: list[str],
+) -> None:
+    """Clip editor hits and prove terminal selection through production routing."""
+    for marker in ("pub fn intersect", "right > x", "bottom > y"):
+        if marker not in render_layout:
+            failures.append(f"viewport hit clipping is missing {marker}")
+    for marker in ("scene_hit_start", "hit_clipping::clip_new_hit_regions"):
+        if marker not in render_scene:
+            failures.append(f"editor scene hit clipping is missing {marker}")
+    for marker in (".drain(first_new_region..)", "region.rect.intersect(viewport)"):
+        if marker not in hit_clipping:
+            failures.append(f"editor scene hit clipping is missing {marker}")
+    for marker in (
+        "non_mouse_child_click_selects_terminal_and_tab_never_cycles_editor_panes",
+        "mouse_reporting_press_selects_same_terminal_authority_before_forwarding",
+        "workspace_action_should_fire",
+        "terminal_tab_sequence",
+    ):
+        if marker not in focus_tests:
+            failures.append(f"terminal focus convergence proof is missing {marker}")
+    if "editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras" not in hit_tests:
+        failures.append("adversarial editor-hit ownership proof is missing")
 
 
 def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
@@ -296,11 +343,32 @@ def main() -> int:
     render_gpu = RENDER_GPU.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
+    workspace_layout = WORKSPACE_LAYOUT.read_text()
+    render_layout = RENDER_LAYOUT.read_text()
+    render_scene = RENDER_SCENE.read_text()
+    hit_clipping = HIT_CLIPPING.read_text()
+    terminal_focus_tests = TERMINAL_FOCUS_TESTS.read_text()
+    terminal_hit_tests = TERMINAL_HIT_TESTS.read_text()
     terminal_transport = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted(TERMINAL_TRANSPORT.rglob("*.rs"))
     )
-    check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
+    check_terminal_focus_reporting(
+        main,
+        keyboard_focus,
+        workspace_layout,
+        terminal_lane,
+        focus_mutation_sources,
+        failures,
+    )
+    check_terminal_hit_ownership(
+        render_layout,
+        render_scene,
+        hit_clipping,
+        terminal_focus_tests,
+        terminal_hit_tests,
+        failures,
+    )
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_agent_tui_runtime(
         main,

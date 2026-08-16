@@ -19,6 +19,7 @@ pub use coordinate_hit::resolve_pane_hover;
 mod interaction_overlay;
 #[path = "status_bar.rs"]
 mod status_bar;
+mod hit_clipping;
 
 impl PreparedScene {
     pub fn from_workspace(
@@ -121,7 +122,6 @@ impl PreparedScene {
         if board_scene_active {
             render_scene(
                 state,
-                &layout,
                 scene_viewport,
                 camera,
                 &mut viewport_underlay_quads,
@@ -588,7 +588,6 @@ fn render_phase1_shell_chrome(
 #[allow(clippy::too_many_arguments)]
 fn render_scene(
     state: &ReviewWorkspaceState,
-    layout: &ShellLayout,
     scene_viewport: RectPx,
     camera: CameraState,
     viewport_underlay_quads: &mut Vec<Quad>,
@@ -602,6 +601,7 @@ fn render_scene(
         scene_viewport,
         camera,
     );
+    let scene_hit_start = hit_regions.len();
     push_scene_overlay_and_hits(
         viewport_overlay_quads,
         &state.scene,
@@ -611,9 +611,8 @@ fn render_scene(
         text_runs,
         hit_regions,
     );
-    // (Removed the redundant canvas scene title that collided with the pane
-    // header at the viewport top — the pane header "Board / Layout" and the
-    // Project panel already name the document, matching the prototype.)
+    hit_clipping::clip_new_hit_regions(hit_regions, scene_hit_start, scene_viewport);
+    // The pane header and Project panel already name the document.
     // (Removed the "ACTIVE <action-id> / NET <name>" review-HUD overlay that
     // bled over the canvas top-left — internal selection state, not designed
     // board-pane chrome. The selection is reflected in the Inspector + status bar.)
@@ -624,7 +623,6 @@ fn render_scene(
     // overlay that painted a PANEL_BG band across the bottom of the canvas.
     // These readouts belong in the global status bar (see M7), not floating on
     // the board field — the canvas stays a clean board surface.)
-    let _ = layout;
 }
 
 fn push_scene_underlay(

@@ -1,5 +1,6 @@
 use super::*;
 use crate::terminal_session::TerminalEvent;
+use datum_gui_protocol::ApplicationFocus as KeyboardFocus;
 use std::fs;
 use std::time::{Duration, Instant};
 

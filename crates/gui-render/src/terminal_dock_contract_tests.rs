@@ -1,5 +1,8 @@
 use super::*;
 
+#[path = "terminal_hit_ownership_tests.rs"]
+mod terminal_hit_ownership_tests;
+
 #[test]
 fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
@@ -552,7 +555,7 @@ fn terminal_dock_renders_protocol_cursor_shape() {
     state.ui.terminal.screen_cursor_row = 0;
     state.ui.terminal.screen_cursor_col = 6;
     state.ui.terminal.screen_cursor_visible = true;
-    state.ui.terminal.has_keyboard_focus = true;
+    state.ui.focus = datum_gui_protocol::ApplicationFocus::Terminal;
     state.ui.terminal.screen_cursor_style = Some("steady_bar".to_string());
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);

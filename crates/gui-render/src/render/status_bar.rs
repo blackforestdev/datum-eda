@@ -7,6 +7,22 @@
 
 use super::*;
 
+pub(crate) fn application_focus_label(state: &ReviewWorkspaceState) -> &'static str {
+    match state.ui.focus {
+        datum_gui_protocol::ApplicationFocus::Terminal => "Terminal",
+        datum_gui_protocol::ApplicationFocus::Overlay => "Overlay",
+        datum_gui_protocol::ApplicationFocus::Editor(pane) => match state
+            .ui
+            .layout
+            .content_for(pane)
+            .unwrap_or_else(|| state.ui.layout.focused_content())
+        {
+            datum_gui_protocol::PaneContent::Board => "Board",
+            datum_gui_protocol::PaneContent::Schematic => "Schematic",
+        },
+    }
+}
+
 /// Segmented status bar (Design Book .status): labelled key/value segments with
 /// full-height dividers, a flex gap, and a right-aligned build/version run. The
 /// focus value reads accent; a DRC segment reads STATUS_WARN and is hidden at
@@ -56,10 +72,7 @@ pub(crate) fn render_status_bar(
     let layers = state.scene.layers.len().to_string();
     // Reflect the actually-focused document, not a hardcoded value — focusing the
     // Schematic pane must read "Schematic" here (context-follows-focus).
-    let focus_label = match state.ui.layout.focused_content() {
-        datum_gui_protocol::PaneContent::Board => "Board",
-        datum_gui_protocol::PaneContent::Schematic => "Schematic",
-    };
+    let focus_label = application_focus_label(state);
     let left: [(&str, &str, [f32; 3]); 4] = [
         ("focus", focus_label, TEXT_ACCENT),
         ("Tool", tool, TEXT_SECONDARY),

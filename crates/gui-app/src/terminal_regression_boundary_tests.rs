@@ -10,9 +10,10 @@
 
 use super::*;
 use crate::keyboard_focus::{
-    KeyClass, KeyboardFocus, RouteDecision, hit_target_is_terminal_entry, key_route,
+    KeyClass, RouteDecision, hit_target_is_terminal_entry, key_route,
     workspace_action_should_fire,
 };
+use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
 use datum_gui_render::HitTarget;
 use std::fs;
 use std::time::{Duration, Instant};
@@ -208,7 +209,7 @@ fn only_escape_with_empty_input_releases_terminal_focus() {
         // Release is meaningless without terminal ownership: no other focus
         // owner ever produces it (an Editor/Overlay Escape must not re-route
         // key ownership).
-        for focus in [KeyboardFocus::Editor, KeyboardFocus::Overlay] {
+        for focus in [KeyboardFocus::Editor(PaneId(0)), KeyboardFocus::Overlay] {
             for class in all_classes {
                 assert_ne!(
                     key_route(focus, class, visible),
@@ -549,13 +550,13 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
     for key in hotkeys {
         for visible in [false, true] {
             assert!(workspace_action_should_fire(
-                KeyboardFocus::Editor,
+                KeyboardFocus::Editor(PaneId(0)),
                 visible,
                 ElementState::Pressed,
                 false,
             ));
             assert_ne!(
-                key_route(KeyboardFocus::Editor, KeyClass::RawPty, visible),
+                key_route(KeyboardFocus::Editor(PaneId(0)), KeyClass::RawPty, visible),
                 RouteDecision::Terminal,
                 "Editor focus must never route hotkey {key:?} to the PTY"
             );
@@ -648,6 +649,7 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
 
 fn workspace_ui_state() -> datum_gui_protocol::WorkspaceUiState {
     datum_gui_protocol::WorkspaceUiState {
+        focus: datum_gui_protocol::ApplicationFocus::Terminal,
         active_dock_tab: Some(datum_gui_protocol::DockTab::Terminal),
         active_menu: None,
         marking_menu: None,

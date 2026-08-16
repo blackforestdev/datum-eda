@@ -1,11 +1,11 @@
 use super::{
-    KeyClass, KeyboardFocus, RouteDecision, TerminalInputOwner, armed_close_shortcut,
-    focus_after_canvas_click, focus_after_hit_target, focus_before_terminal_mouse_press,
-    hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
-    terminal_focus_report_transition, terminal_input_owner, terminal_mouse_report_allowed,
-    workspace_action_should_fire,
+    KeyClass, RouteDecision, TerminalInputOwner, armed_close_shortcut, focus_after_canvas_click,
+    focus_after_hit_target, focus_before_terminal_mouse_press, hit_target_is_terminal_entry,
+    key_route, pre_raw_escape_route, terminal_focus_report_transition, terminal_input_owner,
+    terminal_mouse_report_allowed, workspace_action_should_fire,
 };
 use crate::terminal_input::terminal_tab_sequence;
+use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
 use datum_gui_render::HitTarget;
 use winit::{
     event::ElementState,
@@ -14,39 +14,46 @@ use winit::{
 
 #[test]
 fn default_focus_is_editor() {
-    assert_eq!(KeyboardFocus::default(), KeyboardFocus::Editor);
+    assert_eq!(KeyboardFocus::default(), KeyboardFocus::Editor(PaneId(0)));
 }
 
 #[test]
 fn mouse_aware_child_cannot_swallow_terminal_focus_entry() {
-    let focus = focus_before_terminal_mouse_press(KeyboardFocus::Editor, true, true, true);
+    let focus =
+        focus_before_terminal_mouse_press(KeyboardFocus::Editor(PaneId(0)), true, true, true);
     assert_eq!(focus, KeyboardFocus::Terminal);
     assert!(terminal_mouse_report_allowed(focus, true, true, true));
-    assert_eq!(key_route(focus, KeyClass::RawPty, true), RouteDecision::Terminal);
+    assert_eq!(
+        key_route(focus, KeyClass::RawPty, true),
+        RouteDecision::Terminal
+    );
     assert!(!workspace_action_should_fire(
         focus,
         true,
         ElementState::Pressed,
         false,
     ));
-    assert_eq!(terminal_tab_sequence(ModifiersState::empty()), Some(b"\t".to_vec()));
+    assert_eq!(
+        terminal_tab_sequence(ModifiersState::empty()),
+        Some(b"\t".to_vec())
+    );
     assert_eq!(
         terminal_tab_sequence(ModifiersState::SHIFT),
         Some(b"\x1b[Z".to_vec())
     );
     assert_eq!(
-        focus_before_terminal_mouse_press(KeyboardFocus::Editor, true, true, false),
-        KeyboardFocus::Editor
+        focus_before_terminal_mouse_press(KeyboardFocus::Editor(PaneId(0)), true, true, false),
+        KeyboardFocus::Editor(PaneId(0))
     );
     assert!(!terminal_mouse_report_allowed(
-        KeyboardFocus::Editor,
+        KeyboardFocus::Editor(PaneId(0)),
         true,
         true,
         false,
     ));
     assert_eq!(
-        focus_before_terminal_mouse_press(KeyboardFocus::Editor, false, true, true),
-        KeyboardFocus::Editor
+        focus_before_terminal_mouse_press(KeyboardFocus::Editor(PaneId(0)), false, true, true),
+        KeyboardFocus::Editor(PaneId(0))
     );
 }
 
@@ -96,7 +103,7 @@ fn terminal_input_owner_is_exclusive_without_a_detached_mode() {
         "background tabs remain owned; selected-tab input does not create a detached PTY mode"
     );
     assert_eq!(
-        terminal_input_owner(KeyboardFocus::Editor, true, true, false),
+        terminal_input_owner(KeyboardFocus::Editor(PaneId(0)), true, true, false),
         TerminalInputOwner::Unowned
     );
     assert_eq!(
@@ -131,15 +138,23 @@ fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
 fn editor_focus_routes_hotkeys_and_never_to_terminal() {
     for visible in [false, true] {
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::WorkspaceHotkey, visible),
+            key_route(
+                KeyboardFocus::Editor(PaneId(0)),
+                KeyClass::WorkspaceHotkey,
+                visible
+            ),
             RouteDecision::Editor
         );
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::TerminalRenameEdit, visible),
+            key_route(
+                KeyboardFocus::Editor(PaneId(0)),
+                KeyClass::TerminalRenameEdit,
+                visible
+            ),
             RouteDecision::Unrouted
         );
         assert_eq!(
-            key_route(KeyboardFocus::Editor, KeyClass::RawPty, visible),
+            key_route(KeyboardFocus::Editor(PaneId(0)), KeyClass::RawPty, visible),
             RouteDecision::Unrouted
         );
     }
@@ -149,19 +164,19 @@ fn editor_focus_routes_hotkeys_and_never_to_terminal() {
 fn workspace_actions_fire_once_on_editor_press_and_never_under_terminal_focus() {
     for visible in [false, true] {
         assert!(workspace_action_should_fire(
-            KeyboardFocus::Editor,
+            KeyboardFocus::Editor(PaneId(0)),
             visible,
             ElementState::Pressed,
             false,
         ));
         assert!(!workspace_action_should_fire(
-            KeyboardFocus::Editor,
+            KeyboardFocus::Editor(PaneId(0)),
             visible,
             ElementState::Released,
             false,
         ));
         assert!(!workspace_action_should_fire(
-            KeyboardFocus::Editor,
+            KeyboardFocus::Editor(PaneId(0)),
             visible,
             ElementState::Pressed,
             true,
@@ -180,7 +195,7 @@ fn workspace_actions_fire_once_on_editor_press_and_never_under_terminal_focus() 
 #[test]
 fn dock_visibility_never_changes_routing_except_raw_pty() {
     for focus in [
-        KeyboardFocus::Editor,
+        KeyboardFocus::Editor(PaneId(0)),
         KeyboardFocus::Terminal,
         KeyboardFocus::Overlay,
     ] {
@@ -229,7 +244,7 @@ fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
         "Escape press remains raw PTY input",
     );
     assert_eq!(
-        pre_raw_escape_route(KeyboardFocus::Editor, true, true),
+        pre_raw_escape_route(KeyboardFocus::Editor(PaneId(0)), true, true),
         None,
         "editor Escape is not a terminal focus exit",
     );
@@ -260,9 +275,16 @@ fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
 
 #[test]
 fn production_click_transition_functions_are_the_single_focus_authority() {
-    assert_eq!(focus_after_canvas_click(), KeyboardFocus::Editor);
     assert_eq!(
-        focus_after_hit_target(KeyboardFocus::Editor, true, &HitTarget::TerminalScreen),
+        focus_after_canvas_click(PaneId(0)),
+        KeyboardFocus::Editor(PaneId(0))
+    );
+    assert_eq!(
+        focus_after_hit_target(
+            KeyboardFocus::Editor(PaneId(0)),
+            true,
+            &HitTarget::TerminalScreen
+        ),
         KeyboardFocus::Terminal,
     );
     let handoff = datum_gui_protocol::TerminalCommandHandoff {
@@ -275,8 +297,8 @@ fn production_click_transition_functions_are_the_single_focus_authority() {
         HitTarget::ProductionTerminalCommand(handoff),
     ] {
         assert_eq!(
-            focus_after_hit_target(KeyboardFocus::Editor, true, &target),
-            KeyboardFocus::Editor,
+            focus_after_hit_target(KeyboardFocus::Editor(PaneId(0)), true, &target),
+            KeyboardFocus::Editor(PaneId(0)),
             "programmatic run-in-terminal handoff must not steal keyboard focus",
         );
     }
@@ -307,11 +329,11 @@ fn overlay_focus_routes_nothing_through_the_focus_classes() {
 #[test]
 fn focus_reports_follow_terminal_keyboard_ownership_only() {
     assert_eq!(
-        terminal_focus_report_transition(KeyboardFocus::Editor, KeyboardFocus::Terminal),
+        terminal_focus_report_transition(KeyboardFocus::Editor(PaneId(0)), KeyboardFocus::Terminal),
         Some(true),
     );
     assert_eq!(
-        terminal_focus_report_transition(KeyboardFocus::Terminal, KeyboardFocus::Editor),
+        terminal_focus_report_transition(KeyboardFocus::Terminal, KeyboardFocus::Editor(PaneId(0))),
         Some(false),
     );
     assert_eq!(
@@ -319,7 +341,7 @@ fn focus_reports_follow_terminal_keyboard_ownership_only() {
         Some(false),
     );
     assert_eq!(
-        terminal_focus_report_transition(KeyboardFocus::Editor, KeyboardFocus::Overlay),
+        terminal_focus_report_transition(KeyboardFocus::Editor(PaneId(0)), KeyboardFocus::Overlay),
         None,
     );
     assert_eq!(

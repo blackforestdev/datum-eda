@@ -32,6 +32,22 @@ impl RectPx {
         x >= self.x && x <= self.x + self.width && y >= self.y && y <= self.y + self.height
     }
 
+    /// Return the positive-area overlap shared by two screen rectangles.
+    /// Render scissoring and pointer ownership must describe the same visible
+    /// surface; zero-width/height edge contact therefore owns no hit area.
+    pub fn intersect(self, other: Self) -> Option<Self> {
+        let x = self.x.max(other.x);
+        let y = self.y.max(other.y);
+        let right = (self.x + self.width).min(other.x + other.width);
+        let bottom = (self.y + self.height).min(other.y + other.height);
+        (right > x && bottom > y).then_some(Self {
+            x,
+            y,
+            width: right - x,
+            height: bottom - y,
+        })
+    }
+
     fn scale_by(self, scale: f32) -> Self {
         Self {
             x: self.x * scale,

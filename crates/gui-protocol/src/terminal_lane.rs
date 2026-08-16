@@ -84,9 +84,6 @@ pub struct TerminalLaneState {
     pub screen_cursor_col: usize,
     pub screen_cursor_visible: bool,
     pub screen_cursor_style: Option<String>,
-    /// Read-only projection of the gui-app keyboard-focus authority for cursor
-    /// presentation. The terminal child still owns cursor shape and visibility.
-    pub has_keyboard_focus: bool,
     pub application_cursor_keys: bool,
     pub application_keypad: bool,
     pub focus_event_reporting: bool,
@@ -178,7 +175,6 @@ impl Default for TerminalLaneState {
             screen_cursor_col: 0,
             screen_cursor_visible: true,
             screen_cursor_style: None,
-            has_keyboard_focus: false,
             application_cursor_keys: false,
             application_keypad: false,
             focus_event_reporting: false,
@@ -200,7 +196,6 @@ mod tests {
         let mut active = TerminalLaneState {
             lines: vec!["active".to_string()],
             title: Some("active title".to_string()),
-            has_keyboard_focus: true,
             rename_input: "rename".to_string(),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
@@ -208,7 +203,6 @@ mod tests {
             ..Default::default()
         };
         let chrome = (
-            active.has_keyboard_focus,
             active.rename_input.clone(),
             active.active_session_id.clone(),
             active.activity_summary.clone(),
@@ -228,7 +222,6 @@ mod tests {
         assert_eq!(parked.title.as_deref(), Some("active title"));
         assert_eq!(
             (
-                active.has_keyboard_focus,
                 active.rename_input,
                 active.active_session_id,
                 active.activity_summary,

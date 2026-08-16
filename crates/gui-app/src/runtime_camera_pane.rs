@@ -187,7 +187,12 @@ impl Runtime {
         f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout),
     ) {
         let outgoing_scene = self.scene_leaf_id();
-        f(&mut self.session.workspace_mut().ui.layout);
+        let focused_pane = {
+            let ui = &mut self.session.workspace_mut().ui;
+            f(&mut ui.layout);
+            ui.layout.focused
+        };
+        self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(focused_pane));
         let incoming_scene = self.scene_leaf_id();
         if let (Some(outgoing), Some(incoming)) = (outgoing_scene, incoming_scene)
             && outgoing != incoming
@@ -522,7 +527,7 @@ impl Runtime {
         });
         // TF-01: while open, the marking menu is a transient Overlay keyboard
         // owner; `dismiss_marking_menu` restores Editor ownership.
-        self.set_keyboard_focus(crate::keyboard_focus::KeyboardFocus::Overlay);
+        self.set_application_focus(datum_gui_protocol::ApplicationFocus::Overlay);
         self.invalidate_frame();
         true
     }

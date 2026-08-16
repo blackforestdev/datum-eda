@@ -51,7 +51,12 @@ pub use terminal_lane::{
     TerminalTextStyle,
 };
 mod workspace_layout;
-pub use workspace_layout::{ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState, PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild, SplitOrientation, ViewportInteraction, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState};
+pub use workspace_layout::{
+    ApplicationFocus, ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState,
+    PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild,
+    SplitOrientation, ViewportInteraction, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset,
+    WorkspaceUiState,
+};
 mod production_proposals;
 pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
@@ -1644,31 +1649,14 @@ impl ReviewWorkspaceState {
             backing: None,
             last_command_status: None,
             supervision: GuiSupervisionSnapshot::default(),
-            ui: WorkspaceUiState {
-                active_dock_tab: None,
-                active_menu: None,
-                marking_menu: None,
-                dock_height_px: 220,
-                hovered_object: None,
-                cursor_pos: None,
-                crosshair_style: CrosshairStyle::default(),
-                filters: WorkspaceFilterState {
-                    show_authored: true,
-                    show_proposed: true,
-                    show_unrouted: true,
-                    dim_unrelated: has_review_actions,
-                    active_layer_id,
-                    layer_visibility,
-                },
-                // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001:
-                // the terminal grid starts EMPTY. No seeded "ready" rows — the
-                // only writer of terminal cells is PTY output interpreted by
-                // the terminal core; session status belongs to panel chrome.
-                terminal: TerminalLaneState::default(),
-                console: ConsoleLaneState::default(),
-                artifact_preview: ArtifactPreviewViewportState::default(),
-                layout: WorkspaceLayout::default(),
-            },
+            ui: WorkspaceUiState::new(WorkspaceFilterState {
+                show_authored: true,
+                show_proposed: true,
+                show_unrouted: true,
+                dim_unrelated: has_review_actions,
+                active_layer_id,
+                layer_visibility,
+            }),
         }
     }
 

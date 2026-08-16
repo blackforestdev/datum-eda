@@ -24,15 +24,15 @@ impl Runtime {
             .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
             .is_some();
         let next = keyboard_focus::focus_before_terminal_mouse_press(
-            self.keyboard_focus,
+            self.application_focus(),
             terminal_visible,
             child_mouse_reporting,
             over_screen,
         );
-        if next != self.keyboard_focus {
-            self.set_keyboard_focus(next);
+        if next != self.application_focus() {
+            self.set_application_focus(next);
         }
-        next == KeyboardFocus::Terminal && over_screen
+        next == ApplicationFocus::Terminal && over_screen
     }
 
     pub(super) fn set_active_dock(&mut self, tab: DockTab) -> bool {
@@ -63,8 +63,9 @@ impl Runtime {
         // TF-01: keyboard focus must not outlive the surface that owns it —
         // a closed dock with Terminal focus would swallow keys without a
         // visible recipient. Closing the dock hands ownership back to the editor.
-        if self.keyboard_focus == KeyboardFocus::Terminal {
-            self.set_keyboard_focus(KeyboardFocus::Editor);
+        if self.application_focus() == ApplicationFocus::Terminal {
+            let pane = self.workspace().ui.layout.focused;
+            self.set_application_focus(ApplicationFocus::Editor(pane));
         }
         self.invalidate_scene();
         true

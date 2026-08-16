@@ -97,6 +97,11 @@ impl ConsoleLaneState {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
+    /// The one application-level input/selection owner. `WorkspaceLayout`
+    /// retains pane structure and the last editor leaf, while this value says
+    /// whether that leaf, the terminal dock, or a transient overlay currently
+    /// owns interaction. Consumer/session state; never journaled.
+    pub focus: ApplicationFocus,
     pub active_dock_tab: Option<DockTab>,
     pub active_menu: Option<String>,
     pub marking_menu: Option<MarkingMenuState>,
@@ -119,6 +124,27 @@ pub struct WorkspaceUiState {
 }
 
 impl WorkspaceUiState {
+    /// Construct the session-owned UI shell around the caller's scene filter
+    /// projection. Focus begins at the primary editor pane; terminal cells are
+    /// empty until the owned PTY/core path supplies bytes.
+    pub fn new(filters: WorkspaceFilterState) -> Self {
+        Self {
+            focus: ApplicationFocus::default(),
+            active_dock_tab: None,
+            active_menu: None,
+            marking_menu: None,
+            dock_height_px: 220,
+            hovered_object: None,
+            cursor_pos: None,
+            crosshair_style: CrosshairStyle::default(),
+            filters,
+            terminal: TerminalLaneState::default(),
+            console: ConsoleLaneState::default(),
+            artifact_preview: ArtifactPreviewViewportState::default(),
+            layout: WorkspaceLayout::default(),
+        }
+    }
+
     /// Append a GUI-action narration echo to the invisible console sink.
     ///
     /// Mirrors the terminal lane's 240-line cap but never touches the PTY lane:
@@ -199,6 +225,30 @@ impl PaneContent {
 /// `WorkspaceLayout`. Ids are never reused within a layout's lifetime.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PaneId(pub u32);
+
+/// The selected interactive surface for the application window.
+///
+/// Carrying the editor `PaneId` makes editor and terminal selection equally
+/// explicit; no renderer or input path may infer focus from dock visibility or
+/// from `WorkspaceLayout::focused` alone.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ApplicationFocus {
+    Editor(PaneId),
+    Terminal,
+    Overlay,
+}
+
+impl Default for ApplicationFocus {
+    fn default() -> Self {
+        Self::Editor(PaneId(0))
+    }
+}
+
+impl ApplicationFocus {
+    pub fn is_terminal(self) -> bool {
+        self == Self::Terminal
+    }
+}
 
 /// A node in the recursive tile tree: a leaf pane or a binary split.
 #[derive(Debug, Clone, PartialEq)]
@@ -314,6 +364,14 @@ impl WorkspaceLayout {
         match self.focused_leaf() {
             PaneNode::Leaf { content, .. } => *content,
             PaneNode::Split { .. } => unreachable!("focused_leaf always returns a leaf"),
+        }
+    }
+
+    /// Resolve the editor content carried by an application-focus `PaneId`.
+    pub fn content_for(&self, pane: PaneId) -> Option<PaneContent> {
+        match find_leaf(&self.root, pane)? {
+            PaneNode::Leaf { content, .. } => Some(*content),
+            PaneNode::Split { .. } => None,
         }
     }
 
