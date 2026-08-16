@@ -101,11 +101,8 @@ fn terminal_grid_holds_only_pty_rows_across_session_lifecycle_events() {
         .restart_active(&mut state, &context)
         .expect("restart active terminal session");
     registry
-        .detach_active(&mut state)
-        .expect("detach active terminal session");
-    registry
         .close_active(&mut state)
-        .expect("close active terminal session");
+        .expect("arm active terminal close without touching PTY cells");
 
     assert_eq!(
         state.grid_lines(),

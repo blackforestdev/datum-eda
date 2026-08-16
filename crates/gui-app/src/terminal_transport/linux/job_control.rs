@@ -1,16 +1,44 @@
+use super::process_session::{self, ProcessIdentity};
 use anyhow::{Context, Result};
 use std::{io, os::fd::RawFd};
 
-pub(in crate::terminal_transport) fn signal_process_group(
-    process_group_id: libc::pid_t,
+pub(in crate::terminal_transport) fn signal_owned_process_group(
+    representative: ProcessIdentity,
+    expected_session_id: libc::pid_t,
     signal: libc::c_int,
-    context: &'static str,
-) -> Result<()> {
-    let rc = unsafe { libc::kill(-process_group_id, signal) };
-    if rc < 0 {
-        return Err(io::Error::last_os_error()).context(context);
+) -> io::Result<()> {
+    if representative.pid <= 1 || representative.process_group_id <= 1 || expected_session_id <= 1 {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "unsafe terminal process identity",
+        ));
     }
-    Ok(())
+    let current = process_session::read_process_identity(representative.pid).map_err(|error| {
+        if matches!(
+            &error,
+            process_session::DiscoveryError::Io { error, .. }
+                if error.kind() == io::ErrorKind::NotFound
+        ) {
+            io::Error::from_raw_os_error(libc::ESRCH)
+        } else {
+            io::Error::other(error.to_string())
+        }
+    })?;
+    if current != representative || current.session_id != expected_session_id {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "terminal process identity changed before signal",
+        ));
+    }
+    loop {
+        if unsafe { libc::kill(-current.process_group_id, signal) } == 0 {
+            return Ok(());
+        }
+        let error = io::Error::last_os_error();
+        if error.kind() != io::ErrorKind::Interrupted {
+            return Err(error);
+        }
+    }
 }
 
 pub(in crate::terminal_transport) fn resize(master_fd: RawFd, cols: u16, rows: u16) -> Result<()> {
@@ -24,9 +52,14 @@ pub(in crate::terminal_transport) fn resize_fd(fd: RawFd, cols: u16, rows: u16) 
         ws_xpixel: 0,
         ws_ypixel: 0,
     };
-    let rc = unsafe { libc::ioctl(fd, libc::TIOCSWINSZ, &size) };
-    if rc < 0 {
-        return Err(io::Error::last_os_error());
+    loop {
+        let rc = unsafe { libc::ioctl(fd, libc::TIOCSWINSZ, &size) };
+        if rc == 0 {
+            return Ok(());
+        }
+        let error = io::Error::last_os_error();
+        if error.kind() != io::ErrorKind::Interrupted {
+            return Err(error);
+        }
     }
-    Ok(())
 }

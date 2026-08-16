@@ -112,7 +112,7 @@ fn terminal_context_projects_protocol_terminal_tabs_for_agents() {
     );
     assert_eq!(
         latest_context["terminal_sessions"]["tabs"][0]["attached"],
-        serde_json::json!(false)
+        serde_json::json!(true)
     );
     assert_eq!(
         latest_context["terminal_sessions"]["tabs"][1]["session_id"],
@@ -122,12 +122,10 @@ fn terminal_context_projects_protocol_terminal_tabs_for_agents() {
         latest_context["terminal_sessions"]["tabs"][1]["label"],
         "layout agent"
     );
-    assert!(
-        latest_context["terminal_sessions"]["tabs"][0]["activity_event_count"]
-            .as_u64()
-            .unwrap()
-            >= 1,
-        "detached tab activity should be visible to agents: {latest_context}"
+    assert_eq!(
+        latest_context["terminal_sessions"]["tabs"][0]["activity_event_count"],
+        serde_json::json!(0),
+        "background ownership must not invent a detached lifecycle event"
     );
     assert!(latest_context["active_context_commands"]["artifact_show"].is_null());
     assert!(latest_context["active_context_commands"]["check_show"].is_null());

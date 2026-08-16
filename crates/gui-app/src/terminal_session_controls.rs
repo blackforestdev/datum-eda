@@ -1,6 +1,43 @@
 use super::{DockTab, Runtime};
+use datum_gui_render::HitTarget;
 
 impl Runtime {
+    pub(super) fn handle_terminal_lifecycle_target(&mut self, target: &HitTarget) -> bool {
+        match target {
+            HitTarget::TerminalSessionRestartActive => self.restart_terminal_session(),
+            HitTarget::TerminalSessionCloseActive => return self.close_active_terminal_session(),
+            HitTarget::TerminalSessionTerminateActive => {
+                let _ = self
+                    .terminal_sessions
+                    .confirm_close_active(&mut self.session.workspace_mut().ui.terminal);
+            }
+            HitTarget::TerminalSessionForceKillActive => {
+                self.terminal_sessions.force_kill_active();
+                self.invalidate_frame();
+            }
+            HitTarget::TerminalSessionRetryTermination => {
+                if self.application_shutdown_started.is_some() {
+                    self.retry_application_terminal_shutdown();
+                } else {
+                    self.terminal_sessions.retry_failed_terminations();
+                }
+            }
+            HitTarget::TerminalShutdownCancel if self.application_shutdown_started.is_some() => {
+                self.cancel_application_terminal_shutdown();
+            }
+            HitTarget::TerminalShutdownCancel => {
+                self.terminal_sessions.handle_close_confirmation_input(
+                    b"\x1b",
+                    &mut self.session.workspace_mut().ui.terminal,
+                );
+                self.sync_terminal_tabs();
+                self.invalidate_frame();
+            }
+            _ => return false,
+        }
+        true
+    }
+
     pub(super) fn refresh_terminal_activity_summary(&mut self) -> bool {
         // Incremental read: O(new event-log bytes) per refresh (terminal
         // performance slice) — never a full-log reload on the drain path.
@@ -116,37 +153,6 @@ impl Runtime {
                 self.resize_terminal_to_dock();
             }
             Err(err) => self.log_review_event(format!("terminal session close failed: {err}")),
-        }
-        true
-    }
-
-    pub(super) fn detach_active_terminal_session(&mut self) -> bool {
-        self.clear_terminal_rename_editor();
-        match self
-            .terminal_sessions
-            .detach_active(&mut self.session.workspace_mut().ui.terminal)
-        {
-            Ok(()) => {
-                self.log_review_event("detached active terminal session".to_string());
-                self.sync_terminal_tabs();
-            }
-            Err(err) => self.log_review_event(format!("terminal session detach failed: {err}")),
-        }
-        true
-    }
-
-    pub(super) fn reattach_active_terminal_session(&mut self) -> bool {
-        let session_id = self.terminal_sessions.active().session_id().to_string();
-        match self
-            .terminal_sessions
-            .activate_with_lane(&session_id, &mut self.session.workspace_mut().ui.terminal)
-        {
-            Ok(()) => {
-                self.log_review_event("reattached active terminal session".to_string());
-                self.sync_terminal_tabs();
-                self.resize_terminal_to_dock();
-            }
-            Err(err) => self.log_review_event(format!("terminal session reattach failed: {err}")),
         }
         true
     }

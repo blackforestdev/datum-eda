@@ -1,6 +1,5 @@
 use super::*;
 use crate::terminal_session::TerminalEvent;
-use datum_gui_protocol::TerminalLaneState;
 use std::fs;
 use std::time::{Duration, Instant};
 
@@ -15,50 +14,32 @@ fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
 }
 
 #[test]
-fn detached_and_rename_modes_write_zero_bytes_then_reattach_writes_once() {
+fn rename_chrome_writes_zero_pty_bytes_then_shell_input_writes_once() {
     let root =
         std::env::temp_dir().join(format!("datum-terminal-input-mode-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(&root).expect("create terminal input-mode root");
     let context = TerminalLaunchContext::for_project_root(&root);
-    let mut registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
-    let session_id = registry.active().session_id().to_string();
-    let mut state = TerminalLaneState::default();
+    let registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
     let baseline = recorded_input_bytes(&registry);
-
-    registry
-        .detach_active(&mut state)
-        .expect("detach active terminal session");
     assert_eq!(
-        keyboard_focus::terminal_input_owner(KeyboardFocus::Terminal, true, false, false),
-        keyboard_focus::TerminalInputOwner::DetachedReadOnly
-    );
-    assert!(!write_attached_terminal_bytes(&registry, b"detached").unwrap());
-    assert_eq!(recorded_input_bytes(&registry), baseline);
-
-    state.rename_input = "chrome only".to_string();
-    state.rename_cursor = state.rename_input.chars().count();
-    assert_eq!(
-        keyboard_focus::terminal_input_owner(KeyboardFocus::Terminal, true, false, true),
+        keyboard_focus::terminal_input_owner(KeyboardFocus::Terminal, true, true, true),
         keyboard_focus::TerminalInputOwner::RenameChrome
     );
     assert_eq!(recorded_input_bytes(&registry), baseline);
 
-    registry
-        .activate(&session_id)
-        .expect("reattach terminal session");
-    let payload = b"printf 'ti03-reattach-proof'\r";
+    let payload = b"printf 'ti03-shell-proof'\r";
     assert!(write_attached_terminal_bytes(&registry, payload).unwrap());
     assert_eq!(
         recorded_input_bytes(&registry),
         baseline + payload.len(),
-        "reattached payload must be recorded exactly once"
+        "shell payload must be recorded exactly once"
     );
 
     let deadline = Instant::now() + Duration::from_secs(8);
     let mut output = Vec::new();
     while Instant::now() < deadline
-        && !String::from_utf8_lossy(&output).contains("ti03-reattach-proof")
+        && !String::from_utf8_lossy(&output).contains("ti03-shell-proof")
     {
         if let Ok(TerminalEvent::Output(bytes)) = registry
             .active()
@@ -68,8 +49,8 @@ fn detached_and_rename_modes_write_zero_bytes_then_reattach_writes_once() {
         }
     }
     assert!(
-        String::from_utf8_lossy(&output).contains("ti03-reattach-proof"),
-        "reattached shell must produce the recovery payload"
+        String::from_utf8_lossy(&output).contains("ti03-shell-proof"),
+        "shell must produce the payload"
     );
     let _ = fs::remove_dir_all(&root);
 }

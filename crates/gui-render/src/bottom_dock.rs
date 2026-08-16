@@ -10,6 +10,7 @@ use super::{
     draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
+use crate::terminal_session_chrome::render_terminal_session_controls;
 use taffy::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
@@ -291,18 +292,21 @@ fn render_terminal_header(
         TextFace::Mono,
         text_runs,
     );
-    let mut session_label = if let Some(title) = state.ui.terminal.title.as_deref() {
-        format!(
-            "SHELL SESSION / {} / {}",
-            state.ui.terminal.status.to_uppercase(),
-            truncate_text(title, 48)
-        )
-    } else {
-        format!(
-            "SHELL SESSION / {}",
-            state.ui.terminal.status.to_uppercase()
-        )
-    };
+    let mut session_label =
+        if let Some(blocked) = state.ui.terminal.application_shutdown_blocked.as_deref() {
+            format!("APPLICATION SHUTDOWN / {blocked}")
+        } else if let Some(title) = state.ui.terminal.title.as_deref() {
+            format!(
+                "SHELL SESSION / {} / {}",
+                state.ui.terminal.status.to_uppercase(),
+                truncate_text(title, 48)
+            )
+        } else {
+            format!(
+                "SHELL SESSION / {}",
+                state.ui.terminal.status.to_uppercase()
+            )
+        };
     if state.ui.terminal.bell_count > 0 {
         session_label.push_str(&format!(" / BELL {}", state.ui.terminal.bell_count));
     }
@@ -361,17 +365,11 @@ fn render_terminal_sessions_row(
             TextFace::Mono,
             text_runs,
         );
-        let active_attached = state
-            .ui
-            .terminal
-            .tabs
-            .iter()
-            .find(|tab| tab.active)
-            .is_none_or(|tab| tab.attached);
         let mut x = render_terminal_session_controls(
             rect,
             y,
-            active_attached,
+            &state.ui.terminal.status,
+            state.ui.terminal.application_shutdown_blocked.as_deref(),
             text_runs,
             hit_regions,
         );
@@ -611,41 +609,6 @@ fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: 
         _ if bold => TEXT_PRIMARY,
         _ => TEXT_PANEL_VALUE,
     }
-}
-
-fn render_terminal_session_controls(
-    rect: RectPx,
-    y: f32,
-    active_attached: bool,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) -> f32 {
-    let mut x = rect.x + 66.0;
-    let attachment_control = if active_attached {
-        ("DETACH", HitTarget::TerminalSessionDetachActive)
-    } else {
-        ("REATTACH", HitTarget::TerminalSessionReattachActive)
-    };
-    for (label, target) in [
-        ("+NEW", HitTarget::TerminalSessionNew),
-        ("RENAME", HitTarget::TerminalSessionRenameActive),
-        ("RESTART", HitTarget::TerminalSessionRestartActive),
-        attachment_control,
-        ("CLOSE", HitTarget::TerminalSessionCloseActive),
-    ] {
-        draw_text(label, x, y, 10.5, TEXT_MUTED, TextFace::Mono, text_runs);
-        hit_regions.push(HitRegion {
-            target,
-            rect: RectPx {
-                x: x - 4.0,
-                y: y - 2.0,
-                width: (label.len() as f32 * 7.0 + 8.0).max(24.0),
-                height: 14.0,
-            },
-        });
-        x += label.len() as f32 * 7.0 + 16.0;
-    }
-    x + 4.0
 }
 
 fn split_at_cursor(input: &str, cursor: usize) -> (&str, &str) {

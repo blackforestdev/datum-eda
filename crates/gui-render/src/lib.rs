@@ -20,7 +20,6 @@ use wgpu::util::DeviceExt;
 pub use datum_gui_viewport::CameraState;
 
 mod bottom_dock;
-mod terminal_cursor;
 #[cfg(feature = "visual")]
 pub mod design_artboards;
 mod design_tokens;
@@ -28,6 +27,8 @@ mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
 mod side_panels;
+mod terminal_cursor;
+mod terminal_session_chrome;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
@@ -61,14 +62,14 @@ include!("render/draw_primitives.rs");
 include!("render/pads_and_layers.rs");
 include!("render/geometry.rs");
 include!("render/gpu.rs");
-#[path = "render/gpu_surface_pass.rs"]
-mod gpu_surface_pass;
-#[path = "render/surface_grid_pass.rs"]
-mod surface_grid_pass;
 #[path = "render/gpu_surface.rs"]
 mod gpu_surface;
+#[path = "render/gpu_surface_pass.rs"]
+mod gpu_surface_pass;
 #[path = "render/grid.rs"]
 mod grid;
+#[path = "render/surface_grid_pass.rs"]
+mod surface_grid_pass;
 pub use grid::resolve_surface_grid_lod;
 pub(crate) use grid::{push_scene_grid, push_schematic_grid};
 #[path = "render/via.rs"]

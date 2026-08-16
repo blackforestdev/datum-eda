@@ -11,17 +11,27 @@ mod launch_error;
 mod limits;
 mod linux;
 mod output;
+mod process_status;
+mod process_supervisor;
 mod reader;
 mod request;
 mod session_handle;
+mod shutdown;
 mod wake;
 
 use anyhow::{Context, Result};
 pub(super) use event::{TerminalInputError, TerminalTransportEvent};
 use launch_error::{TerminalLaunchError, TerminalLaunchStage};
-pub(super) use limits::{GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT, MAX_LIVE_SESSIONS};
+#[cfg(test)]
+pub(super) use limits::MAX_OUTPUT_CHUNK_BYTES;
+pub(super) use limits::{
+    GLOBAL_SHUTDOWN_MS, GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT, MAX_LIVE_SESSIONS,
+};
+pub(super) use process_status::TerminalExitStatus;
+pub(super) use process_supervisor::{ShutdownProcessIdentity, ShutdownSnapshot};
 pub(super) use request::TerminalTransportRequest;
 pub(super) use session_handle::{PreparedTerminalTransport, TerminalTransportSession};
+pub(super) use shutdown::ShutdownPhase;
 pub(super) use wake::TerminalWakeGate;
 
 pub(super) fn prepare_terminal_transport(
@@ -66,7 +76,7 @@ mod tests {
     use super::*;
     use std::path::PathBuf;
 
-    fn run_request(request: TerminalTransportRequest) -> (Vec<u8>, Option<i32>) {
+    fn run_request(request: TerminalTransportRequest) -> (Vec<u8>, Option<TerminalExitStatus>) {
         let session = prepare_terminal_transport(request)
             .unwrap()
             .start(TerminalWakeGate::new(None));
@@ -83,7 +93,7 @@ mod tests {
             };
             match event {
                 TerminalTransportEvent::Output(bytes) => output.extend(bytes),
-                TerminalTransportEvent::Exited(code) => exit_code = code,
+                TerminalTransportEvent::Exited(status) => exit_code = Some(status),
                 TerminalTransportEvent::Error(error) => panic!("transport error: {error:?}"),
             }
         }
@@ -135,7 +145,7 @@ mod tests {
         let request = TerminalTransportRequest::new("/usr/bin/printf", PathBuf::from("/tmp"))
             .args(["%s", literal.as_str()]);
         let (output, code) = run_request(request);
-        assert_eq!(code, Some(0));
+        assert_eq!(code, Some(TerminalExitStatus::Code(0)));
         assert_eq!(String::from_utf8_lossy(&output), literal);
         assert!(!marker.exists());
     }
@@ -149,7 +159,7 @@ mod tests {
             .initial_size(111, 37);
         let (output, code) = run_request(request);
         let output = String::from_utf8_lossy(&output);
-        assert_eq!(code, Some(0));
+        assert_eq!(code, Some(TerminalExitStatus::Code(0)));
         assert!(output.contains("SIZE:37 111"), "{output}");
         assert!(output.contains("TTY:/dev/pts/"), "{output}");
         assert!(!output.contains("/dev/ptmx"), "{output}");
@@ -163,7 +173,7 @@ mod tests {
             "printf '%s:%s:%s:%s' \"$(id -ru)\" \"$(id -u)\" \"$(id -rg)\" \"$(id -g)\"",
         ]);
         let (output, code) = run_request(request);
-        assert_eq!(code, Some(0));
+        assert_eq!(code, Some(TerminalExitStatus::Code(0)));
         let expected = format!(
             "{}:{}:{}:{}",
             unsafe { libc::getuid() },
@@ -188,7 +198,7 @@ mod tests {
             .env("DATUM_REMOVE_TEST", "must-not-survive")
             .env_remove("DATUM_REMOVE_TEST");
         let (output, code) = run_request(request);
-        assert_eq!(code, Some(0));
+        assert_eq!(code, Some(TerminalExitStatus::Code(0)));
         assert!(output.windows(16).any(|part| part == b"PATH_PRESENT:yes"));
         assert!(
             output

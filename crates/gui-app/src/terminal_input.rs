@@ -1,3 +1,4 @@
+use crate::terminal_control_input::{VINTR_BYTE, control_character_sequence};
 use winit::{
     event::{ElementState, KeyEvent, MouseButton},
     keyboard::{Key, KeyCode, ModifiersState, NamedKey, PhysicalKey},
@@ -6,9 +7,9 @@ use winit::{
 #[derive(Debug, PartialEq, Eq)]
 pub(super) enum TerminalKeyAction {
     Write(Vec<u8>),
-    Interrupt,
     RestartSession,
     TerminateSession,
+    CloseSession,
     ScrollbackPageUp,
     ScrollbackPageDown,
     ScrollbackTop,
@@ -39,8 +40,15 @@ pub(super) fn terminal_key_action(
         if modifiers.shift_key() && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyK)) {
             return TerminalKeyAction::TerminateSession;
         }
+        if modifiers.shift_key() && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyW)) {
+            return TerminalKeyAction::CloseSession;
+        }
         if matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyC)) {
-            return terminal_ctrl_c_action(modifiers);
+            return if modifiers.shift_key() {
+                TerminalKeyAction::LetCopyShortcutHandle
+            } else {
+                TerminalKeyAction::Write(vec![VINTR_BYTE])
+            };
         }
         if matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyV)) {
             return TerminalKeyAction::LetPasteShortcutHandle;
@@ -48,10 +56,10 @@ pub(super) fn terminal_key_action(
     }
     if modifiers.shift_key()
         && let Key::Named(key) = &event.logical_key
-            && let Some(action) = terminal_shift_named_key_action(*key)
-        {
-            return action;
-        }
+        && let Some(action) = terminal_shift_named_key_action(*key)
+    {
+        return action;
+    }
     if application_keypad
         && let PhysicalKey::Code(code) = event.physical_key
         && let Some(sequence) = application_keypad_sequence(code)
@@ -376,22 +384,6 @@ fn terminal_tab_sequence(modifiers: ModifiersState) -> Option<Vec<u8>> {
     Some(b"\t".to_vec())
 }
 
-fn control_character_sequence(text: &str) -> Option<Vec<u8>> {
-    let byte = text.as_bytes().first().copied()?;
-    let control = match byte {
-        b'a'..=b'z' => byte - b'a' + 1,
-        b'A'..=b'Z' => byte - b'A' + 1,
-        b'[' => 0x1b,
-        b'\\' => 0x1c,
-        b']' => 0x1d,
-        b'^' => 0x1e,
-        b'_' => 0x1f,
-        b'?' => 0x7f,
-        _ => return None,
-    };
-    Some(vec![control])
-}
-
 fn terminal_named_key_sequence(key: NamedKey, modifiers: ModifiersState) -> Option<Vec<u8>> {
     let tilde_param = match key {
         NamedKey::Insert => Some(2),
@@ -462,14 +454,6 @@ fn application_keypad_sequence(key: KeyCode) -> Option<Vec<u8>> {
     Some(vec![b'\x1b', b'O', final_byte])
 }
 
-fn terminal_ctrl_c_action(modifiers: ModifiersState) -> TerminalKeyAction {
-    if modifiers.shift_key() {
-        TerminalKeyAction::LetCopyShortcutHandle
-    } else {
-        TerminalKeyAction::Interrupt
-    }
-}
-
 fn terminal_shift_named_key_action(key: NamedKey) -> Option<TerminalKeyAction> {
     match key {
         NamedKey::PageUp => Some(TerminalKeyAction::ScrollbackPageUp),
@@ -517,6 +501,7 @@ fn consumes_release(event: &KeyEvent) -> bool {
             KeyCode::KeyC
                 | KeyCode::KeyV
                 | KeyCode::KeyK
+                | KeyCode::KeyW
                 | KeyCode::KeyR
                 | KeyCode::NumpadEnter
                 | KeyCode::Numpad0
@@ -548,21 +533,6 @@ mod terminal_workspace_hotkey_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn ctrl_c_interrupts_but_ctrl_shift_c_defers_to_copy() {
-        let ctrl = ModifiersState::CONTROL;
-        let ctrl_shift = ModifiersState::CONTROL | ModifiersState::SHIFT;
-
-        assert!(matches!(
-            terminal_ctrl_c_action(ctrl),
-            TerminalKeyAction::Interrupt
-        ));
-        assert!(matches!(
-            terminal_ctrl_c_action(ctrl_shift),
-            TerminalKeyAction::LetCopyShortcutHandle
-        ));
-    }
-
     #[test]
     fn shift_navigation_controls_terminal_scrollback() {
         for (key, action) in [

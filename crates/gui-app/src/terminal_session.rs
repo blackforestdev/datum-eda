@@ -1,15 +1,14 @@
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_context::{
-        TerminalContext, read_session_created_unix_ms, tool_session_event_log_path, unix_time_ms,
-        update_terminal_lifecycle_file, write_terminal_context_files,
+        TerminalContext, read_session_created_unix_ms, unix_time_ms,
+        update_terminal_lifecycle_file, update_terminal_lifecycle_file_exact,
+        write_terminal_context_files,
     },
     terminal_process::spawn_terminal_process,
     terminal_screen::TerminalScreen,
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
-    terminal_session_events::{
-        record_terminal_input_accepted_event, record_terminal_lifecycle_event,
-    },
+    terminal_session_events::record_terminal_lifecycle_event,
     terminal_transport::{MAX_LIVE_SESSIONS, TerminalTransportSession, TerminalWakeGate},
 };
 use anyhow::Result;
@@ -63,6 +62,13 @@ struct TerminalSessionSlot {
     activity: TerminalActivitySummaryCache,
     parked_lane: TerminalLaneState,
     disconnected_reported: bool,
+    termination_failure_reported: bool,
+    close_confirmation_armed: bool,
+    close_confirmation_input: String,
+    pending_restart: bool,
+    remove_when_closed: bool,
+    hidden_after_close: bool,
+    exact_exit_status: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -109,6 +115,13 @@ impl TerminalSessionRegistry {
                 activity: TerminalActivitySummaryCache::default(),
                 parked_lane: TerminalLaneState::default(),
                 disconnected_reported: false,
+                termination_failure_reported: false,
+                close_confirmation_armed: false,
+                close_confirmation_input: String::new(),
+                pending_restart: false,
+                remove_when_closed: false,
+                hidden_after_close: false,
+                exact_exit_status: None,
             }],
             active_index: 0,
             terminal_wake,
@@ -120,7 +133,7 @@ impl TerminalSessionRegistry {
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
         ensure_session_capacity(self.sessions.len())?;
-        let previous_active_index = self.active_index;
+        let _previous_active_index = self.active_index;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         self.sessions.push(TerminalSessionSlot {
             session,
@@ -135,18 +148,14 @@ impl TerminalSessionRegistry {
             activity: TerminalActivitySummaryCache::default(),
             parked_lane: TerminalLaneState::default(),
             disconnected_reported: false,
+            termination_failure_reported: false,
+            close_confirmation_armed: false,
+            close_confirmation_input: String::new(),
+            pending_restart: false,
+            remove_when_closed: false,
+            hidden_after_close: false,
+            exact_exit_status: None,
         });
-        self.sessions[previous_active_index].attached = false;
-        mark_terminal_session_lifecycle(
-            &self.sessions[previous_active_index].session,
-            DatumToolSessionLifecycle::Detached,
-            None,
-        )?;
-        record_terminal_lifecycle_event(
-            &self.sessions[previous_active_index].session,
-            DatumToolSessionLifecycle::Detached,
-            None,
-        )?;
         self.active_index = self.sessions.len() - 1;
         mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
@@ -179,25 +188,10 @@ impl TerminalSessionRegistry {
             .iter()
             .position(|slot| slot.session.session_id() == session_id)
             .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
-        if index == self.active_index && self.sessions[index].attached {
+        if index == self.active_index {
             return Ok(());
         }
-        if index != self.active_index {
-            let previous_active_index = self.active_index;
-            self.sessions[previous_active_index].attached = false;
-            mark_terminal_session_lifecycle(
-                &self.sessions[previous_active_index].session,
-                DatumToolSessionLifecycle::Detached,
-                None,
-            )?;
-            record_terminal_lifecycle_event(
-                &self.sessions[previous_active_index].session,
-                DatumToolSessionLifecycle::Detached,
-                None,
-            )?;
-        }
         self.active_index = index;
-        self.sessions[self.active_index].attached = true;
         mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         Ok(())
@@ -276,68 +270,93 @@ impl TerminalSessionRegistry {
         Ok(())
     }
 
-    pub(super) fn detach_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
-        if !self.sessions[self.active_index].attached {
-            self.sync_lane_tabs(state);
-            return Ok(());
-        }
-        self.sessions[self.active_index].attached = false;
-        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Detached, None)?;
-        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Detached, None)?;
-        self.sync_lane_tabs(state);
-        Ok(())
-    }
-
-    pub(super) fn terminate_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
-        terminate_terminal_session(self.active(), state)?;
-        self.sessions[self.active_index].status = state.status.clone();
-        self.sync_lane_tabs(state);
-        Ok(())
-    }
-
-    pub(super) fn close_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
-        if self.sessions.len() <= 1 {
-            anyhow::bail!("cannot close the only terminal session");
-        }
-        terminate_terminal_session(self.active(), state)?;
-        self.sessions.remove(self.active_index);
-        if self.active_index >= self.sessions.len() {
-            self.active_index = self.sessions.len() - 1;
-        }
-        self.sessions[self.active_index].attached = true;
-        if self.projection_managed {
-            let mut discarded = TerminalLaneState::default();
-            state.swap_session_projection(&mut discarded);
-            state.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
-        } else {
-            state.status = self.sessions[self.active_index].status.clone();
-        }
-        self.sync_lane_tabs(state);
-        Ok(())
-    }
-
     pub(super) fn restart_active(
         &mut self,
         state: &mut TerminalLaneState,
         context: &TerminalLaunchContext,
     ) -> Result<()> {
         let slot = &mut self.sessions[self.active_index];
+        let phase = slot
+            .session
+            .shutdown_snapshot()
+            .map(|snapshot| snapshot.phase);
+        if phase != Some(crate::terminal_transport::ShutdownPhase::Closed)
+            || !slot.session.presentation_complete()
+        {
+            slot.pending_restart = true;
+            return terminate_terminal_session(&slot.session, state);
+        }
+        Self::replace_slot_session(slot, state, context, self.terminal_wake.clone())
+    }
+
+    fn replace_slot_session(
+        slot: &mut TerminalSessionSlot,
+        state: &mut TerminalLaneState,
+        context: &TerminalLaunchContext,
+        terminal_wake: TerminalWakeGate,
+    ) -> Result<()> {
         let previous_session_id = slot.session.session_id().to_string();
         restart_terminal_session(
             &mut slot.session,
             &mut slot.screen,
             state,
             context,
-            self.terminal_wake.clone(),
+            terminal_wake,
         )?;
         slot.status = state.status.clone();
         slot.attached = true;
         slot.previous_session_id = Some(previous_session_id);
         slot.restart_count += 1;
+        slot.pending_restart = false;
+        slot.remove_when_closed = false;
+        slot.hidden_after_close = false;
+        slot.exact_exit_status = None;
         slot.session.resize(slot.columns, slot.rows)?;
         slot.screen.resize_grid(slot.columns, slot.rows);
-        self.sync_lane_tabs(state);
         Ok(())
+    }
+
+    pub(super) fn complete_pending_restarts(
+        &mut self,
+        state: &mut TerminalLaneState,
+        context: &TerminalLaunchContext,
+    ) -> Result<bool> {
+        let mut changed = false;
+        for index in 0..self.sessions.len() {
+            let ready = self.sessions[index].pending_restart
+                && self.sessions[index]
+                    .session
+                    .shutdown_snapshot()
+                    .is_some_and(|snapshot| {
+                        snapshot.phase == crate::terminal_transport::ShutdownPhase::Closed
+                    })
+                && self.sessions[index].session.presentation_complete();
+            if !ready {
+                continue;
+            }
+            if index == self.active_index {
+                Self::replace_slot_session(
+                    &mut self.sessions[index],
+                    state,
+                    context,
+                    self.terminal_wake.clone(),
+                )?;
+            } else {
+                let mut lane = std::mem::take(&mut self.sessions[index].parked_lane);
+                Self::replace_slot_session(
+                    &mut self.sessions[index],
+                    &mut lane,
+                    context,
+                    self.terminal_wake.clone(),
+                )?;
+                self.sessions[index].parked_lane = lane;
+            }
+            changed = true;
+        }
+        if changed {
+            self.sync_lane_tabs(state);
+        }
+        Ok(changed)
     }
 
     #[cfg_attr(not(test), allow(dead_code))]
@@ -369,11 +388,13 @@ impl TerminalSessionRegistry {
 
     pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
         let active_index = self.active_index;
-        state.active_session_id = Some(self.active().session_id().to_string());
+        state.active_session_id = (!self.sessions[self.active_index].hidden_after_close)
+            .then(|| self.active().session_id().to_string());
         let tabs = self
             .sessions
             .iter_mut()
             .enumerate()
+            .filter(|(_, slot)| !slot.hidden_after_close)
             .map(|(index, slot)| {
                 if index == active_index {
                     slot.status = state.status.clone();
@@ -423,6 +444,8 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
 
 #[path = "terminal_session_drain.rs"]
 mod drain;
+#[path = "terminal_session_lifecycle.rs"]
+mod lifecycle;
 
 pub(super) fn terminal_launch_context_from_state(
     project_root: &Path,
@@ -544,9 +567,10 @@ pub(super) fn restart_terminal_session(
     context: &TerminalLaunchContext,
     terminal_wake: TerminalWakeGate,
 ) -> Result<()> {
+    let replacement = spawn_terminal_session_with_wake(context, terminal_wake)?;
     mark_terminal_session_lifecycle(session, DatumToolSessionLifecycle::Restarted, None)?;
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
-    *session = spawn_terminal_session_with_wake(context, terminal_wake)?;
+    *session = replacement;
     *screen = TerminalScreen::default();
     state.status = "running".to_string();
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
@@ -582,97 +606,49 @@ pub(super) fn mark_terminal_session_lifecycle(
     )
 }
 
-impl TerminalSession {
-    pub(super) fn from_transport(
-        transport: TerminalTransportSession,
-        context: TerminalContext,
-    ) -> Self {
-        Self {
-            transport,
-            context_path: context.context_path,
-            latest_context_path: context.latest_context_path,
-            session_path: context.session_path,
-            session_id: context.session_id,
-            context_id: context.context_id,
-            active_execution_id: Arc::new(Mutex::new(None)),
-            finished_scan_offset: std::cell::Cell::new(0),
-        }
+pub(super) fn mark_terminal_session_exit(
+    session: &TerminalSession,
+    status: crate::terminal_transport::TerminalExitStatus,
+) -> Result<()> {
+    let (code, signal, core_dumped) = match status {
+        crate::terminal_transport::TerminalExitStatus::Code(code) => (Some(code), None, None),
+        crate::terminal_transport::TerminalExitStatus::Signal {
+            signal,
+            core_dumped,
+        } => (None, Some(signal), Some(core_dumped)),
+    };
+    for path in [
+        &session.context_path,
+        &session.latest_context_path,
+        &session.session_path,
+    ] {
+        update_terminal_lifecycle_file_exact(
+            path,
+            DatumToolSessionLifecycle::Exited,
+            code,
+            signal,
+            core_dumped,
+            Some(session.process_group_id()),
+        )?;
     }
-
-    pub(super) fn write_bytes(&self, bytes: &[u8]) -> Result<()> {
-        self.transport.write_bytes(bytes)?;
-        let _ = record_terminal_input_accepted_event(self, bytes);
-        Ok(())
-    }
-    fn try_recv_control_event(&self) -> Option<TerminalEvent> {
-        self.transport.try_recv_control_event()
-    }
-    fn try_recv_output(&self, max_bytes: usize) -> Option<Vec<u8>> {
-        self.transport.try_recv_output(max_bytes)
-    }
-    fn has_pending_event(&self) -> bool {
-        self.transport.has_pending_event()
-    }
-    #[cfg(test)]
-    pub(super) fn recv_event_timeout(
-        &self,
-        timeout: std::time::Duration,
-    ) -> Result<TerminalEvent, std::sync::mpsc::RecvTimeoutError> {
-        self.transport.recv_event_timeout(timeout)
-    }
-    pub(super) fn process_group_id(&self) -> libc::pid_t {
-        self.transport.process_group_id()
-    }
-    pub(super) fn session_id(&self) -> &str {
-        &self.session_id
-    }
-    pub(super) fn event_log_path(&self) -> PathBuf {
-        tool_session_event_log_path(&self.session_path)
-    }
-    pub(super) fn set_active_execution_id(&self, execution_id: String) {
-        if let Ok(mut active) = self.active_execution_id.lock() {
-            *active = Some(execution_id);
-        }
-    }
-    pub(super) fn active_execution_id(&self) -> Option<String> {
-        self.active_execution_id
-            .lock()
-            .ok()
-            .and_then(|active| active.clone())
-    }
-    pub(super) fn clear_active_execution_id(&self, execution_id: &str) {
-        if let Ok(mut active) = self.active_execution_id.lock()
-            && active.as_deref() == Some(execution_id)
-        {
-            *active = None;
-        }
-    }
-    pub(super) fn finished_scan_offset(&self) -> u64 {
-        self.finished_scan_offset.get()
-    }
-    pub(super) fn set_finished_scan_offset(&self, offset: u64) {
-        self.finished_scan_offset.set(offset);
-    }
-
-    pub(super) fn interrupt(&self) -> Result<()> {
-        self.transport.interrupt()
-    }
-
-    pub(super) fn terminate(&self) -> Result<()> {
-        self.transport.terminate()
-    }
-
-    pub(super) fn resize(&self, cols: u16, rows: u16) -> Result<()> {
-        self.transport.resize(cols, rows)
-    }
+    Ok(())
 }
 
+#[path = "terminal_session_handle.rs"]
+mod handle;
+
+#[cfg(test)]
+#[path = "terminal_job_control_tests.rs"]
+mod terminal_job_control_tests;
 #[cfg(test)]
 #[path = "terminal_regression_boundary_tests.rs"]
 mod terminal_regression_boundary_tests;
 #[cfg(test)]
 #[path = "terminal_screen_authority_tests.rs"]
 mod terminal_screen_authority_tests;
+#[cfg(test)]
+#[path = "terminal_session_close_tests.rs"]
+mod terminal_session_close_tests;
 #[cfg(test)]
 #[path = "terminal_session_context_tests.rs"]
 mod terminal_session_context_tests;

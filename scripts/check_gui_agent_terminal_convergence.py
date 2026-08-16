@@ -138,16 +138,14 @@ def check_terminal_input_mode(
     bottom_dock: str,
     failures: list[str],
 ) -> None:
-    """Require one exclusive attached/rename/detached input-mode authority."""
+    """Require one exclusive owned-PTY/rename input-mode authority."""
     for marker in (
         "enum TerminalInputOwner",
         "AttachedPty",
         "RenameChrome",
-        "DetachedReadOnly",
         "fn terminal_input_owner",
         "fn commit_terminal_ime_text",
         "fn write_attached_terminal_bytes",
-        "HitTarget::TerminalSessionReattachActive",
     ):
         if marker not in production_sources:
             failures.append(f"terminal input-mode authority is missing {marker}")
@@ -158,19 +156,19 @@ def check_terminal_input_mode(
     ):
         if marker in production_sources:
             failures.append(f"dead terminal line-edit marker must not remain: {marker}")
-    for marker in ("\"REATTACH\"", "TerminalSessionReattachActive"):
-        if marker not in bottom_dock:
-            failures.append(f"detached terminal chrome is missing {marker}")
+    for marker in ("\"DETACH\"", "\"REATTACH\"", "TerminalSessionReattachActive", "DetachedReadOnly"):
+        if marker in production_sources or marker in bottom_dock:
+            failures.append(f"retired detached terminal mode remains: {marker}")
     mode_marker = "pub(crate) fn terminal_input_owner"
     if mode_marker in production_sources:
         mode_body = production_sources.split(mode_marker, 1)[1].split("\n}", 1)[0]
-        for marker in ("RenameChrome", "AttachedPty", "DetachedReadOnly"):
+        for marker in ("RenameChrome", "AttachedPty", "Unowned"):
             if marker not in mode_body:
                 failures.append(f"terminal input owner does not classify {marker}")
     writer_marker = "fn write_attached_terminal_bytes"
     if writer_marker in production_sources:
         writer_body = production_sources.split(writer_marker, 1)[1].split("\n}", 1)[0]
-        for marker in ("active_attached", "write_bytes"):
+        for marker in ("write_bytes",):
             if marker not in writer_body:
                 failures.append(f"attached terminal byte gate is missing {marker}")
 

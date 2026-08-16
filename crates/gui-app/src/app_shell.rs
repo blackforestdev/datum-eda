@@ -12,6 +12,16 @@ pub(super) struct App {
 }
 
 impl App {
+    pub(super) fn request_controlled_close(&mut self, event_loop: &ActiveEventLoop) {
+        append_gui_diagnostic_line("close requested");
+        if let Some(runtime) = &mut self.runtime {
+            runtime.begin_application_terminal_shutdown();
+            self.request_redraw_if_needed();
+        } else {
+            event_loop.exit();
+        }
+    }
+
     pub(super) fn new(
         args: GuiArgs,
         terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,

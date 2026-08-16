@@ -45,6 +45,8 @@ struct TerminalLifecycleEvent<'a> {
     session_id: &'a str,
     lifecycle: &'static str,
     process_exit_code: Option<i32>,
+    process_exit_signal: Option<i32>,
+    process_core_dumped: Option<bool>,
     occurred_unix_ms: u128,
 }
 
@@ -60,6 +62,23 @@ struct TerminalIoEvent<'a> {
     text_preview: String,
     truncated: bool,
     occurred_unix_ms: u128,
+}
+
+#[derive(Debug, Serialize)]
+struct TerminalTerminationFailureEvent<'a> {
+    event: &'static str,
+    schema_version: u64,
+    session_id: &'a str,
+    reason: &'a str,
+    survivors: Vec<TerminalTerminationSurvivor>,
+    occurred_unix_ms: u128,
+}
+
+#[derive(Debug, Serialize)]
+struct TerminalTerminationSurvivor {
+    pid: i32,
+    process_group_id: i32,
+    session_id: i32,
 }
 
 pub(super) fn prepare_terminal_command_execution(
@@ -143,7 +162,68 @@ pub(super) fn record_terminal_lifecycle_event(
         session.session_id(),
         lifecycle,
         process_exit_code,
+        None,
+        None,
     )
+}
+
+pub(super) fn record_terminal_exit_event(
+    session: &TerminalSession,
+    status: crate::terminal_transport::TerminalExitStatus,
+) -> Result<()> {
+    let (code, signal, core_dumped) = match status {
+        crate::terminal_transport::TerminalExitStatus::Code(code) => (Some(code), None, None),
+        crate::terminal_transport::TerminalExitStatus::Signal {
+            signal,
+            core_dumped,
+        } => (None, Some(signal), Some(core_dumped)),
+    };
+    append_terminal_lifecycle_event(
+        &session.event_log_path(),
+        session.session_id(),
+        DatumToolSessionLifecycle::Exited,
+        code,
+        signal,
+        core_dumped,
+    )
+}
+
+pub(super) fn record_terminal_termination_failure_event(
+    session: &TerminalSession,
+    reason: &str,
+    survivors: &[crate::terminal_transport::ShutdownProcessIdentity],
+) -> Result<()> {
+    let occurred_unix_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .context("terminal termination failure timestamp")?
+        .as_millis();
+    let event = TerminalTerminationFailureEvent {
+        event: "terminal_termination_failure",
+        schema_version: 1,
+        session_id: session.session_id(),
+        reason,
+        survivors: survivors
+            .iter()
+            .map(|identity| TerminalTerminationSurvivor {
+                pid: identity.pid,
+                process_group_id: identity.process_group_id,
+                session_id: identity.session_id,
+            })
+            .collect(),
+        occurred_unix_ms,
+    };
+    let path = session.event_log_path();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .with_context(|| format!("open terminal termination event log {}", path.display()))?;
+    writeln!(
+        file,
+        "{}",
+        serde_json::to_string(&event).context("serialize terminal termination failure")?
+    )
+    .with_context(|| format!("append terminal termination event {}", path.display()))
 }
 
 pub(super) fn record_terminal_input_accepted_event(
@@ -280,6 +360,8 @@ fn append_terminal_lifecycle_event(
     session_id: &str,
     lifecycle: DatumToolSessionLifecycle,
     process_exit_code: Option<i32>,
+    process_exit_signal: Option<i32>,
+    process_core_dumped: Option<bool>,
 ) -> Result<()> {
     let occurred_unix_ms = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -291,6 +373,8 @@ fn append_terminal_lifecycle_event(
         session_id,
         lifecycle: lifecycle.as_str(),
         process_exit_code,
+        process_exit_signal,
+        process_core_dumped,
         occurred_unix_ms,
     };
     let mut file = OpenOptions::new()
@@ -486,6 +570,8 @@ mod tests {
             "terminal-test",
             DatumToolSessionLifecycle::Exited,
             Some(0),
+            None,
+            None,
         )
         .expect("append lifecycle event");
         let line = std::fs::read_to_string(&path).expect("read lifecycle event log");

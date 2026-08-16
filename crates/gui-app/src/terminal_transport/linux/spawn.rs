@@ -23,6 +23,17 @@ fn configure_child_pty(slave_fd: RawFd, master_fd: RawFd) -> io::Result<()> {
         unsafe { libc::close(slave_fd) };
         return Err(error);
     }
+    loop {
+        let process_group = unsafe { libc::getpgrp() };
+        if unsafe { libc::tcsetpgrp(slave_fd, process_group) } == 0 {
+            break;
+        }
+        let error = io::Error::last_os_error();
+        if error.kind() != io::ErrorKind::Interrupted {
+            unsafe { libc::close(slave_fd) };
+            return Err(error);
+        }
+    }
     for fd in [libc::STDIN_FILENO, libc::STDOUT_FILENO, libc::STDERR_FILENO] {
         if let Err(error) = duplicate_to(slave_fd, fd) {
             unsafe { libc::close(slave_fd) };

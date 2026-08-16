@@ -37,13 +37,12 @@ IDENTIFIER_OWNERS = {
     "TIOCSCTTY": {TRANSPORT / "linux/spawn.rs"},
     "dup2": {TRANSPORT / "linux/spawn.rs"},
     "TIOCSWINSZ": {TRANSPORT / "linux/job_control.rs"},
-    "kill": {TRANSPORT / "linux/job_control.rs"},
     "open_pty_pair": {
         TRANSPORT / "linux/pty.rs", TRANSPORT / "linux/termios.rs", TRANSPORT / "mod.rs",
     },
     "attach_child_pty": {TRANSPORT / "linux/spawn.rs", TRANSPORT / "mod.rs"},
-    "signal_process_group": {
-        TRANSPORT / "linux/job_control.rs", TRANSPORT / "session_handle.rs",
+    "signal_owned_process_group": {
+        TRANSPORT / "linux/job_control.rs", TRANSPORT / "process_supervisor.rs",
     },
 }
 
@@ -61,7 +60,11 @@ REQUIRED_FILES = {
     "wake.rs": "struct TerminalWakeGate",
     "linux/pty.rs": "open_pty_pair",
     "linux/spawn.rs": "attach_child_pty",
-    "linux/job_control.rs": "signal_process_group",
+    "process_status.rs": "enum TerminalExitStatus",
+    "process_supervisor.rs": "struct ProcessSupervisor",
+    "shutdown.rs": "enum ShutdownPhase",
+    "linux/process_session.rs": "discover_owned_session",
+    "linux/job_control.rs": "signal_owned_process_group",
     "linux/io.rs": "wait_readable",
     "linux/termios.rs": "configure_interactive",
 }
@@ -166,7 +169,9 @@ def check(root: Path) -> list[str]:
     allowed_methods = {
         "process_group_id", "start", "try_recv_event", "recv_event_timeout",
         "try_recv_control_event", "try_recv_output", "has_pending_event",
-        "write_bytes", "interrupt", "terminate", "resize",
+        "write_bytes", "terminate", "force_kill", "shutdown_snapshot", "resize",
+        "terminate_by", "presentation_complete",
+        "retry_termination_by",
     }
     public_functions = list(re.finditer(
         r"(?P<visibility>pub(?:\([^)]*\))?)\s+fn\s+(?P<name>\w+)\s*\(", handle_production
@@ -218,6 +223,29 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in reader:
             failures.append(f"terminal reader lacks deterministic transition proof: {marker}")
+    input_transport = transport_sources.get(TRANSPORT / "input.rs", "")
+    control_transport = transport_sources.get(TRANSPORT / "control.rs", "")
+    supervisor = transport_sources.get(TRANSPORT / "process_supervisor.rs", "")
+    io_transport = transport_sources.get(TRANSPORT / "linux/io.rs", "")
+    lifecycle_markers = {
+        "input cancellation before PTY writes": (input_transport, "queue.is_closed()"),
+        "writer completion presentation barrier": (control_transport, "writer_finished"),
+        "atomic Kill transition": (supervisor, "fn begin_kill_phase"),
+        "bounded writable cancellation poll": (io_transport, "wait_with_timeout(fd, libc::POLLOUT, 100)"),
+    }
+    for description, (text, marker) in lifecycle_markers.items():
+        if marker not in text:
+            failures.append(f"terminal transport lacks {description}: {marker}")
+    proof_markers = {
+        APP_SRC / "terminal_job_control_tests.rs":
+            "termination_cancels_backpressured_input_and_closes_every_master",
+        TRANSPORT / "process_supervisor_tests.rs":
+            "redundant_force_during_kill_cannot_queue_an_unauthorized_retry",
+    }
+    for relative, marker in proof_markers.items():
+        path = root / relative
+        if not path.is_file() or marker not in path.read_text(encoding="utf-8"):
+            failures.append(f"terminal transport lacks governed lifecycle proof: {marker}")
     session_handle = transport_sources.get(TRANSPORT / "session_handle.rs", "")
     if "try_enqueue(bytes.to_vec())" in session_handle:
         failures.append("terminal input must reject oversized slices before allocation")
@@ -231,10 +259,21 @@ def check(root: Path) -> list[str]:
         "MAX_LIVE_SESSIONS": "16",
         "GUI_DRAIN_EVENT_LIMIT": "128",
         "GUI_DRAIN_BYTE_LIMIT": "64 * 1024",
+        "MAX_SESSION_MEMBERS": "4_096",
+        "MAX_SESSION_GROUPS": "4_096",
     }
     for name, value in expected_limits.items():
         if not re.search(rf"const\s+{name}:\s*usize\s*=\s*{re.escape(value)}\s*;", limits):
             failures.append(f"owner-ratified terminal limit changed or missing: {name}")
+    expected_deadlines = {
+        "HUP_GRACE_MS": "2_000",
+        "TERM_GRACE_MS": "2_000",
+        "KILL_VERIFY_MS": "2_000",
+        "GLOBAL_SHUTDOWN_MS": "6_000",
+    }
+    for name, value in expected_deadlines.items():
+        if not re.search(rf"const\s+{name}:\s*u64\s*=\s*{re.escape(value)}\s*;", limits):
+            failures.append(f"owner-ratified terminal deadline changed or missing: {name}")
     drain = source_text.get(APP_SRC / "terminal_session_drain.rs", "")
     for marker in ("fn drain_all", "next_drain_index", "try_recv_control_event", "try_recv_output"):
         if marker not in drain:

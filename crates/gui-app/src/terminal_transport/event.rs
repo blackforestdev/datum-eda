@@ -4,6 +4,7 @@ use std::{fmt, io};
 pub(crate) enum TerminalIoStage {
     Read,
     Write,
+    Wait,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -50,13 +51,26 @@ impl TerminalIoError {
             total_undelivered_bytes,
         }
     }
+
+    pub(crate) fn wait(error: &io::Error) -> Self {
+        Self {
+            stage: TerminalIoStage::Wait,
+            kind: error.kind(),
+            os_code: error.raw_os_error(),
+            accepted_bytes: 0,
+            written_bytes: 0,
+            remaining_bytes: 0,
+            undelivered_requests: 0,
+            total_undelivered_bytes: 0,
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub(crate) enum TerminalTransportEvent {
     Output(Vec<u8>),
     Error(TerminalIoError),
-    Exited(Option<i32>),
+    Exited(super::process_status::TerminalExitStatus),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

@@ -94,6 +94,9 @@ pub struct TerminalLaneState {
     pub mouse_coordinate_encoding: Option<String>,
     pub scroll_offset: usize,
     pub status: String,
+    /// Application-close authority, distinct from the active session's
+    /// teardown status so per-session refreshes cannot erase Retry/Cancel.
+    pub application_shutdown_blocked: Option<String>,
 }
 
 impl TerminalLaneState {
@@ -183,6 +186,7 @@ impl Default for TerminalLaneState {
             mouse_coordinate_encoding: None,
             scroll_offset: 0,
             status: "running".to_string(),
+            application_shutdown_blocked: None,
         }
     }
 }
@@ -200,6 +204,7 @@ mod tests {
             rename_input: "rename".to_string(),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
+            application_shutdown_blocked: Some("shutdown blocked".to_string()),
             ..Default::default()
         };
         let chrome = (
@@ -207,6 +212,7 @@ mod tests {
             active.rename_input.clone(),
             active.active_session_id.clone(),
             active.activity_summary.clone(),
+            active.application_shutdown_blocked.clone(),
         );
         let mut parked = TerminalLaneState {
             lines: vec!["parked".to_string()],
@@ -225,7 +231,8 @@ mod tests {
                 active.has_keyboard_focus,
                 active.rename_input,
                 active.active_session_id,
-                active.activity_summary
+                active.activity_summary,
+                active.application_shutdown_blocked,
             ),
             chrome,
         );

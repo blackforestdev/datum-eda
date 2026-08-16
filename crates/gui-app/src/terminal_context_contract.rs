@@ -26,6 +26,8 @@ pub(super) struct TerminalContextEnvelope {
     pub(super) updated_unix_ms: u128,
     pub(super) process_group_id: Option<i32>,
     pub(super) process_exit_code: Option<i32>,
+    pub(super) process_exit_signal: Option<i32>,
+    pub(super) process_core_dumped: Option<bool>,
     pub(super) accepted_transaction_tip: Option<String>,
     pub(super) visible_artifact_ids: Vec<String>,
     pub(super) visible_output_job_ids: Vec<String>,

@@ -35,9 +35,9 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
                 "fn reader_drains_hup_tail_then_accepts_correlated_eio_as_eof(){}\n"
                 "fn reader_reports_uncorrelated_eio_and_invalid_descriptor_once(){}"
             ),
-            "input.rs": "struct InputQueue {}",
+            "input.rs": "struct InputQueue {} fn cancel(){queue.is_closed();}",
             "output.rs": "struct OutputBacklog {}",
-            "control.rs": "struct ControlBacklog {}",
+            "control.rs": "struct ControlBacklog { writer_finished: bool }",
             "launch_error.rs": "enum TerminalLaunchStage {}",
             "limits.rs": (
                 "const MAX_OUTPUT_CHUNKS: usize = 256;\n"
@@ -47,7 +47,13 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
                 "const MAX_INPUT_BYTES: usize = 4 * 1024 * 1024;\n"
                 "const MAX_LIVE_SESSIONS: usize = 16;\n"
                 "const GUI_DRAIN_EVENT_LIMIT: usize = 128;\n"
-                "const GUI_DRAIN_BYTE_LIMIT: usize = 64 * 1024;"
+                "const GUI_DRAIN_BYTE_LIMIT: usize = 64 * 1024;\n"
+                "const HUP_GRACE_MS: u64 = 2_000;\n"
+                "const TERM_GRACE_MS: u64 = 2_000;\n"
+                "const KILL_VERIFY_MS: u64 = 2_000;\n"
+                "const GLOBAL_SHUTDOWN_MS: u64 = 6_000;\n"
+                "const MAX_SESSION_MEMBERS: usize = 4_096;\n"
+                "const MAX_SESSION_GROUPS: usize = 4_096;"
             ),
             "session_handle.rs": (
                 "pub(crate) struct PreparedTerminalTransport {\n    child: (),\n}\n"
@@ -60,7 +66,8 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
                 "pub(crate) fn try_recv_control_event() {} pub(crate) fn try_recv_output() {} "
                 "pub(crate) fn has_pending_event() {} "
                 "pub(crate) fn process_group_id() {} pub(crate) fn write_bytes() {} "
-                "pub(crate) fn interrupt() {} pub(crate) fn terminate() {} "
+                "pub(crate) fn terminate() {} "
+                "pub(crate) fn force_kill() {} pub(crate) fn shutdown_snapshot() {} "
                 "pub(crate) fn resize() {} }"
             ),
             "wake.rs": "struct TerminalWakeGate {}",
@@ -72,10 +79,18 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
                 "fn attach_child_pty(){libc::setsid();libc::TIOCSCTTY;libc::dup2();}"
             ),
             "linux/job_control.rs": (
-                "fn signal_process_group(){libc::kill();libc::TIOCSWINSZ;}"
+                "fn signal_owned_process_group(){libc::kill();libc::TIOCSWINSZ;}"
             ),
+            "process_status.rs": "enum TerminalExitStatus {}",
+            "process_supervisor.rs": (
+                "struct ProcessSupervisor { signal_owned_process_group: () } "
+                "impl ProcessSupervisor { fn begin_kill_phase(){} }"
+            ),
+            "shutdown.rs": "enum ShutdownPhase {}",
+            "linux/process_session.rs": "fn discover_owned_session(){}",
             "linux/io.rs": (
-                "fn wait_readable(){libc::F_DUPFD_CLOEXEC;libc::poll();}"
+                "fn wait_readable(){libc::F_DUPFD_CLOEXEC;libc::poll();} "
+                "fn wait_writable(){wait_with_timeout(fd, libc::POLLOUT, 100);}"
             ),
             "linux/termios.rs": (
                 "fn configure_interactive(){libc::tcgetattr();libc::tcsetattr();}"
@@ -88,12 +103,33 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal(){}",
             encoding="utf-8",
         )
+        (root / guard.APP_SRC / "terminal_job_control_tests.rs").write_text(
+            "fn termination_cancels_backpressured_input_and_closes_every_master(){}",
+            encoding="utf-8",
+        )
+        (transport / "process_supervisor_tests.rs").write_text(
+            "fn redundant_force_during_kill_cannot_queue_an_unauthorized_retry(){}",
+            encoding="utf-8",
+        )
         return temporary, root
 
     def test_valid_multifile_boundary_passes(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
         self.assertEqual([], guard.check(root))
+
+    def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        limits = root / guard.TRANSPORT / "limits.rs"
+        limits.write_text(
+            limits.read_text(encoding="utf-8").replace(
+                "const TERM_GRACE_MS: u64 = 2_000;",
+                "const TERM_GRACE_MS: u64 = 3_000;",
+            ),
+            encoding="utf-8",
+        )
+        self.assertTrue(any("TERM_GRACE_MS" in failure for failure in guard.check(root)))
 
     def test_syscall_and_raw_handle_escape_fail(self) -> None:
         temporary, root = self.fixture()
@@ -251,6 +287,26 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("reserve" in failure for failure in failures))
         self.assertTrue(any("transition proof" in failure for failure in failures))
         self.assertIn("all-session terminal drain lacks literal L3 proof", failures)
+
+    def test_missing_kill_and_writer_barrier_proofs_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        supervisor = root / guard.TRANSPORT / "process_supervisor.rs"
+        supervisor.write_text(
+            supervisor.read_text(encoding="utf-8").replace("fn begin_kill_phase", "fn removed"),
+            encoding="utf-8",
+        )
+        control = root / guard.TRANSPORT / "control.rs"
+        control.write_text(
+            control.read_text(encoding="utf-8").replace("writer_finished", "writer_missing"),
+            encoding="utf-8",
+        )
+        proof = root / guard.APP_SRC / "terminal_job_control_tests.rs"
+        proof.write_text("", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("atomic Kill transition" in failure for failure in failures))
+        self.assertTrue(any("writer completion" in failure for failure in failures))
+        self.assertTrue(any("closes_every_master" in failure for failure in failures))
 
 
 if __name__ == "__main__":

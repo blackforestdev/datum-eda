@@ -33,12 +33,14 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalTab
         | HitTarget::TerminalSessionTab(_)
         | HitTarget::TerminalSessionNew
-        | HitTarget::TerminalSessionRenameActive
-        | HitTarget::TerminalSessionReattachActive => true,
+        | HitTarget::TerminalSessionRenameActive => true,
         // Session-ending/suspending terminal chrome never arms focus.
         HitTarget::TerminalSessionRestartActive
-        | HitTarget::TerminalSessionDetachActive
         | HitTarget::TerminalSessionCloseActive
+        | HitTarget::TerminalSessionTerminateActive
+        | HitTarget::TerminalSessionForceKillActive
+        | HitTarget::TerminalSessionRetryTermination
+        | HitTarget::TerminalShutdownCancel
         // Production handoffs write PTY bytes but are observation gestures.
         | HitTarget::ProductionOutputJobRun(_)
         | HitTarget::ProductionTerminalCommand(_)
@@ -140,9 +142,11 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalSessionNew,
         HitTarget::TerminalSessionRenameActive,
         HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionDetachActive,
-        HitTarget::TerminalSessionReattachActive,
         HitTarget::TerminalSessionCloseActive,
+        HitTarget::TerminalSessionTerminateActive,
+        HitTarget::TerminalSessionForceKillActive,
+        HitTarget::TerminalSessionRetryTermination,
+        HitTarget::TerminalShutdownCancel,
         HitTarget::TerminalScreen,
         HitTarget::CheckFinding(id()),
         HitTarget::ProductionArtifact(id()),
@@ -177,8 +181,8 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         entry_targets += usize::from(hit_target_is_terminal_entry(target));
     }
     assert_eq!(
-        entry_targets, 6,
-        "exactly the six deliberate targets may arm terminal keyboard focus"
+        entry_targets, 5,
+        "exactly the five deliberate targets may arm terminal keyboard focus"
     );
 }
 
@@ -357,10 +361,6 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     narrate(&mut ui, "renamed active terminal session bench".to_string());
     registry.sync_lane_tabs(&mut ui.terminal);
     registry
-        .detach_active(&mut ui.terminal)
-        .expect("detach active terminal session");
-    narrate(&mut ui, "detached active terminal session".to_string());
-    registry
         .restart_active(&mut ui.terminal, &context)
         .expect("restart active terminal session");
     narrate(&mut ui, "terminal session restarted".to_string());
@@ -370,7 +370,7 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     narrate(&mut ui, "terminal exited 0".to_string());
     registry
         .close_active(&mut ui.terminal)
-        .expect("close active terminal session");
+        .expect("arm terminal close confirmation");
     narrate(&mut ui, "terminal session ended".to_string());
     registry.sync_lane_tabs(&mut ui.terminal);
 
@@ -397,10 +397,6 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     narrate(
         &mut ui,
         "terminal mouse report failed: broken pipe".to_string(),
-    );
-    narrate(
-        &mut ui,
-        "terminal session is detached; activate the tab to reattach".to_string(),
     );
 
     // Pan/diagnostic traces route to the diagnostic log, never state.
@@ -443,8 +439,8 @@ fn narration_event_classes_route_to_console_and_leave_grid_byte_identical() {
     // Lifecycle/activity truth lives in chrome fields, not cells.
     assert_eq!(
         ui.terminal.tabs.len(),
-        1,
-        "close must leave one session tab"
+        2,
+        "live close must retain the terminating session tab until verified teardown"
     );
     for summary_line in &ui.terminal.activity_summary {
         assert!(
@@ -587,10 +583,20 @@ fn workspace_hotkeys_reach_the_pty_exactly_once_and_editor_focus_writes_zero_byt
     ));
     let mut keyboard_bytes = 0usize;
     for key in hotkeys {
-        registry
-            .active()
-            .write_bytes(key.as_bytes())
-            .expect("write hotkey byte through the production input path");
+        let deadline = Instant::now() + Duration::from_secs(1);
+        loop {
+            match registry.active().write_bytes(key.as_bytes()) {
+                Ok(()) => break,
+                Err(error)
+                    if error.to_string().contains("queue is busy") && Instant::now() < deadline =>
+                {
+                    std::thread::yield_now();
+                }
+                Err(error) => {
+                    panic!("write hotkey byte through the production input path: {error}")
+                }
+            }
+        }
         keyboard_bytes += key.len();
     }
     let expected_echo: String = hotkeys.concat();

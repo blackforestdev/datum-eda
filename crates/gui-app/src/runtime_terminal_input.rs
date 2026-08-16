@@ -1,7 +1,7 @@
 //! Exclusive runtime terminal input-mode authority (TI-02).
 //!
-//! Attached PTY input, detached read-only observation, and chrome-local tab
-//! rename are mutually exclusive recipients. This module owns that selection
+//! PTY input and chrome-local tab rename are mutually exclusive recipients.
+//! This module owns that selection
 //! and composed-text routing; byte encoding remains in `terminal_input`.
 
 use super::*;
@@ -10,18 +10,44 @@ pub(super) fn write_attached_terminal_bytes(
     registry: &TerminalSessionRegistry,
     bytes: &[u8],
 ) -> Result<bool> {
-    if !registry.active_attached() {
-        return Ok(false);
-    }
     registry.active().write_bytes(bytes)?;
     Ok(true)
 }
 
 impl Runtime {
+    pub(super) fn handle_close_confirmation_action(
+        &mut self,
+        action: &TerminalKeyAction,
+    ) -> Option<bool> {
+        if !self.terminal_sessions.active_close_confirmation_armed() {
+            return None;
+        }
+        match action {
+            TerminalKeyAction::Write(bytes) if bytes == &[0x03] => None,
+            TerminalKeyAction::Write(bytes) => {
+                self.terminal_sessions.handle_close_confirmation_input(
+                    bytes,
+                    &mut self.session.workspace_mut().ui.terminal,
+                );
+                self.sync_terminal_tabs();
+                self.invalidate_frame();
+                Some(true)
+            }
+            TerminalKeyAction::CloseSession | TerminalKeyAction::TerminateSession => {
+                let _ = self
+                    .terminal_sessions
+                    .confirm_close_active(&mut self.session.workspace_mut().ui.terminal);
+                Some(true)
+            }
+            _ => Some(true),
+        }
+    }
+
     pub(super) fn terminal_input_owner(&self) -> keyboard_focus::TerminalInputOwner {
         keyboard_focus::terminal_input_owner(
             self.keyboard_focus,
-            matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)),
+            matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
+                && !self.workspace().ui.terminal.tabs.is_empty(),
             self.terminal_sessions.active_attached(),
             self.terminal_rename_session_id.is_some(),
         )
@@ -43,7 +69,6 @@ impl Runtime {
             keyboard_focus::TerminalInputOwner::RenameChrome => {
                 self.append_terminal_rename_text(text)
             }
-            keyboard_focus::TerminalInputOwner::DetachedReadOnly => true,
             keyboard_focus::TerminalInputOwner::Unowned => false,
         }
     }

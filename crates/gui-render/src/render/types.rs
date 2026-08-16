@@ -37,9 +37,11 @@ pub enum HitTarget {
     TerminalSessionNew,
     TerminalSessionRenameActive,
     TerminalSessionRestartActive,
-    TerminalSessionDetachActive,
-    TerminalSessionReattachActive,
     TerminalSessionCloseActive,
+    TerminalSessionTerminateActive,
+    TerminalSessionForceKillActive,
+    TerminalSessionRetryTermination,
+    TerminalShutdownCancel,
     /// The exact visible terminal cell rectangle (T0-C02): clicking SHELL
     /// CONTENT is deliberate terminal keyboard entry. Cell coordinates for a
     /// click are derived from the same shared geometry that produced the
@@ -154,8 +156,14 @@ pub struct RetainedScene {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum RetainedDrawCommand {
-    Quads { layer_id: Option<String>, range: Range<u32> },
-    Strokes { layer_id: Option<String>, range: Range<u32> },
+    Quads {
+        layer_id: Option<String>,
+        range: Range<u32>,
+    },
+    Strokes {
+        layer_id: Option<String>,
+        range: Range<u32>,
+    },
 }
 
 type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;
@@ -224,7 +232,6 @@ impl Projection {
     fn world_length_to_px(&self, length_nm: i64) -> f32 {
         length_nm as f32 * self.scale
     }
-
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

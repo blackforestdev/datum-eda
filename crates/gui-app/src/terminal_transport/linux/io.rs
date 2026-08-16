@@ -39,11 +39,11 @@ pub(in crate::terminal_transport) fn normalize_above_stdio(file: File) -> io::Re
 }
 
 pub(in crate::terminal_transport) fn wait_readable(fd: RawFd) -> io::Result<libc::c_short> {
-    wait(fd, libc::POLLIN)
+    wait_with_timeout(fd, libc::POLLIN, 100)
 }
 
 pub(in crate::terminal_transport) fn wait_writable(fd: RawFd) -> io::Result<libc::c_short> {
-    wait(fd, libc::POLLOUT)
+    wait_with_timeout(fd, libc::POLLOUT, 100)
 }
 
 pub(in crate::terminal_transport) fn is_hung_up(fd: RawFd) -> io::Result<bool> {
@@ -64,19 +64,23 @@ pub(in crate::terminal_transport) fn is_hung_up(fd: RawFd) -> io::Result<bool> {
     }
 }
 
-fn wait(fd: RawFd, events: libc::c_short) -> io::Result<libc::c_short> {
+fn wait_with_timeout(
+    fd: RawFd,
+    events: libc::c_short,
+    timeout_ms: libc::c_int,
+) -> io::Result<libc::c_short> {
     let mut descriptor = libc::pollfd {
         fd,
         events,
         revents: 0,
     };
     loop {
-        let result = unsafe { libc::poll(&mut descriptor, 1, -1) };
+        let result = unsafe { libc::poll(&mut descriptor, 1, timeout_ms) };
         if result > 0 {
             return Ok(descriptor.revents);
         }
         if result == 0 {
-            continue;
+            return Ok(0);
         }
         let error = io::Error::last_os_error();
         if error.kind() != io::ErrorKind::Interrupted {

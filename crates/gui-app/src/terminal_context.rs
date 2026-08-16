@@ -136,6 +136,8 @@ pub(super) fn write_terminal_context_files(
         expires_unix_ms: None,
         process_group_id: terminal_context.process_group_id,
         process_exit_code: None,
+        process_exit_signal: None,
+        process_core_dumped: None,
     };
     let envelope = TerminalContextEnvelope {
         contract: "datum_terminal_context_v1",
@@ -157,6 +159,8 @@ pub(super) fn write_terminal_context_files(
         updated_unix_ms,
         process_group_id: terminal_context.process_group_id,
         process_exit_code: None,
+        process_exit_signal: None,
+        process_core_dumped: None,
         accepted_transaction_tip,
         visible_artifact_ids: production_visibility.visible_artifact_ids,
         visible_output_job_ids: production_visibility.visible_output_job_ids,
@@ -474,6 +478,24 @@ pub(super) fn update_terminal_lifecycle_file(
     process_exit_code: Option<i32>,
     process_group_id: Option<i32>,
 ) -> Result<()> {
+    update_terminal_lifecycle_file_exact(
+        path,
+        lifecycle,
+        process_exit_code,
+        None,
+        None,
+        process_group_id,
+    )
+}
+
+pub(super) fn update_terminal_lifecycle_file_exact(
+    path: &Path,
+    lifecycle: DatumToolSessionLifecycle,
+    process_exit_code: Option<i32>,
+    process_exit_signal: Option<i32>,
+    process_core_dumped: Option<bool>,
+    process_group_id: Option<i32>,
+) -> Result<()> {
     let Ok(text) = fs::read_to_string(path) else {
         return Ok(());
     };
@@ -494,6 +516,14 @@ pub(super) fn update_terminal_lifecycle_file(
             serde_json::to_value(process_exit_code)?,
         );
         object.insert(
+            "process_exit_signal".to_string(),
+            serde_json::to_value(process_exit_signal)?,
+        );
+        object.insert(
+            "process_core_dumped".to_string(),
+            serde_json::to_value(process_core_dumped)?,
+        );
+        object.insert(
             "process_group_id".to_string(),
             serde_json::to_value(process_group_id)?,
         );
@@ -512,6 +542,14 @@ pub(super) fn update_terminal_lifecycle_file(
             session.insert(
                 "process_exit_code".to_string(),
                 serde_json::to_value(process_exit_code)?,
+            );
+            session.insert(
+                "process_exit_signal".to_string(),
+                serde_json::to_value(process_exit_signal)?,
+            );
+            session.insert(
+                "process_core_dumped".to_string(),
+                serde_json::to_value(process_core_dumped)?,
             );
             session.insert(
                 "process_group_id".to_string(),

@@ -1,9 +1,12 @@
-use super::{TerminalEvent, TerminalSessionRegistry, mark_terminal_session_lifecycle};
+use super::{TerminalEvent, TerminalSessionRegistry, mark_terminal_session_exit};
 use crate::{
-    terminal_session_events::{record_terminal_lifecycle_event, record_terminal_output_event},
+    terminal_session_events::{
+        record_terminal_exit_event, record_terminal_output_event,
+        record_terminal_termination_failure_event,
+    },
     terminal_transport::{GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT},
 };
-use datum_gui_protocol::{DatumToolSessionLifecycle, TerminalLaneState};
+use datum_gui_protocol::TerminalLaneState;
 
 #[derive(Default)]
 pub(crate) struct TerminalDrainReport {
@@ -23,6 +26,74 @@ impl TerminalSessionRegistry {
         let mut report = TerminalDrainReport::default();
         if self.sessions.is_empty() {
             return report;
+        }
+        for (index, slot) in self.sessions.iter_mut().enumerate() {
+            let Some(snapshot) = slot.session.shutdown_snapshot() else {
+                continue;
+            };
+            let next = match snapshot.phase {
+                crate::terminal_transport::ShutdownPhase::Running => continue,
+                crate::terminal_transport::ShutdownPhase::Hup => {
+                    "terminating (HUP grace)".to_string()
+                }
+                crate::terminal_transport::ShutdownPhase::Term => {
+                    "terminating (TERM grace)".to_string()
+                }
+                crate::terminal_transport::ShutdownPhase::Kill => {
+                    "terminating (KILL verification)".to_string()
+                }
+                crate::terminal_transport::ShutdownPhase::Closed => slot
+                    .exact_exit_status
+                    .clone()
+                    .unwrap_or_else(|| "closed".to_string()),
+                crate::terminal_transport::ShutdownPhase::Failed => {
+                    let survivors = snapshot
+                        .surviving_processes
+                        .iter()
+                        .map(|identity| {
+                            format!(
+                                "pid={} pgid={} sid={}",
+                                identity.pid, identity.process_group_id, identity.session_id
+                            )
+                        })
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    let message = format!(
+                        "termination failed: {}{}{}",
+                        snapshot.failure.as_deref().unwrap_or("unknown failure"),
+                        if survivors.is_empty() {
+                            ""
+                        } else {
+                            "; survivors: "
+                        },
+                        survivors
+                    );
+                    if !slot.termination_failure_reported {
+                        match record_terminal_termination_failure_event(
+                            &slot.session,
+                            snapshot.failure.as_deref().unwrap_or("unknown failure"),
+                            &snapshot.surviving_processes,
+                        ) {
+                            Ok(()) => slot.termination_failure_reported = true,
+                            Err(error) => report.notices.push(format!(
+                                "persist terminal termination failure evidence failed: {error}"
+                            )),
+                        }
+                    }
+                    message
+                }
+            };
+            if slot.status != next {
+                slot.status = next.clone();
+                let lane = if index == self.active_index {
+                    &mut *active_lane
+                } else {
+                    &mut slot.parked_lane
+                };
+                lane.status = next;
+                report.tabs_changed = true;
+                report.active_projection_changed |= index == self.active_index;
+            }
         }
         let mut idle_visits = 0usize;
         let mut output_events = 0usize;
@@ -83,20 +154,21 @@ impl TerminalSessionRegistry {
                 TerminalEvent::Exited(code) => {
                     #[cfg(test)]
                     report.serviced.push((index, "control", 0));
-                    let _ = mark_terminal_session_lifecycle(
-                        &slot.session,
-                        DatumToolSessionLifecycle::Exited,
-                        code,
-                    );
-                    let _ = record_terminal_lifecycle_event(
-                        &slot.session,
-                        DatumToolSessionLifecycle::Exited,
-                        code,
-                    );
-                    slot.status = code.map_or_else(
-                        || "terminated by signal".to_string(),
-                        |code| format!("exited {code}"),
-                    );
+                    let _ = mark_terminal_session_exit(&slot.session, code);
+                    let _ = record_terminal_exit_event(&slot.session, code);
+                    slot.status = match code {
+                        crate::terminal_transport::TerminalExitStatus::Code(code) => {
+                            format!("exited {code}")
+                        }
+                        crate::terminal_transport::TerminalExitStatus::Signal {
+                            signal,
+                            core_dumped,
+                        } => format!(
+                            "terminated by signal {signal}{}",
+                            if core_dumped { " (core dumped)" } else { "" }
+                        ),
+                    };
+                    slot.exact_exit_status = Some(slot.status.clone());
                     let lane = if is_active {
                         &mut *active_lane
                     } else {
@@ -131,6 +203,10 @@ impl TerminalSessionRegistry {
                 }
             }
         }
+        if self.remove_presented_closed(active_lane) {
+            report.tabs_changed = true;
+            report.active_projection_changed = true;
+        }
         report.pending = self
             .sessions
             .iter()
@@ -161,60 +237,6 @@ mod tests {
     fn seventeenth_session_is_refused_by_preallocation_guard() {
         assert!(super::super::ensure_session_capacity(15).is_ok());
         assert!(super::super::ensure_session_capacity(16).is_err());
-    }
-
-    #[test]
-    fn inactive_and_active_sessions_drain_into_isolated_projections() {
-        let root =
-            std::env::temp_dir().join(format!("datum-terminal-fair-drain-{}", std::process::id()));
-        std::fs::create_dir_all(&root).unwrap();
-        let context = TerminalLaunchContext::for_project_root(&root);
-        let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
-        let first_id = registry.active().session_id().to_string();
-        let mut lane = TerminalLaneState::default();
-        registry
-            .spawn_and_activate_with_lane(&context, &mut lane)
-            .unwrap();
-        registry.sessions[0]
-            .session
-            .write_bytes(b"printf 'alpha-session\\n'\n")
-            .unwrap();
-        registry
-            .active()
-            .write_bytes(b"printf 'beta-session\\n'\n")
-            .unwrap();
-
-        let deadline = Instant::now() + Duration::from_secs(3);
-        while Instant::now() < deadline {
-            registry.drain_all(&mut lane);
-            let inactive = registry.sessions[0].parked_lane.grid_lines().join("\n");
-            let active = lane.grid_lines().join("\n");
-            if inactive.contains("alpha-session") && active.contains("beta-session") {
-                break;
-            }
-            std::thread::sleep(Duration::from_millis(5));
-        }
-        assert!(
-            registry.sessions[0]
-                .parked_lane
-                .grid_lines()
-                .join("\n")
-                .contains("alpha-session")
-        );
-        assert!(lane.grid_lines().join("\n").contains("beta-session"));
-        assert!(!lane.grid_lines().join("\n").contains("alpha-session"));
-        registry.sync_lane_tabs(&mut lane);
-        let inactive_tab = lane
-            .tabs
-            .iter()
-            .find(|tab| tab.session_id == first_id)
-            .unwrap();
-        assert!(inactive_tab.activity_event_count > 0);
-
-        registry.activate_with_lane(&first_id, &mut lane).unwrap();
-        assert!(lane.grid_lines().join("\n").contains("alpha-session"));
-        assert!(!lane.grid_lines().join("\n").contains("beta-session"));
-        let _ = std::fs::remove_dir_all(root);
     }
 
     #[test]
@@ -271,6 +293,13 @@ mod tests {
                     activity: TerminalActivitySummaryCache::default(),
                     parked_lane: TerminalLaneState::default(),
                     disconnected_reported: false,
+                    termination_failure_reported: false,
+                    close_confirmation_armed: false,
+                    close_confirmation_input: String::new(),
+                    pending_restart: false,
+                    remove_when_closed: false,
+                    hidden_after_close: false,
+                    exact_exit_status: None,
                 }
             })
             .collect();
@@ -289,7 +318,7 @@ mod tests {
         registry.sessions[1]
             .session
             .transport
-            .push_synthetic_exit(Some(0));
+            .push_synthetic_error();
         for round in 0..43 {
             for index in 0..3 {
                 registry.sessions[index]
@@ -325,3 +354,7 @@ mod tests {
         assert!(!second.pending);
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_session_drain_projection_tests.rs"]
+mod projection_tests;

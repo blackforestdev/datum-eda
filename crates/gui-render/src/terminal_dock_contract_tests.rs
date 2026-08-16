@@ -155,7 +155,6 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
         HitTarget::TerminalSessionNew,
         HitTarget::TerminalSessionRenameActive,
         HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionDetachActive,
         HitTarget::TerminalSessionCloseActive,
     ] {
         assert!(
@@ -166,38 +165,6 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             "terminal dock should expose {target:?}"
         );
     }
-    assert!(
-        !prepared
-            .hit_regions
-            .iter()
-            .any(|region| region.target == HitTarget::TerminalSessionReattachActive),
-        "attached session must not expose the reattach action"
-    );
-
-    state.ui.terminal.tabs[0].attached = false;
-    let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let detached = PreparedScene::from_workspace(
-        &state,
-        1280,
-        800,
-        CameraState::fit_to_bounds(&state.scene.bounds),
-        &retained,
-    );
-    assert!(
-        detached
-            .hit_regions
-            .iter()
-            .any(|region| region.target == HitTarget::TerminalSessionReattachActive),
-        "detached session must expose an explicit reattach action"
-    );
-    assert!(
-        !detached
-            .hit_regions
-            .iter()
-            .any(|region| region.target == HitTarget::TerminalSessionDetachActive),
-        "detached session must not expose an inapplicable detach action"
-    );
-    state.ui.terminal.tabs[0].attached = true;
     for command_id in [
         "datum.journal.list",
         "datum.journal.undo",
@@ -642,5 +609,30 @@ fn terminal_dock_suppresses_protocol_screen_cursor_when_hidden() {
     assert!(
         hidden.panel_vertices().len() < visible.panel_vertices().len(),
         "terminal dock should honor hidden cursor mode"
+    );
+}
+
+#[test]
+fn terminal_dock_renders_exact_global_shutdown_survivor_identity() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    state.ui.terminal.application_shutdown_blocked =
+        Some("shutdown blocked: agent shell: pid=4242 pgid=4200 sid=4100".to_string());
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| { run.text.contains("pid=4242 pgid=4200 sid=4100") })
     );
 }

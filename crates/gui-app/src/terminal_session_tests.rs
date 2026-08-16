@@ -3,6 +3,28 @@ use crate::terminal_session_context::TerminalSessionContextSummary;
 use datum_gui_protocol::{SelectionTarget, TERMINAL_COMMAND_CATALOG_VERSION};
 use std::fs;
 use std::time::Duration;
+
+fn terminate_and_remove_active(
+    registry: &mut TerminalSessionRegistry,
+    state: &mut TerminalLaneState,
+) {
+    let initial_len = registry.len();
+    registry
+        .close_active(state)
+        .expect("arm close confirmation");
+    registry
+        .confirm_close_active(state)
+        .expect("confirm close termination");
+    let deadline = std::time::Instant::now() + Duration::from_secs(7);
+    while std::time::Instant::now() < deadline {
+        registry.drain_all(state);
+        if registry.len() < initial_len || state.tabs.is_empty() {
+            return;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    panic!("confirmed terminal close did not remove its presented tab");
+}
 impl TerminalLaunchContext {
     pub(crate) fn for_project_root(project_root: &std::path::Path) -> Self {
         Self {
@@ -57,9 +79,8 @@ fn terminal_session_registry_tracks_active_session_contexts() {
     assert_ne!(first_context_path, registry.active().context_path);
     assert!(first_context_path.exists() && registry.active().context_path.exists());
     assert!(
-        fs::read_to_string(&first_event_log_path)
-            .expect("first event log should read")
-            .contains("\"lifecycle\":\"detached\"")
+        fs::read_to_string(&first_event_log_path).map_or(true, |contents| !contents
+            .contains("\"lifecycle\":\"detached\""))
     );
     assert!(
         fs::read_to_string(&second_event_log_path)
@@ -77,7 +98,7 @@ fn terminal_session_registry_tracks_active_session_contexts() {
     assert_eq!(terminal_state.tabs.len(), 2);
     assert_eq!(terminal_state.tabs[0].label, "shell 1");
     assert!(!terminal_state.tabs[0].active);
-    assert!(!terminal_state.tabs[0].attached);
+    assert!(terminal_state.tabs[0].attached);
     assert_eq!(terminal_state.tabs[1].label, "shell 2");
     assert!(terminal_state.tabs[1].active);
     assert!(terminal_state.tabs[1].attached);
@@ -89,9 +110,9 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state.tabs[1].event_log_path,
         second_event_log_path.display().to_string()
     );
-    assert!(
-        terminal_state.tabs[0].activity_event_count >= 1,
-        "detaching previous active tab should be reflected in protocol history count"
+    assert_eq!(
+        terminal_state.tabs[0].activity_event_count, 0,
+        "background ownership must not invent a detached lifecycle event"
     );
     assert!(
         terminal_state.tabs[1].activity_event_count >= 1,
@@ -101,8 +122,8 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state.tabs[0]
             .activity_summary
             .iter()
-            .any(|line| line.contains("lifecycle:detached")),
-        "first tab summary should expose its persisted detach event: {:?}",
+            .all(|line| !line.contains("lifecycle:detached")),
+        "background tab must not invent a detached lifecycle: {:?}",
         terminal_state.tabs[0].activity_summary
     );
     assert!(
@@ -128,7 +149,7 @@ fn terminal_session_registry_tracks_active_session_contexts() {
     assert!(terminal_state.tabs[0].active);
     assert!(terminal_state.tabs[0].attached);
     assert!(!terminal_state.tabs[1].active);
-    assert!(!terminal_state.tabs[1].attached);
+    assert!(terminal_state.tabs[1].attached);
     assert!(
         terminal_state
             .activity_summary
@@ -138,7 +159,7 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state.activity_summary
     );
     assert!(
-        fs::read_to_string(&second_event_log_path)
+        !fs::read_to_string(&second_event_log_path)
             .expect("second event log should read after activate")
             .contains("\"lifecycle\":\"detached\"")
     );
@@ -147,9 +168,7 @@ fn terminal_session_registry_tracks_active_session_contexts() {
             .expect("first event log should read after activate")
             .contains("\"lifecycle\":\"attached\"")
     );
-    registry
-        .close_active(&mut terminal_state)
-        .expect("close active terminal tab");
+    terminate_and_remove_active(&mut registry, &mut terminal_state);
     assert_eq!(registry.len(), 1);
     assert_eq!(
         terminal_state.active_session_id.as_deref(),
@@ -190,9 +209,7 @@ fn terminal_session_registry_close_active_repoints_latest_context() {
         serde_json::from_str(&fs::read_to_string(&latest_context_path).unwrap()).unwrap();
     assert_eq!(latest_before_close["session_id"], second_session_id);
     let mut terminal_state = TerminalLaneState::default();
-    registry
-        .close_active(&mut terminal_state)
-        .expect("close latest active terminal tab");
+    terminate_and_remove_active(&mut registry, &mut terminal_state);
     assert_eq!(registry.len(), 1);
     assert_eq!(
         terminal_state.active_session_id.as_deref(),
@@ -209,47 +226,78 @@ fn terminal_session_registry_close_active_repoints_latest_context() {
     );
     let _ = fs::remove_dir_all(&root);
 }
+
 #[test]
-fn terminal_session_detach_preserves_running_session_until_reattach() {
-    let root = std::env::temp_dir().join(format!("datum-terminal-detach-{}", std::process::id()));
+fn live_close_requires_an_approved_confirmation_and_then_removes_automatically() {
+    let root = std::env::temp_dir().join(format!(
+        "datum-terminal-close-confirmation-{}",
+        std::process::id()
+    ));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(&root).unwrap();
+    let context = TerminalLaunchContext::for_project_root(&root);
+    let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+    let mut lane = TerminalLaneState::default();
+
+    registry.close_active(&mut lane).unwrap();
+    assert!(registry.active_close_confirmation_armed());
+    registry.close_active(&mut lane).unwrap();
+    assert!(
+        registry
+            .active()
+            .write_bytes(b"printf still-running\\n\n")
+            .is_ok()
+    );
+
+    registry.handle_close_confirmation_input(b"YES", &mut lane);
+    registry.handle_close_confirmation_input(b"\n", &mut lane);
+    assert!(registry.active_close_confirmation_armed());
+    registry.handle_close_confirmation_input(b"\x1b", &mut lane);
+    assert!(!registry.active_close_confirmation_armed());
+
+    registry.close_active(&mut lane).unwrap();
+    registry.handle_close_confirmation_input(b"yes", &mut lane);
+    registry.handle_close_confirmation_input(b"\n", &mut lane);
+    assert!(registry.active().write_bytes(b"must-not-enter\n").is_err());
+
+    let deadline = std::time::Instant::now() + Duration::from_secs(7);
+    while std::time::Instant::now() < deadline && !lane.tabs.is_empty() {
+        registry.drain_all(&mut lane);
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    assert!(
+        lane.tabs.is_empty(),
+        "confirmed close must remove the sole tab"
+    );
+    let _ = fs::remove_dir_all(root);
+}
+#[test]
+fn background_tabs_remain_owned_without_detached_lifecycle() {
+    let root =
+        std::env::temp_dir().join(format!("datum-terminal-owned-tabs-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(&root).expect("terminal detach test root should create");
     let context = TerminalLaunchContext::for_project_root(&root);
     let mut registry =
         TerminalSessionRegistry::spawn(&context).expect("spawn initial terminal session");
-    let session_id = registry.active().session_id().to_string();
-    let event_log_path = registry.active().event_log_path();
+    let first_session_id = registry.active().session_id().to_string();
+    let first_event_log_path = registry.active().event_log_path();
     let mut terminal_state = TerminalLaneState::default();
     registry
-        .detach_active(&mut terminal_state)
-        .expect("detach active terminal tab");
-    assert_eq!(terminal_state.status, "running");
-    assert_eq!(
-        terminal_state.active_session_id.as_deref(),
-        Some(session_id.as_str())
-    );
-    assert_eq!(terminal_state.tabs.len(), 1);
-    assert!(terminal_state.tabs[0].active);
-    assert!(!terminal_state.tabs[0].attached);
-    assert!(!registry.active_attached());
-    assert!(
-        fs::read_to_string(&event_log_path)
-            .expect("event log should read after detach")
-            .contains("\"lifecycle\":\"detached\"")
-    );
-    registry
-        .activate(&session_id)
-        .expect("reattach selected terminal tab");
+        .spawn_and_activate(&context)
+        .expect("spawn second terminal tab");
     registry.sync_lane_tabs(&mut terminal_state);
     assert_eq!(terminal_state.status, "running");
-    assert!(terminal_state.tabs[0].active);
-    assert!(terminal_state.tabs[0].attached);
-    assert!(registry.active_attached());
+    assert_eq!(terminal_state.tabs.len(), 2);
+    assert!(terminal_state.tabs.iter().all(|tab| tab.attached));
     assert!(
-        fs::read_to_string(&event_log_path)
-            .expect("event log should read after reattach")
-            .contains("\"lifecycle\":\"attached\"")
+        fs::read_to_string(&first_event_log_path).map_or(true, |contents| !contents
+            .contains("\"lifecycle\":\"detached\""))
     );
+    registry
+        .activate(&first_session_id)
+        .expect("select first tab");
+    assert_eq!(registry.active().session_id(), first_session_id);
     let _ = fs::remove_dir_all(&root);
 }
 #[test]
@@ -272,6 +320,15 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     registry
         .restart_active(&mut terminal_state, &context)
         .expect("restart active terminal tab");
+    let deadline = std::time::Instant::now() + Duration::from_secs(3);
+    while registry.active().session_id() == first_session_id && std::time::Instant::now() < deadline
+    {
+        registry.drain_all(&mut terminal_state);
+        registry
+            .complete_pending_restarts(&mut terminal_state, &context)
+            .expect("complete verified terminal restart");
+        std::thread::sleep(Duration::from_millis(5));
+    }
     let restarted_session_id = registry.active().session_id().to_string();
     assert_ne!(first_session_id, restarted_session_id);
     assert_eq!(registry.active_label(), "layout shell");
@@ -292,7 +349,6 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     assert_eq!(tab.restart_count, 1);
     assert!(tab.active);
     assert!(tab.attached);
-    // Decision 027 FT-001: restart narration goes to the console, never the grid.
     let restarted_rows = terminal_state.grid_lines().join("\n");
     assert!(
         !restarted_rows.contains("terminal restarted"),
@@ -611,7 +667,7 @@ fn terminal_session_spawns_real_pty_shell() {
                     }
                 }
                 TerminalEvent::Exited(code) => {
-                    assert_eq!(code, Some(0));
+                    assert_eq!(code, crate::terminal_transport::TerminalExitStatus::Code(0));
                 }
                 TerminalEvent::Error(error) => panic!("unexpected transport error: {error:?}"),
             }
@@ -639,62 +695,6 @@ fn terminal_session_spawns_real_pty_shell() {
     assert!(
         event_log.contains(session.session_id()),
         "terminal event log should tie events to the session id: {event_log}"
-    );
-    let _ = fs::remove_dir_all(&root);
-}
-#[test]
-fn terminal_session_terminate_reports_signal_exit() {
-    let root =
-        std::env::temp_dir().join(format!("datum-terminal-terminate-{}", std::process::id()));
-    let _ = fs::remove_dir_all(&root);
-    fs::create_dir_all(&root).expect("terminal terminate test root should create");
-    let context = TerminalLaunchContext::for_project_root(&root);
-    let session = spawn_terminal_session(&context).expect("spawn PTY terminal session");
-    session
-        .write_bytes(b"printf 'datum-terminate-ready\\n'\nexec sleep 10\n")
-        .expect("start long command");
-    let mut ready = false;
-    for _ in 0..50 {
-        if let Ok(TerminalEvent::Output(bytes)) =
-            session.recv_event_timeout(Duration::from_millis(100))
-            && String::from_utf8_lossy(&bytes).contains("datum-terminate-ready")
-        {
-            ready = true;
-            break;
-        }
-    }
-    assert!(
-        ready,
-        "terminal should confirm command execution before termination"
-    );
-    session.terminate().expect("terminate PTY session");
-    let mut observed_exit_code = None;
-    for _ in 0..120 {
-        if let Ok(TerminalEvent::Exited(code)) =
-            session.recv_event_timeout(Duration::from_millis(100))
-        {
-            observed_exit_code = Some(code);
-            break;
-        }
-    }
-    assert!(
-        observed_exit_code.is_some(),
-        "terminated terminal should emit exit event"
-    );
-    let observed_exit_code = observed_exit_code.flatten();
-    mark_terminal_session_lifecycle(
-        &session,
-        DatumToolSessionLifecycle::Exited,
-        observed_exit_code,
-    )
-    .expect("mark terminated session exited");
-    let context: serde_json::Value =
-        serde_json::from_str(&fs::read_to_string(&session.context_path).unwrap()).unwrap();
-    assert_eq!(context["session_lifecycle"], "exited");
-    assert_eq!(context["session"]["lifecycle"], "exited");
-    assert_eq!(
-        context["process_exit_code"],
-        serde_json::to_value(observed_exit_code).unwrap()
     );
     let _ = fs::remove_dir_all(&root);
 }

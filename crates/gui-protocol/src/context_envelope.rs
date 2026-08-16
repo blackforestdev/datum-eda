@@ -41,6 +41,10 @@ pub struct DatumToolSessionMetadata {
     pub expires_unix_ms: Option<u128>,
     pub process_group_id: Option<i32>,
     pub process_exit_code: Option<i32>,
+    #[serde(default)]
+    pub process_exit_signal: Option<i32>,
+    #[serde(default)]
+    pub process_core_dumped: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

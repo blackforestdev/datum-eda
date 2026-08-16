@@ -42,26 +42,26 @@ fn open_pty_pair() {
             "third-party terminal dependency must not remain: portable_pty", failures
         )
 
-    def test_terminal_input_mode_is_exclusive_and_reattachable(self) -> None:
+    def test_terminal_input_mode_is_exclusive_and_never_detached(self) -> None:
         production = """
-enum TerminalInputOwner { AttachedPty, RenameChrome, DetachedReadOnly }
+enum TerminalInputOwner { AttachedPty, RenameChrome, Unowned }
 pub(crate) fn terminal_input_owner() {
-    use TerminalInputOwner::{AttachedPty, RenameChrome, DetachedReadOnly};
+    use TerminalInputOwner::{AttachedPty, RenameChrome, Unowned};
 }
 fn commit_terminal_ime_text() {}
-fn write_attached_terminal_bytes() { active_attached(); write_bytes(); }
-HitTarget::TerminalSessionReattachActive
+fn write_attached_terminal_bytes() { write_bytes(); }
 """
-        bottom_dock = '("REATTACH", HitTarget::TerminalSessionReattachActive)'
+        bottom_dock = '("CLOSE", HitTarget::TerminalSessionCloseActive)'
         failures: list[str] = []
         guard.check_terminal_input_mode(production, bottom_dock, failures)
         self.assertEqual([], failures)
 
         failures = []
         guard.check_terminal_input_mode(
-            production.replace("DetachedReadOnly", "LegacyDockLineEdit")
+            production.replace("Unowned", "LegacyDockLineEdit")
+                + "\nDetachedReadOnly\n"
                 + "\nfn complete_terminal_rename_input() {}\n",
-            "",
+            '("REATTACH", HitTarget::TerminalSessionReattachActive)',
             failures,
         )
         self.assertIn(
@@ -69,7 +69,7 @@ HitTarget::TerminalSessionReattachActive
             failures,
         )
         self.assertIn(
-            "detached terminal chrome is missing \"REATTACH\"", failures
+            "retired detached terminal mode remains: \"REATTACH\"", failures
         )
 
     def test_terminal_input_state_has_explicit_authorities(self) -> None:

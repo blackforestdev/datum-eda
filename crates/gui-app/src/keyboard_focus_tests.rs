@@ -1,10 +1,14 @@
 use super::{
-    KeyClass, KeyboardFocus, RouteDecision, TerminalInputOwner, focus_after_canvas_click,
-    focus_after_hit_target, hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
-    terminal_focus_report_transition, terminal_input_owner, workspace_action_should_fire,
+    KeyClass, KeyboardFocus, RouteDecision, TerminalInputOwner, armed_close_shortcut,
+    focus_after_canvas_click, focus_after_hit_target, hit_target_is_terminal_entry, key_route,
+    pre_raw_escape_route, terminal_focus_report_transition, terminal_input_owner,
+    workspace_action_should_fire,
 };
-use winit::event::ElementState;
 use datum_gui_render::HitTarget;
+use winit::{
+    event::ElementState,
+    keyboard::{KeyCode, PhysicalKey},
+};
 
 #[test]
 fn default_focus_is_editor() {
@@ -12,7 +16,36 @@ fn default_focus_is_editor() {
 }
 
 #[test]
-fn terminal_input_owner_is_exclusive_and_detached_is_read_only() {
+fn armed_close_repeat_shortcut_is_focus_independent_and_exact() {
+    let key = PhysicalKey::Code(KeyCode::KeyW);
+    assert!(armed_close_shortcut(
+        true,
+        true,
+        true,
+        ElementState::Pressed,
+        false,
+        key,
+    ));
+    assert!(!armed_close_shortcut(
+        false,
+        true,
+        true,
+        ElementState::Pressed,
+        false,
+        key,
+    ));
+    assert!(!armed_close_shortcut(
+        true,
+        true,
+        false,
+        ElementState::Pressed,
+        false,
+        key,
+    ));
+}
+
+#[test]
+fn terminal_input_owner_is_exclusive_without_a_detached_mode() {
     assert_eq!(
         terminal_input_owner(KeyboardFocus::Terminal, true, true, false),
         TerminalInputOwner::AttachedPty
@@ -24,7 +57,8 @@ fn terminal_input_owner_is_exclusive_and_detached_is_read_only() {
     );
     assert_eq!(
         terminal_input_owner(KeyboardFocus::Terminal, true, false, false),
-        TerminalInputOwner::DetachedReadOnly
+        TerminalInputOwner::AttachedPty,
+        "background tabs remain owned; selected-tab input does not create a detached PTY mode"
     );
     assert_eq!(
         terminal_input_owner(KeyboardFocus::Editor, true, true, false),
@@ -40,7 +74,11 @@ fn terminal_input_owner_is_exclusive_and_detached_is_read_only() {
 fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
     for visible in [false, true] {
         assert_eq!(
-            key_route(KeyboardFocus::Terminal, KeyClass::TerminalRenameEdit, visible),
+            key_route(
+                KeyboardFocus::Terminal,
+                KeyClass::TerminalRenameEdit,
+                visible
+            ),
             RouteDecision::Terminal
         );
         assert_eq!(
@@ -166,19 +204,15 @@ fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
 fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
     assert!(hit_target_is_terminal_entry(&HitTarget::TerminalScreen));
     assert!(hit_target_is_terminal_entry(&HitTarget::TerminalTab));
-    assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionTab(
-        "terminal-a".to_string()
-    )));
+    assert!(hit_target_is_terminal_entry(
+        &HitTarget::TerminalSessionTab("terminal-a".to_string())
+    ));
     assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionNew));
     assert!(hit_target_is_terminal_entry(
         &HitTarget::TerminalSessionRenameActive
     ));
-    assert!(hit_target_is_terminal_entry(
-        &HitTarget::TerminalSessionReattachActive
-    ));
     for target in [
         HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionDetachActive,
         HitTarget::TerminalSessionCloseActive,
         HitTarget::DockResizeHandle,
     ] {

@@ -100,6 +100,11 @@ impl App {
         if let Some(runtime) = &mut self.runtime {
             changed |= runtime.poll_terminal_output();
             changed |= runtime.poll_scheduled_production_refresh();
+            if runtime.application_terminal_shutdown_complete() {
+                event_loop.exit();
+                return;
+            }
+            changed |= runtime.poll_application_terminal_shutdown();
             next_refresh_due = runtime.next_production_refresh_due();
         }
         if changed {
@@ -185,8 +190,26 @@ impl Runtime {
         let report = self
             .terminal_sessions
             .drain_all(&mut self.session.workspace_mut().ui.terminal);
-        if report.events == 0 {
+        let restarted = self
+            .terminal_sessions
+            .complete_pending_restarts(
+                &mut self.session.workspace_mut().ui.terminal,
+                &self.terminal_launch_context,
+            )
+            .unwrap_or_else(|error| {
+                self.log_review_event(format!("terminal restart completion failed: {error}"));
+                false
+            });
+        if report.events == 0
+            && !restarted
+            && !report.tabs_changed
+            && !report.active_projection_changed
+            && report.notices.is_empty()
+        {
             return false;
+        }
+        if restarted {
+            self.log_review_event("terminal session restarted after verified teardown");
         }
         if (self.terminal_production_refresh_pending || self.terminal_workspace_refresh_pending)
             && self.terminal_production_refresh_due.is_none()

@@ -31,6 +31,7 @@ use winit::{
 
 mod app_bootstrap;
 mod app_shell;
+mod application_terminal_shutdown;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod gui_runtime_support;
@@ -55,6 +56,7 @@ mod terminal_check_context;
 mod terminal_context;
 mod terminal_context_contract;
 mod terminal_context_io;
+mod terminal_control_input;
 mod terminal_input;
 mod terminal_journal_context;
 mod terminal_narration;
@@ -286,8 +288,7 @@ impl ApplicationHandler for App {
             append_gui_verbose_diagnostic_line(format!("window event {label}"));
         }
         if matches!(event, WindowEvent::CloseRequested) {
-            append_gui_diagnostic_line("close requested");
-            event_loop.exit();
+            self.request_controlled_close(event_loop);
             return;
         }
         if let Some(runtime) = &mut self.runtime
@@ -617,6 +618,8 @@ struct Runtime {
     /// change it; deliberate entry/exit gestures (terminal clicks, canvas
     /// clicks, Escape) do.
     keyboard_focus: KeyboardFocus,
+    application_shutdown_started: Option<std::time::Instant>,
+    application_shutdown_blocked: bool,
 }
 
 impl Runtime {
@@ -754,6 +757,8 @@ impl Runtime {
             terminal_rename_session_id: None,
             clipboard: Clipboard::new().ok(),
             keyboard_focus: KeyboardFocus::default(),
+            application_shutdown_started: None,
+            application_shutdown_blocked: false,
         };
         runtime.sync_terminal_tabs();
         runtime.resize_terminal_to_dock();
@@ -1232,29 +1237,22 @@ impl Runtime {
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
         let application_cursor_keys = self.workspace().ui.terminal.application_cursor_keys;
         let application_keypad = self.workspace().ui.terminal.application_keypad;
-        match terminal_key_action(
+        let action = terminal_key_action(
             event,
             self.modifiers,
             application_cursor_keys,
             application_keypad,
-        ) {
+        );
+        if let Some(handled) = self.handle_close_confirmation_action(&action) {
+            return handled;
+        }
+        match action {
             TerminalKeyAction::Write(bytes) => self.write_foreign_shell_bytes(&bytes),
-            TerminalKeyAction::Interrupt => {
-                if !self.terminal_sessions.active_attached() {
-                    self.log_review_event(
-                        "terminal session is detached; activate the tab to reattach".to_string(),
-                    );
-                    return true;
-                }
-                if let Err(err) = self.terminal_sessions.active().interrupt() {
-                    self.log_review_event(format!("terminal interrupt failed: {err}"));
-                }
-                true
-            }
             TerminalKeyAction::TerminateSession => {
                 self.terminate_terminal_session();
                 true
             }
+            TerminalKeyAction::CloseSession => self.close_active_terminal_session(),
             TerminalKeyAction::RestartSession => {
                 self.restart_terminal_session();
                 true
@@ -1479,7 +1477,7 @@ impl Runtime {
             &self.terminal_launch_context,
         ) {
             Ok(()) => {
-                self.log_review_event("terminal session restarted");
+                self.log_review_event("terminal restart requested; waiting for verified teardown");
                 self.resize_terminal_to_dock();
             }
             Err(err) => self.log_review_event(format!("terminal restart failed: {err}")),
@@ -1632,7 +1630,6 @@ impl Runtime {
             keyboard_focus::TerminalInputOwner::RenameChrome => {
                 self.append_terminal_rename_text(&text)
             }
-            keyboard_focus::TerminalInputOwner::DetachedReadOnly => true,
             keyboard_focus::TerminalInputOwner::Unowned => false,
         }
     }
@@ -2350,13 +2347,12 @@ impl Runtime {
             HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
             HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
             HitTarget::TerminalSessionRenameActive => self.rename_active_terminal_session(),
-            HitTarget::TerminalSessionRestartActive => {
-                self.restart_terminal_session();
-                true
-            }
-            HitTarget::TerminalSessionDetachActive => self.detach_active_terminal_session(),
-            HitTarget::TerminalSessionReattachActive => self.reattach_active_terminal_session(),
-            HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
+            target @ (HitTarget::TerminalSessionRestartActive
+            | HitTarget::TerminalSessionCloseActive
+            | HitTarget::TerminalSessionTerminateActive
+            | HitTarget::TerminalSessionForceKillActive
+            | HitTarget::TerminalSessionRetryTermination
+            | HitTarget::TerminalShutdownCancel) => self.handle_terminal_lifecycle_target(target),
             HitTarget::TerminalScreen => self.click_terminal_screen(),
             HitTarget::ProductionArtifact(artifact_id) => {
                 let handled = self.dispatch_session_command(

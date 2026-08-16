@@ -13,7 +13,7 @@
 //! dispatcher that applies those decisions to the running app.
 
 use winit::event::{ElementState, KeyEvent};
-use winit::keyboard::{Key, NamedKey};
+use winit::keyboard::{Key, KeyCode, NamedKey, PhysicalKey};
 
 use datum_gui_protocol::SessionCommand;
 use datum_gui_render::HitTarget;
@@ -48,20 +48,19 @@ pub(crate) enum KeyClass {
     EscapeWithEmptyRename,
 }
 
-/// Exclusive terminal input recipient (TI-02). The shell and rename editor can
-/// never be active recipients at the same time; detached sessions own no input.
+/// Exclusive terminal input recipient (TI-02). The shell and chrome editor can
+/// never be active recipients at the same time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum TerminalInputOwner {
     AttachedPty,
     RenameChrome,
-    DetachedReadOnly,
     Unowned,
 }
 
 pub(crate) fn terminal_input_owner(
     focus: KeyboardFocus,
     terminal_tab_visible: bool,
-    attached: bool,
+    _attached: bool,
     renaming: bool,
 ) -> TerminalInputOwner {
     if focus != KeyboardFocus::Terminal || !terminal_tab_visible {
@@ -69,10 +68,8 @@ pub(crate) fn terminal_input_owner(
     }
     if renaming {
         TerminalInputOwner::RenameChrome
-    } else if attached {
-        TerminalInputOwner::AttachedPty
     } else {
-        TerminalInputOwner::DetachedReadOnly
+        TerminalInputOwner::AttachedPty
     }
 }
 
@@ -137,7 +134,6 @@ pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
             | HitTarget::TerminalSessionTab(_)
             | HitTarget::TerminalSessionNew
             | HitTarget::TerminalSessionRenameActive
-            | HitTarget::TerminalSessionReattachActive
     )
 }
 
@@ -220,11 +216,7 @@ impl Runtime {
         // Renderer projection only: KeyboardFocus remains the sole authority.
         // Focus changes fill/outline the child-selected cursor shape; they do
         // not replace DECSCUSR shape or DEC cursor visibility state (TF-04).
-        self.session
-            .workspace_mut()
-            .ui
-            .terminal
-            .has_keyboard_focus = terminal_owns_keyboard(focus);
+        self.session.workspace_mut().ui.terminal.has_keyboard_focus = terminal_owns_keyboard(focus);
         if let Some(focused) = report {
             self.report_terminal_focus_event(focused);
         }
@@ -234,13 +226,30 @@ impl Runtime {
 /// Route one window keyboard event through the focus authority. Returns true
 /// when the event was consumed (a redraw may have been requested).
 pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
-    let Some(focus) = app
-        .runtime
-        .as_ref()
-        .map(|runtime| runtime.keyboard_focus())
-    else {
+    let Some(focus) = app.runtime.as_ref().map(|runtime| runtime.keyboard_focus()) else {
         return false;
     };
+    let confirms_armed_close = app.runtime.as_ref().is_some_and(|runtime| {
+        armed_close_shortcut(
+            runtime.terminal_sessions.active_close_confirmation_armed(),
+            runtime.modifiers.control_key(),
+            runtime.modifiers.shift_key(),
+            event.state,
+            event.repeat,
+            event.physical_key,
+        )
+    });
+    if confirms_armed_close {
+        if let Some(runtime) = &mut app.runtime {
+            let _ = runtime
+                .terminal_sessions
+                .confirm_close_active(&mut runtime.session.workspace_mut().ui.terminal);
+            runtime.sync_terminal_tabs();
+            runtime.invalidate_frame();
+        }
+        app.request_redraw_if_needed();
+        return true;
+    }
     let dock_visible = app
         .runtime
         .as_ref()
@@ -256,8 +265,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     let terminal_owns_attached_pty = terminal_input_owner == TerminalInputOwner::AttachedPty
         && key_route(focus, KeyClass::RawPty, dock_visible) == RouteDecision::Terminal;
     let terminal_owns_rename = terminal_input_owner == TerminalInputOwner::RenameChrome
-        && key_route(focus, KeyClass::TerminalRenameEdit, dock_visible)
-            == RouteDecision::Terminal;
+        && key_route(focus, KeyClass::TerminalRenameEdit, dock_visible) == RouteDecision::Terminal;
     let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
         && event.state == ElementState::Released;
 
@@ -351,8 +359,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     if let Key::Character(text) = &event.logical_key
         && event.state == ElementState::Pressed
         && app.runtime.as_ref().is_some_and(|runtime| {
-            runtime.terminal_rename_accepts_text_input()
-                && !runtime.modifiers.control_key()
+            runtime.terminal_rename_accepts_text_input() && !runtime.modifiers.control_key()
         })
     {
         if let Some(runtime) = &mut app.runtime
@@ -461,15 +468,10 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     if matches!(event.logical_key, Key::Named(NamedKey::Tab)) && terminal_owns_rename {
         return true;
     }
-    if terminal_input_owner == TerminalInputOwner::DetachedReadOnly {
-        return true;
-    }
     // Pane focus cycling (decision 021): Tab -> next leaf, Shift+Tab ->
     // previous leaf, when the dock does not own the keyboard. Reuses the
     // FEEL warm-camera focus swap; workspace view state, never journaled.
-    if matches!(event.logical_key, Key::Named(NamedKey::Tab))
-        && workspace_action_pressed
-    {
+    if matches!(event.logical_key, Key::Named(NamedKey::Tab)) && workspace_action_pressed {
         if let Some(runtime) = &mut app.runtime {
             if runtime.modifiers.shift_key() {
                 runtime.pane_focus_prev();
@@ -514,6 +516,22 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         return true;
     }
     false
+}
+
+fn armed_close_shortcut(
+    armed: bool,
+    control: bool,
+    shift: bool,
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+) -> bool {
+    armed
+        && control
+        && shift
+        && state == ElementState::Pressed
+        && !repeat
+        && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyW))
 }
 
 #[cfg(test)]
