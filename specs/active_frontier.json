@@ -1402,32 +1402,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "856df412-d91f-4f46-81e6-45378ec66e8e",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "1b92c23",
-        "claimed_at": "2026-08-16T06:29:00Z",
-        "heartbeat_at": "2026-08-16T06:29:00Z",
-        "expires_at": "2026-08-16T14:29:00Z",
-        "scope": [
-          "DTC-P05C",
-          "dat-terminal-agent-session-lockup-jzl",
-          "crates/gui-app/src/keyboard_focus.rs",
-          "crates/gui-app/src/main.rs",
-          "crates/gui-app/src/runtime_terminal_dock.rs",
-          "crates/gui-render/src/bottom_dock.rs",
-          "crates/gui-render/src/render/geometry.rs",
-          "crates/gui-render/src/render/gpu.rs",
-          "crates/gui-render/src/render/text_buffer_cache.rs",
-          "production focus, glyph, animated-output cache regressions and convergence guards"
-        ]
-      },
+      "claim": null,
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1438,7 +1417,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05C",
+        "canonical_next_step_id": "DTC-P05D",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1592,7 +1571,7 @@
           {
             "id": "DTC-P05C",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Repair terminal click-focus under child mouse reporting, select the governed terminal glyph face, and bound shaped-text cache residency under animated agent output.",
             "depends_on": [
               "DTC-P05B"
@@ -1603,12 +1582,17 @@
                 "marker": "DTC-P05C"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "30b5d7ddcdc90ac0669b826cc5b22eab1cd7e4e9"
+              }
+            ]
           },
           {
             "id": "DTC-P05D",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Owner-test a fresh production Claude session for click focus, Tab completion, glyph readability, sustained output, and continued post-output input responsiveness.",
             "depends_on": [
               "DTC-P05C"

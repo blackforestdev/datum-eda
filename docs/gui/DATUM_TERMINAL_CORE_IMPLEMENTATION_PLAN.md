@@ -243,6 +243,14 @@ applicable copyright/OFL notice and hash-pinned provenance ship beside it. This
 adds no package, downloaded asset, terminal dependency, or new interaction
 policy.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05C-VERIFIED -->
+DTC-P05C landed in `30b5d7ddcdc90ac0669b826cc5b22eab1cd7e4e9`.
+Production focus-before-mouse-report routing, shared terminal geometry,
+per-session bounded output batching, output-before-exit ordering, one-record
+batch audit, terminal-only glyph shaping, and two-generation shaped-buffer
+residency are regression- and drift-guarded. Decision 031 records the owner's
+terminal typography exception and the exact adjacent OFL/provenance boundary.
+
 <!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->
 DTC-P05D remains pending until the project owner confirms a fresh production
