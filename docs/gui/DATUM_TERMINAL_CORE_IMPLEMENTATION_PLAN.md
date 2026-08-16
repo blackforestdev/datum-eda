@@ -142,7 +142,7 @@ these decisions one at a time.
   send SIGKILL, then allow 2,000 ms for reap and empty-session verification. Mark
   `Closed` only after the leader is reaped and no owned member remains; otherwise
   retain visible `TerminationFailed` state with the surviving identities.
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O4 --> **P05-O4 — app shutdown.** Recommended: tear down sessions concurrently
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P05A:P05-O4 --> **P05-O4 — app shutdown.** Owner-approved 2026-08-15: tear down sessions concurrently
   under one 6,000 ms global deadline. Datum exits only after every owned session
   is verified empty. If the deadline expires with survivors, block the controlled
   application exit in visible `TerminationFailed`, durably report exact
@@ -173,6 +173,13 @@ The project owner approved the bounded six-second escalation ladder: 2,000 ms
 SIGHUP grace, 2,000 ms SIGTERM-plus-SIGCONT grace, and 2,000 ms for SIGKILL,
 reap, and empty-session verification. Unverified survivors remain visibly
 `TerminationFailed`. This evidence approves P05-O3 only.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05A:P05-O4-OWNER-APPROVED -->
+The project owner approved concurrent application-shutdown teardown under one
+global 6,000 ms deadline. Controlled exit is blocked until every owned terminal
+session is verified empty; survivors produce visible `TerminationFailed` with
+exact identities and Retry/Cancel actions, never silent detach or Exit Anyway.
+This evidence approves P05-O4 only.
 
 ### Core foundation
 

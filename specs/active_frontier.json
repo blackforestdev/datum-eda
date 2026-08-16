@@ -1521,15 +1521,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve P05-O4`, or `P05-O4: revise — <replacement>` or `P05-O4: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O5`, or `P05-O5: revise — <replacement>` or `P05-O5: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P05-O4",
-                  "question": "How should Datum tear down multiple terminal sessions when the application exits?",
-                  "recommended_response": "Approve concurrent teardown under one global 6,000 ms deadline; Datum exits only after every owned session is verified empty, otherwise blocks controlled exit in visible TerminationFailed with exact survivor identities and Retry Termination / Cancel Shutdown actions, never silent detach or Exit Anyway.",
+                  "id": "P05-O5",
+                  "question": "Which processes belong to Datum's terminal teardown ownership boundary?",
+                  "recommended_response": "Approve ownership of every live process whose Linux session ID remains the terminal's original session ID, across all its process groups; a process that deliberately creates a different session is outside Datum ownership, including detached tmux servers and remote SSH jobs governed by their server.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P05-O4"
+                    "marker": "P05-O5"
                   }
                 }
               ]
