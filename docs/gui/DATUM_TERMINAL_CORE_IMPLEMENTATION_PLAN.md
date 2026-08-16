@@ -362,12 +362,12 @@ the corrected hands-on completion-context retest.
 
 <!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->
-DTC-P05D remains pending until the project owner confirms a fresh production
-build can enter terminal focus by clicking a mouse-aware Claude session, use
-Tab to accept a visible candidate in one of the documented completion contexts
-without pane cycling, render the governed box/Powerline glyph
-fixture legibly, sustain an agent session, and accept the next prompt without
-freezing. Implementation evidence alone cannot satisfy this hands-on gate.
+DTC-P05D was owner-approved on 2026-08-16 after hands-on testing confirmed that
+the production terminal can be focused and Tab completion works in a Claude
+session. The owner explicitly reported that several other terminal issues
+remain outside this acceptance boundary. This approval therefore closes only
+the DTC-P05D focus/completion gate; it neither resolves nor closes those
+separately scoped defects.
 
 #### DTC-P06A owner packet
 

@@ -1417,7 +1417,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05D",
+        "canonical_next_step_id": "DTC-P06A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1634,7 +1634,7 @@
           {
             "id": "DTC-P05D",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Owner-test a fresh production Claude session using an active documented completion candidate for click focus, Tab acceptance, glyph readability, sustained output, and continued post-output input responsiveness.",
             "depends_on": [
               "DTC-P05F"
@@ -1645,7 +1645,13 @@
                 "marker": "DTC-P05D"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve DTC-P05D`, or `DTC-P05D: revise — <observed defect>`.",
               "requests": [
@@ -1664,7 +1670,7 @@
           {
             "id": "DTC-P06A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Ratify exact proof tiers, session load, latency, throughput, resource, storage, soak, platform, and evidence budgets before timed transport assertions are implemented.",
             "depends_on": [
               "DTC-P05D"
