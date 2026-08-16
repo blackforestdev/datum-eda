@@ -29,6 +29,7 @@ TERMINAL_SCREEN_BASIC_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_sc
 RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
+TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_tests.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -168,6 +169,8 @@ def check_agent_tui_runtime(
     render_geometry: str,
     text_cache: str,
     render_gpu: str,
+    bottom_dock: str,
+    terminal_font_tests: str,
     failures: list[str],
 ) -> None:
     """Keep mouse-aware agent TUIs focused, responsive, and bounded."""
@@ -221,6 +224,14 @@ def check_agent_tui_runtime(
         failures.append("renderer must begin exactly one text-cache generation per frame")
     elif lookup_at < 0 or begin_at > lookup_at:
         failures.append("renderer must prune text buffers before cache lookup")
+    if "TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6" not in bottom_dock:
+        failures.append("terminal font size must derive from the shared logical cell width")
+    for marker in (
+        "terminal_font_advance_matches_shared_logical_cell_width",
+        "styled_terminal_fragments_share_contiguous_cell_origins",
+    ):
+        if marker not in terminal_font_tests:
+            failures.append(f"terminal cell-metric convergence proof is missing {marker}")
 
 
 def check_terminal_input_identity(
@@ -360,6 +371,7 @@ def main() -> int:
     render_geometry = RENDER_GEOMETRY.read_text()
     text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
     render_gpu = RENDER_GPU.read_text()
+    terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
     workspace_layout = WORKSPACE_LAYOUT.read_text()
@@ -403,6 +415,8 @@ def main() -> int:
         render_geometry,
         text_buffer_cache,
         render_gpu,
+        bottom_dock,
+        terminal_font_tests,
         failures,
     )
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)

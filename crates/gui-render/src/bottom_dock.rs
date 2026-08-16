@@ -13,6 +13,13 @@ use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_session_chrome::render_terminal_session_controls;
 use taffy::prelude::*;
 
+/// JetBrains Mono's governed terminal face advances every glyph by 0.6 em.
+/// Derive its render size from the shared logical cell width so glyph shaping,
+/// styled-fragment origins, cursor placement, hit testing, and PTY columns all
+/// land on the same grid. A real shaping-path regression ratchets this against
+/// the vendored font.
+pub(super) const TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6;
+
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
     // Retained for the solver contract test; the seated tab is now sized to its
@@ -493,7 +500,7 @@ fn render_terminal_screen(
                 &truncate_text(line, max_columns),
                 screen.x,
                 y,
-                11.0,
+                TERMINAL_FONT_SIZE_PX,
                 TEXT_PANEL_VALUE,
                 TextFace::Terminal,
                 text_runs,
@@ -534,7 +541,7 @@ fn render_terminal_styled_line(
             "",
             x,
             y,
-            11.0,
+            TERMINAL_FONT_SIZE_PX,
             TEXT_PANEL_VALUE,
             TextFace::Terminal,
             text_runs,
@@ -594,7 +601,7 @@ fn draw_terminal_fragment(
         &fragment,
         origin_x + start as f32 * TERMINAL_CELL_WIDTH_PX,
         y,
-        11.0,
+        TERMINAL_FONT_SIZE_PX,
         color,
         TextFace::Terminal,
         text_runs,

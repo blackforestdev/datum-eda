@@ -73,9 +73,22 @@ fn animated_agent_text_cache_retains_only_two_visible_generations() {}
 self.begin_text_buffer_frame();
 self.cached_text_buffer_indices();
 """
+        bottom_dock = "TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6;"
+        terminal_font_tests = """
+fn terminal_font_advance_matches_shared_logical_cell_width() {}
+fn styled_terminal_fragments_share_contiguous_cell_origins() {}
+"""
         failures: list[str] = []
         guard.check_agent_tui_runtime(
-            main, runtime_dock, drain, geometry, cache, render_gpu, failures
+            main,
+            runtime_dock,
+            drain,
+            geometry,
+            cache,
+            render_gpu,
+            bottom_dock,
+            terminal_font_tests,
+            failures,
         )
         self.assertEqual([], failures)
 
@@ -95,6 +108,10 @@ self.cached_text_buffer_indices();
             geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf"),
             cache.replace("last_used_frame", "unbounded_generation"),
             render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
+            bottom_dock.replace("TERMINAL_CELL_WIDTH_PX / 0.6", "11.0"),
+            terminal_font_tests.replace(
+                "styled_terminal_fragments_share_contiguous_cell_origins", "removed"
+            ),
             failures,
         )
         self.assertIn(
@@ -111,6 +128,13 @@ self.cached_text_buffer_indices();
         )
         self.assertIn(
             "terminal text-cache bound is missing last_used_frame", failures
+        )
+        self.assertIn(
+            "terminal font size must derive from the shared logical cell width",
+            failures,
+        )
+        self.assertTrue(
+            any("styled_terminal_fragments" in failure for failure in failures)
         )
         self.assertIn(
             "renderer must begin exactly one text-cache generation per frame", failures

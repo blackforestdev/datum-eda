@@ -1668,12 +1668,34 @@
             }
           },
           {
+            "id": "DTC-P05G",
+            "kind": "execution",
+            "status": "complete",
+            "action": "Converge shaped terminal font advance, logical cell geometry, styled-fragment origins, cursor geometry, hit testing, and PTY columns under one measured metric, with split-style and long-prompt alignment proof.",
+            "depends_on": [
+              "DTC-P05D"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P05G"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-VERIFIED"
+              }
+            ]
+          },
+          {
             "id": "DTC-P06A",
             "kind": "owner_decision",
             "status": "in_progress",
             "action": "Ratify exact proof tiers, session load, latency, throughput, resource, storage, soak, platform, and evidence budgets before timed transport assertions are implemented.",
             "depends_on": [
-              "DTC-P05D"
+              "DTC-P05G"
             ],
             "requirement_refs": [
               {

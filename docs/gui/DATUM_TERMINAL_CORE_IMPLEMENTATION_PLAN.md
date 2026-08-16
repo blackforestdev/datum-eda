@@ -66,6 +66,10 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05D --> **DTC-P05D — owner production retest.** Accept a fresh-build Claude session
   only after click focus, Tab completion, box/Powerline glyphs, sustained output,
   and post-output typing remain usable without a lockup. Depends on DTC-P05F.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05G --> **DTC-P05G — terminal cell-metric convergence.** Make the shaped terminal
+  font advance, logical cell geometry, styled-fragment origins, cursor geometry,
+  hit testing, and PTY columns consume one measured metric; prove split styling
+  cannot create gaps or cursor drift. Depends on DTC-P05D.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -368,6 +372,43 @@ session. The owner explicitly reported that several other terminal issues
 remain outside this acceptance boundary. This approval therefore closes only
 the DTC-P05D focus/completion gate; it neither resolves nor closes those
 separately scoped defects.
+
+#### DTC-P05G terminal cell-metric convergence
+
+The owner's post-acceptance screenshot on 2026-08-16 exposed a distinct
+renderer defect: the Claude input row contains expanding gaps between styled
+fragments and its cursor is displaced from the visible end of the text. Datum
+currently shapes terminal runs at 11 px while cursor, fragment origins, hit
+testing, PTY columns, and screen width use a fixed 7.9 × 16 px logical cell.
+Independent styled runs therefore restart on logical-cell boundaries that do
+not equal the preceding shaped advance, and cursor error accumulates across the
+row.
+
+DTC-P05G has this bounded scope:
+
+1. Establish one terminal font/cell metric consumed by terminal shaping,
+   logical geometry, styled-fragment placement, cursor placement, hit testing,
+   and PTY resize authority.
+2. Prove an ASCII row has the same glyph origins when rendered as one run or
+   split across multiple SGR spans.
+3. Prove the cursor begins at the exact next cell after the visible prompt and
+   remains aligned across representative long Claude input rows.
+4. Preserve the governed JetBrains Mono whole-run face, DTC-P05C cache bounds,
+   DTC-P05E focus authority, DTC-P05F parser correction, P04 transport budgets,
+   and the no-dependency boundary.
+5. Keep full grapheme, combining, wide-character, emoji, reflow, and immutable
+   TerminalCore cell semantics in their already scheduled DTC-P07..P23 slices;
+   this repair must not claim those broader capabilities.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-VERIFIED -->
+DTC-P05G derives the governed JetBrains Mono render size from the shared 7.9 px
+logical cell width instead of shaping terminal text at an unrelated 11 px.
+Real glyphon shaping proves long ASCII prompts advance exactly one logical cell
+per character, styled fragments meet at identical cell boundaries, and the
+logical cursor position equals the visible text end. Renderer, terminal-app,
+strict Clippy, convergence, dependency-authority, and governance checks pass;
+the fresh release binary is ready for hands-on confirmation. Full Unicode cell
+semantics remain explicitly scheduled rather than being overstated here.
 
 #### DTC-P06A owner packet
 
