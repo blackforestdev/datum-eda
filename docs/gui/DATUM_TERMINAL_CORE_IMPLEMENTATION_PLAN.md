@@ -351,6 +351,15 @@ accept action only where a suggestion or completion is active. These behavioral
 references guide clean-room tests; no third-party source or dependency enters
 Datum.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05F-VERIFIED -->
+DTC-P05F landed in `9f3aee1d5a6ea5d57d5d5d5ac0468c8e49d5c879`.
+Parameterized kitty-keyboard CSI `u` controls are now state-neutral in the
+provisional parser, while parameter-free CSI `u` retains legacy cursor restore.
+The observed Claude 2.1.233 push/query/pop stream is covered whole and across
+arbitrary chunk boundaries, and the convergence guard rejects any return to the
+broad cursor-restore match. A fresh locked/offline release binary was built for
+the corrected hands-on completion-context retest.
+
 <!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->
 DTC-P05D remains pending until the project owner confirms a fresh production

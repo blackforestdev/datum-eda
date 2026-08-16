@@ -1402,23 +1402,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-dtc-p05f-20260816",
-        "claimed_at": "2026-08-16T17:28:55Z",
-        "heartbeat_at": "2026-08-16T17:28:55Z",
-        "expires_at": "2026-08-17T01:28:55Z",
-        "scope": [
-          "DTC-P05F Claude completion compatibility repair"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "08e48eccc05f7effd3e68d34d4a895b45313e29a"
-      },
+      "claim": null,
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1429,7 +1417,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P05F",
+        "canonical_next_step_id": "DTC-P05D",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1625,7 +1613,7 @@
           {
             "id": "DTC-P05F",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Stop Claude kitty-keyboard push, pop, and query controls from masquerading as cursor restore, and prove literal-HT completion in a real candidate context without claiming full kitty-keyboard support.",
             "depends_on": [
               "DTC-P05E"
@@ -1636,12 +1624,17 @@
                 "marker": "DTC-P05F"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "9f3aee1d5a6ea5d57d5d5d5ac0468c8e49d5c879"
+              }
+            ]
           },
           {
             "id": "DTC-P05D",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Owner-test a fresh production Claude session using an active documented completion candidate for click focus, Tab acceptance, glyph readability, sustained output, and continued post-output input responsiveness.",
             "depends_on": [
               "DTC-P05F"
