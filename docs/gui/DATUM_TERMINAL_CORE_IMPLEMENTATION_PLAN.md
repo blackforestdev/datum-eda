@@ -51,6 +51,12 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05B --> **DTC-P05B — job control.** Foreground process groups, line-discipline control
   characters, pipelines, stopped/continued jobs, resize/SIGWINCH, exact exit,
   ratified terminate/escalate/SIGHUP behavior, and orphan-free teardown.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05C --> **DTC-P05C — agent-session usability repair.** Restore terminal-screen focus
+  entry under child mouse reporting, terminal-specific governed glyph coverage,
+  and bounded shaped-text caching under continuously changing agent output.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05D --> **DTC-P05D — owner production retest.** Accept a fresh-build Claude session
+  only after click focus, Tab completion, box/Powerline glyphs, sustained output,
+  and post-output typing remain usable without a lockup.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -220,6 +226,30 @@ Close confirmation, Force/Retry/Cancel, concurrent application shutdown,
 fail-closed process discovery, deliberate new-session exclusion, and
 reader/writer/master-FD completion barriers are regression- and
 drift-guarded. No dependency or terminal capability identity changed.
+
+#### DTC-P05C agent-session usability repair
+
+The owner's production screenshot exposed three coupled defects that must be
+repaired before transport stress proof: a mouse-aware child could consume the
+terminal activation click before Datum changed keyboard focus; terminal cells
+used an IBM Plex Mono UI face without box-drawing/Powerline coverage; and the
+renderer retained every unique shaped text buffer forever, making animated
+agent output progressively slower and larger. DTC-P05C restores the already
+ratified terminal-entry law, applies the owner-approved decision 031
+JetBrains Mono exception to terminal cells only, and bounds cache residency by
+active render generations. The exact internally-versioned 2.305 snapshot was
+already vendored; its
+applicable copyright/OFL notice and hash-pinned provenance ship beside it. This
+adds no package, downloaded asset, terminal dependency, or new interaction
+policy.
+
+<!-- OWNER:TERMINAL-T1-PTY:DTC-P05D:DTC-P05D -->
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05D-OWNER-ACCEPTED -->
+DTC-P05D remains pending until the project owner confirms a fresh production
+build can enter terminal focus by clicking a mouse-aware Claude session, use
+Tab completion without pane cycling, render the governed box/Powerline glyph
+fixture legibly, sustain an agent session, and accept the next prompt without
+freezing. Implementation evidence alone cannot satisfy this hands-on gate.
 
 #### DTC-P06A owner packet
 

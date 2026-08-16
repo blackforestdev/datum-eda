@@ -374,7 +374,7 @@ fn terminal_space_sequence(modifiers: ModifiersState) -> Option<Vec<u8>> {
     Some(bytes)
 }
 
-fn terminal_tab_sequence(modifiers: ModifiersState) -> Option<Vec<u8>> {
+pub(super) fn terminal_tab_sequence(modifiers: ModifiersState) -> Option<Vec<u8>> {
     if modifiers.alt_key() {
         return None;
     }

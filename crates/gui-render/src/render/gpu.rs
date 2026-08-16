@@ -27,6 +27,7 @@ pub struct Renderer {
     text_renderer: TextRenderer,
     menu_overlay_text_renderer: TextRenderer,
     text_buffer_cache: Vec<CachedTextBuffer>,
+    text_buffer_frame: u64,
     last_text_prepare_signature: Option<TextPrepareSignature>,
     panel_vertex_buffer: Option<wgpu::Buffer>,
     panel_vertex_capacity: usize,
@@ -377,6 +378,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_renderer,
             menu_overlay_text_renderer,
             text_buffer_cache: Vec::new(),
+            text_buffer_frame: 0,
             last_text_prepare_signature: None,
             panel_vertex_buffer: None,
             panel_vertex_capacity: 0,
@@ -671,6 +673,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
+        self.begin_text_buffer_frame();
         let (text_buffer_indices, text_cache_stats) =
             self.cached_text_buffer_indices(&prepared.text_runs, width, height);
         let text_signature =

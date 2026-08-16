@@ -276,6 +276,7 @@ tier**.
 |---|---|---|---|---|---|
 | UI sans = IBM Plex Sans (Condensed cut bundled) | prototype `--sans` is a **placeholder** system stack (NOT a target) | `TextFace::Ui` → "IBM Plex Sans Condensed" (`text_attrs`, `lib.rs:6226`) | P1 | ENFORCED | Design Book §2.4 is authoritative; font load `load_datum_fonts`; prototype stack explicitly not conformance-relevant (§0) |
 | Data mono = IBM Plex Mono | `--mono` placeholder stack | `TextFace::Mono` → "IBM Plex Mono" (bundled + used) | P1 | ENFORCED | `VISUAL_LANGUAGE.md` §2.4 + `check_gui_design_tokens.py` type-family parity |
+| Native terminal cell exception = JetBrains Mono Regular | prototype terminal stack is non-authoritative | `TextFace::Terminal` → bundled "JetBrains Mono" for complete terminal cell runs; chrome remains `TextFace::Mono` | T1 | ENFORCED | Decision 031; deterministic box-drawing/Powerline shaping and terminal-run render contracts |
 | Type ramp values (display/header/body/…/micro) | prototype px are placeholders | `design_tokens::typography` mirrors §2.4 | P1 | ENFORCED | `check_gui_design_tokens.py` typography-ramp parity |
 | Spacing (Carbon 2/4/8) + radius mirror the book | `--row` etc. placeholders | `spacing::*`, `radius::*` | P1 | ENFORCED | `check_gui_design_tokens.py` spacing/radius parity |
 | **Menu advance factor** (item 3) | Plex Condensed narrower than 0.78 | condensed UI advance guarded against retired 0.78 path | P1 | ENFORCED | `menu_chrome.rs::conformance_menu_title_width_uses_condensed_measured_advance` |

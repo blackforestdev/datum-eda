@@ -84,10 +84,11 @@ Plex Mono for aligned numeric data. Upstream `IBM/plex` tag `v5.0.0`, SIL OFL 1.
 - family id: `jetbrains_mono`
 - upstream name: `JetBrains Mono Regular`
 - upstream URL: `https://github.com/JetBrains/JetBrainsMono`
-- version: repo snapshot cloned on 2026-04-18
+- version: internal font version 2.305; upstream repo snapshot vendored on 2026-04-18
 - SHA-256: `e6fd0d7e91550b3ed2b735d4312474362c4716edc4fc0577a0f61ed782d5aed1`
 - license: SIL OFL 1.1
 - local asset filename: `assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf`
+- applicable notice/license: `assets/fonts/jetbrains_mono/OFL.txt`
 
 Temporary Phase 2D/2E harness asset:
 

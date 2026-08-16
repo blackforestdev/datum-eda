@@ -270,15 +270,18 @@ default-on per Law 2. Rendered geometry is byte-identical to CAM (Law 1).
 - **Trace-to-pad/via junction** → **teardrop** fillet, sized from pad/via/drill
   diameter and trace width.
 
-## 5. Typography — IBM Plex, program-wide  **[LOCKED]**
+## 5. Typography — IBM Plex, with native-terminal exception  **[LOCKED]**
 
-- **Two IBM Plex faces, no others.** `IBMPlexSansCondensed` is the primary face —
+- **IBM Plex is the program-wide face; terminal cells are the sole exception.**
+  `IBMPlexSansCondensed` is the primary face —
   application chrome, headings, on-canvas schematic/footprint text (pin names,
   reference designators, values, net labels), and silkscreen. `IBMPlexMono` is
   reserved for **aligned numeric data** — coordinates, hex, dimensions, counts —
   where digit columns must line up; it is **not** used for labels, names, or
-  designators (those are Sans). No system fonts anywhere; a mixed font (even on one
-  glyph like `·` / `—` / `≥`) is a defect. Faux-bold is **off**
+  designators (those are Sans). Native terminal cells use the complete
+  `JetBrainsMono-Regular` face under decision 031 so box-drawing and core
+  Powerline output remain legible; terminal chrome remains IBM Plex. No system
+  fonts anywhere; per-glyph mixed fallback is a defect. Faux-bold is **off**
   (`font-synthesis: none`) — weights are real, never synthesized.
 - **Weights bundled.** Sans Condensed `Regular / Medium / SemiBold` and Mono
   `Regular / Medium` ship in `crates/engine/assets/fonts/` (SIL-OFL; license at

@@ -291,11 +291,6 @@ impl ApplicationHandler for App {
             self.request_controlled_close(event_loop);
             return;
         }
-        if let Some(runtime) = &mut self.runtime
-            && runtime.poll_terminal_output()
-        {
-            self.request_redraw_if_needed();
-        }
         match event {
             WindowEvent::Ime(winit::event::Ime::Commit(text))
                 if self
@@ -439,6 +434,7 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    runtime.focus_terminal_screen_before_mouse_report();
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
                     {
@@ -1417,7 +1413,14 @@ impl Runtime {
 
     fn terminal_mouse_reporting_active(&self) -> bool {
         let terminal = &self.workspace().ui.terminal;
-        terminal.mouse_reporting_mode.is_some() && self.terminal_sessions.active_attached()
+        keyboard_focus::terminal_mouse_report_allowed(
+            self.keyboard_focus,
+            terminal.mouse_reporting_mode.is_some(),
+            self.terminal_sessions.active_attached(),
+            self.last_cursor_pos
+                .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
+                .is_some(),
+        )
     }
 
     fn terminal_mouse_encoding_sequence(
@@ -1435,22 +1438,8 @@ impl Runtime {
 
     fn terminal_mouse_cell(&self) -> Option<(u16, u16)> {
         let (x, y) = self.last_cursor_pos?;
-        let layout = self.current_layout();
-        let rect_x = layout.bottom_strip.x + 12.0;
-        let rect_y = layout.bottom_strip.y + 44.0;
-        let rect_width = layout.bottom_strip.width - 24.0;
-        let rect_height = (layout.bottom_strip.height - 56.0).max(0.0);
-        if x < rect_x || x > rect_x + rect_width || y < rect_y || y > rect_y + rect_height {
-            return None;
-        }
-        let terminal = &self.workspace().ui.terminal;
-        let column =
-            (((x - rect_x) / rect_width.max(1.0)) * terminal.columns as f32).floor() as u16;
-        let row = (((y - rect_y) / rect_height.max(1.0)) * terminal.rows as f32).floor() as u16;
-        Some((
-            column.saturating_add(1).min(terminal.columns.max(1)),
-            row.saturating_add(1).min(terminal.rows.max(1)),
-        ))
+        self.terminal_screen_cell_at(x, y)
+            .map(|(column, row)| (column.saturating_add(1), row.saturating_add(1)))
     }
 
     fn write_terminal_mouse_report(&mut self, bytes: &[u8]) {

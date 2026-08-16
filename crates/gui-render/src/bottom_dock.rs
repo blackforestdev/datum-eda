@@ -495,7 +495,7 @@ fn render_terminal_screen(
                 y,
                 11.0,
                 TEXT_PANEL_VALUE,
-                TextFace::Mono,
+                TextFace::Terminal,
                 text_runs,
             );
         }
@@ -524,7 +524,15 @@ fn render_terminal_styled_line(
     };
     let visible_len = text.chars().count().min(max_columns);
     if visible_len == 0 {
-        draw_text("", x, y, 11.0, TEXT_PANEL_VALUE, TextFace::Mono, text_runs);
+        draw_text(
+            "",
+            x,
+            y,
+            11.0,
+            TEXT_PANEL_VALUE,
+            TextFace::Terminal,
+            text_runs,
+        );
         return;
     }
     let mut cursor = 0;
@@ -582,7 +590,7 @@ fn draw_terminal_fragment(
         y,
         11.0,
         color,
-        TextFace::Mono,
+        TextFace::Terminal,
         text_runs,
     );
 }

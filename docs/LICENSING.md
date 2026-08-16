@@ -75,6 +75,13 @@ the component and accepted obligations. The terminal implementation has no
 third-party exception; its PTY/session and terminal-emulation code are
 Datum-owned.
 
+Product Mechanics 031 authorizes one already-vendored non-code asset for the
+native terminal cell plane: JetBrains Mono Regular 2.305 under SIL OFL 1.1.
+Its exact copyright/license notice ships beside the font and its SHA-256 is
+pinned in `crates/engine/assets/fonts/FONT_PROVENANCE.md`. This narrow font
+asset authorization does not relax decision 029 or authorize third-party
+terminal source, packages, build tools, or runtime fallback.
+
 | Dependency | License | Risk |
 |-----------|---------|------|
 | KiCad PNS router | GPL v3 | High — infects if linked. Mitigate with process isolation or deferral |

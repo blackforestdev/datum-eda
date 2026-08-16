@@ -13,8 +13,14 @@ LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
 TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
+RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
+TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain.rs"
+TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain_tests.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
+RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
+TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
+RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -87,6 +93,68 @@ def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
             failures.append("pane and character hotkeys must share the Press predicate")
         if "ElementState::Released" in dispatch_tail:
             failures.append("workspace hotkey dispatch must not fire on key release")
+
+
+def check_agent_tui_runtime(
+    main: str,
+    runtime_dock: str,
+    drain: str,
+    render_geometry: str,
+    text_cache: str,
+    render_gpu: str,
+    failures: list[str],
+) -> None:
+    """Keep mouse-aware agent TUIs focused, responsive, and bounded."""
+    window_event = main.split("    fn window_event", 1)
+    if len(window_event) != 2:
+        failures.append("window-event dispatch boundary is missing")
+    else:
+        before_match = window_event[1].split("        match event {", 1)[0]
+        if "poll_terminal_output" in before_match:
+            failures.append("terminal output must not drain before window input dispatch")
+    press = main.split("MouseButton::Left,", 1)
+    if len(press) != 2:
+        failures.append("terminal primary-press routing is missing")
+    else:
+        press = press[1].split("MouseButton::Left,", 1)[0]
+        focus_at = press.find("focus_terminal_screen_before_mouse_report")
+        report_at = press.find("report_terminal_mouse_button")
+        if focus_at < 0 or report_at < 0 or focus_at > report_at:
+            failures.append("terminal focus must precede child mouse-report forwarding")
+    for marker in (
+        "terminal_mouse_report_allowed",
+        "self.terminal_screen_cell_at(x, y)",
+    ):
+        if marker not in main:
+            failures.append(f"terminal mouse routing is missing {marker}")
+    for marker in (
+        "focus_before_terminal_mouse_press",
+        "terminal_screen_cell_at",
+    ):
+        if marker not in runtime_dock:
+            failures.append(f"terminal focus-entry boundary is missing {marker}")
+    for marker in (
+        "flush_output_batch",
+        "tiny_chunk_flood_is_applied_once_per_session_per_turn",
+    ):
+        if marker not in drain:
+            failures.append(f"terminal tiny-output batching is missing {marker}")
+    for marker in ("JetBrainsMono-Regular.ttf", "TextFace::Terminal"):
+        if marker not in render_geometry:
+            failures.append(f"terminal glyph face is missing {marker}")
+    for marker in (
+        "begin_text_buffer_frame",
+        "last_used_frame",
+        "animated_agent_text_cache_retains_only_two_visible_generations",
+    ):
+        if marker not in text_cache:
+            failures.append(f"terminal text-cache bound is missing {marker}")
+    begin_at = render_gpu.find("self.begin_text_buffer_frame();")
+    lookup_at = render_gpu.find("self.cached_text_buffer_indices(")
+    if render_gpu.count("self.begin_text_buffer_frame();") != 1:
+        failures.append("renderer must begin exactly one text-cache generation per frame")
+    elif lookup_at < 0 or begin_at > lookup_at:
+        failures.append("renderer must prune text buffers before cache lookup")
 
 
 def check_terminal_input_identity(
@@ -221,6 +289,11 @@ def main() -> int:
     terminal_controls = TERMINAL_CONTROLS.read_text()
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
+    runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text()
+    terminal_drain = TERMINAL_DRAIN.read_text() + TERMINAL_DRAIN_TESTS.read_text()
+    render_geometry = RENDER_GEOMETRY.read_text()
+    text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
+    render_gpu = RENDER_GPU.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
     terminal_transport = "\n".join(
@@ -229,6 +302,15 @@ def main() -> int:
     )
     check_terminal_focus_reporting(main, keyboard_focus, focus_mutation_sources, failures)
     check_workspace_hotkey_timing(keyboard_focus, failures)
+    check_agent_tui_runtime(
+        main,
+        runtime_terminal_dock,
+        terminal_drain,
+        render_geometry,
+        text_buffer_cache,
+        render_gpu,
+        failures,
+    )
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)

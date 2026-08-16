@@ -1220,6 +1220,7 @@ fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
         TextFace::UiMedium => 0.64,
         TextFace::UiStrong => 0.66,
         TextFace::Mono => 0.72,
+        TextFace::Terminal => 0.72,
     };
     let glyphs = text.chars().count().max(1) as f32;
     glyphs * size * advance_factor + 16.0
@@ -1296,6 +1297,10 @@ fn load_datum_fonts(font_system: &mut FontSystem) {
     db.load_font_data(
         include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf").to_vec(),
     );
+    db.load_font_data(
+        include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf")
+            .to_vec(),
+    );
 }
 
 fn text_attrs(face: TextFace) -> Attrs<'static> {
@@ -1308,6 +1313,7 @@ fn text_attrs(face: TextFace) -> Attrs<'static> {
             .family(Family::Name("IBM Plex Sans Condensed"))
             .weight(Weight::SEMIBOLD),
         TextFace::Mono => Attrs::new().family(Family::Name("IBM Plex Mono")),
+        TextFace::Terminal => Attrs::new().family(Family::Name("JetBrains Mono")),
     }
 }
 

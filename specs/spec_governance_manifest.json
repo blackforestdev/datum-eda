@@ -631,6 +631,12 @@
    "progress_anchor": "TERMINAL-T1-CORE",
    "notes": "Ratifies a std-only first-party datum-terminal-core crate, clean-room standards process, governed Unicode data, bounded-resource semantics, truthful capability identity, per-slice proof, one-way cutover, source-health module boundaries, and conductor-controlled execution."
   },
+  "docs/decisions/PRODUCT_MECHANICS_031_TERMINAL_TYPOGRAPHY_EXCEPTION.md": {
+   "class": "doctrine",
+   "controlling": true,
+   "progress_anchor": "TERMINAL-T1-PTY",
+   "notes": "Ratifies JetBrains Mono Regular as the terminal-cell-only typography exception for box-drawing and core Powerline coverage, with the exact vendored OFL asset and provenance; all non-cell chrome and EDA text remain IBM Plex, and no code dependency or terminal implementation is authorized."
+  },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",

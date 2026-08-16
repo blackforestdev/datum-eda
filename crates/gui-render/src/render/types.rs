@@ -260,6 +260,7 @@ enum TextFace {
     UiMedium,
     UiStrong,
     Mono,
+    Terminal,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -285,6 +286,7 @@ struct TextBufferKey {
 struct CachedTextBuffer {
     key: TextBufferKey,
     buffer: Buffer,
+    last_used_frame: u64,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]

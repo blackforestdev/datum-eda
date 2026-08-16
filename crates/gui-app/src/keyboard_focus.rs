@@ -158,6 +158,31 @@ pub(crate) fn focus_after_hit_target(
     }
 }
 
+pub(crate) fn focus_before_terminal_mouse_press(
+    current: KeyboardFocus,
+    terminal_visible: bool,
+    child_mouse_reporting: bool,
+    pointer_over_screen: bool,
+) -> KeyboardFocus {
+    if terminal_visible && child_mouse_reporting && pointer_over_screen {
+        KeyboardFocus::Terminal
+    } else {
+        current
+    }
+}
+
+pub(crate) fn terminal_mouse_report_allowed(
+    focus: KeyboardFocus,
+    child_mouse_reporting: bool,
+    session_attached: bool,
+    pointer_over_screen: bool,
+) -> bool {
+    focus == KeyboardFocus::Terminal
+        && child_mouse_reporting
+        && session_attached
+        && pointer_over_screen
+}
+
 /// Resolve the one focus-exit event that must run before raw PTY routing.
 /// The press still reaches the child as ESC; the release transfers ownership
 /// back to the editor after terminal-local rename/input state is dismissed.

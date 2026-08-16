@@ -7,7 +7,35 @@
 
 use super::*;
 
+fn text_buffer_frame_is_recent(last_used_frame: u64, current_frame: u64) -> bool {
+    last_used_frame >= current_frame.saturating_sub(1)
+}
+
+fn retain_recent_text_buffers<T>(
+    entries: &mut Vec<T>,
+    current_frame: u64,
+    last_used_frame: impl Fn(&T) -> u64,
+) {
+    entries.retain(|entry| {
+        text_buffer_frame_is_recent(last_used_frame(entry), current_frame)
+    });
+}
+
 impl Renderer {
+    /// Retain shaped buffers used by the immediately preceding frame only.
+    /// Agent TUIs continuously rewrite status lines; retaining every historical
+    /// whole-string buffer made lookup progressively slower and memory grow
+    /// without bound. Current and previous-frame residency preserves stable
+    /// frame reuse while bounding churn by visible scene complexity.
+    pub(crate) fn begin_text_buffer_frame(&mut self) {
+        self.text_buffer_frame = self.text_buffer_frame.wrapping_add(1).max(1);
+        retain_recent_text_buffers(
+            &mut self.text_buffer_cache,
+            self.text_buffer_frame,
+            |entry| entry.last_used_frame,
+        );
+    }
+
     pub(crate) fn cached_text_buffer_indices(
         &mut self,
         text_runs: &[TextRun],
@@ -35,6 +63,7 @@ impl Renderer {
             .iter()
             .position(|entry| entry.key == key)
         {
+            self.text_buffer_cache[index].last_used_frame = self.text_buffer_frame;
             return (index, false);
         }
         let mut buffer = Buffer::new(
@@ -56,8 +85,46 @@ impl Renderer {
             None,
         );
         buffer.shape_until_scroll(&mut self.font_system, false);
-        self.text_buffer_cache
-            .push(CachedTextBuffer { key, buffer });
+        self.text_buffer_cache.push(CachedTextBuffer {
+            key,
+            buffer,
+            last_used_frame: self.text_buffer_frame,
+        });
         (self.text_buffer_cache.len() - 1, true)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::retain_recent_text_buffers;
+
+    #[derive(Debug)]
+    struct SimulatedBuffer {
+        key: String,
+        last_used_frame: u64,
+    }
+
+    #[test]
+    fn animated_agent_text_cache_retains_only_two_visible_generations() {
+        const VISIBLE_RUNS: usize = 64;
+        let mut cache: Vec<SimulatedBuffer> = Vec::new();
+        let mut maximum_resident = 0usize;
+        for unique in 0..100_000_usize {
+            let frame = (unique / VISIBLE_RUNS + 1) as u64;
+            if unique % VISIBLE_RUNS == 0 {
+                retain_recent_text_buffers(&mut cache, frame, |entry| entry.last_used_frame);
+            }
+            let key = format!("agent-frame-{frame}-run-{}", unique % VISIBLE_RUNS);
+            cache.push(SimulatedBuffer {
+                key,
+                last_used_frame: frame,
+            });
+            assert!(cache.iter().any(|entry| entry.key == cache.last().unwrap().key));
+            maximum_resident = maximum_resident.max(cache.len());
+        }
+        assert_eq!(maximum_resident, VISIBLE_RUNS * 2);
+        assert!(cache.len() <= VISIBLE_RUNS * 2);
+        let last_frame = 100_000_usize.div_ceil(VISIBLE_RUNS) as u64;
+        assert!(cache.iter().all(|entry| entry.last_used_frame >= last_frame - 1));
     }
 }

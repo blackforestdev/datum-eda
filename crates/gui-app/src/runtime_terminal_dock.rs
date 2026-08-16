@@ -10,6 +10,31 @@
 use super::*;
 
 impl Runtime {
+    /// A mouse-aware child may consume terminal pointer events only after the
+    /// terminal screen owns keyboard focus. The activation press therefore
+    /// establishes focus through the shared cell rectangle before mouse
+    /// reporting runs; otherwise the child's report would swallow the only
+    /// click that can make Tab and text belong to the PTY.
+    pub(super) fn focus_terminal_screen_before_mouse_report(&mut self) -> bool {
+        let terminal_visible =
+            matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal));
+        let child_mouse_reporting = self.workspace().ui.terminal.mouse_reporting_mode.is_some();
+        let over_screen = self
+            .last_cursor_pos
+            .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
+            .is_some();
+        let next = keyboard_focus::focus_before_terminal_mouse_press(
+            self.keyboard_focus,
+            terminal_visible,
+            child_mouse_reporting,
+            over_screen,
+        );
+        if next != self.keyboard_focus {
+            self.set_keyboard_focus(next);
+        }
+        next == KeyboardFocus::Terminal && over_screen
+    }
+
     pub(super) fn set_active_dock(&mut self, tab: DockTab) -> bool {
         let ui = &mut self.session.workspace_mut().ui;
         if ui.active_dock_tab == Some(tab) {

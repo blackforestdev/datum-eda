@@ -17,6 +17,76 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_agent_tui_focus_batching_glyph_and_cache_contract_is_pinned(self) -> None:
+        main = """
+    fn window_event() {
+        match event {
+            MouseButton::Left, ElementState::Pressed => {
+                focus_terminal_screen_before_mouse_report();
+                report_terminal_mouse_button();
+            }
+            MouseButton::Left, ElementState::Released => {}
+        }
+    }
+fn terminal_mouse_reporting_active() {
+    terminal_mouse_report_allowed();
+    self.terminal_screen_cell_at(x, y);
+}
+"""
+        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at();"
+        drain = "flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();"
+        geometry = 'include_bytes!("JetBrainsMono-Regular.ttf"); TextFace::Terminal;'
+        cache = """
+fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
+fn animated_agent_text_cache_retains_only_two_visible_generations() {}
+"""
+        render_gpu = """
+self.begin_text_buffer_frame();
+self.cached_text_buffer_indices();
+"""
+        failures: list[str] = []
+        guard.check_agent_tui_runtime(
+            main, runtime_dock, drain, geometry, cache, render_gpu, failures
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_agent_tui_runtime(
+            main.replace(
+                "        match event {",
+                "        poll_terminal_output();\n        match event {",
+            ).replace(
+                "focus_terminal_screen_before_mouse_report();\n"
+                "                report_terminal_mouse_button();",
+                "report_terminal_mouse_button();\n"
+                "                focus_terminal_screen_before_mouse_report();",
+            ),
+            runtime_dock,
+            drain.replace("flush_output_batch", "apply_each_chunk"),
+            geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf"),
+            cache.replace("last_used_frame", "unbounded_generation"),
+            render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
+            failures,
+        )
+        self.assertIn(
+            "terminal output must not drain before window input dispatch", failures
+        )
+        self.assertIn(
+            "terminal focus must precede child mouse-report forwarding", failures
+        )
+        self.assertIn(
+            "terminal tiny-output batching is missing flush_output_batch", failures
+        )
+        self.assertIn(
+            "terminal glyph face is missing JetBrainsMono-Regular.ttf", failures
+        )
+        self.assertIn(
+            "terminal text-cache bound is missing last_used_frame", failures
+        )
+        self.assertIn(
+            "renderer must begin exactly one text-cache generation per frame", failures
+        )
+
     def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
         transport = """
 fn open_pty_pair() {

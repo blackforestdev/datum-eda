@@ -1,18 +1,53 @@
 use super::{
     KeyClass, KeyboardFocus, RouteDecision, TerminalInputOwner, armed_close_shortcut,
-    focus_after_canvas_click, focus_after_hit_target, hit_target_is_terminal_entry, key_route,
-    pre_raw_escape_route, terminal_focus_report_transition, terminal_input_owner,
+    focus_after_canvas_click, focus_after_hit_target, focus_before_terminal_mouse_press,
+    hit_target_is_terminal_entry, key_route, pre_raw_escape_route,
+    terminal_focus_report_transition, terminal_input_owner, terminal_mouse_report_allowed,
     workspace_action_should_fire,
 };
+use crate::terminal_input::terminal_tab_sequence;
 use datum_gui_render::HitTarget;
 use winit::{
     event::ElementState,
-    keyboard::{KeyCode, PhysicalKey},
+    keyboard::{KeyCode, ModifiersState, PhysicalKey},
 };
 
 #[test]
 fn default_focus_is_editor() {
     assert_eq!(KeyboardFocus::default(), KeyboardFocus::Editor);
+}
+
+#[test]
+fn mouse_aware_child_cannot_swallow_terminal_focus_entry() {
+    let focus = focus_before_terminal_mouse_press(KeyboardFocus::Editor, true, true, true);
+    assert_eq!(focus, KeyboardFocus::Terminal);
+    assert!(terminal_mouse_report_allowed(focus, true, true, true));
+    assert_eq!(key_route(focus, KeyClass::RawPty, true), RouteDecision::Terminal);
+    assert!(!workspace_action_should_fire(
+        focus,
+        true,
+        ElementState::Pressed,
+        false,
+    ));
+    assert_eq!(terminal_tab_sequence(ModifiersState::empty()), Some(b"\t".to_vec()));
+    assert_eq!(
+        terminal_tab_sequence(ModifiersState::SHIFT),
+        Some(b"\x1b[Z".to_vec())
+    );
+    assert_eq!(
+        focus_before_terminal_mouse_press(KeyboardFocus::Editor, true, true, false),
+        KeyboardFocus::Editor
+    );
+    assert!(!terminal_mouse_report_allowed(
+        KeyboardFocus::Editor,
+        true,
+        true,
+        false,
+    ));
+    assert_eq!(
+        focus_before_terminal_mouse_press(KeyboardFocus::Editor, false, true, true),
+        KeyboardFocus::Editor
+    );
 }
 
 #[test]

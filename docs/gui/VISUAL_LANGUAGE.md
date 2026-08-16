@@ -128,12 +128,15 @@ defined zoom precedence policy (Altium model: base-pattern-scales /
 layer-dominates / override-dominates) — to be specified when net coloring lands.
 
 ### 2.4 Typography
-**UI sans = IBM Plex Sans (owner choice). Data mono = IBM Plex Mono.**
+**UI sans = IBM Plex Sans (owner choice). Data mono = IBM Plex Mono. Native
+terminal cells = JetBrains Mono (decision 031).**
 - **UI sans:** IBM Plex Sans. The repo currently bundles only the **Condensed**
   cut (`ibm_plex_sans_condensed`); standard non-condensed Plex Sans is *not*
   bundled and adding it is a font-asset addition requiring owner approval.
-- **Data mono:** IBM Plex Mono, bundled and used for coordinates, IDs, terminal
-  text, paths, and command-like data.
+- **Data mono:** IBM Plex Mono, bundled and used for coordinates, IDs, paths,
+  command-like data, and terminal chrome. The native terminal cell plane alone
+  uses the bundled JetBrains Mono Regular face for box-drawing and core
+  Powerline coverage; it is a whole-run face, never a per-glyph fallback.
 - Any font used must be OFL/permissive for embedding in the wgpu/glyphon pipeline.
 
 Type ramp (UI sits in the 10–14px dense range):

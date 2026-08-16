@@ -28,6 +28,9 @@ mod marking_menu;
 mod menu_chrome;
 mod side_panels;
 mod terminal_cursor;
+#[cfg(test)]
+#[path = "terminal_font_tests.rs"]
+mod terminal_font_tests;
 mod terminal_session_chrome;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
