@@ -5,12 +5,11 @@ use datum_gui_viewport::{
 };
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_MUTED,
-    TEXT_PANEL_VALUE, TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_PANEL_VALUE,
+    TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text,
     push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
-use crate::terminal_session_chrome::render_terminal_lifecycle_controls;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
 
@@ -189,53 +188,6 @@ fn render_terminal_lane(
     hit_regions: &mut Vec<HitRegion>,
 ) {
     render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
-    render_terminal_lifecycle_overlay(state, geometry, panel_quads, text_runs, hit_regions);
-}
-
-/// Transient safety chrome overlays the first screen row only while an action
-/// is required. Normal terminal operation reserves no persistent header row.
-fn render_terminal_lifecycle_overlay(
-    state: &ReviewWorkspaceState,
-    geometry: &TerminalScreenGeometry,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) {
-    let Some(label) = state
-        .ui
-        .terminal
-        .application_shutdown_blocked
-        .as_deref()
-        .or_else(|| {
-            (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
-        })
-    else {
-        return;
-    };
-    let screen: RectPx = geometry.screen.into();
-    let overlay = RectPx {
-        height: TERMINAL_CELL_HEIGHT_PX + 2.0,
-        ..screen
-    };
-    panel_quads.push(Quad::from_rect(overlay, PANEL_BG));
-    push_rect_border(panel_quads, overlay, PANEL_CARD_BORDER, 1.0);
-    draw_text(
-        label,
-        overlay.x,
-        overlay.y + 1.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    render_terminal_lifecycle_controls(
-        overlay,
-        overlay.y + 1.0,
-        &state.ui.terminal.status,
-        state.ui.terminal.application_shutdown_blocked.as_deref(),
-        text_runs,
-        hit_regions,
-    );
 }
 
 /// The terminal SCREEN: the exact visible cell rectangle, drawing precisely

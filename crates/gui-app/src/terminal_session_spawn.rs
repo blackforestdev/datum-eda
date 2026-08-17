@@ -160,7 +160,6 @@ fn new_session_slot(session: TerminalSession, label: String) -> TerminalSessionS
         disconnected_reported: false,
         termination_failure_reported: false,
         close_confirmation_armed: false,
-        close_confirmation_input: String::new(),
         pending_restart: false,
         remove_when_closed: false,
         hidden_after_close: false,

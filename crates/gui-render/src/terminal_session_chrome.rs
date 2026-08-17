@@ -1,13 +1,9 @@
 use super::{HitRegion, HitTarget, RectPx, TEXT_MUTED, TextFace, TextRun, draw_text};
 
-pub(crate) fn render_terminal_lifecycle_controls(
-    rect: RectPx,
-    y: f32,
+fn lifecycle_actions(
     status: &str,
     application_shutdown_blocked: Option<&str>,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) -> bool {
+) -> Vec<(&'static str, HitTarget)> {
     let mut actions = Vec::new();
     if status.starts_with("close terminal?") {
         actions.push(("TERMINATE", HitTarget::TerminalSessionTerminateActive));
@@ -31,13 +27,32 @@ pub(crate) fn render_terminal_lifecycle_controls(
     {
         actions.push(("FORCE KILL", HitTarget::TerminalSessionForceKillActive));
     }
+    actions
+}
+
+pub(crate) fn terminal_lifecycle_controls_width(
+    status: &str,
+    application_shutdown_blocked: Option<&str>,
+) -> f32 {
+    lifecycle_actions(status, application_shutdown_blocked)
+        .iter()
+        .map(|(label, _)| label.len() as f32 * 7.0 + 16.0)
+        .sum()
+}
+
+pub(crate) fn render_terminal_lifecycle_controls(
+    rect: RectPx,
+    y: f32,
+    status: &str,
+    application_shutdown_blocked: Option<&str>,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) -> bool {
+    let actions = lifecycle_actions(status, application_shutdown_blocked);
     if actions.is_empty() {
         return false;
     }
-    let width = actions
-        .iter()
-        .map(|(label, _)| label.len() as f32 * 7.0 + 16.0)
-        .sum::<f32>();
+    let width = terminal_lifecycle_controls_width(status, application_shutdown_blocked);
     let mut x = (rect.x + rect.width - width).max(rect.x);
     for (label, target) in actions {
         x = push_control(label, target, x, y, text_runs, hit_regions);
@@ -93,7 +108,7 @@ mod tests {
     fn close_and_shutdown_states_expose_only_the_ratified_actions() {
         assert!(targets("running").is_empty());
 
-        let armed = targets("close terminal? type yes + Enter");
+        let armed = targets("close terminal? Enter confirms; Escape cancels");
         assert!(armed.contains(&HitTarget::TerminalSessionTerminateActive));
         assert!(armed.contains(&HitTarget::TerminalShutdownCancel));
 

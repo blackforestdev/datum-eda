@@ -244,14 +244,12 @@ fn live_close_requires_an_approved_confirmation_and_then_removes_automatically()
             .is_ok()
     );
 
-    registry.handle_close_confirmation_input(b"YES", &mut lane);
-    registry.handle_close_confirmation_input(b"\n", &mut lane);
+    registry.handle_close_confirmation_input(b"not-a-choice", &mut lane);
     assert!(registry.active_close_confirmation_armed());
     registry.handle_close_confirmation_input(b"\x1b", &mut lane);
     assert!(!registry.active_close_confirmation_armed());
 
     registry.close_active(&mut lane).unwrap();
-    registry.handle_close_confirmation_input(b"yes", &mut lane);
     registry.handle_close_confirmation_input(b"\n", &mut lane);
     assert!(registry.active().write_bytes(b"must-not-enter\n").is_err());
 

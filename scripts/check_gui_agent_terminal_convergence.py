@@ -283,7 +283,7 @@ def check_terminal_tab_strip(
     ):
         if marker not in tab_strip:
             failures.append(f"ordered terminal tab strip is missing {marker}")
-    if "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last" not in tests:
+    if any(marker not in tests for marker in ("new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last", "guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text")):
         failures.append("ordered terminal tab-strip production proof is missing")
     for marker in (
         "render_terminal_sessions_row",
@@ -294,7 +294,7 @@ def check_terminal_tab_strip(
         '"CLOSE"', '"SHELL SESSION /"', '"PROJECT TERMINAL"', "COPY SCROLLBACK", "render_terminal_header",
         "TerminalSessionRenameActive",
         "TerminalSessionRestartActive",
-        "TerminalSessionCloseActive",
+        "TerminalSessionCloseActive", "render_terminal_lifecycle_overlay",
     ):
         if marker in bottom_dock:
             failures.append(f"redundant terminal session menu remains: {marker}")

@@ -26,7 +26,7 @@ for tab in tabs {
 target: HitTarget::TerminalSessionNew;
 target: HitTarget::TerminalSessionClose(tab.session_id.clone());
 """
-        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {}"
+        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {} fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {}"
         bottom_dock = "render_terminal_tab_strip();"
         geometry = "fn default_dock_has_no_header_and_uses_every_affordable_row() {}"
         failures: list[str] = []
@@ -42,7 +42,7 @@ target: HitTarget::TerminalSessionClose(tab.session_id.clone());
                 "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last",
                 "removed",
             ),
-            bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\n"PROJECT TERMINAL"\nCOPY SCROLLBACK\nrender_terminal_header();',
+            bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\n"PROJECT TERMINAL"\nCOPY SCROLLBACK\nrender_terminal_header();\nrender_terminal_lifecycle_overlay();',
             geometry + "\nsessions_row\nSESSIONS_BAND_PX\nHEADER_BAND_PX\nheader: Option<ScreenRectPx>",
             failures,
         )

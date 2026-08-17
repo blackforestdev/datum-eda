@@ -15,9 +15,6 @@ impl TerminalSessionRegistry {
 
     pub(crate) fn terminate_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
         self.sessions[self.active_index].close_confirmation_armed = false;
-        self.sessions[self.active_index]
-            .close_confirmation_input
-            .clear();
         terminate_terminal_session(self.active(), state)?;
         self.sessions[self.active_index].status = state.status.clone();
         self.sync_lane_tabs(state);
@@ -43,8 +40,7 @@ impl TerminalSessionRegistry {
             let slot = &mut self.sessions[self.active_index];
             if !slot.close_confirmation_armed {
                 slot.close_confirmation_armed = true;
-                slot.close_confirmation_input.clear();
-                state.status = "close terminal? type yes + Enter, click TERMINATE, or repeat Ctrl+Shift+W; Escape cancels".to_string();
+                state.status = "close terminal? Enter confirms; Escape cancels".to_string();
                 slot.status = state.status.clone();
                 self.sync_lane_tabs(state);
                 return Ok(());
@@ -85,48 +81,22 @@ impl TerminalSessionRegistry {
         bytes: &[u8],
         state: &mut TerminalLaneState,
     ) {
-        let mut confirm = false;
-        {
-            let slot = &mut self.sessions[self.active_index];
-            match bytes {
-                b"\x1b" => {
-                    slot.close_confirmation_armed = false;
-                    slot.close_confirmation_input.clear();
-                    state.status = "running".to_string();
-                    slot.status = state.status.clone();
-                }
-                b"\x7f" => {
-                    slot.close_confirmation_input.pop();
-                }
-                b"\r" | b"\n" => {
-                    if slot.close_confirmation_input == "yes" {
-                        confirm = true;
-                    } else {
-                        slot.close_confirmation_input.clear();
-                    }
-                }
-                bytes if bytes.len() <= 16 => {
-                    if let Ok(text) = std::str::from_utf8(bytes)
-                        && text
-                            .chars()
-                            .all(|character| character.is_ascii_alphabetic())
-                        && slot.close_confirmation_input.len() + text.len() <= 16
-                    {
-                        slot.close_confirmation_input.push_str(text);
-                    }
-                }
-                _ => {}
-            }
-            if slot.close_confirmation_armed && !confirm {
-                state.status = format!(
-                    "close terminal? type yes + Enter [{}]; Escape cancels",
-                    slot.close_confirmation_input
-                );
+        match bytes {
+            b"\x1b" => {
+                let slot = &mut self.sessions[self.active_index];
+                slot.close_confirmation_armed = false;
+                state.status = "running".to_string();
                 slot.status = state.status.clone();
             }
-        }
-        if confirm {
-            let _ = self.confirm_close_active(state);
+            b"\r" | b"\n" => {
+                let _ = self.confirm_close_active(state);
+            }
+            _ => {
+                // The close prompt exclusively owns input while armed so an
+                // accidental keystroke cannot reach the shell. Only the two
+                // displayed choices have meaning: Enter confirms, Escape
+                // cancels.
+            }
         }
     }
 
@@ -144,7 +114,6 @@ impl TerminalSessionRegistry {
     pub(crate) fn terminate_all_by(&mut self, deadline: Instant) {
         for slot in &mut self.sessions {
             slot.close_confirmation_armed = false;
-            slot.close_confirmation_input.clear();
             let _ = slot.session.terminate_by(deadline);
         }
     }

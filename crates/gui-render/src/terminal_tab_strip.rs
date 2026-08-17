@@ -1,12 +1,16 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalTabState};
 
 use super::{
-    HitRegion, HitTarget, Quad, RectPx, TEXT_ACCENT, TEXT_MUTED, TEXT_PRIMARY, TextFace, TextRun,
-    design_tokens, draw_text, estimated_text_run_width_px, truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, TEXT_ACCENT, TEXT_MUTED,
+    TEXT_PRIMARY, TextFace, TextRun, design_tokens, draw_text, estimated_text_run_width_px,
+    push_rect_border, truncate_text,
+};
+use crate::terminal_session_chrome::{
+    render_terminal_lifecycle_controls, terminal_lifecycle_controls_width,
 };
 
 pub(super) const TAB_GAP_PX: f32 = 8.0;
-const CLOSE_WIDTH_PX: f32 = 20.0;
+const CLOSE_WIDTH_PX: f32 = 28.0;
 const PLUS_WIDTH_PX: f32 = 20.0;
 const MIN_TAB_WIDTH_PX: f32 = 56.0;
 const MAX_TAB_WIDTH_PX: f32 = 152.0;
@@ -18,9 +22,20 @@ pub(super) fn render_terminal_tab_strip(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    let hint = "Ctrl+Shift+T new terminal   \u{00B7}   Ctrl+K palette";
-    let hint_width = estimated_text_run_width_px(hint, 11.5, TextFace::Mono) - 16.0;
-    let hint_x = strip.x + strip.width - 12.0 - hint_width;
+    let routine_hint = "Ctrl+Shift+T new terminal   \u{00B7}   Ctrl+K palette";
+    let lifecycle_label = state
+        .ui
+        .terminal
+        .application_shutdown_blocked
+        .as_deref()
+        .or_else(|| {
+            (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
+        });
+    let trailing_width = lifecycle_label.map_or_else(
+        || estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0,
+        |_| (strip.width * 0.46).clamp(320.0, 620.0),
+    );
+    let trailing_x = strip.x + strip.width - 12.0 - trailing_width;
     let tab_y = strip.y + 6.0;
     let tab_height = (strip.height - 6.0).max(1.0);
     let mut x = strip.x + 12.0;
@@ -50,7 +65,7 @@ pub(super) fn render_terminal_tab_strip(
         });
         x += width + TAB_GAP_PX;
     } else {
-        let available = (hint_x - x - PLUS_WIDTH_PX - TAB_GAP_PX).max(MIN_TAB_WIDTH_PX);
+        let available = (trailing_x - x - PLUS_WIDTH_PX - TAB_GAP_PX).max(MIN_TAB_WIDTH_PX);
         let tab_width =
             (available / tabs.len() as f32 - TAB_GAP_PX).clamp(MIN_TAB_WIDTH_PX, MAX_TAB_WIDTH_PX);
         for tab in tabs {
@@ -82,10 +97,10 @@ pub(super) fn render_terminal_tab_strip(
             };
             draw_text(
                 "×",
-                close.x + 5.0,
-                close.y + 8.0,
-                12.5,
-                TEXT_MUTED,
+                close.x + 7.0,
+                close.y + 6.0,
+                15.5,
+                if tab.active { TEXT_PRIMARY } else { TEXT_MUTED },
                 TextFace::Ui,
                 text_runs,
             );
@@ -116,15 +131,49 @@ pub(super) fn render_terminal_tab_strip(
         target: HitTarget::TerminalSessionNew,
         rect: plus,
     });
-    draw_text(
-        hint,
-        hint_x,
-        tab_y + 8.0,
-        11.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
+    if let Some(label) = lifecycle_label {
+        let chrome = RectPx {
+            x: trailing_x,
+            y: tab_y + 2.0,
+            width: trailing_width,
+            height: 22.0,
+        };
+        panel_quads.push(Quad::from_rect(chrome, PANEL_BG));
+        push_rect_border(panel_quads, chrome, PANEL_CARD_BORDER, 1.0);
+        let controls_width = terminal_lifecycle_controls_width(
+            &state.ui.terminal.status,
+            state.ui.terminal.application_shutdown_blocked.as_deref(),
+        );
+        let label_columns = (((chrome.width - controls_width - 20.0) / 7.0) as usize).max(1);
+        let label = truncate_text(label, label_columns);
+        draw_text(
+            &label,
+            chrome.x + 8.0,
+            chrome.y + 4.0,
+            11.0,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            text_runs,
+        );
+        render_terminal_lifecycle_controls(
+            chrome,
+            chrome.y + 4.0,
+            &state.ui.terminal.status,
+            state.ui.terminal.application_shutdown_blocked.as_deref(),
+            text_runs,
+            hit_regions,
+        );
+    } else {
+        draw_text(
+            routine_hint,
+            trailing_x,
+            tab_y + 8.0,
+            11.5,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
 }
 
 fn top_tab_label(tab: &TerminalTabState, tab_width: f32) -> String {

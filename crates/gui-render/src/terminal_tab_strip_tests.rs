@@ -93,3 +93,78 @@ fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last
     let last = top_tabs.last().expect("last session tab").rect;
     assert!(last.x + last.width < plus.rect.x);
 }
+
+#[test]
+fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    state.ui.terminal.status = "close terminal? Enter confirms; Escape cancels".to_string();
+    state.ui.terminal.tabs = vec![datum_gui_protocol::TerminalTabState {
+        session_id: "terminal-1".to_string(),
+        previous_session_id: None,
+        label: "shell 1".to_string(),
+        event_log_path: "/tmp/terminal-1.jsonl".to_string(),
+        activity_event_count: 0,
+        activity_summary: Vec::new(),
+        active: true,
+        attached: true,
+        status: state.ui.terminal.status.clone(),
+        restart_count: 0,
+    }];
+    *state.ui.terminal.pty_grid_mut().lines = vec!["visible-shell-prompt$".to_string()];
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let geometry = datum_gui_viewport::terminal_screen_geometry(
+        ShellLayout::for_window(1280, 800, Some(260))
+            .bottom_strip
+            .into(),
+    );
+    let confirmation = prepared
+        .text_runs
+        .iter()
+        .find(|run| run.text.contains("Enter confirms"))
+        .expect("guarded close must explain the Enter/Escape choice");
+    let prompt = prepared
+        .text_runs
+        .iter()
+        .find(|run| run.text == "visible-shell-prompt$")
+        .expect("terminal content must remain rendered");
+    assert!(confirmation.y < geometry.screen.y);
+    assert!(prompt.y >= geometry.screen.y);
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .any(|region| { region.target == HitTarget::TerminalSessionTerminateActive })
+    );
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .any(|region| { region.target == HitTarget::TerminalShutdownCancel })
+    );
+
+    let close = prepared
+        .hit_regions
+        .iter()
+        .find(|region| matches!(region.target, HitTarget::TerminalSessionClose(_)))
+        .expect("active tab close target");
+    assert!(
+        close.rect.width >= 28.0,
+        "tab close target must be easy to hit"
+    );
+    let close_glyph = prepared
+        .text_runs
+        .iter()
+        .find(|run| run.text == "×")
+        .expect("visible tab close glyph");
+    assert!(close_glyph.size >= 15.0);
+}
