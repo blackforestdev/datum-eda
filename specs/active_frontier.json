@@ -1411,8 +1411,8 @@
         "harness": "codex-cli",
         "session": "codex-dtc-p05i-lean-session-chrome-20260817",
         "claimed_at": "2026-08-17T05:17:33Z",
-        "heartbeat_at": "2026-08-17T05:17:33Z",
-        "expires_at": "2026-08-17T13:17:33Z",
+        "heartbeat_at": "2026-08-17T13:29:51Z",
+        "expires_at": "2026-08-17T21:29:51Z",
         "scope": [
           "DTC-P05I lean terminal session chrome"
         ],
