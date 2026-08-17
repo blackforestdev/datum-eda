@@ -6,8 +6,8 @@ use datum_gui_viewport::{
 
 use super::{
     HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_MUTED,
-    TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, TextRunSpan, draw_rich_text,
-    draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
+    TEXT_PANEL_VALUE, TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text,
+    push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_session_chrome::render_terminal_lifecycle_controls;
@@ -188,22 +188,20 @@ fn render_terminal_lane(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    if let Some(header) = geometry.header {
-        render_terminal_header(state, header.into(), text_runs, hit_regions);
-    }
     render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
+    render_terminal_lifecycle_overlay(state, geometry, panel_quads, text_runs, hit_regions);
 }
 
-/// Single-line terminal chrome: lane title, shortcuts, and contextual
-/// lifecycle controls. Routine PTY metadata remains in terminal/session state
-/// for protocol behavior and diagnostics but consumes no persistent screen row.
-fn render_terminal_header(
+/// Transient safety chrome overlays the first screen row only while an action
+/// is required. Normal terminal operation reserves no persistent header row.
+fn render_terminal_lifecycle_overlay(
     state: &ReviewWorkspaceState,
-    rect: RectPx,
+    geometry: &TerminalScreenGeometry,
+    panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    let header_label = state
+    let Some(label) = state
         .ui
         .terminal
         .application_shutdown_blocked
@@ -211,36 +209,33 @@ fn render_terminal_header(
         .or_else(|| {
             (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
         })
-        .unwrap_or("PROJECT TERMINAL");
+    else {
+        return;
+    };
+    let screen: RectPx = geometry.screen.into();
+    let overlay = RectPx {
+        height: TERMINAL_CELL_HEIGHT_PX + 2.0,
+        ..screen
+    };
+    panel_quads.push(Quad::from_rect(overlay, PANEL_BG));
+    push_rect_border(panel_quads, overlay, PANEL_CARD_BORDER, 1.0);
     draw_text(
-        header_label,
-        rect.x,
-        rect.y,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
+        label,
+        overlay.x,
+        overlay.y + 1.0,
+        10.5,
+        TEXT_MUTED,
+        TextFace::Mono,
         text_runs,
     );
-    if !render_terminal_lifecycle_controls(
-        rect,
-        rect.y + 1.0,
+    render_terminal_lifecycle_controls(
+        overlay,
+        overlay.y + 1.0,
         &state.ui.terminal.status,
         state.ui.terminal.application_shutdown_blocked.as_deref(),
         text_runs,
         hit_regions,
-    ) {
-        let hint = "COPY SCROLLBACK CTRL+SHIFT+C  SCROLL SHIFT+PGUP/PGDN  PASTE CTRL+V";
-        let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
-        draw_text(
-            hint,
-            rect.x + rect.width - hint_w,
-            rect.y + 1.0,
-            10.5,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
+    );
 }
 
 /// The terminal SCREEN: the exact visible cell rectangle, drawing precisely

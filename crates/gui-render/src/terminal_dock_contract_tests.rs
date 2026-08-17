@@ -4,7 +4,7 @@ use super::*;
 mod terminal_hit_ownership_tests;
 
 #[test]
-fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
+fn terminal_dock_omits_persistent_header_and_routine_diagnostics() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
@@ -56,6 +56,10 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
     );
 
     for diagnostic in [
+        "PROJECT TERMINAL",
+        "COPY SCROLLBACK CTRL+SHIFT+C",
+        "SCROLL SHIFT+PGUP/PGDN",
+        "PASTE CTRL+V",
         "SHELL SESSION",
         "codex: substrate review",
         "BELL 2",
@@ -74,27 +78,6 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             "routine terminal diagnostic must not consume persistent chrome: {diagnostic}"
         );
     }
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("COPY SCROLLBACK CTRL+SHIFT+C")),
-        "terminal dock should expose its native scrollback copy shortcut"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("PASTE CTRL+V")),
-        "terminal dock should expose its paste shortcut"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("SCROLL SHIFT+PGUP/PGDN")),
-        "terminal dock should expose keyboard scrollback shortcuts"
-    );
     for redundant in ["SESSIONS", "+NEW", "RENAME", "RESTART", "CLOSE"] {
         assert!(
             !prepared.text_runs.iter().any(|run| run.text == redundant),
@@ -573,5 +556,17 @@ fn terminal_dock_renders_exact_global_shutdown_survivor_identity() {
             .text_runs
             .iter()
             .any(|run| { run.text.contains("pid=4242 pgid=4200 sid=4100") })
+    );
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .any(|region| { region.target == HitTarget::TerminalSessionRetryTermination })
+    );
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .any(|region| { region.target == HitTarget::TerminalShutdownCancel })
     );
 }

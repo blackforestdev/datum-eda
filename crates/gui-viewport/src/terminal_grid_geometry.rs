@@ -11,8 +11,7 @@
 //!
 //! The screen rectangle is the PRIMARY space owner of the terminal lane: the
 //! cell rectangle is computed first (integral rows/columns of the fixed cell
-//! metric) and the compact header fits around it, collapsing before the screen
-//! drops below [`TERMINAL_MIN_ROWS`].
+//! metric). Persistent terminal chrome consumes no cell rows.
 //! Application summaries consume zero cell rows by construction: no summary
 //! band exists in this geometry at all.
 //!
@@ -28,7 +27,7 @@ use datum_gui_protocol::ScreenPointPx;
 pub const TERMINAL_CELL_WIDTH_PX: f32 = 7.9;
 /// Fixed terminal line pitch used by the terminal lane renderer (px).
 pub const TERMINAL_CELL_HEIGHT_PX: f32 = 16.0;
-/// Chrome collapses before the screen drops below this many rows.
+/// Minimum useful terminal height used by callers and tests.
 pub const TERMINAL_MIN_ROWS: u16 = 4;
 
 // Dock-content derivation from the bottom strip (must equal the bottom-dock
@@ -40,17 +39,11 @@ const DOCK_CONTENT_BOTTOM: f32 = 12.0;
 const LANE_PAD_X: f32 = 12.0;
 const LANE_PAD_TOP: f32 = 8.0;
 const LANE_PAD_BOTTOM: f32 = 8.0;
-/// Single-line header chrome: lane title, shortcuts, and contextual actions.
-const HEADER_BAND_PX: f32 = 18.0;
-
-/// The solved terminal-lane geometry: the exact visible cell rectangle plus
-/// the chrome bands that survived around it.
+/// The solved terminal-lane geometry and exact visible cell rectangle.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TerminalScreenGeometry {
     /// The dock content rectangle the lane lives in.
     pub content: ScreenRectPx,
-    /// Single-line header chrome band, when it fits.
-    pub header: Option<ScreenRectPx>,
     /// The exact visible cell rectangle: `columns x rows` whole cells. This
     /// rectangle is the terminal hit target and the PTY size authority.
     pub screen: ScreenRectPx,
@@ -80,11 +73,8 @@ impl TerminalScreenGeometry {
 
 /// Solve the terminal lane geometry for the shell's bottom dock strip.
 ///
-/// Screen-first space budget: the cell rectangle is computed against the full
-/// lane interior and chrome only keeps the bands the remaining space affords
-/// without pushing the screen below [`TERMINAL_MIN_ROWS`]. The returned
-/// `columns`/`rows` are the one
-/// authority for renderer and PTY alike.
+/// The cell rectangle consumes the full lane interior. The returned
+/// `columns`/`rows` are the one authority for renderer and PTY alike.
 pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeometry {
     let content = ScreenRectPx {
         x: bottom_strip.x + DOCK_CONTENT_INSET_X,
@@ -99,30 +89,16 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
         height: (content.height - LANE_PAD_TOP - LANE_PAD_BOTTOM).max(0.0),
     };
     let columns = ((inner.width / TERMINAL_CELL_WIDTH_PX) as u16).max(1);
-    let rows_with = |chrome: f32| ((inner.height - chrome).max(0.0) / TERMINAL_CELL_HEIGHT_PX) as u16;
-    let min_rows_px = f32::from(TERMINAL_MIN_ROWS) * TERMINAL_CELL_HEIGHT_PX;
-    let keep_header = inner.height - HEADER_BAND_PX >= min_rows_px;
-    let mut chrome_bottom = inner.y;
-    let header = keep_header.then(|| {
-        let band = ScreenRectPx {
-            x: inner.x,
-            y: chrome_bottom,
-            width: inner.width,
-            height: HEADER_BAND_PX,
-        };
-        chrome_bottom += HEADER_BAND_PX;
-        band
-    });
-    let rows = rows_with(chrome_bottom - inner.y).max(1);
+    let rows = (inner.height / TERMINAL_CELL_HEIGHT_PX) as u16;
+    let rows = rows.max(1);
     let screen = ScreenRectPx {
         x: inner.x,
-        y: chrome_bottom,
+        y: inner.y,
         width: f32::from(columns) * TERMINAL_CELL_WIDTH_PX,
         height: f32::from(rows) * TERMINAL_CELL_HEIGHT_PX,
     };
     TerminalScreenGeometry {
         content,
-        header,
         screen,
         columns,
         rows,
@@ -162,17 +138,11 @@ mod tests {
     }
 
     #[test]
-    fn default_dock_keeps_single_line_header_and_reclaims_metadata_row() {
+    fn default_dock_has_no_header_and_uses_every_affordable_row() {
         let geometry = terminal_screen_geometry(strip(1280.0, 220.0));
-        assert!(geometry.header.is_some(), "default dock keeps the header");
         assert_eq!(
-            geometry.header.expect("header").height,
-            TERMINAL_CELL_HEIGHT_PX + 2.0,
-            "normal chrome must remain a single compact line"
-        );
-        assert_eq!(
-            geometry.rows, 8,
-            "removed session metadata returns one more terminal cell row"
+            geometry.rows, 9,
+            "removing all persistent header chrome returns every affordable row"
         );
         assert!(geometry.columns >= 80, "a 1280px dock affords 80+ columns");
         assert_screen_within_content(&geometry);
@@ -195,21 +165,13 @@ mod tests {
     }
 
     #[test]
-    fn chrome_collapses_before_screen_drops_below_min_rows() {
-        // 150px dock: content 94px, inner 78px. The compact single-line header
-        // still leaves three rows, below the governed minimum, so it is
-        // surrendered and all four affordable rows belong to the screen.
+    fn short_docks_give_every_affordable_row_to_the_screen() {
         let geometry = terminal_screen_geometry(strip(1280.0, 150.0));
-        assert!(geometry.header.is_none());
         assert_eq!(geometry.rows, TERMINAL_MIN_ROWS);
         assert_screen_within_content(&geometry);
-        // 120px dock: the lane interior itself holds under MIN_ROWS cells, so
-        // ALL chrome is surrendered and every remaining row goes to the screen.
+        // The lane interior itself holds under MIN_ROWS cells at 120px, and
+        // every remaining row still belongs to the screen.
         let geometry = terminal_screen_geometry(strip(1280.0, 120.0));
-        assert!(
-            geometry.header.is_none(),
-            "header collapses when space demands"
-        );
         assert_eq!(geometry.rows, 3, "48px interior affords exactly 3 cells");
         assert_screen_within_content(&geometry);
     }
@@ -248,11 +210,9 @@ mod tests {
                 let inner_y = geometry.content.y + LANE_PAD_TOP;
                 let inner_height =
                     (geometry.content.height - LANE_PAD_TOP - LANE_PAD_BOTTOM).max(0.0);
-                let chrome = geometry.header.map_or(0.0, |band| band.height);
                 assert_eq!(
-                    geometry.screen.y,
-                    inner_y + chrome,
-                    "{width}x{height}: screen must start exactly under the kept chrome"
+                    geometry.screen.y, inner_y,
+                    "{width}x{height}: screen must start at the lane interior"
                 );
                 assert_eq!(
                     geometry.screen.x, inner_x,
@@ -286,9 +246,11 @@ mod tests {
             screen.y + screen.height - 0.5,
         );
         assert_eq!(last, Some((geometry.columns - 1, geometry.rows - 1)));
-        // Chrome above the screen is not a cell.
-        let header = geometry.header.expect("default dock has a header");
-        assert_eq!(geometry.cell_at(header.x + 4.0, header.y + 4.0), None);
+        // Lane padding above the screen is not a cell.
+        assert_eq!(
+            geometry.cell_at(screen.x + 4.0, geometry.content.y + 2.0),
+            None
+        );
         // Outside the lane entirely.
         assert_eq!(geometry.cell_at(-10.0, -10.0), None);
     }
