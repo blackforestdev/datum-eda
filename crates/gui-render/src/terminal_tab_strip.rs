@@ -14,6 +14,17 @@ const CLOSE_WIDTH_PX: f32 = 28.0;
 const PLUS_WIDTH_PX: f32 = 20.0;
 const MIN_TAB_WIDTH_PX: f32 = 56.0;
 const MAX_TAB_WIDTH_PX: f32 = 152.0;
+const TAB_STRIP_ROW_HEIGHT_PX: f32 = 44.0;
+const LIFECYCLE_CHROME_HEIGHT_PX: f32 = 26.0;
+
+pub(super) fn lifecycle_chrome_rect(strip: RectPx, x: f32, width: f32) -> RectPx {
+    RectPx {
+        x,
+        y: strip.y + (TAB_STRIP_ROW_HEIGHT_PX - LIFECYCLE_CHROME_HEIGHT_PX) * 0.5,
+        width,
+        height: LIFECYCLE_CHROME_HEIGHT_PX,
+    }
+}
 
 pub(super) fn render_terminal_tab_strip(
     state: &ReviewWorkspaceState,
@@ -132,12 +143,7 @@ pub(super) fn render_terminal_tab_strip(
         rect: plus,
     });
     if let Some(label) = lifecycle_label {
-        let chrome = RectPx {
-            x: trailing_x,
-            y: tab_y + 2.0,
-            width: trailing_width,
-            height: 22.0,
-        };
+        let chrome = lifecycle_chrome_rect(strip, trailing_x, trailing_width);
         panel_quads.push(Quad::from_rect(chrome, PANEL_BG));
         push_rect_border(panel_quads, chrome, PANEL_CARD_BORDER, 1.0);
         let controls_width = terminal_lifecycle_controls_width(
@@ -149,7 +155,7 @@ pub(super) fn render_terminal_tab_strip(
         draw_text(
             &label,
             chrome.x + 8.0,
-            chrome.y + 4.0,
+            tab_y + 8.0,
             11.0,
             TEXT_PRIMARY,
             TextFace::Mono,
@@ -157,7 +163,7 @@ pub(super) fn render_terminal_tab_strip(
         );
         render_terminal_lifecycle_controls(
             chrome,
-            chrome.y + 4.0,
+            tab_y + 8.0,
             &state.ui.terminal.status,
             state.ui.terminal.application_shutdown_blocked.as_deref(),
             text_runs,

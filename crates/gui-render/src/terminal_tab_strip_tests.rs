@@ -127,17 +127,33 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
             .bottom_strip
             .into(),
     );
+    let strip = ShellLayout::for_window(1280, 800, Some(260)).bottom_strip;
+    let chrome = crate::terminal_tab_strip::lifecycle_chrome_rect(strip, 700.0, 500.0);
+    assert_eq!(
+        chrome.y + chrome.height * 0.5,
+        strip.y + 22.0,
+        "lifecycle chrome must be vertically centered in the 44px tab row"
+    );
     let confirmation = prepared
         .text_runs
         .iter()
         .find(|run| run.text.contains("Enter confirms"))
         .expect("guarded close must explain the Enter/Escape choice");
+    let tab_label = prepared
+        .text_runs
+        .iter()
+        .find(|run| run.text == "shell 1")
+        .expect("active terminal tab label");
     let prompt = prepared
         .text_runs
         .iter()
         .find(|run| run.text == "visible-shell-prompt$")
         .expect("terminal content must remain rendered");
     assert!(confirmation.y < geometry.screen.y);
+    assert_eq!(
+        confirmation.y, tab_label.y,
+        "confirmation text and tab labels must share one vertical baseline"
+    );
     assert!(prompt.y >= geometry.screen.y);
     assert!(
         prepared
