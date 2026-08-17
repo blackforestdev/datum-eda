@@ -59,10 +59,10 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        match self
-            .terminal_sessions
-            .begin_spawn_and_activate(&self.terminal_launch_context)
-        {
+        match self.terminal_sessions.begin_spawn_and_activate(
+            &self.terminal_launch_context,
+            &mut self.session.workspace_mut().ui.terminal,
+        ) {
             Ok(pending_id) => {
                 self.log_review_event(format!("opening terminal session {pending_id}"));
                 self.set_active_dock(DockTab::Terminal);

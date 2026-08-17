@@ -2,14 +2,16 @@ use super::*;
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_screen::TerminalScreen,
-    terminal_session::{TerminalLaunchContext, TerminalSession, TerminalSessionSlot},
+    terminal_session::{
+        PendingTerminalSpawn, TerminalLaunchContext, TerminalSession, TerminalSessionSlot,
+    },
     terminal_transport::{TerminalExitStatus, TerminalTransportSession, TerminalWakeGate},
 };
 use std::time::{Duration, Instant};
 use std::{
     cell::Cell,
     sync::{
-        Arc, Mutex,
+        Arc, Mutex, mpsc,
         atomic::{AtomicU64, Ordering},
     },
 };
@@ -20,6 +22,32 @@ static SYNTHETIC_REGISTRY_ID: AtomicU64 = AtomicU64::new(1);
 fn seventeenth_session_is_refused_by_preallocation_guard() {
     assert!(super::super::ensure_session_capacity(15).is_ok());
     assert!(super::super::ensure_session_capacity(16).is_err());
+}
+
+#[test]
+fn active_pending_tab_keeps_previous_session_output_in_its_parked_projection() {
+    let mut registry = synthetic_registry(1);
+    let (_sender, result) = mpsc::channel();
+    registry.pending_spawns.push(PendingTerminalSpawn {
+        pending_id: "pending-shell-2".to_string(),
+        label: "shell 2".to_string(),
+        result,
+        canceled: false,
+    });
+    registry.active_pending_id = Some("pending-shell-2".to_string());
+    registry.sessions[0]
+        .session
+        .transport
+        .push_synthetic_output(b"old-shell-output");
+
+    let mut lane = TerminalLaneState::default();
+    let report = registry.drain_all(&mut lane);
+    assert!(!report.active_projection_changed);
+    assert!(lane.grid_lines().is_empty());
+    assert_eq!(
+        registry.sessions[0].parked_lane.grid_lines(),
+        &["old-shell-output"]
+    );
 }
 
 #[test]
@@ -91,6 +119,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
     TerminalSessionRegistry {
         sessions,
         pending_spawns: Vec::new(),
+        active_pending_id: None,
         active_index: 0,
         next_session_ordinal: session_count + 1,
         terminal_wake: wake,

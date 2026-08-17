@@ -9,6 +9,9 @@ pub(super) fn write_attached_terminal_bytes(
     registry: &TerminalSessionRegistry,
     bytes: &[u8],
 ) -> Result<bool> {
+    if !registry.active_attached() {
+        return Ok(false);
+    }
     registry.active().write_bytes(bytes)?;
     Ok(true)
 }

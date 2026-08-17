@@ -1301,7 +1301,7 @@ impl Runtime {
         {
             Ok(true) => {}
             Ok(false) => self.log_review_event(
-                "terminal session is detached; use REATTACH to resume input".to_string(),
+                "terminal session is starting; input is not ready yet".to_string(),
             ),
             Err(err) => {
                 let message = format!("terminal input refused: {err}");
@@ -1481,12 +1481,14 @@ impl Runtime {
             self.log_review_event(format!("terminal session activate failed: {err}"));
             return true;
         }
-        let _ = refresh_terminal_session_context_from_state(
-            self.terminal_sessions.active(),
-            &self.terminal_launch_context,
-            self.workspace(),
-            self.last_cursor_pos,
-        );
+        if self.terminal_sessions.active_attached() {
+            let _ = refresh_terminal_session_context_from_state(
+                self.terminal_sessions.active(),
+                &self.terminal_launch_context,
+                self.workspace(),
+                self.last_cursor_pos,
+            );
+        }
         self.set_active_dock(DockTab::Terminal);
         self.refresh_terminal_activity_summary();
         self.sync_terminal_tabs();

@@ -313,6 +313,7 @@ def check_terminal_session_creation(
     terminal_session: str,
     terminal_session_spawn: str,
     production_refresh: str,
+    production_sources: str,
     naming_tests: str,
     failures: list[str],
 ) -> None:
@@ -341,11 +342,14 @@ def check_terminal_session_creation(
         'status: "starting".to_string()',
         "completion_wake.request();",
         "pending_tab_is_projected_before_spawn_work_finishes",
+        "active_pending_id",
     ):
         if marker not in terminal_session + terminal_session_spawn:
             failures.append(f"asynchronous terminal tab creation is missing {marker}")
     if "complete_pending_spawns" not in production_refresh:
         failures.append("terminal spawn completion is not consumed from the GUI wake path")
+    if "if !registry.active_attached()" not in production_sources:
+        failures.append("active pending terminal tabs do not reject input before PTY readiness")
     session_creation_sources = terminal_session + terminal_session_spawn
     for marker in (
         "next_session_ordinal: usize",
@@ -574,6 +578,7 @@ def main() -> int:
         terminal_session,
         terminal_session_spawn,
         production_refresh,
+        focus_mutation_sources,
         terminal_session_naming_tests,
         failures,
     )

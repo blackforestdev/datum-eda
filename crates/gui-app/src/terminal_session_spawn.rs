@@ -39,8 +39,9 @@ impl TerminalSessionRegistry {
     pub(crate) fn begin_spawn_and_activate(
         &mut self,
         context: &TerminalLaunchContext,
+        lane: &mut TerminalLaneState,
     ) -> Result<String> {
-        self.begin_spawn_and_activate_using(context, |context, wake| {
+        self.begin_spawn_and_activate_using(context, lane, |context, wake| {
             spawn_terminal_session_with_wake(&context, wake)
         })
     }
@@ -48,6 +49,7 @@ impl TerminalSessionRegistry {
     fn begin_spawn_and_activate_using<F>(
         &mut self,
         context: &TerminalLaunchContext,
+        lane: &mut TerminalLaneState,
         spawn: F,
     ) -> Result<String>
     where
@@ -88,7 +90,14 @@ impl TerminalSessionRegistry {
             pending_id: pending_id.clone(),
             label,
             result,
+            canceled: false,
         });
+        if self.active_pending_id.is_none() {
+            lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+        }
+        self.active_pending_id = Some(pending_id.clone());
+        lane.status = "starting terminal session".to_string();
+        self.projection_managed = true;
         Ok(pending_id)
     }
 
@@ -111,17 +120,30 @@ impl TerminalSessionRegistry {
                 break;
             };
             let pending = self.pending_spawns.remove(0);
+            let was_active = self.active_pending_id.as_deref() == Some(&pending.pending_id);
+            if pending.canceled {
+                drop(completion);
+                notices.push(format!("canceled terminal session {}", pending.label));
+                continue;
+            }
             match completion {
                 Ok(session) => {
-                    let previous = self.active_index;
                     let session_id = session.session_id().to_string();
                     self.sessions.push(new_session_slot(session, pending.label));
-                    self.active_index = self.sessions.len() - 1;
-                    lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
-                    self.projection_managed = true;
+                    if was_active {
+                        self.active_index = self.sessions.len() - 1;
+                        self.active_pending_id = None;
+                        lane.status = "running".to_string();
+                    }
                     notices.push(format!("opened terminal session {session_id}"));
                 }
                 Err(error) => {
+                    if was_active {
+                        self.active_pending_id = None;
+                        lane.swap_session_projection(
+                            &mut self.sessions[self.active_index].parked_lane,
+                        );
+                    }
                     lane.status = format!("terminal session open failed: {error}");
                     notices.push(lane.status.clone());
                 }
@@ -174,11 +196,12 @@ mod tests {
         fs::create_dir_all(&root).unwrap();
         let context = TerminalLaunchContext::for_project_root(&root);
         let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+        let mut lane = TerminalLaneState::default();
         let (entered_sender, entered_receiver) = mpsc::channel();
         let (release_sender, release_receiver) = mpsc::channel();
 
         registry
-            .begin_spawn_and_activate_using(&context, move |context, wake| {
+            .begin_spawn_and_activate_using(&context, &mut lane, move |context, wake| {
                 entered_sender.send(()).unwrap();
                 release_receiver
                     .recv_timeout(Duration::from_secs(1))
@@ -190,11 +213,17 @@ mod tests {
             .recv_timeout(Duration::from_secs(1))
             .expect("background spawn should begin");
 
-        let mut lane = TerminalLaneState::default();
         registry.sync_lane_tabs(&mut lane);
         assert_eq!(lane.tabs.len(), 2);
         assert_eq!(lane.tabs[1].label, "shell 2");
         assert_eq!(lane.tabs[1].status, "starting");
+        assert!(lane.tabs[1].active);
+        assert!(!lane.tabs[0].active);
+        assert!(!registry.active_attached());
+        assert!(
+            !crate::runtime_terminal_input::write_attached_terminal_bytes(&registry, b"blocked")
+                .unwrap()
+        );
         assert_eq!(registry.sessions.len(), 1);
 
         release_sender.send(()).unwrap();
@@ -206,6 +235,11 @@ mod tests {
         assert!(registry.pending_spawns.is_empty());
         assert_eq!(registry.sessions.len(), 2);
         assert_eq!(registry.sessions[registry.active_index].label, "shell 2");
+        registry.sync_lane_tabs(&mut lane);
+        assert_eq!(
+            lane.tabs.iter().find(|tab| tab.active).unwrap().label,
+            "shell 2"
+        );
         let _ = fs::remove_dir_all(root);
     }
 }

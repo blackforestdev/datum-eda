@@ -27,7 +27,7 @@ pub(crate) struct TerminalDrainReport {
 
 fn flush_output_batch(
     sessions: &mut [TerminalSessionSlot],
-    active_index: usize,
+    active_index: Option<usize>,
     active_lane: &mut TerminalLaneState,
     pending: &mut [Vec<u8>],
     report: &mut TerminalDrainReport,
@@ -39,7 +39,7 @@ fn flush_output_batch(
     }
     let slot = &mut sessions[index];
     let _ = record_terminal_output_event(&slot.session, bytes);
-    let is_active = index == active_index;
+    let is_active = active_index == Some(index);
     let lane = if is_active {
         &mut *active_lane
     } else {
@@ -70,6 +70,10 @@ impl TerminalSessionRegistry {
         if self.sessions.is_empty() {
             return report;
         }
+        let visible_active_index = self
+            .active_pending_id
+            .is_none()
+            .then_some(self.active_index);
         for (index, slot) in self.sessions.iter_mut().enumerate() {
             let Some(snapshot) = slot.session.shutdown_snapshot() else {
                 continue;
@@ -128,14 +132,14 @@ impl TerminalSessionRegistry {
             };
             if slot.status != next {
                 slot.status = next.clone();
-                let lane = if index == self.active_index {
+                let lane = if visible_active_index == Some(index) {
                     &mut *active_lane
                 } else {
                     &mut slot.parked_lane
                 };
                 lane.status = next;
                 report.tabs_changed = true;
-                report.active_projection_changed |= index == self.active_index;
+                report.active_projection_changed |= visible_active_index == Some(index);
             }
         }
         let mut idle_visits = 0usize;
@@ -163,7 +167,7 @@ impl TerminalSessionRegistry {
             if let Some((control_index, _)) = control.as_ref() {
                 flush_output_batch(
                     &mut self.sessions,
-                    self.active_index,
+                    visible_active_index,
                     active_lane,
                     &mut pending_output,
                     &mut report,
@@ -185,7 +189,7 @@ impl TerminalSessionRegistry {
             idle_visits = 0;
             self.next_drain_index = (index + 1) % self.sessions.len();
             report.events += 1;
-            let is_active = index == self.active_index;
+            let is_active = visible_active_index == Some(index);
             match event {
                 TerminalEvent::Output(bytes) => {
                     #[cfg(test)]
@@ -258,7 +262,7 @@ impl TerminalSessionRegistry {
         for index in 0..self.sessions.len() {
             flush_output_batch(
                 &mut self.sessions,
-                self.active_index,
+                visible_active_index,
                 active_lane,
                 &mut pending_output,
                 &mut report,

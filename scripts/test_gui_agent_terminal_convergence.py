@@ -74,10 +74,12 @@ let label = format!("shell {}", self.next_session_ordinal);
 self.next_session_ordinal += 1;
 name(format!("terminal-spawn-{pending_id}"));
 status: "starting".to_string();
+active_pending_id;
 completion_wake.request();
 fn pending_tab_is_projected_before_spawn_work_finishes() {}
 '''
         production_refresh = "complete_pending_spawns();"
+        production_sources = "if !registry.active_attached() { return Ok(false); }"
         naming_tests = "fn default_session_labels_never_reuse_a_removed_ordinal() {}"
         failures: list[str] = []
         guard.check_terminal_session_creation(
@@ -88,6 +90,7 @@ fn pending_tab_is_projected_before_spawn_work_finishes() {}
             terminal_session,
             terminal_spawn,
             production_refresh,
+            production_sources,
             naming_tests,
             failures,
         )
@@ -107,6 +110,7 @@ fn pending_tab_is_projected_before_spawn_work_finishes() {}
                 "pending_tab_is_projected_before_spawn_work_finishes", "removed"
             ),
             production_refresh.replace("complete_pending_spawns", "removed"),
+            production_sources.replace("active_attached", "removed"),
             naming_tests.replace(
                 "default_session_labels_never_reuse_a_removed_ordinal", "removed"
             ),

@@ -41,6 +41,7 @@ pub(super) struct TerminalSession {
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
     pending_spawns: Vec<PendingTerminalSpawn>,
+    active_pending_id: Option<String>,
     active_index: usize,
     next_session_ordinal: usize,
     terminal_wake: TerminalWakeGate,
@@ -52,6 +53,7 @@ struct PendingTerminalSpawn {
     pending_id: String,
     label: String,
     result: Receiver<std::result::Result<TerminalSession, String>>,
+    canceled: bool,
 }
 
 struct TerminalSessionSlot {
@@ -132,6 +134,7 @@ impl TerminalSessionRegistry {
                 exact_exit_status: None,
             }],
             pending_spawns: Vec::new(),
+            active_pending_id: None,
             active_index: 0,
             next_session_ordinal: 2,
             terminal_wake,
@@ -161,6 +164,19 @@ impl TerminalSessionRegistry {
         session_id: &str,
         lane: &mut TerminalLaneState,
     ) -> Result<()> {
+        if self
+            .pending_spawns
+            .iter()
+            .any(|pending| pending.pending_id == session_id)
+        {
+            if self.active_pending_id.is_none() {
+                lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+            }
+            self.active_pending_id = Some(session_id.to_string());
+            lane.status = "starting terminal session".to_string();
+            self.projection_managed = true;
+            return Ok(());
+        }
         let previous = self.active_index;
         let target = self
             .sessions
@@ -168,7 +184,9 @@ impl TerminalSessionRegistry {
             .position(|slot| slot.session.session_id() == session_id)
             .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
         self.activate(session_id)?;
-        if target != previous {
+        if self.active_pending_id.take().is_some() {
+            lane.swap_session_projection(&mut self.sessions[target].parked_lane);
+        } else if target != previous {
             lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
             lane.swap_session_projection(&mut self.sessions[target].parked_lane);
         }
@@ -197,7 +215,7 @@ impl TerminalSessionRegistry {
     }
 
     pub(super) fn active_attached(&self) -> bool {
-        self.sessions[self.active_index].attached
+        self.active_pending_id.is_none() && self.sessions[self.active_index].attached
     }
 
     #[cfg_attr(not(test), allow(dead_code))]
@@ -206,12 +224,16 @@ impl TerminalSessionRegistry {
     }
 
     pub(super) fn active_bracketed_paste_enabled(&self) -> bool {
-        self.sessions[self.active_index]
-            .screen
-            .bracketed_paste_enabled()
+        self.active_pending_id.is_none()
+            && self.sessions[self.active_index]
+                .screen
+                .bracketed_paste_enabled()
     }
 
     pub(super) fn resize_active(&mut self, cols: u16, rows: u16) -> Result<()> {
+        if self.active_pending_id.is_some() {
+            return Ok(());
+        }
         let slot = &mut self.sessions[self.active_index];
         let cols = cols.max(1);
         let rows = rows.max(1);
@@ -230,6 +252,9 @@ impl TerminalSessionRegistry {
         state: &mut TerminalLaneState,
         context: &TerminalLaunchContext,
     ) -> Result<()> {
+        if self.active_pending_id.is_some() {
+            anyhow::bail!("terminal session is still starting");
+        }
         let slot = &mut self.sessions[self.active_index];
         let phase = slot
             .session
@@ -335,6 +360,9 @@ impl TerminalSessionRegistry {
         &mut self,
         max_spans: usize,
     ) -> Result<Vec<String>> {
+        if self.active_pending_id.is_some() {
+            return Ok(vec!["starting terminal session".to_string()]);
+        }
         let slot = &mut self.sessions[self.active_index];
         let event_log_path = slot.session.event_log_path();
         slot.activity.refresh(&event_log_path);
@@ -343,15 +371,17 @@ impl TerminalSessionRegistry {
 
     pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
         let active_index = self.active_index;
-        state.active_session_id = (!self.sessions[self.active_index].hidden_after_close)
-            .then(|| self.active().session_id().to_string());
+        state.active_session_id = self.active_pending_id.clone().or_else(|| {
+            (!self.sessions[self.active_index].hidden_after_close)
+                .then(|| self.active().session_id().to_string())
+        });
         let tabs = self
             .sessions
             .iter_mut()
             .enumerate()
             .filter(|(_, slot)| !slot.hidden_after_close)
             .map(|(index, slot)| {
-                if index == active_index {
+                if self.active_pending_id.is_none() && index == active_index {
                     slot.status = state.status.clone();
                 }
                 let event_log_path = slot.session.event_log_path();
@@ -368,31 +398,38 @@ impl TerminalSessionRegistry {
                             event_log_path.display()
                         )]
                     }),
-                    active: index == active_index,
+                    active: self.active_pending_id.is_none() && index == active_index,
                     attached: slot.attached,
                     status: slot.status.clone(),
                     restart_count: slot.restart_count,
                 }
             })
-            .chain(self.pending_spawns.iter().map(|pending| TerminalTabState {
-                session_id: pending.pending_id.clone(),
-                previous_session_id: None,
-                label: pending.label.clone(),
-                event_log_path: String::new(),
-                activity_event_count: 0,
-                activity_summary: vec!["starting terminal session".to_string()],
-                active: false,
-                attached: true,
-                status: "starting".to_string(),
-                restart_count: 0,
-            }))
+            .chain(
+                self.pending_spawns
+                    .iter()
+                    .filter(|pending| !pending.canceled)
+                    .map(|pending| TerminalTabState {
+                        session_id: pending.pending_id.clone(),
+                        previous_session_id: None,
+                        label: pending.label.clone(),
+                        event_log_path: String::new(),
+                        activity_event_count: 0,
+                        activity_summary: vec!["starting terminal session".to_string()],
+                        active: self.active_pending_id.as_deref() == Some(&pending.pending_id),
+                        attached: true,
+                        status: "starting".to_string(),
+                        restart_count: 0,
+                    }),
+            )
             .collect::<Vec<_>>();
         if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
             state.activity_summary = active_tab.activity_summary.clone();
         }
-        let active_slot = &self.sessions[self.active_index];
-        state.columns = active_slot.columns;
-        state.rows = active_slot.rows;
+        if self.active_pending_id.is_none() {
+            let active_slot = &self.sessions[self.active_index];
+            state.columns = active_slot.columns;
+            state.rows = active_slot.rows;
+        }
         state.tabs = tabs;
     }
 

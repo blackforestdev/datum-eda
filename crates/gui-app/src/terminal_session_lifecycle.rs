@@ -16,6 +16,19 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn close_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        if let Some(pending_id) = self.active_pending_id.take() {
+            if let Some(pending) = self
+                .pending_spawns
+                .iter_mut()
+                .find(|pending| pending.pending_id == pending_id)
+            {
+                pending.canceled = true;
+            }
+            state.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+            state.status = self.sessions[self.active_index].status.clone();
+            self.sync_lane_tabs(state);
+            return Ok(());
+        }
         let can_remove = self.active().presentation_complete();
         if !can_remove {
             let slot = &mut self.sessions[self.active_index];
@@ -54,7 +67,8 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn active_close_confirmation_armed(&self) -> bool {
-        self.sessions[self.active_index].close_confirmation_armed
+        self.active_pending_id.is_none()
+            && self.sessions[self.active_index].close_confirmation_armed
     }
 
     pub(crate) fn handle_close_confirmation_input(
@@ -113,7 +127,9 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn force_kill_active(&self) {
-        self.active().force_kill();
+        if self.active_pending_id.is_none() {
+            self.active().force_kill();
+        }
     }
 
     pub(crate) fn terminate_all_by(&mut self, deadline: Instant) {
@@ -205,12 +221,14 @@ impl TerminalSessionRegistry {
             if self.sessions.len() == 1 {
                 self.sessions[0].remove_when_closed = false;
                 self.sessions[0].hidden_after_close = true;
-                let mut discarded = TerminalLaneState::default();
-                state.swap_session_projection(&mut discarded);
-                state.status = "no terminal session; use +NEW".to_string();
+                if self.active_pending_id.is_none() {
+                    let mut discarded = TerminalLaneState::default();
+                    state.swap_session_projection(&mut discarded);
+                    state.status = "no terminal session; use +NEW".to_string();
+                }
                 continue;
             }
-            let was_active = index == self.active_index;
+            let was_active = self.active_pending_id.is_none() && index == self.active_index;
             self.sessions.remove(index);
             if index < self.active_index || self.active_index >= self.sessions.len() {
                 self.active_index = self
