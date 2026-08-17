@@ -94,8 +94,7 @@ use terminal_input::{
 };
 use terminal_screen::terminal_scrollback_copy_text;
 use terminal_session::{
-    TerminalLaunchContext, TerminalSessionRegistry, refresh_terminal_session_context_from_state,
-    terminal_launch_context_from_state,
+    TerminalLaunchContext, TerminalSessionRegistry, terminal_launch_context_from_state,
 };
 use terminal_session_events::{
     prepare_terminal_command_execution, record_manual_terminal_command_handoff,
@@ -1480,14 +1479,6 @@ impl Runtime {
         {
             self.log_review_event(format!("terminal session activate failed: {err}"));
             return true;
-        }
-        if self.terminal_sessions.active_attached() {
-            let _ = refresh_terminal_session_context_from_state(
-                self.terminal_sessions.active(),
-                &self.terminal_launch_context,
-                self.workspace(),
-                self.last_cursor_pos,
-            );
         }
         self.set_active_dock(DockTab::Terminal);
         self.refresh_terminal_activity_summary();

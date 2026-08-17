@@ -5,7 +5,7 @@ use crate::terminal_context_contract::{
     TerminalContextStorage, TerminalJournalCommands, TerminalLibraryCommands,
     TerminalProductionCommands, TerminalProposalCommands,
 };
-use crate::terminal_context_io::atomic_write_text;
+use crate::terminal_context_io::{atomic_write_text, atomic_write_texts};
 use crate::terminal_journal_context::accepted_transaction_tip;
 use crate::terminal_proposal_context::{latest_proposal_id, visible_proposal_ids};
 use crate::{ASSISTANT_ACTIVITY_COMMAND, terminal_session::TerminalLaunchContext};
@@ -315,34 +315,26 @@ fn write_terminal_context_files_scoped(
         }),
     };
     let text = serde_json::to_string_pretty(&envelope).context("serialize terminal context")?;
-    atomic_write_text(&terminal_context.context_path, &format!("{text}\n")).with_context(|| {
-        format!(
-            "write terminal context {}",
-            terminal_context.context_path.display()
-        )
-    })?;
+    let context_text = format!("{text}\n");
     if !publish_aliases {
-        return Ok(());
+        return atomic_write_text(&terminal_context.context_path, &context_text).with_context(
+            || {
+                format!(
+                    "write terminal context {}",
+                    terminal_context.context_path.display()
+                )
+            },
+        );
     }
-    atomic_write_text(&terminal_context.latest_context_path, &format!("{text}\n")).with_context(
-        || {
-            format!(
-                "write latest terminal context {}",
-                terminal_context.latest_context_path.display()
-            )
-        },
-    )?;
     let session_text =
         serde_json::to_string_pretty(&session).context("serialize tool session metadata")?;
-    atomic_write_text(&terminal_context.session_path, &format!("{session_text}\n")).with_context(
-        || {
-            format!(
-                "write tool session metadata {}",
-                terminal_context.session_path.display()
-            )
-        },
-    )?;
-    Ok(())
+    let session_text = format!("{session_text}\n");
+    atomic_write_texts(&[
+        (&terminal_context.context_path, &context_text),
+        (&terminal_context.latest_context_path, &context_text),
+        (&terminal_context.session_path, &session_text),
+    ])
+    .context("publish pid-bearing terminal context bundle")
 }
 
 struct ProductionVisibilityContext {

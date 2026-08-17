@@ -333,6 +333,8 @@ def check_terminal_session_creation(
         failures.append("new terminal tab projection is not followed by frame invalidation")
     if "begin_spawn_and_activate" not in spawn_body or "spawn_and_activate_with_lane" in spawn_body:
         failures.append("new terminal tabs still perform PTY spawn work on the GUI event path")
+    if "refresh_terminal_session_context_from_state" in main.split("fn activate_terminal_session", 1)[-1].split("fn is_paste_shortcut", 1)[0]:
+        failures.append("terminal tab activation still performs durable context persistence")
     for marker in (
         'name(format!("terminal-spawn-{pending_id}"))',
         'status: "starting".to_string()',
@@ -351,8 +353,8 @@ def check_terminal_session_creation(
         failures.append("terminal creation/switch still persists retired attach lifecycle")
     if "write_terminal_context_files_scoped(&terminal_context, context, false)" not in naming_tests:
         failures.append("terminal bootstrap publishes redundant pre-spawn aliases")
-    if "bootstrap_publishes_only_child_discovery_until_pid_is_known" not in naming_tests:
-        failures.append("bounded terminal bootstrap proof is missing")
+    if "bootstrap_publishes_only_child_discovery_until_pid_is_known" not in naming_tests or "atomic_write_texts(&[" not in naming_tests:
+        failures.append("bounded concurrent terminal context publication is missing")
     for marker in ("next_session_ordinal: usize", 'let label = format!("shell {}", self.next_session_ordinal)', "self.next_session_ordinal += 1"):
         if marker not in session_creation_sources:
             failures.append(f"monotonic terminal session naming is missing {marker}")
@@ -511,9 +513,9 @@ def main() -> int:
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
     terminal_input = TERMINAL_INPUT.read_text()
     terminal_session = TERMINAL_SESSION.read_text()
-    terminal_session_naming_tests = (
-        TERMINAL_SESSION_NAMING_TESTS.read_text()
-        + TERMINAL_SESSION.with_name("terminal_context.rs").read_text()
+    terminal_session_naming_tests = TERMINAL_SESSION_NAMING_TESTS.read_text() + "\n".join(
+        TERMINAL_SESSION.with_name(name).read_text()
+        for name in ("terminal_context.rs", "terminal_context_io.rs")
     )
     terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()

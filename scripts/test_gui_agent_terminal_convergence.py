@@ -84,6 +84,7 @@ fn pending_tab_is_projected_before_spawn_work_finishes() {}
 fn default_session_labels_never_reuse_a_removed_ordinal() {}
 write_terminal_context_files_scoped(&terminal_context, context, false);
 fn bootstrap_publishes_only_child_discovery_until_pid_is_known() {}
+atomic_write_texts(&[]);
 """
         failures: list[str] = []
         guard.check_terminal_session_creation(
@@ -126,6 +127,24 @@ fn bootstrap_publishes_only_child_discovery_until_pid_is_known() {}
             failures,
         )
         self.assertGreaterEqual(len(failures), 9)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main + "\nfn activate_terminal_session() { refresh_terminal_session_context_from_state(); }\nfn is_paste_shortcut() {}",
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources,
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal tab activation still performs durable context persistence",
+            failures,
+        )
 
         failures = []
         guard.check_terminal_session_creation(
