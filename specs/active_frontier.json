@@ -1417,7 +1417,7 @@
           "DTC-P05I lean terminal session chrome"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "6afbe18"
+        "head": "73a161f"
       },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
@@ -1749,6 +1749,10 @@
               {
                 "kind": "commit",
                 "revision": "6afbe18"
+              },
+              {
+                "kind": "commit",
+                "revision": "73a161f"
               },
               {
                 "kind": "review",
