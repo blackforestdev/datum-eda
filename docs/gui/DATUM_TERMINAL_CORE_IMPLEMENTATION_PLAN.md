@@ -560,6 +560,20 @@ PID-context-before-output ordering. The guard rejects restored attach writes or
 redundant pre-spawn alias publication, and the full GUI-app suite passes 329
 tests. Fresh owner QA remains the completion boundary.
 
+Owner QA then isolated two remaining approximately two-second pauses: the
+prompt arrived late after creation, and selecting an already-running tab by
+pointer was equally slow. The activation handler was still rebuilding and
+durably rewriting all three context records before swapping the visible
+projection. Tab activation is now memory-only with respect to session context;
+context refresh remains an explicit workspace/context operation rather than a
+navigation side effect. For new sessions, the per-session discovery document
+still forms the first durable pre-exec barrier, but the independent
+PID-bearing context, latest alias, and tool-session metadata writes now execute
+concurrently behind the second barrier. Atomic temporary names include a
+process-wide nonce so concurrent tabs cannot collide. The full GUI-app suite
+passes 330 tests, and the convergence guard rejects restored activation I/O or
+serial PID-context publication. Fresh owner latency QA remains required.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
