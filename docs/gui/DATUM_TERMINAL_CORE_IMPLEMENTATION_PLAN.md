@@ -608,6 +608,16 @@ header. Reducing the header from 34 to 18 pixels returns one additional cell
 row (eight rather than seven at the default dock height). Fresh visual QA of
 the single-line header remains the DTC-P05I completion boundary.
 
+The next owner review found that the remaining `PROJECT TERMINAL` and
+copy/scroll/paste hint band still duplicated the tab strip and permanently
+withheld a row. The persistent header is now deleted end to end, including its
+shared geometry field and sizing budget. The terminal screen begins directly
+at the lane interior and receives nine rows at the default dock height.
+Actionable close, teardown, and blocked-shutdown state renders only while
+active as transient safety chrome over the first screen row, so it remains
+visible without changing PTY geometry. Fresh visual QA of the header-free
+terminal remains the DTC-P05I completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
