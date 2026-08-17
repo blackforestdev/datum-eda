@@ -544,6 +544,22 @@ the frame immediately after synchronizing tabs; failure status does the same.
 The convergence guard rejects a creation path that publishes tabs without the
 matching frame invalidation.
 
+Subsequent owner QA confirmed two remaining launch-path defects: the pending
+tab was visible but did not become active, and the selected shell remained slow
+to become ready on the production project. The registry now gives the pending
+tab explicit active authority immediately, parks the prior shell projection,
+and rejects input until the new PTY is installed so no keystroke can leak to the
+old session. Readiness no longer persists the retired `Attached` pseudo-event:
+background tabs are continuously owned under P05-O1, so creation and tab
+switching do not rewrite lifecycle state. Pre-exec bootstrap now durably writes
+only the per-session discovery document passed to the child; after spawn it
+publishes the complete PID-bearing context, latest alias, and session metadata
+once. This reduces the additional-tab path from nine durable file
+synchronizations to four while preserving context-before-exec and
+PID-context-before-output ordering. The guard rejects restored attach writes or
+redundant pre-spawn alias publication, and the full GUI-app suite passes 329
+tests. Fresh owner QA remains the completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
