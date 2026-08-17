@@ -32,6 +32,8 @@ TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_bu
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
 TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_tests.rs"
 TERMINAL_CURSOR = ROOT / "crates" / "gui-render" / "src" / "terminal_cursor.rs"
+TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
+TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -260,6 +262,20 @@ def check_agent_tui_runtime(
             failures.append(f"terminal cursor-cell separation is missing {marker}")
 
 
+def check_terminal_tab_strip(tab_strip: str, tests: str, failures: list[str]) -> None:
+    """Keep projected terminal sessions in stable left-to-right tab order."""
+    for marker in (
+        "for tab in tabs {",
+        "HitTarget::TerminalSessionTab(tab.session_id.clone())",
+        "x += tab_width + TAB_GAP_PX",
+        "target: HitTarget::TerminalSessionNew",
+    ):
+        if marker not in tab_strip:
+            failures.append(f"ordered terminal tab strip is missing {marker}")
+    if "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab" not in tests:
+        failures.append("ordered terminal tab-strip production proof is missing")
+
+
 def check_terminal_input_identity(
     terminal_lane: str,
     production_sources: str,
@@ -403,6 +419,9 @@ def main() -> int:
     render_gpu = RENDER_GPU.read_text()
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     terminal_cursor = TERMINAL_CURSOR.read_text()
+    terminal_tab_strip = TERMINAL_TAB_STRIP.read_text()
+    terminal_tab_strip_tests = TERMINAL_TAB_STRIP_TESTS.read_text()
+    terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
     workspace_layout = WORKSPACE_LAYOUT.read_text()
@@ -451,6 +470,7 @@ def main() -> int:
         terminal_cursor,
         failures,
     )
+    check_terminal_tab_strip(terminal_tab_strip, terminal_tab_strip_tests, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
@@ -478,13 +498,13 @@ def main() -> int:
                 f"retired embedded assistant bridge artifact must not exist: {path.relative_to(ROOT)}"
             )
 
-    if '"terminal"' not in bottom_dock:
+    if '"terminal"' not in terminal_dock_sources:
         failures.append("bottom dock must render the terminal tab")
     for forbidden_label in ('"AGENTS"', '"ASSISTANT"', '"OUTPUT"'):
-        if forbidden_label in bottom_dock:
+        if forbidden_label in terminal_dock_sources:
             failures.append(f"bottom dock must not render {forbidden_label} as a dock tab")
     for marker in ("AssistantTab", "OutputsTab", "DockTab::Assistant", "DockTab::Outputs"):
-        if marker in main or marker in bottom_dock or marker in gui_protocol:
+        if marker in main or marker in terminal_dock_sources or marker in gui_protocol:
             failures.append(f"terminal-only dock must not contain {marker}")
     # T0-C02 removes application activity summaries from the foreign-shell
     # viewport entirely. The data remains available to the future Command

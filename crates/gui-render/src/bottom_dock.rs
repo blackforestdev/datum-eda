@@ -5,13 +5,13 @@ use datum_gui_viewport::{
 };
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_ACCENT,
-    TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, TextRunSpan,
-    design_tokens, draw_rich_text, draw_text, estimated_text_run_width_px, push_rect_border,
-    truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_MUTED,
+    TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, TextRunSpan, draw_rich_text,
+    draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_session_chrome::render_terminal_session_controls;
+use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
 
 /// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
@@ -155,83 +155,7 @@ pub(super) fn render_bottom_tabs(
         },
         PANEL_CARD_BORDER,
     ));
-    let active = matches!(state.ui.active_dock_tab, Some(DockTab::Terminal));
-    // Tab label is the session's own (lower/mixed-case) name, never an
-    // uppercased constant. PTY doctrine: this lane is the real terminal.
-    let label = state
-        .ui
-        .terminal
-        .title
-        .as_deref()
-        .map(|title| truncate_text(title, 16))
-        .unwrap_or_else(|| "terminal".to_string());
-    // Seated tab sized to the measured label + padding, its bottom anchored to
-    // the strip seam.
-    let label_w = estimated_text_run_width_px(&label, 12.5, TextFace::Ui) - 16.0;
-    let tab = RectPx {
-        x: strip.x + 12.0,
-        y: strip.y + 6.0,
-        width: label_w + design_tokens::spacing::SP_04 * 2.0,
-        height: (strip.height - 6.0).max(1.0),
-    };
-    if active {
-        // SURFACE_01 fill + a 2px ACCENT top edge only — a seated tab, not a box.
-        panel_quads.push(Quad::from_rect(tab, design_tokens::chrome::SURFACE_01));
-        panel_quads.push(Quad::from_rect(
-            RectPx {
-                x: tab.x,
-                y: tab.y,
-                width: tab.width,
-                height: 2.0,
-            },
-            TEXT_ACCENT,
-        ));
-    }
-    draw_text(
-        &label,
-        tab.x + design_tokens::spacing::SP_04,
-        tab.y + 8.0,
-        12.5,
-        if active { TEXT_PRIMARY } else { TEXT_MUTED },
-        TextFace::Ui,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::TerminalTab,
-        rect: tab,
-    });
-    // "+" add-terminal affordance seated after the tab.
-    let plus = RectPx {
-        x: tab.x + tab.width + design_tokens::spacing::SP_03,
-        y: tab.y,
-        width: 20.0,
-        height: tab.height,
-    };
-    draw_text(
-        "+",
-        plus.x + 6.0,
-        plus.y + 7.0,
-        14.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::TerminalSessionNew,
-        rect: plus,
-    });
-    // Right-aligned persistent dock hint.
-    let hint = "Ctrl+Shift+T new terminal   \u{00B7}   Ctrl+K palette";
-    let hint_w = estimated_text_run_width_px(hint, 11.5, TextFace::Mono) - 16.0;
-    draw_text(
-        hint,
-        strip.x + strip.width - 12.0 - hint_w,
-        tab.y + 8.0,
-        11.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
+    render_terminal_tab_strip(state, strip, panel_quads, text_runs, hit_regions);
 
     let Some(active_tab) = state.ui.active_dock_tab else {
         return;

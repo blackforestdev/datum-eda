@@ -72,6 +72,11 @@ read-only work.
   shape each styled row once so color changes cannot create gaps or drift, and
   make a naturally exited selected shell remove its tab without a second close gesture.
   Depends on DTC-P05D.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05H --> **DTC-P05H — ordered terminal session tab projection.**
+  Project every owned terminal session into one stable left-to-right top-strip
+  tab, append new sessions after existing sessions, keep the active session
+  visually selected, and place the new-session affordance after the final tab.
+  Depends on DTC-P05G.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -455,6 +460,36 @@ cursor after the `$` and trailing space, while a 1.0/1.25/1.5/2.0 prepared-scene
 matrix proves shaped prompt width and cursor-grid x remain identical. The
 convergence mutation gate rejects restoring terminal glyph-only HiDPI scaling.
 DTC-P05G remains open for fresh-build owner visual acceptance of this repair.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-OWNER-ACCEPTED -->
+Owner QA on 2026-08-16 accepted the fresh-build HiDPI correction and confirmed
+that the terminal cursor issue is resolved. DTC-P05G therefore closes with
+implementation revision `1877d5188680a622fe780629e477ad4502887d94` and its
+governed parser, shaping, scale-matrix, mutation, and natural-exit proofs.
+
+#### DTC-P05H ordered terminal session tab projection
+
+The same QA pass exposed a separate session-chrome defect: the session registry
+appends new sessions in correct creation order, but the top dock strip ignores
+that ordered projection and redraws only the active title in the first tab
+rectangle. Each new session therefore appears to replace the far-left tab.
+DTC-P05H renders the protocol `terminal.tabs` sequence directly, assigns every
+tab its own session activation hit target, preserves registry order, and seats
+the `+` affordance after the last projected tab. A renderer regression must
+create at least three sessions and prove strictly increasing, non-overlapping x
+positions in creation order with the new-session target to their right.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05H-AUTOMATED -->
+The renderer now consumes the ordered `terminal.tabs` projection instead of
+redrawing only the active title at the strip's fixed left origin. Each session
+receives its own `TerminalSessionTab` hit target, the x origin advances after
+every projected tab, and the new-session target follows the final tab. The
+three-session production-scene regression
+`new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab` proves the
+creation order, strictly increasing non-overlapping rectangles, and final `+`
+placement. The convergence guard and its mutation suite reject a reversed or
+fixed-origin loop, a missing new-session target, or removal of the production
+proof. Fresh-build owner QA remains the completion boundary for DTC-P05H.
 
 #### DTC-P06A owner packet
 

@@ -32,6 +32,9 @@ mod terminal_cursor;
 #[path = "terminal_font_tests.rs"]
 mod terminal_font_tests;
 mod terminal_session_chrome;
+mod terminal_tab_strip;
+#[cfg(test)]
+mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;

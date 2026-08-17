@@ -17,6 +17,35 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_terminal_session_tabs_must_append_in_projected_order(self) -> None:
+        tab_strip = """
+for tab in tabs {
+    target: HitTarget::TerminalSessionTab(tab.session_id.clone());
+    x += tab_width + TAB_GAP_PX;
+}
+target: HitTarget::TerminalSessionNew;
+"""
+        tests = "fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {}"
+        failures: list[str] = []
+        guard.check_terminal_tab_strip(tab_strip, tests, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_tab_strip(
+            tab_strip.replace("for tab in tabs", "for tab in tabs.rev()")
+            .replace("x += tab_width + TAB_GAP_PX", "x = strip.x")
+            .replace("target: HitTarget::TerminalSessionNew", "removed"),
+            tests.replace(
+                "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab",
+                "removed",
+            ),
+            failures,
+        )
+        self.assertTrue(any("for tab in tabs {" in failure for failure in failures))
+        self.assertTrue(any("x += tab_width" in failure for failure in failures))
+        self.assertTrue(any("TerminalSessionNew" in failure for failure in failures))
+        self.assertIn("ordered terminal tab-strip production proof is missing", failures)
+
     def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
         terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"
         terminal_tests = r'''
