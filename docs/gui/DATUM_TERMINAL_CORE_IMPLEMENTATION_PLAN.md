@@ -67,10 +67,10 @@ read-only work.
   only after click focus, Tab completion, box/Powerline glyphs, sustained output,
   and post-output typing remain usable without a lockup. Depends on DTC-P05F.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05G --> **DTC-P05G — terminal cell-metric and owner-QA lifecycle convergence.**
-  Make shaped terminal ink/advance, logical cell geometry, styled-fragment
-  origins, cursor geometry, hit testing, and PTY columns consume one measured
-  metric; prove split styling cannot create gaps or cursor drift, and make a
-  naturally exited selected shell remove its tab without a second close gesture.
+  Make shaped terminal ink/advance, logical cell geometry, ANSI style spans,
+  cursor geometry, hit testing, and PTY columns consume one measured metric;
+  shape each styled row once so color changes cannot create gaps or drift, and
+  make a naturally exited selected shell remove its tab without a second close gesture.
   Depends on DTC-P05D.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
@@ -389,10 +389,10 @@ row.
 DTC-P05G has this bounded scope:
 
 1. Establish one terminal font/cell metric consumed by terminal shaping,
-   logical geometry, styled-fragment placement, cursor placement, hit testing,
-   and PTY resize authority.
-2. Prove an ASCII row has the same glyph origins when rendered as one run or
-   split across multiple SGR spans.
+   logical geometry, ANSI style placement, cursor placement, hit testing, and
+   PTY resize authority.
+2. Shape each terminal row in one rich-text buffer so SGR color changes retain
+   their metadata without restarting glyph positions at fractional cell edges.
 3. Prove the cursor begins at the exact next cell after the visible prompt and
    remains aligned across representative long Claude input rows.
 4. Preserve the governed JetBrains Mono whole-run face, DTC-P05C cache bounds,
@@ -420,23 +420,23 @@ covering the exact colored shell-prompt and trailing-slash case. Full Unicode
 cell semantics remain explicitly scheduled rather than being overstated here.
 
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-REOPENED-AUTOMATED -->
-The first reopened attempt retained the authoritative cursor column and inset
-its paint by one pixel. Owner QA rejected that attempt because full-size glyph
-ink still consumed the complete cell advance, leaving no reliable raster gap at
-the contrasting blue/yellow prompt boundary or before the cursor. The corrected
-implementation renders JetBrains Mono at 12 px and supplies positive explicit
-letter spacing to glyphon; the smaller ink plus spacing still totals exactly
-the governed 7.9 px advance. Datum therefore preserves PTY bytes, shell prompt
-content, cursor reports, hit testing, and PTY columns while producing visible
-inter-cell bearings. A renderer regression reconstructs the exact colored Bash
-prompt and proves the dollar sign, the shell-emitted post-prompt space, command
-text, trailing character, and next cursor cell remain distinct. A natural exit
-from the selected shell now marks the fully presented session for automatic tab
-removal, with a real PTY regression proving no second CLOSE gesture is required.
-An inactive exited session remains visible with its exact outcome for review.
-The convergence mutation gate requires the ink/spacing, prompt, cursor-cell,
-and natural-exit proofs. DTC-P05G remains open until a fresh release binary
-passes owner visual acceptance.
+The first reopened attempt inset cursor paint by one pixel; the second reduced
+JetBrains Mono ink to 12 px and added explicit tracking while preserving the
+governed 7.9 px advance. Owner QA rejected both because the screenshot defect
+persisted specifically at the green/blue/yellow/default prompt boundaries. The
+root cause was independent shaping: each SGR fragment became a separate glyphon
+buffer positioned at a fractional cell origin, so raster rounding restarted at
+every color boundary even though total run-width tests were correct. Datum now
+builds one rich-text buffer for the entire visible row. ANSI spans set glyph
+colors inside that buffer and cannot restart glyph positioning. A real shaping
+regression proves the plain and colored prompt have byte-for-byte identical
+glyph start/end/x/advance values while retaining color overrides. Smaller ink,
+explicit tracking, PTY bytes, parser columns, cursor reports, hit testing, and
+PTY dimensions remain unchanged. A natural exit from the selected shell marks
+the fully presented session for automatic tab removal; inactive exited sessions
+remain reviewable. The convergence mutation gate requires whole-row rich
+shaping, prompt/cursor, and natural-exit proofs. DTC-P05G remains open until a
+fresh release binary passes owner visual acceptance.
 
 #### DTC-P06A owner packet
 

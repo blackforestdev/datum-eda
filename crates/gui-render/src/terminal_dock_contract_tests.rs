@@ -446,19 +446,22 @@ fn terminal_dock_renders_styled_terminal_spans_as_colored_runs() {
         &retained,
     );
 
-    let err_run = prepared
+    let line_run = prepared
         .text_runs
         .iter()
-        .find(|run| run.text == "ERR")
-        .expect("styled terminal span should render as its own text run");
-    let ok_run = prepared
-        .text_runs
-        .iter()
-        .find(|run| run.text == " ok")
-        .expect("unstyled terminal suffix should render as its own text run");
+        .find(|run| run.text == "ERR ok")
+        .expect("styled terminal line should render as one shaped text run");
+    assert_eq!(
+        line_run
+            .rich_spans
+            .iter()
+            .map(|span| span.text.as_str())
+            .collect::<Vec<_>>(),
+        vec!["ERR", " ok"]
+    );
     assert_ne!(
-        err_run.color, ok_run.color,
-        "styled terminal output should not collapse to one default color"
+        line_run.rich_spans[0].color, line_run.rich_spans[1].color,
+        "styled terminal output should retain distinct colors in one shaped line"
     );
 }
 
@@ -496,18 +499,14 @@ fn terminal_dock_uses_inverse_background_as_visible_terminal_span_color() {
         &retained,
     );
 
-    let inv_run = prepared
+    let line_run = prepared
         .text_runs
         .iter()
-        .find(|run| run.text == "INV")
-        .expect("inverse terminal span should render separately");
-    let ok_run = prepared
-        .text_runs
-        .iter()
-        .find(|run| run.text == " ok")
-        .expect("unstyled terminal suffix should render separately");
+        .find(|run| run.text == "INV ok")
+        .expect("inverse terminal line should render as one shaped text run");
+    assert_eq!(line_run.rich_spans.len(), 2);
     assert_ne!(
-        inv_run.color, ok_run.color,
+        line_run.rich_spans[0].color, line_run.rich_spans[1].color,
         "inverse/background terminal metadata should affect visible terminal color"
     );
 }

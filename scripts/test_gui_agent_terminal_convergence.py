@@ -72,6 +72,7 @@ fn natural_shell_exit_removes_its_tab_without_second_close() {}
         cache = """
 fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
 fn animated_agent_text_cache_retains_only_two_visible_generations() {}
+fn ensure_text_buffer() { buffer.set_rich_text(); }
 """
         render_gpu = """
 self.begin_text_buffer_frame();
@@ -80,12 +81,15 @@ self.cached_text_buffer_indices();
         bottom_dock = """
 TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 TERMINAL_LETTER_SPACING_EM;
+draw_rich_text();
 """
         terminal_font_tests = """
 fn terminal_font_advance_matches_shared_logical_cell_width() {}
 fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {}
-fn styled_terminal_fragments_share_contiguous_cell_origins() {}
+fn styled_terminal_colors_share_one_shaping_origin() {}
 fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
+fn prompt_style_boundaries_do_not_restart_glyph_positioning() {}
+fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {}
 """
         terminal_cursor = """
 const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
@@ -125,11 +129,17 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "removed",
             ),
             geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf"),
-            cache.replace("last_used_frame", "unbounded_generation"),
+            cache.replace("last_used_frame", "unbounded_generation").replace(
+                "set_rich_text", "set_text"
+            ),
             render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
-            bottom_dock.replace("TERMINAL_LETTER_SPACING_EM", "removed"),
+            bottom_dock
+            .replace("TERMINAL_LETTER_SPACING_EM", "removed")
+            .replace("draw_rich_text", "draw_text"),
             terminal_font_tests.replace(
-                "styled_terminal_fragments_share_contiguous_cell_origins", "removed"
+                "styled_terminal_colors_share_one_shaping_origin", "removed"
+            ).replace(
+                "prompt_style_boundaries_do_not_restart_glyph_positioning", "removed"
             ),
             terminal_cursor.replace("CURSOR_HORIZONTAL_INSET_PX", "removed"),
             failures,
@@ -150,11 +160,14 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
             "terminal text-cache bound is missing last_used_frame", failures
         )
         self.assertTrue(any("TERMINAL_LETTER_SPACING_EM" in failure for failure in failures))
+        self.assertTrue(any("draw_rich_text" in failure for failure in failures))
+        self.assertTrue(any("rich-text shaping buffer" in failure for failure in failures))
         self.assertTrue(any("slot.remove_when_closed" in failure for failure in failures))
         self.assertTrue(any("natural_shell_exit" in failure for failure in failures))
         self.assertTrue(
-            any("styled_terminal_fragments" in failure for failure in failures)
+            any("styled_terminal_colors" in failure for failure in failures)
         )
+        self.assertTrue(any("prompt_style_boundaries" in failure for failure in failures))
         self.assertTrue(
             any("terminal cursor-cell separation" in failure for failure in failures)
         )

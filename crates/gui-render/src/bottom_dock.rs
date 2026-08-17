@@ -6,8 +6,9 @@ use datum_gui_viewport::{
 
 use super::{
     HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_ACCENT,
-    TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, design_tokens,
-    draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
+    TEXT_MUTED, TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, TextRunSpan,
+    design_tokens, draw_rich_text, draw_text, estimated_text_run_width_px, push_rect_border,
+    truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_session_chrome::render_terminal_session_controls;
@@ -549,6 +550,8 @@ fn render_terminal_styled_line(
         );
         return;
     }
+    let visible_text = text.chars().take(visible_len).collect::<String>();
+    let mut rich_spans = Vec::new();
     let mut cursor = 0;
     for span in styled_line
         .spans
@@ -558,55 +561,64 @@ fn render_terminal_styled_line(
         let start = span.start.min(visible_len);
         let end = span.end.min(visible_len);
         if cursor < start {
-            draw_terminal_fragment(text, cursor, start, x, y, TEXT_PANEL_VALUE, text_runs);
+            push_terminal_rich_span(
+                &visible_text,
+                cursor,
+                start,
+                TEXT_PANEL_VALUE,
+                &mut rich_spans,
+            );
         }
-        draw_terminal_fragment(
-            text,
-            start,
+        let styled_start = start.max(cursor);
+        push_terminal_rich_span(
+            &visible_text,
+            styled_start,
             end,
-            x,
-            y,
             terminal_span_color(
                 span.fg.as_deref(),
                 span.bg.as_deref(),
                 span.bold,
                 span.inverse,
             ),
-            text_runs,
+            &mut rich_spans,
         );
-        cursor = end;
+        cursor = cursor.max(end);
     }
     if cursor < visible_len {
-        draw_terminal_fragment(text, cursor, visible_len, x, y, TEXT_PANEL_VALUE, text_runs);
+        push_terminal_rich_span(
+            &visible_text,
+            cursor,
+            visible_len,
+            TEXT_PANEL_VALUE,
+            &mut rich_spans,
+        );
     }
+    draw_rich_text(
+        &visible_text,
+        rich_spans,
+        x,
+        y,
+        TERMINAL_FONT_SIZE_PX,
+        TEXT_PANEL_VALUE,
+        TextFace::Terminal,
+        text_runs,
+    );
 }
 
-fn draw_terminal_fragment(
+fn push_terminal_rich_span(
     text: &str,
     start: usize,
     end: usize,
-    origin_x: f32,
-    y: f32,
     color: [f32; 3],
-    text_runs: &mut Vec<TextRun>,
+    spans: &mut Vec<TextRunSpan>,
 ) {
     if start >= end {
         return;
     }
-    let fragment = text
-        .chars()
-        .skip(start)
-        .take(end - start)
-        .collect::<String>();
-    draw_text(
-        &fragment,
-        origin_x + start as f32 * TERMINAL_CELL_WIDTH_PX,
-        y,
-        TERMINAL_FONT_SIZE_PX,
+    spans.push(TextRunSpan {
+        text: text.chars().skip(start).take(end - start).collect(),
         color,
-        TextFace::Terminal,
-        text_runs,
-    );
+    });
 }
 
 fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: bool) -> [f32; 3] {

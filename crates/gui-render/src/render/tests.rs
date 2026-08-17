@@ -14,6 +14,7 @@ mod tests {
     fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
         let base = TextRun {
             text: "PROJECT".to_string(),
+            rich_spans: Vec::new(),
             x: 12.0,
             y: 24.0,
             size: 12.0,
@@ -71,6 +72,7 @@ mod tests {
     fn text_prepare_signature_tracks_render_relevant_inputs() {
         let run = TextRun {
             text: "TERMINAL".to_string(),
+            rich_spans: Vec::new(),
             x: 12.0,
             y: 24.0,
             size: 12.0,

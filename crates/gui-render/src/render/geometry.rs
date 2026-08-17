@@ -1190,6 +1190,14 @@ fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
     let (width_px, height_px) = text_buffer_extent(run, width, height);
     TextBufferKey {
         text: run.text.clone(),
+        rich_spans: run
+            .rich_spans
+            .iter()
+            .map(|span| TextBufferSpanKey {
+                text: span.text.clone(),
+                color_bits: span.color.map(f32::to_bits),
+            })
+            .collect(),
         size_bits: run.size.to_bits(),
         face: run.face,
         width_px,

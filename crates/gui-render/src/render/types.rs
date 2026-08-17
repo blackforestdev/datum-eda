@@ -264,8 +264,15 @@ enum TextFace {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+struct TextRunSpan {
+    text: String,
+    color: [f32; 3],
+}
+
+#[derive(Debug, Clone, PartialEq)]
 struct TextRun {
     text: String,
+    rich_spans: Vec<TextRunSpan>,
     x: f32,
     y: f32,
     size: f32,
@@ -275,8 +282,15 @@ struct TextRun {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct TextBufferSpanKey {
+    text: String,
+    color_bits: [u32; 3],
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct TextBufferKey {
     text: String,
+    rich_spans: Vec<TextBufferSpanKey>,
     size_bits: u32,
     face: TextFace,
     width_px: u32,

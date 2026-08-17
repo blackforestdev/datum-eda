@@ -232,14 +232,19 @@ def check_agent_tui_runtime(
     for marker in (
         "TERMINAL_FONT_SIZE_PX: f32 = 12.0",
         "TERMINAL_LETTER_SPACING_EM",
+        "draw_rich_text",
     ):
         if marker not in bottom_dock:
             failures.append(f"terminal ink/advance separation is missing {marker}")
+    if "set_rich_text" not in text_cache:
+        failures.append("terminal styled rows must use one rich-text shaping buffer")
     for marker in (
         "terminal_font_advance_matches_shared_logical_cell_width",
         "terminal_cell_advance_combines_smaller_ink_with_explicit_spacing",
-        "styled_terminal_fragments_share_contiguous_cell_origins",
+        "styled_terminal_colors_share_one_shaping_origin",
         "colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells",
+        "prompt_style_boundaries_do_not_restart_glyph_positioning",
+        "terminal_rich_span_colors_participate_in_the_buffer_cache_key",
     ):
         if marker not in terminal_font_tests:
             failures.append(f"terminal cell-metric convergence proof is missing {marker}")

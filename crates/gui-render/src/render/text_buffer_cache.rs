@@ -77,13 +77,28 @@ impl Renderer {
             Some(buffer_height as f32),
         );
         let attrs = text_attrs(run.face);
-        buffer.set_text(
-            &mut self.font_system,
-            &run.text,
-            &attrs,
-            Shaping::Basic,
-            None,
-        );
+        if run.rich_spans.is_empty() {
+            buffer.set_text(
+                &mut self.font_system,
+                &run.text,
+                &attrs,
+                Shaping::Basic,
+                None,
+            );
+        } else {
+            buffer.set_rich_text(
+                &mut self.font_system,
+                run.rich_spans.iter().map(|span| {
+                    (
+                        span.text.as_str(),
+                        attrs.clone().color(text_color(span.color)),
+                    )
+                }),
+                &attrs,
+                Shaping::Basic,
+                None,
+            );
+        }
         buffer.shape_until_scroll(&mut self.font_system, false);
         self.text_buffer_cache.push(CachedTextBuffer {
             key,

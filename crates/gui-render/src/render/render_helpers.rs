@@ -1,4 +1,4 @@
-use super::{BoardGraphicPrimitive, RectPx, TextFace, TextRun};
+use super::{BoardGraphicPrimitive, RectPx, TextFace, TextRun, TextRunSpan};
 
 pub(crate) fn trace_render_timing(message: String) {
     if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
@@ -42,6 +42,38 @@ pub(crate) fn draw_text(
 ) {
     out.push(TextRun {
         text: text.to_string(),
+        rich_spans: Vec::new(),
+        x,
+        y,
+        size,
+        color,
+        face,
+        clip_bounds: None,
+    });
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn draw_rich_text(
+    text: &str,
+    spans: Vec<TextRunSpan>,
+    x: f32,
+    y: f32,
+    size: f32,
+    color: [f32; 3],
+    face: TextFace,
+    out: &mut Vec<TextRun>,
+) {
+    debug_assert_eq!(
+        spans
+            .iter()
+            .map(|span| span.text.as_str())
+            .collect::<Vec<_>>()
+            .concat(),
+        text
+    );
+    out.push(TextRun {
+        text: text.to_string(),
+        rich_spans: spans,
         x,
         y,
         size,
@@ -65,6 +97,7 @@ pub(crate) fn draw_text_clipped(
 ) {
     out.push(TextRun {
         text: text.to_string(),
+        rich_spans: Vec::new(),
         x,
         y,
         size,
