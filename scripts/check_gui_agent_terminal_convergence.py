@@ -30,6 +30,7 @@ RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
 TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_tests.rs"
+TERMINAL_CURSOR = ROOT / "crates" / "gui-render" / "src" / "terminal_cursor.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -171,6 +172,7 @@ def check_agent_tui_runtime(
     render_gpu: str,
     bottom_dock: str,
     terminal_font_tests: str,
+    terminal_cursor: str,
     failures: list[str],
 ) -> None:
     """Keep mouse-aware agent TUIs focused, responsive, and bounded."""
@@ -229,9 +231,16 @@ def check_agent_tui_runtime(
     for marker in (
         "terminal_font_advance_matches_shared_logical_cell_width",
         "styled_terminal_fragments_share_contiguous_cell_origins",
+        "colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells",
     ):
         if marker not in terminal_font_tests:
             failures.append(f"terminal cell-metric convergence proof is missing {marker}")
+    for marker in (
+        "CURSOR_HORIZONTAL_INSET_PX",
+        "trailing_slash_cursor_paint_stays_inside_the_next_logical_cell",
+    ):
+        if marker not in terminal_cursor:
+            failures.append(f"terminal cursor-cell separation is missing {marker}")
 
 
 def check_terminal_input_identity(
@@ -372,6 +381,7 @@ def main() -> int:
     text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
     render_gpu = RENDER_GPU.read_text()
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
+    terminal_cursor = TERMINAL_CURSOR.read_text()
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
     workspace_layout = WORKSPACE_LAYOUT.read_text()
@@ -417,6 +427,7 @@ def main() -> int:
         render_gpu,
         bottom_dock,
         terminal_font_tests,
+        terminal_cursor,
         failures,
     )
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)

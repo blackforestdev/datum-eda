@@ -11,6 +11,11 @@ use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX};
 use super::{Quad, RectPx, TEXT_ACCENT, TEXT_MUTED, push_rect_border};
 
 const CURSOR_STROKE_PX: f32 = 1.0;
+// Keep the painted cursor visibly inside its logical cell. JetBrains Mono's
+// right side bearing is narrower than one device pixel at the governed terminal
+// size, so painting from the exact cell boundary visually fuses a block/bar to
+// the preceding glyph even though the parser column is correct.
+const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
 const CURSOR_BAR_WIDTH_PX: f32 = 3.0;
 const CURSOR_UNDERLINE_HEIGHT_PX: f32 = 3.0;
 
@@ -30,21 +35,23 @@ fn cursor_shape(style: Option<&str>) -> CursorShape {
 }
 
 fn cursor_rect(style: Option<&str>, x: f32, y: f32) -> RectPx {
+    let inset_x = x + CURSOR_HORIZONTAL_INSET_PX;
+    let inset_width = TERMINAL_CELL_WIDTH_PX - 2.0 * CURSOR_HORIZONTAL_INSET_PX;
     match cursor_shape(style) {
         CursorShape::Block => RectPx {
-            x,
+            x: inset_x,
             y,
-            width: TERMINAL_CELL_WIDTH_PX,
+            width: inset_width,
             height: TERMINAL_CELL_HEIGHT_PX,
         },
         CursorShape::Underline => RectPx {
-            x,
+            x: inset_x,
             y: y + TERMINAL_CELL_HEIGHT_PX - CURSOR_UNDERLINE_HEIGHT_PX,
-            width: TERMINAL_CELL_WIDTH_PX,
+            width: inset_width,
             height: CURSOR_UNDERLINE_HEIGHT_PX,
         },
         CursorShape::Bar => RectPx {
-            x,
+            x: inset_x,
             y,
             width: CURSOR_BAR_WIDTH_PX,
             height: TERMINAL_CELL_HEIGHT_PX,
@@ -99,11 +106,32 @@ mod tests {
         let underline = cursor_rect(Some("steady_underline"), 0.0, 0.0);
         let bar = cursor_rect(Some("blinking_bar"), 0.0, 0.0);
 
-        assert_eq!(block.width, TERMINAL_CELL_WIDTH_PX);
+        assert_eq!(
+            block.width,
+            TERMINAL_CELL_WIDTH_PX - 2.0 * CURSOR_HORIZONTAL_INSET_PX
+        );
         assert_eq!(block.height, TERMINAL_CELL_HEIGHT_PX);
-        assert_eq!(underline.width, TERMINAL_CELL_WIDTH_PX);
+        assert_eq!(underline.width, block.width);
         assert_eq!(underline.height, CURSOR_UNDERLINE_HEIGHT_PX);
         assert_eq!(bar.width, CURSOR_BAR_WIDTH_PX);
         assert_eq!(bar.height, TERMINAL_CELL_HEIGHT_PX);
+    }
+
+    #[test]
+    fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {
+        let prompt = "bfadmin@debian3520:/tmp/datum-eda/gui-imports/DOA2526-5825f90fe7490128$ cd ~/Documents/datum-eda/";
+        let origin_x = 94.0;
+        let logical_cell_x = origin_x + prompt.chars().count() as f32 * TERMINAL_CELL_WIDTH_PX;
+        let block = cursor_rect(None, logical_cell_x, 802.0);
+
+        assert_eq!(block.x, logical_cell_x + CURSOR_HORIZONTAL_INSET_PX);
+        assert_eq!(
+            block.x + block.width,
+            logical_cell_x + TERMINAL_CELL_WIDTH_PX - CURSOR_HORIZONTAL_INSET_PX
+        );
+        assert!(
+            block.x > logical_cell_x,
+            "painted cursor must leave a visible gutter after the trailing slash"
+        );
     }
 }

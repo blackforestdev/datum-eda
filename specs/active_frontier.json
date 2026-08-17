@@ -1402,11 +1402,23 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-dtc-p05g-reopen-20260816",
+        "claimed_at": "2026-08-17T05:17:33Z",
+        "heartbeat_at": "2026-08-17T05:17:33Z",
+        "expires_at": "2026-08-17T13:17:33Z",
+        "scope": [
+          "DTC-P05G owner-rejected cursor presentation follow-up"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "9e0bbf99393ff44cfd04bc004a83ed41c931ea7c"
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1417,7 +1429,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06A",
+        "canonical_next_step_id": "DTC-P05G",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1670,7 +1682,7 @@
           {
             "id": "DTC-P05G",
             "kind": "execution",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Converge shaped terminal font advance, logical cell geometry, styled-fragment origins, cursor geometry, hit testing, and PTY columns under one measured metric, with split-style and long-prompt alignment proof.",
             "depends_on": [
               "DTC-P05D"
@@ -1681,18 +1693,12 @@
                 "marker": "DTC-P05G"
               }
             ],
-            "completion_evidence": [
-              {
-                "kind": "document",
-                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-VERIFIED"
-              }
-            ]
+            "completion_evidence": []
           },
           {
             "id": "DTC-P06A",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Ratify exact proof tiers, session load, latency, throughput, resource, storage, soak, platform, and evidence budgets before timed transport assertions are implemented.",
             "depends_on": [
               "DTC-P05G"

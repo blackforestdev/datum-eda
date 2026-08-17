@@ -157,3 +157,86 @@ fn styled_terminal_fragments_share_contiguous_cell_origins() {
         "logical cursor x {logical_cursor_x} must equal visible text end {visible_end}"
     );
 }
+
+#[test]
+fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    let host = "bfadmin@debian3520";
+    let path = ":/tmp/datum-eda/gui-imports/DOA2526-5825f90fe7490128";
+    let command = " cd ~/Documents/datum-eda/";
+    let fixture = format!("{host}{path}${command}");
+    let host_end = host.chars().count();
+    let path_end = host_end + path.chars().count();
+    let dollar_end = path_end + 1;
+    let span = |start, end, fg: &str| datum_gui_protocol::TerminalStyleSpan {
+        start,
+        end,
+        fg: Some(fg.to_string()),
+        bg: None,
+        bold: false,
+        dim: false,
+        italic: false,
+        underline: false,
+        overline: false,
+        blink: false,
+        strikethrough: false,
+        conceal: false,
+        inverse: false,
+    };
+    *state.ui.terminal.pty_grid_mut().lines = vec![fixture.clone()];
+    *state.ui.terminal.pty_grid_mut().styled_lines = vec![datum_gui_protocol::TerminalStyledLine {
+        text: fixture.clone(),
+        spans: vec![
+            span(0, host_end, "green"),
+            span(host_end, path_end, "blue"),
+            span(path_end, dollar_end, "yellow"),
+        ],
+    }];
+    state.ui.terminal.screen_cursor_row = 0;
+    state.ui.terminal.screen_cursor_col = fixture.chars().count();
+    state.ui.terminal.screen_cursor_visible = true;
+
+    let retained = RetainedScene::from_workspace(&state, 1200, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1200,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let fragments = prepared
+        .text_runs
+        .iter()
+        .filter(|run| run.face == TextFace::Terminal)
+        .collect::<Vec<_>>();
+
+    assert_eq!(
+        fragments
+            .iter()
+            .map(|run| run.text.as_str())
+            .collect::<Vec<_>>(),
+        vec![host, path, "$", command]
+    );
+    assert!(
+        fragments[3].text.starts_with(" cd"),
+        "the real shell-emitted space after '$' must not be lost"
+    );
+    for pair in fragments.windows(2) {
+        let shaped_end =
+            pair[0].x + measured_text_run_width_px(&pair[0].text, pair[0].size, pair[0].face);
+        assert!(
+            (pair[1].x - shaped_end).abs() < 0.01,
+            "prompt style boundary moved a cell: {:?} ends at {shaped_end}, {:?} starts at {}",
+            pair[0].text,
+            pair[1].text,
+            pair[1].x
+        );
+    }
+    let visible_end = fragments[0].x
+        + fixture.chars().count() as f32 * datum_gui_viewport::TERMINAL_CELL_WIDTH_PX;
+    let logical_cursor_x = fragments[0].x
+        + state.ui.terminal.screen_cursor_col as f32 * datum_gui_viewport::TERMINAL_CELL_WIDTH_PX;
+    assert_eq!(visible_end, logical_cursor_x);
+}

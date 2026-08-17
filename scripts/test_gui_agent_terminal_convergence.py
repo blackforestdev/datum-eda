@@ -77,6 +77,11 @@ self.cached_text_buffer_indices();
         terminal_font_tests = """
 fn terminal_font_advance_matches_shared_logical_cell_width() {}
 fn styled_terminal_fragments_share_contiguous_cell_origins() {}
+fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
+"""
+        terminal_cursor = """
+const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
+fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
 """
         failures: list[str] = []
         guard.check_agent_tui_runtime(
@@ -88,6 +93,7 @@ fn styled_terminal_fragments_share_contiguous_cell_origins() {}
             render_gpu,
             bottom_dock,
             terminal_font_tests,
+            terminal_cursor,
             failures,
         )
         self.assertEqual([], failures)
@@ -112,6 +118,7 @@ fn styled_terminal_fragments_share_contiguous_cell_origins() {}
             terminal_font_tests.replace(
                 "styled_terminal_fragments_share_contiguous_cell_origins", "removed"
             ),
+            terminal_cursor.replace("CURSOR_HORIZONTAL_INSET_PX", "removed"),
             failures,
         )
         self.assertIn(
@@ -135,6 +142,9 @@ fn styled_terminal_fragments_share_contiguous_cell_origins() {}
         )
         self.assertTrue(
             any("styled_terminal_fragments" in failure for failure in failures)
+        )
+        self.assertTrue(
+            any("terminal cursor-cell separation" in failure for failure in failures)
         )
         self.assertIn(
             "renderer must begin exactly one text-cache generation per frame", failures

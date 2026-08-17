@@ -400,15 +400,32 @@ DTC-P05G has this bounded scope:
    TerminalCore cell semantics in their already scheduled DTC-P07..P23 slices;
    this repair must not claim those broader capabilities.
 
-<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-VERIFIED -->
-DTC-P05G derives the governed JetBrains Mono render size from the shared 7.9 px
-logical cell width instead of shaping terminal text at an unrelated 11 px.
-Real glyphon shaping proves long ASCII prompts advance exactly one logical cell
-per character, styled fragments meet at identical cell boundaries, and the
-logical cursor position equals the visible text end. Renderer, terminal-app,
-strict Clippy, convergence, dependency-authority, and governance checks pass;
-the fresh release binary is ready for hands-on confirmation. Full Unicode cell
-semantics remain explicitly scheduled rather than being overstated here.
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-INITIAL-METRIC-REPAIR -->
+The initial DTC-P05G implementation derived the governed JetBrains Mono render
+size from the shared 7.9 px logical cell width. Real glyphon shaping proved
+long ASCII advance and split-style contiguity, but owner QA on 2026-08-16
+rejected closure because the focused full-cell cursor remained visually fused
+to the preceding glyph. Pixel inspection of the supplied screenshot confirms
+that the final slash ends in the preceding logical cell and the cursor occupies
+the correct next cell; the remaining defect is cursor presentation rather than
+PTY text or parser-column corruption. DTC-P05G is reopened to preserve the
+logical cell while providing an unambiguous visual separation and a regression
+covering the exact colored shell-prompt and trailing-slash case. Full Unicode
+cell semantics remain explicitly scheduled rather than being overstated here.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-REOPENED-AUTOMATED -->
+The reopened implementation retains the authoritative cursor column but insets
+the painted block, underline, and bar by one logical pixel inside that cell.
+This creates a visible gutter after the preceding glyph without changing PTY
+bytes, shell prompt content, hit testing, grid width, or cursor reports. A
+renderer regression reconstructs the exact colored Bash prompt observed in the
+owner screenshot and proves that the yellow dollar sign, the shell-emitted
+post-prompt space, command text, trailing slash, and next cursor cell remain
+distinct. The convergence mutation gate now requires both the prompt fixture
+and cursor-cell inset proof. All 118 renderer tests, 273 terminal-focused GUI
+application tests, strict renderer Clippy, dependency authority, spec
+governance, and convergence gates pass. A fresh release binary was built on
+2026-08-16 at 22:27 local for the remaining owner visual acceptance.
 
 #### DTC-P06A owner packet
 
