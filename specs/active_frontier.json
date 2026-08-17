@@ -1751,7 +1751,7 @@
                 "revision": "6afbe18"
               },
               {
-                "kind": "automated",
+                "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05I-AUTOMATED"
               }
