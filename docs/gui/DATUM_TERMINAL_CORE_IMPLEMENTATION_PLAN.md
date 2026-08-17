@@ -394,7 +394,8 @@ DTC-P05G has this bounded scope:
 2. Shape each terminal row in one rich-text buffer so SGR color changes retain
    their metadata without restarting glyph positions at fractional cell edges.
 3. Prove the cursor begins at the exact next cell after the visible prompt and
-   remains aligned across representative long Claude input rows.
+   remains aligned across representative long Claude input rows and the
+   governed 1.0, 1.25, 1.5, and 2.0 surface-scale matrix.
 4. Preserve the governed JetBrains Mono whole-run face, DTC-P05C cache bounds,
    DTC-P05E focus authority, DTC-P05F parser correction, P04 transport budgets,
    and the no-dependency boundary.
@@ -437,6 +438,23 @@ the fully presented session for automatic tab removal; inactive exited sessions
 remain reviewable. The convergence mutation gate requires whole-row rich
 shaping, prompt/cursor, and natural-exit proofs. DTC-P05G remains open until a
 fresh release binary passes owner visual acceptance.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-HIDPI-CURSOR-REPAIR -->
+The third owner screenshot confirmed that whole-row shaping repaired the yellow
+shell prompt delimiter but the magenta cursor still lagged several cells behind
+the final `$ `. The captured runtime requested a 1280 × 768 logical window and
+received a 1344 × 806 surface, establishing a 1.05 Wayland scale. Datum was
+multiplying every terminal `TextRun` size by that surface scale even though the
+terminal cursor, mouse mapping, PTY columns, and shared screen geometry retain
+the fixed 7.9 × 16 device-pixel cell metric. Across the observed 72-cell prompt,
+that five-percent double scaling accumulates roughly 28 pixels of cursor drift,
+matching the rejected image. Terminal cell runs are now excluded from the
+generic GUI text-size scale transform; ordinary GUI chrome continues to scale.
+An exact replay of the colored bash prompt proves ANSI bytes leave the model
+cursor after the `$` and trailing space, while a 1.0/1.25/1.5/2.0 prepared-scene
+matrix proves shaped prompt width and cursor-grid x remain identical. The
+convergence mutation gate rejects restoring terminal glyph-only HiDPI scaling.
+DTC-P05G remains open for fresh-build owner visual acceptance of this repair.
 
 #### DTC-P06A owner packet
 

@@ -25,6 +25,21 @@ fn applies_basic_prompt_and_row_rewrites() {
 }
 
 #[test]
+fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {
+    let mut screen = TerminalScreen::default();
+    screen.resize_grid(164, 6);
+    let mut state = terminal_state();
+    let bytes = b"\x1b[01;32mbfadmin@debian3520\x1b[00m:\x1b[01;34m/tmp/datum-eda/gui-imports/DOA2526-5825f90fe7490128\x1b[01;33m$\x1b[00m ";
+
+    screen.apply_bytes(&mut state, bytes);
+
+    let prompt = "bfadmin@debian3520:/tmp/datum-eda/gui-imports/DOA2526-5825f90fe7490128$ ";
+    assert_eq!(state.grid_lines(), vec![prompt]);
+    assert_eq!(state.screen_cursor_row, 0);
+    assert_eq!(state.screen_cursor_col, prompt.chars().count());
+}
+
+#[test]
 fn cursor_left_and_right_support_progress_rewrites() {
     let mut screen = TerminalScreen::default();
     let mut state = terminal_state();

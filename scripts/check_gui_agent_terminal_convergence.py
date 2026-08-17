@@ -158,6 +158,7 @@ def check_claude_completion_controls(
     for marker in (
         "claude_keyboard_controls_cannot_restore_a_stale_cursor",
         "split_claude_keyboard_controls_are_cursor_state_invariant",
+        "colored_bash_prompt_places_cursor_after_dollar_and_trailing_space",
         'b"\\x1b[>1u\\x1b[?u\\x1b[<uclaude"',
     ):
         if marker not in terminal_screen_tests:
@@ -216,6 +217,8 @@ def check_agent_tui_runtime(
     for marker in ("JetBrainsMono-Regular.ttf", "TextFace::Terminal"):
         if marker not in render_geometry:
             failures.append(f"terminal glyph face is missing {marker}")
+    if "if run.face != TextFace::Terminal" not in render_geometry:
+        failures.append("HiDPI text scaling must preserve the terminal device-pixel grid")
     for marker in (
         "begin_text_buffer_frame",
         "last_used_frame",
@@ -243,6 +246,7 @@ def check_agent_tui_runtime(
         "terminal_cell_advance_combines_smaller_ink_with_explicit_spacing",
         "styled_terminal_colors_share_one_shaping_origin",
         "colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells",
+        "hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid",
         "prompt_style_boundaries_do_not_restart_glyph_positioning",
         "terminal_rich_span_colors_participate_in_the_buffer_cache_key",
     ):

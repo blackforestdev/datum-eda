@@ -24,6 +24,7 @@ fn claude_keyboard_controls_cannot_restore_a_stale_cursor() {
     apply(b"\x1b[>1u\x1b[?u\x1b[<uclaude");
 }
 fn split_claude_keyboard_controls_are_cursor_state_invariant() {}
+fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
 '''
         failures: list[str] = []
         guard.check_claude_completion_controls(
@@ -68,7 +69,11 @@ flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
 slot.remove_when_closed = is_active;
 fn natural_shell_exit_removes_its_tab_without_second_close() {}
 """
-        geometry = 'include_bytes!("JetBrainsMono-Regular.ttf"); TextFace::Terminal;'
+        geometry = '''
+include_bytes!("JetBrainsMono-Regular.ttf");
+TextFace::Terminal;
+if run.face != TextFace::Terminal { run.size *= scale; }
+'''
         cache = """
 fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
 fn animated_agent_text_cache_retains_only_two_visible_generations() {}
@@ -88,6 +93,7 @@ fn terminal_font_advance_matches_shared_logical_cell_width() {}
 fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {}
 fn styled_terminal_colors_share_one_shaping_origin() {}
 fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
+fn hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid() {}
 fn prompt_style_boundaries_do_not_restart_glyph_positioning() {}
 fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {}
 """
@@ -128,7 +134,8 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "natural_shell_exit_removes_its_tab_without_second_close",
                 "removed",
             ),
-            geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf"),
+            geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf")
+            .replace("if run.face != TextFace::Terminal", "if true"),
             cache.replace("last_used_frame", "unbounded_generation").replace(
                 "set_rich_text", "set_text"
             ),
@@ -155,6 +162,10 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         )
         self.assertIn(
             "terminal glyph face is missing JetBrainsMono-Regular.ttf", failures
+        )
+        self.assertIn(
+            "HiDPI text scaling must preserve the terminal device-pixel grid",
+            failures,
         )
         self.assertIn(
             "terminal text-cache bound is missing last_used_frame", failures

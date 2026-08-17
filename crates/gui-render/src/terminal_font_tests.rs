@@ -83,6 +83,49 @@ fn terminal_font_advance_matches_shared_logical_cell_width() {
 }
 
 #[test]
+fn hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+    let prompt = "bfadmin@debian3520:/tmp/datum-eda/gui-imports/DOA2526-5825f90fe7490128$ ";
+    *state.ui.terminal.pty_grid_mut().lines = vec![prompt.to_string()];
+    state.ui.terminal.screen_cursor_row = 0;
+    state.ui.terminal.screen_cursor_col = prompt.chars().count();
+    state.ui.terminal.screen_cursor_visible = true;
+
+    for scale in [1.0_f32, 1.25, 1.5, 2.0] {
+        let retained = RetainedScene::from_workspace_for_surface(&state, 1500, 1000, scale);
+        let prepared = PreparedScene::from_workspace_for_surface(
+            &state,
+            1500,
+            1000,
+            scale,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let line = prepared
+            .text_runs
+            .iter()
+            .find(|run| run.face == TextFace::Terminal && run.text == prompt)
+            .expect("terminal prompt run");
+        assert_eq!(
+            line.size,
+            bottom_dock::TERMINAL_FONT_SIZE_PX,
+            "scale {scale}: device-pixel terminal glyph size must not be scaled twice"
+        );
+        let shaped_end =
+            line.x + measured_text_run_width_px(line.text.as_str(), line.size, TextFace::Terminal);
+        let cursor_x = line.x
+            + state.ui.terminal.screen_cursor_col as f32
+                * datum_gui_viewport::TERMINAL_CELL_WIDTH_PX;
+        assert!(
+            (shaped_end - cursor_x).abs() < 0.01,
+            "scale {scale}: shaped prompt end {shaped_end} must equal cursor grid x {cursor_x}"
+        );
+    }
+}
+
+#[test]
 fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {
     let font_size = std::hint::black_box(bottom_dock::TERMINAL_FONT_SIZE_PX);
     let letter_spacing = std::hint::black_box(bottom_dock::TERMINAL_LETTER_SPACING_EM);
