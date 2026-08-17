@@ -16,7 +16,81 @@ fn hovered_terminal_close_session(target: Option<&HitTarget>) -> Option<String> 
     }
 }
 
+fn terminal_tab_session(target: Option<&HitTarget>) -> Option<&str> {
+    match target {
+        Some(
+            HitTarget::TerminalSessionTab(session_id) | HitTarget::TerminalSessionClose(session_id),
+        ) => Some(session_id),
+        _ => None,
+    }
+}
+
+fn terminal_tab_drag_start(target: Option<&HitTarget>) -> Option<String> {
+    match target {
+        Some(HitTarget::TerminalSessionTab(session_id)) if !session_id.is_empty() => {
+            Some(session_id.clone())
+        }
+        _ => None,
+    }
+}
+
 impl Runtime {
+    pub(super) fn begin_terminal_tab_drag(&mut self) -> bool {
+        let Some(pointer) = self.last_cursor_pos else {
+            return false;
+        };
+        let session_id =
+            terminal_tab_drag_start(self.prepared_scene().hit_test(pointer.0, pointer.1));
+        let Some(session_id) = session_id else {
+            return false;
+        };
+        self.terminal_tab_drag = Some(terminal_tab_drag::TerminalTabDrag::new(session_id, pointer));
+        true
+    }
+
+    pub(super) fn advance_terminal_tab_drag(&mut self, pointer: (f32, f32)) -> bool {
+        let target_id = terminal_tab_session(self.prepared_scene().hit_test(pointer.0, pointer.1))
+            .map(str::to_string);
+        let Some(drag) = &mut self.terminal_tab_drag else {
+            return false;
+        };
+        if !drag.advance(pointer) {
+            return false;
+        }
+        let Some(target_id) = target_id else {
+            return false;
+        };
+        let session_id = drag.session_id().to_string();
+        match self
+            .terminal_sessions
+            .reorder_session(&session_id, &target_id)
+        {
+            Ok(true) => {
+                self.sync_terminal_tabs();
+                self.invalidate_frame();
+                true
+            }
+            Ok(false) => false,
+            Err(err) => {
+                self.log_review_event(format!("terminal tab reorder failed: {err}"));
+                false
+            }
+        }
+    }
+
+    pub(super) fn finish_terminal_tab_drag(&mut self) -> bool {
+        let Some(drag) = self.terminal_tab_drag.take() else {
+            return false;
+        };
+        self.select_hit_target(&HitTarget::TerminalSessionTab(
+            drag.session_id().to_string(),
+        ))
+    }
+
+    pub(super) fn cancel_terminal_tab_drag(&mut self) {
+        self.terminal_tab_drag = None;
+    }
+
     pub(super) fn update_terminal_tab_hover(&mut self, pointer: (f32, f32)) -> bool {
         let next =
             hovered_terminal_close_session(self.prepared_scene().hit_test(pointer.0, pointer.1));
@@ -207,5 +281,17 @@ mod hover_tests {
             None
         );
         assert_eq!(hovered_terminal_close_session(None), None);
+    }
+
+    #[test]
+    fn tab_body_starts_reorder_but_close_control_remains_exclusive() {
+        let tab = HitTarget::TerminalSessionTab("terminal-2".to_string());
+        let close = HitTarget::TerminalSessionClose("terminal-2".to_string());
+        assert_eq!(
+            terminal_tab_drag_start(Some(&tab)).as_deref(),
+            Some("terminal-2")
+        );
+        assert_eq!(terminal_tab_drag_start(Some(&close)), None);
+        assert_eq!(terminal_tab_session(Some(&close)), Some("terminal-2"));
     }
 }

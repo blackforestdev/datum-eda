@@ -640,6 +640,8 @@ pub(super) fn mark_terminal_session_exit(
 
 #[path = "terminal_session_handle.rs"]
 mod handle;
+#[path = "terminal_session_reorder.rs"]
+mod reorder;
 
 #[cfg(test)]
 #[path = "terminal_job_control_tests.rs"]

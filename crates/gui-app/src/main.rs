@@ -66,6 +66,7 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
+mod terminal_tab_drag;
 mod terminal_transport;
 mod workspace_keyboard;
 use app_bootstrap::{GuiArgs, LaunchState};
@@ -323,6 +324,7 @@ impl ApplicationHandler for App {
                 if let Some(runtime) = &mut self.runtime {
                     if !focused {
                         runtime.pan_gesture.cancel();
+                        runtime.cancel_terminal_tab_drag();
                     }
                     if !focused && runtime.clear_interaction_overlay() {
                         self.request_redraw_if_needed();
@@ -333,6 +335,7 @@ impl ApplicationHandler for App {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.last_cursor_pos = None;
                     runtime.pan_gesture.cancel();
+                    runtime.cancel_terminal_tab_drag();
                     let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
                     if runtime.clear_interaction_overlay() || terminal_hover_cleared {
                         self.request_redraw_if_needed();
@@ -346,6 +349,12 @@ impl ApplicationHandler for App {
                     let previous_pos = runtime.last_cursor_pos;
                     runtime.last_cursor_pos = Some(next_pos);
                     let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
+                    if runtime.terminal_tab_drag.is_some() {
+                        if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
+                            self.request_redraw_if_needed();
+                        }
+                        return;
+                    }
                     if runtime.report_terminal_mouse_motion() {
                         runtime.clear_interaction_overlay();
                         self.request_redraw_if_needed();
@@ -434,6 +443,9 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.begin_terminal_tab_drag() {
+                        return;
+                    }
                     runtime.focus_terminal_screen_before_mouse_report();
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
@@ -470,6 +482,10 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.dock_drag_active = false;
+                    if runtime.finish_terminal_tab_drag() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     // A completed divider-drag resize ends here; the release must NOT
                     // fall through to click-to-focus / selection.
                     let was_divider_drag = runtime.divider_drag.take().is_some();
@@ -583,6 +599,7 @@ struct Runtime {
     last_cursor_pos: Option<(f32, f32)>,
     pan_gesture: PanGestureState,
     dock_drag_active: bool,
+    terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
     /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
     /// view state; never journaled.
     divider_drag: Option<DividerDrag>,
@@ -729,6 +746,7 @@ impl Runtime {
             last_cursor_pos: None,
             pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
+            terminal_tab_drag: None,
             divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),

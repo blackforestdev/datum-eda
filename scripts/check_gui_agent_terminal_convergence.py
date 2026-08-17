@@ -201,16 +201,10 @@ def check_agent_tui_runtime(
         report_at = press.find("report_terminal_mouse_button")
         if focus_at < 0 or report_at < 0 or focus_at > report_at:
             failures.append("terminal focus must precede child mouse-report forwarding")
-    for marker in (
-        "terminal_mouse_report_allowed",
-        "self.terminal_screen_cell_at(x, y)",
-    ):
+    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag"):
         if marker not in main:
             failures.append(f"terminal mouse routing is missing {marker}")
-    for marker in (
-        "focus_before_terminal_mouse_press",
-        "terminal_screen_cell_at",
-    ):
+    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "reorder_session"):
         if marker not in runtime_dock:
             failures.append(f"terminal focus-entry boundary is missing {marker}")
     for marker in (
