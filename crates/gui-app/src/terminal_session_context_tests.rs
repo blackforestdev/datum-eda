@@ -17,6 +17,7 @@ fn terminal_launch_context_for_project_root(
         board_name: None,
         scene_id: None,
         source_revision: None,
+        accepted_transaction_tip: None,
         production_status: ProductionStatus::default(),
         source_shard_status: datum_gui_protocol::SourceShardStatusSummary::default(),
         check_status: CheckRunReviewState::default(),

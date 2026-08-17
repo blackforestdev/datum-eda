@@ -117,6 +117,7 @@ fn context_for_root(root: &std::path::Path) -> TerminalLaunchContext {
         board_name: None,
         scene_id: None,
         source_revision: None,
+        accepted_transaction_tip: None,
         production_status: ProductionStatus::default(),
         source_shard_status: datum_gui_protocol::SourceShardStatusSummary::default(),
         check_status: CheckRunReviewState::default(),
@@ -152,6 +153,7 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
     write_minimal_native_project(&root);
     let transaction_tip = commit_review_sidecar(&root);
     let mut context = context_for_root(&root);
+    context.accepted_transaction_tip = Some(transaction_tip.clone());
     context.production_status.focused_artifact = Some(ProductionArtifactDetail {
         artifact_id: "artifact-gerber".to_string(),
         kind: "gerber_set".to_string(),

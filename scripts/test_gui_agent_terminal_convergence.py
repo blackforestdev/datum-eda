@@ -168,6 +168,24 @@ atomic_write_texts(&[]);
             controls,
             terminal_input,
             terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources + "\nrefresh_accepted_transaction_tip();",
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal tab activation still performs durable context persistence",
+            failures,
+        )
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
             terminal_spawn + "\nDatumToolSessionLifecycle::Attached;",
             production_refresh,
             production_sources,

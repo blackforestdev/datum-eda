@@ -333,7 +333,7 @@ def check_terminal_session_creation(
         failures.append("new terminal tab projection is not followed by frame invalidation")
     if "begin_spawn_and_activate" not in spawn_body or "spawn_and_activate_with_lane" in spawn_body:
         failures.append("new terminal tabs still perform PTY spawn work on the GUI event path")
-    if "refresh_terminal_session_context_from_state" in main.split("fn activate_terminal_session", 1)[-1].split("fn is_paste_shortcut", 1)[0]:
+    if "refresh_terminal_session_context_from_state" in main.split("fn activate_terminal_session", 1)[-1].split("fn is_paste_shortcut", 1)[0] or "refresh_accepted_transaction_tip" in production_sources:
         failures.append("terminal tab activation still performs durable context persistence")
     for marker in (
         'name(format!("terminal-spawn-{pending_id}"))',

@@ -58,7 +58,6 @@ mod terminal_context_contract;
 mod terminal_context_io;
 mod terminal_control_input;
 mod terminal_input;
-mod terminal_journal_context;
 mod terminal_narration;
 mod terminal_process;
 mod terminal_proposal_context;

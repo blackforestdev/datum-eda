@@ -6,7 +6,6 @@ use crate::terminal_context_contract::{
     TerminalProductionCommands, TerminalProposalCommands,
 };
 use crate::terminal_context_io::{atomic_write_text, atomic_write_texts};
-use crate::terminal_journal_context::accepted_transaction_tip;
 use crate::terminal_proposal_context::{latest_proposal_id, visible_proposal_ids};
 use crate::{ASSISTANT_ACTIVITY_COMMAND, terminal_session::TerminalLaunchContext};
 use anyhow::{Context, Result};
@@ -100,7 +99,7 @@ fn write_terminal_context_files_scoped(
         .flatten();
     let latest_proposal_id =
         latest_proposal_id(&context.production_status, &context.selection_context);
-    let accepted_transaction_tip = accepted_transaction_tip(context);
+    let accepted_transaction_tip = context.accepted_transaction_tip.clone();
     let active_context_commands = TerminalActiveContextCommands::from_focus(
         &context.project_root,
         production_visibility
