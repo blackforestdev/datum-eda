@@ -307,6 +307,7 @@ def check_terminal_tab_strip(
 def check_terminal_session_creation(
     main: str,
     keyboard_focus: str,
+    terminal_controls: str,
     terminal_input: str,
     terminal_session: str,
     naming_tests: str,
@@ -325,6 +326,11 @@ def check_terminal_session_creation(
     for marker in ("terminal_new_session_shortcut(", "runtime.spawn_terminal_session_tab()"):
         if marker not in keyboard_focus:
             failures.append(f"editor-focus Ctrl+Shift+T dispatch is missing {marker}")
+    spawn_body = terminal_controls.split(
+        "pub(super) fn spawn_terminal_session_tab", 1
+    )[-1].split("pub(super) fn close_active_terminal_session", 1)[0]
+    if "self.sync_terminal_tabs();" not in spawn_body or "self.invalidate_frame();" not in spawn_body:
+        failures.append("new terminal tab projection is not followed by frame invalidation")
     for marker in (
         "next_session_ordinal: usize",
         'let label = format!("shell {}", self.next_session_ordinal)',
@@ -546,6 +552,7 @@ def main() -> int:
     check_terminal_session_creation(
         main,
         keyboard_focus,
+        terminal_controls,
         terminal_input,
         terminal_session,
         terminal_session_naming_tests,

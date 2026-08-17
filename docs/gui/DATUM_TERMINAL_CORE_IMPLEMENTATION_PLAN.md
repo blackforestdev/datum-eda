@@ -535,6 +535,15 @@ proof now requires `shell 2` followed by `shell 3` after `shell 1` is removed
 and rejects shortcut or count-derived-label drift. Fresh owner QA remains the
 completion boundary.
 
+The next owner QA pass found that both `+` and Ctrl+Shift+T updated the session
+projection but left the already-open dock's prepared frame valid. The visible
+tab therefore waited for an unrelated shell-output wake, presenting as a
+variable multi-second spawn delay even though the real PTY spawn path completes
+in tens of milliseconds. The shared successful-spawn boundary now invalidates
+the frame immediately after synchronizing tabs; failure status does the same.
+The convergence guard rejects a creation path that publishes tabs without the
+matching frame invalidation.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application

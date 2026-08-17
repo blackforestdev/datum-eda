@@ -69,11 +69,13 @@ impl Runtime {
                 self.set_active_dock(DockTab::Terminal);
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
+                self.invalidate_frame();
             }
             Err(err) => {
                 let message = format!("terminal session open failed: {err}");
                 self.session.workspace_mut().ui.terminal.status = message.clone();
                 self.log_review_event(message);
+                self.invalidate_frame();
             }
         }
         true
