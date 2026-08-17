@@ -1779,6 +1779,10 @@
                 "revision": "8ddbb18"
               },
               {
+                "kind": "commit",
+                "revision": "b5edaa3"
+              },
+              {
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P05I-AUTOMATED"

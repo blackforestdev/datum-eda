@@ -586,6 +586,18 @@ ms locally, all 330 GUI-app tests pass on repeat, and the convergence guard
 rejects a restored forced flush. Fresh owner prompt-latency QA remains the
 completion boundary.
 
+Fresh QA disproved storage flushing as the complete explanation: prompt
+readiness still exceeded two seconds on the production workspace after that
+repair. Each terminal-context serialization was also refreshing the accepted
+transaction tip by running a full `ProjectResolver::resolve()` over the
+project, and session creation serialized that context twice. Terminal launch
+now carries the accepted transaction tip already held by the authoritative
+workspace supervision state; it no longer performs hidden project resolution
+while preparing a shell. Context contents remain unchanged, while the
+convergence guard rejects reintroducing resolver work into the launch path.
+All 330 GUI-app tests and strict Clippy pass. Fresh owner prompt-latency QA
+remains the completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
