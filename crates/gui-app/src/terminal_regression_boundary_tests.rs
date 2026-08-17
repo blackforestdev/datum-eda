@@ -650,6 +650,7 @@ fn workspace_ui_state() -> datum_gui_protocol::WorkspaceUiState {
         dock_height_px: 220,
         hovered_object: None,
         hovered_terminal_close_session_id: None,
+        terminal_tab_drag: None,
         cursor_pos: None,
         crosshair_style: datum_gui_protocol::CrosshairStyle::default(),
         filters: datum_gui_protocol::WorkspaceFilterState {

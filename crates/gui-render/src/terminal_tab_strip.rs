@@ -92,6 +92,7 @@ pub(super) fn render_terminal_tab_strip(
         let available = (trailing_x - x - PLUS_WIDTH_PX - TAB_GAP_PX).max(MIN_TAB_WIDTH_PX);
         let tab_width =
             (available / tabs.len() as f32 - TAB_GAP_PX).clamp(MIN_TAB_WIDTH_PX, MAX_TAB_WIDTH_PX);
+        let tab_origin_x = x;
         for tab in tabs {
             let rect = RectPx {
                 x,
@@ -100,13 +101,23 @@ pub(super) fn render_terminal_tab_strip(
                 height: tab_height,
             };
             let label = top_tab_label(tab, tab_width);
+            let is_drag_source = state
+                .ui
+                .terminal_tab_drag
+                .as_ref()
+                .is_some_and(|drag| drag.session_id == tab.session_id);
             render_tab(
                 label.as_str(),
-                tab.active && matches!(state.ui.active_dock_tab, Some(DockTab::Terminal)),
+                !is_drag_source
+                    && tab.active
+                    && matches!(state.ui.active_dock_tab, Some(DockTab::Terminal)),
                 rect,
                 panel_quads,
                 text_runs,
             );
+            if is_drag_source {
+                push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
+            }
             hit_regions.push(HitRegion {
                 target: HitTarget::TerminalSessionTab(tab.session_id.clone()),
                 rect: RectPx {
@@ -124,7 +135,9 @@ pub(super) fn render_terminal_tab_strip(
                 close.x + 7.0,
                 close.y + 6.0,
                 15.5,
-                if state.ui.hovered_terminal_close_session_id.as_deref()
+                if is_drag_source {
+                    TEXT_MUTED
+                } else if state.ui.hovered_terminal_close_session_id.as_deref()
                     == Some(tab.session_id.as_str())
                 {
                     TEXT_ACCENT
@@ -141,6 +154,61 @@ pub(super) fn render_terminal_tab_strip(
                 rect: close,
             });
             x += tab_width + TAB_GAP_PX;
+        }
+        if let Some(drag) = state.ui.terminal_tab_drag.as_ref()
+            && let Some((source_index, tab)) = tabs
+                .iter()
+                .enumerate()
+                .find(|(_, tab)| tab.session_id == drag.session_id)
+        {
+            if let Some(target_index) = drag
+                .target_session_id
+                .as_ref()
+                .and_then(|target| tabs.iter().position(|tab| &tab.session_id == target))
+            {
+                let target_x = tab_origin_x + target_index as f32 * (tab_width + TAB_GAP_PX);
+                let marker_x = if target_index < source_index {
+                    target_x - TAB_GAP_PX * 0.5
+                } else {
+                    target_x + tab_width + TAB_GAP_PX * 0.5
+                };
+                panel_quads.push(Quad::from_rect(
+                    RectPx {
+                        x: marker_x - 1.0,
+                        y: tab_y + 2.0,
+                        width: 2.0,
+                        height: (tab_height - 4.0).max(1.0),
+                    },
+                    TEXT_ACCENT,
+                ));
+            }
+            let ghost = RectPx {
+                x: (drag.pointer_x - drag.grab_offset_x)
+                    .clamp(tab_origin_x, (trailing_x - tab_width).max(tab_origin_x)),
+                y: tab_y - 3.0,
+                width: tab_width,
+                height: tab_height,
+            };
+            panel_quads.push(Quad::from_rect(ghost, design_tokens::chrome::SURFACE_01));
+            push_rect_border(panel_quads, ghost, TEXT_ACCENT, 1.0);
+            draw_text(
+                &top_tab_label(tab, tab_width),
+                ghost.x + design_tokens::spacing::SP_04,
+                ghost.y + 8.0,
+                12.5,
+                TEXT_PRIMARY,
+                TextFace::Ui,
+                text_runs,
+            );
+            draw_text(
+                "×",
+                ghost.x + ghost.width - CLOSE_WIDTH_PX + 7.0,
+                ghost.y + 6.0,
+                15.5,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text_runs,
+            );
         }
     }
 

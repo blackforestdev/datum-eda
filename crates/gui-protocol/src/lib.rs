@@ -54,8 +54,8 @@ mod workspace_layout;
 pub use workspace_layout::{
     ApplicationFocus, ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState,
     PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild,
-    SplitOrientation, ViewportInteraction, WorkspaceFilterState, WorkspaceLayout, WorkspacePreset,
-    WorkspaceUiState,
+    SplitOrientation, TerminalTabDragVisualState, ViewportInteraction, WorkspaceFilterState,
+    WorkspaceLayout, WorkspacePreset, WorkspaceUiState,
 };
 mod production_proposals;
 pub use production_proposals::{

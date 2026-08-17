@@ -51,6 +51,10 @@ impl App {
             Some(SplitOrientation::Horizontal) => CursorIcon::NsResize,
             None => CursorIcon::Default,
         };
+        self.apply_cursor_icon(icon);
+    }
+
+    pub(super) fn apply_cursor_icon(&mut self, icon: winit::window::CursorIcon) {
         if self.current_cursor != icon {
             self.current_cursor = icon;
             if let Some(window) = self.window {

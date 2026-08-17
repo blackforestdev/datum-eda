@@ -353,6 +353,7 @@ impl ApplicationHandler for App {
                         if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
                             self.request_redraw_if_needed();
                         }
+                        self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
                     }
                     if runtime.report_terminal_mouse_motion() {
@@ -387,10 +388,15 @@ impl ApplicationHandler for App {
                     // the cursor (or the active drag's) before the runtime borrow
                     // ends, then set the window cursor.
                     let resize_cursor = runtime.divider_resize_cursor(next_pos.0, next_pos.1);
+                    let terminal_tab_cursor = runtime.terminal_tab_cursor_icon(next_pos);
                     if changed {
                         self.request_redraw_if_needed();
                     }
-                    self.apply_cursor(resize_cursor);
+                    if let Some(icon) = terminal_tab_cursor {
+                        self.apply_cursor_icon(icon);
+                    } else {
+                        self.apply_cursor(resize_cursor);
+                    }
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
@@ -444,6 +450,7 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     if runtime.begin_terminal_tab_drag() {
+                        self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
                     }
                     runtime.focus_terminal_screen_before_mouse_report();
@@ -483,6 +490,11 @@ impl ApplicationHandler for App {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.dock_drag_active = false;
                     if runtime.finish_terminal_tab_drag() {
+                        let icon = runtime
+                            .last_cursor_pos
+                            .and_then(|pointer| runtime.terminal_tab_cursor_icon(pointer))
+                            .unwrap_or(winit::window::CursorIcon::Default);
+                        self.apply_cursor_icon(icon);
                         self.request_redraw_if_needed();
                         return;
                     }
@@ -514,6 +526,17 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::KeyboardInput { event, .. } => {
+                if event.state == ElementState::Pressed
+                    && matches!(event.logical_key, Key::Named(NamedKey::Escape))
+                    && self
+                        .runtime
+                        .as_mut()
+                        .is_some_and(Runtime::cancel_terminal_tab_drag)
+                {
+                    self.apply_cursor_icon(winit::window::CursorIcon::Default);
+                    self.request_redraw_if_needed();
+                    return;
+                }
                 keyboard_focus::handle_keyboard_input(self, &event);
             }
             WindowEvent::RedrawRequested => {
@@ -600,6 +623,7 @@ struct Runtime {
     pan_gesture: PanGestureState,
     dock_drag_active: bool,
     terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
+    terminal_tab_drag_release_suppressed: bool,
     /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
     /// view state; never journaled.
     divider_drag: Option<DividerDrag>,
@@ -747,6 +771,7 @@ impl Runtime {
             pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
             terminal_tab_drag: None,
+            terminal_tab_drag_release_suppressed: false,
             divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),

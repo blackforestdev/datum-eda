@@ -55,6 +55,17 @@ pub struct ViewportInteraction {
     pub hover: Option<HoverTarget>,
 }
 
+/// Transient visual contract for a terminal tab that has crossed the pointer
+/// drag threshold. Session order is still unchanged; the renderer uses this to
+/// draw the lifted ghost and destination marker until the atomic drop.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TerminalTabDragVisualState {
+    pub session_id: String,
+    pub pointer_x: f32,
+    pub grab_offset_x: f32,
+    pub target_session_id: Option<String>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DockTab {
     Terminal,
@@ -110,6 +121,7 @@ pub struct WorkspaceUiState {
     /// Session ID whose terminal-tab close target is under the pointer.
     /// Transient consumer chrome, never journaled or swapped with PTY state.
     pub hovered_terminal_close_session_id: Option<String>,
+    pub terminal_tab_drag: Option<TerminalTabDragVisualState>,
     /// The live cursor position in DEVICE-PIXEL SCREEN space (not world nm),
     /// stored in its own screen-space type. `None` when the cursor is
     /// off-window — the offscreen visual-test capture, so the crosshair overlay
@@ -139,6 +151,7 @@ impl WorkspaceUiState {
             dock_height_px: 220,
             hovered_object: None,
             hovered_terminal_close_session_id: None,
+            terminal_tab_drag: None,
             cursor_pos: None,
             crosshair_style: CrosshairStyle::default(),
             filters,

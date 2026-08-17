@@ -95,6 +95,62 @@ fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last
 }
 
 #[test]
+fn dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.terminal.tabs = (1..=3)
+        .map(|index| datum_gui_protocol::TerminalTabState {
+            session_id: format!("terminal-{index}"),
+            previous_session_id: None,
+            label: format!("shell {index}"),
+            event_log_path: String::new(),
+            activity_event_count: 0,
+            activity_summary: Vec::new(),
+            active: index == 1,
+            attached: true,
+            status: "running".to_string(),
+            restart_count: 0,
+        })
+        .collect();
+    state.ui.terminal_tab_drag = Some(datum_gui_protocol::TerminalTabDragVisualState {
+        session_id: "terminal-1".to_string(),
+        pointer_x: 500.0,
+        grab_offset_x: 30.0,
+        target_session_id: Some("terminal-3".to_string()),
+    });
+    let strip = ShellLayout::for_window(1280, 800, Some(260)).bottom_strip;
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    crate::terminal_tab_strip::render_terminal_tab_strip(
+        &state, strip, &mut quads, &mut text, &mut hits,
+    );
+
+    let shell_one = text
+        .iter()
+        .filter(|run| run.text == "shell 1")
+        .collect::<Vec<_>>();
+    assert_eq!(shell_one.len(), 2, "source plus one lifted ghost");
+    assert!(shell_one.iter().any(|run| run.color == TEXT_MUTED));
+    assert!(shell_one.iter().any(|run| run.color == TEXT_PRIMARY));
+    assert!(quads.iter().any(|quad| {
+        let width = quad.points[1].0 - quad.points[0].0;
+        let height = quad.points[3].1 - quad.points[0].1;
+        quad.color == TEXT_ACCENT && width == 2.0 && height > 20.0
+    }));
+    assert_eq!(
+        hits.iter()
+            .filter(|region| {
+                region.target == HitTarget::TerminalSessionTab("terminal-1".to_string())
+            })
+            .count(),
+        1,
+        "the ghost is visual only and must not become a second hit target"
+    );
+}
+
+#[test]
 fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);

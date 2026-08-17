@@ -35,16 +35,39 @@ fn terminal_tab_drag_start(target: Option<&HitTarget>) -> Option<String> {
 }
 
 impl Runtime {
+    pub(super) fn terminal_tab_cursor_icon(
+        &mut self,
+        pointer: (f32, f32),
+    ) -> Option<winit::window::CursorIcon> {
+        if self.terminal_tab_drag.is_some() {
+            return Some(winit::window::CursorIcon::Grabbing);
+        }
+        matches!(
+            self.prepared_scene().hit_test(pointer.0, pointer.1),
+            Some(HitTarget::TerminalSessionTab(_))
+        )
+        .then_some(winit::window::CursorIcon::Grab)
+    }
+
     pub(super) fn begin_terminal_tab_drag(&mut self) -> bool {
         let Some(pointer) = self.last_cursor_pos else {
             return false;
         };
-        let session_id =
-            terminal_tab_drag_start(self.prepared_scene().hit_test(pointer.0, pointer.1));
+        let prepared = self.prepared_scene();
+        let session_id = terminal_tab_drag_start(prepared.hit_test(pointer.0, pointer.1));
         let Some(session_id) = session_id else {
             return false;
         };
-        self.terminal_tab_drag = Some(terminal_tab_drag::TerminalTabDrag::new(session_id, pointer));
+        let Some(tab_x) = prepared.hit_regions.iter().find_map(|region| {
+            (region.target == HitTarget::TerminalSessionTab(session_id.clone()))
+                .then_some(region.rect.x)
+        }) else {
+            return false;
+        };
+        self.terminal_tab_drag = Some(terminal_tab_drag::TerminalTabDrag::new(
+            session_id, pointer, tab_x,
+        ));
+        self.terminal_tab_drag_release_suppressed = false;
         true
     }
 
@@ -55,16 +78,25 @@ impl Runtime {
             return false;
         };
         let changed = drag.advance(pointer, target_id.as_deref());
-        if changed {
+        let visual = drag.visual_state(pointer.0);
+        let visual_changed = self.workspace().ui.terminal_tab_drag != visual;
+        if visual_changed {
+            self.session.workspace_mut().ui.terminal_tab_drag = visual;
+        }
+        if changed || visual_changed {
             self.invalidate_frame();
         }
-        changed
+        changed || visual_changed
     }
 
     pub(super) fn finish_terminal_tab_drag(&mut self) -> bool {
+        if std::mem::take(&mut self.terminal_tab_drag_release_suppressed) {
+            return true;
+        }
         let Some(drag) = self.terminal_tab_drag.take() else {
             return false;
         };
+        self.session.workspace_mut().ui.terminal_tab_drag = None;
         if let Some(target_id) = drag.target_session_id()
             && let Err(err) = self
                 .terminal_sessions
@@ -77,8 +109,20 @@ impl Runtime {
         ))
     }
 
-    pub(super) fn cancel_terminal_tab_drag(&mut self) {
-        self.terminal_tab_drag = None;
+    pub(super) fn cancel_terminal_tab_drag(&mut self) -> bool {
+        let canceled = self.terminal_tab_drag.take().is_some();
+        self.terminal_tab_drag_release_suppressed |= canceled;
+        if self
+            .session
+            .workspace_mut()
+            .ui
+            .terminal_tab_drag
+            .take()
+            .is_some()
+        {
+            self.invalidate_frame();
+        }
+        canceled
     }
 
     pub(super) fn update_terminal_tab_hover(&mut self, pointer: (f32, f32)) -> bool {
@@ -161,6 +205,7 @@ impl Runtime {
         }
         ui.active_dock_tab = None;
         ui.hovered_terminal_close_session_id = None;
+        ui.terminal_tab_drag = None;
         // TF-01: keyboard focus must not outlive the surface that owns it —
         // a closed dock with Terminal focus would swallow keys without a
         // visible recipient. Closing the dock hands ownership back to the editor.

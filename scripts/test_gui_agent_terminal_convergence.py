@@ -26,9 +26,12 @@ for tab in tabs {
 target: HitTarget::TerminalSessionNew;
 target: HitTarget::TerminalSessionClose(tab.session_id.clone());
 hovered_terminal_close_session_id;
+terminal_tab_drag;
+grab_offset_x;
+target_session_id;
 TEXT_ACCENT;
 """
-        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {} fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {}"
+        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {} fn dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker() {} fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {}"
         bottom_dock = "render_terminal_tab_strip();"
         geometry = "fn default_dock_has_no_header_and_uses_every_affordable_row() {}"
         failures: list[str] = []
@@ -39,11 +42,13 @@ TEXT_ACCENT;
         guard.check_terminal_tab_strip(
             tab_strip.replace("for tab in tabs", "for tab in tabs.rev()")
             .replace("x += tab_width + TAB_GAP_PX", "x = strip.x")
-            .replace("target: HitTarget::TerminalSessionNew", "removed").replace("target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "removed"),
+            .replace("target: HitTarget::TerminalSessionNew", "removed")
+            .replace("target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "removed")
+            .replace("terminal_tab_drag", "removed"),
             tests.replace(
                 "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last",
                 "removed",
-            ),
+            ).replace("dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker", "removed"),
             bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\n"PROJECT TERMINAL"\nCOPY SCROLLBACK\nrender_terminal_header();\nrender_terminal_lifecycle_overlay();',
             geometry + "\nsessions_row\nSESSIONS_BAND_PX\nHEADER_BAND_PX\nheader: Option<ScreenRectPx>",
             failures,
@@ -52,6 +57,7 @@ TEXT_ACCENT;
         self.assertTrue(any("x += tab_width" in failure for failure in failures))
         self.assertTrue(any("TerminalSessionNew" in failure for failure in failures))
         self.assertTrue(any("TerminalSessionClose" in failure for failure in failures))
+        self.assertTrue(any("terminal_tab_drag" in failure for failure in failures))
         self.assertIn("ordered terminal tab-strip production proof is missing", failures)
         self.assertTrue(any("redundant terminal session menu" in failure for failure in failures))
         self.assertTrue(any("still reserves space" in failure for failure in failures))
@@ -234,6 +240,8 @@ fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
     def test_agent_tui_focus_batching_glyph_and_cache_contract_is_pinned(self) -> None:
         main = """
     fn window_event() {
+        NamedKey::Escape;
+        cancel_terminal_tab_drag();
         match event {
             MouseButton::Left, ElementState::Pressed => {
                 begin_terminal_tab_drag();
@@ -247,6 +255,8 @@ fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
 fn terminal_mouse_reporting_active() {
     terminal_mouse_report_allowed();
     self.terminal_screen_cell_at(x, y);
+    CursorIcon::Grab;
+    CursorIcon::Grabbing;
 }
 """
         runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session();"
@@ -312,7 +322,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "                report_terminal_mouse_button();",
                 "report_terminal_mouse_button();\n"
                 "                focus_terminal_screen_before_mouse_report();",
-            ).replace("advance_terminal_tab_drag()", "removed"),
+            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed"),
             runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed"),
             drain.replace("flush_output_batch", "apply_each_chunk")
             .replace("slot.remove_when_closed = is_active", "removed")
@@ -344,6 +354,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
             "terminal focus must precede child mouse-report forwarding", failures
         )
         self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
+        self.assertIn("terminal mouse routing is missing cancel_terminal_tab_drag", failures)
         self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
         self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
         self.assertIn(

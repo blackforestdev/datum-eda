@@ -201,7 +201,7 @@ def check_agent_tui_runtime(
         report_at = press.find("report_terminal_mouse_button")
         if focus_at < 0 or report_at < 0 or focus_at > report_at:
             failures.append("terminal focus must precede child mouse-report forwarding")
-    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag"):
+    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing"):
         if marker not in main:
             failures.append(f"terminal mouse routing is missing {marker}")
     for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session"):
@@ -273,11 +273,11 @@ def check_terminal_tab_strip(
         "for tab in tabs {",
         "HitTarget::TerminalSessionTab(tab.session_id.clone())",
         "x += tab_width + TAB_GAP_PX",
-        "target: HitTarget::TerminalSessionNew", "target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "hovered_terminal_close_session_id", "TEXT_ACCENT",
+        "target: HitTarget::TerminalSessionNew", "target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "hovered_terminal_close_session_id", "terminal_tab_drag", "grab_offset_x", "target_session_id", "TEXT_ACCENT",
     ):
         if marker not in tab_strip:
             failures.append(f"ordered terminal tab strip is missing {marker}")
-    if any(marker not in tests for marker in ("new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last", "guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text")):
+    if any(marker not in tests for marker in ("new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last", "dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker", "guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text")):
         failures.append("ordered terminal tab-strip production proof is missing")
     for marker in (
         "render_terminal_sessions_row",
