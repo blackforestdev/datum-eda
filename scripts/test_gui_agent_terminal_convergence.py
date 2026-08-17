@@ -57,6 +57,7 @@ target: HitTarget::TerminalSessionNew;
         keyboard = "terminal_new_session_shortcut(); runtime.spawn_terminal_session_tab();"
         controls = '''
 pub(super) fn spawn_terminal_session_tab() {
+    self.begin_spawn_and_activate();
     self.sync_terminal_tabs();
     self.invalidate_frame();
 }
@@ -67,9 +68,16 @@ pub(super) fn close_active_terminal_session() {}
         )
         terminal_session = '''
 next_session_ordinal: usize;
+'''
+        terminal_spawn = '''
 let label = format!("shell {}", self.next_session_ordinal);
 self.next_session_ordinal += 1;
+name(format!("terminal-spawn-{pending_id}"));
+status: "starting".to_string();
+completion_wake.request();
+fn pending_tab_is_projected_before_spawn_work_finishes() {}
 '''
+        production_refresh = "complete_pending_spawns();"
         naming_tests = "fn default_session_labels_never_reuse_a_removed_ordinal() {}"
         failures: list[str] = []
         guard.check_terminal_session_creation(
@@ -78,6 +86,8 @@ self.next_session_ordinal += 1;
             controls,
             terminal_input,
             terminal_session,
+            terminal_spawn,
+            production_refresh,
             naming_tests,
             failures,
         )
@@ -90,15 +100,19 @@ self.next_session_ordinal += 1;
             controls.replace("self.invalidate_frame();", "removed"),
             terminal_input.replace("KeyCode::KeyT", "KeyCode::KeyR"),
             terminal_session.replace(
-                'let label = format!("shell {}", self.next_session_ordinal)',
-                'let label = format!("shell {}", self.sessions.len() + 1)',
+                "next_session_ordinal: usize",
+                "removed",
             ),
+            terminal_spawn.replace("completion_wake.request();", "removed").replace(
+                "pending_tab_is_projected_before_spawn_work_finishes", "removed"
+            ),
+            production_refresh.replace("complete_pending_spawns", "removed"),
             naming_tests.replace(
                 "default_session_labels_never_reuse_a_removed_ordinal", "removed"
             ),
             failures,
         )
-        self.assertGreaterEqual(len(failures), 6)
+        self.assertGreaterEqual(len(failures), 9)
 
     def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
         terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"

@@ -187,6 +187,15 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        let spawn_notices = self
+            .terminal_sessions
+            .complete_pending_spawns(&mut self.session.workspace_mut().ui.terminal);
+        let spawned = !spawn_notices.is_empty();
+        if spawned && let Some(started) = self.application_shutdown_started {
+            self.terminal_sessions.terminate_all_by(
+                started + Duration::from_millis(crate::terminal_transport::GLOBAL_SHUTDOWN_MS),
+            );
+        }
         let report = self
             .terminal_sessions
             .drain_all(&mut self.session.workspace_mut().ui.terminal);
@@ -202,6 +211,7 @@ impl Runtime {
             });
         if report.events == 0
             && !restarted
+            && !spawned
             && !report.tabs_changed
             && !report.active_projection_changed
             && report.notices.is_empty()
@@ -210,6 +220,9 @@ impl Runtime {
         }
         if restarted {
             self.log_review_event("terminal session restarted after verified teardown");
+        }
+        for notice in spawn_notices {
+            self.log_review_event(notice);
         }
         if (self.terminal_production_refresh_pending || self.terminal_workspace_refresh_pending)
             && self.terminal_production_refresh_due.is_none()
@@ -220,8 +233,12 @@ impl Runtime {
         for notice in report.notices {
             self.log_review_event(notice);
         }
-        if report.tabs_changed {
+        if report.tabs_changed || spawned {
             self.sync_terminal_tabs();
+        }
+        if spawned {
+            self.resize_terminal_to_dock();
+            self.invalidate_frame();
         }
         self.refresh_terminal_activity_summary();
         if report.active_projection_changed {

@@ -59,16 +59,14 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        match self.terminal_sessions.spawn_and_activate_with_lane(
-            &self.terminal_launch_context,
-            &mut self.session.workspace_mut().ui.terminal,
-        ) {
-            Ok(session_id) => {
-                let session_id = session_id.to_string();
-                self.log_review_event(format!("opened terminal session {session_id}"));
+        match self
+            .terminal_sessions
+            .begin_spawn_and_activate(&self.terminal_launch_context)
+        {
+            Ok(pending_id) => {
+                self.log_review_event(format!("opening terminal session {pending_id}"));
                 self.set_active_dock(DockTab::Terminal);
                 self.sync_terminal_tabs();
-                self.resize_terminal_to_dock();
                 self.invalidate_frame();
             }
             Err(err) => {

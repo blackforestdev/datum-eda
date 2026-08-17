@@ -18,7 +18,7 @@ use datum_gui_protocol::{
     TerminalLaneState, TerminalTabState,
 };
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc::Receiver};
 use winit::event_loop::EventLoopProxy;
 
 pub(super) use crate::terminal_transport::TerminalTransportEvent as TerminalEvent;
@@ -40,11 +40,18 @@ pub(super) struct TerminalSession {
 
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
+    pending_spawns: Vec<PendingTerminalSpawn>,
     active_index: usize,
     next_session_ordinal: usize,
     terminal_wake: TerminalWakeGate,
     next_drain_index: usize,
     projection_managed: bool,
+}
+
+struct PendingTerminalSpawn {
+    pending_id: String,
+    label: String,
+    result: Receiver<std::result::Result<TerminalSession, String>>,
 }
 
 struct TerminalSessionSlot {
@@ -124,65 +131,13 @@ impl TerminalSessionRegistry {
                 hidden_after_close: false,
                 exact_exit_status: None,
             }],
+            pending_spawns: Vec::new(),
             active_index: 0,
             next_session_ordinal: 2,
             terminal_wake,
             next_drain_index: 0,
             projection_managed: false,
         })
-    }
-
-    #[allow(dead_code)]
-    pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
-        ensure_session_capacity(self.sessions.len())?;
-        let _previous_active_index = self.active_index;
-        let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
-        let label = format!("shell {}", self.next_session_ordinal);
-        self.next_session_ordinal += 1;
-        self.sessions.push(TerminalSessionSlot {
-            session,
-            screen: TerminalScreen::default(),
-            label,
-            status: "running".to_string(),
-            attached: true,
-            previous_session_id: None,
-            restart_count: 0,
-            columns: 80,
-            rows: 24,
-            activity: TerminalActivitySummaryCache::default(),
-            parked_lane: TerminalLaneState::default(),
-            disconnected_reported: false,
-            termination_failure_reported: false,
-            close_confirmation_armed: false,
-            close_confirmation_input: String::new(),
-            pending_restart: false,
-            remove_when_closed: false,
-            hidden_after_close: false,
-            exact_exit_status: None,
-        });
-        self.active_index = self.sessions.len() - 1;
-        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
-        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
-        Ok(self.active().session_id())
-    }
-
-    pub(super) fn spawn_and_activate_with_lane(
-        &mut self,
-        context: &TerminalLaunchContext,
-        lane: &mut TerminalLaneState,
-    ) -> Result<String> {
-        let previous = self.active_index;
-        let session_id = self.spawn_and_activate(context)?.to_string();
-        lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
-        self.projection_managed = true;
-        debug_assert_eq!(
-            self.sessions[self.active_index]
-                .parked_lane
-                .grid_lines()
-                .len(),
-            0
-        );
-        Ok(session_id)
     }
 
     #[allow(dead_code)]
@@ -419,6 +374,18 @@ impl TerminalSessionRegistry {
                     restart_count: slot.restart_count,
                 }
             })
+            .chain(self.pending_spawns.iter().map(|pending| TerminalTabState {
+                session_id: pending.pending_id.clone(),
+                previous_session_id: None,
+                label: pending.label.clone(),
+                event_log_path: String::new(),
+                activity_event_count: 0,
+                activity_summary: vec!["starting terminal session".to_string()],
+                active: false,
+                attached: true,
+                status: "starting".to_string(),
+                restart_count: 0,
+            }))
             .collect::<Vec<_>>();
         if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
             state.activity_summary = active_tab.activity_summary.clone();
@@ -446,6 +413,8 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
 mod drain;
 #[path = "terminal_session_lifecycle.rs"]
 mod lifecycle;
+#[path = "terminal_session_spawn.rs"]
+mod spawn;
 
 pub(super) fn terminal_launch_context_from_state(
     project_root: &Path,

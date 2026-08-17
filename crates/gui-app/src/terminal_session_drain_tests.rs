@@ -90,6 +90,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
         .collect();
     TerminalSessionRegistry {
         sessions,
+        pending_spawns: Vec::new(),
         active_index: 0,
         next_session_ordinal: session_count + 1,
         terminal_wake: wake,

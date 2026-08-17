@@ -147,13 +147,14 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn all_sessions_closed(&self) -> bool {
-        self.sessions.iter().all(|slot| {
-            slot.session.shutdown_snapshot().is_some_and(|snapshot| {
-                snapshot.phase == crate::terminal_transport::ShutdownPhase::Closed
-                    && snapshot.leader_reaped
-                    && slot.session.presentation_complete()
+        self.pending_spawns.is_empty()
+            && self.sessions.iter().all(|slot| {
+                slot.session.shutdown_snapshot().is_some_and(|snapshot| {
+                    snapshot.phase == crate::terminal_transport::ShutdownPhase::Closed
+                        && snapshot.leader_reaped
+                        && slot.session.presentation_complete()
+                })
             })
-        })
     }
 
     pub(crate) fn shutdown_failure_summary(&self) -> String {

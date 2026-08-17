@@ -11,6 +11,7 @@ KEYBOARD_FOCUS = ROOT / "crates" / "gui-app" / "src" / "keyboard_focus.rs"
 BOTTOM_DOCK = ROOT / "crates" / "gui-render" / "src" / "bottom_dock.rs"
 LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
 TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
+TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_spawn.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
@@ -310,6 +311,8 @@ def check_terminal_session_creation(
     terminal_controls: str,
     terminal_input: str,
     terminal_session: str,
+    terminal_session_spawn: str,
+    production_refresh: str,
     naming_tests: str,
     failures: list[str],
 ) -> None:
@@ -331,14 +334,27 @@ def check_terminal_session_creation(
     )[-1].split("pub(super) fn close_active_terminal_session", 1)[0]
     if "self.sync_terminal_tabs();" not in spawn_body or "self.invalidate_frame();" not in spawn_body:
         failures.append("new terminal tab projection is not followed by frame invalidation")
+    if "begin_spawn_and_activate" not in spawn_body or "spawn_and_activate_with_lane" in spawn_body:
+        failures.append("new terminal tabs still perform PTY spawn work on the GUI event path")
+    for marker in (
+        'name(format!("terminal-spawn-{pending_id}"))',
+        'status: "starting".to_string()',
+        "completion_wake.request();",
+        "pending_tab_is_projected_before_spawn_work_finishes",
+    ):
+        if marker not in terminal_session + terminal_session_spawn:
+            failures.append(f"asynchronous terminal tab creation is missing {marker}")
+    if "complete_pending_spawns" not in production_refresh:
+        failures.append("terminal spawn completion is not consumed from the GUI wake path")
+    session_creation_sources = terminal_session + terminal_session_spawn
     for marker in (
         "next_session_ordinal: usize",
         'let label = format!("shell {}", self.next_session_ordinal)',
         "self.next_session_ordinal += 1",
     ):
-        if marker not in terminal_session:
+        if marker not in session_creation_sources:
             failures.append(f"monotonic terminal session naming is missing {marker}")
-    if "self.sessions.len() + 1" in terminal_session:
+    if "self.sessions.len() + 1" in session_creation_sources:
         failures.append("terminal labels still reuse the live-session count")
     if "default_session_labels_never_reuse_a_removed_ordinal" not in naming_tests:
         failures.append("terminal label non-reuse production proof is missing")
@@ -474,6 +490,7 @@ def main() -> int:
     bottom_dock = BOTTOM_DOCK.read_text()
     launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""
     terminal_controls = TERMINAL_CONTROLS.read_text()
+    terminal_session_spawn = TERMINAL_SESSION_SPAWN.read_text()
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text()
@@ -555,6 +572,8 @@ def main() -> int:
         terminal_controls,
         terminal_input,
         terminal_session,
+        terminal_session_spawn,
+        production_refresh,
         terminal_session_naming_tests,
         failures,
     )
