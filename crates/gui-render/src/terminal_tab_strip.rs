@@ -5,9 +5,10 @@ use super::{
     design_tokens, draw_text, estimated_text_run_width_px, truncate_text,
 };
 
-const TAB_GAP_PX: f32 = 8.0;
+pub(super) const TAB_GAP_PX: f32 = 8.0;
+const CLOSE_WIDTH_PX: f32 = 20.0;
 const PLUS_WIDTH_PX: f32 = 20.0;
-const MIN_TAB_WIDTH_PX: f32 = 44.0;
+const MIN_TAB_WIDTH_PX: f32 = 56.0;
 const MAX_TAB_WIDTH_PX: f32 = 152.0;
 
 pub(super) fn render_terminal_tab_strip(
@@ -69,7 +70,28 @@ pub(super) fn render_terminal_tab_strip(
             );
             hit_regions.push(HitRegion {
                 target: HitTarget::TerminalSessionTab(tab.session_id.clone()),
-                rect,
+                rect: RectPx {
+                    width: rect.width - CLOSE_WIDTH_PX,
+                    ..rect
+                },
+            });
+            let close = RectPx {
+                x: rect.x + rect.width - CLOSE_WIDTH_PX,
+                width: CLOSE_WIDTH_PX,
+                ..rect
+            };
+            draw_text(
+                "×",
+                close.x + 5.0,
+                close.y + 8.0,
+                12.5,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text_runs,
+            );
+            hit_regions.push(HitRegion {
+                target: HitTarget::TerminalSessionClose(tab.session_id.clone()),
+                rect: close,
             });
             x += tab_width + TAB_GAP_PX;
         }
@@ -106,7 +128,7 @@ pub(super) fn render_terminal_tab_strip(
 }
 
 fn top_tab_label(tab: &TerminalTabState, tab_width: f32) -> String {
-    let max_chars = (((tab_width - 16.0) / 7.0) as usize).max(1);
+    let max_chars = (((tab_width - CLOSE_WIDTH_PX - 16.0) / 7.0) as usize).max(1);
     truncate_text(&tab.label, max_chars)
 }
 

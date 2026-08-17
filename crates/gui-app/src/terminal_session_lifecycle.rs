@@ -4,6 +4,15 @@ use datum_gui_protocol::TerminalLaneState;
 use std::time::Instant;
 
 impl TerminalSessionRegistry {
+    pub(crate) fn close_session(
+        &mut self,
+        session_id: &str,
+        state: &mut TerminalLaneState,
+    ) -> Result<()> {
+        self.activate_with_lane(session_id, state)?;
+        self.close_active(state)
+    }
+
     pub(crate) fn terminate_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
         self.sessions[self.active_index].close_confirmation_armed = false;
         self.sessions[self.active_index]

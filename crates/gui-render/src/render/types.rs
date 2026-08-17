@@ -34,6 +34,7 @@ pub enum HitTarget {
     EditSelectedBoardTextLineSpacing,
     TerminalTab,
     TerminalSessionTab(String),
+    TerminalSessionClose(String),
     TerminalSessionNew,
     TerminalSessionTerminateActive,
     TerminalSessionForceKillActive,

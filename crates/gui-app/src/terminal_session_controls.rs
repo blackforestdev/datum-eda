@@ -94,4 +94,23 @@ impl Runtime {
         }
         true
     }
+
+    pub(super) fn close_terminal_session(&mut self, session_id: &str) -> bool {
+        match self
+            .terminal_sessions
+            .close_session(session_id, &mut self.session.workspace_mut().ui.terminal)
+        {
+            Ok(()) => {
+                self.refresh_terminal_context_snapshot();
+                self.refresh_terminal_activity_summary();
+                self.sync_terminal_tabs();
+                self.resize_terminal_to_dock();
+                self.invalidate_frame();
+            }
+            Err(err) => {
+                self.log_review_event(format!("terminal session {session_id} close failed: {err}"))
+            }
+        }
+        true
+    }
 }

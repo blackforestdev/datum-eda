@@ -25,6 +25,41 @@ fn natural_shell_exit_removes_its_tab_without_second_close() {
 }
 
 #[test]
+fn close_target_selects_the_named_tab_and_arms_guarded_teardown() {
+    let root = std::env::temp_dir().join(format!(
+        "datum-terminal-close-target-{}",
+        std::process::id()
+    ));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).unwrap();
+    let context = TerminalLaunchContext::for_project_root(&root);
+    let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+    let first_id = registry.active().session_id().to_string();
+    let second_id = registry.spawn_and_activate(&context).unwrap().to_string();
+    let mut lane = TerminalLaneState::default();
+    registry.sync_lane_tabs(&mut lane);
+    assert_eq!(lane.active_session_id.as_deref(), Some(second_id.as_str()));
+
+    registry.close_session(&first_id, &mut lane).unwrap();
+
+    assert_eq!(lane.active_session_id.as_deref(), Some(first_id.as_str()));
+    assert!(registry.active_close_confirmation_armed());
+    assert!(lane.status.starts_with("close terminal?"));
+    assert!(
+        lane.tabs
+            .iter()
+            .any(|tab| tab.session_id == first_id && tab.active)
+    );
+    assert!(
+        lane.tabs
+            .iter()
+            .any(|tab| tab.session_id == second_id && !tab.active)
+    );
+    registry.handle_close_confirmation_input(b"\x1b", &mut lane);
+    let _ = std::fs::remove_dir_all(root);
+}
+
+#[test]
 fn lifecycle_only_supervisor_wake_changes_visible_status() {
     let root =
         std::env::temp_dir().join(format!("datum-terminal-phase-wake-{}", std::process::id()));

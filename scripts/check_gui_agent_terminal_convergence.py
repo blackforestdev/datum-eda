@@ -279,11 +279,11 @@ def check_terminal_tab_strip(
         "for tab in tabs {",
         "HitTarget::TerminalSessionTab(tab.session_id.clone())",
         "x += tab_width + TAB_GAP_PX",
-        "target: HitTarget::TerminalSessionNew",
+        "target: HitTarget::TerminalSessionNew", "target: HitTarget::TerminalSessionClose(tab.session_id.clone())",
     ):
         if marker not in tab_strip:
             failures.append(f"ordered terminal tab strip is missing {marker}")
-    if "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab" not in tests:
+    if "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last" not in tests:
         failures.append("ordered terminal tab-strip production proof is missing")
     for marker in (
         "render_terminal_sessions_row",

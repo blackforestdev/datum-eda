@@ -2205,6 +2205,7 @@ impl Runtime {
                 true
             }
             HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
+            HitTarget::TerminalSessionClose(session_id) => self.close_terminal_session(session_id),
             HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
             target @ (HitTarget::TerminalSessionTerminateActive
             | HitTarget::TerminalSessionForceKillActive

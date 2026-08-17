@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {
+fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
@@ -52,6 +52,36 @@ fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {
                 index
             );
         }
+    }
+    let close_targets = prepared
+        .hit_regions
+        .iter()
+        .filter(|region| matches!(region.target, HitTarget::TerminalSessionClose(_)))
+        .collect::<Vec<_>>();
+    assert_eq!(
+        close_targets.len(),
+        3,
+        "every session tab needs one close target"
+    );
+    for (index, close) in close_targets.iter().enumerate() {
+        assert!(matches!(
+            &close.target,
+            HitTarget::TerminalSessionClose(session_id)
+                if session_id == &format!("terminal-{}", index + 1)
+        ));
+        let tab = top_tabs[index].rect;
+        assert_eq!(tab.x + tab.width, close.rect.x);
+        if index + 1 < top_tabs.len() {
+            assert_eq!(
+                close.rect.x + close.rect.width + crate::terminal_tab_strip::TAB_GAP_PX,
+                top_tabs[index + 1].rect.x
+            );
+        }
+        assert!(matches!(
+            prepared.hit_test(close.rect.x + 2.0, close.rect.y + 2.0),
+            Some(HitTarget::TerminalSessionClose(session_id))
+                if session_id == &format!("terminal-{}", index + 1)
+        ));
     }
     let plus = prepared
         .hit_regions

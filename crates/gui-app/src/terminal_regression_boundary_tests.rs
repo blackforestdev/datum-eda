@@ -34,7 +34,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalSessionTab(_)
         | HitTarget::TerminalSessionNew => true,
         // Session-ending/suspending terminal chrome never arms focus.
-        HitTarget::TerminalSessionTerminateActive
+        HitTarget::TerminalSessionClose(_)
+        | HitTarget::TerminalSessionTerminateActive
         | HitTarget::TerminalSessionForceKillActive
         | HitTarget::TerminalSessionRetryTermination
         | HitTarget::TerminalShutdownCancel
@@ -136,6 +137,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::EditSelectedBoardTextLineSpacing,
         HitTarget::TerminalTab,
         HitTarget::TerminalSessionTab(id()),
+        HitTarget::TerminalSessionClose(id()),
         HitTarget::TerminalSessionNew,
         HitTarget::TerminalSessionTerminateActive,
         HitTarget::TerminalSessionForceKillActive,

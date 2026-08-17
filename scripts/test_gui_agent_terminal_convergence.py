@@ -24,8 +24,9 @@ for tab in tabs {
     x += tab_width + TAB_GAP_PX;
 }
 target: HitTarget::TerminalSessionNew;
+target: HitTarget::TerminalSessionClose(tab.session_id.clone());
 """
-        tests = "fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {}"
+        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {}"
         bottom_dock = "render_terminal_tab_strip();"
         geometry = "fn default_dock_has_no_header_and_uses_every_affordable_row() {}"
         failures: list[str] = []
@@ -36,9 +37,9 @@ target: HitTarget::TerminalSessionNew;
         guard.check_terminal_tab_strip(
             tab_strip.replace("for tab in tabs", "for tab in tabs.rev()")
             .replace("x += tab_width + TAB_GAP_PX", "x = strip.x")
-            .replace("target: HitTarget::TerminalSessionNew", "removed"),
+            .replace("target: HitTarget::TerminalSessionNew", "removed").replace("target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "removed"),
             tests.replace(
-                "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab",
+                "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last",
                 "removed",
             ),
             bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\n"PROJECT TERMINAL"\nCOPY SCROLLBACK\nrender_terminal_header();',
@@ -48,6 +49,7 @@ target: HitTarget::TerminalSessionNew;
         self.assertTrue(any("for tab in tabs {" in failure for failure in failures))
         self.assertTrue(any("x += tab_width" in failure for failure in failures))
         self.assertTrue(any("TerminalSessionNew" in failure for failure in failures))
+        self.assertTrue(any("TerminalSessionClose" in failure for failure in failures))
         self.assertIn("ordered terminal tab-strip production proof is missing", failures)
         self.assertTrue(any("redundant terminal session menu" in failure for failure in failures))
         self.assertTrue(any("still reserves space" in failure for failure in failures))
