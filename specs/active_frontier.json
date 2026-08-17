@@ -1735,7 +1735,7 @@
             "id": "DTC-P05I",
             "kind": "execution",
             "status": "in_progress",
-            "action": "Remove the redundant persistent sessions menu, duplicate session labels, and duplicate new/rename/restart/close controls; reclaim its terminal cell row while preserving the top tab strip, keyboard shortcuts, and contextual teardown safeguards.",
+            "action": "Remove redundant persistent terminal chrome and reclaim its cell rows while preserving the ordered top tab strip, keyboard shortcuts, contextual teardown safeguards, and a guarded pointer close affordance on every session tab.",
             "depends_on": [
               "DTC-P05H"
             ],
@@ -1789,6 +1789,10 @@
               {
                 "kind": "commit",
                 "revision": "c2ce40b"
+              },
+              {
+                "kind": "commit",
+                "revision": "1d3602b"
               },
               {
                 "kind": "review",

@@ -618,6 +618,15 @@ active as transient safety chrome over the first screen row, so it remains
 visible without changing PTY geometry. Fresh visual QA of the header-free
 terminal remains the DTC-P05I completion boundary.
 
+DTC-P05I also restores a complete pointer close path after retiring the old
+session-control row. Every projected terminal tab owns a right-edge `×` hit
+target carrying that tab's session identity. Clicking an inactive tab's close
+target activates that exact session before applying the existing lifecycle
+law: an already-complete session is removed immediately, while a live session
+only arms guarded confirmation and remains visible until verified teardown.
+The close target is non-entry chrome and cannot steal terminal keyboard focus.
+Fresh owner QA of the tab close affordance remains the completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
