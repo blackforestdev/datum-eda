@@ -54,34 +54,24 @@ impl Runtime {
         let Some(drag) = &mut self.terminal_tab_drag else {
             return false;
         };
-        if !drag.advance(pointer) {
-            return false;
+        let changed = drag.advance(pointer, target_id.as_deref());
+        if changed {
+            self.invalidate_frame();
         }
-        let Some(target_id) = target_id else {
-            return false;
-        };
-        let session_id = drag.session_id().to_string();
-        match self
-            .terminal_sessions
-            .reorder_session(&session_id, &target_id)
-        {
-            Ok(true) => {
-                self.sync_terminal_tabs();
-                self.invalidate_frame();
-                true
-            }
-            Ok(false) => false,
-            Err(err) => {
-                self.log_review_event(format!("terminal tab reorder failed: {err}"));
-                false
-            }
-        }
+        changed
     }
 
     pub(super) fn finish_terminal_tab_drag(&mut self) -> bool {
         let Some(drag) = self.terminal_tab_drag.take() else {
             return false;
         };
+        if let Some(target_id) = drag.target_session_id()
+            && let Err(err) = self
+                .terminal_sessions
+                .reorder_session(drag.session_id(), target_id)
+        {
+            self.log_review_event(format!("terminal tab reorder failed: {err}"));
+        }
         self.select_hit_target(&HitTarget::TerminalSessionTab(
             drag.session_id().to_string(),
         ))

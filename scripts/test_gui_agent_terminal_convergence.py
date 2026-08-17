@@ -249,7 +249,7 @@ fn terminal_mouse_reporting_active() {
     self.terminal_screen_cell_at(x, y);
 }
 """
-        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); reorder_session();"
+        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session();"
         drain = """
 flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
 slot.remove_when_closed = is_active;
@@ -313,7 +313,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "report_terminal_mouse_button();\n"
                 "                focus_terminal_screen_before_mouse_report();",
             ).replace("advance_terminal_tab_drag()", "removed"),
-            runtime_dock.replace("reorder_session()", "removed"),
+            runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed"),
             drain.replace("flush_output_batch", "apply_each_chunk")
             .replace("slot.remove_when_closed = is_active", "removed")
             .replace(
@@ -344,6 +344,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
             "terminal focus must precede child mouse-report forwarding", failures
         )
         self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
+        self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
         self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
         self.assertIn(
             "terminal tiny-output batching is missing flush_output_batch", failures

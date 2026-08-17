@@ -204,7 +204,7 @@ def check_agent_tui_runtime(
     for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag"):
         if marker not in main:
             failures.append(f"terminal mouse routing is missing {marker}")
-    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "reorder_session"):
+    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session"):
         if marker not in runtime_dock:
             failures.append(f"terminal focus-entry boundary is missing {marker}")
     for marker in (

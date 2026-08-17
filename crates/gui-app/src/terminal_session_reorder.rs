@@ -50,6 +50,9 @@ fn remap_index(index: usize, from: usize, to: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::terminal_session::TerminalLaunchContext;
+    use datum_gui_protocol::TerminalLaneState;
+    use std::fs;
 
     #[test]
     fn moving_tabs_remaps_active_and_fair_drain_indices_by_identity() {
@@ -63,5 +66,33 @@ mod tests {
         assert_eq!(remap_index(0, 2, 0), 1);
         assert_eq!(remap_index(1, 2, 0), 2);
         assert_eq!(remap_index(3, 0, 2), 3);
+    }
+
+    #[test]
+    fn dropped_real_session_keeps_its_creation_label_and_projection_identity() {
+        let root =
+            std::env::temp_dir().join(format!("datum-terminal-tab-reorder-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        let context = TerminalLaunchContext::for_project_root(&root);
+        let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+        let first_id = registry.active().session_id().to_string();
+        let second_id = registry.spawn_and_activate(&context).unwrap().to_string();
+        let mut lane = TerminalLaneState::default();
+
+        assert!(registry.reorder_session(&first_id, &second_id).unwrap());
+        registry.activate_with_lane(&first_id, &mut lane).unwrap();
+        registry.sync_lane_tabs(&mut lane);
+
+        assert_eq!(
+            (&lane.tabs[0].session_id, lane.tabs[0].label.as_str()),
+            (&second_id, "shell 2")
+        );
+        assert_eq!(
+            (&lane.tabs[1].session_id, lane.tabs[1].label.as_str()),
+            (&first_id, "shell 1")
+        );
+        assert!(lane.tabs[1].active);
+        let _ = fs::remove_dir_all(root);
     }
 }
