@@ -1237,6 +1237,7 @@ impl Runtime {
         }
         match action {
             TerminalKeyAction::Write(bytes) => self.write_foreign_shell_bytes(&bytes),
+            TerminalKeyAction::NewSession => self.spawn_terminal_session_tab(),
             TerminalKeyAction::TerminateSession => {
                 self.terminate_terminal_session();
                 true

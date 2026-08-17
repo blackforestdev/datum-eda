@@ -52,6 +52,45 @@ target: HitTarget::TerminalSessionNew;
         self.assertTrue(any("redundant terminal session menu" in failure for failure in failures))
         self.assertTrue(any("still reserves space" in failure for failure in failures))
 
+    def test_new_session_shortcut_and_monotonic_labels_are_pinned(self) -> None:
+        main = "TerminalKeyAction::NewSession => self.spawn_terminal_session_tab();"
+        keyboard = "terminal_new_session_shortcut(); runtime.spawn_terminal_session_tab();"
+        terminal_input = (
+            "TerminalKeyAction::NewSession; terminal_new_session_shortcut(); KeyCode::KeyT;"
+        )
+        terminal_session = '''
+next_session_ordinal: usize;
+let label = format!("shell {}", self.next_session_ordinal);
+self.next_session_ordinal += 1;
+'''
+        naming_tests = "fn default_session_labels_never_reuse_a_removed_ordinal() {}"
+        failures: list[str] = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            terminal_input,
+            terminal_session,
+            naming_tests,
+            failures,
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main.replace("TerminalKeyAction::NewSession", "removed"),
+            keyboard.replace("runtime.spawn_terminal_session_tab()", "removed"),
+            terminal_input.replace("KeyCode::KeyT", "KeyCode::KeyR"),
+            terminal_session.replace(
+                'let label = format!("shell {}", self.next_session_ordinal)',
+                'let label = format!("shell {}", self.sessions.len() + 1)',
+            ),
+            naming_tests.replace(
+                "default_session_labels_never_reuse_a_removed_ordinal", "removed"
+            ),
+            failures,
+        )
+        self.assertGreaterEqual(len(failures), 5)
+
     def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
         terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"
         terminal_tests = r'''

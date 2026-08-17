@@ -41,6 +41,7 @@ pub(super) struct TerminalSession {
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
     active_index: usize,
+    next_session_ordinal: usize,
     terminal_wake: TerminalWakeGate,
     next_drain_index: usize,
     projection_managed: bool,
@@ -124,6 +125,7 @@ impl TerminalSessionRegistry {
                 exact_exit_status: None,
             }],
             active_index: 0,
+            next_session_ordinal: 2,
             terminal_wake,
             next_drain_index: 0,
             projection_managed: false,
@@ -135,10 +137,12 @@ impl TerminalSessionRegistry {
         ensure_session_capacity(self.sessions.len())?;
         let _previous_active_index = self.active_index;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
+        let label = format!("shell {}", self.next_session_ordinal);
+        self.next_session_ordinal += 1;
         self.sessions.push(TerminalSessionSlot {
             session,
             screen: TerminalScreen::default(),
-            label: format!("shell {}", self.sessions.len() + 1),
+            label,
             status: "running".to_string(),
             attached: true,
             previous_session_id: None,
@@ -648,6 +652,9 @@ mod terminal_session_close_tests;
 #[cfg(test)]
 #[path = "terminal_session_context_tests.rs"]
 mod terminal_session_context_tests;
+#[cfg(test)]
+#[path = "terminal_session_naming_tests.rs"]
+mod terminal_session_naming_tests;
 #[cfg(test)]
 #[path = "terminal_session_tests.rs"]
 mod terminal_session_tests;

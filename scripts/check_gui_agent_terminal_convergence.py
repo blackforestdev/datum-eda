@@ -35,6 +35,9 @@ TERMINAL_CURSOR = ROOT / "crates" / "gui-render" / "src" / "terminal_cursor.rs"
 TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
 TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
 TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
+TERMINAL_INPUT = ROOT / "crates" / "gui-app" / "src" / "terminal_input.rs"
+TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal_session.rs"
+TERMINAL_SESSION_NAMING_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_naming_tests.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -301,6 +304,40 @@ def check_terminal_tab_strip(
         failures.append("terminal session-row reclamation proof is missing")
 
 
+def check_terminal_session_creation(
+    main: str,
+    keyboard_focus: str,
+    terminal_input: str,
+    terminal_session: str,
+    naming_tests: str,
+    failures: list[str],
+) -> None:
+    """Keep new-session shortcuts real and default labels monotonic."""
+    for marker in (
+        "TerminalKeyAction::NewSession",
+        "terminal_new_session_shortcut(",
+        "KeyCode::KeyT",
+    ):
+        if marker not in terminal_input:
+            failures.append(f"new-terminal shortcut dispatch is missing {marker}")
+    if "TerminalKeyAction::NewSession => self.spawn_terminal_session_tab()" not in main:
+        failures.append("terminal-focus Ctrl+Shift+T does not spawn a session")
+    for marker in ("terminal_new_session_shortcut(", "runtime.spawn_terminal_session_tab()"):
+        if marker not in keyboard_focus:
+            failures.append(f"editor-focus Ctrl+Shift+T dispatch is missing {marker}")
+    for marker in (
+        "next_session_ordinal: usize",
+        'let label = format!("shell {}", self.next_session_ordinal)',
+        "self.next_session_ordinal += 1",
+    ):
+        if marker not in terminal_session:
+            failures.append(f"monotonic terminal session naming is missing {marker}")
+    if "self.sessions.len() + 1" in terminal_session:
+        failures.append("terminal labels still reuse the live-session count")
+    if "default_session_labels_never_reuse_a_removed_ordinal" not in naming_tests:
+        failures.append("terminal label non-reuse production proof is missing")
+
+
 def check_terminal_input_identity(
     terminal_lane: str,
     production_sources: str,
@@ -447,6 +484,9 @@ def main() -> int:
     terminal_tab_strip = TERMINAL_TAB_STRIP.read_text()
     terminal_tab_strip_tests = TERMINAL_TAB_STRIP_TESTS.read_text()
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
+    terminal_input = TERMINAL_INPUT.read_text()
+    terminal_session = TERMINAL_SESSION.read_text()
+    terminal_session_naming_tests = TERMINAL_SESSION_NAMING_TESTS.read_text()
     terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
@@ -501,6 +541,14 @@ def main() -> int:
         terminal_tab_strip_tests,
         bottom_dock,
         terminal_grid_geometry,
+        failures,
+    )
+    check_terminal_session_creation(
+        main,
+        keyboard_focus,
+        terminal_input,
+        terminal_session,
+        terminal_session_naming_tests,
         failures,
     )
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)

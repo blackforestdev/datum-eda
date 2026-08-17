@@ -7,6 +7,7 @@ use winit::{
 #[derive(Debug, PartialEq, Eq)]
 pub(super) enum TerminalKeyAction {
     Write(Vec<u8>),
+    NewSession,
     RestartSession,
     TerminateSession,
     CloseSession,
@@ -32,6 +33,9 @@ pub(super) fn terminal_key_action(
         } else {
             TerminalKeyAction::Ignore
         };
+    }
+    if terminal_new_session_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
+        return TerminalKeyAction::NewSession;
     }
     if modifiers.control_key() {
         if modifiers.shift_key() && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyR)) {
@@ -102,6 +106,19 @@ pub(super) fn terminal_key_action(
             .unwrap_or(TerminalKeyAction::Ignore),
         _ => TerminalKeyAction::Ignore,
     }
+}
+
+pub(super) fn terminal_new_session_shortcut(
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: ModifiersState,
+) -> bool {
+    state == ElementState::Pressed
+        && !repeat
+        && modifiers.control_key()
+        && modifiers.shift_key()
+        && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyT))
 }
 
 pub(super) fn terminal_focus_event_sequence(focused: bool) -> &'static [u8] {
@@ -503,6 +520,7 @@ fn consumes_release(event: &KeyEvent) -> bool {
                 | KeyCode::KeyK
                 | KeyCode::KeyW
                 | KeyCode::KeyR
+                | KeyCode::KeyT
                 | KeyCode::NumpadEnter
                 | KeyCode::Numpad0
                 | KeyCode::Numpad1
@@ -533,6 +551,36 @@ mod terminal_workspace_hotkey_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn ctrl_shift_t_is_the_nonrepeating_new_session_shortcut() {
+        let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
+        let key = PhysicalKey::Code(KeyCode::KeyT);
+        assert!(terminal_new_session_shortcut(
+            ElementState::Pressed,
+            false,
+            key,
+            modifiers,
+        ));
+        assert!(!terminal_new_session_shortcut(
+            ElementState::Pressed,
+            true,
+            key,
+            modifiers,
+        ));
+        assert!(!terminal_new_session_shortcut(
+            ElementState::Released,
+            false,
+            key,
+            modifiers,
+        ));
+        assert!(!terminal_new_session_shortcut(
+            ElementState::Pressed,
+            false,
+            key,
+            ModifiersState::CONTROL,
+        ));
+    }
+
     #[test]
     fn shift_navigation_controls_terminal_scrollback() {
         for (key, action) in [

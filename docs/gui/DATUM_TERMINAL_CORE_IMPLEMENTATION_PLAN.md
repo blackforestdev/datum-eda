@@ -525,6 +525,16 @@ suites), as do strict Clippy, dependency authority, convergence mutations,
 spec governance, Frontier validation, and diff hygiene. Owner visual acceptance
 of the lean row remains the DTC-P05I completion boundary.
 
+Owner QA on 2026-08-17 rejected the first DTC-P05I build on two session-creation
+regressions: the displayed Ctrl+Shift+T shortcut was not connected to creation,
+and closing an earlier tab allowed the live-session count to reuse an existing
+default label. The repair gives the registry a monotonic session ordinal that
+is independent of removal and routes one shared, nonrepeating Ctrl+Shift+T
+predicate through both terminal-focus and editor-focus dispatch. Regression
+proof now requires `shell 2` followed by `shell 3` after `shell 1` is removed
+and rejects shortcut or count-derived-label drift. Fresh owner QA remains the
+completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application

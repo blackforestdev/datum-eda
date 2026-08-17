@@ -1,7 +1,8 @@
 use super::{
-    KeyClass, RouteDecision, TerminalInputOwner, armed_close_shortcut, focus_after_canvas_click,
-    focus_after_hit_target, focus_before_terminal_mouse_press, hit_target_is_terminal_entry,
-    key_route, pre_raw_escape_route, terminal_focus_report_transition, terminal_input_owner,
+    KeyClass, RouteDecision, TerminalInputOwner, armed_close_shortcut,
+    editor_new_terminal_shortcut, focus_after_canvas_click, focus_after_hit_target,
+    focus_before_terminal_mouse_press, hit_target_is_terminal_entry, key_route,
+    pre_raw_escape_route, terminal_focus_report_transition, terminal_input_owner,
     terminal_mouse_report_allowed, workspace_action_should_fire,
 };
 use crate::terminal_input::terminal_tab_sequence;
@@ -15,6 +16,33 @@ use winit::{
 #[test]
 fn default_focus_is_editor() {
     assert_eq!(KeyboardFocus::default(), KeyboardFocus::Editor(PaneId(0)));
+}
+
+#[test]
+fn editor_new_terminal_shortcut_defers_terminal_focus_to_raw_dispatch() {
+    let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
+    let key = PhysicalKey::Code(KeyCode::KeyT);
+    assert!(editor_new_terminal_shortcut(
+        KeyboardFocus::Editor(PaneId(0)),
+        ElementState::Pressed,
+        false,
+        key,
+        modifiers,
+    ));
+    assert!(!editor_new_terminal_shortcut(
+        KeyboardFocus::Terminal,
+        ElementState::Pressed,
+        false,
+        key,
+        modifiers,
+    ));
+    assert!(!editor_new_terminal_shortcut(
+        KeyboardFocus::Overlay,
+        ElementState::Pressed,
+        false,
+        key,
+        modifiers,
+    ));
 }
 
 #[test]

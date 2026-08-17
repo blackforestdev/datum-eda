@@ -51,6 +51,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
         std::process::id(),
         SYNTHETIC_REGISTRY_ID.fetch_add(1, Ordering::Relaxed)
     ));
+    let _ = std::fs::remove_dir_all(&root);
     std::fs::create_dir_all(&root).unwrap();
     let sessions = (0..session_count)
         .map(|index| {
@@ -90,6 +91,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
     TerminalSessionRegistry {
         sessions,
         active_index: 0,
+        next_session_ordinal: session_count + 1,
         terminal_wake: wake,
         next_drain_index: 0,
         projection_managed: true,

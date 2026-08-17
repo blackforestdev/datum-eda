@@ -19,7 +19,9 @@ use datum_gui_protocol::{ApplicationFocus, PaneId, SessionCommand};
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
-use crate::{Runtime, terminal_raw_input_should_handle};
+use crate::{
+    Runtime, terminal_input::terminal_new_session_shortcut, terminal_raw_input_should_handle,
+};
 
 /// What kind of keyboard traffic a key event represents, for routing purposes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -200,6 +202,18 @@ pub(crate) fn workspace_action_should_fire(
             == RouteDecision::Editor
 }
 
+pub(crate) fn editor_new_terminal_shortcut(
+    focus: ApplicationFocus,
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: winit::keyboard::ModifiersState,
+) -> bool {
+    focus != ApplicationFocus::Terminal
+        && focus != ApplicationFocus::Overlay
+        && terminal_new_session_shortcut(state, repeat, physical_key, modifiers)
+}
+
 impl Runtime {
     pub(crate) fn application_focus(&self) -> ApplicationFocus {
         self.workspace().ui.focus
@@ -240,6 +254,24 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
                 .terminal_sessions
                 .confirm_close_active(&mut runtime.session.workspace_mut().ui.terminal);
             runtime.sync_terminal_tabs();
+            runtime.invalidate_frame();
+        }
+        app.request_redraw_if_needed();
+        return true;
+    }
+    let opens_terminal_session = app.runtime.as_ref().is_some_and(|runtime| {
+        editor_new_terminal_shortcut(
+            focus,
+            event.state,
+            event.repeat,
+            event.physical_key,
+            runtime.modifiers,
+        )
+    });
+    if opens_terminal_session {
+        if let Some(runtime) = &mut app.runtime {
+            runtime.spawn_terminal_session_tab();
+            runtime.set_application_focus(ApplicationFocus::Terminal);
             runtime.invalidate_frame();
         }
         app.request_redraw_if_needed();
