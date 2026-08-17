@@ -902,15 +902,17 @@ in-memory `TerminalLaunchContext`, so newly spawned or restarted PTY sessions
 inherit the latest selection/cursor/dock context rather than stale launch-time
 state.
 
-GUI terminal context durability note: GUI-written terminal discovery files
+GUI terminal context visibility note: GUI-written terminal discovery files
 (`.datum/terminal-contexts/<session>.json`,
 `.datum/gui-terminal-context.json`, and `.datum/tool-sessions/<session>.json`)
-now use same-directory atomic temp-file writes with `sync_all` plus rename, and
-lifecycle rewrites use the same path. Runtime context refresh failures are no
-longer silent; they are surfaced in the terminal lane so agents are not left
-with stale or partially-written `$DATUM_DISCOVERY` state without visible
-diagnostics. Focused regressions repeatedly rewrite context JSON and lifecycle
-state while proving the files remain parseable and temp files do not leak.
+use same-directory atomic temp-file writes plus rename, and lifecycle rewrites
+use the same path. These reconstructible process-session snapshots do not force
+storage-device flushes on shell launch; canonical design mutations retain their
+separate journal fsync contract. Runtime context refresh failures are not
+silent: they surface in the terminal lane so agents are not left with stale or
+partially-written `$DATUM_DISCOVERY` state without visible diagnostics. Focused
+regressions repeatedly rewrite context JSON and lifecycle state while proving
+the files remain parseable and temp files do not leak.
 
 GUI terminal session context note: `$DATUM_DISCOVERY` now includes a
 `terminal_sessions` summary derived from the protocol-backed terminal lane.

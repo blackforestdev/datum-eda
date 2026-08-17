@@ -574,6 +574,18 @@ process-wide nonce so concurrent tabs cannot collide. The full GUI-app suite
 passes 330 tests, and the convergence guard rejects restored activation I/O or
 serial PID-context publication. Fresh owner latency QA remains required.
 
+The next fresh-build QA pass confirmed tab switching was immediate but prompt
+readiness still waited several seconds. The remaining blocker was forced
+`sync_all` on generated discovery/session snapshots. Those snapshots are
+reconstructible runtime metadata, not Datum's canonical design state, so shell
+launch now requires atomic same-directory replacement and parseable visibility
+without waiting for storage-firmware crash persistence. The pre-exec discovery
+and post-spawn PID-bearing ordering remain unchanged, as do journal fsyncs for
+canonical design mutation. A real PTY fixture reaches its prompt in roughly 40
+ms locally, all 330 GUI-app tests pass on repeat, and the convergence guard
+rejects a restored forced flush. Fresh owner prompt-latency QA remains the
+completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
