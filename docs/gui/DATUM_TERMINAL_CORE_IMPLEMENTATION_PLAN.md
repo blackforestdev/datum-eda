@@ -598,6 +598,16 @@ convergence guard rejects reintroducing resolver work into the launch path.
 All 330 GUI-app tests and strict Clippy pass. Fresh owner prompt-latency QA
 remains the completion boundary.
 
+Owner QA then confirmed prompt readiness is immediate and accepted the launch
+latency repair. The same pass identified the remaining persistent `SHELL
+SESSION / RUNNING / title / CWD / SIZE / modes` line as redundant diagnostic
+chrome. Normal terminal state now keeps those values only in the functional
+session/protocol model and renders no metadata row; close, teardown failure,
+and blocked application shutdown remain visible and actionable in the compact
+header. Reducing the header from 34 to 18 pixels returns one additional cell
+row (eight rather than seven at the default dock height). Fresh visual QA of
+the single-line header remains the DTC-P05I completion boundary.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
