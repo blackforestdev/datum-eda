@@ -80,7 +80,11 @@ fn pending_tab_is_projected_before_spawn_work_finishes() {}
 '''
         production_refresh = "complete_pending_spawns();"
         production_sources = "if !registry.active_attached() { return Ok(false); }"
-        naming_tests = "fn default_session_labels_never_reuse_a_removed_ordinal() {}"
+        naming_tests = """
+fn default_session_labels_never_reuse_a_removed_ordinal() {}
+write_terminal_context_files_scoped(&terminal_context, context, false);
+fn bootstrap_publishes_only_child_discovery_until_pid_is_known() {}
+"""
         failures: list[str] = []
         guard.check_terminal_session_creation(
             main,
@@ -113,10 +117,33 @@ fn pending_tab_is_projected_before_spawn_work_finishes() {}
             production_sources.replace("active_attached", "removed"),
             naming_tests.replace(
                 "default_session_labels_never_reuse_a_removed_ordinal", "removed"
+            ).replace(
+                "write_terminal_context_files_scoped(&terminal_context, context, false)",
+                "write_terminal_context_files(&terminal_context, context)",
+            ).replace(
+                "bootstrap_publishes_only_child_discovery_until_pid_is_known", "removed"
             ),
             failures,
         )
         self.assertGreaterEqual(len(failures), 9)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn + "\nDatumToolSessionLifecycle::Attached;",
+            production_refresh,
+            production_sources,
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal creation/switch still persists retired attach lifecycle",
+            failures,
+        )
 
     def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
         terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"

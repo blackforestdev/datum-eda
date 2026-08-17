@@ -83,9 +83,8 @@ fn terminal_session_registry_tracks_active_session_contexts() {
             .contains("\"lifecycle\":\"detached\""))
     );
     assert!(
-        fs::read_to_string(&second_event_log_path)
-            .expect("second event log should read")
-            .contains("\"lifecycle\":\"attached\"")
+        fs::read_to_string(&second_event_log_path).map_or(true, |contents| !contents
+            .contains("\"lifecycle\":\"attached\""))
     );
     let mut terminal_state = TerminalLaneState::default();
     assert!(registry.resize_active(112, 31).is_ok());
@@ -114,9 +113,9 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state.tabs[0].activity_event_count, 0,
         "background ownership must not invent a detached lifecycle event"
     );
-    assert!(
-        terminal_state.tabs[1].activity_event_count >= 1,
-        "attaching new active tab should be reflected in protocol history count"
+    assert_eq!(
+        terminal_state.tabs[1].activity_event_count, 0,
+        "creating a permanently owned session must not invent an attach event"
     );
     assert!(
         terminal_state.tabs[0]
@@ -130,9 +129,7 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state.tabs[1]
             .activity_summary
             .iter()
-            .any(|line| line.contains("lifecycle:attached")),
-        "second tab summary should expose its persisted attach event: {:?}",
-        terminal_state.tabs[1].activity_summary
+            .all(|line| !line.contains("lifecycle:attached"))
     );
     registry
         .rename(&first_session_id, "layout shell")
@@ -154,19 +151,16 @@ fn terminal_session_registry_tracks_active_session_contexts() {
         terminal_state
             .activity_summary
             .iter()
-            .any(|line| line.contains("lifecycle:attached")),
-        "visible activity summary should follow the activated terminal tab: {:?}",
-        terminal_state.activity_summary
+            .all(|line| !line.contains("lifecycle:attached"))
     );
     assert!(
-        !fs::read_to_string(&second_event_log_path)
-            .expect("second event log should read after activate")
-            .contains("\"lifecycle\":\"detached\"")
+        fs::read_to_string(&second_event_log_path).map_or(true, |contents| !contents
+            .contains("\"lifecycle\":\"detached\""))
     );
     assert!(
-        fs::read_to_string(&first_event_log_path)
-            .expect("first event log should read after activate")
-            .contains("\"lifecycle\":\"attached\"")
+        fs::read_to_string(&first_event_log_path).map_or(true, |contents| contents
+            .lines()
+            .all(|line| !line.contains("\"lifecycle\":\"attached\"")))
     );
     terminate_and_remove_active(&mut registry, &mut terminal_state);
     assert_eq!(registry.len(), 1);

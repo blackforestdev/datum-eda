@@ -318,11 +318,7 @@ def check_terminal_session_creation(
     failures: list[str],
 ) -> None:
     """Keep new-session shortcuts real and default labels monotonic."""
-    for marker in (
-        "TerminalKeyAction::NewSession",
-        "terminal_new_session_shortcut(",
-        "KeyCode::KeyT",
-    ):
+    for marker in ("TerminalKeyAction::NewSession", "terminal_new_session_shortcut(", "KeyCode::KeyT"):
         if marker not in terminal_input:
             failures.append(f"new-terminal shortcut dispatch is missing {marker}")
     if "TerminalKeyAction::NewSession => self.spawn_terminal_session_tab()" not in main:
@@ -351,11 +347,13 @@ def check_terminal_session_creation(
     if "if !registry.active_attached()" not in production_sources:
         failures.append("active pending terminal tabs do not reject input before PTY readiness")
     session_creation_sources = terminal_session + terminal_session_spawn
-    for marker in (
-        "next_session_ordinal: usize",
-        'let label = format!("shell {}", self.next_session_ordinal)',
-        "self.next_session_ordinal += 1",
-    ):
+    if "DatumToolSessionLifecycle::Attached" in session_creation_sources:
+        failures.append("terminal creation/switch still persists retired attach lifecycle")
+    if "write_terminal_context_files_scoped(&terminal_context, context, false)" not in naming_tests:
+        failures.append("terminal bootstrap publishes redundant pre-spawn aliases")
+    if "bootstrap_publishes_only_child_discovery_until_pid_is_known" not in naming_tests:
+        failures.append("bounded terminal bootstrap proof is missing")
+    for marker in ("next_session_ordinal: usize", 'let label = format!("shell {}", self.next_session_ordinal)', "self.next_session_ordinal += 1"):
         if marker not in session_creation_sources:
             failures.append(f"monotonic terminal session naming is missing {marker}")
     if "self.sessions.len() + 1" in session_creation_sources:
@@ -513,7 +511,10 @@ def main() -> int:
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
     terminal_input = TERMINAL_INPUT.read_text()
     terminal_session = TERMINAL_SESSION.read_text()
-    terminal_session_naming_tests = TERMINAL_SESSION_NAMING_TESTS.read_text()
+    terminal_session_naming_tests = (
+        TERMINAL_SESSION_NAMING_TESTS.read_text()
+        + TERMINAL_SESSION.with_name("terminal_context.rs").read_text()
+    )
     terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()

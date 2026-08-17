@@ -77,13 +77,21 @@ pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<
         created_unix_ms: unix_time_ms()?,
         process_group_id: None,
     };
-    write_terminal_context_files(&terminal_context, context)?;
+    write_terminal_context_files_scoped(&terminal_context, context, false)?;
     Ok(terminal_context)
 }
 
 pub(super) fn write_terminal_context_files(
     terminal_context: &TerminalContext,
     context: &TerminalLaunchContext,
+) -> Result<()> {
+    write_terminal_context_files_scoped(terminal_context, context, true)
+}
+
+fn write_terminal_context_files_scoped(
+    terminal_context: &TerminalContext,
+    context: &TerminalLaunchContext,
+    publish_aliases: bool,
 ) -> Result<()> {
     let updated_unix_ms = unix_time_ms()?;
     let production_visibility = production_visibility_context(&context.production_status);
@@ -313,6 +321,9 @@ pub(super) fn write_terminal_context_files(
             terminal_context.context_path.display()
         )
     })?;
+    if !publish_aliases {
+        return Ok(());
+    }
     atomic_write_text(&terminal_context.latest_context_path, &format!("{text}\n")).with_context(
         || {
             format!(
@@ -591,6 +602,29 @@ mod terminal_active_context_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn bootstrap_publishes_only_child_discovery_until_pid_is_known() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-terminal-context-bootstrap-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).expect("bootstrap context test dir should create");
+        let launch = TerminalLaunchContext::for_project_root(&root);
+
+        let mut terminal = write_terminal_context(&launch).expect("bootstrap context should write");
+        assert!(terminal.context_path.exists());
+        assert!(!terminal.latest_context_path.exists());
+        assert!(!terminal.session_path.exists());
+
+        terminal.process_group_id = Some(4242);
+        write_terminal_context_files(&terminal, &launch)
+            .expect("pid-bearing context aliases should publish");
+        assert!(terminal.latest_context_path.exists());
+        assert!(terminal.session_path.exists());
+        let _ = fs::remove_dir_all(&root);
+    }
 
     #[test]
     fn atomic_write_text_keeps_terminal_context_json_parseable_across_rewrites() {

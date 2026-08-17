@@ -9,8 +9,6 @@ impl TerminalSessionRegistry {
         let label = self.reserve_session_label();
         self.sessions.push(new_session_slot(session, label));
         self.active_index = self.sessions.len() - 1;
-        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
-        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         Ok(self.active().session_id())
     }
 
@@ -67,21 +65,8 @@ impl TerminalSessionRegistry {
         thread::Builder::new()
             .name(format!("terminal-spawn-{pending_id}"))
             .spawn(move || {
-                let result = spawn(worker_context, worker_wake)
-                    .and_then(|session| {
-                        mark_terminal_session_lifecycle(
-                            &session,
-                            DatumToolSessionLifecycle::Attached,
-                            None,
-                        )?;
-                        record_terminal_lifecycle_event(
-                            &session,
-                            DatumToolSessionLifecycle::Attached,
-                            None,
-                        )?;
-                        Ok(session)
-                    })
-                    .map_err(|error| format!("{error:#}"));
+                let result =
+                    spawn(worker_context, worker_wake).map_err(|error| format!("{error:#}"));
                 let _ = sender.send(result);
                 completion_wake.request();
             })

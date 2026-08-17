@@ -154,8 +154,6 @@ impl TerminalSessionRegistry {
             return Ok(());
         }
         self.active_index = index;
-        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
-        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
         Ok(())
     }
 
