@@ -55,62 +55,25 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
         &retained,
     );
 
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("codex: substrate review")),
-        "terminal dock should surface PTY-provided OSC title state"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("BELL 2")),
-        "terminal dock should surface PTY bell alert count"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("CWD /home/user/Datum Project/layout")),
-        "terminal dock should surface PTY-provided OSC 7 current working directory"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("SIZE 132x37")),
-        "terminal dock should surface active PTY geometry"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("FOCUS EVENTS")),
-        "terminal dock should surface PTY focus-event reporting mode"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("APP CURSOR")),
-        "terminal dock should surface DEC application cursor-key mode"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("APP KEYPAD")),
-        "terminal dock should surface DEC application keypad mode"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("MOUSE BUTTON_EVENT SGR")),
-        "terminal dock should surface PTY mouse reporting mode"
-    );
+    for diagnostic in [
+        "SHELL SESSION",
+        "codex: substrate review",
+        "BELL 2",
+        "CWD /home/user/Datum Project/layout",
+        "SIZE 132x37",
+        "FOCUS EVENTS",
+        "APP CURSOR",
+        "APP KEYPAD",
+        "MOUSE BUTTON_EVENT SGR",
+    ] {
+        assert!(
+            !prepared
+                .text_runs
+                .iter()
+                .any(|run| run.text.contains(diagnostic)),
+            "routine terminal diagnostic must not consume persistent chrome: {diagnostic}"
+        );
+    }
     assert!(
         prepared
             .text_runs

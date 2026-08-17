@@ -27,7 +27,7 @@ target: HitTarget::TerminalSessionNew;
 """
         tests = "fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {}"
         bottom_dock = "render_terminal_tab_strip();"
-        geometry = "fn default_dock_keeps_compact_header_and_reclaims_session_menu_row() {}"
+        geometry = "fn default_dock_keeps_single_line_header_and_reclaims_metadata_row() {}"
         failures: list[str] = []
         guard.check_terminal_tab_strip(tab_strip, tests, bottom_dock, geometry, failures)
         self.assertEqual([], failures)
@@ -41,8 +41,8 @@ target: HitTarget::TerminalSessionNew;
                 "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab",
                 "removed",
             ),
-            bottom_dock + '\n"SESSIONS"\nrender_terminal_sessions_row();',
-            geometry + "\nsessions_row\nSESSIONS_BAND_PX",
+            bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\nrender_terminal_sessions_row();',
+            geometry + "\nsessions_row\nSESSIONS_BAND_PX\nHEADER_BAND_PX: f32 = 34.0",
             failures,
         )
         self.assertTrue(any("for tab in tabs {" in failure for failure in failures))

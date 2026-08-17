@@ -291,17 +291,17 @@ def check_terminal_tab_strip(
         '"+NEW"',
         '"RENAME"',
         '"RESTART"',
-        '"CLOSE"',
+        '"CLOSE"', '"SHELL SESSION /"',
         "TerminalSessionRenameActive",
         "TerminalSessionRestartActive",
         "TerminalSessionCloseActive",
     ):
         if marker in bottom_dock:
             failures.append(f"redundant terminal session menu remains: {marker}")
-    for marker in ("sessions_row", "SESSIONS_BAND_PX"):
+    for marker in ("sessions_row", "SESSIONS_BAND_PX", "HEADER_BAND_PX: f32 = 34.0"):
         if marker in grid_geometry:
             failures.append(f"retired terminal session row still reserves space: {marker}")
-    if "default_dock_keeps_compact_header_and_reclaims_session_menu_row" not in grid_geometry:
+    if "default_dock_keeps_single_line_header_and_reclaims_metadata_row" not in grid_geometry:
         failures.append("terminal session-row reclamation proof is missing")
 
 

@@ -40,8 +40,8 @@ const DOCK_CONTENT_BOTTOM: f32 = 12.0;
 const LANE_PAD_X: f32 = 12.0;
 const LANE_PAD_TOP: f32 = 8.0;
 const LANE_PAD_BOTTOM: f32 = 8.0;
-/// Header chrome band: lane title line + session status/meta line.
-const HEADER_BAND_PX: f32 = 34.0;
+/// Single-line header chrome: lane title, shortcuts, and contextual actions.
+const HEADER_BAND_PX: f32 = 18.0;
 
 /// The solved terminal-lane geometry: the exact visible cell rectangle plus
 /// the chrome bands that survived around it.
@@ -49,7 +49,7 @@ const HEADER_BAND_PX: f32 = 34.0;
 pub struct TerminalScreenGeometry {
     /// The dock content rectangle the lane lives in.
     pub content: ScreenRectPx,
-    /// Header chrome band (title + session meta), when it fits.
+    /// Single-line header chrome band, when it fits.
     pub header: Option<ScreenRectPx>,
     /// The exact visible cell rectangle: `columns x rows` whole cells. This
     /// rectangle is the terminal hit target and the PTY size authority.
@@ -162,12 +162,17 @@ mod tests {
     }
 
     #[test]
-    fn default_dock_keeps_compact_header_and_reclaims_session_menu_row() {
+    fn default_dock_keeps_single_line_header_and_reclaims_metadata_row() {
         let geometry = terminal_screen_geometry(strip(1280.0, 220.0));
         assert!(geometry.header.is_some(), "default dock keeps the header");
         assert_eq!(
-            geometry.rows, 7,
-            "removed session menu returns one cell row"
+            geometry.header.expect("header").height,
+            TERMINAL_CELL_HEIGHT_PX + 2.0,
+            "normal chrome must remain a single compact line"
+        );
+        assert_eq!(
+            geometry.rows, 8,
+            "removed session metadata returns one more terminal cell row"
         );
         assert!(geometry.columns >= 80, "a 1280px dock affords 80+ columns");
         assert_screen_within_content(&geometry);
@@ -191,8 +196,8 @@ mod tests {
 
     #[test]
     fn chrome_collapses_before_screen_drops_below_min_rows() {
-        // 150px dock: content 94px, inner 78px — even the compact header
-        // would leave fewer than the governed minimum screen rows, so it is
+        // 150px dock: content 94px, inner 78px. The compact single-line header
+        // still leaves three rows, below the governed minimum, so it is
         // surrendered and all four affordable rows belong to the screen.
         let geometry = terminal_screen_geometry(strip(1280.0, 150.0));
         assert!(geometry.header.is_none());

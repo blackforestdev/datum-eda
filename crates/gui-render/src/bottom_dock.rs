@@ -194,17 +194,26 @@ fn render_terminal_lane(
     render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
 }
 
-/// Terminal chrome header band: lane title plus PTY session status/meta and
-/// the copy/scroll/paste shortcut hint. Chrome only — never terminal cells
-/// (T0-C01/T0-C02; decision 027 FT-001).
+/// Single-line terminal chrome: lane title, shortcuts, and contextual
+/// lifecycle controls. Routine PTY metadata remains in terminal/session state
+/// for protocol behavior and diagnostics but consumes no persistent screen row.
 fn render_terminal_header(
     state: &ReviewWorkspaceState,
     rect: RectPx,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    let header_label = state
+        .ui
+        .terminal
+        .application_shutdown_blocked
+        .as_deref()
+        .or_else(|| {
+            (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
+        })
+        .unwrap_or("PROJECT TERMINAL");
     draw_text(
-        "PROJECT TERMINAL",
+        header_label,
         rect.x,
         rect.y,
         12.0,
@@ -232,55 +241,6 @@ fn render_terminal_header(
             text_runs,
         );
     }
-    let mut session_label =
-        if let Some(blocked) = state.ui.terminal.application_shutdown_blocked.as_deref() {
-            format!("APPLICATION SHUTDOWN / {blocked}")
-        } else if let Some(title) = state.ui.terminal.title.as_deref() {
-            format!(
-                "SHELL SESSION / {} / {}",
-                state.ui.terminal.status.to_uppercase(),
-                truncate_text(title, 48)
-            )
-        } else {
-            format!(
-                "SHELL SESSION / {}",
-                state.ui.terminal.status.to_uppercase()
-            )
-        };
-    if state.ui.terminal.bell_count > 0 {
-        session_label.push_str(&format!(" / BELL {}", state.ui.terminal.bell_count));
-    }
-    if let Some(cwd) = state.ui.terminal.current_working_directory.as_deref() {
-        session_label.push_str(&format!(" / CWD {}", truncate_text(cwd, 56)));
-    }
-    session_label.push_str(&format!(
-        " / SIZE {}x{}",
-        state.ui.terminal.columns, state.ui.terminal.rows
-    ));
-    if state.ui.terminal.focus_event_reporting {
-        session_label.push_str(" / FOCUS EVENTS");
-    }
-    if state.ui.terminal.application_cursor_keys {
-        session_label.push_str(" / APP CURSOR");
-    }
-    if state.ui.terminal.application_keypad {
-        session_label.push_str(" / APP KEYPAD");
-    }
-    if let Some(mode) = state.ui.terminal.mouse_reporting_mode.as_deref() {
-        session_label.push_str(&format!(" / MOUSE {}", mode.to_uppercase()));
-    }
-    if let Some(encoding) = state.ui.terminal.mouse_coordinate_encoding.as_deref() {
-        session_label.push_str(&format!(" {}", encoding.to_uppercase()));
-    }
-    draw_text(
-        &session_label,
-        rect.x,
-        rect.y + 16.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
 }
 
 /// The terminal SCREEN: the exact visible cell rectangle, drawing precisely
