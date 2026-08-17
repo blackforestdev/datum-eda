@@ -279,7 +279,7 @@ def check_terminal_tab_strip(
         "for tab in tabs {",
         "HitTarget::TerminalSessionTab(tab.session_id.clone())",
         "x += tab_width + TAB_GAP_PX",
-        "target: HitTarget::TerminalSessionNew", "target: HitTarget::TerminalSessionClose(tab.session_id.clone())",
+        "target: HitTarget::TerminalSessionNew", "target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "hovered_terminal_close_session_id", "TEXT_ACCENT",
     ):
         if marker not in tab_strip:
             failures.append(f"ordered terminal tab strip is missing {marker}")

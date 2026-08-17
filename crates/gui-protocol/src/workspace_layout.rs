@@ -107,6 +107,9 @@ pub struct WorkspaceUiState {
     pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
     pub hovered_object: Option<HoverTarget>,
+    /// Session ID whose terminal-tab close target is under the pointer.
+    /// Transient consumer chrome, never journaled or swapped with PTY state.
+    pub hovered_terminal_close_session_id: Option<String>,
     /// The live cursor position in DEVICE-PIXEL SCREEN space (not world nm),
     /// stored in its own screen-space type. `None` when the cursor is
     /// off-window — the offscreen visual-test capture, so the crosshair overlay
@@ -135,6 +138,7 @@ impl WorkspaceUiState {
             marking_menu: None,
             dock_height_px: 220,
             hovered_object: None,
+            hovered_terminal_close_session_id: None,
             cursor_pos: None,
             crosshair_style: CrosshairStyle::default(),
             filters,

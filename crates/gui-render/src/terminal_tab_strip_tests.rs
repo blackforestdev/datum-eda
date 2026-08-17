@@ -100,6 +100,7 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
     state.ui.dock_height_px = 260;
     state.ui.terminal.status = "close terminal? Enter confirms; Escape cancels".to_string();
+    state.ui.hovered_terminal_close_session_id = Some("terminal-1".to_string());
     state.ui.terminal.tabs = vec![datum_gui_protocol::TerminalTabState {
         session_id: "terminal-1".to_string(),
         previous_session_id: None,
@@ -197,4 +198,8 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         .find(|run| run.text == "×")
         .expect("visible tab close glyph");
     assert!(close_glyph.size >= 15.0);
+    assert_eq!(
+        close_glyph.color, TEXT_ACCENT,
+        "hovered close glyph must use Datum magenta"
+    );
 }

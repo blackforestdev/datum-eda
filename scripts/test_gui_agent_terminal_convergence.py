@@ -25,6 +25,8 @@ for tab in tabs {
 }
 target: HitTarget::TerminalSessionNew;
 target: HitTarget::TerminalSessionClose(tab.session_id.clone());
+hovered_terminal_close_session_id;
+TEXT_ACCENT;
 """
         tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {} fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {}"
         bottom_dock = "render_terminal_tab_strip();"

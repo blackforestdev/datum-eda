@@ -9,7 +9,43 @@
 
 use super::*;
 
+fn hovered_terminal_close_session(target: Option<&HitTarget>) -> Option<String> {
+    match target {
+        Some(HitTarget::TerminalSessionClose(session_id)) => Some(session_id.clone()),
+        _ => None,
+    }
+}
+
 impl Runtime {
+    pub(super) fn update_terminal_tab_hover(&mut self, pointer: (f32, f32)) -> bool {
+        let next =
+            hovered_terminal_close_session(self.prepared_scene().hit_test(pointer.0, pointer.1));
+        if self.workspace().ui.hovered_terminal_close_session_id == next {
+            return false;
+        }
+        self.session
+            .workspace_mut()
+            .ui
+            .hovered_terminal_close_session_id = next;
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn clear_terminal_tab_hover(&mut self) -> bool {
+        if self
+            .session
+            .workspace_mut()
+            .ui
+            .hovered_terminal_close_session_id
+            .take()
+            .is_none()
+        {
+            return false;
+        }
+        self.invalidate_frame();
+        true
+    }
+
     /// A mouse-aware child may consume terminal pointer events only after the
     /// terminal screen owns keyboard focus. The activation press therefore
     /// establishes focus through the shared cell rectangle before mouse
@@ -60,6 +96,7 @@ impl Runtime {
             return false;
         }
         ui.active_dock_tab = None;
+        ui.hovered_terminal_close_session_id = None;
         // TF-01: keyboard focus must not outlive the surface that owns it —
         // a closed dock with Terminal focus would swallow keys without a
         // visible recipient. Closing the dock hands ownership back to the editor.
@@ -151,5 +188,24 @@ impl Runtime {
                 self.log_review_event(format!("terminal resize failed: {err}"));
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod hover_tests {
+    use super::*;
+
+    #[test]
+    fn only_the_per_tab_close_target_owns_close_hover() {
+        let close = HitTarget::TerminalSessionClose("terminal-2".to_string());
+        assert_eq!(
+            hovered_terminal_close_session(Some(&close)).as_deref(),
+            Some("terminal-2")
+        );
+        assert_eq!(
+            hovered_terminal_close_session(Some(&HitTarget::TerminalSessionNew)),
+            None
+        );
+        assert_eq!(hovered_terminal_close_session(None), None);
     }
 }

@@ -124,7 +124,15 @@ pub(super) fn render_terminal_tab_strip(
                 close.x + 7.0,
                 close.y + 6.0,
                 15.5,
-                if tab.active { TEXT_PRIMARY } else { TEXT_MUTED },
+                if state.ui.hovered_terminal_close_session_id.as_deref()
+                    == Some(tab.session_id.as_str())
+                {
+                    TEXT_ACCENT
+                } else if tab.active {
+                    TEXT_PRIMARY
+                } else {
+                    TEXT_MUTED
+                },
                 TextFace::Ui,
                 text_runs,
             );

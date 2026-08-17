@@ -333,7 +333,8 @@ impl ApplicationHandler for App {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.last_cursor_pos = None;
                     runtime.pan_gesture.cancel();
-                    if runtime.clear_interaction_overlay() {
+                    let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
+                    if runtime.clear_interaction_overlay() || terminal_hover_cleared {
                         self.request_redraw_if_needed();
                     }
                     self.apply_cursor(None);
@@ -344,12 +345,13 @@ impl ApplicationHandler for App {
                     let next_pos = (position.x as f32, position.y as f32);
                     let previous_pos = runtime.last_cursor_pos;
                     runtime.last_cursor_pos = Some(next_pos);
+                    let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
                     if runtime.report_terminal_mouse_motion() {
                         runtime.clear_interaction_overlay();
                         self.request_redraw_if_needed();
                         return;
                     }
-                    let mut changed = false;
+                    let mut changed = terminal_hover_changed;
                     if runtime.dock_drag_active {
                         changed = runtime.handle_dock_resize_drag(next_pos);
                     } else if runtime.divider_drag.is_some() {
