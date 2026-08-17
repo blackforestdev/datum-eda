@@ -1683,7 +1683,7 @@
             "id": "DTC-P05G",
             "kind": "execution",
             "status": "in_progress",
-            "action": "Converge shaped terminal font advance, logical cell geometry, styled-fragment origins, cursor geometry, hit testing, and PTY columns under one measured metric, with split-style and long-prompt alignment proof.",
+            "action": "Converge shaped terminal ink and advance, logical cell geometry, styled-fragment origins, cursor geometry, hit testing, and PTY columns under one measured metric; prove prompt/cursor separation and remove a naturally exited active shell tab after final presentation without a second close gesture while preserving inactive exit results.",
             "depends_on": [
               "DTC-P05D"
             ],

@@ -2,7 +2,7 @@ use super::*;
 use std::time::{Duration, Instant};
 
 #[test]
-fn already_exited_sole_tab_closes_immediately_without_signaling() {
+fn natural_shell_exit_removes_its_tab_without_second_close() {
     let root = std::env::temp_dir().join(format!(
         "datum-terminal-close-exited-{}",
         std::process::id()
@@ -19,7 +19,6 @@ fn already_exited_sole_tab_closes_immediately_without_signaling() {
         std::thread::sleep(Duration::from_millis(5));
     }
     assert!(registry.active().presentation_complete());
-    registry.close_active(&mut lane).unwrap();
     assert!(lane.tabs.is_empty());
     assert_eq!(lane.active_session_id, None);
     let _ = std::fs::remove_dir_all(root);

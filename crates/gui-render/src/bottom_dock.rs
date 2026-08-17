@@ -13,12 +13,13 @@ use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_session_chrome::render_terminal_session_controls;
 use taffy::prelude::*;
 
-/// JetBrains Mono's governed terminal face advances every glyph by 0.6 em.
-/// Derive its render size from the shared logical cell width so glyph shaping,
-/// styled-fragment origins, cursor placement, hit testing, and PTY columns all
-/// land on the same grid. A real shaping-path regression ratchets this against
-/// the vendored font.
-pub(super) const TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6;
+/// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
+/// engine's explicit letter spacing to preserve the exact governed 7.9 px
+/// advance. Enlarging the raw 0.6-em glyph advance to the full cell made
+/// adjacent contrasting glyphs and the cursor visually fuse at raster scale.
+pub(super) const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
+pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
+    (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {

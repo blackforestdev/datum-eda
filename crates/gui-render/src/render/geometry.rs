@@ -1313,7 +1313,9 @@ fn text_attrs(face: TextFace) -> Attrs<'static> {
             .family(Family::Name("IBM Plex Sans Condensed"))
             .weight(Weight::SEMIBOLD),
         TextFace::Mono => Attrs::new().family(Family::Name("IBM Plex Mono")),
-        TextFace::Terminal => Attrs::new().family(Family::Name("JetBrains Mono")),
+        TextFace::Terminal => Attrs::new()
+            .family(Family::Name("JetBrains Mono"))
+            .letter_spacing(bottom_dock::TERMINAL_LETTER_SPACING_EM),
     }
 }
 

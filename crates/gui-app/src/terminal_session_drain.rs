@@ -214,6 +214,12 @@ impl TerminalSessionRegistry {
                         ),
                     };
                     slot.exact_exit_status = Some(slot.status.clone());
+                    // Exiting the selected shell is terminal-close intent.
+                    // Once the output/reader/writer and owned-session barriers
+                    // complete, remove that tab without another CLOSE gesture.
+                    // Keep inactive exited tabs visible so their exact outcome
+                    // is not erased before the owner can review it.
+                    slot.remove_when_closed = is_active;
                     let lane = if is_active {
                         &mut *active_lane
                     } else {

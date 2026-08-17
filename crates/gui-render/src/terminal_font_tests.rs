@@ -83,6 +83,21 @@ fn terminal_font_advance_matches_shared_logical_cell_width() {
 }
 
 #[test]
+fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {
+    let font_size = std::hint::black_box(bottom_dock::TERMINAL_FONT_SIZE_PX);
+    let letter_spacing = std::hint::black_box(bottom_dock::TERMINAL_LETTER_SPACING_EM);
+    assert!(
+        font_size < datum_gui_viewport::TERMINAL_CELL_WIDTH_PX / 0.6,
+        "terminal glyph ink must not consume the entire logical cell"
+    );
+    assert!(letter_spacing > 0.0);
+    assert!(
+        (font_size * (0.6 + letter_spacing) - datum_gui_viewport::TERMINAL_CELL_WIDTH_PX).abs()
+            < 0.001
+    );
+}
+
+#[test]
 fn styled_terminal_fragments_share_contiguous_cell_origins() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);

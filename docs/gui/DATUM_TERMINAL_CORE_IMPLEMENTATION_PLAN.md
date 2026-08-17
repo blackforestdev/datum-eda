@@ -66,10 +66,12 @@ read-only work.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P05D --> **DTC-P05D — owner production retest.** Accept a fresh-build Claude session
   only after click focus, Tab completion, box/Powerline glyphs, sustained output,
   and post-output typing remain usable without a lockup. Depends on DTC-P05F.
-- <!-- REQ:TERMINAL-T1-PTY:DTC-P05G --> **DTC-P05G — terminal cell-metric convergence.** Make the shaped terminal
-  font advance, logical cell geometry, styled-fragment origins, cursor geometry,
-  hit testing, and PTY columns consume one measured metric; prove split styling
-  cannot create gaps or cursor drift. Depends on DTC-P05D.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05G --> **DTC-P05G — terminal cell-metric and owner-QA lifecycle convergence.**
+  Make shaped terminal ink/advance, logical cell geometry, styled-fragment
+  origins, cursor geometry, hit testing, and PTY columns consume one measured
+  metric; prove split styling cannot create gaps or cursor drift, and make a
+  naturally exited selected shell remove its tab without a second close gesture.
+  Depends on DTC-P05D.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -396,7 +398,11 @@ DTC-P05G has this bounded scope:
 4. Preserve the governed JetBrains Mono whole-run face, DTC-P05C cache bounds,
    DTC-P05E focus authority, DTC-P05F parser correction, P04 transport budgets,
    and the no-dependency boundary.
-5. Keep full grapheme, combining, wide-character, emoji, reflow, and immutable
+5. Treat a natural exit from the selected shell as terminal-close intent: after
+   exact final output and presentation barriers complete, remove its tab without
+   requiring a second CLOSE action or sending another signal. Preserve inactive
+   exited tabs so their exact outcome remains reviewable.
+6. Keep full grapheme, combining, wide-character, emoji, reflow, and immutable
    TerminalCore cell semantics in their already scheduled DTC-P07..P23 slices;
    this repair must not claim those broader capabilities.
 
@@ -414,18 +420,23 @@ covering the exact colored shell-prompt and trailing-slash case. Full Unicode
 cell semantics remain explicitly scheduled rather than being overstated here.
 
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05G-REOPENED-AUTOMATED -->
-The reopened implementation retains the authoritative cursor column but insets
-the painted block, underline, and bar by one logical pixel inside that cell.
-This creates a visible gutter after the preceding glyph without changing PTY
-bytes, shell prompt content, hit testing, grid width, or cursor reports. A
-renderer regression reconstructs the exact colored Bash prompt observed in the
-owner screenshot and proves that the yellow dollar sign, the shell-emitted
-post-prompt space, command text, trailing slash, and next cursor cell remain
-distinct. The convergence mutation gate now requires both the prompt fixture
-and cursor-cell inset proof. All 118 renderer tests, 273 terminal-focused GUI
-application tests, strict renderer Clippy, dependency authority, spec
-governance, and convergence gates pass. A fresh release binary was built on
-2026-08-16 at 22:27 local for the remaining owner visual acceptance.
+The first reopened attempt retained the authoritative cursor column and inset
+its paint by one pixel. Owner QA rejected that attempt because full-size glyph
+ink still consumed the complete cell advance, leaving no reliable raster gap at
+the contrasting blue/yellow prompt boundary or before the cursor. The corrected
+implementation renders JetBrains Mono at 12 px and supplies positive explicit
+letter spacing to glyphon; the smaller ink plus spacing still totals exactly
+the governed 7.9 px advance. Datum therefore preserves PTY bytes, shell prompt
+content, cursor reports, hit testing, and PTY columns while producing visible
+inter-cell bearings. A renderer regression reconstructs the exact colored Bash
+prompt and proves the dollar sign, the shell-emitted post-prompt space, command
+text, trailing character, and next cursor cell remain distinct. A natural exit
+from the selected shell now marks the fully presented session for automatic tab
+removal, with a real PTY regression proving no second CLOSE gesture is required.
+An inactive exited session remains visible with its exact outcome for review.
+The convergence mutation gate requires the ink/spacing, prompt, cursor-cell,
+and natural-exit proofs. DTC-P05G remains open until a fresh release binary
+passes owner visual acceptance.
 
 #### DTC-P06A owner packet
 

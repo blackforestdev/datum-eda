@@ -16,6 +16,7 @@ PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_re
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
 TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain.rs"
 TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain_tests.rs"
+TERMINAL_CLOSE_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_close_tests.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
 WORKSPACE_LAYOUT = ROOT / "crates" / "gui-protocol" / "src" / "workspace_layout.rs"
@@ -207,6 +208,8 @@ def check_agent_tui_runtime(
     for marker in (
         "flush_output_batch",
         "tiny_chunk_flood_is_applied_once_per_session_per_turn",
+        "slot.remove_when_closed = is_active",
+        "natural_shell_exit_removes_its_tab_without_second_close",
     ):
         if marker not in drain:
             failures.append(f"terminal tiny-output batching is missing {marker}")
@@ -226,10 +229,15 @@ def check_agent_tui_runtime(
         failures.append("renderer must begin exactly one text-cache generation per frame")
     elif lookup_at < 0 or begin_at > lookup_at:
         failures.append("renderer must prune text buffers before cache lookup")
-    if "TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6" not in bottom_dock:
-        failures.append("terminal font size must derive from the shared logical cell width")
+    for marker in (
+        "TERMINAL_FONT_SIZE_PX: f32 = 12.0",
+        "TERMINAL_LETTER_SPACING_EM",
+    ):
+        if marker not in bottom_dock:
+            failures.append(f"terminal ink/advance separation is missing {marker}")
     for marker in (
         "terminal_font_advance_matches_shared_logical_cell_width",
+        "terminal_cell_advance_combines_smaller_ink_with_explicit_spacing",
         "styled_terminal_fragments_share_contiguous_cell_origins",
         "colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells",
     ):
@@ -376,7 +384,11 @@ def main() -> int:
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text()
-    terminal_drain = TERMINAL_DRAIN.read_text() + TERMINAL_DRAIN_TESTS.read_text()
+    terminal_drain = (
+        TERMINAL_DRAIN.read_text()
+        + TERMINAL_DRAIN_TESTS.read_text()
+        + TERMINAL_CLOSE_TESTS.read_text()
+    )
     render_geometry = RENDER_GEOMETRY.read_text()
     text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
     render_gpu = RENDER_GPU.read_text()

@@ -63,7 +63,11 @@ fn terminal_mouse_reporting_active() {
 }
 """
         runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at();"
-        drain = "flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();"
+        drain = """
+flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
+slot.remove_when_closed = is_active;
+fn natural_shell_exit_removes_its_tab_without_second_close() {}
+"""
         geometry = 'include_bytes!("JetBrainsMono-Regular.ttf"); TextFace::Terminal;'
         cache = """
 fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
@@ -73,9 +77,13 @@ fn animated_agent_text_cache_retains_only_two_visible_generations() {}
 self.begin_text_buffer_frame();
 self.cached_text_buffer_indices();
 """
-        bottom_dock = "TERMINAL_FONT_SIZE_PX: f32 = TERMINAL_CELL_WIDTH_PX / 0.6;"
+        bottom_dock = """
+TERMINAL_FONT_SIZE_PX: f32 = 12.0;
+TERMINAL_LETTER_SPACING_EM;
+"""
         terminal_font_tests = """
 fn terminal_font_advance_matches_shared_logical_cell_width() {}
+fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {}
 fn styled_terminal_fragments_share_contiguous_cell_origins() {}
 fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
 """
@@ -110,11 +118,16 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "                focus_terminal_screen_before_mouse_report();",
             ),
             runtime_dock,
-            drain.replace("flush_output_batch", "apply_each_chunk"),
+            drain.replace("flush_output_batch", "apply_each_chunk")
+            .replace("slot.remove_when_closed = is_active", "removed")
+            .replace(
+                "natural_shell_exit_removes_its_tab_without_second_close",
+                "removed",
+            ),
             geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf"),
             cache.replace("last_used_frame", "unbounded_generation"),
             render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
-            bottom_dock.replace("TERMINAL_CELL_WIDTH_PX / 0.6", "11.0"),
+            bottom_dock.replace("TERMINAL_LETTER_SPACING_EM", "removed"),
             terminal_font_tests.replace(
                 "styled_terminal_fragments_share_contiguous_cell_origins", "removed"
             ),
@@ -136,10 +149,9 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         self.assertIn(
             "terminal text-cache bound is missing last_used_frame", failures
         )
-        self.assertIn(
-            "terminal font size must derive from the shared logical cell width",
-            failures,
-        )
+        self.assertTrue(any("TERMINAL_LETTER_SPACING_EM" in failure for failure in failures))
+        self.assertTrue(any("slot.remove_when_closed" in failure for failure in failures))
+        self.assertTrue(any("natural_shell_exit" in failure for failure in failures))
         self.assertTrue(
             any("styled_terminal_fragments" in failure for failure in failures)
         )
