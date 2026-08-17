@@ -353,7 +353,7 @@ def check_terminal_session_creation(
         failures.append("terminal creation/switch still persists retired attach lifecycle")
     if "write_terminal_context_files_scoped(&terminal_context, context, false)" not in naming_tests:
         failures.append("terminal bootstrap publishes redundant pre-spawn aliases")
-    if "bootstrap_publishes_only_child_discovery_until_pid_is_known" not in naming_tests or "atomic_write_texts(&[" not in naming_tests:
+    if "bootstrap_publishes_only_child_discovery_until_pid_is_known" not in naming_tests or "atomic_write_texts(&[" not in naming_tests or "file.sync_all()" in naming_tests:
         failures.append("bounded concurrent terminal context publication is missing")
     for marker in ("next_session_ordinal: usize", 'let label = format!("shell {}", self.next_session_ordinal)', "self.next_session_ordinal += 1"):
         if marker not in session_creation_sources:

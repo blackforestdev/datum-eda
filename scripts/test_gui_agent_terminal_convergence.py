@@ -153,6 +153,21 @@ atomic_write_texts(&[]);
             controls,
             terminal_input,
             terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources,
+            naming_tests + "\nfile.sync_all();",
+            failures,
+        )
+        self.assertIn("bounded concurrent terminal context publication is missing", failures)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
             terminal_spawn + "\nDatumToolSessionLifecycle::Attached;",
             production_refresh,
             production_sources,

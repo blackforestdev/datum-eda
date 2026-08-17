@@ -22,7 +22,6 @@ pub(super) fn atomic_write_text(path: &Path, text: &str) -> Result<()> {
     {
         let mut file = fs::File::create(&temp_path)?;
         file.write_all(text.as_bytes())?;
-        file.sync_all()?;
     }
     if let Err(err) = fs::rename(&temp_path, path) {
         let _ = fs::remove_file(&temp_path);
