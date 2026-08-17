@@ -144,16 +144,30 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         .iter()
         .find(|run| run.text == "shell 1")
         .expect("active terminal tab label");
+    let terminate = prepared
+        .text_runs
+        .iter()
+        .find(|run| run.text == "TERMINATE")
+        .expect("terminal close action label");
     let prompt = prepared
         .text_runs
         .iter()
         .find(|run| run.text == "visible-shell-prompt$")
         .expect("terminal content must remain rendered");
     assert!(confirmation.y < geometry.screen.y);
-    assert_eq!(
+    assert_ne!(
         confirmation.y, tab_label.y,
-        "confirmation text and tab labels must share one vertical baseline"
+        "context chrome must center its own line box instead of inheriting the tab label offset"
     );
+    for run in [confirmation, terminate] {
+        let line_box_center = run.y + run.size * 1.22 * 0.5;
+        let chrome_center = chrome.y + chrome.height * 0.5;
+        assert!(
+            (line_box_center - chrome_center - 1.5).abs() < 0.001,
+            "{} must apply the governed optical correction after metric centering",
+            run.text
+        );
+    }
     assert!(prompt.y >= geometry.screen.y);
     assert!(
         prepared

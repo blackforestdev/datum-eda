@@ -16,6 +16,13 @@ const MIN_TAB_WIDTH_PX: f32 = 56.0;
 const MAX_TAB_WIDTH_PX: f32 = 152.0;
 const TAB_STRIP_ROW_HEIGHT_PX: f32 = 44.0;
 const LIFECYCLE_CHROME_HEIGHT_PX: f32 = 26.0;
+const LIFECYCLE_LABEL_SIZE_PX: f32 = 11.0;
+const LIFECYCLE_CONTROL_SIZE_PX: f32 = 10.5;
+const TEXT_LINE_HEIGHT_SCALE: f32 = 1.22;
+// IBM Plex Mono reserves descender space below these mostly ascender-only
+// lifecycle labels. Centering the typographic line box alone therefore leaves
+// the visible glyph ink high; this optical correction centers what users see.
+const LIFECYCLE_OPTICAL_CENTER_OFFSET_PX: f32 = 1.5;
 
 pub(super) fn lifecycle_chrome_rect(strip: RectPx, x: f32, width: f32) -> RectPx {
     RectPx {
@@ -24,6 +31,12 @@ pub(super) fn lifecycle_chrome_rect(strip: RectPx, x: f32, width: f32) -> RectPx
         width,
         height: LIFECYCLE_CHROME_HEIGHT_PX,
     }
+}
+
+pub(super) fn centered_text_top(rect: RectPx, size: f32) -> f32 {
+    rect.y
+        + (rect.height - size * TEXT_LINE_HEIGHT_SCALE) * 0.5
+        + LIFECYCLE_OPTICAL_CENTER_OFFSET_PX
 }
 
 pub(super) fn render_terminal_tab_strip(
@@ -155,15 +168,15 @@ pub(super) fn render_terminal_tab_strip(
         draw_text(
             &label,
             chrome.x + 8.0,
-            tab_y + 8.0,
-            11.0,
+            centered_text_top(chrome, LIFECYCLE_LABEL_SIZE_PX),
+            LIFECYCLE_LABEL_SIZE_PX,
             TEXT_PRIMARY,
             TextFace::Mono,
             text_runs,
         );
         render_terminal_lifecycle_controls(
             chrome,
-            tab_y + 8.0,
+            centered_text_top(chrome, LIFECYCLE_CONTROL_SIZE_PX),
             &state.ui.terminal.status,
             state.ui.terminal.application_shutdown_blocked.as_deref(),
             text_runs,
