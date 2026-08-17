@@ -15,7 +15,7 @@ fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
 }
 
 #[test]
-fn rename_chrome_writes_zero_pty_bytes_then_shell_input_writes_once() {
+fn terminal_focus_has_one_attached_pty_input_recipient() {
     let root =
         std::env::temp_dir().join(format!("datum-terminal-input-mode-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
@@ -24,8 +24,8 @@ fn rename_chrome_writes_zero_pty_bytes_then_shell_input_writes_once() {
     let registry = TerminalSessionRegistry::spawn(&context).expect("spawn terminal session");
     let baseline = recorded_input_bytes(&registry);
     assert_eq!(
-        keyboard_focus::terminal_input_owner(KeyboardFocus::Terminal, true, true, true),
-        keyboard_focus::TerminalInputOwner::RenameChrome
+        keyboard_focus::terminal_input_owner(KeyboardFocus::Terminal, true),
+        keyboard_focus::TerminalInputOwner::AttachedPty
     );
     assert_eq!(recorded_input_bytes(&registry), baseline);
 

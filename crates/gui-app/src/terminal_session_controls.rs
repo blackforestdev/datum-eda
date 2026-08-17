@@ -4,8 +4,6 @@ use datum_gui_render::HitTarget;
 impl Runtime {
     pub(super) fn handle_terminal_lifecycle_target(&mut self, target: &HitTarget) -> bool {
         match target {
-            HitTarget::TerminalSessionRestartActive => self.restart_terminal_session(),
-            HitTarget::TerminalSessionCloseActive => return self.close_active_terminal_session(),
             HitTarget::TerminalSessionTerminateActive => {
                 let _ = self
                     .terminal_sessions
@@ -58,8 +56,6 @@ impl Runtime {
     pub(super) fn sync_terminal_tabs(&mut self) {
         self.terminal_sessions
             .sync_lane_tabs(&mut self.session.workspace_mut().ui.terminal);
-        self.session.workspace_mut().ui.terminal.rename_session_id =
-            self.terminal_rename_session_id.clone();
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
@@ -83,65 +79,7 @@ impl Runtime {
         true
     }
 
-    pub(super) fn rename_active_terminal_session(&mut self) -> bool {
-        let session_id = self.terminal_sessions.active().session_id().to_string();
-        let label = self.terminal_sessions.active_label().to_string();
-        self.terminal_rename_session_id = Some(session_id.clone());
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.active_dock_tab = Some(DockTab::Terminal);
-        ui.terminal.rename_session_id = Some(session_id);
-        ui.terminal.rename_input = label;
-        ui.terminal.rename_cursor = ui.terminal.rename_input.chars().count();
-        self.invalidate_frame();
-        true
-    }
-
-    pub(super) fn submit_terminal_rename_input(&mut self) -> bool {
-        let Some(session_id) = self.terminal_rename_session_id.clone() else {
-            return false;
-        };
-        let label = self
-            .session
-            .workspace()
-            .ui
-            .terminal
-            .rename_input
-            .trim()
-            .to_string();
-        if label.is_empty() {
-            return self.cancel_terminal_rename();
-        }
-        match self.terminal_sessions.rename(&session_id, label.clone()) {
-            Ok(()) => {
-                self.log_review_event(format!("renamed active terminal session {label}"));
-                self.clear_terminal_rename_editor();
-            }
-            Err(err) => self.log_review_event(format!("terminal session rename failed: {err}")),
-        }
-        true
-    }
-
-    pub(super) fn cancel_terminal_rename(&mut self) -> bool {
-        if self.terminal_rename_session_id.is_none() {
-            return false;
-        }
-        self.log_review_event("terminal session rename canceled".to_string());
-        self.clear_terminal_rename_editor();
-        true
-    }
-
-    fn clear_terminal_rename_editor(&mut self) {
-        self.terminal_rename_session_id = None;
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.terminal.rename_session_id = None;
-        ui.terminal.rename_input.clear();
-        ui.terminal.rename_cursor = 0;
-        self.sync_terminal_tabs();
-        self.invalidate_frame();
-    }
-
     pub(super) fn close_active_terminal_session(&mut self) -> bool {
-        self.clear_terminal_rename_editor();
         match self
             .terminal_sessions
             .close_active(&mut self.session.workspace_mut().ui.terminal)

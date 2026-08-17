@@ -77,6 +77,11 @@ read-only work.
   tab, append new sessions after existing sessions, keep the active session
   visually selected, and place the new-session affordance after the final tab.
   Depends on DTC-P05G.
+- <!-- REQ:TERMINAL-T1-PTY:DTC-P05I --> **DTC-P05I — lean terminal session chrome.**
+  Remove the redundant persistent sessions menu, duplicate session labels, and
+  duplicate new/rename/restart/close controls; reclaim its cell row while
+  preserving the top tab strip, shortcuts, and contextual teardown safeguards.
+  Depends on DTC-P05H.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06A --> **DTC-P06A — proof-budget owner decision.** Ratify the exact proof tiers,
   session load, latency, throughput, resource, storage, soak, platform, and evidence
   budgets before timed transport assertions are implemented.
@@ -490,6 +495,35 @@ creation order, strictly increasing non-overlapping rectangles, and final `+`
 placement. The convergence guard and its mutation suite reject a reversed or
 fixed-origin loop, a missing new-session target, or removal of the production
 proof. Fresh-build owner QA remains the completion boundary for DTC-P05H.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05H-OWNER-ACCEPTED -->
+Owner QA on 2026-08-17 confirmed that new terminal tabs are indexed correctly
+and append to the right. DTC-P05H therefore closes with implementation revision
+`0c1e153` and its ordered prepared-scene and convergence-mutation proofs.
+
+#### DTC-P05I lean terminal session chrome
+
+The owner identified the persistent `SESSIONS / +NEW / RENAME / RESTART /
+CLOSE / shell 1..N` row as redundant with the top tab strip and keyboard
+controls. DTC-P05I removes that entire band from shared terminal geometry so
+the reclaimed height becomes a real PTY cell row. The top strip remains the
+sole visible session index and new-session affordance; Ctrl+Shift+T,
+Ctrl+Shift+R, and Ctrl+Shift+W retain new, restart, and guarded-close access.
+Normal running state renders no persistent lifecycle buttons. Armed close,
+termination failure, force-kill, application-shutdown retry, and cancel remain
+contextual safeguards in the compact header rather than consuming a permanent
+row. The retired inline rename editor and its protocol/input/hit-target state
+are deleted; shell applications may continue to provide standard OSC titles.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05I-AUTOMATED -->
+Automated evidence: the prepared dock contract rejects every retired persistent
+menu label and requires exactly one top-strip target per session plus the final
+new-session affordance; shared geometry proves the removed band returns a real
+cell row at the default dock height. GUI app, renderer, protocol, and viewport
+tests pass together (323, 123, 96, and 37 unit tests, plus their integration
+suites), as do strict Clippy, dependency authority, convergence mutations,
+spec governance, Frontier validation, and diff hygiene. Owner visual acceptance
+of the lean row remains the DTC-P05I completion boundary.
 
 #### DTC-P06A owner packet
 

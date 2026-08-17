@@ -10,8 +10,7 @@
 
 use super::*;
 use crate::keyboard_focus::{
-    KeyClass, RouteDecision, hit_target_is_terminal_entry, key_route,
-    workspace_action_should_fire,
+    KeyClass, RouteDecision, hit_target_is_terminal_entry, key_route, workspace_action_should_fire,
 };
 use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
 use datum_gui_render::HitTarget;
@@ -33,12 +32,9 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         HitTarget::TerminalScreen
         | HitTarget::TerminalTab
         | HitTarget::TerminalSessionTab(_)
-        | HitTarget::TerminalSessionNew
-        | HitTarget::TerminalSessionRenameActive => true,
+        | HitTarget::TerminalSessionNew => true,
         // Session-ending/suspending terminal chrome never arms focus.
-        HitTarget::TerminalSessionRestartActive
-        | HitTarget::TerminalSessionCloseActive
-        | HitTarget::TerminalSessionTerminateActive
+        HitTarget::TerminalSessionTerminateActive
         | HitTarget::TerminalSessionForceKillActive
         | HitTarget::TerminalSessionRetryTermination
         | HitTarget::TerminalShutdownCancel
@@ -141,9 +137,6 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalTab,
         HitTarget::TerminalSessionTab(id()),
         HitTarget::TerminalSessionNew,
-        HitTarget::TerminalSessionRenameActive,
-        HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionCloseActive,
         HitTarget::TerminalSessionTerminateActive,
         HitTarget::TerminalSessionForceKillActive,
         HitTarget::TerminalSessionRetryTermination,
@@ -182,18 +175,17 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         entry_targets += usize::from(hit_target_is_terminal_entry(target));
     }
     assert_eq!(
-        entry_targets, 5,
-        "exactly the five deliberate targets may arm terminal keyboard focus"
+        entry_targets, 4,
+        "exactly the four deliberate targets may arm terminal keyboard focus"
     );
 }
 
 #[test]
-fn only_escape_with_empty_input_releases_terminal_focus() {
+fn only_terminal_escape_release_returns_focus_to_the_editor() {
     let all_classes = [
         KeyClass::RawPty,
-        KeyClass::TerminalRenameEdit,
         KeyClass::WorkspaceHotkey,
-        KeyClass::EscapeWithEmptyRename,
+        KeyClass::TerminalFocusExit,
     ];
     for visible in [false, true] {
         for class in all_classes {
@@ -201,8 +193,8 @@ fn only_escape_with_empty_input_releases_terminal_focus() {
                 == RouteDecision::ReleaseToEditor;
             assert_eq!(
                 released,
-                class == KeyClass::EscapeWithEmptyRename,
-                "release-to-editor must be exactly the empty-input Escape class \
+                class == KeyClass::TerminalFocusExit,
+                "release-to-editor must be exactly the terminal Escape-release class \
                  (got a release for {class:?}, visible={visible})"
             );
         }

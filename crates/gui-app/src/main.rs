@@ -607,7 +607,6 @@ struct Runtime {
     terminal_workspace_refresh_pending: bool,
     terminal_production_refresh_due: Option<std::time::Instant>,
     terminal_production_refresh_attempts: u8,
-    terminal_rename_session_id: Option<String>,
     clipboard: Option<Clipboard>,
     application_shutdown_started: Option<std::time::Instant>,
     application_shutdown_blocked: bool,
@@ -746,7 +745,6 @@ impl Runtime {
             terminal_workspace_refresh_pending: false,
             terminal_production_refresh_due: None,
             terminal_production_refresh_attempts: 0,
-            terminal_rename_session_id: None,
             clipboard: Clipboard::new().ok(),
             application_shutdown_started: None,
             application_shutdown_blocked: false,
@@ -1519,47 +1517,6 @@ impl Runtime {
         }
     }
 
-    fn is_cut_shortcut(&self, event: &KeyEvent) -> bool {
-        event.state == ElementState::Released
-            && self.modifiers.control_key()
-            && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyX))
-    }
-
-    fn append_terminal_rename_text(&mut self, text: &str) -> bool {
-        if !self.terminal_rename_accepts_text_input() {
-            return false;
-        }
-        if text.chars().any(|ch| ch.is_control()) {
-            return false;
-        }
-        let ui = &mut self.session.workspace_mut().ui;
-        let input = &mut ui.terminal.rename_input;
-        let cursor = &mut ui.terminal.rename_cursor;
-        let byte_pos = char_to_byte_pos(input, *cursor);
-        input.insert_str(byte_pos, text);
-        *cursor += text.chars().count();
-        self.invalidate_frame();
-        true
-    }
-
-    fn current_terminal_rename_input(&self) -> Option<&str> {
-        match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
-                Some(self.workspace().ui.terminal.rename_input.as_str())
-            }
-            _ => None,
-        }
-    }
-
-    fn current_terminal_rename_input_mut(&mut self) -> Option<&mut String> {
-        match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
-                Some(&mut self.session.workspace_mut().ui.terminal.rename_input)
-            }
-            _ => None,
-        }
-    }
-
     fn copy_terminal_scrollback(&mut self) -> bool {
         if !matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             return false;
@@ -1572,26 +1529,6 @@ impl Runtime {
             return true;
         }
         self.log_review_event("terminal scrollback copied".to_string());
-        true
-    }
-
-    fn cut_terminal_rename_input(&mut self) -> bool {
-        let Some(text) = self
-            .workspace()
-            .ui
-            .active_dock_tab
-            .and_then(|_| self.current_terminal_rename_input_mut().map(|s| s.clone()))
-        else {
-            return false;
-        };
-        if self.write_clipboard_text(&text).is_err() {
-            self.log_review_event("clipboard cut failed".to_string());
-            return true;
-        }
-        if let Some(input) = self.current_terminal_rename_input_mut() {
-            input.clear();
-        }
-        self.invalidate_frame();
         true
     }
 
@@ -1610,9 +1547,6 @@ impl Runtime {
                     self.terminal_sessions.active_bracketed_paste_enabled(),
                 );
                 self.write_foreign_shell_bytes(&bytes)
-            }
-            keyboard_focus::TerminalInputOwner::RenameChrome => {
-                self.append_terminal_rename_text(&text)
             }
             keyboard_focus::TerminalInputOwner::Unowned => false,
         }
@@ -1671,57 +1605,6 @@ impl Runtime {
             anyhow::bail!("xclip clipboard write failed");
         }
         Ok(())
-    }
-
-    fn backspace_terminal_rename_input(&mut self) -> bool {
-        if !self.terminal_rename_accepts_text_input() {
-            return false;
-        }
-        let ui = &mut self.session.workspace_mut().ui;
-        let input = &mut ui.terminal.rename_input;
-        let cursor = &mut ui.terminal.rename_cursor;
-        if *cursor > 0 {
-            let byte_pos = char_to_byte_pos(input, *cursor - 1);
-            let byte_end = char_to_byte_pos(input, *cursor);
-            input.drain(byte_pos..byte_end);
-            *cursor -= 1;
-            self.invalidate_frame();
-            return true;
-        }
-        false
-    }
-
-    fn move_terminal_rename_cursor(&mut self, delta: i32) -> bool {
-        if !self.terminal_rename_accepts_text_input() {
-            return false;
-        }
-        let ui = &mut self.session.workspace_mut().ui;
-        let input = &ui.terminal.rename_input;
-        let cursor = &mut ui.terminal.rename_cursor;
-        let char_count = input.chars().count();
-        let new_pos = (*cursor as i32 + delta).clamp(0, char_count as i32) as usize;
-        if new_pos != *cursor {
-            *cursor = new_pos;
-            self.invalidate_frame();
-            return true;
-        }
-        false
-    }
-
-    fn move_terminal_rename_cursor_to_edge(&mut self, home: bool) -> bool {
-        if !self.terminal_rename_accepts_text_input() {
-            return false;
-        }
-        let ui = &mut self.session.workspace_mut().ui;
-        let input = &ui.terminal.rename_input;
-        let cursor = &mut ui.terminal.rename_cursor;
-        let target = if home { 0 } else { input.chars().count() };
-        if target != *cursor {
-            *cursor = target;
-            self.invalidate_frame();
-            return true;
-        }
-        false
     }
 
     fn log_review_event(&mut self, message: impl Into<String>) {
@@ -2330,10 +2213,7 @@ impl Runtime {
             }
             HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
             HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
-            HitTarget::TerminalSessionRenameActive => self.rename_active_terminal_session(),
-            target @ (HitTarget::TerminalSessionRestartActive
-            | HitTarget::TerminalSessionCloseActive
-            | HitTarget::TerminalSessionTerminateActive
+            target @ (HitTarget::TerminalSessionTerminateActive
             | HitTarget::TerminalSessionForceKillActive
             | HitTarget::TerminalSessionRetryTermination
             | HitTarget::TerminalShutdownCancel) => self.handle_terminal_lifecycle_target(target),
@@ -2561,13 +2441,6 @@ fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
         "NE"
     };
     Some(slot.to_string())
-}
-
-fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
-    s.char_indices()
-        .nth(char_index)
-        .map(|(i, _)| i)
-        .unwrap_or(s.len())
 }
 
 fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {

@@ -1,80 +1,48 @@
 use super::{HitRegion, HitTarget, RectPx, TEXT_MUTED, TextFace, TextRun, draw_text};
 
-pub(crate) fn render_terminal_session_controls(
+pub(crate) fn render_terminal_lifecycle_controls(
     rect: RectPx,
     y: f32,
     status: &str,
     application_shutdown_blocked: Option<&str>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> f32 {
-    let mut x = rect.x + 66.0;
-    for (label, target) in [
-        ("+NEW", HitTarget::TerminalSessionNew),
-        ("RENAME", HitTarget::TerminalSessionRenameActive),
-        ("RESTART", HitTarget::TerminalSessionRestartActive),
-        ("CLOSE", HitTarget::TerminalSessionCloseActive),
-    ] {
-        x = push_control(label, target, x, y, text_runs, hit_regions);
-    }
+) -> bool {
+    let mut actions = Vec::new();
     if status.starts_with("close terminal?") {
-        x = push_control(
-            "TERMINATE",
-            HitTarget::TerminalSessionTerminateActive,
-            x,
-            y,
-            text_runs,
-            hit_regions,
-        );
-        x = push_control(
-            "CANCEL",
-            HitTarget::TerminalShutdownCancel,
-            x,
-            y,
-            text_runs,
-            hit_regions,
-        );
+        actions.push(("TERMINATE", HitTarget::TerminalSessionTerminateActive));
+        actions.push(("CANCEL", HitTarget::TerminalShutdownCancel));
     }
-    let contextual = if status.starts_with("termination failed") {
-        Some(("RETRY", HitTarget::TerminalSessionRetryTermination))
-    } else {
-        None
-    };
-    if let Some((label, target)) = contextual {
-        x = push_control(label, target, x, y, text_runs, hit_regions);
+    if status.starts_with("termination failed") {
+        actions.push(("RETRY", HitTarget::TerminalSessionRetryTermination));
     }
     if application_shutdown_blocked.is_some() {
-        x = push_control(
-            "RETRY",
-            HitTarget::TerminalSessionRetryTermination,
-            x,
-            y,
-            text_runs,
-            hit_regions,
-        );
-        x = push_control(
-            "CANCEL SHUTDOWN",
-            HitTarget::TerminalShutdownCancel,
-            x,
-            y,
-            text_runs,
-            hit_regions,
-        );
+        if !actions
+            .iter()
+            .any(|(_, target)| *target == HitTarget::TerminalSessionRetryTermination)
+        {
+            actions.push(("RETRY", HitTarget::TerminalSessionRetryTermination));
+        }
+        actions.push(("CANCEL SHUTDOWN", HitTarget::TerminalShutdownCancel));
     }
     if status.starts_with("termination failed")
         || status.contains("TERM grace")
         || status.contains("KILL verification")
     {
-        x = push_control(
-            "FORCE KILL",
-            HitTarget::TerminalSessionForceKillActive,
-            x,
-            y,
-            text_runs,
-            hit_regions,
-        );
+        actions.push(("FORCE KILL", HitTarget::TerminalSessionForceKillActive));
     }
-    x + 4.0
+    if actions.is_empty() {
+        return false;
+    }
+    let width = actions
+        .iter()
+        .map(|(label, _)| label.len() as f32 * 7.0 + 16.0)
+        .sum::<f32>();
+    let mut x = (rect.x + rect.width - width).max(rect.x);
+    for (label, target) in actions {
+        x = push_control(label, target, x, y, text_runs, hit_regions);
+    }
+    true
 }
 
 fn push_control(
@@ -105,7 +73,7 @@ mod tests {
     fn targets(status: &str) -> Vec<HitTarget> {
         let mut text = Vec::new();
         let mut hits = Vec::new();
-        render_terminal_session_controls(
+        render_terminal_lifecycle_controls(
             RectPx {
                 x: 0.0,
                 y: 0.0,
@@ -123,6 +91,8 @@ mod tests {
 
     #[test]
     fn close_and_shutdown_states_expose_only_the_ratified_actions() {
+        assert!(targets("running").is_empty());
+
         let armed = targets("close terminal? type yes + Enter");
         assert!(armed.contains(&HitTarget::TerminalSessionTerminateActive));
         assert!(armed.contains(&HitTarget::TerminalShutdownCancel));

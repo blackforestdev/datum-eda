@@ -87,27 +87,17 @@ fn armed_close_repeat_shortcut_is_focus_independent_and_exact() {
 }
 
 #[test]
-fn terminal_input_owner_is_exclusive_without_a_detached_mode() {
+fn terminal_input_owner_is_exclusive_to_the_visible_focused_pty() {
     assert_eq!(
-        terminal_input_owner(KeyboardFocus::Terminal, true, true, false),
+        terminal_input_owner(KeyboardFocus::Terminal, true),
         TerminalInputOwner::AttachedPty
     );
     assert_eq!(
-        terminal_input_owner(KeyboardFocus::Terminal, true, true, true),
-        TerminalInputOwner::RenameChrome,
-        "rename chrome must displace PTY input even while the session is attached"
-    );
-    assert_eq!(
-        terminal_input_owner(KeyboardFocus::Terminal, true, false, false),
-        TerminalInputOwner::AttachedPty,
-        "background tabs remain owned; selected-tab input does not create a detached PTY mode"
-    );
-    assert_eq!(
-        terminal_input_owner(KeyboardFocus::Editor(PaneId(0)), true, true, false),
+        terminal_input_owner(KeyboardFocus::Editor(PaneId(0)), true),
         TerminalInputOwner::Unowned
     );
     assert_eq!(
-        terminal_input_owner(KeyboardFocus::Terminal, false, true, false),
+        terminal_input_owner(KeyboardFocus::Terminal, false),
         TerminalInputOwner::Unowned
     );
 }
@@ -115,14 +105,6 @@ fn terminal_input_owner_is_exclusive_without_a_detached_mode() {
 #[test]
 fn terminal_focus_routes_text_to_terminal_and_never_to_workspace() {
     for visible in [false, true] {
-        assert_eq!(
-            key_route(
-                KeyboardFocus::Terminal,
-                KeyClass::TerminalRenameEdit,
-                visible
-            ),
-            RouteDecision::Terminal
-        );
         assert_eq!(
             key_route(KeyboardFocus::Terminal, KeyClass::WorkspaceHotkey, visible),
             RouteDecision::Unrouted
@@ -144,14 +126,6 @@ fn editor_focus_routes_hotkeys_and_never_to_terminal() {
                 visible
             ),
             RouteDecision::Editor
-        );
-        assert_eq!(
-            key_route(
-                KeyboardFocus::Editor(PaneId(0)),
-                KeyClass::TerminalRenameEdit,
-                visible
-            ),
-            RouteDecision::Unrouted
         );
         assert_eq!(
             key_route(KeyboardFocus::Editor(PaneId(0)), KeyClass::RawPty, visible),
@@ -199,11 +173,7 @@ fn dock_visibility_never_changes_routing_except_raw_pty() {
         KeyboardFocus::Terminal,
         KeyboardFocus::Overlay,
     ] {
-        for class in [
-            KeyClass::TerminalRenameEdit,
-            KeyClass::WorkspaceHotkey,
-            KeyClass::EscapeWithEmptyRename,
-        ] {
+        for class in [KeyClass::WorkspaceHotkey, KeyClass::TerminalFocusExit] {
             assert_eq!(
                 key_route(focus, class, false),
                 key_route(focus, class, true),
@@ -227,7 +197,7 @@ fn escape_under_terminal_focus_releases_to_editor_when_input_empty() {
         assert_eq!(
             key_route(
                 KeyboardFocus::Terminal,
-                KeyClass::EscapeWithEmptyRename,
+                KeyClass::TerminalFocusExit,
                 visible
             ),
             RouteDecision::ReleaseToEditor
@@ -258,12 +228,9 @@ fn terminal_screen_click_is_entry_and_observation_chrome_is_not() {
         &HitTarget::TerminalSessionTab("terminal-a".to_string())
     ));
     assert!(hit_target_is_terminal_entry(&HitTarget::TerminalSessionNew));
-    assert!(hit_target_is_terminal_entry(
-        &HitTarget::TerminalSessionRenameActive
-    ));
     for target in [
-        HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionCloseActive,
+        HitTarget::TerminalSessionTerminateActive,
+        HitTarget::TerminalSessionForceKillActive,
         HitTarget::DockResizeHandle,
     ] {
         assert!(
@@ -314,9 +281,8 @@ fn overlay_focus_routes_nothing_through_the_focus_classes() {
     for visible in [false, true] {
         for class in [
             KeyClass::RawPty,
-            KeyClass::TerminalRenameEdit,
             KeyClass::WorkspaceHotkey,
-            KeyClass::EscapeWithEmptyRename,
+            KeyClass::TerminalFocusExit,
         ] {
             assert_eq!(
                 key_route(KeyboardFocus::Overlay, class, visible),

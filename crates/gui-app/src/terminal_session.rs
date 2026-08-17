@@ -237,10 +237,6 @@ impl TerminalSessionRegistry {
         &self.sessions[self.active_index].session
     }
 
-    pub(super) fn active_label(&self) -> &str {
-        &self.sessions[self.active_index].label
-    }
-
     pub(super) fn active_attached(&self) -> bool {
         self.sessions[self.active_index].attached
     }

@@ -132,13 +132,12 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             .any(|run| run.text.contains("SCROLL SHIFT+PGUP/PGDN")),
         "terminal dock should expose keyboard scrollback shortcuts"
     );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("[layout shell R1]")),
-        "terminal dock should render active terminal session restart count"
-    );
+    for redundant in ["SESSIONS", "+NEW", "RENAME", "RESTART", "CLOSE"] {
+        assert!(
+            !prepared.text_runs.iter().any(|run| run.text == redundant),
+            "terminal dock must not retain redundant session-menu item {redundant}"
+        );
+    }
     let session_region = prepared.hit_regions.iter().find(|region| {
         matches!(
             &region.target,
@@ -154,20 +153,21 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
         prepared.hit_test(rect.x + 1.0, rect.y + 1.0),
         Some(HitTarget::TerminalSessionTab(session_id)) if session_id == "terminal-b"
     ));
-    for target in [
-        HitTarget::TerminalSessionNew,
-        HitTarget::TerminalSessionRenameActive,
-        HitTarget::TerminalSessionRestartActive,
-        HitTarget::TerminalSessionCloseActive,
-    ] {
-        assert!(
-            prepared
-                .hit_regions
-                .iter()
-                .any(|region| region.target == target),
-            "terminal dock should expose {target:?}"
-        );
-    }
+    assert!(
+        prepared
+            .hit_regions
+            .iter()
+            .any(|region| region.target == HitTarget::TerminalSessionNew)
+    );
+    assert_eq!(
+        prepared
+            .hit_regions
+            .iter()
+            .filter(|region| matches!(region.target, HitTarget::TerminalSessionTab(_)))
+            .count(),
+        state.ui.terminal.tabs.len(),
+        "each session must have exactly one tab target in the top strip"
+    );
     for command_id in [
         "datum.journal.list",
         "datum.journal.undo",
@@ -182,32 +182,6 @@ fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
             "terminal dock must not expose {command_id} as a CLI handoff"
         );
     }
-
-    state.ui.terminal.rename_session_id = Some("terminal-a".to_string());
-    state.ui.terminal.rename_input = "layout edit".to_string();
-    state.ui.terminal.rename_cursor = 6;
-    let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
-        &state,
-        1280,
-        800,
-        CameraState::fit_to_bounds(&state.scene.bounds),
-        &retained,
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("[layout| edit]")),
-        "terminal dock should render inline tab rename editor"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("ENTER SAVE  ESC CANCEL")),
-        "terminal dock should render rename save/cancel affordance"
-    );
 }
 
 #[test]

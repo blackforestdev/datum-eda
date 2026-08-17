@@ -10,7 +10,7 @@ use super::{
     draw_text, estimated_text_run_width_px, push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
-use crate::terminal_session_chrome::render_terminal_session_controls;
+use crate::terminal_session_chrome::render_terminal_lifecycle_controls;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
 
@@ -189,10 +189,7 @@ fn render_terminal_lane(
     hit_regions: &mut Vec<HitRegion>,
 ) {
     if let Some(header) = geometry.header {
-        render_terminal_header(state, header.into(), text_runs);
-    }
-    if let Some(sessions_row) = geometry.sessions_row {
-        render_terminal_sessions_row(state, sessions_row.into(), text_runs, hit_regions);
+        render_terminal_header(state, header.into(), text_runs, hit_regions);
     }
     render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
 }
@@ -204,6 +201,7 @@ fn render_terminal_header(
     state: &ReviewWorkspaceState,
     rect: RectPx,
     text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
 ) {
     draw_text(
         "PROJECT TERMINAL",
@@ -214,17 +212,26 @@ fn render_terminal_header(
         TextFace::Ui,
         text_runs,
     );
-    let hint = "COPY SCROLLBACK CTRL+SHIFT+C  SCROLL SHIFT+PGUP/PGDN  PASTE CTRL+V";
-    let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
-    draw_text(
-        hint,
-        rect.x + rect.width - hint_w,
+    if !render_terminal_lifecycle_controls(
+        rect,
         rect.y + 1.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
+        &state.ui.terminal.status,
+        state.ui.terminal.application_shutdown_blocked.as_deref(),
         text_runs,
-    );
+        hit_regions,
+    ) {
+        let hint = "COPY SCROLLBACK CTRL+SHIFT+C  SCROLL SHIFT+PGUP/PGDN  PASTE CTRL+V";
+        let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
+        draw_text(
+            hint,
+            rect.x + rect.width - hint_w,
+            rect.y + 1.0,
+            10.5,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
     let mut session_label =
         if let Some(blocked) = state.ui.terminal.application_shutdown_blocked.as_deref() {
             format!("APPLICATION SHUTDOWN / {blocked}")
@@ -274,114 +281,6 @@ fn render_terminal_header(
         TextFace::Mono,
         text_runs,
     );
-}
-
-/// Terminal chrome sessions band: session controls, tabs, and the inline
-/// rename affordance. Application summaries (ACTIVITY SPANS) are gone from
-/// the lane entirely — summaries belong to chrome/console surfaces and must
-/// consume zero cell rows (T0-C02; owner directive on
-/// dat-pan-trace-terminal-pollution-0j0).
-fn render_terminal_sessions_row(
-    state: &ReviewWorkspaceState,
-    rect: RectPx,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) {
-    if !state.ui.terminal.tabs.is_empty() {
-        let y = rect.y + 2.0;
-        draw_text(
-            "SESSIONS",
-            rect.x,
-            y,
-            10.5,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-        let mut x = render_terminal_session_controls(
-            rect,
-            y,
-            &state.ui.terminal.status,
-            state.ui.terminal.application_shutdown_blocked.as_deref(),
-            text_runs,
-            hit_regions,
-        );
-        for tab in state.ui.terminal.tabs.iter().take(6) {
-            let renaming = state
-                .ui
-                .terminal
-                .rename_session_id
-                .as_deref()
-                .is_some_and(|session_id| session_id == tab.session_id);
-            let label = if renaming {
-                let (before, after) = split_at_cursor(
-                    &state.ui.terminal.rename_input,
-                    state.ui.terminal.rename_cursor,
-                );
-                format!(
-                    "[{}|{}]",
-                    truncate_text(before, 12),
-                    truncate_text(after, 8)
-                )
-            } else if tab.active {
-                let label = if tab.restart_count > 0 {
-                    format!("{} R{}", truncate_text(&tab.label, 12), tab.restart_count)
-                } else if tab.activity_event_count > 0 {
-                    format!(
-                        "{} A{}",
-                        truncate_text(&tab.label, 12),
-                        tab.activity_event_count
-                    )
-                } else {
-                    truncate_text(&tab.label, 18)
-                };
-                format!("[{}]", label)
-            } else if !tab.attached {
-                format!("{}:DETACHED", truncate_text(&tab.label, 12))
-            } else {
-                truncate_text(&tab.label, 18)
-            };
-            draw_text(
-                &label,
-                x,
-                y,
-                10.5,
-                if tab.active {
-                    TEXT_PRIMARY
-                } else {
-                    TEXT_SECONDARY
-                },
-                TextFace::Mono,
-                text_runs,
-            );
-            hit_regions.push(HitRegion {
-                target: HitTarget::TerminalSessionTab(tab.session_id.clone()),
-                rect: RectPx {
-                    x: x - 4.0,
-                    y: y - 2.0,
-                    width: (label.len() as f32 * 7.0 + 8.0).max(24.0),
-                    height: 14.0,
-                },
-            });
-            x += (label.len() as f32 * 7.0 + 18.0).min(160.0);
-            if x > rect.x + rect.width - 60.0 {
-                break;
-            }
-        }
-        if state.ui.terminal.rename_session_id.is_some() {
-            let hint = "RENAMING TERMINAL TAB  ENTER SAVE  ESC CANCEL";
-            let hint_w = estimated_text_run_width_px(hint, 10.5, TextFace::Mono) - 16.0;
-            draw_text(
-                hint,
-                rect.x + rect.width - hint_w,
-                y,
-                10.5,
-                TEXT_MUTED,
-                TextFace::Mono,
-                text_runs,
-            );
-        }
-    }
 }
 
 /// The terminal SCREEN: the exact visible cell rectangle, drawing precisely
@@ -567,15 +466,6 @@ fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: 
         _ if bold => TEXT_PRIMARY,
         _ => TEXT_PANEL_VALUE,
     }
-}
-
-fn split_at_cursor(input: &str, cursor: usize) -> (&str, &str) {
-    let byte_pos = input
-        .char_indices()
-        .nth(cursor)
-        .map(|(i, _)| i)
-        .unwrap_or(input.len());
-    (&input[..byte_pos], &input[byte_pos..])
 }
 
 #[cfg(test)]

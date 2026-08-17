@@ -13,9 +13,7 @@ use winit::keyboard::ModifiersState;
 /// Every character workspace hotkey the editor persona binds
 /// (`keyboard_focus::handle_keyboard_input`): tools s/b/v/m/x/r, fit f/t,
 /// pane zoom z, crosshair c, review navigation [ / ].
-const WORKSPACE_HOTKEYS: [&str; 12] = [
-    "s", "b", "v", "m", "x", "r", "f", "t", "z", "c", "[", "]",
-];
+const WORKSPACE_HOTKEYS: [&str; 12] = ["s", "b", "v", "m", "x", "r", "f", "t", "z", "c", "[", "]"];
 
 #[test]
 fn every_workspace_hotkey_is_pty_bytes_never_a_tool_under_terminal_focus() {
@@ -88,11 +86,7 @@ fn editor_focus_fires_hotkeys_and_no_key_class_routes_to_the_pty() {
             RouteDecision::Editor,
             "editor focus must own workspace hotkeys"
         );
-        for class in [
-            KeyClass::RawPty,
-            KeyClass::TerminalRenameEdit,
-            KeyClass::EscapeWithEmptyRename,
-        ] {
+        for class in [KeyClass::RawPty, KeyClass::TerminalFocusExit] {
             assert_eq!(
                 key_route(KeyboardFocus::Editor(PaneId(0)), class, visible),
                 RouteDecision::Unrouted,

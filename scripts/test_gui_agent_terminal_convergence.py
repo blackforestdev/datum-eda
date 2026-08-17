@@ -26,8 +26,10 @@ for tab in tabs {
 target: HitTarget::TerminalSessionNew;
 """
         tests = "fn new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab() {}"
+        bottom_dock = "render_terminal_tab_strip();"
+        geometry = "fn default_dock_keeps_compact_header_and_reclaims_session_menu_row() {}"
         failures: list[str] = []
-        guard.check_terminal_tab_strip(tab_strip, tests, failures)
+        guard.check_terminal_tab_strip(tab_strip, tests, bottom_dock, geometry, failures)
         self.assertEqual([], failures)
 
         failures = []
@@ -39,12 +41,16 @@ target: HitTarget::TerminalSessionNew;
                 "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab",
                 "removed",
             ),
+            bottom_dock + '\n"SESSIONS"\nrender_terminal_sessions_row();',
+            geometry + "\nsessions_row\nSESSIONS_BAND_PX",
             failures,
         )
         self.assertTrue(any("for tab in tabs {" in failure for failure in failures))
         self.assertTrue(any("x += tab_width" in failure for failure in failures))
         self.assertTrue(any("TerminalSessionNew" in failure for failure in failures))
         self.assertIn("ordered terminal tab-strip production proof is missing", failures)
+        self.assertTrue(any("redundant terminal session menu" in failure for failure in failures))
+        self.assertTrue(any("still reserves space" in failure for failure in failures))
 
     def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
         terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"
@@ -242,14 +248,14 @@ fn open_pty_pair() {
 
     def test_terminal_input_mode_is_exclusive_and_never_detached(self) -> None:
         production = """
-enum TerminalInputOwner { AttachedPty, RenameChrome, Unowned }
+enum TerminalInputOwner { AttachedPty, Unowned }
 pub(crate) fn terminal_input_owner() {
-    use TerminalInputOwner::{AttachedPty, RenameChrome, Unowned};
+    use TerminalInputOwner::{AttachedPty, Unowned};
 }
 fn commit_terminal_ime_text() {}
 fn write_attached_terminal_bytes() { write_bytes(); }
 """
-        bottom_dock = '("CLOSE", HitTarget::TerminalSessionCloseActive)'
+        bottom_dock = ""
         failures: list[str] = []
         guard.check_terminal_input_mode(production, bottom_dock, failures)
         self.assertEqual([], failures)
@@ -273,28 +279,19 @@ fn write_attached_terminal_bytes() { write_bytes(); }
     def test_terminal_input_state_has_explicit_authorities(self) -> None:
         terminal_lane = """
 pub rename_input: String,
-pub rename_cursor: usize,
 pub screen_cursor_row: usize,
 pub screen_cursor_col: usize,
 """
-        production = """
-fn append_terminal_rename_text(&mut self, text: &str) -> bool {
-    self.ui.terminal.rename_input.push_str(text);
-    true
-}
-    fn after() {}
-"""
+        terminal_lane = terminal_lane.replace("pub rename_input: String,\n", "")
+        production = "fn terminal_screen_input() {}"
         failures: list[str] = []
         guard.check_terminal_input_identity(terminal_lane, production, failures)
         self.assertEqual([], failures)
 
         failures = []
         invalid_lane = terminal_lane + "pub input: String;\npub cursor: usize;\n"
-        invalid_production = production.replace(
-            "self.ui.terminal.rename_input.push_str(text);",
-            "self.ui.terminal.input.push_str(text);\n"
-            "    self.write_foreign_shell_bytes(text.as_bytes());",
-        ) + "\nfn append_dock_text() {}\n"
+        invalid_production = production + "\nself.ui.terminal.input.push_str(text);\n" \
+            "fn append_dock_text() {}\nfn append_terminal_rename_text() {}\n"
         guard.check_terminal_input_identity(
             invalid_lane, invalid_production, failures
         )
@@ -308,9 +305,7 @@ fn append_terminal_rename_text(&mut self, text: &str) -> bool {
             "terminal chrome editor must not use generic marker fn append_dock_text",
             failures,
         )
-        self.assertIn(
-            "terminal rename text must never reach the foreign shell", failures
-        )
+        self.assertIn("retired terminal rename chrome remains: append_terminal_rename_text", failures)
 
     def test_workspace_hotkeys_are_press_timed_through_one_focus_predicate(self) -> None:
         valid = """

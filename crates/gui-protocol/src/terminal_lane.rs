@@ -70,14 +70,9 @@ pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
     pub tabs: Vec<TerminalTabState>,
     pub active_session_id: Option<String>,
-    pub rename_session_id: Option<String>,
     pub title: Option<String>,
     pub current_working_directory: Option<String>,
     pub bell_count: usize,
-    /// Chrome-local terminal-tab rename text. Never a shell-input buffer.
-    pub rename_input: String,
-    /// Character cursor for `rename_input`; unrelated to the PTY screen cursor.
-    pub rename_cursor: usize,
     pub columns: u16,
     pub rows: u16,
     pub screen_cursor_row: usize,
@@ -98,7 +93,7 @@ pub struct TerminalLaneState {
 
 impl TerminalLaneState {
     /// Swap only the PTY-owned projection for one session. Global dock chrome,
-    /// tab identity, rename editing, activity summary, and keyboard focus stay
+    /// tab identity, activity summary, and keyboard focus stay
     /// with the workspace while inactive sessions retain their own screen.
     pub fn swap_session_projection(&mut self, other: &mut Self) {
         macro_rules! swap_fields {
@@ -163,12 +158,9 @@ impl Default for TerminalLaneState {
             activity_summary: Vec::new(),
             tabs: Vec::new(),
             active_session_id: None,
-            rename_session_id: None,
             title: None,
             current_working_directory: None,
             bell_count: 0,
-            rename_input: String::new(),
-            rename_cursor: 0,
             columns: 80,
             rows: 24,
             screen_cursor_row: 0,
@@ -196,14 +188,12 @@ mod tests {
         let mut active = TerminalLaneState {
             lines: vec!["active".to_string()],
             title: Some("active title".to_string()),
-            rename_input: "rename".to_string(),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
             ..Default::default()
         };
         let chrome = (
-            active.rename_input.clone(),
             active.active_session_id.clone(),
             active.activity_summary.clone(),
             active.application_shutdown_blocked.clone(),
@@ -222,7 +212,6 @@ mod tests {
         assert_eq!(parked.title.as_deref(), Some("active title"));
         assert_eq!(
             (
-                active.rename_input,
                 active.active_session_id,
                 active.activity_summary,
                 active.application_shutdown_blocked,

@@ -331,7 +331,6 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     }
     let restarted_session_id = registry.active().session_id().to_string();
     assert_ne!(first_session_id, restarted_session_id);
-    assert_eq!(registry.active_label(), "layout shell");
     assert_eq!(terminal_state.status, "running");
     assert_eq!((terminal_state.columns, terminal_state.rows), (101, 29));
     assert_eq!(

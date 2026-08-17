@@ -11,8 +11,8 @@
 //!
 //! The screen rectangle is the PRIMARY space owner of the terminal lane: the
 //! cell rectangle is computed first (integral rows/columns of the fixed cell
-//! metric) and chrome fits around it, collapsing — sessions row first, then
-//! the header — before the screen drops below [`TERMINAL_MIN_ROWS`].
+//! metric) and the compact header fits around it, collapsing before the screen
+//! drops below [`TERMINAL_MIN_ROWS`].
 //! Application summaries consume zero cell rows by construction: no summary
 //! band exists in this geometry at all.
 //!
@@ -42,8 +42,6 @@ const LANE_PAD_TOP: f32 = 8.0;
 const LANE_PAD_BOTTOM: f32 = 8.0;
 /// Header chrome band: lane title line + session status/meta line.
 const HEADER_BAND_PX: f32 = 34.0;
-/// Sessions chrome band: session controls + tabs (+ inline rename hint).
-const SESSIONS_BAND_PX: f32 = 18.0;
 
 /// The solved terminal-lane geometry: the exact visible cell rectangle plus
 /// the chrome bands that survived around it.
@@ -53,8 +51,6 @@ pub struct TerminalScreenGeometry {
     pub content: ScreenRectPx,
     /// Header chrome band (title + session meta), when it fits.
     pub header: Option<ScreenRectPx>,
-    /// Sessions chrome band (controls + tabs), when it fits.
-    pub sessions_row: Option<ScreenRectPx>,
     /// The exact visible cell rectangle: `columns x rows` whole cells. This
     /// rectangle is the terminal hit target and the PTY size authority.
     pub screen: ScreenRectPx,
@@ -86,8 +82,8 @@ impl TerminalScreenGeometry {
 ///
 /// Screen-first space budget: the cell rectangle is computed against the full
 /// lane interior and chrome only keeps the bands the remaining space affords
-/// without pushing the screen below [`TERMINAL_MIN_ROWS`] (sessions row is
-/// dropped first, then the header). The returned `columns`/`rows` are the one
+/// without pushing the screen below [`TERMINAL_MIN_ROWS`]. The returned
+/// `columns`/`rows` are the one
 /// authority for renderer and PTY alike.
 pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeometry {
     let content = ScreenRectPx {
@@ -105,14 +101,7 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
     let columns = ((inner.width / TERMINAL_CELL_WIDTH_PX) as u16).max(1);
     let rows_with = |chrome: f32| ((inner.height - chrome).max(0.0) / TERMINAL_CELL_HEIGHT_PX) as u16;
     let min_rows_px = f32::from(TERMINAL_MIN_ROWS) * TERMINAL_CELL_HEIGHT_PX;
-    let (keep_header, keep_sessions) =
-        if inner.height - (HEADER_BAND_PX + SESSIONS_BAND_PX) >= min_rows_px {
-            (true, true)
-        } else if inner.height - HEADER_BAND_PX >= min_rows_px {
-            (true, false)
-        } else {
-            (false, false)
-        };
+    let keep_header = inner.height - HEADER_BAND_PX >= min_rows_px;
     let mut chrome_bottom = inner.y;
     let header = keep_header.then(|| {
         let band = ScreenRectPx {
@@ -122,16 +111,6 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
             height: HEADER_BAND_PX,
         };
         chrome_bottom += HEADER_BAND_PX;
-        band
-    });
-    let sessions_row = keep_sessions.then(|| {
-        let band = ScreenRectPx {
-            x: inner.x,
-            y: chrome_bottom,
-            width: inner.width,
-            height: SESSIONS_BAND_PX,
-        };
-        chrome_bottom += SESSIONS_BAND_PX;
         band
     });
     let rows = rows_with(chrome_bottom - inner.y).max(1);
@@ -144,7 +123,6 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
     TerminalScreenGeometry {
         content,
         header,
-        sessions_row,
         screen,
         columns,
         rows,
@@ -184,14 +162,13 @@ mod tests {
     }
 
     #[test]
-    fn default_dock_keeps_full_chrome_and_at_least_min_rows() {
+    fn default_dock_keeps_compact_header_and_reclaims_session_menu_row() {
         let geometry = terminal_screen_geometry(strip(1280.0, 220.0));
         assert!(geometry.header.is_some(), "default dock keeps the header");
-        assert!(
-            geometry.sessions_row.is_some(),
-            "default dock keeps the sessions row"
+        assert_eq!(
+            geometry.rows, 7,
+            "removed session menu returns one cell row"
         );
-        assert!(geometry.rows >= TERMINAL_MIN_ROWS);
         assert!(geometry.columns >= 80, "a 1280px dock affords 80+ columns");
         assert_screen_within_content(&geometry);
     }
@@ -214,18 +191,20 @@ mod tests {
 
     #[test]
     fn chrome_collapses_before_screen_drops_below_min_rows() {
-        // 150px dock: content 94px, inner 78px — full chrome (52px) would
-        // leave 1 row, so the sessions row must be surrendered first.
+        // 150px dock: content 94px, inner 78px — even the compact header
+        // would leave fewer than the governed minimum screen rows, so it is
+        // surrendered and all four affordable rows belong to the screen.
         let geometry = terminal_screen_geometry(strip(1280.0, 150.0));
-        assert!(geometry.sessions_row.is_none(), "sessions row collapses first");
-        assert!(geometry.header.is_none() || geometry.rows >= TERMINAL_MIN_ROWS);
-        assert!(geometry.rows >= TERMINAL_MIN_ROWS);
+        assert!(geometry.header.is_none());
+        assert_eq!(geometry.rows, TERMINAL_MIN_ROWS);
         assert_screen_within_content(&geometry);
         // 120px dock: the lane interior itself holds under MIN_ROWS cells, so
         // ALL chrome is surrendered and every remaining row goes to the screen.
         let geometry = terminal_screen_geometry(strip(1280.0, 120.0));
-        assert!(geometry.header.is_none(), "header collapses when space demands");
-        assert!(geometry.sessions_row.is_none());
+        assert!(
+            geometry.header.is_none(),
+            "header collapses when space demands"
+        );
         assert_eq!(geometry.rows, 3, "48px interior affords exactly 3 cells");
         assert_screen_within_content(&geometry);
     }
@@ -264,8 +243,7 @@ mod tests {
                 let inner_y = geometry.content.y + LANE_PAD_TOP;
                 let inner_height =
                     (geometry.content.height - LANE_PAD_TOP - LANE_PAD_BOTTOM).max(0.0);
-                let chrome = geometry.header.map_or(0.0, |band| band.height)
-                    + geometry.sessions_row.map_or(0.0, |band| band.height);
+                let chrome = geometry.header.map_or(0.0, |band| band.height);
                 assert_eq!(
                     geometry.screen.y,
                     inner_y + chrome,

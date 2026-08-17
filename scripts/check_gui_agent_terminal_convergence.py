@@ -34,6 +34,7 @@ TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_te
 TERMINAL_CURSOR = ROOT / "crates" / "gui-render" / "src" / "terminal_cursor.rs"
 TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
 TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
+TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
@@ -262,7 +263,13 @@ def check_agent_tui_runtime(
             failures.append(f"terminal cursor-cell separation is missing {marker}")
 
 
-def check_terminal_tab_strip(tab_strip: str, tests: str, failures: list[str]) -> None:
+def check_terminal_tab_strip(
+    tab_strip: str,
+    tests: str,
+    bottom_dock: str,
+    grid_geometry: str,
+    failures: list[str],
+) -> None:
     """Keep projected terminal sessions in stable left-to-right tab order."""
     for marker in (
         "for tab in tabs {",
@@ -274,6 +281,24 @@ def check_terminal_tab_strip(tab_strip: str, tests: str, failures: list[str]) ->
             failures.append(f"ordered terminal tab strip is missing {marker}")
     if "new_terminal_tabs_append_left_to_right_and_plus_follows_last_tab" not in tests:
         failures.append("ordered terminal tab-strip production proof is missing")
+    for marker in (
+        "render_terminal_sessions_row",
+        '"SESSIONS"',
+        '"+NEW"',
+        '"RENAME"',
+        '"RESTART"',
+        '"CLOSE"',
+        "TerminalSessionRenameActive",
+        "TerminalSessionRestartActive",
+        "TerminalSessionCloseActive",
+    ):
+        if marker in bottom_dock:
+            failures.append(f"redundant terminal session menu remains: {marker}")
+    for marker in ("sessions_row", "SESSIONS_BAND_PX"):
+        if marker in grid_geometry:
+            failures.append(f"retired terminal session row still reserves space: {marker}")
+    if "default_dock_keeps_compact_header_and_reclaims_session_menu_row" not in grid_geometry:
+        failures.append("terminal session-row reclamation proof is missing")
 
 
 def check_terminal_input_identity(
@@ -281,10 +306,8 @@ def check_terminal_input_identity(
     production_sources: str,
     failures: list[str],
 ) -> None:
-    """Keep shell, screen-cursor, and chrome-rename state distinguishable."""
+    """Keep the PTY screen cursor explicit and retired rename state absent."""
     for marker in (
-        "pub rename_input: String",
-        "pub rename_cursor: usize",
         "pub screen_cursor_row: usize",
         "pub screen_cursor_col: usize",
     ):
@@ -311,13 +334,15 @@ def check_terminal_input_identity(
     ):
         if marker in production_sources:
             failures.append(f"terminal chrome editor must not use generic marker {marker}")
-    rename_marker = "fn append_terminal_rename_text"
-    if rename_marker not in production_sources:
-        failures.append("terminal rename editor must expose an explicit text boundary")
-    else:
-        rename_body = production_sources.split(rename_marker, 1)[1].split("\n    fn ", 1)[0]
-        if "write_foreign_shell_bytes" in rename_body:
-            failures.append("terminal rename text must never reach the foreign shell")
+    for marker in (
+        "rename_session_id",
+        "rename_input",
+        "rename_cursor",
+        "append_terminal_rename_text",
+        "RenameChrome",
+    ):
+        if marker in terminal_lane or marker in production_sources:
+            failures.append(f"retired terminal rename chrome remains: {marker}")
 
 
 def check_terminal_input_mode(
@@ -325,11 +350,10 @@ def check_terminal_input_mode(
     bottom_dock: str,
     failures: list[str],
 ) -> None:
-    """Require one exclusive owned-PTY/rename input-mode authority."""
+    """Require one exclusive owned-PTY input-mode authority."""
     for marker in (
         "enum TerminalInputOwner",
         "AttachedPty",
-        "RenameChrome",
         "fn terminal_input_owner",
         "fn commit_terminal_ime_text",
         "fn write_attached_terminal_bytes",
@@ -340,6 +364,7 @@ def check_terminal_input_mode(
         "LegacyDockLineEdit",
         "complete_terminal_rename_input",
         "terminal_rename_editor_active",
+        "RenameChrome",
     ):
         if marker in production_sources:
             failures.append(f"dead terminal line-edit marker must not remain: {marker}")
@@ -349,7 +374,7 @@ def check_terminal_input_mode(
     mode_marker = "pub(crate) fn terminal_input_owner"
     if mode_marker in production_sources:
         mode_body = production_sources.split(mode_marker, 1)[1].split("\n}", 1)[0]
-        for marker in ("RenameChrome", "AttachedPty", "Unowned"):
+        for marker in ("AttachedPty", "Unowned"):
             if marker not in mode_body:
                 failures.append(f"terminal input owner does not classify {marker}")
     writer_marker = "fn write_attached_terminal_bytes"
@@ -421,6 +446,7 @@ def main() -> int:
     terminal_cursor = TERMINAL_CURSOR.read_text()
     terminal_tab_strip = TERMINAL_TAB_STRIP.read_text()
     terminal_tab_strip_tests = TERMINAL_TAB_STRIP_TESTS.read_text()
+    terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
     terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
@@ -470,7 +496,13 @@ def main() -> int:
         terminal_cursor,
         failures,
     )
-    check_terminal_tab_strip(terminal_tab_strip, terminal_tab_strip_tests, failures)
+    check_terminal_tab_strip(
+        terminal_tab_strip,
+        terminal_tab_strip_tests,
+        bottom_dock,
+        terminal_grid_geometry,
+        failures,
+    )
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
