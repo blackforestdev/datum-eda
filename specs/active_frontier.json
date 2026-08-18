@@ -1827,18 +1827,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O4-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O5-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O5`, or `P06-O5: revise — <replacement>` or `P06-O5: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O6`, or `P06-O6: revise — <replacement>` or `P06-O6: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O5",
-                  "question": "What queued-payload and process-memory limits should P06 enforce across long agent sessions?",
-                  "recommended_response": "Preserve 4 MiB output plus 4 MiB input per session, 16 sessions, and a 128 MiB aggregate queued-payload ceiling; require sixteen-session RSS peak <= warm baseline +192 MiB, post-warm-up RSS growth <=1 MiB/hour for the active 24-hour session and <=256 KiB/hour per idle session, and RSS return to <=warm baseline +16 MiB within 30 seconds after all terminal tabs close. Measure disk event-log retention separately under P06-O9.",
+                  "id": "P06-O6",
+                  "question": "What file-descriptor, worker-thread, zombie, and owned-process cleanup limits should P06 enforce?",
+                  "recommended_response": "Approve Datum-process FD growth <=4 per live terminal session +8 global and worker-thread growth <=4 per live session +4 global; require both counts to return within one second of verified close/reap to warm baseline +2; and require zero upward FD/thread slope, zero zombies, and zero surviving Datum-owned Linux-session processes across 1,000 spawn/exit/restart cycles.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O5"
+                    "marker": "P06-O6"
                   }
                 }
               ]

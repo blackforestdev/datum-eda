@@ -706,8 +706,8 @@ exactly as stated above. No throughput or memory threshold is implied.
 Owner approval on 2026-08-18 ratifies the P06-O4 throughput and backlog-recovery
 thresholds exactly as stated above. No memory or storage threshold is implied.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O5 --> **P06-O5 — memory and bounded backlog.** Recommended: preserve the
-  existing hard 4 MiB output plus 4 MiB input ceiling per session, the sixteen-
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O5 --> **P06-O5 — memory and bounded backlog.** Owner-approved 2026-08-18:
+  preserve the existing hard 4 MiB output plus 4 MiB input ceiling per session, the sixteen-
   session limit, and therefore a 128 MiB maximum aggregate queued payload. At
   sixteen sessions, Datum-process RSS peaks no higher than the warm baseline
   plus 192 MiB. After warm-up, RSS growth is at most 1 MiB/hour for the active
@@ -716,8 +716,24 @@ thresholds exactly as stated above. No memory or storage threshold is implied.
   Disk event-log retention is measured separately and remains P06-O9 rather
   than being hidden inside the RSS claim.
 
-Approving P06-O5 approves only memory and bounded-backlog thresholds. It does
-not yet approve descriptor/thread, resize, platform, storage, or
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O5-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O5 memory and bounded-backlog
+thresholds exactly as stated above. These are current release acceptance
+budgets, not a permanent cap on transcript or model context; future 2M-token
+and larger agent workloads may expand them through a new measured owner
+decision without weakening losslessness or boundedness.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O6 --> **P06-O6 — descriptors, workers, and process cleanup.** Recommended:
+  Datum-process file-descriptor growth is at most four descriptors per live
+  terminal session plus eight global, and worker-thread growth is at most four
+  threads per live session plus four global. Within one second after ordinary
+  verified close/reap, both counts return to their warm baseline plus two.
+  Across the approved 1,000 spawn/exit/restart cycles there is zero upward
+  descriptor or thread slope, zero zombies, and zero surviving process whose
+  Linux session remains Datum-owned.
+
+Approving P06-O6 approves only descriptor, worker-thread, zombie, and owned-
+process cleanup thresholds. It does not yet approve resize, platform, storage, or
 landing thresholds; those remain subsequent P06A owner decisions.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
