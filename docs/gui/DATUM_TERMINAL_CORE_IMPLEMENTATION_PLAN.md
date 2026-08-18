@@ -692,8 +692,8 @@ floor exactly as stated above. No latency or throughput threshold is implied.
 Owner approval on 2026-08-18 ratifies the P06-O3 responsiveness thresholds
 exactly as stated above. No throughput or memory threshold is implied.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O4 --> **P06-O4 — throughput and backlog recovery.** Recommended: the raw
-  owned-PTY consumer sustains at least 20 MiB/s for one session and at least
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O4 --> **P06-O4 — throughput and backlog recovery.** Owner-approved 2026-08-18:
+  the raw owned-PTY consumer sustains at least 20 MiB/s for one session and at least
   40 MiB/s aggregate across eight producers for 60 seconds. The current
   production registry/provisional-screen path sustains at least 1 MiB/s for one
   session and 4 MiB/s aggregate across eight sessions. After a producer stops,
@@ -702,8 +702,22 @@ exactly as stated above. No throughput or memory threshold is implied.
   a drain quantum. The provisional-screen floors expire at the P26 owned-core
   cutover and are anti-regression limits, not TerminalCore performance targets.
 
-Approving P06-O4 approves only throughput and backlog-recovery thresholds. It
-does not yet approve memory, descriptor/thread, resize, platform, storage, or
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O4-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O4 throughput and backlog-recovery
+thresholds exactly as stated above. No memory or storage threshold is implied.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O5 --> **P06-O5 — memory and bounded backlog.** Recommended: preserve the
+  existing hard 4 MiB output plus 4 MiB input ceiling per session, the sixteen-
+  session limit, and therefore a 128 MiB maximum aggregate queued payload. At
+  sixteen sessions, Datum-process RSS peaks no higher than the warm baseline
+  plus 192 MiB. After warm-up, RSS growth is at most 1 MiB/hour for the active
+  24-hour session and at most 256 KiB/hour per idle session. Within 30 seconds
+  after every terminal tab closes, RSS returns to the warm baseline plus 16 MiB.
+  Disk event-log retention is measured separately and remains P06-O9 rather
+  than being hidden inside the RSS claim.
+
+Approving P06-O5 approves only memory and bounded-backlog thresholds. It does
+not yet approve descriptor/thread, resize, platform, storage, or
 landing thresholds; those remain subsequent P06A owner decisions.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.

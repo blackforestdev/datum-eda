@@ -1822,18 +1822,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O3-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O4-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O4`, or `P06-O4: revise — <replacement>` or `P06-O4: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O5`, or `P06-O5: revise — <replacement>` or `P06-O5: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O4",
-                  "question": "What raw-transport, production-drain, and backlog-recovery throughput floors should P06 enforce?",
-                  "recommended_response": "Approve raw owned-PTY throughput >=20 MiB/s for one session and >=40 MiB/s aggregate across eight producers for 60 seconds; current production registry/provisional-screen throughput >=1 MiB/s for one session and >=4 MiB/s aggregate across eight; a full 4 MiB output backlog below 64 KiB within 2 seconds and empty within 5 seconds after production stops; and no runnable session denied a drain quantum for more than 100 ms. Provisional-screen floors expire at P26.",
+                  "id": "P06-O5",
+                  "question": "What queued-payload and process-memory limits should P06 enforce across long agent sessions?",
+                  "recommended_response": "Preserve 4 MiB output plus 4 MiB input per session, 16 sessions, and a 128 MiB aggregate queued-payload ceiling; require sixteen-session RSS peak <= warm baseline +192 MiB, post-warm-up RSS growth <=1 MiB/hour for the active 24-hour session and <=256 KiB/hour per idle session, and RSS return to <=warm baseline +16 MiB within 30 seconds after all terminal tabs close. Measure disk event-log retention separately under P06-O9.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O4"
+                    "marker": "P06-O5"
                   }
                 }
               ]
