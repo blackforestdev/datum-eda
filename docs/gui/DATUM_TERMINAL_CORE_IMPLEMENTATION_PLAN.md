@@ -649,21 +649,36 @@ drain independently, and reactivate without contamination; it must never
 reintroduce detach/reattach APIs. Logical history/reflow remains DTC-P12 and
 shell/TUI/agent compatibility remains DTC-P28 through DTC-P30.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O1 --> **P06-O1 — proof tiers and duration.** Recommended: release builds are
-  normative. Run a bounded ten-minute eight-session proof in normal CI; a
-  scheduled 24-hour single-session agent-style soak plus a four-hour proof at
-  the governed maximum of sixteen sessions; and 1,000 spawn/exit/restart cycles.
-  Require three consecutive clean scheduled runs before release evidence is
-  accepted. Record the exact revision, seed, kernel, libc, CPU, RAM, display
-  backend, and raw samples. This duration is intended to expose slow leaks and
-  lifecycle drift from multi-million-token code-agent sessions; it does not cap
-  transcript or model-context length.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O1 --> **P06-O1 — proof tiers and duration.** Owner-approved 2026-08-18:
+  release builds are normative. Run a bounded ten-minute eight-session proof in
+  normal CI; a scheduled 24-hour single-session agent-style soak plus a
+  four-hour proof at the governed maximum of sixteen sessions; and 1,000
+  spawn/exit/restart cycles. Require three consecutive clean scheduled runs
+  before release evidence is accepted. Record the exact revision, seed, kernel,
+  libc, CPU, RAM, display backend, and raw samples. This duration is intended to
+  expose slow leaks and lifecycle drift from multi-million-token code-agent
+  sessions; it does not cap transcript or model-context length.
 
-Approving P06-O1 approves only the proof tiers and durations. It does not yet
-approve the session payload, latency, throughput, memory, descriptor/thread,
-resize, platform, or landing thresholds; those remain subsequent P06A owner
-decisions. No dependency, TERM identity, TerminalCore behavior, visual golden,
-or final release acceptance is authorized.
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O1-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O1 proof tiers and durations
+exactly as stated above. No later P06 numerical threshold is implied.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O2 --> **P06-O2 — session workload and correctness.** Recommended: the
+  ten-minute CI tier runs eight simultaneous real PTYs, with each session
+  carrying at least 8 MiB of exact output and 1 MiB of exact input. Scheduled
+  runs rotate agent-style burst, status-update, full-screen, resize, exit,
+  restart, saturation, and idle roles; the long tiers carry at least 128 MiB of
+  output and 8 MiB of bidirectional input per exercised session, with at least
+  1 GiB aggregate output. Every stream uses a unique seeded identity and must
+  prove zero lost, duplicated, reordered, stale, or cross-session bytes. Keep
+  the already-ratified maximum of sixteen live sessions and refusal of the
+  seventeenth.
+
+Approving P06-O2 approves only the workload and correctness floor. It does not
+yet approve latency, throughput, memory, descriptor/thread, resize, platform,
+storage, or landing thresholds; those remain subsequent P06A owner decisions.
+No dependency, TERM identity, TerminalCore behavior, visual golden, or final
+release acceptance is authorized.
 
 ### Core foundation
 

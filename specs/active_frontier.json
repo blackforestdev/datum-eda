@@ -1807,17 +1807,23 @@
                 "marker": "DTC-P06A"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O1-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O1`, or `P06-O1: revise — <replacement>` or `P06-O1: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O2`, or `P06-O2: revise — <replacement>` or `P06-O2: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O1",
-                  "question": "What proof tiers and durations should govern long-running terminal transport verification?",
-                  "recommended_response": "Approve release-build proof with a ten-minute eight-session CI tier, a scheduled 24-hour single-session agent-style soak, a four-hour maximum-sixteen-session soak, 1,000 spawn/exit/restart cycles, and three consecutive clean scheduled runs before release evidence is accepted.",
+                  "id": "P06-O2",
+                  "question": "What session workload and byte-correctness floor should each P06 proof tier enforce?",
+                  "recommended_response": "Approve eight simultaneous real PTYs in CI with at least 8 MiB exact output and 1 MiB exact input per session; rotate agent-style roles in scheduled runs with at least 128 MiB output and 8 MiB bidirectional input per exercised session and at least 1 GiB aggregate output; require unique seeded streams with zero loss, duplication, reordering, stale bytes, or cross-session contamination; preserve the 16-session maximum and refuse the seventeenth.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O1"
+                    "marker": "P06-O2"
                   }
                 }
               ]
