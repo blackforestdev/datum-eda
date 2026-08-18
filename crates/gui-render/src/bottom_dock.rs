@@ -21,8 +21,8 @@ use taffy::prelude::*;
 pub(super) const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
     (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
-const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::ACCENT;
-const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_ON_ACCENT;
+const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::TERMINAL_SELECTION;
+const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
@@ -465,8 +465,11 @@ mod selection_tests {
         assert_eq!(quads[0].color, TERMINAL_SELECTION_BG);
         assert_eq!(selection, Some(expected));
         assert_eq!(quads[0], Quad::from_rect(expected, TERMINAL_SELECTION_BG));
-        assert_eq!(TERMINAL_SELECTION_BG, design_tokens::chrome::ACCENT);
-        assert_eq!(TERMINAL_SELECTION_FG, design_tokens::chrome::TEXT_ON_ACCENT);
+        assert_eq!(
+            TERMINAL_SELECTION_BG,
+            design_tokens::chrome::TERMINAL_SELECTION
+        );
+        assert_eq!(TERMINAL_SELECTION_FG, design_tokens::chrome::TEXT_PRIMARY);
 
         let mut text_runs = Vec::new();
         render_terminal_selection_text("selected", 10.0, 20.0, 80, expected, &mut text_runs);

@@ -71,7 +71,7 @@ pub(super) fn render_terminal_cursor(
     let x = origin_x + terminal.screen_cursor_col as f32 * TERMINAL_CELL_WIDTH_PX;
     let rect = cursor_rect(terminal.screen_cursor_style.as_deref(), x, y);
     let color = if over_selection {
-        design_tokens::chrome::TEXT_ON_ACCENT
+        design_tokens::chrome::TEXT_PRIMARY
     } else if has_keyboard_focus {
         TEXT_ACCENT
     } else {
@@ -114,7 +114,7 @@ mod tests {
             selected,
             vec![Quad::from_rect(
                 expected,
-                design_tokens::chrome::TEXT_ON_ACCENT
+                design_tokens::chrome::TEXT_PRIMARY
             )]
         );
     }

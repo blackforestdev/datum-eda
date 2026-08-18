@@ -32,6 +32,9 @@ pub(crate) mod chrome {
     pub(crate) const ACCENT_HOVER: Rgb = srgb(0xD8, 0x6E, 0xA0);
     pub(crate) const ACCENT_PRESSED: Rgb = srgb(0xB8, 0x4A, 0x80);
     pub(crate) const ACCENT_TINT: Rgb = srgb(0x2A, 0x1D, 0x25);
+    /// Terminal text-selection fill: a 50% sRGB blend of ACCENT over
+    /// SURFACE_01. Primary text retains ~6.7:1 contrast at terminal size.
+    pub(crate) const TERMINAL_SELECTION: Rgb = srgb(0x73, 0x3B, 0x5A);
 
     pub(crate) const STATUS_ERROR: Rgb = srgb(0xE5, 0x53, 0x4B);
     pub(crate) const STATUS_WARN: Rgb = srgb(0xE0, 0xA2, 0x3A);

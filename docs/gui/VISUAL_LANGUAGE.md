@@ -85,6 +85,7 @@ selection signal):
 | `color.accent.hover` | `#D86EA0` | hover on accent surfaces |
 | `color.accent.pressed` | `#B84A80` | pressed/active-down |
 | `color.accent.tint` | `#2A1D25` | selected-row background tint |
+| `color.accent.terminalSelection` | `#733B5A` | terminal cell selection fill; 50% accent over `surface.01`, paired with primary text (~6.7:1) |
 
 Status (chrome context — distinct from content DRC markers, see §2.3):
 
