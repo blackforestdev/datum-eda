@@ -1837,18 +1837,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O6-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O7-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O7`, or `P06-O7: revise — <replacement>` or `P06-O7: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O8`, or `P06-O8: revise — <replacement>` or `P06-O8: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O7",
-                  "question": "What resize latency and cross-session isolation limits should P06 enforce?",
-                  "recommended_response": "Approve 10,000 resize requests across the sixteen-session mixed workload with at least 500 per session and concurrent I/O; resize completion p95 <=2 ms, p99 <=5 ms, max <=20 ms; exact final kernel winsize within 100 ms; SIGWINCH only to the current foreground process group; and zero cross-session contamination across input, output, resize, exit, termination, restart, tab activation, and inactive-session draining. Reflow remains DTC-P14.",
+                  "id": "P06-O8",
+                  "question": "What platform, scheduling, evidence, and landing contract should govern P06?",
+                  "recommended_response": "Approve current supported Linux x86_64/glibc using /dev/ptmx, /proc, and inherited libc as normative; measure the production GUI under X11 and Wayland when available and record explicit unavailability; run deterministic ten-minute proof per merge and 24-hour/four-hour scheduled tiers with three clean runs for release; emit machine-readable host, revision, seed, percentile, throughput, backlog, RSS/FD/thread, fairness, survivor, failure, and raw-sample evidence; require locked/offline tests, strict Clippy, dependency/source/file-size/transport/convergence/project/spec gates and independent verification; make no aarch64, musl, macOS, or Windows claim in P06.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O7"
+                    "marker": "P06-O8"
                   }
                 }
               ]

@@ -736,8 +736,8 @@ decision without weakening losslessness or boundedness.
 Owner approval on 2026-08-18 ratifies the P06-O6 descriptor, worker-thread,
 zombie, and owned-process cleanup thresholds exactly as stated above.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O7 --> **P06-O7 — resize and isolation.** Recommended: perform 10,000 total
-  resize requests during the sixteen-session mixed workload, with at least 500
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O7 --> **P06-O7 — resize and isolation.** Owner-approved 2026-08-18: perform
+  10,000 total resize requests during the sixteen-session mixed workload, with at least 500
   requests per session and concurrent terminal I/O. Resize ioctl/request
   completion is p95 at most 2 ms, p99 at most 5 ms, and maximum 20 ms; the final
   kernel winsize is exact within 100 ms. SIGWINCH reaches only the current
@@ -745,9 +745,30 @@ zombie, and owned-process cleanup thresholds exactly as stated above.
   tab activation, and inactive-session draining exhibit zero cross-session
   contamination. Logical reflow correctness remains DTC-P14.
 
-Approving P06-O7 approves only resize and cross-session isolation thresholds.
-It does not yet approve platform, storage, or
-landing thresholds; those remain subsequent P06A owner decisions.
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O7-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O7 resize and cross-session
+isolation thresholds exactly as stated above. Reflow remains outside P06.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O8 --> **P06-O8 — platform, scheduling, evidence, and landing.** Recommended:
+  the normative platform is the current supported Linux x86_64/glibc Datum
+  workstation using `/dev/ptmx`, `/proc`, and the already-authorized libc FFI;
+  run the production GUI measurements under both X11 and Wayland when each is
+  available, recording an explicit unavailable result rather than silently
+  skipping. Per-merge CI runs the deterministic ten-minute tier; scheduled CI
+  runs the 24-hour and four-hour tiers, and release acceptance requires the
+  approved three consecutive clean scheduled runs. Machine-readable evidence
+  records revision, seed, build profile, kernel, libc, CPU, RAM, display
+  backend, payloads, count/min/p50/p95/p99/max, throughput, queue high-water and
+  recovery, RSS/FD/thread samples, fairness gap, survivors, failures, and raw
+  sample artifacts. Landing requires locked/offline build and tests, strict
+  Clippy, dependency authority, source health with every new file below 700
+  lines, transport/convergence mutation guards, project-state/spec governance,
+  and independent verification. P06 makes no aarch64, musl, macOS, or Windows
+  claim; their support requires a later explicit platform decision.
+
+Approving P06-O8 approves only the platform, scheduling, evidence, and landing
+contract. It does not yet approve storage thresholds; those remain the final
+P06A owner decision.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
 
