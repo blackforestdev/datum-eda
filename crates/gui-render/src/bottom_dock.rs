@@ -18,6 +18,10 @@ use taffy::prelude::*;
 mod terminal_color;
 use terminal_color::{span_background, span_foreground};
 
+#[path = "terminal_block_elements.rs"]
+mod terminal_block_elements;
+use terminal_block_elements::{render_terminal_block_elements, text_without_geometric_blocks};
+
 /// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
 /// engine's explicit letter spacing to preserve the exact governed 7.9 px
 /// advance. Enlarging the raw 0.6-em glyph advance to the full cell made
@@ -243,11 +247,20 @@ fn render_terminal_screen(
             max_columns,
             panel_quads,
         );
+        render_terminal_block_elements(
+            state.ui.terminal.grid_styled_lines().get(line_index),
+            line,
+            screen.x,
+            y,
+            max_columns,
+            panel_quads,
+        );
         if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
             render_terminal_styled_line(styled_line, line, screen.x, y, max_columns, text_runs);
         } else {
+            let visible_text = text_without_geometric_blocks(&truncate_text(line, max_columns));
             draw_text(
-                &truncate_text(line, max_columns),
+                &visible_text,
                 screen.x,
                 y,
                 TERMINAL_FONT_SIZE_PX,
@@ -339,8 +352,9 @@ fn render_terminal_selection_text(
     clip_bounds: RectPx,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let visible_text = text_without_geometric_blocks(&truncate_text(line, max_columns));
     draw_text_clipped(
-        &truncate_text(line, max_columns),
+        &visible_text,
         x,
         y,
         TERMINAL_FONT_SIZE_PX,
@@ -377,7 +391,8 @@ fn render_terminal_styled_line(
         );
         return;
     }
-    let visible_text = text.chars().take(visible_len).collect::<String>();
+    let visible_text =
+        text_without_geometric_blocks(&text.chars().take(visible_len).collect::<String>());
     let mut rich_spans = Vec::new();
     let mut cursor = 0;
     for span in styled_line
