@@ -6,13 +6,17 @@ use datum_gui_viewport::{
 
 use super::{
     HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_PANEL_VALUE,
-    TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text, draw_text_clipped,
-    push_rect_border, truncate_text,
+    TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text, draw_text_clipped, push_rect_border,
+    truncate_text,
 };
 use crate::design_tokens;
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
+
+#[path = "terminal_color.rs"]
+mod terminal_color;
+use terminal_color::{span_background, span_foreground};
 
 /// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
 /// engine's explicit letter spacing to preserve the exact governed 7.9 px
@@ -228,6 +232,9 @@ fn render_terminal_screen(
         .skip(tail_start)
         .take(max_lines)
     {
+        if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
+            render_terminal_style_backgrounds(styled_line, screen.x, y, max_columns, panel_quads);
+        }
         let selection_rect = render_terminal_selection_row(
             &state.ui.terminal,
             line_index,
@@ -272,6 +279,36 @@ fn render_terminal_screen(
             );
         }
         y += TERMINAL_CELL_HEIGHT_PX;
+    }
+}
+
+fn render_terminal_style_backgrounds(
+    styled_line: &TerminalStyledLine,
+    x: f32,
+    y: f32,
+    max_columns: usize,
+    panel_quads: &mut Vec<Quad>,
+) {
+    for span in styled_line
+        .spans
+        .iter()
+        .filter(|span| span.start < max_columns && span.start < span.end)
+    {
+        let start = span.start.min(max_columns);
+        let end = span.end.min(max_columns);
+        let Some(color) = span_background(span.fg.as_deref(), span.bg.as_deref(), span.inverse)
+        else {
+            continue;
+        };
+        panel_quads.push(Quad::from_rect(
+            RectPx {
+                x: x + start as f32 * TERMINAL_CELL_WIDTH_PX,
+                y,
+                width: (end - start) as f32 * TERMINAL_CELL_WIDTH_PX,
+                height: TERMINAL_CELL_HEIGHT_PX,
+            },
+            color,
+        ));
     }
 }
 
@@ -364,11 +401,12 @@ fn render_terminal_styled_line(
             &visible_text,
             styled_start,
             end,
-            terminal_span_color(
+            span_foreground(
                 span.fg.as_deref(),
                 span.bg.as_deref(),
                 span.bold,
                 span.inverse,
+                span.conceal,
             ),
             &mut rich_spans,
         );
@@ -409,30 +447,6 @@ fn push_terminal_rich_span(
         text: text.chars().skip(start).take(end - start).collect(),
         color,
     });
-}
-
-fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: bool) -> [f32; 3] {
-    let effective_fg = if inverse { bg.or(Some("white")) } else { fg };
-    match effective_fg {
-        Some("black") => [0.25, 0.27, 0.30],
-        Some("red") => [0.95, 0.32, 0.28],
-        Some("green") => [0.45, 0.82, 0.48],
-        Some("yellow") => [0.96, 0.78, 0.32],
-        Some("blue") => [0.42, 0.62, 0.95],
-        Some("magenta") => [0.82, 0.50, 0.90],
-        Some("cyan") => [0.38, 0.82, 0.88],
-        Some("white") => [0.90, 0.92, 0.94],
-        Some("bright_black") => [0.48, 0.52, 0.58],
-        Some("bright_red") => [1.00, 0.42, 0.36],
-        Some("bright_green") => [0.58, 0.92, 0.56],
-        Some("bright_yellow") => [1.00, 0.86, 0.42],
-        Some("bright_blue") => [0.52, 0.72, 1.00],
-        Some("bright_magenta") => [0.92, 0.62, 1.00],
-        Some("bright_cyan") => [0.50, 0.92, 0.96],
-        Some("bright_white") => [1.00, 1.00, 1.00],
-        _ if bold => TEXT_PRIMARY,
-        _ => TEXT_PANEL_VALUE,
-    }
 }
 
 #[cfg(test)]
@@ -477,6 +491,44 @@ mod selection_tests {
         assert_eq!(text_runs[0].text, "selected");
         assert_eq!(text_runs[0].color, TERMINAL_SELECTION_FG);
         assert_eq!(text_runs[0].clip_bounds, Some(expected));
+    }
+
+    #[test]
+    fn terminal_truecolor_background_uses_exact_styled_cell_geometry() {
+        let styled = TerminalStyledLine {
+            text: "abcdef".to_string(),
+            spans: vec![datum_gui_protocol::TerminalStyleSpan {
+                start: 2,
+                end: 5,
+                fg: None,
+                bg: Some("rgb:12:34:56".to_string()),
+                bold: false,
+                dim: false,
+                italic: false,
+                underline: false,
+                overline: false,
+                blink: false,
+                strikethrough: false,
+                conceal: false,
+                inverse: false,
+            }],
+        };
+        let mut quads = Vec::new();
+        render_terminal_style_backgrounds(&styled, 10.0, 20.0, 80, &mut quads);
+
+        assert_eq!(quads.len(), 1);
+        assert_eq!(
+            quads[0],
+            Quad::from_rect(
+                RectPx {
+                    x: 10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX,
+                    y: 20.0,
+                    width: 3.0 * TERMINAL_CELL_WIDTH_PX,
+                    height: TERMINAL_CELL_HEIGHT_PX,
+                },
+                terminal_color::terminal_color("rgb:12:34:56").expect("valid fixture color"),
+            )
+        );
     }
 }
 

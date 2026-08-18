@@ -16,8 +16,8 @@ pub(super) fn spawn_terminal_process(
 ) -> Result<TerminalSession> {
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     let mut terminal_context = write_terminal_context(context)?;
-    let mut request = TerminalTransportRequest::new(&shell, terminal_context.project_root.clone())
-        .env("TERM", "xterm-256color")
+    let request = TerminalTransportRequest::new(&shell, terminal_context.project_root.clone());
+    let mut request = apply_interactive_terminal_environment(request)
         .env("DATUM_PROJECT_ROOT", context.project_root.as_os_str())
         .env("DATUM_CLI", DATUM_CLI)
         .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
@@ -57,6 +57,22 @@ pub(super) fn spawn_terminal_process(
     Ok(TerminalSession::from_transport(transport, terminal_context))
 }
 
+/// A terminal tab is a new interactive presentation boundary, not a subprocess
+/// inheriting the launcher's log-format preference. Keep the currently governed
+/// TERM identity, advertise the truecolor path Datum actually renders, remove
+/// NO_COLOR, and prevent a parent terminal emulator from being misidentified as
+/// the terminal that owns this PTY.
+fn apply_interactive_terminal_environment(
+    request: TerminalTransportRequest,
+) -> TerminalTransportRequest {
+    request
+        .env("TERM", "xterm-256color")
+        .env("COLORTERM", "truecolor")
+        .env_remove("NO_COLOR")
+        .env_remove("TERM_PROGRAM")
+        .env_remove("TERM_PROGRAM_VERSION")
+}
+
 fn persist_context_before_start<T>(
     persist: impl FnOnce() -> Result<()>,
     start: impl FnOnce() -> T,
@@ -69,6 +85,27 @@ fn persist_context_before_start<T>(
 mod tests {
     use super::*;
     use std::cell::Cell;
+
+    #[test]
+    fn interactive_terminal_environment_enables_color_without_foreign_identity() {
+        let request = TerminalTransportRequest::new("/bin/sh", "/tmp".into())
+            .env("NO_COLOR", "1")
+            .env("TERM_PROGRAM", "ghostty")
+            .env("TERM_PROGRAM_VERSION", "fixture");
+        let (command, _, _) = apply_interactive_terminal_environment(request).into_command();
+        let env = command.get_envs().collect::<Vec<_>>();
+        assert!(env.contains(&(
+            std::ffi::OsStr::new("TERM"),
+            Some(std::ffi::OsStr::new("xterm-256color"))
+        )));
+        assert!(env.contains(&(
+            std::ffi::OsStr::new("COLORTERM"),
+            Some(std::ffi::OsStr::new("truecolor"))
+        )));
+        for key in ["NO_COLOR", "TERM_PROGRAM", "TERM_PROGRAM_VERSION"] {
+            assert!(env.contains(&(std::ffi::OsStr::new(key), None)));
+        }
+    }
 
     #[test]
     fn context_persistence_failure_prevents_transport_start() {
