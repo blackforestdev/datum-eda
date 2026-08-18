@@ -627,6 +627,17 @@ only arms guarded confirmation and remains visible until verified teardown.
 The close target is non-entry chrome and cannot steal terminal keyboard focus.
 Fresh owner QA of the tab close affordance remains the completion boundary.
 
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P05I-OWNER-ACCEPTED -->
+Owner acceptance on 2026-08-18 closes DTC-P05I after repeated fresh-build QA of
+the complete terminal round. The accepted surface includes terminal click
+focus and Tab routing, prompt and cursor alignment, color and governed glyph
+rendering, responsive input after output, ordered and draggable session tabs,
+prompt new-session activation, guarded per-tab close, clipboard and visible
+selection, reclaimed terminal rows, and smooth dock-boundary resizing. The
+owner explicitly classifies this terminal round as usable. Project/layer
+sidebar resizing, scrolling, overflow affordances, and project-panel cleanup
+are separate viewport work and do not extend DTC-P05I.
+
 #### DTC-P06A owner packet
 
 DTC-P06 is transport/session proof, not terminal-core or application
