@@ -773,8 +773,8 @@ Owner approval on 2026-08-18 ratifies the P06-O8 platform, scheduling, evidence,
 and landing contract with Wayland primary and X11 fallback exactly as stated
 above. It does not authorize treating X11 as Datum's default GUI backend.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O9 --> **P06-O9 — long-session event-log retention.** Recommended: cap each
-  terminal session's I/O event-log family at 64 MiB total, stored as four
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O9 --> **P06-O9 — long-session event-log retention.** Owner-approved 2026-08-18:
+  cap each terminal session's I/O event-log family at 64 MiB total, stored as four
   16 MiB segments with oldest-first rotation and atomic rollover. Rotation must
   never block PTY draining, must emit one typed rotation/truncation fact, and
   must preserve command, lifecycle, exact-exit, termination-failure, and
@@ -783,6 +783,18 @@ above. It does not authorize treating X11 as Datum's default GUI backend.
   This is a diagnostic preview log, not the terminal's logical history or the
   model context. Raw transcript retention and secret-redaction policy remain a
   later explicit security/product boundary.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O9-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O9 diagnostic event-log retention
+policy exactly as stated above.
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A-OWNER-APPROVED -->
+DTC-P06A is complete. P06-O1 through P06-O9 now govern proof duration and
+workload, responsiveness, throughput and recovery, memory, descriptor/thread
+cleanup, resize/isolation, Wayland-first Linux evidence and landing gates, and
+bounded diagnostic event-log retention. This authorizes DTC-P06B–P06E
+execution only within those exact limits and does not authorize dependencies,
+non-Linux claims, provisional-core expansion, or later terminal semantics.
 
 Approving P06-O9 completes only the P06A numerical and platform policy. It does
 not itself claim P06B–P06E implementation, measured evidence, or release

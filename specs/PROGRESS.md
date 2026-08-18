@@ -43,7 +43,7 @@
    Keep raw PTY/TerminalCore input as the sole attached model and make detached state explicit. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
 - **Harden the Datum-owned PTY transport** (`TERMINAL-T1-PTY`; `dat-terminal-emulator-epic-jzv.1`).
-   Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency. *state `planned`; authorization `owner_decision`; **CANONICAL NEXT**.*
+   Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-pan-trace-terminal-pollution-0j0`. *Unblocks:* dat-terminal-emulator-epic-jzv.2, dat-terminal-emulator-epic-jzv.3. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md`, `docs/decisions/PRODUCT_MECHANICS_031_TERMINAL_TYPOGRAPHY_EXCEPTION.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md`, `docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build the Datum-owned TerminalCore** (`TERMINAL-T1-CORE`; `dat-terminal-emulator-epic-jzv.2`).

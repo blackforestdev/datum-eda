@@ -1402,10 +1402,23 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-dtc-p06b-session-isolation-20260818",
+        "claimed_at": "2026-08-18T22:00:56Z",
+        "heartbeat_at": "2026-08-18T22:00:56Z",
+        "expires_at": "2026-08-19T06:00:56Z",
+        "scope": [
+          "DTC-P06B eight-session transport isolation"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "ae7c082"
+      },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1416,7 +1429,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06A",
+        "canonical_next_step_id": "DTC-P06B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1796,7 +1809,7 @@
           {
             "id": "DTC-P06A",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Ratify exact proof tiers, session load, latency, throughput, resource, storage, soak, platform, and evidence budgets before timed transport assertions are implemented.",
             "depends_on": [
               "DTC-P05I"
@@ -1847,6 +1860,16 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O8-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O9-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A-OWNER-APPROVED"
               }
             ],
             "owner_input": {
@@ -1867,7 +1890,7 @@
           {
             "id": "DTC-P06B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prove eight real sessions isolate concurrent input/output/resize, inactive-tab drain/reactivation, exact exit, termination, and verified restart without any detached Datum PTY.",
             "depends_on": [
               "DTC-P06A"
