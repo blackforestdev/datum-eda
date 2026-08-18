@@ -1409,15 +1409,15 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-dtc-p06b-session-isolation-20260818",
-        "claimed_at": "2026-08-18T22:00:56Z",
-        "heartbeat_at": "2026-08-18T22:09:12Z",
-        "expires_at": "2026-08-19T06:09:12Z",
+        "session": "codex-dtc-p06d-measured-linux-proof-20260818",
+        "claimed_at": "2026-08-18T22:14:25Z",
+        "heartbeat_at": "2026-08-18T22:14:25Z",
+        "expires_at": "2026-08-19T06:14:25Z",
         "scope": [
-          "DTC-P06C bounded stress and resource proof"
+          "DTC-P06D measured Linux performance and soak proof"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "369f936"
+        "head": "c11ffb48c319fe7c64b637be129049ed056623cd"
       },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
@@ -1429,7 +1429,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06C",
+        "canonical_next_step_id": "DTC-P06D",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1916,7 +1916,7 @@
           {
             "id": "DTC-P06C",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove bounded saturation, persistent fairness, lifecycle churn, maximum-session refusal, and zero cross-session bytes, owned-session survivors, or descriptor/thread growth.",
             "depends_on": [
               "DTC-P06B"
@@ -1927,12 +1927,22 @@
                 "marker": "DTC-P06C"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "c11ffb48c319fe7c64b637be129049ed056623cd"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06C-VERIFIED"
+              }
+            ]
           },
           {
             "id": "DTC-P06D",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Run the ratified release-build Linux latency, throughput, memory, resize, lifecycle, and long-session soak matrix with reproducible machine-readable evidence.",
             "depends_on": [
               "DTC-P06C"

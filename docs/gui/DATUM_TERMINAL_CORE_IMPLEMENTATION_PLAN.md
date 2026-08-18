@@ -827,6 +827,34 @@ below decision-022's 700-line ceiling. Repository-wide source health remains
 red only for unrelated concurrent CLI/engine/protocol ceiling drift and the
 pre-existing terminal-input inline-test-tail debt; DTC-P06B adds no debt.
 
+#### DTC-P06C bounded stress and resource evidence
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06C-VERIFIED -->
+The bounded-resource proof composes the existing exact queue and scheduling
+fixtures with a new isolated real-kernel lifecycle harness. Output saturation
+reserves capacity before reading and blocks losslessly at 256 chunks or 4 MiB;
+input admission remains whole-request atomic at 64 requests and 4 MiB; the
+registry retains control-first persistent round-robin service under the exact
+128-event/64-KiB global turn ceilings; and the seventeenth session is refused
+before PTY allocation. The DTC-P06B eight-session fixture remains the exact
+cross-session byte, process, resize, exit, restart, and termination-isolation
+proof.
+
+The lifecycle harness runs in a dedicated subprocess so unrelated parallel
+Rust tests cannot pollute its Linux resource measurements. Across 100 real PTY
+spawn/exit cycles it requires exact exit zero, complete output presentation,
+the direct child reaped, the original process session empty, and both
+`/proc/self/fd` and `/proc/self/task` returned within one second to the warm
+baseline plus two after every cycle. The complete 349-test GUI-app suite and
+strict all-target Clippy pass. Dependency authority, convergence, the terminal
+transport boundary, fifteen hermetic boundary mutations, formatting, and diff
+hygiene pass. Source health remains red only for unrelated concurrent
+CLI/engine/protocol ceiling drift and the pre-existing terminal-input inline
+test-tail debt; the 143-line P06C proof and all touched files satisfy decision
+022. The owner-ratified 1,000-cycle, release-performance, and long-duration
+soak requirements remain DTC-P06D and are not claimed by this deterministic
+closure.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
