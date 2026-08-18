@@ -301,6 +301,33 @@ def check(root: Path) -> list[str]:
     for marker in isolation_markers:
         if marker not in isolation:
             failures.append(f"DTC-P06B eight-session isolation proof missing: {marker}")
+    p06c_proofs = {
+        TRANSPORT / "output.rs": (
+            "full_output_backlog_blocks_reservation_until_consumer_pop",
+        ),
+        TRANSPORT / "input.rs": (
+            "input_admission_is_atomic_at_request_and_byte_limits",
+        ),
+        APP_SRC / "terminal_session_drain_tests.rs": (
+            "control_priority_round_robin_cursor_and_exact_global_caps_are_literal",
+            "seventeenth_session_is_refused_by_preallocation_guard",
+        ),
+        APP_SRC / "terminal_session_p06_stress_tests.rs": (
+            "const P06_LIFECYCLE_CYCLES: usize = 100;",
+            "fn p06_resource_helper",
+            'proc_entry_count("/proc/self/fd")',
+            'proc_entry_count("/proc/self/task")',
+            "session.presentation_complete()",
+            "snapshot.leader_reaped",
+            "snapshot.surviving_processes.is_empty()",
+        ),
+    }
+    for relative, markers in p06c_proofs.items():
+        path = root / relative
+        proof = path.read_text(encoding="utf-8") if path.is_file() else ""
+        for marker in markers:
+            if marker not in proof:
+                failures.append(f"DTC-P06C bounded resource proof missing: {marker}")
     if "active().try_recv_event" in "\n".join(outside_transport.values()):
         failures.append("active-only terminal event draining must not return")
 

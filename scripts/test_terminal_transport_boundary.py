@@ -113,6 +113,30 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "all_sessions_closed(); let _ = \"P06 must not recreate a detached PTY state\";\n}",
             encoding="utf-8",
         )
+        (root / guard.APP_SRC / "terminal_session_p06_stress_tests.rs").write_text(
+            "const P06_LIFECYCLE_CYCLES: usize = 100;\n"
+            "fn p06_resource_helper(){\n"
+            "proc_entry_count(\"/proc/self/fd\"); proc_entry_count(\"/proc/self/task\");\n"
+            "session.presentation_complete(); snapshot.leader_reaped;\n"
+            "snapshot.surviving_processes.is_empty();\n}",
+            encoding="utf-8",
+        )
+        (transport / "output.rs").write_text(
+            (transport / "output.rs").read_text(encoding="utf-8")
+            + "\nfn full_output_backlog_blocks_reservation_until_consumer_pop(){}",
+            encoding="utf-8",
+        )
+        (transport / "input.rs").write_text(
+            (transport / "input.rs").read_text(encoding="utf-8")
+            + "\nfn input_admission_is_atomic_at_request_and_byte_limits(){}",
+            encoding="utf-8",
+        )
+        drain_tests = root / guard.APP_SRC / "terminal_session_drain_tests.rs"
+        drain_tests.write_text(
+            drain_tests.read_text(encoding="utf-8")
+            + "\nfn seventeenth_session_is_refused_by_preallocation_guard(){}",
+            encoding="utf-8",
+        )
         (root / guard.APP_SRC / "terminal_job_control_tests.rs").write_text(
             "fn termination_cancels_backpressured_input_and_closes_every_master(){}",
             encoding="utf-8",
@@ -142,6 +166,24 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(
             any("DTC-P06B eight-session isolation proof missing" in failure for failure in guard.check(root))
         )
+
+    def test_missing_p06c_resource_and_saturation_proofs_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        stress = root / guard.APP_SRC / "terminal_session_p06_stress_tests.rs"
+        stress.write_text(
+            stress.read_text(encoding="utf-8").replace(
+                "const P06_LIFECYCLE_CYCLES: usize = 100;",
+                "const P06_LIFECYCLE_CYCLES: usize = 1;",
+            ).replace("snapshot.leader_reaped", "true"),
+            encoding="utf-8",
+        )
+        output = root / guard.TRANSPORT / "output.rs"
+        output.write_text("struct OutputBacklog {}", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("P06_LIFECYCLE_CYCLES" in failure for failure in failures))
+        self.assertTrue(any("snapshot.leader_reaped" in failure for failure in failures))
+        self.assertTrue(any("full_output_backlog" in failure for failure in failures))
 
     def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
         temporary, root = self.fixture()
