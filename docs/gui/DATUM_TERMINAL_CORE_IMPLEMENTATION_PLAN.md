@@ -723,8 +723,8 @@ budgets, not a permanent cap on transcript or model context; future 2M-token
 and larger agent workloads may expand them through a new measured owner
 decision without weakening losslessness or boundedness.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O6 --> **P06-O6 — descriptors, workers, and process cleanup.** Recommended:
-  Datum-process file-descriptor growth is at most four descriptors per live
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O6 --> **P06-O6 — descriptors, workers, and process cleanup.** Owner-approved
+  2026-08-18: Datum-process file-descriptor growth is at most four descriptors per live
   terminal session plus eight global, and worker-thread growth is at most four
   threads per live session plus four global. Within one second after ordinary
   verified close/reap, both counts return to their warm baseline plus two.
@@ -732,8 +732,21 @@ decision without weakening losslessness or boundedness.
   descriptor or thread slope, zero zombies, and zero surviving process whose
   Linux session remains Datum-owned.
 
-Approving P06-O6 approves only descriptor, worker-thread, zombie, and owned-
-process cleanup thresholds. It does not yet approve resize, platform, storage, or
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O6-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O6 descriptor, worker-thread,
+zombie, and owned-process cleanup thresholds exactly as stated above.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O7 --> **P06-O7 — resize and isolation.** Recommended: perform 10,000 total
+  resize requests during the sixteen-session mixed workload, with at least 500
+  requests per session and concurrent terminal I/O. Resize ioctl/request
+  completion is p95 at most 2 ms, p99 at most 5 ms, and maximum 20 ms; the final
+  kernel winsize is exact within 100 ms. SIGWINCH reaches only the current
+  foreground process group. Input, output, resize, exit, termination, restart,
+  tab activation, and inactive-session draining exhibit zero cross-session
+  contamination. Logical reflow correctness remains DTC-P14.
+
+Approving P06-O7 approves only resize and cross-session isolation thresholds.
+It does not yet approve platform, storage, or
 landing thresholds; those remain subsequent P06A owner decisions.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
