@@ -39,6 +39,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalSessionForceKillActive
         | HitTarget::TerminalSessionRetryTermination
         | HitTarget::TerminalShutdownCancel
+        | HitTarget::TerminalClipboardCopy
+        | HitTarget::TerminalClipboardPaste
         // Production handoffs write PTY bytes but are observation gestures.
         | HitTarget::ProductionOutputJobRun(_)
         | HitTarget::ProductionTerminalCommand(_)
@@ -143,6 +145,8 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalSessionForceKillActive,
         HitTarget::TerminalSessionRetryTermination,
         HitTarget::TerminalShutdownCancel,
+        HitTarget::TerminalClipboardCopy,
+        HitTarget::TerminalClipboardPaste,
         HitTarget::TerminalScreen,
         HitTarget::CheckFinding(id()),
         HitTarget::ProductionArtifact(id()),
@@ -651,6 +655,7 @@ fn workspace_ui_state() -> datum_gui_protocol::WorkspaceUiState {
         hovered_object: None,
         hovered_terminal_close_session_id: None,
         terminal_tab_drag: None,
+        terminal_clipboard_menu: None,
         cursor_pos: None,
         crosshair_style: datum_gui_protocol::CrosshairStyle::default(),
         filters: datum_gui_protocol::WorkspaceFilterState {

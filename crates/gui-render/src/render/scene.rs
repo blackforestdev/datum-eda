@@ -1,20 +1,12 @@
-// Per-pane coordinate + hit resolution (UVT-004 keystone) is extracted into a
-// real child module — a descendant of this crate-root scope, so it still reaches
-// the private `PreparedScene`/`RetainedScene` fields and the private
-// `WorldHitShape`/`WorldHitRegion` types. Declared here (not in lib.rs) so lib.rs
-// stays untouched and this file carries the extraction. `#[path]` resolves beside
-// this physical file (`src/render/`), not the include! host.
+// Per-pane coordinate + hit resolution (UVT-004) stays a real child module so
+// it can reach private prepared/retained scene types without growing lib.rs.
 #[path = "coordinate_hit.rs"]
 mod coordinate_hit;
 pub use coordinate_hit::resolve_pane_hover;
 
-// S4 immediate interaction overlays (hover pre-highlight + cursor crosshair) and
-// the extracted segmented status-bar renderer. Both are real `#[path] mod`
-// children of the crate root (this file is `include!`d at the root), so they reach
-// the private `Projection`/`WorldHit*` types and the crate-root render helpers via
-// `use super::*`, exactly like `coordinate_hit`. Declared here so `scene.rs` (not
-// `lib.rs`) carries the extraction, keeping each file under its source-health
-// ceiling with real (non-`include!`) module boundaries.
+// S4 interaction overlays and the segmented status bar remain real child modules
+// of the included crate-root scope, retaining private geometry access without
+// shifting their ownership into lib.rs.
 #[path = "interaction_overlay.rs"]
 mod interaction_overlay;
 #[path = "status_bar.rs"]
@@ -114,11 +106,17 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        terminal_clipboard_menu::render_terminal_clipboard_menu(
+            state,
+            &layout,
+            &mut menu_overlay_quads,
+            &mut menu_overlay_text_runs,
+            &mut hit_regions,
+        );
         // Single-live-scene: the board scene (substrate + grid underlay, selection
         // overlay, and world PCB) renders into the BOARD leaf's rect whenever a
         // board leaf exists — independent of which pane is focused, so the PCB stays
-        // visible in its pane while a Schematic pane is focused. Panes that are not
-        // the board scene leaf show their own placeholder (render_viewport_panes).
+        // visible while other panes are focused; non-board panes render placeholders.
         if board_scene_active {
             render_scene(
                 state,

@@ -66,6 +66,14 @@ pub struct TerminalTabDragVisualState {
     pub target_session_id: Option<String>,
 }
 
+/// Transient terminal-owned clipboard menu anchored in device-pixel screen
+/// coordinates. It is presentation state only and is never journaled.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TerminalClipboardMenuState {
+    pub anchor_x: f32,
+    pub anchor_y: f32,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DockTab {
     Terminal,
@@ -122,6 +130,7 @@ pub struct WorkspaceUiState {
     /// Transient consumer chrome, never journaled or swapped with PTY state.
     pub hovered_terminal_close_session_id: Option<String>,
     pub terminal_tab_drag: Option<TerminalTabDragVisualState>,
+    pub terminal_clipboard_menu: Option<TerminalClipboardMenuState>,
     /// The live cursor position in DEVICE-PIXEL SCREEN space (not world nm),
     /// stored in its own screen-space type. `None` when the cursor is
     /// off-window — the offscreen visual-test capture, so the crosshair overlay
@@ -152,6 +161,7 @@ impl WorkspaceUiState {
             hovered_object: None,
             hovered_terminal_close_session_id: None,
             terminal_tab_drag: None,
+            terminal_clipboard_menu: None,
             cursor_pos: None,
             crosshair_style: CrosshairStyle::default(),
             filters,

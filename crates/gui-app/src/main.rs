@@ -46,6 +46,7 @@ mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
+mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_input;
@@ -356,6 +357,9 @@ impl ApplicationHandler for App {
                         self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
                     }
+                    if runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
                     if runtime.report_terminal_mouse_motion() {
                         runtime.clear_interaction_overlay();
                         self.request_redraw_if_needed();
@@ -435,6 +439,16 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if button == MouseButton::Right
+                        && state == ElementState::Pressed
+                        && runtime.open_terminal_clipboard_menu_at_cursor()
+                    {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if button == MouseButton::Right && runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
                     if runtime.report_terminal_mouse_button(button, state) {
                         return;
                     }
@@ -449,6 +463,9 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
                     if runtime.begin_terminal_tab_drag() {
                         self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
@@ -501,8 +518,9 @@ impl ApplicationHandler for App {
                     // A completed divider-drag resize ends here; the release must NOT
                     // fall through to click-to-focus / selection.
                     let was_divider_drag = runtime.divider_drag.take().is_some();
-                    if runtime
-                        .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
+                    if !runtime.terminal_clipboard_menu_active()
+                        && runtime
+                            .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
                     {
                         return;
                     }
@@ -526,6 +544,16 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::KeyboardInput { event, .. } => {
+                if event.state == ElementState::Pressed
+                    && matches!(event.logical_key, Key::Named(NamedKey::Escape))
+                    && self
+                        .runtime
+                        .as_mut()
+                        .is_some_and(Runtime::dismiss_terminal_clipboard_menu)
+                {
+                    self.request_redraw_if_needed();
+                    return;
+                }
                 if event.state == ElementState::Pressed
                     && matches!(event.logical_key, Key::Named(NamedKey::Escape))
                     && self
@@ -1308,10 +1336,10 @@ impl Runtime {
                 self.scroll_terminal_scrollback_to_bottom();
                 true
             }
+            TerminalKeyAction::CopyClipboard => self.copy_terminal_scrollback(),
+            TerminalKeyAction::PasteClipboard => self.paste_terminal_input(),
             TerminalKeyAction::ConsumeRelease => true,
-            TerminalKeyAction::LetPasteShortcutHandle
-            | TerminalKeyAction::LetCopyShortcutHandle
-            | TerminalKeyAction::Ignore => false,
+            TerminalKeyAction::Ignore => false,
         }
     }
 
@@ -1530,29 +1558,6 @@ impl Runtime {
         self.resize_terminal_to_dock();
         self.invalidate_frame();
         true
-    }
-
-    fn is_paste_shortcut(&self, event: &KeyEvent) -> bool {
-        if event.state != ElementState::Released {
-            return false;
-        }
-        (self.modifiers.control_key()
-            && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyV)))
-            || (self.modifiers.shift_key()
-                && matches!(event.logical_key, Key::Named(NamedKey::Insert)))
-    }
-
-    fn is_copy_shortcut(&self, event: &KeyEvent) -> bool {
-        if event.state != ElementState::Released
-            || !self.modifiers.control_key()
-            || !matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyC))
-        {
-            return false;
-        }
-        match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Terminal) => self.modifiers.shift_key(),
-            None => false,
-        }
     }
 
     fn copy_terminal_scrollback(&mut self) -> bool {
@@ -1929,6 +1934,15 @@ impl Runtime {
             )
         };
         let prepared_elapsed = prepared_started.elapsed();
+        if self.terminal_clipboard_menu_active()
+            && !matches!(
+                prepared_target.as_ref(),
+                Some(HitTarget::TerminalClipboardCopy | HitTarget::TerminalClipboardPaste)
+            )
+        {
+            self.dismiss_terminal_clipboard_menu();
+            return true;
+        }
         if let Some(target) = prepared_target {
             self.trace_click(format!(
                 "primary click ({x:.1}, {y:.1}) prepared target {target:?}; prepare {}ms; dock {:?}",
@@ -2257,6 +2271,16 @@ impl Runtime {
             | HitTarget::TerminalSessionRetryTermination
             | HitTarget::TerminalShutdownCancel) => self.handle_terminal_lifecycle_target(target),
             HitTarget::TerminalScreen => self.click_terminal_screen(),
+            HitTarget::TerminalClipboardCopy => {
+                self.dismiss_terminal_clipboard_menu();
+                self.copy_terminal_scrollback();
+                true
+            }
+            HitTarget::TerminalClipboardPaste => {
+                self.dismiss_terminal_clipboard_menu();
+                self.paste_terminal_input();
+                true
+            }
             HitTarget::ProductionArtifact(artifact_id) => {
                 let handled = self.dispatch_session_command(
                     SessionCommand::FocusProductionArtifact(artifact_id.clone()),
@@ -2363,6 +2387,7 @@ impl Runtime {
 
     fn toggle_menu(&mut self, menu: &str) -> bool {
         let ui = &mut self.session.workspace_mut().ui;
+        ui.terminal_clipboard_menu = None;
         ui.active_menu = if ui.active_menu.as_deref() == Some(menu) {
             None
         } else {
@@ -2523,14 +2548,6 @@ mod tests {
         assert!(parse_window_size("1280").is_err());
         assert!(parse_window_size("0x768").is_err());
         assert!(parse_window_size("1280x0").is_err());
-    }
-
-    #[test]
-    fn terminal_raw_input_defers_paste_and_copy_shortcuts() {
-        assert!(terminal_raw_input_should_handle(true, false, false));
-        assert!(!terminal_raw_input_should_handle(true, true, false));
-        assert!(!terminal_raw_input_should_handle(true, false, true));
-        assert!(!terminal_raw_input_should_handle(false, false, false));
     }
 
     #[test]

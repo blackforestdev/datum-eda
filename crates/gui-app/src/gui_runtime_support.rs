@@ -81,14 +81,6 @@ pub(crate) fn trace_startup_timing(message: String) {
     }
 }
 
-pub(crate) fn terminal_raw_input_should_handle(
-    terminal_accepts_raw_input: bool,
-    paste_shortcut: bool,
-    copy_shortcut: bool,
-) -> bool {
-    terminal_accepts_raw_input && !paste_shortcut && !copy_shortcut
-}
-
 pub(crate) fn select_msaa_samples(adapter: &wgpu::Adapter, format: wgpu::TextureFormat) -> u32 {
     let format_features = adapter.get_texture_format_features(format);
     let supported = format_features.flags.supported_sample_counts();

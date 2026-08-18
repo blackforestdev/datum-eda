@@ -5,15 +5,81 @@
 //! are asserted against the same private sequence builders `terminal_key_action`
 //! uses, so a mapping change and a routing change both fail here.
 
-use super::{terminal_character_sequence, terminal_space_sequence, terminal_tab_sequence};
+use super::{
+    TerminalClipboardShortcut, terminal_character_sequence, terminal_clipboard_shortcut,
+    terminal_space_sequence, terminal_tab_sequence,
+};
 use crate::keyboard_focus::{KeyClass, RouteDecision, key_route};
 use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
-use winit::keyboard::ModifiersState;
+use winit::{
+    event::ElementState,
+    keyboard::{KeyCode, ModifiersState, PhysicalKey},
+};
 
 /// Every character workspace hotkey the editor persona binds
 /// (`keyboard_focus::handle_keyboard_input`): tools s/b/v/m/x/r, fit f/t,
 /// pane zoom z, crosshair c, review navigation [ / ].
 const WORKSPACE_HOTKEYS: [&str; 12] = ["s", "b", "v", "m", "x", "r", "f", "t", "z", "c", "[", "]"];
+
+#[test]
+fn clipboard_shortcuts_fire_once_on_press_and_preserve_plain_control_bytes() {
+    let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
+    for (key, expected) in [
+        (KeyCode::KeyC, TerminalClipboardShortcut::Copy),
+        (KeyCode::KeyV, TerminalClipboardShortcut::Paste),
+    ] {
+        assert_eq!(
+            terminal_clipboard_shortcut(
+                ElementState::Pressed,
+                false,
+                PhysicalKey::Code(key),
+                modifiers,
+            ),
+            Some(expected)
+        );
+        assert_eq!(
+            terminal_clipboard_shortcut(
+                ElementState::Released,
+                false,
+                PhysicalKey::Code(key),
+                modifiers,
+            ),
+            None
+        );
+        assert_eq!(
+            terminal_clipboard_shortcut(
+                ElementState::Pressed,
+                true,
+                PhysicalKey::Code(key),
+                modifiers,
+            ),
+            None
+        );
+    }
+    assert_eq!(
+        terminal_clipboard_shortcut(
+            ElementState::Pressed,
+            false,
+            PhysicalKey::Code(KeyCode::Insert),
+            ModifiersState::SHIFT,
+        ),
+        Some(TerminalClipboardShortcut::Paste)
+    );
+    assert_eq!(
+        terminal_clipboard_shortcut(
+            ElementState::Pressed,
+            false,
+            PhysicalKey::Code(KeyCode::KeyV),
+            ModifiersState::CONTROL,
+        ),
+        None
+    );
+    assert_eq!(
+        terminal_character_sequence("v", ModifiersState::CONTROL),
+        Some(vec![0x16]),
+        "plain Ctrl+V remains the shell's literal-next byte"
+    );
+}
 
 #[test]
 fn every_workspace_hotkey_is_pty_bytes_never_a_tool_under_terminal_focus() {

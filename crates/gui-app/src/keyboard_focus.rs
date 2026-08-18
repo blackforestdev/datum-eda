@@ -19,9 +19,7 @@ use datum_gui_protocol::{ApplicationFocus, PaneId, SessionCommand};
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
-use crate::{
-    Runtime, terminal_input::terminal_new_session_shortcut, terminal_raw_input_should_handle,
-};
+use crate::{Runtime, terminal_input::terminal_new_session_shortcut};
 
 /// What kind of keyboard traffic a key event represents, for routing purposes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -316,41 +314,9 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     {
         return true;
     }
-    if app.runtime.as_ref().is_some_and(|runtime| {
-        terminal_raw_input_should_handle(
-            terminal_owns_attached_pty,
-            runtime.is_paste_shortcut(event),
-            runtime.is_copy_shortcut(event),
-        )
-    }) {
+    if terminal_owns_attached_pty {
         if let Some(runtime) = &mut app.runtime
             && runtime.handle_terminal_key_input(event)
-        {
-            app.request_redraw_if_needed();
-        }
-        return true;
-    }
-    if terminal_input_owner != TerminalInputOwner::Unowned
-        && app
-            .runtime
-            .as_ref()
-            .is_some_and(|runtime| runtime.is_paste_shortcut(event))
-    {
-        if let Some(runtime) = &mut app.runtime
-            && runtime.paste_terminal_input()
-        {
-            app.request_redraw_if_needed();
-        }
-        return true;
-    }
-    if terminal_input_owner != TerminalInputOwner::Unowned
-        && app
-            .runtime
-            .as_ref()
-            .is_some_and(|runtime| runtime.is_copy_shortcut(event))
-    {
-        if let Some(runtime) = &mut app.runtime
-            && runtime.copy_terminal_scrollback()
         {
             app.request_redraw_if_needed();
         }

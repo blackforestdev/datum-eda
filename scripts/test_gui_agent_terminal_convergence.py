@@ -140,7 +140,7 @@ atomic_write_texts(&[]);
 
         failures = []
         guard.check_terminal_session_creation(
-            main + "\nfn activate_terminal_session() { refresh_terminal_session_context_from_state(); }\nfn is_paste_shortcut() {}",
+            main + "\nfn activate_terminal_session() { refresh_terminal_session_context_from_state(); }\nfn copy_terminal_scrollback() {}",
             keyboard,
             controls,
             terminal_input,
@@ -242,6 +242,10 @@ fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
     fn window_event() {
         NamedKey::Escape;
         cancel_terminal_tab_drag();
+        open_terminal_clipboard_menu_at_cursor();
+        !runtime.terminal_clipboard_menu_active();
+        TerminalKeyAction::CopyClipboard;
+        TerminalKeyAction::PasteClipboard;
         match event {
             MouseButton::Left, ElementState::Pressed => {
                 begin_terminal_tab_drag();
@@ -322,7 +326,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "                report_terminal_mouse_button();",
                 "report_terminal_mouse_button();\n"
                 "                focus_terminal_screen_before_mouse_report();",
-            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed"),
+            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
             runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed"),
             drain.replace("flush_output_batch", "apply_each_chunk")
             .replace("slot.remove_when_closed = is_active", "removed")
@@ -355,6 +359,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         )
         self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
         self.assertIn("terminal mouse routing is missing cancel_terminal_tab_drag", failures)
+        self.assertIn("terminal mouse routing is missing TerminalKeyAction::PasteClipboard", failures)
         self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
         self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
         self.assertIn(

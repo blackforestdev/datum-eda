@@ -15,10 +15,37 @@ pub(super) enum TerminalKeyAction {
     ScrollbackPageDown,
     ScrollbackTop,
     ScrollbackBottom,
-    LetPasteShortcutHandle,
-    LetCopyShortcutHandle,
+    CopyClipboard,
+    PasteClipboard,
     ConsumeRelease,
     Ignore,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum TerminalClipboardShortcut {
+    Copy,
+    Paste,
+}
+
+pub(super) fn terminal_clipboard_shortcut(
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: ModifiersState,
+) -> Option<TerminalClipboardShortcut> {
+    if state != ElementState::Pressed || repeat || !modifiers.shift_key() {
+        return None;
+    }
+    match physical_key {
+        PhysicalKey::Code(KeyCode::KeyC) if modifiers.control_key() => {
+            Some(TerminalClipboardShortcut::Copy)
+        }
+        PhysicalKey::Code(KeyCode::KeyV) if modifiers.control_key() => {
+            Some(TerminalClipboardShortcut::Paste)
+        }
+        PhysicalKey::Code(KeyCode::Insert) => Some(TerminalClipboardShortcut::Paste),
+        _ => None,
+    }
 }
 
 pub(super) fn terminal_key_action(
@@ -37,6 +64,14 @@ pub(super) fn terminal_key_action(
     if terminal_new_session_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
         return TerminalKeyAction::NewSession;
     }
+    if let Some(shortcut) =
+        terminal_clipboard_shortcut(event.state, event.repeat, event.physical_key, modifiers)
+    {
+        return match shortcut {
+            TerminalClipboardShortcut::Copy => TerminalKeyAction::CopyClipboard,
+            TerminalClipboardShortcut::Paste => TerminalKeyAction::PasteClipboard,
+        };
+    }
     if modifiers.control_key() {
         if modifiers.shift_key() && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyR)) {
             return TerminalKeyAction::RestartSession;
@@ -48,14 +83,10 @@ pub(super) fn terminal_key_action(
             return TerminalKeyAction::CloseSession;
         }
         if matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyC)) {
-            return if modifiers.shift_key() {
-                TerminalKeyAction::LetCopyShortcutHandle
-            } else {
-                TerminalKeyAction::Write(vec![VINTR_BYTE])
-            };
+            return TerminalKeyAction::Write(vec![VINTR_BYTE]);
         }
         if matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyV)) {
-            return TerminalKeyAction::LetPasteShortcutHandle;
+            return TerminalKeyAction::Write(vec![0x16]);
         }
     }
     if modifiers.shift_key()

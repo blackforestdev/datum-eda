@@ -33,6 +33,7 @@ mod terminal_cursor;
 mod terminal_font_tests;
 mod terminal_session_chrome;
 mod terminal_tab_strip;
+mod terminal_clipboard_menu;
 #[cfg(test)]
 mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]

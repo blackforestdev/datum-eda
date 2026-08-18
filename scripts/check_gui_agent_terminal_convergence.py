@@ -201,7 +201,7 @@ def check_agent_tui_runtime(
         report_at = press.find("report_terminal_mouse_button")
         if focus_at < 0 or report_at < 0 or focus_at > report_at:
             failures.append("terminal focus must precede child mouse-report forwarding")
-    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing"):
+    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing", "open_terminal_clipboard_menu_at_cursor", "!runtime.terminal_clipboard_menu_active()", "TerminalKeyAction::CopyClipboard", "TerminalKeyAction::PasteClipboard"):
         if marker not in main:
             failures.append(f"terminal mouse routing is missing {marker}")
     for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session"):
@@ -327,7 +327,7 @@ def check_terminal_session_creation(
         failures.append("new terminal tab projection is not followed by frame invalidation")
     if "begin_spawn_and_activate" not in spawn_body or "spawn_and_activate_with_lane" in spawn_body:
         failures.append("new terminal tabs still perform PTY spawn work on the GUI event path")
-    if "refresh_terminal_session_context_from_state" in main.split("fn activate_terminal_session", 1)[-1].split("fn is_paste_shortcut", 1)[0] or "refresh_accepted_transaction_tip" in production_sources:
+    if "refresh_terminal_session_context_from_state" in main.split("fn activate_terminal_session", 1)[-1].split("fn copy_terminal_scrollback", 1)[0] or "refresh_accepted_transaction_tip" in production_sources:
         failures.append("terminal tab activation still performs durable context persistence")
     for marker in (
         'name(format!("terminal-spawn-{pending_id}"))',

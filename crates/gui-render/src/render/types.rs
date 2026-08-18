@@ -40,6 +40,8 @@ pub enum HitTarget {
     TerminalSessionForceKillActive,
     TerminalSessionRetryTermination,
     TerminalShutdownCancel,
+    TerminalClipboardCopy,
+    TerminalClipboardPaste,
     /// The exact visible terminal cell rectangle (T0-C02): clicking SHELL
     /// CONTENT is deliberate terminal keyboard entry. Cell coordinates for a
     /// click are derived from the same shared geometry that produced the
