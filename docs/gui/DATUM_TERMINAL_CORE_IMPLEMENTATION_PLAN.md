@@ -749,12 +749,14 @@ zombie, and owned-process cleanup thresholds exactly as stated above.
 Owner approval on 2026-08-18 ratifies the P06-O7 resize and cross-session
 isolation thresholds exactly as stated above. Reflow remains outside P06.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O8 --> **P06-O8 — platform, scheduling, evidence, and landing.** Recommended:
-  the normative platform is the current supported Linux x86_64/glibc Datum
-  workstation using `/dev/ptmx`, `/proc`, and the already-authorized libc FFI;
-  run the production GUI measurements under both X11 and Wayland when each is
-  available, recording an explicit unavailable result rather than silently
-  skipping. Per-merge CI runs the deterministic ten-minute tier; scheduled CI
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O8 --> **P06-O8 — platform, scheduling, evidence, and landing.** Owner-approved
+  with revision 2026-08-18: the normative platform is the current supported
+  Linux x86_64/glibc Datum workstation using `/dev/ptmx`, `/proc`, and the
+  already-authorized libc FFI. Wayland is the primary and preferred Datum GUI
+  backend; X11 is the legacy fallback, not the default. Run production GUI
+  measurements under Wayland and also under X11 where each is available,
+  recording an explicit unavailable result rather than silently skipping.
+  Per-merge CI runs the deterministic ten-minute tier; scheduled CI
   runs the 24-hour and four-hour tiers, and release acceptance requires the
   approved three consecutive clean scheduled runs. Machine-readable evidence
   records revision, seed, build profile, kernel, libc, CPU, RAM, display
@@ -766,9 +768,25 @@ isolation thresholds exactly as stated above. Reflow remains outside P06.
   and independent verification. P06 makes no aarch64, musl, macOS, or Windows
   claim; their support requires a later explicit platform decision.
 
-Approving P06-O8 approves only the platform, scheduling, evidence, and landing
-contract. It does not yet approve storage thresholds; those remain the final
-P06A owner decision.
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O8-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O8 platform, scheduling, evidence,
+and landing contract with Wayland primary and X11 fallback exactly as stated
+above. It does not authorize treating X11 as Datum's default GUI backend.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O9 --> **P06-O9 — long-session event-log retention.** Recommended: cap each
+  terminal session's I/O event-log family at 64 MiB total, stored as four
+  16 MiB segments with oldest-first rotation and atomic rollover. Rotation must
+  never block PTY draining, must emit one typed rotation/truncation fact, and
+  must preserve command, lifecycle, exact-exit, termination-failure, and
+  lineage metadata independently of discarded byte previews. At the governed
+  sixteen-session maximum this bounds terminal event-log storage to 1 GiB.
+  This is a diagnostic preview log, not the terminal's logical history or the
+  model context. Raw transcript retention and secret-redaction policy remain a
+  later explicit security/product boundary.
+
+Approving P06-O9 completes only the P06A numerical and platform policy. It does
+not itself claim P06B–P06E implementation, measured evidence, or release
+acceptance.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
 

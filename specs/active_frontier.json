@@ -1842,18 +1842,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O7-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O8-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O8`, or `P06-O8: revise — <replacement>` or `P06-O8: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O9`, or `P06-O9: revise — <replacement>` or `P06-O9: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O8",
-                  "question": "What platform, scheduling, evidence, and landing contract should govern P06?",
-                  "recommended_response": "Approve current supported Linux x86_64/glibc using /dev/ptmx, /proc, and inherited libc as normative; measure the production GUI under X11 and Wayland when available and record explicit unavailability; run deterministic ten-minute proof per merge and 24-hour/four-hour scheduled tiers with three clean runs for release; emit machine-readable host, revision, seed, percentile, throughput, backlog, RSS/FD/thread, fairness, survivor, failure, and raw-sample evidence; require locked/offline tests, strict Clippy, dependency/source/file-size/transport/convergence/project/spec gates and independent verification; make no aarch64, musl, macOS, or Windows claim in P06.",
+                  "id": "P06-O9",
+                  "question": "What bounded retention policy should govern long-running terminal event logs?",
+                  "recommended_response": "Approve a 64 MiB terminal I/O event-log family per session as four 16 MiB segments with atomic oldest-first rotation; rotation never blocks PTY draining and emits one typed rotation/truncation fact; preserve command, lifecycle, exact-exit, termination-failure, and lineage metadata independently; bound sixteen-session log storage to 1 GiB; keep logical history/model context and raw-transcript retention/redaction outside this diagnostic-preview policy.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O8"
+                    "marker": "P06-O9"
                   }
                 }
               ]
