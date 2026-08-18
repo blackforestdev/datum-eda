@@ -1411,13 +1411,13 @@
         "harness": "codex-cli",
         "session": "codex-dtc-p06b-session-isolation-20260818",
         "claimed_at": "2026-08-18T22:00:56Z",
-        "heartbeat_at": "2026-08-18T22:00:56Z",
-        "expires_at": "2026-08-19T06:00:56Z",
+        "heartbeat_at": "2026-08-18T22:09:12Z",
+        "expires_at": "2026-08-19T06:09:12Z",
         "scope": [
-          "DTC-P06B eight-session transport isolation"
+          "DTC-P06C bounded stress and resource proof"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ae7c082"
+        "head": "369f936"
       },
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
@@ -1429,7 +1429,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06B",
+        "canonical_next_step_id": "DTC-P06C",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1890,7 +1890,7 @@
           {
             "id": "DTC-P06B",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove eight real sessions isolate concurrent input/output/resize, inactive-tab drain/reactivation, exact exit, termination, and verified restart without any detached Datum PTY.",
             "depends_on": [
               "DTC-P06A"
@@ -1901,12 +1901,22 @@
                 "marker": "DTC-P06B"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "369f936"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06B-VERIFIED"
+              }
+            ]
           },
           {
             "id": "DTC-P06C",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prove bounded saturation, persistent fairness, lifecycle churn, maximum-session refusal, and zero cross-session bytes, owned-session survivors, or descriptor/thread growth.",
             "depends_on": [
               "DTC-P06B"

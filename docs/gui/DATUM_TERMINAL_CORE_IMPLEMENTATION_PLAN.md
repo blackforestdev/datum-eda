@@ -802,6 +802,31 @@ acceptance.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
 
+#### DTC-P06B eight-session isolation evidence
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06B-VERIFIED -->
+The dedicated real-kernel fixture launches eight simultaneous Datum-owned PTYs
+and, before draining, gives each shell unique FIFO input while its foreground
+read is active and applies a distinct kernel size. The persistent round-robin
+registry drains every active and inactive session into its own projection;
+each projection contains its exact marker, input, and `stty size` result and no
+peer marker. Selecting every background tab restores that session's projection
+without a detached lifecycle. One inactive shell exits with exact code 23,
+restarts only after the output/presentation and owned-session barriers, receives
+a fresh session ID with explicit lineage, and preserves its geometry. A second
+session terminates independently while a peer remains writable. The fixture
+ends only after every remaining original Linux session is verified closed.
+
+The DTC-P06B test passes both alone and in the complete 348-test GUI-app suite;
+strict all-target Clippy, dependency authority, convergence guards, and the
+transport boundary plus fourteen hermetic mutations pass. The boundary checker
+now reads the extracted L3 proof from its real test module and requires the
+eight-session, exact-exit/presentation, no-detach, peer-survival, and final
+no-orphan markers. The 250-line proof and all touched production files remain
+below decision-022's 700-line ceiling. Repository-wide source health remains
+red only for unrelated concurrent CLI/engine/protocol ceiling drift and the
+pre-existing terminal-input inline-test-tail debt; DTC-P06B adds no debt.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
