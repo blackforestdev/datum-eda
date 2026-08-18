@@ -366,17 +366,6 @@ impl TerminalTabStops {
     }
 }
 
-pub(super) fn terminal_scrollback_copy_text(state: &TerminalLaneState) -> Option<String> {
-    let mut lines = state.grid_lines();
-    while matches!(lines.last(), Some(line) if line.is_empty()) {
-        lines = &lines[..lines.len().saturating_sub(1)];
-    }
-    if lines.is_empty() {
-        return None;
-    }
-    Some(lines.join("\n"))
-}
-
 fn ensure_row(state: &mut TerminalLaneState) {
     let grid = state.pty_grid_mut();
     if grid.lines.is_empty() {
@@ -608,17 +597,35 @@ fn trim_rows(state: &mut TerminalLaneState) {
     // projection is synchronized once per batch at the end of
     // `apply_bytes_with_responses`; rows are trimmed from `lines` and
     // `styled_lines` in lockstep, so indices stay aligned in between.
-    let grid = state.pty_grid_mut();
-    if grid.lines.len() <= MAX_TERMINAL_ROWS {
+    let overflow = state.grid_lines().len().saturating_sub(MAX_TERMINAL_ROWS);
+    if overflow == 0 {
         return;
     }
-    let overflow = grid.lines.len() - MAX_TERMINAL_ROWS;
-    grid.lines.drain(0..overflow);
-    grid.styled_lines.drain(0..overflow);
+    {
+        let grid = state.pty_grid_mut();
+        grid.lines.drain(0..overflow);
+        grid.styled_lines.drain(0..overflow);
+    }
+    if let Some(((start_row, start_column), (end_row, end_column))) = state.text_selection_ordered()
+    {
+        if start_row < overflow {
+            state.clear_text_selection();
+        } else {
+            state.set_text_selection(
+                (start_row - overflow, start_column),
+                (end_row - overflow, end_column),
+            );
+        }
+    }
 }
 
 #[cfg(test)]
 mod terminal_screen_basic_tests;
+
+mod clipboard;
+pub(super) use clipboard::terminal_clipboard_copy_text;
+#[cfg(test)]
+pub(super) use clipboard::terminal_scrollback_copy_text;
 
 #[cfg(test)]
 mod terminal_screen_c1_tests;

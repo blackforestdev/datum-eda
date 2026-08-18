@@ -242,6 +242,7 @@ fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
     fn window_event() {
         NamedKey::Escape;
         cancel_terminal_tab_drag();
+        cancel_terminal_text_selection_drag();
         open_terminal_clipboard_menu_at_cursor();
         !runtime.terminal_clipboard_menu_active();
         TerminalKeyAction::CopyClipboard;
@@ -250,10 +251,11 @@ fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
             MouseButton::Left, ElementState::Pressed => {
                 begin_terminal_tab_drag();
                 focus_terminal_screen_before_mouse_report();
+                begin_terminal_text_selection();
                 report_terminal_mouse_button();
             }
-            CursorMoved => advance_terminal_tab_drag(),
-            MouseButton::Left, ElementState::Released => finish_terminal_tab_drag(),
+            CursorMoved => { advance_terminal_tab_drag(); advance_terminal_text_selection(); },
+            MouseButton::Left, ElementState::Released => { finish_terminal_tab_drag(); finish_terminal_text_selection(); },
         }
     }
 fn terminal_mouse_reporting_active() {
@@ -263,7 +265,7 @@ fn terminal_mouse_reporting_active() {
     CursorIcon::Grabbing;
 }
 """
-        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session();"
+        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session(); terminal_grid_point(); set_text_selection();"
         drain = """
 flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
 slot.remove_when_closed = is_active;
@@ -287,6 +289,7 @@ self.cached_text_buffer_indices();
 TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 TERMINAL_LETTER_SPACING_EM;
 draw_rich_text();
+render_terminal_selection_row();
 """
         terminal_font_tests = """
 fn terminal_font_advance_matches_shared_logical_cell_width() {}
@@ -323,11 +326,13 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "        poll_terminal_output();\n        match event {",
             ).replace(
                 "focus_terminal_screen_before_mouse_report();\n"
+                "                begin_terminal_text_selection();\n"
                 "                report_terminal_mouse_button();",
                 "report_terminal_mouse_button();\n"
+                "                begin_terminal_text_selection();\n"
                 "                focus_terminal_screen_before_mouse_report();",
-            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
-            runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed"),
+            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("advance_terminal_text_selection()", "removed").replace("cancel_terminal_text_selection_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
+            runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed").replace("terminal_grid_point()", "removed"),
             drain.replace("flush_output_batch", "apply_each_chunk")
             .replace("slot.remove_when_closed = is_active", "removed")
             .replace(
@@ -342,7 +347,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
             render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
             bottom_dock
             .replace("TERMINAL_LETTER_SPACING_EM", "removed")
-            .replace("draw_rich_text", "draw_text"),
+            .replace("draw_rich_text", "draw_text").replace("render_terminal_selection_row", "removed"),
             terminal_font_tests.replace(
                 "styled_terminal_colors_share_one_shaping_origin", "removed"
             ).replace(
@@ -359,9 +364,12 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         )
         self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
         self.assertIn("terminal mouse routing is missing cancel_terminal_tab_drag", failures)
+        self.assertIn("terminal mouse routing is missing advance_terminal_text_selection", failures)
+        self.assertIn("terminal mouse routing is missing cancel_terminal_text_selection_drag", failures)
         self.assertIn("terminal mouse routing is missing TerminalKeyAction::PasteClipboard", failures)
         self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
         self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
+        self.assertIn("terminal focus-entry boundary is missing terminal_grid_point", failures)
         self.assertIn(
             "terminal tiny-output batching is missing flush_output_batch", failures
         )
@@ -377,6 +385,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         )
         self.assertTrue(any("TERMINAL_LETTER_SPACING_EM" in failure for failure in failures))
         self.assertTrue(any("draw_rich_text" in failure for failure in failures))
+        self.assertTrue(any("render_terminal_selection_row" in failure for failure in failures))
         self.assertTrue(any("rich-text shaping buffer" in failure for failure in failures))
         self.assertTrue(any("slot.remove_when_closed" in failure for failure in failures))
         self.assertTrue(any("natural_shell_exit" in failure for failure in failures))

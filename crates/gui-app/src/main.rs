@@ -50,6 +50,7 @@ mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_input;
+mod runtime_terminal_pointer;
 mod runtime_view_actions;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
@@ -84,16 +85,8 @@ use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
 use std::fs;
-use terminal_input::{
-    TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action,
-    terminal_sgr_mouse_button_sequence, terminal_sgr_mouse_motion_sequence,
-    terminal_sgr_mouse_wheel_sequence, terminal_urxvt_mouse_button_sequence,
-    terminal_urxvt_mouse_motion_sequence, terminal_urxvt_mouse_wheel_sequence,
-    terminal_utf8_mouse_button_sequence, terminal_utf8_mouse_motion_sequence,
-    terminal_utf8_mouse_wheel_sequence, terminal_x10_mouse_button_sequence,
-    terminal_x10_mouse_motion_sequence, terminal_x10_mouse_wheel_sequence,
-};
-use terminal_screen::terminal_scrollback_copy_text;
+use terminal_input::{TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action};
+use terminal_screen::terminal_clipboard_copy_text;
 use terminal_session::{
     TerminalLaunchContext, TerminalSessionRegistry, terminal_launch_context_from_state,
 };
@@ -326,6 +319,7 @@ impl ApplicationHandler for App {
                     if !focused {
                         runtime.pan_gesture.cancel();
                         runtime.cancel_terminal_tab_drag();
+                        runtime.cancel_terminal_text_selection_drag();
                     }
                     if !focused && runtime.clear_interaction_overlay() {
                         self.request_redraw_if_needed();
@@ -337,6 +331,7 @@ impl ApplicationHandler for App {
                     runtime.last_cursor_pos = None;
                     runtime.pan_gesture.cancel();
                     runtime.cancel_terminal_tab_drag();
+                    runtime.cancel_terminal_text_selection_drag();
                     let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
                     if runtime.clear_interaction_overlay() || terminal_hover_cleared {
                         self.request_redraw_if_needed();
@@ -358,6 +353,11 @@ impl ApplicationHandler for App {
                         return;
                     }
                     if runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
+                    if runtime.advance_terminal_text_selection(next_pos) {
+                        self.apply_cursor_icon(winit::window::CursorIcon::Text);
+                        self.request_redraw_if_needed();
                         return;
                     }
                     if runtime.report_terminal_mouse_motion() {
@@ -471,6 +471,11 @@ impl ApplicationHandler for App {
                         return;
                     }
                     runtime.focus_terminal_screen_before_mouse_report();
+                    if runtime.begin_terminal_text_selection() {
+                        self.apply_cursor_icon(winit::window::CursorIcon::Text);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if runtime
                         .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
                     {
@@ -518,6 +523,10 @@ impl ApplicationHandler for App {
                     // A completed divider-drag resize ends here; the release must NOT
                     // fall through to click-to-focus / selection.
                     let was_divider_drag = runtime.divider_drag.take().is_some();
+                    if runtime.finish_terminal_text_selection() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if !runtime.terminal_clipboard_menu_active()
                         && runtime
                             .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
@@ -652,6 +661,7 @@ struct Runtime {
     dock_drag_active: bool,
     terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
     terminal_tab_drag_release_suppressed: bool,
+    terminal_text_selection_drag: Option<runtime_terminal_pointer::TerminalSelectionPoint>,
     /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
     /// view state; never journaled.
     divider_drag: Option<DividerDrag>,
@@ -800,6 +810,7 @@ impl Runtime {
             dock_drag_active: false,
             terminal_tab_drag: None,
             terminal_tab_drag_release_suppressed: false,
+            terminal_text_selection_drag: None,
             divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
@@ -1396,123 +1407,6 @@ impl Runtime {
         }
     }
 
-    fn report_terminal_mouse_button(&mut self, button: MouseButton, state: ElementState) -> bool {
-        if !self.terminal_mouse_reporting_active() {
-            return false;
-        }
-        let Some((column, row)) = self.terminal_mouse_cell() else {
-            return false;
-        };
-        let pressed = state == ElementState::Pressed;
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_button_sequence(button, pressed, column, row),
-            Some("urxvt") => terminal_urxvt_mouse_button_sequence(button, pressed, column, row),
-            Some("utf8") => terminal_utf8_mouse_button_sequence(button, pressed, column, row),
-            None => terminal_x10_mouse_button_sequence(button, pressed, column, row),
-            _ => None,
-        }) else {
-            return false;
-        };
-        self.write_terminal_mouse_report(&bytes);
-        self.terminal_mouse_button = if state == ElementState::Pressed {
-            Some(button)
-        } else {
-            None
-        };
-        true
-    }
-
-    fn report_terminal_mouse_motion(&mut self) -> bool {
-        if !self.terminal_mouse_reporting_active() {
-            return false;
-        }
-        let terminal = &self.workspace().ui.terminal;
-        let held_button = match terminal.mouse_reporting_mode.as_deref() {
-            Some("any_event") => self.terminal_mouse_button,
-            Some("button_event") => {
-                let Some(button) = self.terminal_mouse_button else {
-                    return false;
-                };
-                Some(button)
-            }
-            _ => return false,
-        };
-        let Some((column, row)) = self.terminal_mouse_cell() else {
-            return false;
-        };
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_motion_sequence(held_button, column, row),
-            Some("urxvt") => held_button
-                .and_then(|button| terminal_urxvt_mouse_motion_sequence(button, column, row)),
-            Some("utf8") => held_button
-                .and_then(|button| terminal_utf8_mouse_motion_sequence(button, column, row)),
-            None => held_button
-                .and_then(|button| terminal_x10_mouse_motion_sequence(button, column, row)),
-            _ => None,
-        }) else {
-            return false;
-        };
-        self.write_terminal_mouse_report(&bytes);
-        true
-    }
-
-    fn report_terminal_mouse_wheel(&mut self, scroll_lines: f32) -> bool {
-        if !self.terminal_mouse_reporting_active() {
-            return false;
-        }
-        let Some((column, row)) = self.terminal_mouse_cell() else {
-            return false;
-        };
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_wheel_sequence(scroll_lines, column, row),
-            Some("urxvt") => terminal_urxvt_mouse_wheel_sequence(scroll_lines, column, row),
-            Some("utf8") => terminal_utf8_mouse_wheel_sequence(scroll_lines, column, row),
-            None => terminal_x10_mouse_wheel_sequence(scroll_lines, column, row),
-            _ => None,
-        }) else {
-            return false;
-        };
-        self.write_terminal_mouse_report(&bytes);
-        true
-    }
-
-    fn terminal_mouse_reporting_active(&self) -> bool {
-        let terminal = &self.workspace().ui.terminal;
-        keyboard_focus::terminal_mouse_report_allowed(
-            self.application_focus(),
-            terminal.mouse_reporting_mode.is_some(),
-            self.terminal_sessions.active_attached(),
-            self.last_cursor_pos
-                .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
-                .is_some(),
-        )
-    }
-
-    fn terminal_mouse_encoding_sequence(
-        &self,
-        sequence: impl FnOnce(Option<&str>) -> Option<Vec<u8>>,
-    ) -> Option<Vec<u8>> {
-        sequence(
-            self.workspace()
-                .ui
-                .terminal
-                .mouse_coordinate_encoding
-                .as_deref(),
-        )
-    }
-
-    fn terminal_mouse_cell(&self) -> Option<(u16, u16)> {
-        let (x, y) = self.last_cursor_pos?;
-        self.terminal_screen_cell_at(x, y)
-            .map(|(column, row)| (column.saturating_add(1), row.saturating_add(1)))
-    }
-
-    fn write_terminal_mouse_report(&mut self, bytes: &[u8]) {
-        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.log_review_event(format!("terminal mouse report failed: {err}"));
-        }
-    }
-
     fn terminate_terminal_session(&mut self) {
         match self
             .terminal_sessions
@@ -1564,14 +1458,14 @@ impl Runtime {
         if !matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             return false;
         }
-        let Some(text) = terminal_scrollback_copy_text(&self.workspace().ui.terminal) else {
+        let Some(text) = terminal_clipboard_copy_text(&self.workspace().ui.terminal) else {
             return false;
         };
         if self.write_clipboard_text(&text).is_err() {
             self.log_review_event("clipboard copy failed".to_string());
             return true;
         }
-        self.log_review_event("terminal scrollback copied".to_string());
+        self.log_review_event("terminal text copied".to_string());
         true
     }
 

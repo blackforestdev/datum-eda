@@ -5,9 +5,9 @@ use datum_gui_viewport::{
 };
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_PANEL_VALUE,
-    TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text,
-    push_rect_border, truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, REVIEW_ROW_ACTIVE_BG, RectPx,
+    ShellLayout, TEXT_PANEL_VALUE, TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text,
+    draw_text, push_rect_border, truncate_text,
 };
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
@@ -225,6 +225,14 @@ fn render_terminal_screen(
         .skip(tail_start)
         .take(max_lines)
     {
+        render_terminal_selection_row(
+            &state.ui.terminal,
+            line_index,
+            screen.x,
+            y,
+            max_columns,
+            panel_quads,
+        );
         if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
             render_terminal_styled_line(styled_line, line, screen.x, y, max_columns, text_runs);
         } else {
@@ -252,6 +260,28 @@ fn render_terminal_screen(
         }
         y += TERMINAL_CELL_HEIGHT_PX;
     }
+}
+
+fn render_terminal_selection_row(
+    terminal: &datum_gui_protocol::TerminalLaneState,
+    row: usize,
+    x: f32,
+    y: f32,
+    max_columns: usize,
+    panel_quads: &mut Vec<Quad>,
+) {
+    let Some((first, last)) = terminal.text_selection_span(row, max_columns) else {
+        return;
+    };
+    panel_quads.push(Quad::from_rect(
+        RectPx {
+            x: x + first as f32 * TERMINAL_CELL_WIDTH_PX,
+            y,
+            width: (last - first) as f32 * TERMINAL_CELL_WIDTH_PX,
+            height: TERMINAL_CELL_HEIGHT_PX,
+        },
+        REVIEW_ROW_ACTIVE_BG,
+    ));
 }
 
 fn render_terminal_styled_line(
@@ -372,6 +402,31 @@ fn terminal_span_color(fg: Option<&str>, bg: Option<&str>, bold: bool, inverse: 
         Some("bright_white") => [1.00, 1.00, 1.00],
         _ if bold => TEXT_PRIMARY,
         _ => TEXT_PANEL_VALUE,
+    }
+}
+
+#[cfg(test)]
+mod selection_tests {
+    use datum_gui_protocol::TerminalLaneState;
+
+    use super::*;
+
+    #[test]
+    fn terminal_selection_highlight_uses_exact_cell_geometry_behind_text() {
+        let mut terminal = TerminalLaneState::default();
+        terminal.set_text_selection((3, 2), (3, 4));
+        let mut quads = Vec::new();
+        render_terminal_selection_row(&terminal, 3, 10.0, 20.0, 80, &mut quads);
+        assert_eq!(quads.len(), 1);
+        assert_eq!(
+            quads[0].points[0],
+            (10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX, 20.0)
+        );
+        assert_eq!(
+            quads[0].points[1],
+            (10.0 + 5.0 * TERMINAL_CELL_WIDTH_PX, 20.0)
+        );
+        assert_eq!(quads[0].color, REVIEW_ROW_ACTIVE_BG);
     }
 }
 

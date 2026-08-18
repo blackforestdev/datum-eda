@@ -15,6 +15,7 @@ TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
+RUNTIME_TERMINAL_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_pointer.rs"
 TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain.rs"
 TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain_tests.rs"
 TERMINAL_CLOSE_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_close_tests.rs"
@@ -201,10 +202,10 @@ def check_agent_tui_runtime(
         report_at = press.find("report_terminal_mouse_button")
         if focus_at < 0 or report_at < 0 or focus_at > report_at:
             failures.append("terminal focus must precede child mouse-report forwarding")
-    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing", "open_terminal_clipboard_menu_at_cursor", "!runtime.terminal_clipboard_menu_active()", "TerminalKeyAction::CopyClipboard", "TerminalKeyAction::PasteClipboard"):
-        if marker not in main:
+    for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "begin_terminal_text_selection", "advance_terminal_text_selection", "finish_terminal_text_selection", "cancel_terminal_text_selection_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing", "open_terminal_clipboard_menu_at_cursor", "!runtime.terminal_clipboard_menu_active()", "TerminalKeyAction::CopyClipboard", "TerminalKeyAction::PasteClipboard"):
+        if marker not in main and marker not in runtime_dock:
             failures.append(f"terminal mouse routing is missing {marker}")
-    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session"):
+    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session", "terminal_grid_point", "set_text_selection"):
         if marker not in runtime_dock:
             failures.append(f"terminal focus-entry boundary is missing {marker}")
     for marker in (
@@ -237,6 +238,7 @@ def check_agent_tui_runtime(
         "TERMINAL_FONT_SIZE_PX: f32 = 12.0",
         "TERMINAL_LETTER_SPACING_EM",
         "draw_rich_text",
+        "render_terminal_selection_row",
     ):
         if marker not in bottom_dock:
             failures.append(f"terminal ink/advance separation is missing {marker}")
@@ -491,7 +493,7 @@ def main() -> int:
     terminal_session_spawn = TERMINAL_SESSION_SPAWN.read_text()
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
-    runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text()
+    runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text() + RUNTIME_TERMINAL_POINTER.read_text()
     terminal_drain = (
         TERMINAL_DRAIN.read_text()
         + TERMINAL_DRAIN_TESTS.read_text()

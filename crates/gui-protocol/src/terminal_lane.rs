@@ -50,6 +50,46 @@ pub struct TerminalStyledLine {
     pub spans: Vec<TerminalStyleSpan>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct TerminalTextPoint {
+    row: usize,
+    column: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct TerminalTextSelection {
+    anchor: TerminalTextPoint,
+    focus: TerminalTextPoint,
+}
+
+impl TerminalTextSelection {
+    fn ordered(self) -> (TerminalTextPoint, TerminalTextPoint) {
+        if self.anchor <= self.focus {
+            (self.anchor, self.focus)
+        } else {
+            (self.focus, self.anchor)
+        }
+    }
+
+    /// Return the selected half-open column span for one grid row. Pointer
+    /// endpoints name cells, so both endpoints are included.
+    fn column_span(self, row: usize, row_columns: usize) -> Option<(usize, usize)> {
+        let (start, end) = self.ordered();
+        if row < start.row || row > end.row {
+            return None;
+        }
+        let first = if row == start.row { start.column } else { 0 };
+        let last = if row == end.row {
+            end.column.saturating_add(1)
+        } else {
+            row_columns
+        };
+        let first = first.min(row_columns);
+        let last = last.min(row_columns);
+        (first < last).then_some((first, last))
+    }
+}
+
 /// Split mutable borrow of the terminal screen grid, obtainable only through
 /// [`TerminalLaneState::pty_grid_mut`]. See that method for the screen-authority
 /// invariant that governs every use of this type.
@@ -85,6 +125,9 @@ pub struct TerminalLaneState {
     pub mouse_reporting_mode: Option<String>,
     pub mouse_coordinate_encoding: Option<String>,
     pub scroll_offset: usize,
+    /// Pointer-selected PTY cells for the active session. This is projection
+    /// state, so it follows its terminal tab and never crosses sessions.
+    text_selection: Option<TerminalTextSelection>,
     pub status: String,
     /// Application-close authority, distinct from the active session's
     /// teardown status so per-session refreshes cannot erase Retry/Cancel.
@@ -117,6 +160,7 @@ impl TerminalLaneState {
             mouse_reporting_mode,
             mouse_coordinate_encoding,
             scroll_offset,
+            text_selection,
             status,
         );
     }
@@ -129,6 +173,32 @@ impl TerminalLaneState {
     /// Read-only view of the styled terminal screen grid rows.
     pub fn grid_styled_lines(&self) -> &[TerminalStyledLine] {
         &self.styled_lines
+    }
+
+    pub fn set_text_selection(&mut self, anchor: (usize, usize), focus: (usize, usize)) {
+        self.text_selection = Some(TerminalTextSelection {
+            anchor: TerminalTextPoint {
+                row: anchor.0,
+                column: anchor.1,
+            },
+            focus: TerminalTextPoint {
+                row: focus.0,
+                column: focus.1,
+            },
+        });
+    }
+
+    pub fn clear_text_selection(&mut self) {
+        self.text_selection = None;
+    }
+
+    pub fn text_selection_ordered(&self) -> Option<((usize, usize), (usize, usize))> {
+        let (start, end) = self.text_selection?.ordered();
+        Some(((start.row, start.column), (end.row, end.column)))
+    }
+
+    pub fn text_selection_span(&self, row: usize, row_columns: usize) -> Option<(usize, usize)> {
+        self.text_selection?.column_span(row, row_columns)
     }
 
     /// Sole mutation gateway into the terminal screen grid.
@@ -173,6 +243,7 @@ impl Default for TerminalLaneState {
             mouse_reporting_mode: None,
             mouse_coordinate_encoding: None,
             scroll_offset: 0,
+            text_selection: None,
             status: "running".to_string(),
             application_shutdown_blocked: None,
         }
@@ -203,6 +274,8 @@ mod tests {
             title: Some("parked title".to_string()),
             ..Default::default()
         };
+        active.set_text_selection((0, 1), (0, 3));
+        parked.set_text_selection((0, 0), (0, 2));
 
         active.swap_session_projection(&mut parked);
 
@@ -210,6 +283,8 @@ mod tests {
         assert_eq!(active.title.as_deref(), Some("parked title"));
         assert_eq!(parked.grid_lines(), &["active"]);
         assert_eq!(parked.title.as_deref(), Some("active title"));
+        assert_eq!(active.text_selection_ordered(), Some(((0, 0), (0, 2))));
+        assert_eq!(parked.text_selection_ordered(), Some(((0, 1), (0, 3))));
         assert_eq!(
             (
                 active.active_session_id,
@@ -218,5 +293,24 @@ mod tests {
             ),
             chrome,
         );
+    }
+
+    #[test]
+    fn selection_spans_are_order_independent_and_include_both_pointer_cells() {
+        let selection = TerminalTextSelection {
+            anchor: TerminalTextPoint { row: 4, column: 2 },
+            focus: TerminalTextPoint { row: 2, column: 5 },
+        };
+        assert_eq!(selection.column_span(1, 12), None);
+        assert_eq!(selection.column_span(2, 12), Some((5, 12)));
+        assert_eq!(selection.column_span(3, 12), Some((0, 12)));
+        assert_eq!(selection.column_span(4, 12), Some((0, 3)));
+        assert_eq!(selection.column_span(5, 12), None);
+
+        let one_row = TerminalTextSelection {
+            anchor: TerminalTextPoint { row: 7, column: 6 },
+            focus: TerminalTextPoint { row: 7, column: 3 },
+        };
+        assert_eq!(one_row.column_span(7, 10), Some((3, 7)));
     }
 }

@@ -207,6 +207,7 @@ impl Runtime {
         ui.hovered_terminal_close_session_id = None;
         ui.terminal_tab_drag = None;
         ui.terminal_clipboard_menu = None;
+        self.terminal_text_selection_drag = None;
         // TF-01: keyboard focus must not outlive the surface that owns it —
         // a closed dock with Terminal focus would swallow keys without a
         // visible recipient. Closing the dock hands ownership back to the editor.
