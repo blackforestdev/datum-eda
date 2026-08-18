@@ -1812,18 +1812,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O1-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O2-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O2`, or `P06-O2: revise — <replacement>` or `P06-O2: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O3`, or `P06-O3: revise — <replacement>` or `P06-O3: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P06-O2",
-                  "question": "What session workload and byte-correctness floor should each P06 proof tier enforce?",
-                  "recommended_response": "Approve eight simultaneous real PTYs in CI with at least 8 MiB exact output and 1 MiB exact input per session; rotate agent-style roles in scheduled runs with at least 128 MiB output and 8 MiB bidirectional input per exercised session and at least 1 GiB aggregate output; require unique seeded streams with zero loss, duplication, reordering, stale bytes, or cross-session contamination; preserve the 16-session maximum and refuse the seventeenth.",
+                  "id": "P06-O3",
+                  "question": "What release-build terminal responsiveness limits should P06 enforce?",
+                  "recommended_response": "Approve idle input-to-first-output latency of p95 <=25 ms, p99 <=50 ms, max <=100 ms; sustained-peer-output latency of p95 <=50 ms, p99 <=100 ms, max <=250 ms; first post-burst command p99 <=100 ms and max <=250 ms; GUI drain work p95 <=8 ms, p99 <=16 ms, max <=33 ms; and no main-thread unresponsive interval over 100 ms. Shared CI records timing but gates deterministic work/correctness rather than wall-clock thresholds.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P06-O2"
+                    "marker": "P06-O3"
                   }
                 }
               ]

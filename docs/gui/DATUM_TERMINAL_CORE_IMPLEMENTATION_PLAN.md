@@ -663,8 +663,8 @@ shell/TUI/agent compatibility remains DTC-P28 through DTC-P30.
 Owner approval on 2026-08-18 ratifies the P06-O1 proof tiers and durations
 exactly as stated above. No later P06 numerical threshold is implied.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O2 --> **P06-O2 — session workload and correctness.** Recommended: the
-  ten-minute CI tier runs eight simultaneous real PTYs, with each session
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O2 --> **P06-O2 — session workload and correctness.** Owner-approved 2026-08-18:
+  the ten-minute CI tier runs eight simultaneous real PTYs, with each session
   carrying at least 8 MiB of exact output and 1 MiB of exact input. Scheduled
   runs rotate agent-style burst, status-update, full-screen, resize, exit,
   restart, saturation, and idle roles; the long tiers carry at least 128 MiB of
@@ -674,9 +674,23 @@ exactly as stated above. No later P06 numerical threshold is implied.
   the already-ratified maximum of sixteen live sessions and refusal of the
   seventeenth.
 
-Approving P06-O2 approves only the workload and correctness floor. It does not
-yet approve latency, throughput, memory, descriptor/thread, resize, platform,
-storage, or landing thresholds; those remain subsequent P06A owner decisions.
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O2-OWNER-APPROVED -->
+Owner approval on 2026-08-18 ratifies the P06-O2 workload and byte-correctness
+floor exactly as stated above. No latency or throughput threshold is implied.
+
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O3 --> **P06-O3 — responsiveness.** Recommended: on the reference release-build
+  Linux workstation, idle input-to-first-output latency is p95 at most 25 ms,
+  p99 at most 50 ms, and absolute maximum 100 ms. With sustained output from
+  peer sessions it is p95 at most 50 ms, p99 at most 100 ms, and absolute
+  maximum 250 ms; the first command after a burst is visible within the same
+  100 ms p99 and 250 ms maximum. GUI drain work is p95 at most 8 ms, p99 at
+  most 16 ms, and maximum 33 ms, with no main-thread unresponsive interval
+  exceeding 100 ms. Shared CI records these timings but gates deterministic
+  work and correctness rather than flaky wall-clock measurements.
+
+Approving P06-O3 approves only the responsiveness thresholds. It does not yet
+approve throughput, memory, descriptor/thread, resize, platform, storage, or
+landing thresholds; those remain subsequent P06A owner decisions.
 No dependency, TERM identity, TerminalCore behavior, visual golden, or final
 release acceptance is authorized.
 
