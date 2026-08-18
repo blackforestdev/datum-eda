@@ -585,11 +585,11 @@ def main() -> int:
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)
 
-    raw_write_marker = "    fn write_foreign_shell_bytes"
-    if raw_write_marker not in main:
+    raw_write_marker = "fn write_foreign_shell_bytes"
+    if raw_write_marker not in focus_mutation_sources:
         failures.append("foreign-shell byte writer must remain an explicit runtime boundary")
     else:
-        raw_write_body = main.split(raw_write_marker, 1)[1].split("\n    fn ", 1)[0]
+        raw_write_body = focus_mutation_sources.split(raw_write_marker, 1)[1].split("\n    fn ", 1)[0]
         if "write_attached_terminal_bytes" not in raw_write_body:
             failures.append("foreign-shell writer must use the attached-session byte gate")
         if "mark_terminal_" in raw_write_body or "refresh_pending" in raw_write_body:

@@ -16,7 +16,34 @@ pub(super) fn write_attached_terminal_bytes(
     Ok(true)
 }
 
+fn follow_live_terminal_input(state: &mut datum_gui_protocol::TerminalLaneState) {
+    // Native terminals return to the live screen as soon as the user types.
+    // Leaving accepted input hidden behind scrollback makes a healthy PTY look
+    // unfocused or frozen even though the child is receiving and echoing bytes.
+    state.scroll_offset = 0;
+    state.clear_text_selection();
+}
+
 impl Runtime {
+    pub(super) fn write_foreign_shell_bytes(&mut self, bytes: &[u8]) -> bool {
+        match write_attached_terminal_bytes(&self.terminal_sessions, bytes) {
+            Ok(true) => {
+                follow_live_terminal_input(&mut self.session.workspace_mut().ui.terminal);
+                self.invalidate_frame();
+            }
+            Ok(false) => self.log_review_event(
+                "terminal session is starting; input is not ready yet".to_string(),
+            ),
+            Err(err) => {
+                let message = format!("terminal input refused: {err}");
+                self.session.workspace_mut().ui.terminal.status = message.clone();
+                self.log_review_event(message);
+                self.invalidate_frame();
+            }
+        }
+        true
+    }
+
     pub(super) fn handle_close_confirmation_action(
         &mut self,
         action: &TerminalKeyAction,

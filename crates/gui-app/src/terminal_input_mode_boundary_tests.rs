@@ -15,6 +15,19 @@ fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
 }
 
 #[test]
+fn accepted_input_returns_scrollback_to_live_cursor_and_clears_selection() {
+    let mut state = datum_gui_protocol::TerminalLaneState::default();
+    *state.pty_grid_mut().lines = (0..40).map(|row| format!("line {row}")).collect();
+    state.scroll_offset = 18;
+    state.set_text_selection((2, 1), (4, 3));
+
+    follow_live_terminal_input(&mut state);
+
+    assert_eq!(state.scroll_offset, 0);
+    assert_eq!(state.text_selection_ordered(), None);
+}
+
+#[test]
 fn terminal_focus_has_one_attached_pty_input_recipient() {
     let root =
         std::env::temp_dir().join(format!("datum-terminal-input-mode-{}", std::process::id()));

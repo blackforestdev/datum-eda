@@ -1378,23 +1378,6 @@ impl Runtime {
         self.invalidate_frame();
     }
 
-    fn write_foreign_shell_bytes(&mut self, bytes: &[u8]) -> bool {
-        match runtime_terminal_input::write_attached_terminal_bytes(&self.terminal_sessions, bytes)
-        {
-            Ok(true) => {}
-            Ok(false) => self.log_review_event(
-                "terminal session is starting; input is not ready yet".to_string(),
-            ),
-            Err(err) => {
-                let message = format!("terminal input refused: {err}");
-                self.session.workspace_mut().ui.terminal.status = message.clone();
-                self.log_review_event(message);
-                self.invalidate_frame();
-            }
-        }
-        true
-    }
-
     fn report_terminal_focus_event(&mut self, focused: bool) {
         if !self.workspace().ui.terminal.focus_event_reporting
             || !self.terminal_sessions.active_attached()

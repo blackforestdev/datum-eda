@@ -7,6 +7,32 @@ fn terminal_state() -> TerminalLaneState {
 }
 
 #[test]
+fn long_truecolor_listing_keeps_following_prompt_and_input_visible() {
+    let mut pty_output = Vec::new();
+    for line in 0..64 {
+        pty_output.extend_from_slice(
+            format!("\x1b[38;2;249;38;114mif\x1b[0m colorful-{line:02}\r\n").as_bytes(),
+        );
+    }
+    let mut screen = TerminalScreen::default();
+    screen.resize_grid(164, 20);
+    let mut state = terminal_state();
+    screen.apply_bytes(&mut state, &pty_output);
+    screen.apply_bytes(
+        &mut state,
+        b"\r\x1b[K\r\x1b[01;32mbfadmin@debian3520\x1b[00m:\x1b[01;34m~/Documents/datum-eda\x1b[01;33m$\x1b[00m ",
+    );
+    screen.apply_bytes(&mut state, b"visible");
+    assert!(state.screen_cursor_visible);
+    assert!(
+        state
+            .grid_lines()
+            .iter()
+            .any(|line| line.trim_end().ends_with("$ visible"))
+    );
+}
+
+#[test]
 fn sgr_foreground_color_is_retained_as_terminal_spans() {
     let mut screen = TerminalScreen::default();
     let mut state = terminal_state();
