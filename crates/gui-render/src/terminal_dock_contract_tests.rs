@@ -171,6 +171,39 @@ fn terminal_screen_rect_is_the_dedicated_content_hit_target() {
 }
 
 #[test]
+fn terminal_top_boundary_is_the_visible_resize_cursor_target() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let shell = ShellLayout::for_window(1280, 800, Some(260));
+    let handle = prepared
+        .hit_regions
+        .iter()
+        .find(|region| region.target == HitTarget::DockResizeHandle)
+        .expect("open terminal dock must expose its top resize boundary");
+
+    assert_eq!(handle.rect.y, shell.bottom_strip.y);
+    assert_eq!(handle.rect.height, 6.0);
+    assert_eq!(handle.rect.width, shell.bottom_strip.width);
+    assert_eq!(
+        prepared.hit_test(
+            handle.rect.x + handle.rect.width * 0.5,
+            handle.rect.y + handle.rect.height * 0.5,
+        ),
+        Some(&HitTarget::DockResizeHandle)
+    );
+}
+
+#[test]
 fn terminal_lane_draws_exactly_the_shared_geometry_row_count() {
     // T0-C02: the renderer draws exactly the rows the shared geometry solved
     // — the same count the PTY resize path derives — so drawn rows always

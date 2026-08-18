@@ -388,19 +388,11 @@ impl ApplicationHandler for App {
                     } else {
                         changed = runtime.clear_interaction_overlay() || changed;
                     }
-                    // Resize-cursor affordance: read the divider orientation under
-                    // the cursor (or the active drag's) before the runtime borrow
-                    // ends, then set the window cursor.
-                    let resize_cursor = runtime.divider_resize_cursor(next_pos.0, next_pos.1);
-                    let terminal_tab_cursor = runtime.terminal_tab_cursor_icon(next_pos);
+                    let pointer_cursor = runtime.pointer_cursor_icon(next_pos);
                     if changed {
                         self.request_redraw_if_needed();
                     }
-                    if let Some(icon) = terminal_tab_cursor {
-                        self.apply_cursor_icon(icon);
-                    } else {
-                        self.apply_cursor(resize_cursor);
-                    }
+                    self.apply_cursor_icon(pointer_cursor);
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
@@ -510,7 +502,11 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.dock_drag_active = false;
+                    if let Some(icon) = runtime.finish_dock_resize_drag() {
+                        self.apply_cursor_icon(icon);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if runtime.finish_terminal_tab_drag() {
                         let icon = runtime
                             .last_cursor_pos

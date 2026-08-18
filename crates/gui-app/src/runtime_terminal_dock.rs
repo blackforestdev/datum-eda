@@ -34,7 +34,38 @@ fn terminal_tab_drag_start(target: Option<&HitTarget>) -> Option<String> {
     }
 }
 
+fn owns_dock_resize_cursor(target: Option<&HitTarget>, drag_active: bool) -> bool {
+    drag_active || matches!(target, Some(HitTarget::DockResizeHandle))
+}
+
 impl Runtime {
+    pub(super) fn pointer_cursor_icon(&mut self, pointer: (f32, f32)) -> winit::window::CursorIcon {
+        if let Some(icon) = self
+            .dock_resize_cursor_icon(pointer)
+            .or_else(|| self.terminal_tab_cursor_icon(pointer))
+        {
+            return icon;
+        }
+        match self.divider_resize_cursor(pointer.0, pointer.1) {
+            Some(datum_gui_protocol::SplitOrientation::Vertical) => {
+                winit::window::CursorIcon::EwResize
+            }
+            Some(datum_gui_protocol::SplitOrientation::Horizontal) => {
+                winit::window::CursorIcon::NsResize
+            }
+            None => winit::window::CursorIcon::Default,
+        }
+    }
+
+    pub(super) fn dock_resize_cursor_icon(
+        &mut self,
+        pointer: (f32, f32),
+    ) -> Option<winit::window::CursorIcon> {
+        let drag_active = self.dock_drag_active;
+        let target = self.prepared_scene().hit_test(pointer.0, pointer.1);
+        owns_dock_resize_cursor(target, drag_active).then_some(winit::window::CursorIcon::NsResize)
+    }
+
     pub(super) fn terminal_tab_cursor_icon(
         &mut self,
         pointer: (f32, f32),
@@ -242,6 +273,17 @@ impl Runtime {
         true
     }
 
+    pub(super) fn finish_dock_resize_drag(&mut self) -> Option<winit::window::CursorIcon> {
+        if !std::mem::take(&mut self.dock_drag_active) {
+            return None;
+        }
+        Some(
+            self.last_cursor_pos
+                .and_then(|pointer| self.dock_resize_cursor_icon(pointer))
+                .unwrap_or(winit::window::CursorIcon::Default),
+        )
+    }
+
     /// The terminal lane geometry for the current surface — the ONE shared
     /// solver (`datum_gui_viewport::terminal_screen_geometry`) the renderer
     /// also draws with, so drawn rows/columns always equal PTY rows/columns
@@ -330,5 +372,21 @@ mod hover_tests {
         );
         assert_eq!(terminal_tab_drag_start(Some(&close)), None);
         assert_eq!(terminal_tab_session(Some(&close)), Some("terminal-2"));
+    }
+
+    #[test]
+    fn dock_boundary_and_active_drag_own_north_south_resize_cursor() {
+        assert!(owns_dock_resize_cursor(
+            Some(&HitTarget::DockResizeHandle),
+            false
+        ));
+        assert!(owns_dock_resize_cursor(
+            Some(&HitTarget::TerminalScreen),
+            true
+        ));
+        assert!(!owns_dock_resize_cursor(
+            Some(&HitTarget::TerminalScreen),
+            false
+        ));
     }
 }
