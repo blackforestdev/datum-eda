@@ -9,6 +9,7 @@ use datum_gui_protocol::TerminalLaneState;
 use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX};
 
 use super::{Quad, RectPx, TEXT_ACCENT, TEXT_MUTED, push_rect_border};
+use crate::design_tokens;
 
 const CURSOR_STROKE_PX: f32 = 1.0;
 // Keep the painted cursor visibly inside its logical cell. JetBrains Mono's
@@ -64,14 +65,22 @@ pub(super) fn render_terminal_cursor(
     has_keyboard_focus: bool,
     origin_x: f32,
     y: f32,
+    over_selection: bool,
     quads: &mut Vec<Quad>,
 ) {
     let x = origin_x + terminal.screen_cursor_col as f32 * TERMINAL_CELL_WIDTH_PX;
     let rect = cursor_rect(terminal.screen_cursor_style.as_deref(), x, y);
-    if has_keyboard_focus {
-        quads.push(Quad::from_rect(rect, TEXT_ACCENT));
+    let color = if over_selection {
+        design_tokens::chrome::TEXT_ON_ACCENT
+    } else if has_keyboard_focus {
+        TEXT_ACCENT
     } else {
-        push_rect_border(quads, rect, TEXT_MUTED, CURSOR_STROKE_PX);
+        TEXT_MUTED
+    };
+    if has_keyboard_focus {
+        quads.push(Quad::from_rect(rect, color));
+    } else {
+        push_rect_border(quads, rect, color, CURSOR_STROKE_PX);
     }
 }
 
@@ -91,13 +100,23 @@ mod tests {
         );
 
         let mut unfocused = Vec::new();
-        render_terminal_cursor(&terminal, false, 10.0, 20.0, &mut unfocused);
+        render_terminal_cursor(&terminal, false, 10.0, 20.0, false, &mut unfocused);
         assert_eq!(unfocused.len(), 4, "unfocused cursor must be hollow");
         assert!(unfocused.iter().all(|quad| quad.color == TEXT_MUTED));
 
         let mut focused = Vec::new();
-        render_terminal_cursor(&terminal, true, 10.0, 20.0, &mut focused);
+        render_terminal_cursor(&terminal, true, 10.0, 20.0, false, &mut focused);
         assert_eq!(focused, vec![Quad::from_rect(expected, TEXT_ACCENT)]);
+
+        let mut selected = Vec::new();
+        render_terminal_cursor(&terminal, true, 10.0, 20.0, true, &mut selected);
+        assert_eq!(
+            selected,
+            vec![Quad::from_rect(
+                expected,
+                design_tokens::chrome::TEXT_ON_ACCENT
+            )]
+        );
     }
 
     #[test]

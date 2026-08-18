@@ -5,10 +5,11 @@ use datum_gui_viewport::{
 };
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, REVIEW_ROW_ACTIVE_BG, RectPx,
-    ShellLayout, TEXT_PANEL_VALUE, TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text,
-    draw_text, push_rect_border, truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_PANEL_VALUE,
+    TEXT_PRIMARY, TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text, draw_text_clipped,
+    push_rect_border, truncate_text,
 };
+use crate::design_tokens;
 use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
@@ -20,6 +21,8 @@ use taffy::prelude::*;
 pub(super) const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
     (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
+const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::ACCENT;
+const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_ON_ACCENT;
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
@@ -225,7 +228,7 @@ fn render_terminal_screen(
         .skip(tail_start)
         .take(max_lines)
     {
-        render_terminal_selection_row(
+        let selection_rect = render_terminal_selection_row(
             &state.ui.terminal,
             line_index,
             screen.x,
@@ -246,6 +249,9 @@ fn render_terminal_screen(
                 text_runs,
             );
         }
+        if let Some(clip_bounds) = selection_rect {
+            render_terminal_selection_text(line, screen.x, y, max_columns, clip_bounds, text_runs);
+        }
         if state.ui.terminal.screen_cursor_visible
             && state.ui.terminal.screen_cursor_row == line_index
             && state.ui.terminal.screen_cursor_col < max_columns
@@ -255,6 +261,13 @@ fn render_terminal_screen(
                 state.ui.focus.is_terminal(),
                 screen.x,
                 y,
+                state
+                    .ui
+                    .terminal
+                    .text_selection_span(line_index, max_columns)
+                    .is_some_and(|(first, last)| {
+                        (first..last).contains(&state.ui.terminal.screen_cursor_col)
+                    }),
                 panel_quads,
             );
         }
@@ -269,19 +282,36 @@ fn render_terminal_selection_row(
     y: f32,
     max_columns: usize,
     panel_quads: &mut Vec<Quad>,
-) {
-    let Some((first, last)) = terminal.text_selection_span(row, max_columns) else {
-        return;
+) -> Option<RectPx> {
+    let (first, last) = terminal.text_selection_span(row, max_columns)?;
+    let rect = RectPx {
+        x: x + first as f32 * TERMINAL_CELL_WIDTH_PX,
+        y,
+        width: (last - first) as f32 * TERMINAL_CELL_WIDTH_PX,
+        height: TERMINAL_CELL_HEIGHT_PX,
     };
-    panel_quads.push(Quad::from_rect(
-        RectPx {
-            x: x + first as f32 * TERMINAL_CELL_WIDTH_PX,
-            y,
-            width: (last - first) as f32 * TERMINAL_CELL_WIDTH_PX,
-            height: TERMINAL_CELL_HEIGHT_PX,
-        },
-        REVIEW_ROW_ACTIVE_BG,
-    ));
+    panel_quads.push(Quad::from_rect(rect, TERMINAL_SELECTION_BG));
+    Some(rect)
+}
+
+fn render_terminal_selection_text(
+    line: &str,
+    x: f32,
+    y: f32,
+    max_columns: usize,
+    clip_bounds: RectPx,
+    text_runs: &mut Vec<TextRun>,
+) {
+    draw_text_clipped(
+        &truncate_text(line, max_columns),
+        x,
+        y,
+        TERMINAL_FONT_SIZE_PX,
+        TERMINAL_SELECTION_FG,
+        TextFace::Terminal,
+        clip_bounds,
+        text_runs,
+    );
 }
 
 fn render_terminal_styled_line(
@@ -416,7 +446,13 @@ mod selection_tests {
         let mut terminal = TerminalLaneState::default();
         terminal.set_text_selection((3, 2), (3, 4));
         let mut quads = Vec::new();
-        render_terminal_selection_row(&terminal, 3, 10.0, 20.0, 80, &mut quads);
+        let expected = RectPx {
+            x: 10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX,
+            y: 20.0,
+            width: 3.0 * TERMINAL_CELL_WIDTH_PX,
+            height: TERMINAL_CELL_HEIGHT_PX,
+        };
+        let selection = render_terminal_selection_row(&terminal, 3, 10.0, 20.0, 80, &mut quads);
         assert_eq!(quads.len(), 1);
         assert_eq!(
             quads[0].points[0],
@@ -426,7 +462,18 @@ mod selection_tests {
             quads[0].points[1],
             (10.0 + 5.0 * TERMINAL_CELL_WIDTH_PX, 20.0)
         );
-        assert_eq!(quads[0].color, REVIEW_ROW_ACTIVE_BG);
+        assert_eq!(quads[0].color, TERMINAL_SELECTION_BG);
+        assert_eq!(selection, Some(expected));
+        assert_eq!(quads[0], Quad::from_rect(expected, TERMINAL_SELECTION_BG));
+        assert_eq!(TERMINAL_SELECTION_BG, design_tokens::chrome::ACCENT);
+        assert_eq!(TERMINAL_SELECTION_FG, design_tokens::chrome::TEXT_ON_ACCENT);
+
+        let mut text_runs = Vec::new();
+        render_terminal_selection_text("selected", 10.0, 20.0, 80, expected, &mut text_runs);
+        assert_eq!(text_runs.len(), 1);
+        assert_eq!(text_runs[0].text, "selected");
+        assert_eq!(text_runs[0].color, TERMINAL_SELECTION_FG);
+        assert_eq!(text_runs[0].clip_bounds, Some(expected));
     }
 }
 
