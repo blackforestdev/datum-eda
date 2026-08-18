@@ -61,9 +61,11 @@ impl Runtime {
         &mut self,
         pointer: (f32, f32),
     ) -> Option<winit::window::CursorIcon> {
-        let drag_active = self.dock_drag_active;
+        if self.dock_drag_active {
+            return Some(winit::window::CursorIcon::NsResize);
+        }
         let target = self.prepared_scene().hit_test(pointer.0, pointer.1);
-        owns_dock_resize_cursor(target, drag_active).then_some(winit::window::CursorIcon::NsResize)
+        owns_dock_resize_cursor(target, false).then_some(winit::window::CursorIcon::NsResize)
     }
 
     pub(super) fn terminal_tab_cursor_icon(
@@ -268,8 +270,11 @@ impl Runtime {
             return false;
         }
         self.session.workspace_mut().ui.dock_height_px = new_height_logical;
-        self.resize_terminal_to_dock();
-        self.invalidate_scene();
+        // Keep pointer motion lightweight. A PTY resize makes a full-screen
+        // child redraw, and invalidating retained scenes rebuilds unrelated
+        // PCB/schematic geometry. Preview the shell frame while dragging and
+        // commit one PTY resize on release.
+        self.invalidate_frame();
         true
     }
 
@@ -277,6 +282,8 @@ impl Runtime {
         if !std::mem::take(&mut self.dock_drag_active) {
             return None;
         }
+        self.resize_terminal_to_dock();
+        self.invalidate_frame();
         Some(
             self.last_cursor_pos
                 .and_then(|pointer| self.dock_resize_cursor_icon(pointer))
@@ -388,5 +395,29 @@ mod hover_tests {
             Some(&HitTarget::TerminalScreen),
             false
         ));
+    }
+
+    #[test]
+    fn dock_drag_previews_frames_and_commits_one_pty_resize_on_release() {
+        let source = include_str!("runtime_terminal_dock.rs");
+        let drag = source
+            .split("pub(super) fn handle_dock_resize_drag")
+            .nth(1)
+            .unwrap()
+            .split("pub(super) fn finish_dock_resize_drag")
+            .next()
+            .unwrap();
+        assert!(drag.contains("self.invalidate_frame()"));
+        assert!(!drag.contains("self.invalidate_scene()"));
+        assert!(!drag.contains("self.resize_terminal_to_dock()"));
+
+        let finish = source
+            .split("pub(super) fn finish_dock_resize_drag")
+            .nth(1)
+            .unwrap()
+            .split("/// The terminal lane geometry")
+            .next()
+            .unwrap();
+        assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);
     }
 }
