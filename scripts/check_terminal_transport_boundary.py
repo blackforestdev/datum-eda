@@ -275,11 +275,32 @@ def check(root: Path) -> list[str]:
         if not re.search(rf"const\s+{name}:\s*u64\s*=\s*{re.escape(value)}\s*;", limits):
             failures.append(f"owner-ratified terminal deadline changed or missing: {name}")
     drain = source_text.get(APP_SRC / "terminal_session_drain.rs", "")
+    drain_tests_path = root / APP_SRC / "terminal_session_drain_tests.rs"
+    drain_tests = (
+        drain_tests_path.read_text(encoding="utf-8")
+        if drain_tests_path.is_file()
+        else ""
+    )
     for marker in ("fn drain_all", "next_drain_index", "try_recv_control_event", "try_recv_output"):
         if marker not in drain:
             failures.append(f"all-session terminal drain lacks fairness marker: {marker}")
-    if "control_priority_round_robin_cursor_and_exact_global_caps_are_literal" not in drain:
+    if "control_priority_round_robin_cursor_and_exact_global_caps_are_literal" not in drain_tests:
         failures.append("all-session terminal drain lacks literal L3 proof")
+    isolation_path = root / APP_SRC / "terminal_session_p06_isolation_tests.rs"
+    isolation = (
+        isolation_path.read_text(encoding="utf-8") if isolation_path.is_file() else ""
+    )
+    isolation_markers = (
+        "const SESSION_COUNT: usize = 8;",
+        "eight_real_sessions_isolate_io_resize_exit_termination_and_restart",
+        "DTC06B-peer-survived",
+        "presentation_complete()",
+        "all_sessions_closed()",
+        "P06 must not recreate a detached PTY state",
+    )
+    for marker in isolation_markers:
+        if marker not in isolation:
+            failures.append(f"DTC-P06B eight-session isolation proof missing: {marker}")
     if "active().try_recv_event" in "\n".join(outside_transport.values()):
         failures.append("active-only terminal event draining must not return")
 

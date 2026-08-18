@@ -99,8 +99,18 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         for relative, text in files.items():
             (transport / relative).write_text(text, encoding="utf-8")
         (root / guard.APP_SRC / "terminal_session_drain.rs").write_text(
-            "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}\n"
+            "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}\n",
+            encoding="utf-8",
+        )
+        (root / guard.APP_SRC / "terminal_session_drain_tests.rs").write_text(
             "fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal(){}",
+            encoding="utf-8",
+        )
+        (root / guard.APP_SRC / "terminal_session_p06_isolation_tests.rs").write_text(
+            "const SESSION_COUNT: usize = 8;\n"
+            "fn eight_real_sessions_isolate_io_resize_exit_termination_and_restart(){\n"
+            "let _ = \"DTC06B-peer-survived\"; presentation_complete();\n"
+            "all_sessions_closed(); let _ = \"P06 must not recreate a detached PTY state\";\n}",
             encoding="utf-8",
         )
         (root / guard.APP_SRC / "terminal_job_control_tests.rs").write_text(
@@ -117,6 +127,21 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
         self.assertEqual([], guard.check(root))
+
+    def test_missing_eight_session_isolation_proof_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        proof = root / guard.APP_SRC / "terminal_session_p06_isolation_tests.rs"
+        proof.write_text(
+            proof.read_text(encoding="utf-8").replace(
+                "eight_real_sessions_isolate_io_resize_exit_termination_and_restart",
+                "weakened_single_session_smoke",
+            ),
+            encoding="utf-8",
+        )
+        self.assertTrue(
+            any("DTC-P06B eight-session isolation proof missing" in failure for failure in guard.check(root))
+        )
 
     def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
         temporary, root = self.fixture()
@@ -278,11 +303,8 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         reader = root / guard.TRANSPORT / "reader.rs"
         reader.write_text("fn spawn_reader(){reader.read_bytes();}", encoding="utf-8")
-        drain = root / guard.APP_SRC / "terminal_session_drain.rs"
-        drain.write_text(
-            "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}",
-            encoding="utf-8",
-        )
+        drain_tests = root / guard.APP_SRC / "terminal_session_drain_tests.rs"
+        drain_tests.write_text("fn weakened_fairness_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("reserve" in failure for failure in failures))
         self.assertTrue(any("transition proof" in failure for failure in failures))
