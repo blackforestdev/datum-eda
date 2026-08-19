@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use serde_json::Value;
 use std::io::{Read, Seek, SeekFrom};
+use std::os::unix::fs::MetadataExt;
 use std::path::{Path, PathBuf};
 
 /// Completed spans retained by [`TerminalActivitySummaryCache`]. Must be at
@@ -63,6 +64,11 @@ pub(crate) struct TerminalActivitySummaryCache {
     path: Option<PathBuf>,
     /// Byte offset of the first unconsumed log byte (always a line start).
     offset: u64,
+    /// Current bounded I/O segment identity and offset. Segment zero is
+    /// replaced atomically on rotation, so inode identity—not length—detects
+    /// rollover without replaying retained historical segments.
+    io_inode: Option<u64>,
+    io_offset: u64,
     /// Total physical lines consumed (for one-shot-parity error line numbers).
     total_lines: usize,
     /// Non-empty lines consumed (parity with the tab activity event count).
@@ -82,58 +88,39 @@ impl TerminalActivitySummaryCache {
             self.reset(Some(path.to_path_buf()));
         }
         self.read_error = None;
-        let Ok(mut file) = std::fs::File::open(path) else {
-            // Missing log reads as empty, exactly like the one-shot loader.
-            self.reset(Some(path.to_path_buf()));
-            return;
-        };
-        let len = file.metadata().map(|meta| meta.len()).unwrap_or(0);
-        if len < self.offset {
-            // Truncated or replaced in place: rebuild from the start.
-            self.reset(Some(path.to_path_buf()));
-        }
-        if len == self.offset {
-            return;
-        }
-        let mut new_bytes = Vec::new();
-        if file.seek(SeekFrom::Start(self.offset)).is_err()
-            || file.read_to_end(&mut new_bytes).is_err()
-        {
-            self.read_error = Some(format!("read terminal activity log {}", path.display()));
-            return;
-        }
-        // Consume complete lines only; a torn trailing line is re-read whole
-        // on the next refresh once its writer has finished appending it.
-        let Some(consumable) = new_bytes
-            .iter()
-            .rposition(|byte| *byte == b'\n')
-            .map(|position| position + 1)
-        else {
-            return;
-        };
-        let text = String::from_utf8_lossy(&new_bytes[..consumable]);
-        for line in text.lines() {
-            self.total_lines += 1;
-            let trimmed = line.trim();
-            if trimmed.is_empty() {
-                continue;
+        let mut sources = Vec::new();
+        if let Some(batch) = read_complete_appended_lines(path, self.offset) {
+            if batch.replaced {
+                self.reset(Some(path.to_path_buf()));
             }
-            self.nonempty_lines += 1;
-            if self.parse_error.is_some() {
-                continue;
-            }
-            match serde_json::from_str::<Value>(trimmed) {
-                Ok(event) => self.builder.ingest(&event),
-                Err(_) => {
-                    self.parse_error = Some(format!(
-                        "parse terminal activity log {} line {}",
-                        path.display(),
-                        self.total_lines
-                    ));
+            self.offset = batch.next_offset;
+            sources.push((path.to_path_buf(), batch.lines));
+        }
+
+        let current_io = crate::terminal_session_events::io_event_log::io_segment_path(path, 0);
+        if self.io_inode.is_none() {
+            for segment in
+                crate::terminal_session_events::io_event_log::io_segment_paths_oldest_first(path)
+            {
+                if let Some(batch) = read_complete_appended_lines(&segment, 0) {
+                    sources.push((segment.clone(), batch.lines));
+                    if segment == current_io {
+                        self.io_offset = batch.next_offset;
+                    }
                 }
             }
+        } else if let Ok(metadata) = current_io.metadata() {
+            let inode = metadata.ino();
+            if self.io_inode != Some(inode) {
+                self.io_offset = 0;
+            }
+            if let Some(batch) = read_complete_appended_lines(&current_io, self.io_offset) {
+                self.io_offset = batch.next_offset;
+                sources.push((current_io.clone(), batch.lines));
+            }
         }
-        self.offset += consumable as u64;
+        self.io_inode = current_io.metadata().ok().map(|metadata| metadata.ino());
+        self.ingest_sources(sources);
     }
 
     /// Formatted summary window, or the same persistent error the one-shot
@@ -157,6 +144,80 @@ impl TerminalActivitySummaryCache {
             ..Self::default()
         };
     }
+
+    fn ingest_sources(&mut self, sources: Vec<(PathBuf, Vec<String>)>) {
+        let mut events = Vec::new();
+        for (path, lines) in sources {
+            for line in lines {
+                self.total_lines += 1;
+                let trimmed = line.trim();
+                if trimmed.is_empty() {
+                    continue;
+                }
+                self.nonempty_lines += 1;
+                if self.parse_error.is_some() {
+                    continue;
+                }
+                match serde_json::from_str::<Value>(trimmed) {
+                    Ok(event) => events.push(event),
+                    Err(_) => {
+                        self.parse_error = Some(format!(
+                            "parse terminal activity log {} line {}",
+                            path.display(),
+                            self.total_lines
+                        ));
+                    }
+                }
+            }
+        }
+        events.sort_by_key(event_timestamp);
+        for event in events {
+            self.builder.ingest(&event);
+        }
+    }
+}
+
+fn event_timestamp(event: &Value) -> u64 {
+    event
+        .get("occurred_unix_ms")
+        .and_then(Value::as_u64)
+        .unwrap_or(0)
+}
+
+struct AppendedLines {
+    lines: Vec<String>,
+    next_offset: u64,
+    replaced: bool,
+}
+
+fn read_complete_appended_lines(path: &Path, offset: u64) -> Option<AppendedLines> {
+    let mut file = std::fs::File::open(path).ok()?;
+    let len = file.metadata().ok()?.len();
+    let replaced = len < offset;
+    let start = if replaced { 0 } else { offset };
+    if len == start || file.seek(SeekFrom::Start(start)).is_err() {
+        return Some(AppendedLines {
+            lines: Vec::new(),
+            next_offset: start,
+            replaced,
+        });
+    }
+    let mut new_bytes = Vec::new();
+    file.read_to_end(&mut new_bytes).ok()?;
+    let consumable = new_bytes
+        .iter()
+        .rposition(|byte| *byte == b'\n')
+        .map(|position| position + 1)
+        .unwrap_or(0);
+    let lines = String::from_utf8_lossy(&new_bytes[..consumable])
+        .lines()
+        .map(str::to_string)
+        .collect();
+    Some(AppendedLines {
+        lines,
+        next_offset: start + consumable as u64,
+        replaced,
+    })
 }
 
 /// The one activity-span fold shared by the one-shot loader and the
@@ -215,25 +276,27 @@ impl ActivitySpanBuilder {
 
 #[cfg_attr(not(test), allow(dead_code))]
 fn read_event_log(path: &Path) -> Result<Vec<Value>> {
-    if !path.exists() {
-        return Ok(Vec::new());
-    }
-    let text = std::fs::read_to_string(path)
-        .with_context(|| format!("read terminal activity log {}", path.display()))?;
     let mut events = Vec::new();
-    for (index, line) in text.lines().enumerate() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
+    let paths = std::iter::once(path.to_path_buf())
+        .chain(crate::terminal_session_events::io_event_log::io_segment_paths_oldest_first(path));
+    for event_path in paths.filter(|candidate| candidate.is_file()) {
+        let text = std::fs::read_to_string(&event_path)
+            .with_context(|| format!("read terminal activity log {}", event_path.display()))?;
+        for (index, line) in text.lines().enumerate() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+            events.push(serde_json::from_str::<Value>(trimmed).with_context(|| {
+                format!(
+                    "parse terminal activity log {} line {}",
+                    event_path.display(),
+                    index + 1
+                )
+            })?);
         }
-        events.push(serde_json::from_str::<Value>(trimmed).with_context(|| {
-            format!(
-                "parse terminal activity log {} line {}",
-                path.display(),
-                index + 1
-            )
-        })?);
     }
+    events.sort_by_key(event_timestamp);
     Ok(events)
 }
 
@@ -619,3 +682,7 @@ mod tests {
         let _ = std::fs::remove_file(&path);
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_activity_snapshot_rotation_tests.rs"]
+mod rotation_tests;

@@ -121,6 +121,18 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "snapshot.surviving_processes.is_empty();\n}",
             encoding="utf-8",
         )
+        (root / guard.APP_SRC / "terminal_io_event_log.rs").write_text(
+            "pub(crate) const IO_SEGMENT_BYTES: u64 = 16 * 1024 * 1024;\n"
+            "pub(crate) const IO_SEGMENT_COUNT: usize = 4;\n"
+            "fn rotate_segments(){}\n"
+            "fn fact(){let _ = Rotation { event: \"terminal_io_rotation\" };}\n"
+            "fn four_segments_rotate_oldest_first_and_metadata_records_the_fact(){}",
+            encoding="utf-8",
+        )
+        (root / guard.APP_SRC / "terminal_activity_snapshot_rotation_tests.rs").write_text(
+            "fn rotated_io_family_is_folded_chronologically_without_replay(){}",
+            encoding="utf-8",
+        )
         (transport / "output.rs").write_text(
             (transport / "output.rs").read_text(encoding="utf-8")
             + "\nfn full_output_backlog_blocks_reservation_until_consumer_pop(){}",
@@ -184,6 +196,23 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("P06_LIFECYCLE_CYCLES" in failure for failure in failures))
         self.assertTrue(any("snapshot.leader_reaped" in failure for failure in failures))
         self.assertTrue(any("full_output_backlog" in failure for failure in failures))
+
+    def test_terminal_io_log_budget_or_rotation_proof_drift_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        io_log = root / guard.APP_SRC / "terminal_io_event_log.rs"
+        io_log.write_text(
+            io_log.read_text(encoding="utf-8")
+            .replace("16 * 1024 * 1024", "32 * 1024 * 1024")
+            .replace("fn rotate_segments", "fn discard_without_rotation"),
+            encoding="utf-8",
+        )
+        rotation_test = root / guard.APP_SRC / "terminal_activity_snapshot_rotation_tests.rs"
+        rotation_test.write_text("fn weakened_rotation_smoke(){}", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("IO_SEGMENT_BYTES" in failure for failure in failures))
+        self.assertTrue(any("fn rotate_segments" in failure for failure in failures))
+        self.assertIn("DTC-P06D rotation-safe activity cache proof missing", failures)
 
     def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
         temporary, root = self.fixture()

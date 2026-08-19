@@ -22,6 +22,7 @@ mod main_tests_context_active;
 mod main_tests_context_check_context;
 mod main_tests_context_source_shards;
 mod main_tests_context_terminal_lifecycle;
+mod main_tests_context_terminal_rotation;
 mod main_tests_project_artifact_runs;
 mod main_tests_project_bom_compare;
 mod main_tests_project_bom_export;

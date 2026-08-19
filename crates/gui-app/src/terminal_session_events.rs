@@ -6,6 +6,9 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::sync::atomic::{AtomicU64, Ordering};
 
+#[path = "terminal_io_event_log.rs"]
+pub(crate) mod io_event_log;
+
 static TERMINAL_COMMAND_EXECUTION_SEQ: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Debug, Serialize)]
@@ -47,20 +50,6 @@ struct TerminalLifecycleEvent<'a> {
     process_exit_code: Option<i32>,
     process_exit_signal: Option<i32>,
     process_core_dumped: Option<bool>,
-    occurred_unix_ms: u128,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalIoEvent<'a> {
-    event: &'static str,
-    schema_version: u64,
-    session_id: &'a str,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    execution_id: Option<&'a str>,
-    direction: &'static str,
-    byte_count: usize,
-    text_preview: String,
-    truncated: bool,
     occurred_unix_ms: u128,
 }
 
@@ -231,7 +220,7 @@ pub(super) fn record_terminal_input_accepted_event(
     bytes: &[u8],
 ) -> Result<()> {
     let execution_id = session.active_execution_id();
-    append_terminal_io_event(
+    io_event_log::append_terminal_io_event(
         &session.event_log_path(),
         session.session_id(),
         execution_id.as_deref(),
@@ -242,7 +231,7 @@ pub(super) fn record_terminal_input_accepted_event(
 
 pub(super) fn record_terminal_output_event(session: &TerminalSession, bytes: &[u8]) -> Result<()> {
     let execution_id = session.active_execution_id();
-    let result = append_terminal_io_event(
+    let result = io_event_log::append_terminal_io_event(
         &session.event_log_path(),
         session.session_id(),
         execution_id.as_deref(),
@@ -255,42 +244,6 @@ pub(super) fn record_terminal_output_event(session: &TerminalSession, bytes: &[u
         session.clear_active_execution_id(&execution_id);
     }
     result
-}
-
-fn append_terminal_io_event(
-    path: &std::path::Path,
-    session_id: &str,
-    execution_id: Option<&str>,
-    direction: &'static str,
-    bytes: &[u8],
-) -> Result<()> {
-    let occurred_unix_ms = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .context("terminal I/O event timestamp")?
-        .as_millis();
-    let (text_preview, truncated) = terminal_text_preview(bytes);
-    let event = TerminalIoEvent {
-        event: "terminal_io",
-        schema_version: 1,
-        session_id,
-        execution_id,
-        direction,
-        byte_count: bytes.len(),
-        text_preview,
-        truncated,
-        occurred_unix_ms,
-    };
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(path)
-        .with_context(|| format!("open terminal I/O event log {}", path.display()))?;
-    writeln!(
-        file,
-        "{}",
-        serde_json::to_string(&event).context("serialize terminal I/O event")?
-    )
-    .with_context(|| format!("append terminal I/O event {}", path.display()))
 }
 
 fn terminal_command_execution_finished(session: &TerminalSession, execution_id: &str) -> bool {
@@ -338,21 +291,6 @@ fn terminal_command_execution_finished(session: &TerminalSession, execution_id: 
     });
     session.set_finished_scan_offset(offset + consumable as u64);
     finished
-}
-
-fn terminal_text_preview(bytes: &[u8]) -> (String, bool) {
-    const MAX_PREVIEW_CHARS: usize = 512;
-    let text = String::from_utf8_lossy(bytes);
-    let mut preview = String::new();
-    let mut truncated = false;
-    for (index, ch) in text.chars().enumerate() {
-        if index == MAX_PREVIEW_CHARS {
-            truncated = true;
-            break;
-        }
-        preview.push(ch);
-    }
-    (preview, truncated || text.len() != bytes.len())
 }
 
 fn append_terminal_lifecycle_event(
@@ -678,45 +616,6 @@ mod tests {
         assert_eq!(event["command"], serde_json::Value::Null);
         assert_eq!(event["lifecycle"], "finished");
         assert_eq!(event["process_exit_code"], 0);
-        let _ = std::fs::remove_file(&path);
-    }
-
-    #[test]
-    fn io_events_append_bounded_jsonl_records() {
-        let path = std::env::temp_dir().join(format!(
-            "datum-terminal-io-events-{}.jsonl",
-            std::process::id()
-        ));
-        let _ = std::fs::remove_file(&path);
-        append_terminal_io_event(
-            &path,
-            "terminal-test",
-            Some("terminal-test:cmd:io"),
-            "input",
-            b"ls -al\r",
-        )
-        .expect("append input event");
-        append_terminal_io_event(&path, "terminal-test", None, "output", &vec![b'a'; 600])
-            .expect("append output event");
-        let lines = std::fs::read_to_string(&path).expect("read I/O event log");
-        let events = lines
-            .lines()
-            .map(|line| serde_json::from_str::<serde_json::Value>(line).expect("parse event"))
-            .collect::<Vec<_>>();
-        assert_eq!(events.len(), 2);
-        assert_eq!(events[0]["event"], "terminal_io");
-        assert_eq!(events[0]["schema_version"], 1);
-        assert_eq!(events[0]["session_id"], "terminal-test");
-        assert_eq!(events[0]["execution_id"], "terminal-test:cmd:io");
-        assert_eq!(events[0]["direction"], "input");
-        assert_eq!(events[0]["byte_count"], 7);
-        assert_eq!(events[0]["text_preview"], "ls -al\r");
-        assert_eq!(events[0]["truncated"], false);
-        assert_eq!(events[1]["direction"], "output");
-        assert_eq!(events[1].get("execution_id"), None);
-        assert_eq!(events[1]["byte_count"], 600);
-        assert_eq!(events[1]["text_preview"].as_str().unwrap().len(), 512);
-        assert_eq!(events[1]["truncated"], true);
         let _ = std::fs::remove_file(&path);
     }
 }

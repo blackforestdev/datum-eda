@@ -328,6 +328,26 @@ def check(root: Path) -> list[str]:
         for marker in markers:
             if marker not in proof:
                 failures.append(f"DTC-P06C bounded resource proof missing: {marker}")
+    io_log_path = root / APP_SRC / "terminal_io_event_log.rs"
+    io_log = io_log_path.read_text(encoding="utf-8") if io_log_path.is_file() else ""
+    p06d_storage_markers = (
+        "pub(crate) const IO_SEGMENT_BYTES: u64 = 16 * 1024 * 1024;",
+        "pub(crate) const IO_SEGMENT_COUNT: usize = 4;",
+        "fn rotate_segments",
+        'event: "terminal_io_rotation"',
+        "four_segments_rotate_oldest_first_and_metadata_records_the_fact",
+    )
+    for marker in p06d_storage_markers:
+        if marker not in io_log:
+            failures.append(f"DTC-P06D bounded terminal I/O log proof missing: {marker}")
+    rotation_test_path = root / APP_SRC / "terminal_activity_snapshot_rotation_tests.rs"
+    rotation_test = (
+        rotation_test_path.read_text(encoding="utf-8")
+        if rotation_test_path.is_file()
+        else ""
+    )
+    if "rotated_io_family_is_folded_chronologically_without_replay" not in rotation_test:
+        failures.append("DTC-P06D rotation-safe activity cache proof missing")
     if "active().try_recv_event" in "\n".join(outside_transport.values()):
         failures.append("active-only terminal event draining must not return")
 

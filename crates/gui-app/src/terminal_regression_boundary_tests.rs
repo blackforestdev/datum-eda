@@ -493,8 +493,9 @@ fn drain_output(
 /// Recorded keyboard-origin input bytes: total input minus the tracked status
 /// responses — the exact-once accounting the T0-C03 canary established.
 fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
-    let event_log = fs::read_to_string(registry.active_event_log_path())
-        .expect("read terminal session event log");
+    let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &registry.active_event_log_path(),
+    );
     event_log
         .lines()
         .filter(|line| !line.trim().is_empty())

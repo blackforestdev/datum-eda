@@ -549,26 +549,40 @@ fn resolve_session_event_log_path(
 }
 
 fn read_session_event_log(path: &Path) -> Result<Vec<serde_json::Value>> {
-    if !path.exists() {
-        return Ok(Vec::new());
-    }
-    let text = std::fs::read_to_string(path)
-        .with_context(|| format!("read tool-session event log {}", path.display()))?;
     let mut events = Vec::new();
-    for (index, line) in text.lines().enumerate() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
+    let file_name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("terminal.events.jsonl");
+    let paths = std::iter::once(path.to_path_buf()).chain(
+        (0..4)
+            .rev()
+            .map(|index| path.with_file_name(format!("{file_name}.io.{index}.jsonl"))),
+    );
+    for event_path in paths.filter(|candidate| candidate.is_file()) {
+        let text = std::fs::read_to_string(&event_path)
+            .with_context(|| format!("read tool-session event log {}", event_path.display()))?;
+        for (index, line) in text.lines().enumerate() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+            let event: serde_json::Value = serde_json::from_str(trimmed).with_context(|| {
+                format!(
+                    "parse tool-session event log {} line {}",
+                    event_path.display(),
+                    index + 1
+                )
+            })?;
+            events.push(event);
         }
-        let event: serde_json::Value = serde_json::from_str(trimmed).with_context(|| {
-            format!(
-                "parse tool-session event log {} line {}",
-                path.display(),
-                index + 1
-            )
-        })?;
-        events.push(event);
     }
+    events.sort_by_key(|event| {
+        event
+            .get("occurred_unix_ms")
+            .and_then(Value::as_u64)
+            .unwrap_or(0)
+    });
     Ok(events)
 }
 

@@ -11,8 +11,9 @@ use std::time::{Duration, Instant};
 use std::{
     cell::Cell,
     sync::{
-        Arc, Mutex, mpsc,
+        Arc, Mutex,
         atomic::{AtomicU64, Ordering},
+        mpsc,
     },
 };
 
@@ -187,16 +188,15 @@ fn tiny_chunk_flood_is_applied_once_per_session_per_turn() {
         lane.grid_lines().last(),
         Some(&"x".repeat(GUI_DRAIN_EVENT_LIMIT))
     );
-    let event_log = std::fs::read_to_string(registry.sessions[0].session.event_log_path()).unwrap();
+    let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &registry.sessions[0].session.event_log_path(),
+    );
     let output_records = event_log
         .lines()
         .filter(|line| line.contains("\"direction\":\"output\""))
         .collect::<Vec<_>>();
     assert_eq!(output_records.len(), 1);
-    assert!(output_records[0].contains(&format!(
-        "\"byte_count\":{}",
-        GUI_DRAIN_EVENT_LIMIT
-    )));
+    assert!(output_records[0].contains(&format!("\"byte_count\":{}", GUI_DRAIN_EVENT_LIMIT)));
 }
 
 #[test]

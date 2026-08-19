@@ -671,7 +671,9 @@ fn terminal_session_spawns_real_pty_shell() {
             "missing {expected:?} in PTY output: {output}"
         );
     }
-    let event_log = fs::read_to_string(session.event_log_path()).expect("read terminal event log");
+    let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &session.event_log_path(),
+    );
     assert!(
         event_log.contains(r#""event":"terminal_io""#),
         "terminal event log should record I/O events: {event_log}"

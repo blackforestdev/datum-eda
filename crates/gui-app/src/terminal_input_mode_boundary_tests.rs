@@ -5,13 +5,14 @@ use std::fs;
 use std::time::{Duration, Instant};
 
 fn recorded_input_bytes(registry: &TerminalSessionRegistry) -> usize {
-    fs::read_to_string(registry.active_event_log_path())
-        .unwrap_or_default()
-        .lines()
-        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-        .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input_accepted")
-        .map(|event| event["byte_count"].as_u64().unwrap_or(0) as usize)
-        .sum()
+    crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &registry.active_event_log_path(),
+    )
+    .lines()
+    .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+    .filter(|event| event["event"] == "terminal_io" && event["direction"] == "input_accepted")
+    .map(|event| event["byte_count"].as_u64().unwrap_or(0) as usize)
+    .sum()
 }
 
 #[test]

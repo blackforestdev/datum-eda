@@ -343,8 +343,9 @@ fn production_real_shell_canary_proves_ordered_visible_output_and_exact_once_inp
     // status responses, so the recorded input byte total must match exactly
     // (no drops), and exactly one input event may carry the canary command
     // (no duplicates).
-    let event_log = fs::read_to_string(registry.active_event_log_path())
-        .expect("read terminal session event log");
+    let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &registry.active_event_log_path(),
+    );
     let mut input_bytes_total = 0usize;
     let mut nonce_input_events = 0usize;
     for line in event_log.lines().filter(|line| !line.trim().is_empty()) {
