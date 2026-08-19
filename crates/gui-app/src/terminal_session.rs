@@ -668,6 +668,9 @@ mod terminal_session_p06_gui_measurement_tests;
 #[path = "terminal_session_p06_isolation_tests.rs"]
 mod terminal_session_p06_isolation_tests;
 #[cfg(test)]
+#[path = "terminal_session_p06_lifecycle_measurement_tests.rs"]
+mod terminal_session_p06_lifecycle_measurement_tests;
+#[cfg(test)]
 #[path = "terminal_session_p06_measurement_tests.rs"]
 mod terminal_session_p06_measurement_tests;
 #[cfg(test)]

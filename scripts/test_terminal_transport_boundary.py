@@ -148,6 +148,14 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "registry.drain_all(); drain_work: distribution(); presentation_complete();}",
             encoding="utf-8",
         )
+        (root / guard.APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs").write_text(
+            "const P06_LIFECYCLE_CYCLES: usize = 1_000;\n"
+            "fn p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json(){\n"
+            "let _ = Evidence { contract: \"datum_terminal_p06_lifecycle_v1\" };\n"
+            "restart_active(); presentation_complete(); snapshot.surviving_processes.is_empty();\n"
+            "proc_count(\"/proc/self/fd\"); proc_count(\"/proc/self/task\");}",
+            encoding="utf-8",
+        )
         (root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs").write_text(
             "fn p06_soak_tier_budgets_are_literal(){}\n"
             "fn p06_scheduled_soak_emits_reproducible_json(){\n"
@@ -168,14 +176,16 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "wayland-primary x11-fallback\n"
             "single throughput >=20MiB/s\n"
             "aggregate throughput >=40MiB/s\n"
-            "smoke|gui|ci|single-24h|max-4h DATUM_P06_RUN_ORDINAL\n"
+            "smoke|gui|lifecycle-1000|ci|single-24h|max-4h DATUM_P06_RUN_ORDINAL\n"
             'p06_scheduled_soak_emits_reproducible_json "datum_terminal_p06_soak_v1"\n'
             '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)\n'
             '"single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500)\n'
             '"maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000)\n'
             '"datum_terminal_p06_gui_measurement_v1"\n'
             "single provisional GUI throughput >=1MiB/s\n"
-            "aggregate provisional GUI throughput >=4MiB/s\n",
+            "aggregate provisional GUI throughput >=4MiB/s\n"
+            '"datum_terminal_p06_lifecycle_v1"\n'
+            "exactly 1000 completed lifecycle cycles\n",
             encoding="utf-8",
         )
         (transport / "output.rs").write_text(
@@ -279,13 +289,13 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         runner = root / "scripts/run_terminal_transport_proof_gates.sh"
         runner.write_text(
             runner.read_text(encoding="utf-8")
-            .replace("smoke|gui|ci|single-24h|max-4h", "smoke")
+            .replace("smoke|gui|lifecycle-1000|ci|single-24h|max-4h", "smoke")
             .replace("DATUM_P06_RUN_ORDINAL", "UNTRACKED_RUN"),
             encoding="utf-8",
         )
         failures = guard.check(root)
         self.assertTrue(any("scheduled soak proof missing" in failure for failure in failures))
-        self.assertTrue(any("smoke|gui|ci|single-24h|max-4h" in failure for failure in failures))
+        self.assertTrue(any("smoke|gui|lifecycle-1000|ci|single-24h|max-4h" in failure for failure in failures))
         self.assertTrue(any("DATUM_P06_RUN_ORDINAL" in failure for failure in failures))
 
     def test_provisional_gui_measurement_drift_fails(self) -> None:
@@ -295,6 +305,14 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         measurement.write_text("fn bypassed_registry_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("provisional GUI measurement proof missing" in failure for failure in failures))
+
+    def test_lifecycle_measurement_drift_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        measurement = root / guard.APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs"
+        measurement.write_text("const P06_LIFECYCLE_CYCLES: usize = 10;", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("lifecycle measurement proof missing" in failure for failure in failures))
 
     def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
         temporary, root = self.fixture()

@@ -6,9 +6,9 @@ cd "$repo_root"
 
 tier="${1:-smoke}"
 case "$tier" in
-  smoke|gui|ci|single-24h|max-4h) ;;
+  smoke|gui|lifecycle-1000|ci|single-24h|max-4h) ;;
   *)
-    echo "usage: $0 {smoke|gui|ci|single-24h|max-4h}" >&2
+    echo "usage: $0 {smoke|gui|lifecycle-1000|ci|single-24h|max-4h}" >&2
     exit 2
     ;;
 esac
@@ -46,6 +46,8 @@ if [[ "$tier" == smoke ]]; then
   test_name="terminal_session::terminal_session_p06_measurement_tests::p06_release_measurement_emits_reproducible_json"
 elif [[ "$tier" == gui ]]; then
   test_name="terminal_session::terminal_session_p06_gui_measurement_tests::p06_provisional_gui_path_emits_reproducible_json"
+elif [[ "$tier" == lifecycle-1000 ]]; then
+  test_name="terminal_session::terminal_session_p06_lifecycle_measurement_tests::p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json"
 else
   test_name="terminal_session::terminal_session_p06_soak_tests::p06_scheduled_soak_emits_reproducible_json"
 fi
@@ -82,6 +84,29 @@ if evidence.get("contract") == "datum_terminal_p06_gui_measurement_v1":
     if failed:
         raise SystemExit("DTC-P06D GUI threshold failures: " + ", ".join(failed))
     print(f"DTC-P06D GUI evidence verified: {path}")
+    raise SystemExit(0)
+if evidence.get("contract") == "datum_terminal_p06_lifecycle_v1":
+    baseline = evidence["baseline"]
+    exit_latency = evidence["cooperative_exit_latency"]
+    resources = evidence["resources"]
+    checks = {
+        "exactly 1000 completed lifecycle cycles": evidence["requested_cycles"] == 1_000
+            and evidence["completed_cycles"] == 1_000,
+        "1000 unique restarted session identities": evidence["unique_session_ids"] == 1_000,
+        "cooperative exit p99 <=500ms": exit_latency["p99_us"] <= 500_000,
+        "zero original-SID survivors": not evidence["survivors"],
+        "RSS returns within baseline+16MiB": resources[-1]["rss_kib"] <= baseline["rss_kib"] + 16 * 1024,
+        "FDs never grow beyond one live-session shape": max(point["file_descriptors"] for point in resources)
+            <= baseline["file_descriptors"] + 4 + 8,
+        "workers never grow beyond one live-session shape": max(point["threads"] for point in resources)
+            <= baseline["threads"] + 4 + 4,
+        "closed FDs return to baseline+2": evidence["final_file_descriptors"] <= baseline["file_descriptors"] + 2,
+        "closed workers return to baseline+2": evidence["final_threads"] <= baseline["threads"] + 2,
+    }
+    failed = [name for name, passed in checks.items() if not passed]
+    if failed:
+        raise SystemExit("DTC-P06D lifecycle threshold failures: " + ", ".join(failed))
+    print(f"DTC-P06D lifecycle evidence verified: {path}")
     raise SystemExit(0)
 if evidence.get("contract") == "datum_terminal_p06_soak_v1":
     tiers = {

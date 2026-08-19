@@ -382,6 +382,20 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in gui_measurement:
             failures.append(f"DTC-P06D provisional GUI measurement proof missing: {marker}")
+    lifecycle_path = root / APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs"
+    lifecycle = lifecycle_path.read_text(encoding="utf-8") if lifecycle_path.is_file() else ""
+    for marker in (
+        "const P06_LIFECYCLE_CYCLES: usize = 1_000;",
+        "p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json",
+        'contract: "datum_terminal_p06_lifecycle_v1"',
+        "restart_active",
+        "presentation_complete",
+        "snapshot.surviving_processes.is_empty()",
+        'proc_count("/proc/self/fd")',
+        'proc_count("/proc/self/task")',
+    ):
+        if marker not in lifecycle:
+            failures.append(f"DTC-P06D lifecycle measurement proof missing: {marker}")
     soak_path = root / APP_SRC / "terminal_session_p06_soak_tests.rs"
     soak = soak_path.read_text(encoding="utf-8") if soak_path.is_file() else ""
     for marker in (
@@ -410,7 +424,7 @@ def check(root: Path) -> list[str]:
         "x11-fallback",
         "single throughput >=20MiB/s",
         "aggregate throughput >=40MiB/s",
-        "smoke|gui|ci|single-24h|max-4h",
+        "smoke|gui|lifecycle-1000|ci|single-24h|max-4h",
         "DATUM_P06_RUN_ORDINAL",
         "p06_scheduled_soak_emits_reproducible_json",
         '"datum_terminal_p06_soak_v1"',
@@ -420,6 +434,8 @@ def check(root: Path) -> list[str]:
         '"datum_terminal_p06_gui_measurement_v1"',
         "single provisional GUI throughput >=1MiB/s",
         "aggregate provisional GUI throughput >=4MiB/s",
+        '"datum_terminal_p06_lifecycle_v1"',
+        "exactly 1000 completed lifecycle cycles",
     ):
         if marker not in runner:
             failures.append(f"DTC-P06D release proof runner missing: {marker}")
