@@ -11,9 +11,9 @@ fi
 
 tier="${1:-smoke}"
 case "$tier" in
-  backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h) ;;
+  backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci) ;;
   *)
-    echo "usage: $0 {backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h}" >&2
+    echo "usage: $0 {backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci}" >&2
     exit 2
     ;;
 esac
@@ -120,7 +120,7 @@ elif [[ "$tier" == lifecycle-1000 ]]; then
 elif [[ "$tier" == throughput-60s ]]; then
   test_name="terminal_session::terminal_session_p06_throughput_tests::p06_sustained_throughput_and_backlog_emit_reproducible_json"
 else
-  test_name="terminal_session::terminal_session_p06_soak_tests::p06_scheduled_soak_emits_reproducible_json"
+  test_name="terminal_session::terminal_session_p06_soak_tests::p06_bounded_ci_emits_reproducible_json"
 fi
 DATUM_P06_TIER="$tier" \
 DATUM_P06_SEED="$seed" \
@@ -204,11 +204,7 @@ if evidence.get("contract") == "datum_terminal_p06_sustained_v1":
     print(f"DTC-P06D sustained evidence verified: {path}")
     raise SystemExit(0)
 if evidence.get("contract") == "datum_terminal_p06_soak_v1":
-    tiers = {
-        "ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000),
-        "single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500),
-        "maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000),
-    }
+    tiers = {"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)}
     expected = tiers.get(evidence.get("tier"))
     if expected is None:
         raise SystemExit("unknown DTC-P06D soak tier")
@@ -248,17 +244,6 @@ if evidence.get("contract") == "datum_terminal_p06_soak_v1":
         "closed FDs return to baseline+2": evidence["final_file_descriptors"] <= baseline["file_descriptors"] + 2,
         "closed workers return to baseline+2": evidence["final_threads"] <= baseline["threads"] + 2,
     }
-    if evidence["tier"] != "ci-10-minute":
-        checks["long-tier aggregate input >=1GiB"] = evidence["aggregate_input_bytes"] >= 1 << 30
-        checks["long-tier aggregate output >=1GiB"] = evidence["aggregate_output_bytes"] >= 1 << 30
-    if evidence["tier"] == "maximum-16-session-4-hour":
-        checks["maximum tier rotates verified restarts"] = evidence["restart_count"] > 0
-        checks["at least 500 resizes per session"] = evidence["resize_requests"] >= sessions * 500
-    if evidence["tier"] == "single-24-hour":
-        runtime = resources[:-1]
-        hours = max((runtime[-1]["elapsed_seconds"] - runtime[0]["elapsed_seconds"]) / 3600.0, 1.0)
-        growth = max(0, runtime[-1]["rss_kib"] - runtime[0]["rss_kib"])
-        checks["active RSS slope <=1MiB/hour"] = growth / hours <= 1024
     failed = [name for name, passed in checks.items() if not passed]
     if failed:
         raise SystemExit("DTC-P06D owner threshold failures: " + ", ".join(failed))

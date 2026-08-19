@@ -157,14 +157,11 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs").write_text(
-            "fn p06_soak_tier_budgets_are_literal(){}\n"
-            "fn p06_scheduled_soak_emits_reproducible_json(){\n"
+            "fn p06_bounded_ci_budgets_are_literal(){}\n"
+            "fn p06_bounded_ci_emits_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_soak_v1\" };\n"
-            "match tier { \"ci\" => Self { duration: Duration::from_secs(10 * 60) },\n"
-            "\"single-24h\" => Self { duration: Duration::from_secs(24 * 60 * 60),\n"
-            "minimum_bytes_per_session: 128 * 1024 * 1024 },\n"
-            "\"max-4h\" => Self { duration: Duration::from_secs(4 * 60 * 60),\n"
-            "minimum_bytes_per_session: 128 * 1024 * 1024, resize_requests: 10_000 } };\n"
+            "match tier { \"ci\" => Self { duration: Duration::from_secs(10 * 60),\n"
+            "minimum_bytes_per_session: 8 * 1024 * 1024, resize_requests: 1_000 } };\n"
             "input_bytes_per_session; output_bytes_per_session; aggregate_input_bytes;\n"
             "aggregate_output_bytes; WorkloadRole::Saturation; restart_echo();\n"
             "presentation_complete(); proc_count(\"/proc/self/fd\");\n"
@@ -187,14 +184,12 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "wayland-primary x11-fallback\n"
             "single throughput >=20MiB/s\n"
             "aggregate throughput >=40MiB/s\n"
-            "backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h DATUM_P06_RUN_ORDINAL\n"
+            "backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci DATUM_P06_RUN_ORDINAL\n"
             "WINIT_UNIX_BACKEND=wayland WINIT_UNIX_BACKEND=x11\n"
             '"datum_terminal_p06_backend_canary_v1"\n'
             'grep -q "window created"; grep -q "renderer init end"; grep -q "window visible"\n'
-            'p06_scheduled_soak_emits_reproducible_json "datum_terminal_p06_soak_v1"\n'
+            'p06_bounded_ci_emits_reproducible_json "datum_terminal_p06_soak_v1"\n'
             '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)\n'
-            '"single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500)\n'
-            '"maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000)\n'
             '"datum_terminal_p06_gui_measurement_v1"\n'
             "single provisional GUI throughput >=1MiB/s\n"
             "aggregate provisional GUI throughput >=4MiB/s\n"
@@ -204,8 +199,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "single duration >=60s aggregate duration >=60s\n"
             "backlog fixture emits exact 4MiB burst\n"
             "backlog saturates a governed queue limit\n"
-            "backlog high-water remains within 4MiB\n"
-            "long-tier aggregate output >=1GiB\n",
+            "backlog high-water remains within 4MiB\n",
             encoding="utf-8",
         )
         (transport / "output.rs").write_text(
@@ -314,7 +308,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         )
         self.assertTrue(any("clean revision-addressed" in failure for failure in guard.check(root)))
 
-    def test_scheduled_soak_or_tier_runner_drift_fails(self) -> None:
+    def test_bounded_ci_or_tier_runner_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
         soak = root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs"
@@ -322,14 +316,32 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         runner = root / "scripts/run_terminal_transport_proof_gates.sh"
         runner.write_text(
             runner.read_text(encoding="utf-8")
-            .replace("backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h", "smoke")
+            .replace("backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci", "smoke")
             .replace("DATUM_P06_RUN_ORDINAL", "UNTRACKED_RUN"),
             encoding="utf-8",
         )
         failures = guard.check(root)
-        self.assertTrue(any("scheduled soak proof missing" in failure for failure in failures))
-        self.assertTrue(any("backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h" in failure for failure in failures))
+        self.assertTrue(any("bounded CI proof missing" in failure for failure in failures))
+        self.assertTrue(any("backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci" in failure for failure in failures))
         self.assertTrue(any("DATUM_P06_RUN_ORDINAL" in failure for failure in failures))
+
+    def test_owner_removed_long_duration_tier_cannot_return(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        soak = root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs"
+        soak.write_text(
+            soak.read_text(encoding="utf-8")
+            + '\nfn legacy_soak(){ let _ = "single-24h"; }\n',
+            encoding="utf-8",
+        )
+        runner = root / "scripts/run_terminal_transport_proof_gates.sh"
+        runner.write_text(
+            runner.read_text(encoding="utf-8") + "\nmax-4h\n",
+            encoding="utf-8",
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("owner-removed long-duration tier returned" in failure for failure in failures))
+        self.assertTrue(any("proof runner reintroduced owner-removed tier" in failure for failure in failures))
 
     def test_provisional_gui_measurement_drift_fails(self) -> None:
         temporary, root = self.fixture()

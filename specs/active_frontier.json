@@ -1943,7 +1943,7 @@
             "id": "DTC-P06D",
             "kind": "execution",
             "status": "in_progress",
-            "action": "Run the ratified release-build Linux latency, throughput, memory, resize, lifecycle, and long-session soak matrix with reproducible machine-readable evidence.",
+            "action": "Run the ratified release-build Linux latency, throughput, memory, resize, lifecycle, and bounded eight-session matrix with reproducible machine-readable evidence.",
             "depends_on": [
               "DTC-P06C"
             ],

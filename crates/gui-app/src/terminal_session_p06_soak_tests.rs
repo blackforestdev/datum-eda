@@ -12,7 +12,6 @@ use std::{
 
 const GLOBAL_CLOSE: Duration = Duration::from_secs(7);
 const IO_STALL: Duration = Duration::from_secs(30);
-const LONG_AGGREGATE_BYTES: u64 = 1024 * 1024 * 1024;
 
 #[derive(Clone, Copy)]
 enum WorkloadRole {
@@ -96,23 +95,7 @@ impl SoakTier {
                 resize_requests: 1_000,
                 resource_interval: Duration::from_secs(30),
             },
-            "single-24h" => Self {
-                name: "single-24-hour",
-                duration: Duration::from_secs(24 * 60 * 60),
-                sessions: 1,
-                minimum_bytes_per_session: 128 * 1024 * 1024,
-                resize_requests: 500,
-                resource_interval: Duration::from_secs(60 * 60),
-            },
-            "max-4h" => Self {
-                name: "maximum-16-session-4-hour",
-                duration: Duration::from_secs(4 * 60 * 60),
-                sessions: 16,
-                minimum_bytes_per_session: 128 * 1024 * 1024,
-                resize_requests: 10_000,
-                resource_interval: Duration::from_secs(5 * 60),
-            },
-            other => panic!("unsupported scheduled P06 tier {other:?}"),
+            other => panic!("unsupported bounded P06 tier {other:?}"),
         }
     }
 }
@@ -430,7 +413,7 @@ fn evidence_path(tier: &str) -> PathBuf {
 }
 
 #[test]
-fn p06_soak_tier_budgets_are_literal() {
+fn p06_bounded_ci_budgets_are_literal() {
     let ci = SoakTier::named("ci");
     assert_eq!((ci.duration.as_secs(), ci.sessions), (600, 8));
     assert_eq!(
@@ -438,24 +421,13 @@ fn p06_soak_tier_budgets_are_literal() {
         (8 << 20, 1_000)
     );
 
-    let single = SoakTier::named("single-24h");
-    assert_eq!((single.duration.as_secs(), single.sessions), (86_400, 1));
-    assert_eq!(single.minimum_bytes_per_session, 128 << 20);
-
-    let maximum = SoakTier::named("max-4h");
-    assert_eq!((maximum.duration.as_secs(), maximum.sessions), (14_400, 16));
-    assert_eq!(
-        (maximum.minimum_bytes_per_session, maximum.resize_requests),
-        (128 << 20, 10_000)
-    );
-    assert_eq!(LONG_AGGREGATE_BYTES, 1 << 30);
     assert_eq!(WorkloadRole::Saturation.bytes(5), 4 << 20);
     assert_eq!(WorkloadRole::Idle.bytes(0), 0);
 }
 
 #[test]
-#[ignore = "DTC-P06D scheduled release soak; run through the proof gate runner"]
-fn p06_scheduled_soak_emits_reproducible_json() {
+#[ignore = "DTC-P06D bounded release workload; run through the proof gate runner"]
+fn p06_bounded_ci_emits_reproducible_json() {
     if std::hint::black_box(cfg!(debug_assertions)) {
         panic!("P06 soak evidence must use --release");
     }

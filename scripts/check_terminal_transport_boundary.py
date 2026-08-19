@@ -399,17 +399,13 @@ def check(root: Path) -> list[str]:
     soak_path = root / APP_SRC / "terminal_session_p06_soak_tests.rs"
     soak = soak_path.read_text(encoding="utf-8") if soak_path.is_file() else ""
     for marker in (
-        "p06_soak_tier_budgets_are_literal",
-        "p06_scheduled_soak_emits_reproducible_json",
+        "p06_bounded_ci_budgets_are_literal",
+        "p06_bounded_ci_emits_reproducible_json",
         'contract: "datum_terminal_p06_soak_v1"',
         '"ci" => Self',
         "Duration::from_secs(10 * 60)",
-        '"single-24h" => Self',
-        "Duration::from_secs(24 * 60 * 60)",
-        '"max-4h" => Self',
-        "Duration::from_secs(4 * 60 * 60)",
-        "minimum_bytes_per_session: 128 * 1024 * 1024",
-        "resize_requests: 10_000",
+        "minimum_bytes_per_session: 8 * 1024 * 1024",
+        "resize_requests: 1_000",
         "input_bytes_per_session",
         "output_bytes_per_session",
         "aggregate_input_bytes",
@@ -421,7 +417,12 @@ def check(root: Path) -> list[str]:
         'proc_count("/proc/self/task")',
     ):
         if marker not in soak:
-            failures.append(f"DTC-P06D scheduled soak proof missing: {marker}")
+            failures.append(f"DTC-P06D bounded CI proof missing: {marker}")
+    for removed_tier in ('"single-24h"', '"max-4h"'):
+        if removed_tier in soak:
+            failures.append(
+                f"DTC-P06D owner-removed long-duration tier returned: {removed_tier}"
+            )
     sustained_path = root / APP_SRC / "terminal_session_p06_throughput_tests.rs"
     sustained = sustained_path.read_text(encoding="utf-8") if sustained_path.is_file() else ""
     for marker in (
@@ -444,7 +445,7 @@ def check(root: Path) -> list[str]:
         "x11-fallback",
         "single throughput >=20MiB/s",
         "aggregate throughput >=40MiB/s",
-        "backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h",
+        "backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci",
         "WINIT_UNIX_BACKEND=wayland",
         "WINIT_UNIX_BACKEND=x11",
         '"datum_terminal_p06_backend_canary_v1"',
@@ -452,11 +453,9 @@ def check(root: Path) -> list[str]:
         'grep -q "renderer init end"',
         'grep -q "window visible"',
         "DATUM_P06_RUN_ORDINAL",
-        "p06_scheduled_soak_emits_reproducible_json",
+        "p06_bounded_ci_emits_reproducible_json",
         '"datum_terminal_p06_soak_v1"',
         '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)',
-        '"single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500)',
-        '"maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000)',
         '"datum_terminal_p06_gui_measurement_v1"',
         "single provisional GUI throughput >=1MiB/s",
         "aggregate provisional GUI throughput >=4MiB/s",
@@ -468,10 +467,14 @@ def check(root: Path) -> list[str]:
         "backlog fixture emits exact 4MiB burst",
         "backlog saturates a governed queue limit",
         "backlog high-water remains within 4MiB",
-        "long-tier aggregate output >=1GiB",
     ):
         if marker not in runner:
             failures.append(f"DTC-P06D release proof runner missing: {marker}")
+    for removed_tier in ("single-24h", "max-4h"):
+        if removed_tier in runner:
+            failures.append(
+                f"DTC-P06D proof runner reintroduced owner-removed tier: {removed_tier}"
+            )
     if "active().try_recv_event" in "\n".join(outside_transport.values()):
         failures.append("active-only terminal event draining must not return")
 

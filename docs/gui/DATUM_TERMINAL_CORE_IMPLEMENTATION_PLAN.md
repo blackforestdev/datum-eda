@@ -92,8 +92,8 @@ read-only work.
   persistent fairness, lifecycle churn, maximum-session refusal, and absence of
   cross-session bytes, owned-session survivors, or descriptor/thread growth.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06D --> **DTC-P06D — measured Linux proof.** Run the owner-ratified release-build
-  latency, throughput, memory, resize, lifecycle, and long-session soak matrix
-  with reproducible machine-readable evidence.
+  latency, throughput, memory, resize, lifecycle, and bounded eight-session
+  matrix with reproducible machine-readable evidence.
 - <!-- REQ:TERMINAL-T1-PTY:DTC-P06E --> **DTC-P06E — transport closure.** Ratchet the Linux platform, offline,
   dependency-authority, source-health, isolation, stress, and performance gates;
   synchronize evidence and close the owned-transport slice.
@@ -649,27 +649,26 @@ drain independently, and reactivate without contamination; it must never
 reintroduce detach/reattach APIs. Logical history/reflow remains DTC-P12 and
 shell/TUI/agent compatibility remains DTC-P28 through DTC-P30.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O1 --> **P06-O1 — proof tiers and duration.** Owner-approved 2026-08-18:
-  release builds are normative. Run a bounded ten-minute eight-session proof in
-  normal CI; a scheduled 24-hour single-session agent-style soak plus a
-  four-hour proof at the governed maximum of sixteen sessions; and 1,000
-  spawn/exit/restart cycles. Require three consecutive clean scheduled runs
-  before release evidence is accepted. Record the exact revision, seed, kernel,
-  libc, CPU, RAM, display backend, and raw samples. This duration is intended to
-  expose slow leaks and lifecycle drift from multi-million-token code-agent
-  sessions; it does not cap transcript or model-context length.
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O1 --> **P06-O1 — proof tiers and duration.** Owner-approved 2026-08-18 and
+  revised 2026-08-19: release builds are normative. Run a bounded ten-minute
+  eight-session proof, a 60-second sustained raw-transport proof, and 1,000
+  spawn/exit/restart cycles. Record the exact revision, seed, kernel, libc, CPU,
+  RAM, display backend, and raw samples. The owner explicitly removed the
+  previously approved 24-hour and four-hour tiers and the three-consecutive-run
+  requirement from P06 acceptance. Longer local soaks may be run diagnostically,
+  but they are not completion or release blockers and cannot substitute for the
+  bounded required matrix. These durations do not cap transcript or model-context
+  length.
 
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O1-OWNER-APPROVED -->
-Owner approval on 2026-08-18 ratifies the P06-O1 proof tiers and durations
-exactly as stated above. No later P06 numerical threshold is implied.
+Owner approval on 2026-08-19 revises and supersedes the earlier P06-O1 duration
+packet exactly as stated above. No later P06 numerical threshold is implied.
 
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O2 --> **P06-O2 — session workload and correctness.** Owner-approved 2026-08-18:
   the ten-minute CI tier runs eight simultaneous real PTYs, with each session
-  carrying at least 8 MiB of exact output and 1 MiB of exact input. Scheduled
-  runs rotate agent-style burst, status-update, full-screen, resize, exit,
-  restart, saturation, and idle roles; the long tiers carry at least 128 MiB of
-  output and 8 MiB of bidirectional input per exercised session, with at least
-  1 GiB aggregate output. Every stream uses a unique seeded identity and must
+  carrying at least 8 MiB of exact output and 1 MiB of exact input. That bounded
+  run rotates agent-style burst, status-update, full-screen, resize, exit,
+  restart, saturation, and idle roles. Every stream uses a unique seeded identity and must
   prove zero lost, duplicated, reordered, stale, or cross-session bytes. Keep
   the already-ratified maximum of sixteen live sessions and refusal of the
   seventeenth.
@@ -710,9 +709,9 @@ thresholds exactly as stated above. No memory or storage threshold is implied.
   preserve the existing hard 4 MiB output plus 4 MiB input ceiling per session, the sixteen-
   session limit, and therefore a 128 MiB maximum aggregate queued payload. At
   sixteen sessions, Datum-process RSS peaks no higher than the warm baseline
-  plus 192 MiB. After warm-up, RSS growth is at most 1 MiB/hour for the active
-  24-hour session and at most 256 KiB/hour per idle session. Within 30 seconds
-  after every terminal tab closes, RSS returns to the warm baseline plus 16 MiB.
+  plus 192 MiB. The bounded eight-session run and the 1,000-cycle lifecycle run
+  must show no monotonic RSS/FD/thread growth. Within 30 seconds after every
+  terminal tab closes, RSS returns to the warm baseline plus 16 MiB.
   Disk event-log retention is measured separately and remains P06-O9 rather
   than being hidden inside the RSS claim.
 
@@ -736,9 +735,9 @@ decision without weakening losslessness or boundedness.
 Owner approval on 2026-08-18 ratifies the P06-O6 descriptor, worker-thread,
 zombie, and owned-process cleanup thresholds exactly as stated above.
 
-- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O7 --> **P06-O7 — resize and isolation.** Owner-approved 2026-08-18: perform
-  10,000 total resize requests during the sixteen-session mixed workload, with at least 500
-  requests per session and concurrent terminal I/O. Resize ioctl/request
+- <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O7 --> **P06-O7 — resize and isolation.** Owner-approved 2026-08-18 and
+  duration-reconciled 2026-08-19: perform 1,000 total resize requests during the
+  bounded eight-session mixed workload with concurrent terminal I/O. Resize ioctl/request
   completion is p95 at most 2 ms, p99 at most 5 ms, and maximum 20 ms; the final
   kernel winsize is exact within 100 ms. SIGWINCH reaches only the current
   foreground process group. Input, output, resize, exit, termination, restart,
@@ -756,9 +755,9 @@ isolation thresholds exactly as stated above. Reflow remains outside P06.
   backend; X11 is the legacy fallback, not the default. Run production GUI
   measurements under Wayland and also under X11 where each is available,
   recording an explicit unavailable result rather than silently skipping.
-  Per-merge CI runs the deterministic ten-minute tier; scheduled CI
-  runs the 24-hour and four-hour tiers, and release acceptance requires the
-  approved three consecutive clean scheduled runs. Machine-readable evidence
+  Per-merge CI runs the deterministic ten-minute tier. The 24-hour, four-hour,
+  and three-consecutive-run requirements were removed by owner direction on
+  2026-08-19; longer scheduled soaks are optional diagnostics only. Machine-readable evidence
   records revision, seed, build profile, kernel, libc, CPU, RAM, display
   backend, payloads, count/min/p50/p95/p99/max, throughput, queue high-water and
   recovery, RSS/FD/thread samples, fairness gap, survivors, failures, and raw
@@ -769,9 +768,10 @@ isolation thresholds exactly as stated above. Reflow remains outside P06.
   claim; their support requires a later explicit platform decision.
 
 <!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06A:P06-O8-OWNER-APPROVED -->
-Owner approval on 2026-08-18 ratifies the P06-O8 platform, scheduling, evidence,
-and landing contract with Wayland primary and X11 fallback exactly as stated
-above. It does not authorize treating X11 as Datum's default GUI backend.
+Owner approval revised on 2026-08-19 ratifies the P06-O8 platform, bounded
+scheduling, evidence, and landing contract with Wayland primary and X11 fallback
+exactly as stated above. It does not authorize treating X11 as Datum's default
+GUI backend.
 
 - <!-- OWNER:TERMINAL-T1-PTY:DTC-P06A:P06-O9 --> **P06-O9 — long-session event-log retention.** Owner-approved 2026-08-18:
   cap each terminal session's I/O event-log family at 64 MiB total, stored as four
@@ -851,9 +851,8 @@ transport boundary, fifteen hermetic boundary mutations, formatting, and diff
 hygiene pass. Source health remains red only for unrelated concurrent
 CLI/engine/protocol ceiling drift and the pre-existing terminal-input inline
 test-tail debt; the 143-line P06C proof and all touched files satisfy decision
-022. The owner-ratified 1,000-cycle, release-performance, and long-duration
-soak requirements remain DTC-P06D and are not claimed by this deterministic
-closure.
+022. The owner-ratified 1,000-cycle and bounded release-performance requirements
+remain DTC-P06D and are not claimed by this deterministic closure.
 
 ### Core foundation
 
