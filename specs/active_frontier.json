@@ -927,7 +927,6 @@
         "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.1",
         "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
       ],
@@ -1105,10 +1104,9 @@
           "effects": [
             "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.1",
-            "dat-terminal-emulator-epic-jzv.2",
-            "dat-terminal-emulator-epic-jzv.3"
+        "unblocks_issue_ids": [
+          "dat-terminal-emulator-epic-jzv.2",
+          "dat-terminal-emulator-epic-jzv.3"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -1402,23 +1400,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-dtc-p06d-measured-linux-proof-20260818",
-        "claimed_at": "2026-08-18T22:14:25Z",
-        "heartbeat_at": "2026-08-19T16:56:05Z",
-        "expires_at": "2026-08-20T00:56:05Z",
-        "scope": [
-          "DTC-P06E transport closure governance"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "b26b1b73dfecd5429d55327802399c787da12dc7"
-      },
+      "landing_commit": "1491113",
       "summary": "Implement and prove the bounded Datum-owned Linux PTY/session transport through DTC-P03..P06E with no third-party terminal dependency.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
@@ -1429,7 +1415,7 @@
       ],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
-        "canonical_next_step_id": "DTC-P06E",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -1968,7 +1954,7 @@
           {
             "id": "DTC-P06E",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Ratchet Linux platform, offline, dependency-authority, source-health, isolation, stress, performance, and bounded-storage gates; synchronize evidence and close the owned-transport slice.",
             "depends_on": [
               "DTC-P06D"
@@ -1979,7 +1965,17 @@
                 "marker": "DTC-P06E"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "1491113"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06E-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -2009,9 +2005,9 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [

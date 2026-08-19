@@ -892,6 +892,29 @@ convergence guard plus 11 mutations, project-state validation, and diff hygiene
 all pass. The owner-removed 24-hour, four-hour, and three-run tiers were not run
 and remain optional diagnostics rather than P06 acceptance gates.
 
+#### DTC-P06E owned-transport closure evidence
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06E-CLOSED -->
+The Datum-owned Linux PTY transport slice closes through revision `1491113`.
+The dedicated boundary guard pins the ratified P04 queue and fairness limits,
+P05 lifecycle/presentation barriers, P06 eight-session isolation and bounded
+resource proofs, revision-addressed release evidence contracts, Wayland-primary
+and X11-fallback compositor canaries, the ten-minute/60-second/1,000-cycle
+bounded matrix, and the explicit absence of the owner-removed long-duration
+tiers. Its 23 hermetic mutations prove removal or weakening of those boundaries
+fails; the GUI agent/terminal convergence guard adds 11 focus, input-order,
+batching, font-cache, and rendering mutations.
+
+Final clean-revision closure passes the complete 354-test GUI-app suite, strict
+workspace all-target Clippy, locked/offline workspace all-target build, source
+health over 1,407 source files, dependency authority, both guard suites,
+project-state and generated-Frontier validation, formatting, and diff hygiene.
+No Cargo dependency, downloaded source, TERM identity, P04 budget, P05 teardown
+policy, detached-PTY behavior, or non-Linux platform claim changed. T1a closes
+only the owned PTY/session transport; the Datum-owned TerminalCore and later
+parser, Unicode, history, rendering, compatibility, agent, and release slices
+remain governed by their subsequent Frontier items.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
