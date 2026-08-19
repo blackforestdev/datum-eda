@@ -42,12 +42,33 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
                 )
             if relative == "parser_action.rs":
                 text += "\nCancelled\nCsiParameter\nStringTerminator\nLimitExceeded\n"
+            if relative == "charset.rs":
+                text += "\nCharacterSet::DecSpecialGraphics\n"
+            if relative == "semantics.rs":
+                text += (
+                    "\nself.state.charsets.map(character)\n"
+                    "self.state.synchronized_dirty = true\n"
+                    "ReplyKind::DeviceAttributes\n"
+                )
+            if relative == "csi.rs":
+                text += (
+                    "\n2026 => self.end_synchronized_output(update)?\n"
+                    "ReplyKind::ModeReport\n"
+                )
+            if relative == "control_string.rs":
+                text += (
+                    "\nself.state.palette[index as usize] = color\n"
+                    "TitleText::new\nWorkingDirectoryText::new\n"
+                )
             (source / relative).write_text(text, encoding="utf-8")
         (source / "parser_tests.rs").write_text(
             "\n".join(guard.REQUIRED_PARSER_PROOFS), encoding="utf-8"
         )
         (source / "reducer_tests.rs").write_text(
             "\n".join(guard.REQUIRED_REDUCER_PROOFS), encoding="utf-8"
+        )
+        (source / "semantic_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_SEMANTIC_PROOFS), encoding="utf-8"
         )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
@@ -67,7 +88,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             "pub use screen::{ScreenState, TerminalCore};\n"
             "pub use parser::{FeedReport, StreamingParser};\n"
             "pub use reducer::{Reduction, ScreenError};\n"
-            "pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};\n",
+            "pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};\n"
+            "pub use semantics::{CoreError, CoreUpdate};\n",
             encoding="utf-8",
         )
         return temporary, root
@@ -160,6 +182,45 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         failures = guard.check(root)
         self.assertTrue(any("ScreenCells" in item for item in failures))
         self.assertTrue(any("primary_and_alternate" in item for item in failures))
+
+    def test_missing_semantic_owner_or_proof_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        semantics = root / guard.CRATE / "src/semantics.rs"
+        semantics.write_text(
+            semantics.read_text().replace("self.state.charsets.map(character)", "character")
+        )
+        proofs = root / guard.CRATE / "src/semantic_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "complete_semantics_are_invariant_across_arbitrary_parser_chunks", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("character-set mapping" in item for item in failures))
+        self.assertTrue(any("complete_semantics" in item for item in failures))
+
+    def test_synchronized_output_or_metadata_owner_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        csi = root / guard.CRATE / "src/csi.rs"
+        csi.write_text(
+            csi.read_text().replace(
+                "2026 => self.end_synchronized_output(update)?", "2026 => {}"
+            )
+        )
+        control = root / guard.CRATE / "src/control_string.rs"
+        control.write_text(control.read_text().replace("WorkingDirectoryText::new", "removed"))
+        failures = guard.check(root)
+        self.assertTrue(any("synchronized-output" in item for item in failures))
+        self.assertTrue(any("WorkingDirectoryText::new" in item for item in failures))
+
+    def test_retained_semantic_update_queue_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        semantics = root / guard.CRATE / "src/semantics.rs"
+        semantics.write_text(semantics.read_text() + "\nVec<CoreUpdate>\n")
+        self.assertTrue(any("update queue" in item for item in guard.check(root)))
 
 
 if __name__ == "__main__":

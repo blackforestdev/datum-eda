@@ -1,7 +1,8 @@
 use crate::grid::GridBuffer;
 use crate::{
-    Cell, CellStyle, CoreLimits, CursorState, Margins, ModeState, SavedCursorState, ScreenBuffer,
-    ScreenError, SnapshotError, SnapshotRow, TabStops, TerminalSize, TerminalSnapshot,
+    Cell, CellStyle, CharacterSetState, Cluster, Color, CoreLimits, CursorState, Margins,
+    ModeState, SavedCursorState, ScreenBuffer, ScreenError, SnapshotError, SnapshotRow, TabStops,
+    TerminalSize, TerminalSnapshot, TitleText, WorkingDirectoryText,
 };
 
 #[derive(Clone, Debug)]
@@ -14,6 +15,15 @@ pub struct ScreenState {
     pub(crate) tabs: TabStops,
     pub(crate) style: CellStyle,
     pub(crate) protected: bool,
+    pub(crate) charsets: CharacterSetState,
+    pub(crate) palette: [Color; 256],
+    pub(crate) default_foreground: Color,
+    pub(crate) default_background: Color,
+    pub(crate) cursor_color: Color,
+    pub(crate) title: Option<TitleText>,
+    pub(crate) working_directory: Option<WorkingDirectoryText>,
+    pub(crate) synchronized_dirty: bool,
+    pub(crate) last_printed: Option<Cluster>,
     pub(crate) saved: Option<SavedCursorState>,
     pub(crate) primary: GridBuffer,
     pub(crate) alternate: GridBuffer,
@@ -38,9 +48,18 @@ impl ScreenState {
             cursor: CursorState::home(size),
             margins: Margins::full(size),
             modes,
-            tabs: TabStops::default(),
+            tabs: TabStops::every_eight(size.columns),
             style: CellStyle::default(),
             protected: false,
+            charsets: CharacterSetState::default(),
+            palette: [Color::Default; 256],
+            default_foreground: Color::Default,
+            default_background: Color::Default,
+            cursor_color: Color::Default,
+            title: None,
+            working_directory: None,
+            synchronized_dirty: false,
+            last_printed: None,
             saved: None,
             primary,
             alternate,
@@ -73,6 +92,34 @@ impl ScreenState {
 
     pub const fn protected(&self) -> bool {
         self.protected
+    }
+
+    pub const fn character_sets(&self) -> CharacterSetState {
+        self.charsets
+    }
+
+    pub const fn palette_color(&self, index: u8) -> Color {
+        self.palette[index as usize]
+    }
+
+    pub const fn default_foreground(&self) -> Color {
+        self.default_foreground
+    }
+
+    pub const fn default_background(&self) -> Color {
+        self.default_background
+    }
+
+    pub const fn cursor_color(&self) -> Color {
+        self.cursor_color
+    }
+
+    pub fn title(&self) -> Option<&TitleText> {
+        self.title.as_ref()
+    }
+
+    pub fn working_directory(&self) -> Option<&WorkingDirectoryText> {
+        self.working_directory.as_ref()
     }
 
     pub fn tab_stops(&self) -> &TabStops {

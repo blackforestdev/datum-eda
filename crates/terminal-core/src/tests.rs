@@ -184,7 +184,14 @@ fn terminal_core_starts_with_closed_renderer_independent_state() {
             ..ModeState::default()
         }
     );
-    assert_eq!(core.state().tab_stops().iter().count(), 0);
+    assert_eq!(
+        core.state()
+            .tab_stops()
+            .iter()
+            .map(Column::get)
+            .collect::<Vec<_>>(),
+        (8..120).step_by(8).collect::<Vec<_>>()
+    );
     assert!(core.state().saved_cursor().is_none());
 }
 

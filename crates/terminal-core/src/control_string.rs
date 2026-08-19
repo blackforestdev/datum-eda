@@ -1,0 +1,334 @@
+use crate::{
+    CellAttribute, Color, ControlString, ControlStringKind, CoreError, CoreEvent, CoreUpdate,
+    CursorShape, Damage, PaletteIndex, ReplyKind, Rgb, TerminalCore, TitleText, UnderlineStyle,
+    WorkingDirectoryText,
+};
+
+impl TerminalCore {
+    pub(crate) fn apply_control_string(
+        &mut self,
+        string: ControlString,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        match string.kind {
+            ControlStringKind::Osc => self.apply_osc(&string.bytes, update),
+            ControlStringKind::Dcs => self.apply_dcs(&string.bytes, update),
+            ControlStringKind::Apc | ControlStringKind::Pm | ControlStringKind::Sos => Ok(()),
+        }
+    }
+
+    fn apply_osc(&mut self, bytes: &[u8], update: &mut CoreUpdate) -> Result<(), CoreError> {
+        let mut fields = bytes.split(|byte| *byte == b';');
+        let Some(command) = fields.next().and_then(parse_usize) else {
+            return Ok(());
+        };
+        match command {
+            0..=2 => self.set_title(fields.collect(), update)?,
+            4 => self.palette_command(fields.collect(), update)?,
+            7 => self.set_working_directory(fields.collect(), update)?,
+            10..=12 => self.default_color_command(command, fields.collect(), update)?,
+            104 => self.reset_palette(fields.collect(), update)?,
+            110..=112 => self.reset_default_color(command, update)?,
+            _ => {}
+        }
+        Ok(())
+    }
+
+    fn set_title(&mut self, fields: Vec<&[u8]>, update: &mut CoreUpdate) -> Result<(), CoreError> {
+        let Some(text) = join_fields(&fields).and_then(|bytes| String::from_utf8(bytes).ok())
+        else {
+            return Ok(());
+        };
+        let title = TitleText::new(text, self.limits.title_bytes)?;
+        self.state.title = Some(title.clone());
+        self.push_event(CoreEvent::TitleChanged(title), update)?;
+        self.push_damage(Damage::Title, update)
+    }
+
+    fn set_working_directory(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let Some(text) = join_fields(&fields).and_then(|bytes| String::from_utf8(bytes).ok())
+        else {
+            return Ok(());
+        };
+        let cwd = WorkingDirectoryText::new(text, self.limits.working_directory_bytes)?;
+        self.state.working_directory = Some(cwd.clone());
+        self.push_event(CoreEvent::WorkingDirectoryChanged(cwd), update)
+    }
+
+    fn palette_command(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        for pair in fields.chunks_exact(2) {
+            let Some(index) = parse_usize(pair[0]).and_then(|value| u8::try_from(value).ok())
+            else {
+                continue;
+            };
+            if pair[1] == b"?" {
+                let color = self.state.palette[index as usize];
+                if let Some(specification) = color_specification(color) {
+                    self.push_reply(
+                        ReplyKind::ColorReport,
+                        format!("\x1b]4;{index};{specification}\x1b\\").into_bytes(),
+                        update,
+                    )?;
+                }
+                continue;
+            }
+            let Some(color) = parse_color(pair[1]) else {
+                continue;
+            };
+            self.state.palette[index as usize] = color;
+            self.push_event(
+                CoreEvent::PaletteChanged {
+                    index: PaletteIndex::new(index),
+                    color,
+                },
+                update,
+            )?;
+            self.push_damage(Damage::Palette(PaletteIndex::new(index)), update)?;
+        }
+        Ok(())
+    }
+
+    fn reset_palette(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        if fields.is_empty() || fields.iter().all(|field| field.is_empty()) {
+            self.state.palette = [Color::Default; 256];
+            self.push_damage(Damage::Full, update)?;
+            update.recognized = true;
+            return Ok(());
+        }
+        for field in fields {
+            let Some(index) = parse_usize(field).and_then(|value| u8::try_from(value).ok()) else {
+                continue;
+            };
+            self.state.palette[index as usize] = Color::Default;
+            self.push_damage(Damage::Palette(PaletteIndex::new(index)), update)?;
+            update.recognized = true;
+        }
+        Ok(())
+    }
+
+    fn default_color_command(
+        &mut self,
+        command: usize,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let Some(field) = fields.first() else {
+            return Ok(());
+        };
+        if *field == b"?" {
+            let color = self.default_color(command);
+            if let Some(specification) = color_specification(color) {
+                self.push_reply(
+                    ReplyKind::ColorReport,
+                    format!("\x1b]{command};{specification}\x1b\\").into_bytes(),
+                    update,
+                )?;
+            }
+            return Ok(());
+        }
+        let Some(color) = parse_color(field) else {
+            return Ok(());
+        };
+        *self.default_color_mut(command) = color;
+        self.push_damage(Damage::Full, update)?;
+        update.recognized = true;
+        Ok(())
+    }
+
+    fn reset_default_color(
+        &mut self,
+        command: usize,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        *self.default_color_mut(command - 100) = Color::Default;
+        self.push_damage(Damage::Full, update)?;
+        update.recognized = true;
+        Ok(())
+    }
+
+    fn default_color(&self, command: usize) -> Color {
+        match command {
+            10 => self.state.default_foreground,
+            11 => self.state.default_background,
+            12 => self.state.cursor_color,
+            _ => Color::Default,
+        }
+    }
+
+    fn default_color_mut(&mut self, command: usize) -> &mut Color {
+        match command {
+            10 => &mut self.state.default_foreground,
+            11 => &mut self.state.default_background,
+            12 => &mut self.state.cursor_color,
+            _ => unreachable!("caller validates default-color OSC command"),
+        }
+    }
+
+    fn apply_dcs(&mut self, bytes: &[u8], update: &mut CoreUpdate) -> Result<(), CoreError> {
+        if let Some(query) = bytes.strip_prefix(b"$q") {
+            let response = self.status_string(query);
+            let valid = response.is_some();
+            let body = response.unwrap_or_default();
+            return self.push_reply(
+                ReplyKind::DeviceStatus,
+                format!("\x1bP{}$r{body}\x1b\\", usize::from(valid)).into_bytes(),
+                update,
+            );
+        }
+        if bytes.starts_with(b"+q") {
+            return self.push_reply(ReplyKind::DeviceStatus, b"\x1bP0+r\x1b\\".to_vec(), update);
+        }
+        Ok(())
+    }
+
+    fn status_string(&self, query: &[u8]) -> Option<String> {
+        match query {
+            b"m" => Some(style_status(self.state.style)),
+            b"r" => Some(format!(
+                "{};{}r",
+                self.state.margins.top.get() + 1,
+                self.state.margins.bottom.get() + 1
+            )),
+            b"\"q" => Some(format!("{}\"q", usize::from(self.state.protected))),
+            b" q" => Some(format!("{} q", cursor_style_status(self.state.cursor))),
+            _ => None,
+        }
+    }
+}
+
+fn parse_usize(bytes: &[u8]) -> Option<usize> {
+    std::str::from_utf8(bytes).ok()?.parse().ok()
+}
+
+fn join_fields(fields: &[&[u8]]) -> Option<Vec<u8>> {
+    let length = fields.iter().try_fold(0usize, |length, field| {
+        length.checked_add(field.len())?.checked_add(1)
+    })?;
+    let mut joined = Vec::new();
+    joined.try_reserve_exact(length.saturating_sub(1)).ok()?;
+    for (index, field) in fields.iter().enumerate() {
+        if index != 0 {
+            joined.push(b';');
+        }
+        joined.extend_from_slice(field);
+    }
+    Some(joined)
+}
+
+fn parse_color(bytes: &[u8]) -> Option<Color> {
+    if let Some(hex) = bytes.strip_prefix(b"#") {
+        if hex.len() != 6 {
+            return None;
+        }
+        return Some(Color::Rgb(Rgb {
+            red: parse_hex(&hex[0..2])?,
+            green: parse_hex(&hex[2..4])?,
+            blue: parse_hex(&hex[4..6])?,
+        }));
+    }
+    let rgb = bytes.strip_prefix(b"rgb:")?;
+    let mut components = rgb.split(|byte| *byte == b'/');
+    Some(Color::Rgb(Rgb {
+        red: scale_hex(components.next()?)?,
+        green: scale_hex(components.next()?)?,
+        blue: scale_hex(components.next()?)?,
+    }))
+}
+
+fn parse_hex(bytes: &[u8]) -> Option<u8> {
+    u8::from_str_radix(std::str::from_utf8(bytes).ok()?, 16).ok()
+}
+
+fn scale_hex(bytes: &[u8]) -> Option<u8> {
+    if bytes.is_empty() || bytes.len() > 4 {
+        return None;
+    }
+    let value = u16::from_str_radix(std::str::from_utf8(bytes).ok()?, 16).ok()?;
+    let maximum = (1u32 << (bytes.len() * 4)) - 1;
+    Some(((u32::from(value) * 255 + maximum / 2) / maximum) as u8)
+}
+
+fn color_specification(color: Color) -> Option<String> {
+    let Color::Rgb(rgb) = color else {
+        return None;
+    };
+    Some(format!(
+        "rgb:{0:02x}{0:02x}/{1:02x}{1:02x}/{2:02x}{2:02x}",
+        rgb.red, rgb.green, rgb.blue
+    ))
+}
+
+fn style_status(style: crate::CellStyle) -> String {
+    let mut values = Vec::new();
+    if style.attributes.contains(CellAttribute::Bold) {
+        values.push("1".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Faint) {
+        values.push("2".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Italic) {
+        values.push("3".to_owned());
+    }
+    match style.underline {
+        UnderlineStyle::None => {}
+        UnderlineStyle::Single => values.push("4".to_owned()),
+        UnderlineStyle::Double => values.push("4:2".to_owned()),
+        UnderlineStyle::Curly => values.push("4:3".to_owned()),
+        UnderlineStyle::Dotted => values.push("4:4".to_owned()),
+        UnderlineStyle::Dashed => values.push("4:5".to_owned()),
+    }
+    if style.attributes.contains(CellAttribute::Blink) {
+        values.push("5".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Inverse) {
+        values.push("7".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Hidden) {
+        values.push("8".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Strike) {
+        values.push("9".to_owned());
+    }
+    if style.attributes.contains(CellAttribute::Overline) {
+        values.push("53".to_owned());
+    }
+    values.extend(color_status(38, style.foreground));
+    values.extend(color_status(48, style.background));
+    values.extend(color_status(58, style.underline_color));
+    if values.is_empty() {
+        "0m".to_owned()
+    } else {
+        format!("{}m", values.join(";"))
+    }
+}
+
+fn color_status(prefix: usize, color: Color) -> Vec<String> {
+    match color {
+        Color::Default => Vec::new(),
+        Color::Indexed(index) => vec![format!("{prefix};5;{}", index.get())],
+        Color::Rgb(rgb) => vec![format!("{prefix};2;{};{};{}", rgb.red, rgb.green, rgb.blue)],
+    }
+}
+
+fn cursor_style_status(cursor: crate::CursorState) -> usize {
+    match (cursor.shape, cursor.blinking) {
+        (CursorShape::Block, true) => 1,
+        (CursorShape::Block, false) => 2,
+        (CursorShape::Underline, true) => 3,
+        (CursorShape::Underline, false) => 4,
+        (CursorShape::Bar, true) => 5,
+        (CursorShape::Bar, false) => 6,
+    }
+}

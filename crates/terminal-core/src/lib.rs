@@ -8,8 +8,11 @@
 #![forbid(unsafe_code)]
 
 mod cell;
+mod charset;
 mod color;
+mod control_string;
 mod coordinates;
+mod csi;
 mod damage;
 mod event;
 mod grid;
@@ -20,12 +23,15 @@ mod parser_action;
 mod reducer;
 mod reducer_action;
 mod screen;
+mod semantics;
+mod sgr;
 mod snapshot;
 
 pub use cell::{
     Cell, CellAttribute, CellAttributes, CellContent, CellStyle, CellWidth, Cluster, ClusterError,
     HyperlinkId, UnderlineStyle,
 };
+pub use charset::{CharacterSet, CharacterSetSlot, CharacterSetState};
 pub use color::{Color, PaletteIndex, Rgb};
 pub use coordinates::{
     CellPoint, Column, Columns, CoordinateError, LogicalLineId, LogicalPoint, PixelSize, Row, Rows,
@@ -56,6 +62,7 @@ pub use parser_action::{
 pub use reducer::{Reduction, ScreenError};
 pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
+pub use semantics::{CoreError, CoreUpdate};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
 
 #[cfg(test)]
@@ -66,3 +73,6 @@ mod parser_tests;
 
 #[cfg(test)]
 mod reducer_tests;
+
+#[cfg(test)]
+mod semantic_tests;

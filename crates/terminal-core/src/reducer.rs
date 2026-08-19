@@ -108,6 +108,7 @@ impl TerminalCore {
     }
 
     fn print(&mut self, cluster: crate::Cluster) {
+        self.state.last_printed = Some(cluster.clone());
         if self.state.cursor.pending_wrap {
             self.wrap_line();
         }
@@ -428,6 +429,8 @@ impl TerminalCore {
             cursor: self.state.cursor,
             style: self.state.style,
             modes: self.state.modes,
+            charsets: self.state.charsets,
+            protected: self.state.protected,
         });
     }
 
@@ -436,6 +439,8 @@ impl TerminalCore {
             self.state.cursor = saved.cursor;
             self.state.style = saved.style;
             self.state.modes = saved.modes;
+            self.state.charsets = saved.charsets;
+            self.state.protected = saved.protected;
         }
     }
 
@@ -459,9 +464,13 @@ impl TerminalCore {
             auto_wrap: true,
             ..ModeState::default()
         };
+        self.state.tabs = crate::TabStops::every_eight(self.state.size.columns);
+        self.state.charsets = crate::CharacterSetState::default();
         self.state.style = crate::CellStyle::default();
         self.state.protected = false;
         self.state.saved = None;
+        self.state.synchronized_dirty = false;
+        self.state.last_printed = None;
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

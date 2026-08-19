@@ -13,8 +13,11 @@ CRATE = Path("crates/terminal-core")
 
 REQUIRED_MODULES = {
     "cell.rs": ("pub struct Cluster", "pub enum CellContent", "pub struct CellStyle"),
+    "charset.rs": ("pub enum CharacterSet", "pub struct CharacterSetState", "pub fn map("),
     "color.rs": ("pub enum Color",),
+    "control_string.rs": ("fn apply_control_string", "fn apply_osc", "fn apply_dcs"),
     "coordinates.rs": ("pub struct TerminalSize", "pub struct LogicalPoint"),
+    "csi.rs": ("fn apply_csi", "fn set_private_mode", "fn report_mode"),
     "damage.rs": ("pub enum Damage", "pub struct DamageSet"),
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
     "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
@@ -25,6 +28,8 @@ REQUIRED_MODULES = {
     "reducer.rs": ("pub enum ScreenError", "pub struct Reduction", "pub fn reduce("),
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
+    "semantics.rs": ("pub enum CoreError", "pub struct CoreUpdate", "pub fn apply("),
+    "sgr.rs": ("fn apply_sgr", "fn extended_color"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
 }
 
@@ -69,6 +74,20 @@ REQUIRED_REDUCER_PROOFS = (
     "seeded_edit_sequences_never_create_orphan_continuations",
 )
 
+REQUIRED_SEMANTIC_PROOFS = (
+    "parser_actions_drive_controls_tabs_and_dec_special_graphics",
+    "sgr_semicolon_and_colon_forms_preserve_complete_cell_style",
+    "csi_origin_margins_protected_erase_and_tab_controls_reach_the_reducer",
+    "save_restore_includes_designated_character_sets_and_protection",
+    "private_modes_alternate_screen_cursor_style_and_mode_queries_are_exact",
+    "device_cursor_window_and_status_string_reports_are_byte_exact",
+    "osc_metadata_palette_and_default_color_state_are_bounded_and_queryable",
+    "synchronized_output_defers_all_damage_until_one_final_flush",
+    "complete_semantics_are_invariant_across_arbitrary_parser_chunks",
+    "metadata_limits_and_unsupported_queries_fail_closed",
+    "semantic_events_and_replies_share_one_checked_pending_limit",
+)
+
 
 def check(root: Path) -> list[str]:
     failures: list[str] = []
@@ -90,7 +109,7 @@ def check(root: Path) -> list[str]:
 
     sources: dict[str, str] = {}
     for path in sorted((crate / "src").glob("*.rs")):
-        if path.name == "tests.rs":
+        if path.name == "tests.rs" or path.name.endswith("_tests.rs"):
             continue
         sources[path.name] = path.read_text(encoding="utf-8")
 
@@ -126,6 +145,8 @@ def check(root: Path) -> list[str]:
         failures.append("TerminalCore root must expose the DTC-P09 reducer result boundary")
     if "pub use reducer_action::{" not in lib or "ScreenAction" not in lib:
         failures.append("TerminalCore root must expose the DTC-P09 typed screen actions")
+    if "pub use semantics::{CoreError, CoreUpdate}" not in lib:
+        failures.append("TerminalCore root must expose the DTC-P10 semantic update boundary")
     parser = sources.get("parser.rs", "")
     action = sources.get("parser_action.rs", "")
     if "emit: impl FnMut(Action)" not in parser:
@@ -168,6 +189,34 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_REDUCER_PROOFS:
         if marker not in reducer_proof_text:
             failures.append(f"DTC-P09 deterministic reducer proof is missing: {marker}")
+
+    semantics = sources.get("semantics.rs", "")
+    charset = sources.get("charset.rs", "")
+    csi = sources.get("csi.rs", "")
+    control_string = sources.get("control_string.rs", "")
+    if "self.state.charsets.map(character)" not in semantics:
+        failures.append("DTC-P10 printable bytes must pass through owned character-set mapping")
+    if "CharacterSet::DecSpecialGraphics" not in charset:
+        failures.append("DTC-P10 must retain the owned DEC special-graphics mapping")
+    if "2026 => self.end_synchronized_output(update)?" not in csi:
+        failures.append("DTC-P10 synchronized-output disable must release deferred damage")
+    if "self.state.synchronized_dirty = true" not in semantics:
+        failures.append("DTC-P10 synchronized output must retain deferred-damage state")
+    if "ReplyKind::ModeReport" not in csi or "ReplyKind::DeviceAttributes" not in semantics:
+        failures.append("DTC-P10 must retain exact mode and device report ownership")
+    for marker in ("self.state.palette[index as usize] = color", "TitleText::new", "WorkingDirectoryText::new"):
+        if marker not in control_string:
+            failures.append(f"DTC-P10 bounded OSC metadata owner is missing: {marker}")
+    if "Vec<CoreUpdate>" in joined or "VecDeque<CoreUpdate>" in joined:
+        failures.append("DTC-P10 semantics must not retain an unbounded update queue")
+
+    semantic_tests = crate / "src" / "semantic_tests.rs"
+    semantic_proof_text = (
+        semantic_tests.read_text(encoding="utf-8") if semantic_tests.is_file() else ""
+    )
+    for marker in REQUIRED_SEMANTIC_PROOFS:
+        if marker not in semantic_proof_text:
+            failures.append(f"DTC-P10 deterministic semantic proof is missing: {marker}")
     return failures
 
 

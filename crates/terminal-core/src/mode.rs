@@ -1,4 +1,4 @@
-use crate::{CellPoint, CellStyle, Column, CoordinateError, Row, TerminalSize};
+use crate::{CellPoint, CellStyle, CharacterSetState, Column, CoordinateError, Row, TerminalSize};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CursorShape {
@@ -93,14 +93,40 @@ pub struct TabStops {
 }
 
 impl TabStops {
+    pub fn every_eight(columns: crate::Columns) -> Self {
+        Self::from_columns(
+            (8..columns.get())
+                .step_by(8)
+                .filter_map(|column| Column::new(column, columns).ok())
+                .collect(),
+        )
+    }
+
     pub fn from_columns(mut columns: Vec<Column>) -> Self {
         columns.sort_unstable();
         columns.dedup();
         Self { columns }
     }
 
-    pub fn iter(&self) -> impl ExactSizeIterator<Item = Column> + '_ {
+    pub fn iter(&self) -> impl ExactSizeIterator<Item = Column> + DoubleEndedIterator + '_ {
         self.columns.iter().copied()
+    }
+
+    pub fn set(&mut self, column: Column) {
+        match self.columns.binary_search(&column) {
+            Ok(_) => {}
+            Err(index) => self.columns.insert(index, column),
+        }
+    }
+
+    pub fn clear(&mut self, column: Column) {
+        if let Ok(index) = self.columns.binary_search(&column) {
+            self.columns.remove(index);
+        }
+    }
+
+    pub fn clear_all(&mut self) {
+        self.columns.clear();
     }
 }
 
@@ -109,4 +135,6 @@ pub struct SavedCursorState {
     pub cursor: CursorState,
     pub style: CellStyle,
     pub modes: ModeState,
+    pub charsets: CharacterSetState,
+    pub protected: bool,
 }
