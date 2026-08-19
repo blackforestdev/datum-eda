@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "policy": "Files listed here are exempt from the rustfmt gate ONLY because rustfmt's reflow would push them over their exact source-health ceiling (decision 022, downward-only). The list may only shrink: when a file becomes rustfmt-clean the gate fails until its row is removed. No new rows may be added without an ownership extraction that makes the exemption unnecessary.",
+  "exemptions": {
+    "crates/cli/src/command_plan.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 749 (formatted: 750)"
+    },
+    "crates/cli/src/commands/board/routing_net.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 926 (formatted: 928)"
+    },
+    "crates/cli/src/commands/project/validate.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 1035 (formatted: 1041)"
+    },
+    "crates/engine/src/import/kicad/parser_helpers.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 974 (formatted: 976)"
+    },
+    "crates/engine/src/substrate/journal.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 803 (formatted: 804)"
+    },
+    "crates/engine/src/substrate/replay.rs": {
+      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 809 (formatted: 810)"
+    },
+    "crates/gui-protocol/src/lib.rs": {
+      "reason": "rustfmt reflow exceeds inline_test_lines ceiling 1869 (formatted: 1870)"
+    }
+  }
+}

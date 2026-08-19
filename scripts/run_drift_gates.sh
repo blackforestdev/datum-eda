@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "== rustfmt: workspace formatting gate =="
+python3 scripts/test_rustfmt_gate.py
+python3 scripts/check_rustfmt.py
+
 echo "== clippy: workspace lint gate (-D warnings) =="
 cargo clippy --workspace --all-targets -- -D warnings
 
