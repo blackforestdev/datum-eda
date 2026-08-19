@@ -9,6 +9,7 @@ members = [
     "crates/gui-render",
     "crates/gui-app",
     "crates/gui-viewport",
+    "crates/terminal-core",
     "crates/verb-registry",
 ]
 
