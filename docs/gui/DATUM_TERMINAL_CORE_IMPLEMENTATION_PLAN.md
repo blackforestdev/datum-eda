@@ -985,6 +985,36 @@ hygiene pass. No dependency, PTY/GUI/process authority, screen mutation,
 Unicode property data, TERM identity, renderer integration, or production
 cutover changed. DTC-P09 remains the sole screen-model and reducer boundary.
 
+#### DTC-P09 screen-model and reducer evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P09-CLOSED -->
+Revision `64a458a` adds checked primary and alternate cell grids plus the sole
+`TerminalCore::reduce` mutation authority. Its closed action vocabulary covers
+printing, delayed wrap, cursor motion, vertical and horizontal margins, cell
+and line insertion/deletion, selective and ordinary erase, scrolling, buffer
+switching, save/restore, foundation modes, protected cells, reset, snapshots,
+and damage. Both resident buffers are admitted together under the distinct
+owner-supplied `ScreenCells` limit; the core defines no numeric default.
+
+Every structural edit repairs wide-cell lead/continuation pairs, including
+overwrites through a continuation, shifts, erasure, scrolling, and hostile
+cursor positions outside narrowed margins. Twenty-four core tests prove buffer
+allocation rejection, delayed-wrap and soft-line identity, primary/alternate
+isolation, total reset, protected selective erase, margin-confined editing,
+saved state, damage projection, and 2,000 seeded mixed edits whose snapshot is
+validated after every mutation. The boundary guard requires the reducer,
+screen-cell resource owner, continuation repair, and named deterministic proof;
+nine hermetic mutations prove those checks fail closed.
+
+At the isolated clean revision, the full workspace all-target test suite,
+strict workspace all-target Clippy, locked/offline workspace all-target check,
+dependency authority, TerminalCore boundary and mutations, source health over
+1,427 files, project-state validation/render parity, formatting, and diff
+hygiene pass. No dependency, parser contract, PTY/GUI/process authority,
+Unicode property policy, DEC/xterm decoding, history, TERM identity, renderer
+integration, or production cutover changed. DTC-P10 remains the sole owner of
+complete DEC/xterm action decoding and state semantics.
+
 ### Text, history, and interaction semantics
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** Pinned generated property tables,

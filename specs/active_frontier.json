@@ -2014,13 +2014,13 @@
         "harness": "codex-cli",
         "session": "codex-20260819-terminal-core",
         "claimed_at": "2026-08-19T10:08:52-07:00",
-        "heartbeat_at": "2026-08-19T10:56:10-07:00",
-        "expires_at": "2026-08-19T18:56:10-07:00",
+        "heartbeat_at": "2026-08-19T11:41:00-07:00",
+        "expires_at": "2026-08-19T19:41:00-07:00",
         "scope": [
-          "DTC-P09 primary and alternate screen model, cursor and margins, edit and erase and scroll reducer, invariants, tests, and evidence"
+          "DTC-P10 DEC and xterm state, reports, colors, charsets, private modes, metadata, synchronized output, tests, and evidence"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "80ca882ffa34fa68787a62bce3141f339b3e42c1"
+        "head": "64a458ad17c2917bcd0eb9b9b67743581c975876"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2032,7 +2032,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P09",
+        "canonical_next_step_id": "DTC-P10",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2087,16 +2087,26 @@
           {
             "id": "DTC-P09",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement the primary/alternate screen, cursor, margins, modes, edit/erase/scroll reducer, and cell-continuation invariants.",
             "depends_on": ["DTC-P07", "DTC-P08"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P09"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "64a458a"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P09-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P10",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete DEC/xterm SGR, colors, charsets, tabs, reports, private modes, palettes, metadata, and synchronized-output semantics.",
             "depends_on": ["DTC-P09"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P10"}],
