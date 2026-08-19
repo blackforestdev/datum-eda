@@ -1015,6 +1015,45 @@ Unicode property policy, DEC/xterm decoding, history, TERM identity, renderer
 integration, or production cutover changed. DTC-P10 remains the sole owner of
 complete DEC/xterm action decoding and state semantics.
 
+#### DTC-P10 DEC/xterm semantic evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P10-CLOSED -->
+Revision `be9f268` connects the bounded streaming parser to the sole screen
+reducer through `TerminalCore::apply`. Cohesive Datum-owned modules implement
+CSI, SGR, OSC/DCS, and DEC character-set semantics without retaining an action
+or update queue. The state model now owns default and mutable tab stops,
+G0/G1 designation and DEC special graphics, complete saved cursor protection
+and charset state, indexed and RGB colors, underline styles and colors,
+palette/default color state, title/CWD metadata, cursor style, repeat state,
+private modes, alternate-screen transitions, and synchronized-output damage.
+
+Supported device, cursor, window, mode, color, and status-string queries return
+byte-exact bounded replies; unsupported modes and capability queries fail
+closed without claiming behavior. Events and replies share one checked
+`PendingEvents` admission limit, reply bytes retain their separate bound, and
+synchronized output suppresses intermediate damage before releasing exactly
+one full-damage update. Bell, metadata, palette, and working-directory changes
+remain typed caller-owned outputs and do not acquire filesystem, GUI, PTY, or
+Datum-model authority.
+
+Thirty-five TerminalCore tests prove extended semicolon/colon SGR, DEC graphics,
+tabs, origin and margin behavior, protected erase, save/restore, private modes,
+primary/alternate isolation, exact reports, bounded metadata, synchronized
+damage, shared event/reply accounting, and complete semantic equivalence across
+arbitrary parser chunk boundaries. The boundary guard requires every semantic
+owner and named proof, rejects retained update queues, and passes twelve
+hermetic mutations.
+
+At the isolated clean revision, the full workspace all-target test suite,
+strict workspace all-target Clippy, locked/offline workspace all-target check,
+dependency authority, TerminalCore boundary and mutations, source health over
+1,435 files, project-state validation/render parity, formatting, and diff
+hygiene pass. No dependency, Unicode property table, history, graphics,
+PTY/GUI/process authority, TERM identity, renderer integration, or production
+cutover changed. DTC-P11 remains the sole owner of governed Unicode data,
+grapheme formation, width, wide-cell text placement, shaping boundaries, and
+the declared BiDi policy.
+
 ### Text, history, and interaction semantics
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** Pinned generated property tables,
