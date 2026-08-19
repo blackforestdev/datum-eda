@@ -366,6 +366,22 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in measurement:
             failures.append(f"DTC-P06D release measurement proof missing: {marker}")
+    gui_measurement_path = root / APP_SRC / "terminal_session_p06_gui_measurement_tests.rs"
+    gui_measurement = (
+        gui_measurement_path.read_text(encoding="utf-8")
+        if gui_measurement_path.is_file()
+        else ""
+    )
+    for marker in (
+        "p06_provisional_gui_path_emits_reproducible_json",
+        'contract: "datum_terminal_p06_gui_measurement_v1"',
+        "OUTPUT_BYTES_PER_SESSION: usize = 1024 * 1024",
+        "registry.drain_all",
+        "drain_work: distribution",
+        "presentation_complete",
+    ):
+        if marker not in gui_measurement:
+            failures.append(f"DTC-P06D provisional GUI measurement proof missing: {marker}")
     soak_path = root / APP_SRC / "terminal_session_p06_soak_tests.rs"
     soak = soak_path.read_text(encoding="utf-8") if soak_path.is_file() else ""
     for marker in (
@@ -394,13 +410,16 @@ def check(root: Path) -> list[str]:
         "x11-fallback",
         "single throughput >=20MiB/s",
         "aggregate throughput >=40MiB/s",
-        "smoke|ci|single-24h|max-4h",
+        "smoke|gui|ci|single-24h|max-4h",
         "DATUM_P06_RUN_ORDINAL",
         "p06_scheduled_soak_emits_reproducible_json",
         '"datum_terminal_p06_soak_v1"',
         '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)',
         '"single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500)',
         '"maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000)',
+        '"datum_terminal_p06_gui_measurement_v1"',
+        "single provisional GUI throughput >=1MiB/s",
+        "aggregate provisional GUI throughput >=4MiB/s",
     ):
         if marker not in runner:
             failures.append(f"DTC-P06D release proof runner missing: {marker}")

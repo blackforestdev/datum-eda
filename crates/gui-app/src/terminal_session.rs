@@ -662,6 +662,9 @@ mod terminal_session_context_tests;
 #[path = "terminal_session_naming_tests.rs"]
 mod terminal_session_naming_tests;
 #[cfg(test)]
+#[path = "terminal_session_p06_gui_measurement_tests.rs"]
+mod terminal_session_p06_gui_measurement_tests;
+#[cfg(test)]
 #[path = "terminal_session_p06_isolation_tests.rs"]
 mod terminal_session_p06_isolation_tests;
 #[cfg(test)]

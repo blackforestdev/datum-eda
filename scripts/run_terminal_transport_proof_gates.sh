@@ -6,9 +6,9 @@ cd "$repo_root"
 
 tier="${1:-smoke}"
 case "$tier" in
-  smoke|ci|single-24h|max-4h) ;;
+  smoke|gui|ci|single-24h|max-4h) ;;
   *)
-    echo "usage: $0 {smoke|ci|single-24h|max-4h}" >&2
+    echo "usage: $0 {smoke|gui|ci|single-24h|max-4h}" >&2
     exit 2
     ;;
 esac
@@ -44,6 +44,8 @@ mkdir -p "$evidence_dir"
 echo "DTC-P06D tier=$tier backend=$backend revision=$revision seed=$seed run=$run_ordinal"
 if [[ "$tier" == smoke ]]; then
   test_name="terminal_session::terminal_session_p06_measurement_tests::p06_release_measurement_emits_reproducible_json"
+elif [[ "$tier" == gui ]]; then
+  test_name="terminal_session::terminal_session_p06_gui_measurement_tests::p06_provisional_gui_path_emits_reproducible_json"
 else
   test_name="terminal_session::terminal_session_p06_soak_tests::p06_scheduled_soak_emits_reproducible_json"
 fi
@@ -63,6 +65,24 @@ path = pathlib.Path(sys.argv[1])
 evidence = json.loads(path.read_text(encoding="utf-8"))
 if evidence.get("failures"):
     raise SystemExit(f"DTC-P06D evidence reports failures: {evidence['failures']}")
+if evidence.get("contract") == "datum_terminal_p06_gui_measurement_v1":
+    single = evidence["single_session"]
+    aggregate = evidence["eight_session_aggregate"]
+    checks = {
+        "single provisional GUI throughput >=1MiB/s": single["mib_per_second"] >= 1.0,
+        "aggregate provisional GUI throughput >=4MiB/s": aggregate["mib_per_second"] >= 4.0,
+        "single drain p95 <=8ms": single["drain_work"]["p95_us"] <= 8_000,
+        "single drain p99 <=16ms": single["drain_work"]["p99_us"] <= 16_000,
+        "single drain max <=33ms": single["drain_work"]["max_us"] <= 33_000,
+        "aggregate drain p95 <=8ms": aggregate["drain_work"]["p95_us"] <= 8_000,
+        "aggregate drain p99 <=16ms": aggregate["drain_work"]["p99_us"] <= 16_000,
+        "aggregate drain max <=33ms": aggregate["drain_work"]["max_us"] <= 33_000,
+    }
+    failed = [name for name, passed in checks.items() if not passed]
+    if failed:
+        raise SystemExit("DTC-P06D GUI threshold failures: " + ", ".join(failed))
+    print(f"DTC-P06D GUI evidence verified: {path}")
+    raise SystemExit(0)
 if evidence.get("contract") == "datum_terminal_p06_soak_v1":
     tiers = {
         "ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000),
