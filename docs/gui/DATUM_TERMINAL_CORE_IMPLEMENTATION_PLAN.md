@@ -957,6 +957,34 @@ authority, source health over 1,420 source files, project-state validation, and
 diff hygiene pass. No third-party dependency, Unicode data, PTY behavior,
 renderer integration, capability identity, or production cutover changed.
 
+#### DTC-P08 streaming-parser evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P08-CLOSED -->
+Revision `80ca882` adds the Datum-owned `StreamingParser` and a closed typed
+action vocabulary for printable scalars, C0/C1 controls, ESC, CSI, OSC, DCS,
+APC, PM, and SOS families. UTF-8 state, parameters, subparameters,
+intermediates, control strings, cancellation, incomplete input, malformed
+recovery, and oversize discard remain incremental across arbitrary PTY chunk
+boundaries. The parser emits directly into a caller-owned sink and returns a
+resumable consumed prefix under the owner-supplied parser-work limit; it owns no
+unbounded action queue and defines no numerical policy default.
+
+Fifteen core tests prove whole-stream, bytewise, irregular, and seeded
+arbitrary-chunk equivalence; RFC-3629 rejection and replacement; C0/C1 and all
+required control-string families; CSI private markers and subparameters;
+CAN/SUB cancellation; malformed CSI phase recovery; exact limit discard;
+incomplete-stream reset; and parser-work resumption. The boundary guard now
+requires this parser/action/proof surface, rejects lossy UTF-8 and retained
+action queues, and passes seven hermetic mutations.
+
+At the isolated clean revision, the full workspace all-target test suite,
+strict workspace all-target Clippy, locked/offline workspace all-target check,
+dependency authority, TerminalCore boundary and mutations, source health over
+1,423 files, project-state validation/render parity, formatting, and diff
+hygiene pass. No dependency, PTY/GUI/process authority, screen mutation,
+Unicode property data, TERM identity, renderer integration, or production
+cutover changed. DTC-P09 remains the sole screen-model and reducer boundary.
+
 ### Text, history, and interaction semantics
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** Pinned generated property tables,
