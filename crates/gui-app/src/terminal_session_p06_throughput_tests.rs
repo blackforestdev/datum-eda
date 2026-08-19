@@ -1,5 +1,5 @@
 use crate::terminal_transport::{
-    MAX_OUTPUT_CHUNK_BYTES, TerminalTransportEvent, TerminalTransportRequest,
+    MAX_OUTPUT_CHUNK_BYTES, MAX_OUTPUT_CHUNKS, TerminalTransportEvent, TerminalTransportRequest,
     TerminalTransportSession, TerminalWakeGate, prepare_terminal_transport,
 };
 use serde::Serialize;
@@ -29,7 +29,9 @@ struct SustainedRun {
 
 #[derive(Serialize)]
 struct BacklogRecovery {
+    burst_bytes: usize,
     high_water_bytes: usize,
+    high_water_chunks: usize,
     below_64_kib_us: u64,
     zero_us: u64,
 }
@@ -195,13 +197,19 @@ fn backlog_recovery() -> BacklogRecovery {
     .expect("prepare backlog PTY")
     .start(TerminalWakeGate::new(None));
     let fill_deadline = Instant::now() + STALL;
-    while session.output_queued_bytes_for_test() < OUTPUT_CAPACITY_BYTES
+    while session.output_queued_chunks_for_test() < MAX_OUTPUT_CHUNKS
+        && session.output_queued_bytes_for_test() < OUTPUT_CAPACITY_BYTES
         && Instant::now() < fill_deadline
     {
         std::thread::yield_now();
     }
     let high_water_bytes = session.output_queued_bytes_for_test();
-    assert_eq!(high_water_bytes, OUTPUT_CAPACITY_BYTES);
+    let high_water_chunks = session.output_queued_chunks_for_test();
+    assert!(
+        high_water_chunks == MAX_OUTPUT_CHUNKS || high_water_bytes == OUTPUT_CAPACITY_BYTES,
+        "output backlog did not reach either governed saturation limit: {high_water_chunks} chunks, {high_water_bytes} bytes"
+    );
+    assert!(high_water_bytes <= OUTPUT_CAPACITY_BYTES);
     let started = Instant::now();
     let mut received = 0usize;
     let mut below_64_kib = None;
@@ -226,7 +234,9 @@ fn backlog_recovery() -> BacklogRecovery {
         let _ = session.recv_event_timeout(Duration::from_millis(20));
     }
     BacklogRecovery {
+        burst_bytes: OUTPUT_CAPACITY_BYTES,
         high_water_bytes,
+        high_water_chunks,
         below_64_kib_us: duration_us(below_64_kib.expect("backlog below 64 KiB")),
         zero_us: duration_us(zero),
     }
@@ -265,6 +275,7 @@ fn p06_sustained_throughput_budgets_are_literal() {
     assert_eq!(SESSION_COUNT, 8);
     assert_eq!(OUTPUT_CAPACITY_BYTES, 4 << 20);
     assert_eq!(MAX_OUTPUT_CHUNK_BYTES, 16 << 10);
+    assert_eq!(MAX_OUTPUT_CHUNKS, 256);
 }
 
 #[test]

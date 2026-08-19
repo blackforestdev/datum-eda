@@ -23,7 +23,7 @@ use anyhow::{Context, Result};
 pub(super) use event::{TerminalInputError, TerminalTransportEvent};
 use launch_error::{TerminalLaunchError, TerminalLaunchStage};
 #[cfg(test)]
-pub(super) use limits::MAX_OUTPUT_CHUNK_BYTES;
+pub(super) use limits::{MAX_OUTPUT_CHUNK_BYTES, MAX_OUTPUT_CHUNKS};
 pub(super) use limits::{
     GLOBAL_SHUTDOWN_MS, GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT, MAX_LIVE_SESSIONS,
 };

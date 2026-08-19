@@ -109,6 +109,15 @@ impl OutputBacklog {
             .queued_bytes
     }
 
+    #[cfg(test)]
+    pub(super) fn queued_chunks(&self) -> usize {
+        self.state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .chunks
+            .len()
+    }
+
     pub(super) fn close(&self) {
         self.state
             .lock()

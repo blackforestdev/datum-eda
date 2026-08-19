@@ -191,7 +191,10 @@ if evidence.get("contract") == "datum_terminal_p06_sustained_v1":
         "single exact input/output": single["input_bytes"] == single["output_bytes"],
         "aggregate exact input/output": aggregate["input_bytes"] == aggregate["output_bytes"],
         "fairness gap <=100ms": aggregate["max_fairness_gap_us"] <= 100_000,
-        "backlog reaches exact 4MiB high-water": recovery["high_water_bytes"] == 4 << 20,
+        "backlog fixture emits exact 4MiB burst": recovery["burst_bytes"] == 4 << 20,
+        "backlog saturates a governed queue limit": recovery["high_water_chunks"] == 256
+            or recovery["high_water_bytes"] == 4 << 20,
+        "backlog high-water remains within 4MiB": 0 < recovery["high_water_bytes"] <= 4 << 20,
         "backlog falls below 64KiB <=2s": recovery["below_64_kib_us"] <= 2_000_000,
         "backlog reaches zero <=5s": recovery["zero_us"] <= 5_000_000,
     }

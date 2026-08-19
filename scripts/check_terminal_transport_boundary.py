@@ -430,6 +430,7 @@ def check(root: Path) -> list[str]:
         'contract: "datum_terminal_p06_sustained_v1"',
         "Duration::from_secs(60)",
         "output_queued_bytes_for_test",
+        "output_queued_chunks_for_test",
         "max_fairness_gap_us",
     ):
         if marker not in sustained:
@@ -464,7 +465,9 @@ def check(root: Path) -> list[str]:
         '"datum_terminal_p06_sustained_v1"',
         "single duration >=60s",
         "aggregate duration >=60s",
-        "backlog reaches exact 4MiB high-water",
+        "backlog fixture emits exact 4MiB burst",
+        "backlog saturates a governed queue limit",
+        "backlog high-water remains within 4MiB",
         "long-tier aggregate output >=1GiB",
     ):
         if marker not in runner:

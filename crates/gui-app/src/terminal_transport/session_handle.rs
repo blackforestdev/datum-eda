@@ -287,6 +287,11 @@ impl TerminalTransportSession {
     pub(crate) fn output_queued_bytes_for_test(&self) -> usize {
         self.output.queued_bytes()
     }
+
+    #[cfg(test)]
+    pub(crate) fn output_queued_chunks_for_test(&self) -> usize {
+        self.output.queued_chunks()
+    }
 }
 
 #[cfg(test)]

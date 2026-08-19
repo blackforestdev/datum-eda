@@ -175,7 +175,8 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "fn p06_sustained_throughput_budgets_are_literal(){Duration::from_secs(60);}\n"
             "fn p06_sustained_throughput_and_backlog_emit_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_sustained_v1\",\n"
-            "max_fairness_gap_us: 0 }; output_queued_bytes_for_test();}",
+            "max_fairness_gap_us: 0 }; output_queued_bytes_for_test();\n"
+            "output_queued_chunks_for_test();}",
             encoding="utf-8",
         )
         scripts = root / "scripts"
@@ -201,7 +202,9 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "exactly 1000 completed lifecycle cycles\n"
             '"datum_terminal_p06_sustained_v1"\n'
             "single duration >=60s aggregate duration >=60s\n"
-            "backlog reaches exact 4MiB high-water\n"
+            "backlog fixture emits exact 4MiB burst\n"
+            "backlog saturates a governed queue limit\n"
+            "backlog high-water remains within 4MiB\n"
             "long-tier aggregate output >=1GiB\n",
             encoding="utf-8",
         )
