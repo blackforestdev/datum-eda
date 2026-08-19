@@ -11,9 +11,9 @@ fi
 
 tier="${1:-smoke}"
 case "$tier" in
-  smoke|gui|lifecycle-1000|ci|single-24h|max-4h) ;;
+  backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h) ;;
   *)
-    echo "usage: $0 {smoke|gui|lifecycle-1000|ci|single-24h|max-4h}" >&2
+    echo "usage: $0 {backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h}" >&2
     exit 2
     ;;
 esac
@@ -47,12 +47,78 @@ evidence_path="$evidence_dir/${revision}-${tier}-${backend}-run${run_ordinal}.js
 mkdir -p "$evidence_dir"
 
 echo "DTC-P06D tier=$tier backend=$backend revision=$revision seed=$seed run=$run_ordinal"
+if [[ "$tier" == backend-canary ]]; then
+  screenshot_path="${evidence_path%.json}.png"
+  log_path="${evidence_path%.json}.log"
+  gui_args=(
+    cargo run -p datum-gui-app --release --locked --offline --features visual --bin datum-gui --
+    --project-root crates/engine/testdata/golden/text/native/text-fidelity-repro
+    --window-size 1280x768 --visual-scale-factor 1
+    --visual-test --window-visual-test --screenshot-out "$screenshot_path"
+    --exit-after-screenshot --interaction-smoke --resize-torture-smoke
+  )
+  if [[ "$backend" == wayland-primary ]]; then
+    if [[ -z "${WAYLAND_DISPLAY:-}" ]]; then
+      echo "Wayland primary canary requires WAYLAND_DISPLAY" >&2
+      exit 1
+    fi
+    env -u DISPLAY WINIT_UNIX_BACKEND=wayland XDG_SESSION_TYPE=wayland \
+      DATUM_GUI_LOG="$log_path" "${gui_args[@]}"
+  elif [[ "$backend" == x11-fallback ]]; then
+    if [[ -z "${DISPLAY:-}" ]]; then
+      python3 - "$evidence_path" "$revision" <<'PY'
+import json, pathlib, sys
+pathlib.Path(sys.argv[1]).write_text(json.dumps({
+    "contract": "datum_terminal_p06_backend_canary_v1",
+    "revision": sys.argv[2],
+    "backend": "x11-fallback",
+    "status": "unavailable",
+    "reason": "DISPLAY is not available",
+}, indent=2) + "\n", encoding="utf-8")
+PY
+      echo "DTC-P06D X11 fallback explicitly unavailable: $evidence_path"
+      exit 0
+    fi
+    env -u WAYLAND_DISPLAY WINIT_UNIX_BACKEND=x11 XDG_SESSION_TYPE=x11 \
+      DATUM_GUI_LOG="$log_path" "${gui_args[@]}"
+  else
+    echo "backend canary requires XDG_SESSION_TYPE=wayland or x11" >&2
+    exit 1
+  fi
+  test -s "$screenshot_path"
+  grep -q "window created" "$log_path"
+  grep -q "renderer init end" "$log_path"
+  grep -q "window visible" "$log_path"
+  python3 - "$evidence_path" "$revision" "$backend" "$screenshot_path" "$log_path" <<'PY'
+import hashlib, json, pathlib, sys
+evidence, revision, backend, screenshot_name, log_name = sys.argv[1:]
+screenshot = pathlib.Path(screenshot_name)
+payload = {
+    "contract": "datum_terminal_p06_backend_canary_v1",
+    "revision": revision,
+    "backend": backend,
+    "status": "passed",
+    "screenshot": str(screenshot),
+    "screenshot_bytes": screenshot.stat().st_size,
+    "screenshot_sha256": hashlib.sha256(screenshot.read_bytes()).hexdigest(),
+    "log": log_name,
+    "window_created": True,
+    "renderer_initialized": True,
+    "window_visible": True,
+}
+pathlib.Path(evidence).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+PY
+  echo "DTC-P06D compositor evidence verified: $evidence_path"
+  exit 0
+fi
 if [[ "$tier" == smoke ]]; then
   test_name="terminal_session::terminal_session_p06_measurement_tests::p06_release_measurement_emits_reproducible_json"
 elif [[ "$tier" == gui ]]; then
   test_name="terminal_session::terminal_session_p06_gui_measurement_tests::p06_provisional_gui_path_emits_reproducible_json"
 elif [[ "$tier" == lifecycle-1000 ]]; then
   test_name="terminal_session::terminal_session_p06_lifecycle_measurement_tests::p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json"
+elif [[ "$tier" == throughput-60s ]]; then
+  test_name="terminal_session::terminal_session_p06_throughput_tests::p06_sustained_throughput_and_backlog_emit_reproducible_json"
 else
   test_name="terminal_session::terminal_session_p06_soak_tests::p06_scheduled_soak_emits_reproducible_json"
 fi
@@ -113,6 +179,27 @@ if evidence.get("contract") == "datum_terminal_p06_lifecycle_v1":
         raise SystemExit("DTC-P06D lifecycle threshold failures: " + ", ".join(failed))
     print(f"DTC-P06D lifecycle evidence verified: {path}")
     raise SystemExit(0)
+if evidence.get("contract") == "datum_terminal_p06_sustained_v1":
+    single = evidence["single_session"]
+    aggregate = evidence["eight_session_aggregate"]
+    recovery = evidence["backlog_recovery"]
+    checks = {
+        "single duration >=60s": single["duration_us"] >= 60_000_000,
+        "aggregate duration >=60s": aggregate["duration_us"] >= 60_000_000,
+        "single throughput >=20MiB/s": single["mib_per_second"] >= 20.0,
+        "aggregate throughput >=40MiB/s": aggregate["mib_per_second"] >= 40.0,
+        "single exact input/output": single["input_bytes"] == single["output_bytes"],
+        "aggregate exact input/output": aggregate["input_bytes"] == aggregate["output_bytes"],
+        "fairness gap <=100ms": aggregate["max_fairness_gap_us"] <= 100_000,
+        "backlog reaches exact 4MiB high-water": recovery["high_water_bytes"] == 4 << 20,
+        "backlog falls below 64KiB <=2s": recovery["below_64_kib_us"] <= 2_000_000,
+        "backlog reaches zero <=5s": recovery["zero_us"] <= 5_000_000,
+    }
+    failed = [name for name, passed in checks.items() if not passed]
+    if failed:
+        raise SystemExit("DTC-P06D sustained threshold failures: " + ", ".join(failed))
+    print(f"DTC-P06D sustained evidence verified: {path}")
+    raise SystemExit(0)
 if evidence.get("contract") == "datum_terminal_p06_soak_v1":
     tiers = {
         "ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000),
@@ -133,9 +220,18 @@ if evidence.get("contract") == "datum_terminal_p06_soak_v1":
     checks = {
         "exact session cardinality": evidence["sessions"] == sessions,
         "minimum governed duration": evidence["elapsed_seconds"] >= duration,
-        "per-session byte floor": len(evidence["bytes_per_session"]) == sessions
-            and all(value >= byte_floor for value in evidence["bytes_per_session"]),
+        "per-session output byte floor": len(evidence["output_bytes_per_session"]) == sessions
+            and all(value >= byte_floor for value in evidence["output_bytes_per_session"]),
+        "per-session input byte floor": len(evidence["input_bytes_per_session"]) == sessions
+            and all(value >= (1 << 20 if evidence["tier"] == "ci-10-minute" else 8 << 20)
+                    for value in evidence["input_bytes_per_session"]),
+        "input/output byte identity": evidence["input_bytes_per_session"]
+            == evidence["output_bytes_per_session"],
         "exact resize count": evidence["resize_requests"] == resize_count,
+        "all scheduled workload roles exercised": {role["name"] for role in evidence["roles"]}
+            == {"agent-burst", "status-update", "full-screen", "resize", "lifecycle",
+                "saturation", "interactive", "idle"}
+            and all(role["cycles"] > 0 for role in evidence["roles"]),
         "zero original-SID survivors": not evidence["survivors"],
         "noisy p95 <=50ms": latency["p95_us"] <= 50_000,
         "noisy p99 <=100ms": latency["p99_us"] <= 100_000,
@@ -149,6 +245,12 @@ if evidence.get("contract") == "datum_terminal_p06_soak_v1":
         "closed FDs return to baseline+2": evidence["final_file_descriptors"] <= baseline["file_descriptors"] + 2,
         "closed workers return to baseline+2": evidence["final_threads"] <= baseline["threads"] + 2,
     }
+    if evidence["tier"] != "ci-10-minute":
+        checks["long-tier aggregate input >=1GiB"] = evidence["aggregate_input_bytes"] >= 1 << 30
+        checks["long-tier aggregate output >=1GiB"] = evidence["aggregate_output_bytes"] >= 1 << 30
+    if evidence["tier"] == "maximum-16-session-4-hour":
+        checks["maximum tier rotates verified restarts"] = evidence["restart_count"] > 0
+        checks["at least 500 resizes per session"] = evidence["resize_requests"] >= sessions * 500
     if evidence["tier"] == "single-24-hour":
         runtime = resources[:-1]
         hours = max((runtime[-1]["elapsed_seconds"] - runtime[0]["elapsed_seconds"]) / 3600.0, 1.0)

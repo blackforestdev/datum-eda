@@ -126,6 +126,9 @@ fn run_lifecycle_resource_proof() {
 
 #[test]
 fn p06_resource_helper() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     if std::env::var_os(HELPER_ENV).is_some() {
         run_lifecycle_resource_proof();
         return;

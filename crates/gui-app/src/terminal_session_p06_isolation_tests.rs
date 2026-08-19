@@ -49,6 +49,9 @@ fn drain_until(
 
 #[test]
 fn eight_real_sessions_isolate_io_resize_exit_termination_and_restart() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = unique_test_root();
     fs::create_dir_all(&root).expect("create P06 isolation root");
     let context = TerminalLaunchContext::for_project_root(&root);

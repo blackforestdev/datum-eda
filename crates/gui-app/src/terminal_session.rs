@@ -21,6 +21,9 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, mpsc::Receiver};
 use winit::event_loop::EventLoopProxy;
 
+#[cfg(test)]
+static P06_REAL_PTY_TEST_LOCK: Mutex<()> = Mutex::new(());
+
 pub(super) use crate::terminal_transport::TerminalTransportEvent as TerminalEvent;
 
 pub(super) struct TerminalSession {
@@ -679,6 +682,9 @@ mod terminal_session_p06_soak_tests;
 #[cfg(test)]
 #[path = "terminal_session_p06_stress_tests.rs"]
 mod terminal_session_p06_stress_tests;
+#[cfg(test)]
+#[path = "terminal_session_p06_throughput_tests.rs"]
+mod terminal_session_p06_throughput_tests;
 #[cfg(test)]
 #[path = "terminal_session_tests.rs"]
 mod terminal_session_tests;

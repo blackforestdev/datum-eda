@@ -10,9 +10,64 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-const BLOCK_BYTES: usize = 16 * 1024;
 const GLOBAL_CLOSE: Duration = Duration::from_secs(7);
 const IO_STALL: Duration = Duration::from_secs(30);
+const LONG_AGGREGATE_BYTES: u64 = 1024 * 1024 * 1024;
+
+#[derive(Clone, Copy)]
+enum WorkloadRole {
+    AgentBurst,
+    StatusUpdate,
+    FullScreen,
+    Resize,
+    Lifecycle,
+    Saturation,
+    Interactive,
+    Idle,
+}
+
+impl WorkloadRole {
+    const ALL: [Self; 8] = [
+        Self::AgentBurst,
+        Self::StatusUpdate,
+        Self::FullScreen,
+        Self::Resize,
+        Self::Lifecycle,
+        Self::Saturation,
+        Self::Interactive,
+        Self::Idle,
+    ];
+
+    fn index(self) -> usize {
+        self as usize
+    }
+
+    fn name(self) -> &'static str {
+        match self {
+            Self::AgentBurst => "agent-burst",
+            Self::StatusUpdate => "status-update",
+            Self::FullScreen => "full-screen",
+            Self::Resize => "resize",
+            Self::Lifecycle => "lifecycle",
+            Self::Saturation => "saturation",
+            Self::Interactive => "interactive",
+            Self::Idle => "idle",
+        }
+    }
+
+    fn bytes(self, cycle: u64) -> usize {
+        match self {
+            Self::AgentBurst => 64 * 1024,
+            Self::StatusUpdate => 1024,
+            Self::FullScreen => 32 * 1024,
+            Self::Resize | Self::Lifecycle => 16 * 1024,
+            Self::Saturation if cycle % 600 == 5 => 4 * 1024 * 1024,
+            Self::Saturation => 16 * 1024,
+            Self::Interactive => 4 * 1024,
+            Self::Idle => 0,
+        }
+    }
+}
 
 #[derive(Clone, Copy)]
 struct SoakTier {
@@ -71,6 +126,21 @@ struct ResourcePoint {
 }
 
 #[derive(Serialize)]
+struct HostEvidence {
+    kernel: String,
+    libc: String,
+    cpu: String,
+    memory_kib: u64,
+    architecture: &'static str,
+}
+
+#[derive(Serialize)]
+struct RoleEvidence {
+    name: &'static str,
+    cycles: u64,
+}
+
+#[derive(Serialize)]
 struct Percentiles {
     count: usize,
     min_us: u64,
@@ -89,11 +159,18 @@ struct SoakEvidence {
     run_ordinal: u8,
     tier: &'static str,
     display_backend: String,
+    host: HostEvidence,
     started_unix_ms: u128,
     elapsed_seconds: u64,
     sessions: usize,
     bytes_per_session: Vec<u64>,
+    input_bytes_per_session: Vec<u64>,
+    output_bytes_per_session: Vec<u64>,
+    aggregate_input_bytes: u64,
+    aggregate_output_bytes: u64,
     checksums: Vec<u64>,
+    roles: Vec<RoleEvidence>,
+    restart_count: u64,
     roundtrip_latency: Percentiles,
     resize_latency: Percentiles,
     resize_requests: usize,
@@ -125,9 +202,9 @@ fn spawn_echo() -> TerminalTransportSession {
     panic!("soak PTY setup timed out");
 }
 
-fn payload(seed: u64, session: usize, cycle: u64) -> Vec<u8> {
+fn payload(seed: u64, session: usize, cycle: u64, bytes: usize) -> Vec<u8> {
     let mut state = seed ^ (session as u64).wrapping_mul(0x9e37_79b9) ^ cycle.rotate_left(17);
-    (0..BLOCK_BYTES)
+    (0..bytes)
         .map(|_| {
             state ^= state << 13;
             state ^= state >> 7;
@@ -153,7 +230,7 @@ fn drain_cycle(
     sessions: &[TerminalTransportSession],
     expected: &[Vec<u8>],
     started: &[Instant],
-) -> Vec<u64> {
+) -> Vec<Option<u64>> {
     let deadline = Instant::now() + IO_STALL;
     let mut received = (0..sessions.len()).map(|_| Vec::new()).collect::<Vec<_>>();
     let mut first = vec![None; sessions.len()];
@@ -188,9 +265,29 @@ fn drain_cycle(
         .enumerate()
         .map(|(index, (actual, wanted))| {
             assert_eq!(actual, wanted, "soak session {index} byte stream");
-            duration_us(first[index].expect("first soak output") - started[index])
+            first[index].map(|first| duration_us(first - started[index]))
         })
         .collect()
+}
+
+fn restart_echo(session: &mut TerminalTransportSession) {
+    let deadline = Instant::now() + GLOBAL_CLOSE;
+    session
+        .terminate_by(deadline)
+        .expect("begin scheduled soak restart");
+    while Instant::now() < deadline && !session.presentation_complete() {
+        while let Ok(event) = session.try_recv_event() {
+            if let TerminalTransportEvent::Error(error) = event {
+                panic!("scheduled soak restart error: {error:?}");
+            }
+        }
+        std::thread::yield_now();
+    }
+    assert!(
+        session.presentation_complete(),
+        "scheduled restart timed out"
+    );
+    *session = spawn_echo();
 }
 
 fn close_all(sessions: &[TerminalTransportSession]) -> Vec<String> {
@@ -299,6 +396,33 @@ fn command_output(program: &str, args: &[&str]) -> String {
         .unwrap_or_else(|| "unavailable".to_string())
 }
 
+fn host_evidence() -> HostEvidence {
+    let cpu = fs::read_to_string("/proc/cpuinfo")
+        .ok()
+        .and_then(|text| {
+            text.lines()
+                .find_map(|line| line.strip_prefix("model name\t: "))
+                .map(str::to_string)
+        })
+        .unwrap_or_else(|| "unavailable".to_string());
+    let memory_kib = fs::read_to_string("/proc/meminfo")
+        .ok()
+        .and_then(|text| {
+            text.lines()
+                .find_map(|line| line.strip_prefix("MemTotal:"))
+                .and_then(|value| value.split_whitespace().next())
+                .and_then(|value| value.parse().ok())
+        })
+        .unwrap_or(0);
+    HostEvidence {
+        kernel: command_output("uname", &["-srvmo"]),
+        libc: command_output("getconf", &["GNU_LIBC_VERSION"]),
+        cpu,
+        memory_kib,
+        architecture: std::env::consts::ARCH,
+    }
+}
+
 fn evidence_path(tier: &str) -> PathBuf {
     std::env::var_os("DATUM_P06_EVIDENCE")
         .map(PathBuf::from)
@@ -324,6 +448,9 @@ fn p06_soak_tier_budgets_are_literal() {
         (maximum.minimum_bytes_per_session, maximum.resize_requests),
         (128 << 20, 10_000)
     );
+    assert_eq!(LONG_AGGREGATE_BYTES, 1 << 30);
+    assert_eq!(WorkloadRole::Saturation.bytes(5), 4 << 20);
+    assert_eq!(WorkloadRole::Idle.bytes(0), 0);
 }
 
 #[test]
@@ -348,7 +475,7 @@ fn p06_scheduled_soak_emits_reproducible_json() {
         .as_millis();
     let baseline = resource(Duration::ZERO);
     let started = Instant::now();
-    let sessions = (0..tier.sessions).map(|_| spawn_echo()).collect::<Vec<_>>();
+    let mut sessions = (0..tier.sessions).map(|_| spawn_echo()).collect::<Vec<_>>();
     let mut bytes_per_session = vec![0u64; tier.sessions];
     let mut checksums = vec![0xcbf29ce484222325; tier.sessions];
     let mut latency_us = Vec::new();
@@ -357,6 +484,8 @@ fn p06_scheduled_soak_emits_reproducible_json() {
     let mut resources = vec![resource(Duration::ZERO)];
     let mut next_resource = tier.resource_interval;
     let mut cycle = 0u64;
+    let mut role_cycles = [0u64; 8];
+    let mut restart_count = 0u64;
     let mut next_cycle = Instant::now();
 
     while started.elapsed() < tier.duration
@@ -364,8 +493,17 @@ fn p06_scheduled_soak_emits_reproducible_json() {
             .iter()
             .any(|bytes| *bytes < tier.minimum_bytes_per_session)
     {
+        if tier.sessions > 1 && cycle > 0 && cycle.is_multiple_of(900) {
+            let index = (cycle as usize / 900) % sessions.len();
+            restart_echo(&mut sessions[index]);
+            restart_count += 1;
+        }
         let expected = (0..tier.sessions)
-            .map(|index| payload(seed, index, cycle))
+            .map(|index| {
+                let role = WorkloadRole::ALL[(cycle as usize + index) % WorkloadRole::ALL.len()];
+                role_cycles[role.index()] += 1;
+                payload(seed, index, cycle, role.bytes(cycle))
+            })
             .collect::<Vec<_>>();
         let admitted = (0..tier.sessions)
             .map(|_| Instant::now())
@@ -373,7 +511,11 @@ fn p06_scheduled_soak_emits_reproducible_json() {
         for (session, bytes) in sessions.iter().zip(&expected) {
             enqueue_exact(session, bytes);
         }
-        latency_us.extend(drain_cycle(&sessions, &expected, &admitted));
+        latency_us.extend(
+            drain_cycle(&sessions, &expected, &admitted)
+                .into_iter()
+                .flatten(),
+        );
         for (index, bytes) in expected.iter().enumerate() {
             bytes_per_session[index] += bytes.len() as u64;
             checksums[index] = fnv_extend(checksums[index], bytes);
@@ -417,6 +559,7 @@ fn p06_scheduled_soak_emits_reproducible_json() {
         std::thread::yield_now();
     }
     resources.push(resource(started.elapsed()));
+    let aggregate_bytes: u64 = bytes_per_session.iter().sum();
     let evidence = SoakEvidence {
         contract: "datum_terminal_p06_soak_v1",
         revision: command_output("git", &["rev-parse", "HEAD"]),
@@ -424,11 +567,24 @@ fn p06_scheduled_soak_emits_reproducible_json() {
         run_ordinal,
         tier: tier.name,
         display_backend: std::env::var("XDG_SESSION_TYPE").unwrap_or_else(|_| "unknown".into()),
+        host: host_evidence(),
         started_unix_ms,
         elapsed_seconds: started.elapsed().as_secs(),
         sessions: tier.sessions,
+        input_bytes_per_session: bytes_per_session.clone(),
+        output_bytes_per_session: bytes_per_session.clone(),
         bytes_per_session,
+        aggregate_input_bytes: aggregate_bytes,
+        aggregate_output_bytes: aggregate_bytes,
         checksums,
+        roles: WorkloadRole::ALL
+            .into_iter()
+            .map(|role| RoleEvidence {
+                name: role.name(),
+                cycles: role_cycles[role.index()],
+            })
+            .collect(),
+        restart_count,
         roundtrip_latency: percentiles(latency_us),
         resize_latency: percentiles(resize_us),
         resize_requests: resize_index,

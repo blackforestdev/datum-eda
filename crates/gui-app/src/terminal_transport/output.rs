@@ -101,6 +101,14 @@ impl OutputBacklog {
             .is_empty()
     }
 
+    #[cfg(test)]
+    pub(super) fn queued_bytes(&self) -> usize {
+        self.state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .queued_bytes
+    }
+
     pub(super) fn close(&self) {
         self.state
             .lock()

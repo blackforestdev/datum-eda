@@ -410,12 +410,30 @@ def check(root: Path) -> list[str]:
         "Duration::from_secs(4 * 60 * 60)",
         "minimum_bytes_per_session: 128 * 1024 * 1024",
         "resize_requests: 10_000",
+        "input_bytes_per_session",
+        "output_bytes_per_session",
+        "aggregate_input_bytes",
+        "aggregate_output_bytes",
+        "WorkloadRole::Saturation",
+        "restart_echo",
         "presentation_complete",
         'proc_count("/proc/self/fd")',
         'proc_count("/proc/self/task")',
     ):
         if marker not in soak:
             failures.append(f"DTC-P06D scheduled soak proof missing: {marker}")
+    sustained_path = root / APP_SRC / "terminal_session_p06_throughput_tests.rs"
+    sustained = sustained_path.read_text(encoding="utf-8") if sustained_path.is_file() else ""
+    for marker in (
+        "p06_sustained_throughput_budgets_are_literal",
+        "p06_sustained_throughput_and_backlog_emit_reproducible_json",
+        'contract: "datum_terminal_p06_sustained_v1"',
+        "Duration::from_secs(60)",
+        "output_queued_bytes_for_test",
+        "max_fairness_gap_us",
+    ):
+        if marker not in sustained:
+            failures.append(f"DTC-P06D sustained throughput proof missing: {marker}")
     runner_path = root / "scripts/run_terminal_transport_proof_gates.sh"
     runner = runner_path.read_text(encoding="utf-8") if runner_path.is_file() else ""
     for marker in (
@@ -425,7 +443,13 @@ def check(root: Path) -> list[str]:
         "x11-fallback",
         "single throughput >=20MiB/s",
         "aggregate throughput >=40MiB/s",
-        "smoke|gui|lifecycle-1000|ci|single-24h|max-4h",
+        "backend-canary|smoke|gui|throughput-60s|lifecycle-1000|ci|single-24h|max-4h",
+        "WINIT_UNIX_BACKEND=wayland",
+        "WINIT_UNIX_BACKEND=x11",
+        '"datum_terminal_p06_backend_canary_v1"',
+        'grep -q "window created"',
+        'grep -q "renderer init end"',
+        'grep -q "window visible"',
         "DATUM_P06_RUN_ORDINAL",
         "p06_scheduled_soak_emits_reproducible_json",
         '"datum_terminal_p06_soak_v1"',
@@ -437,6 +461,11 @@ def check(root: Path) -> list[str]:
         "aggregate provisional GUI throughput >=4MiB/s",
         '"datum_terminal_p06_lifecycle_v1"',
         "exactly 1000 completed lifecycle cycles",
+        '"datum_terminal_p06_sustained_v1"',
+        "single duration >=60s",
+        "aggregate duration >=60s",
+        "backlog reaches exact 4MiB high-water",
+        "long-tier aggregate output >=1GiB",
     ):
         if marker not in runner:
             failures.append(f"DTC-P06D release proof runner missing: {marker}")

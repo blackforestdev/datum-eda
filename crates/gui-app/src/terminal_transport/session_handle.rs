@@ -283,6 +283,10 @@ impl TerminalTransportSession {
     pub(crate) fn finish_synthetic_reader(&self) {
         self.control.reader_finished();
     }
+
+    pub(crate) fn output_queued_bytes_for_test(&self) -> usize {
+        self.output.queued_bytes()
+    }
 }
 
 #[cfg(test)]
