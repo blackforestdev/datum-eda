@@ -2005,10 +2005,23 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-20260819-dtc-p07",
+        "claimed_at": "2026-08-19T10:08:52-07:00",
+        "heartbeat_at": "2026-08-19T10:08:52-07:00",
+        "expires_at": "2026-08-19T18:08:52-07:00",
+        "scope": [
+          "DTC-P07 TerminalCore crate foundation, closed types, checked limits, tests, and governance evidence"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "89ceef76fd1771e75aa04081b7d848c563336db3"
+      },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2036,7 +2049,7 @@
           {
             "id": "DTC-P07",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Create the std-only first-party core and define closed cells, screen state, limits, replies, events, damage, and snapshot types.",
             "depends_on": [],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P07"}],
