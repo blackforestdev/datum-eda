@@ -583,36 +583,6 @@ mod terminal_workspace_hotkey_tests;
 mod tests {
     use super::*;
     #[test]
-    fn ctrl_shift_t_is_the_nonrepeating_new_session_shortcut() {
-        let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
-        let key = PhysicalKey::Code(KeyCode::KeyT);
-        assert!(terminal_new_session_shortcut(
-            ElementState::Pressed,
-            false,
-            key,
-            modifiers,
-        ));
-        assert!(!terminal_new_session_shortcut(
-            ElementState::Pressed,
-            true,
-            key,
-            modifiers,
-        ));
-        assert!(!terminal_new_session_shortcut(
-            ElementState::Released,
-            false,
-            key,
-            modifiers,
-        ));
-        assert!(!terminal_new_session_shortcut(
-            ElementState::Pressed,
-            false,
-            key,
-            ModifiersState::CONTROL,
-        ));
-    }
-
-    #[test]
     fn shift_navigation_controls_terminal_scrollback() {
         for (key, action) in [
             (NamedKey::PageUp, TerminalKeyAction::ScrollbackPageUp),

@@ -7,7 +7,7 @@
 
 use super::{
     TerminalClipboardShortcut, terminal_character_sequence, terminal_clipboard_shortcut,
-    terminal_space_sequence, terminal_tab_sequence,
+    terminal_new_session_shortcut, terminal_space_sequence, terminal_tab_sequence,
 };
 use crate::keyboard_focus::{KeyClass, RouteDecision, key_route};
 use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
@@ -20,6 +20,36 @@ use winit::{
 /// (`keyboard_focus::handle_keyboard_input`): tools s/b/v/m/x/r, fit f/t,
 /// pane zoom z, crosshair c, review navigation [ / ].
 const WORKSPACE_HOTKEYS: [&str; 12] = ["s", "b", "v", "m", "x", "r", "f", "t", "z", "c", "[", "]"];
+
+#[test]
+fn ctrl_shift_t_is_the_nonrepeating_new_session_shortcut() {
+    let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
+    let key = PhysicalKey::Code(KeyCode::KeyT);
+    assert!(terminal_new_session_shortcut(
+        ElementState::Pressed,
+        false,
+        key,
+        modifiers,
+    ));
+    assert!(!terminal_new_session_shortcut(
+        ElementState::Pressed,
+        true,
+        key,
+        modifiers,
+    ));
+    assert!(!terminal_new_session_shortcut(
+        ElementState::Released,
+        false,
+        key,
+        modifiers,
+    ));
+    assert!(!terminal_new_session_shortcut(
+        ElementState::Pressed,
+        false,
+        key,
+        ModifiersState::CONTROL,
+    ));
+}
 
 #[test]
 fn clipboard_shortcuts_fire_once_on_press_and_preserve_plain_control_bytes() {
