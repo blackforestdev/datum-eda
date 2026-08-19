@@ -930,6 +930,33 @@ remain governed by their subsequent Frontier items.
   tabs, reports/replies, private modes, palette/title/CWD/bell, synchronized
   output, and exact supported-query behavior.
 
+#### DTC-P07 closed-contract evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P07-CLOSED -->
+Revision `ad13358` establishes the new `datum-terminal-core` workspace crate as
+a `std`-only, unsafe-forbidden, renderer-independent semantic boundary. It owns
+closed cell, cluster, complete rendition, color, logical-coordinate, cursor,
+margin, mode, tab, saved-state, reply, event, damage, `ScreenState`,
+`TerminalCore`, and immutable snapshot types. Snapshot construction rejects
+dimension mismatch and orphaned wide-cell continuations.
+
+Every resource family named by decision 030 has a distinct nonzero checked
+limit with deterministic excess and arithmetic-overflow errors. Values are
+application-owner supplied: DTC-P07 defines no numerical default, does not
+preempt a later budget decision, and contains no parser/feed entry point. The
+boundary guard rejects dependencies, GUI/process/design authority, unsafe or
+foreign terminal code, missing resource families, numeric defaults, and early
+DTC-P08 parser ownership; five hermetic mutations prove those checks fail
+closed.
+
+At the clean revision, all workspace tests pass, including six core contract
+tests and the existing 354-test GUI-app suite with its five governed
+measurements ignored. Strict workspace Clippy, locked/offline workspace
+all-target checking, the TerminalCore boundary and mutation suite, dependency
+authority, source health over 1,420 source files, project-state validation, and
+diff hygiene pass. No third-party dependency, Unicode data, PTY behavior,
+renderer integration, capability identity, or production cutover changed.
+
 ### Text, history, and interaction semantics
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** Pinned generated property tables,
