@@ -42,7 +42,7 @@ fn vintr_byte_interrupts_foreground_pipeline_and_shell_survives() {
 
     write_retry(
         &registry,
-        b"printf 'PIPELINE%s\\n' '-START'; sleep 30 | cat\n",
+        b"sleep 30 | python3 -c 'import os,sys,time; next(iter(lambda: os.tcgetpgrp(0) != os.getpgrp() and (time.sleep(.001) or True), False)); print(\"PIPELINE-START\", flush=True); sys.stdin.buffer.read()'\n",
     );
     drain_until(&mut registry, &mut lane, "PIPELINE-START");
     write_retry(&registry, &[0x03]);
