@@ -29,6 +29,7 @@ pub enum LimitKind {
     ParserWork,
     SearchWork,
     ReflowWork,
+    ScreenCells,
     SnapshotCells,
 }
 
@@ -133,6 +134,7 @@ checked_limit!(CompressionRatioLimit, CompressionRatio);
 checked_limit!(ParserWorkLimit, ParserWork);
 checked_limit!(SearchWorkLimit, SearchWork);
 checked_limit!(ReflowWorkLimit, ReflowWork);
+checked_limit!(ScreenCellsLimit, ScreenCells);
 checked_limit!(SnapshotCellsLimit, SnapshotCells);
 
 /// Raw owner-supplied values. DTC-P07 deliberately defines no numeric default.
@@ -162,6 +164,7 @@ pub struct CoreLimitValues {
     pub parser_work: usize,
     pub search_work: usize,
     pub reflow_work: usize,
+    pub screen_cells: usize,
     pub snapshot_cells: usize,
 }
 
@@ -192,6 +195,7 @@ pub struct CoreLimits {
     pub parser_work: ParserWorkLimit,
     pub search_work: SearchWorkLimit,
     pub reflow_work: ReflowWorkLimit,
+    pub screen_cells: ScreenCellsLimit,
     pub snapshot_cells: SnapshotCellsLimit,
 }
 
@@ -224,6 +228,7 @@ impl TryFrom<CoreLimitValues> for CoreLimits {
             parser_work: ParserWorkLimit::new(raw.parser_work)?,
             search_work: SearchWorkLimit::new(raw.search_work)?,
             reflow_work: ReflowWorkLimit::new(raw.reflow_work)?,
+            screen_cells: ScreenCellsLimit::new(raw.screen_cells)?,
             snapshot_cells: SnapshotCellsLimit::new(raw.snapshot_cells)?,
         })
     }

@@ -26,6 +26,7 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         parser_work: value,
         search_work: value,
         reflow_work: value,
+        screen_cells: value,
         snapshot_cells: value,
     }
 }

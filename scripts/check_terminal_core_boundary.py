@@ -17,10 +17,13 @@ REQUIRED_MODULES = {
     "coordinates.rs": ("pub struct TerminalSize", "pub struct LogicalPoint"),
     "damage.rs": ("pub enum Damage", "pub struct DamageSet"),
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
+    "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
     "limits.rs": ("pub enum LimitKind", "pub struct CoreLimits", "pub struct CoreLimitValues"),
     "mode.rs": ("pub struct CursorState", "pub struct Margins", "pub struct ModeState"),
     "parser.rs": ("pub struct StreamingParser", "pub fn feed(", "pub fn finish("),
     "parser_action.rs": ("pub enum Action", "pub struct CsiSequence", "pub enum ParseError"),
+    "reducer.rs": ("pub enum ScreenError", "pub struct Reduction", "pub fn reduce("),
+    "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
 }
@@ -32,7 +35,7 @@ REQUIRED_LIMITS = (
     "NotificationBytes", "ReplyBytes", "PendingEvents", "PendingDamage",
     "HistoryLines", "HistoryBytes", "GraphicObjects", "GraphicPixels",
     "GraphicDecodedBytes", "GraphicFrames", "CompressionRatio", "ParserWork",
-    "SearchWork", "ReflowWork", "SnapshotCells",
+    "SearchWork", "ReflowWork", "ScreenCells", "SnapshotCells",
 )
 
 FORBIDDEN_SOURCE = (
@@ -52,6 +55,18 @@ REQUIRED_PARSER_PROOFS = (
     "end_of_stream_reports_and_resets_incomplete_input",
     "seeded_malformed_streams_replay_identically_under_arbitrary_chunking",
     "malformed_csi_parameter_after_intermediate_discards_until_final",
+)
+
+REQUIRED_REDUCER_PROOFS = (
+    "both_screen_buffers_are_admitted_as_one_checked_resource",
+    "delayed_wrap_scroll_and_hard_soft_line_identity_are_deterministic",
+    "primary_and_alternate_buffers_are_isolated_and_reset_is_total",
+    "wide_clusters_remain_atomic_across_overwrite_insert_delete_and_erase",
+    "selective_erase_preserves_protected_clusters_without_orphans",
+    "margins_confine_line_insertion_deletion_and_scrolling",
+    "cell_edits_outside_horizontal_margins_use_the_full_screen_without_underflow",
+    "save_restore_modes_style_cursor_and_damage_are_closed",
+    "seeded_edit_sequences_never_create_orphan_continuations",
 )
 
 
@@ -107,6 +122,10 @@ def check(root: Path) -> list[str]:
         failures.append("TerminalCore root must expose the owned state authority")
     if "pub use parser::{FeedReport, StreamingParser}" not in lib:
         failures.append("TerminalCore root must expose the DTC-P08 streaming parser")
+    if "pub use reducer::{Reduction, ScreenError}" not in lib:
+        failures.append("TerminalCore root must expose the DTC-P09 reducer result boundary")
+    if "pub use reducer_action::{" not in lib or "ScreenAction" not in lib:
+        failures.append("TerminalCore root must expose the DTC-P09 typed screen actions")
     parser = sources.get("parser.rs", "")
     action = sources.get("parser_action.rs", "")
     if "emit: impl FnMut(Action)" not in parser:
@@ -129,6 +148,26 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_PARSER_PROOFS:
         if marker not in proof_text:
             failures.append(f"DTC-P08 deterministic parser proof is missing: {marker}")
+
+    screen = sources.get("screen.rs", "")
+    reducer = sources.get("reducer.rs", "")
+    grid = sources.get("grid.rs", "")
+    if "primary: GridBuffer" not in screen or "alternate: GridBuffer" not in screen:
+        failures.append("DTC-P09 screen must own distinct primary and alternate buffers")
+    if "impl TerminalCore" not in reducer or "self.apply_action(action)" not in reducer:
+        failures.append("DTC-P09 must mutate screen state through the TerminalCore reducer")
+    if "repair_row(row)" not in reducer or "CellContent::Continuation" not in grid:
+        failures.append("DTC-P09 edits must repair wide-cell continuation invariants")
+    if "VecDeque<ScreenAction>" in joined or "Vec<ScreenAction>" in joined:
+        failures.append("DTC-P09 reducer must not retain an unbounded action queue")
+
+    reducer_tests = crate / "src" / "reducer_tests.rs"
+    reducer_proof_text = (
+        reducer_tests.read_text(encoding="utf-8") if reducer_tests.is_file() else ""
+    )
+    for marker in REQUIRED_REDUCER_PROOFS:
+        if marker not in reducer_proof_text:
+            failures.append(f"DTC-P09 deterministic reducer proof is missing: {marker}")
     return failures
 
 

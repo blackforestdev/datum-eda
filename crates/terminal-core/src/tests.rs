@@ -26,6 +26,7 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         parser_work: value,
         search_work: value,
         reflow_work: value,
+        screen_cells: value,
         snapshot_cells: value,
     }
 }
@@ -71,6 +72,7 @@ fn all_resource_families_reject_zero_and_expose_no_default_policy() {
     assert_zero!(ParserWorkLimit, ParserWork);
     assert_zero!(SearchWorkLimit, SearchWork);
     assert_zero!(ReflowWorkLimit, ReflowWork);
+    assert_zero!(ScreenCellsLimit, ScreenCells);
     assert_zero!(SnapshotCellsLimit, SnapshotCells);
 
     let error = CoreLimits::try_from(raw_limits(0)).expect_err("zero policy is invalid");
@@ -167,7 +169,7 @@ fn clusters_replies_events_and_damage_are_bounded_at_construction() {
 #[test]
 fn terminal_core_starts_with_closed_renderer_independent_state() {
     let size = TerminalSize::new(120, 40, 1_200, 800).unwrap();
-    let core = TerminalCore::new(limits(), size);
+    let core = TerminalCore::new(CoreLimits::try_from(raw_limits(10_000)).unwrap(), size).unwrap();
     assert_eq!(core.size(), size);
     assert_eq!(core.state().active_buffer(), ScreenBuffer::Primary);
     assert_eq!(
@@ -175,7 +177,13 @@ fn terminal_core_starts_with_closed_renderer_independent_state() {
         CellPoint::new(0, 0, size).unwrap()
     );
     assert_eq!(core.state().margins(), Margins::full(size));
-    assert_eq!(core.state().modes(), ModeState::default());
+    assert_eq!(
+        core.state().modes(),
+        ModeState {
+            auto_wrap: true,
+            ..ModeState::default()
+        }
+    );
     assert_eq!(core.state().tab_stops().iter().count(), 0);
     assert!(core.state().saved_cursor().is_none());
 }

@@ -46,9 +46,28 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "parser_tests.rs").write_text(
             "\n".join(guard.REQUIRED_PARSER_PROOFS), encoding="utf-8"
         )
+        (source / "reducer_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_REDUCER_PROOFS), encoding="utf-8"
+        )
+        (source / "screen.rs").write_text(
+            (source / "screen.rs").read_text()
+            + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
+            encoding="utf-8",
+        )
+        (source / "reducer.rs").write_text(
+            (source / "reducer.rs").read_text()
+            + "\nimpl TerminalCore {}\nself.apply_action(action)\nrepair_row(row)\n",
+            encoding="utf-8",
+        )
+        (source / "grid.rs").write_text(
+            (source / "grid.rs").read_text() + "\nCellContent::Continuation\n",
+            encoding="utf-8",
+        )
         (source / "lib.rs").write_text(
             "pub use screen::{ScreenState, TerminalCore};\n"
-            "pub use parser::{FeedReport, StreamingParser};\n",
+            "pub use parser::{FeedReport, StreamingParser};\n"
+            "pub use reducer::{Reduction, ScreenError};\n"
+            "pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};\n",
             encoding="utf-8",
         )
         return temporary, root
@@ -113,6 +132,34 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             "oversized_sequences_emit_one_error_discard_and_recover", "removed"
         ))
         self.assertTrue(any("oversized_sequences" in item for item in guard.check(root)))
+
+    def test_missing_reducer_or_continuation_repair_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        reducer = root / guard.CRATE / "src/reducer.rs"
+        reducer.unlink()
+        self.assertTrue(any("reducer.rs" in item for item in guard.check(root)))
+
+        temporary_two, root_two = self.fixture()
+        self.addCleanup(temporary_two.cleanup)
+        grid = root_two / guard.CRATE / "src/grid.rs"
+        grid.write_text(grid.read_text().replace("fn repair_row", "fn removed"))
+        self.assertTrue(any("repair_row" in item for item in guard.check(root_two)))
+
+    def test_missing_screen_limit_or_reducer_proof_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        limits = root / guard.CRATE / "src/limits.rs"
+        limits.write_text(limits.read_text().replace("ScreenCells", "RemovedCells"))
+        proofs = root / guard.CRATE / "src/reducer_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "primary_and_alternate_buffers_are_isolated_and_reset_is_total", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("ScreenCells" in item for item in failures))
+        self.assertTrue(any("primary_and_alternate" in item for item in failures))
 
 
 if __name__ == "__main__":

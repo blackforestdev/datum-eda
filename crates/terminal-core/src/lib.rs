@@ -12,10 +12,13 @@ mod color;
 mod coordinates;
 mod damage;
 mod event;
+mod grid;
 mod limits;
 mod mode;
 mod parser;
 mod parser_action;
+mod reducer;
+mod reducer_action;
 mod screen;
 mod snapshot;
 
@@ -39,8 +42,8 @@ pub use limits::{
     GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, IntermediateBytesLimit, LimitError,
     LimitKind, NotificationBytesLimit, ParameterCountLimit, ParameterDigitsLimit,
     ParameterValueLimit, ParserWorkLimit, PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit,
-    ReplyBytesLimit, SearchWorkLimit, SnapshotCellsLimit, SubparameterCountLimit, TitleBytesLimit,
-    WorkingDirectoryBytesLimit,
+    ReplyBytesLimit, ScreenCellsLimit, SearchWorkLimit, SnapshotCellsLimit, SubparameterCountLimit,
+    TitleBytesLimit, WorkingDirectoryBytesLimit,
 };
 pub use mode::{
     CursorShape, CursorState, Margins, ModeState, SavedCursorState, ScreenBuffer, TabStops,
@@ -50,6 +53,8 @@ pub use parser_action::{
     Action, ControlCode, ControlString, ControlStringKind, CsiParameter, CsiSequence,
     EscapeSequence, ParseError, ParserStateKind, StringTerminator,
 };
+pub use reducer::{Reduction, ScreenError};
+pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
 
@@ -58,3 +63,6 @@ mod tests;
 
 #[cfg(test)]
 mod parser_tests;
+
+#[cfg(test)]
+mod reducer_tests;
