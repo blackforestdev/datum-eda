@@ -204,7 +204,8 @@ fn measure_gui_path(count: usize, label: &str) -> GuiPathMeasurement {
             .expect("GUI shutdown snapshot");
         assert_eq!(
             snapshot.phase,
-            crate::terminal_transport::ShutdownPhase::Closed
+            crate::terminal_transport::ShutdownPhase::Closed,
+            "GUI measurement teardown did not close: {snapshot:?}"
         );
         assert!(snapshot.leader_reaped);
         assert!(snapshot.surviving_processes.is_empty());

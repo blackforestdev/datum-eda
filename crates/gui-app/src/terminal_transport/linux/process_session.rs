@@ -64,6 +64,15 @@ impl DiscoveryError {
             | Self::GroupLimit { observed } => observed.clone(),
         }
     }
+
+    pub(in crate::terminal_transport) fn is_process_gone(&self) -> bool {
+        matches!(self, Self::Io { error, .. } if is_process_gone_error(error))
+    }
+}
+
+fn is_process_gone_error(error: &io::Error) -> bool {
+    error.kind() == io::ErrorKind::NotFound
+        || matches!(error.raw_os_error(), Some(libc::ENOENT | libc::ESRCH))
 }
 
 pub(in crate::terminal_transport) fn discover_owned_session(
@@ -116,7 +125,7 @@ fn discover_in(
         let path = entry.path().join("stat");
         let contents = match fs::read_to_string(&path) {
             Ok(contents) => contents,
-            Err(error) if matches!(error.kind(), io::ErrorKind::NotFound) => continue,
+            Err(error) if is_process_gone_error(&error) => continue,
             Err(error) => {
                 return Err(DiscoveryError::Io {
                     path: path.display().to_string(),
@@ -191,6 +200,19 @@ mod tests {
         let snapshot = discover_owned_session(sid).unwrap();
         assert!(snapshot.members.iter().any(|member| member.pid == pid));
         assert!(snapshot.groups.iter().all(|(group, _)| *group > 1));
+    }
+
+    #[test]
+    fn vanished_proc_entries_are_normal_discovery_churn() {
+        assert!(is_process_gone_error(&io::Error::from_raw_os_error(
+            libc::ENOENT
+        )));
+        assert!(is_process_gone_error(&io::Error::from_raw_os_error(
+            libc::ESRCH
+        )));
+        assert!(!is_process_gone_error(&io::Error::from_raw_os_error(
+            libc::EACCES
+        )));
     }
 
     #[test]

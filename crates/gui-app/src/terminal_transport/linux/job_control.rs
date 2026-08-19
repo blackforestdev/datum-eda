@@ -14,11 +14,7 @@ pub(in crate::terminal_transport) fn signal_owned_process_group(
         ));
     }
     let current = process_session::read_process_identity(representative.pid).map_err(|error| {
-        if matches!(
-            &error,
-            process_session::DiscoveryError::Io { error, .. }
-                if error.kind() == io::ErrorKind::NotFound
-        ) {
+        if error.is_process_gone() {
             io::Error::from_raw_os_error(libc::ESRCH)
         } else {
             io::Error::other(error.to_string())
