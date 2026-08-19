@@ -14,6 +14,8 @@ mod damage;
 mod event;
 mod limits;
 mod mode;
+mod parser;
+mod parser_action;
 mod screen;
 mod snapshot;
 
@@ -34,16 +36,25 @@ pub use event::{
 pub use limits::{
     ClipboardBytesLimit, ClusterBytesLimit, CompressionRatioLimit, ControlStringBytesLimit,
     CoreLimitValues, CoreLimits, GraphicDecodedBytesLimit, GraphicFramesLimit, GraphicObjectsLimit,
-    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, LimitError, LimitKind,
-    NotificationBytesLimit, ParameterCountLimit, ParameterDigitsLimit, ParameterValueLimit,
-    ParserWorkLimit, PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit, ReplyBytesLimit,
-    SearchWorkLimit, SnapshotCellsLimit, TitleBytesLimit, WorkingDirectoryBytesLimit,
+    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, IntermediateBytesLimit, LimitError,
+    LimitKind, NotificationBytesLimit, ParameterCountLimit, ParameterDigitsLimit,
+    ParameterValueLimit, ParserWorkLimit, PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit,
+    ReplyBytesLimit, SearchWorkLimit, SnapshotCellsLimit, SubparameterCountLimit, TitleBytesLimit,
+    WorkingDirectoryBytesLimit,
 };
 pub use mode::{
     CursorShape, CursorState, Margins, ModeState, SavedCursorState, ScreenBuffer, TabStops,
+};
+pub use parser::{FeedReport, StreamingParser};
+pub use parser_action::{
+    Action, ControlCode, ControlString, ControlStringKind, CsiParameter, CsiSequence,
+    EscapeSequence, ParseError, ParserStateKind, StringTerminator,
 };
 pub use screen::{ScreenState, TerminalCore};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod parser_tests;

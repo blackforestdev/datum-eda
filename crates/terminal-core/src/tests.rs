@@ -5,6 +5,8 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         parameter_count: value,
         parameter_digits: value,
         parameter_value: value,
+        subparameter_count: value,
+        intermediate_bytes: value,
         control_string_bytes: value,
         cluster_bytes: value,
         title_bytes: value,
@@ -48,6 +50,8 @@ fn all_resource_families_reject_zero_and_expose_no_default_policy() {
     assert_zero!(ParameterCountLimit, ParameterCount);
     assert_zero!(ParameterDigitsLimit, ParameterDigits);
     assert_zero!(ParameterValueLimit, ParameterValue);
+    assert_zero!(SubparameterCountLimit, SubparameterCount);
+    assert_zero!(IntermediateBytesLimit, IntermediateBytes);
     assert_zero!(ControlStringBytesLimit, ControlStringBytes);
     assert_zero!(ClusterBytesLimit, ClusterBytes);
     assert_zero!(TitleBytesLimit, TitleBytes);

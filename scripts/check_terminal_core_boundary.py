@@ -19,12 +19,15 @@ REQUIRED_MODULES = {
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
     "limits.rs": ("pub enum LimitKind", "pub struct CoreLimits", "pub struct CoreLimitValues"),
     "mode.rs": ("pub struct CursorState", "pub struct Margins", "pub struct ModeState"),
+    "parser.rs": ("pub struct StreamingParser", "pub fn feed(", "pub fn finish("),
+    "parser_action.rs": ("pub enum Action", "pub struct CsiSequence", "pub enum ParseError"),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
 }
 
 REQUIRED_LIMITS = (
-    "ParameterCount", "ParameterDigits", "ParameterValue", "ControlStringBytes",
+    "ParameterCount", "ParameterDigits", "ParameterValue", "SubparameterCount",
+    "IntermediateBytes", "ControlStringBytes",
     "ClusterBytes", "TitleBytes", "WorkingDirectoryBytes", "ClipboardBytes",
     "NotificationBytes", "ReplyBytes", "PendingEvents", "PendingDamage",
     "HistoryLines", "HistoryBytes", "GraphicObjects", "GraphicPixels",
@@ -37,6 +40,18 @@ FORBIDDEN_SOURCE = (
     "winit", "wgpu", "glyphon", "gui_app", "gui_protocol", "gui_render",
     "DesignModel", "Operation", "commit(", "journal", "libc::", "include!",
     "extern crate", "ghostty", "alacritty", "portable_pty", "vte::",
+    "from_utf8_lossy",
+)
+
+REQUIRED_PARSER_PROOFS = (
+    "utf8_and_ecma48_actions_are_invariant_across_every_byte_boundary",
+    "cancellation_aborts_sequences_and_recovers_at_ground",
+    "malformed_utf8_replacement_and_reprocessing_are_chunk_invariant",
+    "oversized_sequences_emit_one_error_discard_and_recover",
+    "parser_work_cap_returns_a_resumable_consumed_prefix",
+    "end_of_stream_reports_and_resets_incomplete_input",
+    "seeded_malformed_streams_replay_identically_under_arbitrary_chunking",
+    "malformed_csi_parameter_after_intermediate_discards_until_final",
 )
 
 
@@ -90,8 +105,30 @@ def check(root: Path) -> list[str]:
     lib = sources.get("lib.rs", "")
     if "pub use screen::{ScreenState, TerminalCore}" not in lib:
         failures.append("TerminalCore root must expose the owned state authority")
-    if "feed_pty" in joined or "fn feed(" in joined:
-        failures.append("DTC-P07 must not preempt the DTC-P08 streaming parser boundary")
+    if "pub use parser::{FeedReport, StreamingParser}" not in lib:
+        failures.append("TerminalCore root must expose the DTC-P08 streaming parser")
+    parser = sources.get("parser.rs", "")
+    action = sources.get("parser_action.rs", "")
+    if "emit: impl FnMut(Action)" not in parser:
+        failures.append("DTC-P08 parser must stream typed actions to a caller-owned sink")
+    if "Vec<Action>" in parser or "VecDeque<Action>" in parser:
+        failures.append("DTC-P08 parser must not retain an unbounded action queue")
+    for marker in (
+        "ControlStringKind::Osc", "ControlStringKind::Dcs", "ControlStringKind::Apc",
+        "ControlStringKind::Pm", "ControlStringKind::Sos", "DiscardState",
+        "MalformedUtf8", "work_exhausted",
+    ):
+        if marker not in parser:
+            failures.append(f"DTC-P08 streaming parser behavior marker is missing: {marker}")
+    for marker in ("Cancelled", "CsiParameter", "StringTerminator", "LimitExceeded"):
+        if marker not in action:
+            failures.append(f"DTC-P08 typed action marker is missing: {marker}")
+
+    parser_tests = crate / "src" / "parser_tests.rs"
+    proof_text = parser_tests.read_text(encoding="utf-8") if parser_tests.is_file() else ""
+    for marker in REQUIRED_PARSER_PROOFS:
+        if marker not in proof_text:
+            failures.append(f"DTC-P08 deterministic parser proof is missing: {marker}")
     return failures
 
 

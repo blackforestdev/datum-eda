@@ -8,6 +8,8 @@ pub enum LimitKind {
     ParameterCount,
     ParameterDigits,
     ParameterValue,
+    SubparameterCount,
+    IntermediateBytes,
     ControlStringBytes,
     ClusterBytes,
     TitleBytes,
@@ -110,6 +112,8 @@ macro_rules! checked_limit {
 checked_limit!(ParameterCountLimit, ParameterCount);
 checked_limit!(ParameterDigitsLimit, ParameterDigits);
 checked_limit!(ParameterValueLimit, ParameterValue);
+checked_limit!(SubparameterCountLimit, SubparameterCount);
+checked_limit!(IntermediateBytesLimit, IntermediateBytes);
 checked_limit!(ControlStringBytesLimit, ControlStringBytes);
 checked_limit!(ClusterBytesLimit, ClusterBytes);
 checked_limit!(TitleBytesLimit, TitleBytes);
@@ -137,6 +141,8 @@ pub struct CoreLimitValues {
     pub parameter_count: usize,
     pub parameter_digits: usize,
     pub parameter_value: usize,
+    pub subparameter_count: usize,
+    pub intermediate_bytes: usize,
     pub control_string_bytes: usize,
     pub cluster_bytes: usize,
     pub title_bytes: usize,
@@ -165,6 +171,8 @@ pub struct CoreLimits {
     pub parameter_count: ParameterCountLimit,
     pub parameter_digits: ParameterDigitsLimit,
     pub parameter_value: ParameterValueLimit,
+    pub subparameter_count: SubparameterCountLimit,
+    pub intermediate_bytes: IntermediateBytesLimit,
     pub control_string_bytes: ControlStringBytesLimit,
     pub cluster_bytes: ClusterBytesLimit,
     pub title_bytes: TitleBytesLimit,
@@ -195,6 +203,8 @@ impl TryFrom<CoreLimitValues> for CoreLimits {
             parameter_count: ParameterCountLimit::new(raw.parameter_count)?,
             parameter_digits: ParameterDigitsLimit::new(raw.parameter_digits)?,
             parameter_value: ParameterValueLimit::new(raw.parameter_value)?,
+            subparameter_count: SubparameterCountLimit::new(raw.subparameter_count)?,
+            intermediate_bytes: IntermediateBytesLimit::new(raw.intermediate_bytes)?,
             control_string_bytes: ControlStringBytesLimit::new(raw.control_string_bytes)?,
             cluster_bytes: ClusterBytesLimit::new(raw.cluster_bytes)?,
             title_bytes: TitleBytesLimit::new(raw.title_bytes)?,

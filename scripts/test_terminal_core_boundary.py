@@ -34,9 +34,22 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             text = "\n".join(markers)
             if relative == "limits.rs":
                 text += "\n" + "\n".join(guard.REQUIRED_LIMITS)
+            if relative == "parser.rs":
+                text += (
+                    "\nemit: impl FnMut(Action)\nControlStringKind::Osc\n"
+                    "ControlStringKind::Dcs\nControlStringKind::Apc\nControlStringKind::Pm\n"
+                    "ControlStringKind::Sos\nDiscardState\nMalformedUtf8\nwork_exhausted\n"
+                )
+            if relative == "parser_action.rs":
+                text += "\nCancelled\nCsiParameter\nStringTerminator\nLimitExceeded\n"
             (source / relative).write_text(text, encoding="utf-8")
+        (source / "parser_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_PARSER_PROOFS), encoding="utf-8"
+        )
         (source / "lib.rs").write_text(
-            "pub use screen::{ScreenState, TerminalCore};\n", encoding="utf-8"
+            "pub use screen::{ScreenState, TerminalCore};\n"
+            "pub use parser::{FeedReport, StreamingParser};\n",
+            encoding="utf-8",
         )
         return temporary, root
 
@@ -71,14 +84,35 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("SnapshotCells" in item for item in failures))
         self.assertTrue(any("owner-supplied" in item for item in failures))
 
-    def test_early_parser_or_missing_core_authority_fails(self) -> None:
+    def test_missing_parser_or_core_authority_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
         screen = root / guard.CRATE / "src/screen.rs"
         screen.write_text("pub fn feed_pty() {}\n")
         failures = guard.check(root)
         self.assertTrue(any("owned marker" in item for item in failures))
-        self.assertTrue(any("DTC-P08" in item for item in failures))
+
+        parser = root / guard.CRATE / "src/parser.rs"
+        parser.unlink()
+        self.assertTrue(any("parser.rs" in item for item in guard.check(root)))
+
+    def test_lossy_utf8_or_retained_action_queue_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        parser = root / guard.CRATE / "src/parser.rs"
+        parser.write_text(parser.read_text() + "\nfrom_utf8_lossy\nVec<Action>\n")
+        failures = guard.check(root)
+        self.assertTrue(any("from_utf8_lossy" in item for item in failures))
+        self.assertTrue(any("action queue" in item for item in failures))
+
+    def test_missing_chunk_recovery_proof_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        proofs = root / guard.CRATE / "src/parser_tests.rs"
+        proofs.write_text(proofs.read_text().replace(
+            "oversized_sequences_emit_one_error_discard_and_recover", "removed"
+        ))
+        self.assertTrue(any("oversized_sequences" in item for item in guard.check(root)))
 
 
 if __name__ == "__main__":
