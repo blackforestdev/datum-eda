@@ -4,6 +4,11 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
+if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
+  echo "DTC-P06D evidence requires a clean revision-addressed worktree" >&2
+  exit 1
+fi
+
 tier="${1:-smoke}"
 case "$tier" in
   smoke|gui|lifecycle-1000|ci|single-24h|max-4h) ;;

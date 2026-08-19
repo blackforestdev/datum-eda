@@ -420,6 +420,7 @@ def check(root: Path) -> list[str]:
     runner = runner_path.read_text(encoding="utf-8") if runner_path.is_file() else ""
     for marker in (
         "--release --locked --offline",
+        "DTC-P06D evidence requires a clean revision-addressed worktree",
         "wayland-primary",
         "x11-fallback",
         "single throughput >=20MiB/s",

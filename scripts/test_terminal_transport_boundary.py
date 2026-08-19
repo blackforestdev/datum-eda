@@ -173,6 +173,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         scripts.mkdir(exist_ok=True)
         (scripts / "run_terminal_transport_proof_gates.sh").write_text(
             "cargo test --release --locked --offline\n"
+            "DTC-P06D evidence requires a clean revision-addressed worktree\n"
             "wayland-primary x11-fallback\n"
             "single throughput >=20MiB/s\n"
             "aggregate throughput >=40MiB/s\n"
@@ -280,6 +281,19 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("release measurement proof missing" in failure for failure in failures))
         self.assertTrue(any("--release --locked --offline" in failure for failure in failures))
         self.assertTrue(any("wayland-primary" in failure for failure in failures))
+
+    def test_dirty_worktree_evidence_escape_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        runner = root / "scripts/run_terminal_transport_proof_gates.sh"
+        runner.write_text(
+            runner.read_text(encoding="utf-8").replace(
+                "DTC-P06D evidence requires a clean revision-addressed worktree",
+                "dirty builds are accepted",
+            ),
+            encoding="utf-8",
+        )
+        self.assertTrue(any("clean revision-addressed" in failure for failure in guard.check(root)))
 
     def test_scheduled_soak_or_tier_runner_drift_fails(self) -> None:
         temporary, root = self.fixture()
