@@ -854,6 +854,44 @@ test-tail debt; the 143-line P06C proof and all touched files satisfy decision
 022. The owner-ratified 1,000-cycle and bounded release-performance requirements
 remain DTC-P06D and are not claimed by this deterministic closure.
 
+#### DTC-P06D bounded measured Linux evidence
+
+<!-- EVIDENCE:TERMINAL-T1-PTY:DTC-P06D-VERIFIED -->
+Revision `b26b1b73dfecd5429d55327802399c787da12dc7` passed the complete
+owner-ratified bounded matrix on Linux 6.12.101 x86_64 with glibc 2.41 and the
+fixed seed `229532293120280`. Production compositor canaries created, rendered,
+and exposed a visible window under the Wayland-primary backend and the X11
+fallback, each with revision-addressed screenshot, log, and SHA-256 evidence.
+
+The release smoke proof measured 0.124-ms idle p95 and 2.080-ms p99 input
+latency, 0.001-ms resize p95 and 0.002-ms p99, 112.15 MiB/s single-session raw
+output, 111.47 MiB/s aggregate eight-session output, and 53.97 MiB/s input
+roundtrip. The 60-second sustained phases measured 99.73 MiB/s for one session
+and 119.89 MiB/s across eight sessions, with maximum fairness gaps of 10.276 ms
+and 25.977 ms. A 4-MiB burst reached a 633,856-byte/256-chunk high-water mark,
+fell below 64 KiB in 39.002 ms, and drained completely in 39.303 ms.
+
+The provisional GUI path measured 12.25 MiB/s single and 10.82 MiB/s aggregate
+under Wayland, and 11.30 MiB/s single and 10.70 MiB/s aggregate under X11.
+Both backends remained within the approved drain-work ceilings. The 1,000-cycle
+lifecycle proof completed in 44 seconds with 1,000 unique session IDs, no
+survivors or failures, 51.984-ms cooperative-exit p95, 63.493-ms p99, and
+68.110-ms maximum latency; final descriptor/thread counts returned to the
+approved bounds.
+
+The final 600-second workload ran eight simultaneous real PTYs through the
+seeded agent-burst, status, full-screen, resize, lifecycle, saturation,
+interactive, and idle roles. It moved 95,723,520 exact bytes in each direction,
+completed 1,000 resizes, recorded 1.341-ms roundtrip p95 and 2.619-ms p99, and
+ended at four descriptors and two threads with no byte, ordering, isolation,
+queue, process, or resource failure. Full GUI-app validation passed 354 tests
+with only the five governed measurements and one visual harness intentionally
+ignored; strict workspace Clippy, dependency authority, source health over
+1,407 source files, the transport boundary plus 23 hermetic mutations, the GUI
+convergence guard plus 11 mutations, project-state validation, and diff hygiene
+all pass. The owner-removed 24-hour, four-hour, and three-run tiers were not run
+and remain optional diagnostics rather than P06 acceptance gates.
+
 ### Core foundation
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P07 --> **DTC-P07 — closed types and limits.** First-party crate; cell/cluster/style/
