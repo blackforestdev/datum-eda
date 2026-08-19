@@ -22,6 +22,8 @@ CLAUDE.md
 # (engine never ships copyleft; subprocess/IPC only). Keep them ignored.
 /research/eagle-analysis
 /research/horizon-source
+# Third-party papers (copyrighted) kept locally for reference; never commit.
+/research/**/*.pdf
 
 # Codex
 .codex
@@ -39,3 +41,6 @@ CLAUDE.md
 .env
 .env.*
 .datum/
+
+# Owner-local launcher (machine-specific paths)
+scripts/run_gui_doa2526.sh
