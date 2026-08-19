@@ -366,6 +366,26 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in measurement:
             failures.append(f"DTC-P06D release measurement proof missing: {marker}")
+    soak_path = root / APP_SRC / "terminal_session_p06_soak_tests.rs"
+    soak = soak_path.read_text(encoding="utf-8") if soak_path.is_file() else ""
+    for marker in (
+        "p06_soak_tier_budgets_are_literal",
+        "p06_scheduled_soak_emits_reproducible_json",
+        'contract: "datum_terminal_p06_soak_v1"',
+        '"ci" => Self',
+        "Duration::from_secs(10 * 60)",
+        '"single-24h" => Self',
+        "Duration::from_secs(24 * 60 * 60)",
+        '"max-4h" => Self',
+        "Duration::from_secs(4 * 60 * 60)",
+        "minimum_bytes_per_session: 128 * 1024 * 1024",
+        "resize_requests: 10_000",
+        "presentation_complete",
+        'proc_count("/proc/self/fd")',
+        'proc_count("/proc/self/task")',
+    ):
+        if marker not in soak:
+            failures.append(f"DTC-P06D scheduled soak proof missing: {marker}")
     runner_path = root / "scripts/run_terminal_transport_proof_gates.sh"
     runner = runner_path.read_text(encoding="utf-8") if runner_path.is_file() else ""
     for marker in (
@@ -374,6 +394,13 @@ def check(root: Path) -> list[str]:
         "x11-fallback",
         "single throughput >=20MiB/s",
         "aggregate throughput >=40MiB/s",
+        "smoke|ci|single-24h|max-4h",
+        "DATUM_P06_RUN_ORDINAL",
+        "p06_scheduled_soak_emits_reproducible_json",
+        '"datum_terminal_p06_soak_v1"',
+        '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)',
+        '"single-24-hour": (1, 24 * 60 * 60, 128 * 1024 * 1024, 500)',
+        '"maximum-16-session-4-hour": (16, 4 * 60 * 60, 128 * 1024 * 1024, 10_000)',
     ):
         if marker not in runner:
             failures.append(f"DTC-P06D release proof runner missing: {marker}")
