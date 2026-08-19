@@ -348,6 +348,35 @@ def check(root: Path) -> list[str]:
     )
     if "rotated_io_family_is_folded_chronologically_without_replay" not in rotation_test:
         failures.append("DTC-P06D rotation-safe activity cache proof missing")
+    measurement_path = root / APP_SRC / "terminal_session_p06_measurement_tests.rs"
+    measurement = (
+        measurement_path.read_text(encoding="utf-8")
+        if measurement_path.is_file()
+        else ""
+    )
+    for marker in (
+        "const SESSION_COUNT: usize = 8;",
+        "p06_release_measurement_emits_reproducible_json",
+        'contract: "datum_terminal_p06_measurement_v1"',
+        "measure_aggregate_output",
+        "measure_latency_and_input",
+        "measure_resize",
+        'proc_count("/proc/self/fd")',
+        'proc_count("/proc/self/task")',
+    ):
+        if marker not in measurement:
+            failures.append(f"DTC-P06D release measurement proof missing: {marker}")
+    runner_path = root / "scripts/run_terminal_transport_proof_gates.sh"
+    runner = runner_path.read_text(encoding="utf-8") if runner_path.is_file() else ""
+    for marker in (
+        "--release --locked --offline",
+        "wayland-primary",
+        "x11-fallback",
+        "single throughput >=20MiB/s",
+        "aggregate throughput >=40MiB/s",
+    ):
+        if marker not in runner:
+            failures.append(f"DTC-P06D release proof runner missing: {marker}")
     if "active().try_recv_event" in "\n".join(outside_transport.values()):
         failures.append("active-only terminal event draining must not return")
 

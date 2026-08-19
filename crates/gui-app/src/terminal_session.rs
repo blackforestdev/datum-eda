@@ -665,6 +665,9 @@ mod terminal_session_naming_tests;
 #[path = "terminal_session_p06_isolation_tests.rs"]
 mod terminal_session_p06_isolation_tests;
 #[cfg(test)]
+#[path = "terminal_session_p06_measurement_tests.rs"]
+mod terminal_session_p06_measurement_tests;
+#[cfg(test)]
 #[path = "terminal_session_p06_stress_tests.rs"]
 mod terminal_session_p06_stress_tests;
 #[cfg(test)]

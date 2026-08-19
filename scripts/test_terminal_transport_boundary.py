@@ -133,6 +133,23 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "fn rotated_io_family_is_folded_chronologically_without_replay(){}",
             encoding="utf-8",
         )
+        (root / guard.APP_SRC / "terminal_session_p06_measurement_tests.rs").write_text(
+            "const SESSION_COUNT: usize = 8;\n"
+            "fn p06_release_measurement_emits_reproducible_json(){\n"
+            "let _ = Evidence { contract: \"datum_terminal_p06_measurement_v1\" };\n"
+            "measure_aggregate_output(); measure_latency_and_input(); measure_resize();\n"
+            "proc_count(\"/proc/self/fd\"); proc_count(\"/proc/self/task\");}",
+            encoding="utf-8",
+        )
+        scripts = root / "scripts"
+        scripts.mkdir(exist_ok=True)
+        (scripts / "run_terminal_transport_proof_gates.sh").write_text(
+            "cargo test --release --locked --offline\n"
+            "wayland-primary x11-fallback\n"
+            "single throughput >=20MiB/s\n"
+            "aggregate throughput >=40MiB/s\n",
+            encoding="utf-8",
+        )
         (transport / "output.rs").write_text(
             (transport / "output.rs").read_text(encoding="utf-8")
             + "\nfn full_output_backlog_blocks_reservation_until_consumer_pop(){}",
@@ -213,6 +230,18 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("IO_SEGMENT_BYTES" in failure for failure in failures))
         self.assertTrue(any("fn rotate_segments" in failure for failure in failures))
         self.assertIn("DTC-P06D rotation-safe activity cache proof missing", failures)
+
+    def test_release_measurement_or_wayland_runner_drift_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        measurement = root / guard.APP_SRC / "terminal_session_p06_measurement_tests.rs"
+        measurement.write_text("fn weakened_debug_benchmark(){}", encoding="utf-8")
+        runner = root / "scripts/run_terminal_transport_proof_gates.sh"
+        runner.write_text("cargo test --release\nx11-only\n", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("release measurement proof missing" in failure for failure in failures))
+        self.assertTrue(any("--release --locked --offline" in failure for failure in failures))
+        self.assertTrue(any("wayland-primary" in failure for failure in failures))
 
     def test_owner_ratified_shutdown_deadline_drift_fails(self) -> None:
         temporary, root = self.fixture()
