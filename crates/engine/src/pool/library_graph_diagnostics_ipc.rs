@@ -114,14 +114,15 @@ impl LibraryGraph {
             });
         }
         if let Some(pin_count) = basis.pin_count
-            && (pin_count < 4 || pin_count % 2 != 0) {
-                diagnostics.push(LibraryGraphDiagnostic {
-                    severity: "error",
-                    code: "invalid_ipc_footprint_basis",
-                    subject: basis_subject.clone(),
-                    message: "ipc_basis pin_count must be an even value of at least 4".to_string(),
-                });
-            }
+            && (pin_count < 4 || pin_count % 2 != 0)
+        {
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "error",
+                code: "invalid_ipc_footprint_basis",
+                subject: basis_subject.clone(),
+                message: "ipc_basis pin_count must be an even value of at least 4".to_string(),
+            });
+        }
         for (field, value) in [
             ("pitch_nm", basis.pitch_nm),
             ("lead_span_nm", basis.lead_span_nm),

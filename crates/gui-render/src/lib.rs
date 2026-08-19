@@ -27,13 +27,13 @@ mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
 mod side_panels;
+mod terminal_clipboard_menu;
 mod terminal_cursor;
 #[cfg(test)]
 #[path = "terminal_font_tests.rs"]
 mod terminal_font_tests;
 mod terminal_session_chrome;
 mod terminal_tab_strip;
-mod terminal_clipboard_menu;
 #[cfg(test)]
 mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]

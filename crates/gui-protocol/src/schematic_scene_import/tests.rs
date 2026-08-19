@@ -91,8 +91,7 @@ fn symbols_project_pins_terminals_and_annotation_text() {
     );
     assert!(
         text_layers.contains(&layer_id_string(SCHEMATIC_REFDES_TEXT_LAYER_INT).as_str())
-            && text_layers
-                .contains(&layer_id_string(SCHEMATIC_VALUE_TEXT_LAYER_INT).as_str()),
+            && text_layers.contains(&layer_id_string(SCHEMATIC_VALUE_TEXT_LAYER_INT).as_str()),
         "refdes and value text must carry their own per-role layers, got {text_layers:?}"
     );
 }
@@ -109,10 +108,7 @@ fn schematic_elements_carry_per_net_role_layers() {
     // more; each net-role gets its own `Schematic.*` layer so the renderer
     // can resolve prototype token colours (green wires, grey symbols).
     assert!(
-        scene
-            .board_graphics
-            .iter()
-            .all(|g| g.layer_id != "L37"),
+        scene.board_graphics.iter().all(|g| g.layer_id != "L37"),
         "no schematic graphic may remain on the retired F.SilkS layer"
     );
 
@@ -174,10 +170,7 @@ fn schematic_projection_emits_no_sheet_frame() {
     let scene = &state.scene;
 
     assert!(
-        scene
-            .outline
-            .iter()
-            .all(|outline| outline.path.is_empty()),
+        scene.outline.iter().all(|outline| outline.path.is_empty()),
         "schematic scene must emit no rendered sheet-frame outline path"
     );
     assert!(
@@ -185,10 +178,7 @@ fn schematic_projection_emits_no_sheet_frame() {
         "schematic scene must no longer register the Edge.Cuts frame layer"
     );
     assert!(
-        scene
-            .board_graphics
-            .iter()
-            .all(|g| g.layer_id != "L44"),
+        scene.board_graphics.iter().all(|g| g.layer_id != "L44"),
         "no schematic graphic may sit on the retired L44 frame layer"
     );
     assert!(
@@ -325,7 +315,10 @@ fn power_symbols_project_rail_flag_and_ground_stack_geometry() {
     let rail_uuid = Uuid::from_u128(0x9002);
     let mut symbols = HashMap::new();
     symbols.insert(gnd_uuid, power_symbol(gnd_uuid, "power:GND", "GND", 0));
-    symbols.insert(rail_uuid, power_symbol(rail_uuid, "power:+3V3", "+3V3", 5_000_000));
+    symbols.insert(
+        rail_uuid,
+        power_symbol(rail_uuid, "power:+3V3", "+3V3", 5_000_000),
+    );
 
     let sheet = Sheet {
         uuid: Uuid::from_u128(0x1),

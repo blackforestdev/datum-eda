@@ -13,7 +13,6 @@ pub enum TextRenderIntent {
     UiPreview,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TextFamilyId(pub String);
 
@@ -31,7 +30,6 @@ pub enum TextFamilySource {
     ImplicitDefault,
     Explicit,
 }
-
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TextStyleId(pub String);

@@ -459,7 +459,10 @@ mod tests {
         let origin = i64::MAX - 1_000_000;
         let line = HitShape::Polyline {
             path: vec![
-                PointNm { x: origin, y: origin },
+                PointNm {
+                    x: origin,
+                    y: origin,
+                },
                 PointNm {
                     x: origin + 100_000,
                     y: origin,

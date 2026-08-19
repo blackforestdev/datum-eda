@@ -34,9 +34,10 @@ pub fn guarded_operation_batch(
     let mut guarded = Vec::with_capacity(batch.operations.len());
     for operation in batch.operations {
         if let Some(object_id) = existing_object_guard_target(&operation)
-            && guarded_objects.insert(object_id) {
-                guarded.push(object_revision_guard(model, object_id)?);
-            }
+            && guarded_objects.insert(object_id)
+        {
+            guarded.push(object_revision_guard(model, object_id)?);
+        }
         guarded.push(operation);
     }
     batch.operations = guarded;

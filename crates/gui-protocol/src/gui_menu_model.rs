@@ -217,15 +217,27 @@ mod tests {
         }
         // Keyboard-mirrored shortcuts are present on the right items.
         assert_eq!(
-            by_action.get("view.maximize_pane").unwrap().shortcut.as_deref(),
+            by_action
+                .get("view.maximize_pane")
+                .unwrap()
+                .shortcut
+                .as_deref(),
             Some("Z")
         );
         assert_eq!(
-            by_action.get("view.focus_next").unwrap().shortcut.as_deref(),
+            by_action
+                .get("view.focus_next")
+                .unwrap()
+                .shortcut
+                .as_deref(),
             Some("Tab")
         );
         assert_eq!(
-            by_action.get("view.focus_prev").unwrap().shortcut.as_deref(),
+            by_action
+                .get("view.focus_prev")
+                .unwrap()
+                .shortcut
+                .as_deref(),
             Some("Shift+Tab")
         );
     }

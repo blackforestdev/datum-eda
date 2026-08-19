@@ -225,10 +225,14 @@ mod tests {
             center_y_nm: 40.0,
             zoom: 0.75,
         };
-        let mut warm = PaneCameras::new(active, PaneContent::Board, CameraState {
-            zoom: 1.0,
-            ..active_camera
-        });
+        let mut warm = PaneCameras::new(
+            active,
+            PaneContent::Board,
+            CameraState {
+                zoom: 1.0,
+                ..active_camera
+            },
+        );
         warm.inherit(inactive, PaneContent::Board, inactive_camera);
 
         assert_eq!(

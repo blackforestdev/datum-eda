@@ -443,9 +443,10 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAware {
                 let mut next_steps = state.steps.clone();
                 let mut next_transition_count = state.topology_transition_count;
                 if let Some(previous) = next_steps.last()
-                    && (previous.kind != step.kind || previous.layer != step.layer) {
-                        next_transition_count += 1;
-                    }
+                    && (previous.kind != step.kind || previous.layer != step.layer)
+                {
+                    next_transition_count += 1;
+                }
 
                 let mut next_visited_nodes = state.visited_nodes.clone();
                 next_visited_nodes.push(*next_node);

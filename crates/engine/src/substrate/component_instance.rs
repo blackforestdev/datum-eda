@@ -385,17 +385,18 @@ fn insert_component_instance(
             part_ref.object_revision,
             objects,
             "parts",
-        ) {
-            diagnostics.push(ResolveDiagnostic {
-                code: "component_instance_invalid_part_ref".to_string(),
-                message: format!(
-                    "component instance {} part_ref {} must target a current pool parts object",
-                    input.uuid, part_ref.object_id
-                ),
-                path: Some(shard.path.clone()),
-            });
-            return;
-        }
+        )
+    {
+        diagnostics.push(ResolveDiagnostic {
+            code: "component_instance_invalid_part_ref".to_string(),
+            message: format!(
+                "component instance {} part_ref {} must target a current pool parts object",
+                input.uuid, part_ref.object_id
+            ),
+            path: Some(shard.path.clone()),
+        });
+        return;
+    }
     if let Err(message) = validate_library_bindings(&input, objects) {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_invalid_library_binding".to_string(),
@@ -469,15 +470,15 @@ fn validate_library_bindings(
     if let (Some(part_ref), Some(part_binding)) = (&input.part_ref, part_binding)
         && (part_ref.object_id != part_binding.target_object_id
             || part_ref.object_revision != part_binding.pinned_object_revision)
-        {
-            return Err(format!(
-                "part_ref {}@{} does not match part LibraryBinding {}@{}",
-                part_ref.object_id,
-                part_ref.object_revision.0,
-                part_binding.target_object_id,
-                part_binding.pinned_object_revision.0
-            ));
-        }
+    {
+        return Err(format!(
+            "part_ref {}@{} does not match part LibraryBinding {}@{}",
+            part_ref.object_id,
+            part_ref.object_revision.0,
+            part_binding.target_object_id,
+            part_binding.pinned_object_revision.0
+        ));
+    }
     Ok(())
 }
 
@@ -508,9 +509,9 @@ pub(super) fn validate_role_map(
             && (role_label.trim().is_empty()
                 || role_label.len() > 128
                 || role_label.chars().any(char::is_control))
-            {
-                return Err(format!("{label} role label for {object_id} is invalid"));
-            }
+        {
+            return Err(format!("{label} role label for {object_id} is invalid"));
+        }
         if !ref_ids.contains(object_id) {
             return Err(format!(
                 "{label} role for {object_id} must reference a placed {label}"

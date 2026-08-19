@@ -25,9 +25,9 @@ pub(super) fn latest_proposal_id_from_context(
             .proposals
             .keys()
             .any(|proposal| proposal.to_string() == selected)
-        {
-            return Some(selected.to_string());
-        }
+    {
+        return Some(selected.to_string());
+    }
     model
         .proposals
         .iter()

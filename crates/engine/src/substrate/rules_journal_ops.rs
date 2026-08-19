@@ -265,14 +265,16 @@ pub fn validate_native_project_rule_payload(rule: &serde_json::Value) -> Result<
         ));
     }
     if object
-        .get("priority").is_none_or(|value| value.as_u64().is_none())
+        .get("priority")
+        .is_none_or(|value| value.as_u64().is_none())
     {
         return Err(EngineError::Validation(
             "project rule priority must be an unsigned integer".to_string(),
         ));
     }
     if object
-        .get("enabled").is_none_or(|value| value.as_bool().is_none())
+        .get("enabled")
+        .is_none_or(|value| value.as_bool().is_none())
     {
         return Err(EngineError::Validation(
             "project rule enabled must be boolean".to_string(),

@@ -24,7 +24,10 @@ use super::*;
 pub(crate) fn surface_pane_ids(
     shell: &ShellLayout,
     layout: &datum_gui_protocol::WorkspaceLayout,
-) -> (datum_gui_protocol::PaneId, Option<datum_gui_protocol::PaneId>) {
+) -> (
+    datum_gui_protocol::PaneId,
+    Option<datum_gui_protocol::PaneId>,
+) {
     let panes = shell.viewport_panes(layout);
     let pane_for = |content| {
         panes
@@ -368,7 +371,10 @@ mod coordinate_hit_tests {
             .iter()
             .filter(|graphic| graphic.schematic_hit_kind().is_some())
             .collect();
-        assert!(!eligible.is_empty(), "typed hit metadata must not be vacuous");
+        assert!(
+            !eligible.is_empty(),
+            "typed hit metadata must not be vacuous"
+        );
         for graphic in eligible {
             assert!(
                 targets.contains(graphic.object_id.as_str()),

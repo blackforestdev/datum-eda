@@ -1,6 +1,6 @@
-use wgpu::util::DeviceExt;
 use super::{PointNm, Renderer};
 use std::ops::Range;
+use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
@@ -13,42 +13,89 @@ pub(crate) struct WorldStrokeInstance {
 }
 
 impl WorldStrokeInstance {
-    pub(crate) fn segment(from: PointNm, to: PointNm, color: [f32; 3], nominal_nm: i64, min_px: f32) -> Self {
-        Self { from: [from.x as f32, from.y as f32], to: [to.x as f32, to.y as f32],
+    pub(crate) fn segment(
+        from: PointNm,
+        to: PointNm,
+        color: [f32; 3],
+        nominal_nm: i64,
+        min_px: f32,
+    ) -> Self {
+        Self {
+            from: [from.x as f32, from.y as f32],
+            to: [to.x as f32, to.y as f32],
             color_min_px: [color[0], color[1], color[2], min_px],
-            nominal_nm: nominal_nm.max(1) as f32, _pad: [0.0; 3] }
+            nominal_nm: nominal_nm.max(1) as f32,
+            _pad: [0.0; 3],
+        }
     }
     #[cfg(test)]
     pub(crate) fn resolved_width_px(self, live_scale: f32) -> f32 {
         (self.nominal_nm * live_scale).max(self.color_min_px[3])
     }
     pub(crate) fn layout<'a>() -> wgpu::VertexBufferLayout<'a> {
-        wgpu::VertexBufferLayout { array_stride: std::mem::size_of::<Self>() as u64,
-            step_mode: wgpu::VertexStepMode::Instance, attributes: &[
-                wgpu::VertexAttribute { offset: 0, shader_location: 0, format: wgpu::VertexFormat::Float32x2 },
-                wgpu::VertexAttribute { offset: 8, shader_location: 1, format: wgpu::VertexFormat::Float32x2 },
-                wgpu::VertexAttribute { offset: 16, shader_location: 2, format: wgpu::VertexFormat::Float32x4 },
-                wgpu::VertexAttribute { offset: 32, shader_location: 3, format: wgpu::VertexFormat::Float32 },
-            ] }
+        wgpu::VertexBufferLayout {
+            array_stride: std::mem::size_of::<Self>() as u64,
+            step_mode: wgpu::VertexStepMode::Instance,
+            attributes: &[
+                wgpu::VertexAttribute {
+                    offset: 0,
+                    shader_location: 0,
+                    format: wgpu::VertexFormat::Float32x2,
+                },
+                wgpu::VertexAttribute {
+                    offset: 8,
+                    shader_location: 1,
+                    format: wgpu::VertexFormat::Float32x2,
+                },
+                wgpu::VertexAttribute {
+                    offset: 16,
+                    shader_location: 2,
+                    format: wgpu::VertexFormat::Float32x4,
+                },
+                wgpu::VertexAttribute {
+                    offset: 32,
+                    shader_location: 3,
+                    format: wgpu::VertexFormat::Float32,
+                },
+            ],
+        }
     }
 }
 
-pub(crate) fn push_world_stroke_path(out: &mut Vec<WorldStrokeInstance>, path: &[PointNm],
-    color: [f32; 3], nominal_nm: i64, min_px: f32) {
-    out.extend(path.windows(2).filter(|e| e[0] != e[1])
-        .map(|e| WorldStrokeInstance::segment(e[0], e[1], color, nominal_nm, min_px)));
+pub(crate) fn push_world_stroke_path(
+    out: &mut Vec<WorldStrokeInstance>,
+    path: &[PointNm],
+    color: [f32; 3],
+    nominal_nm: i64,
+    min_px: f32,
+) {
+    out.extend(
+        path.windows(2)
+            .filter(|e| e[0] != e[1])
+            .map(|e| WorldStrokeInstance::segment(e[0], e[1], color, nominal_nm, min_px)),
+    );
 }
 
-pub(crate) fn push_board_graphic_semantic_stroke(out: &mut Vec<super::Quad>,
-    strokes: &mut Vec<WorldStrokeInstance>, graphic: &super::BoardGraphicPrimitive, color: [f32; 3]) {
+pub(crate) fn push_board_graphic_semantic_stroke(
+    out: &mut Vec<super::Quad>,
+    strokes: &mut Vec<WorldStrokeInstance>,
+    graphic: &super::BoardGraphicPrimitive,
+    color: [f32; 3],
+) {
     if graphic.primitive_kind == "polygon" && graphic.path.len() >= 3 {
         super::push_world_polygon_fill_contours(out, &graphic.path, &graphic.holes, color);
-        if graphic.width_nm.is_none() { return; }
+        if graphic.width_nm.is_none() {
+            return;
+        }
     }
-    let path = if graphic.primitive_kind == "polygon" { super::close_path(&graphic.path) }
-        else { graphic.path.clone() };
-    let (nominal_nm, min_px) = super::semantic_graphic_kind(&graphic.object_id,
-        &graphic.layer_id, graphic.width_nm).nominal_and_floor();
+    let path = if graphic.primitive_kind == "polygon" {
+        super::close_path(&graphic.path)
+    } else {
+        graphic.path.clone()
+    };
+    let (nominal_nm, min_px) =
+        super::semantic_graphic_kind(&graphic.object_id, &graphic.layer_id, graphic.width_nm)
+            .nominal_and_floor();
     push_world_stroke_path(strokes, &path, color, nominal_nm, min_px);
 }
 
@@ -97,101 +144,204 @@ fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> { return select(pow((c + vec3<f32>(
 }
 "#;
 
-pub(crate) fn create_world_stroke_pipeline(device: &wgpu::Device,
-    layout: &wgpu::PipelineLayout, format: wgpu::TextureFormat, samples: u32) -> wgpu::RenderPipeline {
+pub(crate) fn create_world_stroke_pipeline(
+    device: &wgpu::Device,
+    layout: &wgpu::PipelineLayout,
+    format: wgpu::TextureFormat,
+    samples: u32,
+) -> wgpu::RenderPipeline {
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-        label: Some("datum-world-stroke-shader"), source: wgpu::ShaderSource::Wgsl(WORLD_STROKE_SHADER.into()) });
+        label: Some("datum-world-stroke-shader"),
+        source: wgpu::ShaderSource::Wgsl(WORLD_STROKE_SHADER.into()),
+    });
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-        label: Some("datum-world-stroke-pipeline"), layout: Some(layout),
-        vertex: wgpu::VertexState { module: &shader, entry_point: Some("vs_main"),
-            buffers: &[WorldStrokeInstance::layout()], compilation_options: Default::default() },
-        fragment: Some(wgpu::FragmentState { module: &shader, entry_point: Some("fs_main"),
-            targets: &[Some(wgpu::ColorTargetState { format, blend: Some(wgpu::BlendState::REPLACE), write_mask: wgpu::ColorWrites::ALL })],
-            compilation_options: Default::default() }), primitive: wgpu::PrimitiveState::default(),
-        depth_stencil: None, multisample: wgpu::MultisampleState { count: samples, mask: !0,
-            alpha_to_coverage_enabled: false }, multiview_mask: None, cache: None })
+        label: Some("datum-world-stroke-pipeline"),
+        layout: Some(layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_main"),
+            buffers: &[WorldStrokeInstance::layout()],
+            compilation_options: Default::default(),
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            targets: &[Some(wgpu::ColorTargetState {
+                format,
+                blend: Some(wgpu::BlendState::REPLACE),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+            compilation_options: Default::default(),
+        }),
+        primitive: wgpu::PrimitiveState::default(),
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState {
+            count: samples,
+            mask: !0,
+            alpha_to_coverage_enabled: false,
+        },
+        multiview_mask: None,
+        cache: None,
+    })
 }
 
-pub(crate) fn draw_world_strokes<'a>(pass: &mut wgpu::RenderPass<'a>,
-    pipeline: &'a wgpu::RenderPipeline, bind_group: &'a wgpu::BindGroup,
-    buffer: &'a wgpu::Buffer, viewport: super::RectPx, ranges: &[Range<u32>]) {
-    if ranges.is_empty() { return; }
-    pass.set_pipeline(pipeline); pass.set_bind_group(0, bind_group, &[]);
-    pass.set_scissor_rect(viewport.x.max(0.0).floor() as u32, viewport.y.max(0.0).floor() as u32,
-        viewport.width.max(1.0).ceil() as u32, viewport.height.max(1.0).ceil() as u32);
+pub(crate) fn draw_world_strokes<'a>(
+    pass: &mut wgpu::RenderPass<'a>,
+    pipeline: &'a wgpu::RenderPipeline,
+    bind_group: &'a wgpu::BindGroup,
+    buffer: &'a wgpu::Buffer,
+    viewport: super::RectPx,
+    ranges: &[Range<u32>],
+) {
+    if ranges.is_empty() {
+        return;
+    }
+    pass.set_pipeline(pipeline);
+    pass.set_bind_group(0, bind_group, &[]);
+    pass.set_scissor_rect(
+        viewport.x.max(0.0).floor() as u32,
+        viewport.y.max(0.0).floor() as u32,
+        viewport.width.max(1.0).ceil() as u32,
+        viewport.height.max(1.0).ceil() as u32,
+    );
     pass.set_vertex_buffer(0, buffer.slice(..));
-    for range in ranges { pass.draw(0..6, range.clone()); }
+    for range in ranges {
+        pass.draw(0..6, range.clone());
+    }
 }
 
 impl Renderer {
-    pub(crate) fn sync_schematic_world_strokes(&mut self, device: &wgpu::Device,
-        queue: &wgpu::Queue, strokes: &[WorldStrokeInstance]) {
+    pub(crate) fn sync_schematic_world_strokes(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        strokes: &[WorldStrokeInstance],
+    ) {
         let ptr = strokes.as_ptr() as usize;
         if self.schematic_world_stroke_buffer.is_some()
             && self.schematic_world_stroke_source_ptr == ptr
-            && self.schematic_world_stroke_source_len == strokes.len() { return; }
-        Self::upload_stroke_instances(device, queue, &mut self.schematic_world_stroke_buffer,
-            &mut self.schematic_world_stroke_capacity, "datum-schematic-world-stroke-buffer", strokes);
+            && self.schematic_world_stroke_source_len == strokes.len()
+        {
+            return;
+        }
+        Self::upload_stroke_instances(
+            device,
+            queue,
+            &mut self.schematic_world_stroke_buffer,
+            &mut self.schematic_world_stroke_capacity,
+            "datum-schematic-world-stroke-buffer",
+            strokes,
+        );
         self.schematic_world_stroke_source_ptr = ptr;
         self.schematic_world_stroke_source_len = strokes.len();
     }
 
-    pub(crate) fn upload_stroke_instances(device: &wgpu::Device, queue: &wgpu::Queue,
-        buffer: &mut Option<wgpu::Buffer>, capacity: &mut usize, label: &str,
-        strokes: &[WorldStrokeInstance]) {
+    pub(crate) fn upload_stroke_instances(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        buffer: &mut Option<wgpu::Buffer>,
+        capacity: &mut usize,
+        label: &str,
+        strokes: &[WorldStrokeInstance],
+    ) {
         let bytes = bytemuck::cast_slice(strokes);
         if buffer.is_none() || *capacity < bytes.len() {
-            *buffer = Some(device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some(label), contents: bytes,
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST }));
+            *buffer = Some(
+                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: Some(label),
+                    contents: bytes,
+                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                }),
+            );
             *capacity = bytes.len();
-        } else if let Some(buffer) = buffer { queue.write_buffer(buffer, 0, bytes); }
+        } else if let Some(buffer) = buffer {
+            queue.write_buffer(buffer, 0, bytes);
+        }
     }
 
-    pub(crate) fn sync_world_strokes(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, strokes: &[WorldStrokeInstance]) {
+    pub(crate) fn sync_world_strokes(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        strokes: &[WorldStrokeInstance],
+    ) {
         let ptr = strokes.as_ptr() as usize;
-        if self.world_stroke_buffer.is_some() && self.world_stroke_source_ptr == ptr && self.world_stroke_source_len == strokes.len() { return; }
-        Self::upload_stroke_instances(device, queue, &mut self.world_stroke_buffer,
-            &mut self.world_stroke_capacity, "datum-world-stroke-buffer", strokes);
-        self.world_stroke_source_ptr = ptr; self.world_stroke_source_len = strokes.len();
+        if self.world_stroke_buffer.is_some()
+            && self.world_stroke_source_ptr == ptr
+            && self.world_stroke_source_len == strokes.len()
+        {
+            return;
+        }
+        Self::upload_stroke_instances(
+            device,
+            queue,
+            &mut self.world_stroke_buffer,
+            &mut self.world_stroke_capacity,
+            "datum-world-stroke-buffer",
+            strokes,
+        );
+        self.world_stroke_source_ptr = ptr;
+        self.world_stroke_source_len = strokes.len();
     }
 }
 
-#[cfg(test)] mod tests {
- use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
- fn capsule_contains(local_px: [f32; 2], half_length: f32, radius: f32) -> bool {
-  let cap_distance = (local_px[0].abs() - half_length).max(0.0);
-  cap_distance * cap_distance + local_px[1] * local_px[1] <= radius * radius
- }
+    fn capsule_contains(local_px: [f32; 2], half_length: f32, radius: f32) -> bool {
+        let cap_distance = (local_px[0].abs() - half_length).max(0.0);
+        cap_distance * cap_distance + local_px[1] * local_px[1] <= radius * radius
+    }
 
- #[test] fn retained_stroke_uses_live_scale_and_px_floor() {
- let s = WorldStrokeInstance::segment(PointNm{x:0,y:0}, PointNm{x:1_000_000,y:0}, [1.0;3], 152_400, 1.0);
-  let retained = s;
-  assert_eq!(s.resolved_width_px(1e-9), 1.0); assert!((s.resolved_width_px(1e-4)-15.24).abs()<0.001);
-  assert_eq!(s, retained, "camera changes must not mutate/rebuild retained strokes");
- }
+    #[test]
+    fn retained_stroke_uses_live_scale_and_px_floor() {
+        let s = WorldStrokeInstance::segment(
+            PointNm { x: 0, y: 0 },
+            PointNm { x: 1_000_000, y: 0 },
+            [1.0; 3],
+            152_400,
+            1.0,
+        );
+        let retained = s;
+        assert_eq!(s.resolved_width_px(1e-9), 1.0);
+        assert!((s.resolved_width_px(1e-4) - 15.24).abs() < 0.001);
+        assert_eq!(
+            s, retained,
+            "camera changes must not mutate/rebuild retained strokes"
+        );
+    }
 
- #[test]
- fn round_caps_reject_square_corners_and_cover_shared_endpoints() {
-  let (half_length, radius) = (10.0, 4.0);
-  assert!(capsule_contains([10.0, 0.0], half_length, radius),
-      "the endpoint center must be covered");
-  assert!(capsule_contains([14.0, 0.0], half_length, radius),
-      "the radial cap edge must be covered");
-  assert!(capsule_contains([10.0, 4.0], half_length, radius),
-      "a second capsule sharing the endpoint must overlap without a gap");
-  assert!(!capsule_contains([14.0, 4.0], half_length, radius),
-      "a round cap must reject the old square projecting corner");
-  assert!(!capsule_contains([14.01, 0.0], half_length, radius),
-      "coverage must stop beyond the cap radius");
- }
+    #[test]
+    fn round_caps_reject_square_corners_and_cover_shared_endpoints() {
+        let (half_length, radius) = (10.0, 4.0);
+        assert!(
+            capsule_contains([10.0, 0.0], half_length, radius),
+            "the endpoint center must be covered"
+        );
+        assert!(
+            capsule_contains([14.0, 0.0], half_length, radius),
+            "the radial cap edge must be covered"
+        );
+        assert!(
+            capsule_contains([10.0, 4.0], half_length, radius),
+            "a second capsule sharing the endpoint must overlap without a gap"
+        );
+        assert!(
+            !capsule_contains([14.0, 4.0], half_length, radius),
+            "a round cap must reject the old square projecting corner"
+        );
+        assert!(
+            !capsule_contains([14.01, 0.0], half_length, radius),
+            "coverage must stop beyond the cap radius"
+        );
+    }
 
- #[test]
- fn world_stroke_shader_contains_analytic_capsule_rejection() {
- assert!(WORLD_STROKE_SHADER.contains("let cap_distance ="));
- assert!(WORLD_STROKE_SHADER.contains("distance_squared >"));
- assert!(WORLD_STROKE_SHADER.contains("discard;"));
-  assert!(WORLD_STROKE_SHADER.contains("@builtin(sample_index)"));
- }
+    #[test]
+    fn world_stroke_shader_contains_analytic_capsule_rejection() {
+        assert!(WORLD_STROKE_SHADER.contains("let cap_distance ="));
+        assert!(WORLD_STROKE_SHADER.contains("distance_squared >"));
+        assert!(WORLD_STROKE_SHADER.contains("discard;"));
+        assert!(WORLD_STROKE_SHADER.contains("@builtin(sample_index)"));
+    }
 }

@@ -209,26 +209,27 @@ fn validate_library_bindings(
         }
         validate_library_binding(component_instance.id, *binding_id, binding, model)?;
         if binding.binding_role == LibraryBindingRole::Part
-            && part_binding.replace(binding).is_some() {
-                return Err(EngineError::Validation(format!(
-                    "component instance {} must not contain multiple part LibraryBindings",
-                    component_instance.id
-                )));
-            }
+            && part_binding.replace(binding).is_some()
+        {
+            return Err(EngineError::Validation(format!(
+                "component instance {} must not contain multiple part LibraryBindings",
+                component_instance.id
+            )));
+        }
     }
     if let (Some(part_ref), Some(part_binding)) = (part_ref, part_binding)
         && (part_ref.object_id != part_binding.target_object_id
             || part_ref.object_revision != part_binding.pinned_object_revision)
-        {
-            return Err(EngineError::Validation(format!(
-                "component instance {} part_ref {}@{} does not match part LibraryBinding {}@{}",
-                component_instance.id,
-                part_ref.object_id,
-                part_ref.object_revision.0,
-                part_binding.target_object_id,
-                part_binding.pinned_object_revision.0
-            )));
-        }
+    {
+        return Err(EngineError::Validation(format!(
+            "component instance {} part_ref {}@{} does not match part LibraryBinding {}@{}",
+            component_instance.id,
+            part_ref.object_id,
+            part_ref.object_revision.0,
+            part_binding.target_object_id,
+            part_binding.pinned_object_revision.0
+        )));
+    }
     Ok(())
 }
 

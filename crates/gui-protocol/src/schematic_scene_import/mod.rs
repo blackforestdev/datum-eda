@@ -120,7 +120,13 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     let mut graphics = Vec::new();
     let mut points = Vec::new();
     let mut text = SchematicTextSink::default();
-    push_root_sheet_graphics(root_sheet, &schematic, &mut graphics, &mut points, &mut text);
+    push_root_sheet_graphics(
+        root_sheet,
+        &schematic,
+        &mut graphics,
+        &mut points,
+        &mut text,
+    );
     tag_schematic_hit_kinds(root_sheet, &mut graphics);
     let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
     // P2.2f: the schematic pane has NO sheet border (the prototype draws none), so

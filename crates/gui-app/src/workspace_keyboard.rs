@@ -63,10 +63,12 @@ pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> 
             runtime.cycle_crosshair_style();
             true
         }
-        WorkspaceCharacterAction::PreviousReview => runtime
-            .dispatch_session_command(SessionCommand::SelectPreviousReviewAction),
-        WorkspaceCharacterAction::NextReview => runtime
-            .dispatch_session_command(SessionCommand::SelectNextReviewAction),
+        WorkspaceCharacterAction::PreviousReview => {
+            runtime.dispatch_session_command(SessionCommand::SelectPreviousReviewAction)
+        }
+        WorkspaceCharacterAction::NextReview => {
+            runtime.dispatch_session_command(SessionCommand::SelectNextReviewAction)
+        }
         WorkspaceCharacterAction::Consume => false,
     }
 }
@@ -79,12 +81,27 @@ mod tests {
     #[test]
     fn production_character_dispatch_table_covers_every_workspace_hotkey() {
         for (key, expected) in [
-            ("s", WorkspaceCharacterAction::SetTool(WorkspaceTool::Select)),
-            ("b", WorkspaceCharacterAction::SetTool(WorkspaceTool::PlaceBoardText)),
-            ("v", WorkspaceCharacterAction::SetTool(WorkspaceTool::PlaceBoardVia)),
+            (
+                "s",
+                WorkspaceCharacterAction::SetTool(WorkspaceTool::Select),
+            ),
+            (
+                "b",
+                WorkspaceCharacterAction::SetTool(WorkspaceTool::PlaceBoardText),
+            ),
+            (
+                "v",
+                WorkspaceCharacterAction::SetTool(WorkspaceTool::PlaceBoardVia),
+            ),
             ("m", WorkspaceCharacterAction::SetTool(WorkspaceTool::Move)),
-            ("x", WorkspaceCharacterAction::SetTool(WorkspaceTool::Delete)),
-            ("r", WorkspaceCharacterAction::SetTool(WorkspaceTool::DrawBoardTrack)),
+            (
+                "x",
+                WorkspaceCharacterAction::SetTool(WorkspaceTool::Delete),
+            ),
+            (
+                "r",
+                WorkspaceCharacterAction::SetTool(WorkspaceTool::DrawBoardTrack),
+            ),
             ("f", WorkspaceCharacterAction::FitCamera),
             ("t", WorkspaceCharacterAction::FitReviewTarget),
             ("z", WorkspaceCharacterAction::TogglePaneZoom),
@@ -93,9 +110,15 @@ mod tests {
             ("]", WorkspaceCharacterAction::NextReview),
         ] {
             assert_eq!(character_action(key, false), Some(expected));
-            assert_eq!(character_action(&key.to_ascii_uppercase(), false), Some(expected));
+            assert_eq!(
+                character_action(&key.to_ascii_uppercase(), false),
+                Some(expected)
+            );
         }
-        assert_eq!(character_action("c", true), Some(WorkspaceCharacterAction::Consume));
+        assert_eq!(
+            character_action("c", true),
+            Some(WorkspaceCharacterAction::Consume)
+        );
         assert_eq!(character_action("q", false), None);
     }
 }

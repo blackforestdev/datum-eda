@@ -202,33 +202,75 @@ mod tests {
     use super::*;
 
     fn bounds() -> SceneBounds {
-        SceneBounds { min_x: -2_000_000, min_y: 1_000_000, max_x: 6_000_000, max_y: 5_000_000 }
+        SceneBounds {
+            min_x: -2_000_000,
+            min_y: 1_000_000,
+            max_x: 6_000_000,
+            max_y: 5_000_000,
+        }
     }
 
     fn viewport() -> CameraViewport {
-        CameraViewport { x: 100.0, y: 50.0, width: 800.0, height: 400.0 }
+        CameraViewport {
+            x: 100.0,
+            y: 50.0,
+            width: 800.0,
+            height: 400.0,
+        }
     }
 
     #[test]
     fn fit_centers_each_axis_without_overflow_prone_integer_addition() {
         let camera = CameraEngine::fit_to_bounds(&bounds());
-        assert_eq!((camera.center_x_nm, camera.center_y_nm, camera.zoom), (2_000_000.0, 3_000_000.0, 1.0));
+        assert_eq!(
+            (camera.center_x_nm, camera.center_y_nm, camera.zoom),
+            (2_000_000.0, 3_000_000.0, 1.0)
+        );
     }
 
     #[test]
     fn pan_uses_visible_projection_scale() {
         let mut camera = CameraEngine::fit_to_bounds(&bounds());
-        CameraEngine::pan_pixels(&mut camera, CameraConfig::default(), viewport(), &bounds(), 80.0, -40.0);
-        assert_eq!((camera.center_x_nm, camera.center_y_nm), (1_200_000.0, 3_400_000.0));
+        CameraEngine::pan_pixels(
+            &mut camera,
+            CameraConfig::default(),
+            viewport(),
+            &bounds(),
+            80.0,
+            -40.0,
+        );
+        assert_eq!(
+            (camera.center_x_nm, camera.center_y_nm),
+            (1_200_000.0, 3_400_000.0)
+        );
     }
 
     #[test]
     fn zoom_clamps_and_keeps_anchor_world_position_stationary() {
         let mut camera = CameraEngine::fit_to_bounds(&bounds());
-        CameraEngine::zoom_about_screen_point(&mut camera, CameraConfig::default(), viewport(), &bounds(), 700.0, 250.0, 100.0);
+        CameraEngine::zoom_about_screen_point(
+            &mut camera,
+            CameraConfig::default(),
+            viewport(),
+            &bounds(),
+            700.0,
+            250.0,
+            100.0,
+        );
         assert_eq!(camera.zoom, 8.0);
-        assert_eq!((camera.center_x_nm, camera.center_y_nm), (3_750_000.0, 3_000_000.0));
-        CameraEngine::zoom_about_screen_point(&mut camera, CameraConfig::default(), viewport(), &bounds(), 700.0, 250.0, 0.0001);
+        assert_eq!(
+            (camera.center_x_nm, camera.center_y_nm),
+            (3_750_000.0, 3_000_000.0)
+        );
+        CameraEngine::zoom_about_screen_point(
+            &mut camera,
+            CameraConfig::default(),
+            viewport(),
+            &bounds(),
+            700.0,
+            250.0,
+            0.0001,
+        );
         assert_eq!(camera.zoom, 0.35);
     }
 
@@ -236,7 +278,15 @@ mod tests {
     fn invalid_zoom_delta_is_a_noop() {
         let mut camera = CameraEngine::fit_to_bounds(&bounds());
         let before = camera;
-        CameraEngine::zoom_about_screen_point(&mut camera, CameraConfig::default(), viewport(), &bounds(), 500.0, 250.0, f32::NAN);
+        CameraEngine::zoom_about_screen_point(
+            &mut camera,
+            CameraConfig::default(),
+            viewport(),
+            &bounds(),
+            500.0,
+            250.0,
+            f32::NAN,
+        );
         assert_eq!(camera, before);
     }
 
@@ -270,7 +320,10 @@ mod tests {
         CameraEngine::pan_pixels(
             &mut camera,
             CameraConfig::default(),
-            CameraViewport { width: 0.0, ..viewport() },
+            CameraViewport {
+                width: 0.0,
+                ..viewport()
+            },
             &bounds(),
             10.0,
             10.0,

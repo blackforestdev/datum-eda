@@ -433,16 +433,17 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
         Err(err) => return error_response(request_id, -32060, &err.to_string()),
     };
     if let Some(expected) = params.expected_model_revision.as_deref()
-        && expected != model.model_revision.0 {
-            return error_response(
-                request_id,
-                -32061,
-                &format!(
-                    "stale expected_model_revision: expected {expected}, current {}",
-                    model.model_revision.0
-                ),
-            );
-        }
+        && expected != model.model_revision.0
+    {
+        return error_response(
+            request_id,
+            -32061,
+            &format!(
+                "stale expected_model_revision: expected {expected}, current {}",
+                model.model_revision.0
+            ),
+        );
+    }
     let Some(verb) = find_native_write_verb(&params.verb) else {
         return error_response(
             request_id,

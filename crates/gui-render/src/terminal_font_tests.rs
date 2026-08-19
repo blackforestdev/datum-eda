@@ -290,13 +290,7 @@ fn prompt_style_boundaries_do_not_restart_glyph_positioning() {
     let attrs = text_attrs(TextFace::Terminal);
 
     let mut plain = Buffer::new(&mut font_system, metrics);
-    plain.set_text(
-        &mut font_system,
-        fixture,
-        &attrs,
-        Shaping::Basic,
-        None,
-    );
+    plain.set_text(&mut font_system, fixture, &attrs, Shaping::Basic, None);
     plain.shape_until_scroll(&mut font_system, false);
 
     let mut rich = Buffer::new(&mut font_system, metrics);
@@ -324,14 +318,7 @@ fn prompt_style_boundaries_do_not_restart_glyph_positioning() {
         buffer
             .layout_runs()
             .flat_map(|run| run.glyphs.iter())
-            .map(|glyph| {
-                (
-                    glyph.start,
-                    glyph.end,
-                    glyph.x.to_bits(),
-                    glyph.w.to_bits(),
-                )
-            })
+            .map(|glyph| (glyph.start, glyph.end, glyph.x.to_bits(), glyph.w.to_bits()))
             .collect::<Vec<_>>()
     };
     assert_eq!(

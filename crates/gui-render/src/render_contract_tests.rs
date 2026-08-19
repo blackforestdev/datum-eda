@@ -601,7 +601,8 @@ fn narrow_pane_header_does_not_bleed_into_neighbor() {
     // Every header-band text run that STARTS inside the board pane must not extend
     // (after its clip bounds) into the schematic pane.
     for run in &prepared.text_runs {
-        let in_header_band = run.y >= board.header.y && run.y <= board.header.y + board.header.height;
+        let in_header_band =
+            run.y >= board.header.y && run.y <= board.header.y + board.header.height;
         let starts_in_board = run.x >= board.frame.x && run.x < schem.frame.x;
         if !in_header_band || !starts_in_board {
             continue;

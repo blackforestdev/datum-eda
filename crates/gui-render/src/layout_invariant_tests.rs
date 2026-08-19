@@ -293,8 +293,16 @@ fn viewport_tiling_holds_pane_tree_invariants_across_scale_matrix() {
         {
             let default = WorkspaceLayout::default();
             let panes = layout.viewport_panes(&default);
-            assert_eq!(panes.panes.len(), 2, "default must be two leaves at scale {scale}");
-            assert_eq!(panes.dividers.len(), 1, "default must have one divider at scale {scale}");
+            assert_eq!(
+                panes.panes.len(),
+                2,
+                "default must be two leaves at scale {scale}"
+            );
+            assert_eq!(
+                panes.dividers.len(),
+                1,
+                "default must have one divider at scale {scale}"
+            );
             assert_eq!(panes.panes[0].content, PaneContent::Board);
             assert_eq!(panes.panes[1].content, PaneContent::Schematic);
             assert_eq!(panes.focused, PaneId(0));
@@ -329,7 +337,11 @@ fn leaf_at_maps_points_for_click_to_focus() {
         // Default: vertical Board | Schematic split, Board (PaneId 0) focused.
         let workspace = WorkspaceLayout::default();
         let panes = layout.viewport_panes(&workspace);
-        assert_eq!(panes.panes.len(), 2, "default is two panes at scale {scale}");
+        assert_eq!(
+            panes.panes.len(),
+            2,
+            "default is two panes at scale {scale}"
+        );
 
         // A point at the center of each leaf frame maps back to that leaf.
         for leaf in &panes.panes {
@@ -388,8 +400,7 @@ fn default_board_and_loaded_schematic_scene_centers_are_editor_targets() {
     for scale in SCALES {
         let pw = ((logical_w as f32) * scale).round() as u32;
         let ph = ((logical_h as f32) * scale).round() as u32;
-        let panes = ShellLayout::for_surface(pw, ph, scale, None)
-            .viewport_panes(&state.ui.layout);
+        let panes = ShellLayout::for_surface(pw, ph, scale, None).viewport_panes(&state.ui.layout);
 
         for content in [PaneContent::Board, PaneContent::Schematic] {
             let leaf = panes
@@ -427,14 +438,20 @@ fn dividers_carry_split_paths_and_are_grabbable() {
     let panes = layout.viewport_panes(&ws);
     assert_eq!(panes.dividers.len(), 1);
     let root_div = &panes.dividers[0];
-    assert!(root_div.path.is_empty(), "root split divider has the empty path");
+    assert!(
+        root_div.path.is_empty(),
+        "root split divider has the empty path"
+    );
     assert_eq!(root_div.orientation, SplitOrientation::Vertical);
     // The split frame spans the whole viewport for the root split.
     assert_eq!(root_div.split_frame, layout.viewport);
     // divider_at hits the gutter center and misses a point far from it.
     let cx = root_div.rect.x + root_div.rect.width * 0.5;
     let cy = root_div.rect.y + root_div.rect.height * 0.5;
-    assert!(panes.divider_at(cx, cy).is_some(), "gutter center is grabbable");
+    assert!(
+        panes.divider_at(cx, cy).is_some(),
+        "gutter center is grabbable"
+    );
     assert!(
         panes.divider_at(root_div.rect.x - 100.0, cy).is_none(),
         "a point far from every gutter is not a divider grab"

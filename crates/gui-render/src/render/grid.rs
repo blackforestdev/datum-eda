@@ -1,11 +1,11 @@
 use super::{
-    board_surface_color, BoardSurfaceRole, Projection, Quad, RectPx, SCHEMATIC_GRID_MAJOR,
-    SCHEMATIC_GRID_MINOR,
+    BoardSurfaceRole, Projection, Quad, RectPx, SCHEMATIC_GRID_MAJOR, SCHEMATIC_GRID_MINOR,
+    board_surface_color,
 };
 use datum_gui_viewport::{
+    AxisProjection, GridConfig, GridEngine, GridMode, GridTier, ViewportProfile, WeightClass,
     grid::{GridLodState, GridViewport},
     profile::GridMark,
-    AxisProjection, GridConfig, GridEngine, GridMode, GridTier, ViewportProfile, WeightClass,
 };
 use std::sync::LazyLock;
 

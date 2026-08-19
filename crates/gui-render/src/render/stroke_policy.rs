@@ -39,10 +39,12 @@ impl AuthoredStrokePrimitive {
     pub(crate) fn weight(self) -> WeightClass {
         let authored = |nominal_nm, min_px| WeightClass::AuthoredConstantNm { nominal_nm, min_px };
         match self {
-            Self::CopperTrace { width_nm } | Self::ImportedWorldLine { width_nm } => WeightClass::WorldWidthWithMinClamp {
-                nominal_nm: width_nm.max(1),
-                min_px: 1.0,
-            },
+            Self::CopperTrace { width_nm } | Self::ImportedWorldLine { width_nm } => {
+                WeightClass::WorldWidthWithMinClamp {
+                    nominal_nm: width_nm.max(1),
+                    min_px: 1.0,
+                }
+            }
             Self::CopperZoneOutline => authored(EDGE_CUT_NM, 1.0),
             Self::BoardSilkLine => authored(SILK_LINE_NM, 1.0),
             Self::EdgeCut => authored(EDGE_CUT_NM, 1.0),
@@ -76,24 +78,41 @@ impl AuthoredStrokePrimitive {
     }
 }
 
-pub(crate) fn semantic_graphic_kind(object_id: &str, layer_id: &str,
-    imported_width_nm: Option<i64>) -> AuthoredStrokePrimitive {
-    if object_id.starts_with("schematic-bus-entry:") { AuthoredStrokePrimitive::BusEntry }
-    else if object_id.starts_with("schematic-bus:") { AuthoredStrokePrimitive::SchematicBus }
-    else if object_id.starts_with("schematic-wire:") { AuthoredStrokePrimitive::SchematicWire }
-    else if object_id.starts_with("schematic-symbol-pin-terminal:") { AuthoredStrokePrimitive::PinTerminalDot }
-    else if object_id.starts_with("schematic-symbol-pin:") { AuthoredStrokePrimitive::PinLine }
-    else if object_id.starts_with("schematic-junction:") { AuthoredStrokePrimitive::JunctionDot }
-    else if object_id.starts_with("schematic-noconnect:") { AuthoredStrokePrimitive::NoConnectMarker }
-    else if object_id.starts_with("schematic-power:") { AuthoredStrokePrimitive::PowerSymbolGlyph }
-    else if object_id.starts_with("schematic-label:") || object_id.starts_with("schematic-port:") {
+pub(crate) fn semantic_graphic_kind(
+    object_id: &str,
+    layer_id: &str,
+    imported_width_nm: Option<i64>,
+) -> AuthoredStrokePrimitive {
+    if object_id.starts_with("schematic-bus-entry:") {
+        AuthoredStrokePrimitive::BusEntry
+    } else if object_id.starts_with("schematic-bus:") {
+        AuthoredStrokePrimitive::SchematicBus
+    } else if object_id.starts_with("schematic-wire:") {
+        AuthoredStrokePrimitive::SchematicWire
+    } else if object_id.starts_with("schematic-symbol-pin-terminal:") {
+        AuthoredStrokePrimitive::PinTerminalDot
+    } else if object_id.starts_with("schematic-symbol-pin:") {
+        AuthoredStrokePrimitive::PinLine
+    } else if object_id.starts_with("schematic-junction:") {
+        AuthoredStrokePrimitive::JunctionDot
+    } else if object_id.starts_with("schematic-noconnect:") {
+        AuthoredStrokePrimitive::NoConnectMarker
+    } else if object_id.starts_with("schematic-power:") {
+        AuthoredStrokePrimitive::PowerSymbolGlyph
+    } else if object_id.starts_with("schematic-label:") || object_id.starts_with("schematic-port:")
+    {
         AuthoredStrokePrimitive::NetLabelBorder
-    } else if object_id.starts_with("schematic-symbol:") { AuthoredStrokePrimitive::SymbolBodyOutline }
-    else if layer_id.eq_ignore_ascii_case("Edge.Cuts") || layer_id.eq_ignore_ascii_case("edge_cuts") {
+    } else if object_id.starts_with("schematic-symbol:") {
+        AuthoredStrokePrimitive::SymbolBodyOutline
+    } else if layer_id.eq_ignore_ascii_case("Edge.Cuts")
+        || layer_id.eq_ignore_ascii_case("edge_cuts")
+    {
         AuthoredStrokePrimitive::EdgeCut
     } else if let Some(width_nm) = imported_width_nm {
         AuthoredStrokePrimitive::ImportedWorldLine { width_nm }
-    } else { AuthoredStrokePrimitive::BoardSilkLine }
+    } else {
+        AuthoredStrokePrimitive::BoardSilkLine
+    }
 }
 
 pub(crate) fn board_graphic_nominal_nm(layer_id: &str, imported_width_nm: Option<i64>) -> i64 {
@@ -179,15 +198,31 @@ mod tests {
             ("schematic-bus:b", AuthoredStrokePrimitive::SchematicBus),
             ("schematic-bus-entry:e", AuthoredStrokePrimitive::BusEntry),
             ("schematic-symbol-pin:s:0", AuthoredStrokePrimitive::PinLine),
-            ("schematic-symbol-pin-terminal:s:0", AuthoredStrokePrimitive::PinTerminalDot),
+            (
+                "schematic-symbol-pin-terminal:s:0",
+                AuthoredStrokePrimitive::PinTerminalDot,
+            ),
             ("schematic-junction:j", AuthoredStrokePrimitive::JunctionDot),
-            ("schematic-noconnect:n:a", AuthoredStrokePrimitive::NoConnectMarker),
-            ("schematic-power:p:g", AuthoredStrokePrimitive::PowerSymbolGlyph),
+            (
+                "schematic-noconnect:n:a",
+                AuthoredStrokePrimitive::NoConnectMarker,
+            ),
+            (
+                "schematic-power:p:g",
+                AuthoredStrokePrimitive::PowerSymbolGlyph,
+            ),
             ("schematic-label:l", AuthoredStrokePrimitive::NetLabelBorder),
-            ("schematic-symbol:s", AuthoredStrokePrimitive::SymbolBodyOutline),
+            (
+                "schematic-symbol:s",
+                AuthoredStrokePrimitive::SymbolBodyOutline,
+            ),
         ];
         for (id, expected) in cases {
-            assert_eq!(semantic_graphic_kind(id, "schematic", Some(9)), expected, "{id}");
+            assert_eq!(
+                semantic_graphic_kind(id, "schematic", Some(9)),
+                expected,
+                "{id}"
+            );
         }
     }
 }

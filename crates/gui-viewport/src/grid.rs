@@ -388,12 +388,16 @@ mod tests {
             axis(1.0, 0.0),
             axis(1.0, 0.0),
         );
-        assert!(lines
-            .iter()
-            .any(|l| l.height == 80.0 && (l.x - 3.0).abs() < 0.01));
-        assert!(lines
-            .iter()
-            .any(|l| l.width == 100.0 && (l.y - 7.0).abs() < 0.01));
+        assert!(
+            lines
+                .iter()
+                .any(|l| l.height == 80.0 && (l.x - 3.0).abs() < 0.01)
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l.width == 100.0 && (l.y - 7.0).abs() < 0.01)
+        );
     }
     #[test]
     fn cross_and_dot_have_distinct_representation() {
@@ -436,21 +440,25 @@ mod tests {
     }
     #[test]
     fn invalid_inputs_emit_nothing() {
-        assert!(GridEngine::compute(
-            &config(GridMark::Lines),
-            99,
-            vp(),
-            axis(1.0, 0.0),
-            axis(1.0, 0.0)
-        )
-        .is_empty());
-        assert!(GridEngine::compute(
-            &config(GridMark::Lines),
-            0,
-            vp(),
-            axis(f32::NAN, 0.0),
-            axis(1.0, 0.0)
-        )
-        .is_empty());
+        assert!(
+            GridEngine::compute(
+                &config(GridMark::Lines),
+                99,
+                vp(),
+                axis(1.0, 0.0),
+                axis(1.0, 0.0)
+            )
+            .is_empty()
+        );
+        assert!(
+            GridEngine::compute(
+                &config(GridMark::Lines),
+                0,
+                vp(),
+                axis(f32::NAN, 0.0),
+                axis(1.0, 0.0)
+            )
+            .is_empty()
+        );
     }
 }

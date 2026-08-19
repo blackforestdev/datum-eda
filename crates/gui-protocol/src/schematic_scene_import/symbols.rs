@@ -37,7 +37,17 @@ pub(super) fn push_symbol_graphics(
 
     // 2. Pin lines + terminal markers, 4. pin name/number text.
     for (index, pin) in symbol.pins.iter().enumerate() {
-        push_symbol_pin(graphics, points, text, symbol.uuid, center, half_w, half_h, index, pin);
+        push_symbol_pin(
+            graphics,
+            points,
+            text,
+            symbol.uuid,
+            center,
+            half_w,
+            half_h,
+            index,
+            pin,
+        );
     }
 
     // 3. Refdes above the body, value below it.

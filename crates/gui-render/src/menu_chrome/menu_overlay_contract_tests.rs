@@ -4,9 +4,7 @@
 //! title-aligned drop position, content-fitted card width, and the closed-menu
 //! parity guarantee.
 
-use crate::{
-    CameraState, HitTarget, PreparedScene, RetainedScene, measured_text_run_width_px,
-};
+use crate::{CameraState, HitTarget, PreparedScene, RetainedScene, measured_text_run_width_px};
 
 #[test]
 fn menu_dropdown_composites_into_menu_overlay_under_its_title() {
@@ -149,7 +147,10 @@ fn menu_dropdown_fits_its_content_no_spill() {
         .iter()
         .map(|v| v.pos[0])
         .fold(f32::NEG_INFINITY, f32::max);
-    assert!(card_right.is_finite(), "an open menu must emit an overlay card");
+    assert!(
+        card_right.is_finite(),
+        "an open menu must emit an overlay card"
+    );
     for run in prepared.menu_overlay_text_runs() {
         let right_edge = run.x + measured_text_run_width_px(&run.text, run.size, run.face);
         assert!(
@@ -159,4 +160,3 @@ fn menu_dropdown_fits_its_content_no_spill() {
         );
     }
 }
-

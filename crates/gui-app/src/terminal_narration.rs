@@ -6,10 +6,7 @@
 
 use datum_gui_protocol::ConsoleLaneState;
 
-pub(super) fn route_gui_narration(
-    console: &mut ConsoleLaneState,
-    message: impl Into<String>,
-) {
+pub(super) fn route_gui_narration(console: &mut ConsoleLaneState, message: impl Into<String>) {
     console.push_line(message.into());
 }
 

@@ -120,9 +120,7 @@ pub(crate) fn place_native_project_board_text(
         position,
         rotation: rotation_deg,
         render_intent,
-        family: family
-            .map(TextFamilyId)
-            .unwrap_or_default(),
+        family: family.map(TextFamilyId).unwrap_or_default(),
         family_source,
         style: style.map(TextStyleId).unwrap_or_default(),
         h_align,

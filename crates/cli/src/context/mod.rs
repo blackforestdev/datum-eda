@@ -220,13 +220,15 @@ fn resolve_context_path(args: &ContextGetArgs) -> Result<PathBuf> {
         return Ok(path.clone());
     }
     if let Ok(path) = std::env::var("DATUM_DISCOVERY")
-        && !path.is_empty() {
-            return Ok(PathBuf::from(path));
-        }
+        && !path.is_empty()
+    {
+        return Ok(PathBuf::from(path));
+    }
     if let Ok(path) = std::env::var("DATUM_TERMINAL_CONTEXT")
-        && !path.is_empty() {
-            return Ok(PathBuf::from(path));
-        }
+        && !path.is_empty()
+    {
+        return Ok(PathBuf::from(path));
+    }
     if let Some(root) = &args.project_root {
         if let Some(session) = &args.session {
             let session_path = root

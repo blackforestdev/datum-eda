@@ -222,7 +222,6 @@ pub enum ComponentInstanceAuthority {
     CompatibilityDerived,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComponentInstance {
     pub id: ComponentInstanceId,

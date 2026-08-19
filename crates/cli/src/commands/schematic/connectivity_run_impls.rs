@@ -1,5 +1,5 @@
-use super::*;
 use super::connectivity_mutations::*;
+use super::*;
 
 // Phase 5: exec-layer dissolution — variant run() impls (the former
 // command_exec destructure-and-forward glue, now inherent methods on the

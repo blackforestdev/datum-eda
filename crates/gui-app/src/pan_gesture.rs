@@ -25,8 +25,13 @@ impl Runtime {
         );
         append_gui_verbose_diagnostic_line(format!(
             "pan key physical={:?} logical={:?} state={:?} repeat={} pointer_in_scene={} held={} consumed={}",
-            event.physical_key, event.logical_key, event.state, event.repeat,
-            pointer_in_scene, self.pan_gesture.space_is_held(), consumed
+            event.physical_key,
+            event.logical_key,
+            event.state,
+            event.repeat,
+            pointer_in_scene,
+            self.pan_gesture.space_is_held(),
+            consumed
         ));
         consumed
     }
@@ -36,16 +41,15 @@ impl Runtime {
         let active = self.pan_gesture.primary_pressed(pointer_in_scene);
         append_gui_verbose_diagnostic_line(format!(
             "pan primary pressed cursor={:?} pointer_in_scene={} held={} active={}",
-            self.last_cursor_pos, pointer_in_scene, self.pan_gesture.space_is_held(), active
+            self.last_cursor_pos,
+            pointer_in_scene,
+            self.pan_gesture.space_is_held(),
+            active
         ));
         active
     }
 
-    pub(super) fn advance_primary_pan(
-        &mut self,
-        previous: (f32, f32),
-        next: (f32, f32),
-    ) -> bool {
+    pub(super) fn advance_primary_pan(&mut self, previous: (f32, f32), next: (f32, f32)) -> bool {
         let changed = self.handle_pan_drag(previous, next);
         append_gui_verbose_diagnostic_line(format!(
             "pan move previous={previous:?} next={next:?} changed={changed}"

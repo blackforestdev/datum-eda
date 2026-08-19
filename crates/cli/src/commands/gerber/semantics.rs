@@ -529,12 +529,13 @@ fn finalize_pending_stroke(
     geometries: &mut Vec<ParsedGerberGeometry>,
 ) {
     if let Some(stroke) = pending_stroke.take()
-        && stroke.points.len() >= 2 {
-            geometries.push(ParsedGerberGeometry::Stroke {
-                aperture_diameter_nm: stroke.aperture_diameter_nm,
-                points: canonicalize_path_points(&stroke.points),
-            });
-        }
+        && stroke.points.len() >= 2
+    {
+        geometries.push(ParsedGerberGeometry::Stroke {
+            aperture_diameter_nm: stroke.aperture_diameter_nm,
+            points: canonicalize_path_points(&stroke.points),
+        });
+    }
 }
 fn canonicalize_path_points(points: &[Point]) -> Vec<Point> {
     let mut normalized = points.to_vec();

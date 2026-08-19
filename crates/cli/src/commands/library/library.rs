@@ -904,18 +904,18 @@ pub(crate) fn detach_native_project_pool_part_model(
                 .and_then(serde_json::Value::as_str)
                 .and_then(|uuid| Uuid::parse_str(uuid).ok())
                 == Some(attachment_id)
-            {
-                continue;
-            }
+        {
+            continue;
+        }
         if let Some(model_id) = model_id
             && model
                 .get("model_uuid")
                 .and_then(serde_json::Value::as_str)
                 .and_then(|uuid| Uuid::parse_str(uuid).ok())
                 == Some(model_id)
-            {
-                continue;
-            }
+        {
+            continue;
+        }
         attachments.push(model.clone());
     }
     if attachments.len() == previous_attachments.len() {

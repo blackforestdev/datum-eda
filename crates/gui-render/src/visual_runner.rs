@@ -394,8 +394,13 @@ mod tests {
             manifest.viewport.height_px,
             None,
         );
-        let board_field =
-            crate::inset_rect(layout.scene_viewport(&state.ui.layout), 10.0, 10.0, 10.0, 10.0);
+        let board_field = crate::inset_rect(
+            layout.scene_viewport(&state.ui.layout),
+            10.0,
+            10.0,
+            10.0,
+            10.0,
+        );
         let projection = crate::Projection::new(board_field, bounds, camera);
         let projected = crate::project_rect(
             datum_gui_protocol::RectNm {

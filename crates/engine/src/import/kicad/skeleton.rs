@@ -15,12 +15,12 @@ use crate::substrate::{ImportKey, ImportMapEntry, allocate_import_identity};
 
 use super::board_objects::*;
 use super::net_refs::*;
-use super::parser_helpers::*;
 use super::pad_expansion::{
     NonCopperLayerKind, parse_block_mm_value_anywhere, parse_block_ratio_ppm_anywhere,
     parse_footprint_mm_value_before_pads, parse_footprint_ratio_ppm_before_pads,
     parse_pad_expansion_setup, parse_pad_non_copper_layers_anywhere,
 };
+use super::parser_helpers::*;
 use super::schematic_bus::{
     ParsedBusEntrySkeleton, ParsedBusSegment, attached_bus_specs, resolve_bus_entry_attachment,
 };
@@ -327,12 +327,7 @@ pub(super) fn parse_schematic_skeleton(
         ports,
         noconnects,
         texts: parse_schematic_texts(path, contents, import_map, import_identities.as_deref_mut()),
-        drawings: parse_schematic_drawings(
-            path,
-            contents,
-            import_map,
-            import_identities,
-        ),
+        drawings: parse_schematic_drawings(path, contents, import_map, import_identities),
     };
 
     Ok(ParsedSchematicSkeleton {

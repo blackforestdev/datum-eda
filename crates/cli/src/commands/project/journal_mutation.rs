@@ -134,13 +134,14 @@ fn validate_journal_mutation_guard(
     expected_tip_transaction: Option<Uuid>,
 ) -> Result<()> {
     if let Some(expected) = expected_model_revision
-        && expected != model.model_revision.0 {
-            return Err(anyhow!(
-                "journal {action} refused: expected model revision {}, current {}",
-                expected,
-                model.model_revision.0
-            ));
-        }
+        && expected != model.model_revision.0
+    {
+        return Err(anyhow!(
+            "journal {action} refused: expected model revision {}, current {}",
+            expected,
+            model.model_revision.0
+        ));
+    }
     if let Some(expected) = expected_tip_transaction {
         let current = model
             .journal

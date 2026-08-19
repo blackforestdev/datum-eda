@@ -35,7 +35,6 @@ pub enum ImportMapEntryStatus {
     Merged,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImportIdentityAllocation {
     pub import_key: ImportKey,

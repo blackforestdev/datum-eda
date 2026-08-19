@@ -268,9 +268,6 @@ mod tests {
         *cameras.entry_or_insert_with(second, PaneContent::Board, || cam(0.75)) = cam(1.25);
 
         assert_eq!(cameras.camera(first, PaneContent::Board), Some(cam(2.0)));
-        assert_eq!(
-            cameras.camera(second, PaneContent::Board),
-            Some(cam(1.25))
-        );
+        assert_eq!(cameras.camera(second, PaneContent::Board), Some(cam(1.25)));
     }
 }

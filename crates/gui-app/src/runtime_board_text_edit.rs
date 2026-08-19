@@ -124,7 +124,10 @@ impl Runtime {
         true
     }
 
-    pub(super) fn toggle_selected_board_text_boolean(&mut self, field: BoardTextBooleanField) -> bool {
+    pub(super) fn toggle_selected_board_text_boolean(
+        &mut self,
+        field: BoardTextBooleanField,
+    ) -> bool {
         let field_label = match field {
             BoardTextBooleanField::Mirrored => "mirrored",
             BoardTextBooleanField::KeepUpright => "keep-upright",
@@ -147,7 +150,10 @@ impl Runtime {
         )
     }
 
-    pub(super) fn cycle_selected_board_text_alignment(&mut self, field: BoardTextAlignmentField) -> bool {
+    pub(super) fn cycle_selected_board_text_alignment(
+        &mut self,
+        field: BoardTextAlignmentField,
+    ) -> bool {
         let field_label = match field {
             BoardTextAlignmentField::Horizontal => "horizontal align",
             BoardTextAlignmentField::Vertical => "vertical align",
@@ -158,7 +164,10 @@ impl Runtime {
         )
     }
 
-    pub(super) fn step_selected_board_text_line_spacing(&mut self, step: BoardTextLineSpacingStep) -> bool {
+    pub(super) fn step_selected_board_text_line_spacing(
+        &mut self,
+        step: BoardTextLineSpacingStep,
+    ) -> bool {
         self.begin_selected_board_text_quick_edit(
             BoardTextQuickEditTerminalAction::StepLineSpacing(step),
             "editing selected board text line spacing".to_string(),
@@ -172,7 +181,10 @@ impl Runtime {
         )
     }
 
-    pub(super) fn step_selected_board_text_rotation(&mut self, step: BoardTextRotationStep) -> bool {
+    pub(super) fn step_selected_board_text_rotation(
+        &mut self,
+        step: BoardTextRotationStep,
+    ) -> bool {
         self.begin_selected_board_text_quick_edit(
             BoardTextQuickEditTerminalAction::StepRotation(step),
             "editing selected board text rotation".to_string(),

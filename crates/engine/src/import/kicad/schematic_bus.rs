@@ -28,9 +28,10 @@ pub(super) fn attached_bus_specs<'a>(
             continue;
         }
         if let Some(spec) = parse_bus_label_spec(&label.name)
-            && !specs.iter().any(|existing| existing == &spec) {
-                specs.push(spec);
-            }
+            && !specs.iter().any(|existing| existing == &spec)
+        {
+            specs.push(spec);
+        }
     }
     specs.sort_by(|a, b| a.0.cmp(&b.0).then_with(|| a.1.cmp(&b.1)));
     specs

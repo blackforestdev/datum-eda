@@ -97,7 +97,10 @@ impl PreparedScene {
                 .find(|pass| pass.scene_viewport.contains(x, y))
                 .cloned()
         });
-        if let Some(pass) = active.as_ref().filter(|pass| pass.surface == SceneSurface::Board) {
+        if let Some(pass) = active
+            .as_ref()
+            .filter(|pass| pass.surface == SceneSurface::Board)
+        {
             let field = inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(field, &pass.bounds, pass.camera);
             push_pane_interaction(

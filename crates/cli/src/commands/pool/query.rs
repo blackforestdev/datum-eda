@@ -210,10 +210,7 @@ pub(crate) fn query_native_project_pool_models(
                     format!("datum-eda:pool-model:{sha256}").as_bytes(),
                 );
                 let hash_matches = sha256 == computed_sha256;
-                let attachments = attachment_refs
-                    .get(sha256)
-                    .cloned()
-                    .unwrap_or_default();
+                let attachments = attachment_refs.get(sha256).cloned().unwrap_or_default();
                 let referenced = !attachments.is_empty();
                 models.push(NativeProjectPoolModelView {
                     pool_path: pool_path.to_string(),

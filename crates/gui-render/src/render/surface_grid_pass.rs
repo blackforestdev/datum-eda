@@ -20,11 +20,7 @@ pub(crate) fn build_surface_grids(
                 grid::push_scene_grid_with_lod(&mut quads, &projection, pass.grid_lod_resolved);
             }
             SceneSurface::Schematic => {
-                grid::push_schematic_grid_with_lod(
-                    &mut quads,
-                    &projection,
-                    pass.grid_lod_resolved,
-                );
+                grid::push_schematic_grid_with_lod(&mut quads, &projection, pass.grid_lod_resolved);
             }
         }
         let start = vertices.len() as u32;

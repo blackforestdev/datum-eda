@@ -365,31 +365,33 @@ fn resolve_contour_set_non_zero_scanline(contours: TextContourSet) -> TextResolv
             winding += crossing.3;
             if previous_winding == 0 && winding != 0 {
                 span_start = Some((crossing.1, crossing.2));
-            } else if previous_winding != 0 && winding == 0
+            } else if previous_winding != 0
+                && winding == 0
                 && let Some((left_x0, left_x1)) = span_start.take()
-                    && crossing.0 - left_x0 > EPS {
-                        regions.push(TextFilledRegion {
-                            outer: vec![
-                                crate::ir::geometry::Point {
-                                    x: left_x0.round() as i64,
-                                    y: y0.round() as i64,
-                                },
-                                crate::ir::geometry::Point {
-                                    x: crossing.1.round() as i64,
-                                    y: y0.round() as i64,
-                                },
-                                crate::ir::geometry::Point {
-                                    x: crossing.2.round() as i64,
-                                    y: y1.round() as i64,
-                                },
-                                crate::ir::geometry::Point {
-                                    x: left_x1.round() as i64,
-                                    y: y1.round() as i64,
-                                },
-                            ],
-                            holes: Vec::new(),
-                        });
-                    }
+                && crossing.0 - left_x0 > EPS
+            {
+                regions.push(TextFilledRegion {
+                    outer: vec![
+                        crate::ir::geometry::Point {
+                            x: left_x0.round() as i64,
+                            y: y0.round() as i64,
+                        },
+                        crate::ir::geometry::Point {
+                            x: crossing.1.round() as i64,
+                            y: y0.round() as i64,
+                        },
+                        crate::ir::geometry::Point {
+                            x: crossing.2.round() as i64,
+                            y: y1.round() as i64,
+                        },
+                        crate::ir::geometry::Point {
+                            x: left_x1.round() as i64,
+                            y: y1.round() as i64,
+                        },
+                    ],
+                    holes: Vec::new(),
+                });
+            }
         }
     }
 

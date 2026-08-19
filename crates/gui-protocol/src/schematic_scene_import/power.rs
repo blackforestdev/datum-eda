@@ -19,7 +19,11 @@ pub(super) fn is_power_symbol(symbol: &PlacedSymbol) -> bool {
 /// the lib_id (after `:`) containing GND / GROUND / VSS / EARTH is a ground stack;
 /// anything else (VCC, +3V3, VEE, PWR_FLAG, ...) is a rail flag.
 fn is_ground_power_symbol(lib_id: &str) -> bool {
-    let name = lib_id.rsplit(':').next().unwrap_or(lib_id).to_ascii_uppercase();
+    let name = lib_id
+        .rsplit(':')
+        .next()
+        .unwrap_or(lib_id)
+        .to_ascii_uppercase();
     ["GND", "GROUND", "VSS", "EARTH"]
         .iter()
         .any(|token| name.contains(token))

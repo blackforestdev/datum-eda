@@ -6,7 +6,11 @@ use crate::*;
 /// P2.2e: a bus as a GOLD thick polyline (`Schematic.Bus` -> `--bus`). Geometry
 /// comes from the engine `Bus.segments` (KiCad `(bus (pts ...))`); a bus authored
 /// through the write path with no segments yet is skipped (nothing to draw).
-pub(super) fn push_bus_graphic(graphics: &mut Vec<BoardGraphicPrimitive>, points: &mut Vec<PointNm>, bus: &Bus) {
+pub(super) fn push_bus_graphic(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    bus: &Bus,
+) {
     if bus.segments.len() < 2 {
         return;
     }

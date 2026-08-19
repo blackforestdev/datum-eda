@@ -156,14 +156,15 @@ fn render_menu_dropdown(
         .fold(0.0_f32, f32::max);
     // The row is inset SP_02 from the card on each side; add that back, floor at a
     // sensible minimum, and never exceed the menu-bar (window) width.
-    let max_card_width = (layout.top_menu_bar.width - design_tokens::spacing::SP_02 * 2.0).max(MIN_WIDTH);
+    let max_card_width =
+        (layout.top_menu_bar.width - design_tokens::spacing::SP_02 * 2.0).max(MIN_WIDTH);
     let width = (content_width + design_tokens::spacing::SP_02 * 2.0)
         .max(MIN_WIDTH)
         .min(max_card_width);
     let height = item_height * menu.items.len() as f32 + design_tokens::spacing::SP_02 * 2.0;
     // Clamp so the dropdown stays inside the window right edge under its title.
-    let max_x = (layout.top_menu_bar.x + layout.top_menu_bar.width - width)
-        .max(layout.top_menu_bar.x);
+    let max_x =
+        (layout.top_menu_bar.x + layout.top_menu_bar.width - width).max(layout.top_menu_bar.x);
     let rect = RectPx {
         x: menu_x.min(max_x),
         y: layout.top_menu_bar.y + layout.top_menu_bar.height,
@@ -318,8 +319,11 @@ mod tests {
         let expected_pad_sum = MENU_TITLE_PAD * 2.0;
         for menu in &model.menubar {
             let width = menu_title_width(&menu.menu);
-            let measured =
-                measured_text_run_width_px(&menu.menu, design_tokens::typography::BODY_SIZE, TextFace::Ui);
+            let measured = measured_text_run_width_px(
+                &menu.menu,
+                design_tokens::typography::BODY_SIZE,
+                TextFace::Ui,
+            );
             let pad = width - measured;
             assert!(
                 (pad - expected_pad_sum).abs() < 1e-3,

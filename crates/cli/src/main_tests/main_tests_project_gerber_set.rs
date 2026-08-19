@@ -527,12 +527,8 @@ fn project_export_gerber_set_writes_planned_artifact_set() {
     assert_eq!(compare_report["missing_count"], 0);
     assert_eq!(compare_report["extra_count"], 0);
     assert_eq!(compare_report["expected_count"], 6);
-    assert!(
-        output_dir.join("release-a-l2-top-mask-mask.gbr").exists()
-    );
-    assert!(
-        output_dir.join("release-a-l4-top-paste-paste.gbr").exists()
-    );
+    assert!(output_dir.join("release-a-l2-top-mask-mask.gbr").exists());
+    assert!(output_dir.join("release-a-l4-top-paste-paste.gbr").exists());
 }
 
 #[test]

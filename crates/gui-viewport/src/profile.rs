@@ -6,8 +6,8 @@
 //! camera, snap, hover, selection, tool, menu, readout, and layer engines that
 //! read the remaining config.
 
-use crate::stroke::WeightClass;
 use crate::CameraConfig;
+use crate::stroke::WeightClass;
 
 /// Grid layout mode (spec §5): a square grid uses one pitch on both axes; a
 /// rectangular grid allows an independent pitch per axis.

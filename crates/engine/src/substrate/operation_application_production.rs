@@ -189,17 +189,12 @@ fn validate_production_payload(
             validate_optional_variant(model, job.variant, "output job")?;
             if let Some(plan_id) = job.manufacturing_plan
                 && !model.manufacturing_plans.contains_key(&plan_id)
-                    && !object_has_domain_kind(
-                        model,
-                        plan_id,
-                        "manufacturing",
-                        "manufacturing_plan",
-                    )
-                {
-                    return Err(EngineError::Validation(format!(
-                        "output job {object_id} references missing manufacturing plan {plan_id}"
-                    )));
-                }
+                && !object_has_domain_kind(model, plan_id, "manufacturing", "manufacturing_plan")
+            {
+                return Err(EngineError::Validation(format!(
+                    "output job {object_id} references missing manufacturing plan {plan_id}"
+                )));
+            }
         }
         _ => {
             return Err(EngineError::Operation(format!(
@@ -266,11 +261,12 @@ fn validate_optional_variant(
     subject: &str,
 ) -> Result<(), EngineError> {
     if let Some(variant_id) = variant
-        && !model.variants.contains_key(&variant_id) {
-            return Err(EngineError::Validation(format!(
-                "{subject} references missing variant {variant_id}"
-            )));
-        }
+        && !model.variants.contains_key(&variant_id)
+    {
+        return Err(EngineError::Validation(format!(
+            "{subject} references missing variant {variant_id}"
+        )));
+    }
     Ok(())
 }
 

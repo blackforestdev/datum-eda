@@ -1,7 +1,7 @@
 use super::{
-    dim_authored_color, dim_structural_color, inset_rect, project_point, push_projected_ellipse,
-    push_world_ellipse_nm, resolve_layer_appearance, world_inset_rect, world_length_to_px,
-    Projection, Quad, RectPx, AUTHOR_SELECTED,
+    AUTHOR_SELECTED, Projection, Quad, RectPx, dim_authored_color, dim_structural_color,
+    inset_rect, project_point, push_projected_ellipse, push_world_ellipse_nm,
+    resolve_layer_appearance, world_inset_rect, world_length_to_px,
 };
 
 #[allow(dead_code)]

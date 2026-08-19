@@ -246,18 +246,17 @@ fn validate_output_job_targets(
         );
     }
     if let Some(variant_id) = output_job.variant
-        && !model.variants.contains_key(&variant_id) {
-            anyhow::bail!("output job references missing variant {variant_id}");
-        }
+        && !model.variants.contains_key(&variant_id)
+    {
+        anyhow::bail!("output job references missing variant {variant_id}");
+    }
     if let Some(manufacturing_plan_id) = output_job.manufacturing_plan
         && !model
             .manufacturing_plans
             .contains_key(&manufacturing_plan_id)
-        {
-            anyhow::bail!(
-                "output job references missing manufacturing plan {manufacturing_plan_id}"
-            );
-        }
+    {
+        anyhow::bail!("output job references missing manufacturing plan {manufacturing_plan_id}");
+    }
     Ok(())
 }
 

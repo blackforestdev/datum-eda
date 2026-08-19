@@ -182,7 +182,11 @@ fn render_pane_header(
     let header = pane.header;
     // Focused pane: lightened header background (~#16181f). Unfocused: a darker,
     // recessed fill (BG_BASE) so it reads as the passive document.
-    const PANE_HEADER_FOCUS: [f32; 3] = [0x16 as f32 / 255.0, 0x18 as f32 / 255.0, 0x1F as f32 / 255.0];
+    const PANE_HEADER_FOCUS: [f32; 3] = [
+        0x16 as f32 / 255.0,
+        0x18 as f32 / 255.0,
+        0x1F as f32 / 255.0,
+    ];
     let header_fill = if focused {
         PANE_HEADER_FOCUS
     } else {
@@ -218,7 +222,11 @@ fn render_pane_header(
     push_rect_border(
         panel_quads,
         glyph,
-        if focused { TEXT_ACCENT } else { PANEL_CARD_BORDER },
+        if focused {
+            TEXT_ACCENT
+        } else {
+            PANEL_CARD_BORDER
+        },
         1.0,
     );
     // Right edge available for header content. Reserve the focus-dot zone on the
@@ -255,11 +263,9 @@ fn render_pane_header(
     // (Letter placeholders are an accepted Phase-1 interim: the chrome path
     // only emits axis-aligned quads, so the five vector tool icons and true
     // 5px corner rounding are a tracked fidelity gap.)
-    let title_w = estimated_text_run_width_px(
-        title,
-        design_tokens::typography::DATA_SIZE,
-        TextFace::Mono,
-    ) - 16.0;
+    let title_w =
+        estimated_text_run_width_px(title, design_tokens::typography::DATA_SIZE, TextFace::Mono)
+            - 16.0;
     let mut x = title_x + title_w + design_tokens::spacing::SP_04;
     for (i, label) in tools.iter().enumerate() {
         // The active tool is the first entry, and only on the focused pane.
@@ -288,7 +294,11 @@ fn render_pane_header(
         push_rect_border(
             panel_quads,
             rect,
-            if active { TEXT_ACCENT } else { PANEL_CARD_BORDER },
+            if active {
+                TEXT_ACCENT
+            } else {
+                PANEL_CARD_BORDER
+            },
             1.0,
         );
         draw_text(

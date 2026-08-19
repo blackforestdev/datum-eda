@@ -58,9 +58,10 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
         anyhow::bail!("manufacturing plan {plan_id} already exists");
     }
     if let Some(panel_projection_id) = panel_projection
-        && !model.panel_projections.contains_key(&panel_projection_id) {
-            anyhow::bail!("panel projection {panel_projection_id} was not found");
-        }
+        && !model.panel_projections.contains_key(&panel_projection_id)
+    {
+        anyhow::bail!("panel projection {panel_projection_id} was not found");
+    }
     let plan = ManufacturingPlan {
         schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: plan_id,
@@ -129,9 +130,10 @@ pub(crate) fn propose_update_native_project_manufacturing_plan(
         .cloned()
         .with_context(|| format!("manufacturing plan {manufacturing_plan_id} was not found"))?;
     if let Some(panel_projection_id) = panel_projection
-        && !model.panel_projections.contains_key(&panel_projection_id) {
-            anyhow::bail!("panel projection {panel_projection_id} was not found");
-        }
+        && !model.panel_projections.contains_key(&panel_projection_id)
+    {
+        anyhow::bail!("panel projection {panel_projection_id} was not found");
+    }
 
     let mut plan = previous_plan.clone();
     if let Some(name) = name {

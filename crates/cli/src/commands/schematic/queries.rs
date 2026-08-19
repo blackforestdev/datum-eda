@@ -337,8 +337,16 @@ pub(crate) fn query_native_project_check_with_inputs(
 ) -> Result<CheckReport> {
     let project = load_native_project_with_resolved_board(root)?;
     let schematic = build_native_project_schematic(&project)?;
-    let diagnostics = if include_relationships { schematic_diagnostics(&schematic) } else { Default::default() };
-    let erc = if include_erc { run_prechecks(&schematic) } else { Default::default() };
+    let diagnostics = if include_relationships {
+        schematic_diagnostics(&schematic)
+    } else {
+        Default::default()
+    };
+    let erc = if include_erc {
+        run_prechecks(&schematic)
+    } else {
+        Default::default()
+    };
     let drc = if drc_rules.is_empty() {
         Vec::new()
     } else {

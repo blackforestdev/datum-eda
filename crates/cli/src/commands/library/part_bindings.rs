@@ -45,18 +45,18 @@ pub(crate) fn set_native_project_pool_part_bindings(
             .get(&footprint_id)
             .filter(|object| object.domain == "pool" && object.kind == "footprints")
             .is_none()
-        {
-            bail!("missing pool footprint {footprint_id} for part {part_id}");
-        }
+    {
+        bail!("missing pool footprint {footprint_id} for part {part_id}");
+    }
     if let Some(pin_pad_map_id) = default_pin_pad_map
         && model
             .objects
             .get(&pin_pad_map_id)
             .filter(|object| object.domain == "pool" && object.kind == "pin_pad_maps")
             .is_none()
-        {
-            bail!("missing pool pin_pad_map {pin_pad_map_id} for part {part_id}");
-        }
+    {
+        bail!("missing pool pin_pad_map {pin_pad_map_id} for part {part_id}");
+    }
 
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
     let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
