@@ -25,6 +25,8 @@ python3 scripts/test_terminal_core_boundary.py
 python3 scripts/check_terminal_core_boundary.py
 python3 scripts/test_terminal_kitty_boundary.py
 python3 scripts/check_terminal_kitty_boundary.py
+python3 scripts/test_terminal_snapshot_boundary.py
+python3 scripts/check_terminal_snapshot_boundary.py
 python3 scripts/check_gui_design_tokens.py
 python3 scripts/check_gui_conformance.py
 # check_gui_conformance.py runs the composed-shell visual-parity gate

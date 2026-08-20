@@ -2013,9 +2013,9 @@
         "agent": "codex",
         "harness": "codex-cli",
         "session": "dtc-p20-20260820",
-        "claimed_at": "2026-08-20T08:24:02Z",
-        "heartbeat_at": "2026-08-20T08:24:02Z",
-        "expires_at": "2026-08-20T16:24:02Z",
+        "claimed_at": "2026-08-20T16:03:22Z",
+        "heartbeat_at": "2026-08-20T16:03:22Z",
+        "expires_at": "2026-08-21T00:03:22Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",

@@ -1,6 +1,6 @@
 use crate::grid::GridAllocationError;
 use crate::{
-    Cell, CellContent, CellPoint, CellWidth, Column, Damage, DamageSet, EraseDisplay, EraseLine,
+    Cell, CellContent, CellPoint, CellWidth, Column, DamageSet, EraseDisplay, EraseLine,
     FoundationMode, LimitError, Margins, ModeState, SavedCursorState, ScreenAction, ScreenBuffer,
     TerminalCore,
 };
@@ -57,6 +57,7 @@ impl Reduction {
 
 impl TerminalCore {
     pub fn reduce(&mut self, action: ScreenAction) -> Result<Reduction, ScreenError> {
+        let damage_plan = crate::reducer_damage::DamagePlan::capture(&action, self);
         let clear_graphics = match &action {
             ScreenAction::Reset => Some(None),
             ScreenAction::SwitchBuffer {
@@ -70,16 +71,6 @@ impl TerminalCore {
             } => Some(Some(self.state.active_buffer)),
             _ => None,
         };
-        let cursor_only = matches!(
-            action,
-            ScreenAction::Backspace
-                | ScreenAction::CarriageReturn
-                | ScreenAction::HorizontalTab
-                | ScreenAction::SetCursor { .. }
-                | ScreenAction::MoveCursor { .. }
-                | ScreenAction::SaveCursor
-                | ScreenAction::RestoreCursor
-        );
         self.apply_action(action);
         match clear_graphics {
             Some(None) => self.state.graphics.clear(),
@@ -87,13 +78,9 @@ impl TerminalCore {
             None => self.prune_graphics(),
         }
         let mut damage = DamageSet::new(self.limits.pending_damage);
-        damage
-            .push(if cursor_only {
-                Damage::Cursor
-            } else {
-                Damage::Full
-            })
-            .map_err(ScreenError::Limit)?;
+        for entry in damage_plan.finish(self) {
+            damage.push_coalesced(entry);
+        }
         Ok(Reduction { damage })
     }
 

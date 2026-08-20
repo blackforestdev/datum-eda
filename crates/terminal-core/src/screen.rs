@@ -369,6 +369,96 @@ impl ScreenState {
         )
     }
 
+    pub fn render_snapshot(
+        &self,
+        limits: &CoreLimits,
+    ) -> Result<crate::RenderSnapshot, SnapshotError> {
+        let history_rows = if self.active_buffer == ScreenBuffer::Primary {
+            self.history.rows().len()
+        } else {
+            0
+        };
+        let row_count = history_rows
+            .checked_add(self.active_grid().rows.len())
+            .ok_or(SnapshotError::CellLimit(
+                crate::LimitError::ArithmeticOverflow {
+                    kind: crate::LimitKind::SnapshotCells,
+                },
+            ))?;
+        let cells = row_count
+            .checked_mul(usize::from(self.size.columns.get()))
+            .ok_or(SnapshotError::CellLimit(
+                crate::LimitError::ArithmeticOverflow {
+                    kind: crate::LimitKind::SnapshotCells,
+                },
+            ))?;
+        limits
+            .snapshot_cells
+            .check(cells)
+            .map_err(SnapshotError::CellLimit)?;
+
+        let mut rows = Vec::with_capacity(row_count);
+        if self.active_buffer == ScreenBuffer::Primary {
+            rows.extend(self.history.rows().iter().enumerate().map(|(index, row)| {
+                crate::RenderRow::new(
+                    crate::RenderRowSource::History { index },
+                    crate::LogicalPoint {
+                        line: row.logical_line,
+                        cluster: row.cluster_start,
+                    },
+                    row.cells.clone(),
+                    row.soft_wrapped,
+                )
+            }));
+        }
+        rows.extend(
+            self.active_grid()
+                .rows
+                .iter()
+                .enumerate()
+                .map(|(row_index, row)| {
+                    crate::RenderRow::new(
+                        crate::RenderRowSource::Screen {
+                            row: row_index.min(u16::MAX as usize) as u16,
+                        },
+                        crate::LogicalPoint {
+                            line: row.logical_line,
+                            cluster: row.cluster_start,
+                        },
+                        row.cells.clone(),
+                        row.soft_wrapped,
+                    )
+                }),
+        );
+        let graphics = self
+            .graphics
+            .iter()
+            .cloned()
+            .map(|placement| {
+                let resolution = self.resolve_graphic(placement.id());
+                crate::RenderGraphic::new(placement, resolution)
+            })
+            .collect();
+        crate::RenderSnapshot::new(
+            self.size,
+            self.active_buffer,
+            rows,
+            history_rows,
+            self.history.fingerprint().2,
+            self.cursor,
+            self.modes,
+            crate::RenderPalette::new(
+                self.palette,
+                self.default_foreground,
+                self.default_background,
+                self.cursor_color,
+            ),
+            self.selection,
+            graphics,
+            limits.snapshot_cells,
+        )
+    }
+
     pub(crate) fn active_grid(&self) -> &GridBuffer {
         match self.active_buffer {
             ScreenBuffer::Primary => &self.primary,
@@ -420,5 +510,9 @@ impl TerminalCore {
 
     pub fn snapshot(&self) -> Result<TerminalSnapshot, SnapshotError> {
         self.state.snapshot(&self.limits)
+    }
+
+    pub fn render_snapshot(&self) -> Result<crate::RenderSnapshot, SnapshotError> {
+        self.state.render_snapshot(&self.limits)
     }
 }

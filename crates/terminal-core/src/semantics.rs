@@ -261,12 +261,7 @@ impl TerminalCore {
             self.state.synchronized_dirty = true;
             return Ok(());
         }
-        if update.damage.iter().len() == 0 {
-            update.damage.push(damage)?;
-        } else {
-            update.damage.clear();
-            update.damage.push(Damage::Full)?;
-        }
+        update.damage.push_coalesced(damage);
         Ok(())
     }
 

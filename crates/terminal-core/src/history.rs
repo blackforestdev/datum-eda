@@ -88,6 +88,10 @@ impl HistoryStore {
         &self.rows
     }
 
+    pub(crate) fn fingerprint(&self) -> (usize, usize, u64) {
+        (self.rows.len(), self.payload_bytes, self.trimmed_rows)
+    }
+
     pub(crate) fn replace_rows(&mut self, rows: Vec<GridRow>) {
         self.rows = rows.into();
         self.payload_bytes = self.rows.iter().map(GridRow::payload_bytes).sum();

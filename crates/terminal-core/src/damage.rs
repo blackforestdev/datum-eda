@@ -52,6 +52,21 @@ impl DamageSet {
         Ok(())
     }
 
+    pub(crate) fn push_coalesced(&mut self, damage: Damage) {
+        if self.entries.contains(&damage)
+            || (self.entries.contains(&Damage::Full) && visible_damage(damage))
+        {
+            return;
+        }
+        if damage == Damage::Full {
+            self.entries.retain(|entry| !visible_damage(*entry));
+        }
+        if self.push(damage).is_err() {
+            self.entries.clear();
+            self.entries.push(Damage::Full);
+        }
+    }
+
     pub fn iter(&self) -> impl ExactSizeIterator<Item = Damage> + '_ {
         self.entries.iter().copied()
     }
@@ -59,4 +74,16 @@ impl DamageSet {
     pub fn clear(&mut self) {
         self.entries.clear();
     }
+}
+
+const fn visible_damage(damage: Damage) -> bool {
+    matches!(
+        damage,
+        Damage::Cell(_)
+            | Damage::Row(_)
+            | Damage::Rows { .. }
+            | Damage::Scroll { .. }
+            | Damage::Cursor
+            | Damage::Full
+    )
 }

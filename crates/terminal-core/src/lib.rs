@@ -41,6 +41,7 @@ mod png;
 mod png_pixels;
 mod reducer;
 mod reducer_action;
+mod reducer_damage;
 mod reflow;
 mod screen;
 mod search;
@@ -119,7 +120,10 @@ pub use search::{
 pub use selection::{CopiedText, Selection, SelectionError, SelectionScope, SelectionState};
 pub use semantics::{CoreError, CoreUpdate};
 pub use sixel::{SixelColorRegisters, SixelError, SixelImage, SixelLimits, decode_sixel};
-pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
+pub use snapshot::{
+    RENDER_SNAPSHOT_SCHEMA_VERSION, RenderGraphic, RenderPalette, RenderRow, RenderRowSource,
+    RenderSnapshot, SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot,
+};
 pub use unicode::{
     BIDIRECTIONAL_TEXT_POLICY, BidirectionalTextPolicy, GraphemeIndices, ShapingCluster,
     UNICODE_VERSION, grapheme_break_before, grapheme_indices, terminal_cluster_width,
@@ -161,3 +165,6 @@ mod sixel_tests;
 
 #[cfg(test)]
 mod kitty_graphics_tests;
+
+#[cfg(test)]
+mod render_snapshot_tests;
