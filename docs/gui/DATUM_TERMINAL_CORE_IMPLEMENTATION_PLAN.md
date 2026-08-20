@@ -1214,6 +1214,44 @@ production cutover. DTC-P14 owns bounded literal and regex search.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P14 --> **DTC-P14 — search.** Incremental literal/case search plus Datum-owned bounded
   Thompson-NFA regex, stable matches under output/trim/reflow, prompt navigation,
   no backtracking/ReDoS.
+
+#### DTC-P14 bounded search evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P14-CLOSED -->
+Revision `a359320` adds case-aware forward and backward literal search plus a
+Datum-owned iterative Thompson-NFA regex engine. Search operates on Unicode
+grapheme clusters, treats soft wraps as continuous text and hard line breaks as
+newlines, keeps primary history separate from alternate-screen content, and
+returns logical endpoints that remain stable across later output and resize
+reflow. Navigation and retained matches distinguish active, trimmed, and
+unknown anchors instead of silently restarting from unrelated content.
+
+The regex grammar covers grouping, alternation, dot, anchors, character classes
+and ranges, escaped class terminators and hyphens, and greedy `*`, `+`, and `?`
+quantifiers. Compilation and matching use explicit state lists rather than
+recursive matching or backtracking. Document construction, pattern compilation,
+epsilon closure, and input scanning all charge the owner-supplied `SearchWork`
+limit, so hostile patterns fail with a typed limit error without ReDoS or an
+unbounded retained queue.
+
+Seventy-two TerminalCore tests pass. Ten focused DTC-P14 proofs cover
+case-sensitive and insensitive incremental navigation in both directions,
+Thompson-NFA grammar and Unicode grapheme literals, greedy matching, soft-wrap
+versus hard-newline behavior, stable identity under output and reflow, explicit
+trim and unknown results, alternate isolation, hostile work exhaustion, and
+invalid-pattern failure. The boundary guard requires the search and NFA owners,
+stable-match and work-limit markers, every named proof, and rejects third-party
+regex or recursive-backtracking ownership; seventeen hermetic mutations pass.
+
+The full locked/offline workspace all-target suite and strict workspace
+all-target Clippy pass, as do dependency authority, TerminalCore boundary,
+spec governance, project-state validation/render parity, formatting, and diff
+hygiene. The shared worktree source-health check remains red only on seven
+unrelated pre-existing dirty legacy files outside this revision; the DTC-P14
+production modules are 365 and 435 lines and its dedicated tests are 314 lines.
+DTC-P14 adds no Cargo dependency, runtime fetch, Unicode-policy change, renderer,
+PTY/GUI/process authority, TERM identity, or production cutover. DTC-P15 owns
+the complete terminal input protocol surface.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P15 --> **DTC-P15 — input protocols.** Legacy and modified keys, application cursor/
   keypad, kitty negotiation stack, mouse families, focus, paste, IME commit
   contract, replies, local override, and coordinate clipping.

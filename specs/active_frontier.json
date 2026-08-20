@@ -2012,10 +2012,10 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "dtc-p14-20260820",
-        "claimed_at": "2026-08-20T04:22:56Z",
-        "heartbeat_at": "2026-08-20T04:22:56Z",
-        "expires_at": "2026-08-20T12:22:56Z",
+        "session": "dtc-p15-20260820",
+        "claimed_at": "2026-08-20T04:39:20Z",
+        "heartbeat_at": "2026-08-20T04:39:20Z",
+        "expires_at": "2026-08-20T12:39:20Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",
@@ -2027,7 +2027,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "main",
-        "head": "8d773a4"
+        "head": "a359320"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2039,7 +2039,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P14",
+        "canonical_next_step_id": "DTC-P15",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2246,16 +2246,26 @@
           {
             "id": "DTC-P14",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement incremental literal search and a bounded Datum-owned non-backtracking regex engine with stable matches.",
             "depends_on": ["DTC-P11", "DTC-P12"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P14"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "a359320"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P14-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P15",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete legacy, application, kitty keyboard, mouse, focus, paste, IME-commit, reply, and coordinate-clipping protocols.",
             "depends_on": ["DTC-P10", "DTC-P11"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P15"}],
