@@ -1176,6 +1176,41 @@ selection/copy policy, search engine, graphics, TERM identity, or production
 cutover. DTC-P13 owns selection scopes and deterministic copy extraction.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P13 --> **DTC-P13 — selection and copy.** Grapheme, word, logical/wrapped line, block,
   all scopes; stable endpoints; trailing blank/tab/wrap/newline extraction.
+
+#### DTC-P13 selection and copy evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P13-CLOSED -->
+Revision `8d773a4` makes selection a first-class TerminalCore state owned by two
+stable logical endpoints. Grapheme, deterministic word, physical wrapped-line,
+logical-line, rectangular block, and all-content scopes operate over the active
+buffer; primary selections include retained history while alternate selections
+remain isolated. Switching buffers or resetting clears an invalid selection,
+whereas output and resize reflow preserve endpoints until whole-line history
+trimming reports them explicitly as trimmed.
+
+Copy extraction preserves Unicode grapheme clusters and explicit spaces,
+distinguishes soft wraps from hard logical newlines, removes only unselected
+row padding, and preserves rectangular blanks. The complete result is checked
+against the owner-supplied `ClipboardBytes` limit before it is returned, so
+oversized copies fail atomically without partial or lossy text. TerminalCore
+continues to expose logical order exactly as approved by DTC-P11A; it performs
+no visual BiDi reordering and owns no system clipboard or GUI operation.
+
+Sixty-two TerminalCore tests pass. Eight focused DTC-P13 proofs cover reversed
+grapheme and word endpoints, soft versus hard line extraction, all six scopes,
+explicit trailing spaces, reflow preservation and history trimming, alternate
+buffer isolation, clipboard exhaustion, and reset/clear invalidation. The
+boundary guard requires the selection owner, all scopes, stable-anchor lookup,
+clipboard limit, and every named proof; sixteen hermetic mutations pass.
+
+The full locked/offline workspace all-target suite and strict workspace
+all-target Clippy pass, as do dependency authority, TerminalCore boundary,
+spec governance, project-state validation, formatting, and diff hygiene. The
+live shared worktree source-health check remains red only on seven unrelated
+pre-existing dirty legacy files outside this revision; the DTC-P13 production
+and test files are 453 and 211 lines. DTC-P13 adds no dependency, regex/search
+engine, renderer, clipboard I/O, PTY/GUI/process authority, TERM identity, or
+production cutover. DTC-P14 owns bounded literal and regex search.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P14 --> **DTC-P14 — search.** Incremental literal/case search plus Datum-owned bounded
   Thompson-NFA regex, stable matches under output/trim/reflow, prompt navigation,
   no backtracking/ReDoS.

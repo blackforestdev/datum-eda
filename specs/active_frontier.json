@@ -2012,10 +2012,10 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "dtc-p13-20260820",
-        "claimed_at": "2026-08-20T04:10:35Z",
-        "heartbeat_at": "2026-08-20T04:10:35Z",
-        "expires_at": "2026-08-20T12:10:35Z",
+        "session": "dtc-p14-20260820",
+        "claimed_at": "2026-08-20T04:22:56Z",
+        "heartbeat_at": "2026-08-20T04:22:56Z",
+        "expires_at": "2026-08-20T12:22:56Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",
@@ -2027,7 +2027,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "main",
-        "head": "5cff8d8"
+        "head": "8d773a4"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2039,7 +2039,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P13",
+        "canonical_next_step_id": "DTC-P14",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2227,16 +2227,26 @@
           {
             "id": "DTC-P13",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement grapheme, word, logical/wrapped-line, block and all selection plus deterministic copy extraction.",
             "depends_on": ["DTC-P11", "DTC-P12"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P13"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "8d773a4"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P13-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P14",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement incremental literal search and a bounded Datum-owned non-backtracking regex engine with stable matches.",
             "depends_on": ["DTC-P11", "DTC-P12"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P14"}],
