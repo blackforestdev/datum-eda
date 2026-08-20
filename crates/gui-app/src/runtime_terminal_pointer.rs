@@ -1,20 +1,15 @@
 use datum_gui_protocol::ApplicationFocus;
+use datum_terminal_core::{
+    KeyModifiers, LogicalPoint, MouseAction, MouseButton as CoreMouseButton, MouseInput,
+    MousePosition, SelectionScope,
+};
 use winit::event::{ElementState, MouseButton};
 
-use crate::terminal_input::{
-    terminal_sgr_mouse_button_sequence, terminal_sgr_mouse_motion_sequence,
-    terminal_sgr_mouse_wheel_sequence, terminal_urxvt_mouse_button_sequence,
-    terminal_urxvt_mouse_motion_sequence, terminal_urxvt_mouse_wheel_sequence,
-    terminal_utf8_mouse_button_sequence, terminal_utf8_mouse_motion_sequence,
-    terminal_utf8_mouse_wheel_sequence, terminal_x10_mouse_button_sequence,
-    terminal_x10_mouse_motion_sequence, terminal_x10_mouse_wheel_sequence,
-};
 use crate::{Runtime, keyboard_focus};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) struct TerminalSelectionPoint {
-    row: usize,
-    column: usize,
+    logical: LogicalPoint,
 }
 
 impl Runtime {
@@ -34,6 +29,7 @@ impl Runtime {
             self.set_application_focus(ApplicationFocus::Terminal);
         }
         self.terminal_text_selection_drag = Some(point);
+        let _ = self.terminal_sessions.clear_active_selection();
         self.session
             .workspace_mut()
             .ui
@@ -50,20 +46,19 @@ impl Runtime {
         let Some(focus) = self.terminal_text_point_at(pointer, true) else {
             return true;
         };
-        let selection = (focus != anchor).then_some((anchor, focus));
-        let current = self.workspace().ui.terminal.text_selection_ordered();
-        let next = selection.map(|(anchor, focus)| {
-            let a = (anchor.row, anchor.column);
-            let f = (focus.row, focus.column);
-            if a <= f { (a, f) } else { (f, a) }
-        });
-        if current != next {
+        let selection = (focus != anchor).then_some((anchor.logical, focus.logical));
+        if let Some((anchor, focus)) = selection {
+            let _ = self.terminal_sessions.set_active_selection(
+                anchor,
+                focus,
+                SelectionScope::Grapheme,
+            );
+        } else {
+            let _ = self.terminal_sessions.clear_active_selection();
+        }
+        {
             let terminal = &mut self.session.workspace_mut().ui.terminal;
-            if let Some((anchor, focus)) = selection {
-                terminal.set_text_selection((anchor.row, anchor.column), (focus.row, focus.column));
-            } else {
-                terminal.clear_text_selection();
-            }
+            terminal.clear_text_selection();
             self.invalidate_frame();
         }
         true
@@ -95,13 +90,16 @@ impl Runtime {
         } else {
             geometry.cell_at(pointer.0, pointer.1)?
         };
-        terminal_grid_point(
-            self.workspace().ui.terminal.grid_lines().len(),
-            geometry.rows as usize,
-            self.workspace().ui.terminal.scroll_offset,
-            column as usize,
-            visible_row as usize,
-        )
+        self.terminal_sessions
+            .active_logical_point_at(
+                usize::from(geometry.rows),
+                self.workspace().ui.terminal.scroll_offset,
+                usize::from(visible_row),
+                usize::from(column),
+            )
+            .ok()
+            .flatten()
+            .map(|logical| TerminalSelectionPoint { logical })
     }
 
     pub(super) fn report_terminal_mouse_button(
@@ -112,20 +110,20 @@ impl Runtime {
         if !self.terminal_mouse_reporting_active() {
             return false;
         }
-        let Some((column, row)) = self.terminal_mouse_cell() else {
+        let Some(position) = self.terminal_mouse_position() else {
             return false;
         };
-        let pressed = state == ElementState::Pressed;
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_button_sequence(button, pressed, column, row),
-            Some("urxvt") => terminal_urxvt_mouse_button_sequence(button, pressed, column, row),
-            Some("utf8") => terminal_utf8_mouse_button_sequence(button, pressed, column, row),
-            None => terminal_x10_mouse_button_sequence(button, pressed, column, row),
-            _ => None,
-        }) else {
+        let Some(core_button) = core_mouse_button(button) else {
             return false;
         };
-        self.write_terminal_mouse_report(&bytes);
+        let action = if state == ElementState::Pressed {
+            MouseAction::Press(core_button)
+        } else {
+            MouseAction::Release(core_button)
+        };
+        if !self.write_terminal_mouse_input(action, position) {
+            return false;
+        }
         self.terminal_mouse_button = if state == ElementState::Pressed {
             Some(button)
         } else {
@@ -138,62 +136,35 @@ impl Runtime {
         if !self.terminal_mouse_reporting_active() {
             return false;
         }
-        let terminal = &self.workspace().ui.terminal;
-        let held_button = match terminal.mouse_reporting_mode.as_deref() {
-            Some("any_event") => self.terminal_mouse_button,
-            Some("button_event") => {
-                let Some(button) = self.terminal_mouse_button else {
-                    return false;
-                };
-                Some(button)
-            }
-            _ => return false,
-        };
-        let Some((column, row)) = self.terminal_mouse_cell() else {
+        let Some(position) = self.terminal_mouse_position() else {
             return false;
         };
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_motion_sequence(held_button, column, row),
-            Some("urxvt") => held_button
-                .and_then(|button| terminal_urxvt_mouse_motion_sequence(button, column, row)),
-            Some("utf8") => held_button
-                .and_then(|button| terminal_utf8_mouse_motion_sequence(button, column, row)),
-            None => held_button
-                .and_then(|button| terminal_x10_mouse_motion_sequence(button, column, row)),
-            _ => None,
-        }) else {
-            return false;
-        };
-        self.write_terminal_mouse_report(&bytes);
-        true
+        self.write_terminal_mouse_input(
+            MouseAction::Move(self.terminal_mouse_button.and_then(core_mouse_button)),
+            position,
+        )
     }
 
     pub(super) fn report_terminal_mouse_wheel(&mut self, scroll_lines: f32) -> bool {
         if !self.terminal_mouse_reporting_active() {
             return false;
         }
-        let Some((column, row)) = self.terminal_mouse_cell() else {
+        let Some(position) = self.terminal_mouse_position() else {
             return false;
         };
-        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
-            Some("sgr") => terminal_sgr_mouse_wheel_sequence(scroll_lines, column, row),
-            Some("urxvt") => terminal_urxvt_mouse_wheel_sequence(scroll_lines, column, row),
-            Some("utf8") => terminal_utf8_mouse_wheel_sequence(scroll_lines, column, row),
-            None => terminal_x10_mouse_wheel_sequence(scroll_lines, column, row),
-            _ => None,
-        }) else {
-            return false;
+        let action = if scroll_lines < 0.0 {
+            MouseAction::WheelDown
+        } else {
+            MouseAction::WheelUp
         };
-        self.write_terminal_mouse_report(&bytes);
-        true
+        self.write_terminal_mouse_input(action, position)
     }
 
     fn terminal_mouse_reporting_active(&self) -> bool {
-        let terminal = &self.workspace().ui.terminal;
         !self.modifiers.shift_key()
             && keyboard_focus::terminal_mouse_report_allowed(
                 self.application_focus(),
-                terminal.mouse_reporting_mode.is_some(),
+                true,
                 self.terminal_sessions.active_attached(),
                 self.last_cursor_pos
                     .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
@@ -201,32 +172,59 @@ impl Runtime {
             )
     }
 
-    fn terminal_mouse_encoding_sequence(
-        &self,
-        sequence: impl FnOnce(Option<&str>) -> Option<Vec<u8>>,
-    ) -> Option<Vec<u8>> {
-        sequence(
-            self.workspace()
-                .ui
-                .terminal
-                .mouse_coordinate_encoding
-                .as_deref(),
-        )
-    }
-
-    fn terminal_mouse_cell(&self) -> Option<(u16, u16)> {
+    fn terminal_mouse_position(&self) -> Option<MousePosition> {
         let (x, y) = self.last_cursor_pos?;
-        self.terminal_screen_cell_at(x, y)
-            .map(|(column, row)| (column.saturating_add(1), row.saturating_add(1)))
+        let geometry = self.terminal_screen_geometry();
+        let (column, row) = geometry.cell_at(x, y)?;
+        Some(MousePosition {
+            column: i64::from(column),
+            row: i64::from(row),
+            pixel_x: (x - geometry.screen.x).round() as i64,
+            pixel_y: (y - geometry.screen.y).round() as i64,
+        })
     }
 
-    fn write_terminal_mouse_report(&mut self, bytes: &[u8]) {
-        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.log_review_event(format!("terminal mouse report failed: {err}"));
+    fn write_terminal_mouse_input(&mut self, action: MouseAction, position: MousePosition) -> bool {
+        let input = MouseInput {
+            action,
+            position,
+            modifiers: KeyModifiers {
+                shift: self.modifiers.shift_key(),
+                alt: self.modifiers.alt_key(),
+                control: self.modifiers.control_key(),
+                super_key: self.modifiers.super_key(),
+                hyper: false,
+                meta: false,
+            },
+            local_override: self.modifiers.shift_key(),
+        };
+        match self.terminal_sessions.encode_active_mouse(input) {
+            Ok(Some(bytes)) => match self.terminal_sessions.active().write_bytes(&bytes) {
+                Ok(()) => true,
+                Err(err) => {
+                    self.log_review_event(format!("terminal mouse report failed: {err}"));
+                    true
+                }
+            },
+            Ok(None) => false,
+            Err(err) => {
+                self.log_review_event(format!("terminal mouse encoding failed: {err}"));
+                true
+            }
         }
     }
 }
 
+fn core_mouse_button(button: MouseButton) -> Option<CoreMouseButton> {
+    match button {
+        MouseButton::Left => Some(CoreMouseButton::Left),
+        MouseButton::Middle => Some(CoreMouseButton::Middle),
+        MouseButton::Right => Some(CoreMouseButton::Right),
+        _ => None,
+    }
+}
+
+#[cfg(test)]
 fn terminal_grid_point(
     total_lines: usize,
     visible_rows: usize,
@@ -241,8 +239,12 @@ fn terminal_grid_point(
     let tail_start = total_lines.saturating_sub(visible_rows + scroll);
     let last_visible_row = total_lines.saturating_sub(tail_start + 1);
     Some(TerminalSelectionPoint {
-        row: tail_start + visible_row.min(last_visible_row),
-        column,
+        logical: LogicalPoint {
+            line: datum_terminal_core::LogicalLineId::new(
+                (tail_start + visible_row.min(last_visible_row)) as u64,
+            ),
+            cluster: column as u32,
+        },
     })
 }
 
@@ -254,11 +256,21 @@ mod tests {
     fn pointer_rows_follow_the_visible_scrollback_window() {
         assert_eq!(
             terminal_grid_point(40, 10, 0, 7, 2),
-            Some(TerminalSelectionPoint { row: 32, column: 7 })
+            Some(TerminalSelectionPoint {
+                logical: LogicalPoint {
+                    line: datum_terminal_core::LogicalLineId::new(32),
+                    cluster: 7
+                }
+            })
         );
         assert_eq!(
             terminal_grid_point(40, 10, 5, 3, 9),
-            Some(TerminalSelectionPoint { row: 34, column: 3 })
+            Some(TerminalSelectionPoint {
+                logical: LogicalPoint {
+                    line: datum_terminal_core::LogicalLineId::new(34),
+                    cluster: 3
+                }
+            })
         );
         assert_eq!(terminal_grid_point(0, 10, 0, 0, 0), None);
     }
@@ -267,7 +279,12 @@ mod tests {
     fn pointer_rows_clamp_to_the_last_real_line_below_short_content() {
         assert_eq!(
             terminal_grid_point(2, 10, 0, 4, 8),
-            Some(TerminalSelectionPoint { row: 1, column: 4 })
+            Some(TerminalSelectionPoint {
+                logical: LogicalPoint {
+                    line: datum_terminal_core::LogicalLineId::new(1),
+                    cluster: 4
+                }
+            })
         );
     }
 }

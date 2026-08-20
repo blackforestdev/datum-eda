@@ -226,13 +226,6 @@ impl TerminalSessionRegistry {
         &mut self.sessions[self.active_index].core
     }
 
-    pub(super) fn active_bracketed_paste_enabled(&self) -> bool {
-        self.active_pending_id.is_none()
-            && self.sessions[self.active_index]
-                .core
-                .bracketed_paste_enabled()
-    }
-
     pub(super) fn restart_active(
         &mut self,
         state: &mut TerminalLaneState,
@@ -433,6 +426,8 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
 
 #[path = "terminal_session_drain.rs"]
 mod drain;
+#[path = "terminal_session_interaction.rs"]
+mod interaction;
 #[path = "terminal_session_lifecycle.rs"]
 mod lifecycle;
 #[path = "terminal_session_render.rs"]

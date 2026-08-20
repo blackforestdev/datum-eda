@@ -4,8 +4,6 @@
 //! bytes enter the PTY unchanged so the kernel line discipline targets the
 //! current foreground process group, while raw-mode programs receive them.
 
-pub(super) const VINTR_BYTE: u8 = 0x03;
-
 pub(super) fn control_character_sequence(text: &str) -> Option<Vec<u8>> {
     let byte = text.as_bytes().first().copied()?;
     let control = match byte {

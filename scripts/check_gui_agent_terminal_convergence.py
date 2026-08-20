@@ -206,7 +206,7 @@ def check_agent_tui_runtime(
     for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "begin_terminal_text_selection", "advance_terminal_text_selection", "finish_terminal_text_selection", "cancel_terminal_text_selection_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing", "open_terminal_clipboard_menu_at_cursor", "!runtime.terminal_clipboard_menu_active()", "TerminalKeyAction::CopyClipboard", "TerminalKeyAction::PasteClipboard"):
         if marker not in main and marker not in runtime_dock:
             failures.append(f"terminal mouse routing is missing {marker}")
-    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session", "terminal_grid_point", "set_text_selection"):
+    for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session", "active_logical_point_at", "set_active_selection"):
         if marker not in runtime_dock:
             failures.append(f"terminal focus-entry boundary is missing {marker}")
     for marker in (
@@ -415,7 +415,7 @@ def check_terminal_input_mode(
         "enum TerminalInputOwner",
         "AttachedPty",
         "fn terminal_input_owner",
-        "fn commit_terminal_ime_text",
+        "fn handle_terminal_ime",
         "fn write_attached_terminal_bytes",
     ):
         if marker not in production_sources:

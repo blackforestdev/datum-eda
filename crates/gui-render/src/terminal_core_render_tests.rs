@@ -125,6 +125,32 @@ fn cursor_uses_core_row_column_shape_and_palette_without_lane_projection() {
 }
 
 #[test]
+fn ime_preedit_is_rendered_at_the_core_cursor_without_entering_cells() {
+    let snapshot = snapshot(b"abc");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    state.ui.terminal.ime_preedit = Some("文".into());
+    let geometry = geometry();
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut text,
+        &mut Vec::new(),
+    );
+    let preedit = text.iter().find(|run| run.text == "文").unwrap();
+    assert_eq!(preedit.x, geometry.screen.x + 3.0 * TERMINAL_CELL_WIDTH_PX);
+    assert!(quads.iter().any(|quad| quad.color == TEXT_ACCENT));
+    assert_eq!(
+        snapshot.rows().next().unwrap().cells()[3].content,
+        datum_terminal_core::CellContent::Empty
+    );
+}
+
+#[test]
 fn retained_rows_rebuild_only_for_declared_damage_or_geometry_change() {
     let snapshot = snapshot(b"first\r\nsecond");
     let mut state = datum_gui_protocol::load_fixture_workspace_state();

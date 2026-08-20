@@ -119,6 +119,9 @@ pub struct TerminalLaneState {
     pub screen_cursor_col: usize,
     pub screen_cursor_visible: bool,
     pub screen_cursor_style: Option<String>,
+    /// Application-local IME composition. Preedit is rendered at the core
+    /// cursor but is never inserted into the PTY byte stream.
+    pub ime_preedit: Option<String>,
     pub application_cursor_keys: bool,
     pub application_keypad: bool,
     pub focus_event_reporting: bool,
@@ -154,6 +157,7 @@ impl TerminalLaneState {
             screen_cursor_col,
             screen_cursor_visible,
             screen_cursor_style,
+            ime_preedit,
             application_cursor_keys,
             application_keypad,
             focus_event_reporting,
@@ -237,6 +241,7 @@ impl Default for TerminalLaneState {
             screen_cursor_col: 0,
             screen_cursor_visible: true,
             screen_cursor_style: None,
+            ime_preedit: None,
             application_cursor_keys: false,
             application_keypad: false,
             focus_event_reporting: false,

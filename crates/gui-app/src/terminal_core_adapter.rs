@@ -11,11 +11,15 @@ use datum_gui_protocol::{
 };
 use datum_terminal_core::{
     CellAttribute, CellContent, CellStyle, Color, CoreError, CoreEvent, CoreLimitValues,
-    CoreLimits, CursorShape, Damage, LimitKind, MouseEncoding, MouseTracking, RenderSnapshot,
-    StreamingParser, TerminalCore, TerminalSize, UnderlineStyle,
+    CoreLimits, CursorShape, Damage, InputError, LimitKind, MouseEncoding, MouseTracking,
+    RenderSnapshot, SearchError, SelectionError, StreamingParser, TerminalCore, TerminalSize,
+    UnderlineStyle,
 };
 use std::error::Error;
 use std::fmt;
+
+#[path = "terminal_core_adapter_interaction.rs"]
+mod interaction;
 
 pub(crate) const PRODUCTION_CORE_LIMIT_VALUES: CoreLimitValues = CoreLimitValues {
     parameter_count: 64,
@@ -55,6 +59,10 @@ pub(crate) enum TerminalCoreAdapterError {
     Size(datum_terminal_core::CoordinateError),
     Screen(datum_terminal_core::ScreenError),
     Snapshot(datum_terminal_core::SnapshotError),
+    Input(InputError),
+    Selection(SelectionError),
+    #[allow(dead_code)]
+    Search(SearchError),
 }
 
 impl fmt::Display for TerminalCoreAdapterError {
@@ -64,6 +72,9 @@ impl fmt::Display for TerminalCoreAdapterError {
             Self::Size(error) => error.fmt(formatter),
             Self::Screen(error) => error.fmt(formatter),
             Self::Snapshot(error) => error.fmt(formatter),
+            Self::Input(error) => error.fmt(formatter),
+            Self::Selection(error) => error.fmt(formatter),
+            Self::Search(error) => error.fmt(formatter),
         }
     }
 }
@@ -120,6 +131,7 @@ impl TerminalCoreSessionAdapter {
         &self.context_id
     }
 
+    #[cfg(test)]
     pub(crate) fn bracketed_paste_enabled(&self) -> bool {
         self.core.state().modes().bracketed_paste
     }

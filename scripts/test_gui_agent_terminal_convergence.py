@@ -265,7 +265,7 @@ fn terminal_mouse_reporting_active() {
     CursorIcon::Grabbing;
 }
 """
-        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session(); terminal_grid_point(); set_text_selection();"
+        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session(); active_logical_point_at(); set_active_selection();"
         drain = """
 flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
 slot.remove_when_closed = is_active;
@@ -332,7 +332,10 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "                begin_terminal_text_selection();\n"
                 "                focus_terminal_screen_before_mouse_report();",
             ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("advance_terminal_text_selection()", "removed").replace("cancel_terminal_text_selection_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
-            runtime_dock.replace("target_session_id()", "removed").replace("reorder_session()", "removed").replace("terminal_grid_point()", "removed"),
+            runtime_dock.replace("target_session_id()", "removed")
+            .replace("reorder_session()", "removed")
+            .replace("active_logical_point_at()", "removed")
+            .replace("set_active_selection()", "removed"),
             drain.replace("flush_output_batch", "apply_each_chunk")
             .replace("slot.remove_when_closed = is_active", "removed")
             .replace(
@@ -369,7 +372,8 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         self.assertIn("terminal mouse routing is missing TerminalKeyAction::PasteClipboard", failures)
         self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
         self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
-        self.assertIn("terminal focus-entry boundary is missing terminal_grid_point", failures)
+        self.assertIn("terminal focus-entry boundary is missing active_logical_point_at", failures)
+        self.assertIn("terminal focus-entry boundary is missing set_active_selection", failures)
         self.assertIn(
             "terminal tiny-output batching is missing flush_output_batch", failures
         )
@@ -431,7 +435,7 @@ enum TerminalInputOwner { AttachedPty, Unowned }
 pub(crate) fn terminal_input_owner() {
     use TerminalInputOwner::{AttachedPty, Unowned};
 }
-fn commit_terminal_ime_text() {}
+fn handle_terminal_ime() {}
 fn write_attached_terminal_bytes() { write_bytes(); }
 """
         bottom_dock = ""

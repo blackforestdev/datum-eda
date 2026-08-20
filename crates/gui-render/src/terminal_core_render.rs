@@ -147,7 +147,52 @@ pub(super) fn render_terminal_core_snapshot(
                 y,
                 panel_quads,
             );
+            if state.ui.focus.is_terminal()
+                && let Some(preedit) = state.ui.terminal.ime_preedit.as_deref()
+                && !preedit.is_empty()
+            {
+                render_ime_preedit(preedit, snapshot, screen, y, panel_quads, text_runs);
+            }
         }
+    }
+}
+
+fn render_ime_preedit(
+    preedit: &str,
+    snapshot: &RenderSnapshot,
+    screen: RectPx,
+    y: f32,
+    quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let x = screen.x + f32::from(snapshot.cursor().position.column.get()) * TERMINAL_CELL_WIDTH_PX;
+    let cells = preedit.chars().count().max(1) as f32;
+    let rect = RectPx {
+        x,
+        y,
+        width: cells * TERMINAL_CELL_WIDTH_PX,
+        height: TERMINAL_CELL_HEIGHT_PX,
+    };
+    let clip = intersection(rect, screen);
+    quads.push(Quad::from_rect(clip, [0.16, 0.12, 0.17]));
+    push_rect_border(quads, clip, TEXT_ACCENT, 1.0);
+    draw_rich_text(
+        preedit,
+        vec![TextRunSpan {
+            text: preedit.to_string(),
+            color: TEXT_ACCENT,
+            bold: false,
+            italic: false,
+        }],
+        x,
+        y,
+        TERMINAL_FONT_SIZE_PX,
+        TEXT_ACCENT,
+        TextFace::Terminal,
+        text_runs,
+    );
+    if let Some(run) = text_runs.last_mut() {
+        run.clip_bounds = Some(clip);
     }
 }
 

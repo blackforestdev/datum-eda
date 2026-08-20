@@ -220,8 +220,12 @@ impl Runtime {
     pub(crate) fn set_application_focus(&mut self, focus: ApplicationFocus) {
         let report = terminal_focus_report_transition(self.application_focus(), focus);
         self.session.workspace_mut().ui.focus = focus;
+        if focus != ApplicationFocus::Terminal {
+            self.session.workspace_mut().ui.terminal.ime_preedit = None;
+        }
         if let Some(focused) = report {
             self.report_terminal_focus_event(focused);
+            self.refresh_terminal_accessibility();
         }
     }
 }

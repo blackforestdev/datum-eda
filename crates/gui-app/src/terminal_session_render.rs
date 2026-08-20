@@ -3,6 +3,16 @@
 use super::*;
 
 impl TerminalSessionRegistry {
+    pub(crate) fn active_render_row_count(&self) -> usize {
+        if self.active_pending_id.is_some() {
+            return 0;
+        }
+        self.sessions[self.active_index]
+            .core
+            .render_row_count()
+            .unwrap_or(0)
+    }
+
     pub(crate) fn take_active_render_state(
         &mut self,
     ) -> Result<

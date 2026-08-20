@@ -244,6 +244,7 @@ impl Runtime {
         if report.active_projection_changed {
             self.invalidate_frame();
         }
+        self.refresh_terminal_accessibility();
         true
     }
 }

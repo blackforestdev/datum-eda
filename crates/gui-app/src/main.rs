@@ -54,12 +54,15 @@ mod runtime_terminal_input;
 mod runtime_terminal_pointer;
 mod runtime_terminal_render;
 mod runtime_view_actions;
+mod terminal_accessibility;
+mod terminal_accessibility_bridge;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
 mod terminal_check_context;
 mod terminal_context;
 mod terminal_context_contract;
 mod terminal_context_io;
+#[cfg(test)]
 mod terminal_control_input;
 mod terminal_core_adapter;
 mod terminal_input;
@@ -88,8 +91,7 @@ use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
 #[cfg(feature = "visual")]
 use std::fs;
-use terminal_input::{TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action};
-use terminal_screen::terminal_clipboard_copy_text;
+use terminal_input::{TerminalKeyAction, terminal_key_action};
 use terminal_session::{
     TerminalLaunchContext, TerminalSessionRegistry, terminal_launch_context_from_state,
 };
@@ -288,15 +290,22 @@ impl ApplicationHandler for App {
             return;
         }
         match event {
-            WindowEvent::Ime(winit::event::Ime::Commit(text))
+            WindowEvent::Ime(ime)
                 if self
                     .runtime
                     .as_ref()
                     .is_some_and(Runtime::terminal_owns_input) =>
             {
                 if let Some(runtime) = &mut self.runtime
-                    && runtime.commit_terminal_ime_text(&text)
+                    && runtime.handle_terminal_ime(&ime)
                 {
+                    if let Some(window) = self.window {
+                        let (x, y, width, height) = runtime.terminal_ime_cursor_rect();
+                        window.set_ime_cursor_area(
+                            winit::dpi::PhysicalPosition::new(x, y),
+                            winit::dpi::PhysicalSize::new(width, height),
+                        );
+                    }
                     self.request_redraw_if_needed();
                 }
             }
@@ -670,6 +679,7 @@ struct Runtime {
     retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     prepared_scene: Option<PreparedScene>,
     terminal_render_cache: TerminalRenderCache,
+    terminal_accessibility: terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
     // P2.2a: the static companion schematic world buffer, rendered as the additive
     // second GPU pass into the Schematic pane. Rebuilt lazily whenever it is None;
     // cleared in lockstep with `prepared_scene` on every scene/frame invalidation,
@@ -818,6 +828,8 @@ impl Runtime {
             retained_scene_cache: Vec::new(),
             prepared_scene: None,
             terminal_render_cache: TerminalRenderCache::new(),
+            terminal_accessibility:
+                terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge::default(),
             schematic_retained_scene: None,
             scene_dirty: true,
             terminal_sessions,
@@ -1271,7 +1283,16 @@ impl Runtime {
             return handled;
         }
         match action {
-            TerminalKeyAction::Write(bytes) => self.write_foreign_shell_bytes(&bytes),
+            TerminalKeyAction::CoreKey(input) => {
+                match self.terminal_sessions.encode_active_key(&input) {
+                    Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
+                    Ok(None) => true,
+                    Err(err) => {
+                        self.log_review_event(format!("terminal key encoding failed: {err}"));
+                        true
+                    }
+                }
+            }
             TerminalKeyAction::NewSession => self.spawn_terminal_session_tab(),
             TerminalKeyAction::TerminateSession => {
                 self.terminate_terminal_session();
@@ -1302,14 +1323,13 @@ impl Runtime {
             }
             TerminalKeyAction::CopyClipboard => self.copy_terminal_scrollback(),
             TerminalKeyAction::PasteClipboard => self.paste_terminal_input(),
-            TerminalKeyAction::ConsumeRelease => true,
             TerminalKeyAction::Ignore => false,
         }
     }
 
     fn scroll_terminal_scrollback(&mut self, delta: usize) {
+        let max = self.terminal_sessions.active_render_row_count();
         let terminal = &mut self.session.workspace_mut().ui.terminal;
-        let max = terminal.grid_lines().len();
         terminal.scroll_offset = (terminal.scroll_offset + delta).min(max);
         self.invalidate_frame();
     }
@@ -1321,8 +1341,8 @@ impl Runtime {
     }
 
     fn scroll_terminal_scrollback_to_top(&mut self) {
-        let terminal = &mut self.session.workspace_mut().ui.terminal;
-        terminal.scroll_offset = terminal.grid_lines().len();
+        self.session.workspace_mut().ui.terminal.scroll_offset =
+            self.terminal_sessions.active_render_row_count();
         self.invalidate_frame();
     }
 
@@ -1332,14 +1352,22 @@ impl Runtime {
     }
 
     fn report_terminal_focus_event(&mut self, focused: bool) {
-        if !self.workspace().ui.terminal.focus_event_reporting
-            || !self.terminal_sessions.active_attached()
-        {
+        if !self.terminal_sessions.active_attached() {
             return;
         }
-        let bytes = terminal_focus_event_sequence(focused);
-        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
-            self.log_review_event(format!("terminal focus report failed: {err}"));
+        let input = if focused {
+            datum_terminal_core::FocusInput::Gained
+        } else {
+            datum_terminal_core::FocusInput::Lost
+        };
+        match self.terminal_sessions.encode_active_focus(input) {
+            Ok(Some(bytes)) => {
+                if let Err(err) = self.terminal_sessions.active().write_bytes(&bytes) {
+                    self.log_review_event(format!("terminal focus report failed: {err}"));
+                }
+            }
+            Ok(None) => {}
+            Err(err) => self.log_review_event(format!("terminal focus encoding failed: {err}")),
         }
     }
 
@@ -1394,8 +1422,9 @@ impl Runtime {
         if !matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             return false;
         }
-        let Some(text) = terminal_clipboard_copy_text(&self.workspace().ui.terminal) else {
-            return false;
+        let text = match self.terminal_sessions.copy_active_selection() {
+            Ok(text) => text,
+            Err(_) => return false,
         };
         if self.write_clipboard_text(&text).is_err() {
             self.log_review_event("clipboard copy failed".to_string());
@@ -1415,11 +1444,14 @@ impl Runtime {
         }
         match self.terminal_input_owner() {
             keyboard_focus::TerminalInputOwner::AttachedPty => {
-                let bytes = terminal_paste_bytes(
-                    &text,
-                    self.terminal_sessions.active_bracketed_paste_enabled(),
-                );
-                self.write_foreign_shell_bytes(&bytes)
+                match self.terminal_sessions.encode_active_paste(&text) {
+                    Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
+                    Ok(None) => false,
+                    Err(err) => {
+                        self.log_review_event(format!("terminal paste encoding failed: {err}"));
+                        true
+                    }
+                }
             }
             keyboard_focus::TerminalInputOwner::Unowned => false,
         }
@@ -2337,6 +2369,7 @@ fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
     Some(slot.to_string())
 }
 
+#[cfg(test)]
 fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
     if !bracketed_paste {
         return text.as_bytes().to_vec();

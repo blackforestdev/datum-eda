@@ -626,8 +626,8 @@ fn trim_rows(state: &mut TerminalLaneState) {
 #[cfg(test)]
 mod terminal_screen_basic_tests;
 
+#[cfg(test)]
 mod clipboard;
-pub(super) use clipboard::terminal_clipboard_copy_text;
 #[cfg(test)]
 pub(super) use clipboard::terminal_scrollback_copy_text;
 

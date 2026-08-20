@@ -1,4 +1,5 @@
 use super::*;
+use datum_terminal_core::{InputDisposition, SearchCursor, SearchQuery};
 
 fn adapter(session: &str) -> TerminalCoreSessionAdapter {
     TerminalCoreSessionAdapter::new(session, format!("context-{session}"), 12, 4).unwrap()
@@ -166,4 +167,99 @@ fn repeated_bells_remain_bounded_but_preserve_visible_count() {
             .iter()
             .any(|event| matches!(event, CoreEvent::LimitReached(LimitKind::PendingEvents)))
     );
+}
+
+#[test]
+fn native_input_selection_search_and_links_use_the_same_core_state() {
+    use datum_terminal_core::{
+        FocusInput, ImeInput, KeyCode, KeyEventKind, KeyInput, KeyModifiers, MouseAction,
+        MouseButton, MouseInput, MousePosition, SearchCase, SelectionScope,
+    };
+
+    let mut adapter = adapter("native-interaction");
+    let mut lane = TerminalLaneState::default();
+    adapter
+        .apply_output(
+            &mut lane,
+            b"\x1b[?1004h\x1b[?2004h\x1b[?1000h\x1b[?1006h\x1b]8;;https://example.com\x07linked\x1b]8;;\x07 text",
+        )
+        .unwrap();
+
+    let key = KeyInput {
+        code: KeyCode::Tab,
+        shifted_key: None,
+        base_layout_key: None,
+        modifiers: KeyModifiers::default(),
+        kind: KeyEventKind::Press,
+    };
+    assert_eq!(adapter.encode_key(&key).unwrap().bytes(), Some(&b"\t"[..]));
+    assert_eq!(
+        adapter.encode_focus(FocusInput::Gained).unwrap().bytes(),
+        Some(&b"\x1b[I"[..])
+    );
+    assert_eq!(
+        adapter
+            .encode_ime(&ImeInput::Preedit("draft".into()))
+            .unwrap(),
+        InputDisposition::LocalOnly
+    );
+    assert_eq!(
+        adapter.encode_paste("a\nb").unwrap().bytes(),
+        Some(&b"\x1b[200~a\nb\x1b[201~"[..])
+    );
+    assert_eq!(
+        adapter
+            .encode_mouse(MouseInput {
+                action: MouseAction::Press(MouseButton::Left),
+                position: MousePosition {
+                    column: 2,
+                    row: 1,
+                    pixel_x: 20,
+                    pixel_y: 16,
+                },
+                modifiers: KeyModifiers::default(),
+                local_override: false,
+            })
+            .unwrap()
+            .bytes(),
+        Some(&b"\x1b[<0;3;2M"[..])
+    );
+
+    let start = adapter
+        .logical_point_at_visible_cell(4, 0, 0, 0)
+        .unwrap()
+        .unwrap();
+    let end = adapter
+        .logical_point_at_visible_cell(4, 0, 0, 5)
+        .unwrap()
+        .unwrap();
+    adapter
+        .set_selection(start, end, SelectionScope::Grapheme)
+        .unwrap();
+    assert_eq!(adapter.copy_selection().unwrap(), "linked");
+
+    let result = adapter
+        .search(
+            &SearchQuery::literal("text", SearchCase::Sensitive),
+            SearchCursor::forward(None),
+        )
+        .unwrap();
+    assert!(result.matched().is_some());
+    assert_eq!(
+        adapter
+            .hyperlink_at_visible_cell(4, 0, 0, 2)
+            .unwrap()
+            .map(|(_, uri)| uri),
+        Some("https://example.com".into())
+    );
+    let accessibility = adapter.accessibility_snapshot(4, 0, true).unwrap();
+    assert_eq!(accessibility.session_id, "native-interaction");
+    assert!(accessibility.text.starts_with("linked text"));
+    assert_eq!(accessibility.selection, Some((0, 6)));
+    assert_eq!(accessibility.links.len(), 1);
+    assert_eq!(accessibility.links[0].start, 0);
+    assert_eq!(accessibility.links[0].end, 6);
+    assert_eq!(accessibility.links[0].uri, "https://example.com");
+    assert!(accessibility.focused);
+    assert!(accessibility.caret <= accessibility.text.chars().count());
 }
