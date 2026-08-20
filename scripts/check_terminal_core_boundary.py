@@ -28,6 +28,11 @@ REQUIRED_MODULES = {
         "struct HistoryStore",
         "fn trim_to_limits",
     ),
+    "hyperlink.rs": (
+        "pub struct Hyperlink",
+        "struct HyperlinkRegistry",
+        "pub(crate) fn insert(",
+    ),
     "input.rs": (
         "pub enum InputDisposition",
         "pub fn encode_key(",
@@ -113,6 +118,7 @@ REQUIRED_LIMITS = (
     "ParameterCount", "ParameterDigits", "ParameterValue", "SubparameterCount",
     "IntermediateBytes", "ControlStringBytes",
     "ClusterBytes", "TitleBytes", "WorkingDirectoryBytes", "ClipboardBytes",
+    "HyperlinkBytes",
     "InputBytes", "KeyboardStack",
     "NotificationBytes", "ReplyBytes", "PendingEvents", "PendingDamage",
     "HistoryLines", "HistoryBytes", "GraphicObjects", "GraphicPixels",
@@ -224,6 +230,14 @@ REQUIRED_INPUT_PROOFS = (
     "tracking_modes_filter_motion_release_and_press_without_crossing_local_policy",
     "input_byte_limit_rejects_complete_key_paste_and_commit_without_prefixes",
     "reset_clears_negotiated_input_protocol_state",
+)
+
+REQUIRED_METADATA_PROOFS = (
+    "osc8_hyperlinks_attach_to_cells_and_end_without_opening_any_uri",
+    "osc52_emits_encoded_clipboard_writes_and_denies_reads_without_a_reply",
+    "shell_marks_notifications_and_latest_progress_are_typed_and_chunk_invariant",
+    "hyperlink_registry_evicts_old_targets_at_its_owner_supplied_byte_limit",
+    "metadata_is_scoped_per_core_and_reset_clears_session_state",
 )
 
 
@@ -491,6 +505,30 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_INPUT_PROOFS:
         if marker not in input_proof_text:
             failures.append(f"DTC-P15 deterministic input protocol proof is missing: {marker}")
+    metadata = sources.get("control_string.rs", "")
+    event = sources.get("event.rs", "")
+    reducer = sources.get("reducer.rs", "")
+    for marker in (
+        "8 => self.set_hyperlink",
+        "52 => self.clipboard_request",
+        "133 => self.shell_mark",
+        "777 => self.extended_notification",
+        "self.state.progress = progress",
+    ):
+        if marker not in metadata:
+            failures.append(f"DTC-P16 OSC metadata behavior marker is missing: {marker}")
+    for marker in ("ClipboardRequest", "OpenUriRequest", "ShellMark", "Notification", "Progress"):
+        if marker not in event:
+            failures.append(f"DTC-P16 typed metadata event is missing: {marker}")
+    if "hyperlink: self.state.current_hyperlink" not in reducer:
+        failures.append("DTC-P16 printed cells must retain the current OSC 8 hyperlink")
+    semantic_tests = crate / "src" / "semantic_tests.rs"
+    metadata_proof_text = (
+        semantic_tests.read_text(encoding="utf-8") if semantic_tests.is_file() else ""
+    )
+    for marker in REQUIRED_METADATA_PROOFS:
+        if marker not in metadata_proof_text:
+            failures.append(f"DTC-P16 deterministic metadata proof is missing: {marker}")
     return failures
 
 

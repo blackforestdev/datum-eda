@@ -1,6 +1,7 @@
 use crate::{
-    CellAttribute, Color, ControlString, ControlStringKind, CoreError, CoreEvent, CoreUpdate,
-    CursorShape, Damage, PaletteIndex, ReplyKind, Rgb, TerminalCore, TitleText, UnderlineStyle,
+    CellAttribute, ClipboardBytes, ClipboardSelection, Color, ControlString, ControlStringKind,
+    CoreError, CoreEvent, CoreUpdate, CursorShape, Damage, NotificationText, PaletteIndex, Percent,
+    ProgressState, ReplyKind, Rgb, ShellMark, TerminalCore, TitleText, UnderlineStyle,
     WorkingDirectoryText,
 };
 
@@ -26,12 +27,142 @@ impl TerminalCore {
             0..=2 => self.set_title(fields.collect(), update)?,
             4 => self.palette_command(fields.collect(), update)?,
             7 => self.set_working_directory(fields.collect(), update)?,
+            8 => self.set_hyperlink(fields.collect())?,
+            9 => self.notification_or_progress(fields.collect(), update)?,
             10..=12 => self.default_color_command(command, fields.collect(), update)?,
+            52 => self.clipboard_request(fields.collect(), update)?,
+            133 => self.shell_mark(fields.collect(), update)?,
             104 => self.reset_palette(fields.collect(), update)?,
             110..=112 => self.reset_default_color(command, update)?,
+            777 => self.extended_notification(fields.collect(), update)?,
             _ => {}
         }
         Ok(())
+    }
+
+    fn set_hyperlink(&mut self, fields: Vec<&[u8]>) -> Result<(), CoreError> {
+        let parameters = fields.first().copied().unwrap_or_default();
+        let Some(uri) = join_fields(fields.get(1..).unwrap_or_default()) else {
+            return Ok(());
+        };
+        if uri.is_empty() {
+            self.state.current_hyperlink = None;
+            return Ok(());
+        }
+        let (Ok(parameters), Ok(uri)) = (
+            String::from_utf8(parameters.to_vec()),
+            String::from_utf8(uri),
+        ) else {
+            return Ok(());
+        };
+        self.state.current_hyperlink = Some(self.state.hyperlinks.insert(parameters, uri)?);
+        Ok(())
+    }
+
+    fn clipboard_request(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let selections = fields.first().copied().unwrap_or(b"c");
+        let Some(contents) = join_fields(fields.get(1..).unwrap_or_default()) else {
+            return Ok(());
+        };
+        update.recognized = true;
+        if contents == b"?" {
+            return Ok(());
+        }
+        let contents = ClipboardBytes::new(contents, self.limits.clipboard_bytes)?;
+        let selections = if selections.is_empty() {
+            b"c"
+        } else {
+            selections
+        };
+        for selection in selections.iter().filter_map(|selection| match selection {
+            b'c' => Some(ClipboardSelection::Clipboard),
+            b'p' => Some(ClipboardSelection::Primary),
+            b's' => Some(ClipboardSelection::Select),
+            _ => None,
+        }) {
+            self.push_event(
+                CoreEvent::ClipboardRequest {
+                    selection,
+                    encoded_contents: contents.clone(),
+                },
+                update,
+            )?;
+        }
+        Ok(())
+    }
+
+    fn shell_mark(&mut self, fields: Vec<&[u8]>, update: &mut CoreUpdate) -> Result<(), CoreError> {
+        let Some(mark) = fields.first().and_then(|field| match *field {
+            b"A" => Some(ShellMark::PromptStart),
+            b"B" => Some(ShellMark::CommandStart),
+            b"C" => Some(ShellMark::CommandExecuted),
+            b"D" => Some(ShellMark::CommandFinished {
+                exit_code: fields.get(1).and_then(|value| parse_i32(value)),
+            }),
+            _ => None,
+        }) else {
+            return Ok(());
+        };
+        self.state.shell_mark = Some(mark);
+        self.push_event(CoreEvent::ShellMark(mark), update)
+    }
+
+    fn notification_or_progress(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        if fields.first().copied() == Some(b"4") {
+            return self.set_progress(fields.get(1..).unwrap_or_default(), update);
+        }
+        self.emit_notification(&fields, update)
+    }
+
+    fn extended_notification(
+        &mut self,
+        fields: Vec<&[u8]>,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        if fields.first().copied() != Some(b"notify") {
+            return Ok(());
+        }
+        self.emit_notification(fields.get(1..).unwrap_or_default(), update)
+    }
+
+    fn emit_notification(
+        &mut self,
+        fields: &[&[u8]],
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let Some(text) = join_fields(fields).and_then(|bytes| String::from_utf8(bytes).ok()) else {
+            return Ok(());
+        };
+        let notification = NotificationText::new(text, self.limits.notification_bytes)?;
+        self.push_event(CoreEvent::Notification(notification), update)
+    }
+
+    fn set_progress(&mut self, fields: &[&[u8]], update: &mut CoreUpdate) -> Result<(), CoreError> {
+        let percent = fields
+            .get(1)
+            .and_then(|value| parse_usize(value))
+            .and_then(|value| u8::try_from(value).ok())
+            .and_then(Percent::new);
+        let Some(progress) = fields.first().and_then(|state| match *state {
+            b"0" => Some(ProgressState::Clear),
+            b"1" => percent.map(|percent| ProgressState::Set { percent }),
+            b"2" => percent.map(|percent| ProgressState::Error { percent }),
+            b"3" => Some(ProgressState::Indeterminate),
+            b"4" => percent.map(|percent| ProgressState::Paused { percent }),
+            _ => None,
+        }) else {
+            return Ok(());
+        };
+        self.state.progress = progress;
+        self.push_event(CoreEvent::Progress(progress), update)
     }
 
     fn set_title(&mut self, fields: Vec<&[u8]>, update: &mut CoreUpdate) -> Result<(), CoreError> {
@@ -209,6 +340,10 @@ impl TerminalCore {
 }
 
 fn parse_usize(bytes: &[u8]) -> Option<usize> {
+    std::str::from_utf8(bytes).ok()?.parse().ok()
+}
+
+fn parse_i32(bytes: &[u8]) -> Option<i32> {
     std::str::from_utf8(bytes).ok()?.parse().ok()
 }
 

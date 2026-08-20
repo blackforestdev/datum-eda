@@ -325,6 +325,7 @@ fn limits(input_bytes: usize, keyboard_stack: usize) -> CoreLimits {
         title_bytes: 4_096,
         working_directory_bytes: 4_096,
         clipboard_bytes: 4_096,
+        hyperlink_bytes: 4_096,
         input_bytes,
         keyboard_stack,
         notification_bytes: 4_096,

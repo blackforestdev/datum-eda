@@ -277,6 +277,7 @@ fn core(columns: u16, rows: u16, history_lines: usize, search_work: usize) -> Te
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes: value,
+        hyperlink_bytes: value,
         input_bytes: value,
         keyboard_stack: value,
         notification_bytes: value,

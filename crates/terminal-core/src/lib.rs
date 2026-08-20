@@ -17,6 +17,7 @@ mod damage;
 mod event;
 mod grid;
 mod history;
+mod hyperlink;
 mod input;
 mod input_key;
 mod input_modes;
@@ -52,9 +53,10 @@ pub use coordinates::{
 pub use damage::{Damage, DamageSet, ScrollDirection};
 pub use event::{
     ClipboardBytes, ClipboardSelection, CoreEvent, NotificationText, Percent, ProgressState,
-    ReplyKind, TerminalReply, TitleText, WorkingDirectoryText,
+    ReplyKind, ShellMark, TerminalReply, TitleText, WorkingDirectoryText,
 };
 pub use history::{AnchorResolution, HistoryRowSnapshot, HistorySnapshot};
+pub use hyperlink::Hyperlink;
 pub use input::{
     FocusInput, ImeInput, InputBytes, InputDisposition, InputError, KeyCode, KeyEventKind,
     KeyInput, KeyModifiers, KeypadKey, MediaKey, ModifierKey,
@@ -63,7 +65,7 @@ pub use input_mouse::{MouseAction, MouseButton, MouseInput, MousePosition};
 pub use limits::{
     ClipboardBytesLimit, ClusterBytesLimit, CompressionRatioLimit, ControlStringBytesLimit,
     CoreLimitValues, CoreLimits, GraphicDecodedBytesLimit, GraphicFramesLimit, GraphicObjectsLimit,
-    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, InputBytesLimit,
+    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, HyperlinkBytesLimit, InputBytesLimit,
     IntermediateBytesLimit, KeyboardStackLimit, LimitError, LimitKind, NotificationBytesLimit,
     ParameterCountLimit, ParameterDigitsLimit, ParameterValueLimit, ParserWorkLimit,
     PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit, ReplyBytesLimit, ScreenCellsLimit,

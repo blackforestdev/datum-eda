@@ -67,7 +67,12 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
                 text += (
                     "\nself.state.palette[index as usize] = color\n"
                     "TitleText::new\nWorkingDirectoryText::new\n"
+                    "8 => self.set_hyperlink\n52 => self.clipboard_request\n"
+                    "133 => self.shell_mark\n777 => self.extended_notification\n"
+                    "self.state.progress = progress\n"
                 )
+            if relative == "event.rs":
+                text += "\nClipboardRequest\nOpenUriRequest\nShellMark\nNotification\nProgress\n"
             (source / relative).write_text(text, encoding="utf-8")
         (source / "parser_tests.rs").write_text(
             "\n".join(guard.REQUIRED_PARSER_PROOFS), encoding="utf-8"
@@ -76,7 +81,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             "\n".join(guard.REQUIRED_REDUCER_PROOFS), encoding="utf-8"
         )
         (source / "semantic_tests.rs").write_text(
-            "\n".join(guard.REQUIRED_SEMANTIC_PROOFS), encoding="utf-8"
+            "\n".join(guard.REQUIRED_SEMANTIC_PROOFS + guard.REQUIRED_METADATA_PROOFS),
+            encoding="utf-8",
         )
         (source / "unicode_tests.rs").write_text(
             "\n".join(guard.REQUIRED_UNICODE_PROOFS), encoding="utf-8"
@@ -100,7 +106,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         )
         (source / "reducer.rs").write_text(
             (source / "reducer.rs").read_text()
-            + "\nimpl TerminalCore {}\nself.apply_action(action)\nrepair_row(row)\n",
+            + "\nimpl TerminalCore {}\nself.apply_action(action)\nrepair_row(row)\n"
+            + "hyperlink: self.state.current_hyperlink\n",
             encoding="utf-8",
         )
         (source / "grid.rs").write_text(
@@ -442,6 +449,26 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("MouseEncoding::SgrPixels" in item for item in failures))
         self.assertTrue(any("input.local_override" in item for item in failures))
         self.assertTrue(any("kitty_keyboard_negotiation" in item for item in failures))
+
+    def test_metadata_handler_cell_link_and_proof_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        control = root / guard.CRATE / "src/control_string.rs"
+        control.write_text(control.read_text().replace("52 => self.clipboard_request", "removed"))
+        reducer = root / guard.CRATE / "src/reducer.rs"
+        reducer.write_text(
+            reducer.read_text().replace("hyperlink: self.state.current_hyperlink", "hyperlink: None")
+        )
+        proofs = root / guard.CRATE / "src/semantic_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "osc8_hyperlinks_attach_to_cells_and_end_without_opening_any_uri", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("clipboard_request" in item for item in failures))
+        self.assertTrue(any("current OSC 8 hyperlink" in item for item in failures))
+        self.assertTrue(any("osc8_hyperlinks" in item for item in failures))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 use crate::grid::GridBuffer;
 use crate::history::HistoryStore;
+use crate::hyperlink::HyperlinkRegistry;
 use crate::{
     Cell, CellStyle, CharacterSetState, Cluster, Color, CoreLimits, CursorState,
     KittyKeyboardState, Margins, ModeState, MouseEncoding, MouseTracking, SavedCursorState,
@@ -27,6 +28,10 @@ pub struct ScreenState {
     pub(crate) cursor_color: Color,
     pub(crate) title: Option<TitleText>,
     pub(crate) working_directory: Option<WorkingDirectoryText>,
+    pub(crate) current_hyperlink: Option<crate::HyperlinkId>,
+    pub(crate) hyperlinks: HyperlinkRegistry,
+    pub(crate) shell_mark: Option<crate::ShellMark>,
+    pub(crate) progress: crate::ProgressState,
     pub(crate) synchronized_dirty: bool,
     pub(crate) last_printed: Option<Cluster>,
     pub(crate) grapheme_anchor: Option<crate::CellPoint>,
@@ -73,6 +78,10 @@ impl ScreenState {
             cursor_color: Color::Default,
             title: None,
             working_directory: None,
+            current_hyperlink: None,
+            hyperlinks: HyperlinkRegistry::new(limits.hyperlink_bytes),
+            shell_mark: None,
+            progress: crate::ProgressState::Clear,
             synchronized_dirty: false,
             last_printed: None,
             grapheme_anchor: None,
@@ -151,6 +160,18 @@ impl ScreenState {
 
     pub fn working_directory(&self) -> Option<&WorkingDirectoryText> {
         self.working_directory.as_ref()
+    }
+
+    pub fn hyperlink(&self, id: crate::HyperlinkId) -> Option<&crate::Hyperlink> {
+        self.hyperlinks.get(id)
+    }
+
+    pub const fn shell_mark(&self) -> Option<crate::ShellMark> {
+        self.shell_mark
+    }
+
+    pub const fn progress(&self) -> crate::ProgressState {
+        self.progress
     }
 
     pub fn tab_stops(&self) -> &TabStops {

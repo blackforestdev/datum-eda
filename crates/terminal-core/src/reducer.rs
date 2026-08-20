@@ -144,7 +144,7 @@ impl TerminalCore {
         let cell = Cell {
             content: CellContent::Cluster(cluster),
             style: self.state.style,
-            hyperlink: None,
+            hyperlink: self.state.current_hyperlink,
             protected: self.state.protected,
         };
         self.state.active_grid_mut().set_cluster(row, column, cell);
@@ -624,6 +624,10 @@ impl TerminalCore {
         self.state.grapheme_anchor = None;
         self.state.history.clear();
         self.state.selection = None;
+        self.state.current_hyperlink = None;
+        self.state.hyperlinks.clear();
+        self.state.shell_mark = None;
+        self.state.progress = crate::ProgressState::Clear;
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

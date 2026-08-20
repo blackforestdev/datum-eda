@@ -12,6 +12,7 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes: value,
+        hyperlink_bytes: value,
         input_bytes: value,
         keyboard_stack: value,
         notification_bytes: value,

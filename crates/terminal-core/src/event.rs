@@ -77,6 +77,14 @@ pub enum ProgressState {
     Indeterminate,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ShellMark {
+    PromptStart,
+    CommandStart,
+    CommandExecuted,
+    CommandFinished { exit_code: Option<i32> },
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum CoreEvent {
     Bell,
@@ -84,8 +92,10 @@ pub enum CoreEvent {
     WorkingDirectoryChanged(WorkingDirectoryText),
     ClipboardRequest {
         selection: ClipboardSelection,
-        contents: ClipboardBytes,
+        encoded_contents: ClipboardBytes,
     },
+    OpenUriRequest(crate::Hyperlink),
+    ShellMark(ShellMark),
     Notification(NotificationText),
     Progress(ProgressState),
     PaletteChanged {

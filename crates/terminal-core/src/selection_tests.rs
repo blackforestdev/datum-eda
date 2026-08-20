@@ -160,6 +160,7 @@ fn core(
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes,
+        hyperlink_bytes: value,
         input_bytes: value,
         keyboard_stack: value,
         notification_bytes: value,

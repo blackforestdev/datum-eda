@@ -12,6 +12,7 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes: value,
+        hyperlink_bytes: value,
         input_bytes: value,
         keyboard_stack: value,
         notification_bytes: value,
@@ -299,6 +300,154 @@ fn osc_metadata_palette_and_default_color_state_are_bounded_and_queryable() {
             .iter()
             .any(|(_, bytes)| bytes == b"\x1b]10;rgb:aaaa/bbbb/cccc\x1b\\")
     );
+}
+
+#[test]
+fn osc8_hyperlinks_attach_to_cells_and_end_without_opening_any_uri() {
+    let limits = limits(4_096);
+    let mut core = core(limits);
+    let mut parser = StreamingParser::new(limits);
+    apply_bytes(
+        &mut core,
+        &mut parser,
+        b"\x1b]8;id=docs;https://example.test/a;b\x1b\\L\x1b]8;;\x1b\\N",
+        &[1; 64],
+    )
+    .unwrap();
+
+    let linked = core.state().cell(0, 0).unwrap();
+    let id = linked.hyperlink.expect("OSC 8 marks printed cells");
+    let target = core.state().hyperlink(id).expect("link target is retained");
+    assert_eq!(target.parameters(), "id=docs");
+    assert_eq!(target.uri(), "https://example.test/a;b");
+    assert_eq!(core.state().cell(0, 1).unwrap().hyperlink, None);
+    assert!(matches!(
+        core.uri_open_request(id),
+        Some(CoreEvent::OpenUriRequest(target)) if target.uri() == "https://example.test/a;b"
+    ));
+}
+
+#[test]
+fn osc52_emits_encoded_clipboard_writes_and_denies_reads_without_a_reply() {
+    let limits = limits(4_096);
+    let mut core = core(limits);
+    let mut parser = StreamingParser::new(limits);
+    let updates = apply_bytes(
+        &mut core,
+        &mut parser,
+        b"\x1b]52;cp;YWJj\x1b\\\x1b]52;c;?\x1b\\",
+        &[2, 1, 5, 3],
+    )
+    .unwrap();
+    let events = updates
+        .iter()
+        .flat_map(CoreUpdate::events)
+        .collect::<Vec<_>>();
+    assert_eq!(events.len(), 2);
+    assert!(events.iter().any(|event| matches!(
+        event,
+        CoreEvent::ClipboardRequest {
+            selection: ClipboardSelection::Clipboard,
+            encoded_contents,
+        } if encoded_contents.as_slice() == b"YWJj"
+    )));
+    assert!(events.iter().any(|event| matches!(
+        event,
+        CoreEvent::ClipboardRequest {
+            selection: ClipboardSelection::Primary,
+            encoded_contents,
+        } if encoded_contents.as_slice() == b"YWJj"
+    )));
+    assert!(updates.iter().all(|update| update.replies().is_empty()));
+}
+
+#[test]
+fn shell_marks_notifications_and_latest_progress_are_typed_and_chunk_invariant() {
+    let limits = limits(4_096);
+    let bytes = b"\x1b]133;A\x1b\\\x1b]133;B\x1b\\\x1b]133;C\x1b\\\x1b]133;D;17\x1b\\\x1b]9;build done\x1b\\\x1b]777;notify;Agent;Needs input\x1b\\\x1b]9;4;1;73\x1b\\";
+    let mut whole = core(limits);
+    let mut whole_parser = StreamingParser::new(limits);
+    let whole_updates = apply_bytes(&mut whole, &mut whole_parser, bytes, &[bytes.len()]).unwrap();
+    let mut split = core(limits);
+    let mut split_parser = StreamingParser::new(limits);
+    let split_updates = apply_bytes(&mut split, &mut split_parser, bytes, &[1; 256]).unwrap();
+
+    let whole_events = whole_updates
+        .iter()
+        .flat_map(CoreUpdate::events)
+        .cloned()
+        .collect::<Vec<_>>();
+    let split_events = split_updates
+        .iter()
+        .flat_map(CoreUpdate::events)
+        .cloned()
+        .collect::<Vec<_>>();
+    assert_eq!(split_events, whole_events);
+    assert_eq!(
+        split.state().shell_mark(),
+        Some(ShellMark::CommandFinished {
+            exit_code: Some(17)
+        })
+    );
+    assert_eq!(
+        split.state().progress(),
+        ProgressState::Set {
+            percent: Percent::new(73).unwrap()
+        }
+    );
+    assert!(whole_events.iter().any(|event| matches!(
+        event,
+        CoreEvent::Notification(text) if text.as_str() == "build done"
+    )));
+    assert!(whole_events.iter().any(|event| matches!(
+        event,
+        CoreEvent::Notification(text) if text.as_str() == "Agent;Needs input"
+    )));
+}
+
+#[test]
+fn hyperlink_registry_evicts_old_targets_at_its_owner_supplied_byte_limit() {
+    let mut raw = raw_limits(512);
+    raw.hyperlink_bytes = 8;
+    let limits = CoreLimits::try_from(raw).unwrap();
+    let mut core = core(limits);
+    let mut parser = StreamingParser::new(limits);
+    apply_bytes(&mut core, &mut parser, b"\x1b]8;;12345678\x1b\\A", &[64]).unwrap();
+    let first = core.state().cell(0, 0).unwrap().hyperlink.unwrap();
+    apply_bytes(&mut core, &mut parser, b"\x1b]8;;abcdefgh\x1b\\B", &[64]).unwrap();
+    let second = core.state().cell(0, 1).unwrap().hyperlink.unwrap();
+    assert!(core.state().hyperlink(first).is_none());
+    assert_eq!(core.state().hyperlink(second).unwrap().uri(), "abcdefgh");
+}
+
+#[test]
+fn metadata_is_scoped_per_core_and_reset_clears_session_state() {
+    let limits = limits(4_096);
+    let mut first = core(limits);
+    let mut first_parser = StreamingParser::new(limits);
+    apply_bytes(
+        &mut first,
+        &mut first_parser,
+        b"\x1b]8;;https://one.test\x1b\\A\x1b]133;A\x1b\\\x1b]9;4;3\x1b\\",
+        &[1; 128],
+    )
+    .unwrap();
+    let id = first.state().cell(0, 0).unwrap().hyperlink.unwrap();
+
+    let second = core(limits);
+    assert!(second.state().hyperlink(id).is_none());
+    assert_eq!(second.state().shell_mark(), None);
+    assert_eq!(second.state().progress(), ProgressState::Clear);
+
+    first
+        .apply(Action::Escape(EscapeSequence {
+            intermediates: Vec::new(),
+            final_byte: b'c',
+        }))
+        .unwrap();
+    assert!(first.state().hyperlink(id).is_none());
+    assert_eq!(first.state().shell_mark(), None);
+    assert_eq!(first.state().progress(), ProgressState::Clear);
 }
 
 #[test]
