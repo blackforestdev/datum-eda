@@ -927,7 +927,6 @@
         "dat-terminal-emulator-epic-jzv.7"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
       ],
       "completion": {
@@ -1105,7 +1104,6 @@
             "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
         "unblocks_issue_ids": [
-          "dat-terminal-emulator-epic-jzv.2",
           "dat-terminal-emulator-epic-jzv.3"
           ],
           "selection": "explicit_frontier_update",
@@ -1410,7 +1408,6 @@
         "dat-pan-trace-terminal-pollution-0j0"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.2",
         "dat-terminal-emulator-epic-jzv.3"
       ],
       "completion": {
@@ -1983,7 +1980,6 @@
             "T1b loses the owned-transport blocker; T2 remains blocked on the separately completed Datum-owned TerminalCore slice."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.2",
             "dat-terminal-emulator-epic-jzv.3"
           ],
           "selection": "explicit_frontier_update",
@@ -2005,33 +2001,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "dtc-p21-20260820",
-        "claimed_at": "2026-08-20T16:20:34Z",
-        "heartbeat_at": "2026-08-20T16:20:34Z",
-        "expires_at": "2026-08-21T00:20:34Z",
-        "scope": [
-          "crates/terminal-core",
-          "scripts/check_terminal_core_boundary.py",
-          "scripts/test_terminal_core_boundary.py",
-          "scripts/check_terminal_kitty_boundary.py",
-          "scripts/test_terminal_kitty_boundary.py",
-          "scripts/check_terminal_snapshot_boundary.py",
-          "scripts/test_terminal_snapshot_boundary.py",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "main",
-        "head": "9cccd7a"
-      },
+      "landing_commit": "144a7ba3e566f41111ebdb3c7f7a53e0e6a13ade",
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2042,7 +2016,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P21",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2458,11 +2432,21 @@
           {
             "id": "DTC-P21",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Close the core with normative snapshots, chunk invariance, deterministic mutation/replay, hostile-input, resource, performance, offline, dependency, and source-health proof.",
             "depends_on": ["DTC-P08", "DTC-P09", "DTC-P10", "DTC-P11", "DTC-P12", "DTC-P13", "DTC-P14", "DTC-P15", "DTC-P16", "DTC-P17", "DTC-P18", "DTC-P19", "DTC-P20"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P21"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "144a7ba"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P21-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -2485,12 +2469,40 @@
       "issue_id": "dat-terminal-emulator-epic-jzv.3",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
+        "docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "blocked",
+      "state": "in_progress",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "dtc-p22-20260820",
+        "claimed_at": "2026-08-20T16:33:06Z",
+        "heartbeat_at": "2026-08-20T16:33:06Z",
+        "expires_at": "2026-08-21T00:33:06Z",
+        "scope": [
+          "crates/gui-app/src/terminal_process.rs",
+          "crates/gui-app/src/terminal_session.rs",
+          "crates/gui-app/src/terminal_session_drain.rs",
+          "crates/gui-app/src/terminal_transport",
+          "crates/terminal-core",
+          "scripts/check_gui_agent_terminal_convergence.py",
+          "scripts/check_terminal_core_boundary.py",
+          "scripts/check_terminal_transport_boundary.py",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": "main",
+        "head": "144a7ba"
+      },
       "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2503,7 +2515,83 @@
         "dat-terminal-emulator-epic-jzv.4",
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
-      ]
+      ],
+      "completion": {
+        "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
+        "canonical_next_step_id": "DTC-P22",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "DTC-P22",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Connect PTY bytes, replies, resize, lifecycle, context association, bounded scheduling, and every-session draining to TerminalCore through one session adapter.",
+            "depends_on": [],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P23",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Render immutable TerminalCore snapshots through Datum GPU/text primitives with complete attributes, shaping, clipping, damage, images, DPI, and visual proof.",
+            "depends_on": ["DTC-P22"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P23"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P24",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Route native focus, keyboard, IME, mouse, paste, selection, clipboard, search, links, and Linux accessibility through the sole TerminalCore authority.",
+            "depends_on": ["DTC-P22", "DTC-P23"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P25",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Run bounded test/debug-only shadow comparison between the provisional path and TerminalCore over their declared overlap without creating a production selector or fallback.",
+            "depends_on": ["DTC-P22", "DTC-P23", "DTC-P24"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P25"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "DTC-P26",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Atomically select TerminalCore as sole production authority and delete the provisional screen, parser, string/style grid, lossy renderer, shadow path, and TERM overclaim.",
+            "depends_on": ["DTC-P22", "DTC-P23", "DTC-P24", "DTC-P25"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P26"}],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "T3, agent-launch, and MCP terminal integration lose the native-cutover blocker while retaining their own separate selection and acceptance boundaries."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.4",
+            "dat-terminal-emulator-epic-jzv.8",
+            "dat-terminal-emulator-epic-jzv.9"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T3-UX",

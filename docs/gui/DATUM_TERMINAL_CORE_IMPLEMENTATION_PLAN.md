@@ -1594,19 +1594,58 @@ claim was added.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P21 --> **DTC-P21 — core proof gate.** Datum-authored normative corpus, chunk
   invariance, generational mutation/replay/shrink, hostile streams, reset,
   resource and performance proof for P07–P20.
-- **DTC-P22 — session adapter.** PTY bytes to core, replies to PTY, bounded
+
+#### DTC-P21 integrated core-proof evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P21-CLOSED -->
+Revision `144a7ba` closes the Datum-owned TerminalCore with one integrated,
+authority-labeled proof surface. Five stable corpus cases cover ECMA-48 cursor
+and reply behavior, DEC save/restore and alternate-screen state, governed
+Unicode/history behavior, xterm metadata/palette/link/shell integration, and
+both DEC sixel and Kitty graphics. Every case produces identical immutable
+state, replies, events, damage, and errors when supplied whole, one byte at a
+time, or through deterministic arbitrary partitions.
+
+A seeded 256-generation mutation runner proves replay reproducibility and
+minimizes any partition divergence to a stable byte artifact. Hostile control
+strings, parameters, malformed UTF-8, and graphics exhaust caller-supplied
+limits without panic or structural escape. Repeated generations remain within
+history, graphics, and snapshot quotas. The reset proof exposed and repaired a
+real total-reset defect: RIS now clears OSC title and working-directory state
+alongside the screen, history, graphics, modes, and cursor.
+
+The release proof consumes 8,388,608 deterministic bytes and emits
+machine-readable schema-v1 measurements. The closure run reduced 5,033,984
+actions with zero errors at a measured 2.271 MiB/s on the owner workstation.
+This value is recorded evidence, not a new performance acceptance threshold;
+decision 030 still reserves numerical product budgets to the owner. A dedicated
+guard pins the corpus, partition progress, seed/shrinker, bounded snapshot,
+release/offline runner, empty dependency inventory, and absence of renderer,
+PTY, filesystem, process, network, or Datum-design authority. Four hermetic
+mutations prove corpus removal, progress/shrinker weakening, dependency or I/O
+escape, invented throughput thresholds, and drift-runner disconnection fail.
+
+All 132 TerminalCore tests, the complete locked/offline workspace all-target
+suite, strict workspace Clippy, locked/offline check, core/snapshot/Kitty/proof
+guards, dependency authority, source health over 1,483 files, project-state,
+progress, parity and spec-governance gates, scoped formatting, Python
+compilation, and diff hygiene pass. No Cargo dependency, runtime fetch, copied
+terminal implementation, renderer or PTY authority, TERM identity change, or
+production cutover was introduced. DTC-P22 remains the separately selected
+session-adapter boundary.
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P22 --> **DTC-P22 — session adapter.** PTY bytes to core, replies to PTY, bounded
   scheduling/backpressure, every-session draining, resize, lifecycle, and
   context association.
-- **DTC-P23 — GPU renderer.** Backgrounds, glyph clusters, fallback/shaping,
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P23 --> **DTC-P23 — GPU renderer.** Backgrounds, glyph clusters, fallback/shaping,
   every text decoration/color, cursor, clipping, damage-only updates, images,
   DPI/font change, and visual proof through renderer-owned types.
-- **DTC-P24 — native input and accessibility.** Focus, IME preedit/commit,
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24 --> **DTC-P24 — native input and accessibility.** Focus, IME preedit/commit,
   keyboard/mouse/paste, selection/clipboard/search/links and the Linux AT-SPI
   text/caret/selection/event bridge with real screen-reader evidence.
-- **DTC-P25 — bounded shadow comparison.** Feed recorded bytes to old and new
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P25 --> **DTC-P25 — bounded shadow comparison.** Feed recorded bytes to old and new
   cores only in tests/debug; compare the declared overlap; use normative proof
   for new behavior; no production selector or fallback.
-- **DTC-P26 — atomic cutover.** Select the Datum core as sole production
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P26 --> **DTC-P26 — atomic cutover.** Select the Datum core as sole production
   authority; delete provisional `TerminalScreen`, string/style grid authority
   from `gui-protocol`, lossy renderer, shadow path, and `TERM` overclaim.
 
