@@ -36,6 +36,17 @@ REQUIRED_MODULES = {
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "reflow.rs": ("pub fn resize(", "fn reflow_rows(", "fn resolve_visible_point("),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
+    "search.rs": (
+        "pub enum SearchQuery",
+        "pub struct SearchMatch",
+        "pub fn search(",
+        "pub fn search_match_state(",
+    ),
+    "search_regex.rs": (
+        "struct RegexProgram",
+        "enum State",
+        "fn match_at(",
+    ),
     "selection.rs": (
         "pub enum SelectionScope",
         "pub struct Selection",
@@ -162,6 +173,19 @@ REQUIRED_SELECTION_PROOFS = (
     "alternate_buffer_isolated_and_buffer_switch_clears_selection",
     "clipboard_limit_rejects_atomically_without_truncating",
     "reset_and_explicit_clear_remove_selection",
+)
+
+REQUIRED_SEARCH_PROOFS = (
+    "literal_search_is_incremental_case_aware_and_bidirectional",
+    "thompson_regex_supports_groups_alternation_classes_quantifiers_and_anchors",
+    "regex_literals_follow_unicode_grapheme_boundaries_and_quantifiers_are_greedy",
+    "search_distinguishes_soft_wrap_from_hard_newline",
+    "matches_keep_logical_identity_across_output_and_reflow",
+    "retained_match_reports_trimmed_after_whole_line_eviction",
+    "trimmed_and_unknown_navigation_cursors_fail_explicitly",
+    "alternate_search_never_observes_primary_history",
+    "hostile_regex_exhausts_search_work_without_backtracking",
+    "invalid_and_empty_patterns_fail_closed",
 )
 
 
@@ -359,6 +383,28 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_SELECTION_PROOFS:
         if marker not in selection_proof_text:
             failures.append(f"DTC-P13 deterministic selection/copy proof is missing: {marker}")
+    search = sources.get("search.rs", "")
+    regex = sources.get("search_regex.rs", "")
+    for marker in (
+        "self.limits.search_work.get()",
+        "SearchDirection::Forward",
+        "SearchDirection::Backward",
+        "resolve_logical_point",
+        "SearchMatchState::Trimmed",
+    ):
+        if marker not in search:
+            failures.append(f"DTC-P14 bounded stable-search marker is missing: {marker}")
+    for marker in ("State::Split", "Vec<Fragment>", "work.charge(1)?"):
+        if marker not in regex:
+            failures.append(f"DTC-P14 Thompson-NFA marker is missing: {marker}")
+    for forbidden in ("backtrack", "fancy_regex", "regex::"):
+        if forbidden in regex:
+            failures.append(f"DTC-P14 regex engine contains forbidden implementation marker: {forbidden}")
+    search_tests = crate / "src" / "search_tests.rs"
+    search_proof_text = search_tests.read_text(encoding="utf-8") if search_tests.is_file() else ""
+    for marker in REQUIRED_SEARCH_PROOFS:
+        if marker not in search_proof_text:
+            failures.append(f"DTC-P14 deterministic search proof is missing: {marker}")
     return failures
 
 

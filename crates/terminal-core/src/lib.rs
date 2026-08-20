@@ -25,6 +25,8 @@ mod reducer;
 mod reducer_action;
 mod reflow;
 mod screen;
+mod search;
+mod search_regex;
 mod selection;
 mod semantics;
 mod sgr;
@@ -69,6 +71,10 @@ pub use parser_action::{
 pub use reducer::{Reduction, ScreenError};
 pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
+pub use search::{
+    SearchCase, SearchCursor, SearchDirection, SearchError, SearchMatch, SearchMatchState,
+    SearchQuery, SearchResult,
+};
 pub use selection::{CopiedText, Selection, SelectionError, SelectionScope, SelectionState};
 pub use semantics::{CoreError, CoreUpdate};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
@@ -97,3 +103,6 @@ mod history_tests;
 
 #[cfg(test)]
 mod selection_tests;
+
+#[cfg(test)]
+mod search_tests;

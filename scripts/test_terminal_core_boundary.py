@@ -87,6 +87,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "selection_tests.rs").write_text(
             "\n".join(guard.REQUIRED_SELECTION_PROOFS), encoding="utf-8"
         )
+        (source / "search_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_SEARCH_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -125,6 +128,17 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             + "SelectionScope::WrappedLine\nSelectionScope::LogicalLine\n"
             + "SelectionScope::Block\nSelectionScope::All\n"
             + "resolve_logical_point\nself.limits.clipboard_bytes\n",
+            encoding="utf-8",
+        )
+        (source / "search.rs").write_text(
+            (source / "search.rs").read_text()
+            + "\nself.limits.search_work.get()\nSearchDirection::Forward\n"
+            + "SearchDirection::Backward\nresolve_logical_point\nSearchMatchState::Trimmed\n",
+            encoding="utf-8",
+        )
+        (source / "search_regex.rs").write_text(
+            (source / "search_regex.rs").read_text()
+            + "\nState::Split\nVec<Fragment>\nwork.charge(1)?\n",
             encoding="utf-8",
         )
         (source / "history.rs").write_text(
@@ -347,6 +361,29 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("clipboard_bytes" in item for item in failures))
         self.assertTrue(any("stable logical endpoints" in item for item in failures))
         self.assertTrue(any("logical_endpoints_survive" in item for item in failures))
+
+    def test_search_work_nfa_and_stability_proof_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        search = root / guard.CRATE / "src/search.rs"
+        search.write_text(
+            search.read_text()
+            .replace("self.limits.search_work.get()", "usize::MAX")
+            .replace("SearchMatchState::Trimmed", "SearchMatchState::Unknown")
+        )
+        regex = root / guard.CRATE / "src/search_regex.rs"
+        regex.write_text(regex.read_text().replace("State::Split", "removed_split"))
+        proofs = root / guard.CRATE / "src/search_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "hostile_regex_exhausts_search_work_without_backtracking", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("search_work" in item for item in failures))
+        self.assertTrue(any("SearchMatchState::Trimmed" in item for item in failures))
+        self.assertTrue(any("State::Split" in item for item in failures))
+        self.assertTrue(any("hostile_regex_exhausts" in item for item in failures))
 
 
 if __name__ == "__main__":
