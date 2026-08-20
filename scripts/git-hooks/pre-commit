@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Datum pre-commit hook: staged Rust files must be rustfmt-clean so formatting
+# debt cannot accumulate between drift-gate runs. Only STAGED files are
+# checked — another agent's dirty-but-unstaged files never block a commit.
+# Ceiling-bound exemptions live in specs/rustfmt_exemption_manifest.json.
+#
+# Enable once per clone:   git config core.hooksPath scripts/git-hooks
+# Bypass in an emergency:  git commit --no-verify
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+exec python3 scripts/check_rustfmt.py --staged

@@ -27,6 +27,23 @@ class DiffLineParsing(unittest.TestCase):
         self.assertIsNone(check_rustfmt.DIFF_LINE.match("+    use foo;"))
 
 
+class SelectViolations(unittest.TestCase):
+    def test_whole_tree_reports_violations_and_stale_rows(self) -> None:
+        v, stale = check_rustfmt.select_violations({"a.rs", "b.rs"}, {"b.rs", "c.rs"}, None)
+        self.assertEqual(v, ["a.rs"])
+        self.assertEqual(stale, ["c.rs"])
+
+    def test_staged_mode_only_fails_staged_files_and_skips_stale(self) -> None:
+        v, stale = check_rustfmt.select_violations({"a.rs", "b.rs"}, {"c.rs"}, {"b.rs"})
+        self.assertEqual(v, ["b.rs"])
+        self.assertEqual(stale, [])
+
+    def test_staged_mode_passes_when_dirty_files_are_unstaged(self) -> None:
+        v, stale = check_rustfmt.select_violations({"a.rs"}, set(), {"other.rs"})
+        self.assertEqual(v, [])
+        self.assertEqual(stale, [])
+
+
 class ExemptionManifest(unittest.TestCase):
     def test_manifest_loads_and_every_exempted_file_exists(self) -> None:
         exemptions = check_rustfmt.load_exemptions()

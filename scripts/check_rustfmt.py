@@ -6,6 +6,14 @@ in `specs/rustfmt_exemption_manifest.json`. That list exists only for modules
 whose rustfmt reflow would exceed an exact source-health ceiling (decision 022)
 and is downward-only: an exempted file that is actually rustfmt-clean is a
 stale exemption and fails the gate until its row is removed.
+
+`--staged` restricts failures to files staged for commit (for the pre-commit
+hook): another agent's dirty-but-unstaged files never block a commit, and the
+stale-exemption check is skipped because it is a handoff concern, not a
+per-commit one. Staged mode runs rustfmt directly on the staged files rather
+than through `cargo fmt`, so a new file not yet reachable from a crate root is
+still checked. rustfmt inspects the working tree, so a file staged with
+further unstaged edits is judged by its working-tree content.
 """
 
 from __future__ import annotations
@@ -36,9 +44,16 @@ def load_exemptions() -> dict[str, dict]:
     return exemptions
 
 
-def rustfmt_dirty_files() -> set[str]:
+def rustfmt_dirty_files(files: list[str] | None = None) -> set[str]:
+    """Whole-workspace check via cargo fmt, or a direct rustfmt check of `files`."""
+    if files is not None:
+        if not files:
+            return set()
+        cmd = ["rustfmt", "--edition", "2024", "--check", *files]
+    else:
+        cmd = ["cargo", "fmt", "--all", "--", "--check"]
     proc = subprocess.run(
-        ["cargo", "fmt", "--all", "--", "--check"],
+        cmd,
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -57,19 +72,42 @@ def rustfmt_dirty_files() -> set[str]:
         # rustfmt failed for a reason other than formatting diffs (parse error, etc).
         sys.stderr.write(proc.stdout)
         sys.stderr.write(proc.stderr)
-        raise SystemExit("rustfmt gate: `cargo fmt --all -- --check` failed")
+        raise SystemExit(f"rustfmt gate: `{' '.join(cmd[:4])} ...` failed")
     return dirty
 
 
-def main() -> int:
-    exemptions = load_exemptions()
-    dirty = rustfmt_dirty_files()
+def staged_rust_files() -> set[str]:
+    proc = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "--", "*.rs"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return {line.strip() for line in proc.stdout.splitlines() if line.strip()}
 
-    violations = sorted(dirty - set(exemptions))
-    stale = sorted(set(exemptions) - dirty)
+
+def select_violations(
+    dirty: set[str], exemptions: set[str], staged: set[str] | None
+) -> tuple[list[str], list[str]]:
+    """Return (violations, stale_exemptions). staged=None means whole-tree mode."""
+    violations = dirty - exemptions
+    if staged is not None:
+        return sorted(violations & staged), []
+    return sorted(violations), sorted(exemptions - dirty)
+
+
+def main() -> int:
+    staged_only = "--staged" in sys.argv[1:]
+    exemptions = load_exemptions()
+    staged = staged_rust_files() if staged_only else None
+    dirty = rustfmt_dirty_files(sorted(staged) if staged is not None else None)
+
+    violations, stale = select_violations(dirty, set(exemptions), staged)
 
     if violations:
-        print("rustfmt gate FAILED: the following files are not rustfmt-clean:")
+        scope = "staged files are" if staged_only else "files are"
+        print(f"rustfmt gate FAILED: the following {scope} not rustfmt-clean:")
         for rel in violations:
             print(f"  - {rel}")
         print("Run `cargo fmt --all` (or rustfmt on the listed files) and re-run.")
@@ -80,9 +118,10 @@ def main() -> int:
     if violations or stale:
         return 1
 
+    scope = "staged files" if staged_only else "workspace"
     print(
-        f"rustfmt gate passed ({len(exemptions)} ceiling-bound exemption(s) "
-        f"in {MANIFEST.relative_to(ROOT)})."
+        f"rustfmt gate passed for {scope} ({len(exemptions)} ceiling-bound "
+        f"exemption(s) in {MANIFEST.relative_to(ROOT)})."
     )
     return 0
 
