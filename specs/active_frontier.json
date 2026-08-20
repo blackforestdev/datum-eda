@@ -2274,18 +2274,23 @@
                 "kind": "review",
                 "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
                 "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S1-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S2-OWNER-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P16 URI policy`, or `P16-S2: revise — <replacement>` or `P16-S2: defer — <reason>`.",
+              "response_format": "Reply `approve DTC-P16 paste policy`, or `P16-S3: revise — <replacement>` or `P16-S3: defer — <reason>`.",
               "requests": [
                 {
-                  "id": "P16-S2",
-                  "question": "When may a link printed by a terminal program open a browser, application, or local file?",
-                  "recommended_response": "Never open anything automatically. Only a deliberate user action in the focused active terminal may request opening; show the exact destination and require confirmation for http/https. Deny background requests and other URI schemes by default; copying the bounded target remains available.",
+                  "id": "P16-S3",
+                  "question": "When should Datum ask before pasting clipboard text into a terminal?",
+                  "recommended_response": "Paste ordinary single-line text immediately. Require a visible preview and explicit confirmation for multiline text or control characters; reject background-terminal paste and use bracketed-paste framing when enabled. Automated agents' bounded PTY input is not a human clipboard paste and remains unaffected.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P16-S2"
+                    "marker": "P16-S3"
                   }
                 }
               ]

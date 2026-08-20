@@ -1323,11 +1323,28 @@ Owner response: `approve DTC-P16 clipboard policy` (2026-08-20).
 
 - <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S2 --> **P16-S2 — terminal link and URI opening.** Terminal output may
   label text as a link or path, but hostile output must never launch a browser,
-  application, or file automatically. Recommended: only a deliberate user
-  action in the focused active terminal may request opening; show the exact
-  destination and require confirmation before handing an `http` or `https` URI
-  to the desktop. Deny background requests and all other URI schemes by default.
-  Copying the bounded link target remains available without opening it.
+  application, or file automatically. Owner-approved 2026-08-20: only a
+  deliberate user action in the focused active terminal may request opening;
+  show the exact destination and require confirmation before handing an `http`
+  or `https` URI to the desktop. Background requests and all other URI schemes
+  are denied by default. Copying the bounded link target remains available
+  without opening it. This does not restrict an automatic agent's authorized
+  typed CLI/MCP operations or bounded PTY input; it prevents terminal escape
+  output from becoming an implicit desktop-launch authority.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S2-OWNER-APPROVED -->
+Owner response: `approve DTC-P16 URI policy` (2026-08-20). The owner explicitly
+asked that automatic AI use cases remain functional; the approved boundary
+distinguishes authorized agent actions from hostile terminal-output requests.
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S3 --> **P16-S3 — human clipboard paste confirmation.** Pasting text into
+  a shell can execute commands, especially when the clipboard contains multiple
+  lines or terminal control bytes. Recommended: allow an ordinary single-line
+  human paste immediately; require a visible preview and explicit confirmation
+  for multiline text or control characters; reject paste into an unfocused or
+  background terminal; use bracketed-paste framing when the child enables it.
+  Automated agents' bounded PTY input is not classified as a human clipboard
+  paste and continues through its existing explicit authority path.
 
 ### Extended graphics parity
 
