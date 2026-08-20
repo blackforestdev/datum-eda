@@ -312,6 +312,8 @@ impl TerminalCore {
     }
 
     fn reset_p10_state(&mut self) {
+        self.state.title = None;
+        self.state.working_directory = None;
         self.state.palette = [crate::Color::Default; 256];
         self.state.default_foreground = crate::Color::Default;
         self.state.default_background = crate::Color::Default;

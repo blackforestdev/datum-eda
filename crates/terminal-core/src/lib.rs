@@ -168,3 +168,6 @@ mod kitty_graphics_tests;
 
 #[cfg(test)]
 mod render_snapshot_tests;
+
+#[cfg(test)]
+mod proof_tests;
