@@ -99,6 +99,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "input_tests.rs").write_text(
             "\n".join(guard.REQUIRED_INPUT_PROOFS), encoding="utf-8"
         )
+        (source / "codec_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_CODEC_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -120,6 +123,15 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             "pub use reducer::{Reduction, ScreenError};\n"
             "pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};\n"
             "pub use semantics::{CoreError, CoreUpdate};\n",
+            encoding="utf-8",
+        )
+        (source / "lib.rs").write_text(
+            (source / "lib.rs").read_text()
+            + "pub use base64::decode_base64;\n"
+            + "pub use checksum::{Adler32, Crc32, adler32, crc32};\n"
+            + "pub use deflate::{DeflateOutput, decode_deflate};\n"
+            + "pub use png::{PngImage, Rgba8, decode_png};\n"
+            + "pub use zlib::decode_zlib;\n",
             encoding="utf-8",
         )
         (source / "semantics.rs").write_text(
@@ -469,6 +481,27 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("clipboard_request" in item for item in failures))
         self.assertTrue(any("current OSC 8 hyperlink" in item for item in failures))
         self.assertTrue(any("osc8_hyperlinks" in item for item in failures))
+
+    def test_codec_limit_crc_interlace_and_hostile_proof_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        base64 = root / guard.CRATE / "src/base64.rs"
+        base64.write_text(base64.read_text().replace("limits.decoded_bytes", "usize::MAX"))
+        png = root / guard.CRATE / "src/png.rs"
+        png.write_text(png.read_text().replace("checksum.update(&kind)", "removed_crc"))
+        pixels = root / guard.CRATE / "src/png_pixels.rs"
+        pixels.write_text(pixels.read_text().replace("const ADAM7", "const REMOVED"))
+        proofs = root / guard.CRATE / "src/codec_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "hostile_png_prefixes_and_mutations_never_escape_bounded_errors", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("limits.decoded_bytes" in item for item in failures))
+        self.assertTrue(any("checksum.update(&kind)" in item for item in failures))
+        self.assertTrue(any("const ADAM7" in item for item in failures))
+        self.assertTrue(any("hostile_png_prefixes" in item for item in failures))
 
 
 if __name__ == "__main__":

@@ -7,13 +7,17 @@
 
 #![forbid(unsafe_code)]
 
+mod base64;
 mod cell;
 mod charset;
+mod checksum;
+mod codec;
 mod color;
 mod control_string;
 mod coordinates;
 mod csi;
 mod damage;
+mod deflate;
 mod event;
 mod grid;
 mod history;
@@ -26,6 +30,8 @@ mod limits;
 mod mode;
 mod parser;
 mod parser_action;
+mod png;
+mod png_pixels;
 mod reducer;
 mod reducer_action;
 mod reflow;
@@ -39,18 +45,23 @@ mod snapshot;
 mod unicode;
 mod unicode_grapheme_tables;
 mod unicode_width_tables;
+mod zlib;
 
+pub use base64::decode_base64;
 pub use cell::{
     Cell, CellAttribute, CellAttributes, CellContent, CellStyle, CellWidth, Cluster, ClusterError,
     HyperlinkId, UnderlineStyle,
 };
 pub use charset::{CharacterSet, CharacterSetSlot, CharacterSetState};
+pub use checksum::{Adler32, Crc32, adler32, crc32};
+pub use codec::{Base64Limits, ChecksumKind, CodecError, CodecLimits, CodecStage};
 pub use color::{Color, PaletteIndex, Rgb};
 pub use coordinates::{
     CellPoint, Column, Columns, CoordinateError, LogicalLineId, LogicalPoint, PixelSize, Row, Rows,
     TerminalSize,
 };
 pub use damage::{Damage, DamageSet, ScrollDirection};
+pub use deflate::{DeflateOutput, decode_deflate};
 pub use event::{
     ClipboardBytes, ClipboardSelection, CoreEvent, NotificationText, Percent, ProgressState,
     ReplyKind, ShellMark, TerminalReply, TitleText, WorkingDirectoryText,
@@ -81,6 +92,7 @@ pub use parser_action::{
     Action, ControlCode, ControlString, ControlStringKind, CsiParameter, CsiSequence,
     EscapeSequence, ParseError, ParserStateKind, StringTerminator,
 };
+pub use png::{PngImage, Rgba8, decode_png};
 pub use reducer::{Reduction, ScreenError};
 pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
@@ -95,6 +107,7 @@ pub use unicode::{
     BIDIRECTIONAL_TEXT_POLICY, BidirectionalTextPolicy, GraphemeIndices, ShapingCluster,
     UNICODE_VERSION, grapheme_break_before, grapheme_indices, terminal_cluster_width,
 };
+pub use zlib::decode_zlib;
 
 #[cfg(test)]
 mod tests;
@@ -122,3 +135,6 @@ mod search_tests;
 
 #[cfg(test)]
 mod input_tests;
+
+#[cfg(test)]
+mod codec_tests;

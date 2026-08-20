@@ -13,13 +13,29 @@ ROOT = Path(__file__).resolve().parents[1]
 CRATE = Path("crates/terminal-core")
 
 REQUIRED_MODULES = {
+    "base64.rs": (
+        "pub fn decode_base64(",
+        "work.charge(input.len())?",
+        "limits.decoded_bytes",
+        "CodecError::NonCanonicalBase64",
+    ),
     "cell.rs": ("pub struct Cluster", "pub enum CellContent", "pub struct CellStyle"),
     "charset.rs": ("pub enum CharacterSet", "pub struct CharacterSetState", "pub fn map("),
+    "checksum.rs": ("pub struct Adler32", "pub struct Crc32", "pub fn adler32(", "pub fn crc32("),
+    "codec.rs": ("pub struct Base64Limits", "pub struct CodecLimits", "struct WorkBudget"),
     "color.rs": ("pub enum Color",),
     "control_string.rs": ("fn apply_control_string", "fn apply_osc", "fn apply_dcs"),
     "coordinates.rs": ("pub struct TerminalSize", "pub struct LogicalPoint"),
     "csi.rs": ("fn apply_csi", "fn set_private_mode", "fn report_mode"),
     "damage.rs": ("pub enum Damage", "pub struct DamageSet"),
+    "deflate.rs": (
+        "pub fn decode_deflate(",
+        "fn dynamic_trees(",
+        "fn from_lengths(",
+        "limits.compression_ratio.get()",
+        "output[output.len() - distance]",
+        "Huffman::empty()",
+    ),
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
     "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
     "history.rs": (
@@ -62,6 +78,19 @@ REQUIRED_MODULES = {
     "mode.rs": ("pub struct CursorState", "pub struct Margins", "pub struct ModeState"),
     "parser.rs": ("pub struct StreamingParser", "pub fn feed(", "pub fn finish("),
     "parser_action.rs": ("pub enum Action", "pub struct CsiSequence", "pub enum ParseError"),
+    "png.rs": (
+        "pub fn decode_png(",
+        "checksum.update(&kind)",
+        "kind[2] & 0x20",
+        "idat_ended",
+    ),
+    "png_pixels.rs": (
+        "const ADAM7",
+        "fn unfilter(",
+        "fn decode_pixel(",
+        "limits.decoded_bytes.check(resident)?",
+        "work.charge(pixel_count)?",
+    ),
     "reducer.rs": ("pub enum ScreenError", "pub struct Reduction", "pub fn reduce("),
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "reflow.rs": ("pub fn resize(", "fn reflow_rows(", "fn resolve_visible_point("),
@@ -99,6 +128,11 @@ REQUIRED_MODULES = {
         "EAST_ASIAN_WIDTH_RANGES",
         "EXTENDED_PICTOGRAPHIC_RANGES",
         "EMOJI_PRESENTATION_RANGES",
+    ),
+    "zlib.rs": (
+        "pub fn decode_zlib(",
+        "decoded.consumed_bytes != payload.len()",
+        "adler32(&decoded.bytes)",
     ),
 }
 
@@ -240,6 +274,19 @@ REQUIRED_METADATA_PROOFS = (
     "metadata_is_scoped_per_core_and_reset_clears_session_state",
 )
 
+REQUIRED_CODEC_PROOFS = (
+    "rfc4648_base64_vectors_are_strict_and_canonical",
+    "base64_output_and_work_limits_reject_without_a_prefix",
+    "checksum_vectors_and_incremental_updates_are_exact",
+    "zlib_decodes_stored_fixed_and_dynamic_deflate_blocks",
+    "zlib_rejects_headers_checksums_trailing_data_bombs_and_truncation",
+    "png_all_filters_reconstruct_truecolor_rows_exactly",
+    "png_color_types_depths_palette_and_transparency_decode_to_rgba8",
+    "adam7_interlace_places_every_pixel_in_reference_order",
+    "png_crc_order_palette_filter_and_resource_errors_fail_closed",
+    "hostile_png_prefixes_and_mutations_never_escape_bounded_errors",
+)
+
 
 def check(root: Path) -> list[str]:
     failures: list[str] = []
@@ -299,6 +346,15 @@ def check(root: Path) -> list[str]:
         failures.append("TerminalCore root must expose the DTC-P09 typed screen actions")
     if "pub use semantics::{CoreError, CoreUpdate}" not in lib:
         failures.append("TerminalCore root must expose the DTC-P10 semantic update boundary")
+    for marker in (
+        "pub use base64::decode_base64",
+        "pub use checksum::{Adler32, Crc32, adler32, crc32}",
+        "pub use deflate::{DeflateOutput, decode_deflate}",
+        "pub use png::{PngImage, Rgba8, decode_png}",
+        "pub use zlib::decode_zlib",
+    ):
+        if marker not in lib:
+            failures.append(f"TerminalCore root lacks DTC-P17 codec export: {marker}")
     parser = sources.get("parser.rs", "")
     action = sources.get("parser_action.rs", "")
     if "emit: impl FnMut(Action)" not in parser:
@@ -529,6 +585,11 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_METADATA_PROOFS:
         if marker not in metadata_proof_text:
             failures.append(f"DTC-P16 deterministic metadata proof is missing: {marker}")
+    codec_tests = crate / "src" / "codec_tests.rs"
+    codec_proof_text = codec_tests.read_text(encoding="utf-8") if codec_tests.is_file() else ""
+    for marker in REQUIRED_CODEC_PROOFS:
+        if marker not in codec_proof_text:
+            failures.append(f"DTC-P17 deterministic binary-codec proof is missing: {marker}")
     return failures
 
 
