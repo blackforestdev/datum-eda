@@ -1312,11 +1312,22 @@ must precede DTC-P16.
 
 - <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S1 --> **P16-S1 — terminal clipboard requests.** A program running in a
   terminal can emit OSC 52 to ask for clipboard contents or to overwrite the
-  desktop clipboard. Recommended: deny clipboard reads by default; accept a
-  write request only from the focused active session and require explicit user
-  confirmation before `gui-app` changes the clipboard. Inactive/background
-  requests are denied. TerminalCore emits only a bounded typed request and
-  never accesses the clipboard or logs the clipboard payload.
+  desktop clipboard. Owner-approved 2026-08-20: clipboard reads are denied by
+  default; a write request is accepted only from the focused active session and
+  requires explicit user confirmation before `gui-app` changes the clipboard.
+  Inactive/background requests are denied. TerminalCore emits only a bounded
+  typed request and never accesses the clipboard or logs the clipboard payload.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S1-OWNER-APPROVED -->
+Owner response: `approve DTC-P16 clipboard policy` (2026-08-20).
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S2 --> **P16-S2 — terminal link and URI opening.** Terminal output may
+  label text as a link or path, but hostile output must never launch a browser,
+  application, or file automatically. Recommended: only a deliberate user
+  action in the focused active terminal may request opening; show the exact
+  destination and require confirmation before handing an `http` or `https` URI
+  to the desktop. Deny background requests and all other URI schemes by default.
+  Copying the bounded link target remains available without opening it.
 
 ### Extended graphics parity
 
