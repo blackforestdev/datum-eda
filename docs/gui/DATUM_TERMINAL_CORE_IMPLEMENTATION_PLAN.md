@@ -1680,6 +1680,28 @@ session-adapter boundary.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P23 --> **DTC-P23 — GPU renderer.** Backgrounds, glyph clusters, fallback/shaping,
   every text decoration/color, cursor, clipping, damage-only updates, images,
   DPI/font change, and visual proof through renderer-owned types.
+
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P23-CLOSED --> **Closure evidence
+  (2026-08-20).** Commit `926de21` connected each active session's immutable
+  TerminalCore render snapshot and declared damage directly to Datum-owned GPU
+  and text primitives. The retained row cache applies only damaged rows;
+  renderer-owned fixed-cell projection covers backgrounds, indexed/RGB colors,
+  faint/inverse/hidden state, bold/italic shaping attributes, underline variants
+  and colors, strike/overline, wide-cluster continuation, selection, cursor, and
+  clipping. Bounded TerminalCore graphics, including SIXEL image placements,
+  are uploaded as sRGB RGBA textures and composited in ordered background and
+  foreground passes with source/destination clipping and alpha blending. The
+  application supplies physical terminal pixel geometry to TerminalCore while
+  preserving the existing PTY geometry boundary. The full locked/offline
+  workspace test suite, 136 gui-render unit tests plus five integrations, 361
+  gui-app tests, strict workspace clippy, an actual offscreen WGPU SIXEL
+  readback, terminal-core/adapter/renderer/transport/convergence boundary and
+  mutation suites, dependency authority, rustfmt, source health, spec
+  governance, project-state validation, and diff hygiene passed. Follow-up
+  commit `c6e53fb` preserved the ratcheted legacy renderer source ceilings
+  without changing executable behavior. No external terminal implementation,
+  package, TERM claim, input/accessibility policy, or DTC-P24 behavior was
+  added.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24 --> **DTC-P24 — native input and accessibility.** Focus, IME preedit/commit,
   keyboard/mouse/paste, selection/clipboard/search/links and the Linux AT-SPI
   text/caret/selection/event bridge with real screen-reader evidence.

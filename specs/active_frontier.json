@@ -2494,7 +2494,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P23",
+        "canonical_next_step_id": "DTC-P24",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2559,16 +2559,30 @@
           {
             "id": "DTC-P23",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Render immutable TerminalCore snapshots through Datum GPU/text primitives with complete attributes, shaping, clipping, damage, images, DPI, and visual proof.",
             "depends_on": ["DTC-P22B"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P23"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "926de21"
+              },
+              {
+                "kind": "commit",
+                "revision": "c6e53fb"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P23-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P24",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Route native focus, keyboard, IME, mouse, paste, selection, clipboard, search, links, and Linux accessibility through the sole TerminalCore authority.",
             "depends_on": ["DTC-P22B", "DTC-P23"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24"}],
@@ -2610,12 +2624,12 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "root-dtc-p23-20260820",
+        "session": "root-dtc-p24-20260820",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "c90777125a97351c6d2c142578f97c36d3fd350d",
-        "claimed_at": "2026-08-20T17:19:53Z",
-        "heartbeat_at": "2026-08-20T17:19:53Z",
-        "expires_at": "2026-08-21T01:19:53Z",
+        "head": "926de217ac09f3d6fea423dfce6eb75bccd0700b",
+        "claimed_at": "2026-08-20T19:36:17Z",
+        "heartbeat_at": "2026-08-20T19:36:17Z",
+        "expires_at": "2026-08-21T03:36:17Z",
         "scope": [
           "crates/gui-app",
           "crates/gui-protocol",
