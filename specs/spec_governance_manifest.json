@@ -637,6 +637,12 @@
    "progress_anchor": "TERMINAL-T1-PTY",
    "notes": "Ratifies JetBrains Mono Regular as the terminal-cell-only typography exception for box-drawing and core Powerline coverage, with the exact vendored OFL asset and provenance; all non-cell chrome and EDA text remain IBM Plex, and no code dependency or terminal implementation is authorized."
   },
+  "docs/decisions/PRODUCT_MECHANICS_032_DATUM_OWNED_AT_SPI_BRIDGE.md": {
+    "class": "doctrine",
+    "controlling": true,
+    "progress_anchor": "TERMINAL-T2-NATIVE",
+    "notes": "Ratifies a std-only Datum-authored Linux D-Bus/AT-SPI accessibility bridge while rejecting AccessKit, libatspi, D-Bus crates, copied bindings/source, helper subprocesses, and any new third-party package; TerminalCore remains the sole terminal semantic authority."
+  },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",

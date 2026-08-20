@@ -1717,10 +1717,10 @@ session-adapter boundary.
   hygiene passed. No package, manifest, PTY behavior, TERM identity, or Linux
   accessibility provider was added.
 
-- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24A --> **DTC-P24A — Linux accessibility dependency owner decision.** Before Datum
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24A --> **DTC-P24A — Linux accessibility mechanism owner decision.** Before Datum
   publishes the semantic model to Linux assistive technology, the owner chooses
-  whether to approve the standard winit accessibility adapter. Product
-  Mechanics 029 forbids adding it from implementation authorization alone.
+  the compatible operating-system bridge. Product Mechanics 029 forbids adding
+  a dependency from implementation authorization alone.
 
 - <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P24A:P24-A1 --> **P24-A1 — rejected
   AccessKit proposal.** AccessKit was considered as the maintained Rust bridge
@@ -1750,7 +1750,14 @@ session-adapter boundary.
   subprocess is authorized. Reply `approve DTC-P24 Datum-owned AT-SPI bridge`,
   or `P24-A2: revise — <replacement>`.
 
-- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24B --> **DTC-P24B — Linux AT-SPI bridge and evidence.** After P24-A1 disposition,
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24A-DATUM-ATSPI-APPROVED --> **Owner
+  disposition (2026-08-20).** The owner replied exactly `approve DTC-P24
+  Datum-owned AT-SPI bridge`. Product Mechanics 032 ratifies the std-only,
+  Datum-authored D-Bus/AT-SPI bridge and preserves the prohibition on AccessKit,
+  libatspi, D-Bus crates, copied bindings/source, helper subprocesses, and all
+  other new third-party packages.
+
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24B --> **DTC-P24B — Linux AT-SPI bridge and evidence.** After P24-A2 disposition,
   connect the immutable TerminalCore semantic snapshot to the approved Linux
   accessibility mechanism and prove text, caret, selection, focus, title,
   links, and events with a real screen reader.

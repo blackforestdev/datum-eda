@@ -2471,12 +2471,13 @@
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md",
+        "docs/decisions/PRODUCT_MECHANICS_032_DATUM_OWNED_AT_SPI_BRIDGE.md",
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
@@ -2494,7 +2495,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P24A",
+        "canonical_next_step_id": "DTC-P24B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2601,11 +2602,22 @@
           {
             "id": "DTC-P24A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Decide whether Datum should implement a std-only Datum-authored Linux AT-SPI bridge after rejecting the Apache-2.0-only AccessKit adapter.",
             "depends_on": ["DTC-P24"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24A"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "decision",
+                "path": "docs/decisions/PRODUCT_MECHANICS_032_DATUM_OWNED_AT_SPI_BRIDGE.md",
+                "marker": "Product Mechanics 032: Datum-Owned AT-SPI Accessibility Bridge"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24A-DATUM-ATSPI-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve DTC-P24 Datum-owned AT-SPI bridge`, or `P24-A2: revise — <replacement>`.",
               "requests": [
@@ -2624,7 +2636,7 @@
           {
             "id": "DTC-P24B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Publish the immutable TerminalCore semantic snapshot through the approved Linux AT-SPI bridge and prove text, caret, selection, focus, title, links, and events with a real screen reader.",
             "depends_on": ["DTC-P24A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24B"}],
@@ -2663,7 +2675,29 @@
           "selects_successor": false
         }
       },
-      "claim": null
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-dtc-p24b-first-party-20260820",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "79bb16e",
+        "claimed_at": "2026-08-20T21:23:05Z",
+        "heartbeat_at": "2026-08-20T21:23:05Z",
+        "expires_at": "2026-08-21T05:23:05Z",
+        "scope": [
+          "crates/gui-app/src/terminal_accessibility_bridge.rs",
+          "crates/gui-app/src/terminal_accessibility_platform",
+          "crates/gui-app/src/app_shell.rs",
+          "crates/gui-app/src/main.rs",
+          "docs/decisions/PRODUCT_MECHANICS_032_DATUM_OWNED_AT_SPI_BRIDGE.md",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "scripts",
+          "specs/spec_governance_manifest.json",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ]
+      }
     },
     {
       "key": "TERMINAL-T3-UX",
