@@ -1373,6 +1373,44 @@ notification/progress behavior. These decisions authorize bounded typed
 TerminalCore metadata/security events only; desktop integration remains owned
 by the later GUI adapter slices.
 
+#### DTC-P16 metadata-security evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16-CLOSED -->
+Revision `6441b0b` implements the standard modern-terminal metadata surface in
+the std-only TerminalCore. OSC 8 creates bounded inert hyperlink records and
+associates their identities with printed cells; only an explicit adapter call
+can produce a typed URI-open request. OSC 52 clipboard writes become bounded
+typed events carrying the still-encoded payload, while clipboard-read queries
+are recognized and denied without a reply. Base64 decoding remains exclusively
+owned by DTC-P17. OSC 133 shell marks, OSC 9 and OSC 777 notifications, and OSC
+9;4 progress states are typed, chunk-invariant, and scoped to one core/session.
+Title, CWD, palette, synchronized-output, and immediate bracketed-paste behavior
+remain on their existing standard paths. No notification throttle, paste
+inspection, confirmation layer, or other Datum-specific compatibility barrier
+was added.
+
+Hyperlink payload and registry residency are governed by the new owner-supplied
+`HyperlinkBytes` limit. Old targets evict deterministically without mutating
+cells, and reset clears links, shell marks, and progress. The core exposes no
+GUI, clipboard, filesystem, network, process, MCP, or design-model authority;
+terminal output therefore cannot execute a URI, change the desktop clipboard,
+or invoke a Datum design operation by itself.
+
+Eighty-six TerminalCore tests pass. The focused proofs cover bytewise parser
+chunking, link start/end and cell association, bounded eviction, inert URI
+requests, clipboard-write selection and read denial, shell-mark exit status,
+notification/progress behavior, per-session isolation, and total reset. The
+TerminalCore boundary guard pins the owned handlers, typed events, cell-link
+projection, checked limit, and every named proof; nineteen hermetic mutations
+pass. The full locked/offline workspace all-target test and check suites, strict
+workspace Clippy, dependency authority, spec governance, project state,
+formatting, and diff hygiene pass. Shared-tree source health remains red only on
+seven unrelated pre-existing dirty legacy files outside this revision. All
+DTC-P16 production and proof modules remain below 700 lines. No dependency,
+runtime fetch, binary codec, graphics protocol, renderer/PTY authority, TERM
+identity, or production cutover changed. DTC-P17 owns the next selected binary
+codec step.
+
 ### Extended graphics parity
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P17 --> **DTC-P17 — owned binary codecs.** Base64, checksums, Adler-32, zlib/DEFLATE,
