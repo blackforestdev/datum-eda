@@ -415,7 +415,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         }
     }
 
-    // Render helper threads many quad/text-run/hit-region sinks.
     #[allow(clippy::too_many_arguments)]
     pub fn render(
         &mut self,
@@ -436,9 +435,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let world_strokes = retained.world_strokes();
-        // P2.2a: resolve the additive companion schematic pass. Active only when
-        // the layout carries a Schematic pane (`schematic_scene_viewport`) AND a
-        // projected schematic RetainedScene was threaded in with geometry to draw.
         let schematic_pass = match (prepared.schematic_scene_viewport, schematic_retained) {
             (Some(scene_viewport), Some(sr)) if !sr.world_vertices().is_empty() => {
                 let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
@@ -586,12 +582,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
-            // Slice S1b: immediate schematic grid. Drawn with the SCREEN pipeline
-            // (active here — restored after the board world pass, or the default) so
-            // its pixel-rect lines keep a fixed device-pixel weight at any schematic
-            // zoom, scissored to the schematic pane's scene rect. Painted BEFORE the
-            // schematic world pass below so wires/symbols sit on top of the grid,
-            // preserving the old draw order the retained bake had.
+            // Keep the schematic grid screen-space so zoom cannot thicken it.
             if prepared.surface_passes().is_empty()
                 && !schematic_underlay_vertices.is_empty()
                 && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
@@ -606,12 +597,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.set_vertex_buffer(0, buffer.slice(..));
                 pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
             }
-            // P2.2a: additive companion schematic world pass. Reuses the same world
-            // pipeline, but with the schematic's own bind group (schematic camera +
-            // viewport uniform) and vertex buffer, scissored to the schematic pane's
-            // scene rect so it can never touch pane A. The board pass above is
-            // completely unchanged. Restores the screen pipeline afterward for the
-            // overlay/menu passes.
+            // The companion pass uses its own camera uniforms and pane scissor.
             if prepared.surface_passes().is_empty()
                 && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref()
             {
@@ -650,9 +636,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
-            // Interaction chrome is intentionally composited after schematic world
-            // geometry, matching the board overlay and preventing filled symbols
-            // from obscuring hover/cursor feedback.
+            // Interaction chrome stays above schematic world geometry.
             if !schematic_overlay_vertices.is_empty()
                 && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
                 && let Some(buffer) = self.schematic_overlay_vertex_buffer.as_ref()
@@ -789,11 +773,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
 
         self.encode_terminal_graphics(&mut encoder, &msaa_view, target, true);
 
-        // === Menu dropdown, composited LAST (after the main text pass) ===
-        // The card is drawn here — not with the base quads — so it occludes the
-        // work-pane content AND every underlying text_run below it. The dropdown's
-        // OWN text then renders in a final pass on top of the card, so it stays
-        // crisp while the bleed text is hidden. Only present when a menu is open.
+        // Composite the menu card and its text after the main text pass.
         if !menu_overlay_vertices.is_empty() {
             // Pass C: the dropdown card background/rows. Base pipeline + screen
             // uniform; full-window scissor so the drop below the menu bar is not

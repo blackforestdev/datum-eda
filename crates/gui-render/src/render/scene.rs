@@ -404,20 +404,8 @@ impl RetainedScene {
         }
     }
 
-    /// Build the STATIC companion schematic world buffer for the P2.2a
-    /// multi-scene GPU pass. This mirrors `from_workspace_for_surface` exactly —
-    /// the world geometry pipeline is coordinate-agnostic, so it is reused
-    /// verbatim — but projects `state.schematic_scene` into the SCHEMATIC pane's
-    /// rect with its own fit-to-schematic-bounds reference projection. Returns
-    /// `None` (second pass gated off) when the workspace has no companion
-    /// schematic scene or the layout has no Schematic pane. Symbols currently
-    /// project as bare boxes (the projector discards labels/pins) — expected this
-    /// slice; projection fidelity is P2.2b. No hit regions are emitted: pane B is
-    /// non-interactive this slice.
-    ///
-    /// This is a strictly ADDITIVE resolve; it deliberately does NOT bump
-    /// `RETAINED_RESOLVE_COUNT` (that counter gates BOARD pane-op latency and must
-    /// stay board-scoped).
+    /// Build the companion schematic world buffer without changing the board
+    /// resolve counter. Its camera, viewport, and hit index remain independent.
     pub fn from_workspace_schematic_for_surface(
         state: &ReviewWorkspaceState,
         width: u32,
@@ -437,12 +425,7 @@ impl RetainedScene {
         let mut world_quads = Vec::new();
         let mut world_strokes = Vec::new();
         let mut draw_commands = Vec::new();
-        // Slice S1b: the schematic grid is NO LONGER baked here. It used to be pushed
-        // FIRST as world-nm lines so scene geometry painted over it, but world-baked
-        // lines are re-scaled by the live schematic camera and thicken on zoom-in.
-        // The grid now draws as an IMMEDIATE screen-space pass (shared `GridEngine`,
-        // `ScreenConstant` weight) in gpu.rs, scissored to the schematic pane — so
-        // this retained WORLD buffer holds only real geometry (wires/symbols/text).
+        // The grid is immediate screen-space geometry; retain only scene geometry.
         push_retained_scene_geometry(
             &mut world_quads,
             &mut world_strokes,
