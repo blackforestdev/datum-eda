@@ -1454,6 +1454,52 @@ production cutover changed. DTC-P18 owns the next bounded sixel package.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P18 --> **DTC-P18 — sixel.** Grammar, raster/repeat/newline, RGB/HLS registers,
   transparency, palette, clipping, scrolling/history placement, teardown, and
   bounds.
+
+#### DTC-P18 sixel evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P18-CLOSED -->
+Revision `379992f` implements bounded DEC sixel semantics inside the std-only
+TerminalCore. The decoder owns sixel data, repeat, carriage return, next-band,
+raster attributes, RGB-percent and DEC-rotated HLS color definitions,
+transparent/background fill, the 256 color registers, and DEC pixel-aspect
+macros. Persistent color registers update transactionally only after the whole
+image and its placement are admitted; private-color mode provides per-image
+registers without changing session state.
+
+Each successful image becomes one immutable typed RGBA placement with an opaque
+monotonic ID, protocol identity, active-buffer ownership, pixel aspect, and a
+stable logical-cell anchor. Graphic object, frame, aggregate pixel, aggregate
+decoded-byte, parser-work, event, and damage limits remain application-supplied
+checked types with no numeric defaults. The decoder validates bounds before
+pixel allocation, explicit raster dimensions clip drawing deterministically,
+and malformed or exhausted input cannot commit palette state or a partial
+placement.
+
+DEC sixel scrolling, private color registers, and cursor-right behavior are
+implemented through modes 80, 1070, and 8452. Placements follow their logical
+anchors through primary-screen scrolling, history, and resize reflow. Visible
+pixel extents clip at the current surface boundary. Whole-display erase,
+alternate-buffer clear, history trimming, and reset release the applicable
+pixel objects and palette state; alternate graphics never enter primary
+history. TerminalCore emits typed graphic-added and graphics-damage records but
+does not own renderer resources or expose a graphics snapshot schema, which
+remains DTC-P20.
+
+One hundred seven TerminalCore tests pass. Eleven focused DTC-P18 proofs cover
+RGB/HLS, raster/repeat/bands, sparse transparency, hostile limits, DEC defaults
+and aspect macros, transactional persistent/private palettes, typed placement
+and damage, screen-edge clipping, scrolling/history trimming, primary reflow,
+alternate/reset teardown, aggregate admission, and streaming DCS chunk
+boundaries. Twenty-one hermetic boundary tests pin the grammar owner, resource
+checks, palette transaction, mode integration, placement, pruning, teardown,
+exports, and named proofs. The full locked/offline workspace all-target suite
+and strict workspace Clippy pass, as do dependency authority, source health
+over 1,465 files, formatting, Python compilation, and diff hygiene. Every
+DTC-P18 source is below the decision-022 700-line ceiling. No Cargo dependency,
+runtime fetch, copied terminal implementation, renderer/PTY authority, TERM
+identity, or production cutover changed. DTC-P19 owns the next bounded kitty
+graphics package.
+
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P19 --> **DTC-P19 — kitty graphics.** APC grammar, transfer/chunk/query/reply,
   images/placements/z-order/crop/scale/offset/cursor/virtual placement,
   animation/composition/deletion, safe transport posture, history/reflow, and

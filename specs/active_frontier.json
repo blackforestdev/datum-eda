@@ -2012,10 +2012,10 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "dtc-p18-20260820",
-        "claimed_at": "2026-08-20T06:49:48Z",
-        "heartbeat_at": "2026-08-20T06:49:48Z",
-        "expires_at": "2026-08-20T14:49:48Z",
+        "session": "dtc-p19-20260820",
+        "claimed_at": "2026-08-20T07:28:05Z",
+        "heartbeat_at": "2026-08-20T07:28:05Z",
+        "expires_at": "2026-08-20T15:28:05Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",
@@ -2026,7 +2026,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "main",
-        "head": "fc0cc44"
+        "head": "379992f"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2038,7 +2038,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P18",
+        "canonical_next_step_id": "DTC-P19",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2397,16 +2397,26 @@
           {
             "id": "DTC-P18",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement bounded sixel grammar, raster/color semantics, placement, clipping, history, and teardown.",
             "depends_on": ["DTC-P10", "DTC-P11"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P18"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "379992f"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P18-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P19",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement full bounded kitty graphics transfer, image, placement, animation, composition, deletion, history, and reply semantics.",
             "depends_on": ["DTC-P10", "DTC-P11", "DTC-P16", "DTC-P17"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P19"}],
