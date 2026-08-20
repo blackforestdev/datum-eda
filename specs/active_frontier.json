@@ -2475,8 +2475,8 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
@@ -2494,7 +2494,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P22A",
+        "canonical_next_step_id": "DTC-P22B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2511,11 +2511,17 @@
           {
             "id": "DTC-P22A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Ratify the exact per-session TerminalCore memory and work profile before the production adapter supplies numerical limits.",
             "depends_on": [],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22A"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "OWNER:TERMINAL-T2-NATIVE:DTC-P22A:P22-L1"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve DTC-P22 recommended production limits`, or `P22-L1: revise — <replacement>`.",
               "requests": [
@@ -2534,7 +2540,7 @@
           {
             "id": "DTC-P22B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Connect PTY bytes, replies, resize, lifecycle, context association, bounded scheduling, and every-session draining to TerminalCore through one session adapter using the ratified profile.",
             "depends_on": ["DTC-P22A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22B"}],
@@ -2590,6 +2596,26 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-dtc-p22b-20260820",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "fc064f385f8e9e19ee9917c9dc6555d06fd9656a",
+        "claimed_at": "2026-08-20T16:51:26Z",
+        "heartbeat_at": "2026-08-20T16:51:26Z",
+        "expires_at": "2026-08-21T00:51:26Z",
+        "scope": [
+          "crates/gui-app",
+          "crates/gui-protocol",
+          "crates/terminal-core",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "scripts/terminal-core-boundary",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ]
       }
     },
     {
