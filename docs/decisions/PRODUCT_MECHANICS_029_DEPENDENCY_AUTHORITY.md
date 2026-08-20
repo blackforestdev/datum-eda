@@ -53,6 +53,11 @@ approved precedent.
 - **DA-007 — same-change governance.** An approved exception must update the
   dependency policy, licensing inventory, governing specification, Frontier,
   tracker, and automated gates in the same change.
+- **DA-008 — Apache-only dependencies are incompatible.** Datum does not accept
+  Apache-2.0-only code dependencies because the owner has determined that their
+  obligations are incompatible with Datum's intended commercial licensing
+  structure. Dual-licensed software is not accepted under its Apache option;
+  any use of a separately offered compatible option still requires DA-001.
 
 ## Terminal Recovery Sequence
 

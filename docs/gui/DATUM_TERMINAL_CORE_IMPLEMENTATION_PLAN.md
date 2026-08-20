@@ -1722,21 +1722,33 @@ session-adapter boundary.
   whether to approve the standard winit accessibility adapter. Product
   Mechanics 029 forbids adding it from implementation authorization alone.
 
-- <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P24A:P24-A1 --> **P24-A1 — AccessKit winit adapter.** In plain language, this decides
-  whether Datum may add the maintained Rust bridge that exposes its existing UI
-  semantics to Linux screen readers through AT-SPI. **Recommended:** approve
-  `accesskit_winit` version `0.33.2`, with Linux `accesskit_unix` integration and
-  the exact platform-selected AccessKit dependency closure pinned in
-  `Cargo.lock`. Accept the upstream MIT-or-Apache-2.0 terms under the MIT option
-  and retain the required BSD-style Chromium-derived notice. The same change
-  must inventory every resolved transitive license and keep TerminalCore as the
-  sole terminal semantic authority. AccessKit supplies only the operating-system
-  accessibility bridge; it does not replace terminal parsing, cells, PTY,
-  input, rendering, or security behavior. The alternative is a bespoke AT-SPI
-  D-Bus provider that Datum would need to design and maintain. Primary project
-  records: <https://github.com/AccessKit/accesskit/releases/tag/accesskit_winit-v0.33.2>
-  and <https://github.com/AccessKit/accesskit>. Reply `approve DTC-P24
-  recommended AccessKit bridge`, or `P24-A1: revise — <replacement>`.
+- <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P24A:P24-A1 --> **P24-A1 — rejected
+  AccessKit proposal.** AccessKit was considered as the maintained Rust bridge
+  from Datum's semantic snapshot to Linux AT-SPI. Authoritative package metadata
+  established that `accesskit_winit` 0.33.2 is Apache-2.0-only, so the owner
+  rejected it as incompatible with Datum's commercial licensing structure.
+  AccessKit and its dependency closure are not authorized.
+
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24A-ACCESSKIT-REJECTED --> **Owner
+  disposition correction (2026-08-20).** Package metadata established that
+  `accesskit_winit` 0.33.2 is Apache-2.0-only. The owner rejected that license
+  as incompatible with Datum's commercial licensing structure. AccessKit is
+  not authorized and must not be added. DTC-P24A remains open for a compatible
+  Datum-owned operating-system accessibility mechanism.
+
+- <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P24A:P24-A2 --> **P24-A2 — Datum-owned Linux
+  accessibility bridge.** In plain language, this decides whether Datum should
+  speak Linux's standard accessibility protocol itself instead of importing an
+  accessibility library. **Recommended:** approve a std-only, Datum-authored
+  AT-SPI bridge over the documented D-Bus wire/authentication protocol. The
+  bridge will register Datum's application/root terminal objects and expose the
+  bounded Application, Accessible, Component, Text, Hypertext, and event surface
+  required by the existing immutable TerminalCore accessibility snapshot. It
+  may use only Rust's standard library, existing Datum workspace substrate, and
+  the operating-system accessibility bus; no AccessKit, libatspi, D-Bus crate,
+  generated third-party bindings, copied implementation, or runtime helper
+  subprocess is authorized. Reply `approve DTC-P24 Datum-owned AT-SPI bridge`,
+  or `P24-A2: revise — <replacement>`.
 
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24B --> **DTC-P24B — Linux AT-SPI bridge and evidence.** After P24-A1 disposition,
   connect the immutable TerminalCore semantic snapshot to the approved Linux

@@ -90,6 +90,14 @@ v3 (`Unicode-3.0`) is retained there. A Datum-owned offline generator produces
 reviewed Rust tables. Neither builds nor runtime download data or execute
 third-party Unicode implementation code.
 
+Datum does not accept Apache-2.0-only code dependencies. The owner rejected
+`accesskit_winit` after its authoritative package metadata established that the
+adapter is Apache-2.0-only, because those obligations are incompatible with
+Datum's intended commercial licensing structure. A dependency offering a
+separate compatible license may be used only under that compatible option and
+still requires the explicit authority in Product Mechanics 029. An agent must
+not infer acceptance from Apache's general reputation as a permissive license.
+
 | Dependency | License | Risk |
 |-----------|---------|------|
 | KiCad PNS router | GPL v3 | High — infects if linked. Mitigate with process isolation or deferral |

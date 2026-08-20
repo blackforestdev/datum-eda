@@ -2602,20 +2602,20 @@
             "id": "DTC-P24A",
             "kind": "owner_decision",
             "status": "pending",
-            "action": "Decide whether Datum may add the standard AccessKit winit adapter for the Linux AT-SPI accessibility bridge.",
+            "action": "Decide whether Datum should implement a std-only Datum-authored Linux AT-SPI bridge after rejecting the Apache-2.0-only AccessKit adapter.",
             "depends_on": ["DTC-P24"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24A"}],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P24 recommended AccessKit bridge`, or `P24-A1: revise — <replacement>`.",
+              "response_format": "Reply `approve DTC-P24 Datum-owned AT-SPI bridge`, or `P24-A2: revise — <replacement>`.",
               "requests": [
                 {
-                  "id": "P24-A1",
-                  "question": "May Datum add accesskit_winit 0.33.2 to publish its existing terminal text, cursor, selection, focus, title, links, and events to Linux screen readers through standard AT-SPI?",
-                  "recommended_response": "Approve accesskit_winit 0.33.2 with Linux accesskit_unix integration, a Cargo.lock-pinned transitive closure, the MIT license option, retained BSD-style Chromium-derived notice, and same-change dependency/license inventory. AccessKit is only the OS accessibility bridge; TerminalCore remains the sole terminal authority.",
+                  "id": "P24-A2",
+                  "question": "Should Datum implement its own Linux accessibility bridge so screen readers receive terminal text, cursor, selection, focus, title, links, and changes without an Apache-licensed dependency?",
+                  "recommended_response": "Approve a std-only Datum-authored AT-SPI bridge over the documented D-Bus protocol. It may use only existing Datum code and operating-system interfaces; AccessKit, libatspi, D-Bus crates, generated third-party bindings, copied code, and helper subprocesses remain forbidden.",
                   "source_ref": {
                     "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-                    "marker": "P24-A1"
+                    "marker": "P24-A2"
                   }
                 }
               ]
