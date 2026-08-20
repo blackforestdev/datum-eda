@@ -1353,12 +1353,25 @@ reject only background-terminal paste` (2026-08-20).
 
 - <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S4 --> **P16-S4 — terminal-generated notifications and rate limits.** A
   program may request progress or notifications repeatedly, including while its
-  tab is in the background. Recommended: always retain the latest bounded
-  terminal-local progress state; allow desktop notifications from owned
-  sessions, but coalesce identical repeats and permit at most three desktop
-  notifications per ten seconds per session so hostile output cannot flood the
-  desktop. Notification text remains untrusted display data and cannot trigger
-  commands, links, or Datum actions.
+  tab is in the background. Owner-revised 2026-08-20: implement established
+  modern-terminal OSC notification and progress behavior without a Datum-added
+  throttle, confirmation prompt, content inspection, or policy layer. Normal
+  parser, payload, event, and memory bounds still apply. Escape metadata remains
+  terminal presentation state and never becomes Datum design-operation
+  authority.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S4-OWNER-APPROVED -->
+Owner directive (2026-08-20): Datum's terminal behaves like a normal modern
+terminal such as Alacritty, Ghostty, or Konsole; compatibility is the default,
+and agents must not invent paternalistic restrictions around ordinary terminal
+behavior.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16A-CLOSED -->
+DTC-P16A is complete. The owner approved controlled OSC 52 clipboard writes,
+deliberate URI activation, direct focused-terminal paste, and standard
+notification/progress behavior. These decisions authorize bounded typed
+TerminalCore metadata/security events only; desktop integration remains owned
+by the later GUI adapter slices.
 
 ### Extended graphics parity
 
