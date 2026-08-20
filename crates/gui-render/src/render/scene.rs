@@ -7,30 +7,24 @@ pub use coordinate_hit::resolve_pane_hover;
 // S4 interaction overlays and the segmented status bar remain real child modules
 // of the included crate-root scope, retaining private geometry access without
 // shifting their ownership into lib.rs.
+mod hit_clipping;
 #[path = "interaction_overlay.rs"]
 mod interaction_overlay;
 #[path = "status_bar.rs"]
 mod status_bar;
-mod hit_clipping;
 
 impl PreparedScene {
-    pub fn from_workspace(
-        state: &ReviewWorkspaceState,
-        width: u32,
-        height: u32,
-        camera: CameraState,
-        retained_scene: &RetainedScene,
-    ) -> Self {
-        Self::from_workspace_for_surface(state, width, height, 1.0, camera, retained_scene)
-    }
-
-    pub fn from_workspace_for_surface(
+    #[allow(clippy::too_many_arguments)]
+    pub fn from_workspace_with_terminal_renderer(
         state: &ReviewWorkspaceState,
         width: u32,
         height: u32,
         scale_factor: f32,
         camera: CameraState,
         retained_scene: &RetainedScene,
+        terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
+        terminal_damage: &[datum_terminal_core::Damage],
+        terminal_cache: Option<&mut crate::TerminalRenderCache>,
     ) -> Self {
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, dock_height_for_state(state));
@@ -41,6 +35,7 @@ impl PreparedScene {
         let mut viewport_overlay_quads = Vec::new();
         let mut board_interaction_quads = Vec::new();
         let mut text_runs = Vec::new();
+        let mut terminal_graphics = Vec::new();
         let mut hit_regions = Vec::new();
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
         let (board_pane_id, schematic_pane_id) =
@@ -101,11 +96,17 @@ impl PreparedScene {
         );
         render_bottom_tabs(
             state,
+            terminal_snapshot.map(|snapshot| bottom_dock::TerminalRenderInput {
+                snapshot,
+                damage: terminal_damage,
+                cache: terminal_cache,
+            }),
             &layout,
             &mut panel_quads,
             &mut text_runs,
             &mut hit_regions,
         );
+        terminal_scene::prepare_graphics(state, &layout, terminal_snapshot, &mut terminal_graphics);
         terminal_clipboard_menu::render_terminal_clipboard_menu(
             state,
             &layout,
@@ -205,7 +206,8 @@ impl PreparedScene {
             crosshair_cursor_screen,
             crosshair_style,
         );
-        let surface_passes = coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
+        let surface_passes =
+            coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
 
         Self {
             layout,
@@ -223,6 +225,7 @@ impl PreparedScene {
             board_interaction_vertices,
             visible_draw_commands,
             text_runs,
+            terminal_graphics,
             schematic_scene_viewport,
             schematic_pane_id,
             schematic_bounds,
@@ -345,8 +348,14 @@ impl RetainedScene {
         let mut draw_commands = Vec::new();
         let mut world_hit_regions = Vec::new();
         let geometry_started = std::time::Instant::now();
-        push_retained_scene_geometry(&mut world_quads, &mut world_strokes, &mut draw_commands,
-            &state.scene, &reference_projection, state);
+        push_retained_scene_geometry(
+            &mut world_quads,
+            &mut world_strokes,
+            &mut draw_commands,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
         let board_graphics_started = std::time::Instant::now();
         let board_graphics_before = world_quads.len();
         push_retained_board_text_geometry_batches(
@@ -457,7 +466,10 @@ impl RetainedScene {
             &reference_projection,
             state,
         );
-        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &schematic_scene.layers);
+        scene_retained_access::sort_retained_draw_commands(
+            &mut draw_commands,
+            &schematic_scene.layers,
+        );
         let world_vertices = quads_to_vertices(&world_quads);
         // S3 / UVT-004: build typed schematic hit shapes independently from the
         // current tool's selection eligibility.

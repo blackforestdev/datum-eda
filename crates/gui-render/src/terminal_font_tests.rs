@@ -341,6 +341,8 @@ fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {
         rich_spans: vec![TextRunSpan {
             text: "$ command".to_string(),
             color: TEXT_PRIMARY,
+            bold: false,
+            italic: false,
         }],
         x: 0.0,
         y: 0.0,

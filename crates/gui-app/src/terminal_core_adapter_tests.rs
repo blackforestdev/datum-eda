@@ -101,7 +101,7 @@ fn adapters_isolate_output_modes_resize_and_context() {
     right
         .apply_output(&mut right_lane, b"RIGHT\x1b[?1002h")
         .unwrap();
-    left.resize(20, 5).unwrap();
+    left.resize(20, 5, 200, 100).unwrap();
     left.project(&mut left_lane).unwrap();
 
     assert_eq!(left_lane.grid_lines()[0], "LEFT");
@@ -116,6 +116,26 @@ fn adapters_isolate_output_modes_resize_and_context() {
     assert_eq!((right_lane.columns, right_lane.rows), (12, 4));
     assert_eq!(left.context_id(), "context-left");
     assert_eq!(right.context_id(), "context-right");
+}
+
+#[test]
+fn render_state_preserves_surface_pixels_and_consumes_damage_once() {
+    let mut adapter = adapter("render-state");
+    let mut lane = TerminalLaneState::default();
+    adapter.apply_output(&mut lane, b"pixel-aware").unwrap();
+    adapter.resize(20, 5, 200, 100).unwrap();
+
+    let (snapshot, first_damage) = adapter.take_render_state().unwrap();
+    assert_eq!(snapshot.size().pixels.width, 200);
+    assert_eq!(snapshot.size().pixels.height, 100);
+    assert_eq!(first_damage, vec![Damage::Full]);
+
+    let (_, second_damage) = adapter.take_render_state().unwrap();
+    assert!(second_damage.is_empty());
+    adapter.apply_output(&mut lane, b"!").unwrap();
+    let (_, incremental_damage) = adapter.take_render_state().unwrap();
+    assert!(!incremental_damage.is_empty());
+    assert!(!incremental_damage.contains(&Damage::Full));
 }
 
 #[test]

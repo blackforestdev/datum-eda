@@ -13,6 +13,7 @@ use datum_gui_protocol::{
 use datum_gui_render::visual_capture::OffscreenRenderer;
 use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, SceneSurface, ShellLayout,
+    TerminalRenderCache,
 };
 use std::collections::BTreeMap;
 use std::io::Write;
@@ -51,6 +52,7 @@ mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_input;
 mod runtime_terminal_pointer;
+mod runtime_terminal_render;
 mod runtime_view_actions;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
@@ -667,6 +669,7 @@ struct Runtime {
     retained_scene: Option<RetainedScene>,
     retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     prepared_scene: Option<PreparedScene>,
+    terminal_render_cache: TerminalRenderCache,
     // P2.2a: the static companion schematic world buffer, rendered as the additive
     // second GPU pass into the Schematic pane. Rebuilt lazily whenever it is None;
     // cleared in lockstep with `prepared_scene` on every scene/frame invalidation,
@@ -814,6 +817,7 @@ impl Runtime {
             retained_scene: None,
             retained_scene_cache: Vec::new(),
             prepared_scene: None,
+            terminal_render_cache: TerminalRenderCache::new(),
             schematic_retained_scene: None,
             scene_dirty: true,
             terminal_sessions,
@@ -935,29 +939,9 @@ impl Runtime {
                     "retained scene build end {retained_build_ms}ms"
                 ));
             }
-            // P2.2d: the focused schematic pane's warm interactive camera (or its
-            // initial fit when cold) — overrides the prepared scene's static-fit
-            // default so owner pan/zoom on the schematic persists frame-to-frame.
-            let schematic_camera = self.schematic_camera_for_render();
-            let retained = self
-                .retained_scene
-                .as_ref()
-                .context("retained scene should exist before prepared scene rebuild")?;
             let prepared_started = std::time::Instant::now();
             append_gui_verbose_diagnostic_line("prepared scene build begin");
-            let mut prepared = PreparedScene::from_workspace_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-                self.camera,
-                retained,
-            );
-            if let Some(camera) = schematic_camera {
-                prepared.set_schematic_camera(camera);
-            }
-            self.apply_prepared_grid_lod(&mut prepared);
-            self.prepared_scene = Some(prepared);
+            self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
             prepared_build_ms = prepared_started.elapsed().as_millis();
             append_gui_verbose_diagnostic_line(format!(
                 "prepared scene build end {prepared_build_ms}ms"
@@ -1103,10 +1087,7 @@ impl Runtime {
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
-            // P2.2d: schematic pane's warm camera (or its initial fit when cold) so
-            // a headless capture reflects the focused schematic pane's framing.
-            let schematic_camera = self.schematic_camera_for_render();
-            let retained = self.retained_scene.get_or_insert_with(|| {
+            self.retained_scene.get_or_insert_with(|| {
                 RetainedScene::from_workspace_for_surface(
                     self.session.workspace(),
                     self.config.width,
@@ -1114,19 +1095,7 @@ impl Runtime {
                     self.scale_factor,
                 )
             });
-            let mut prepared = PreparedScene::from_workspace_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-                self.camera,
-                retained,
-            );
-            if let Some(camera) = schematic_camera {
-                prepared.set_schematic_camera(camera);
-            }
-            self.apply_prepared_grid_lod(&mut prepared);
-            self.prepared_scene = Some(prepared);
+            self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
         }
         if self.schematic_retained_scene.is_none() {
             self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
@@ -1231,32 +1200,20 @@ impl Runtime {
     }
 
     fn prepared_scene(&mut self) -> &PreparedScene {
-        // P2.2d: resolve the schematic pane's warm camera (or its initial fit when
-        // cold) up front, before the disjoint mutable borrows below.
-        let schematic_camera = self.schematic_camera_for_render();
-        let retained = self.retained_scene.get_or_insert_with(|| {
-            RetainedScene::from_workspace_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            )
-        });
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
-            let mut prepared = PreparedScene::from_workspace_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-                self.camera,
-                retained,
+            self.retained_scene.get_or_insert_with(|| {
+                RetainedScene::from_workspace_for_surface(
+                    self.session.workspace(),
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                )
+            });
+            self.prepared_scene = Some(
+                self.build_terminal_prepared_scene()
+                    .expect("approved active TerminalCore snapshot fits production limits"),
             );
-            if let Some(camera) = schematic_camera {
-                prepared.set_schematic_camera(camera);
-            }
-            self.apply_prepared_grid_lod(&mut prepared);
-            self.prepared_scene = Some(prepared);
         }
         self.prepared_scene
             .as_ref()

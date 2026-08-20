@@ -6,6 +6,7 @@
 // as the inline methods did. Behaviour is unchanged — a verbatim move.
 
 use super::*;
+use glyphon::Style;
 
 fn text_buffer_frame_is_recent(last_used_frame: u64, current_frame: u64) -> bool {
     last_used_frame >= current_frame.saturating_sub(1)
@@ -16,9 +17,7 @@ fn retain_recent_text_buffers<T>(
     current_frame: u64,
     last_used_frame: impl Fn(&T) -> u64,
 ) {
-    entries.retain(|entry| {
-        text_buffer_frame_is_recent(last_used_frame(entry), current_frame)
-    });
+    entries.retain(|entry| text_buffer_frame_is_recent(last_used_frame(entry), current_frame));
 }
 
 impl Renderer {
@@ -89,10 +88,14 @@ impl Renderer {
             buffer.set_rich_text(
                 &mut self.font_system,
                 run.rich_spans.iter().map(|span| {
-                    (
-                        span.text.as_str(),
-                        attrs.clone().color(text_color(span.color)),
-                    )
+                    let mut span_attrs = attrs.clone().color(text_color(span.color));
+                    if span.bold {
+                        span_attrs = span_attrs.weight(Weight::BOLD);
+                    }
+                    if span.italic {
+                        span_attrs = span_attrs.style(Style::Italic);
+                    }
+                    (span.text.as_str(), span_attrs)
                 }),
                 &attrs,
                 Shaping::Basic,
@@ -134,12 +137,20 @@ mod tests {
                 key,
                 last_used_frame: frame,
             });
-            assert!(cache.iter().any(|entry| entry.key == cache.last().unwrap().key));
+            assert!(
+                cache
+                    .iter()
+                    .any(|entry| entry.key == cache.last().unwrap().key)
+            );
             maximum_resident = maximum_resident.max(cache.len());
         }
         assert_eq!(maximum_resident, VISIBLE_RUNS * 2);
         assert!(cache.len() <= VISIBLE_RUNS * 2);
         let last_frame = 100_000_usize.div_ceil(VISIBLE_RUNS) as u64;
-        assert!(cache.iter().all(|entry| entry.last_used_frame >= last_frame - 1));
+        assert!(
+            cache
+                .iter()
+                .all(|entry| entry.last_used_frame >= last_frame - 1)
+        );
     }
 }

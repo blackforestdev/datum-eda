@@ -9,6 +9,7 @@ visual = ["dep:image", "dep:pollster"]
 [dependencies]
 datum-gui-protocol = { path = "../gui-protocol" }
 datum-gui-viewport = { path = "../gui-viewport" }
+datum-terminal-core = { path = "../terminal-core" }
 eda-engine = { path = "../engine" }
 bytemuck.workspace = true
 wgpu.workspace = true

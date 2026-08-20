@@ -19,7 +19,7 @@ mod terminal_color;
 use terminal_color::{span_background, span_foreground};
 
 #[path = "terminal_block_elements.rs"]
-mod terminal_block_elements;
+pub(super) mod terminal_block_elements;
 use terminal_block_elements::{render_terminal_block_elements, text_without_geometric_blocks};
 
 /// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
@@ -29,8 +29,8 @@ use terminal_block_elements::{render_terminal_block_elements, text_without_geome
 pub(super) const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
     (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
-const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::TERMINAL_SELECTION;
-const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+pub(super) const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::TERMINAL_SELECTION;
+pub(super) const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {
@@ -40,6 +40,12 @@ struct BottomDockLayout {
     terminal_tab: RectPx,
     handle: RectPx,
     content: RectPx,
+}
+
+pub(super) struct TerminalRenderInput<'a> {
+    pub(super) snapshot: &'a datum_terminal_core::RenderSnapshot,
+    pub(super) damage: &'a [datum_terminal_core::Damage],
+    pub(super) cache: Option<&'a mut crate::TerminalRenderCache>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -147,6 +153,7 @@ fn fallback_bottom_dock_layout(layout: &ShellLayout) -> BottomDockLayout {
 
 pub(super) fn render_bottom_tabs(
     state: &ReviewWorkspaceState,
+    terminal_render: Option<TerminalRenderInput<'_>>,
     layout: &ShellLayout,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
@@ -186,7 +193,28 @@ pub(super) fn render_bottom_tabs(
             // path uses (datum_gui_viewport::terminal_screen_geometry), so the
             // rows drawn here always equal the rows the PTY was told.
             let geometry = terminal_screen_geometry(layout.bottom_strip.into());
-            render_terminal_lane(state, &geometry, panel_quads, text_runs, hit_regions);
+            if let Some(terminal_render) = terminal_render {
+                if let Some(cache) = terminal_render.cache {
+                    cache.render(
+                        state,
+                        terminal_render.snapshot,
+                        terminal_render.damage,
+                        &geometry,
+                        (panel_quads, text_runs, hit_regions),
+                    );
+                } else {
+                    crate::terminal_core_render::render_terminal_core_snapshot(
+                        state,
+                        terminal_render.snapshot,
+                        &geometry,
+                        panel_quads,
+                        text_runs,
+                        hit_regions,
+                    );
+                }
+            } else {
+                render_terminal_lane(state, &geometry, panel_quads, text_runs, hit_regions);
+            }
         }
     }
 }
@@ -461,6 +489,8 @@ fn push_terminal_rich_span(
     spans.push(TextRunSpan {
         text: text.chars().skip(start).take(end - start).collect(),
         color,
+        bold: false,
+        italic: false,
     });
 }
 

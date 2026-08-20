@@ -28,10 +28,14 @@ mod marking_menu;
 mod menu_chrome;
 mod side_panels;
 mod terminal_clipboard_menu;
+mod terminal_core_render;
+mod terminal_render_cache;
+pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_cursor;
 #[cfg(test)]
 #[path = "terminal_font_tests.rs"]
 mod terminal_font_tests;
+mod terminal_scene;
 mod terminal_session_chrome;
 mod terminal_tab_strip;
 #[cfg(test)]

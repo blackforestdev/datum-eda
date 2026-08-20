@@ -82,7 +82,22 @@ impl OffscreenRenderer {
         scale_factor: f32,
     ) -> anyhow::Result<RgbaImage> {
         let target =
-            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor)?;
+            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor, None)?;
+        self.read_texture(&target)
+    }
+
+    pub fn render_workspace_with_terminal_snapshot(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        snapshot: &datum_terminal_core::RenderSnapshot,
+        scale_factor: f32,
+    ) -> anyhow::Result<RgbaImage> {
+        let target = self.render_workspace_texture_for_surface_scale(
+            state,
+            None,
+            scale_factor,
+            Some(snapshot),
+        )?;
         self.read_texture(&target)
     }
 
@@ -93,7 +108,7 @@ impl OffscreenRenderer {
         scale_factor: f32,
     ) -> anyhow::Result<()> {
         let _target =
-            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor)?;
+            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor, None)?;
         Ok(())
     }
 
@@ -102,6 +117,7 @@ impl OffscreenRenderer {
         state: &ReviewWorkspaceState,
         camera: Option<CameraState>,
         scale_factor: f32,
+        terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
     ) -> anyhow::Result<wgpu::Texture> {
         let target = self.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-gui-visual-capture-target"),
@@ -125,13 +141,14 @@ impl OffscreenRenderer {
             scale_factor,
         );
         let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
-        let prepared = PreparedScene::from_workspace_for_surface(
+        let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
             state,
             self.width,
             self.height,
             scale_factor,
             camera,
             &retained,
+            terminal_snapshot,
         );
 
         self.renderer.render(
@@ -231,6 +248,11 @@ fn align_to(value: u32, alignment: u32) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use datum_gui_protocol::DockTab;
+    use datum_terminal_core::{
+        CoreLimitValues, CoreLimits, StreamingParser, TerminalCore, TerminalSize,
+    };
+    use image::GenericImageView;
 
     #[test]
     fn align_to_preserves_aligned_rows() {
@@ -250,5 +272,72 @@ mod tests {
         assert_eq!(image.width(), 640);
         assert_eq!(image.height(), 360);
         assert!(image.pixels().any(|pixel| pixel.0 != [0, 0, 0, 0]));
+    }
+
+    #[test]
+    #[ignore = "requires a working local wgpu adapter; explicit DTC-P23 visual proof"]
+    fn offscreen_terminal_sixel_uses_the_production_texture_pipeline() {
+        let values = CoreLimitValues {
+            parameter_count: 64,
+            parameter_digits: 16,
+            parameter_value: 1_000_000,
+            subparameter_count: 64,
+            intermediate_bytes: 16,
+            control_string_bytes: 1 << 20,
+            cluster_bytes: 4_096,
+            title_bytes: 4_096,
+            working_directory_bytes: 4_096,
+            clipboard_bytes: 1 << 20,
+            hyperlink_bytes: 1 << 20,
+            input_bytes: 1 << 20,
+            keyboard_stack: 32,
+            notification_bytes: 4_096,
+            reply_bytes: 4_096,
+            pending_events: 1_024,
+            pending_damage: 1_024,
+            history_lines: 64,
+            history_bytes: 1 << 20,
+            graphic_objects: 16,
+            graphic_pixels: 1 << 16,
+            graphic_decoded_bytes: 1 << 18,
+            graphic_frames: 16,
+            compression_ratio: 1_024,
+            parser_work: 1 << 20,
+            search_work: 1 << 20,
+            reflow_work: 1 << 20,
+            screen_cells: 1 << 20,
+            snapshot_cells: 1 << 20,
+        };
+        let limits = CoreLimits::try_from(values).unwrap();
+        let mut core =
+            TerminalCore::new(limits, TerminalSize::new(74, 9, 585, 144).unwrap()).unwrap();
+        let mut parser = StreamingParser::new(limits);
+        parser.feed(b"\x1bP0;1;0q\"1;1;8;8#2;2;100;0;0!8~\x1b\\", |action| {
+            core.apply(action).unwrap();
+        });
+        let snapshot = core.render_snapshot().unwrap();
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        state.ui.dock_height_px = 220;
+        let mut renderer = OffscreenRenderer::new(640, 480).expect("create offscreen renderer");
+        let image = renderer
+            .render_workspace_with_terminal_snapshot(&state, &snapshot, 1.0)
+            .expect("render TerminalCore SIXEL snapshot");
+        let layout = crate::ShellLayout::for_surface(640, 480, 1.0, Some(220));
+        let geometry = datum_gui_viewport::terminal_screen_geometry(layout.bottom_strip.into());
+        let red_pixels = image
+            .view(geometry.screen.x as u32, geometry.screen.y as u32, 8, 8)
+            .pixels()
+            .filter(|(_, _, pixel)| pixel[0] > 180 && pixel[1] < 80 && pixel[2] < 80)
+            .count();
+        assert!(
+            red_pixels > 0,
+            "decoded SIXEL pixels must reach the GPU target"
+        );
+        if let Some(path) = std::env::var_os("DATUM_DTC_P23_SCREENSHOT_OUT") {
+            image
+                .save(path)
+                .expect("save explicit DTC-P23 visual proof");
+        }
     }
 }

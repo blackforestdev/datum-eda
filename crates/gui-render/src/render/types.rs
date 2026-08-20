@@ -115,6 +115,7 @@ pub struct PreparedScene {
     board_interaction_vertices: Vec<Vertex>,
     visible_draw_commands: Vec<RetainedDrawCommand>,
     text_runs: Vec<TextRun>,
+    terminal_graphics: Vec<PreparedTerminalGraphic>,
     // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
     // `Some` only when the layout has a Schematic pane AND the workspace carries a
     // projected `schematic_scene`; gates the additive second world GPU pass. The
@@ -144,6 +145,13 @@ pub struct PreparedScene {
     crosshair_style: datum_gui_protocol::CrosshairStyle,
     schematic_underlay_vertices: Vec<Vertex>,
     schematic_overlay_vertices: Vec<Vertex>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+struct PreparedTerminalGraphic {
+    graphic: datum_terminal_core::RenderGraphic,
+    rect: RectPx,
+    clip: RectPx,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -267,6 +275,8 @@ enum TextFace {
 struct TextRunSpan {
     text: String,
     color: [f32; 3],
+    bold: bool,
+    italic: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -285,6 +295,8 @@ struct TextRun {
 struct TextBufferSpanKey {
     text: String,
     color_bits: [u32; 3],
+    bold: bool,
+    italic: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

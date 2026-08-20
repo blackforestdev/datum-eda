@@ -37,8 +37,11 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
         )
         (root / guard.SESSION).write_text(
             "struct Slot { core: TerminalCoreSessionAdapter }\n"
-            "fn resize(){slot.core.resize(cols, rows)?;}\n"
             "fn restart(){slot.core = TerminalCoreSessionAdapter::new();}\n",
+            encoding="utf-8",
+        )
+        (root / guard.SESSION_RENDER).write_text(
+            "fn resize(){slot.core.resize(cols, rows, pixel_width, pixel_height)?;}\n",
             encoding="utf-8",
         )
         (root / guard.SPAWN).write_text(
@@ -92,7 +95,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
     def test_missing_reply_resize_finish_or_identity_fails(self) -> None:
         mutations = (
             (guard.DRAIN, "session.write_bytes(&response);", ""),
-            (guard.SESSION, "slot.core.resize(cols, rows)?;", ""),
+            (guard.SESSION_RENDER, ".resize(cols, rows, pixel_width, pixel_height)?;", ""),
             (guard.DRAIN, "slot.core.finish(lane);", ""),
             (guard.DRAIN, "debug_assert_eq!(slot.core.context_id(), slot.session.context_id);", ""),
         )

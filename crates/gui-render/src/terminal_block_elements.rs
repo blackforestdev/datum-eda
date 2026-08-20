@@ -12,7 +12,7 @@ use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX};
 use super::terminal_color::span_foreground;
 use super::{Quad, RectPx, TEXT_PANEL_VALUE};
 
-pub(super) fn render_terminal_block_elements(
+pub(crate) fn render_terminal_block_elements(
     styled_line: Option<&TerminalStyledLine>,
     fallback_line: &str,
     x: f32,
@@ -42,21 +42,48 @@ pub(super) fn render_terminal_block_elements(
                     span.conceal,
                 )
             });
-        for &(part_x, part_y, width, height) in parts {
-            quads.push(Quad::from_rect(
-                RectPx {
-                    x: x + (column as f32 + part_x) * TERMINAL_CELL_WIDTH_PX,
-                    y: y + part_y * TERMINAL_CELL_HEIGHT_PX,
-                    width: width * TERMINAL_CELL_WIDTH_PX,
-                    height: height * TERMINAL_CELL_HEIGHT_PX,
-                },
-                color,
-            ));
-        }
+        render_block_parts(parts, x, y, column, color, quads);
     }
 }
 
-pub(super) fn text_without_geometric_blocks(text: &str) -> String {
+pub(crate) fn render_terminal_block_elements_with_color(
+    text: &str,
+    x: f32,
+    y: f32,
+    max_columns: usize,
+    color: [f32; 3],
+    quads: &mut Vec<Quad>,
+) {
+    for (column, glyph) in text.chars().take(max_columns).enumerate() {
+        let Some(parts) = block_parts(glyph) else {
+            continue;
+        };
+        render_block_parts(parts, x, y, column, color, quads);
+    }
+}
+
+fn render_block_parts(
+    parts: BlockParts,
+    x: f32,
+    y: f32,
+    column: usize,
+    color: [f32; 3],
+    quads: &mut Vec<Quad>,
+) {
+    for &(part_x, part_y, width, height) in parts {
+        quads.push(Quad::from_rect(
+            RectPx {
+                x: x + (column as f32 + part_x) * TERMINAL_CELL_WIDTH_PX,
+                y: y + part_y * TERMINAL_CELL_HEIGHT_PX,
+                width: width * TERMINAL_CELL_WIDTH_PX,
+                height: height * TERMINAL_CELL_HEIGHT_PX,
+            },
+            color,
+        ));
+    }
+}
+
+pub(crate) fn text_without_geometric_blocks(text: &str) -> String {
     text.chars()
         .map(|glyph| {
             if block_parts(glyph).is_some() {

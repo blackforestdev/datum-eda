@@ -13,6 +13,7 @@ APP = Path("crates/gui-app")
 SRC = APP / "src"
 ADAPTER = SRC / "terminal_core_adapter.rs"
 SESSION = SRC / "terminal_session.rs"
+SESSION_RENDER = SRC / "terminal_session_render.rs"
 DRAIN = SRC / "terminal_session_drain.rs"
 SPAWN = SRC / "terminal_session_spawn.rs"
 
@@ -55,6 +56,7 @@ REQUIRED_PROOFS = (
     "adapters_isolate_output_modes_resize_and_context",
     "stream_finish_repairs_incomplete_utf8_before_lifecycle_completion",
     "repeated_bells_remain_bounded_but_preserve_visible_count",
+    "render_state_preserves_surface_pixels_and_consumes_damage_once",
 )
 
 
@@ -68,6 +70,7 @@ def check(root: Path) -> list[str]:
     manifest = read(root, APP / "Cargo.toml")
     adapter = read(root, ADAPTER)
     session = read(root, SESSION)
+    session_render = read(root, SESSION_RENDER)
     drain = read(root, DRAIN)
     spawn = read(root, SPAWN)
     tests = read(root, SRC / "terminal_core_adapter_tests.rs")
@@ -101,10 +104,10 @@ def check(root: Path) -> list[str]:
 
     for marker in (
         "core: TerminalCoreSessionAdapter",
-        "slot.core.resize(cols, rows)?",
+        ".resize(cols, rows, pixel_width, pixel_height)?",
         "slot.core = TerminalCoreSessionAdapter::new(",
     ):
-        if marker not in session:
+        if marker not in session + session_render:
             failures.append(f"session registry lacks TerminalCore ownership marker: {marker}")
     if "screen: TerminalScreen" in session:
         failures.append("production session slot must not retain the provisional TerminalScreen")

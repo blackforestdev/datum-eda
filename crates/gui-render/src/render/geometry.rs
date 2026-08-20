@@ -1196,6 +1196,8 @@ fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
             .map(|span| TextBufferSpanKey {
                 text: span.text.clone(),
                 color_bits: span.color.map(f32::to_bits),
+                bold: span.bold,
+                italic: span.italic,
             })
             .collect(),
         size_bits: run.size.to_bits(),
@@ -1258,7 +1260,9 @@ fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
 /// Deterministic: same inputs -> same width, so it is golden-stable.
 fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     let mutex = measure_font_system();
-    let mut font_system = mutex.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+    let mut font_system = mutex
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let mut buffer = Buffer::new(&mut font_system, Metrics::new(size, size * 1.22));
     let attrs = text_attrs(face);
     buffer.set_text(&mut font_system, text, &attrs, Shaping::Basic, None);
@@ -1307,10 +1311,12 @@ fn load_datum_fonts(font_system: &mut FontSystem) {
         .to_vec(),
     );
     db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf").to_vec(),
+        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf")
+            .to_vec(),
     );
     db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf").to_vec(),
+        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf")
+            .to_vec(),
     );
     db.load_font_data(
         include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf")

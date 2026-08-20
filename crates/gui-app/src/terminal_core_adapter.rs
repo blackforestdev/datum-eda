@@ -11,8 +11,8 @@ use datum_gui_protocol::{
 };
 use datum_terminal_core::{
     CellAttribute, CellContent, CellStyle, Color, CoreError, CoreEvent, CoreLimitValues,
-    CoreLimits, CursorShape, Damage, LimitKind, MouseEncoding, MouseTracking, StreamingParser,
-    TerminalCore, TerminalSize, UnderlineStyle,
+    CoreLimits, CursorShape, Damage, LimitKind, MouseEncoding, MouseTracking, RenderSnapshot,
+    StreamingParser, TerminalCore, TerminalSize, UnderlineStyle,
 };
 use std::error::Error;
 use std::fmt;
@@ -86,6 +86,7 @@ pub(crate) struct TerminalCoreSessionAdapter {
     parser: StreamingParser,
     core: TerminalCore,
     bell_count: usize,
+    pending_render_damage: Vec<Damage>,
 }
 
 impl TerminalCoreSessionAdapter {
@@ -107,6 +108,7 @@ impl TerminalCoreSessionAdapter {
             parser: StreamingParser::new(limits),
             core,
             bell_count: 0,
+            pending_render_damage: vec![Damage::Full],
         })
     }
 
@@ -120,6 +122,17 @@ impl TerminalCoreSessionAdapter {
 
     pub(crate) fn bracketed_paste_enabled(&self) -> bool {
         self.core.state().modes().bracketed_paste
+    }
+
+    pub(crate) fn take_render_state(
+        &mut self,
+    ) -> Result<(RenderSnapshot, Vec<Damage>), TerminalCoreAdapterError> {
+        let snapshot = self
+            .core
+            .render_snapshot()
+            .map_err(TerminalCoreAdapterError::Snapshot)?;
+        let damage = std::mem::take(&mut self.pending_render_damage);
+        Ok((snapshot, damage))
     }
 
     pub(crate) fn apply_output(
@@ -140,6 +153,7 @@ impl TerminalCoreSessionAdapter {
             apply_action(core, limits, bell_count, action, &mut update);
         });
         debug_assert_eq!(report.consumed, bytes.len());
+        self.merge_render_damage(&update.damage);
         self.project(lane)?;
         Ok(update)
     }
@@ -156,6 +170,7 @@ impl TerminalCoreSessionAdapter {
         parser.finish(|action| {
             apply_action(core, limits, bell_count, action, &mut update);
         });
+        self.merge_render_damage(&update.damage);
         self.project(lane)?;
         Ok(update)
     }
@@ -164,12 +179,16 @@ impl TerminalCoreSessionAdapter {
         &mut self,
         columns: u16,
         rows: u16,
+        pixel_width: u32,
+        pixel_height: u32,
     ) -> Result<(), TerminalCoreAdapterError> {
-        let size =
-            TerminalSize::new(columns, rows, 0, 0).map_err(TerminalCoreAdapterError::Size)?;
-        self.core
+        let size = TerminalSize::new(columns, rows, pixel_width, pixel_height)
+            .map_err(TerminalCoreAdapterError::Size)?;
+        let reduction = self
+            .core
             .resize(size)
             .map_err(TerminalCoreAdapterError::Screen)?;
+        self.merge_render_damage(&reduction.damage().iter().collect::<Vec<_>>());
         Ok(())
     }
 
@@ -223,6 +242,22 @@ impl TerminalCoreSessionAdapter {
         lane.mouse_coordinate_encoding = mouse_encoding(state.mouse_encoding()).map(str::to_string);
         lane.scroll_offset = 0;
         Ok(())
+    }
+
+    fn merge_render_damage(&mut self, entries: &[Damage]) {
+        for &entry in entries {
+            if self.pending_render_damage.contains(&Damage::Full) {
+                return;
+            }
+            if entry == Damage::Full {
+                self.pending_render_damage.clear();
+                self.pending_render_damage.push(Damage::Full);
+                return;
+            }
+            if !self.pending_render_damage.contains(&entry) {
+                self.pending_render_damage.push(entry);
+            }
+        }
     }
 }
 

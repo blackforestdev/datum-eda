@@ -754,6 +754,7 @@ dependencies = [
  "bytemuck",
  "datum-gui-protocol",
  "datum-gui-viewport",
+ "datum-terminal-core",
  "eda-engine",
  "glyphon",
  "image",

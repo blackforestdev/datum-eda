@@ -336,7 +336,12 @@ impl Runtime {
         let geometry = self.terminal_screen_geometry();
         let (cols, rows) = (geometry.columns, geometry.rows);
         append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
-        match self.terminal_sessions.resize_active(cols, rows) {
+        match self.terminal_sessions.resize_active_surface(
+            cols,
+            rows,
+            geometry.screen.width.round() as u32,
+            geometry.screen.height.round() as u32,
+        ) {
             Ok(()) => {
                 let terminal = &mut self.session.workspace_mut().ui.terminal;
                 terminal.columns = cols;

@@ -2,6 +2,7 @@ pub struct Renderer {
     pipeline: wgpu::RenderPipeline,
     world_pipeline: wgpu::RenderPipeline,
     world_stroke_pipeline: wgpu::RenderPipeline,
+    terminal_graphics: terminal_graphics::TerminalGraphicsRenderer,
     uniform_bind_group: wgpu::BindGroup,
     uniform_buffer: wgpu::Buffer,
     scene_bind_group: wgpu::BindGroup,
@@ -53,10 +54,12 @@ pub struct Renderer {
     msaa_samples: u32,
 }
 
-#[path = "text_buffer_cache.rs"]
-mod text_buffer_cache;
 #[path = "gpu_vertex_upload.rs"]
 mod gpu_vertex_upload;
+#[path = "terminal_graphics.rs"]
+mod terminal_graphics;
+#[path = "text_buffer_cache.rs"]
+mod text_buffer_cache;
 
 impl Renderer {
     pub fn new(
@@ -321,8 +324,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             multiview_mask: None,
             cache: None,
         });
-        let world_stroke_pipeline = create_world_stroke_pipeline(
-            device, &world_pipeline_layout, format, msaa_samples);
+        let world_stroke_pipeline =
+            create_world_stroke_pipeline(device, &world_pipeline_layout, format, msaa_samples);
+        let terminal_graphics = terminal_graphics::TerminalGraphicsRenderer::new(
+            device,
+            &uniform_bind_group_layout,
+            format,
+            msaa_samples,
+        );
         let mut font_system = FontSystem::new();
         load_datum_fonts(&mut font_system);
         let swash_cache = SwashCache::new();
@@ -353,6 +362,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             pipeline,
             world_pipeline,
             world_stroke_pipeline,
+            terminal_graphics,
             uniform_bind_group,
             uniform_buffer,
             scene_bind_group,
@@ -467,13 +477,19 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_underlay_vertices,
             schematic_overlay_vertices,
         );
-        Self::upload_vertices(device, queue, &mut self.surface_grid_vertex_buffer,
-            &mut self.surface_grid_vertex_capacity, "datum-surface-grid-vertex-buffer",
-            &surface_grid_vertices);
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.surface_grid_vertex_buffer,
+            &mut self.surface_grid_vertex_capacity,
+            "datum-surface-grid-vertex-buffer",
+            &surface_grid_vertices,
+        );
         self.sync_world_strokes(device, queue, world_strokes);
         if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
             self.sync_schematic_world_strokes(device, queue, scene.world_strokes());
         }
+        self.sync_terminal_graphics(device, queue, prepared, width, height);
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
@@ -538,7 +554,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 for command in prepared.visible_draw_commands() {
                     match command {
                         RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.world_vertex_buffer.as_ref() else { continue };
+                            let Some(buffer) = self.world_vertex_buffer.as_ref() else {
+                                continue;
+                            };
                             pass.set_pipeline(&self.world_pipeline);
                             pass.set_bind_group(0, &self.scene_bind_group, &[]);
                             pass.set_scissor_rect(
@@ -551,10 +569,17 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                             pass.draw(range.clone(), 0..1);
                         }
                         RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.world_stroke_buffer.as_ref() else { continue };
-                            draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
-                                &self.scene_bind_group, buffer, prepared.scene_viewport,
-                                std::slice::from_ref(range));
+                            let Some(buffer) = self.world_stroke_buffer.as_ref() else {
+                                continue;
+                            };
+                            draw_world_strokes(
+                                &mut pass,
+                                &self.world_stroke_pipeline,
+                                &self.scene_bind_group,
+                                buffer,
+                                prepared.scene_viewport,
+                                std::slice::from_ref(range),
+                            );
                         }
                     }
                 }
@@ -567,7 +592,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // zoom, scissored to the schematic pane's scene rect. Painted BEFORE the
             // schematic world pass below so wires/symbols sit on top of the grid,
             // preserving the old draw order the retained bake had.
-            if prepared.surface_passes().is_empty() && !schematic_underlay_vertices.is_empty()
+            if prepared.surface_passes().is_empty()
+                && !schematic_underlay_vertices.is_empty()
                 && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
                 && let Some(buffer) = self.schematic_underlay_vertex_buffer.as_ref()
             {
@@ -587,11 +613,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // completely unchanged. Restores the screen pipeline afterward for the
             // overlay/menu passes.
             if prepared.surface_passes().is_empty()
-                && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref() {
+                && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref()
+            {
                 for command in sr.all_draw_commands() {
                     match command {
                         RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() else { continue };
+                            let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() else {
+                                continue;
+                            };
                             pass.set_pipeline(&self.world_pipeline);
                             pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
                             pass.set_scissor_rect(
@@ -604,10 +633,17 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                             pass.draw(range.clone(), 0..1);
                         }
                         RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() else { continue };
-                            draw_world_strokes(&mut pass, &self.world_stroke_pipeline,
-                                &self.schematic_scene_bind_group, buffer, *scene_viewport,
-                                std::slice::from_ref(range));
+                            let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() else {
+                                continue;
+                            };
+                            draw_world_strokes(
+                                &mut pass,
+                                &self.world_stroke_pipeline,
+                                &self.schematic_scene_bind_group,
+                                buffer,
+                                *scene_viewport,
+                                std::slice::from_ref(range),
+                            );
                         }
                     }
                 }
@@ -670,6 +706,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             // the work-pane quads but every underlying text_run too; its own text
             // then draws in a final pass on top of the card.
         }
+        self.encode_terminal_graphics(&mut encoder, &msaa_view, target, false);
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
@@ -749,6 +786,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let text_encode_elapsed = text_encode_started.elapsed();
+
+        self.encode_terminal_graphics(&mut encoder, &msaa_view, target, true);
 
         // === Menu dropdown, composited LAST (after the main text pass) ===
         // The card is drawn here — not with the base quads — so it occludes the

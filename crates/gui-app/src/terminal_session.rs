@@ -233,23 +233,6 @@ impl TerminalSessionRegistry {
                 .bracketed_paste_enabled()
     }
 
-    pub(super) fn resize_active(&mut self, cols: u16, rows: u16) -> Result<()> {
-        if self.active_pending_id.is_some() {
-            return Ok(());
-        }
-        let slot = &mut self.sessions[self.active_index];
-        let cols = cols.max(1);
-        let rows = rows.max(1);
-        if slot.columns == cols && slot.rows == rows {
-            return Ok(());
-        }
-        slot.session.resize(cols, rows)?;
-        slot.core.resize(cols, rows)?;
-        slot.columns = cols;
-        slot.rows = rows;
-        Ok(())
-    }
-
     pub(super) fn restart_active(
         &mut self,
         state: &mut TerminalLaneState,
@@ -452,6 +435,8 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
 mod drain;
 #[path = "terminal_session_lifecycle.rs"]
 mod lifecycle;
+#[path = "terminal_session_render.rs"]
+mod render;
 #[path = "terminal_session_spawn.rs"]
 mod spawn;
 
