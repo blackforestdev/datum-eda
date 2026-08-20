@@ -1505,6 +1505,49 @@ graphics package.
   animation/composition/deletion, safe transport posture, history/reflow, and
   bounds.
 
+#### DTC-P19 kitty graphics evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P19-CLOSED -->
+Revision `081ecda` implements bounded Kitty graphics semantics inside the
+std-only TerminalCore. The APC decoder owns strict control-field parsing,
+atomic multi-chunk assembly, Base64 payload validation, direct RGB/RGBA/PNG
+transfer, zlib decompression, query replies, and quiet-mode behavior. File,
+temporary-file, and shared-memory transfers fail explicitly with `ENOTSUP` so
+the renderer-independent core never acquires filesystem or IPC authority.
+
+Images and immutable shared RGBA frame storage retain Kitty image IDs and
+numbers, frame metadata, animation state, and independent placement IDs.
+Placement semantics include cell/pixel crop, scale, offset, z-order, cursor
+movement, virtual and parent-relative placement, and bounded placeholder
+resolution. Composition, animation control, the default 40 ms frame gap,
+replacement, and all Kitty deletion families update images and placements
+transactionally. Missing-parent pruning, primary history/reflow, alternate
+buffer teardown, display erase, and reset release the appropriate objects.
+
+Kitty and sixel graphics share checked object, frame, pixel, decoded-byte,
+parser-work, event, and damage limits. Chunk admission is bounded before
+allocation; aggregate accounting is overflow-safe; replacement remains legal
+at the object ceiling; cyclic, missing, or excessive virtual-placement depth
+fails without committing partial state. TerminalCore exposes typed immutable
+image, frame, placement, placeholder, and graphics-damage data while retaining
+renderer ownership for DTC-P20.
+
+One hundred twenty TerminalCore tests pass. Thirteen focused DTC-P19 proofs
+cover direct transfers and query replies, chunk atomicity and payload caps,
+RGB/RGBA/PNG/zlib decoding, placement geometry and cursor movement, image
+numbers, replacement and object limits, animation and composition, deletion,
+virtual placement, placeholders, history/reflow, teardown, and cross-protocol
+aggregate accounting. Four hermetic Kitty-boundary tests and twenty-one core
+boundary tests pin grammar, safe transports, checked resource admission,
+storage, placement, animation, deletion, history, exports, and named proofs.
+The full locked/offline workspace all-target suite and strict workspace Clippy
+pass, as do dependency authority, source health over 1,474 files, formatting,
+Python compilation, drift guards, and diff hygiene. Every DTC-P19 source is
+below the decision-022 700-line ceiling. No Cargo dependency, runtime fetch,
+copied terminal implementation, renderer/PTY authority, TERM identity, or
+production cutover changed. DTC-P20 owns immutable render snapshots and the
+complete renderer-independent damage projection.
+
 ### Projection, proof, and cutover
 
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P20 --> **DTC-P20 — damage and render snapshot.** Dirty cell/row/scroll/cursor/palette/

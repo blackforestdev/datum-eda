@@ -25,7 +25,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 289 | `e6113b1c79f114e70e745ec2fd3bc73afc3cb4302d429ad67dfb2fff76ddbce1` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 5 | `990b4a0e4fd6bddc8a5e74b6f2ee5795f32800c2dafcc40dd31476c1515d64c8` |
-| `workspace_crates` | `specs/PROGRESS.md` | 9 | `52365c74bae9fa5c1ad7ee7eceb19ae3a0c75650772f8f4e19e2e5f3bc2c49c9` |
+| `workspace_crates` | `specs/PROGRESS.md` | 10 | `8f610e4e2a644b1a60bbf735eca22e1193b711eb4e2bb93ad959a9a477c1279c` |
 | `daemon_dispatch_methods` | `specs/PROGRESS.md` | 41 | `7c6fab120a23d8fbf495e171180071b7ce7ac0ef113898f8b97c3e51da00e5f6` |
 | `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 196 | `b5e294d1a0186d4c58b4214f54eda852b1df2ce5b41c2e22c204c361ab21cea8` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
@@ -34,4 +34,4 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `8d10f280ffc6abcaf7990ce3120a4253a2ea54b474b0a0d56428b2e30bdd2dfa` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 15 | `0cb536712554560e63413ee1eba3424c0b7b190ad008317609423153402f2ef9` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 95 | `a5e06d57897fc6a008e7e80ec550379a736a7e009356ea585ea88c08ac9710c2` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 95 | `cbdaa8295f3375ac63188f4e36c832ba2b2e200a3662bb0633f2b1f51fbbed8e` |
