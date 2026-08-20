@@ -84,6 +84,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "history_tests.rs").write_text(
             "\n".join(guard.REQUIRED_HISTORY_PROOFS), encoding="utf-8"
         )
+        (source / "selection_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_SELECTION_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -111,7 +114,17 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (source / "screen.rs").write_text(
-            (source / "screen.rs").read_text() + "\ngrapheme_anchor\nresolve_logical_point\n",
+            (source / "screen.rs").read_text()
+            + "\ngrapheme_anchor\nresolve_logical_point\n"
+            + "pub(crate) selection: Option<crate::Selection>\n",
+            encoding="utf-8",
+        )
+        (source / "selection.rs").write_text(
+            (source / "selection.rs").read_text()
+            + "\nSelectionScope::Grapheme\nSelectionScope::Word\n"
+            + "SelectionScope::WrappedLine\nSelectionScope::LogicalLine\n"
+            + "SelectionScope::Block\nSelectionScope::All\n"
+            + "resolve_logical_point\nself.limits.clipboard_bytes\n",
             encoding="utf-8",
         )
         (source / "history.rs").write_text(
@@ -307,6 +320,33 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("logical-line limit" in item for item in failures))
         self.assertTrue(any("stable logical anchors" in item for item in failures))
         self.assertTrue(any("primary_scrollback" in item for item in failures))
+
+    def test_selection_scope_limit_and_stable_endpoint_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        selection = root / guard.CRATE / "src/selection.rs"
+        selection.write_text(
+            selection.read_text()
+            .replace("SelectionScope::Block", "removed_block")
+            .replace("self.limits.clipboard_bytes", "usize::MAX")
+        )
+        screen = root / guard.CRATE / "src/screen.rs"
+        screen.write_text(
+            screen.read_text().replace(
+                "pub(crate) selection: Option<crate::Selection>", "removed_selection"
+            )
+        )
+        proofs = root / guard.CRATE / "src/selection_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "logical_endpoints_survive_reflow_then_report_history_trim", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("SelectionScope::Block" in item for item in failures))
+        self.assertTrue(any("clipboard_bytes" in item for item in failures))
+        self.assertTrue(any("stable logical endpoints" in item for item in failures))
+        self.assertTrue(any("logical_endpoints_survive" in item for item in failures))
 
 
 if __name__ == "__main__":

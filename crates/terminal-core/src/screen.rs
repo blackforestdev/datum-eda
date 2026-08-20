@@ -30,6 +30,7 @@ pub struct ScreenState {
     pub(crate) primary: GridBuffer,
     pub(crate) alternate: GridBuffer,
     pub(crate) history: HistoryStore,
+    pub(crate) selection: Option<crate::Selection>,
     pub(crate) next_logical_line: u64,
 }
 
@@ -72,6 +73,7 @@ impl ScreenState {
             primary,
             alternate,
             history: HistoryStore::new(limits.history_lines, limits.history_bytes),
+            selection: None,
             next_logical_line,
         })
     }
@@ -145,12 +147,21 @@ impl ScreenState {
     }
 
     pub fn contains_logical_point(&self, point: crate::LogicalPoint) -> bool {
-        self.history.contains(point)
-            || self
-                .primary
+        match self.active_buffer {
+            ScreenBuffer::Primary => {
+                self.history.contains(point)
+                    || self
+                        .primary
+                        .rows
+                        .iter()
+                        .any(|row| crate::history::row_contains(row, point))
+            }
+            ScreenBuffer::Alternate => self
+                .alternate
                 .rows
                 .iter()
-                .any(|row| crate::history::row_contains(row, point))
+                .any(|row| crate::history::row_contains(row, point)),
+        }
     }
 
     pub fn logical_point_at(&self, row: u16, column: u16) -> Option<crate::LogicalPoint> {
@@ -168,10 +179,12 @@ impl ScreenState {
     }
 
     pub fn resolve_logical_point(&self, point: crate::LogicalPoint) -> crate::AnchorResolution {
-        if let Some((row, column)) = self.history.resolve(point) {
+        if self.active_buffer == ScreenBuffer::Primary
+            && let Some((row, column)) = self.history.resolve(point)
+        {
             return crate::AnchorResolution::History { row, column };
         }
-        for (row, grid_row) in self.primary.rows.iter().enumerate() {
+        for (row, grid_row) in self.active_grid().rows.iter().enumerate() {
             if let Some(column) = crate::history::column_for_point(grid_row, point) {
                 return crate::AnchorResolution::Screen {
                     row: row.min(u16::MAX as usize) as u16,
@@ -179,10 +192,13 @@ impl ScreenState {
                 };
             }
         }
-        let oldest = self
-            .history
-            .oldest_line()
-            .or_else(|| self.primary.rows.first().map(|row| row.logical_line));
+        let oldest = (self.active_buffer == ScreenBuffer::Primary)
+            .then(|| {
+                self.history
+                    .oldest_line()
+                    .or_else(|| self.primary.rows.first().map(|row| row.logical_line))
+            })
+            .flatten();
         if oldest.is_some_and(|oldest| point.line < oldest) {
             crate::AnchorResolution::Trimmed
         } else {

@@ -36,6 +36,12 @@ REQUIRED_MODULES = {
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "reflow.rs": ("pub fn resize(", "fn reflow_rows(", "fn resolve_visible_point("),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
+    "selection.rs": (
+        "pub enum SelectionScope",
+        "pub struct Selection",
+        "pub fn copy_selection(",
+        "fn bounded_copy(",
+    ),
     "semantics.rs": ("pub enum CoreError", "pub struct CoreUpdate", "pub fn apply("),
     "sgr.rs": ("fn apply_sgr", "fn extended_color"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
@@ -145,6 +151,17 @@ REQUIRED_HISTORY_PROOFS = (
     "reset_invalidates_prior_history_anchors_without_identity_reuse",
     "logical_anchor_resolution_remains_stable_while_output_arrives",
     "reflow_work_exhaustion_rejects_resize_without_mutation",
+)
+
+REQUIRED_SELECTION_PROOFS = (
+    "grapheme_and_word_selection_are_direction_independent",
+    "soft_wrap_omits_newline_while_hard_line_includes_it",
+    "wrapped_logical_block_and_all_scopes_have_distinct_copy_rules",
+    "explicit_spaces_survive_while_unselected_padding_does_not",
+    "logical_endpoints_survive_reflow_then_report_history_trim",
+    "alternate_buffer_isolated_and_buffer_switch_clears_selection",
+    "clipboard_limit_rejects_atomically_without_truncating",
+    "reset_and_explicit_clear_remove_selection",
 )
 
 
@@ -320,6 +337,28 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_HISTORY_PROOFS:
         if marker not in history_proof_text:
             failures.append(f"DTC-P12 deterministic history/reflow proof is missing: {marker}")
+    selection = sources.get("selection.rs", "")
+    for marker in (
+        "SelectionScope::Grapheme",
+        "SelectionScope::Word",
+        "SelectionScope::WrappedLine",
+        "SelectionScope::LogicalLine",
+        "SelectionScope::Block",
+        "SelectionScope::All",
+        "resolve_logical_point",
+        "self.limits.clipboard_bytes",
+    ):
+        if marker not in selection:
+            failures.append(f"DTC-P13 selection/copy behavior marker is missing: {marker}")
+    if "pub(crate) selection: Option<crate::Selection>" not in screen:
+        failures.append("DTC-P13 screen must own selection through stable logical endpoints")
+    selection_tests = crate / "src" / "selection_tests.rs"
+    selection_proof_text = (
+        selection_tests.read_text(encoding="utf-8") if selection_tests.is_file() else ""
+    )
+    for marker in REQUIRED_SELECTION_PROOFS:
+        if marker not in selection_proof_text:
+            failures.append(f"DTC-P13 deterministic selection/copy proof is missing: {marker}")
     return failures
 
 

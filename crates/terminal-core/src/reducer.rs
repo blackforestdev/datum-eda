@@ -547,6 +547,9 @@ impl TerminalCore {
     }
 
     fn switch_buffer(&mut self, buffer: ScreenBuffer, clear: bool, home: bool) {
+        if self.state.active_buffer != buffer {
+            self.state.selection = None;
+        }
         self.state.active_buffer = buffer;
         if clear {
             match buffer {
@@ -620,6 +623,7 @@ impl TerminalCore {
         self.state.last_printed = None;
         self.state.grapheme_anchor = None;
         self.state.history.clear();
+        self.state.selection = None;
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

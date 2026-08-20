@@ -163,7 +163,7 @@ impl LogicalLineId {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct LogicalPoint {
     pub line: LogicalLineId,
     pub cluster: u32,
