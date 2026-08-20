@@ -1338,13 +1338,27 @@ asked that automatic AI use cases remain functional; the approved boundary
 distinguishes authorized agent actions from hostile terminal-output requests.
 
 - <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S3 --> **P16-S3 — human clipboard paste confirmation.** Pasting text into
-  a shell can execute commands, especially when the clipboard contains multiple
-  lines or terminal control bytes. Recommended: allow an ordinary single-line
-  human paste immediately; require a visible preview and explicit confirmation
-  for multiline text or control characters; reject paste into an unfocused or
-  background terminal; use bracketed-paste framing when the child enables it.
-  Automated agents' bounded PTY input is not classified as a human clipboard
-  paste and continues through its existing explicit authority path.
+  a shell can execute commands, but Datum does not inspect or police user-owned
+  clipboard content. Owner-revised 2026-08-20: paste immediately into the
+  focused terminal without content inspection, rewriting, or confirmation;
+  reject only paste directed at an unfocused/background terminal; use
+  bracketed-paste framing when the child enables it. Existing bounded input
+  admission remains unchanged. Automated agents' bounded PTY input is not a
+  human clipboard paste and continues through its existing authority path.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P16A:P16-S3-OWNER-APPROVED -->
+Owner response: `P16-S3: revise — paste immediately into the focused terminal
+without content inspection or confirmation; use bracketed paste when enabled;
+reject only background-terminal paste` (2026-08-20).
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S4 --> **P16-S4 — terminal-generated notifications and rate limits.** A
+  program may request progress or notifications repeatedly, including while its
+  tab is in the background. Recommended: always retain the latest bounded
+  terminal-local progress state; allow desktop notifications from owned
+  sessions, but coalesce identical repeats and permit at most three desktop
+  notifications per ten seconds per session so hostile output cannot flood the
+  desktop. Notification text remains untrusted display data and cannot trigger
+  commands, links, or Datum actions.
 
 ### Extended graphics parity
 
