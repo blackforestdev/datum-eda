@@ -1,3 +1,4 @@
+use crate::graphics::{GraphicLimits, GraphicStore};
 use crate::grid::GridBuffer;
 use crate::history::HistoryStore;
 use crate::hyperlink::HyperlinkRegistry;
@@ -39,6 +40,8 @@ pub struct ScreenState {
     pub(crate) primary: GridBuffer,
     pub(crate) alternate: GridBuffer,
     pub(crate) history: HistoryStore,
+    pub(crate) graphics: GraphicStore,
+    pub(crate) sixel_colors: crate::SixelColorRegisters,
     pub(crate) selection: Option<crate::Selection>,
     pub(crate) next_logical_line: u64,
 }
@@ -57,6 +60,7 @@ impl ScreenState {
             .map_err(ScreenError::from)?;
         let modes = ModeState {
             auto_wrap: true,
+            sixel_scrolling: true,
             ..ModeState::default()
         };
         Ok(Self {
@@ -89,6 +93,13 @@ impl ScreenState {
             primary,
             alternate,
             history: HistoryStore::new(limits.history_lines, limits.history_bytes),
+            graphics: GraphicStore::new(GraphicLimits {
+                objects: limits.graphic_objects,
+                pixels: limits.graphic_pixels,
+                decoded_bytes: limits.graphic_decoded_bytes,
+                frames: limits.graphic_frames,
+            }),
+            sixel_colors: crate::SixelColorRegisters::default(),
             selection: None,
             next_logical_line,
         })
@@ -184,6 +195,53 @@ impl ScreenState {
 
     pub fn history(&self) -> crate::HistorySnapshot {
         self.history.snapshot()
+    }
+
+    pub fn graphics(&self) -> impl ExactSizeIterator<Item = &crate::GraphicPlacement> {
+        self.graphics.iter()
+    }
+
+    pub fn resolve_graphic(&self, id: crate::GraphicId) -> crate::GraphicAnchorResolution {
+        let Some(graphic) = self.graphics.get(id) else {
+            return crate::GraphicAnchorResolution::Unknown;
+        };
+        if graphic.buffer() != self.active_buffer {
+            return crate::GraphicAnchorResolution::InactiveBuffer;
+        }
+        match self.resolve_logical_point(graphic.anchor()) {
+            crate::AnchorResolution::History { row, column } => {
+                crate::GraphicAnchorResolution::History { row, column }
+            }
+            crate::AnchorResolution::Screen { row, column } => {
+                let cell_width = pixel_extent(
+                    self.size.pixels.width,
+                    u32::from(self.size.columns.get()),
+                    1,
+                );
+                let cell_height =
+                    pixel_extent(self.size.pixels.height, u32::from(self.size.rows.get()), 6);
+                let x = u32::from(column).saturating_mul(cell_width);
+                let y = u32::from(row).saturating_mul(cell_height);
+                let surface_width = if self.size.pixels.width == 0 {
+                    cell_width.saturating_mul(u32::from(self.size.columns.get()))
+                } else {
+                    self.size.pixels.width
+                };
+                let surface_height = if self.size.pixels.height == 0 {
+                    cell_height.saturating_mul(u32::from(self.size.rows.get()))
+                } else {
+                    self.size.pixels.height
+                };
+                crate::GraphicAnchorResolution::Screen {
+                    row,
+                    column,
+                    visible_pixel_width: graphic.width().min(surface_width.saturating_sub(x)),
+                    visible_pixel_height: graphic.height().min(surface_height.saturating_sub(y)),
+                }
+            }
+            crate::AnchorResolution::Trimmed => crate::GraphicAnchorResolution::Trimmed,
+            crate::AnchorResolution::Unknown => crate::GraphicAnchorResolution::Unknown,
+        }
     }
 
     pub fn contains_logical_point(&self, point: crate::LogicalPoint) -> bool {
@@ -283,6 +341,14 @@ impl ScreenState {
             ScreenBuffer::Primary => &mut self.primary,
             ScreenBuffer::Alternate => &mut self.alternate,
         }
+    }
+}
+
+fn pixel_extent(total: u32, cells: u32, fallback: u32) -> u32 {
+    if total == 0 {
+        fallback
+    } else {
+        (total / cells).max(1)
     }
 }
 

@@ -187,6 +187,7 @@ fn terminal_core_starts_with_closed_renderer_independent_state() {
         core.state().modes(),
         ModeState {
             auto_wrap: true,
+            sixel_scrolling: true,
             ..ModeState::default()
         }
     );

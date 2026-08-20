@@ -79,6 +79,12 @@ pub struct ModeState {
     pub bracketed_paste: bool,
     pub focus_reporting: bool,
     pub synchronized_output: bool,
+    /// DECSDM reset/default permits the image to advance and scroll text rows.
+    pub sixel_scrolling: bool,
+    /// XTerm-compatible mode 8452 leaves the cursor to the right of an image.
+    pub sixel_cursor_right: bool,
+    /// XTerm-compatible mode 1070 resets color registers for every graphic.
+    pub sixel_private_colors: bool,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

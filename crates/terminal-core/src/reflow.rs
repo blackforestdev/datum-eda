@@ -87,6 +87,7 @@ impl TerminalCore {
             .expect("clamped resize cursor is valid"),
         };
         self.state.cursor.pending_wrap = false;
+        self.prune_graphics();
 
         let mut damage = DamageSet::new(self.limits.pending_damage);
         damage.push(Damage::Full).map_err(ScreenError::Limit)?;

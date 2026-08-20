@@ -102,6 +102,7 @@ pub enum CoreEvent {
         index: PaletteIndex,
         color: Color,
     },
+    GraphicAdded(crate::GraphicId),
     LimitReached(crate::LimitKind),
 }
 

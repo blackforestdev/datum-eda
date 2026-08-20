@@ -102,6 +102,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "codec_tests.rs").write_text(
             "\n".join(guard.REQUIRED_CODEC_PROOFS), encoding="utf-8"
         )
+        (source / "sixel_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_SIXEL_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -110,7 +113,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "reducer.rs").write_text(
             (source / "reducer.rs").read_text()
             + "\nimpl TerminalCore {}\nself.apply_action(action)\nrepair_row(row)\n"
-            + "hyperlink: self.state.current_hyperlink\n",
+            + "hyperlink: self.state.current_hyperlink\n"
+            + "pub(crate) fn prune_graphics(\nclear_buffer\nScreenAction::Reset\n",
             encoding="utf-8",
         )
         (source / "grid.rs").write_text(
@@ -131,7 +135,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             + "pub use checksum::{Adler32, Crc32, adler32, crc32};\n"
             + "pub use deflate::{DeflateOutput, decode_deflate};\n"
             + "pub use png::{PngImage, Rgba8, decode_png};\n"
-            + "pub use zlib::decode_zlib;\n",
+            + "pub use zlib::decode_zlib;\n"
+            + "pub use sixel::{SixelColorRegisters, decode_sixel};\n",
             encoding="utf-8",
         )
         (source / "semantics.rs").write_text(
@@ -198,6 +203,19 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "reflow.rs").write_text(
             (source / "reflow.rs").read_text()
             + "\nself.state.history.replace_rows(history)\n.reflow_work\n",
+            encoding="utf-8",
+        )
+        (source / "control_string.rs").write_text(
+            (source / "control_string.rs").read_text()
+            + "\nself.state.graphics.insert_sixel(\n"
+            + "self.push_damage(Damage::Graphics, update)?\n"
+            + "sixel_aspect(parameters.first().copied().unwrap_or(0))\n",
+            encoding="utf-8",
+        )
+        (source / "csi.rs").write_text(
+            (source / "csi.rs").read_text()
+            + "\n80 =>\n1070 =>\n8452 =>\nsixel_scrolling\n"
+            + "sixel_private_colors\nsixel_cursor_right\n",
             encoding="utf-8",
         )
         return temporary, root
@@ -502,6 +520,29 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("checksum.update(&kind)" in item for item in failures))
         self.assertTrue(any("const ADAM7" in item for item in failures))
         self.assertTrue(any("hostile_png_prefixes" in item for item in failures))
+
+    def test_sixel_bounds_placement_teardown_and_proof_removal_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        sixel = root / guard.CRATE / "src/sixel.rs"
+        sixel.write_text(
+            sixel.read_text()
+            .replace("limits.pixels.check(pixel_count)?", "removed_pixel_limit")
+            .replace("let mut working_registers = registers.clone()", "removed_atomic_palette")
+        )
+        reducer = root / guard.CRATE / "src/reducer.rs"
+        reducer.write_text(reducer.read_text().replace("clear_buffer", "removed_clear"))
+        proofs = root / guard.CRATE / "src/sixel_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "sixel_scrolls_into_history_and_history_trim_releases_pixels", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("limits.pixels.check" in item for item in failures))
+        self.assertTrue(any("working_registers" in item for item in failures))
+        self.assertTrue(any("tear down graphics" in item for item in failures))
+        self.assertTrue(any("sixel_scrolls_into_history" in item for item in failures))
 
 
 if __name__ == "__main__":

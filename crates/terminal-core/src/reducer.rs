@@ -57,6 +57,19 @@ impl Reduction {
 
 impl TerminalCore {
     pub fn reduce(&mut self, action: ScreenAction) -> Result<Reduction, ScreenError> {
+        let clear_graphics = match &action {
+            ScreenAction::Reset => Some(None),
+            ScreenAction::SwitchBuffer {
+                buffer,
+                clear: true,
+                ..
+            } => Some(Some(*buffer)),
+            ScreenAction::EraseDisplay {
+                mode: EraseDisplay::All,
+                selective: false,
+            } => Some(Some(self.state.active_buffer)),
+            _ => None,
+        };
         let cursor_only = matches!(
             action,
             ScreenAction::Backspace
@@ -68,6 +81,11 @@ impl TerminalCore {
                 | ScreenAction::RestoreCursor
         );
         self.apply_action(action);
+        match clear_graphics {
+            Some(None) => self.state.graphics.clear(),
+            Some(Some(buffer)) => self.state.graphics.clear_buffer(buffer),
+            None => self.prune_graphics(),
+        }
         let mut damage = DamageSet::new(self.limits.pending_damage);
         damage
             .push(if cursor_only {
@@ -612,6 +630,7 @@ impl TerminalCore {
         self.state.margins = Margins::full(self.state.size);
         self.state.modes = ModeState {
             auto_wrap: true,
+            sixel_scrolling: true,
             ..ModeState::default()
         };
         self.state.tabs = crate::TabStops::every_eight(self.state.size.columns);
@@ -628,6 +647,23 @@ impl TerminalCore {
         self.state.hyperlinks.clear();
         self.state.shell_mark = None;
         self.state.progress = crate::ProgressState::Clear;
+        self.state.sixel_colors = crate::SixelColorRegisters::default();
+    }
+
+    pub(crate) fn prune_graphics(&mut self) {
+        let history = &self.state.history;
+        let primary = &self.state.primary;
+        let alternate = &self.state.alternate;
+        self.state.graphics.retain(|placement| {
+            let rows = match placement.buffer() {
+                ScreenBuffer::Primary => &primary.rows,
+                ScreenBuffer::Alternate => &alternate.rows,
+            };
+            (placement.buffer() == ScreenBuffer::Primary && history.contains(placement.anchor()))
+                || rows
+                    .iter()
+                    .any(|row| crate::history::row_contains(row, placement.anchor()))
+        });
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

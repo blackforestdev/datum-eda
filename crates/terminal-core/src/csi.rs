@@ -423,6 +423,18 @@ impl TerminalCore {
                 self.state.modes.bracketed_paste = enabled;
                 update.recognized = true;
             }
+            80 => {
+                self.state.modes.sixel_scrolling = !enabled;
+                update.recognized = true;
+            }
+            1070 => {
+                self.state.modes.sixel_private_colors = enabled;
+                update.recognized = true;
+            }
+            8452 => {
+                self.state.modes.sixel_cursor_right = enabled;
+                update.recognized = true;
+            }
             2026 if enabled => {
                 self.state.modes.synchronized_output = true;
                 update.recognized = true;

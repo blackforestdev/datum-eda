@@ -19,6 +19,7 @@ mod csi;
 mod damage;
 mod deflate;
 mod event;
+mod graphics;
 mod grid;
 mod history;
 mod hyperlink;
@@ -41,6 +42,7 @@ mod search_regex;
 mod selection;
 mod semantics;
 mod sgr;
+mod sixel;
 mod snapshot;
 mod unicode;
 mod unicode_grapheme_tables;
@@ -65,6 +67,9 @@ pub use deflate::{DeflateOutput, decode_deflate};
 pub use event::{
     ClipboardBytes, ClipboardSelection, CoreEvent, NotificationText, Percent, ProgressState,
     ReplyKind, ShellMark, TerminalReply, TitleText, WorkingDirectoryText,
+};
+pub use graphics::{
+    GraphicAnchorResolution, GraphicId, GraphicPlacement, GraphicProtocol, PixelAspect,
 };
 pub use history::{AnchorResolution, HistoryRowSnapshot, HistorySnapshot};
 pub use hyperlink::Hyperlink;
@@ -102,6 +107,7 @@ pub use search::{
 };
 pub use selection::{CopiedText, Selection, SelectionError, SelectionScope, SelectionState};
 pub use semantics::{CoreError, CoreUpdate};
+pub use sixel::{SixelColorRegisters, SixelError, SixelImage, SixelLimits, decode_sixel};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
 pub use unicode::{
     BIDIRECTIONAL_TEXT_POLICY, BidirectionalTextPolicy, GraphemeIndices, ShapingCluster,
@@ -138,3 +144,6 @@ mod input_tests;
 
 #[cfg(test)]
 mod codec_tests;
+
+#[cfg(test)]
+mod sixel_tests;

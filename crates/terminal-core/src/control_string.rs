@@ -321,6 +321,95 @@ impl TerminalCore {
         if bytes.starts_with(b"+q") {
             return self.push_reply(ReplyKind::DeviceStatus, b"\x1bP0+r\x1b\\".to_vec(), update);
         }
+        if let Some((parameters, data)) = sixel_body(bytes) {
+            return self.apply_sixel(&parameters, data, update);
+        }
+        Ok(())
+    }
+
+    fn apply_sixel(
+        &mut self,
+        parameters: &[usize],
+        data: &[u8],
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let background =
+            (parameters.get(1).copied().unwrap_or(0) != 1).then(|| sixel_background(&self.state));
+        let mut colors = if self.state.modes.sixel_private_colors {
+            crate::SixelColorRegisters::default()
+        } else {
+            self.state.sixel_colors.clone()
+        };
+        let image = crate::decode_sixel(
+            data,
+            background,
+            &mut colors,
+            sixel_aspect(parameters.first().copied().unwrap_or(0)),
+            crate::SixelLimits {
+                pixels: self.limits.graphic_pixels,
+                decoded_bytes: self.limits.graphic_decoded_bytes,
+                work: self.limits.parser_work,
+            },
+        )?;
+        update.recognized = true;
+        if image.width == 0 || image.height == 0 {
+            if !self.state.modes.sixel_private_colors {
+                self.state.sixel_colors = colors;
+            }
+            return Ok(());
+        }
+        let pending = self
+            .limits
+            .pending_events
+            .checked_total(update.events.len(), update.replies.len())?;
+        self.limits.pending_events.checked_total(pending, 1)?;
+        let anchor = self
+            .state
+            .logical_point_at(
+                self.state.cursor.position.row.get(),
+                self.state.cursor.position.column.get(),
+            )
+            .expect("cursor belongs to active grid");
+        let width = image.width;
+        let height = image.height;
+        let id = self
+            .state
+            .graphics
+            .insert_sixel(self.state.active_buffer, anchor, image)?;
+        if !self.state.modes.sixel_private_colors {
+            self.state.sixel_colors = colors;
+        }
+        self.push_event(CoreEvent::GraphicAdded(id), update)?;
+        self.push_damage(Damage::Graphics, update)?;
+        self.advance_after_sixel(width, height, update)
+    }
+
+    fn advance_after_sixel(
+        &mut self,
+        width: u32,
+        height: u32,
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        let cell_width = cell_pixel_extent(
+            self.state.size.pixels.width,
+            u32::from(self.state.size.columns.get()),
+            1,
+        );
+        let cell_height = cell_pixel_extent(
+            self.state.size.pixels.height,
+            u32::from(self.state.size.rows.get()),
+            6,
+        );
+        if self.state.modes.sixel_cursor_right {
+            let columns = width.div_ceil(cell_width).min(u32::from(u16::MAX)) as i32;
+            return self.apply_screen(crate::ScreenAction::MoveCursor { rows: 0, columns }, update);
+        }
+        if self.state.modes.sixel_scrolling {
+            self.apply_screen(crate::ScreenAction::CarriageReturn, update)?;
+            for _ in 0..height.div_ceil(cell_height) {
+                self.apply_screen(crate::ScreenAction::LineFeed, update)?;
+            }
+        }
         Ok(())
     }
 
@@ -341,6 +430,79 @@ impl TerminalCore {
 
 fn parse_usize(bytes: &[u8]) -> Option<usize> {
     std::str::from_utf8(bytes).ok()?.parse().ok()
+}
+
+fn sixel_body(bytes: &[u8]) -> Option<(Vec<usize>, &[u8])> {
+    let final_index = bytes.iter().position(|byte| *byte == b'q')?;
+    let introducer = &bytes[..final_index];
+    if !introducer
+        .iter()
+        .all(|byte| byte.is_ascii_digit() || *byte == b';')
+    {
+        return None;
+    }
+    let parameters = if introducer.is_empty() {
+        Vec::new()
+    } else {
+        introducer
+            .split(|byte| *byte == b';')
+            .map(|field| {
+                if field.is_empty() {
+                    Some(0)
+                } else {
+                    parse_usize(field)
+                }
+            })
+            .collect::<Option<Vec<_>>>()?
+    };
+    (parameters.len() <= 3).then_some((parameters, &bytes[final_index + 1..]))
+}
+
+fn sixel_aspect(macro_parameter: usize) -> crate::PixelAspect {
+    let (numerator, denominator) = match macro_parameter {
+        2 => (5, 1),
+        3 | 4 => (3, 1),
+        7..=9 => (1, 1),
+        _ => (2, 1),
+    };
+    crate::PixelAspect::new(numerator, denominator).expect("DEC aspect ratios are nonzero")
+}
+
+fn sixel_background(state: &crate::ScreenState) -> crate::Rgba8 {
+    let color = match state.default_background {
+        Color::Default => {
+            return crate::Rgba8 {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 255,
+            };
+        }
+        Color::Indexed(index) => state.palette[index.get() as usize],
+        color => color,
+    };
+    match color {
+        Color::Rgb(rgb) => crate::Rgba8 {
+            red: rgb.red,
+            green: rgb.green,
+            blue: rgb.blue,
+            alpha: 255,
+        },
+        Color::Default | Color::Indexed(_) => crate::Rgba8 {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 255,
+        },
+    }
+}
+
+fn cell_pixel_extent(total: u32, cells: u32, fallback: u32) -> u32 {
+    if total == 0 {
+        fallback
+    } else {
+        (total / cells).max(1)
+    }
 }
 
 fn parse_i32(bytes: &[u8]) -> Option<i32> {

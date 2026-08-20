@@ -37,6 +37,16 @@ REQUIRED_MODULES = {
         "Huffman::empty()",
     ),
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
+    "graphics.rs": (
+        "pub struct GraphicPlacement",
+        "struct GraphicStore",
+        "pub(crate) fn insert_sixel(",
+        ".objects",
+        ".pixels",
+        ".decoded_bytes",
+        ".frames",
+        "Vec<Rgba8>",
+    ),
     "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
     "history.rs": (
         "pub struct HistorySnapshot",
@@ -115,6 +125,17 @@ REQUIRED_MODULES = {
     "semantics.rs": ("pub enum CoreError", "pub struct CoreUpdate", "pub fn apply("),
     "sgr.rs": ("fn apply_sgr", "fn extended_color"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
+    "sixel.rs": (
+        "pub fn decode_sixel(",
+        "pub struct SixelColorRegisters",
+        "let mut working_registers = registers.clone()",
+        "charge(&mut work, data.len(), limits.work)?",
+        "limits.pixels.check(pixel_count)?",
+        "limits.decoded_bytes.check(decoded_bytes)?",
+        "let width = if declared_width == 0",
+        "let height = if declared_height == 0",
+        "fn hls(",
+    ),
     "unicode.rs": (
         'pub const UNICODE_VERSION: &str = "17.0.0"',
         "pub fn grapheme_break_before(",
@@ -287,6 +308,20 @@ REQUIRED_CODEC_PROOFS = (
     "hostile_png_prefixes_and_mutations_never_escape_bounded_errors",
 )
 
+REQUIRED_SIXEL_PROOFS = (
+    "sixel_raster_carriage_return_rgb_and_hls_are_exact",
+    "repeat_newline_and_transparent_background_preserve_sparse_pixels",
+    "malformed_and_hostile_sixel_fail_before_unbounded_allocation",
+    "dec_color_register_defaults_hls_wheel_and_macro_aspects_are_exact",
+    "dcs_sixel_adds_one_typed_placement_and_damage_event",
+    "sixel_palette_persists_unless_private_color_mode_is_enabled",
+    "sixel_scrolls_into_history_and_history_trim_releases_pixels",
+    "sixel_logical_anchor_survives_primary_reflow",
+    "screen_edge_clipping_and_alternate_teardown_are_deterministic",
+    "aggregate_object_and_pixel_limits_apply_across_graphics",
+    "streaming_dcs_boundaries_preserve_sixel_grammar_and_cursor_modes",
+)
+
 
 def check(root: Path) -> list[str]:
     failures: list[str] = []
@@ -355,6 +390,8 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in lib:
             failures.append(f"TerminalCore root lacks DTC-P17 codec export: {marker}")
+    if "pub use sixel::{" not in lib or "SixelColorRegisters" not in lib:
+        failures.append("TerminalCore root lacks the DTC-P18 sixel decoder contract")
     parser = sources.get("parser.rs", "")
     action = sources.get("parser_action.rs", "")
     if "emit: impl FnMut(Action)" not in parser:
@@ -590,6 +627,37 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_CODEC_PROOFS:
         if marker not in codec_proof_text:
             failures.append(f"DTC-P17 deterministic binary-codec proof is missing: {marker}")
+    sixel = sources.get("sixel.rs", "")
+    graphics = sources.get("graphics.rs", "")
+    compact_control_string = "".join(control_string.split())
+    for marker in (
+        "self.state.graphics.insert_sixel(",
+        "self.push_damage(Damage::Graphics, update)?",
+        "sixel_aspect(parameters.first().copied().unwrap_or(0))",
+    ):
+        if "".join(marker.split()) not in compact_control_string:
+            failures.append(f"DTC-P18 sixel semantic integration marker is missing: {marker}")
+    for marker in (
+        "80 =>",
+        "1070 =>",
+        "8452 =>",
+        "sixel_scrolling",
+        "sixel_private_colors",
+        "sixel_cursor_right",
+    ):
+        if marker not in csi:
+            failures.append(f"DTC-P18 sixel mode marker is missing: {marker}")
+    if "pub(crate) fn prune_graphics(" not in reducer:
+        failures.append("DTC-P18 must release graphics after logical-anchor trimming")
+    if "clear_buffer" not in reducer or "ScreenAction::Reset" not in reducer:
+        failures.append("DTC-P18 must tear down graphics on buffer clear and reset")
+    if "Vec<Rgba8>" not in graphics or "Vec<String>" in sixel:
+        failures.append("DTC-P18 graphics must remain bounded opaque RGBA, never text semantics")
+    sixel_tests = crate / "src" / "sixel_tests.rs"
+    sixel_proof_text = sixel_tests.read_text(encoding="utf-8") if sixel_tests.is_file() else ""
+    for marker in REQUIRED_SIXEL_PROOFS:
+        if marker not in sixel_proof_text:
+            failures.append(f"DTC-P18 deterministic sixel proof is missing: {marker}")
     return failures
 
 

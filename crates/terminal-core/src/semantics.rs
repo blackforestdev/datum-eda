@@ -9,6 +9,7 @@ use std::fmt;
 pub enum CoreError {
     Screen(ScreenError),
     Limit(LimitError),
+    Sixel(crate::SixelError),
     InvalidPrintable,
 }
 
@@ -17,6 +18,7 @@ impl fmt::Display for CoreError {
         match self {
             Self::Screen(error) => error.fmt(formatter),
             Self::Limit(error) => error.fmt(formatter),
+            Self::Sixel(error) => error.fmt(formatter),
             Self::InvalidPrintable => formatter.write_str("terminal printable cluster is invalid"),
         }
     }
@@ -33,6 +35,12 @@ impl From<ScreenError> for CoreError {
 impl From<LimitError> for CoreError {
     fn from(value: LimitError) -> Self {
         Self::Limit(value)
+    }
+}
+
+impl From<crate::SixelError> for CoreError {
+    fn from(value: crate::SixelError) -> Self {
+        Self::Sixel(value)
     }
 }
 
