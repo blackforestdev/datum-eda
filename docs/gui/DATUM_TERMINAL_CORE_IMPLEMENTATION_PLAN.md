@@ -1255,6 +1255,48 @@ the complete terminal input protocol surface.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P15 --> **DTC-P15 — input protocols.** Legacy and modified keys, application cursor/
   keypad, kitty negotiation stack, mouse families, focus, paste, IME commit
   contract, replies, local override, and coordinate clipping.
+
+#### DTC-P15 input-protocol evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P15-CLOSED -->
+Revision `cde29f5` makes TerminalCore the bounded authority for outbound key,
+mouse, focus, paste, and IME-commit bytes. Legacy encoding covers text, control
+and Meta chords, cursor and navigation keys, F1 through F35, and numeric and
+application keypad modes. Kitty keyboard support owns the disambiguation,
+event, alternate-key, all-key, and associated-text flags; set, push, pop, and
+query negotiation; press, repeat, and release events; shifted and base-layout
+identity; and the protocol's extended keypad, lock, media, and modifier codes.
+Parameterized Kitty CSI-u sequences no longer collide with the parameter-free
+legacy cursor-restore sequence.
+
+Mouse input covers X10, button, drag, and any-motion tracking with default,
+UTF-8, SGR cell, URXVT, and SGR pixel encodings. Cell and pixel coordinates are
+clipped to the current checked terminal size, releases retain their exact
+button identity where the selected protocol permits it, and an explicit local
+override keeps selection gestures out of the child stream. Focus reporting,
+bracketed paste, IME preedit locality, and IME commit transmission are distinct
+typed dispositions. Complete encoded inputs are admitted atomically through an
+owner-supplied `InputBytes` limit, and the Kitty save stack is bounded by the
+owner-supplied `KeyboardStack` limit; neither resource has a built-in policy
+default. Reset clears all negotiated input state.
+
+Eighty-one TerminalCore tests pass. Nine focused DTC-P15 proofs cover legacy and
+application keys, chunk-invariant bounded Kitty negotiation and replies, event,
+alternate-key and associated-text encoding, focus/paste/IME contracts, every
+mouse family, coordinate clipping, local override, tracking filters, atomic
+input-limit rejection, and reset. The TerminalCore boundary guard requires all
+input owner modules, both limit families, the five Kitty flags and negotiation
+stack, every mouse encoding, local override and clipping markers, and every
+named proof; eighteen hermetic mutations pass.
+
+The full locked/offline workspace all-target suite and strict workspace
+all-target Clippy pass, as do dependency authority, TerminalCore boundary,
+spec governance, project-state validation, formatting, and diff hygiene. The
+shared worktree source-health check remains red only on seven unrelated
+pre-existing dirty legacy files outside this revision; all DTC-P15 files remain
+below 700 lines. DTC-P15 adds no Cargo dependency, runtime fetch, Unicode-policy
+change, renderer, PTY/GUI/process authority, TERM identity, security policy, or
+production cutover. DTC-P16 owns metadata and escape-driven security policy.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P16 --> **DTC-P16 — metadata security.** OSC 8/52/133, links, clipboard requests,
   palette/title/CWD, notifications/progress, URI/paste policy, session scoping,
   rate limits, and proof that escapes cannot invoke Datum operations.
