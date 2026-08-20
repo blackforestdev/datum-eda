@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import sys
+import hashlib
 import tomllib
 from pathlib import Path
 
@@ -31,6 +32,32 @@ REQUIRED_MODULES = {
     "semantics.rs": ("pub enum CoreError", "pub struct CoreUpdate", "pub fn apply("),
     "sgr.rs": ("fn apply_sgr", "fn extended_color"),
     "snapshot.rs": ("pub struct TerminalSnapshot", "fn validate_continuations"),
+    "unicode.rs": (
+        'pub const UNICODE_VERSION: &str = "17.0.0"',
+        "pub fn grapheme_break_before(",
+        "pub fn grapheme_indices(",
+        "pub fn terminal_cluster_width(",
+        "BidirectionalTextPolicy::LogicalOrder",
+        "pub struct ShapingCluster",
+    ),
+    "unicode_grapheme_tables.rs": ("GRAPHEME_BREAK_RANGES", "INCB_RANGES"),
+    "unicode_width_tables.rs": (
+        "EAST_ASIAN_WIDTH_RANGES",
+        "EXTENDED_PICTOGRAPHIC_RANGES",
+        "EMOJI_PRESENTATION_RANGES",
+    ),
+}
+
+UNICODE_INPUTS = {
+    "17.0.0/DerivedCoreProperties.txt": "24c7fed1195c482faaefd5c1e7eb821c5ee1fb6de07ecdbaa64b56a99da22c08",
+    "17.0.0/EastAsianWidth.txt": "ea7ce50f3444a050333448dffef1cadd9325af55cbb764b4a2280faf52170a33",
+    "17.0.0/GraphemeBreakProperty.txt": "d6b51d1d2ae5c33b451b7ed994b48f1f4dc62b2272a5831e7fd418514a6bae89",
+    "17.0.0/GraphemeBreakTest.txt": "e2d134d2c52919bace503ebb6a551c1855fe1a1faec18478c78fff254a1793ec",
+    "17.0.0/emoji-data.txt": "2cb2bb9455cda83e8481541ecf5b6dfda66a3bb89efa3fa7c5297eccf607b72b",
+    "17.0.0/emoji-sequences.txt": "12cc8267dc33cbd11ed32bcf6fc5dc2ad9c7a77bae1bdfba2f41b1b9b3ead8dd",
+    "17.0.0/emoji-variation-sequences.txt": "bb3d09ef03f206012c7532dd52dc0a21c9efddba0135ea4cf0d9201b8b9bba7e",
+    "17.0.0/emoji-zwj-sequences.txt": "5b25441daed2322b068c5e70cda522946a4f0274df864445a1965a92e5fc5cad",
+    "LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
 }
 
 REQUIRED_LIMITS = (
@@ -48,6 +75,7 @@ FORBIDDEN_SOURCE = (
     "winit", "wgpu", "glyphon", "gui_app", "gui_protocol", "gui_render",
     "DesignModel", "Operation", "commit(", "journal", "libc::", "include!",
     "extern crate", "ghostty", "alacritty", "portable_pty", "vte::",
+    "unicode_segmentation::", "unicode_width::", "unicode_bidi::", "icu_", "std::env",
     "from_utf8_lossy",
 )
 
@@ -86,6 +114,17 @@ REQUIRED_SEMANTIC_PROOFS = (
     "complete_semantics_are_invariant_across_arbitrary_parser_chunks",
     "metadata_limits_and_unsupported_queries_fail_closed",
     "semantic_events_and_replies_share_one_checked_pending_limit",
+)
+
+REQUIRED_UNICODE_PROOFS = (
+    "unicode_17_grapheme_break_corpus_matches_every_normative_boundary",
+    "every_rgi_emoji_sequence_is_one_two_cell_cluster",
+    "unicode_width_policy_covers_ascii_ambiguous_cjk_and_emoji",
+    "terminal_core_combines_marks_and_emoji_without_orphan_cells",
+    "variation_selector_width_expansion_wraps_atomically_at_the_right_edge",
+    "unicode_screen_state_is_invariant_across_every_utf8_chunk_boundary",
+    "bidirectional_text_policy_preserves_logical_cell_order",
+    "shaping_boundary_exposes_original_cluster_text_and_fixed_cell_ownership",
 )
 
 
@@ -217,6 +256,32 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_SEMANTIC_PROOFS:
         if marker not in semantic_proof_text:
             failures.append(f"DTC-P10 deterministic semantic proof is missing: {marker}")
+
+    unicode_root = crate / "unicode"
+    for relative, expected in UNICODE_INPUTS.items():
+        path = unicode_root / relative
+        if not path.is_file():
+            failures.append(f"DTC-P11 Unicode input is missing: {relative}")
+            continue
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            failures.append(f"DTC-P11 Unicode input checksum drifted: {relative}")
+    generator = root / "scripts/generate_terminal_unicode.py"
+    generator_text = generator.read_text(encoding="utf-8") if generator.is_file() else ""
+    for marker in ("EXPECTED_SHA256", "--check", "verify_inputs", "generated_files"):
+        if marker not in generator_text:
+            failures.append(f"DTC-P11 offline Unicode generator marker is missing: {marker}")
+    if "urlopen" in generator_text or "requests" in generator_text or "curl" in generator_text:
+        failures.append("DTC-P11 Unicode generation must remain offline")
+    if "ScreenAction::AppendCluster" not in sources.get("semantics.rs", ""):
+        failures.append("DTC-P11 grapheme extension must enter the sole screen reducer")
+    if "grapheme_anchor" not in sources.get("screen.rs", ""):
+        failures.append("DTC-P11 screen state must retain a bounded grapheme anchor")
+    unicode_tests = crate / "src" / "unicode_tests.rs"
+    unicode_proof_text = unicode_tests.read_text(encoding="utf-8") if unicode_tests.is_file() else ""
+    for marker in REQUIRED_UNICODE_PROOFS:
+        if marker not in unicode_proof_text:
+            failures.append(f"DTC-P11 deterministic Unicode proof is missing: {marker}")
     return failures
 
 

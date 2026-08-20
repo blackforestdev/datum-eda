@@ -2012,15 +2012,22 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-20260819-terminal-core",
-        "claimed_at": "2026-08-19T10:08:52-07:00",
-        "heartbeat_at": "2026-08-19T16:45:00-07:00",
-        "expires_at": "2026-08-20T00:45:00-07:00",
+        "session": "dtc-p11-20260820",
+        "claimed_at": "2026-08-20T03:24:41Z",
+        "heartbeat_at": "2026-08-20T03:24:41Z",
+        "expires_at": "2026-08-20T11:24:41Z",
         "scope": [
-          "DTC-P11 governed Unicode tables, graphemes, emoji and ZWJ, width, wide-cell placement, shaping boundary, BiDi policy, tests, and evidence"
+          "crates/terminal-core",
+          "scripts/check_terminal_core_boundary.py",
+          "scripts/test_terminal_core_boundary.py",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "docs/LICENSING.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
         ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "be9f268"
+        "worktree": "main",
+        "head": "fd18290deaa82a7425fab57c2ef9e278e62481b9"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2123,11 +2130,68 @@
             ]
           },
           {
+            "id": "DTC-P11A",
+            "kind": "owner_decision",
+            "status": "complete",
+            "action": "Ratify the exact Unicode version, ambiguous-width tailoring, and BiDi posture before Unicode data generation or text implementation begins.",
+            "depends_on": ["DTC-P10"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11A"}],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U1-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U2-OWNER-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U3-OWNER-APPROVED"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Approve each requested policy with the exact phrase shown, or revise/defer the named P11-Un item.",
+              "requests": [
+                {
+                  "id": "P11-U1",
+                  "question": "Which exact Unicode data version governs TerminalCore text behavior?",
+                  "recommended_response": "Approve Unicode 17.0.0 final as the immutable versioned input for DTC-P11.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P11-U1"
+                  }
+                },
+                {
+                  "id": "P11-U2",
+                  "question": "How many terminal cells should East Asian Width Ambiguous characters occupy by default?",
+                  "recommended_response": "Approve one cell independent of locale; any future two-cell terminal profile requires a separately governed compatibility decision.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P11-U2"
+                  }
+                },
+                {
+                  "id": "P11-U3",
+                  "question": "Should TerminalCore preserve bidirectional text in logical input order instead of visually reordering terminal cells?",
+                  "recommended_response": "Approve logical-order cell ownership with no UAX #9 visual reordering in TerminalCore.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P11-U3"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "DTC-P11",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Generate governed Unicode tables and implement grapheme, emoji, combining, width, wide-cell, shaping-boundary, and declared BiDi behavior.",
-            "depends_on": ["DTC-P07", "DTC-P09"],
+            "depends_on": ["DTC-P07", "DTC-P09", "DTC-P11A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11"}],
             "completion_evidence": []
           },

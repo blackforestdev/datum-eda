@@ -26,6 +26,9 @@ mod screen;
 mod semantics;
 mod sgr;
 mod snapshot;
+mod unicode;
+mod unicode_grapheme_tables;
+mod unicode_width_tables;
 
 pub use cell::{
     Cell, CellAttribute, CellAttributes, CellContent, CellStyle, CellWidth, Cluster, ClusterError,
@@ -64,6 +67,10 @@ pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
 pub use semantics::{CoreError, CoreUpdate};
 pub use snapshot::{SnapshotCell, SnapshotError, SnapshotRow, TerminalSnapshot};
+pub use unicode::{
+    BIDIRECTIONAL_TEXT_POLICY, BidirectionalTextPolicy, GraphemeIndices, ShapingCluster,
+    UNICODE_VERSION, grapheme_break_before, grapheme_indices, terminal_cluster_width,
+};
 
 #[cfg(test)]
 mod tests;
@@ -76,3 +83,6 @@ mod reducer_tests;
 
 #[cfg(test)]
 mod semantic_tests;
+
+#[cfg(test)]
+mod unicode_tests;

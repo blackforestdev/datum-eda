@@ -74,6 +74,9 @@ impl CoreUpdate {
 impl TerminalCore {
     pub fn apply(&mut self, action: Action) -> Result<CoreUpdate, CoreError> {
         let mut update = CoreUpdate::new(self);
+        if !matches!(action, Action::Print(_)) {
+            self.state.grapheme_anchor = None;
+        }
         match action {
             Action::Print(character) => self.apply_print(character, &mut update)?,
             Action::Execute(control) => self.apply_control(control.byte(), &mut update)?,
@@ -94,12 +97,30 @@ impl TerminalCore {
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
         let mapped = self.state.charsets.map(character);
-        let cluster = Cluster::new(
-            mapped.to_string(),
-            crate::CellWidth::One,
-            self.limits.cluster_bytes,
-        )
-        .map_err(|_| CoreError::InvalidPrintable)?;
+        if let Some(anchor) = self.state.grapheme_anchor
+            && let Some(crate::Cell {
+                content: crate::CellContent::Cluster(existing),
+                ..
+            }) = self.state.cell(anchor.row.get(), anchor.column.get())
+            && !crate::grapheme_break_before(existing.text(), mapped)
+        {
+            let mut text = existing.text().to_owned();
+            text.push(mapped);
+            let width = crate::terminal_cluster_width(&text);
+            let cluster = Cluster::new(text, width, self.limits.cluster_bytes)
+                .map_err(|_| CoreError::InvalidPrintable)?;
+            return self.apply_screen(
+                ScreenAction::AppendCluster {
+                    at: anchor,
+                    cluster,
+                },
+                update,
+            );
+        }
+        let text = mapped.to_string();
+        let width = crate::terminal_cluster_width(&text);
+        let cluster = Cluster::new(text, width, self.limits.cluster_bytes)
+            .map_err(|_| CoreError::InvalidPrintable)?;
         self.apply_screen(ScreenAction::Print(cluster), update)
     }
 

@@ -1,0 +1,3 @@
+# Preserve checksum-pinned upstream Unicode data byte-for-byte. Its formatting
+# is governed by crates/terminal-core/unicode/SHA256SUMS, not repository style.
+crates/terminal-core/unicode/** -whitespace

@@ -1056,10 +1056,48 @@ the declared BiDi policy.
 
 ### Text, history, and interaction semantics
 
-- <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** Pinned generated property tables,
+- <!-- REQ:TERMINAL-T1-CORE:DTC-P11A --> **DTC-P11A — Unicode policy owner decisions.** Before standards data is
+  downloaded or generated, the owner pins the exact Unicode version,
+  ambiguous-width tailoring, and BiDi posture. These choices are compatibility
+  policy, not generator implementation details. Approval does not authorize a
+  dependency, copied implementation, build/runtime download, automatic future
+  Unicode upgrade, or renderer ownership in TerminalCore.
+- <!-- REQ:TERMINAL-T1-CORE:DTC-P11 --> **DTC-P11 — Unicode data and text.** After DTC-P11A, pin exact provenance,
+  license and checksums; generate reviewed property tables offline; implement
   extended graphemes, emoji/ZWJ, deterministic width tailoring, combining and
   wide-cell placement, original text preservation, font/shaping boundary, and
   declared BiDi behavior.
+
+#### DTC-P11A owner packet
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P11A:P11-U1 --> **P11-U1 — Unicode version.** Owner-approved 2026-08-19: pin
+  Unicode 17.0.0 final data and the synchronized Unicode 17 authorities. The
+  versioned input set is immutable for this implementation package; any later
+  Unicode version is a separately reviewed compatibility change.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U1-OWNER-APPROVED -->
+Owner response `approve DTC-P11 Unicode 17.0.0` on 2026-08-19 ratifies exactly
+the version pin above. It does not disposition ambiguous width or BiDi.
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P11A:P11-U2 --> **P11-U2 — ambiguous-width tailoring.** Recommended: East Asian
+  Width `A` defaults to one terminal cell, independent of locale. A future
+  explicit terminal profile may choose two cells only through another governed
+  compatibility decision; glyph advance never changes cell ownership.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U2-OWNER-APPROVED -->
+Owner response `approve DTC-P11 ambiguous-width 1` on 2026-08-19 ratifies the
+one-cell, locale-independent default above. It does not disposition BiDi.
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P11A:P11-U3 --> **P11-U3 — BiDi posture.** Recommended: TerminalCore preserves
+  original code points, grapheme clusters, logical input order, and fixed cell
+  ownership without applying UAX #9 visual reordering. The renderer may shape
+  within a cluster but may not reorder or resize terminal cells. Adding visual
+  BiDi is a separately governed compatibility capability.
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P11A:P11-U3-OWNER-APPROVED -->
+Owner response `approve DTC-P11 logical-order BiDi` on 2026-08-19 ratifies the
+logical-order, fixed-cell posture above and completes DTC-P11A. It does not
+authorize visual BiDi reordering, a dependency, or renderer ownership in
+TerminalCore.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P12 --> **DTC-P12 — history and reflow.** Logical lines, hard/soft breaks, bounded
   storage, alternate isolation, stable viewport/cursor/selection/search/link/
   graphics anchors, deterministic trim, and resize reflow.

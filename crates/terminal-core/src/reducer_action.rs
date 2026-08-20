@@ -1,4 +1,4 @@
-use crate::{CellStyle, Cluster, Margins, ScreenBuffer};
+use crate::{CellPoint, CellStyle, Cluster, Margins, ScreenBuffer};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EraseLine {
@@ -25,6 +25,10 @@ pub enum FoundationMode {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ScreenAction {
     Print(Cluster),
+    AppendCluster {
+        at: CellPoint,
+        cluster: Cluster,
+    },
     Backspace,
     CarriageReturn,
     LineFeed,

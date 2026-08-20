@@ -73,6 +73,7 @@ impl TerminalCore {
     fn apply_action(&mut self, action: ScreenAction) {
         match action {
             ScreenAction::Print(cluster) => self.print(cluster),
+            ScreenAction::AppendCluster { at, cluster } => self.append_cluster(at, cluster),
             ScreenAction::Backspace => self.backspace(),
             ScreenAction::CarriageReturn => self.carriage_return(),
             ScreenAction::LineFeed => self.line_feed(),
@@ -130,6 +131,7 @@ impl TerminalCore {
         }
         let row = usize::from(self.state.cursor.position.row.get());
         let column = self.state.cursor.position.column;
+        let anchor = self.state.cursor.position;
         let cell = Cell {
             content: CellContent::Cluster(cluster),
             style: self.state.style,
@@ -137,6 +139,7 @@ impl TerminalCore {
             protected: self.state.protected,
         };
         self.state.active_grid_mut().set_cluster(row, column, cell);
+        self.state.grapheme_anchor = Some(anchor);
 
         let end = column.get().saturating_add(width - 1);
         if end >= right {
@@ -146,6 +149,68 @@ impl TerminalCore {
         } else {
             self.state.cursor.position.column = Column::new(end + 1, self.state.size.columns)
                 .unwrap_or(self.state.cursor.position.column);
+        }
+    }
+
+    fn append_cluster(&mut self, at: CellPoint, cluster: crate::Cluster) {
+        let row = usize::from(at.row.get());
+        let column = usize::from(at.column.get());
+        let Some(existing) = self
+            .state
+            .active_grid()
+            .rows
+            .get(row)
+            .and_then(|row| row.cells.get(column))
+            .cloned()
+        else {
+            self.state.grapheme_anchor = None;
+            return;
+        };
+        if !matches!(existing.content, CellContent::Cluster(_)) {
+            self.state.grapheme_anchor = None;
+            return;
+        }
+        let (_, right) = self.horizontal_bounds_for_cursor();
+        if cluster.width() == CellWidth::Two && at.column.get() >= right {
+            if !self.state.modes.auto_wrap {
+                return;
+            }
+            self.state.active_grid_mut().clear_cluster_at(row, column);
+            self.state.cursor.position = at;
+            self.state.cursor.pending_wrap = false;
+            self.wrap_line();
+        } else {
+            self.state.cursor.position = at;
+            self.state.cursor.pending_wrap = false;
+        }
+        let anchor = self.state.cursor.position;
+        let cell = Cell {
+            content: CellContent::Cluster(cluster.clone()),
+            style: existing.style,
+            hyperlink: existing.hyperlink,
+            protected: existing.protected,
+        };
+        self.state.active_grid_mut().set_cluster(
+            usize::from(anchor.row.get()),
+            anchor.column,
+            cell,
+        );
+        self.state.last_printed = Some(cluster.clone());
+        self.state.grapheme_anchor = Some(anchor);
+        let width = if cluster.width() == CellWidth::Two {
+            2
+        } else {
+            1
+        };
+        let (_, right) = self.horizontal_bounds_for_cursor();
+        let end = anchor.column.get().saturating_add(width - 1);
+        if end >= right {
+            self.state.cursor.position.column =
+                Column::new(right, self.state.size.columns).unwrap_or(anchor.column);
+            self.state.cursor.pending_wrap = self.state.modes.auto_wrap;
+        } else {
+            self.state.cursor.position.column =
+                Column::new(end + 1, self.state.size.columns).unwrap_or(anchor.column);
         }
     }
 
@@ -471,6 +536,7 @@ impl TerminalCore {
         self.state.saved = None;
         self.state.synchronized_dirty = false;
         self.state.last_printed = None;
+        self.state.grapheme_anchor = None;
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

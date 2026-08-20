@@ -82,6 +82,14 @@ pinned in `crates/engine/assets/fonts/FONT_PROVENANCE.md`. This narrow font
 asset authorization does not relax decision 029 or authorize third-party
 terminal source, packages, build tools, or runtime fallback.
 
+Product Mechanics 030 separately classifies the checked-in Unicode 17.0.0 and
+Emoji 17.0 property/test files as governed normative standards data rather than
+a code dependency. Their exact Unicode Consortium URLs and SHA-256 checksums
+are pinned in `crates/terminal-core/unicode/`; the applicable Unicode License
+v3 (`Unicode-3.0`) is retained there. A Datum-owned offline generator produces
+reviewed Rust tables. Neither builds nor runtime download data or execute
+third-party Unicode implementation code.
+
 | Dependency | License | Risk |
 |-----------|---------|------|
 | KiCad PNS router | GPL v3 | High — infects if linked. Mitigate with process isolation or deferral |

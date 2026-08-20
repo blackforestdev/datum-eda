@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -22,6 +23,13 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         root = Path(temporary.name)
         source = root / guard.CRATE / "src"
         source.mkdir(parents=True)
+        shutil.copytree(guard.ROOT / guard.CRATE / "unicode", root / guard.CRATE / "unicode")
+        scripts = root / "scripts"
+        scripts.mkdir()
+        shutil.copy2(
+            guard.ROOT / "scripts/generate_terminal_unicode.py",
+            scripts / "generate_terminal_unicode.py",
+        )
         (root / "Cargo.toml").write_text(
             '[workspace]\nmembers = ["crates/terminal-core"]\n', encoding="utf-8"
         )
@@ -70,6 +78,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "semantic_tests.rs").write_text(
             "\n".join(guard.REQUIRED_SEMANTIC_PROOFS), encoding="utf-8"
         )
+        (source / "unicode_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_UNICODE_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -90,6 +101,14 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             "pub use reducer::{Reduction, ScreenError};\n"
             "pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};\n"
             "pub use semantics::{CoreError, CoreUpdate};\n",
+            encoding="utf-8",
+        )
+        (source / "semantics.rs").write_text(
+            (source / "semantics.rs").read_text() + "\nScreenAction::AppendCluster\n",
+            encoding="utf-8",
+        )
+        (source / "screen.rs").write_text(
+            (source / "screen.rs").read_text() + "\ngrapheme_anchor\n",
             encoding="utf-8",
         )
         return temporary, root
@@ -221,6 +240,37 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         semantics = root / guard.CRATE / "src/semantics.rs"
         semantics.write_text(semantics.read_text() + "\nVec<CoreUpdate>\n")
         self.assertTrue(any("update queue" in item for item in guard.check(root)))
+
+    def test_unicode_input_generator_and_proof_drift_fail(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        width = root / guard.CRATE / "unicode/17.0.0/EastAsianWidth.txt"
+        width.write_text(width.read_text() + "\n# drift\n")
+        generator = root / "scripts/generate_terminal_unicode.py"
+        generator.write_text(generator.read_text().replace("verify_inputs", "removed"))
+        proofs = root / guard.CRATE / "src/unicode_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "unicode_17_grapheme_break_corpus_matches_every_normative_boundary", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("checksum drifted" in item for item in failures))
+        self.assertTrue(any("generator marker" in item for item in failures))
+        self.assertTrue(any("grapheme_break_corpus" in item for item in failures))
+
+    def test_unicode_policy_or_reducer_integration_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        unicode = root / guard.CRATE / "src/unicode.rs"
+        unicode.write_text(
+            unicode.read_text().replace("BidirectionalTextPolicy::LogicalOrder", "removed")
+        )
+        semantics = root / guard.CRATE / "src/semantics.rs"
+        semantics.write_text(semantics.read_text().replace("ScreenAction::AppendCluster", "removed"))
+        failures = guard.check(root)
+        self.assertTrue(any("owned marker" in item for item in failures))
+        self.assertTrue(any("sole screen reducer" in item for item in failures))
 
 
 if __name__ == "__main__":
