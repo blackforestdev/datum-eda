@@ -141,11 +141,12 @@ fn nested_blocks_by_form_with_max_indent(
                         trimmed.as_bytes().get(prefix.len()),
                         Some(b' ') | Some(b'\t') | Some(b')') | None
                     )
-            }) {
-                capturing_form = Some(form.clone());
-                current.clear();
-                depth = 0;
-            }
+            })
+        {
+            capturing_form = Some(form.clone());
+            current.clear();
+            depth = 0;
+        }
 
         if let Some(form) = capturing_form.as_ref() {
             current.push(line.to_string());
@@ -939,10 +940,11 @@ pub(super) fn parse_kicad_layer_table(contents: &str) -> std::collections::HashM
                     let mut parts = inner.split_whitespace();
                     if let Some(id_str) = parts.next()
                         && let Ok(id) = id_str.parse::<i32>()
-                            && let Some(name) = parts.next() {
-                                let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
-                                map.insert(name.to_string(), id);
-                            }
+                        && let Some(name) = parts.next()
+                    {
+                        let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
+                        map.insert(name.to_string(), id);
+                    }
                 }
             }
         }

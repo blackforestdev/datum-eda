@@ -779,14 +779,15 @@ pub(super) fn append_transaction_journal(
             }
         }
         if let Some((last_transaction, _)) = existing_transactions.last()
-            && last_transaction.after_model_revision != transaction.before_model_revision {
-                return Err(EngineError::Operation(format!(
-                    "journal append refused: transaction {} before revision {} does not match journal tip {}",
-                    transaction.transaction_id,
-                    transaction.before_model_revision.0,
-                    last_transaction.after_model_revision.0
-                )));
-            }
+            && last_transaction.after_model_revision != transaction.before_model_revision
+        {
+            return Err(EngineError::Operation(format!(
+                "journal append refused: transaction {} before revision {} does not match journal tip {}",
+                transaction.transaction_id,
+                transaction.before_model_revision.0,
+                last_transaction.after_model_revision.0
+            )));
+        }
     }
 
     let mut file = std::fs::OpenOptions::new()

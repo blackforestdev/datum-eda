@@ -37,16 +37,17 @@ pub(super) fn validate_and_replay_journal(
     let mut valid = Vec::new();
     let mut current_revision = compute_model_revision(project_id, shards, objects);
     if let Some(first) = journal.first()
-        && first.before_model_revision != current_revision {
-            return validate_promoted_journal_tip(
-                project_root,
-                project_id,
-                shards,
-                objects,
-                journal,
-                diagnostics,
-            );
-        }
+        && first.before_model_revision != current_revision
+    {
+        return validate_promoted_journal_tip(
+            project_root,
+            project_id,
+            shards,
+            objects,
+            journal,
+            diagnostics,
+        );
+    }
 
     for (index, transaction) in journal.iter().enumerate() {
         if let Err(message) = validate_transaction_links(transaction, &valid) {

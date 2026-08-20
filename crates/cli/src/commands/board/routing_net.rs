@@ -306,9 +306,10 @@ pub(crate) fn edit_native_project_board_track(
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
     if let Some(net_uuid) = net_uuid
-        && !project.board.nets.contains_key(&net_uuid.to_string()) {
-            bail!("board net not found in native project: {net_uuid}");
-        }
+        && !project.board.nets.contains_key(&net_uuid.to_string())
+    {
+        bail!("board net not found in native project: {net_uuid}");
+    }
     let value = project
         .board
         .tracks
@@ -360,9 +361,10 @@ pub(crate) fn edit_native_project_board_via(
 ) -> Result<NativeProjectBoardViaMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
     if let Some(net_uuid) = net_uuid
-        && !project.board.nets.contains_key(&net_uuid.to_string()) {
-            bail!("board net not found in native project: {net_uuid}");
-        }
+        && !project.board.nets.contains_key(&net_uuid.to_string())
+    {
+        bail!("board net not found in native project: {net_uuid}");
+    }
     let value = project
         .board
         .vias

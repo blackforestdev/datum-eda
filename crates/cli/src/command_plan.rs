@@ -137,13 +137,14 @@ pub(super) fn load_scoped_replacement_manifest_with_metadata(
 
     let kind = value.get("kind").and_then(serde_json::Value::as_str);
     if let Some(kind) = kind
-        && kind != SCOPED_REPLACEMENT_MANIFEST_KIND {
-            bail!(
-                "unsupported scoped replacement manifest kind '{}' in {}",
-                kind,
-                path.display()
-            );
-        }
+        && kind != SCOPED_REPLACEMENT_MANIFEST_KIND
+    {
+        bail!(
+            "unsupported scoped replacement manifest kind '{}' in {}",
+            kind,
+            path.display()
+        );
+    }
 
     let version = match value.get("version") {
         Some(version) => {

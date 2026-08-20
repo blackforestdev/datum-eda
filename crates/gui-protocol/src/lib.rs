@@ -149,7 +149,6 @@ pub struct BoardGraphicPrimitive {
     pub width_nm: Option<i64>,
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UnroutedPrimitive {
     pub object_id: String,
@@ -4884,7 +4883,8 @@ mod tests {
         // The real PTY terminal display buffer is byte-for-byte unchanged and
         // never carries the GUI-action echo.
         assert_eq!(
-            state.ui.terminal.grid_lines(), terminal_before,
+            state.ui.terminal.grid_lines(),
+            terminal_before,
             "GUI-action narration must not mutate the terminal display buffer"
         );
         assert!(

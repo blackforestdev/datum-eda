@@ -242,18 +242,19 @@ fn validate_schematic_root(
             checked_sheet_files += 1;
             validate_schema_version(issues, relative_subject(root, &path), sheet.schema_version);
             if let Some(expected_uuid) = expected_uuid
-                && sheet.uuid != expected_uuid {
-                    push_issue(
-                        issues,
-                        "error",
-                        "uuid_key_mismatch",
-                        subject.clone(),
-                        format!(
-                            "schematic sheet key {expected_uuid} does not match file UUID {}",
-                            sheet.uuid
-                        ),
-                    );
-                }
+                && sheet.uuid != expected_uuid
+            {
+                push_issue(
+                    issues,
+                    "error",
+                    "uuid_key_mismatch",
+                    subject.clone(),
+                    format!(
+                        "schematic sheet key {expected_uuid} does not match file UUID {}",
+                        sheet.uuid
+                    ),
+                );
+            }
             record_uuid(
                 "schematic_sheet",
                 sheet.uuid,
@@ -294,18 +295,19 @@ fn validate_schematic_root(
                 definition.schema_version,
             );
             if let Some(expected_uuid) = expected_uuid
-                && definition.uuid != expected_uuid {
-                    push_issue(
-                        issues,
-                        "error",
-                        "uuid_key_mismatch",
-                        subject,
-                        format!(
-                            "sheet definition key {expected_uuid} does not match file UUID {}",
-                            definition.uuid
-                        ),
-                    );
-                }
+                && definition.uuid != expected_uuid
+            {
+                push_issue(
+                    issues,
+                    "error",
+                    "uuid_key_mismatch",
+                    subject,
+                    format!(
+                        "sheet definition key {expected_uuid} does not match file UUID {}",
+                        definition.uuid
+                    ),
+                );
+            }
             record_uuid(
                 "sheet_definition",
                 definition.uuid,
@@ -465,18 +467,19 @@ fn validate_schematic_instances(
             );
         }
         if let Some(parent_sheet) = instance.parent_sheet
-            && !sheet_uuids.contains(&parent_sheet) {
-                push_issue(
-                    issues,
-                    "error",
-                    "dangling_reference",
-                    subject,
-                    format!(
-                        "sheet instance {} references missing parent sheet {}",
-                        instance.uuid, parent_sheet
-                    ),
-                );
-            }
+            && !sheet_uuids.contains(&parent_sheet)
+        {
+            push_issue(
+                issues,
+                "error",
+                "dangling_reference",
+                subject,
+                format!(
+                    "sheet instance {} references missing parent sheet {}",
+                    instance.uuid, parent_sheet
+                ),
+            );
+        }
     }
 }
 
@@ -688,15 +691,16 @@ fn validate_board_root(
             );
         }
         if let Some(net) = pad.net
-            && !net_uuids.contains(&net) {
-                push_issue(
-                    issues,
-                    "error",
-                    "dangling_reference",
-                    format!("board/board.json#pads/{}", pad.uuid),
-                    format!("board pad {} references missing net {}", pad.uuid, net),
-                );
-            }
+            && !net_uuids.contains(&net)
+        {
+            push_issue(
+                issues,
+                "error",
+                "dangling_reference",
+                format!("board/board.json#pads/{}", pad.uuid),
+                format!("board pad {} references missing net {}", pad.uuid, net),
+            );
+        }
     }
 
     let tracks = validate_uuid_keyed_json_map(
@@ -867,18 +871,19 @@ where
             Ok(item) => {
                 let actual_uuid = get_uuid(&item);
                 if let Some(expected_uuid) = expected_uuid
-                    && actual_uuid != expected_uuid {
-                        push_issue(
-                            issues,
-                            "error",
-                            "uuid_key_mismatch",
-                            subject.clone(),
-                            format!(
-                                "{object_type} key {expected_uuid} does not match value UUID {}",
-                                actual_uuid
-                            ),
-                        );
-                    }
+                    && actual_uuid != expected_uuid
+                {
+                    push_issue(
+                        issues,
+                        "error",
+                        "uuid_key_mismatch",
+                        subject.clone(),
+                        format!(
+                            "{object_type} key {expected_uuid} does not match value UUID {}",
+                            actual_uuid
+                        ),
+                    );
+                }
                 record_uuid(object_type, actual_uuid, subject, seen, issues);
                 parsed.push(item);
             }
@@ -909,18 +914,19 @@ fn validate_uuid_keyed_typed_map<T, F>(
         let expected_uuid = parse_uuid_key(key, &subject, issues);
         let actual_uuid = get_uuid(value);
         if let Some(expected_uuid) = expected_uuid
-            && actual_uuid != expected_uuid {
-                push_issue(
-                    issues,
-                    "error",
-                    "uuid_key_mismatch",
-                    subject.clone(),
-                    format!(
-                        "{object_type} key {expected_uuid} does not match value UUID {}",
-                        actual_uuid
-                    ),
-                );
-            }
+            && actual_uuid != expected_uuid
+        {
+            push_issue(
+                issues,
+                "error",
+                "uuid_key_mismatch",
+                subject.clone(),
+                format!(
+                    "{object_type} key {expected_uuid} does not match value UUID {}",
+                    actual_uuid
+                ),
+            );
+        }
         record_uuid(object_type, actual_uuid, subject, seen, issues);
     }
 }
