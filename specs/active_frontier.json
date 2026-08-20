@@ -2012,10 +2012,10 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "dtc-p11-20260820",
-        "claimed_at": "2026-08-20T03:24:41Z",
-        "heartbeat_at": "2026-08-20T03:24:41Z",
-        "expires_at": "2026-08-20T11:24:41Z",
+        "session": "dtc-p12-20260820",
+        "claimed_at": "2026-08-20T03:55:47Z",
+        "heartbeat_at": "2026-08-20T03:55:47Z",
+        "expires_at": "2026-08-20T11:55:47Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",
@@ -2027,7 +2027,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "main",
-        "head": "fd18290deaa82a7425fab57c2ef9e278e62481b9"
+        "head": "199bc4c"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2039,7 +2039,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P11",
+        "canonical_next_step_id": "DTC-P12",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2189,16 +2189,26 @@
           {
             "id": "DTC-P11",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Generate governed Unicode tables and implement grapheme, emoji, combining, width, wide-cell, shaping-boundary, and declared BiDi behavior.",
             "depends_on": ["DTC-P07", "DTC-P09", "DTC-P11A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "199bc4c"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P11-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P12",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement bounded logical history, stable anchors, deterministic trimming, and resize reflow.",
             "depends_on": ["DTC-P09", "DTC-P11"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P12"}],

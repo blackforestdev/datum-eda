@@ -1098,6 +1098,42 @@ Owner response `approve DTC-P11 logical-order BiDi` on 2026-08-19 ratifies the
 logical-order, fixed-cell posture above and completes DTC-P11A. It does not
 authorize visual BiDi reordering, a dependency, or renderer ownership in
 TerminalCore.
+
+#### DTC-P11 Unicode text evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P11-CLOSED -->
+Revision `199bc4c` pins the Unicode 17.0.0 property, grapheme, emoji, and test
+inputs with exact checksums and the Unicode License v3, then generates compact
+Datum-owned Rust tables through a standard-library-only offline tool. The
+runtime implements extended grapheme formation, Indic conjunct and emoji ZWJ
+rules, regional-indicator pairing, deterministic emoji and East Asian width,
+the approved one-cell ambiguous-width default, and the approved logical-order
+BiDi policy without a runtime download or third-party code dependency.
+
+TerminalCore now preserves original cluster text, appends combining and emoji
+sequences atomically under the configured cluster-byte limit, repairs wide-cell
+continuations through the sole reducer, wraps a width-expanding variation
+sequence without orphan cells, and exposes an immutable shaping boundary with
+fixed cell ownership. Font shaping may operate inside that cluster boundary;
+it may not reorder or resize terminal cells.
+
+Forty-four TerminalCore tests cover the complete Unicode 17 normative grapheme
+break corpus, every concrete RGI emoji and ZWJ sequence, ASCII/ambiguous/CJK/
+emoji width, combining and wide-cell placement, limit failure without partial
+mutation, logical-order Hebrew text, shaping metadata, and identical snapshots
+for whole, split, and bytewise UTF-8 input. The boundary guard verifies exact
+data and license hashes, generated-table ownership, reducer integration, and
+the three ratified policies; fourteen hermetic mutations prove those checks
+fail closed.
+
+The full workspace all-target suite, strict workspace all-target Clippy,
+locked/offline workspace checking, the offline generation check, dependency
+authority, TerminalCore boundary and mutations, source health over 1,440 files
+at the isolated revision, spec governance, project-state validation/render
+parity, formatting, and diff hygiene pass. DTC-P11 adds no Cargo package,
+runtime network path, visual BiDi implementation, history/reflow, renderer,
+PTY/GUI/process authority, TERM identity, or production cutover. DTC-P12 owns
+bounded logical history, stable anchors, trimming, and resize reflow.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P12 --> **DTC-P12 — history and reflow.** Logical lines, hard/soft breaks, bounded
   storage, alternate isolation, stable viewport/cursor/selection/search/link/
   graphics anchors, deterministic trim, and resize reflow.
