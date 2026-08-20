@@ -1,4 +1,5 @@
 use crate::grid::GridBuffer;
+use crate::history::HistoryStore;
 use crate::{
     Cell, CellStyle, CharacterSetState, Cluster, Color, CoreLimits, CursorState, Margins,
     ModeState, SavedCursorState, ScreenBuffer, ScreenError, SnapshotError, SnapshotRow, TabStops,
@@ -28,6 +29,8 @@ pub struct ScreenState {
     pub(crate) saved: Option<SavedCursorState>,
     pub(crate) primary: GridBuffer,
     pub(crate) alternate: GridBuffer,
+    pub(crate) history: HistoryStore,
+    pub(crate) next_logical_line: u64,
 }
 
 impl ScreenState {
@@ -37,8 +40,11 @@ impl ScreenState {
             .screen_cells
             .checked_total(cells, cells)
             .map_err(ScreenError::Limit)?;
-        let primary = GridBuffer::new(size, limits.screen_cells).map_err(ScreenError::from)?;
-        let alternate = GridBuffer::new(size, limits.screen_cells).map_err(ScreenError::from)?;
+        let mut next_logical_line = 0;
+        let primary = GridBuffer::new(size, limits.screen_cells, &mut next_logical_line)
+            .map_err(ScreenError::from)?;
+        let alternate = GridBuffer::new(size, limits.screen_cells, &mut next_logical_line)
+            .map_err(ScreenError::from)?;
         let modes = ModeState {
             auto_wrap: true,
             ..ModeState::default()
@@ -65,6 +71,8 @@ impl ScreenState {
             saved: None,
             primary,
             alternate,
+            history: HistoryStore::new(limits.history_lines, limits.history_bytes),
+            next_logical_line,
         })
     }
 
@@ -130,6 +138,56 @@ impl ScreenState {
 
     pub fn saved_cursor(&self) -> Option<&SavedCursorState> {
         self.saved.as_ref()
+    }
+
+    pub fn history(&self) -> crate::HistorySnapshot {
+        self.history.snapshot()
+    }
+
+    pub fn contains_logical_point(&self, point: crate::LogicalPoint) -> bool {
+        self.history.contains(point)
+            || self
+                .primary
+                .rows
+                .iter()
+                .any(|row| crate::history::row_contains(row, point))
+    }
+
+    pub fn logical_point_at(&self, row: u16, column: u16) -> Option<crate::LogicalPoint> {
+        let row = self.active_grid().rows.get(usize::from(row))?;
+        let mut cluster = row.cluster_start;
+        for cell in row.cells.iter().take(usize::from(column)) {
+            if !matches!(cell.content, crate::CellContent::Continuation { .. }) {
+                cluster = cluster.saturating_add(1);
+            }
+        }
+        Some(crate::LogicalPoint {
+            line: row.logical_line,
+            cluster,
+        })
+    }
+
+    pub fn resolve_logical_point(&self, point: crate::LogicalPoint) -> crate::AnchorResolution {
+        if let Some((row, column)) = self.history.resolve(point) {
+            return crate::AnchorResolution::History { row, column };
+        }
+        for (row, grid_row) in self.primary.rows.iter().enumerate() {
+            if let Some(column) = crate::history::column_for_point(grid_row, point) {
+                return crate::AnchorResolution::Screen {
+                    row: row.min(u16::MAX as usize) as u16,
+                    column,
+                };
+            }
+        }
+        let oldest = self
+            .history
+            .oldest_line()
+            .or_else(|| self.primary.rows.first().map(|row| row.logical_line));
+        if oldest.is_some_and(|oldest| point.line < oldest) {
+            crate::AnchorResolution::Trimmed
+        } else {
+            crate::AnchorResolution::Unknown
+        }
     }
 
     pub fn cell(&self, row: u16, column: u16) -> Option<&Cell> {

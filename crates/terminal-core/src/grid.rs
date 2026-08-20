@@ -1,11 +1,14 @@
 use crate::{
-    Cell, CellContent, CellWidth, Column, LimitError, LimitKind, ScreenCellsLimit, TerminalSize,
+    Cell, CellContent, CellWidth, Column, LimitError, LimitKind, LogicalLineId, ScreenCellsLimit,
+    TerminalSize,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct GridRow {
     pub cells: Vec<Cell>,
     pub soft_wrapped: bool,
+    pub logical_line: LogicalLineId,
+    pub cluster_start: u32,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -14,7 +17,11 @@ pub(crate) struct GridBuffer {
 }
 
 impl GridBuffer {
-    pub fn new(size: TerminalSize, limit: ScreenCellsLimit) -> Result<Self, GridAllocationError> {
+    pub fn new(
+        size: TerminalSize,
+        limit: ScreenCellsLimit,
+        next_line: &mut u64,
+    ) -> Result<Self, GridAllocationError> {
         let cells = size.cell_count().ok_or(GridAllocationError::Limit(
             LimitError::ArithmeticOverflow {
                 kind: LimitKind::ScreenCells,
@@ -26,23 +33,18 @@ impl GridBuffer {
         rows.try_reserve_exact(usize::from(size.rows.get()))
             .map_err(|_| GridAllocationError::Allocation)?;
         for _ in 0..size.rows.get() {
-            let mut cells = Vec::new();
-            cells
-                .try_reserve_exact(usize::from(size.columns.get()))
-                .map_err(|_| GridAllocationError::Allocation)?;
-            cells.resize(usize::from(size.columns.get()), Cell::default());
-            rows.push(GridRow {
-                cells,
-                soft_wrapped: false,
-            });
+            rows.push(GridRow::blank(size.columns, take_line_id(next_line)?));
         }
         Ok(Self { rows })
     }
 
-    pub fn clear(&mut self) {
+    pub(crate) fn clear_with_new_lines(&mut self, next_line: &mut u64) {
         for row in &mut self.rows {
             row.cells.fill(Cell::default());
             row.soft_wrapped = false;
+            row.cluster_start = 0;
+            row.logical_line = LogicalLineId::new(*next_line);
+            *next_line = next_line.saturating_add(1);
         }
     }
 
@@ -133,8 +135,46 @@ impl GridBuffer {
     }
 }
 
+impl GridRow {
+    pub(crate) fn blank(columns: crate::Columns, logical_line: LogicalLineId) -> Self {
+        Self {
+            cells: vec![Cell::default(); usize::from(columns.get())],
+            soft_wrapped: false,
+            logical_line,
+            cluster_start: 0,
+        }
+    }
+
+    pub(crate) fn payload_bytes(&self) -> usize {
+        self.cells
+            .iter()
+            .filter_map(|cell| match &cell.content {
+                CellContent::Cluster(cluster) => Some(cluster.text().len()),
+                _ => None,
+            })
+            .sum()
+    }
+
+    pub(crate) fn cluster_count(&self) -> u32 {
+        self.cells
+            .iter()
+            .filter(|cell| !matches!(cell.content, CellContent::Continuation { .. }))
+            .count()
+            .min(u32::MAX as usize) as u32
+    }
+}
+
+fn take_line_id(next_line: &mut u64) -> Result<LogicalLineId, GridAllocationError> {
+    let line = LogicalLineId::new(*next_line);
+    *next_line = next_line
+        .checked_add(1)
+        .ok_or(GridAllocationError::LogicalLineIdExhausted)?;
+    Ok(line)
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum GridAllocationError {
     Limit(LimitError),
     Allocation,
+    LogicalLineIdExhausted,
 }

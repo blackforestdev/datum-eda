@@ -81,6 +81,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "unicode_tests.rs").write_text(
             "\n".join(guard.REQUIRED_UNICODE_PROOFS), encoding="utf-8"
         )
+        (source / "history_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_HISTORY_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -108,7 +111,18 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (source / "screen.rs").write_text(
-            (source / "screen.rs").read_text() + "\ngrapheme_anchor\n",
+            (source / "screen.rs").read_text() + "\ngrapheme_anchor\nresolve_logical_point\n",
+            encoding="utf-8",
+        )
+        (source / "history.rs").write_text(
+            (source / "history.rs").read_text()
+            + "\nlogical_line_count(&self.rows) > self.line_limit.get()\n"
+            + "self.payload_bytes > self.byte_limit.get()\n",
+            encoding="utf-8",
+        )
+        (source / "reflow.rs").write_text(
+            (source / "reflow.rs").read_text()
+            + "\nself.state.history.replace_rows(history)\n.reflow_work\n",
             encoding="utf-8",
         )
         return temporary, root
@@ -271,6 +285,28 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         failures = guard.check(root)
         self.assertTrue(any("owned marker" in item for item in failures))
         self.assertTrue(any("sole screen reducer" in item for item in failures))
+
+    def test_history_limit_anchor_and_reflow_proof_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        history = root / guard.CRATE / "src/history.rs"
+        history.write_text(
+            history.read_text().replace(
+                "logical_line_count(&self.rows) > self.line_limit.get()", "false"
+            )
+        )
+        screen = root / guard.CRATE / "src/screen.rs"
+        screen.write_text(screen.read_text().replace("resolve_logical_point", "removed"))
+        proofs = root / guard.CRATE / "src/history_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "primary_scrollback_preserves_logical_identity_across_reflow", "removed"
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("logical-line limit" in item for item in failures))
+        self.assertTrue(any("stable logical anchors" in item for item in failures))
+        self.assertTrue(any("primary_scrollback" in item for item in failures))
 
 
 if __name__ == "__main__":

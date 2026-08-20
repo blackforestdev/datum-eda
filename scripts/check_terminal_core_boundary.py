@@ -22,12 +22,19 @@ REQUIRED_MODULES = {
     "damage.rs": ("pub enum Damage", "pub struct DamageSet"),
     "event.rs": ("pub enum CoreEvent", "pub struct TerminalReply"),
     "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
+    "history.rs": (
+        "pub struct HistorySnapshot",
+        "pub enum AnchorResolution",
+        "struct HistoryStore",
+        "fn trim_to_limits",
+    ),
     "limits.rs": ("pub enum LimitKind", "pub struct CoreLimits", "pub struct CoreLimitValues"),
     "mode.rs": ("pub struct CursorState", "pub struct Margins", "pub struct ModeState"),
     "parser.rs": ("pub struct StreamingParser", "pub fn feed(", "pub fn finish("),
     "parser_action.rs": ("pub enum Action", "pub struct CsiSequence", "pub enum ParseError"),
     "reducer.rs": ("pub enum ScreenError", "pub struct Reduction", "pub fn reduce("),
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
+    "reflow.rs": ("pub fn resize(", "fn reflow_rows(", "fn resolve_visible_point("),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
     "semantics.rs": ("pub enum CoreError", "pub struct CoreUpdate", "pub fn apply("),
     "sgr.rs": ("fn apply_sgr", "fn extended_color"),
@@ -125,6 +132,19 @@ REQUIRED_UNICODE_PROOFS = (
     "unicode_screen_state_is_invariant_across_every_utf8_chunk_boundary",
     "bidirectional_text_policy_preserves_logical_cell_order",
     "shaping_boundary_exposes_original_cluster_text_and_fixed_cell_ownership",
+)
+
+REQUIRED_HISTORY_PROOFS = (
+    "primary_scrollback_preserves_logical_identity_across_reflow",
+    "history_trims_complete_oldest_logical_lines_by_owner_limits",
+    "history_byte_limit_evicts_whole_logical_lines_without_partial_rows",
+    "alternate_screen_never_contributes_to_primary_history",
+    "resize_reflow_keeps_wide_clusters_atomic_and_cursor_logical",
+    "resize_preserves_cursor_anchor_across_trailing_blank_cells",
+    "repeated_resize_reflow_is_deterministic_and_byte_preserving",
+    "reset_invalidates_prior_history_anchors_without_identity_reuse",
+    "logical_anchor_resolution_remains_stable_while_output_arrives",
+    "reflow_work_exhaustion_rejects_resize_without_mutation",
 )
 
 
@@ -282,6 +302,24 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_UNICODE_PROOFS:
         if marker not in unicode_proof_text:
             failures.append(f"DTC-P11 deterministic Unicode proof is missing: {marker}")
+
+    history = sources.get("history.rs", "")
+    reflow = sources.get("reflow.rs", "")
+    if "logical_line_count(&self.rows) > self.line_limit.get()" not in history:
+        failures.append("DTC-P12 history must enforce its owner-supplied logical-line limit")
+    if "self.payload_bytes > self.byte_limit.get()" not in history:
+        failures.append("DTC-P12 history must enforce its owner-supplied payload-byte limit")
+    if "self.state.history.replace_rows(history)" not in reflow:
+        failures.append("DTC-P12 resize must reflow and repartition primary history")
+    if ".reflow_work" not in reflow:
+        failures.append("DTC-P12 resize must enforce the owner-supplied reflow-work limit")
+    if "resolve_logical_point" not in sources.get("screen.rs", ""):
+        failures.append("DTC-P12 screen must resolve stable logical anchors")
+    history_tests = crate / "src" / "history_tests.rs"
+    history_proof_text = history_tests.read_text(encoding="utf-8") if history_tests.is_file() else ""
+    for marker in REQUIRED_HISTORY_PROOFS:
+        if marker not in history_proof_text:
+            failures.append(f"DTC-P12 deterministic history/reflow proof is missing: {marker}")
     return failures
 
 

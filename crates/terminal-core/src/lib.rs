@@ -16,12 +16,14 @@ mod csi;
 mod damage;
 mod event;
 mod grid;
+mod history;
 mod limits;
 mod mode;
 mod parser;
 mod parser_action;
 mod reducer;
 mod reducer_action;
+mod reflow;
 mod screen;
 mod semantics;
 mod sgr;
@@ -45,6 +47,7 @@ pub use event::{
     ClipboardBytes, ClipboardSelection, CoreEvent, NotificationText, Percent, ProgressState,
     ReplyKind, TerminalReply, TitleText, WorkingDirectoryText,
 };
+pub use history::{AnchorResolution, HistoryRowSnapshot, HistorySnapshot};
 pub use limits::{
     ClipboardBytesLimit, ClusterBytesLimit, CompressionRatioLimit, ControlStringBytesLimit,
     CoreLimitValues, CoreLimits, GraphicDecodedBytesLimit, GraphicFramesLimit, GraphicObjectsLimit,
@@ -86,3 +89,6 @@ mod semantic_tests;
 
 #[cfg(test)]
 mod unicode_tests;
+
+#[cfg(test)]
+mod history_tests;

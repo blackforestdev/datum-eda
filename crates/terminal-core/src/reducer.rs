@@ -12,6 +12,7 @@ pub enum ScreenError {
     Limit(LimitError),
     CellCountOverflow,
     Allocation,
+    LogicalLineIdExhausted,
 }
 
 impl fmt::Display for ScreenError {
@@ -20,6 +21,9 @@ impl fmt::Display for ScreenError {
             Self::Limit(error) => error.fmt(formatter),
             Self::CellCountOverflow => formatter.write_str("terminal screen cell count overflowed"),
             Self::Allocation => formatter.write_str("terminal screen allocation failed"),
+            Self::LogicalLineIdExhausted => {
+                formatter.write_str("terminal logical line identity exhausted")
+            }
         }
     }
 }
@@ -31,6 +35,7 @@ impl From<GridAllocationError> for ScreenError {
         match value {
             GridAllocationError::Limit(error) => Self::Limit(error),
             GridAllocationError::Allocation => Self::Allocation,
+            GridAllocationError::LogicalLineIdExhausted => Self::LogicalLineIdExhausted,
         }
     }
 }
@@ -43,6 +48,10 @@ pub struct Reduction {
 impl Reduction {
     pub fn damage(&self) -> &DamageSet {
         &self.damage
+    }
+
+    pub(crate) const fn with_damage(damage: DamageSet) -> Self {
+        Self { damage }
     }
 }
 
@@ -243,13 +252,28 @@ impl TerminalCore {
     fn line_feed(&mut self) {
         self.state.cursor.pending_wrap = false;
         let row = self.state.cursor.position.row.get();
+        let source = &self.state.active_grid().rows[usize::from(row)];
+        let continuation = source.soft_wrapped.then_some((
+            source.logical_line,
+            source.cluster_start.saturating_add(source.cluster_count()),
+        ));
         if row == self.state.margins.bottom.get() {
-            self.scroll_up(self.state.margins.top.get(), 1);
+            self.scroll(
+                self.state.margins.top.get(),
+                1,
+                true,
+                continuation.is_some(),
+            );
         } else {
             self.set_cursor(
                 row.saturating_add(1),
                 self.state.cursor.position.column.get(),
             );
+            if let Some((logical_line, cluster_start)) = continuation {
+                let target = &mut self.state.active_grid_mut().rows[usize::from(row + 1)];
+                target.logical_line = logical_line;
+                target.cluster_start = cluster_start;
+            }
         }
         if self.state.modes.newline {
             self.carriage_return();
@@ -386,19 +410,24 @@ impl TerminalCore {
     }
 
     fn scroll_up(&mut self, first_row: u16, count: u16) {
-        self.scroll(first_row, count, true);
+        self.scroll(first_row, count, true, false);
     }
 
     fn scroll_down(&mut self, first_row: u16, count: u16) {
-        self.scroll(first_row, count, false);
+        self.scroll(first_row, count, false, false);
     }
 
-    fn scroll(&mut self, first_row: u16, count: u16, up: bool) {
+    fn scroll(&mut self, first_row: u16, count: u16, up: bool, continue_bottom: bool) {
         let top = usize::from(first_row.max(self.state.margins.top.get()));
         let bottom = usize::from(self.state.margins.bottom.get());
         let left = usize::from(self.state.margins.left.get());
         let right = usize::from(self.state.margins.right.get());
         let count = usize::from(count.max(1)).min(bottom - top + 1);
+        let full_width = left == 0 && right + 1 == usize::from(self.state.size.columns.get());
+        if full_width {
+            self.scroll_full_rows(top, bottom, count, up, continue_bottom);
+            return;
+        }
         let grid = self.state.active_grid_mut();
         if up {
             for row in top..=bottom {
@@ -424,6 +453,46 @@ impl TerminalCore {
         for row in top..=bottom {
             grid.rows[row].soft_wrapped = false;
             grid.repair_row(row);
+        }
+    }
+
+    fn scroll_full_rows(
+        &mut self,
+        top: usize,
+        bottom: usize,
+        count: usize,
+        up: bool,
+        continue_bottom: bool,
+    ) {
+        let columns = self.state.size.columns;
+        let record_history = up
+            && top == 0
+            && bottom + 1 == usize::from(self.state.size.rows.get())
+            && self.state.active_buffer == ScreenBuffer::Primary;
+        for _ in 0..count {
+            let fresh_line = crate::history::next_line_id(&mut self.state.next_logical_line);
+            let grid = self.state.active_grid_mut();
+            let displaced = if up {
+                let displaced = grid.rows.remove(top);
+                let previous = grid.rows.get(bottom.saturating_sub(1));
+                let mut blank = crate::grid::GridRow::blank(columns, fresh_line);
+                if let Some(previous) = previous.filter(|row| continue_bottom && row.soft_wrapped) {
+                    blank.logical_line = previous.logical_line;
+                    blank.cluster_start = previous
+                        .cluster_start
+                        .saturating_add(previous.cluster_count());
+                }
+                grid.rows.insert(bottom, blank);
+                displaced
+            } else {
+                let displaced = grid.rows.remove(bottom);
+                grid.rows
+                    .insert(top, crate::grid::GridRow::blank(columns, fresh_line));
+                displaced
+            };
+            if record_history {
+                self.state.history.push(displaced);
+            }
         }
     }
 
@@ -480,7 +549,16 @@ impl TerminalCore {
     fn switch_buffer(&mut self, buffer: ScreenBuffer, clear: bool, home: bool) {
         self.state.active_buffer = buffer;
         if clear {
-            self.state.active_grid_mut().clear();
+            match buffer {
+                ScreenBuffer::Primary => self
+                    .state
+                    .primary
+                    .clear_with_new_lines(&mut self.state.next_logical_line),
+                ScreenBuffer::Alternate => self
+                    .state
+                    .alternate
+                    .clear_with_new_lines(&mut self.state.next_logical_line),
+            }
         }
         if home {
             self.state.cursor = crate::CursorState::home(self.state.size);
@@ -520,8 +598,12 @@ impl TerminalCore {
     }
 
     fn reset(&mut self) {
-        self.state.primary.clear();
-        self.state.alternate.clear();
+        self.state
+            .primary
+            .clear_with_new_lines(&mut self.state.next_logical_line);
+        self.state
+            .alternate
+            .clear_with_new_lines(&mut self.state.next_logical_line);
         self.state.active_buffer = ScreenBuffer::Primary;
         self.state.cursor = crate::CursorState::home(self.state.size);
         self.state.margins = Margins::full(self.state.size);
@@ -537,6 +619,7 @@ impl TerminalCore {
         self.state.synchronized_dirty = false;
         self.state.last_printed = None;
         self.state.grapheme_anchor = None;
+        self.state.history.clear();
     }
 
     fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {

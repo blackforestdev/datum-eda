@@ -128,6 +128,15 @@ impl TabStops {
     pub fn clear_all(&mut self) {
         self.columns.clear();
     }
+
+    pub(crate) fn resize(&mut self, columns: crate::Columns) {
+        self.columns.retain(|column| column.get() < columns.get());
+        for column in (8..columns.get()).step_by(8) {
+            if let Ok(column) = Column::new(column, columns) {
+                self.set(column);
+            }
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
