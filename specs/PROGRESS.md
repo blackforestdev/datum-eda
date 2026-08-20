@@ -93,7 +93,7 @@
    *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
 - **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
    Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-output-lane-t6v`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
+   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-output-lane-t6v`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
 - **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.

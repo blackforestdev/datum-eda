@@ -2770,7 +2770,8 @@
       "summary": "Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution.",
       "dependencies": [
         "dat-marking-menu-shell-g0w",
-        "dat-output-lane-t6v"
+        "dat-output-lane-t6v",
+        "dat-project-write-ownership-lock-0ne"
       ],
       "unblocks": [
         "journaled GUI authoring",
