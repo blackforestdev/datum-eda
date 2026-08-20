@@ -1660,6 +1660,23 @@ session-adapter boundary.
   to TerminalCore, replies to PTY, bounded scheduling/backpressure,
   every-session draining, resize, lifecycle, and context association using the
   ratified application profile.
+
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P22B-CLOSED --> **Closure evidence
+  (2026-08-20).** Commit `c907771` replaced the production session-owned
+  provisional screen with one first-party `TerminalCore` plus one
+  `StreamingParser` per terminal session. The application adapter supplies the
+  exact P22-L1 limits, validates session/context identity, feeds every active
+  and inactive PTY batch through the owned core, returns bounded terminal
+  replies to the originating PTY, propagates resize, and flushes incomplete
+  input before exact lifecycle completion. A temporary immutable snapshot-to-
+  lane projection keeps the existing renderer working until DTC-P23; it does
+  not restore the provisional parser as production authority. Six focused
+  adapter tests, the 360-test gui-app suite, the real-shell exact-once canary,
+  complete locked/offline workspace tests and checks, strict workspace clippy,
+  terminal-core/transport/convergence boundary suites, dependency authority,
+  source health, and project-state validation passed. No external terminal
+  implementation, package, TERM claim, renderer policy, input policy, or
+  approved resource limit changed.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P23 --> **DTC-P23 — GPU renderer.** Backgrounds, glyph clusters, fallback/shaping,
   every text decoration/color, cursor, clipping, damage-only updates, images,
   DPI/font change, and visual proof through renderer-owned types.
