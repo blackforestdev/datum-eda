@@ -1416,6 +1416,41 @@ codec step.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P17 --> **DTC-P17 — owned binary codecs.** Base64, checksums, Adler-32, zlib/DEFLATE,
   and PNG parse/filter/color/interlace decode with bombs, overflow, malformed
   input, and deterministic resource limits.
+
+#### DTC-P17 binary-codec evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P17-CLOSED -->
+Revision `fc0cc44` implements the complete DTC-P17 codec boundary inside the
+std-only TerminalCore. Strict canonical RFC 4648 Base64 uses the owning
+graphics or clipboard payload limit. Incremental Adler-32 and PNG CRC-32 feed
+RFC 1950 zlib verification and PNG chunk verification. The RFC 1951 decoder
+handles stored, fixed-Huffman, and dynamic-Huffman blocks, including
+overlapping history copies and the conforming all-literal zero-distance-tree
+case, while rejecting reserved blocks, invalid trees, bad distances, truncated
+streams, trailing compressed data, and preset zlib dictionaries.
+
+Static PNG decoding validates the signature, chunk types, reserved bit, CRC,
+ordering, consecutive IDAT extent, IHDR combinations, palette and transparency
+contracts, and IEND boundary. It reconstructs all five PNG filters, every
+governed color/depth family, transparency, and Adam7 interlace into RGBA8.
+Caller-supplied `GraphicPixels`, `GraphicDecodedBytes`, `CompressionRatio`, and
+`ParserWork` limits meter allocation, resident compressed/inflated/pixel/row
+storage, decompression expansion, bit decoding, filtering, and pixel
+conversion; no codec defines an application numeric default.
+
+Ninety-six TerminalCore tests pass, including RFC vectors, stored/fixed/dynamic
+streams, checksum and malformed-header failures, decompression bombs, every
+filter, legal sample depths, palette/transparency, Adam7 placement, PNG
+ordering/CRC/reserved-bit failures, every truncated prefix, and deterministic
+mutations. Twenty hermetic TerminalCore boundary mutations pin the codec owners,
+limit paths, CRC, interlace, exports, and named hostile-input proofs. The full
+locked/offline workspace all-target test and check suites, strict workspace
+Clippy, dependency authority, source health over 1,462 files, spec governance,
+project state, formatting, and diff hygiene pass. Every DTC-P17 file is below
+the decision-022 700-line ceiling. No dependency, runtime fetch, copied
+implementation, graphics protocol, renderer/PTY authority, TERM identity, or
+production cutover changed. DTC-P18 owns the next bounded sixel package.
+
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P18 --> **DTC-P18 — sixel.** Grammar, raster/repeat/newline, RGB/HLS registers,
   transparency, palette, clipping, scrolling/history placement, teardown, and
   bounds.
