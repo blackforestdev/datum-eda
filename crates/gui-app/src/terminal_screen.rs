@@ -68,6 +68,10 @@ impl Default for TerminalScreen {
     }
 }
 
+// DTC-P22B removes this provisional parser from production ownership. Its
+// direct regression corpus remains compiled until the DTC-P25 comparison and
+// DTC-P26 deletion transaction complete.
+#[cfg_attr(not(test), allow(dead_code))]
 impl TerminalScreen {
     pub(super) fn bracketed_paste_enabled(&self) -> bool {
         self.bracketed_paste

@@ -7,7 +7,7 @@ impl TerminalSessionRegistry {
         ensure_session_capacity(self.sessions.len() + self.pending_spawns.len())?;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         let label = self.reserve_session_label();
-        self.sessions.push(new_session_slot(session, label));
+        self.sessions.push(new_session_slot(session, label)?);
         self.active_index = self.sessions.len() - 1;
         Ok(self.active().session_id())
     }
@@ -114,7 +114,21 @@ impl TerminalSessionRegistry {
             match completion {
                 Ok(session) => {
                     let session_id = session.session_id().to_string();
-                    self.sessions.push(new_session_slot(session, pending.label));
+                    let slot = match new_session_slot(session, pending.label) {
+                        Ok(slot) => slot,
+                        Err(error) => {
+                            if was_active {
+                                self.active_pending_id = None;
+                                lane.swap_session_projection(
+                                    &mut self.sessions[self.active_index].parked_lane,
+                                );
+                            }
+                            lane.status = format!("terminal core start failed: {error:#}");
+                            notices.push(lane.status.clone());
+                            continue;
+                        }
+                    };
+                    self.sessions.push(slot);
                     if was_active {
                         self.active_index = self.sessions.len() - 1;
                         self.active_pending_id = None;
@@ -144,10 +158,16 @@ impl TerminalSessionRegistry {
     }
 }
 
-fn new_session_slot(session: TerminalSession, label: String) -> TerminalSessionSlot {
-    TerminalSessionSlot {
+fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalSessionSlot> {
+    let core = TerminalCoreSessionAdapter::new(
+        session.session_id.clone(),
+        session.context_id.clone(),
+        80,
+        24,
+    )?;
+    Ok(TerminalSessionSlot {
         session,
-        screen: TerminalScreen::default(),
+        core,
         label,
         status: "running".to_string(),
         attached: true,
@@ -164,7 +184,7 @@ fn new_session_slot(session: TerminalSession, label: String) -> TerminalSessionS
         remove_when_closed: false,
         hidden_after_close: false,
         exact_exit_status: None,
-    }
+    })
 }
 
 #[cfg(test)]

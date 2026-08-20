@@ -475,10 +475,11 @@ fn drain_output(
         };
         let _ =
             crate::terminal_session_events::record_terminal_output_event(registry.active(), &bytes);
-        let responses = registry
-            .active_screen_mut()
-            .apply_bytes_with_responses(state, &bytes);
-        for response in responses {
+        let update = registry
+            .active_core_mut()
+            .apply_output(state, &bytes)
+            .expect("TerminalCore must accept PTY output");
+        for response in update.replies {
             *response_bytes_written += response.len();
             let _ = registry.active().write_bytes(&response);
         }

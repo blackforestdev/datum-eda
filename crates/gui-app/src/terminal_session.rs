@@ -5,8 +5,8 @@ use crate::{
         update_terminal_lifecycle_file, update_terminal_lifecycle_file_exact,
         write_terminal_context_files,
     },
+    terminal_core_adapter::TerminalCoreSessionAdapter,
     terminal_process::spawn_terminal_process,
-    terminal_screen::TerminalScreen,
     terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::record_terminal_lifecycle_event,
     terminal_transport::{MAX_LIVE_SESSIONS, TerminalTransportSession, TerminalWakeGate},
@@ -58,7 +58,7 @@ struct PendingTerminalSpawn {
 
 struct TerminalSessionSlot {
     session: TerminalSession,
-    screen: TerminalScreen,
+    core: TerminalCoreSessionAdapter,
     label: String,
     status: String,
     attached: bool,
@@ -111,10 +111,16 @@ impl TerminalSessionRegistry {
     ) -> Result<Self> {
         let terminal_wake = TerminalWakeGate::new(terminal_event_proxy);
         let session = spawn_terminal_session_with_wake(context, terminal_wake.clone())?;
+        let core = TerminalCoreSessionAdapter::new(
+            session.session_id.clone(),
+            session.context_id.clone(),
+            80,
+            24,
+        )?;
         Ok(Self {
             sessions: vec![TerminalSessionSlot {
                 session,
-                screen: TerminalScreen::default(),
+                core,
                 label: "shell 1".to_string(),
                 status: "running".to_string(),
                 attached: true,
@@ -216,14 +222,14 @@ impl TerminalSessionRegistry {
     }
 
     #[cfg_attr(not(test), allow(dead_code))]
-    pub(super) fn active_screen_mut(&mut self) -> &mut TerminalScreen {
-        &mut self.sessions[self.active_index].screen
+    pub(super) fn active_core_mut(&mut self) -> &mut TerminalCoreSessionAdapter {
+        &mut self.sessions[self.active_index].core
     }
 
     pub(super) fn active_bracketed_paste_enabled(&self) -> bool {
         self.active_pending_id.is_none()
             && self.sessions[self.active_index]
-                .screen
+                .core
                 .bracketed_paste_enabled()
     }
 
@@ -238,7 +244,7 @@ impl TerminalSessionRegistry {
             return Ok(());
         }
         slot.session.resize(cols, rows)?;
-        slot.screen.resize_grid(cols, rows);
+        slot.core.resize(cols, rows)?;
         slot.columns = cols;
         slot.rows = rows;
         Ok(())
@@ -273,12 +279,12 @@ impl TerminalSessionRegistry {
         terminal_wake: TerminalWakeGate,
     ) -> Result<()> {
         let previous_session_id = slot.session.session_id().to_string();
-        restart_terminal_session(
-            &mut slot.session,
-            &mut slot.screen,
-            state,
-            context,
-            terminal_wake,
+        restart_terminal_session(&mut slot.session, state, context, terminal_wake)?;
+        slot.core = TerminalCoreSessionAdapter::new(
+            slot.session.session_id.clone(),
+            slot.session.context_id.clone(),
+            slot.columns,
+            slot.rows,
         )?;
         slot.status = state.status.clone();
         slot.attached = true;
@@ -289,7 +295,6 @@ impl TerminalSessionRegistry {
         slot.hidden_after_close = false;
         slot.exact_exit_status = None;
         slot.session.resize(slot.columns, slot.rows)?;
-        slot.screen.resize_grid(slot.columns, slot.rows);
         Ok(())
     }
 
@@ -566,7 +571,6 @@ pub(super) fn terminate_terminal_session(
 
 pub(super) fn restart_terminal_session(
     session: &mut TerminalSession,
-    screen: &mut TerminalScreen,
     state: &mut TerminalLaneState,
     context: &TerminalLaunchContext,
     terminal_wake: TerminalWakeGate,
@@ -575,7 +579,6 @@ pub(super) fn restart_terminal_session(
     mark_terminal_session_lifecycle(session, DatumToolSessionLifecycle::Restarted, None)?;
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
     *session = replacement;
-    *screen = TerminalScreen::default();
     state.status = "running".to_string();
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
     // write a notice row into the terminal grid — the grid holds only PTY

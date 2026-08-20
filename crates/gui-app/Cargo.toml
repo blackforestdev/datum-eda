@@ -14,6 +14,7 @@ path = "src/main.rs"
 datum-gui-protocol = { path = "../gui-protocol" }
 datum-gui-render = { path = "../gui-render" }
 datum-gui-viewport = { path = "../gui-viewport" }
+datum-terminal-core = { path = "../terminal-core" }
 anyhow.workspace = true
 arboard.workspace = true
 clap.workspace = true

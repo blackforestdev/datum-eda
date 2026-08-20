@@ -39,6 +39,7 @@ TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_ta
 TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
 TERMINAL_INPUT = ROOT / "crates" / "gui-app" / "src" / "terminal_input.rs"
 TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal_session.rs"
+TERMINAL_CORE_ADAPTER = Path("crates/gui-app/src/terminal_core_adapter.rs")
 TERMINAL_SESSION_NAMING_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_naming_tests.rs"
 TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
 RETIRED_BRIDGE_FILES = [
@@ -60,7 +61,7 @@ def check_terminal_grid_writers(failures: list[str]) -> None:
         is_terminal_core = relative == Path("crates/gui-app/src/terminal_screen.rs") or (
             terminal_core in relative.parents
         )
-        if relative != declaration and not is_test and not is_terminal_core:
+        if relative not in (declaration, TERMINAL_CORE_ADAPTER) and not is_test and not is_terminal_core:
             failures.append(
                 f"terminal grid mutation escaped PTY interpretation: {relative}"
             )

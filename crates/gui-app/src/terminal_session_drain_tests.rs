@@ -1,7 +1,7 @@
 use super::*;
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
-    terminal_screen::TerminalScreen,
+    terminal_core_adapter::TerminalCoreSessionAdapter,
     terminal_session::{
         PendingTerminalSpawn, TerminalLaunchContext, TerminalSession, TerminalSessionSlot,
     },
@@ -96,7 +96,13 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
                     active_execution_id: Arc::new(Mutex::new(None)),
                     finished_scan_offset: Cell::new(0),
                 },
-                screen: TerminalScreen::default(),
+                core: TerminalCoreSessionAdapter::new(
+                    id.clone(),
+                    format!("context-{index}"),
+                    80,
+                    24,
+                )
+                .unwrap(),
                 label: id,
                 status: "running".to_string(),
                 attached: index == 0,
@@ -185,8 +191,8 @@ fn tiny_chunk_flood_is_applied_once_per_session_per_turn() {
     assert_eq!(report.output_bytes, GUI_DRAIN_EVENT_LIMIT);
     assert_eq!(report.output_batches, 1);
     assert_eq!(
-        lane.grid_lines().last(),
-        Some(&"x".repeat(GUI_DRAIN_EVENT_LIMIT))
+        lane.grid_lines().concat(),
+        "x".repeat(GUI_DRAIN_EVENT_LIMIT)
     );
     let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
         &registry.sessions[0].session.event_log_path(),

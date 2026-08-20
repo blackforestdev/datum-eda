@@ -23,6 +23,8 @@ python3 scripts/test_terminal_transport_boundary.py
 python3 scripts/check_terminal_transport_boundary.py
 python3 scripts/test_terminal_core_boundary.py
 python3 scripts/check_terminal_core_boundary.py
+python3 scripts/test_terminal_core_adapter_boundary.py
+python3 scripts/check_terminal_core_adapter_boundary.py
 python3 scripts/test_terminal_kitty_boundary.py
 python3 scripts/check_terminal_kitty_boundary.py
 python3 scripts/test_terminal_snapshot_boundary.py

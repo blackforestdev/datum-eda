@@ -722,6 +722,7 @@ dependencies = [
  "datum-gui-protocol",
  "datum-gui-render",
  "datum-gui-viewport",
+ "datum-terminal-core",
  "eda-engine",
  "image",
  "libc",

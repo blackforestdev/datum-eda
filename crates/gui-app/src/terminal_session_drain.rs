@@ -2,6 +2,7 @@ use super::{
     TerminalEvent, TerminalSessionRegistry, TerminalSessionSlot, mark_terminal_session_exit,
 };
 use crate::{
+    terminal_core_adapter::TerminalCoreAdapterUpdate,
     terminal_session_events::{
         record_terminal_exit_event, record_terminal_output_event,
         record_terminal_termination_failure_event,
@@ -38,6 +39,8 @@ fn flush_output_batch(
         return;
     }
     let slot = &mut sessions[index];
+    debug_assert_eq!(slot.core.session_id(), slot.session.session_id());
+    debug_assert_eq!(slot.core.context_id(), slot.session.context_id);
     let _ = record_terminal_output_event(&slot.session, bytes);
     let is_active = active_index == Some(index);
     let lane = if is_active {
@@ -45,13 +48,11 @@ fn flush_output_batch(
     } else {
         &mut slot.parked_lane
     };
-    let responses = slot.screen.apply_bytes_with_responses(lane, bytes);
-    for response in responses {
-        if let Err(error) = slot.session.write_bytes(&response) {
-            report
-                .notices
-                .push(format!("terminal status response failed: {error}"));
-        }
+    match slot.core.apply_output(lane, bytes) {
+        Ok(update) => consume_core_update(&slot.session, report, update),
+        Err(error) => report
+            .notices
+            .push(format!("terminal core output failed: {error}")),
     }
     #[cfg(test)]
     report.serviced.push((index, "apply", bytes.len()));
@@ -61,6 +62,36 @@ fn flush_output_batch(
     #[cfg(test)]
     {
         report.output_batches += 1;
+    }
+}
+
+fn consume_core_update(
+    session: &super::TerminalSession,
+    report: &mut TerminalDrainReport,
+    update: TerminalCoreAdapterUpdate,
+) {
+    for response in update.replies {
+        if let Err(error) = session.write_bytes(&response) {
+            report
+                .notices
+                .push(format!("terminal status response failed: {error}"));
+        }
+    }
+    for error in update.semantic_errors {
+        report
+            .notices
+            .push(format!("terminal core semantic limit/error: {error}"));
+    }
+    for event in update.events {
+        match event {
+            datum_terminal_core::CoreEvent::LimitReached(kind) => report
+                .notices
+                .push(format!("terminal core {:?} limit reached", kind).to_lowercase()),
+            datum_terminal_core::CoreEvent::Notification(text) => {
+                report.notices.push(text.as_str().to_owned());
+            }
+            _ => {}
+        }
     }
 }
 
@@ -201,6 +232,17 @@ impl TerminalSessionRegistry {
                 }
                 TerminalEvent::Exited(code) => {
                     let slot = &mut self.sessions[index];
+                    let lane = if is_active {
+                        &mut *active_lane
+                    } else {
+                        &mut slot.parked_lane
+                    };
+                    match slot.core.finish(lane) {
+                        Ok(update) => consume_core_update(&slot.session, &mut report, update),
+                        Err(error) => report
+                            .notices
+                            .push(format!("terminal core finish failed: {error}")),
+                    }
                     #[cfg(test)]
                     report.serviced.push((index, "control", 0));
                     let _ = mark_terminal_session_exit(&slot.session, code);
@@ -224,11 +266,6 @@ impl TerminalSessionRegistry {
                     // Keep inactive exited tabs visible so their exact outcome
                     // is not erased before the owner can review it.
                     slot.remove_when_closed = is_active;
-                    let lane = if is_active {
-                        &mut *active_lane
-                    } else {
-                        &mut slot.parked_lane
-                    };
                     lane.status = slot.status.clone();
                     if !slot.disconnected_reported {
                         report.notices.push(format!("terminal {}", slot.status));

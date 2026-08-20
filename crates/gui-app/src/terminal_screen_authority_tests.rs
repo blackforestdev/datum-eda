@@ -170,11 +170,12 @@ fn drain_production_path(
             crate::terminal_session_events::record_terminal_output_event(registry.active(), &bytes);
         cost.event_log_append += step.elapsed();
         let step = Instant::now();
-        let responses = registry
-            .active_screen_mut()
-            .apply_bytes_with_responses(state, &bytes);
+        let update = registry
+            .active_core_mut()
+            .apply_output(state, &bytes)
+            .expect("TerminalCore must accept PTY output");
         cost.apply_bytes += step.elapsed();
-        for response in responses {
+        for response in update.replies {
             *response_bytes_written += response.len();
             let _ = registry.active().write_bytes(&response);
         }

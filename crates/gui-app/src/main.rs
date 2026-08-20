@@ -59,6 +59,7 @@ mod terminal_context;
 mod terminal_context_contract;
 mod terminal_context_io;
 mod terminal_control_input;
+mod terminal_core_adapter;
 mod terminal_input;
 mod terminal_narration;
 mod terminal_process;
@@ -377,7 +378,6 @@ impl ApplicationHandler for App {
                             runtime.advance_primary_pan(previous, next_pos)
                         });
                     }
-                    // Update hover state
                     if !runtime.dock_drag_active
                         && runtime.divider_drag.is_none()
                         && !runtime.pan_gesture.is_active()
