@@ -1702,9 +1702,46 @@ session-adapter boundary.
   without changing executable behavior. No external terminal implementation,
   package, TERM claim, input/accessibility policy, or DTC-P24 behavior was
   added.
-- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24 --> **DTC-P24 — native input and accessibility.** Focus, IME preedit/commit,
-  keyboard/mouse/paste, selection/clipboard/search/links and the Linux AT-SPI
-  text/caret/selection/event bridge with real screen-reader evidence.
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24 --> **DTC-P24 — native input and semantic accessibility foundation.** Route focus,
+  IME preedit/commit, keyboard/mouse/paste, selection/clipboard/search/links,
+  and immutable text/caret/selection/focus semantics through TerminalCore.
+
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24-FOUNDATION --> **Foundation evidence
+  (2026-08-20).** Commit `1526968` routes production focus, keyboard, IME,
+  paste, mouse, selection, copy, search, hyperlink lookup, and accessibility
+  snapshots through the active session's TerminalCore adapter. Transient IME
+  preedit renders at the immutable core cursor without entering terminal cells;
+  a semantic diff bridge tracks text, caret, selection, focus, title, and bell
+  changes. Full affected package tests, strict Clippy, interaction/convergence
+  mutation guards, dependency authority, source health, formatting, and diff
+  hygiene passed. No package, manifest, PTY behavior, TERM identity, or Linux
+  accessibility provider was added.
+
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24A --> **DTC-P24A — Linux accessibility dependency owner decision.** Before Datum
+  publishes the semantic model to Linux assistive technology, the owner chooses
+  whether to approve the standard winit accessibility adapter. Product
+  Mechanics 029 forbids adding it from implementation authorization alone.
+
+- <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P24A:P24-A1 --> **P24-A1 — AccessKit winit adapter.** In plain language, this decides
+  whether Datum may add the maintained Rust bridge that exposes its existing UI
+  semantics to Linux screen readers through AT-SPI. **Recommended:** approve
+  `accesskit_winit` version `0.33.2`, with Linux `accesskit_unix` integration and
+  the exact platform-selected AccessKit dependency closure pinned in
+  `Cargo.lock`. Accept the upstream MIT-or-Apache-2.0 terms under the MIT option
+  and retain the required BSD-style Chromium-derived notice. The same change
+  must inventory every resolved transitive license and keep TerminalCore as the
+  sole terminal semantic authority. AccessKit supplies only the operating-system
+  accessibility bridge; it does not replace terminal parsing, cells, PTY,
+  input, rendering, or security behavior. The alternative is a bespoke AT-SPI
+  D-Bus provider that Datum would need to design and maintain. Primary project
+  records: <https://github.com/AccessKit/accesskit/releases/tag/accesskit_winit-v0.33.2>
+  and <https://github.com/AccessKit/accesskit>. Reply `approve DTC-P24
+  recommended AccessKit bridge`, or `P24-A1: revise — <replacement>`.
+
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P24B --> **DTC-P24B — Linux AT-SPI bridge and evidence.** After P24-A1 disposition,
+  connect the immutable TerminalCore semantic snapshot to the approved Linux
+  accessibility mechanism and prove text, caret, selection, focus, title,
+  links, and events with a real screen reader.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P25 --> **DTC-P25 — bounded shadow comparison.** Feed recorded bytes to old and new
   cores only in tests/debug; compare the declared overlap; use normative proof
   for new behavior; no production selector or fallback.
