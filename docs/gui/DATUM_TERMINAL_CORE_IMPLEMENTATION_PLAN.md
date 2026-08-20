@@ -1553,6 +1553,44 @@ complete renderer-independent damage projection.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P20 --> **DTC-P20 — damage and render snapshot.** Dirty cell/row/scroll/cursor/palette/
   graphics events, immutable iteration, deterministic snapshot schema, and no
   renderer ownership in core.
+
+#### DTC-P20 damage and render snapshot evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P20-CLOSED -->
+Revision `9cccd7a` adds a schema-versioned immutable render projection to the
+std-only TerminalCore. The snapshot owns ordered primary-history and visible
+screen rows, logical row origins and soft-wrap state, the active buffer,
+cursor, modes, the complete 256-color and default-color palette, selection,
+history counts, and deterministically sorted graphics with resolved anchors.
+The caller-supplied snapshot-cell limit is checked across history and visible
+rows before cell cloning, and graphic pixels retain immutable shared frame
+storage rather than copying renderer resources into the core.
+
+A dedicated damage planner classifies safe single-cell writes, row and row-range
+edits, scrolling regions, cursor movement, palette changes, history mutation,
+and graphics changes. Wide-cell creation or replacement expands damage to the
+whole affected row, wrap/insert cases conservatively request a full visible
+redraw, and full visible damage does not erase independent history, palette,
+title, or graphics invalidation. Pending-damage exhaustion degrades
+deterministically to one full redraw without an unbounded queue. History change
+detection uses a constant-time fingerprint and does not clone history per
+action.
+
+One hundred twenty-eight TerminalCore tests pass. Eight focused DTC-P20 proofs
+cover immutable/versioned history-before-screen snapshots, alternate-buffer and
+selection isolation, pre-clone resource rejection, deterministic graphics
+resolution/order, every governed damage family, overflow fallback, independent
+history invalidation, and wide-cell neighbor clearing. Four hermetic snapshot
+boundary tests plus the existing core and Kitty guards pin the schema,
+renderer-independence, resource checks, damage ownership, and named proofs. The
+full locked/offline workspace all-target suite, strict workspace Clippy,
+locked/offline check, dependency authority, source health over 1,478 files,
+progress coverage, spec parity/governance, project-state tests/check,
+formatting, and diff hygiene pass. Every touched source remains below the
+decision-022 700-line ceiling. No Cargo dependency, runtime fetch, renderer or
+PTY authority, TERM identity, production cutover, or DTC-P21 proof-closure
+claim was added.
+
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P21 --> **DTC-P21 — core proof gate.** Datum-authored normative corpus, chunk
   invariance, generational mutation/replay/shrink, hostile streams, reset,
   resource and performance proof for P07–P20.

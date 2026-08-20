@@ -2012,23 +2012,25 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "dtc-p20-20260820",
-        "claimed_at": "2026-08-20T16:03:22Z",
-        "heartbeat_at": "2026-08-20T16:03:22Z",
-        "expires_at": "2026-08-21T00:03:22Z",
+        "session": "dtc-p21-20260820",
+        "claimed_at": "2026-08-20T16:20:34Z",
+        "heartbeat_at": "2026-08-20T16:20:34Z",
+        "expires_at": "2026-08-21T00:20:34Z",
         "scope": [
           "crates/terminal-core",
           "scripts/check_terminal_core_boundary.py",
           "scripts/test_terminal_core_boundary.py",
           "scripts/check_terminal_kitty_boundary.py",
           "scripts/test_terminal_kitty_boundary.py",
+          "scripts/check_terminal_snapshot_boundary.py",
+          "scripts/test_terminal_snapshot_boundary.py",
           "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
           ".beads/issues.jsonl"
         ],
         "worktree": "main",
-        "head": "081ecda"
+        "head": "9cccd7a"
       },
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
@@ -2040,7 +2042,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P20",
+        "canonical_next_step_id": "DTC-P21",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2437,16 +2439,26 @@
           {
             "id": "DTC-P20",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement complete damage events and immutable renderer-independent snapshots for text, cursor, palette, history, and graphics.",
             "depends_on": ["DTC-P09", "DTC-P10", "DTC-P12", "DTC-P16", "DTC-P18", "DTC-P19"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P20"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "9cccd7a"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P20-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P21",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Close the core with normative snapshots, chunk invariance, deterministic mutation/replay, hostile-input, resource, performance, offline, dependency, and source-health proof.",
             "depends_on": ["DTC-P08", "DTC-P09", "DTC-P10", "DTC-P11", "DTC-P12", "DTC-P13", "DTC-P14", "DTC-P15", "DTC-P16", "DTC-P17", "DTC-P18", "DTC-P19", "DTC-P20"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P21"}],
