@@ -1633,9 +1633,33 @@ compilation, and diff hygiene pass. No Cargo dependency, runtime fetch, copied
 terminal implementation, renderer or PTY authority, TERM identity change, or
 production cutover was introduced. DTC-P22 remains the separately selected
 session-adapter boundary.
-- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P22 --> **DTC-P22 — session adapter.** PTY bytes to core, replies to PTY, bounded
-  scheduling/backpressure, every-session draining, resize, lifecycle, and
-  context association.
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P22A --> **DTC-P22A — production-limit owner decision.** Before the GUI creates a
+  production TerminalCore, the owner ratifies the exact per-session memory and
+  work profile below. Decision 030 forbids an agent-selected numeric default.
+
+- <!-- OWNER:TERMINAL-T2-NATIVE:DTC-P22A:P22-L1 --> **P22-L1 — production TerminalCore resource profile.** In plain
+  language, this decides how much scrollback, graphics, metadata, and parser
+  work one terminal tab may retain before the terminal reports a bounded limit
+  instead of consuming more memory. **Recommended:** approve a long-agent
+  profile with 100,000 logical history lines and 64 MiB history text; 16 MiB
+  per control string; 4 MiB clipboard/input; 256 graphics objects, 1,024
+  frames, 16,777,216 pixels, and 64 MiB decoded graphics; 32,768 title bytes,
+  65,536 working-directory bytes, 1 MiB hyperlinks, and 65,536 notification or
+  reply bytes; 4,096 pending events and 4,096 pending damage entries; 1,048,576
+  screen cells and 33,554,432 snapshot cells; parser/search/reflow work caps of
+  67,108,864 operations per admitted call; 64 parameters, 64 subparameters,
+  16 parameter digits, value 1,000,000, 16 intermediates, 4,096 cluster bytes,
+  32 Kitty keyboard stack entries, and compression-ratio cap 1,024. This is
+  terminal display/history capacity, not an LLM context-window cap; at typical
+  text density the 64 MiB history allowance materially exceeds a one-million-
+  token transcript, while future profiles may raise it through another measured
+  owner decision. Reply `approve DTC-P22 recommended production limits`, or
+  `P22-L1: revise — <replacement>`.
+
+- <!-- REQ:TERMINAL-T2-NATIVE:DTC-P22B --> **DTC-P22B — session adapter.** After P22-L1 approval, connect PTY bytes
+  to TerminalCore, replies to PTY, bounded scheduling/backpressure,
+  every-session draining, resize, lifecycle, and context association using the
+  ratified application profile.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P23 --> **DTC-P23 — GPU renderer.** Backgrounds, glyph clusters, fallback/shaping,
   every text decoration/color, cursor, clipping, damage-only updates, images,
   DPI/font change, and visual proof through renderer-owned types.

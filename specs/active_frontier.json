@@ -2475,34 +2475,10 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "dtc-p22-20260820",
-        "claimed_at": "2026-08-20T16:33:06Z",
-        "heartbeat_at": "2026-08-20T16:33:06Z",
-        "expires_at": "2026-08-21T00:33:06Z",
-        "scope": [
-          "crates/gui-app/src/terminal_process.rs",
-          "crates/gui-app/src/terminal_session.rs",
-          "crates/gui-app/src/terminal_session_drain.rs",
-          "crates/gui-app/src/terminal_transport",
-          "crates/terminal-core",
-          "scripts/check_gui_agent_terminal_convergence.py",
-          "scripts/check_terminal_core_boundary.py",
-          "scripts/check_terminal_transport_boundary.py",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "main",
-        "head": "144a7ba"
-      },
       "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2518,7 +2494,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P22",
+        "canonical_next_step_id": "DTC-P22A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2533,12 +2509,35 @@
         },
         "steps": [
           {
-            "id": "DTC-P22",
-            "kind": "execution",
-            "status": "in_progress",
-            "action": "Connect PTY bytes, replies, resize, lifecycle, context association, bounded scheduling, and every-session draining to TerminalCore through one session adapter.",
+            "id": "DTC-P22A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Ratify the exact per-session TerminalCore memory and work profile before the production adapter supplies numerical limits.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22"}],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22A"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve DTC-P22 recommended production limits`, or `P22-L1: revise — <replacement>`.",
+              "requests": [
+                {
+                  "id": "P22-L1",
+                  "question": "How much scrollback, graphics, metadata, and parser work may one production terminal tab retain before reporting a bounded limit?",
+                  "recommended_response": "Approve the long-agent profile: 100,000 logical history lines/64 MiB text; 16 MiB control strings; 4 MiB clipboard/input; 256 graphics/1,024 frames/16,777,216 pixels/64 MiB decoded graphics; bounded metadata/event/damage/screen/snapshot/parser/search/reflow and structural limits exactly listed in P22-L1.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P22-L1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DTC-P22B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Connect PTY bytes, replies, resize, lifecycle, context association, bounded scheduling, and every-session draining to TerminalCore through one session adapter using the ratified profile.",
+            "depends_on": ["DTC-P22A"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22B"}],
             "completion_evidence": []
           },
           {
@@ -2546,7 +2545,7 @@
             "kind": "execution",
             "status": "pending",
             "action": "Render immutable TerminalCore snapshots through Datum GPU/text primitives with complete attributes, shaping, clipping, damage, images, DPI, and visual proof.",
-            "depends_on": ["DTC-P22"],
+            "depends_on": ["DTC-P22B"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P23"}],
             "completion_evidence": []
           },
@@ -2555,7 +2554,7 @@
             "kind": "execution",
             "status": "pending",
             "action": "Route native focus, keyboard, IME, mouse, paste, selection, clipboard, search, links, and Linux accessibility through the sole TerminalCore authority.",
-            "depends_on": ["DTC-P22", "DTC-P23"],
+            "depends_on": ["DTC-P22B", "DTC-P23"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24"}],
             "completion_evidence": []
           },
@@ -2564,7 +2563,7 @@
             "kind": "execution",
             "status": "pending",
             "action": "Run bounded test/debug-only shadow comparison between the provisional path and TerminalCore over their declared overlap without creating a production selector or fallback.",
-            "depends_on": ["DTC-P22", "DTC-P23", "DTC-P24"],
+            "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P25"}],
             "completion_evidence": []
           },
@@ -2573,7 +2572,7 @@
             "kind": "execution",
             "status": "pending",
             "action": "Atomically select TerminalCore as sole production authority and delete the provisional screen, parser, string/style grid, lossy renderer, shadow path, and TERM overclaim.",
-            "depends_on": ["DTC-P22", "DTC-P23", "DTC-P24", "DTC-P25"],
+            "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24", "DTC-P25"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P26"}],
             "completion_evidence": []
           }
