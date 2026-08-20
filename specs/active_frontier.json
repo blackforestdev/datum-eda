@@ -2005,30 +2005,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "dtc-p16-20260820",
-        "claimed_at": "2026-08-20T04:56:42Z",
-        "heartbeat_at": "2026-08-20T04:56:42Z",
-        "expires_at": "2026-08-20T12:56:42Z",
-        "scope": [
-          "crates/terminal-core",
-          "scripts/check_terminal_core_boundary.py",
-          "scripts/test_terminal_core_boundary.py",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "docs/LICENSING.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "main",
-        "head": "cde29f5"
-      },
+      "claim": null,
       "summary": "Implement Datum-owned VT parsing, state, cells, modes, replies, damage, history, reflow, selection, search, and protocols without third-party terminal code.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2039,7 +2020,7 @@
       ],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
-        "canonical_next_step_id": "DTC-P16",
+        "canonical_next_step_id": "DTC-P16A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2282,11 +2263,34 @@
             ]
           },
           {
+            "id": "DTC-P16A",
+            "kind": "owner_decision",
+            "status": "in_progress",
+            "action": "Ratify terminal clipboard, URI activation, paste confirmation, and notification/rate security policy before metadata implementation.",
+            "depends_on": ["DTC-P15"],
+            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P16A"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve DTC-P16 clipboard policy`, or `P16-S1: revise — <replacement>` or `P16-S1: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "P16-S1",
+                  "question": "What may a program running inside Datum's terminal do to the desktop clipboard through OSC 52?",
+                  "recommended_response": "Deny clipboard reads by default. Allow a clipboard write request only from the focused active terminal and require explicit user confirmation; deny background requests. TerminalCore emits a bounded typed request and never accesses or logs clipboard contents.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                    "marker": "P16-S1"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "DTC-P16",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Implement bounded OSC link, clipboard, shell-mark, palette, title, CWD, notification, progress, URI and paste-security events.",
-            "depends_on": ["DTC-P10"],
+            "depends_on": ["DTC-P10", "DTC-P16A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P16"}],
             "completion_evidence": []
           },

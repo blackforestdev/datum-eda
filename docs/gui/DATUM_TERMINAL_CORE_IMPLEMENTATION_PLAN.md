@@ -1296,10 +1296,27 @@ shared worktree source-health check remains red only on seven unrelated
 pre-existing dirty legacy files outside this revision; all DTC-P15 files remain
 below 700 lines. DTC-P15 adds no Cargo dependency, runtime fetch, Unicode-policy
 change, renderer, PTY/GUI/process authority, TERM identity, security policy, or
-production cutover. DTC-P16 owns metadata and escape-driven security policy.
+production cutover. DTC-P16A owns the metadata-security policy decisions that
+must precede DTC-P16.
+- <!-- REQ:TERMINAL-T1-CORE:DTC-P16A --> **DTC-P16A — metadata-security owner decisions.** Before metadata/security
+  implementation, the owner ratifies how hostile terminal output may request
+  clipboard access, URI activation, paste confirmation, and notification/rate
+  behavior. Decisions are presented one at a time in plain language. Approval
+  authorizes only bounded typed core events; the core never accesses the GUI,
+  clipboard, filesystem, network, process layer, MCP, or Datum design state.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P16 --> **DTC-P16 — metadata security.** OSC 8/52/133, links, clipboard requests,
   palette/title/CWD, notifications/progress, URI/paste policy, session scoping,
   rate limits, and proof that escapes cannot invoke Datum operations.
+
+#### DTC-P16A owner packet
+
+- <!-- OWNER:TERMINAL-T1-CORE:DTC-P16A:P16-S1 --> **P16-S1 — terminal clipboard requests.** A program running in a
+  terminal can emit OSC 52 to ask for clipboard contents or to overwrite the
+  desktop clipboard. Recommended: deny clipboard reads by default; accept a
+  write request only from the focused active session and require explicit user
+  confirmation before `gui-app` changes the clipboard. Inactive/background
+  requests are denied. TerminalCore emits only a bounded typed request and
+  never accesses the clipboard or logs the clipboard payload.
 
 ### Extended graphics parity
 
