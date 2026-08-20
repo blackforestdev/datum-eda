@@ -27,6 +27,12 @@ mod input;
 mod input_key;
 mod input_modes;
 mod input_mouse;
+mod kitty_commands;
+mod kitty_graphics;
+mod kitty_pixels;
+mod kitty_placeholder;
+mod kitty_protocol;
+mod kitty_store;
 mod limits;
 mod mode;
 mod parser;
@@ -69,7 +75,9 @@ pub use event::{
     ReplyKind, ShellMark, TerminalReply, TitleText, WorkingDirectoryText,
 };
 pub use graphics::{
-    GraphicAnchorResolution, GraphicId, GraphicPlacement, GraphicProtocol, PixelAspect,
+    GraphicAnchorResolution, GraphicCellExtent, GraphicId, GraphicPixelOffset, GraphicPlacement,
+    GraphicProtocol, GraphicSourceRect, KittyImageId, KittyParentPlacement, KittyPlacementId,
+    PixelAspect,
 };
 pub use history::{AnchorResolution, HistoryRowSnapshot, HistorySnapshot};
 pub use hyperlink::Hyperlink;
@@ -78,6 +86,9 @@ pub use input::{
     KeyInput, KeyModifiers, KeypadKey, MediaKey, ModifierKey,
 };
 pub use input_mouse::{MouseAction, MouseButton, MouseInput, MousePosition};
+pub use kitty_placeholder::KittyPlaceholder;
+pub use kitty_protocol::KittyGraphicsError;
+pub use kitty_store::{KittyAnimationState, KittyFrame, KittyImage};
 pub use limits::{
     ClipboardBytesLimit, ClusterBytesLimit, CompressionRatioLimit, ControlStringBytesLimit,
     CoreLimitValues, CoreLimits, GraphicDecodedBytesLimit, GraphicFramesLimit, GraphicObjectsLimit,
@@ -147,3 +158,6 @@ mod codec_tests;
 
 #[cfg(test)]
 mod sixel_tests;
+
+#[cfg(test)]
+mod kitty_graphics_tests;

@@ -45,7 +45,7 @@ REQUIRED_MODULES = {
         ".pixels",
         ".decoded_bytes",
         ".frames",
-        "Vec<Rgba8>",
+        "Arc<[Rgba8]>",
     ),
     "grid.rs": ("struct GridBuffer", "fn repair_row", "fn clear_cluster_at"),
     "history.rs": (
@@ -651,7 +651,7 @@ def check(root: Path) -> list[str]:
         failures.append("DTC-P18 must release graphics after logical-anchor trimming")
     if "clear_buffer" not in reducer or "ScreenAction::Reset" not in reducer:
         failures.append("DTC-P18 must tear down graphics on buffer clear and reset")
-    if "Vec<Rgba8>" not in graphics or "Vec<String>" in sixel:
+    if "Arc<[Rgba8]>" not in graphics or "Vec<String>" in sixel:
         failures.append("DTC-P18 graphics must remain bounded opaque RGBA, never text semantics")
     sixel_tests = crate / "src" / "sixel_tests.rs"
     sixel_proof_text = sixel_tests.read_text(encoding="utf-8") if sixel_tests.is_file() else ""

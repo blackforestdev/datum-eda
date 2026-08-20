@@ -10,6 +10,7 @@ pub enum CoreError {
     Screen(ScreenError),
     Limit(LimitError),
     Sixel(crate::SixelError),
+    KittyGraphics(crate::KittyGraphicsError),
     InvalidPrintable,
 }
 
@@ -19,6 +20,7 @@ impl fmt::Display for CoreError {
             Self::Screen(error) => error.fmt(formatter),
             Self::Limit(error) => error.fmt(formatter),
             Self::Sixel(error) => error.fmt(formatter),
+            Self::KittyGraphics(error) => error.fmt(formatter),
             Self::InvalidPrintable => formatter.write_str("terminal printable cluster is invalid"),
         }
     }
@@ -44,6 +46,12 @@ impl From<crate::SixelError> for CoreError {
     }
 }
 
+impl From<crate::KittyGraphicsError> for CoreError {
+    fn from(value: crate::KittyGraphicsError) -> Self {
+        Self::KittyGraphics(value)
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CoreUpdate {
     pub(crate) damage: DamageSet,
@@ -53,7 +61,7 @@ pub struct CoreUpdate {
 }
 
 impl CoreUpdate {
-    fn new(core: &TerminalCore) -> Self {
+    pub(crate) fn new(core: &TerminalCore) -> Self {
         Self {
             damage: DamageSet::new(core.limits.pending_damage),
             events: Vec::new(),

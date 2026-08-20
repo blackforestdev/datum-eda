@@ -14,7 +14,8 @@ impl TerminalCore {
         match string.kind {
             ControlStringKind::Osc => self.apply_osc(&string.bytes, update),
             ControlStringKind::Dcs => self.apply_dcs(&string.bytes, update),
-            ControlStringKind::Apc | ControlStringKind::Pm | ControlStringKind::Sos => Ok(()),
+            ControlStringKind::Apc => self.apply_kitty_graphics(&string.bytes, update),
+            ControlStringKind::Pm | ControlStringKind::Sos => Ok(()),
         }
     }
 

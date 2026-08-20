@@ -201,6 +201,10 @@ impl ScreenState {
         self.graphics.iter()
     }
 
+    pub fn kitty_images(&self) -> impl ExactSizeIterator<Item = &crate::KittyImage> {
+        self.graphics.kitty.images()
+    }
+
     pub fn resolve_graphic(&self, id: crate::GraphicId) -> crate::GraphicAnchorResolution {
         let Some(graphic) = self.graphics.get(id) else {
             return crate::GraphicAnchorResolution::Unknown;
@@ -213,6 +217,20 @@ impl ScreenState {
                 crate::GraphicAnchorResolution::History { row, column }
             }
             crate::AnchorResolution::Screen { row, column } => {
+                let (row, column) = if let Some(parent) = graphic.parent() {
+                    let row = i64::from(row) + i64::from(parent.vertical_cells);
+                    let column = i64::from(column) + i64::from(parent.horizontal_cells);
+                    if row < 0
+                        || column < 0
+                        || row >= i64::from(self.size.rows.get())
+                        || column >= i64::from(self.size.columns.get())
+                    {
+                        return crate::GraphicAnchorResolution::Trimmed;
+                    }
+                    (row as u16, column as u16)
+                } else {
+                    (row, column)
+                };
                 let cell_width = pixel_extent(
                     self.size.pixels.width,
                     u32::from(self.size.columns.get()),
@@ -232,11 +250,33 @@ impl ScreenState {
                 } else {
                     self.size.pixels.height
                 };
+                let source = graphic.source();
+                let source_width = if source.width == 0 {
+                    graphic.width().saturating_sub(source.x)
+                } else {
+                    source.width.min(graphic.width().saturating_sub(source.x))
+                };
+                let source_height = if source.height == 0 {
+                    graphic.height().saturating_sub(source.y)
+                } else {
+                    source.height.min(graphic.height().saturating_sub(source.y))
+                };
+                let cells = graphic.cell_extent();
+                let display_width = if cells.columns == 0 {
+                    source_width
+                } else {
+                    cells.columns.saturating_mul(cell_width)
+                };
+                let display_height = if cells.rows == 0 {
+                    source_height
+                } else {
+                    cells.rows.saturating_mul(cell_height)
+                };
                 crate::GraphicAnchorResolution::Screen {
                     row,
                     column,
-                    visible_pixel_width: graphic.width().min(surface_width.saturating_sub(x)),
-                    visible_pixel_height: graphic.height().min(surface_height.saturating_sub(y)),
+                    visible_pixel_width: display_width.min(surface_width.saturating_sub(x)),
+                    visible_pixel_height: display_height.min(surface_height.saturating_sub(y)),
                 }
             }
             crate::AnchorResolution::Trimmed => crate::GraphicAnchorResolution::Trimmed,
