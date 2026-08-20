@@ -1137,6 +1137,43 @@ bounded logical history, stable anchors, trimming, and resize reflow.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P12 --> **DTC-P12 — history and reflow.** Logical lines, hard/soft breaks, bounded
   storage, alternate isolation, stable viewport/cursor/selection/search/link/
   graphics anchors, deterministic trim, and resize reflow.
+
+#### DTC-P12 history and reflow evidence
+
+<!-- EVIDENCE:TERMINAL-T1-CORE:DTC-P12-CLOSED -->
+Revision `5cff8d8` adds a primary-only logical history store with stable
+monotonic line identities, physical-row logical offsets, immutable history
+snapshots, and explicit anchor resolution across history and the visible
+screen. Owner-supplied `HistoryLines` and `HistoryBytes` limits independently
+bound retained logical lines and cluster payload. Exhaustion removes the
+complete oldest logical line and records cumulative trimming; it never retains
+a misleading partial prefix or lets alternate-screen output enter history.
+
+Full-screen primary scrolling now transfers displaced rows into history while
+hard and soft line identities remain distinct. Resize performs one checked
+reflow of retained history plus the primary grid, preserves cursor and trailing
+blank anchors, never divides a wide cluster from its continuation, deterministically
+repartitions history and visible rows, and resizes the isolated alternate grid
+without contaminating scrollback. `ReflowWork` and screen-cell limits are
+checked before mutation, reset/clear assigns fresh line identities, and every
+resize produces one full-damage result.
+
+Fifty-three TerminalCore tests pass. Ten focused DTC-P12 proofs cover stable
+anchor resolution while output arrives, line- and byte-limit whole-line trim,
+trimmed-anchor identity, primary/alternate isolation, repeated byte-preserving
+Unicode reflow, atomic wide clusters, cursor placement through trailing blanks,
+reset invalidation, and rejection without mutation when reflow work is
+exhausted. The boundary guard requires the history/reflow owners, both resource
+checks, stable anchor resolver, and every named proof; fifteen hermetic
+mutations pass.
+
+The full workspace all-target suite, strict workspace all-target Clippy,
+locked/offline workspace checking, dependency authority, TerminalCore boundary
+and mutations, source health over 1,443 files at the isolated revision, spec
+governance, project-state validation/render parity, formatting, and diff
+hygiene pass. DTC-P12 adds no dependency, renderer, PTY/GUI/process authority,
+selection/copy policy, search engine, graphics, TERM identity, or production
+cutover. DTC-P13 owns selection scopes and deterministic copy extraction.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P13 --> **DTC-P13 — selection and copy.** Grapheme, word, logical/wrapped line, block,
   all scopes; stable endpoints; trailing blank/tab/wrap/newline extraction.
 - <!-- REQ:TERMINAL-T1-CORE:DTC-P14 --> **DTC-P14 — search.** Incremental literal/case search plus Datum-owned bounded
