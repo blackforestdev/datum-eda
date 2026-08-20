@@ -90,6 +90,9 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "search_tests.rs").write_text(
             "\n".join(guard.REQUIRED_SEARCH_PROOFS), encoding="utf-8"
         )
+        (source / "input_tests.rs").write_text(
+            "\n".join(guard.REQUIRED_INPUT_PROOFS), encoding="utf-8"
+        )
         (source / "screen.rs").write_text(
             (source / "screen.rs").read_text()
             + "\nprimary: GridBuffer\nalternate: GridBuffer\n",
@@ -139,6 +142,32 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "search_regex.rs").write_text(
             (source / "search_regex.rs").read_text()
             + "\nState::Split\nVec<Fragment>\nwork.charge(1)?\n",
+            encoding="utf-8",
+        )
+        (source / "input.rs").write_text(
+            (source / "input.rs").read_text()
+            + "\nself.limits.input_bytes\nInputDisposition::LocalOnly\n"
+            + "self.state.modes.bracketed_paste\nself.state.modes.focus_reporting\n",
+            encoding="utf-8",
+        )
+        (source / "input_key.rs").write_text(
+            (source / "input_key.rs").read_text()
+            + "\nKITTY_DISAMBIGUATE\nKITTY_REPORT_EVENTS\nKITTY_REPORT_ALTERNATE\nKITTY_REPORT_ALL\n"
+            + "KITTY_ASSOCIATED_TEXT\napplication_cursor\napplication_keypad\n"
+            + "kitty_keypad_code\n",
+            encoding="utf-8",
+        )
+        (source / "input_modes.rs").write_text(
+            (source / "input_modes.rs").read_text()
+            + "\n.keyboard_stack\nReplyKind::KeyboardProtocol\n"
+            + ".stack.push(\n.stack.pop(\n",
+            encoding="utf-8",
+        )
+        (source / "input_mouse.rs").write_text(
+            (source / "input_mouse.rs").read_text()
+            + "\nMouseEncoding::Default\nMouseEncoding::Utf8\nMouseEncoding::Sgr\n"
+            + "MouseEncoding::Urxvt\nMouseEncoding::SgrPixels\n"
+            + "input.local_override\nvalue.clamp(\n",
             encoding="utf-8",
         )
         (source / "history.rs").write_text(
@@ -384,6 +413,35 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.assertTrue(any("SearchMatchState::Trimmed" in item for item in failures))
         self.assertTrue(any("State::Split" in item for item in failures))
         self.assertTrue(any("hostile_regex_exhausts" in item for item in failures))
+
+    def test_input_limit_kitty_mouse_override_and_proof_removal_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        contract = root / guard.CRATE / "src/input.rs"
+        contract.write_text(contract.read_text().replace("self.limits.input_bytes", "usize::MAX"))
+        modes = root / guard.CRATE / "src/input_modes.rs"
+        modes.write_text(
+            modes.read_text().replace(".keyboard_stack", ".removed_stack")
+        )
+        mouse = root / guard.CRATE / "src/input_mouse.rs"
+        mouse.write_text(
+            mouse.read_text()
+            .replace("MouseEncoding::SgrPixels", "removed_pixels")
+            .replace("input.local_override", "false")
+        )
+        proofs = root / guard.CRATE / "src/input_tests.rs"
+        proofs.write_text(
+            proofs.read_text().replace(
+                "kitty_keyboard_negotiation_is_chunk_invariant_bounded_and_queryable",
+                "removed",
+            )
+        )
+        failures = guard.check(root)
+        self.assertTrue(any("input_bytes" in item for item in failures))
+        self.assertTrue(any("keyboard_stack" in item for item in failures))
+        self.assertTrue(any("MouseEncoding::SgrPixels" in item for item in failures))
+        self.assertTrue(any("input.local_override" in item for item in failures))
+        self.assertTrue(any("kitty_keyboard_negotiation" in item for item in failures))
 
 
 if __name__ == "__main__":

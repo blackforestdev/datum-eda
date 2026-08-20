@@ -1,6 +1,7 @@
 use crate::{
     CoreError, CoreUpdate, CsiSequence, CursorShape, Damage, EraseDisplay, EraseLine,
-    FoundationMode, Margins, ReplyKind, ScreenAction, ScreenBuffer, TerminalCore,
+    FoundationMode, Margins, MouseEncoding, MouseTracking, ReplyKind, ScreenAction, ScreenBuffer,
+    TerminalCore,
 };
 
 impl TerminalCore {
@@ -64,7 +65,13 @@ impl TerminalCore {
                 self.set_horizontal_margins(&sequence, update)?;
             }
             ([], [], b's') => self.apply_screen(ScreenAction::SaveCursor, update)?,
-            ([], [], b'u') => self.apply_screen(ScreenAction::RestoreCursor, update)?,
+            ([], [], b'u') if sequence.parameters.is_empty() => {
+                self.apply_screen(ScreenAction::RestoreCursor, update)?
+            }
+            ([b'>'], [], b'u') => self.push_kitty_keyboard(&sequence, update)?,
+            ([b'<'], [], b'u') => self.pop_kitty_keyboard(&sequence, update),
+            ([b'?'], [], b'u') => self.query_kitty_keyboard(update)?,
+            ([b'='], [], b'u') => self.set_kitty_keyboard(&sequence, update),
             ([], [], b'g') => self.clear_tab_stop(&sequence, update),
             ([], [], b'b') => self.repeat_last(&sequence, update)?,
             ([], [], b'h' | b'l') | ([b'?'], [], b'h' | b'l') => {
@@ -400,6 +407,14 @@ impl TerminalCore {
                 self.state.modes.application_keypad = enabled;
                 update.recognized = true;
             }
+            9 => self.set_mouse_tracking(MouseTracking::X10, enabled, update),
+            1000 => self.set_mouse_tracking(MouseTracking::Button, enabled, update),
+            1002 => self.set_mouse_tracking(MouseTracking::Drag, enabled, update),
+            1003 => self.set_mouse_tracking(MouseTracking::Any, enabled, update),
+            1005 => self.set_mouse_encoding(MouseEncoding::Utf8, enabled, update),
+            1006 => self.set_mouse_encoding(MouseEncoding::Sgr, enabled, update),
+            1015 => self.set_mouse_encoding(MouseEncoding::Urxvt, enabled, update),
+            1016 => self.set_mouse_encoding(MouseEncoding::SgrPixels, enabled, update),
             1004 => {
                 self.state.modes.focus_reporting = enabled;
                 update.recognized = true;
@@ -485,6 +500,14 @@ impl TerminalCore {
                 25 => Some(self.state.cursor.visible),
                 47 | 1047 | 1049 => Some(self.state.active_buffer == ScreenBuffer::Alternate),
                 66 => Some(self.state.modes.application_keypad),
+                9 => Some(self.state.mouse_tracking == MouseTracking::X10),
+                1000 => Some(self.state.mouse_tracking == MouseTracking::Button),
+                1002 => Some(self.state.mouse_tracking == MouseTracking::Drag),
+                1003 => Some(self.state.mouse_tracking == MouseTracking::Any),
+                1005 => Some(self.state.mouse_encoding == MouseEncoding::Utf8),
+                1006 => Some(self.state.mouse_encoding == MouseEncoding::Sgr),
+                1015 => Some(self.state.mouse_encoding == MouseEncoding::Urxvt),
+                1016 => Some(self.state.mouse_encoding == MouseEncoding::SgrPixels),
                 1004 => Some(self.state.modes.focus_reporting),
                 2004 => Some(self.state.modes.bracketed_paste),
                 2026 => Some(self.state.modes.synchronized_output),

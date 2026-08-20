@@ -188,6 +188,8 @@ fn core_with_cluster_limit(
         title_bytes: limit,
         working_directory_bytes: limit,
         clipboard_bytes: limit,
+        input_bytes: limit,
+        keyboard_stack: limit,
         notification_bytes: limit,
         reply_bytes: limit,
         pending_events: limit,

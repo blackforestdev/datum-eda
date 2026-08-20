@@ -28,6 +28,31 @@ REQUIRED_MODULES = {
         "struct HistoryStore",
         "fn trim_to_limits",
     ),
+    "input.rs": (
+        "pub enum InputDisposition",
+        "pub fn encode_key(",
+        "pub fn encode_focus(",
+        "pub fn encode_paste(",
+        "pub fn encode_ime(",
+    ),
+    "input_key.rs": (
+        "fn kitty(",
+        "fn legacy(",
+        "fn kitty_keypad_code(",
+        "fn control_text(",
+    ),
+    "input_modes.rs": (
+        "fn push_kitty_keyboard(",
+        "fn pop_kitty_keyboard(",
+        "fn query_kitty_keyboard(",
+        "fn set_kitty_keyboard(",
+    ),
+    "input_mouse.rs": (
+        "pub enum MouseAction",
+        "pub fn encode_mouse(",
+        "fn tracked(",
+        "fn clip(",
+    ),
     "limits.rs": ("pub enum LimitKind", "pub struct CoreLimits", "pub struct CoreLimitValues"),
     "mode.rs": ("pub struct CursorState", "pub struct Margins", "pub struct ModeState"),
     "parser.rs": ("pub struct StreamingParser", "pub fn feed(", "pub fn finish("),
@@ -88,6 +113,7 @@ REQUIRED_LIMITS = (
     "ParameterCount", "ParameterDigits", "ParameterValue", "SubparameterCount",
     "IntermediateBytes", "ControlStringBytes",
     "ClusterBytes", "TitleBytes", "WorkingDirectoryBytes", "ClipboardBytes",
+    "InputBytes", "KeyboardStack",
     "NotificationBytes", "ReplyBytes", "PendingEvents", "PendingDamage",
     "HistoryLines", "HistoryBytes", "GraphicObjects", "GraphicPixels",
     "GraphicDecodedBytes", "GraphicFrames", "CompressionRatio", "ParserWork",
@@ -186,6 +212,18 @@ REQUIRED_SEARCH_PROOFS = (
     "alternate_search_never_observes_primary_history",
     "hostile_regex_exhausts_search_work_without_backtracking",
     "invalid_and_empty_patterns_fail_closed",
+)
+
+REQUIRED_INPUT_PROOFS = (
+    "legacy_keys_cover_text_control_meta_cursor_keypad_function_and_modifiers",
+    "kitty_keyboard_negotiation_is_chunk_invariant_bounded_and_queryable",
+    "kitty_encoding_reports_events_and_text_while_flag_one_keeps_plain_tab",
+    "focus_paste_and_ime_commit_have_distinct_transmission_contracts",
+    "every_mouse_family_clips_coordinates_and_preserves_release_identity",
+    "pixel_mouse_and_local_override_are_explicit_and_never_escape_bounds",
+    "tracking_modes_filter_motion_release_and_press_without_crossing_local_policy",
+    "input_byte_limit_rejects_complete_key_paste_and_commit_without_prefixes",
+    "reset_clears_negotiated_input_protocol_state",
 )
 
 
@@ -405,6 +443,54 @@ def check(root: Path) -> list[str]:
     for marker in REQUIRED_SEARCH_PROOFS:
         if marker not in search_proof_text:
             failures.append(f"DTC-P14 deterministic search proof is missing: {marker}")
+    input_contract = sources.get("input.rs", "")
+    input_key = sources.get("input_key.rs", "")
+    input_modes = sources.get("input_modes.rs", "")
+    input_mouse = sources.get("input_mouse.rs", "")
+    for marker in (
+        "self.limits.input_bytes",
+        "InputDisposition::LocalOnly",
+        "self.state.modes.bracketed_paste",
+        "self.state.modes.focus_reporting",
+    ):
+        if marker not in input_contract:
+            failures.append(f"DTC-P15 bounded input-contract marker is missing: {marker}")
+    for marker in (
+        "KITTY_DISAMBIGUATE",
+        "KITTY_REPORT_EVENTS",
+        "KITTY_REPORT_ALTERNATE",
+        "KITTY_REPORT_ALL",
+        "KITTY_ASSOCIATED_TEXT",
+        "application_cursor",
+        "application_keypad",
+        "kitty_keypad_code",
+    ):
+        if marker not in input_key:
+            failures.append(f"DTC-P15 keyboard protocol marker is missing: {marker}")
+    for marker in (
+        ".keyboard_stack",
+        "ReplyKind::KeyboardProtocol",
+        ".stack.push(",
+        ".stack.pop(",
+    ):
+        if marker not in input_modes:
+            failures.append(f"DTC-P15 kitty negotiation marker is missing: {marker}")
+    for marker in (
+        "MouseEncoding::Default",
+        "MouseEncoding::Utf8",
+        "MouseEncoding::Sgr",
+        "MouseEncoding::Urxvt",
+        "MouseEncoding::SgrPixels",
+        "input.local_override",
+        "value.clamp(",
+    ):
+        if marker not in input_mouse:
+            failures.append(f"DTC-P15 mouse/override/clipping marker is missing: {marker}")
+    input_tests = crate / "src" / "input_tests.rs"
+    input_proof_text = input_tests.read_text(encoding="utf-8") if input_tests.is_file() else ""
+    for marker in REQUIRED_INPUT_PROOFS:
+        if marker not in input_proof_text:
+            failures.append(f"DTC-P15 deterministic input protocol proof is missing: {marker}")
     return failures
 
 

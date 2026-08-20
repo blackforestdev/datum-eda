@@ -12,6 +12,8 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes: value,
+        input_bytes: value,
+        keyboard_stack: value,
         notification_bytes: value,
         reply_bytes: value,
         pending_events: value,
@@ -369,7 +371,7 @@ fn metadata_limits_and_unsupported_queries_fail_closed() {
         .apply(Action::Csi(CsiSequence {
             private_markers: vec![b'?'],
             parameters: vec![CsiParameter {
-                subparameters: vec![Some(1000)],
+                subparameters: vec![Some(999)],
             }],
             intermediates: Vec::new(),
             final_byte: b'h',

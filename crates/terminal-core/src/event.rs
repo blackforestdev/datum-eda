@@ -102,6 +102,7 @@ pub enum ReplyKind {
     CursorPosition,
     ModeReport,
     ColorReport,
+    KeyboardProtocol,
     Graphics,
 }
 

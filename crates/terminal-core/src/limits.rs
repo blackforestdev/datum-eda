@@ -15,6 +15,8 @@ pub enum LimitKind {
     TitleBytes,
     WorkingDirectoryBytes,
     ClipboardBytes,
+    InputBytes,
+    KeyboardStack,
     NotificationBytes,
     ReplyBytes,
     PendingEvents,
@@ -120,6 +122,8 @@ checked_limit!(ClusterBytesLimit, ClusterBytes);
 checked_limit!(TitleBytesLimit, TitleBytes);
 checked_limit!(WorkingDirectoryBytesLimit, WorkingDirectoryBytes);
 checked_limit!(ClipboardBytesLimit, ClipboardBytes);
+checked_limit!(InputBytesLimit, InputBytes);
+checked_limit!(KeyboardStackLimit, KeyboardStack);
 checked_limit!(NotificationBytesLimit, NotificationBytes);
 checked_limit!(ReplyBytesLimit, ReplyBytes);
 checked_limit!(PendingEventsLimit, PendingEvents);
@@ -150,6 +154,8 @@ pub struct CoreLimitValues {
     pub title_bytes: usize,
     pub working_directory_bytes: usize,
     pub clipboard_bytes: usize,
+    pub input_bytes: usize,
+    pub keyboard_stack: usize,
     pub notification_bytes: usize,
     pub reply_bytes: usize,
     pub pending_events: usize,
@@ -181,6 +187,8 @@ pub struct CoreLimits {
     pub title_bytes: TitleBytesLimit,
     pub working_directory_bytes: WorkingDirectoryBytesLimit,
     pub clipboard_bytes: ClipboardBytesLimit,
+    pub input_bytes: InputBytesLimit,
+    pub keyboard_stack: KeyboardStackLimit,
     pub notification_bytes: NotificationBytesLimit,
     pub reply_bytes: ReplyBytesLimit,
     pub pending_events: PendingEventsLimit,
@@ -214,6 +222,8 @@ impl TryFrom<CoreLimitValues> for CoreLimits {
             title_bytes: TitleBytesLimit::new(raw.title_bytes)?,
             working_directory_bytes: WorkingDirectoryBytesLimit::new(raw.working_directory_bytes)?,
             clipboard_bytes: ClipboardBytesLimit::new(raw.clipboard_bytes)?,
+            input_bytes: InputBytesLimit::new(raw.input_bytes)?,
+            keyboard_stack: KeyboardStackLimit::new(raw.keyboard_stack)?,
             notification_bytes: NotificationBytesLimit::new(raw.notification_bytes)?,
             reply_bytes: ReplyBytesLimit::new(raw.reply_bytes)?,
             pending_events: PendingEventsLimit::new(raw.pending_events)?,

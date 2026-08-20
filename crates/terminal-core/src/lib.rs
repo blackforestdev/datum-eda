@@ -17,6 +17,10 @@ mod damage;
 mod event;
 mod grid;
 mod history;
+mod input;
+mod input_key;
+mod input_modes;
+mod input_mouse;
 mod limits;
 mod mode;
 mod parser;
@@ -51,17 +55,24 @@ pub use event::{
     ReplyKind, TerminalReply, TitleText, WorkingDirectoryText,
 };
 pub use history::{AnchorResolution, HistoryRowSnapshot, HistorySnapshot};
+pub use input::{
+    FocusInput, ImeInput, InputBytes, InputDisposition, InputError, KeyCode, KeyEventKind,
+    KeyInput, KeyModifiers, KeypadKey, MediaKey, ModifierKey,
+};
+pub use input_mouse::{MouseAction, MouseButton, MouseInput, MousePosition};
 pub use limits::{
     ClipboardBytesLimit, ClusterBytesLimit, CompressionRatioLimit, ControlStringBytesLimit,
     CoreLimitValues, CoreLimits, GraphicDecodedBytesLimit, GraphicFramesLimit, GraphicObjectsLimit,
-    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, IntermediateBytesLimit, LimitError,
-    LimitKind, NotificationBytesLimit, ParameterCountLimit, ParameterDigitsLimit,
-    ParameterValueLimit, ParserWorkLimit, PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit,
-    ReplyBytesLimit, ScreenCellsLimit, SearchWorkLimit, SnapshotCellsLimit, SubparameterCountLimit,
-    TitleBytesLimit, WorkingDirectoryBytesLimit,
+    GraphicPixelsLimit, HistoryBytesLimit, HistoryLinesLimit, InputBytesLimit,
+    IntermediateBytesLimit, KeyboardStackLimit, LimitError, LimitKind, NotificationBytesLimit,
+    ParameterCountLimit, ParameterDigitsLimit, ParameterValueLimit, ParserWorkLimit,
+    PendingDamageLimit, PendingEventsLimit, ReflowWorkLimit, ReplyBytesLimit, ScreenCellsLimit,
+    SearchWorkLimit, SnapshotCellsLimit, SubparameterCountLimit, TitleBytesLimit,
+    WorkingDirectoryBytesLimit,
 };
 pub use mode::{
-    CursorShape, CursorState, Margins, ModeState, SavedCursorState, ScreenBuffer, TabStops,
+    CursorShape, CursorState, KittyKeyboardState, Margins, ModeState, MouseEncoding, MouseTracking,
+    SavedCursorState, ScreenBuffer, TabStops,
 };
 pub use parser::{FeedReport, StreamingParser};
 pub use parser_action::{
@@ -106,3 +117,6 @@ mod selection_tests;
 
 #[cfg(test)]
 mod search_tests;
+
+#[cfg(test)]
+mod input_tests;

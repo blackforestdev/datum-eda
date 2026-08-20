@@ -87,6 +87,42 @@ pub enum ScreenBuffer {
     Alternate,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum MouseTracking {
+    #[default]
+    Off,
+    X10,
+    Button,
+    Drag,
+    Any,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum MouseEncoding {
+    #[default]
+    Default,
+    Utf8,
+    Sgr,
+    Urxvt,
+    SgrPixels,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct KittyKeyboardState {
+    pub(crate) flags: u8,
+    pub(crate) stack: Vec<u8>,
+}
+
+impl KittyKeyboardState {
+    pub const fn flags(&self) -> u8 {
+        self.flags
+    }
+
+    pub fn stack_depth(&self) -> usize {
+        self.stack.len()
+    }
+}
+
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct TabStops {
     columns: Vec<Column>,

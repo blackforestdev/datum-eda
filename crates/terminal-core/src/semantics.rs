@@ -305,5 +305,8 @@ impl TerminalCore {
         self.state.default_foreground = crate::Color::Default;
         self.state.default_background = crate::Color::Default;
         self.state.cursor_color = crate::Color::Default;
+        self.state.mouse_tracking = crate::MouseTracking::Off;
+        self.state.mouse_encoding = crate::MouseEncoding::Default;
+        self.state.kitty_keyboard = crate::KittyKeyboardState::default();
     }
 }

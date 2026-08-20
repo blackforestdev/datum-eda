@@ -12,6 +12,8 @@ fn raw_limits(value: usize) -> CoreLimitValues {
         title_bytes: value,
         working_directory_bytes: value,
         clipboard_bytes: value,
+        input_bytes: value,
+        keyboard_stack: value,
         notification_bytes: value,
         reply_bytes: value,
         pending_events: value,
@@ -58,6 +60,8 @@ fn all_resource_families_reject_zero_and_expose_no_default_policy() {
     assert_zero!(TitleBytesLimit, TitleBytes);
     assert_zero!(WorkingDirectoryBytesLimit, WorkingDirectoryBytes);
     assert_zero!(ClipboardBytesLimit, ClipboardBytes);
+    assert_zero!(InputBytesLimit, InputBytes);
+    assert_zero!(KeyboardStackLimit, KeyboardStack);
     assert_zero!(NotificationBytesLimit, NotificationBytes);
     assert_zero!(ReplyBytesLimit, ReplyBytes);
     assert_zero!(PendingEventsLimit, PendingEvents);

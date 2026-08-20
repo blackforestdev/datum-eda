@@ -1,9 +1,10 @@
 use crate::grid::GridBuffer;
 use crate::history::HistoryStore;
 use crate::{
-    Cell, CellStyle, CharacterSetState, Cluster, Color, CoreLimits, CursorState, Margins,
-    ModeState, SavedCursorState, ScreenBuffer, ScreenError, SnapshotError, SnapshotRow, TabStops,
-    TerminalSize, TerminalSnapshot, TitleText, WorkingDirectoryText,
+    Cell, CellStyle, CharacterSetState, Cluster, Color, CoreLimits, CursorState,
+    KittyKeyboardState, Margins, ModeState, MouseEncoding, MouseTracking, SavedCursorState,
+    ScreenBuffer, ScreenError, SnapshotError, SnapshotRow, TabStops, TerminalSize,
+    TerminalSnapshot, TitleText, WorkingDirectoryText,
 };
 
 #[derive(Clone, Debug)]
@@ -13,6 +14,9 @@ pub struct ScreenState {
     pub(crate) cursor: CursorState,
     pub(crate) margins: Margins,
     pub(crate) modes: ModeState,
+    pub(crate) mouse_tracking: MouseTracking,
+    pub(crate) mouse_encoding: MouseEncoding,
+    pub(crate) kitty_keyboard: KittyKeyboardState,
     pub(crate) tabs: TabStops,
     pub(crate) style: CellStyle,
     pub(crate) protected: bool,
@@ -56,6 +60,9 @@ impl ScreenState {
             cursor: CursorState::home(size),
             margins: Margins::full(size),
             modes,
+            mouse_tracking: MouseTracking::Off,
+            mouse_encoding: MouseEncoding::Default,
+            kitty_keyboard: KittyKeyboardState::default(),
             tabs: TabStops::every_eight(size.columns),
             style: CellStyle::default(),
             protected: false,
@@ -96,6 +103,18 @@ impl ScreenState {
 
     pub const fn modes(&self) -> ModeState {
         self.modes
+    }
+
+    pub const fn mouse_tracking(&self) -> MouseTracking {
+        self.mouse_tracking
+    }
+
+    pub const fn mouse_encoding(&self) -> MouseEncoding {
+        self.mouse_encoding
+    }
+
+    pub const fn kitty_keyboard(&self) -> &KittyKeyboardState {
+        &self.kitty_keyboard
     }
 
     pub const fn style(&self) -> CellStyle {
