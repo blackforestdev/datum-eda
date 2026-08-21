@@ -49,6 +49,11 @@ pub(super) fn render_terminal_clipboard_menu(
             items.insert(2, ("OPEN LINK...", "", HitTarget::TerminalLinkOpen));
         }
     }
+    items.push((
+        "NEXT THEME",
+        state.ui.terminal.theme.label(),
+        HitTarget::TerminalThemeNext,
+    ));
     let menu_height = ITEM_HEIGHT_PX * items.len() as f32;
     let x = menu.anchor_x.clamp(
         screen.x + MENU_MARGIN_PX,
@@ -144,9 +149,15 @@ mod tests {
         assert!(text.iter().any(|run| run.text == "PASTE"));
         assert!(text.iter().any(|run| run.text == "COPY LINK"));
         assert!(text.iter().any(|run| run.text == "OPEN LINK..."));
+        assert!(text.iter().any(|run| run.text == "NEXT THEME"));
+        assert!(
+            text.iter()
+                .any(|run| run.text == state.ui.terminal.theme.label())
+        );
         for target in [
             HitTarget::TerminalClipboardCopy,
             HitTarget::TerminalClipboardPaste,
+            HitTarget::TerminalThemeNext,
             HitTarget::TerminalLinkCopy,
             HitTarget::TerminalLinkOpen,
         ] {

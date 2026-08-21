@@ -57,6 +57,7 @@ mod runtime_terminal_notifications;
 mod runtime_terminal_pointer;
 mod runtime_terminal_render;
 mod runtime_terminal_search;
+mod runtime_terminal_theme;
 mod runtime_view_actions;
 mod terminal_accessibility;
 mod terminal_accessibility_bridge;
@@ -1905,6 +1906,7 @@ impl Runtime {
                 Some(
                     HitTarget::TerminalClipboardCopy
                         | HitTarget::TerminalClipboardPaste
+                        | HitTarget::TerminalThemeNext
                         | HitTarget::TerminalLinkCopy
                         | HitTarget::TerminalLinkOpen
                 )
@@ -2251,6 +2253,10 @@ impl Runtime {
                 self.dismiss_terminal_clipboard_menu();
                 self.paste_terminal_input();
                 true
+            }
+            HitTarget::TerminalThemeNext => {
+                self.dismiss_terminal_clipboard_menu();
+                self.cycle_terminal_theme()
             }
             HitTarget::TerminalLinkCopy => {
                 let target = self.terminal_clipboard_link_target();

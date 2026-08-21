@@ -42,6 +42,7 @@ pub enum HitTarget {
     TerminalShutdownCancel,
     TerminalClipboardCopy,
     TerminalClipboardPaste,
+    TerminalThemeNext,
     TerminalLinkCopy,
     TerminalLinkOpen,
     TerminalLinkConfirmOpen,

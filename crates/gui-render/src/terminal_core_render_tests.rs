@@ -3,7 +3,8 @@ use crate::TerminalRenderCache;
 use datum_gui_protocol::{ApplicationFocus, DockTab};
 use datum_gui_viewport::{ScreenRectPx, TERMINAL_CELL_WIDTH_PX};
 use datum_terminal_core::{
-    CoreLimitValues, CoreLimits, Damage, Row, Rows, StreamingParser, TerminalCore, TerminalSize,
+    CoreLimitValues, CoreLimits, Damage, PaletteIndex, Rgb, Row, Rows, StreamingParser,
+    TerminalCore, TerminalSize,
 };
 
 fn limits() -> CoreLimits {
@@ -92,6 +93,58 @@ fn scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together() {
     assert!((a.clip_bounds.unwrap().height - geometry.metrics.height).abs() < 0.001);
     let cursor_x = geometry.screen.x + 2.0 * geometry.metrics.width + CURSOR_HORIZONTAL_INSET_PX;
     assert!(quads.iter().any(|quad| quad.points[0].0 == cursor_x));
+}
+
+#[test]
+fn themes_change_only_fallback_colors_and_invalidate_retained_rows() {
+    let snapshot = snapshot(b"\x1b[31mR\x1b[38;2;9;8;7mT");
+    let palette = snapshot.palette();
+    let dark_background = resolve_background(Color::Default, palette, TerminalTheme::DatumDark);
+    let light_background = resolve_background(Color::Default, palette, TerminalTheme::Light);
+    assert_ne!(dark_background, light_background);
+    assert_ne!(
+        resolve_foreground(
+            Color::Indexed(PaletteIndex::new(1)),
+            palette,
+            TerminalTheme::DatumDark,
+        ),
+        resolve_foreground(
+            Color::Indexed(PaletteIndex::new(1)),
+            palette,
+            TerminalTheme::Light,
+        ),
+    );
+    let explicit = Color::Rgb(Rgb {
+        red: 9,
+        green: 8,
+        blue: 7,
+    });
+    assert_eq!(
+        resolve_foreground(explicit, palette, TerminalTheme::DatumDark),
+        resolve_foreground(explicit, palette, TerminalTheme::Light),
+        "child-program RGB colors remain authoritative",
+    );
+
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let mut cache = TerminalRenderCache::new();
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Full],
+        &geometry(),
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    let first = cache.rebuilt_rows();
+    state.ui.terminal.theme = TerminalTheme::Light;
+    cache.render(
+        &state,
+        &snapshot,
+        &[],
+        &geometry(),
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert!(cache.rebuilt_rows() > first);
 }
 
 #[test]

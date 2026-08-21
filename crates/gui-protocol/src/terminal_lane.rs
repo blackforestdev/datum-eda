@@ -101,6 +101,32 @@ pub const TERMINAL_FONT_SCALE_MIN_MILLIS: u16 = 600;
 pub const TERMINAL_FONT_SCALE_MAX_MILLIS: u16 = 2_000;
 pub const TERMINAL_FONT_SCALE_STEP_MILLIS: u16 = 100;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum TerminalTheme {
+    #[default]
+    DatumDark,
+    HighContrast,
+    Light,
+}
+
+impl TerminalTheme {
+    pub fn next(self) -> Self {
+        match self {
+            Self::DatumDark => Self::HighContrast,
+            Self::HighContrast => Self::Light,
+            Self::Light => Self::DatumDark,
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::DatumDark => "DATUM DARK",
+            Self::HighContrast => "HIGH CONTRAST",
+            Self::Light => "LIGHT",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
@@ -112,6 +138,9 @@ pub struct TerminalLaneState {
     /// `swap_session_projection`: changing tabs or split focus must not change
     /// the user's terminal appearance.
     pub font_scale_millis: u16,
+    /// Workspace-global fallback palette. Explicit colors and child-program
+    /// OSC palette changes remain authoritative over this user preference.
+    pub theme: TerminalTheme,
     pub active_tab_id: Option<String>,
     pub active_session_id: Option<String>,
     pub title: Option<String>,
@@ -195,6 +224,7 @@ impl Default for TerminalLaneState {
             tabs: Vec::new(),
             tab_layouts: Vec::new(),
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+            theme: TerminalTheme::default(),
             active_tab_id: None,
             active_session_id: None,
             title: None,
@@ -250,6 +280,7 @@ mod tests {
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
             font_scale_millis: 1_400,
+            theme: TerminalTheme::HighContrast,
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
             ..Default::default()
         };
@@ -258,6 +289,7 @@ mod tests {
             active.activity_summary.clone(),
             active.application_shutdown_blocked.clone(),
             active.font_scale_millis,
+            active.theme,
         );
         let mut parked = TerminalLaneState {
             title: Some("parked title".to_string()),
@@ -295,8 +327,25 @@ mod tests {
                 active.activity_summary,
                 active.application_shutdown_blocked,
                 active.font_scale_millis,
+                active.theme,
             ),
             chrome,
         );
+    }
+
+    #[test]
+    fn terminal_theme_cycle_is_closed_and_labels_are_user_facing() {
+        let themes = [
+            TerminalTheme::DatumDark,
+            TerminalTheme::HighContrast,
+            TerminalTheme::Light,
+        ];
+        assert_eq!(
+            themes.map(TerminalTheme::label),
+            ["DATUM DARK", "HIGH CONTRAST", "LIGHT"]
+        );
+        assert_eq!(TerminalTheme::DatumDark.next(), TerminalTheme::HighContrast);
+        assert_eq!(TerminalTheme::HighContrast.next(), TerminalTheme::Light);
+        assert_eq!(TerminalTheme::Light.next(), TerminalTheme::DatumDark);
     }
 }

@@ -5,7 +5,9 @@
 //! palette entries, decorations, selection, cursor, clipping, history, and
 //! graphics placement all originate in one immutable `RenderSnapshot`.
 
-use datum_gui_protocol::{ReviewWorkspaceState, TerminalSearchMatch, TerminalSearchPoint};
+use datum_gui_protocol::{
+    ReviewWorkspaceState, TerminalSearchMatch, TerminalSearchPoint, TerminalTheme,
+};
 use datum_gui_viewport::{TerminalCellMetrics, TerminalScreenGeometry};
 use datum_terminal_core::{
     CellAttribute, CellContent, CellStyle, CellWidth, Color, CursorShape, GraphicAnchorResolution,
@@ -35,6 +37,7 @@ pub(super) struct TerminalRowRenderContext<'a> {
     pub(super) y: f32,
     pub(super) max_columns: usize,
     pub(super) metrics: TerminalCellMetrics,
+    pub(super) theme: TerminalTheme,
     pub(super) search_highlights: &'a [TerminalSearchMatch],
     pub(super) active_search_match: Option<TerminalSearchMatch>,
 }
@@ -126,7 +129,7 @@ pub(super) fn render_terminal_core_snapshot(
     });
     panel_quads.push(Quad::from_rect(
         screen,
-        resolve_background(Color::Default, snapshot.palette()),
+        resolve_background(Color::Default, snapshot.palette(), state.ui.terminal.theme),
     ));
 
     let rows = snapshot.rows().collect::<Vec<_>>();
@@ -147,6 +150,7 @@ pub(super) fn render_terminal_core_snapshot(
                 y,
                 max_columns: usize::from(geometry.columns),
                 metrics: geometry.metrics,
+                theme: state.ui.terminal.theme,
                 search_highlights: &state.ui.terminal.search.highlights,
                 active_search_match: state.ui.terminal.search.matched,
             },
@@ -163,6 +167,7 @@ pub(super) fn render_terminal_core_snapshot(
                 screen.x,
                 y,
                 geometry.metrics,
+                state.ui.terminal.theme,
                 panel_quads,
             );
             if state.ui.focus.is_terminal()
@@ -263,8 +268,8 @@ pub(super) fn render_row(
             width: width_cells as f32 * context.metrics.width,
             height: context.metrics.height,
         };
-        let (foreground, background) = style_colors(cell.style, snapshot.palette());
-        if background != resolve_background(Color::Default, snapshot.palette()) {
+        let (foreground, background) = style_colors(cell.style, snapshot.palette(), context.theme);
+        if background != resolve_background(Color::Default, snapshot.palette(), context.theme) {
             quads.push(Quad::from_rect(cell_rect, background));
         }
         if selected {
@@ -276,7 +281,7 @@ pub(super) fn render_row(
         }
         let decoration = match cell.style.underline_color {
             Color::Default => foreground,
-            color => resolve_foreground(color, snapshot.palette()),
+            color => resolve_foreground(color, snapshot.palette(), context.theme),
         };
         render_decorations(cell.style, cell_rect, decoration, selected, quads);
         let CellContent::Cluster(cluster) = &cell.content else {
@@ -341,9 +346,13 @@ fn search_highlight_contains(
     preceding != 0 && search_match_contains(highlights[preceding - 1], point)
 }
 
-fn style_colors(style: CellStyle, palette: &RenderPalette) -> ([f32; 3], [f32; 3]) {
-    let mut foreground = resolve_foreground(style.foreground, palette);
-    let mut background = resolve_background(style.background, palette);
+fn style_colors(
+    style: CellStyle,
+    palette: &RenderPalette,
+    theme: TerminalTheme,
+) -> ([f32; 3], [f32; 3]) {
+    let mut foreground = resolve_foreground(style.foreground, palette, theme);
+    let mut background = resolve_background(style.background, palette, theme);
     if style.attributes.contains(CellAttribute::Inverse) {
         std::mem::swap(&mut foreground, &mut background);
     }
@@ -353,14 +362,14 @@ fn style_colors(style: CellStyle, palette: &RenderPalette) -> ([f32; 3], [f32; 3
     (foreground, background)
 }
 
-fn resolve_foreground(color: Color, palette: &RenderPalette) -> [f32; 3] {
+fn resolve_foreground(color: Color, palette: &RenderPalette, theme: TerminalTheme) -> [f32; 3] {
     let rgb = match color {
         Color::Default => match palette.default_foreground() {
-            Color::Default => return [0.90, 0.92, 0.94],
-            resolved => return resolve_foreground(resolved, palette),
+            Color::Default => return theme_foreground(theme),
+            resolved => return resolve_foreground(resolved, palette, theme),
         },
         Color::Indexed(index) => match palette.color(index.get()) {
-            Color::Default | Color::Indexed(_) => return ansi_fallback(index.get()),
+            Color::Default | Color::Indexed(_) => return ansi_fallback(index.get(), theme),
             Color::Rgb(rgb) => rgb,
         },
         Color::Rgb(rgb) => rgb,
@@ -372,18 +381,22 @@ fn resolve_foreground(color: Color, palette: &RenderPalette) -> [f32; 3] {
     ]
 }
 
-pub(super) fn resolve_background(color: Color, palette: &RenderPalette) -> [f32; 3] {
+pub(super) fn resolve_background(
+    color: Color,
+    palette: &RenderPalette,
+    theme: TerminalTheme,
+) -> [f32; 3] {
     match color {
         Color::Default => match palette.default_background() {
-            Color::Default => [0.071, 0.082, 0.102],
-            resolved => resolve_foreground(resolved, palette),
+            Color::Default => theme_background(theme),
+            resolved => resolve_foreground(resolved, palette, theme),
         },
-        resolved => resolve_foreground(resolved, palette),
+        resolved => resolve_foreground(resolved, palette, theme),
     }
 }
 
-fn ansi_fallback(index: u8) -> [f32; 3] {
-    const ANSI: [[u8; 3]; 16] = [
+fn ansi_fallback(index: u8, theme: TerminalTheme) -> [f32; 3] {
+    const DATUM_DARK: [[u8; 3]; 16] = [
         [64, 69, 77],
         [242, 82, 71],
         [115, 209, 122],
@@ -401,8 +414,48 @@ fn ansi_fallback(index: u8) -> [f32; 3] {
         [128, 235, 245],
         [255, 255, 255],
     ];
+    const HIGH_CONTRAST: [[u8; 3]; 16] = [
+        [0, 0, 0],
+        [255, 85, 85],
+        [85, 255, 85],
+        [255, 255, 85],
+        [85, 170, 255],
+        [255, 85, 255],
+        [85, 255, 255],
+        [238, 238, 238],
+        [102, 102, 102],
+        [255, 102, 102],
+        [102, 255, 102],
+        [255, 255, 102],
+        [102, 178, 255],
+        [255, 102, 255],
+        [102, 255, 255],
+        [255, 255, 255],
+    ];
+    const LIGHT: [[u8; 3]; 16] = [
+        [28, 31, 36],
+        [174, 45, 36],
+        [45, 125, 57],
+        [144, 98, 0],
+        [39, 91, 170],
+        [142, 68, 173],
+        [0, 119, 133],
+        [222, 225, 230],
+        [91, 96, 105],
+        [210, 63, 52],
+        [56, 145, 68],
+        [179, 126, 0],
+        [55, 111, 199],
+        [162, 82, 194],
+        [0, 143, 158],
+        [255, 255, 255],
+    ];
     let value = if index < 16 {
-        ANSI[usize::from(index)]
+        (match theme {
+            TerminalTheme::DatumDark => DATUM_DARK,
+            TerminalTheme::HighContrast => HIGH_CONTRAST,
+            TerminalTheme::Light => LIGHT,
+        })[usize::from(index)]
     } else if index < 232 {
         let cube = index - 16;
         let level = |component: u8| [0, 95, 135, 175, 215, 255][usize::from(component)];
@@ -412,6 +465,22 @@ fn ansi_fallback(index: u8) -> [f32; 3] {
         [gray, gray, gray]
     };
     value.map(|channel| f32::from(channel) / 255.0)
+}
+
+fn theme_foreground(theme: TerminalTheme) -> [f32; 3] {
+    match theme {
+        TerminalTheme::DatumDark => [0.90, 0.92, 0.94],
+        TerminalTheme::HighContrast => [1.0, 1.0, 1.0],
+        TerminalTheme::Light => [0.10, 0.11, 0.13],
+    }
+}
+
+fn theme_background(theme: TerminalTheme) -> [f32; 3] {
+    match theme {
+        TerminalTheme::DatumDark => [0.071, 0.082, 0.102],
+        TerminalTheme::HighContrast => [0.0, 0.0, 0.0],
+        TerminalTheme::Light => [0.94, 0.95, 0.97],
+    }
 }
 
 fn render_decorations(
@@ -514,6 +583,7 @@ pub(super) fn render_cursor(
     origin_x: f32,
     y: f32,
     metrics: TerminalCellMetrics,
+    theme: TerminalTheme,
     quads: &mut Vec<Quad>,
 ) {
     let cursor = snapshot.cursor();
@@ -541,8 +611,9 @@ pub(super) fn render_cursor(
             height: metrics.height,
         },
     };
-    let palette_cursor = resolve_foreground(snapshot.palette().cursor(), snapshot.palette());
-    let color = if palette_cursor == [0.90, 0.92, 0.94] {
+    let cursor = snapshot.palette().cursor();
+    let palette_cursor = resolve_foreground(cursor, snapshot.palette(), theme);
+    let color = if cursor == Color::Default {
         if focused { TEXT_ACCENT } else { TEXT_MUTED }
     } else {
         palette_cursor

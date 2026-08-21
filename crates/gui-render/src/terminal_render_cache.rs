@@ -20,6 +20,7 @@ struct TerminalSessionRenderCache {
     screen: Option<RectPx>,
     columns: u16,
     palette: Option<RenderPalette>,
+    theme: Option<datum_gui_protocol::TerminalTheme>,
     selection: Option<Selection>,
     search_matches: Vec<TerminalSearchMatch>,
     search_match: Option<TerminalSearchMatch>,
@@ -129,7 +130,11 @@ impl TerminalSessionRenderCache {
         });
         panel_quads.push(Quad::from_rect(
             screen,
-            super::terminal_core_render::resolve_background(Color::Default, snapshot.palette()),
+            super::terminal_core_render::resolve_background(
+                Color::Default,
+                snapshot.palette(),
+                lane.theme,
+            ),
         ));
         let rows = snapshot.rows().collect::<Vec<_>>();
         let max_rows = usize::from(geometry.rows);
@@ -143,6 +148,7 @@ impl TerminalSessionRenderCache {
         let global_dirty = self.screen != Some(screen)
             || self.columns != geometry.columns
             || self.palette.as_ref() != Some(snapshot.palette())
+            || self.theme != Some(lane.theme)
             || self.selection != snapshot.selection()
             || self.search_matches != lane.search.highlights
             || self.search_match != lane.search.matched
@@ -188,6 +194,7 @@ impl TerminalSessionRenderCache {
                         y: 0.0,
                         max_columns: usize::from(geometry.columns),
                         metrics: geometry.metrics,
+                        theme: lane.theme,
                         search_highlights: &lane.search.highlights,
                         active_search_match: lane.search.matched,
                     },
@@ -223,6 +230,7 @@ impl TerminalSessionRenderCache {
                     screen.x,
                     y,
                     geometry.metrics,
+                    lane.theme,
                     panel_quads,
                 );
             }
@@ -230,6 +238,7 @@ impl TerminalSessionRenderCache {
         self.screen = Some(screen);
         self.columns = geometry.columns;
         self.palette = Some(snapshot.palette().clone());
+        self.theme = Some(lane.theme);
         self.selection = snapshot.selection();
         self.search_matches = lane.search.highlights.clone();
         self.search_match = lane.search.matched;

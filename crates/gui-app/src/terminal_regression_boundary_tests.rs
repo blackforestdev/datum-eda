@@ -40,6 +40,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalShutdownCancel
         | HitTarget::TerminalClipboardCopy
         | HitTarget::TerminalClipboardPaste
+        | HitTarget::TerminalThemeNext
         | HitTarget::TerminalLinkCopy
         | HitTarget::TerminalLinkOpen
         | HitTarget::TerminalLinkConfirmOpen
