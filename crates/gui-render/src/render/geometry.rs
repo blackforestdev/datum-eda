@@ -1277,9 +1277,9 @@ fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
     for run in text_runs {
         // Terminal cells already live in the device-pixel coordinate space of
         // the scaled ShellLayout. Their glyph advance, cursor, mouse mapping,
-        // and PTY rows/columns all share the fixed terminal cell metric. Scaling
-        // only the glyph size here makes the visible prompt advance diverge from
-        // the cursor by `(scale - 1) * column` cells on HiDPI surfaces.
+        // and PTY rows/columns all share the terminal geometry's resolved cell
+        // metric. Scaling only the glyph here for HiDPI would apply a second
+        // scale and make prompt advance diverge from the cursor.
         if run.face != TextFace::Terminal {
             run.size *= scale;
         }

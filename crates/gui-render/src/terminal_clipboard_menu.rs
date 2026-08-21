@@ -3,7 +3,7 @@ use super::{
     TEXT_MUTED, TEXT_PRIMARY, TextFace, TextRun, draw_text, push_rect_border,
 };
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalLinkKind};
-use datum_gui_viewport::terminal_screen_geometry;
+use datum_gui_viewport::terminal_screen_geometry_with_scale;
 
 const MENU_WIDTH_PX: f32 = 216.0;
 const ITEM_HEIGHT_PX: f32 = 30.0;
@@ -22,9 +22,12 @@ pub(super) fn render_terminal_clipboard_menu(
     if state.ui.active_dock_tab != Some(DockTab::Terminal) {
         return;
     }
-    let screen: RectPx = terminal_screen_geometry(layout.bottom_strip.into())
-        .screen
-        .into();
+    let screen: RectPx = terminal_screen_geometry_with_scale(
+        layout.bottom_strip.into(),
+        state.ui.terminal.font_scale_millis,
+    )
+    .screen
+    .into();
     let mut items = vec![
         ("COPY", "CTRL+SHIFT+C", HitTarget::TerminalClipboardCopy),
         ("PASTE", "CTRL+SHIFT+V", HitTarget::TerminalClipboardPaste),
@@ -125,9 +128,12 @@ mod tests {
             }),
         });
         let layout = ShellLayout::for_window(1280, 800, Some(260));
-        let screen: RectPx = terminal_screen_geometry(layout.bottom_strip.into())
-            .screen
-            .into();
+        let screen: RectPx = terminal_screen_geometry_with_scale(
+            layout.bottom_strip.into(),
+            state.ui.terminal.font_scale_millis,
+        )
+        .screen
+        .into();
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();

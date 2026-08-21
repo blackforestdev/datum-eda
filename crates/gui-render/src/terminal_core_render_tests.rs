@@ -1,7 +1,7 @@
 use super::*;
 use crate::TerminalRenderCache;
 use datum_gui_protocol::{ApplicationFocus, DockTab};
-use datum_gui_viewport::ScreenRectPx;
+use datum_gui_viewport::{ScreenRectPx, TERMINAL_CELL_WIDTH_PX};
 use datum_terminal_core::{
     CoreLimitValues, CoreLimits, Damage, Row, Rows, StreamingParser, TerminalCore, TerminalSize,
 };
@@ -58,6 +58,40 @@ fn geometry() -> TerminalScreenGeometry {
         width: 160.0,
         height: 120.0,
     })
+}
+
+#[test]
+fn scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together() {
+    let snapshot = snapshot(b"ab");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    let geometry = datum_gui_viewport::terminal_screen_geometry_with_scale(
+        ScreenRectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 320.0,
+            height: 240.0,
+        },
+        1_500,
+    );
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut text,
+        &mut Vec::new(),
+    );
+
+    let a = text.iter().find(|run| run.text == "a").unwrap();
+    let b = text.iter().find(|run| run.text == "b").unwrap();
+    assert!((a.size - geometry.metrics.font_size).abs() < 0.001);
+    assert!((b.x - a.x - geometry.metrics.width).abs() < 0.001);
+    assert!((a.clip_bounds.unwrap().height - geometry.metrics.height).abs() < 0.001);
+    let cursor_x = geometry.screen.x + 2.0 * geometry.metrics.width + CURSOR_HORIZONTAL_INSET_PX;
+    assert!(quads.iter().any(|quad| quad.points[0].0 == cursor_x));
 }
 
 #[test]

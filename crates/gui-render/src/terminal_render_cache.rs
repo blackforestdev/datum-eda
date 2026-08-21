@@ -1,7 +1,7 @@
 //! Damage-driven retained row plans for immutable TerminalCore snapshots.
 
 use datum_gui_protocol::{ReviewWorkspaceState, TerminalLaneState, TerminalSearchMatch};
-use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TerminalScreenGeometry};
+use datum_gui_viewport::TerminalScreenGeometry;
 use datum_terminal_core::{
     Color, Damage, RenderPalette, RenderRowSource, RenderSnapshot, Selection,
 };
@@ -187,6 +187,7 @@ impl TerminalSessionRenderCache {
                         },
                         y: 0.0,
                         max_columns: usize::from(geometry.columns),
+                        metrics: geometry.metrics,
                         search_highlights: &lane.search.highlights,
                         active_search_match: lane.search.matched,
                     },
@@ -198,7 +199,7 @@ impl TerminalSessionRenderCache {
                     self.rebuilt_rows += 1;
                 }
             }
-            let y = screen.y + visible_index as f32 * TERMINAL_CELL_HEIGHT_PX;
+            let y = screen.y + visible_index as f32 * geometry.metrics.height;
             panel_quads.extend(cached.quads.iter().copied().map(|mut quad| {
                 for point in &mut quad.points {
                     point.1 += y;
@@ -221,6 +222,7 @@ impl TerminalSessionRenderCache {
                     focused,
                     screen.x,
                     y,
+                    geometry.metrics,
                     panel_quads,
                 );
             }

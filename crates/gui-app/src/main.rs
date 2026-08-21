@@ -50,6 +50,7 @@ mod runtime_camera_pane;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
+mod runtime_terminal_font;
 mod runtime_terminal_input;
 mod runtime_terminal_links;
 mod runtime_terminal_notifications;
@@ -1397,6 +1398,9 @@ impl Runtime {
                 self.begin_terminal_search();
                 true
             }
+            TerminalKeyAction::FontZoomIn => self.adjust_terminal_font_zoom(1),
+            TerminalKeyAction::FontZoomOut => self.adjust_terminal_font_zoom(-1),
+            TerminalKeyAction::FontZoomReset => self.reset_terminal_font_zoom(),
             TerminalKeyAction::Ignore => false,
         }
     }

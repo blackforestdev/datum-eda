@@ -24,6 +24,9 @@ pub(super) enum TerminalKeyAction {
     CopyClipboard,
     PasteClipboard,
     Search,
+    FontZoomIn,
+    FontZoomOut,
+    FontZoomReset,
     Ignore,
 }
 
@@ -79,6 +82,11 @@ pub(super) fn terminal_key_action(
     if terminal_search_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
         return TerminalKeyAction::Search;
     }
+    if let Some(action) =
+        terminal_font_zoom_shortcut(event.state, event.repeat, event.physical_key, modifiers)
+    {
+        return action;
+    }
     if let Some(shortcut) =
         terminal_clipboard_shortcut(event.state, event.repeat, event.physical_key, modifiers)
     {
@@ -108,6 +116,34 @@ pub(super) fn terminal_key_action(
     terminal_core_key_input(event, modifiers)
         .map(TerminalKeyAction::CoreKey)
         .unwrap_or(TerminalKeyAction::Ignore)
+}
+
+pub(super) fn terminal_font_zoom_shortcut(
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: ModifiersState,
+) -> Option<TerminalKeyAction> {
+    if state != ElementState::Pressed
+        || repeat
+        || !modifiers.control_key()
+        || modifiers.alt_key()
+        || modifiers.super_key()
+    {
+        return None;
+    }
+    match physical_key {
+        PhysicalKey::Code(KeyCode::Equal | KeyCode::NumpadAdd) => {
+            Some(TerminalKeyAction::FontZoomIn)
+        }
+        PhysicalKey::Code(KeyCode::Minus | KeyCode::NumpadSubtract) => {
+            Some(TerminalKeyAction::FontZoomOut)
+        }
+        PhysicalKey::Code(KeyCode::Digit0 | KeyCode::Numpad0) => {
+            Some(TerminalKeyAction::FontZoomReset)
+        }
+        _ => None,
+    }
 }
 
 pub(super) fn terminal_core_key_input(

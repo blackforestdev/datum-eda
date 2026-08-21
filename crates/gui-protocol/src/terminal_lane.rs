@@ -96,6 +96,11 @@ pub enum TerminalProgressState {
     Indeterminate,
 }
 
+pub const TERMINAL_FONT_SCALE_DEFAULT_MILLIS: u16 = 1_000;
+pub const TERMINAL_FONT_SCALE_MIN_MILLIS: u16 = 600;
+pub const TERMINAL_FONT_SCALE_MAX_MILLIS: u16 = 2_000;
+pub const TERMINAL_FONT_SCALE_STEP_MILLIS: u16 = 100;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
@@ -103,6 +108,10 @@ pub struct TerminalLaneState {
     /// Persistent split ownership for every terminal tab. This is global dock
     /// chrome and deliberately does not move with a session projection.
     pub tab_layouts: Vec<crate::TerminalTabLayout>,
+    /// Workspace-global terminal font zoom. It deliberately stays outside
+    /// `swap_session_projection`: changing tabs or split focus must not change
+    /// the user's terminal appearance.
+    pub font_scale_millis: u16,
     pub active_tab_id: Option<String>,
     pub active_session_id: Option<String>,
     pub title: Option<String>,
@@ -185,6 +194,7 @@ impl Default for TerminalLaneState {
             activity_summary: Vec::new(),
             tabs: Vec::new(),
             tab_layouts: Vec::new(),
+            font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
             active_tab_id: None,
             active_session_id: None,
             title: None,
@@ -239,6 +249,7 @@ mod tests {
             }),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
+            font_scale_millis: 1_400,
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
             ..Default::default()
         };
@@ -246,6 +257,7 @@ mod tests {
             active.active_session_id.clone(),
             active.activity_summary.clone(),
             active.application_shutdown_blocked.clone(),
+            active.font_scale_millis,
         );
         let mut parked = TerminalLaneState {
             title: Some("parked title".to_string()),
@@ -282,6 +294,7 @@ mod tests {
                 active.active_session_id,
                 active.activity_summary,
                 active.application_shutdown_blocked,
+                active.font_scale_millis,
             ),
             chrome,
         );

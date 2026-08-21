@@ -10,8 +10,9 @@
 //! than the lane could draw (bead `dat-pan-trace-terminal-pollution-0j0`).
 //!
 //! The screen rectangle is the PRIMARY space owner of the terminal lane: the
-//! cell rectangle is computed first (integral rows/columns of the fixed cell
-//! metric). Persistent terminal chrome consumes no cell rows.
+//! cell rectangle is computed first (integral rows/columns of the resolved
+//! workspace-global font/cell metric). Persistent terminal chrome consumes no
+//! cell rows.
 //! Application summaries consume zero cell rows by construction: no summary
 //! band exists in this geometry at all.
 //!
@@ -25,15 +26,44 @@ use datum_gui_protocol::{
     ScreenPointPx, TerminalSplitChild, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
 };
 
-/// Fixed mono cell advance used by the terminal lane renderer (px).
+/// Base mono cell advance used by the terminal lane renderer at 100% zoom (px).
 pub const TERMINAL_CELL_WIDTH_PX: f32 = 7.9;
-/// Fixed terminal line pitch used by the terminal lane renderer (px).
+/// Base terminal line pitch used by the terminal lane renderer at 100% zoom (px).
 pub const TERMINAL_CELL_HEIGHT_PX: f32 = 16.0;
+/// Base terminal glyph size at 100% zoom (px).
+pub const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
 /// Minimum useful terminal height used by callers and tests.
 pub const TERMINAL_MIN_ROWS: u16 = 4;
 /// Visible separation between adjacent terminal panes. It is owned here so
 /// rendering, hit testing, and PTY sizing cannot disagree about the gutter.
 pub const TERMINAL_SPLIT_GUTTER_PX: f32 = 6.0;
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TerminalCellMetrics {
+    pub width: f32,
+    pub height: f32,
+    pub font_size: f32,
+}
+
+impl TerminalCellMetrics {
+    pub const DEFAULT: Self = Self {
+        width: TERMINAL_CELL_WIDTH_PX,
+        height: TERMINAL_CELL_HEIGHT_PX,
+        font_size: TERMINAL_FONT_SIZE_PX,
+    };
+
+    pub fn from_scale_millis(scale_millis: u16) -> Self {
+        let scale = f32::from(scale_millis.clamp(
+            datum_gui_protocol::TERMINAL_FONT_SCALE_MIN_MILLIS,
+            datum_gui_protocol::TERMINAL_FONT_SCALE_MAX_MILLIS,
+        )) / 1_000.0;
+        Self {
+            width: TERMINAL_CELL_WIDTH_PX * scale,
+            height: TERMINAL_CELL_HEIGHT_PX * scale,
+            font_size: TERMINAL_FONT_SIZE_PX * scale,
+        }
+    }
+}
 
 // Dock-content derivation from the bottom strip (must equal the bottom-dock
 // solver's content rect: x+12, y+44, w-24, h-56).
@@ -56,6 +86,9 @@ pub struct TerminalScreenGeometry {
     pub columns: u16,
     /// Rows the renderer draws and the PTY is resized to.
     pub rows: u16,
+    /// The same scaled cell metrics used for grid sizing, hit testing,
+    /// renderer placement, cursor geometry, graphics, and IME placement.
+    pub metrics: TerminalCellMetrics,
 }
 
 /// One solved leaf in a terminal tab's recursive split tree.
@@ -87,8 +120,8 @@ impl TerminalScreenGeometry {
         if !self.screen.contains(ScreenPointPx { x, y }) {
             return None;
         }
-        let column = ((x - self.screen.x) / TERMINAL_CELL_WIDTH_PX) as u16;
-        let row = ((y - self.screen.y) / TERMINAL_CELL_HEIGHT_PX) as u16;
+        let column = ((x - self.screen.x) / self.metrics.width) as u16;
+        let row = ((y - self.screen.y) / self.metrics.height) as u16;
         Some((column.min(self.columns - 1), row.min(self.rows - 1)))
     }
 }
@@ -98,6 +131,23 @@ impl TerminalScreenGeometry {
 /// The cell rectangle consumes the full lane interior. The returned
 /// `columns`/`rows` are the one authority for renderer and PTY alike.
 pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeometry {
+    terminal_screen_geometry_with_metrics(bottom_strip, TerminalCellMetrics::DEFAULT)
+}
+
+pub fn terminal_screen_geometry_with_scale(
+    bottom_strip: ScreenRectPx,
+    scale_millis: u16,
+) -> TerminalScreenGeometry {
+    terminal_screen_geometry_with_metrics(
+        bottom_strip,
+        TerminalCellMetrics::from_scale_millis(scale_millis),
+    )
+}
+
+fn terminal_screen_geometry_with_metrics(
+    bottom_strip: ScreenRectPx,
+    metrics: TerminalCellMetrics,
+) -> TerminalScreenGeometry {
     let content = ScreenRectPx {
         x: bottom_strip.x + DOCK_CONTENT_INSET_X,
         y: bottom_strip.y + DOCK_CONTENT_TOP,
@@ -110,20 +160,21 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
         width: (content.width - 2.0 * LANE_PAD_X).max(0.0),
         height: (content.height - LANE_PAD_TOP - LANE_PAD_BOTTOM).max(0.0),
     };
-    let columns = ((inner.width / TERMINAL_CELL_WIDTH_PX) as u16).max(1);
-    let rows = (inner.height / TERMINAL_CELL_HEIGHT_PX) as u16;
+    let columns = ((inner.width / metrics.width) as u16).max(1);
+    let rows = (inner.height / metrics.height) as u16;
     let rows = rows.max(1);
     let screen = ScreenRectPx {
         x: inner.x,
         y: inner.y,
-        width: f32::from(columns) * TERMINAL_CELL_WIDTH_PX,
-        height: f32::from(rows) * TERMINAL_CELL_HEIGHT_PX,
+        width: f32::from(columns) * metrics.width,
+        height: f32::from(rows) * metrics.height,
     };
     TerminalScreenGeometry {
         content,
         screen,
         columns,
         rows,
+        metrics,
     }
 }
 
@@ -143,7 +194,13 @@ pub fn terminal_split_geometries(
         }];
     }
     let mut panes = Vec::new();
-    solve_split_node(&tab.root, root.screen, &tab.focused_session_id, &mut panes);
+    solve_split_node(
+        &tab.root,
+        root.screen,
+        root.metrics,
+        &tab.focused_session_id,
+        &mut panes,
+    );
     panes
 }
 
@@ -212,6 +269,7 @@ fn split_gutter(
 fn solve_split_node(
     node: &TerminalSplitNode,
     bounds: ScreenRectPx,
+    metrics: TerminalCellMetrics,
     focused_session_id: &str,
     panes: &mut Vec<TerminalPaneGeometry>,
 ) {
@@ -219,7 +277,7 @@ fn solve_split_node(
         TerminalSplitNode::Session { session_id } => panes.push(TerminalPaneGeometry {
             session_id: session_id.clone(),
             focused: session_id == focused_session_id,
-            geometry: grid_geometry_in(bounds),
+            geometry: grid_geometry_in(bounds, metrics),
         }),
         TerminalSplitNode::Split {
             direction,
@@ -229,8 +287,8 @@ fn solve_split_node(
         } => {
             let ratio = f32::from((*ratio_millis).clamp(100, 900)) / 1000.0;
             let (first_bounds, second_bounds) = split_bounds(bounds, *direction, ratio);
-            solve_split_node(first, first_bounds, focused_session_id, panes);
-            solve_split_node(second, second_bounds, focused_session_id, panes);
+            solve_split_node(first, first_bounds, metrics, focused_session_id, panes);
+            solve_split_node(second, second_bounds, metrics, focused_session_id, panes);
         }
     }
 }
@@ -276,18 +334,19 @@ fn split_bounds(
     }
 }
 
-fn grid_geometry_in(bounds: ScreenRectPx) -> TerminalScreenGeometry {
-    let columns = ((bounds.width / TERMINAL_CELL_WIDTH_PX) as u16).max(1);
-    let rows = ((bounds.height / TERMINAL_CELL_HEIGHT_PX) as u16).max(1);
+fn grid_geometry_in(bounds: ScreenRectPx, metrics: TerminalCellMetrics) -> TerminalScreenGeometry {
+    let columns = ((bounds.width / metrics.width) as u16).max(1);
+    let rows = ((bounds.height / metrics.height) as u16).max(1);
     TerminalScreenGeometry {
         content: bounds,
         screen: ScreenRectPx {
-            width: f32::from(columns) * TERMINAL_CELL_WIDTH_PX,
-            height: f32::from(rows) * TERMINAL_CELL_HEIGHT_PX,
+            width: f32::from(columns) * metrics.width,
+            height: f32::from(rows) * metrics.height,
             ..bounds
         },
         columns,
         rows,
+        metrics,
     }
 }
 
@@ -332,6 +391,41 @@ mod tests {
         );
         assert!(geometry.columns >= 80, "a 1280px dock affords 80+ columns");
         assert_screen_within_content(&geometry);
+    }
+
+    #[test]
+    fn font_zoom_changes_grid_and_hit_testing_through_one_metric_authority() {
+        let strip = strip(1280.0, 320.0);
+        let default = terminal_screen_geometry_with_scale(strip, 1_000);
+        let enlarged = terminal_screen_geometry_with_scale(strip, 1_500);
+        assert_eq!(default.metrics, TerminalCellMetrics::DEFAULT);
+        assert!((enlarged.metrics.width - TERMINAL_CELL_WIDTH_PX * 1.5).abs() < 0.001);
+        assert!((enlarged.metrics.height - TERMINAL_CELL_HEIGHT_PX * 1.5).abs() < 0.001);
+        assert!((enlarged.metrics.font_size - TERMINAL_FONT_SIZE_PX * 1.5).abs() < 0.001);
+        assert!(enlarged.columns < default.columns);
+        assert!(enlarged.rows < default.rows);
+
+        let point = ScreenPointPx {
+            x: enlarged.screen.x + enlarged.metrics.width * 2.5,
+            y: enlarged.screen.y + enlarged.metrics.height * 1.5,
+        };
+        assert_eq!(enlarged.cell_at(point.x, point.y), Some((2, 1)));
+
+        let tab = TerminalTabLayout {
+            tab_id: "zoomed".into(),
+            focused_session_id: "left".into(),
+            root: TerminalSplitNode::Split {
+                direction: TerminalSplitDirection::SideBySide,
+                ratio_millis: 500,
+                first: Box::new(TerminalSplitNode::session("left")),
+                second: Box::new(TerminalSplitNode::session("right")),
+            },
+        };
+        assert!(
+            terminal_split_geometries(enlarged, &tab)
+                .iter()
+                .all(|pane| pane.geometry.metrics == enlarged.metrics)
+        );
     }
 
     #[test]

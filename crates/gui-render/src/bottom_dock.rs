@@ -1,6 +1,6 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
 use datum_gui_viewport::{
-    TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry,
+    TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry_with_scale,
     terminal_split_dividers, terminal_split_geometries,
 };
 
@@ -19,7 +19,7 @@ pub(super) mod terminal_block_elements;
 /// engine's explicit letter spacing to preserve the exact governed 7.9 px
 /// advance. Enlarging the raw 0.6-em glyph advance to the full cell made
 /// adjacent contrasting glyphs and the cursor visually fuse at raster scale.
-pub(super) const TERMINAL_FONT_SIZE_PX: f32 = 12.0;
+pub(super) const TERMINAL_FONT_SIZE_PX: f32 = datum_gui_viewport::TERMINAL_FONT_SIZE_PX;
 pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
     (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
 pub(super) const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::TERMINAL_SELECTION;
@@ -186,7 +186,10 @@ pub(super) fn render_bottom_tabs(
             // row/column authority — the same shared geometry the PTY resize
             // path uses (datum_gui_viewport::terminal_screen_geometry), so the
             // rows drawn here always equal the rows the PTY was told.
-            let root_geometry = terminal_screen_geometry(layout.bottom_strip.into());
+            let root_geometry = terminal_screen_geometry_with_scale(
+                layout.bottom_strip.into(),
+                state.ui.terminal.font_scale_millis,
+            );
             if let Some(terminal_render) = terminal_render {
                 if let Some(cache) = terminal_render.cache {
                     let active_layout =
@@ -314,7 +317,7 @@ mod tests {
             let shell = ShellLayout::for_window(1280, 800, Some(dock_height));
             let solved = solve_bottom_dock_layout_with_taffy(&shell)
                 .expect("bottom dock layout should solve");
-            let geometry = terminal_screen_geometry(shell.bottom_strip.into());
+            let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
             let content: RectPx = geometry.content.into();
             assert_eq!(content, solved.content, "dock {dock_height}px");
         }
@@ -325,7 +328,7 @@ mod tests {
         use datum_gui_protocol::{TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout};
 
         let shell = ShellLayout::for_window(1280, 800, Some(320));
-        let root = terminal_screen_geometry(shell.bottom_strip.into());
+        let root = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
         let tab = TerminalTabLayout {
             tab_id: "split-tab".to_string(),
             focused_session_id: "right".to_string(),

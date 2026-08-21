@@ -2,6 +2,51 @@
 
 use super::*;
 use winit::event::MouseButton;
+
+#[test]
+fn conventional_terminal_font_zoom_shortcuts_are_chrome_owned() {
+    for (key, modifiers, action) in [
+        (
+            KeyCode::Equal,
+            ModifiersState::CONTROL,
+            TerminalKeyAction::FontZoomIn,
+        ),
+        (
+            KeyCode::Equal,
+            ModifiersState::CONTROL | ModifiersState::SHIFT,
+            TerminalKeyAction::FontZoomIn,
+        ),
+        (
+            KeyCode::Minus,
+            ModifiersState::CONTROL,
+            TerminalKeyAction::FontZoomOut,
+        ),
+        (
+            KeyCode::Digit0,
+            ModifiersState::CONTROL,
+            TerminalKeyAction::FontZoomReset,
+        ),
+    ] {
+        assert_eq!(
+            terminal_font_zoom_shortcut(
+                ElementState::Pressed,
+                false,
+                PhysicalKey::Code(key),
+                modifiers,
+            ),
+            Some(action),
+        );
+    }
+    assert_eq!(
+        terminal_font_zoom_shortcut(
+            ElementState::Pressed,
+            false,
+            PhysicalKey::Code(KeyCode::Equal),
+            ModifiersState::CONTROL | ModifiersState::ALT,
+        ),
+        None,
+    );
+}
 #[test]
 fn shift_navigation_controls_terminal_scrollback() {
     for (key, action) in [

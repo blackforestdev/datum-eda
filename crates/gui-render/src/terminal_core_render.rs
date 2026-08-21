@@ -6,7 +6,7 @@
 //! graphics placement all originate in one immutable `RenderSnapshot`.
 
 use datum_gui_protocol::{ReviewWorkspaceState, TerminalSearchMatch, TerminalSearchPoint};
-use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry};
+use datum_gui_viewport::{TerminalCellMetrics, TerminalScreenGeometry};
 use datum_terminal_core::{
     CellAttribute, CellContent, CellStyle, CellWidth, Color, CursorShape, GraphicAnchorResolution,
     LogicalPoint, RenderPalette, RenderRow, RenderRowSource, RenderSnapshot, Selection,
@@ -21,8 +21,7 @@ use crate::bottom_dock::terminal_block_elements::{
     render_terminal_block_elements_with_color, text_without_geometric_blocks,
 };
 use crate::bottom_dock::{
-    TERMINAL_FONT_SIZE_PX, TERMINAL_SEARCH_ALL_BG, TERMINAL_SEARCH_BG, TERMINAL_SELECTION_BG,
-    TERMINAL_SELECTION_FG,
+    TERMINAL_SEARCH_ALL_BG, TERMINAL_SEARCH_BG, TERMINAL_SELECTION_BG, TERMINAL_SELECTION_FG,
 };
 
 const CURSOR_STROKE_PX: f32 = 1.0;
@@ -35,6 +34,7 @@ pub(super) struct TerminalRowRenderContext<'a> {
     pub(super) screen: RectPx,
     pub(super) y: f32,
     pub(super) max_columns: usize,
+    pub(super) metrics: TerminalCellMetrics,
     pub(super) search_highlights: &'a [TerminalSearchMatch],
     pub(super) active_search_match: Option<TerminalSearchMatch>,
 }
@@ -81,14 +81,14 @@ pub(super) fn prepare_terminal_graphics(
         }
         let cells = placement.cell_extent();
         let width = if cells.columns > 0 {
-            cells.columns as f32 * TERMINAL_CELL_WIDTH_PX
+            cells.columns as f32 * geometry.metrics.width
         } else if visible_pixel_width > 0 {
             visible_pixel_width as f32
         } else {
             placement.width() as f32
         };
         let height = if cells.rows > 0 {
-            cells.rows as f32 * TERMINAL_CELL_HEIGHT_PX
+            cells.rows as f32 * geometry.metrics.height
         } else if visible_pixel_height > 0 {
             visible_pixel_height as f32
         } else {
@@ -96,8 +96,8 @@ pub(super) fn prepare_terminal_graphics(
         };
         let offset = placement.pixel_offset();
         let rect = RectPx {
-            x: screen.x + f32::from(column) * TERMINAL_CELL_WIDTH_PX + offset.x as f32,
-            y: screen.y + visible_row as f32 * TERMINAL_CELL_HEIGHT_PX + offset.y as f32,
+            x: screen.x + f32::from(column) * geometry.metrics.width + offset.x as f32,
+            y: screen.y + visible_row as f32 * geometry.metrics.height + offset.y as f32,
             width,
             height,
         };
@@ -138,7 +138,7 @@ pub(super) fn render_terminal_core_snapshot(
         .min(rows.len().saturating_sub(max_rows));
     let first = rows.len().saturating_sub(max_rows + scroll);
     for (visible_row, row) in rows.iter().skip(first).take(max_rows).enumerate() {
-        let y = screen.y + visible_row as f32 * TERMINAL_CELL_HEIGHT_PX;
+        let y = screen.y + visible_row as f32 * geometry.metrics.height;
         render_row(
             row,
             snapshot,
@@ -146,6 +146,7 @@ pub(super) fn render_terminal_core_snapshot(
                 screen,
                 y,
                 max_columns: usize::from(geometry.columns),
+                metrics: geometry.metrics,
                 search_highlights: &state.ui.terminal.search.highlights,
                 active_search_match: state.ui.terminal.search.matched,
             },
@@ -161,13 +162,22 @@ pub(super) fn render_terminal_core_snapshot(
                 state.ui.focus.is_terminal(),
                 screen.x,
                 y,
+                geometry.metrics,
                 panel_quads,
             );
             if state.ui.focus.is_terminal()
                 && let Some(preedit) = state.ui.terminal.ime_preedit.as_deref()
                 && !preedit.is_empty()
             {
-                render_ime_preedit(preedit, snapshot, screen, y, panel_quads, text_runs);
+                render_ime_preedit(
+                    preedit,
+                    snapshot,
+                    screen,
+                    y,
+                    geometry.metrics,
+                    panel_quads,
+                    text_runs,
+                );
             }
         }
     }
@@ -178,16 +188,17 @@ fn render_ime_preedit(
     snapshot: &RenderSnapshot,
     screen: RectPx,
     y: f32,
+    metrics: TerminalCellMetrics,
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
-    let x = screen.x + f32::from(snapshot.cursor().position.column.get()) * TERMINAL_CELL_WIDTH_PX;
+    let x = screen.x + f32::from(snapshot.cursor().position.column.get()) * metrics.width;
     let cells = preedit.chars().count().max(1) as f32;
     let rect = RectPx {
         x,
         y,
-        width: cells * TERMINAL_CELL_WIDTH_PX,
-        height: TERMINAL_CELL_HEIGHT_PX,
+        width: cells * metrics.width,
+        height: metrics.height,
     };
     let clip = intersection(rect, screen);
     quads.push(Quad::from_rect(clip, [0.16, 0.12, 0.17]));
@@ -202,7 +213,7 @@ fn render_ime_preedit(
         }],
         x,
         y,
-        TERMINAL_FONT_SIZE_PX,
+        metrics.font_size,
         TEXT_ACCENT,
         TextFace::Terminal,
         text_runs,
@@ -247,10 +258,10 @@ pub(super) fn render_row(
             _ => 1,
         };
         let cell_rect = RectPx {
-            x: context.screen.x + column as f32 * TERMINAL_CELL_WIDTH_PX,
+            x: context.screen.x + column as f32 * context.metrics.width,
             y: context.y,
-            width: width_cells as f32 * TERMINAL_CELL_WIDTH_PX,
-            height: TERMINAL_CELL_HEIGHT_PX,
+            width: width_cells as f32 * context.metrics.width,
+            height: context.metrics.height,
         };
         let (foreground, background) = style_colors(cell.style, snapshot.palette());
         if background != resolve_background(Color::Default, snapshot.palette()) {
@@ -283,6 +294,7 @@ pub(super) fn render_row(
             cell_rect.x,
             cell_rect.y,
             width_cells,
+            context.metrics,
             display_color,
             quads,
         );
@@ -297,7 +309,7 @@ pub(super) fn render_row(
             }],
             cell_rect.x,
             cell_rect.y,
-            TERMINAL_FONT_SIZE_PX,
+            context.metrics.font_size,
             display_color,
             TextFace::Terminal,
             text_runs,
@@ -501,23 +513,24 @@ pub(super) fn render_cursor(
     focused: bool,
     origin_x: f32,
     y: f32,
+    metrics: TerminalCellMetrics,
     quads: &mut Vec<Quad>,
 ) {
     let cursor = snapshot.cursor();
     let logical_x = origin_x
-        + f32::from(cursor.position.column.get()) * TERMINAL_CELL_WIDTH_PX
+        + f32::from(cursor.position.column.get()) * metrics.width
         + CURSOR_HORIZONTAL_INSET_PX;
-    let usable_width = TERMINAL_CELL_WIDTH_PX - 2.0 * CURSOR_HORIZONTAL_INSET_PX;
+    let usable_width = metrics.width - 2.0 * CURSOR_HORIZONTAL_INSET_PX;
     let rect = match cursor.shape {
         CursorShape::Block => RectPx {
             x: logical_x,
             y,
             width: usable_width,
-            height: TERMINAL_CELL_HEIGHT_PX,
+            height: metrics.height,
         },
         CursorShape::Underline => RectPx {
             x: logical_x,
-            y: y + TERMINAL_CELL_HEIGHT_PX - CURSOR_UNDERLINE_HEIGHT_PX,
+            y: y + metrics.height - CURSOR_UNDERLINE_HEIGHT_PX,
             width: usable_width,
             height: CURSOR_UNDERLINE_HEIGHT_PX,
         },
@@ -525,7 +538,7 @@ pub(super) fn render_cursor(
             x: logical_x,
             y,
             width: CURSOR_BAR_WIDTH_PX,
-            height: TERMINAL_CELL_HEIGHT_PX,
+            height: metrics.height,
         },
     };
     let palette_cursor = resolve_foreground(snapshot.palette().cursor(), snapshot.palette());

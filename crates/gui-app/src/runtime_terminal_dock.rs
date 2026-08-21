@@ -419,7 +419,10 @@ impl Runtime {
             self.scale_factor,
             Some(self.workspace().ui.effective_dock_height_px()),
         );
-        datum_gui_viewport::terminal_screen_geometry(layout.bottom_strip.into())
+        datum_gui_viewport::terminal_screen_geometry_with_scale(
+            layout.bottom_strip.into(),
+            self.workspace().ui.terminal.font_scale_millis,
+        )
     }
 
     /// The terminal cell under a screen point as `(column, row)`, or `None`

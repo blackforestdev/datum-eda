@@ -6,7 +6,9 @@
 //! between rows. Render the geometric subset as exact cell quads and replace
 //! those scalars with advance-preserving spaces in the shaped text run.
 
-use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX};
+#[cfg(test)]
+use datum_gui_viewport::TERMINAL_CELL_HEIGHT_PX;
+use datum_gui_viewport::TerminalCellMetrics;
 
 use super::{Quad, RectPx};
 
@@ -15,6 +17,7 @@ pub(crate) fn render_terminal_block_elements_with_color(
     x: f32,
     y: f32,
     max_columns: usize,
+    metrics: TerminalCellMetrics,
     color: [f32; 3],
     quads: &mut Vec<Quad>,
 ) {
@@ -22,7 +25,7 @@ pub(crate) fn render_terminal_block_elements_with_color(
         let Some(parts) = block_parts(glyph) else {
             continue;
         };
-        render_block_parts(parts, x, y, column, color, quads);
+        render_block_parts(parts, x, y, column, metrics, color, quads);
     }
 }
 
@@ -31,16 +34,17 @@ fn render_block_parts(
     x: f32,
     y: f32,
     column: usize,
+    metrics: TerminalCellMetrics,
     color: [f32; 3],
     quads: &mut Vec<Quad>,
 ) {
     for &(part_x, part_y, width, height) in parts {
         quads.push(Quad::from_rect(
             RectPx {
-                x: x + (column as f32 + part_x) * TERMINAL_CELL_WIDTH_PX,
-                y: y + part_y * TERMINAL_CELL_HEIGHT_PX,
-                width: width * TERMINAL_CELL_WIDTH_PX,
-                height: height * TERMINAL_CELL_HEIGHT_PX,
+                x: x + (column as f32 + part_x) * metrics.width,
+                y: y + part_y * metrics.height,
+                width: width * metrics.width,
+                height: height * metrics.height,
             },
             color,
         ));
@@ -124,6 +128,7 @@ mod tests {
             10.0,
             20.0,
             80,
+            TerminalCellMetrics::DEFAULT,
             crate::TEXT_PRIMARY,
             &mut quads,
         );

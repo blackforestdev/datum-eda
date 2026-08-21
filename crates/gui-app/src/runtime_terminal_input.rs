@@ -132,10 +132,10 @@ impl Runtime {
         let cursor = self.workspace().ui.terminal.screen_cursor_col as f32;
         let row = self.workspace().ui.terminal.screen_cursor_row as f32;
         (
-            f64::from(geometry.screen.x + cursor * datum_gui_viewport::TERMINAL_CELL_WIDTH_PX),
-            f64::from(geometry.screen.y + row * datum_gui_viewport::TERMINAL_CELL_HEIGHT_PX),
-            datum_gui_viewport::TERMINAL_CELL_WIDTH_PX.ceil() as u32,
-            datum_gui_viewport::TERMINAL_CELL_HEIGHT_PX.ceil() as u32,
+            f64::from(geometry.screen.x + cursor * geometry.metrics.width),
+            f64::from(geometry.screen.y + row * geometry.metrics.height),
+            geometry.metrics.width.ceil() as u32,
+            geometry.metrics.height.ceil() as u32,
         )
     }
 }
