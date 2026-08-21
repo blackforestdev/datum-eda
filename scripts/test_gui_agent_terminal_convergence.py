@@ -207,36 +207,6 @@ atomic_write_texts(&[]);
             failures,
         )
 
-    def test_claude_keyboard_controls_cannot_alias_cursor_restore(self) -> None:
-        terminal_escape = "match final_byte { b'u' if self.params.is_empty() => restore() }"
-        terminal_tests = r'''
-fn claude_keyboard_controls_cannot_restore_a_stale_cursor() {
-    apply(b"\x1b[>1u\x1b[?u\x1b[<uclaude");
-}
-fn split_claude_keyboard_controls_are_cursor_state_invariant() {}
-fn colored_bash_prompt_places_cursor_after_dollar_and_trailing_space() {}
-'''
-        failures: list[str] = []
-        guard.check_claude_completion_controls(
-            terminal_escape, terminal_tests, failures
-        )
-        self.assertEqual([], failures)
-
-        failures = []
-        guard.check_claude_completion_controls(
-            terminal_escape.replace(" if self.params.is_empty()", ""),
-            terminal_tests.replace(
-                "split_claude_keyboard_controls_are_cursor_state_invariant", "removed"
-            ),
-            failures,
-        )
-        self.assertIn(
-            "parameterized CSI u must not restore the terminal cursor", failures
-        )
-        self.assertTrue(
-            any("split_claude_keyboard_controls" in failure for failure in failures)
-        )
-
     def test_agent_tui_focus_batching_glyph_and_cache_contract_is_pinned(self) -> None:
         main = """
     fn window_event() {
@@ -300,9 +270,11 @@ fn hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid() {}
 fn prompt_style_boundaries_do_not_restart_glyph_positioning() {}
 fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {}
 """
-        terminal_cursor = """
+        terminal_core_render = """
 const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
-fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
+fn draw_rich_text() {}
+fn selection_contains() {}
+fn render_cursor() {}
 """
         failures: list[str] = []
         guard.check_agent_tui_runtime(
@@ -314,7 +286,7 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
             render_gpu,
             bottom_dock,
             terminal_font_tests,
-            terminal_cursor,
+            terminal_core_render,
             failures,
         )
         self.assertEqual([], failures)
@@ -348,15 +320,16 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
                 "set_rich_text", "set_text"
             ),
             render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
-            bottom_dock
-            .replace("TERMINAL_LETTER_SPACING_EM", "removed")
-            .replace("draw_rich_text", "draw_text").replace("render_terminal_selection_row", "removed"),
+            bottom_dock,
             terminal_font_tests.replace(
                 "styled_terminal_colors_share_one_shaping_origin", "removed"
             ).replace(
                 "prompt_style_boundaries_do_not_restart_glyph_positioning", "removed"
             ),
-            terminal_cursor.replace("CURSOR_HORIZONTAL_INSET_PX", "removed"),
+            terminal_core_render
+            .replace("CURSOR_HORIZONTAL_INSET_PX", "removed")
+            .replace("draw_rich_text", "draw_text")
+            .replace("selection_contains", "removed"),
             failures,
         )
         self.assertIn(
@@ -387,18 +360,14 @@ fn trailing_slash_cursor_paint_stays_inside_the_next_logical_cell() {}
         self.assertIn(
             "terminal text-cache bound is missing last_used_frame", failures
         )
-        self.assertTrue(any("TERMINAL_LETTER_SPACING_EM" in failure for failure in failures))
         self.assertTrue(any("draw_rich_text" in failure for failure in failures))
-        self.assertTrue(any("render_terminal_selection_row" in failure for failure in failures))
+        self.assertTrue(any("selection_contains" in failure for failure in failures))
         self.assertTrue(any("rich-text shaping buffer" in failure for failure in failures))
         self.assertTrue(any("slot.remove_when_closed" in failure for failure in failures))
         self.assertTrue(any("natural_shell_exit" in failure for failure in failures))
-        self.assertTrue(
-            any("styled_terminal_colors" in failure for failure in failures)
-        )
         self.assertTrue(any("prompt_style_boundaries" in failure for failure in failures))
         self.assertTrue(
-            any("terminal cursor-cell separation" in failure for failure in failures)
+            any("TerminalCore cursor-cell separation" in failure for failure in failures)
         )
         self.assertIn(
             "renderer must begin exactly one text-cache generation per frame", failures
@@ -603,7 +572,7 @@ fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
         )
         self.assertIn("adversarial editor-hit ownership proof is missing", failures)
 
-    def test_only_protocol_declaration_terminal_core_and_tests_may_mutate_grid(self) -> None:
+    def test_deleted_provisional_grid_cannot_return_anywhere(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             files = {
@@ -624,11 +593,8 @@ fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
                 guard.check_terminal_grid_writers(failures)
             finally:
                 guard.ROOT = previous_root
-            self.assertEqual(
-                ["terminal grid mutation escaped PTY interpretation: "
-                 "crates/gui-app/src/rogue_writer.rs"],
-                failures,
-            )
+            self.assertEqual(5, len(failures))
+            self.assertTrue(all("deleted provisional terminal authority" in item for item in failures))
 
 
 if __name__ == "__main__":

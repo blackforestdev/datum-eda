@@ -392,7 +392,7 @@ def check(root: Path) -> list[str]:
         else ""
     )
     for marker in (
-        "p06_provisional_gui_path_emits_reproducible_json",
+        "p06_production_core_gui_path_emits_reproducible_json",
         'contract: "datum_terminal_p06_gui_measurement_v1"',
         "OUTPUT_BYTES_PER_SESSION: usize = 1024 * 1024",
         "registry.drain_all",
@@ -400,7 +400,7 @@ def check(root: Path) -> list[str]:
         "presentation_complete",
     ):
         if marker not in gui_measurement:
-            failures.append(f"DTC-P06D provisional GUI measurement proof missing: {marker}")
+            failures.append(f"DTC-P06D production-core GUI measurement proof missing: {marker}")
     lifecycle_path = root / APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs"
     lifecycle = lifecycle_path.read_text(encoding="utf-8") if lifecycle_path.is_file() else ""
     for marker in (
@@ -476,8 +476,8 @@ def check(root: Path) -> list[str]:
         '"datum_terminal_p06_soak_v1"',
         '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)',
         '"datum_terminal_p06_gui_measurement_v1"',
-        "single provisional GUI throughput >=1MiB/s",
-        "aggregate provisional GUI throughput >=4MiB/s",
+        "single production-core GUI throughput >=1MiB/s",
+        "aggregate production-core GUI throughput >=4MiB/s",
         '"datum_terminal_p06_lifecycle_v1"',
         "exactly 1000 completed lifecycle cycles",
         '"datum_terminal_p06_sustained_v1"',

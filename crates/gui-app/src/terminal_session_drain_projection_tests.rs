@@ -26,22 +26,16 @@ fn inactive_and_active_sessions_drain_into_isolated_projections() {
     let deadline = Instant::now() + Duration::from_secs(3);
     while Instant::now() < deadline {
         registry.drain_all(&mut lane);
-        let inactive = registry.sessions[0].parked_lane.grid_lines().join("\n");
-        let active = lane.grid_lines().join("\n");
+        let inactive = registry.test_session_text(0);
+        let active = registry.test_active_text();
         if inactive.contains("alpha-session") && active.contains("beta-session") {
             break;
         }
         std::thread::sleep(Duration::from_millis(5));
     }
-    assert!(
-        registry.sessions[0]
-            .parked_lane
-            .grid_lines()
-            .join("\n")
-            .contains("alpha-session")
-    );
-    assert!(lane.grid_lines().join("\n").contains("beta-session"));
-    assert!(!lane.grid_lines().join("\n").contains("alpha-session"));
+    assert!(registry.test_session_text(0).contains("alpha-session"));
+    assert!(registry.test_active_text().contains("beta-session"));
+    assert!(!registry.test_active_text().contains("alpha-session"));
     registry.sync_lane_tabs(&mut lane);
     let inactive_tab = lane
         .tabs
@@ -51,7 +45,7 @@ fn inactive_and_active_sessions_drain_into_isolated_projections() {
     assert!(inactive_tab.activity_event_count > 0);
 
     registry.activate_with_lane(&first_id, &mut lane).unwrap();
-    assert!(lane.grid_lines().join("\n").contains("alpha-session"));
-    assert!(!lane.grid_lines().join("\n").contains("beta-session"));
+    assert!(registry.test_active_text().contains("alpha-session"));
+    assert!(!registry.test_active_text().contains("beta-session"));
     let _ = std::fs::remove_dir_all(root);
 }

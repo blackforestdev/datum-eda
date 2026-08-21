@@ -20,14 +20,10 @@ fn unique_test_root() -> PathBuf {
 
 fn projection_text(
     registry: &TerminalSessionRegistry,
-    lane: &TerminalLaneState,
+    _lane: &TerminalLaneState,
     index: usize,
 ) -> String {
-    if index == registry.active_index && registry.active_pending_id.is_none() {
-        lane.grid_lines().join("\n")
-    } else {
-        registry.sessions[index].parked_lane.grid_lines().join("\n")
-    }
+    registry.test_session_text(index)
 }
 
 fn drain_until(
@@ -148,8 +144,8 @@ fn eight_real_sessions_isolate_io_resize_exit_termination_and_restart() {
             .activate_with_lane(session_id, &mut lane)
             .expect("reactivate isolated session");
         assert!(
-            lane.grid_lines()
-                .join("\n")
+            registry
+                .test_active_text()
                 .contains(&format!("DTC06B-{index}:"))
         );
     }
@@ -232,11 +228,7 @@ fn eight_real_sessions_isolate_io_resize_exit_termination_and_restart() {
         &mut registry,
         &mut lane,
         "surviving peer output",
-        |_, lane| {
-            lane.grid_lines()
-                .join("\n")
-                .contains("DTC06B-peer-survived")
-        },
+        |registry, _| registry.test_active_text().contains("DTC06B-peer-survived"),
     );
 
     // End with the same verified no-orphan contract used by controlled app

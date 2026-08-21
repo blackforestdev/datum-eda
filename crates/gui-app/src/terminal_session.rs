@@ -621,6 +621,17 @@ pub(super) fn mark_terminal_session_exit(
     Ok(())
 }
 
+#[cfg(test)]
+impl TerminalSessionRegistry {
+    fn test_session_text(&self, index: usize) -> String {
+        self.sessions[index].core.test_plain_text()
+    }
+
+    fn test_active_text(&self) -> String {
+        self.test_session_text(self.active_index)
+    }
+}
+
 #[path = "terminal_session_handle.rs"]
 mod handle;
 #[path = "terminal_session_reorder.rs"]
@@ -632,9 +643,6 @@ mod terminal_job_control_tests;
 #[cfg(test)]
 #[path = "terminal_regression_boundary_tests.rs"]
 mod terminal_regression_boundary_tests;
-#[cfg(test)]
-#[path = "terminal_screen_authority_tests.rs"]
-mod terminal_screen_authority_tests;
 #[cfg(test)]
 #[path = "terminal_session_close_tests.rs"]
 mod terminal_session_close_tests;

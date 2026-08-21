@@ -6,45 +6,9 @@
 //! between rows. Render the geometric subset as exact cell quads and replace
 //! those scalars with advance-preserving spaces in the shaped text run.
 
-use datum_gui_protocol::TerminalStyledLine;
 use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX};
 
-use super::terminal_color::span_foreground;
-use super::{Quad, RectPx, TEXT_PANEL_VALUE};
-
-pub(crate) fn render_terminal_block_elements(
-    styled_line: Option<&TerminalStyledLine>,
-    fallback_line: &str,
-    x: f32,
-    y: f32,
-    max_columns: usize,
-    quads: &mut Vec<Quad>,
-) {
-    let text = styled_line
-        .filter(|line| !line.text.is_empty())
-        .map_or(fallback_line, |line| line.text.as_str());
-    for (column, glyph) in text.chars().take(max_columns).enumerate() {
-        let Some(parts) = block_parts(glyph) else {
-            continue;
-        };
-        let color = styled_line
-            .and_then(|line| {
-                line.spans
-                    .iter()
-                    .find(|span| span.start <= column && column < span.end)
-            })
-            .map_or(TEXT_PANEL_VALUE, |span| {
-                span_foreground(
-                    span.fg.as_deref(),
-                    span.bg.as_deref(),
-                    span.bold,
-                    span.inverse,
-                    span.conceal,
-                )
-            });
-        render_block_parts(parts, x, y, column, color, quads);
-    }
-}
+use super::{Quad, RectPx};
 
 pub(crate) fn render_terminal_block_elements_with_color(
     text: &str,
@@ -155,7 +119,14 @@ mod tests {
     #[test]
     fn claude_mascot_blocks_use_cell_exact_geometry_and_leave_text_advance() {
         let mut quads = Vec::new();
-        render_terminal_block_elements(None, "▛███▜", 10.0, 20.0, 80, &mut quads);
+        render_terminal_block_elements_with_color(
+            "▛███▜",
+            10.0,
+            20.0,
+            80,
+            crate::TEXT_PRIMARY,
+            &mut quads,
+        );
 
         assert_eq!(
             text_without_geometric_blocks("▛███▜ Claude"),

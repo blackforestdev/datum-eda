@@ -62,15 +62,8 @@ fn projection_contains(
     index: usize,
     marker: &str,
 ) -> bool {
-    let projection = if index == registry.active_index && registry.active_pending_id.is_none() {
-        lane
-    } else {
-        &registry.sessions[index].parked_lane
-    };
-    projection
-        .grid_lines()
-        .iter()
-        .any(|line| line.contains(marker))
+    let _ = lane;
+    registry.test_session_text(index).contains(marker)
 }
 
 fn prepare_registry(
@@ -266,7 +259,7 @@ fn evidence_path() -> PathBuf {
 
 #[test]
 #[ignore = "DTC-P06D release GUI-path measurement; run through the proof gate runner"]
-fn p06_provisional_gui_path_emits_reproducible_json() {
+fn p06_production_core_gui_path_emits_reproducible_json() {
     if std::hint::black_box(cfg!(debug_assertions)) {
         panic!("P06 GUI-path evidence must use --release");
     }

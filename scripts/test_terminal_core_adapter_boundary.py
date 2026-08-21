@@ -32,7 +32,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "struct TerminalCoreSessionAdapter {\n"
             "    parser: StreamingParser,\n    core: TerminalCore,\n}\n"
             f"const PRODUCTION_CORE_LIMIT_VALUES: CoreLimitValues = CoreLimitValues {{\n{limits}\n}};\n"
-            "fn apply(){ parser.feed(bytes, |action| core.apply(action)); self.core.snapshot(); }\n",
+            "fn apply(){ parser.feed(bytes, |action| core.apply(action)); self.core.render_snapshot(); }\n",
             encoding="utf-8",
         )
         (root / guard.SESSION).write_text(
@@ -46,6 +46,9 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
         )
         (root / guard.SPAWN).write_text(
             "fn spawn(){TerminalCoreSessionAdapter::new();}\n", encoding="utf-8"
+        )
+        (root / guard.TERMINAL_PROCESS).write_text(
+            "fn environment(){ env_remove(\"TERM_PROGRAM\"); }\n", encoding="utf-8"
         )
         (root / guard.DRAIN).write_text(
             "fn drain(){\n"
@@ -90,6 +93,25 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             guard.DRAIN,
             "slot.core.apply_output(lane, bytes);",
             "slot.core.apply_output(lane, bytes); apply_bytes_with_responses(lane, bytes);",
+        )
+
+    def test_retired_screen_or_protocol_grid_reentry_fails(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        retired = root / guard.RETIRED_AUTHORITIES[0]
+        retired.write_text("struct TerminalScreen;", encoding="utf-8")
+        lane = root / guard.TERMINAL_LANE
+        lane.parent.mkdir(parents=True, exist_ok=True)
+        lane.write_text("fn pty_grid_mut() {}", encoding="utf-8")
+        failures = guard.check(root)
+        self.assertTrue(any("retired provisional terminal authority returned" in item for item in failures))
+        self.assertTrue(any("terminal lane regained screen authority" in item for item in failures))
+
+    def test_xterm_capability_overclaim_reentry_fails(self) -> None:
+        self.assert_mutation_fails(
+            guard.TERMINAL_PROCESS,
+            'env_remove("TERM_PROGRAM")',
+            '.env("TERM", "xterm-256color")',
         )
 
     def test_missing_reply_resize_finish_or_identity_fails(self) -> None:

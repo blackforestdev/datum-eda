@@ -46,10 +46,7 @@ pub use source_shard_status::{
     load_source_shard_status as refresh_source_shard_status,
 };
 mod terminal_lane;
-pub use terminal_lane::{
-    TerminalLaneState, TerminalPtyGrid, TerminalStyleSpan, TerminalStyledLine, TerminalTabState,
-    TerminalTextStyle,
-};
+pub use terminal_lane::{TerminalLaneState, TerminalTabState};
 mod workspace_layout;
 pub use workspace_layout::{
     ApplicationFocus, ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState,
@@ -148,7 +145,6 @@ pub struct BoardGraphicPrimitive {
     #[serde(default)]
     pub width_nm: Option<i64>,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UnroutedPrimitive {
@@ -4858,9 +4854,6 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 mod kicad_text_import_tests;
 
 #[cfg(test)]
-mod terminal_screen_authority_tests;
-
-#[cfg(test)]
 mod tests {
     use super::kicad_scene_import::*;
     use super::*;
@@ -4871,7 +4864,7 @@ mod tests {
     #[test]
     fn gui_action_narration_lands_in_console_never_on_terminal() {
         let mut state = load_fixture_workspace_state();
-        let terminal_before = state.ui.terminal.grid_lines().to_vec();
+        let terminal_before = state.ui.terminal.clone();
 
         let echo = "fit board".to_string();
         state.ui.push_console_line(echo.clone());
@@ -4881,15 +4874,10 @@ mod tests {
             state.ui.console.lines.contains(&echo),
             "GUI-action narration should land in the console sink"
         );
-        // The real PTY terminal display buffer is byte-for-byte unchanged and
-        // never carries the GUI-action echo.
+        // GUI narration cannot mutate terminal session projection state.
         assert_eq!(
-            state.ui.terminal.grid_lines(), terminal_before,
-            "GUI-action narration must not mutate the terminal display buffer"
-        );
-        assert!(
-            !state.ui.terminal.grid_lines().contains(&echo),
-            "GUI-action narration must never appear in the terminal lane"
+            state.ui.terminal, terminal_before,
+            "GUI-action narration must not mutate terminal session projection"
         );
     }
 

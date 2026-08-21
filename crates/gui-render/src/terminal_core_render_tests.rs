@@ -65,7 +65,6 @@ fn immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry() {
     let snapshot = snapshot(b"\x1b[1;3;4;9;53;38;2;1;2;3;48;2;4;5;6;58;2;7;8;9mA\xe7\x95\x8c");
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(DockTab::Terminal);
-    *state.ui.terminal.pty_grid_mut().lines = vec!["PROVISIONAL-MUST-NOT-RENDER".to_string()];
     let mut quads = Vec::new();
     let mut text = Vec::new();
     let mut hits = Vec::new();
@@ -78,7 +77,6 @@ fn immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry() {
         &mut hits,
     );
 
-    assert!(text.iter().all(|run| !run.text.contains("PROVISIONAL")));
     let ascii = text.iter().find(|run| run.text == "A").unwrap();
     assert_eq!(
         ascii.rich_spans[0].color,

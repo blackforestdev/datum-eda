@@ -21,14 +21,14 @@ fn drain_until(registry: &mut TerminalSessionRegistry, lane: &mut TerminalLaneSt
     let deadline = Instant::now() + Duration::from_secs(5);
     while Instant::now() < deadline {
         registry.drain_all(lane);
-        if lane.grid_lines().join("\n").contains(needle) {
+        if registry.test_active_text().contains(needle) {
             return;
         }
         std::thread::sleep(Duration::from_millis(5));
     }
     panic!(
         "terminal output did not contain {needle:?}: {}",
-        lane.grid_lines().join("\n")
+        registry.test_active_text()
     );
 }
 
@@ -68,7 +68,7 @@ fn vsusp_bg_fg_and_vintr_follow_native_shell_job_control() {
         b"jobs -s; printf 'JOB%s\\n' '-STOPPED'; bg; printf 'BG%s\\n' '-OK'; fg\n",
     );
     drain_until(&mut registry, &mut lane, "BG-OK");
-    assert!(lane.grid_lines().join("\n").contains("JOB-STOPPED"));
+    assert!(registry.test_active_text().contains("JOB-STOPPED"));
     write_retry(&registry, &[0x03]);
     write_retry(&registry, b"printf 'FG%s\\n' '-INTERRUPTED'\n");
     drain_until(&mut registry, &mut lane, "FG-INTERRUPTED");
@@ -204,11 +204,17 @@ fn new_session_descendant_is_not_signaled_and_cannot_hold_terminal_open() {
     );
     registry.active().write_bytes(script.as_bytes()).unwrap();
     let deadline = Instant::now() + Duration::from_secs(4);
-    while Instant::now() < deadline && !registry.active().presentation_complete() {
+    while Instant::now() < deadline
+        && (!registry.active().presentation_complete() || !pid_path.is_file())
+    {
         registry.drain_all(&mut lane);
         std::thread::sleep(Duration::from_millis(10));
     }
     assert!(registry.active().presentation_complete());
+    assert!(
+        pid_path.is_file(),
+        "escaped child must publish its PID before inspection"
+    );
     let escaped_pid: i32 = std::fs::read_to_string(&pid_path)
         .unwrap()
         .trim()

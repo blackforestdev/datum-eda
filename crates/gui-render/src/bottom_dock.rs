@@ -1,26 +1,18 @@
-use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalStyledLine};
+use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
 use datum_gui_viewport::{
-    TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry,
-    terminal_screen_geometry,
+    TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry,
 };
 
 use super::{
-    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_PANEL_VALUE,
-    TextFace, TextRun, TextRunSpan, draw_rich_text, draw_text, draw_text_clipped, push_rect_border,
-    truncate_text,
+    HitRegion, HitTarget, PANEL_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TextRun,
+    push_rect_border,
 };
 use crate::design_tokens;
-use crate::terminal_cursor::render_terminal_cursor;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
 use taffy::prelude::*;
 
-#[path = "terminal_color.rs"]
-mod terminal_color;
-use terminal_color::{span_background, span_foreground};
-
 #[path = "terminal_block_elements.rs"]
 pub(super) mod terminal_block_elements;
-use terminal_block_elements::{render_terminal_block_elements, text_without_geometric_blocks};
 
 /// Keep JetBrains Mono's ink comfortably inside the cell, then use the shaping
 /// engine's explicit letter spacing to preserve the exact governed 7.9 px
@@ -213,31 +205,15 @@ pub(super) fn render_bottom_tabs(
                     );
                 }
             } else {
-                render_terminal_lane(state, &geometry, panel_quads, text_runs, hit_regions);
+                render_empty_terminal_surface(&geometry, panel_quads, hit_regions);
             }
         }
     }
 }
 
-fn render_terminal_lane(
-    state: &ReviewWorkspaceState,
+fn render_empty_terminal_surface(
     geometry: &TerminalScreenGeometry,
     panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) {
-    render_terminal_screen(state, geometry, panel_quads, text_runs, hit_regions);
-}
-
-/// The terminal SCREEN: the exact visible cell rectangle, drawing precisely
-/// `geometry.rows` grid rows of `geometry.columns` cells — the same numbers
-/// the PTY was resized to — and exposing the rectangle as the dedicated
-/// terminal-content hit target (T0-C02).
-fn render_terminal_screen(
-    state: &ReviewWorkspaceState,
-    geometry: &TerminalScreenGeometry,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
     let screen: RectPx = geometry.screen.into();
@@ -245,338 +221,8 @@ fn render_terminal_screen(
         target: HitTarget::TerminalScreen,
         rect: screen,
     });
-    let max_lines = geometry.rows as usize;
-    let max_columns = geometry.columns as usize;
-    let total = state.ui.terminal.grid_lines().len();
-    let scroll = state
-        .ui
-        .terminal
-        .scroll_offset
-        .min(total.saturating_sub(max_lines));
-    let tail_start = total.saturating_sub(max_lines + scroll);
-    let mut y = screen.y;
-    for (line_index, line) in state
-        .ui
-        .terminal
-        .grid_lines()
-        .iter()
-        .enumerate()
-        .skip(tail_start)
-        .take(max_lines)
-    {
-        if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
-            render_terminal_style_backgrounds(styled_line, screen.x, y, max_columns, panel_quads);
-        }
-        let selection_rect = render_terminal_selection_row(
-            &state.ui.terminal,
-            line_index,
-            screen.x,
-            y,
-            max_columns,
-            panel_quads,
-        );
-        render_terminal_block_elements(
-            state.ui.terminal.grid_styled_lines().get(line_index),
-            line,
-            screen.x,
-            y,
-            max_columns,
-            panel_quads,
-        );
-        if let Some(styled_line) = state.ui.terminal.grid_styled_lines().get(line_index) {
-            render_terminal_styled_line(styled_line, line, screen.x, y, max_columns, text_runs);
-        } else {
-            let visible_text = text_without_geometric_blocks(&truncate_text(line, max_columns));
-            draw_text(
-                &visible_text,
-                screen.x,
-                y,
-                TERMINAL_FONT_SIZE_PX,
-                TEXT_PANEL_VALUE,
-                TextFace::Terminal,
-                text_runs,
-            );
-        }
-        if let Some(clip_bounds) = selection_rect {
-            render_terminal_selection_text(line, screen.x, y, max_columns, clip_bounds, text_runs);
-        }
-        if state.ui.terminal.screen_cursor_visible
-            && state.ui.terminal.screen_cursor_row == line_index
-            && state.ui.terminal.screen_cursor_col < max_columns
-        {
-            render_terminal_cursor(
-                &state.ui.terminal,
-                state.ui.focus.is_terminal(),
-                screen.x,
-                y,
-                state
-                    .ui
-                    .terminal
-                    .text_selection_span(line_index, max_columns)
-                    .is_some_and(|(first, last)| {
-                        (first..last).contains(&state.ui.terminal.screen_cursor_col)
-                    }),
-                panel_quads,
-            );
-        }
-        y += TERMINAL_CELL_HEIGHT_PX;
-    }
+    panel_quads.push(Quad::from_rect(screen, PANEL_BG));
 }
-
-fn render_terminal_style_backgrounds(
-    styled_line: &TerminalStyledLine,
-    x: f32,
-    y: f32,
-    max_columns: usize,
-    panel_quads: &mut Vec<Quad>,
-) {
-    for span in styled_line
-        .spans
-        .iter()
-        .filter(|span| span.start < max_columns && span.start < span.end)
-    {
-        let start = span.start.min(max_columns);
-        let end = span.end.min(max_columns);
-        let Some(color) = span_background(span.fg.as_deref(), span.bg.as_deref(), span.inverse)
-        else {
-            continue;
-        };
-        panel_quads.push(Quad::from_rect(
-            RectPx {
-                x: x + start as f32 * TERMINAL_CELL_WIDTH_PX,
-                y,
-                width: (end - start) as f32 * TERMINAL_CELL_WIDTH_PX,
-                height: TERMINAL_CELL_HEIGHT_PX,
-            },
-            color,
-        ));
-    }
-}
-
-fn render_terminal_selection_row(
-    terminal: &datum_gui_protocol::TerminalLaneState,
-    row: usize,
-    x: f32,
-    y: f32,
-    max_columns: usize,
-    panel_quads: &mut Vec<Quad>,
-) -> Option<RectPx> {
-    let (first, last) = terminal.text_selection_span(row, max_columns)?;
-    let rect = RectPx {
-        x: x + first as f32 * TERMINAL_CELL_WIDTH_PX,
-        y,
-        width: (last - first) as f32 * TERMINAL_CELL_WIDTH_PX,
-        height: TERMINAL_CELL_HEIGHT_PX,
-    };
-    panel_quads.push(Quad::from_rect(rect, TERMINAL_SELECTION_BG));
-    Some(rect)
-}
-
-fn render_terminal_selection_text(
-    line: &str,
-    x: f32,
-    y: f32,
-    max_columns: usize,
-    clip_bounds: RectPx,
-    text_runs: &mut Vec<TextRun>,
-) {
-    let visible_text = text_without_geometric_blocks(&truncate_text(line, max_columns));
-    draw_text_clipped(
-        &visible_text,
-        x,
-        y,
-        TERMINAL_FONT_SIZE_PX,
-        TERMINAL_SELECTION_FG,
-        TextFace::Terminal,
-        clip_bounds,
-        text_runs,
-    );
-}
-
-fn render_terminal_styled_line(
-    styled_line: &TerminalStyledLine,
-    fallback_line: &str,
-    x: f32,
-    y: f32,
-    max_columns: usize,
-    text_runs: &mut Vec<TextRun>,
-) {
-    let text = if styled_line.text.is_empty() {
-        fallback_line
-    } else {
-        &styled_line.text
-    };
-    let visible_len = text.chars().count().min(max_columns);
-    if visible_len == 0 {
-        draw_text(
-            "",
-            x,
-            y,
-            TERMINAL_FONT_SIZE_PX,
-            TEXT_PANEL_VALUE,
-            TextFace::Terminal,
-            text_runs,
-        );
-        return;
-    }
-    let visible_text =
-        text_without_geometric_blocks(&text.chars().take(visible_len).collect::<String>());
-    let mut rich_spans = Vec::new();
-    let mut cursor = 0;
-    for span in styled_line
-        .spans
-        .iter()
-        .filter(|span| span.start < visible_len && span.start < span.end)
-    {
-        let start = span.start.min(visible_len);
-        let end = span.end.min(visible_len);
-        if cursor < start {
-            push_terminal_rich_span(
-                &visible_text,
-                cursor,
-                start,
-                TEXT_PANEL_VALUE,
-                &mut rich_spans,
-            );
-        }
-        let styled_start = start.max(cursor);
-        push_terminal_rich_span(
-            &visible_text,
-            styled_start,
-            end,
-            span_foreground(
-                span.fg.as_deref(),
-                span.bg.as_deref(),
-                span.bold,
-                span.inverse,
-                span.conceal,
-            ),
-            &mut rich_spans,
-        );
-        cursor = cursor.max(end);
-    }
-    if cursor < visible_len {
-        push_terminal_rich_span(
-            &visible_text,
-            cursor,
-            visible_len,
-            TEXT_PANEL_VALUE,
-            &mut rich_spans,
-        );
-    }
-    draw_rich_text(
-        &visible_text,
-        rich_spans,
-        x,
-        y,
-        TERMINAL_FONT_SIZE_PX,
-        TEXT_PANEL_VALUE,
-        TextFace::Terminal,
-        text_runs,
-    );
-}
-
-fn push_terminal_rich_span(
-    text: &str,
-    start: usize,
-    end: usize,
-    color: [f32; 3],
-    spans: &mut Vec<TextRunSpan>,
-) {
-    if start >= end {
-        return;
-    }
-    spans.push(TextRunSpan {
-        text: text.chars().skip(start).take(end - start).collect(),
-        color,
-        bold: false,
-        italic: false,
-    });
-}
-
-#[cfg(test)]
-mod selection_tests {
-    use datum_gui_protocol::TerminalLaneState;
-
-    use super::*;
-
-    #[test]
-    fn terminal_selection_highlight_uses_exact_cell_geometry_behind_text() {
-        let mut terminal = TerminalLaneState::default();
-        terminal.set_text_selection((3, 2), (3, 4));
-        let mut quads = Vec::new();
-        let expected = RectPx {
-            x: 10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX,
-            y: 20.0,
-            width: 3.0 * TERMINAL_CELL_WIDTH_PX,
-            height: TERMINAL_CELL_HEIGHT_PX,
-        };
-        let selection = render_terminal_selection_row(&terminal, 3, 10.0, 20.0, 80, &mut quads);
-        assert_eq!(quads.len(), 1);
-        assert_eq!(
-            quads[0].points[0],
-            (10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX, 20.0)
-        );
-        assert_eq!(
-            quads[0].points[1],
-            (10.0 + 5.0 * TERMINAL_CELL_WIDTH_PX, 20.0)
-        );
-        assert_eq!(quads[0].color, TERMINAL_SELECTION_BG);
-        assert_eq!(selection, Some(expected));
-        assert_eq!(quads[0], Quad::from_rect(expected, TERMINAL_SELECTION_BG));
-        assert_eq!(
-            TERMINAL_SELECTION_BG,
-            design_tokens::chrome::TERMINAL_SELECTION
-        );
-        assert_eq!(TERMINAL_SELECTION_FG, design_tokens::chrome::TEXT_PRIMARY);
-
-        let mut text_runs = Vec::new();
-        render_terminal_selection_text("selected", 10.0, 20.0, 80, expected, &mut text_runs);
-        assert_eq!(text_runs.len(), 1);
-        assert_eq!(text_runs[0].text, "selected");
-        assert_eq!(text_runs[0].color, TERMINAL_SELECTION_FG);
-        assert_eq!(text_runs[0].clip_bounds, Some(expected));
-    }
-
-    #[test]
-    fn terminal_truecolor_background_uses_exact_styled_cell_geometry() {
-        let styled = TerminalStyledLine {
-            text: "abcdef".to_string(),
-            spans: vec![datum_gui_protocol::TerminalStyleSpan {
-                start: 2,
-                end: 5,
-                fg: None,
-                bg: Some("rgb:12:34:56".to_string()),
-                bold: false,
-                dim: false,
-                italic: false,
-                underline: false,
-                overline: false,
-                blink: false,
-                strikethrough: false,
-                conceal: false,
-                inverse: false,
-            }],
-        };
-        let mut quads = Vec::new();
-        render_terminal_style_backgrounds(&styled, 10.0, 20.0, 80, &mut quads);
-
-        assert_eq!(quads.len(), 1);
-        assert_eq!(
-            quads[0],
-            Quad::from_rect(
-                RectPx {
-                    x: 10.0 + 2.0 * TERMINAL_CELL_WIDTH_PX,
-                    y: 20.0,
-                    width: 3.0 * TERMINAL_CELL_WIDTH_PX,
-                    height: TERMINAL_CELL_HEIGHT_PX,
-                },
-                terminal_color::terminal_color("rgb:12:34:56").expect("valid fixture color"),
-            )
-        );
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

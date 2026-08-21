@@ -143,7 +143,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         )
         (root / guard.APP_SRC / "terminal_session_p06_gui_measurement_tests.rs").write_text(
             "const OUTPUT_BYTES_PER_SESSION: usize = 1024 * 1024;\n"
-            "fn p06_provisional_gui_path_emits_reproducible_json(){\n"
+            "fn p06_production_core_gui_path_emits_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_gui_measurement_v1\" };\n"
             "registry.drain_all(); drain_work: distribution(); presentation_complete();}",
             encoding="utf-8",
@@ -191,8 +191,8 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             'p06_bounded_ci_emits_reproducible_json "datum_terminal_p06_soak_v1"\n'
             '"ci-10-minute": (8, 600, 8 * 1024 * 1024, 1_000)\n'
             '"datum_terminal_p06_gui_measurement_v1"\n'
-            "single provisional GUI throughput >=1MiB/s\n"
-            "aggregate provisional GUI throughput >=4MiB/s\n"
+            "single production-core GUI throughput >=1MiB/s\n"
+            "aggregate production-core GUI throughput >=4MiB/s\n"
             '"datum_terminal_p06_lifecycle_v1"\n'
             "exactly 1000 completed lifecycle cycles\n"
             '"datum_terminal_p06_sustained_v1"\n'
@@ -343,13 +343,13 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("owner-removed long-duration tier returned" in failure for failure in failures))
         self.assertTrue(any("proof runner reintroduced owner-removed tier" in failure for failure in failures))
 
-    def test_provisional_gui_measurement_drift_fails(self) -> None:
+    def test_production_core_gui_measurement_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
         measurement = root / guard.APP_SRC / "terminal_session_p06_gui_measurement_tests.rs"
         measurement.write_text("fn bypassed_registry_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
-        self.assertTrue(any("provisional GUI measurement proof missing" in failure for failure in failures))
+        self.assertTrue(any("production-core GUI measurement proof missing" in failure for failure in failures))
 
     def test_sustained_throughput_or_real_backend_canary_drift_fails(self) -> None:
         temporary, root = self.fixture()

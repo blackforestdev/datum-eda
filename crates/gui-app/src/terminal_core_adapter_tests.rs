@@ -1,5 +1,7 @@
 use super::*;
-use datum_terminal_core::{InputDisposition, SearchCursor, SearchQuery};
+use datum_terminal_core::{
+    CellAttribute, Color, InputDisposition, PaletteIndex, SearchCursor, SearchQuery,
+};
 
 fn adapter(session: &str) -> TerminalCoreSessionAdapter {
     TerminalCoreSessionAdapter::new(session, format!("context-{session}"), 12, 4).unwrap()
@@ -61,13 +63,12 @@ fn adapter_keeps_session_context_identity_and_projects_core_state() {
         )
         .unwrap();
 
-    assert_eq!(lane.grid_lines()[0], "A\u{754c}");
-    assert_eq!(lane.grid_styled_lines()[0].text, "A\u{754c}");
-    assert_eq!(lane.grid_styled_lines()[0].spans.len(), 1);
-    let style = &lane.grid_styled_lines()[0].spans[0];
-    assert_eq!(style.fg.as_deref(), Some("ansi256:1"));
-    assert_eq!(style.bg.as_deref(), Some("ansi256:4"));
-    assert!(style.bold);
+    assert_eq!(adapter.test_plain_lines()[0], "A\u{754c}");
+    let snapshot = adapter.test_render_snapshot();
+    let style = snapshot.rows().next().unwrap().cells()[0].style;
+    assert_eq!(style.foreground, Color::Indexed(PaletteIndex::new(1)));
+    assert_eq!(style.background, Color::Indexed(PaletteIndex::new(4)));
+    assert!(style.attributes.contains(CellAttribute::Bold));
     assert_eq!(lane.title.as_deref(), Some("agent session"));
     assert_eq!(
         lane.current_working_directory.as_deref(),
@@ -80,14 +81,14 @@ fn adapter_keeps_session_context_identity_and_projects_core_state() {
 }
 
 #[test]
-fn terminal_replies_are_emitted_once_and_never_enter_the_grid() {
+fn terminal_replies_are_emitted_once_and_never_enter_terminal_cells() {
     let mut adapter = adapter("session-reply");
     let mut lane = TerminalLaneState::default();
     let update = adapter.apply_output(&mut lane, b"ok\x1b[6n").unwrap();
-    assert_eq!(lane.grid_lines()[0], "ok");
+    assert_eq!(adapter.test_plain_lines()[0], "ok");
     assert_eq!(update.replies.len(), 1);
     assert!(update.replies[0].starts_with(b"\x1b["));
-    assert!(!lane.grid_lines()[0].contains('['));
+    assert!(!adapter.test_plain_lines()[0].contains('['));
 }
 
 #[test]
@@ -105,8 +106,8 @@ fn adapters_isolate_output_modes_resize_and_context() {
     left.resize(20, 5, 200, 100).unwrap();
     left.project(&mut left_lane).unwrap();
 
-    assert_eq!(left_lane.grid_lines()[0], "LEFT");
-    assert_eq!(right_lane.grid_lines()[0], "RIGHT");
+    assert_eq!(left.test_plain_lines()[0], "LEFT");
+    assert_eq!(right.test_plain_lines()[0], "RIGHT");
     assert!(left.bracketed_paste_enabled());
     assert!(!right.bracketed_paste_enabled());
     assert_eq!(
@@ -144,10 +145,10 @@ fn stream_finish_repairs_incomplete_utf8_before_lifecycle_completion() {
     let mut adapter = adapter("finish");
     let mut lane = TerminalLaneState::default();
     adapter.apply_output(&mut lane, b"tail \xe2\x82").unwrap();
-    assert_eq!(lane.grid_lines()[0], "tail ");
+    assert_eq!(adapter.test_plain_lines()[0], "tail ");
     let update = adapter.finish(&mut lane).unwrap();
     assert!(update.semantic_errors.is_empty());
-    assert_eq!(lane.grid_lines()[0], "tail \u{fffd}");
+    assert_eq!(adapter.test_plain_lines()[0], "tail \u{fffd}");
 }
 
 #[test]

@@ -31,7 +31,6 @@ mod terminal_clipboard_menu;
 mod terminal_core_render;
 mod terminal_render_cache;
 pub use terminal_render_cache::TerminalRenderCache;
-mod terminal_cursor;
 #[cfg(test)]
 #[path = "terminal_font_tests.rs"]
 mod terminal_font_tests;

@@ -341,7 +341,7 @@ fn terminal_session_restart_preserves_tab_and_reports_lineage() {
     assert_eq!(tab.restart_count, 1);
     assert!(tab.active);
     assert!(tab.attached);
-    let restarted_rows = terminal_state.grid_lines().join("\n");
+    let restarted_rows = registry.test_active_text();
     assert!(
         !restarted_rows.contains("terminal restarted"),
         "restart lifecycle message must not enter the terminal grid"

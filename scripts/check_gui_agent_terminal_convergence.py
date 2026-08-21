@@ -27,13 +27,11 @@ RENDER_SCENE = ROOT / "crates" / "gui-render" / "src" / "render" / "scene.rs"
 HIT_CLIPPING = ROOT / "crates" / "gui-render" / "src" / "render" / "hit_clipping.rs"
 TERMINAL_FOCUS_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_focus_convergence_tests.rs"
 TERMINAL_HIT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_hit_ownership_tests.rs"
-TERMINAL_ESCAPE = ROOT / "crates" / "gui-app" / "src" / "terminal_screen" / "terminal_escape.rs"
-TERMINAL_SCREEN_BASIC_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_screen" / "terminal_screen_basic_tests.rs"
 RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
 TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_tests.rs"
-TERMINAL_CURSOR = ROOT / "crates" / "gui-render" / "src" / "terminal_cursor.rs"
+TERMINAL_CORE_RENDER = ROOT / "crates" / "gui-render" / "src" / "terminal_core_render.rs"
 TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
 TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
 TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
@@ -49,22 +47,13 @@ RETIRED_BRIDGE_FILES = [
 
 
 def check_terminal_grid_writers(failures: list[str]) -> None:
-    """Keep the public cross-crate grid gateway inside PTY interpretation."""
-    declaration = Path("crates/gui-protocol/src/terminal_lane.rs")
-    terminal_core = Path("crates/gui-app/src/terminal_screen")
+    """Reject resurrection of the deleted provisional terminal authority."""
     for path in sorted((ROOT / "crates").rglob("*.rs")):
         source = path.read_text(encoding="utf-8")
-        if "pty_grid_mut(" not in source:
-            continue
         relative = path.relative_to(ROOT)
-        is_test = relative.name.endswith("_tests.rs")
-        is_terminal_core = relative == Path("crates/gui-app/src/terminal_screen.rs") or (
-            terminal_core in relative.parents
-        )
-        if relative not in (declaration, TERMINAL_CORE_ADAPTER) and not is_test and not is_terminal_core:
-            failures.append(
-                f"terminal grid mutation escaped PTY interpretation: {relative}"
-            )
+        for marker in ("pty_grid_mut(", "grid_styled_lines(", "TerminalStyledLine"):
+            if marker in source:
+                failures.append(f"deleted provisional terminal authority returned in {relative}: {marker}")
 
 
 def check_terminal_focus_reporting(
@@ -156,24 +145,6 @@ def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
             failures.append("workspace hotkey dispatch must not fire on key release")
 
 
-def check_claude_completion_controls(
-    terminal_escape: str,
-    terminal_screen_tests: str,
-    failures: list[str],
-) -> None:
-    """Keep kitty keyboard management distinct from legacy cursor restore."""
-    if "b'u' if self.params.is_empty()" not in terminal_escape:
-        failures.append("parameterized CSI u must not restore the terminal cursor")
-    for marker in (
-        "claude_keyboard_controls_cannot_restore_a_stale_cursor",
-        "split_claude_keyboard_controls_are_cursor_state_invariant",
-        "colored_bash_prompt_places_cursor_after_dollar_and_trailing_space",
-        'b"\\x1b[>1u\\x1b[?u\\x1b[<uclaude"',
-    ):
-        if marker not in terminal_screen_tests:
-            failures.append(f"Claude completion control proof is missing {marker}")
-
-
 def check_agent_tui_runtime(
     main: str,
     runtime_dock: str,
@@ -183,7 +154,7 @@ def check_agent_tui_runtime(
     render_gpu: str,
     bottom_dock: str,
     terminal_font_tests: str,
-    terminal_cursor: str,
+    terminal_core_render: str,
     failures: list[str],
 ) -> None:
     """Keep mouse-aware agent TUIs focused, responsive, and bounded."""
@@ -235,33 +206,21 @@ def check_agent_tui_runtime(
         failures.append("renderer must begin exactly one text-cache generation per frame")
     elif lookup_at < 0 or begin_at > lookup_at:
         failures.append("renderer must prune text buffers before cache lookup")
-    for marker in (
-        "TERMINAL_FONT_SIZE_PX: f32 = 12.0",
-        "TERMINAL_LETTER_SPACING_EM",
-        "draw_rich_text",
-        "render_terminal_selection_row",
-    ):
-        if marker not in bottom_dock:
-            failures.append(f"terminal ink/advance separation is missing {marker}")
+    for marker in ("draw_rich_text", "selection_contains", "render_cursor"):
+        if marker not in terminal_core_render:
+            failures.append(f"TerminalCore renderer is missing {marker}")
     if "set_rich_text" not in text_cache:
         failures.append("terminal styled rows must use one rich-text shaping buffer")
     for marker in (
         "terminal_font_advance_matches_shared_logical_cell_width",
         "terminal_cell_advance_combines_smaller_ink_with_explicit_spacing",
-        "styled_terminal_colors_share_one_shaping_origin",
-        "colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells",
-        "hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid",
         "prompt_style_boundaries_do_not_restart_glyph_positioning",
         "terminal_rich_span_colors_participate_in_the_buffer_cache_key",
     ):
         if marker not in terminal_font_tests:
             failures.append(f"terminal cell-metric convergence proof is missing {marker}")
-    for marker in (
-        "CURSOR_HORIZONTAL_INSET_PX",
-        "trailing_slash_cursor_paint_stays_inside_the_next_logical_cell",
-    ):
-        if marker not in terminal_cursor:
-            failures.append(f"terminal cursor-cell separation is missing {marker}")
+    if "CURSOR_HORIZONTAL_INSET_PX" not in terminal_core_render:
+        failures.append("TerminalCore cursor-cell separation is missing")
 
 
 def check_terminal_tab_strip(
@@ -504,7 +463,7 @@ def main() -> int:
     text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
     render_gpu = RENDER_GPU.read_text()
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
-    terminal_cursor = TERMINAL_CURSOR.read_text()
+    terminal_core_render = TERMINAL_CORE_RENDER.read_text()
     terminal_tab_strip = TERMINAL_TAB_STRIP.read_text()
     terminal_tab_strip_tests = TERMINAL_TAB_STRIP_TESTS.read_text()
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
@@ -523,8 +482,6 @@ def main() -> int:
     hit_clipping = HIT_CLIPPING.read_text()
     terminal_focus_tests = TERMINAL_FOCUS_TESTS.read_text()
     terminal_hit_tests = TERMINAL_HIT_TESTS.read_text()
-    terminal_escape = TERMINAL_ESCAPE.read_text()
-    terminal_screen_basic_tests = TERMINAL_SCREEN_BASIC_TESTS.read_text()
     terminal_transport = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted(TERMINAL_TRANSPORT.rglob("*.rs"))
@@ -546,11 +503,6 @@ def main() -> int:
         failures,
     )
     check_workspace_hotkey_timing(keyboard_focus, failures)
-    check_claude_completion_controls(
-        terminal_escape,
-        terminal_screen_basic_tests,
-        failures,
-    )
     check_agent_tui_runtime(
         main,
         runtime_terminal_dock,
@@ -560,7 +512,7 @@ def main() -> int:
         render_gpu,
         bottom_dock,
         terminal_font_tests,
-        terminal_cursor,
+        terminal_core_render,
         failures,
     )
     check_terminal_tab_strip(

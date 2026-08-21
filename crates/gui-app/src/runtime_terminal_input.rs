@@ -21,7 +21,6 @@ fn follow_live_terminal_input(state: &mut datum_gui_protocol::TerminalLaneState)
     // Leaving accepted input hidden behind scrollback makes a healthy PTY look
     // unfocused or frozen even though the child is receiving and echoing bytes.
     state.scroll_offset = 0;
-    state.clear_text_selection();
 }
 
 impl Runtime {

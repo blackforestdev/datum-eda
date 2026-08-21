@@ -1,19 +1,14 @@
 //! Production session boundary between the Linux PTY transport and TerminalCore.
 //!
 //! The adapter owns exactly one parser/core pair and the application-approved
-//! resource profile. PTY bytes enter once, terminal replies leave once, and the
-//! current provisional lane projection is derived from immutable core state.
-//! DTC-P23 replaces that projection with direct snapshot rendering; it does not
-//! introduce another parser or semantic authority.
+//! resource profile. PTY bytes enter once, terminal replies leave once, and
+//! production rendering consumes immutable core snapshots directly.
 
-use datum_gui_protocol::{
-    TerminalLaneState, TerminalStyleSpan, TerminalStyledLine, TerminalTextStyle,
-};
+use datum_gui_protocol::TerminalLaneState;
 use datum_terminal_core::{
-    CellAttribute, CellContent, CellStyle, Color, CoreError, CoreEvent, CoreLimitValues,
-    CoreLimits, CursorShape, Damage, InputError, LimitKind, MouseEncoding, MouseTracking,
-    RenderSnapshot, SearchError, SelectionError, StreamingParser, TerminalCore, TerminalSize,
-    UnderlineStyle,
+    CoreError, CoreEvent, CoreLimitValues, CoreLimits, CursorShape, Damage, InputError, LimitKind,
+    MouseEncoding, MouseTracking, RenderSnapshot, SearchError, SelectionError, StreamingParser,
+    TerminalCore, TerminalSize,
 };
 use std::error::Error;
 use std::fmt;
@@ -136,6 +131,36 @@ impl TerminalCoreSessionAdapter {
         self.core.state().modes().bracketed_paste
     }
 
+    #[cfg(test)]
+    pub(crate) fn test_render_snapshot(&self) -> RenderSnapshot {
+        self.core
+            .render_snapshot()
+            .expect("test core snapshot should remain within governed limits")
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_plain_lines(&self) -> Vec<String> {
+        use datum_terminal_core::CellContent;
+
+        self.test_render_snapshot()
+            .rows()
+            .map(|row| {
+                row.cells()
+                    .iter()
+                    .filter_map(|cell| match &cell.content {
+                        CellContent::Cluster(cluster) => Some(cluster.text()),
+                        CellContent::Empty | CellContent::Continuation { .. } => None,
+                    })
+                    .collect()
+            })
+            .collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_plain_text(&self) -> String {
+        self.test_plain_lines().join("\n")
+    }
+
     pub(crate) fn take_render_state(
         &mut self,
     ) -> Result<(RenderSnapshot, Vec<Damage>), TerminalCoreAdapterError> {
@@ -208,34 +233,9 @@ impl TerminalCoreSessionAdapter {
         &self,
         lane: &mut TerminalLaneState,
     ) -> Result<(), TerminalCoreAdapterError> {
-        let snapshot = self
-            .core
-            .snapshot()
-            .map_err(TerminalCoreAdapterError::Snapshot)?;
-        let mut lines = Vec::with_capacity(snapshot.rows().len());
-        let mut styled_lines = Vec::with_capacity(snapshot.rows().len());
-        for row in snapshot.rows() {
-            let (text, spans) = project_row(row.cells());
-            lines.push(text.clone());
-            styled_lines.push(TerminalStyledLine { text, spans });
-        }
         let state = self.core.state();
         let cursor = state.cursor();
         let modes = state.modes();
-        // The P22 bridge retains the legacy lane's compact row projection while
-        // TerminalCore remains the fixed-grid authority. Keep the cursor row even
-        // when it is blank so the renderer never loses its insertion position.
-        let significant_rows = styled_lines
-            .iter()
-            .rposition(|line| !line.text.is_empty() || !line.spans.is_empty())
-            .map_or(0, |index| index + 1);
-        let projected_rows = significant_rows.max(usize::from(cursor.position.row.get()) + 1);
-        lines.truncate(projected_rows);
-        styled_lines.truncate(projected_rows);
-        let grid = lane.pty_grid_mut();
-        *grid.lines = lines;
-        *grid.styled_lines = styled_lines;
-
         lane.title = state.title().map(|title| title.as_str().to_owned());
         lane.current_working_directory = state
             .working_directory()
@@ -339,80 +339,6 @@ fn push_damage_bounded(damage: &mut Vec<Damage>, limits: CoreLimits, entry: Dama
     }
 }
 
-fn project_row(cells: &[datum_terminal_core::Cell]) -> (String, Vec<TerminalStyleSpan>) {
-    let mut text = String::new();
-    let mut styles = Vec::<(usize, usize, CellStyle)>::new();
-    let mut last_significant = 0usize;
-    for cell in cells {
-        let start = text.chars().count();
-        match &cell.content {
-            CellContent::Empty => text.push(' '),
-            CellContent::Cluster(cluster) => text.push_str(cluster.text()),
-            CellContent::Continuation { .. } => continue,
-        }
-        let end = text.chars().count();
-        if !matches!(cell.content, CellContent::Empty) || cell.style != CellStyle::default() {
-            last_significant = end;
-        }
-        if cell.style != CellStyle::default() {
-            if let Some((_, prior_end, prior_style)) = styles.last_mut()
-                && *prior_end == start
-                && *prior_style == cell.style
-            {
-                *prior_end = end;
-            } else {
-                styles.push((start, end, cell.style));
-            }
-        }
-    }
-    text = text.chars().take(last_significant).collect();
-    let spans = styles
-        .into_iter()
-        .filter(|(start, _, _)| *start < last_significant)
-        .map(|(start, end, style)| style_span(start, end.min(last_significant), style))
-        .collect();
-    (text, spans)
-}
-
-fn style_span(start: usize, end: usize, style: CellStyle) -> TerminalStyleSpan {
-    let projected = TerminalTextStyle {
-        fg: color(style.foreground),
-        bg: color(style.background),
-        bold: style.attributes.contains(CellAttribute::Bold),
-        dim: style.attributes.contains(CellAttribute::Faint),
-        italic: style.attributes.contains(CellAttribute::Italic),
-        underline: style.underline != UnderlineStyle::None,
-        overline: style.attributes.contains(CellAttribute::Overline),
-        blink: style.attributes.contains(CellAttribute::Blink),
-        strikethrough: style.attributes.contains(CellAttribute::Strike),
-        conceal: style.attributes.contains(CellAttribute::Hidden),
-        inverse: style.attributes.contains(CellAttribute::Inverse),
-    };
-    TerminalStyleSpan {
-        start,
-        end,
-        fg: projected.fg,
-        bg: projected.bg,
-        bold: projected.bold,
-        dim: projected.dim,
-        italic: projected.italic,
-        underline: projected.underline,
-        overline: projected.overline,
-        blink: projected.blink,
-        strikethrough: projected.strikethrough,
-        conceal: projected.conceal,
-        inverse: projected.inverse,
-    }
-}
-
-fn color(color: Color) -> Option<String> {
-    match color {
-        Color::Default => None,
-        Color::Indexed(index) => Some(format!("ansi256:{}", index.get())),
-        Color::Rgb(rgb) => Some(format!("rgb:{}:{}:{}", rgb.red, rgb.green, rgb.blue)),
-    }
-}
-
 const fn cursor_style(shape: CursorShape, blinking: bool) -> &'static str {
     match (shape, blinking) {
         (CursorShape::Block, true) => "blinking_block",
@@ -447,7 +373,3 @@ const fn mouse_encoding(encoding: MouseEncoding) -> Option<&'static str> {
 #[cfg(test)]
 #[path = "terminal_core_adapter_tests.rs"]
 mod tests;
-
-#[cfg(test)]
-#[path = "terminal_shadow.rs"]
-mod shadow;

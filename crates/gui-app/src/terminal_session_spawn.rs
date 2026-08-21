@@ -22,12 +22,6 @@ impl TerminalSessionRegistry {
         let session_id = self.spawn_and_activate(context)?.to_string();
         lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
         self.projection_managed = true;
-        debug_assert!(
-            self.sessions[self.active_index]
-                .parked_lane
-                .grid_lines()
-                .is_empty()
-        );
         Ok(session_id)
     }
 

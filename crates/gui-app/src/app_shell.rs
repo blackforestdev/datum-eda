@@ -125,6 +125,7 @@ pub(super) fn fatal_gui_error(
 pub(super) fn terminal_scrollback_page_step(
     workspace: &datum_gui_protocol::ReviewWorkspaceState,
 ) -> usize {
-    let visible_hint = workspace.ui.terminal.grid_lines().len().min(24);
-    visible_hint.saturating_sub(1).max(1)
+    usize::from(workspace.ui.terminal.rows)
+        .saturating_sub(1)
+        .max(1)
 }

@@ -114,7 +114,7 @@ fi
 if [[ "$tier" == smoke ]]; then
   test_name="terminal_session::terminal_session_p06_measurement_tests::p06_release_measurement_emits_reproducible_json"
 elif [[ "$tier" == gui ]]; then
-  test_name="terminal_session::terminal_session_p06_gui_measurement_tests::p06_provisional_gui_path_emits_reproducible_json"
+  test_name="terminal_session::terminal_session_p06_gui_measurement_tests::p06_production_core_gui_path_emits_reproducible_json"
 elif [[ "$tier" == lifecycle-1000 ]]; then
   test_name="terminal_session::terminal_session_p06_lifecycle_measurement_tests::p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json"
 elif [[ "$tier" == throughput-60s ]]; then
@@ -142,8 +142,8 @@ if evidence.get("contract") == "datum_terminal_p06_gui_measurement_v1":
     single = evidence["single_session"]
     aggregate = evidence["eight_session_aggregate"]
     checks = {
-        "single provisional GUI throughput >=1MiB/s": single["mib_per_second"] >= 1.0,
-        "aggregate provisional GUI throughput >=4MiB/s": aggregate["mib_per_second"] >= 4.0,
+        "single production-core GUI throughput >=1MiB/s": single["mib_per_second"] >= 1.0,
+        "aggregate production-core GUI throughput >=4MiB/s": aggregate["mib_per_second"] >= 4.0,
         "single drain p95 <=8ms": single["drain_work"]["p95_us"] <= 8_000,
         "single drain p99 <=16ms": single["drain_work"]["p99_us"] <= 16_000,
         "single drain max <=33ms": single["drain_work"]["max_us"] <= 33_000,

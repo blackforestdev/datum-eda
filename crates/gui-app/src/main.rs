@@ -70,7 +70,6 @@ mod terminal_input;
 mod terminal_narration;
 mod terminal_process;
 mod terminal_proposal_context;
-mod terminal_screen;
 mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;

@@ -169,7 +169,6 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         status: state.ui.terminal.status.clone(),
         restart_count: 0,
     }];
-    *state.ui.terminal.pty_grid_mut().lines = vec!["visible-shell-prompt$".to_string()];
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let prepared = PreparedScene::from_workspace(
@@ -206,11 +205,6 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         .iter()
         .find(|run| run.text == "TERMINATE")
         .expect("terminal close action label");
-    let prompt = prepared
-        .text_runs
-        .iter()
-        .find(|run| run.text == "visible-shell-prompt$")
-        .expect("terminal content must remain rendered");
     assert!(confirmation.y < geometry.screen.y);
     assert_ne!(
         confirmation.y, tab_label.y,
@@ -225,7 +219,6 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
             run.text
         );
     }
-    assert!(prompt.y >= geometry.screen.y);
     assert!(
         prepared
             .hit_regions

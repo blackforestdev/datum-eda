@@ -16,6 +16,15 @@ SESSION = SRC / "terminal_session.rs"
 SESSION_RENDER = SRC / "terminal_session_render.rs"
 DRAIN = SRC / "terminal_session_drain.rs"
 SPAWN = SRC / "terminal_session_spawn.rs"
+TERMINAL_PROCESS = SRC / "terminal_process.rs"
+TERMINAL_LANE = Path("crates/gui-protocol/src/terminal_lane.rs")
+RETIRED_AUTHORITIES = (
+    SRC / "terminal_screen.rs",
+    SRC / "terminal_screen",
+    SRC / "terminal_shadow.rs",
+    Path("crates/gui-render/src/terminal_color.rs"),
+    Path("crates/gui-render/src/terminal_cursor.rs"),
+)
 
 APPROVED_LIMITS = {
     "parameter_count": "64",
@@ -52,7 +61,7 @@ APPROVED_LIMITS = {
 REQUIRED_PROOFS = (
     "production_profile_matches_the_owner_approved_p22_l1_values",
     "adapter_keeps_session_context_identity_and_projects_core_state",
-    "terminal_replies_are_emitted_once_and_never_enter_the_grid",
+    "terminal_replies_are_emitted_once_and_never_enter_terminal_cells",
     "adapters_isolate_output_modes_resize_and_context",
     "stream_finish_repairs_incomplete_utf8_before_lifecycle_completion",
     "repeated_bells_remain_bounded_but_preserve_visible_count",
@@ -74,6 +83,19 @@ def check(root: Path) -> list[str]:
     drain = read(root, DRAIN)
     spawn = read(root, SPAWN)
     tests = read(root, SRC / "terminal_core_adapter_tests.rs")
+    terminal_lane = read(root, TERMINAL_LANE)
+    terminal_process = read(root, TERMINAL_PROCESS)
+
+    for retired in RETIRED_AUTHORITIES:
+        candidate = root / retired
+        if candidate.is_file() or (candidate.is_dir() and any(candidate.rglob("*"))):
+            failures.append(f"retired provisional terminal authority returned: {retired}")
+    for marker in ("PtyGrid", "grid_lines", "grid_styled_lines", "pty_grid_mut"):
+        if marker in terminal_lane:
+            failures.append(f"gui-protocol terminal lane regained screen authority: {marker}")
+    for marker in ('.env("TERM", "xterm-256color")', '.env("COLORTERM", "truecolor")'):
+        if marker in terminal_process:
+            failures.append(f"retired terminal capability overclaim returned: {marker}")
 
     if 'datum-terminal-core = { path = "../terminal-core" }' not in manifest:
         failures.append("gui-app must consume TerminalCore through the local path crate")
@@ -88,7 +110,7 @@ def check(root: Path) -> list[str]:
         "PRODUCTION_CORE_LIMIT_VALUES",
         "parser.feed(bytes",
         "core.apply(action)",
-        ".snapshot()",
+        ".render_snapshot()",
     ):
         if marker not in adapter:
             failures.append(f"production TerminalCore adapter lacks ownership marker: {marker}")

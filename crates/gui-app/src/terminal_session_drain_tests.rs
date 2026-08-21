@@ -44,11 +44,7 @@ fn active_pending_tab_keeps_previous_session_output_in_its_parked_projection() {
     let mut lane = TerminalLaneState::default();
     let report = registry.drain_all(&mut lane);
     assert!(!report.active_projection_changed);
-    assert!(lane.grid_lines().is_empty());
-    assert_eq!(
-        registry.sessions[0].parked_lane.grid_lines(),
-        &["old-shell-output"]
-    );
+    assert_eq!(registry.test_active_text().trim_end(), "old-shell-output");
 }
 
 #[test]
@@ -191,7 +187,7 @@ fn tiny_chunk_flood_is_applied_once_per_session_per_turn() {
     assert_eq!(report.output_bytes, GUI_DRAIN_EVENT_LIMIT);
     assert_eq!(report.output_batches, 1);
     assert_eq!(
-        lane.grid_lines().concat(),
+        registry.test_active_text().replace('\n', ""),
         "x".repeat(GUI_DRAIN_EVENT_LIMIT)
     );
     let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
@@ -223,23 +219,10 @@ fn split_control_and_utf8_chunks_batch_without_cross_session_leakage() {
     let mut lane = TerminalLaneState::default();
     let report = registry.drain_all(&mut lane);
     assert_eq!(report.output_batches, 2);
-    assert_eq!(lane.grid_lines().last().map(String::as_str), Some("red"));
-    assert_eq!(
-        registry.sessions[1]
-            .parked_lane
-            .grid_lines()
-            .last()
-            .map(String::as_str),
-        Some("┌")
-    );
-    assert!(lane.grid_lines().iter().all(|line| !line.contains('┌')));
-    assert!(
-        registry.sessions[1]
-            .parked_lane
-            .grid_lines()
-            .iter()
-            .all(|line| !line.contains("red"))
-    );
+    assert!(registry.test_session_text(0).contains("red"));
+    assert!(registry.test_session_text(1).contains('┌'));
+    assert!(!registry.test_session_text(0).contains('┌'));
+    assert!(!registry.test_session_text(1).contains("red"));
 }
 
 #[test]
@@ -281,12 +264,5 @@ fn same_session_output_is_applied_before_its_final_exit_control() {
         .unwrap();
     assert!(controlled_apply < exit);
     assert!(exit < unrelated_apply);
-    assert_eq!(
-        registry.sessions[1]
-            .parked_lane
-            .grid_lines()
-            .last()
-            .map(String::as_str),
-        Some("final-tail")
-    );
+    assert!(registry.test_session_text(1).contains("final-tail"));
 }

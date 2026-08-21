@@ -57,18 +57,14 @@ pub(super) fn spawn_terminal_process(
     Ok(TerminalSession::from_transport(transport, terminal_context))
 }
 
-/// A terminal tab is a new interactive presentation boundary, not a subprocess
-/// inheriting the launcher's log-format preference. Keep the currently governed
-/// TERM identity, advertise the truecolor path Datum actually renders, remove
-/// NO_COLOR, and prevent a parent terminal emulator from being misidentified as
-/// the terminal that owns this PTY.
+/// A terminal tab is a new presentation boundary, but DTC-P26 deliberately
+/// does not invent a Datum terminfo identity. Preserve the launching process's
+/// TERM/COLORTERM/NO_COLOR policy until DTC-P27 installs truthful Datum terminfo,
+/// while preventing a parent emulator from being misidentified as PTY owner.
 fn apply_interactive_terminal_environment(
     request: TerminalTransportRequest,
 ) -> TerminalTransportRequest {
     request
-        .env("TERM", "xterm-256color")
-        .env("COLORTERM", "truecolor")
-        .env_remove("NO_COLOR")
         .env_remove("TERM_PROGRAM")
         .env_remove("TERM_PROGRAM_VERSION")
 }
@@ -87,22 +83,28 @@ mod tests {
     use std::cell::Cell;
 
     #[test]
-    fn interactive_terminal_environment_enables_color_without_foreign_identity() {
+    fn interactive_terminal_environment_preserves_capability_policy_without_foreign_identity() {
         let request = TerminalTransportRequest::new("/bin/sh", "/tmp".into())
             .env("NO_COLOR", "1")
+            .env("TERM", "owner-terminal")
+            .env("COLORTERM", "owner-color-policy")
             .env("TERM_PROGRAM", "ghostty")
             .env("TERM_PROGRAM_VERSION", "fixture");
         let (command, _, _) = apply_interactive_terminal_environment(request).into_command();
         let env = command.get_envs().collect::<Vec<_>>();
         assert!(env.contains(&(
             std::ffi::OsStr::new("TERM"),
-            Some(std::ffi::OsStr::new("xterm-256color"))
+            Some(std::ffi::OsStr::new("owner-terminal"))
         )));
         assert!(env.contains(&(
             std::ffi::OsStr::new("COLORTERM"),
-            Some(std::ffi::OsStr::new("truecolor"))
+            Some(std::ffi::OsStr::new("owner-color-policy"))
         )));
-        for key in ["NO_COLOR", "TERM_PROGRAM", "TERM_PROGRAM_VERSION"] {
+        assert!(env.contains(&(
+            std::ffi::OsStr::new("NO_COLOR"),
+            Some(std::ffi::OsStr::new("1"))
+        )));
+        for key in ["TERM_PROGRAM", "TERM_PROGRAM_VERSION"] {
             assert!(env.contains(&(std::ffi::OsStr::new(key), None)));
         }
     }

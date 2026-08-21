@@ -30,11 +30,6 @@ impl Runtime {
         }
         self.terminal_text_selection_drag = Some(point);
         let _ = self.terminal_sessions.clear_active_selection();
-        self.session
-            .workspace_mut()
-            .ui
-            .terminal
-            .clear_text_selection();
         self.invalidate_frame();
         true
     }
@@ -56,11 +51,7 @@ impl Runtime {
         } else {
             let _ = self.terminal_sessions.clear_active_selection();
         }
-        {
-            let terminal = &mut self.session.workspace_mut().ui.terminal;
-            terminal.clear_text_selection();
-            self.invalidate_frame();
-        }
+        self.invalidate_frame();
         true
     }
 

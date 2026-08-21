@@ -65,12 +65,13 @@ impl Runtime {
             return false;
         };
         let delta = if scroll_lines > 0.0 { 1_usize } else { 0_usize };
+        let terminal_row_count = self.terminal_sessions.active_render_row_count();
         let ui = &mut self.session.workspace_mut().ui;
         match active {
             DockTab::Terminal => {
                 if scroll_lines > 0.0 {
-                    let max = ui.terminal.grid_lines().len();
-                    ui.terminal.scroll_offset = (ui.terminal.scroll_offset + delta).min(max);
+                    ui.terminal.scroll_offset =
+                        (ui.terminal.scroll_offset + delta).min(terminal_row_count);
                 } else {
                     ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
                 }
