@@ -2495,7 +2495,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P24B",
+        "canonical_next_step_id": "DTC-P25",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2636,16 +2636,26 @@
           {
             "id": "DTC-P24B",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Publish the immutable TerminalCore semantic snapshot through the approved Linux AT-SPI bridge and prove text, caret, selection, focus, title, links, and events with a real screen reader.",
             "depends_on": ["DTC-P24A"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24B"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "5c88c14"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24B-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P25",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Run bounded test/debug-only shadow comparison between the provisional path and TerminalCore over their declared overlap without creating a production selector or fallback.",
             "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P25"}],
@@ -2678,21 +2688,18 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "root-dtc-p24b-first-party-20260820",
+        "session": "root-dtc-p25-shadow-20260820",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "79bb16e",
-        "claimed_at": "2026-08-20T21:23:05Z",
-        "heartbeat_at": "2026-08-20T21:23:05Z",
-        "expires_at": "2026-08-21T05:23:05Z",
+        "head": "5c88c14",
+        "claimed_at": "2026-08-21T04:28:00Z",
+        "heartbeat_at": "2026-08-21T04:28:00Z",
+        "expires_at": "2026-08-21T12:28:00Z",
         "scope": [
-          "crates/gui-app/src/terminal_accessibility_bridge.rs",
-          "crates/gui-app/src/terminal_accessibility_platform",
-          "crates/gui-app/src/app_shell.rs",
-          "crates/gui-app/src/main.rs",
-          "docs/decisions/PRODUCT_MECHANICS_032_DATUM_OWNED_AT_SPI_BRIDGE.md",
+          "crates/gui-app/src/terminal_core_adapter",
+          "crates/gui-app/src/terminal_screen",
+          "crates/gui-app/src/terminal_shadow",
           "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
           "scripts",
-          "specs/spec_governance_manifest.json",
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
           ".beads/issues.jsonl"

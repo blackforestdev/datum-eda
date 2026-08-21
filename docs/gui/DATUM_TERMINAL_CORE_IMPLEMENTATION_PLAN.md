@@ -1761,6 +1761,45 @@ session-adapter boundary.
   connect the immutable TerminalCore semantic snapshot to the approved Linux
   accessibility mechanism and prove text, caret, selection, focus, title,
   links, and events with a real screen reader.
+
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24B-CLOSED --> **Closure evidence
+  (2026-08-20).** Commit `5c88c14` added a Datum-authored, standard-library-only
+  D-Bus transport and Linux AT-SPI service over the immutable TerminalCore
+  accessibility snapshot. The bounded service authenticates to the local Unix
+  bus with EXTERNAL credentials, discovers the accessibility bus through the
+  standard session service, registers application and terminal objects with the
+  registry, and publishes Application, Accessible, Component, Text, Hypertext,
+  Hyperlink, property, introspection, and Object-event behavior for terminal
+  name, Unicode-scalar text offsets, caret, selection, focus, geometry, title,
+  links, bell, and lifecycle-relevant changes. The background bridge coalesces
+  immutable updates without retaining PTY bytes or creating a second terminal
+  state authority; absent buses, rejected authentication, malformed signatures
+  or frames, oversize messages, disconnects, and unsupported calls fail closed
+  without impairing Datum.
+
+  Deterministic proof covers wire alignment and fragmentation, bounded signature
+  grammar, authentication, reentrant reply correlation, disconnect and hostile
+  auth handling, malformed and oversize framing, AT-SPI roles/properties/state,
+  Unicode text, caret, selection, focus, geometry, hyperlink objects, event
+  bodies, and update coalescing. The live registration test passed both with an
+  explicit accessibility-bus address and through standard session-bus
+  discovery. On the production Wayland desktop, registry and direct queries
+  returned `Datum EDA`, terminal role 60, and the actual TerminalCore prompt
+  text. Installed Orca enumerated the running Datum process and its terminal
+  object, and its debug trace observed the TerminalCore-derived terminal name
+  and focus state. Orca's optional cache probe remains an honest unsupported
+  extension; Product Mechanics 032 requires the implemented object surface and
+  does not authorize a rival cached semantic tree.
+
+  The complete gui-app suite passed 381 tests with six governed measurement
+  tests ignored; the focused accessibility suite passed 18 deterministic tests
+  with the real-bus test explicitly selected separately. Workspace all-target
+  offline checking, strict workspace Clippy, dependency authority, source
+  health over 1,516 files, native-interaction architecture and four mutation
+  tests, spec governance, project-state/render parity, rustfmt, and diff hygiene
+  passed. No Cargo package, manifest, AccessKit, libatspi, D-Bus crate, generated
+  binding, copied implementation, helper subprocess, license exception, PTY
+  behavior, TERM identity, or TerminalCore mutation path was added.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P25 --> **DTC-P25 — bounded shadow comparison.** Feed recorded bytes to old and new
   cores only in tests/debug; compare the declared overlap; use normative proof
   for new behavior; no production selector or fallback.
