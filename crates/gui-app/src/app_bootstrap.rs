@@ -18,6 +18,8 @@ pub(super) fn parse_window_size(value: &str) -> Result<(u32, u32)> {
 #[derive(Debug, Clone, Parser)]
 #[command(name = "datum-gui", about = "Datum EDA Phase 1 read-only board GUI")]
 pub(super) struct GuiArgs {
+    #[command(flatten)]
+    pub(super) terminal_profile: crate::terminal_profile::TerminalProfileArgs,
     #[arg(long = "demo-known-good", default_value_t = false)]
     pub(super) demo_known_good: bool,
     #[arg(
@@ -99,6 +101,7 @@ pub(super) struct LaunchState {
     pub(super) state: datum_gui_protocol::ReviewWorkspaceState,
     pub(super) camera: CameraState,
     pub(super) terminal_launch_context: TerminalLaunchContext,
+    pub(super) terminal_profiles: crate::terminal_profile::TerminalProfileCatalog,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) workspace_include_review: bool,
 }
@@ -327,8 +330,14 @@ impl GuiArgs {
             camera_started.elapsed().as_millis()
         ));
 
-        let terminal_launch_context =
+        let terminal_profiles =
+            crate::terminal_profile::TerminalProfileCatalog::from_args(&self.terminal_profile)?;
+        state.ui.terminal.theme = terminal_profiles.selected().theme();
+        state.ui.terminal.font_scale_millis = terminal_profiles.selected().font_scale_millis();
+        state.ui.terminal.launch_profile_name = terminal_profiles.selected().name().to_string();
+        let mut terminal_launch_context =
             terminal_launch_context_from_state(&request.project_root, &state);
+        terminal_launch_context.terminal_profile = terminal_profiles.selected().clone();
         let terminal_started = std::time::Instant::now();
         append_gui_diagnostic_line("terminal spawn begin");
         let mut terminal_sessions = TerminalSessionRegistry::spawn_with_proxy(
@@ -348,6 +357,7 @@ impl GuiArgs {
             state,
             camera,
             terminal_launch_context,
+            terminal_profiles,
             terminal_sessions,
             workspace_include_review,
         })

@@ -107,6 +107,7 @@ pub(super) struct TerminalLaunchContext {
     /// separate from `project_root`, which remains Datum's stable project and
     /// context identity when a new tab follows the active shell's OSC 7 CWD.
     pub(super) launch_working_directory: PathBuf,
+    pub(super) terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
     pub(super) project_id: Option<String>,
     pub(super) project_name: Option<String>,
     pub(super) board_id: Option<String>,
@@ -440,6 +441,7 @@ pub(super) fn terminal_launch_context_from_state(
     TerminalLaunchContext {
         project_root: project_root.to_path_buf(),
         launch_working_directory: project_root.to_path_buf(),
+        terminal_profile: crate::terminal_profile::TerminalLaunchProfile::default(),
         project_id: Some(state.scene.project_uuid.clone()),
         project_name: Some(state.scene.project_name.clone()),
         board_id: Some(state.scene.board_uuid.clone()),
@@ -530,8 +532,9 @@ pub(super) fn refresh_terminal_session_context_from_state(
     state: &ReviewWorkspaceState,
     cursor: Option<(f32, f32)>,
 ) -> Result<TerminalLaunchContext> {
-    let context =
+    let mut context =
         terminal_launch_context_from_state_with_cursor(&base_context.project_root, state, cursor);
+    context.terminal_profile = base_context.terminal_profile.clone();
     refresh_terminal_session_context(session, &context)?;
     Ok(context)
 }

@@ -157,6 +157,7 @@ fn write_terminal_context_files_scoped(
         context_id: terminal_context.context_id.clone(),
         session_id: terminal_context.session_id.clone(),
         terminal_session_id: terminal_context.session_id.clone(),
+        terminal_launch_profile: context.terminal_profile.name().to_string(),
         session_lifecycle: DatumToolSessionLifecycle::Running,
         actor_type: "ExternalAgent",
         capabilities: vec!["read", "check", "artifact", "propose", "apply-approved"],

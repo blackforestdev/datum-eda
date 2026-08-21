@@ -1,0 +1,414 @@
+//! User-selected terminal launch templates over the owned PTY transport.
+
+use anyhow::{Context, Result};
+use datum_gui_protocol::{
+    TERMINAL_FONT_SCALE_DEFAULT_MILLIS, TERMINAL_FONT_SCALE_MAX_MILLIS,
+    TERMINAL_FONT_SCALE_MIN_MILLIS, TerminalTheme,
+};
+use std::{
+    ffi::OsString,
+    path::{Path, PathBuf},
+};
+
+#[derive(Debug, Clone, clap::Args)]
+pub(super) struct TerminalProfileArgs {
+    /// Select `default`, `login`, or the configured custom profile for new terminals.
+    #[arg(long = "terminal-session-profile", default_value = "default")]
+    selected: String,
+    /// User-facing name for the optional custom terminal profile.
+    #[arg(long = "terminal-profile-name", default_value = "custom")]
+    custom_name: String,
+    /// Executable for the custom profile. Without this, the user's `$SHELL` is used.
+    #[arg(long = "terminal-program")]
+    program: Option<OsString>,
+    /// One exact argv element for the custom profile; repeat to add arguments.
+    #[arg(long = "terminal-arg", allow_hyphen_values = true)]
+    args: Vec<OsString>,
+    /// Set one inherited environment key as `KEY=VALUE`; repeat as needed.
+    #[arg(long = "terminal-env", value_name = "KEY=VALUE")]
+    environment: Vec<String>,
+    /// Remove one inherited environment key; removals are applied after sets.
+    #[arg(long = "terminal-env-remove", value_name = "KEY")]
+    environment_remove: Vec<String>,
+    /// Initial cwd: `active`, `project`, or a path relative to the project root.
+    #[arg(long = "terminal-cwd", default_value = "active")]
+    cwd: String,
+    /// Initial custom-profile theme: datum-dark, high-contrast, or light.
+    #[arg(long = "terminal-theme")]
+    theme: Option<String>,
+    /// Initial custom-profile terminal font scale as an integer percent (60..=200).
+    #[arg(long = "terminal-font-scale-percent")]
+    font_scale_percent: Option<u16>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct TerminalLaunchProfile {
+    name: String,
+    executable: Option<OsString>,
+    args: Vec<OsString>,
+    cwd: TerminalCwdTemplate,
+    environment: Vec<(OsString, Option<OsString>)>,
+    theme: TerminalTheme,
+    font_scale_millis: u16,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum TerminalCwdTemplate {
+    Active,
+    Project,
+    Path(PathBuf),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct ResolvedTerminalLaunchProfile {
+    pub(super) name: String,
+    pub(super) executable: OsString,
+    pub(super) args: Vec<OsString>,
+    pub(super) cwd: PathBuf,
+    pub(super) environment: Vec<(OsString, Option<OsString>)>,
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct TerminalProfileCatalog {
+    profiles: Vec<TerminalLaunchProfile>,
+    selected: usize,
+}
+
+impl Default for TerminalLaunchProfile {
+    fn default() -> Self {
+        Self {
+            name: "default".to_string(),
+            executable: None,
+            args: Vec::new(),
+            cwd: TerminalCwdTemplate::Active,
+            environment: Vec::new(),
+            theme: TerminalTheme::DatumDark,
+            font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+        }
+    }
+}
+
+impl TerminalLaunchProfile {
+    fn login() -> Self {
+        Self {
+            name: "login".to_string(),
+            args: vec![OsString::from("-l")],
+            ..Self::default()
+        }
+    }
+
+    pub(super) fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub(super) fn theme(&self) -> TerminalTheme {
+        self.theme
+    }
+
+    pub(super) fn font_scale_millis(&self) -> u16 {
+        self.font_scale_millis
+    }
+
+    pub(super) fn resolve(
+        &self,
+        project_root: &Path,
+        active_cwd: &Path,
+    ) -> ResolvedTerminalLaunchProfile {
+        self.resolve_with_shell(
+            project_root,
+            active_cwd,
+            std::env::var_os("SHELL").unwrap_or_else(|| OsString::from("/bin/sh")),
+        )
+    }
+
+    fn resolve_with_shell(
+        &self,
+        project_root: &Path,
+        active_cwd: &Path,
+        shell: OsString,
+    ) -> ResolvedTerminalLaunchProfile {
+        let cwd = match &self.cwd {
+            TerminalCwdTemplate::Active => active_cwd.to_path_buf(),
+            TerminalCwdTemplate::Project => project_root.to_path_buf(),
+            TerminalCwdTemplate::Path(path) if path.is_absolute() => path.clone(),
+            TerminalCwdTemplate::Path(path) => project_root.join(path),
+        };
+        ResolvedTerminalLaunchProfile {
+            name: self.name.clone(),
+            executable: self.executable.clone().unwrap_or(shell),
+            args: self.args.clone(),
+            cwd,
+            environment: self.environment.clone(),
+        }
+    }
+}
+
+impl TerminalProfileCatalog {
+    pub(super) fn from_args(args: &TerminalProfileArgs) -> Result<Self> {
+        let custom = custom_profile(args)?;
+        let mut profiles = vec![
+            TerminalLaunchProfile::default(),
+            TerminalLaunchProfile::login(),
+        ];
+        if let Some(custom) = custom {
+            profiles.push(custom);
+        }
+        let selected = profiles
+            .iter()
+            .position(|profile| profile.name == args.selected)
+            .with_context(|| {
+                format!(
+                    "unknown terminal session profile {:?}; available: {}",
+                    args.selected,
+                    profiles
+                        .iter()
+                        .map(|profile| profile.name.as_str())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            })?;
+        Ok(Self { profiles, selected })
+    }
+
+    pub(super) fn selected(&self) -> &TerminalLaunchProfile {
+        &self.profiles[self.selected]
+    }
+
+    pub(super) fn select_next(&mut self) -> &TerminalLaunchProfile {
+        self.selected = (self.selected + 1) % self.profiles.len();
+        self.selected()
+    }
+}
+
+fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchProfile>> {
+    let has_custom = args.program.is_some()
+        || !args.args.is_empty()
+        || !args.environment.is_empty()
+        || !args.environment_remove.is_empty()
+        || args.cwd != "active"
+        || args.theme.is_some()
+        || args.font_scale_percent.is_some()
+        || args.custom_name != "custom"
+        || args.selected == args.custom_name;
+    if !has_custom {
+        return Ok(None);
+    }
+    if args.custom_name.is_empty() || matches!(args.custom_name.as_str(), "default" | "login") {
+        anyhow::bail!("custom terminal profile name must be non-empty and not default or login");
+    }
+    let cwd = match args.cwd.as_str() {
+        "active" => TerminalCwdTemplate::Active,
+        "project" => TerminalCwdTemplate::Project,
+        path => TerminalCwdTemplate::Path(PathBuf::from(path)),
+    };
+    let theme = match args.theme.as_deref() {
+        None | Some("datum-dark") => TerminalTheme::DatumDark,
+        Some("high-contrast") => TerminalTheme::HighContrast,
+        Some("light") => TerminalTheme::Light,
+        Some(value) => anyhow::bail!(
+            "unknown terminal theme {value:?}; expected datum-dark, high-contrast, or light"
+        ),
+    };
+    let font_scale_millis = match args.font_scale_percent {
+        None => TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+        Some(percent) => percent.checked_mul(10).with_context(|| {
+            format!("terminal font scale percent {percent} cannot be represented")
+        })?,
+    };
+    if !(TERMINAL_FONT_SCALE_MIN_MILLIS..=TERMINAL_FONT_SCALE_MAX_MILLIS)
+        .contains(&font_scale_millis)
+    {
+        anyhow::bail!("terminal font scale percent must be between 60 and 200");
+    }
+    let mut environment = Vec::new();
+    for assignment in &args.environment {
+        let (key, value) = assignment
+            .split_once('=')
+            .with_context(|| format!("terminal environment must use KEY=VALUE: {assignment:?}"))?;
+        validate_environment_key(key)?;
+        environment.push((OsString::from(key), Some(OsString::from(value))));
+    }
+    for key in &args.environment_remove {
+        validate_environment_key(key)?;
+        environment.push((OsString::from(key), None));
+    }
+    Ok(Some(TerminalLaunchProfile {
+        name: args.custom_name.clone(),
+        executable: args.program.clone(),
+        args: args.args.clone(),
+        cwd,
+        environment,
+        theme,
+        font_scale_millis,
+    }))
+}
+
+fn validate_environment_key(key: &str) -> Result<()> {
+    if key.is_empty() || key.contains('=') || key.contains('\0') {
+        anyhow::bail!("terminal environment key must be non-empty and contain neither '=' nor NUL");
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::terminal_session::{TerminalEvent, TerminalLaunchContext, spawn_terminal_session};
+    use clap::Parser;
+    use std::{fs, time::Duration};
+
+    #[derive(Parser)]
+    struct FixtureArgs {
+        #[command(flatten)]
+        terminal: TerminalProfileArgs,
+    }
+
+    fn parse(values: &[&str]) -> TerminalProfileCatalog {
+        let mut argv = vec!["fixture"];
+        argv.extend_from_slice(values);
+        let args = FixtureArgs::try_parse_from(argv).unwrap();
+        TerminalProfileCatalog::from_args(&args.terminal).unwrap()
+    }
+
+    #[test]
+    fn default_and_login_profiles_preserve_active_cwd_and_exact_argv() {
+        let mut catalog = parse(&[]);
+        let default = catalog.selected().resolve_with_shell(
+            Path::new("/project"),
+            Path::new("/active"),
+            OsString::from("/bin/zsh"),
+        );
+        assert_eq!(default.executable, "/bin/zsh");
+        assert!(default.args.is_empty());
+        assert_eq!(default.cwd, Path::new("/active"));
+
+        let login = catalog.select_next().resolve_with_shell(
+            Path::new("/project"),
+            Path::new("/active"),
+            OsString::from("/bin/zsh"),
+        );
+        assert_eq!(login.executable, "/bin/zsh");
+        assert_eq!(login.args, [OsString::from("-l")]);
+        assert_eq!(login.cwd, Path::new("/active"));
+        assert_eq!(catalog.select_next().name(), "default");
+    }
+
+    #[test]
+    fn custom_profile_preserves_program_argv_cwd_env_and_appearance() {
+        let catalog = parse(&[
+            "--terminal-session-profile",
+            "agent",
+            "--terminal-profile-name",
+            "agent",
+            "--terminal-program",
+            "/usr/bin/env",
+            "--terminal-arg",
+            "--literal;$(not-a-shell)",
+            "--terminal-cwd",
+            "tools",
+            "--terminal-env",
+            "AGENT_MODE=1",
+            "--terminal-env-remove",
+            "OLD_AGENT_MODE",
+            "--terminal-theme",
+            "light",
+            "--terminal-font-scale-percent",
+            "130",
+        ]);
+        let profile = catalog.selected();
+        let resolved = profile.resolve_with_shell(
+            Path::new("/project"),
+            Path::new("/active"),
+            OsString::from("/bin/sh"),
+        );
+        assert_eq!(resolved.name, "agent");
+        assert_eq!(resolved.executable, "/usr/bin/env");
+        assert_eq!(resolved.args, [OsString::from("--literal;$(not-a-shell)")]);
+        assert_eq!(resolved.cwd, Path::new("/project/tools"));
+        assert_eq!(
+            resolved.environment,
+            [
+                (OsString::from("AGENT_MODE"), Some(OsString::from("1"))),
+                (OsString::from("OLD_AGENT_MODE"), None),
+            ]
+        );
+        assert_eq!(profile.theme(), TerminalTheme::Light);
+        assert_eq!(profile.font_scale_millis(), 1_300);
+    }
+
+    #[test]
+    fn invalid_selection_theme_scale_and_environment_fail_closed() {
+        for values in [
+            vec!["--terminal-session-profile", "missing"],
+            vec!["--terminal-theme", "unknown"],
+            vec!["--terminal-font-scale-percent", "201"],
+            vec!["--terminal-env", "MISSING_SEPARATOR"],
+            vec!["--terminal-env-remove", ""],
+        ] {
+            let mut argv = vec!["fixture"];
+            argv.extend(values);
+            let args = FixtureArgs::try_parse_from(argv).unwrap();
+            assert!(TerminalProfileCatalog::from_args(&args.terminal).is_err());
+        }
+    }
+
+    #[test]
+    fn production_spawn_observes_profile_program_argv_cwd_env_and_protected_identity() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-terminal-profile-spawn-{}",
+            std::process::id()
+        ));
+        let cwd = root.join("profile-cwd");
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&cwd).unwrap();
+        let mut context = TerminalLaunchContext::for_project_root(&root);
+        context.terminal_profile = TerminalLaunchProfile {
+            name: "agent".to_string(),
+            executable: Some(OsString::from("/bin/sh")),
+            args: vec![
+                OsString::from("-c"),
+                OsString::from(
+                    "printf 'PROFILE=%s|MARKER=%s|TERM=%s|CWD=%s' \"$DATUM_TERMINAL_PROFILE\" \"$PROFILE_MARKER\" \"$TERM\" \"$PWD\"",
+                ),
+            ],
+            cwd: TerminalCwdTemplate::Path(cwd.clone()),
+            environment: vec![
+                (
+                    OsString::from("PROFILE_MARKER"),
+                    Some(OsString::from("literal;$(not-interpreted)")),
+                ),
+                (
+                    OsString::from("TERM"),
+                    Some(OsString::from("foreign-terminal")),
+                ),
+            ],
+            theme: TerminalTheme::DatumDark,
+            font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+        };
+        let session = spawn_terminal_session(&context).unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(2);
+        let mut output = Vec::new();
+        while std::time::Instant::now() < deadline {
+            match session.recv_event_timeout(Duration::from_millis(50)) {
+                Ok(TerminalEvent::Output(bytes)) => output.extend(bytes),
+                Ok(TerminalEvent::Exited(_)) => break,
+                Ok(_) | Err(_) => {}
+            }
+        }
+        let output = String::from_utf8_lossy(&output);
+        assert!(output.contains("PROFILE=agent"), "{output}");
+        assert!(
+            output.contains("MARKER=literal;$(not-interpreted)"),
+            "{output}"
+        );
+        assert!(
+            output.contains(&format!("TERM={}", crate::terminal_capability::DATUM_TERM)),
+            "{output}"
+        );
+        assert!(
+            output.contains(&format!("CWD={}", cwd.display())),
+            "{output}"
+        );
+        let _ = fs::remove_dir_all(root);
+    }
+}

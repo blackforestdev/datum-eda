@@ -19,6 +19,7 @@ pub(super) struct TerminalContextEnvelope {
     pub(super) context_id: String,
     pub(super) session_id: String,
     pub(super) terminal_session_id: String,
+    pub(super) terminal_launch_profile: String,
     pub(super) session_lifecycle: DatumToolSessionLifecycle,
     pub(super) actor_type: &'static str,
     pub(super) capabilities: Vec<&'static str>,

@@ -48,12 +48,18 @@ pub(super) fn render_terminal_clipboard_menu(
         if link.kind == TerminalLinkKind::HttpUri {
             items.insert(2, ("OPEN LINK...", "", HitTarget::TerminalLinkOpen));
         }
+    } else {
+        items.push((
+            "NEXT PROFILE",
+            state.ui.terminal.launch_profile_name.as_str(),
+            HitTarget::TerminalProfileNext,
+        ));
+        items.push((
+            "NEXT THEME",
+            state.ui.terminal.theme.label(),
+            HitTarget::TerminalThemeNext,
+        ));
     }
-    items.push((
-        "NEXT THEME",
-        state.ui.terminal.theme.label(),
-        HitTarget::TerminalThemeNext,
-    ));
     let menu_height = ITEM_HEIGHT_PX * items.len() as f32;
     let x = menu.anchor_x.clamp(
         screen.x + MENU_MARGIN_PX,
@@ -149,15 +155,9 @@ mod tests {
         assert!(text.iter().any(|run| run.text == "PASTE"));
         assert!(text.iter().any(|run| run.text == "COPY LINK"));
         assert!(text.iter().any(|run| run.text == "OPEN LINK..."));
-        assert!(text.iter().any(|run| run.text == "NEXT THEME"));
-        assert!(
-            text.iter()
-                .any(|run| run.text == state.ui.terminal.theme.label())
-        );
         for target in [
             HitTarget::TerminalClipboardCopy,
             HitTarget::TerminalClipboardPaste,
-            HitTarget::TerminalThemeNext,
             HitTarget::TerminalLinkCopy,
             HitTarget::TerminalLinkOpen,
         ] {
@@ -169,6 +169,36 @@ mod tests {
             assert!(rect.x >= screen.x && rect.y >= screen.y);
             assert!(rect.x + rect.width <= screen.x + screen.width);
             assert!(rect.y + rect.height <= screen.y + screen.height);
+        }
+    }
+
+    #[test]
+    fn generic_terminal_menu_exposes_compact_profile_and_theme_controls() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        state.ui.terminal.launch_profile_name = "agent".to_string();
+        state.ui.terminal_clipboard_menu = Some(datum_gui_protocol::TerminalClipboardMenuState {
+            anchor_x: 100.0,
+            anchor_y: 500.0,
+            link: None,
+        });
+        let layout = ShellLayout::for_window(1280, 800, Some(260));
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+
+        render_terminal_clipboard_menu(&state, &layout, &mut quads, &mut text, &mut hits);
+
+        for label in [
+            "NEXT PROFILE",
+            "agent",
+            "NEXT THEME",
+            state.ui.terminal.theme.label(),
+        ] {
+            assert!(text.iter().any(|run| run.text == label), "missing {label}");
+        }
+        for target in [HitTarget::TerminalProfileNext, HitTarget::TerminalThemeNext] {
+            assert!(hits.iter().any(|region| region.target == target));
         }
     }
 

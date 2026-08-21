@@ -30,6 +30,7 @@ impl TerminalLaunchContext {
         Self {
             project_root: project_root.to_path_buf(),
             launch_working_directory: project_root.to_path_buf(),
+            terminal_profile: crate::terminal_profile::TerminalLaunchProfile::default(),
             project_id: None,
             project_name: None,
             board_id: None,
@@ -605,6 +606,7 @@ fn terminal_session_spawns_real_pty_shell() {
         session_context["session_id"]
     );
     assert_eq!(refreshed["contract"], "datum_terminal_context_v1");
+    assert_eq!(refreshed["terminal_launch_profile"], "default");
     assert_eq!(refreshed["datum_cli"], "datum-eda");
     assert_eq!(refreshed["actor_type"], "ExternalAgent");
     assert_eq!(refreshed["selection_context"]["kind"], "authored_object");

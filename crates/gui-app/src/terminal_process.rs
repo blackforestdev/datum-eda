@@ -15,11 +15,21 @@ pub(super) fn spawn_terminal_process(
     context: &TerminalLaunchContext,
     terminal_wake: TerminalWakeGate,
 ) -> Result<TerminalSession> {
-    let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
+    let profile = context
+        .terminal_profile
+        .resolve(&context.project_root, &context.launch_working_directory);
     let mut terminal_context = write_terminal_context(context)?;
     let terminfo_root = install_session_terminfo(&terminal_context.session_path)?;
-    let request = TerminalTransportRequest::new(&shell, context.launch_working_directory.clone());
+    let mut request =
+        TerminalTransportRequest::new(&profile.executable, profile.cwd).args(profile.args);
+    for (key, value) in profile.environment {
+        request = match value {
+            Some(value) => request.env(key, value),
+            None => request.env_remove(key),
+        };
+    }
     let mut request = apply_datum_terminal_identity(request, &terminfo_root)
+        .env("DATUM_TERMINAL_PROFILE", &profile.name)
         .env("DATUM_PROJECT_ROOT", context.project_root.as_os_str())
         .env("DATUM_CLI", DATUM_CLI)
         .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)

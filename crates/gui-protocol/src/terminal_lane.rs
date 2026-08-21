@@ -141,6 +141,8 @@ pub struct TerminalLaneState {
     /// Workspace-global fallback palette. Explicit colors and child-program
     /// OSC palette changes remain authoritative over this user preference.
     pub theme: TerminalTheme,
+    /// Profile template selected for subsequently launched terminal sessions.
+    pub launch_profile_name: String,
     pub active_tab_id: Option<String>,
     pub active_session_id: Option<String>,
     pub title: Option<String>,
@@ -225,6 +227,7 @@ impl Default for TerminalLaneState {
             tab_layouts: Vec::new(),
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
             theme: TerminalTheme::default(),
+            launch_profile_name: "default".to_string(),
             active_tab_id: None,
             active_session_id: None,
             title: None,
@@ -281,6 +284,7 @@ mod tests {
             activity_summary: vec!["activity".to_string()],
             font_scale_millis: 1_400,
             theme: TerminalTheme::HighContrast,
+            launch_profile_name: "agent".to_string(),
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
             ..Default::default()
         };
@@ -290,6 +294,7 @@ mod tests {
             active.application_shutdown_blocked.clone(),
             active.font_scale_millis,
             active.theme,
+            active.launch_profile_name.clone(),
         );
         let mut parked = TerminalLaneState {
             title: Some("parked title".to_string()),
@@ -328,6 +333,7 @@ mod tests {
                 active.application_shutdown_blocked,
                 active.font_scale_millis,
                 active.theme,
+                active.launch_profile_name,
             ),
             chrome,
         );

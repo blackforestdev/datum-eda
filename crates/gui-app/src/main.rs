@@ -55,6 +55,7 @@ mod runtime_terminal_input;
 mod runtime_terminal_links;
 mod runtime_terminal_notifications;
 mod runtime_terminal_pointer;
+mod runtime_terminal_profile;
 mod runtime_terminal_render;
 mod runtime_terminal_search;
 mod runtime_terminal_theme;
@@ -77,6 +78,7 @@ mod terminal_narration;
 #[cfg(test)]
 mod terminal_new_session_cwd_tests;
 mod terminal_process;
+mod terminal_profile;
 mod terminal_proposal_context;
 mod terminal_session;
 mod terminal_session_context;
@@ -738,6 +740,7 @@ struct Runtime {
     scene_dirty: bool,
     terminal_sessions: TerminalSessionRegistry,
     terminal_launch_context: TerminalLaunchContext,
+    terminal_profiles: terminal_profile::TerminalProfileCatalog,
     workspace_include_review: bool,
     terminal_production_refresh_pending: bool,
     terminal_workspace_refresh_pending: bool,
@@ -764,6 +767,7 @@ impl Runtime {
             mut state,
             camera,
             terminal_launch_context,
+            terminal_profiles,
             terminal_sessions,
             workspace_include_review,
         } = launch_state;
@@ -887,6 +891,7 @@ impl Runtime {
             scene_dirty: true,
             terminal_sessions,
             terminal_launch_context,
+            terminal_profiles,
             workspace_include_review,
             terminal_production_refresh_pending: false,
             terminal_workspace_refresh_pending: false,
@@ -1906,6 +1911,7 @@ impl Runtime {
                 Some(
                     HitTarget::TerminalClipboardCopy
                         | HitTarget::TerminalClipboardPaste
+                        | HitTarget::TerminalProfileNext
                         | HitTarget::TerminalThemeNext
                         | HitTarget::TerminalLinkCopy
                         | HitTarget::TerminalLinkOpen
@@ -2257,6 +2263,10 @@ impl Runtime {
             HitTarget::TerminalThemeNext => {
                 self.dismiss_terminal_clipboard_menu();
                 self.cycle_terminal_theme()
+            }
+            HitTarget::TerminalProfileNext => {
+                self.dismiss_terminal_clipboard_menu();
+                self.cycle_terminal_profile()
             }
             HitTarget::TerminalLinkCopy => {
                 let target = self.terminal_clipboard_link_target();
