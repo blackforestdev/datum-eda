@@ -1803,6 +1803,27 @@ session-adapter boundary.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P25 --> **DTC-P25 — bounded shadow comparison.** Feed recorded bytes to old and new
   cores only in tests/debug; compare the declared overlap; use normative proof
   for new behavior; no production selector or fallback.
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P25-CLOSED --> **Closure evidence
+  (2026-08-20; implementation `6dd1234`).** A strictly `cfg(test)` shadow module
+  now replays eight bounded Datum-authored shell/TUI recordings through the
+  provisional screen and TerminalCore. It compares their declared ASCII,
+  style, cursor, title, cwd, bell, geometry, mode, scroll, bracketed-paste, and
+  exact-reply overlap after every recorded boundary and under whole, recorded,
+  bytewise, and seeded chunking. Explicit normalization is limited to named
+  ANSI colors, file-URI cwd spelling, and trailing fixed-grid blanks. Unicode
+  width and hyperlinks remain outside the provisional oracle and are proved
+  directly against TerminalCore. A dedicated drift guard pins the corpus/work
+  bounds, exact test-only registration, comparison paths, normative proof, and
+  prohibition on production selection, external I/O, or fallback behavior.
+
+  The complete gui-app suite passed 390 tests (384 executed and six governed
+  measurements ignored); workspace all-target offline checking, strict
+  workspace Clippy, and the full offline workspace test suite passed. Shadow,
+  adapter, renderer, native-interaction, TerminalCore, transport, convergence,
+  dependency-authority, source-health, spec-governance, project-state,
+  rustfmt, and diff gates passed. No package, dependency, production code path,
+  TERM identity, fallback, or provisional ownership changed. DTC-P26 therefore
+  owns the atomic cutover and deletion.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P26 --> **DTC-P26 — atomic cutover.** Select the Datum core as sole production
   authority; delete provisional `TerminalScreen`, string/style grid authority
   from `gui-protocol`, lossy renderer, shadow path, and `TERM` overclaim.

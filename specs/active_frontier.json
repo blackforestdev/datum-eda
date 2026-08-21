@@ -2495,7 +2495,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P25",
+        "canonical_next_step_id": "DTC-P26",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2655,16 +2655,26 @@
           {
             "id": "DTC-P25",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Run bounded test/debug-only shadow comparison between the provisional path and TerminalCore over their declared overlap without creating a production selector or fallback.",
             "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P25"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "6dd1234"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P25-CLOSED"
+              }
+            ]
           },
           {
             "id": "DTC-P26",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Atomically select TerminalCore as sole production authority and delete the provisional screen, parser, string/style grid, lossy renderer, shadow path, and TERM overclaim.",
             "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B", "DTC-P25"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P26"}],
@@ -2688,16 +2698,20 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "root-dtc-p25-shadow-20260820",
+        "session": "root-dtc-p26-cutover-20260820",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5c88c14",
-        "claimed_at": "2026-08-21T04:28:00Z",
-        "heartbeat_at": "2026-08-21T04:28:00Z",
-        "expires_at": "2026-08-21T12:28:00Z",
+        "head": "6dd1234",
+        "claimed_at": "2026-08-21T04:44:50Z",
+        "heartbeat_at": "2026-08-21T04:44:50Z",
+        "expires_at": "2026-08-21T12:44:50Z",
         "scope": [
           "crates/gui-app/src/terminal_core_adapter",
           "crates/gui-app/src/terminal_screen",
           "crates/gui-app/src/terminal_shadow",
+          "crates/gui-app/src/terminal_session",
+          "crates/gui-app/src/terminal_session_drain",
+          "crates/gui-protocol/src/terminal_lane.rs",
+          "crates/gui-render/src",
           "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
           "scripts",
           "specs/active_frontier.json",
