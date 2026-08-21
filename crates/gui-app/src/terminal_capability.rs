@@ -16,9 +16,11 @@ const COMPILED_ENTRY: &[u8] = include_bytes!(concat!(
     "/assets/terminfo/compiled/d/datum-256color"
 ));
 
-/// Materialize the embedded terminfo entry and return its database root.
+/// Materialize the embedded terminfo entry beside, never at, the durable JSON
+/// session record and return its database root.
 pub(crate) fn install_session_terminfo(session_path: &Path) -> Result<std::path::PathBuf> {
-    let root = session_path.join("terminfo");
+    let runtime = session_path.with_extension("terminal-runtime");
+    let root = runtime.join("terminfo");
     let family = root.join("d");
     fs::create_dir_all(&family)
         .with_context(|| format!("create Datum terminfo directory {}", family.display()))?;
@@ -61,9 +63,15 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("system clock follows the epoch")
             .as_nanos();
-        let session =
+        let fixture =
             std::env::temp_dir().join(format!("datum-terminfo-{}-{nonce}", std::process::id()));
+        let session = fixture.join("session.json");
         let root = install_session_terminfo(&session).expect("install embedded terminfo");
+        assert_eq!(root, fixture.join("session.terminal-runtime/terminfo"));
+        assert!(
+            !session.is_dir(),
+            "the durable JSON session path must never become a terminfo directory"
+        );
         let installed = root.join("d").join(DATUM_TERM);
         assert_eq!(
             fs::read(installed).expect("read installed entry"),
@@ -75,6 +83,6 @@ mod tests {
                 .count(),
             1
         );
-        fs::remove_dir_all(session).expect("remove test session tree");
+        fs::remove_dir_all(fixture).expect("remove test session tree");
     }
 }
