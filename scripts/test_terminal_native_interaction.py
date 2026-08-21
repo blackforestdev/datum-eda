@@ -58,6 +58,25 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         )
         self.assertTrue(any("legacy terminal encoder escaped" in failure for failure in failures))
 
+    def test_accessibility_bridge_cannot_lose_limits_or_import_external_runtime(self) -> None:
+        sources = valid_sources()
+        sources["terminal_accessibility_platform/dbus.rs"] = sources[
+            "terminal_accessibility_platform/dbus.rs"
+        ].replace("MAX_MESSAGE_BYTES", "unbounded_message")
+        sources["terminal_accessibility_platform/worker.rs"] = sources[
+            "terminal_accessibility_platform/worker.rs"
+        ].replace("real_accessibility_bus_accepts_datum_registration", "deleted_live_proof")
+        sources["terminal_accessibility_platform/connection.rs"] += "\nuse zbus::Connection;"
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position",
+            failures,
+        )
+        self.assertTrue(any("MAX_MESSAGE_BYTES" in failure for failure in failures))
+        self.assertTrue(any("real_accessibility_bus" in failure for failure in failures))
+        self.assertTrue(any("forbidden substrate" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()

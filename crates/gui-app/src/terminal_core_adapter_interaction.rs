@@ -217,6 +217,7 @@ impl TerminalCoreSessionAdapter {
             links,
             focused,
             bell_count: self.bell_count,
+            bounds: Default::default(),
         })
     }
 

@@ -20,4 +20,13 @@ pub(crate) struct TerminalAccessibilitySnapshot {
     pub(crate) links: Vec<TerminalAccessibilityLink>,
     pub(crate) focused: bool,
     pub(crate) bell_count: usize,
+    pub(crate) bounds: TerminalAccessibilityBounds,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub(crate) struct TerminalAccessibilityBounds {
+    pub(crate) x: i32,
+    pub(crate) y: i32,
+    pub(crate) width: i32,
+    pub(crate) height: i32,
 }

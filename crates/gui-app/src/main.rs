@@ -56,6 +56,7 @@ mod runtime_terminal_render;
 mod runtime_view_actions;
 mod terminal_accessibility;
 mod terminal_accessibility_bridge;
+mod terminal_accessibility_platform;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
 mod terminal_check_context;

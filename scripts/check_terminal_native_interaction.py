@@ -56,6 +56,47 @@ REQUIRED = {
         "FocusChanged",
         "refresh_terminal_accessibility",
     ),
+    "terminal_accessibility_platform/mod.rs": (
+        "pub(crate) use worker::PlatformBridge",
+        "mod atspi",
+        "mod connection",
+        "mod dbus",
+    ),
+    "terminal_accessibility_platform/connection.rs": (
+        "AUTH EXTERNAL",
+        "org.a11y.Bus",
+        "call_blocking_with",
+        "wait_fd",
+    ),
+    "terminal_accessibility_platform/dbus.rs": (
+        "MAX_MESSAGE_BYTES",
+        "FrameBuffer",
+        "D-Bus frame exceeds Datum limit",
+    ),
+    "terminal_accessibility_platform/body.rs": (
+        "validate_signature",
+        "parse_complete_type",
+        "D-Bus signature nesting exceeds Datum limit",
+    ),
+    "terminal_accessibility_platform/atspi.rs": (
+        'REGISTRY_PATH: &str = "/org/a11y/atspi/accessible/root"',
+        "org.a11y.atspi.Accessible",
+        "org.a11y.atspi.Application",
+        "org.a11y.atspi.Component",
+        "org.a11y.atspi.Text",
+        "org.a11y.atspi.Hypertext",
+    ),
+    "terminal_accessibility_platform/events.rs": (
+        "org.a11y.atspi.Event.Object",
+        "TextCaretMoved",
+        "TextSelectionChanged",
+        "StateChanged",
+    ),
+    "terminal_accessibility_platform/worker.rs": (
+        'name("datum-atspi"',
+        "real_accessibility_bus_accepts_datum_registration",
+        "pending_updates_replace_snapshot_and_coalesce_event_kinds",
+    ),
 }
 
 LEGACY_ENCODERS = (
@@ -65,6 +106,15 @@ LEGACY_ENCODERS = (
     "terminal_urxvt_mouse_button_sequence",
     "terminal_character_sequence",
     "terminal_tab_sequence",
+)
+
+FORBIDDEN_ACCESSIBILITY_SUBSTRATE = (
+    "accesskit",
+    "use zbus::",
+    "use dbus::",
+    "libatspi",
+    "std::process::Command",
+    "datum_terminal_core",
 )
 
 
@@ -85,6 +135,14 @@ def check(sources: dict[str, str], render: str, failures: list[str]) -> None:
             if f"fn {marker}" in source:
                 failures.append(f"legacy terminal encoder escaped test-only modules: {name}:{marker}")
 
+        if name.startswith("terminal_accessibility_platform/"):
+            lowered = source.lower()
+            for marker in FORBIDDEN_ACCESSIBILITY_SUBSTRATE:
+                if marker.lower() in lowered:
+                    failures.append(
+                        f"Datum-owned accessibility bridge imported forbidden substrate: {name}:{marker}"
+                    )
+
     for marker in ("ime_preedit", "render_ime_preedit", "snapshot.cursor().position"):
         if marker not in render:
             failures.append(f"native terminal IME rendering is missing {marker}")
@@ -92,8 +150,8 @@ def check(sources: dict[str, str], render: str, failures: list[str]) -> None:
 
 def main() -> int:
     sources = {
-        path.name: path.read_text(encoding="utf-8")
-        for path in APP.glob("*.rs")
+        str(path.relative_to(APP)): path.read_text(encoding="utf-8")
+        for path in APP.rglob("*.rs")
     }
     render = (RENDER / "terminal_core_render.rs").read_text(encoding="utf-8")
     failures: list[str] = []
