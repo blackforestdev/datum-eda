@@ -33,6 +33,7 @@ use uuid::Uuid;
 // directory modules; the command_exec_* forwarding layer is dissolved into
 // inherent run() impls on the args structs, hosted by their owning
 // commands/<family>/ files, with commands/dispatch.rs as the single router.
+pub mod agent_adapters;
 mod args;
 mod command_modify;
 mod command_plan;
