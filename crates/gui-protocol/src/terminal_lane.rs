@@ -1,3 +1,5 @@
+pub use crate::terminal_split::{TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalTabState {
     pub session_id: String,
@@ -96,6 +98,10 @@ pub enum TerminalProgressState {
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
     pub tabs: Vec<TerminalTabState>,
+    /// Persistent split ownership for every terminal tab. This is global dock
+    /// chrome and deliberately does not move with a session projection.
+    pub tab_layouts: Vec<crate::TerminalTabLayout>,
+    pub active_tab_id: Option<String>,
     pub active_session_id: Option<String>,
     pub title: Option<String>,
     pub current_working_directory: Option<String>,
@@ -176,6 +182,8 @@ impl Default for TerminalLaneState {
         Self {
             activity_summary: Vec::new(),
             tabs: Vec::new(),
+            tab_layouts: Vec::new(),
+            active_tab_id: None,
             active_session_id: None,
             title: None,
             current_working_directory: None,

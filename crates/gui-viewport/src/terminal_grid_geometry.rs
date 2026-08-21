@@ -21,7 +21,9 @@
 //! by construction.
 
 use crate::editor::ScreenRectPx;
-use datum_gui_protocol::ScreenPointPx;
+use datum_gui_protocol::{
+    ScreenPointPx, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
+};
 
 /// Fixed mono cell advance used by the terminal lane renderer (px).
 pub const TERMINAL_CELL_WIDTH_PX: f32 = 7.9;
@@ -29,6 +31,9 @@ pub const TERMINAL_CELL_WIDTH_PX: f32 = 7.9;
 pub const TERMINAL_CELL_HEIGHT_PX: f32 = 16.0;
 /// Minimum useful terminal height used by callers and tests.
 pub const TERMINAL_MIN_ROWS: u16 = 4;
+/// Visible separation between adjacent terminal panes. It is owned here so
+/// rendering, hit testing, and PTY sizing cannot disagree about the gutter.
+pub const TERMINAL_SPLIT_GUTTER_PX: f32 = 6.0;
 
 // Dock-content derivation from the bottom strip (must equal the bottom-dock
 // solver's content rect: x+12, y+44, w-24, h-56).
@@ -51,6 +56,14 @@ pub struct TerminalScreenGeometry {
     pub columns: u16,
     /// Rows the renderer draws and the PTY is resized to.
     pub rows: u16,
+}
+
+/// One solved leaf in a terminal tab's recursive split tree.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TerminalPaneGeometry {
+    pub session_id: String,
+    pub focused: bool,
+    pub geometry: TerminalScreenGeometry,
 }
 
 impl TerminalScreenGeometry {
@@ -100,6 +113,108 @@ pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeo
     TerminalScreenGeometry {
         content,
         screen,
+        columns,
+        rows,
+    }
+}
+
+/// Solve every visible pane in one terminal tab from the same root screen
+/// rectangle used by the unsplit terminal. Split allocation is recursive and
+/// every leaf is snapped down to whole cells before it becomes a renderer or
+/// PTY-size authority.
+pub fn terminal_split_geometries(
+    root: TerminalScreenGeometry,
+    tab: &TerminalTabLayout,
+) -> Vec<TerminalPaneGeometry> {
+    if let TerminalSplitNode::Session { session_id } = &tab.root {
+        return vec![TerminalPaneGeometry {
+            session_id: session_id.clone(),
+            focused: session_id == &tab.focused_session_id,
+            geometry: root,
+        }];
+    }
+    let mut panes = Vec::new();
+    solve_split_node(&tab.root, root.screen, &tab.focused_session_id, &mut panes);
+    panes
+}
+
+fn solve_split_node(
+    node: &TerminalSplitNode,
+    bounds: ScreenRectPx,
+    focused_session_id: &str,
+    panes: &mut Vec<TerminalPaneGeometry>,
+) {
+    match node {
+        TerminalSplitNode::Session { session_id } => panes.push(TerminalPaneGeometry {
+            session_id: session_id.clone(),
+            focused: session_id == focused_session_id,
+            geometry: grid_geometry_in(bounds),
+        }),
+        TerminalSplitNode::Split {
+            direction,
+            ratio_millis,
+            first,
+            second,
+        } => {
+            let ratio = f32::from((*ratio_millis).clamp(100, 900)) / 1000.0;
+            let (first_bounds, second_bounds) = split_bounds(bounds, *direction, ratio);
+            solve_split_node(first, first_bounds, focused_session_id, panes);
+            solve_split_node(second, second_bounds, focused_session_id, panes);
+        }
+    }
+}
+
+fn split_bounds(
+    bounds: ScreenRectPx,
+    direction: TerminalSplitDirection,
+    ratio: f32,
+) -> (ScreenRectPx, ScreenRectPx) {
+    match direction {
+        TerminalSplitDirection::SideBySide => {
+            let available = (bounds.width - TERMINAL_SPLIT_GUTTER_PX).max(2.0);
+            let first_width = (available * ratio).clamp(1.0, available - 1.0);
+            let second_x = bounds.x + first_width + TERMINAL_SPLIT_GUTTER_PX;
+            (
+                ScreenRectPx {
+                    width: first_width,
+                    ..bounds
+                },
+                ScreenRectPx {
+                    x: second_x,
+                    width: (bounds.x + bounds.width - second_x).max(1.0),
+                    ..bounds
+                },
+            )
+        }
+        TerminalSplitDirection::Stacked => {
+            let available = (bounds.height - TERMINAL_SPLIT_GUTTER_PX).max(2.0);
+            let first_height = (available * ratio).clamp(1.0, available - 1.0);
+            let second_y = bounds.y + first_height + TERMINAL_SPLIT_GUTTER_PX;
+            (
+                ScreenRectPx {
+                    height: first_height,
+                    ..bounds
+                },
+                ScreenRectPx {
+                    y: second_y,
+                    height: (bounds.y + bounds.height - second_y).max(1.0),
+                    ..bounds
+                },
+            )
+        }
+    }
+}
+
+fn grid_geometry_in(bounds: ScreenRectPx) -> TerminalScreenGeometry {
+    let columns = ((bounds.width / TERMINAL_CELL_WIDTH_PX) as u16).max(1);
+    let rows = ((bounds.height / TERMINAL_CELL_HEIGHT_PX) as u16).max(1);
+    TerminalScreenGeometry {
+        content: bounds,
+        screen: ScreenRectPx {
+            width: f32::from(columns) * TERMINAL_CELL_WIDTH_PX,
+            height: f32::from(rows) * TERMINAL_CELL_HEIGHT_PX,
+            ..bounds
+        },
         columns,
         rows,
     }
@@ -253,5 +368,62 @@ mod tests {
         );
         // Outside the lane entirely.
         assert_eq!(geometry.cell_at(-10.0, -10.0), None);
+    }
+
+    #[test]
+    fn unsplit_tab_is_byte_identical_to_the_root_grid() {
+        let root = terminal_screen_geometry(strip(1280.0, 320.0));
+        let panes = terminal_split_geometries(root, &TerminalTabLayout::single("session-a"));
+        assert_eq!(panes.len(), 1);
+        assert_eq!(panes[0].geometry, root);
+        assert!(panes[0].focused);
+    }
+
+    #[test]
+    fn recursive_splits_have_distinct_identity_whole_cells_and_gutters() {
+        let root = terminal_screen_geometry(strip(1280.0, 440.0));
+        let tab = TerminalTabLayout {
+            tab_id: "tab-a".to_string(),
+            focused_session_id: "right-bottom".to_string(),
+            root: TerminalSplitNode::Split {
+                direction: TerminalSplitDirection::SideBySide,
+                ratio_millis: 400,
+                first: Box::new(TerminalSplitNode::session("left")),
+                second: Box::new(TerminalSplitNode::Split {
+                    direction: TerminalSplitDirection::Stacked,
+                    ratio_millis: 600,
+                    first: Box::new(TerminalSplitNode::session("right-top")),
+                    second: Box::new(TerminalSplitNode::session("right-bottom")),
+                }),
+            },
+        };
+        let panes = terminal_split_geometries(root, &tab);
+
+        assert_eq!(
+            panes
+                .iter()
+                .map(|pane| pane.session_id.as_str())
+                .collect::<Vec<_>>(),
+            ["left", "right-top", "right-bottom"]
+        );
+        assert_eq!(panes.iter().filter(|pane| pane.focused).count(), 1);
+        for pane in &panes {
+            assert_eq!(
+                pane.geometry.screen.width,
+                f32::from(pane.geometry.columns) * TERMINAL_CELL_WIDTH_PX
+            );
+            assert_eq!(
+                pane.geometry.screen.height,
+                f32::from(pane.geometry.rows) * TERMINAL_CELL_HEIGHT_PX
+            );
+            assert!(root.screen.contains(ScreenPointPx {
+                x: pane.geometry.screen.x,
+                y: pane.geometry.screen.y,
+            }));
+        }
+        let left_right_edge = panes[0].geometry.content.x + panes[0].geometry.content.width;
+        assert!(panes[1].geometry.content.x - left_right_edge >= TERMINAL_SPLIT_GUTTER_PX);
+        let top_bottom_edge = panes[1].geometry.content.y + panes[1].geometry.content.height;
+        assert!(panes[2].geometry.content.y - top_bottom_edge >= TERMINAL_SPLIT_GUTTER_PX);
     }
 }

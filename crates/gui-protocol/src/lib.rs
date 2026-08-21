@@ -46,11 +46,8 @@ pub use source_shard_status::{
     load_source_shard_status as refresh_source_shard_status,
 };
 mod terminal_lane;
-pub use terminal_lane::{
-    TerminalClipboardConfirmation, TerminalClipboardSelection, TerminalLaneState, TerminalLinkKind,
-    TerminalLinkTarget, TerminalProgressState, TerminalSearchMatch, TerminalSearchPoint,
-    TerminalSearchState, TerminalTabState,
-};
+pub use terminal_lane::*;
+mod terminal_split;
 mod workspace_layout;
 pub use workspace_layout::{
     ApplicationFocus, ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState,

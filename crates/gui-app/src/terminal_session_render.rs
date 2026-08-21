@@ -42,6 +42,7 @@ pub(super) fn terminal_tab_label(
 
 impl TerminalSessionRegistry {
     pub(crate) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        self.sync_terminal_tab_layouts(state);
         let active_index = self.active_index;
         state.active_session_id = self.active_pending_id.clone().or_else(|| {
             (!self.sessions[self.active_index].hidden_after_close)

@@ -55,7 +55,12 @@ impl TerminalSessionRegistry {
             self.sync_lane_tabs(state);
             return Ok(());
         }
+        let removed_session_id = self.sessions[self.active_index]
+            .session
+            .session_id()
+            .to_string();
         self.sessions.remove(self.active_index);
+        self.remove_terminal_tab_session(&removed_session_id);
         if self.active_index >= self.sessions.len() {
             self.active_index = self.sessions.len() - 1;
         }
@@ -209,7 +214,9 @@ impl TerminalSessionRegistry {
                 continue;
             }
             let was_active = self.active_pending_id.is_none() && index == self.active_index;
+            let removed_session_id = self.sessions[index].session.session_id().to_string();
             self.sessions.remove(index);
+            self.remove_terminal_tab_session(&removed_session_id);
             if index < self.active_index || self.active_index >= self.sessions.len() {
                 self.active_index = self
                     .active_index

@@ -24,6 +24,17 @@ impl TerminalSessionRegistry {
         let active = remap_index(self.active_index, from, to);
         let next_drain = remap_index(self.next_drain_index, from, to);
         move_item(&mut self.sessions, from, to);
+        let tab_from = self
+            .terminal_tabs
+            .iter()
+            .position(|tab| tab.root.contains_session(session_id));
+        let tab_to = self
+            .terminal_tabs
+            .iter()
+            .position(|tab| tab.root.contains_session(target_id));
+        if let (Some(tab_from), Some(tab_to)) = (tab_from, tab_to) {
+            move_item(&mut self.terminal_tabs, tab_from, tab_to);
+        }
         self.active_index = active;
         self.next_drain_index = next_drain;
         Ok(true)
@@ -91,6 +102,13 @@ mod tests {
         assert_eq!(
             (&lane.tabs[1].session_id, lane.tabs[1].label.as_str()),
             (&first_id, "shell 1")
+        );
+        assert_eq!(
+            lane.tab_layouts
+                .iter()
+                .flat_map(|tab| tab.root.session_ids())
+                .collect::<Vec<_>>(),
+            [second_id.as_str(), first_id.as_str()]
         );
         assert!(lane.tabs[1].active);
         let _ = fs::remove_dir_all(root);

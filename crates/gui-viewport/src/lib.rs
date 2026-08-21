@@ -39,6 +39,7 @@ pub use profile::{
 };
 pub use stroke::WeightClass;
 pub use terminal_grid_geometry::{
-    TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TERMINAL_MIN_ROWS, TerminalScreenGeometry,
-    terminal_screen_geometry,
+    TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TERMINAL_MIN_ROWS, TERMINAL_SPLIT_GUTTER_PX,
+    TerminalPaneGeometry, TerminalScreenGeometry, terminal_screen_geometry,
+    terminal_split_geometries,
 };

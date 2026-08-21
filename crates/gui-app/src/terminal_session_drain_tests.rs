@@ -123,6 +123,11 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
         .collect();
     TerminalSessionRegistry {
         sessions,
+        terminal_tabs: (0..session_count)
+            .map(|index| {
+                datum_gui_protocol::TerminalTabLayout::single(format!("synthetic-{index}"))
+            })
+            .collect(),
         pending_spawns: Vec::new(),
         active_pending_id: None,
         active_index: 0,

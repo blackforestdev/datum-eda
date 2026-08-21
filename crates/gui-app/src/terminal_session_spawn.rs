@@ -7,7 +7,9 @@ impl TerminalSessionRegistry {
         ensure_session_capacity(self.sessions.len() + self.pending_spawns.len())?;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         let label = self.reserve_session_label();
+        let session_id = session.session_id().to_string();
         self.sessions.push(new_session_slot(session, label)?);
+        self.add_standalone_terminal_tab(session_id);
         self.active_index = self.sessions.len() - 1;
         Ok(self.active().session_id())
     }
@@ -71,6 +73,7 @@ impl TerminalSessionRegistry {
             result,
             canceled: false,
         });
+        self.add_standalone_terminal_tab(pending_id.clone());
         if self.active_pending_id.is_none() {
             lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
         }
@@ -101,6 +104,7 @@ impl TerminalSessionRegistry {
             let pending = self.pending_spawns.remove(0);
             let was_active = self.active_pending_id.as_deref() == Some(&pending.pending_id);
             if pending.canceled {
+                self.remove_pending_terminal_tab(&pending);
                 drop(completion);
                 notices.push(format!("canceled terminal session {}", pending.label));
                 continue;
@@ -123,6 +127,7 @@ impl TerminalSessionRegistry {
                         }
                     };
                     self.sessions.push(slot);
+                    self.replace_pending_terminal_tab(&pending.pending_id, session_id.clone());
                     if was_active {
                         self.active_index = self.sessions.len() - 1;
                         self.active_pending_id = None;
@@ -131,6 +136,7 @@ impl TerminalSessionRegistry {
                     notices.push(format!("opened terminal session {session_id}"));
                 }
                 Err(error) => {
+                    self.remove_pending_terminal_tab(&pending);
                     if was_active {
                         self.active_pending_id = None;
                         lane.swap_session_projection(
@@ -220,6 +226,9 @@ mod tests {
         assert_eq!(lane.tabs[1].status, "starting");
         assert!(lane.tabs[1].active);
         assert!(!lane.tabs[0].active);
+        assert_eq!(lane.active_tab_id.as_deref(), Some("pending-shell-2"));
+        assert_eq!(lane.tab_layouts.len(), 2);
+        assert_eq!(lane.tab_layouts[1].root.session_ids(), ["pending-shell-2"]);
         assert!(!registry.active_attached());
         assert!(
             !crate::runtime_terminal_input::write_attached_terminal_bytes(&registry, b"blocked")
@@ -240,6 +249,17 @@ mod tests {
         assert_eq!(
             lane.tabs.iter().find(|tab| tab.active).unwrap().label,
             "shell 2"
+        );
+        assert_eq!(
+            lane.tab_layouts
+                .iter()
+                .flat_map(|tab| tab.root.session_ids())
+                .collect::<Vec<_>>(),
+            registry
+                .sessions
+                .iter()
+                .map(|slot| slot.session.session_id())
+                .collect::<Vec<_>>()
         );
         let _ = fs::remove_dir_all(root);
     }

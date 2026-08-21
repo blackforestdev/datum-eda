@@ -40,6 +40,7 @@ pub(super) struct TerminalSession {
 
 pub(super) struct TerminalSessionRegistry {
     sessions: Vec<TerminalSessionSlot>,
+    terminal_tabs: Vec<datum_gui_protocol::TerminalTabLayout>,
     pending_spawns: Vec<PendingTerminalSpawn>,
     active_pending_id: Option<String>,
     active_index: usize,
@@ -124,6 +125,7 @@ impl TerminalSessionRegistry {
             80,
             24,
         )?;
+        let first_session_id = session.session_id().to_string();
         Ok(Self {
             sessions: vec![TerminalSessionSlot {
                 session,
@@ -148,6 +150,9 @@ impl TerminalSessionRegistry {
                 unread_output: false,
                 seen_bell_count: 0,
             }],
+            terminal_tabs: vec![datum_gui_protocol::TerminalTabLayout::single(
+                first_session_id,
+            )],
             pending_spawns: Vec::new(),
             active_pending_id: None,
             active_index: 0,
@@ -592,6 +597,8 @@ impl TerminalSessionRegistry {
 mod handle;
 #[path = "terminal_session_reorder.rs"]
 mod reorder;
+#[path = "terminal_split_state.rs"]
+mod split_state;
 
 #[cfg(test)]
 #[path = "terminal_job_control_tests.rs"]
