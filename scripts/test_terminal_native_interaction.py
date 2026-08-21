@@ -127,6 +127,23 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("context_for_new_terminal" in failure for failure in failures))
         self.assertTrue(any("percent_decode_path" in failure for failure in failures))
 
+    def test_terminal_maximize_cannot_fall_back_to_the_editor_pane(self) -> None:
+        sources = valid_sources()
+        sources["runtime_view_actions.rs"] = sources[
+            "runtime_view_actions.rs"
+        ].replace("self.toggle_terminal_maximized()", "self.pane_toggle_zoom()")
+        sources["runtime_terminal_dock.rs"] = sources[
+            "runtime_terminal_dock.rs"
+        ].replace("effective_dock_height_px", "dock_height_px")
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("toggle_terminal_maximized" in failure for failure in failures))
+        self.assertTrue(any("effective_dock_height_px" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()

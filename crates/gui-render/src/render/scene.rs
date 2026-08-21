@@ -474,7 +474,7 @@ impl RetainedScene {
 
 fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
     if state.ui.active_dock_tab.is_some() {
-        Some(state.ui.dock_height_px)
+        Some(state.ui.effective_dock_height_px())
     } else {
         None
     }

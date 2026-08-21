@@ -60,19 +60,34 @@ impl RectPx {
 
 impl From<RectPx> for datum_gui_viewport::CameraViewport {
     fn from(value: RectPx) -> Self {
-        Self { x: value.x, y: value.y, width: value.width, height: value.height }
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
+        }
     }
 }
 
 impl From<RectPx> for datum_gui_viewport::ScreenRectPx {
     fn from(value: RectPx) -> Self {
-        Self { x: value.x, y: value.y, width: value.width, height: value.height }
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
+        }
     }
 }
 
 impl From<datum_gui_viewport::ScreenRectPx> for RectPx {
     fn from(value: datum_gui_viewport::ScreenRectPx) -> Self {
-        Self { x: value.x, y: value.y, width: value.width, height: value.height }
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
+        }
     }
 }
 
@@ -395,7 +410,10 @@ impl ShellLayout {
         let left_width = 224.0_f32.min(width * 0.3);
         let right_width = 296.0_f32.min(width * 0.35);
         let bottom_height = match dock_height_px {
-            Some(h) => (h as f32).clamp(design_tokens::spacing::SP_07, height * 0.6),
+            Some(h) => (h as f32).clamp(
+                design_tokens::spacing::SP_07,
+                (height - menu_height - status_height).max(design_tokens::spacing::SP_07),
+            ),
             None => design_tokens::spacing::SP_07.min(height * 0.25),
         };
         if let Some(layout) = solve_shell_layout_with_taffy(
@@ -465,8 +483,8 @@ impl ShellLayout {
         if let Some(zoomed) = layout.zoomed {
             // Maximize: the zoomed leaf fills the viewport; no siblings, no
             // dividers. The tree is never mutated — this is transient view state.
-            let content =
-                leaf_pane_content(&layout.root, zoomed).unwrap_or(datum_gui_protocol::PaneContent::Board);
+            let content = leaf_pane_content(&layout.root, zoomed)
+                .unwrap_or(datum_gui_protocol::PaneContent::Board);
             panes.push(LeafPane {
                 id: zoomed,
                 content,

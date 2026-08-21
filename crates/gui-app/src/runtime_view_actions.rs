@@ -10,6 +10,10 @@
 
 use super::*;
 
+fn terminal_owns_maximize(focus: ApplicationFocus, active_dock: Option<DockTab>) -> bool {
+    focus == ApplicationFocus::Terminal && active_dock == Some(DockTab::Terminal)
+}
+
 impl Runtime {
     pub(super) fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
         match action {
@@ -65,7 +69,14 @@ impl Runtime {
                 true
             }
             "view.maximize_pane" => {
-                self.pane_toggle_zoom();
+                if terminal_owns_maximize(
+                    self.application_focus(),
+                    self.workspace().ui.active_dock_tab,
+                ) {
+                    self.toggle_terminal_maximized();
+                } else {
+                    self.pane_toggle_zoom();
+                }
                 self.log_review_event("menu view.maximize_pane".to_string());
                 true
             }
@@ -138,5 +149,23 @@ impl Runtime {
             CrosshairStyle::None => CrosshairStyle::FullViewport,
         };
         self.set_crosshair_style(next)
+    }
+}
+
+#[cfg(test)]
+mod terminal_maximize_tests {
+    use super::*;
+
+    #[test]
+    fn maximize_action_follows_the_application_focus_authority() {
+        assert!(terminal_owns_maximize(
+            ApplicationFocus::Terminal,
+            Some(DockTab::Terminal)
+        ));
+        assert!(!terminal_owns_maximize(
+            ApplicationFocus::Editor(datum_gui_protocol::PaneId(1)),
+            Some(DockTab::Terminal)
+        ));
+        assert!(!terminal_owns_maximize(ApplicationFocus::Terminal, None));
     }
 }

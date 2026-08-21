@@ -410,7 +410,7 @@ impl Runtime {
             self.config.height,
             self.scale_factor,
             if self.workspace().ui.active_dock_tab.is_some() {
-                Some(self.workspace().ui.dock_height_px)
+                Some(self.workspace().ui.effective_dock_height_px())
             } else {
                 None
             },

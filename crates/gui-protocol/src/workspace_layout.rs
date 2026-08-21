@@ -128,6 +128,10 @@ pub struct WorkspaceUiState {
     pub active_menu: Option<String>,
     pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
+    /// Transient terminal-only maximize state. The ordinary dock height stays
+    /// intact so restoring, closing/reopening, and manual resize preserve the
+    /// user's prior geometry.
+    pub terminal_maximized: bool,
     pub hovered_object: Option<HoverTarget>,
     /// Session ID whose terminal-tab close target is under the pointer.
     /// Transient consumer chrome, never journaled or swapped with PTY state.
@@ -161,6 +165,7 @@ impl WorkspaceUiState {
             active_menu: None,
             marking_menu: None,
             dock_height_px: 220,
+            terminal_maximized: false,
             hovered_object: None,
             hovered_terminal_close_session_id: None,
             terminal_tab_drag: None,
@@ -172,6 +177,17 @@ impl WorkspaceUiState {
             console: ConsoleLaneState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
             layout: WorkspaceLayout::default(),
+        }
+    }
+
+    /// Height request consumed by the one shell-layout authority. `u32::MAX`
+    /// deliberately asks the solver to fill all space between the menu and
+    /// status bars and continues to track later window-size changes.
+    pub fn effective_dock_height_px(&self) -> u32 {
+        if self.terminal_maximized {
+            u32::MAX
+        } else {
+            self.dock_height_px
         }
     }
 

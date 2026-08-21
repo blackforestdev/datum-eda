@@ -38,6 +38,14 @@ fn owns_dock_resize_cursor(target: Option<&HitTarget>, drag_active: bool) -> boo
     drag_active || matches!(target, Some(HitTarget::DockResizeHandle))
 }
 
+fn toggle_terminal_maximized(ui: &mut datum_gui_protocol::WorkspaceUiState) -> bool {
+    if ui.active_dock_tab != Some(DockTab::Terminal) {
+        return false;
+    }
+    ui.terminal_maximized = !ui.terminal_maximized;
+    true
+}
+
 impl Runtime {
     pub(super) fn pointer_cursor_icon(&mut self, pointer: (f32, f32)) -> winit::window::CursorIcon {
         if let Some(icon) = self
@@ -238,6 +246,7 @@ impl Runtime {
             return false;
         }
         ui.active_dock_tab = None;
+        ui.terminal_maximized = false;
         ui.hovered_terminal_close_session_id = None;
         ui.terminal_tab_drag = None;
         ui.terminal_clipboard_menu = None;
@@ -267,10 +276,14 @@ impl Runtime {
             (window_height - next_cursor_pos.1).clamp(32.0, window_height * 0.6);
         let new_height_logical = new_height_physical / self.scale_factor.max(0.01);
         let new_height_logical = new_height_logical as u32;
-        if self.workspace().ui.dock_height_px == new_height_logical {
+        if self.workspace().ui.dock_height_px == new_height_logical
+            && !self.workspace().ui.terminal_maximized
+        {
             return false;
         }
-        self.session.workspace_mut().ui.dock_height_px = new_height_logical;
+        let ui = &mut self.session.workspace_mut().ui;
+        ui.terminal_maximized = false;
+        ui.dock_height_px = new_height_logical;
         // Keep pointer motion lightweight. A PTY resize makes a full-screen
         // child redraw, and invalidating retained scenes rebuilds unrelated
         // PCB/schematic geometry. Preview the shell frame while dragging and
@@ -303,7 +316,7 @@ impl Runtime {
             self.config.width,
             self.config.height,
             self.scale_factor,
-            Some(self.workspace().ui.dock_height_px),
+            Some(self.workspace().ui.effective_dock_height_px()),
         );
         datum_gui_viewport::terminal_screen_geometry(layout.bottom_strip.into())
     }
@@ -354,6 +367,15 @@ impl Runtime {
                 self.log_review_event(format!("terminal resize failed: {err}"));
             }
         }
+    }
+
+    pub(super) fn toggle_terminal_maximized(&mut self) -> bool {
+        if !toggle_terminal_maximized(&mut self.session.workspace_mut().ui) {
+            return false;
+        }
+        self.resize_terminal_to_dock();
+        self.invalidate_scene();
+        true
     }
 }
 
@@ -425,5 +447,27 @@ mod hover_tests {
             .next()
             .unwrap();
         assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);
+    }
+
+    #[test]
+    fn terminal_maximize_is_transient_and_preserves_the_normal_dock_height() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        state.ui.dock_height_px = 287;
+        assert!(toggle_terminal_maximized(&mut state.ui));
+        assert!(state.ui.terminal_maximized);
+        assert_eq!(state.ui.dock_height_px, 287);
+        assert_eq!(state.ui.effective_dock_height_px(), u32::MAX);
+        assert!(toggle_terminal_maximized(&mut state.ui));
+        assert!(!state.ui.terminal_maximized);
+        assert_eq!(state.ui.effective_dock_height_px(), 287);
+    }
+
+    #[test]
+    fn hidden_or_nonterminal_dock_cannot_enter_terminal_maximize() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = None;
+        assert!(!toggle_terminal_maximized(&mut state.ui));
+        assert!(!state.ui.terminal_maximized);
     }
 }

@@ -32,6 +32,16 @@ REQUIRED = {
         "set_active_selection",
         "active_logical_point_at",
     ),
+    "runtime_terminal_dock.rs": (
+        "toggle_terminal_maximized",
+        "effective_dock_height_px",
+        "terminal_maximize_is_transient_and_preserves_the_normal_dock_height",
+    ),
+    "runtime_view_actions.rs": (
+        "terminal_owns_maximize",
+        "self.toggle_terminal_maximized()",
+        "maximize_action_follows_the_application_focus_authority",
+    ),
     "terminal_session_interaction.rs": (
         ".core.encode_key",
         ".core.encode_mouse",

@@ -32,6 +32,20 @@ fn overlaps(a: RectPx, b: RectPx) -> bool {
 }
 
 #[test]
+fn maximized_terminal_fills_the_workspace_between_global_chrome() {
+    let layout = ShellLayout::for_window(1280, 800, Some(u32::MAX));
+    let menu_bottom = layout.top_menu_bar.y + layout.top_menu_bar.height;
+    assert!((layout.bottom_strip.y - menu_bottom).abs() <= EPS);
+    assert!(
+        (layout.bottom_strip.y + layout.bottom_strip.height - layout.status_bar.y).abs() <= EPS
+    );
+    assert!(layout.bottom_strip.height > 700.0);
+    assert!(layout.viewport.height <= EPS);
+    assert!(layout.left_sidebar.height <= EPS);
+    assert!(layout.right_sidebar.height <= EPS);
+}
+
+#[test]
 fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
     let state = datum_gui_protocol::load_fixture_workspace_state();
     let logical_w = 1280u32;

@@ -1250,7 +1250,7 @@ impl Runtime {
             width: self.config.width,
             height: self.config.height,
             scale_bits: self.scale_factor.to_bits(),
-            dock_height_px: workspace.ui.dock_height_px,
+            dock_height_px: workspace.ui.effective_dock_height_px(),
             show_authored: workspace.ui.filters.show_authored,
             show_proposed: workspace.ui.filters.show_proposed,
             show_unrouted: workspace.ui.filters.show_unrouted,
