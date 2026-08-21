@@ -60,6 +60,7 @@ struct TerminalSessionSlot {
     session: TerminalSession,
     core: TerminalCoreSessionAdapter,
     label: String,
+    label_is_explicit: bool,
     status: String,
     attached: bool,
     previous_session_id: Option<String>,
@@ -126,6 +127,7 @@ impl TerminalSessionRegistry {
                 session,
                 core,
                 label: "shell 1".to_string(),
+                label_is_explicit: false,
                 status: "running".to_string(),
                 attached: true,
                 previous_session_id: None,
@@ -214,6 +216,7 @@ impl TerminalSessionRegistry {
             anyhow::bail!("terminal session label must not be empty");
         }
         slot.label = trimmed.to_string();
+        slot.label_is_explicit = true;
         Ok(())
     }
 
@@ -371,7 +374,15 @@ impl TerminalSessionRegistry {
                 TerminalTabState {
                     session_id: slot.session.session_id().to_string(),
                     previous_session_id: slot.previous_session_id.clone(),
-                    label: slot.label.clone(),
+                    label: render::terminal_tab_label(
+                        &slot.label,
+                        slot.label_is_explicit,
+                        if self.active_pending_id.is_none() && index == active_index {
+                            state.title.as_deref()
+                        } else {
+                            slot.parked_lane.title.as_deref()
+                        },
+                    ),
                     event_log_path: event_log_path.display().to_string(),
                     activity_event_count: slot.activity.event_count(),
                     activity_summary: slot.activity.summary_lines(2).unwrap_or_else(|err| {

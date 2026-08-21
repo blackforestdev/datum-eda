@@ -87,6 +87,14 @@ REQUIRED = {
         "context_for_new_terminal",
         "current_working_directory",
     ),
+    "terminal_session.rs": (
+        "label_is_explicit",
+        "terminal_tab_label",
+    ),
+    "terminal_session_naming_tests.rs": (
+        "shell_titles_drive_tabs_until_the_user_renames_them",
+        "inactive_shell_title_stays_with_its_parked_session",
+    ),
     "terminal_working_directory.rs": (
         "context_for_new_terminal",
         "local_working_directory",

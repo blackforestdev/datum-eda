@@ -144,6 +144,26 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("toggle_terminal_maximized" in failure for failure in failures))
         self.assertTrue(any("effective_dock_height_px" in failure for failure in failures))
 
+    def test_shell_title_cannot_override_an_explicit_tab_rename(self) -> None:
+        sources = valid_sources()
+        sources["terminal_session.rs"] = sources["terminal_session.rs"].replace(
+            "label_is_explicit", "always_follow_shell_title"
+        )
+        sources["terminal_session_naming_tests.rs"] = sources[
+            "terminal_session_naming_tests.rs"
+        ].replace(
+            "shell_titles_drive_tabs_until_the_user_renames_them",
+            "deleted_title_authority_proof",
+        )
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("label_is_explicit" in failure for failure in failures))
+        self.assertTrue(any("shell_titles_drive_tabs" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -163,6 +163,7 @@ fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalS
         session,
         core,
         label,
+        label_is_explicit: false,
         status: "running".to_string(),
         attached: true,
         previous_session_id: None,

@@ -100,6 +100,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
                 )
                 .unwrap(),
                 label: id,
+                label_is_explicit: false,
                 status: "running".to_string(),
                 attached: index == 0,
                 previous_session_id: None,

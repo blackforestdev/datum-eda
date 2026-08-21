@@ -2,6 +2,21 @@
 
 use super::*;
 
+pub(super) fn terminal_tab_label(
+    fallback: &str,
+    explicit: bool,
+    terminal_title: Option<&str>,
+) -> String {
+    if explicit {
+        return fallback.to_string();
+    }
+    terminal_title
+        .map(str::trim)
+        .filter(|title| !title.is_empty())
+        .map(ToOwned::to_owned)
+        .unwrap_or_else(|| fallback.to_string())
+}
+
 impl TerminalSessionRegistry {
     pub(crate) fn active_render_row_count(&self) -> usize {
         if self.active_pending_id.is_some() {
