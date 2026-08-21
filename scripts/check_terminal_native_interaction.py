@@ -20,6 +20,7 @@ REQUIRED = {
         "encode_active_key",
         "encode_active_focus",
         "encode_active_paste",
+        "arm_terminal_link_at_cursor",
     ),
     "runtime_terminal_input.rs": (
         "handle_terminal_ime",
@@ -39,6 +40,7 @@ REQUIRED = {
         ".core.search_all(query)",
         "pub(crate) fn active_search_match_state",
         "pub(crate) fn active_hyperlink_at",
+        "pub(crate) fn active_link_target_at",
         "pub(crate) fn active_accessibility_snapshot",
     ),
     "terminal_core_adapter_interaction.rs": (
@@ -51,6 +53,7 @@ REQUIRED = {
         "pub(crate) fn search_all",
         "pub(crate) fn search_match_state",
         "TerminalAccessibilitySnapshot",
+        "pub(crate) fn link_target_at_visible_cell",
     ),
     "runtime_terminal_search.rs": (
         "handle_terminal_search_key",
@@ -58,6 +61,17 @@ REQUIRED = {
         "maintain_terminal_search_after_output",
         "escape_release_pending",
         "search_navigation_wraps_and_stable_refresh_preserves_current_match",
+    ),
+    "runtime_terminal_links.rs": (
+        "validate_http_target",
+        'Command::new("/usr/bin/xdg-open")',
+        "handle_terminal_link_confirmation_key",
+        "only_exact_http_and_https_targets_are_openable",
+        "confirmation_owns_all_keys_and_the_matching_escape_release",
+    ),
+    "runtime_terminal_clipboard.rs": (
+        "terminal_link_target_at_cursor",
+        "terminal_clipboard_link_target",
     ),
     "terminal_accessibility_bridge.rs": (
         "TerminalAccessibilityEvent",
@@ -145,6 +159,9 @@ def check(sources: dict[str, str], render: str, failures: list[str]) -> None:
         for marker in LEGACY_ENCODERS:
             if f"fn {marker}" in source:
                 failures.append(f"legacy terminal encoder escaped test-only modules: {name}:{marker}")
+
+        if '/usr/bin/xdg-open' in source and name != "runtime_terminal_links.rs":
+            failures.append(f"terminal desktop handoff escaped its policy owner: {name}")
 
         if name.startswith("terminal_accessibility_platform/"):
             lowered = source.lower()

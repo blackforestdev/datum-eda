@@ -43,6 +43,7 @@ impl Runtime {
         if let Some(icon) = self
             .dock_resize_cursor_icon(pointer)
             .or_else(|| self.terminal_tab_cursor_icon(pointer))
+            .or_else(|| self.terminal_link_cursor_icon(pointer))
         {
             return icon;
         }

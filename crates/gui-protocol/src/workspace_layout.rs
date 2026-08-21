@@ -68,10 +68,13 @@ pub struct TerminalTabDragVisualState {
 
 /// Transient terminal-owned clipboard menu anchored in device-pixel screen
 /// coordinates. It is presentation state only and is never journaled.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TerminalClipboardMenuState {
     pub anchor_x: f32,
     pub anchor_y: f32,
+    /// Optional inert terminal target beneath the secondary click. The menu
+    /// may copy it; only HTTP(S) targets expose a separately confirmed open.
+    pub link: Option<crate::TerminalLinkTarget>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

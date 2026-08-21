@@ -60,6 +60,37 @@ pub(crate) fn render_terminal_lifecycle_controls(
     true
 }
 
+pub(crate) const fn terminal_link_controls_width() -> f32 {
+    // OPEN + CANCEL, using the same fixed mono-control measurement as the
+    // lifecycle actions below.
+    (4.0 * 7.0 + 16.0) + (6.0 * 7.0 + 16.0)
+}
+
+pub(crate) fn render_terminal_link_controls(
+    rect: RectPx,
+    y: f32,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
+    let mut x = (rect.x + rect.width - terminal_link_controls_width()).max(rect.x);
+    x = push_control(
+        "OPEN",
+        HitTarget::TerminalLinkConfirmOpen,
+        x,
+        y,
+        text_runs,
+        hit_regions,
+    );
+    push_control(
+        "CANCEL",
+        HitTarget::TerminalLinkCancel,
+        x,
+        y,
+        text_runs,
+        hit_regions,
+    );
+}
+
 fn push_control(
     label: &str,
     target: HitTarget,

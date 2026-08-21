@@ -42,6 +42,10 @@ pub enum HitTarget {
     TerminalShutdownCancel,
     TerminalClipboardCopy,
     TerminalClipboardPaste,
+    TerminalLinkCopy,
+    TerminalLinkOpen,
+    TerminalLinkConfirmOpen,
+    TerminalLinkCancel,
     /// The exact visible terminal cell rectangle (T0-C02): clicking SHELL
     /// CONTENT is deliberate terminal keyboard entry. Cell coordinates for a
     /// click are derived from the same shared geometry that produced the

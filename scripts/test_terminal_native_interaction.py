@@ -95,6 +95,21 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("search_highlights" in failure for failure in failures))
         self.assertTrue(any("TERMINAL_SEARCH_ALL_BG" in failure for failure in failures))
 
+    def test_link_confirmation_and_desktop_handoff_cannot_bypass_policy_owner(self) -> None:
+        sources = valid_sources()
+        sources["runtime_terminal_links.rs"] = sources[
+            "runtime_terminal_links.rs"
+        ].replace("validate_http_target", "open_every_scheme")
+        sources["main.rs"] += '\nCommand::new("/usr/bin/xdg-open");'
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("validate_http_target" in failure for failure in failures))
+        self.assertTrue(any("desktop handoff escaped" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()

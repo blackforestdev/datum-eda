@@ -39,6 +39,10 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::TerminalShutdownCancel
         | HitTarget::TerminalClipboardCopy
         | HitTarget::TerminalClipboardPaste
+        | HitTarget::TerminalLinkCopy
+        | HitTarget::TerminalLinkOpen
+        | HitTarget::TerminalLinkConfirmOpen
+        | HitTarget::TerminalLinkCancel
         // Production handoffs write PTY bytes but are observation gestures.
         | HitTarget::ProductionOutputJobRun(_)
         | HitTarget::ProductionTerminalCommand(_)
@@ -145,6 +149,10 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalShutdownCancel,
         HitTarget::TerminalClipboardCopy,
         HitTarget::TerminalClipboardPaste,
+        HitTarget::TerminalLinkCopy,
+        HitTarget::TerminalLinkOpen,
+        HitTarget::TerminalLinkConfirmOpen,
+        HitTarget::TerminalLinkCancel,
         HitTarget::TerminalScreen,
         HitTarget::CheckFinding(id()),
         HitTarget::ProductionArtifact(id()),

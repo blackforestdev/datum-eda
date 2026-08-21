@@ -16,12 +16,14 @@ impl Runtime {
         ) {
             return false;
         }
+        let link = self.terminal_link_target_at_cursor();
         let ui = &mut self.session.workspace_mut().ui;
         ui.active_menu = None;
         ui.marking_menu = None;
         ui.terminal_clipboard_menu = Some(TerminalClipboardMenuState {
             anchor_x: x,
             anchor_y: y,
+            link,
         });
         self.set_application_focus(ApplicationFocus::Terminal);
         self.invalidate_frame();
@@ -30,6 +32,16 @@ impl Runtime {
 
     pub(super) fn terminal_clipboard_menu_active(&self) -> bool {
         self.workspace().ui.terminal_clipboard_menu.is_some()
+    }
+
+    pub(super) fn terminal_clipboard_link_target(
+        &self,
+    ) -> Option<datum_gui_protocol::TerminalLinkTarget> {
+        self.workspace()
+            .ui
+            .terminal_clipboard_menu
+            .as_ref()
+            .and_then(|menu| menu.link.clone())
     }
 
     pub(super) fn dismiss_terminal_clipboard_menu(&mut self) -> bool {
@@ -70,6 +82,7 @@ mod tests {
         let menu = TerminalClipboardMenuState {
             anchor_x: 120.0,
             anchor_y: 480.0,
+            link: None,
         };
         assert_eq!(menu.anchor_x, 120.0);
         assert_eq!(menu.anchor_y, 480.0);

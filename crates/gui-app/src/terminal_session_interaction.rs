@@ -124,6 +124,26 @@ impl TerminalSessionRegistry {
             .hyperlink_at_visible_cell(visible_rows, scroll_offset, visible_row, column)?)
     }
 
+    pub(crate) fn active_link_target_at(
+        &self,
+        visible_rows: usize,
+        scroll_offset: usize,
+        visible_row: usize,
+        column: usize,
+        current_working_directory: Option<&str>,
+    ) -> Result<Option<datum_gui_protocol::TerminalLinkTarget>> {
+        self.ensure_active_ready()?;
+        Ok(self.sessions[self.active_index]
+            .core
+            .link_target_at_visible_cell(
+                visible_rows,
+                scroll_offset,
+                visible_row,
+                column,
+                current_working_directory,
+            )?)
+    }
+
     pub(crate) fn active_accessibility_snapshot(
         &self,
         visible_rows: usize,

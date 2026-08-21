@@ -276,3 +276,44 @@ fn active_terminal_search_replaces_the_routine_hint_with_query_chrome() {
             .any(|run| run.text.contains("Ctrl+Shift+T new terminal"))
     );
 }
+
+#[test]
+fn http_link_confirmation_replaces_routine_hint_with_explicit_actions() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.terminal.status = "running".to_string();
+    state.ui.terminal.link_confirmation = Some(datum_gui_protocol::TerminalLinkTarget {
+        kind: datum_gui_protocol::TerminalLinkKind::HttpUri,
+        target: "https://example.test/exact-target".to_string(),
+    });
+    let layout = ShellLayout::for_window(1280, 800, Some(260));
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    crate::terminal_tab_strip::render_terminal_tab_strip(
+        &state,
+        layout.bottom_strip,
+        &mut quads,
+        &mut text,
+        &mut hits,
+    );
+
+    assert!(text.iter().any(|run| {
+        run.text
+            .contains("Open link? https://example.test/exact-target")
+    }));
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalLinkConfirmOpen)
+    );
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalLinkCancel)
+    );
+    assert!(
+        !text
+            .iter()
+            .any(|run| run.text.contains("Ctrl+Shift+T new terminal"))
+    );
+}

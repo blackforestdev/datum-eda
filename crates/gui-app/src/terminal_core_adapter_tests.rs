@@ -301,3 +301,54 @@ fn native_input_selection_search_and_links_use_the_same_core_state() {
     assert!(accessibility.focused);
     assert!(accessibility.caret <= accessibility.text.chars().count());
 }
+
+#[test]
+fn osc8_urls_and_cwd_relative_paths_resolve_as_inert_link_targets() {
+    use datum_gui_protocol::{TerminalLinkKind, TerminalLinkTarget};
+
+    let mut adapter = TerminalCoreSessionAdapter::new("links", "context-links", 64, 4).unwrap();
+    let mut lane = TerminalLaneState::default();
+    adapter
+        .apply_output(
+            &mut lane,
+            b"\x1b]8;;https://example.test/report\x1b\\open\x1b]8;;\x1b\\ ./reports/run.log\r\nhttps://plain.example/docs\r\n\x1b]8;;mailto:user@example.test\x1b\\mail\x1b]8;;\x1b\\",
+        )
+        .unwrap();
+
+    assert_eq!(
+        adapter
+            .link_target_at_visible_cell(4, 0, 0, 2, Some("file:///tmp/project"))
+            .unwrap(),
+        Some(TerminalLinkTarget {
+            kind: TerminalLinkKind::HttpUri,
+            target: "https://example.test/report".to_string(),
+        })
+    );
+    assert_eq!(
+        adapter
+            .link_target_at_visible_cell(4, 0, 0, 12, Some("file:///tmp/project"))
+            .unwrap(),
+        Some(TerminalLinkTarget {
+            kind: TerminalLinkKind::Path,
+            target: "/tmp/project/./reports/run.log".to_string(),
+        })
+    );
+    assert_eq!(
+        adapter
+            .link_target_at_visible_cell(4, 0, 1, 10, Some("file:///tmp/project"))
+            .unwrap(),
+        Some(TerminalLinkTarget {
+            kind: TerminalLinkKind::HttpUri,
+            target: "https://plain.example/docs".to_string(),
+        })
+    );
+    assert_eq!(
+        adapter
+            .link_target_at_visible_cell(4, 0, 2, 1, Some("file:///tmp/project"))
+            .unwrap(),
+        Some(TerminalLinkTarget {
+            kind: TerminalLinkKind::Other,
+            target: "mailto:user@example.test".to_string(),
+        })
+    );
+}

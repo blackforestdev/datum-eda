@@ -1,5 +1,6 @@
 //! TerminalCore-owned input, selection, search, link, and accessibility projection.
 
+use datum_gui_protocol::{TerminalLinkKind, TerminalLinkTarget};
 use datum_terminal_core::{
     CellContent, Damage, FocusInput, HyperlinkId, ImeInput, InputDisposition, KeyInput,
     LogicalPoint, MouseInput, RenderRow, RenderRowSource, RenderSnapshot, SearchBatch, SearchMatch,
@@ -164,6 +165,40 @@ impl TerminalCoreSessionAdapter {
             .map(|link| (id, link.uri().to_owned())))
     }
 
+    /// Resolve the inert OSC 8 target or a bounded URL/path token beneath one
+    /// visible cell. This never performs filesystem or desktop I/O.
+    pub(crate) fn link_target_at_visible_cell(
+        &self,
+        visible_rows: usize,
+        scroll_offset: usize,
+        visible_row: usize,
+        column: usize,
+        current_working_directory: Option<&str>,
+    ) -> Result<Option<TerminalLinkTarget>, TerminalCoreAdapterError> {
+        let snapshot = self
+            .core
+            .render_snapshot()
+            .map_err(TerminalCoreAdapterError::Snapshot)?;
+        let Some(row) =
+            visible_row_from_snapshot(&snapshot, visible_rows, scroll_offset, visible_row)
+        else {
+            return Ok(None);
+        };
+        if let Some(id) = row.cells().get(column).and_then(|cell| cell.hyperlink)
+            && let Some(link) = self.core.state().hyperlink(id)
+        {
+            return Ok(Some(classify_osc8_target(
+                link.uri(),
+                current_working_directory,
+            )));
+        }
+        Ok(detected_target_in_row(
+            row,
+            column,
+            current_working_directory,
+        ))
+    }
+
     pub(crate) fn accessibility_snapshot(
         &self,
         visible_rows: usize,
@@ -256,6 +291,133 @@ impl TerminalCoreSessionAdapter {
             .rows()
             .len())
     }
+}
+
+fn detected_target_in_row(
+    row: &RenderRow,
+    column: usize,
+    current_working_directory: Option<&str>,
+) -> Option<TerminalLinkTarget> {
+    let cells = row.cells();
+    let clicked = match &cells.get(column)?.content {
+        CellContent::Continuation { lead } => usize::from(lead.get()),
+        _ => column,
+    };
+    if !cell_belongs_to_target(cells.get(clicked)?) {
+        return None;
+    }
+    let start = (0..clicked)
+        .rev()
+        .find(|&index| !cell_belongs_to_target(&cells[index]))
+        .map_or(0, |index| index + 1);
+    let end = (clicked + 1..cells.len())
+        .find(|&index| !cell_belongs_to_target(&cells[index]))
+        .unwrap_or(cells.len());
+    let token = cells[start..end]
+        .iter()
+        .filter_map(|cell| match &cell.content {
+            CellContent::Cluster(cluster) => Some(cluster.text()),
+            CellContent::Empty | CellContent::Continuation { .. } => None,
+        })
+        .collect::<String>();
+    classify_terminal_target(trim_terminal_target(&token), current_working_directory)
+}
+
+fn cell_belongs_to_target(cell: &datum_terminal_core::Cell) -> bool {
+    match &cell.content {
+        CellContent::Cluster(cluster) => cluster.text().chars().all(|character| {
+            !character.is_whitespace()
+                && !character.is_control()
+                && !matches!(character, '<' | '>' | '"' | '\'' | '`' | '|')
+        }),
+        CellContent::Continuation { .. } => true,
+        CellContent::Empty => false,
+    }
+}
+
+fn trim_terminal_target(token: &str) -> &str {
+    token
+        .trim_start_matches(['(', '[', '{'])
+        .trim_end_matches(['.', ',', ';', ':', '!', '?', ')', ']', '}'])
+}
+
+fn classify_terminal_target(
+    target: &str,
+    current_working_directory: Option<&str>,
+) -> Option<TerminalLinkTarget> {
+    if target.is_empty() {
+        return None;
+    }
+    if is_http_uri(target) {
+        return Some(TerminalLinkTarget {
+            kind: TerminalLinkKind::HttpUri,
+            target: target.to_owned(),
+        });
+    }
+    if !(target.starts_with('/')
+        || target.starts_with("./")
+        || target.starts_with("../")
+        || target.starts_with("~/")
+        || target.contains('/'))
+        || target
+            .split_once('/')
+            .is_some_and(|(prefix, _)| prefix.contains(':'))
+    {
+        return None;
+    }
+    let resolved = if target.starts_with('/') || target.starts_with("~/") {
+        target.to_owned()
+    } else if let Some(cwd) = current_working_directory.and_then(local_cwd_path) {
+        std::path::Path::new(cwd)
+            .join(target)
+            .to_string_lossy()
+            .into_owned()
+    } else {
+        target.to_owned()
+    };
+    Some(TerminalLinkTarget {
+        kind: TerminalLinkKind::Path,
+        target: resolved,
+    })
+}
+
+fn classify_osc8_target(
+    target: &str,
+    current_working_directory: Option<&str>,
+) -> TerminalLinkTarget {
+    if is_http_uri(target)
+        || (!target.contains(':')
+            && (target.starts_with('/')
+                || target.starts_with("./")
+                || target.starts_with("../")
+                || target.starts_with("~/")))
+    {
+        return classify_terminal_target(target, current_working_directory).unwrap_or_else(|| {
+            TerminalLinkTarget {
+                kind: TerminalLinkKind::Other,
+                target: target.to_owned(),
+            }
+        });
+    }
+    TerminalLinkTarget {
+        kind: TerminalLinkKind::Other,
+        target: target.to_owned(),
+    }
+}
+
+fn is_http_uri(target: &str) -> bool {
+    target
+        .get(..7)
+        .is_some_and(|prefix| prefix.eq_ignore_ascii_case("http://"))
+        || target
+            .get(..8)
+            .is_some_and(|prefix| prefix.eq_ignore_ascii_case("https://"))
+}
+
+fn local_cwd_path(cwd: &str) -> Option<&str> {
+    cwd.strip_prefix("file://")
+        .filter(|path| path.starts_with('/'))
+        .or_else(|| cwd.starts_with('/').then_some(cwd))
 }
 
 fn visible_row_from_snapshot(

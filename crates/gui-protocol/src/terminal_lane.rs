@@ -42,6 +42,23 @@ pub struct TerminalSearchState {
     pub status: String,
 }
 
+/// A bounded target derived from terminal content. Terminal output can create
+/// this inert presentation value, but it cannot launch a desktop application.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TerminalLinkTarget {
+    pub kind: TerminalLinkKind,
+    /// Exact target retained for clipboard copy or an explicitly confirmed
+    /// desktop handoff. Renderers may truncate the visual projection only.
+    pub target: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TerminalLinkKind {
+    HttpUri,
+    Path,
+    Other,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
@@ -66,6 +83,12 @@ pub struct TerminalLaneState {
     pub mouse_coordinate_encoding: Option<String>,
     pub scroll_offset: usize,
     pub search: TerminalSearchState,
+    /// Explicit user confirmation for an inert HTTP(S) target. This is
+    /// session-local chrome and never enters the terminal cell stream.
+    pub link_confirmation: Option<TerminalLinkTarget>,
+    /// Matching Escape release remains link-chrome-owned after cancellation so
+    /// it cannot also eject keyboard focus from the terminal.
+    pub link_escape_release_pending: bool,
     pub status: String,
     /// Application-close authority, distinct from the active session's
     /// teardown status so per-session refreshes cannot erase Retry/Cancel.
@@ -98,6 +121,8 @@ impl TerminalLaneState {
             mouse_coordinate_encoding,
             scroll_offset,
             search,
+            link_confirmation,
+            link_escape_release_pending,
             status,
         );
     }
@@ -126,6 +151,8 @@ impl Default for TerminalLaneState {
             mouse_coordinate_encoding: None,
             scroll_offset: 0,
             search: TerminalSearchState::default(),
+            link_confirmation: None,
+            link_escape_release_pending: false,
             status: "running".to_string(),
             application_shutdown_blocked: None,
         }
@@ -145,6 +172,10 @@ mod tests {
                 query: "active query".to_string(),
                 ..Default::default()
             },
+            link_confirmation: Some(TerminalLinkTarget {
+                kind: TerminalLinkKind::HttpUri,
+                target: "https://active.example".to_string(),
+            }),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
@@ -171,6 +202,13 @@ mod tests {
         assert_eq!(parked.title.as_deref(), Some("active title"));
         assert_eq!(active.search.query, "parked query");
         assert_eq!(parked.search.query, "active query");
+        assert_eq!(
+            parked
+                .link_confirmation
+                .as_ref()
+                .map(|link| link.target.as_str()),
+            Some("https://active.example")
+        );
         assert_eq!(
             (
                 active.active_session_id,

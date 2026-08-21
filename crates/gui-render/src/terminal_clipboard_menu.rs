@@ -2,7 +2,7 @@ use super::{
     HitRegion, HitTarget, PANEL_CARD_BG, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_ACCENT,
     TEXT_MUTED, TEXT_PRIMARY, TextFace, TextRun, draw_text, push_rect_border,
 };
-use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
+use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalLinkKind};
 use datum_gui_viewport::terminal_screen_geometry;
 
 const MENU_WIDTH_PX: f32 = 216.0;
@@ -16,7 +16,7 @@ pub(super) fn render_terminal_clipboard_menu(
     overlay_text: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    let Some(menu) = state.ui.terminal_clipboard_menu else {
+    let Some(menu) = state.ui.terminal_clipboard_menu.as_ref() else {
         return;
     };
     if state.ui.active_dock_tab != Some(DockTab::Terminal) {
@@ -25,7 +25,28 @@ pub(super) fn render_terminal_clipboard_menu(
     let screen: RectPx = terminal_screen_geometry(layout.bottom_strip.into())
         .screen
         .into();
-    let menu_height = ITEM_HEIGHT_PX * 2.0;
+    let mut items = vec![
+        ("COPY", "CTRL+SHIFT+C", HitTarget::TerminalClipboardCopy),
+        ("PASTE", "CTRL+SHIFT+V", HitTarget::TerminalClipboardPaste),
+    ];
+    if let Some(link) = &menu.link {
+        items.insert(
+            1,
+            (
+                if link.kind == TerminalLinkKind::Path {
+                    "COPY PATH"
+                } else {
+                    "COPY LINK"
+                },
+                "",
+                HitTarget::TerminalLinkCopy,
+            ),
+        );
+        if link.kind == TerminalLinkKind::HttpUri {
+            items.insert(2, ("OPEN LINK...", "", HitTarget::TerminalLinkOpen));
+        }
+    }
+    let menu_height = ITEM_HEIGHT_PX * items.len() as f32;
     let x = menu.anchor_x.clamp(
         screen.x + MENU_MARGIN_PX,
         (screen.x + screen.width - MENU_WIDTH_PX - MENU_MARGIN_PX).max(screen.x + MENU_MARGIN_PX),
@@ -43,13 +64,7 @@ pub(super) fn render_terminal_clipboard_menu(
     overlay_quads.push(Quad::from_rect(card, PANEL_CARD_BG));
     push_rect_border(overlay_quads, card, PANEL_CARD_BORDER, 1.0);
 
-    for (index, (label, shortcut, target)) in [
-        ("COPY", "CTRL+SHIFT+C", HitTarget::TerminalClipboardCopy),
-        ("PASTE", "CTRL+SHIFT+V", HitTarget::TerminalClipboardPaste),
-    ]
-    .into_iter()
-    .enumerate()
-    {
+    for (index, (label, shortcut, target)) in items.into_iter().enumerate() {
         let item = RectPx {
             x,
             y: y + index as f32 * ITEM_HEIGHT_PX,
@@ -81,7 +96,11 @@ pub(super) fn render_terminal_clipboard_menu(
             item.x + 92.0,
             item.y + 7.0,
             11.5,
-            if index == 0 { TEXT_MUTED } else { TEXT_ACCENT },
+            if shortcut.is_empty() || index == 0 {
+                TEXT_MUTED
+            } else {
+                TEXT_ACCENT
+            },
             TextFace::Mono,
             overlay_text,
         );
@@ -100,6 +119,10 @@ mod tests {
         state.ui.terminal_clipboard_menu = Some(datum_gui_protocol::TerminalClipboardMenuState {
             anchor_x: f32::MAX,
             anchor_y: f32::MAX,
+            link: Some(datum_gui_protocol::TerminalLinkTarget {
+                kind: TerminalLinkKind::HttpUri,
+                target: "https://example.test".to_string(),
+            }),
         });
         let layout = ShellLayout::for_window(1280, 800, Some(260));
         let screen: RectPx = terminal_screen_geometry(layout.bottom_strip.into())
@@ -113,9 +136,13 @@ mod tests {
 
         assert!(text.iter().any(|run| run.text == "COPY"));
         assert!(text.iter().any(|run| run.text == "PASTE"));
+        assert!(text.iter().any(|run| run.text == "COPY LINK"));
+        assert!(text.iter().any(|run| run.text == "OPEN LINK..."));
         for target in [
             HitTarget::TerminalClipboardCopy,
             HitTarget::TerminalClipboardPaste,
+            HitTarget::TerminalLinkCopy,
+            HitTarget::TerminalLinkOpen,
         ] {
             let rect = hits
                 .iter()
@@ -126,5 +153,36 @@ mod tests {
             assert!(rect.x + rect.width <= screen.x + screen.width);
             assert!(rect.y + rect.height <= screen.y + screen.height);
         }
+    }
+
+    #[test]
+    fn detected_paths_are_copyable_but_never_offer_desktop_open() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        state.ui.terminal_clipboard_menu = Some(datum_gui_protocol::TerminalClipboardMenuState {
+            anchor_x: 100.0,
+            anchor_y: 500.0,
+            link: Some(datum_gui_protocol::TerminalLinkTarget {
+                kind: TerminalLinkKind::Path,
+                target: "/tmp/project/report.html".to_string(),
+            }),
+        });
+        let layout = ShellLayout::for_window(1280, 800, Some(260));
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+
+        render_terminal_clipboard_menu(&state, &layout, &mut quads, &mut text, &mut hits);
+
+        assert!(text.iter().any(|run| run.text == "COPY PATH"));
+        assert!(
+            hits.iter()
+                .any(|hit| hit.target == HitTarget::TerminalLinkCopy)
+        );
+        assert!(
+            !hits
+                .iter()
+                .any(|hit| hit.target == HitTarget::TerminalLinkOpen)
+        );
     }
 }

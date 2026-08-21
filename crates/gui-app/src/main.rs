@@ -51,6 +51,7 @@ mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_input;
+mod runtime_terminal_links;
 mod runtime_terminal_pointer;
 mod runtime_terminal_render;
 mod runtime_terminal_search;
@@ -469,6 +470,10 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     if runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
+                    if runtime.modifiers.control_key() && runtime.arm_terminal_link_at_cursor() {
+                        self.request_redraw_if_needed();
                         return;
                     }
                     if runtime.begin_terminal_tab_drag() {
@@ -1273,6 +1278,9 @@ impl Runtime {
     // (console sink) or terminal chrome, never the grid.
 
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
+        if self.handle_terminal_link_confirmation_key(event) {
+            return true;
+        }
         if self.handle_terminal_search_key(event) {
             return true;
         }
@@ -1808,7 +1816,12 @@ impl Runtime {
         if self.terminal_clipboard_menu_active()
             && !matches!(
                 prepared_target.as_ref(),
-                Some(HitTarget::TerminalClipboardCopy | HitTarget::TerminalClipboardPaste)
+                Some(
+                    HitTarget::TerminalClipboardCopy
+                        | HitTarget::TerminalClipboardPaste
+                        | HitTarget::TerminalLinkCopy
+                        | HitTarget::TerminalLinkOpen
+                )
             )
         {
             self.dismiss_terminal_clipboard_menu();
@@ -2150,6 +2163,27 @@ impl Runtime {
             HitTarget::TerminalClipboardPaste => {
                 self.dismiss_terminal_clipboard_menu();
                 self.paste_terminal_input();
+                true
+            }
+            HitTarget::TerminalLinkCopy => {
+                let target = self.terminal_clipboard_link_target();
+                self.dismiss_terminal_clipboard_menu();
+                if let Some(target) = target {
+                    self.copy_terminal_link_target(&target);
+                }
+                true
+            }
+            HitTarget::TerminalLinkOpen => {
+                let target = self.terminal_clipboard_link_target();
+                self.dismiss_terminal_clipboard_menu();
+                if let Some(target) = target {
+                    self.arm_terminal_link_target(target);
+                }
+                true
+            }
+            HitTarget::TerminalLinkConfirmOpen => self.confirm_terminal_link_open(),
+            HitTarget::TerminalLinkCancel => {
+                self.cancel_terminal_link_confirmation();
                 true
             }
             HitTarget::ProductionArtifact(artifact_id) => {
