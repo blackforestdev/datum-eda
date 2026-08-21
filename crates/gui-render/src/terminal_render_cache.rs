@@ -1,15 +1,21 @@
 //! Damage-driven retained row plans for immutable TerminalCore snapshots.
 
-use datum_gui_protocol::{ReviewWorkspaceState, TerminalSearchMatch};
+use datum_gui_protocol::{ReviewWorkspaceState, TerminalLaneState, TerminalSearchMatch};
 use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TerminalScreenGeometry};
 use datum_terminal_core::{
     Color, Damage, RenderPalette, RenderRowSource, RenderSnapshot, Selection,
 };
 
 use super::{HitRegion, HitTarget, Quad, RectPx, TextRun};
+use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct TerminalRenderCache {
+    sessions: BTreeMap<String, TerminalSessionRenderCache>,
+}
+
+#[derive(Default)]
+struct TerminalSessionRenderCache {
     rows: Vec<CachedRow>,
     screen: Option<RectPx>,
     columns: u16,
@@ -35,10 +41,14 @@ impl TerminalRenderCache {
     }
 
     #[cfg(test)]
-    pub(crate) const fn rebuilt_rows(&self) -> usize {
-        self.rebuilt_rows
+    pub(crate) fn rebuilt_rows(&self) -> usize {
+        self.sessions
+            .values()
+            .map(|session| session.rebuilt_rows)
+            .sum()
     }
 
+    #[cfg_attr(not(test), allow(dead_code))]
     pub(crate) fn render(
         &mut self,
         state: &ReviewWorkspaceState,
@@ -47,10 +57,74 @@ impl TerminalRenderCache {
         geometry: &TerminalScreenGeometry,
         sinks: (&mut Vec<Quad>, &mut Vec<TextRun>, &mut Vec<HitRegion>),
     ) {
+        let session_id = state
+            .ui
+            .terminal
+            .active_session_id
+            .as_deref()
+            .unwrap_or("terminal");
+        let focused = state.ui.focus.is_terminal();
+        self.render_pane(
+            session_id,
+            &state.ui.terminal,
+            focused,
+            snapshot,
+            damage,
+            geometry,
+            HitTarget::TerminalScreen,
+            sinks,
+        );
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn render_pane(
+        &mut self,
+        session_id: &str,
+        lane: &TerminalLaneState,
+        focused: bool,
+        snapshot: &RenderSnapshot,
+        damage: &[Damage],
+        geometry: &TerminalScreenGeometry,
+        target: HitTarget,
+        sinks: (&mut Vec<Quad>, &mut Vec<TextRun>, &mut Vec<HitRegion>),
+    ) {
+        self.sessions
+            .entry(session_id.to_string())
+            .or_default()
+            .render(
+                session_id, lane, focused, snapshot, damage, geometry, target, sinks,
+            );
+    }
+
+    pub(crate) fn retain_sessions<'a>(&mut self, session_ids: impl IntoIterator<Item = &'a str>) {
+        let visible = session_ids.into_iter().collect::<BTreeSet<_>>();
+        self.sessions
+            .retain(|session_id, _| visible.contains(session_id.as_str()));
+    }
+
+    #[cfg(test)]
+    pub(crate) fn cached_session_count(&self) -> usize {
+        self.sessions.len()
+    }
+}
+
+impl TerminalSessionRenderCache {
+    #[allow(clippy::too_many_arguments)]
+    fn render(
+        &mut self,
+        session_id: &str,
+        lane: &TerminalLaneState,
+        focused: bool,
+        snapshot: &RenderSnapshot,
+        damage: &[Damage],
+        geometry: &TerminalScreenGeometry,
+        target: HitTarget,
+        sinks: (&mut Vec<Quad>, &mut Vec<TextRun>, &mut Vec<HitRegion>),
+    ) {
         let (panel_quads, text_runs, hit_regions) = sinks;
         let screen: RectPx = geometry.screen.into();
         hit_regions.push(HitRegion {
-            target: HitTarget::TerminalScreen,
+            target,
             rect: screen,
         });
         panel_quads.push(Quad::from_rect(
@@ -59,11 +133,7 @@ impl TerminalRenderCache {
         ));
         let rows = snapshot.rows().collect::<Vec<_>>();
         let max_rows = usize::from(geometry.rows);
-        let scroll = state
-            .ui
-            .terminal
-            .scroll_offset
-            .min(rows.len().saturating_sub(max_rows));
+        let scroll = lane.scroll_offset.min(rows.len().saturating_sub(max_rows));
         let first = rows.len().saturating_sub(max_rows + scroll);
         let visible = rows
             .into_iter()
@@ -74,9 +144,9 @@ impl TerminalRenderCache {
             || self.columns != geometry.columns
             || self.palette.as_ref() != Some(snapshot.palette())
             || self.selection != snapshot.selection()
-            || self.search_matches != state.ui.terminal.search.highlights
-            || self.search_match != state.ui.terminal.search.matched
-            || self.session_id != state.ui.terminal.active_session_id
+            || self.search_matches != lane.search.highlights
+            || self.search_match != lane.search.matched
+            || self.session_id.as_deref() != Some(session_id)
             || self.scroll_offset != scroll
             || damage.iter().any(|entry| {
                 matches!(
@@ -117,8 +187,8 @@ impl TerminalRenderCache {
                         },
                         y: 0.0,
                         max_columns: usize::from(geometry.columns),
-                        search_highlights: &state.ui.terminal.search.highlights,
-                        active_search_match: state.ui.terminal.search.matched,
+                        search_highlights: &lane.search.highlights,
+                        active_search_match: lane.search.matched,
                     },
                     &mut cached.quads,
                     &mut cached.text,
@@ -148,7 +218,7 @@ impl TerminalRenderCache {
             {
                 super::terminal_core_render::render_cursor(
                     snapshot,
-                    state.ui.focus.is_terminal(),
+                    focused,
                     screen.x,
                     y,
                     panel_quads,
@@ -159,9 +229,9 @@ impl TerminalRenderCache {
         self.columns = geometry.columns;
         self.palette = Some(snapshot.palette().clone());
         self.selection = snapshot.selection();
-        self.search_matches = state.ui.terminal.search.highlights.clone();
-        self.search_match = state.ui.terminal.search.matched;
-        self.session_id = state.ui.terminal.active_session_id.clone();
+        self.search_matches = lane.search.highlights.clone();
+        self.search_match = lane.search.matched;
+        self.session_id = Some(session_id.to_string());
         self.scroll_offset = scroll;
     }
 }

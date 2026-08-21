@@ -1,3 +1,4 @@
+use datum_gui_protocol::TerminalSplitDirection;
 use datum_terminal_core::{
     KeyCode as CoreKeyCode, KeyEventKind as CoreKeyEventKind, KeyInput as CoreKeyInput,
     KeyModifiers as CoreKeyModifiers, KeypadKey,
@@ -11,6 +12,8 @@ use winit::{
 pub(super) enum TerminalKeyAction {
     CoreKey(CoreKeyInput),
     NewSession,
+    SplitRight,
+    SplitDown,
     RestartSession,
     TerminateSession,
     CloseSession,
@@ -64,6 +67,14 @@ pub(super) fn terminal_key_action(
     }
     if terminal_new_session_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
         return TerminalKeyAction::NewSession;
+    }
+    if let Some(direction) =
+        terminal_split_shortcut(event.state, event.repeat, event.physical_key, modifiers)
+    {
+        return match direction {
+            TerminalSplitDirection::SideBySide => TerminalKeyAction::SplitRight,
+            TerminalSplitDirection::Stacked => TerminalKeyAction::SplitDown,
+        };
     }
     if terminal_search_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
         return TerminalKeyAction::Search;
@@ -223,6 +234,25 @@ pub(super) fn terminal_new_session_shortcut(
         && modifiers.control_key()
         && modifiers.shift_key()
         && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyT))
+}
+
+pub(super) fn terminal_split_shortcut(
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: ModifiersState,
+) -> Option<TerminalSplitDirection> {
+    if state != ElementState::Pressed
+        || repeat
+        || !(modifiers.control_key() && modifiers.shift_key())
+    {
+        return None;
+    }
+    match physical_key {
+        PhysicalKey::Code(KeyCode::KeyO) => Some(TerminalSplitDirection::SideBySide),
+        PhysicalKey::Code(KeyCode::KeyE) => Some(TerminalSplitDirection::Stacked),
+        _ => None,
+    }
 }
 
 pub(super) fn terminal_search_shortcut(

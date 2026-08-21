@@ -53,6 +53,9 @@ pub enum HitTarget {
     /// click are derived from the same shared geometry that produced the
     /// region rect (`datum_gui_viewport::terminal_screen_geometry`).
     TerminalScreen,
+    /// An inactive visible split leaf. Clicking it promotes that exact owned
+    /// session to the tab's focused input/render authority.
+    TerminalPaneScreen(String),
     CheckFinding(String),
     ProductionArtifact(String),
     ProductionArtifactFile(String),

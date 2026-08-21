@@ -49,11 +49,39 @@ impl TerminalSessionRegistry {
                 .then(|| self.active().session_id().to_string())
         });
         let tabs = self
-            .sessions
-            .iter_mut()
-            .enumerate()
-            .filter(|(_, slot)| !slot.hidden_after_close)
-            .map(|(index, slot)| {
+            .terminal_tabs
+            .clone()
+            .into_iter()
+            .filter_map(|tab| {
+                let session_id = tab.focused_session_id;
+                if let Some(pending) = self.pending_spawns.iter().find(|pending| {
+                    !pending.canceled
+                        && pending.placement.is_new_tab()
+                        && pending.pending_id == session_id
+                }) {
+                    return Some(datum_gui_protocol::TerminalTabState {
+                        session_id: pending.pending_id.clone(),
+                        previous_session_id: None,
+                        label: pending.label.clone(),
+                        event_log_path: String::new(),
+                        activity_event_count: 0,
+                        activity_summary: vec!["starting terminal session".to_string()],
+                        active: self.active_pending_id.as_deref() == Some(&pending.pending_id),
+                        attached: true,
+                        status: "starting".to_string(),
+                        restart_count: 0,
+                        unread_output: false,
+                        unread_bell_count: 0,
+                    });
+                }
+                let index = self
+                    .sessions
+                    .iter()
+                    .position(|slot| slot.session.session_id() == session_id)?;
+                let slot = &mut self.sessions[index];
+                if slot.hidden_after_close {
+                    return None;
+                }
                 let active = self.active_pending_id.is_none() && index == active_index;
                 if active {
                     slot.status = state.status.clone();
@@ -61,7 +89,7 @@ impl TerminalSessionRegistry {
                 let projected_lane = if active { &*state } else { &slot.parked_lane };
                 let event_log_path = slot.session.event_log_path();
                 slot.activity.refresh(&event_log_path);
-                datum_gui_protocol::TerminalTabState {
+                Some(datum_gui_protocol::TerminalTabState {
                     session_id: slot.session.session_id().to_string(),
                     previous_session_id: slot.previous_session_id.clone(),
                     label: terminal_tab_label(
@@ -91,27 +119,8 @@ impl TerminalSessionRegistry {
                             .bell_count
                             .saturating_sub(slot.seen_bell_count)
                     },
-                }
+                })
             })
-            .chain(
-                self.pending_spawns
-                    .iter()
-                    .filter(|pending| !pending.canceled)
-                    .map(|pending| datum_gui_protocol::TerminalTabState {
-                        session_id: pending.pending_id.clone(),
-                        previous_session_id: None,
-                        label: pending.label.clone(),
-                        event_log_path: String::new(),
-                        activity_event_count: 0,
-                        activity_summary: vec!["starting terminal session".to_string()],
-                        active: self.active_pending_id.as_deref() == Some(&pending.pending_id),
-                        attached: true,
-                        status: "starting".to_string(),
-                        restart_count: 0,
-                        unread_output: false,
-                        unread_bell_count: 0,
-                    }),
-            )
             .collect::<Vec<_>>();
         if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
             state.activity_summary = active_tab.activity_summary.clone();
@@ -134,16 +143,55 @@ impl TerminalSessionRegistry {
             .unwrap_or(0)
     }
 
-    pub(crate) fn take_active_render_state(
+    pub(crate) fn take_active_tab_render_states(
         &mut self,
+        active_lane: &TerminalLaneState,
     ) -> Result<
-        (
-            datum_terminal_core::RenderSnapshot,
-            Vec<datum_terminal_core::Damage>,
-        ),
+        Vec<datum_gui_render::TerminalPaneRenderState>,
         crate::terminal_core_adapter::TerminalCoreAdapterError,
     > {
-        self.sessions[self.active_index].core.take_render_state()
+        if self.active_pending_id.is_some() {
+            return Ok(Vec::new());
+        }
+        let active_session_id = self.active().session_id().to_string();
+        let tab = self
+            .terminal_tabs
+            .iter()
+            .find(|tab| tab.root.contains_session(&active_session_id));
+        let focused_session_id = tab
+            .map(|tab| tab.focused_session_id.clone())
+            .unwrap_or_else(|| active_session_id.clone());
+        let session_ids = tab
+            .map(|tab| {
+                tab.root
+                    .session_ids()
+                    .into_iter()
+                    .map(str::to_string)
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_else(|| vec![active_session_id]);
+        let mut panes = Vec::with_capacity(session_ids.len());
+        for session_id in session_ids {
+            let index = self
+                .sessions
+                .iter()
+                .position(|slot| slot.session.session_id() == session_id)
+                .expect("terminal split leaf must name an owned session");
+            let lane = if index == self.active_index {
+                active_lane.clone()
+            } else {
+                self.sessions[index].parked_lane.clone()
+            };
+            let (snapshot, damage) = self.sessions[index].core.take_render_state()?;
+            panes.push(datum_gui_render::TerminalPaneRenderState {
+                focused: session_id == focused_session_id,
+                session_id,
+                lane,
+                snapshot,
+                damage,
+            });
+        }
+        Ok(panes)
     }
 
     #[cfg(test)]
@@ -170,6 +218,39 @@ impl TerminalSessionRegistry {
             slot.rows = rows;
         }
         slot.core.resize(cols, rows, pixel_width, pixel_height)?;
+        Ok(())
+    }
+
+    pub(crate) fn resize_active_tab_surfaces(
+        &mut self,
+        panes: &[datum_gui_viewport::TerminalPaneGeometry],
+    ) -> Result<()> {
+        if self.active_pending_id.is_some() {
+            return Ok(());
+        }
+        for pane in panes {
+            let Some(slot) = self
+                .sessions
+                .iter_mut()
+                .find(|slot| slot.session.session_id() == pane.session_id)
+            else {
+                continue;
+            };
+            let geometry = pane.geometry;
+            let cols = geometry.columns.max(1);
+            let rows = geometry.rows.max(1);
+            if slot.columns != cols || slot.rows != rows {
+                slot.session.resize(cols, rows)?;
+                slot.columns = cols;
+                slot.rows = rows;
+            }
+            slot.core.resize(
+                cols,
+                rows,
+                geometry.screen.width.round() as u32,
+                geometry.screen.height.round() as u32,
+            )?;
+        }
         Ok(())
     }
 }

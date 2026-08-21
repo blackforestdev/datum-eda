@@ -1323,6 +1323,12 @@ impl Runtime {
                 }
             }
             TerminalKeyAction::NewSession => self.spawn_terminal_session_tab(),
+            TerminalKeyAction::SplitRight => {
+                self.spawn_terminal_split(datum_gui_protocol::TerminalSplitDirection::SideBySide)
+            }
+            TerminalKeyAction::SplitDown => {
+                self.spawn_terminal_split(datum_gui_protocol::TerminalSplitDirection::Stacked)
+            }
             TerminalKeyAction::TerminateSession => {
                 self.terminate_terminal_session();
                 true
@@ -2189,6 +2195,7 @@ impl Runtime {
                 true
             }
             HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
+            HitTarget::TerminalPaneScreen(session_id) => self.activate_terminal_session(session_id),
             HitTarget::TerminalSessionClose(session_id) => self.close_terminal_session(session_id),
             HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
             target @ (HitTarget::TerminalSessionTerminateActive

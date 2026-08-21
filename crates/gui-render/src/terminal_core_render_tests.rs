@@ -185,6 +185,66 @@ fn retained_rows_rebuild_only_for_declared_damage_or_geometry_change() {
 }
 
 #[test]
+fn split_panes_retain_independent_rows_geometry_and_hit_identity() {
+    let left_snapshot = snapshot(b"left-pane");
+    let right_snapshot = snapshot(b"right-pane");
+    let lane = datum_gui_protocol::TerminalLaneState::default();
+    let mut cache = TerminalRenderCache::new();
+    let left = datum_gui_viewport::terminal_screen_geometry(ScreenRectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 160.0,
+        height: 120.0,
+    });
+    let right = datum_gui_viewport::terminal_screen_geometry(ScreenRectPx {
+        x: 166.0,
+        y: 0.0,
+        width: 160.0,
+        height: 120.0,
+    });
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    cache.render_pane(
+        "left",
+        &lane,
+        true,
+        &left_snapshot,
+        &[Damage::Full],
+        &left,
+        HitTarget::TerminalScreen,
+        (&mut quads, &mut text, &mut hits),
+    );
+    cache.render_pane(
+        "right",
+        &lane,
+        false,
+        &right_snapshot,
+        &[Damage::Full],
+        &right,
+        HitTarget::TerminalPaneScreen("right".to_string()),
+        (&mut quads, &mut text, &mut hits),
+    );
+
+    assert_eq!(cache.cached_session_count(), 2);
+    let rendered = text.iter().map(|run| run.text.as_str()).collect::<String>();
+    assert!(rendered.contains("left-pane"));
+    assert!(rendered.contains("right-pane"));
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalScreen)
+    );
+    assert!(hits.iter().any(|hit| {
+        hit.target == HitTarget::TerminalPaneScreen("right".to_string())
+            && hit.rect.x >= right.screen.x
+    }));
+
+    cache.retain_sessions(["right"]);
+    assert_eq!(cache.cached_session_count(), 1);
+}
+
+#[test]
 fn all_search_matches_are_highlighted_and_active_match_invalidates_retained_rows() {
     let snapshot = snapshot(b"find me find");
     let row = snapshot.rows().next().unwrap();

@@ -5,10 +5,11 @@ use super::*;
 impl Runtime {
     pub(super) fn build_terminal_prepared_scene(&mut self) -> Result<PreparedScene> {
         let schematic_camera = self.schematic_camera_for_render();
-        let (terminal_snapshot, terminal_damage) = self
+        let active_terminal_lane = self.session.workspace().ui.terminal.clone();
+        let terminal_panes = self
             .terminal_sessions
-            .take_active_render_state()
-            .context("snapshot active TerminalCore for rendering")?;
+            .take_active_tab_render_states(&active_terminal_lane)
+            .context("snapshot active terminal tab panes for rendering")?;
         let retained = self
             .retained_scene
             .as_ref()
@@ -20,8 +21,7 @@ impl Runtime {
             self.scale_factor,
             self.camera,
             retained,
-            Some(&terminal_snapshot),
-            &terminal_damage,
+            &terminal_panes,
             Some(&mut self.terminal_render_cache),
         );
         if let Some(camera) = schematic_camera {

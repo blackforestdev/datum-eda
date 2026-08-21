@@ -12,6 +12,8 @@ BOTTOM_DOCK = ROOT / "crates" / "gui-render" / "src" / "bottom_dock.rs"
 LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
 TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
 TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_spawn.rs"
+TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal_session_render.rs"
+TERMINAL_SPLIT_STATE = ROOT / "crates" / "gui-app" / "src" / "terminal_split_state.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
@@ -32,6 +34,7 @@ TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_bu
 RENDER_GPU = ROOT / "crates" / "gui-render" / "src" / "render" / "gpu.rs"
 TERMINAL_FONT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_font_tests.rs"
 TERMINAL_CORE_RENDER = ROOT / "crates" / "gui-render" / "src" / "terminal_core_render.rs"
+TERMINAL_CORE_RENDER_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_core_render_tests.rs"
 TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
 TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
 TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
@@ -320,6 +323,41 @@ def check_terminal_session_creation(
         failures.append("terminal label non-reuse production proof is missing")
 
 
+def check_terminal_splits(main: str, terminal_controls: str, terminal_input: str,
+                          terminal_session_spawn: str, terminal_split_state: str,
+                          bottom_dock: str, terminal_grid_geometry: str,
+                          terminal_core_render_tests: str, failures: list[str]) -> None:
+    """Keep split PTYs independently owned, focused, sized, and rendered."""
+    for marker in (
+        "TerminalKeyAction::SplitRight",
+        "TerminalKeyAction::SplitDown",
+        "terminal_split_shortcut(",
+        "KeyCode::KeyO",
+        "KeyCode::KeyE",
+    ):
+        if marker not in terminal_input:
+            failures.append(f"terminal split input is missing {marker}")
+    for marker in ("spawn_terminal_split", "begin_split_and_activate", "resize_terminal_to_dock"):
+        if marker not in terminal_controls:
+            failures.append(f"terminal split runtime is missing {marker}")
+    for marker in ("TerminalKeyAction::SplitRight =>", "TerminalKeyAction::SplitDown =>",
+                   "HitTarget::TerminalPaneScreen(session_id)"):
+        if marker not in main:
+            failures.append(f"terminal split dispatch is missing {marker}")
+    for marker in ("split_spawn_stays_in_one_tab_and_focuses_the_completed_leaf",
+                   "failed_split_spawn_removes_its_leaf_without_removing_the_tab",
+                   "replace_terminal_session_identity"):
+        if marker not in terminal_session_spawn + terminal_split_state:
+            failures.append(f"terminal split lifecycle proof is missing {marker}")
+    for marker in ("render_pane(", "HitTarget::TerminalPaneScreen"):
+        if marker not in bottom_dock:
+            failures.append(f"terminal split renderer is missing {marker}")
+    if "recursive_splits_have_distinct_identity_whole_cells_and_gutters" not in terminal_grid_geometry:
+        failures.append("terminal split whole-cell geometry proof is missing")
+    if "split_panes_retain_independent_rows_geometry_and_hit_identity" not in terminal_core_render_tests:
+        failures.append("terminal split retained-render proof is missing")
+
+
 def check_terminal_input_identity(
     terminal_lane: str,
     production_sources: str,
@@ -450,7 +488,9 @@ def main() -> int:
     bottom_dock = BOTTOM_DOCK.read_text()
     launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""
     terminal_controls = TERMINAL_CONTROLS.read_text()
-    terminal_session_spawn = TERMINAL_SESSION_SPAWN.read_text()
+    terminal_session_spawn = (
+        TERMINAL_SESSION_SPAWN.read_text() + TERMINAL_SESSION_RENDER.read_text()
+    )
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text() + RUNTIME_TERMINAL_POINTER.read_text()
@@ -464,11 +504,13 @@ def main() -> int:
     render_gpu = RENDER_GPU.read_text()
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     terminal_core_render = TERMINAL_CORE_RENDER.read_text()
+    terminal_core_render_tests = TERMINAL_CORE_RENDER_TESTS.read_text()
     terminal_tab_strip = TERMINAL_TAB_STRIP.read_text()
     terminal_tab_strip_tests = TERMINAL_TAB_STRIP_TESTS.read_text()
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
     terminal_input = TERMINAL_INPUT.read_text()
     terminal_session = TERMINAL_SESSION.read_text()
+    terminal_split_state = TERMINAL_SPLIT_STATE.read_text()
     terminal_session_naming_tests = TERMINAL_SESSION_NAMING_TESTS.read_text() + "\n".join(
         TERMINAL_SESSION.with_name(name).read_text()
         for name in ("terminal_context.rs", "terminal_context_io.rs")
@@ -534,6 +576,9 @@ def main() -> int:
         terminal_session_naming_tests,
         failures,
     )
+    check_terminal_splits(main, terminal_controls, terminal_input, terminal_session_spawn,
+                          terminal_split_state, bottom_dock, terminal_grid_geometry,
+                          terminal_core_render_tests, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)

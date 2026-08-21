@@ -40,6 +40,24 @@ impl TerminalSessionRegistry {
         })
     }
 
+    pub(crate) fn begin_split_and_activate(
+        &mut self,
+        context: &TerminalLaunchContext,
+        lane: &mut TerminalLaneState,
+        direction: datum_gui_protocol::TerminalSplitDirection,
+    ) -> Result<String> {
+        let source_session_id = self.active().session_id().to_string();
+        self.begin_spawn_using(
+            context,
+            lane,
+            PendingTerminalPlacement::Split {
+                source_session_id,
+                direction,
+            },
+            |context, wake| spawn_terminal_session_with_wake(&context, wake),
+        )
+    }
+
     fn begin_spawn_and_activate_using<F>(
         &mut self,
         context: &TerminalLaunchContext,
@@ -51,7 +69,32 @@ impl TerminalSessionRegistry {
             + Send
             + 'static,
     {
+        self.begin_spawn_using(context, lane, PendingTerminalPlacement::NewTab, spawn)
+    }
+
+    fn begin_spawn_using<F>(
+        &mut self,
+        context: &TerminalLaunchContext,
+        lane: &mut TerminalLaneState,
+        placement: PendingTerminalPlacement,
+        spawn: F,
+    ) -> Result<String>
+    where
+        F: FnOnce(TerminalLaunchContext, TerminalWakeGate) -> Result<TerminalSession>
+            + Send
+            + 'static,
+    {
         ensure_session_capacity(self.sessions.len() + self.pending_spawns.len())?;
+        if let PendingTerminalPlacement::Split {
+            source_session_id, ..
+        } = &placement
+            && !self
+                .terminal_tabs
+                .iter()
+                .any(|tab| tab.root.contains_session(source_session_id))
+        {
+            anyhow::bail!("terminal split source not found: {source_session_id}");
+        }
         let label = self.reserve_session_label();
         let pending_id = format!("pending-{}", label.replace(' ', "-"));
         let (sender, result) = mpsc::channel();
@@ -72,13 +115,40 @@ impl TerminalSessionRegistry {
             label,
             result,
             canceled: false,
+            placement: placement.clone(),
         });
-        self.add_standalone_terminal_tab(pending_id.clone());
-        if self.active_pending_id.is_none() {
-            lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+        match placement {
+            PendingTerminalPlacement::NewTab => {
+                self.add_standalone_terminal_tab(pending_id.clone());
+                if self.active_pending_id.is_none() {
+                    lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+                }
+                self.active_pending_id = Some(pending_id.clone());
+                lane.status = "starting terminal session".to_string();
+            }
+            PendingTerminalPlacement::Split {
+                source_session_id,
+                direction,
+            } => {
+                if let Err(error) =
+                    self.split_terminal_session(&source_session_id, pending_id.clone(), direction)
+                {
+                    let pending = self
+                        .pending_spawns
+                        .pop()
+                        .expect("split spawn reservation was just appended");
+                    drop(pending);
+                    return Err(error);
+                }
+                if let Some(tab) = self
+                    .terminal_tabs
+                    .iter_mut()
+                    .find(|tab| tab.root.contains_session(&source_session_id))
+                {
+                    tab.focused_session_id = source_session_id;
+                }
+            }
         }
-        self.active_pending_id = Some(pending_id.clone());
-        lane.status = "starting terminal session".to_string();
         self.projection_managed = true;
         Ok(pending_id)
     }
@@ -112,9 +182,10 @@ impl TerminalSessionRegistry {
             match completion {
                 Ok(session) => {
                     let session_id = session.session_id().to_string();
-                    let slot = match new_session_slot(session, pending.label) {
+                    let slot = match new_session_slot(session, pending.label.clone()) {
                         Ok(slot) => slot,
                         Err(error) => {
+                            self.remove_pending_terminal_tab(&pending);
                             if was_active {
                                 self.active_pending_id = None;
                                 lane.swap_session_projection(
@@ -128,10 +199,18 @@ impl TerminalSessionRegistry {
                     };
                     self.sessions.push(slot);
                     self.replace_pending_terminal_tab(&pending.pending_id, session_id.clone());
+                    let split_completion = !pending.placement.is_new_tab();
                     if was_active {
                         self.active_index = self.sessions.len() - 1;
                         self.active_pending_id = None;
                         lane.status = "running".to_string();
+                    } else if split_completion {
+                        let previous = self.active_index;
+                        self.active_index = self.sessions.len() - 1;
+                        lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
+                        lane.swap_session_projection(
+                            &mut self.sessions[self.active_index].parked_lane,
+                        );
                     }
                     notices.push(format!("opened terminal session {session_id}"));
                 }
@@ -261,6 +340,99 @@ mod tests {
                 .map(|slot| slot.session.session_id())
                 .collect::<Vec<_>>()
         );
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn split_spawn_stays_in_one_tab_and_focuses_the_completed_leaf() {
+        let root =
+            std::env::temp_dir().join(format!("datum-terminal-async-split-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        let context = TerminalLaunchContext::for_project_root(&root);
+        let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+        let source_id = registry.active().session_id().to_string();
+        let mut lane = TerminalLaneState::default();
+
+        let pending_id = registry
+            .begin_split_and_activate(
+                &context,
+                &mut lane,
+                datum_gui_protocol::TerminalSplitDirection::SideBySide,
+            )
+            .unwrap();
+        registry.sync_lane_tabs(&mut lane);
+        assert_eq!(lane.tabs.len(), 1);
+        assert_eq!(lane.tab_layouts.len(), 1);
+        assert_eq!(
+            lane.tab_layouts[0].root.session_ids(),
+            [source_id.as_str(), pending_id.as_str()]
+        );
+        assert_eq!(
+            lane.tab_layouts[0].focused_session_id, source_id,
+            "the existing pane remains focused until its peer is ready"
+        );
+
+        let deadline = std::time::Instant::now() + Duration::from_secs(2);
+        while !registry.pending_spawns.is_empty() && std::time::Instant::now() < deadline {
+            registry.complete_pending_spawns(&mut lane);
+            std::thread::yield_now();
+        }
+        assert!(registry.pending_spawns.is_empty());
+        registry.sync_lane_tabs(&mut lane);
+        assert_eq!(registry.sessions.len(), 2);
+        assert_eq!(lane.tabs.len(), 1);
+        assert_eq!(lane.tab_layouts[0].root.session_ids().len(), 2);
+        assert_eq!(
+            lane.tab_layouts[0].focused_session_id,
+            registry.active().session_id()
+        );
+        assert_eq!(lane.tabs[0].session_id, registry.active().session_id());
+        registry
+            .activate_with_lane(&source_id, &mut lane)
+            .expect("focus original split leaf");
+        registry.sync_lane_tabs(&mut lane);
+        assert_eq!(lane.tab_layouts[0].focused_session_id, source_id);
+        assert_eq!(lane.tabs[0].session_id, source_id);
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn failed_split_spawn_removes_its_leaf_without_removing_the_tab() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-terminal-failed-split-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        let context = TerminalLaunchContext::for_project_root(&root);
+        let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+        let source_id = registry.active().session_id().to_string();
+        let mut lane = TerminalLaneState::default();
+
+        registry
+            .begin_spawn_using(
+                &context,
+                &mut lane,
+                PendingTerminalPlacement::Split {
+                    source_session_id: source_id.clone(),
+                    direction: datum_gui_protocol::TerminalSplitDirection::Stacked,
+                },
+                |_context, _wake| Err(anyhow::anyhow!("injected split spawn failure")),
+            )
+            .unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(1);
+        while !registry.pending_spawns.is_empty() && std::time::Instant::now() < deadline {
+            registry.complete_pending_spawns(&mut lane);
+            std::thread::yield_now();
+        }
+        registry.sync_lane_tabs(&mut lane);
+
+        assert!(registry.pending_spawns.is_empty());
+        assert_eq!(registry.sessions.len(), 1);
+        assert_eq!(lane.tabs.len(), 1);
+        assert_eq!(lane.tab_layouts.len(), 1);
+        assert_eq!(lane.tab_layouts[0].root.session_ids(), [source_id]);
         let _ = fs::remove_dir_all(root);
     }
 }

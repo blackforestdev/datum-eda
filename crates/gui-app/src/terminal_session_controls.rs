@@ -1,4 +1,5 @@
 use super::{DockTab, Runtime};
+use datum_gui_protocol::TerminalSplitDirection;
 use datum_gui_render::HitTarget;
 
 impl Runtime {
@@ -80,6 +81,38 @@ impl Runtime {
             }
             Err(err) => {
                 let message = format!("terminal session open failed: {err}");
+                self.session.workspace_mut().ui.terminal.status = message.clone();
+                self.log_review_event(message);
+                self.invalidate_frame();
+            }
+        }
+        true
+    }
+
+    pub(super) fn spawn_terminal_split(&mut self, direction: TerminalSplitDirection) -> bool {
+        let context = crate::terminal_working_directory::context_for_new_terminal(
+            &self.terminal_launch_context,
+            self.session
+                .workspace()
+                .ui
+                .terminal
+                .current_working_directory
+                .as_deref(),
+        );
+        match self.terminal_sessions.begin_split_and_activate(
+            &context,
+            &mut self.session.workspace_mut().ui.terminal,
+            direction,
+        ) {
+            Ok(pending_id) => {
+                self.log_review_event(format!("opening terminal split {pending_id}"));
+                self.set_active_dock(DockTab::Terminal);
+                self.sync_terminal_tabs();
+                self.resize_terminal_to_dock();
+                self.invalidate_frame();
+            }
+            Err(err) => {
+                let message = format!("terminal split open failed: {err}");
                 self.session.workspace_mut().ui.terminal.status = message.clone();
                 self.log_review_event(message);
                 self.invalidate_frame();

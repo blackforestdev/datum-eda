@@ -28,6 +28,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         // terminal tab (owner decision 2026-08-14), and the session actions
         // whose resulting behavior expects terminal typing.
         HitTarget::TerminalScreen
+        | HitTarget::TerminalPaneScreen(_)
         | HitTarget::TerminalTab
         | HitTarget::TerminalSessionTab(_)
         | HitTarget::TerminalSessionNew => true,
@@ -158,6 +159,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::TerminalClipboardConfirmWrite,
         HitTarget::TerminalClipboardCancelWrite,
         HitTarget::TerminalScreen,
+        HitTarget::TerminalPaneScreen(id()),
         HitTarget::CheckFinding(id()),
         HitTarget::ProductionArtifact(id()),
         HitTarget::ProductionArtifactFile(id()),
@@ -191,8 +193,8 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         entry_targets += usize::from(hit_target_is_terminal_entry(target));
     }
     assert_eq!(
-        entry_targets, 4,
-        "exactly the four deliberate targets may arm terminal keyboard focus"
+        entry_targets, 5,
+        "exactly the five deliberate targets may arm terminal keyboard focus"
     );
 }
 

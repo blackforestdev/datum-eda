@@ -40,6 +40,22 @@ impl PreparedScene {
         retained_scene: &RetainedScene,
         terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
     ) -> Self {
+        let terminal_panes = terminal_snapshot
+            .map(|snapshot| {
+                vec![crate::TerminalPaneRenderState {
+                    session_id: state
+                        .ui
+                        .terminal
+                        .active_session_id
+                        .clone()
+                        .unwrap_or_else(|| "terminal".to_string()),
+                    focused: true,
+                    lane: state.ui.terminal.clone(),
+                    snapshot: snapshot.clone(),
+                    damage: Vec::new(),
+                }]
+            })
+            .unwrap_or_default();
         Self::from_workspace_with_terminal_renderer(
             state,
             width,
@@ -47,8 +63,7 @@ impl PreparedScene {
             scale_factor,
             camera,
             retained_scene,
-            terminal_snapshot,
-            &[],
+            &terminal_panes,
             None,
         )
     }
@@ -57,7 +72,7 @@ impl PreparedScene {
 pub(super) fn prepare_graphics(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
-    snapshot: Option<&datum_terminal_core::RenderSnapshot>,
+    panes: &[crate::TerminalPaneRenderState],
     sink: &mut Vec<crate::PreparedTerminalGraphic>,
 ) {
     if !matches!(
@@ -66,16 +81,38 @@ pub(super) fn prepare_graphics(
     ) {
         return;
     }
-    let Some(snapshot) = snapshot else {
+    if panes.is_empty() {
         return;
-    };
-    let geometry = datum_gui_viewport::terminal_screen_geometry(layout.bottom_strip.into());
-    crate::terminal_core_render::prepare_terminal_graphics(
-        snapshot,
-        &geometry,
-        state.ui.terminal.scroll_offset,
-        sink,
-    );
+    }
+    let root_geometry = datum_gui_viewport::terminal_screen_geometry(layout.bottom_strip.into());
+    let geometries = state
+        .ui
+        .terminal
+        .active_tab_id
+        .as_deref()
+        .and_then(|tab_id| {
+            state
+                .ui
+                .terminal
+                .tab_layouts
+                .iter()
+                .find(|tab| tab.tab_id == tab_id)
+        })
+        .map(|tab| datum_gui_viewport::terminal_split_geometries(root_geometry, tab))
+        .unwrap_or_default();
+    for pane in panes {
+        let geometry = geometries
+            .iter()
+            .find(|candidate| candidate.session_id == pane.session_id)
+            .map(|candidate| candidate.geometry)
+            .unwrap_or(root_geometry);
+        crate::terminal_core_render::prepare_terminal_graphics(
+            &pane.snapshot,
+            &geometry,
+            pane.lane.scroll_offset,
+            sink,
+        );
+    }
 }
 
 impl PreparedScene {

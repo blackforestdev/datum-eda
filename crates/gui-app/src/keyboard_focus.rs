@@ -105,6 +105,7 @@ pub(crate) fn hit_target_is_terminal_entry(target: &HitTarget) -> bool {
     matches!(
         target,
         HitTarget::TerminalScreen
+            | HitTarget::TerminalPaneScreen(_)
             | HitTarget::TerminalTab
             | HitTarget::TerminalSessionTab(_)
             | HitTarget::TerminalSessionNew

@@ -1,6 +1,7 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
 use datum_gui_viewport::{
     TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry,
+    terminal_split_geometries,
 };
 
 use super::{
@@ -37,8 +38,7 @@ struct BottomDockLayout {
 }
 
 pub(super) struct TerminalRenderInput<'a> {
-    pub(super) snapshot: &'a datum_terminal_core::RenderSnapshot,
-    pub(super) damage: &'a [datum_terminal_core::Damage],
+    pub(super) panes: &'a [crate::TerminalPaneRenderState],
     pub(super) cache: Option<&'a mut crate::TerminalRenderCache>,
 }
 
@@ -186,28 +186,66 @@ pub(super) fn render_bottom_tabs(
             // row/column authority — the same shared geometry the PTY resize
             // path uses (datum_gui_viewport::terminal_screen_geometry), so the
             // rows drawn here always equal the rows the PTY was told.
-            let geometry = terminal_screen_geometry(layout.bottom_strip.into());
+            let root_geometry = terminal_screen_geometry(layout.bottom_strip.into());
             if let Some(terminal_render) = terminal_render {
                 if let Some(cache) = terminal_render.cache {
-                    cache.render(
-                        state,
-                        terminal_render.snapshot,
-                        terminal_render.damage,
-                        &geometry,
-                        (panel_quads, text_runs, hit_regions),
+                    let active_layout =
+                        state
+                            .ui
+                            .terminal
+                            .active_tab_id
+                            .as_deref()
+                            .and_then(|tab_id| {
+                                state
+                                    .ui
+                                    .terminal
+                                    .tab_layouts
+                                    .iter()
+                                    .find(|tab| tab.tab_id == tab_id)
+                            });
+                    let geometries = active_layout
+                        .map(|tab| terminal_split_geometries(root_geometry, tab))
+                        .unwrap_or_default();
+                    cache.retain_sessions(
+                        terminal_render
+                            .panes
+                            .iter()
+                            .map(|pane| pane.session_id.as_str()),
                     );
-                } else {
+                    for pane in terminal_render.panes {
+                        let geometry = geometries
+                            .iter()
+                            .find(|candidate| candidate.session_id == pane.session_id)
+                            .map(|candidate| candidate.geometry)
+                            .unwrap_or(root_geometry);
+                        let target = if pane.focused {
+                            HitTarget::TerminalScreen
+                        } else {
+                            HitTarget::TerminalPaneScreen(pane.session_id.clone())
+                        };
+                        cache.render_pane(
+                            &pane.session_id,
+                            &pane.lane,
+                            pane.focused && state.ui.focus.is_terminal(),
+                            &pane.snapshot,
+                            &pane.damage,
+                            &geometry,
+                            target,
+                            (panel_quads, text_runs, hit_regions),
+                        );
+                    }
+                } else if let Some(pane) = terminal_render.panes.iter().find(|pane| pane.focused) {
                     crate::terminal_core_render::render_terminal_core_snapshot(
                         state,
-                        terminal_render.snapshot,
-                        &geometry,
+                        &pane.snapshot,
+                        &root_geometry,
                         panel_quads,
                         text_runs,
                         hit_regions,
                     );
                 }
             } else {
-                render_empty_terminal_surface(&geometry, panel_quads, hit_regions);
+                render_empty_terminal_surface(&root_geometry, panel_quads, hit_regions);
             }
         }
     }

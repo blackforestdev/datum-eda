@@ -8,7 +8,7 @@
 use super::{
     TerminalClipboardShortcut, terminal_character_sequence, terminal_clipboard_shortcut,
     terminal_new_session_shortcut, terminal_search_shortcut, terminal_space_sequence,
-    terminal_tab_sequence,
+    terminal_split_shortcut, terminal_tab_sequence,
 };
 use crate::keyboard_focus::{KeyClass, RouteDecision, key_route};
 use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
@@ -50,6 +50,38 @@ fn ctrl_shift_t_is_the_nonrepeating_new_session_shortcut() {
         key,
         ModifiersState::CONTROL,
     ));
+}
+
+#[test]
+fn ctrl_shift_o_and_e_are_nonrepeating_split_shortcuts() {
+    let modifiers = ModifiersState::CONTROL | ModifiersState::SHIFT;
+    assert_eq!(
+        terminal_split_shortcut(
+            ElementState::Pressed,
+            false,
+            PhysicalKey::Code(KeyCode::KeyO),
+            modifiers,
+        ),
+        Some(datum_gui_protocol::TerminalSplitDirection::SideBySide)
+    );
+    assert_eq!(
+        terminal_split_shortcut(
+            ElementState::Pressed,
+            false,
+            PhysicalKey::Code(KeyCode::KeyE),
+            modifiers,
+        ),
+        Some(datum_gui_protocol::TerminalSplitDirection::Stacked)
+    );
+    assert!(
+        terminal_split_shortcut(
+            ElementState::Pressed,
+            true,
+            PhysicalKey::Code(KeyCode::KeyO),
+            modifiers,
+        )
+        .is_none()
+    );
 }
 
 #[test]

@@ -347,15 +347,44 @@ impl Runtime {
     /// rectangle via the shared geometry — never from a separate chrome
     /// estimate (the retired 76px budget drift).
     pub(super) fn resize_terminal_to_dock(&mut self) {
-        let geometry = self.terminal_screen_geometry();
-        let (cols, rows) = (geometry.columns, geometry.rows);
+        let root_geometry = self.terminal_screen_geometry();
+        let active_layout = self
+            .workspace()
+            .ui
+            .terminal
+            .active_tab_id
+            .as_deref()
+            .and_then(|tab_id| {
+                self.workspace()
+                    .ui
+                    .terminal
+                    .tab_layouts
+                    .iter()
+                    .find(|tab| tab.tab_id == tab_id)
+            })
+            .cloned();
+        let panes = active_layout
+            .as_ref()
+            .map(|tab| datum_gui_viewport::terminal_split_geometries(root_geometry, tab))
+            .unwrap_or_default();
+        let focused = panes
+            .iter()
+            .find(|pane| pane.focused)
+            .map(|pane| pane.geometry)
+            .unwrap_or(root_geometry);
+        let (cols, rows) = (focused.columns, focused.rows);
         append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
-        match self.terminal_sessions.resize_active_surface(
-            cols,
-            rows,
-            geometry.screen.width.round() as u32,
-            geometry.screen.height.round() as u32,
-        ) {
+        let result = if panes.is_empty() {
+            self.terminal_sessions.resize_active_surface(
+                cols,
+                rows,
+                focused.screen.width.round() as u32,
+                focused.screen.height.round() as u32,
+            )
+        } else {
+            self.terminal_sessions.resize_active_tab_surfaces(&panes)
+        };
+        match result {
             Ok(()) => {
                 let terminal = &mut self.session.workspace_mut().ui.terminal;
                 terminal.columns = cols;

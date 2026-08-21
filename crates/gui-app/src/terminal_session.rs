@@ -55,6 +55,22 @@ struct PendingTerminalSpawn {
     label: String,
     result: Receiver<std::result::Result<TerminalSession, String>>,
     canceled: bool,
+    placement: PendingTerminalPlacement,
+}
+
+#[derive(Clone)]
+enum PendingTerminalPlacement {
+    NewTab,
+    Split {
+        source_session_id: String,
+        direction: datum_gui_protocol::TerminalSplitDirection,
+    },
+}
+
+impl PendingTerminalPlacement {
+    fn is_new_tab(&self) -> bool {
+        matches!(self, Self::NewTab)
+    }
 }
 
 struct TerminalSessionSlot {
@@ -203,6 +219,7 @@ impl TerminalSessionRegistry {
             .iter()
             .position(|slot| slot.session.session_id() == session_id)
             .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
+        self.focus_terminal_session_in_tab(session_id);
         self.activate(session_id)?;
         if self.active_pending_id.take().is_some() {
             lane.swap_session_projection(&mut self.sessions[target].parked_lane);
@@ -256,18 +273,35 @@ impl TerminalSessionRegistry {
         if self.active_pending_id.is_some() {
             anyhow::bail!("terminal session is still starting");
         }
-        let slot = &mut self.sessions[self.active_index];
-        let phase = slot
+        let phase = self.sessions[self.active_index]
             .session
             .shutdown_snapshot()
             .map(|snapshot| snapshot.phase);
         if phase != Some(crate::terminal_transport::ShutdownPhase::Closed)
-            || !slot.session.presentation_complete()
+            || !self.sessions[self.active_index]
+                .session
+                .presentation_complete()
         {
+            let slot = &mut self.sessions[self.active_index];
             slot.pending_restart = true;
             return terminate_terminal_session(&slot.session, state);
         }
-        Self::replace_slot_session(slot, state, context, self.terminal_wake.clone())
+        let previous_id = self.sessions[self.active_index]
+            .session
+            .session_id()
+            .to_string();
+        Self::replace_slot_session(
+            &mut self.sessions[self.active_index],
+            state,
+            context,
+            self.terminal_wake.clone(),
+        )?;
+        let replacement_id = self.sessions[self.active_index]
+            .session
+            .session_id()
+            .to_string();
+        self.replace_terminal_session_identity(&previous_id, &replacement_id);
+        Ok(())
     }
 
     fn replace_slot_session(
@@ -316,6 +350,7 @@ impl TerminalSessionRegistry {
             if !ready {
                 continue;
             }
+            let previous_id = self.sessions[index].session.session_id().to_string();
             if index == self.active_index {
                 Self::replace_slot_session(
                     &mut self.sessions[index],
@@ -333,6 +368,8 @@ impl TerminalSessionRegistry {
                 )?;
                 self.sessions[index].parked_lane = lane;
             }
+            let replacement_id = self.sessions[index].session.session_id().to_string();
+            self.replace_terminal_session_identity(&previous_id, &replacement_id);
             changed = true;
         }
         if changed {

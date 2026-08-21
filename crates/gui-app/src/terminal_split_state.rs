@@ -27,9 +27,15 @@ impl TerminalSessionRegistry {
             .find(|tab| tab.tab_id == pending_id)
         {
             *tab = TerminalTabLayout::single(session_id);
-        } else {
-            self.add_standalone_terminal_tab(session_id);
+            return;
         }
+        for tab in &mut self.terminal_tabs {
+            if replace_leaf_id(&mut tab.root, pending_id, &session_id) {
+                tab.focused_session_id = session_id;
+                return;
+            }
+        }
+        self.add_standalone_terminal_tab(session_id);
     }
 
     pub(super) fn remove_terminal_tab_session(&mut self, session_id: &str) {
@@ -84,27 +90,33 @@ impl TerminalSessionRegistry {
 
     pub(super) fn sync_terminal_tab_layouts(&self, state: &mut TerminalLaneState) {
         state.tab_layouts = self.terminal_tabs.clone();
-        for pending in self
-            .pending_spawns
-            .iter()
-            .filter(|pending| !pending.canceled)
-        {
-            if !state
-                .tab_layouts
-                .iter()
-                .any(|tab| tab.tab_id == pending.pending_id)
-            {
-                state
-                    .tab_layouts
-                    .push(TerminalTabLayout::single(pending.pending_id.clone()));
-            }
-        }
         state.active_tab_id = if let Some(pending_id) = self.active_pending_id.as_ref() {
             Some(pending_id.clone())
         } else {
             self.active_tab_for_session(self.active().session_id())
                 .map(|tab| tab.tab_id.clone())
         };
+    }
+
+    pub(super) fn focus_terminal_session_in_tab(&mut self, session_id: &str) {
+        if let Some(tab) = self
+            .terminal_tabs
+            .iter_mut()
+            .find(|tab| tab.root.contains_session(session_id))
+        {
+            tab.focused_session_id = session_id.to_string();
+        }
+    }
+
+    pub(super) fn replace_terminal_session_identity(&mut self, old_id: &str, new_id: &str) {
+        for tab in &mut self.terminal_tabs {
+            if replace_leaf_id(&mut tab.root, old_id, new_id) {
+                if tab.focused_session_id == old_id {
+                    tab.focused_session_id = new_id.to_string();
+                }
+                return;
+            }
+        }
     }
 
     fn active_tab_for_session(&self, session_id: &str) -> Option<&TerminalTabLayout> {
@@ -114,8 +126,7 @@ impl TerminalSessionRegistry {
     }
 
     pub(super) fn remove_pending_terminal_tab(&mut self, pending: &PendingTerminalSpawn) {
-        self.terminal_tabs
-            .retain(|tab| tab.tab_id != pending.pending_id);
+        self.remove_terminal_tab_session(&pending.pending_id);
     }
 }
 
@@ -141,6 +152,19 @@ fn split_leaf(
         TerminalSplitNode::Split { first, second, .. } => {
             split_leaf(first, existing_session_id, new_session_id, direction)
                 || split_leaf(second, existing_session_id, new_session_id, direction)
+        }
+    }
+}
+
+fn replace_leaf_id(node: &mut TerminalSplitNode, old_id: &str, new_id: &str) -> bool {
+    match node {
+        TerminalSplitNode::Session { session_id } if session_id == old_id => {
+            *session_id = new_id.to_string();
+            true
+        }
+        TerminalSplitNode::Session { .. } => false,
+        TerminalSplitNode::Split { first, second, .. } => {
+            replace_leaf_id(first, old_id, new_id) || replace_leaf_id(second, old_id, new_id)
         }
     }
 }

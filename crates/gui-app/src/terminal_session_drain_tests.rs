@@ -1,4 +1,5 @@
 use super::*;
+use crate::terminal_session::PendingTerminalPlacement;
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_core_adapter::TerminalCoreSessionAdapter,
@@ -34,6 +35,7 @@ fn active_pending_tab_keeps_previous_session_output_in_its_parked_projection() {
         label: "shell 2".to_string(),
         result,
         canceled: false,
+        placement: PendingTerminalPlacement::NewTab,
     });
     registry.active_pending_id = Some("pending-shell-2".to_string());
     registry.sessions[0]

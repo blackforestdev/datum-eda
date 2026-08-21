@@ -22,8 +22,7 @@ impl PreparedScene {
         scale_factor: f32,
         camera: CameraState,
         retained_scene: &RetainedScene,
-        terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
-        terminal_damage: &[datum_terminal_core::Damage],
+        terminal_panes: &[crate::TerminalPaneRenderState],
         terminal_cache: Option<&mut crate::TerminalRenderCache>,
     ) -> Self {
         let scale = scale_factor.max(0.01);
@@ -96,9 +95,8 @@ impl PreparedScene {
         );
         render_bottom_tabs(
             state,
-            terminal_snapshot.map(|snapshot| bottom_dock::TerminalRenderInput {
-                snapshot,
-                damage: terminal_damage,
+            (!terminal_panes.is_empty()).then_some(bottom_dock::TerminalRenderInput {
+                panes: terminal_panes,
                 cache: terminal_cache,
             }),
             &layout,
@@ -106,7 +104,7 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
-        terminal_scene::prepare_graphics(state, &layout, terminal_snapshot, &mut terminal_graphics);
+        terminal_scene::prepare_graphics(state, &layout, terminal_panes, &mut terminal_graphics);
         terminal_clipboard_menu::render_terminal_clipboard_menu(
             state,
             &layout,
