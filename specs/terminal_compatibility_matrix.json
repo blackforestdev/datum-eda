@@ -1,0 +1,31 @@
+{
+  "schema": "datum-terminal-compatibility-matrix-v1",
+  "frontier_step": "DTC-P28",
+  "production_path": "TerminalTransportSession -> TerminalCoreSessionAdapter -> RenderSnapshot",
+  "external_witnesses": [
+    {"name": "bash", "fixture": "interactive no-profile shell", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "ANSI marker, exact input and code 0"},
+    {"name": "zsh", "fixture": "interactive -f shell", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "ANSI marker, exact input and code 0"},
+    {"name": "fish", "fixture": "interactive --no-config shell", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "ANSI marker, exact input and code 0"},
+    {"name": "ssh", "fixture": "BatchMode local refused connection", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "client diagnostic and exact code 255"},
+    {"name": "tmux", "fixture": "isolated socket and /bin/sh session", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "alternate-screen marker, input, teardown and code 0"},
+    {"name": "less", "fixture": "80-line ANSI-safe text file", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "navigation to final line, quit and code 0"},
+    {"name": "vim", "fixture": "vim.tiny with clean configuration", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "fixture text, command-mode quit and code 0"},
+    {"name": "neovim", "fixture": "nvim with clean configuration", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "fixture text, command-mode quit and code 0"},
+    {"name": "htop", "fixture": "interactive process display", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "CPU display, q input and code 0"},
+    {"name": "btop", "fixture": "interactive process display", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "CPU display, q input and code 0"},
+    {"name": "python", "fixture": "interactive python3 -q", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "evaluated marker and code 0"},
+    {"name": "git", "fixture": "git --version", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "version output and code 0"},
+    {"name": "cargo", "fixture": "cargo --version", "proof": "production_pty_proves_named_shell_tui_and_tool_compatibility", "expected": "version output and code 0"}
+  ],
+  "datum_authored_standards_probes": [
+    {"domain": "VT/DEC and color", "proof": "scripts/check_terminal_core_proof.py", "expected": "parser, screen, style and chunk-equivalence suites pass"},
+    {"domain": "Unicode 17 text", "proof": "scripts/check_terminal_core_boundary.py and datum-terminal-core unicode_tests", "expected": "grapheme, width, BiDi, shaping and resize corpora pass"},
+    {"domain": "modern protocols", "proof": "scripts/check_terminal_core_boundary.py and datum-terminal-core input_tests/semantic_tests", "expected": "focus, synchronized output, OSC, kitty keyboard and notification suites pass"},
+    {"domain": "graphics", "proof": "scripts/check_terminal_kitty_boundary.py and datum-terminal-core kitty_graphics_tests/sixel_tests", "expected": "kitty and sixel decode, bounds, placement and reset suites pass"},
+    {"domain": "production adapter", "proof": "scripts/check_terminal_core_adapter_boundary.py", "expected": "opaque PTY bytes, replies, events, damage and render snapshots retain one authority"}
+  ],
+  "optional_external_conformance": [
+    {"name": "vttest", "status": "optional black-box witness; not counted as normative parity", "authority": "Datum-authored VT/DEC fixtures"},
+    {"name": "esctest2", "status": "optional black-box witness; not counted as normative parity", "authority": "Datum-authored parser and screen fixtures"}
+  ]
+}

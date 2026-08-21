@@ -567,3 +567,7 @@ mod tests {
         let _ = fs::remove_dir_all(root);
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_compatibility_tests.rs"]
+mod compatibility_tests;

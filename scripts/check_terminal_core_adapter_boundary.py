@@ -170,13 +170,13 @@ def check(root: Path) -> list[str]:
     for marker in (
         "core: TerminalCoreSessionAdapter",
         ".resize(cols, rows, pixel_width, pixel_height)?",
-        "slot.core = TerminalCoreSessionAdapter::new(",
+        "slot.core = TerminalCoreSessionAdapter::new_with_profile(",
     ):
         if marker not in session + session_render:
             failures.append(f"session registry lacks TerminalCore ownership marker: {marker}")
     if "screen: TerminalScreen" in session:
         failures.append("production session slot must not retain the provisional TerminalScreen")
-    if "TerminalCoreSessionAdapter::new(" not in spawn:
+    if "TerminalCoreSessionAdapter::new_with_profile(" not in spawn:
         failures.append("every spawned session must receive its own TerminalCore adapter")
     if "TerminalScreen" in adapter:
         failures.append("the production TerminalCore adapter must not call the provisional parser")

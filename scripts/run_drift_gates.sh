@@ -27,6 +27,8 @@ python3 scripts/test_terminal_core_boundary.py
 python3 scripts/check_terminal_core_boundary.py
 python3 scripts/test_terminal_core_adapter_boundary.py
 python3 scripts/check_terminal_core_adapter_boundary.py
+python3 scripts/test_terminal_compatibility_matrix.py
+python3 scripts/check_terminal_compatibility_matrix.py
 python3 scripts/test_terminal_core_renderer_boundary.py
 python3 scripts/check_terminal_core_renderer_boundary.py
 python3 scripts/test_terminal_native_interaction.py

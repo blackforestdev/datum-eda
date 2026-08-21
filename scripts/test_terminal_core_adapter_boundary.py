@@ -38,7 +38,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
         )
         (root / guard.SESSION).write_text(
             "struct Slot { core: TerminalCoreSessionAdapter }\n"
-            "fn restart(){slot.core = TerminalCoreSessionAdapter::new();}\n",
+            "fn restart(){slot.core = TerminalCoreSessionAdapter::new_with_profile();}\n",
             encoding="utf-8",
         )
         (root / guard.SESSION_RENDER).write_text(
@@ -46,7 +46,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.SPAWN).write_text(
-            "fn spawn(){TerminalCoreSessionAdapter::new();}\n", encoding="utf-8"
+            "fn spawn(){TerminalCoreSessionAdapter::new_with_profile();}\n", encoding="utf-8"
         )
         (root / guard.TERMINAL_PROCESS).write_text(
             "fn environment(){\n"
@@ -175,6 +175,13 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
         for relative, old, new in mutations:
             with self.subTest(marker=old):
                 self.assert_mutation_fails(relative, old, new)
+
+    def test_session_core_construction_cannot_bypass_profile(self) -> None:
+        self.assert_mutation_fails(
+            guard.SPAWN,
+            "TerminalCoreSessionAdapter::new_with_profile()",
+            "TerminalCoreSessionAdapter::new()",
+        )
 
     def test_external_terminal_dependency_fails(self) -> None:
         self.assert_mutation_fails(
