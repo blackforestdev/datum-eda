@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -48,8 +49,31 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "fn spawn(){TerminalCoreSessionAdapter::new();}\n", encoding="utf-8"
         )
         (root / guard.TERMINAL_PROCESS).write_text(
-            "fn environment(){ env_remove(\"TERM_PROGRAM\"); }\n", encoding="utf-8"
+            "fn environment(){\n"
+            "let request = apply_datum_terminal_identity(request, &terminfo_root);\n"
+            ".env(\"TERM\", DATUM_TERM);\n"
+            ".env(\"TERMINFO\", terminfo_root.as_os_str());\n"
+            ".env(\"TERM_PROGRAM\", DATUM_TERM_PROGRAM);\n"
+            "env_remove(\"TERM_PROGRAM\");\n}\n",
+            encoding="utf-8",
         )
+        (root / guard.TERMINAL_CAPABILITY).write_text(
+            'const DATUM_TERM: &str = "datum-256color";\n'
+            'const DATUM_TERM_PROGRAM: &str = "Datum";\n'
+            'const ENTRY: &[u8] = include_bytes!("datum-256color");\n'
+            "fn install_session_terminfo() {}\n",
+            encoding="utf-8",
+        )
+        terminfo_source = root / guard.TERMINFO_SOURCE
+        terminfo_source.parent.mkdir(parents=True, exist_ok=True)
+        terminfo_source.write_text(
+            "datum-256color|Datum EDA terminal with 256 colors,\n"
+            "\tcolors#256,\n\tpairs#32767,\n\tTc,\n\tRGB,\n\tSu,\n\tAX,\n",
+            encoding="utf-8",
+        )
+        terminfo_entry = root / guard.TERMINFO_ENTRY
+        terminfo_entry.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(guard.ROOT / guard.TERMINFO_ENTRY, terminfo_entry)
         (root / guard.DRAIN).write_text(
             "fn drain(){\n"
             "debug_assert_eq!(slot.core.session_id(), slot.session.session_id());\n"
@@ -112,6 +136,33 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             guard.TERMINAL_PROCESS,
             'env_remove("TERM_PROGRAM")',
             '.env("TERM", "xterm-256color")',
+        )
+
+    def test_missing_datum_identity_or_compiled_entry_drift_fails(self) -> None:
+        mutations = (
+            (guard.TERMINAL_PROCESS, '.env("TERM", DATUM_TERM)', ""),
+            (guard.TERMINFO_SOURCE, "\tTc,", "\tXT,"),
+            (guard.TERMINFO_ENTRY, None, None),
+        )
+        for relative, old, new in mutations:
+            with self.subTest(relative=relative):
+                temporary, root = self.fixture()
+                self.addCleanup(temporary.cleanup)
+                path = root / relative
+                if old is None:
+                    path.write_bytes(path.read_bytes() + b"drift")
+                else:
+                    path.write_text(
+                        path.read_text(encoding="utf-8").replace(old, new),
+                        encoding="utf-8",
+                    )
+                self.assertTrue(guard.check(root))
+
+    def test_output_projection_cannot_reset_scrollback(self) -> None:
+        self.assert_mutation_fails(
+            guard.ADAPTER,
+            "fn apply(){",
+            "fn apply(){ lane.scroll_offset = 0;",
         )
 
     def test_missing_reply_resize_finish_or_identity_fails(self) -> None:

@@ -252,7 +252,6 @@ impl TerminalCoreSessionAdapter {
         lane.focus_event_reporting = modes.focus_reporting;
         lane.mouse_reporting_mode = mouse_tracking(state.mouse_tracking()).map(str::to_string);
         lane.mouse_coordinate_encoding = mouse_encoding(state.mouse_encoding()).map(str::to_string);
-        lane.scroll_offset = 0;
         Ok(())
     }
 

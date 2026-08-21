@@ -171,6 +171,21 @@ fn repeated_bells_remain_bounded_but_preserve_visible_count() {
 }
 
 #[test]
+fn incoming_output_preserves_the_users_scrollback_anchor() {
+    let mut adapter = adapter("stable-scrollback");
+    let mut lane = TerminalLaneState {
+        scroll_offset: 17,
+        ..TerminalLaneState::default()
+    };
+
+    adapter
+        .apply_output(&mut lane, b"background output\r\n")
+        .unwrap();
+
+    assert_eq!(lane.scroll_offset, 17);
+}
+
+#[test]
 fn native_input_selection_search_and_links_use_the_same_core_state() {
     use datum_terminal_core::{
         FocusInput, ImeInput, KeyCode, KeyEventKind, KeyInput, KeyModifiers, MouseAction,

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import sys
 import re
+import hashlib
 from pathlib import Path
 
 
@@ -17,6 +18,10 @@ SESSION_RENDER = SRC / "terminal_session_render.rs"
 DRAIN = SRC / "terminal_session_drain.rs"
 SPAWN = SRC / "terminal_session_spawn.rs"
 TERMINAL_PROCESS = SRC / "terminal_process.rs"
+TERMINAL_CAPABILITY = SRC / "terminal_capability.rs"
+TERMINFO_SOURCE = APP / "assets/terminfo/datum-256color.terminfo"
+TERMINFO_ENTRY = APP / "assets/terminfo/compiled/d/datum-256color"
+TERMINFO_ENTRY_SHA256 = "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
 TERMINAL_LANE = Path("crates/gui-protocol/src/terminal_lane.rs")
 RETIRED_AUTHORITIES = (
     SRC / "terminal_screen.rs",
@@ -66,6 +71,7 @@ REQUIRED_PROOFS = (
     "stream_finish_repairs_incomplete_utf8_before_lifecycle_completion",
     "repeated_bells_remain_bounded_but_preserve_visible_count",
     "render_state_preserves_surface_pixels_and_consumes_damage_once",
+    "incoming_output_preserves_the_users_scrollback_anchor",
 )
 
 
@@ -85,6 +91,9 @@ def check(root: Path) -> list[str]:
     tests = read(root, SRC / "terminal_core_adapter_tests.rs")
     terminal_lane = read(root, TERMINAL_LANE)
     terminal_process = read(root, TERMINAL_PROCESS)
+    terminal_capability = read(root, TERMINAL_CAPABILITY)
+    terminfo_source = read(root, TERMINFO_SOURCE)
+    terminfo_entry = root / TERMINFO_ENTRY
 
     for retired in RETIRED_AUTHORITIES:
         candidate = root / retired
@@ -96,6 +105,40 @@ def check(root: Path) -> list[str]:
     for marker in ('.env("TERM", "xterm-256color")', '.env("COLORTERM", "truecolor")'):
         if marker in terminal_process:
             failures.append(f"retired terminal capability overclaim returned: {marker}")
+    for marker in (
+        'DATUM_TERM: &str = "datum-256color"',
+        'DATUM_TERM_PROGRAM: &str = "Datum"',
+        'install_session_terminfo',
+        'include_bytes!',
+    ):
+        if marker not in terminal_capability:
+            failures.append(f"Datum capability owner lacks marker: {marker}")
+    for marker in (
+        'apply_datum_terminal_identity(request, &terminfo_root)',
+        '.env("TERM", DATUM_TERM)',
+        '.env("TERMINFO", terminfo_root.as_os_str())',
+        '.env("TERM_PROGRAM", DATUM_TERM_PROGRAM)',
+    ):
+        if marker not in terminal_process:
+            failures.append(f"terminal launch lacks truthful Datum identity marker: {marker}")
+    for marker in (
+        "datum-256color|Datum EDA terminal with 256 colors,",
+        "colors#256,",
+        "pairs#32767,",
+        "\tTc,",
+        "\tRGB,",
+        "\tSu,",
+        "\tAX,",
+    ):
+        if marker not in terminfo_source:
+            failures.append(f"Datum terminfo source lacks governed capability: {marker}")
+    for marker in ("xterm", "\tXT,", "\tXM=", "\tinitc="):
+        if marker in terminfo_source:
+            failures.append(f"Datum terminfo contains unproved capability claim: {marker}")
+    if not terminfo_entry.is_file():
+        failures.append("compiled Datum terminfo entry is missing")
+    elif hashlib.sha256(terminfo_entry.read_bytes()).hexdigest() != TERMINFO_ENTRY_SHA256:
+        failures.append("compiled Datum terminfo entry drifted from its reviewed source")
 
     if 'datum-terminal-core = { path = "../terminal-core" }' not in manifest:
         failures.append("gui-app must consume TerminalCore through the local path crate")
@@ -137,6 +180,8 @@ def check(root: Path) -> list[str]:
         failures.append("every spawned session must receive its own TerminalCore adapter")
     if "TerminalScreen" in adapter:
         failures.append("the production TerminalCore adapter must not call the provisional parser")
+    if "lane.scroll_offset = 0;" in adapter:
+        failures.append("PTY output projection must not reset the user's scrollback anchor")
 
     ordered = (
         "debug_assert_eq!(slot.core.session_id(), slot.session.session_id())",

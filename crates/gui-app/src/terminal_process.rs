@@ -1,6 +1,7 @@
 //! Application adapter from Datum session context to opaque PTY transport.
 
 use crate::{
+    terminal_capability::{DATUM_TERM, DATUM_TERM_PROGRAM, install_session_terminfo},
     terminal_context::{
         DATUM_CLI, DATUM_LEGACY_CLI, tool_session_event_log_path, write_terminal_context,
         write_terminal_context_files,
@@ -16,8 +17,9 @@ pub(super) fn spawn_terminal_process(
 ) -> Result<TerminalSession> {
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     let mut terminal_context = write_terminal_context(context)?;
+    let terminfo_root = install_session_terminfo(&terminal_context.session_path)?;
     let request = TerminalTransportRequest::new(&shell, terminal_context.project_root.clone());
-    let mut request = apply_interactive_terminal_environment(request)
+    let mut request = apply_datum_terminal_identity(request, &terminfo_root)
         .env("DATUM_PROJECT_ROOT", context.project_root.as_os_str())
         .env("DATUM_CLI", DATUM_CLI)
         .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
@@ -57,16 +59,27 @@ pub(super) fn spawn_terminal_process(
     Ok(TerminalSession::from_transport(transport, terminal_context))
 }
 
-/// A terminal tab is a new presentation boundary, but DTC-P26 deliberately
-/// does not invent a Datum terminfo identity. Preserve the launching process's
-/// TERM/COLORTERM/NO_COLOR policy until DTC-P27 installs truthful Datum terminfo,
-/// while preventing a parent emulator from being misidentified as PTY owner.
+/// Remove capability and owner identity inherited from the launching emulator.
+/// DTC-P27 applies Datum's own values after this sanitization step.
 fn apply_interactive_terminal_environment(
     request: TerminalTransportRequest,
 ) -> TerminalTransportRequest {
     request
+        .env_remove("TERM")
+        .env_remove("TERMINFO")
         .env_remove("TERM_PROGRAM")
         .env_remove("TERM_PROGRAM_VERSION")
+}
+
+fn apply_datum_terminal_identity(
+    request: TerminalTransportRequest,
+    terminfo_root: &std::path::Path,
+) -> TerminalTransportRequest {
+    apply_interactive_terminal_environment(request)
+        .env("TERM", DATUM_TERM)
+        .env("TERMINFO", terminfo_root.as_os_str())
+        .env("TERM_PROGRAM", DATUM_TERM_PROGRAM)
+        .env("TERM_PROGRAM_VERSION", env!("CARGO_PKG_VERSION"))
 }
 
 fn persist_context_before_start<T>(
@@ -83,7 +96,7 @@ mod tests {
     use std::cell::Cell;
 
     #[test]
-    fn interactive_terminal_environment_preserves_capability_policy_without_foreign_identity() {
+    fn interactive_terminal_environment_removes_foreign_capability_identity() {
         let request = TerminalTransportRequest::new("/bin/sh", "/tmp".into())
             .env("NO_COLOR", "1")
             .env("TERM", "owner-terminal")
@@ -92,10 +105,8 @@ mod tests {
             .env("TERM_PROGRAM_VERSION", "fixture");
         let (command, _, _) = apply_interactive_terminal_environment(request).into_command();
         let env = command.get_envs().collect::<Vec<_>>();
-        assert!(env.contains(&(
-            std::ffi::OsStr::new("TERM"),
-            Some(std::ffi::OsStr::new("owner-terminal"))
-        )));
+        assert!(env.contains(&(std::ffi::OsStr::new("TERM"), None)));
+        assert!(env.contains(&(std::ffi::OsStr::new("TERMINFO"), None)));
         assert!(env.contains(&(
             std::ffi::OsStr::new("COLORTERM"),
             Some(std::ffi::OsStr::new("owner-color-policy"))
@@ -106,6 +117,33 @@ mod tests {
         )));
         for key in ["TERM_PROGRAM", "TERM_PROGRAM_VERSION"] {
             assert!(env.contains(&(std::ffi::OsStr::new(key), None)));
+        }
+    }
+
+    #[test]
+    fn datum_terminal_identity_replaces_the_launching_emulator_exactly() {
+        let root = std::path::Path::new("/tmp/datum-session/terminfo");
+        let request = TerminalTransportRequest::new("/bin/sh", "/tmp".into())
+            .env("TERM", "foreign-256color")
+            .env("TERMINFO", "/foreign/terminfo")
+            .env("TERM_PROGRAM", "foreign-terminal")
+            .env("TERM_PROGRAM_VERSION", "99");
+        let (command, _, _) = apply_datum_terminal_identity(request, root).into_command();
+        let env = command.get_envs().collect::<Vec<_>>();
+        for (key, value) in [
+            ("TERM", DATUM_TERM),
+            ("TERMINFO", root.to_str().expect("fixture path is UTF-8")),
+            ("TERM_PROGRAM", DATUM_TERM_PROGRAM),
+            ("TERM_PROGRAM_VERSION", env!("CARGO_PKG_VERSION")),
+        ] {
+            assert_eq!(
+                env.iter()
+                    .rev()
+                    .find(|(candidate, _)| *candidate == std::ffi::OsStr::new(key))
+                    .and_then(|(_, value)| *value),
+                Some(std::ffi::OsStr::new(value)),
+                "{key} must end with Datum's authoritative value"
+            );
         }
     }
 

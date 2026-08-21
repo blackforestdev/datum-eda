@@ -2697,7 +2697,7 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
@@ -2727,7 +2727,7 @@
           {
             "id": "DTC-P27",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Complete truthful shell identity and daily-driver UX: Datum terminfo, shell integration, tabs/splits/profiles/themes/fonts, search/history, links, graphics/security prompts, lifecycle, and maximize behavior.",
             "depends_on": [],
             "requirement_refs": [
@@ -2750,6 +2750,31 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-dtc-p27-daily-driver-20260821",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "cc0aa33",
+        "claimed_at": "2026-08-21T15:18:45Z",
+        "heartbeat_at": "2026-08-21T15:18:45Z",
+        "expires_at": "2026-08-21T23:18:45Z",
+        "scope": [
+          "crates/terminal-core",
+          "crates/gui-app/src/terminal_core_adapter",
+          "crates/gui-app/src/terminal_session",
+          "crates/gui-app/src/runtime_terminal_input.rs",
+          "crates/gui-app/src/runtime_terminal_pointer.rs",
+          "crates/gui-protocol/src/terminal_lane.rs",
+          "crates/gui-render/src",
+          "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "scripts",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ]
       }
     },
     {
