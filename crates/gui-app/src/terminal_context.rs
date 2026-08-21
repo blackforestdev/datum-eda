@@ -21,7 +21,6 @@ pub(super) const DATUM_CLI: &str = "datum-eda";
 pub(super) const DATUM_LEGACY_CLI: &str = "eda";
 
 pub(super) struct TerminalContext {
-    pub(super) project_root: PathBuf,
     pub(super) context_path: PathBuf,
     pub(super) latest_context_path: PathBuf,
     pub(super) session_path: PathBuf,
@@ -65,7 +64,6 @@ pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<
     let latest_context_path = datum_dir.join("gui-terminal-context.json");
     let session_path = tool_session_dir.join(format!("{session_id}.json"));
     let terminal_context = TerminalContext {
-        project_root: context.project_root.clone(),
         context_path,
         latest_context_path,
         session_path,

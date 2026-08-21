@@ -18,7 +18,7 @@ pub(super) fn spawn_terminal_process(
     let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     let mut terminal_context = write_terminal_context(context)?;
     let terminfo_root = install_session_terminfo(&terminal_context.session_path)?;
-    let request = TerminalTransportRequest::new(&shell, terminal_context.project_root.clone());
+    let request = TerminalTransportRequest::new(&shell, context.launch_working_directory.clone());
     let mut request = apply_datum_terminal_identity(request, &terminfo_root)
         .env("DATUM_PROJECT_ROOT", context.project_root.as_os_str())
         .env("DATUM_CLI", DATUM_CLI)

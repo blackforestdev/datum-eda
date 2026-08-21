@@ -73,6 +73,17 @@ REQUIRED = {
         "terminal_link_target_at_cursor",
         "terminal_clipboard_link_target",
     ),
+    "terminal_session_controls.rs": (
+        "context_for_new_terminal",
+        "current_working_directory",
+    ),
+    "terminal_working_directory.rs": (
+        "context_for_new_terminal",
+        "local_working_directory",
+        "percent_decode_path",
+        "new_terminal_inherits_local_osc7_directory_without_changing_project_identity",
+        "remote_malformed_and_stale_reports_fall_back_to_project_root",
+    ),
     "terminal_accessibility_bridge.rs": (
         "TerminalAccessibilityEvent",
         "TextChanged",

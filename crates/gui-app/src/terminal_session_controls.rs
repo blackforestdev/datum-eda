@@ -59,10 +59,19 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        match self.terminal_sessions.begin_spawn_and_activate(
+        let context = crate::terminal_working_directory::context_for_new_terminal(
             &self.terminal_launch_context,
-            &mut self.session.workspace_mut().ui.terminal,
-        ) {
+            self.session
+                .workspace()
+                .ui
+                .terminal
+                .current_working_directory
+                .as_deref(),
+        );
+        match self
+            .terminal_sessions
+            .begin_spawn_and_activate(&context, &mut self.session.workspace_mut().ui.terminal)
+        {
             Ok(pending_id) => {
                 self.log_review_event(format!("opening terminal session {pending_id}"));
                 self.set_active_dock(DockTab::Terminal);

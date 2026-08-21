@@ -71,6 +71,8 @@ mod terminal_control_input;
 mod terminal_core_adapter;
 mod terminal_input;
 mod terminal_narration;
+#[cfg(test)]
+mod terminal_new_session_cwd_tests;
 mod terminal_process;
 mod terminal_proposal_context;
 mod terminal_session;
@@ -79,6 +81,7 @@ mod terminal_session_controls;
 mod terminal_session_events;
 mod terminal_tab_drag;
 mod terminal_transport;
+mod terminal_working_directory;
 mod workspace_keyboard;
 use app_bootstrap::{GuiArgs, LaunchState};
 use app_shell::{App, fatal_gui_error, terminal_scrollback_page_step};

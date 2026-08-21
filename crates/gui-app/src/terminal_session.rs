@@ -83,6 +83,10 @@ struct TerminalSessionSlot {
 #[derive(Debug, Clone)]
 pub(super) struct TerminalLaunchContext {
     pub(super) project_root: PathBuf,
+    /// Directory inherited by the launched shell. This is intentionally
+    /// separate from `project_root`, which remains Datum's stable project and
+    /// context identity when a new tab follows the active shell's OSC 7 CWD.
+    pub(super) launch_working_directory: PathBuf,
     pub(super) project_id: Option<String>,
     pub(super) project_name: Option<String>,
     pub(super) board_id: Option<String>,
@@ -441,6 +445,7 @@ pub(super) fn terminal_launch_context_from_state(
 ) -> TerminalLaunchContext {
     TerminalLaunchContext {
         project_root: project_root.to_path_buf(),
+        launch_working_directory: project_root.to_path_buf(),
         project_id: Some(state.scene.project_uuid.clone()),
         project_name: Some(state.scene.project_name.clone()),
         board_id: Some(state.scene.board_uuid.clone()),
@@ -511,7 +516,6 @@ pub(super) fn refresh_terminal_session_context(
     context: &TerminalLaunchContext,
 ) -> Result<()> {
     let terminal_context = TerminalContext {
-        project_root: context.project_root.clone(),
         context_path: session.context_path.clone(),
         latest_context_path: session.latest_context_path.clone(),
         session_path: session.session_path.clone(),

@@ -29,6 +29,7 @@ impl TerminalLaunchContext {
     pub(crate) fn for_project_root(project_root: &std::path::Path) -> Self {
         Self {
             project_root: project_root.to_path_buf(),
+            launch_working_directory: project_root.to_path_buf(),
             project_id: None,
             project_name: None,
             board_id: None,

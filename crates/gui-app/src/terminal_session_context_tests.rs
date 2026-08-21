@@ -11,6 +11,7 @@ fn terminal_launch_context_for_project_root(
 ) -> TerminalLaunchContext {
     TerminalLaunchContext {
         project_root: project_root.to_path_buf(),
+        launch_working_directory: project_root.to_path_buf(),
         project_id: None,
         project_name: None,
         board_id: None,

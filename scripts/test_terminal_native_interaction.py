@@ -110,6 +110,23 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("validate_http_target" in failure for failure in failures))
         self.assertTrue(any("desktop handoff escaped" in failure for failure in failures))
 
+    def test_new_session_cwd_cannot_bypass_local_path_policy(self) -> None:
+        sources = valid_sources()
+        sources["terminal_session_controls.rs"] = sources[
+            "terminal_session_controls.rs"
+        ].replace("context_for_new_terminal", "clone_project_context")
+        sources["terminal_working_directory.rs"] = sources[
+            "terminal_working_directory.rs"
+        ].replace("percent_decode_path", "use_uri_as_path")
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("context_for_new_terminal" in failure for failure in failures))
+        self.assertTrue(any("percent_decode_path" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()
