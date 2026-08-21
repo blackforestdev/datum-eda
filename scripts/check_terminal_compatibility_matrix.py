@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -33,6 +35,18 @@ def failures(root: pathlib.Path = ROOT) -> list[str]:
         problems.append("DTC-P28 matrix schema is missing or changed")
     if matrix.get("frontier_step") != "DTC-P28":
         problems.append("DTC-P28 matrix is not bound to its Frontier step")
+    revision = matrix.get("last_verified_core_revision", "")
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        problems.append("DTC-P28 matrix lacks an exact verified core revision")
+    artifact_sha = matrix.get("verified_artifact_sha256", "")
+    if not re.fullmatch(r"[0-9a-f]{64}", artifact_sha):
+        problems.append("DTC-P28 matrix lacks an exact evidence SHA-256")
+    artifact_value = matrix.get("result_artifact", "")
+    artifact = root / artifact_value
+    if revision not in artifact_value or not artifact.is_file():
+        problems.append("DTC-P28 matrix lacks its checked-in revision-addressed artifact")
+    elif hashlib.sha256(artifact.read_bytes()).hexdigest() != artifact_sha:
+        problems.append("DTC-P28 checked-in evidence SHA-256 does not match the matrix")
     witnesses = {entry.get("name") for entry in matrix.get("external_witnesses", [])}
     missing = REQUIRED_WITNESSES - witnesses
     extra = witnesses - REQUIRED_WITNESSES
@@ -40,6 +54,10 @@ def failures(root: pathlib.Path = ROOT) -> list[str]:
         problems.append("DTC-P28 matrix lacks witnesses: " + ", ".join(sorted(missing)))
     if extra:
         problems.append("DTC-P28 matrix has ungoverned witnesses: " + ", ".join(sorted(extra)))
+    for entry in matrix.get("external_witnesses", []):
+        for field in ("version", "fixture", "proof", "expected"):
+            if not entry.get(field):
+                problems.append(f"DTC-P28 witness {entry.get('name')} lacks {field}")
     domains = {entry.get("domain") for entry in matrix.get("datum_authored_standards_probes", [])}
     if domains != REQUIRED_DOMAINS:
         problems.append("DTC-P28 standards domains do not match the governed set")

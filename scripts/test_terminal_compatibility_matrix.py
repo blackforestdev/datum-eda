@@ -24,6 +24,11 @@ class CompatibilityMatrixGuardTests(unittest.TestCase):
             target = root / source.relative_to(guard.ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
+        matrix_path = root / guard.MATRIX.relative_to(guard.ROOT)
+        matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+        artifact = pathlib.Path(matrix["result_artifact"])
+        (root / artifact).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(guard.ROOT / artifact, root / artifact)
         self.addCleanup(shutil.rmtree, root)
         return root
 
