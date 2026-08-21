@@ -2704,9 +2704,7 @@
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.3"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.5"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum's TerminalCore-backed terminal becomes a truthful daily-driver surface with complete history, reflow, search, links, session layout, profiles, shell identity, and lifecycle UX.",
         "canonical_next_step_id": null,
@@ -2752,9 +2750,7 @@
           "effects": [
             "The modern-protocols task loses the daily-driver UX blocker while retaining its own explicit selection and acceptance boundary."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.5"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -2771,9 +2767,9 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Close synchronized output, OSC 8/52, kitty keyboard, kitty graphics/sixel, security policy, and complete accessibility behavior.",
       "dependencies": [
@@ -2785,7 +2781,7 @@
       ],
       "completion": {
         "outcome": "Datum proves the modern terminal protocol, graphics, security, and accessibility ceiling against its production TerminalCore path.",
-        "canonical_next_step_id": "DTC-P28",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2802,7 +2798,7 @@
           {
             "id": "DTC-P28",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove Bash, zsh, fish, SSH, tmux, less, Vim/Neovim, htop/btop, Python, Git, Cargo, and standards probes on the production terminal build.",
             "depends_on": [],
             "requirement_refs": [
@@ -2811,7 +2807,17 @@
                 "marker": "DTC-P28"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "beb062f"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T3-PROTOCOLS:DTC-P28-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -2827,27 +2833,7 @@
           "selects_successor": false
         }
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-dtc-p28-compatibility-20260821",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "d9da1fd0067ffacb263d7d058f84b657b8565784",
-        "claimed_at": "2026-08-21T20:38:06Z",
-        "heartbeat_at": "2026-08-21T20:38:06Z",
-        "expires_at": "2026-08-22T04:38:06Z",
-        "scope": [
-          "crates/terminal-core",
-          "crates/gui-app/src/terminal_compatibility",
-          "crates/gui-app/src/terminal_session",
-          "scripts",
-          "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ]
-      }
+      "landing_commit": "beb062f"
     },
     {
       "key": "TERMINAL-T4A-AGENT-LAUNCH",
@@ -2860,9 +2846,9 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Implement native discovery adapters and datum-eda agent list/doctor/launch with protected per-session configuration for Codex, Claude Code, Cursor-compatible CLI, and generic local agents.",
       "dependencies": [
@@ -2871,7 +2857,117 @@
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.10"
-      ]
+      ],
+      "completion": {
+        "outcome": "Datum launches supported agent clients through ordinary owned PTYs with native discovery and ephemeral session-scoped configuration.",
+        "canonical_next_step_id": "AI-DISC-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "AI-DISC-01",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Implement the governed adapter registry for Codex, Claude Code, Cursor-compatible CLI, and generic local agents.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-DISC-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-DISC-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Add datum-eda agent list, doctor, and launch with ephemeral session-scoped configuration and no user-global mutation.",
+            "depends_on": [
+              "AI-DISC-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-DISC-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-DISC-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Launch each adapter through the real PTY with project cwd, authentication environment, and Datum discovery identity intact.",
+            "depends_on": [
+              "AI-DISC-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-DISC-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-DISC-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove version, missing-client, config-approval, resume, and teardown behavior with deterministic production-path tests.",
+            "depends_on": [
+              "AI-DISC-03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-DISC-04"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The context-authority package gains the native launcher and discovery prerequisite."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.10"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-terminal-agent-launch-20260821",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "beb062f6e3571b1552b968baebf854c09a2961d2",
+        "claimed_at": "2026-08-21T21:11:33Z",
+        "heartbeat_at": "2026-08-21T21:11:33Z",
+        "expires_at": "2026-08-22T05:11:33Z",
+        "scope": [
+          "crates/cli",
+          "crates/gui-app/src/terminal_agent",
+          "crates/gui-app/src/terminal_context",
+          "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ]
+      }
     },
     {
       "key": "TERMINAL-T4B-MCP",

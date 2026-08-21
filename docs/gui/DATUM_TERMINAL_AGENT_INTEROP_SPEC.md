@@ -61,6 +61,8 @@ closed with an actionable `agent doctor` result.
 
 ## 4. Agent adapter registry and launcher
 
+<!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-01 -->
+<!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-02 -->
 `datum-eda agent list`, `datum-eda agent doctor <adapter>`, and
 `datum-eda agent launch <adapter> [-- <native args>...]` are the canonical
 surface. Direct shell launch remains supported but is reported as unverified
@@ -80,6 +82,7 @@ Required profiles are `codex`, `claude-code`, `cursor-cli`, and
 `local-generic`. `local-generic` provides discovery/CLI and a printed standard
 MCP command without pretending an unknown client supports automatic setup.
 
+<!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-03 -->
 The launcher uses a protected per-session directory and shows the executable,
 cwd, MCP server name, capability grant, and config lifetime before launch. It
 must not rewrite user-global configuration. Persistent project setup is a
@@ -192,6 +195,7 @@ Each required adapter must prove on a production Datum build:
 7. revision-change observation, stale-request refusal, and refresh;
 8. resource update or explicit-refresh behavior;
 9. terminal/agent restart and native resume without context confusion;
+<!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-04 -->
 10. missing client, rejected project config, expired credential, daemon loss,
     unsupported feature, teardown, and revocation behavior.
 

@@ -1876,6 +1876,25 @@ session-adapter boundary.
   owner acceptance.
 - <!-- REQ:TERMINAL-T3-PROTOCOLS:DTC-P28 --> **DTC-P28 — compatibility proof.** Bash/zsh/fish, SSH, tmux, less, Vim/Neovim,
   htop/btop, Python, Git, Cargo and standards probes on the production build.
+  <!-- EVIDENCE:TERMINAL-T3-PROTOCOLS:DTC-P28-CLOSED --> Completed through
+  `beb062f`. A revision-addressed production witness launches all thirteen named
+  programs through `TerminalTransportSession`, applies their opaque output and
+  protocol replies through `TerminalCoreSessionAdapter`, and verifies rendered
+  state plus exact process outcomes. The checked-in matrix records Bash 5.2.37,
+  zsh 5.9, fish 4.0.2, OpenSSH 10.0p2, tmux 3.5a, less 668, Vim 9.1, Neovim
+  0.10.4, htop 3.4.1, btop 1.3.2, Python 3.13.5, Git 2.47.3, and Cargo 1.93.1
+  against core revision `cbdf9e4`, with an exact evidence artifact and SHA-256.
+  TerminalCore's 135-test suite supplies the normative VT/DEC, Unicode 17,
+  modern-protocol, kitty-graphics, and sixel proof; external `vttest` and
+  `esctest2` remain optional black-box witnesses and are not misreported as
+  tested parity. The full gui-app suite passed 260 tests with seven governed
+  measurements ignored; strict Clippy, dependency authority, compatibility,
+  TerminalCore, Kitty, native-interaction, adapter, spec-governance,
+  project-state, and diff gates passed. A clean clone of committed `beb062f`
+  passed source health over 1,506 files; six unrelated unstaged CLI/engine edits
+  in the shared working tree were deliberately neither altered nor staged.
+  DTC-P29 and the T4 agent packages retain agent discovery, MCP, authority,
+  workflow, and release acceptance.
 - **DTC-P29 — agent pipeline proof.** Codex, Claude Code, Cursor-compatible CLI,
   local-agent TUI, discovery, authenticated MCP, pinned context/authority,
   proposal/review/apply/refresh/resume, and one mutation path.
