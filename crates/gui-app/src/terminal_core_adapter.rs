@@ -96,14 +96,30 @@ pub(crate) struct TerminalCoreSessionAdapter {
 }
 
 impl TerminalCoreSessionAdapter {
+    #[cfg(test)]
     pub(crate) fn new(
         session_id: impl Into<String>,
         context_id: impl Into<String>,
         columns: u16,
         rows: u16,
     ) -> Result<Self, TerminalCoreAdapterError> {
-        let limits = CoreLimits::try_from(PRODUCTION_CORE_LIMIT_VALUES)
-            .map_err(TerminalCoreAdapterError::Limits)?;
+        Self::new_with_limit_values(
+            session_id,
+            context_id,
+            columns,
+            rows,
+            PRODUCTION_CORE_LIMIT_VALUES,
+        )
+    }
+
+    pub(crate) fn new_with_limit_values(
+        session_id: impl Into<String>,
+        context_id: impl Into<String>,
+        columns: u16,
+        rows: u16,
+        values: CoreLimitValues,
+    ) -> Result<Self, TerminalCoreAdapterError> {
+        let limits = CoreLimits::try_from(values).map_err(TerminalCoreAdapterError::Limits)?;
         let size =
             TerminalSize::new(columns, rows, 0, 0).map_err(TerminalCoreAdapterError::Size)?;
         let core = TerminalCore::new(limits, size).map_err(TerminalCoreAdapterError::Screen)?;
@@ -154,6 +170,14 @@ impl TerminalCoreSessionAdapter {
                     .collect()
             })
             .collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_history_limits(&self) -> (usize, usize) {
+        (
+            self.limits.history_lines.get(),
+            self.limits.history_bytes.get(),
+        )
     }
 
     #[cfg(test)]

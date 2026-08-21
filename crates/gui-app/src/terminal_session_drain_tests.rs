@@ -91,6 +91,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
                     session_path: root.join(format!("{id}-session.json")),
                     session_id: id.clone(),
                     context_id: format!("context-{index}"),
+                    terminal_profile: crate::terminal_profile::TerminalLaunchProfile::default(),
                     active_execution_id: Arc::new(Mutex::new(None)),
                     finished_scan_offset: Cell::new(0),
                 },

@@ -238,11 +238,12 @@ impl TerminalSessionRegistry {
 }
 
 fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalSessionSlot> {
-    let core = TerminalCoreSessionAdapter::new(
+    let core = TerminalCoreSessionAdapter::new_with_limit_values(
         session.session_id.clone(),
         session.context_id.clone(),
         80,
         24,
+        session.terminal_profile.core_limit_values(),
     )?;
     Ok(TerminalSessionSlot {
         session,

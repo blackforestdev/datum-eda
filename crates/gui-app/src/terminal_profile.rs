@@ -5,6 +5,7 @@ use datum_gui_protocol::{
     TERMINAL_FONT_SCALE_DEFAULT_MILLIS, TERMINAL_FONT_SCALE_MAX_MILLIS,
     TERMINAL_FONT_SCALE_MIN_MILLIS, TerminalTheme,
 };
+use datum_terminal_core::CoreLimitValues;
 use std::{
     ffi::OsString,
     path::{Path, PathBuf},
@@ -39,6 +40,12 @@ pub(super) struct TerminalProfileArgs {
     /// Initial custom-profile terminal font scale as an integer percent (60..=200).
     #[arg(long = "terminal-font-scale-percent")]
     font_scale_percent: Option<u16>,
+    /// Retained logical scrollback lines for the custom profile (1..=100000).
+    #[arg(long = "terminal-scrollback-lines")]
+    history_lines: Option<usize>,
+    /// Retained scrollback text in MiB for the custom profile (1..=64).
+    #[arg(long = "terminal-scrollback-mebibytes")]
+    history_mebibytes: Option<usize>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -50,6 +57,8 @@ pub(super) struct TerminalLaunchProfile {
     environment: Vec<(OsString, Option<OsString>)>,
     theme: TerminalTheme,
     font_scale_millis: u16,
+    history_lines: usize,
+    history_bytes: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -84,6 +93,8 @@ impl Default for TerminalLaunchProfile {
             environment: Vec::new(),
             theme: TerminalTheme::DatumDark,
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+            history_lines: crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES.history_lines,
+            history_bytes: crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES.history_bytes,
         }
     }
 }
@@ -107,6 +118,14 @@ impl TerminalLaunchProfile {
 
     pub(super) fn font_scale_millis(&self) -> u16 {
         self.font_scale_millis
+    }
+
+    pub(super) fn core_limit_values(&self) -> CoreLimitValues {
+        CoreLimitValues {
+            history_lines: self.history_lines,
+            history_bytes: self.history_bytes,
+            ..crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES
+        }
     }
 
     pub(super) fn resolve(
@@ -188,6 +207,8 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
         || args.cwd != "active"
         || args.theme.is_some()
         || args.font_scale_percent.is_some()
+        || args.history_lines.is_some()
+        || args.history_mebibytes.is_some()
         || args.custom_name != "custom"
         || args.selected == args.custom_name;
     if !has_custom {
@@ -220,6 +241,26 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
     {
         anyhow::bail!("terminal font scale percent must be between 60 and 200");
     }
+    let approved = crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES;
+    let history_lines = args.history_lines.unwrap_or(approved.history_lines);
+    if history_lines == 0 || history_lines > approved.history_lines {
+        anyhow::bail!(
+            "terminal scrollback lines must be between 1 and {}",
+            approved.history_lines
+        );
+    }
+    let history_mebibytes = args
+        .history_mebibytes
+        .unwrap_or(approved.history_bytes / (1024 * 1024));
+    let history_bytes = history_mebibytes
+        .checked_mul(1024 * 1024)
+        .context("terminal scrollback MiB cannot be represented")?;
+    if history_mebibytes == 0 || history_bytes > approved.history_bytes {
+        anyhow::bail!(
+            "terminal scrollback MiB must be between 1 and {}",
+            approved.history_bytes / (1024 * 1024)
+        );
+    }
     let mut environment = Vec::new();
     for assignment in &args.environment {
         let (key, value) = assignment
@@ -240,6 +281,8 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
         environment,
         theme,
         font_scale_millis,
+        history_lines,
+        history_bytes,
     }))
 }
 
@@ -273,6 +316,10 @@ mod tests {
     #[test]
     fn default_and_login_profiles_preserve_active_cwd_and_exact_argv() {
         let mut catalog = parse(&[]);
+        assert_eq!(
+            catalog.selected().core_limit_values(),
+            crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES
+        );
         let default = catalog.selected().resolve_with_shell(
             Path::new("/project"),
             Path::new("/active"),
@@ -290,6 +337,10 @@ mod tests {
         assert_eq!(login.executable, "/bin/zsh");
         assert_eq!(login.args, [OsString::from("-l")]);
         assert_eq!(login.cwd, Path::new("/active"));
+        assert_eq!(
+            catalog.selected().core_limit_values(),
+            crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES
+        );
         assert_eq!(catalog.select_next().name(), "default");
     }
 
@@ -314,6 +365,10 @@ mod tests {
             "light",
             "--terminal-font-scale-percent",
             "130",
+            "--terminal-scrollback-lines",
+            "24000",
+            "--terminal-scrollback-mebibytes",
+            "12",
         ]);
         let profile = catalog.selected();
         let resolved = profile.resolve_with_shell(
@@ -334,6 +389,18 @@ mod tests {
         );
         assert_eq!(profile.theme(), TerminalTheme::Light);
         assert_eq!(profile.font_scale_millis(), 1_300);
+        assert_eq!(profile.core_limit_values().history_lines, 24_000);
+        assert_eq!(profile.core_limit_values().history_bytes, 12 * 1024 * 1024);
+        let adapter =
+            crate::terminal_core_adapter::TerminalCoreSessionAdapter::new_with_limit_values(
+                "profile-session",
+                "profile-context",
+                80,
+                24,
+                profile.core_limit_values(),
+            )
+            .unwrap();
+        assert_eq!(adapter.test_history_limits(), (24_000, 12 * 1024 * 1024));
     }
 
     #[test]
@@ -344,6 +411,10 @@ mod tests {
             vec!["--terminal-font-scale-percent", "201"],
             vec!["--terminal-env", "MISSING_SEPARATOR"],
             vec!["--terminal-env-remove", ""],
+            vec!["--terminal-scrollback-lines", "0"],
+            vec!["--terminal-scrollback-lines", "100001"],
+            vec!["--terminal-scrollback-mebibytes", "0"],
+            vec!["--terminal-scrollback-mebibytes", "65"],
         ] {
             let mut argv = vec!["fixture"];
             argv.extend(values);
@@ -384,6 +455,8 @@ mod tests {
             ],
             theme: TerminalTheme::DatumDark,
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
+            history_lines: 12_345,
+            history_bytes: 8 * 1024 * 1024,
         };
         let session = spawn_terminal_session(&context).unwrap();
         let deadline = std::time::Instant::now() + Duration::from_secs(2);
@@ -408,6 +481,19 @@ mod tests {
         assert!(
             output.contains(&format!("CWD={}", cwd.display())),
             "{output}"
+        );
+        assert_eq!(session.terminal_profile.name(), "agent");
+        assert_eq!(
+            session.terminal_profile.core_limit_values().history_lines,
+            12_345
+        );
+        let selected_elsewhere = TerminalLaunchContext::for_project_root(&root);
+        let restart =
+            crate::terminal_session::context_for_terminal_restart(&session, &selected_elsewhere);
+        assert_eq!(restart.terminal_profile.name(), "agent");
+        assert_eq!(
+            restart.terminal_profile.core_limit_values().history_bytes,
+            8 * 1024 * 1024
         );
         let _ = fs::remove_dir_all(root);
     }

@@ -15,6 +15,7 @@ impl TerminalSession {
     pub(crate) fn from_transport(
         transport: TerminalTransportSession,
         context: TerminalContext,
+        terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
     ) -> Self {
         Self {
             transport,
@@ -23,6 +24,7 @@ impl TerminalSession {
             session_path: context.session_path,
             session_id: context.session_id,
             context_id: context.context_id,
+            terminal_profile,
             active_execution_id: Arc::new(Mutex::new(None)),
             finished_scan_offset: std::cell::Cell::new(0),
         }

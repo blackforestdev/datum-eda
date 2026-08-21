@@ -66,7 +66,11 @@ pub(super) fn spawn_terminal_process(
         || prepared.start(terminal_wake),
     )?;
 
-    Ok(TerminalSession::from_transport(transport, terminal_context))
+    Ok(TerminalSession::from_transport(
+        transport,
+        terminal_context,
+        context.terminal_profile.clone(),
+    ))
 }
 
 /// Remove capability and owner identity inherited from the launching emulator.

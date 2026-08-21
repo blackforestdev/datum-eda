@@ -30,6 +30,7 @@ pub(super) struct TerminalSession {
     pub(super) session_path: PathBuf,
     pub(super) session_id: String,
     pub(super) context_id: String,
+    pub(super) terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
     /// command-finished check (terminal performance slice): the log is
@@ -136,11 +137,12 @@ impl TerminalSessionRegistry {
     ) -> Result<Self> {
         let terminal_wake = TerminalWakeGate::new(terminal_event_proxy);
         let session = spawn_terminal_session_with_wake(context, terminal_wake.clone())?;
-        let core = TerminalCoreSessionAdapter::new(
+        let core = TerminalCoreSessionAdapter::new_with_limit_values(
             session.session_id.clone(),
             session.context_id.clone(),
             80,
             24,
+            session.terminal_profile.core_limit_values(),
         )?;
         let first_session_id = session.session_id().to_string();
         Ok(Self {
@@ -312,12 +314,14 @@ impl TerminalSessionRegistry {
         terminal_wake: TerminalWakeGate,
     ) -> Result<()> {
         let previous_session_id = slot.session.session_id().to_string();
-        restart_terminal_session(&mut slot.session, state, context, terminal_wake)?;
-        slot.core = TerminalCoreSessionAdapter::new(
+        let restart_context = context_for_terminal_restart(&slot.session, context);
+        restart_terminal_session(&mut slot.session, state, &restart_context, terminal_wake)?;
+        slot.core = TerminalCoreSessionAdapter::new_with_limit_values(
             slot.session.session_id.clone(),
             slot.session.context_id.clone(),
             slot.columns,
             slot.rows,
+            slot.session.terminal_profile.core_limit_values(),
         )?;
         slot.status = state.status.clone();
         slot.attached = true;
@@ -413,6 +417,15 @@ impl TerminalSessionRegistry {
     pub(super) fn len(&self) -> usize {
         self.sessions.len()
     }
+}
+
+pub(super) fn context_for_terminal_restart(
+    session: &TerminalSession,
+    context: &TerminalLaunchContext,
+) -> TerminalLaunchContext {
+    let mut restart_context = context.clone();
+    restart_context.terminal_profile = session.terminal_profile.clone();
+    restart_context
 }
 
 fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
