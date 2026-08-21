@@ -926,9 +926,7 @@
         "dat-full-native-terminal-contract-e2d",
         "dat-terminal-emulator-epic-jzv.7"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "The production Datum terminal presents only the real foreign shell in its cell rectangle, accepts exact-once input, reports truthful PTY dimensions, and passes deterministic plus owner-visible usability proof.",
         "canonical_next_step_id": null,
@@ -1103,9 +1101,7 @@
           "effects": [
             "The still-open T1/T2 foundation issues lose their T0 blocker; the completed focus slice retains its historical dependency evidence, and no successor is auto-authorized or auto-selected."
           ],
-        "unblocks_issue_ids": [
-          "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -1132,9 +1128,7 @@
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "One explicit focus/input authority correctly routes the real terminal content rectangle, without claiming terminal product completeness or visible-shell correctness supplied by other slices.",
         "canonical_next_step_id": null,
@@ -1261,9 +1255,7 @@
           "effects": [
             "The terminal focus/input slice is complete; visible-shell and full-product claims remain owned by T0 and T4."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -1289,9 +1281,7 @@
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "The terminal has one shell-input ingress: attached bytes go only to the PTY/TerminalCore, detached sessions are explicitly read-only, and chrome-local rename editing cannot become a rival shell buffer.",
         "canonical_next_step_id": null,
@@ -1374,9 +1364,7 @@
           "effects": [
             "T2 loses the rival-input-model blocker but remains blocked on the separately completed Datum-owned PTY and TerminalCore slices."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -1407,9 +1395,7 @@
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum exclusively owns Linux PTY/session transport while preserving native shell semantics, independent sessions, launch context, and a terminal-core-independent boundary.",
         "canonical_next_step_id": null,
@@ -1979,9 +1965,7 @@
           "effects": [
             "T1b loses the owned-transport blocker; T2 remains blocked on the separately completed Datum-owned TerminalCore slice."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -2011,9 +1995,7 @@
         "dat-pan-trace-terminal-pollution-0j0",
         "dat-terminal-emulator-epic-jzv.1"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.3"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "A fully Datum-owned TerminalCore provides bounded, deterministic terminal semantics and an explicit T2 production-cutover seam with no third-party terminal dependency.",
         "canonical_next_step_id": null,
@@ -2453,9 +2435,7 @@
           "effects": [
             "T2 loses the owned-core blocker; production cutover remains a separately selected task."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.3"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -2476,10 +2456,11 @@
         "docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
+      "landing_commit": "0ecc5dd",
       "summary": "Replace the bespoke screen with TerminalCore and complete lossless rendering, Unicode/fonts, focus/input/IME/mouse, selection/clipboard, damage, and accessibility foundation.",
       "dependencies": [
         "dat-pan-trace-terminal-pollution-0j0",
@@ -2495,7 +2476,7 @@
       ],
       "completion": {
         "outcome": "TerminalCore becomes the sole production terminal state and input authority through a bounded adapter, native renderer/input/accessibility integration, shadow proof, and atomic deletion of the provisional implementation.",
-        "canonical_next_step_id": "DTC-P26",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2674,11 +2655,21 @@
           {
             "id": "DTC-P26",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Atomically select TerminalCore as sole production authority and delete the provisional screen, parser, string/style grid, lossy renderer, shadow path, and TERM overclaim.",
             "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B", "DTC-P25"],
             "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P26"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "0ecc5dd"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P26-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -2694,30 +2685,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-dtc-p26-cutover-20260820",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "6dd1234",
-        "claimed_at": "2026-08-21T04:44:50Z",
-        "heartbeat_at": "2026-08-21T04:44:50Z",
-        "expires_at": "2026-08-21T12:44:50Z",
-        "scope": [
-          "crates/gui-app/src/terminal_core_adapter",
-          "crates/gui-app/src/terminal_screen",
-          "crates/gui-app/src/terminal_shadow",
-          "crates/gui-app/src/terminal_session",
-          "crates/gui-app/src/terminal_session_drain",
-          "crates/gui-protocol/src/terminal_lane.rs",
-          "crates/gui-render/src",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "scripts",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ]
       }
     },
     {
@@ -2727,19 +2694,63 @@
       "issue_id": "dat-terminal-emulator-epic-jzv.4",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
-      "summary": "Deliver complete scrollback/reflow/search/link behavior plus tabs, splits, profiles, themes, fonts, lifecycle, maximize/detach, shell and terminfo integration.",
+      "summary": "Deliver complete scrollback/reflow/search/link behavior plus tabs, splits, profiles, themes, fonts, terminate-only lifecycle, maximize, shell, and terminfo integration without detached Datum PTYs.",
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.3"
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.5"
-      ]
+      ],
+      "completion": {
+        "outcome": "Datum's TerminalCore-backed terminal becomes a truthful daily-driver surface with complete history, reflow, search, links, session layout, profiles, shell identity, and lifecycle UX.",
+        "canonical_next_step_id": "DTC-P27",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "DTC-P27",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete truthful shell identity and daily-driver UX: Datum terminfo, shell integration, tabs/splits/profiles/themes/fonts, search/history, links, graphics/security prompts, lifecycle, and maximize behavior.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P27"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The modern-protocols task loses the daily-driver UX blocker while retaining its own explicit selection and acceptance boundary."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.5"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T3-PROTOCOLS",
@@ -2774,7 +2785,7 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
@@ -2798,7 +2809,7 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
       "canonical_next": false,
       "parallel": false,

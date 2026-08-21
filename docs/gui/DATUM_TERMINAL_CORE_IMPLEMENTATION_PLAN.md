@@ -1827,12 +1827,35 @@ session-adapter boundary.
 - <!-- REQ:TERMINAL-T2-NATIVE:DTC-P26 --> **DTC-P26 — atomic cutover.** Select the Datum core as sole production
   authority; delete provisional `TerminalScreen`, string/style grid authority
   from `gui-protocol`, lossy renderer, shadow path, and `TERM` overclaim.
+  <!-- EVIDENCE:TERMINAL-T2-NATIVE:DTC-P26-CLOSED --> **Closure evidence
+  (2026-08-20; implementation `0ecc5dd`).** TerminalCore is now the sole
+  production terminal state, parser, input, selection, accessibility, and
+  rendering authority. The provisional `TerminalScreen` tree, protocol
+  string/style grid, lossy renderer, shadow implementation, and their obsolete
+  boundary suites were deleted atomically. Production rendering consumes
+  immutable TerminalCore snapshots; focused tests inspect the real core through
+  bounded test-only adapters instead of rebuilding a second projection. The
+  launch adapter no longer synthesizes `TERM=xterm-256color`, `COLORTERM`, or a
+  `NO_COLOR` override. It preserves the caller's environment until DTC-P27
+  introduces Datum's truthful terminfo identity.
+
+  The complete locked/offline workspace test suite, workspace all-target
+  checking, and strict workspace Clippy passed. The focused gui-app suite passed
+  221 tests with six governed measurements ignored; gui-protocol passed 94 unit
+  tests and all integration suites; gui-render passed 120 unit tests and five
+  selection tests. Adapter, renderer, convergence, transport, dependency
+  authority, source health over 1,486 files, spec governance over 150 classified
+  specs, project-state, scoped rustfmt, and diff-hygiene gates passed. No package,
+  dependency, license, PTY transport contract, lifecycle budget, or terminal
+  capability identity was added. DTC-P27 retains truthful shell/terminfo
+  integration, and later T3/T4 packages retain their own explicit selection and
+  acceptance boundaries.
 
 ### Product completion
 
-- **DTC-P27 — truthful shell identity and daily-driver UX.** Datum terminfo,
+- <!-- REQ:TERMINAL-T3-UX:DTC-P27 --> **DTC-P27 — truthful shell identity and daily-driver UX.** Datum terminfo,
   shell integration, tabs/splits/profiles/themes/fonts, search/history, links,
-  graphics/security prompts, lifecycle/detach/maximize.
+  graphics/security prompts, terminate-only lifecycle, and maximize behavior.
 - **DTC-P28 — compatibility proof.** Bash/zsh/fish, SSH, tmux, less, Vim/Neovim,
   htop/btop, Python, Git, Cargo and standards probes on the production build.
 - **DTC-P29 — agent pipeline proof.** Codex, Claude Code, Cursor-compatible CLI,
