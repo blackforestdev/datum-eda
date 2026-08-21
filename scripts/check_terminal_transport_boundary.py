@@ -23,7 +23,6 @@ OWNERS = {
     "libc::TIOCSWINSZ": TRANSPORT / "linux/job_control.rs",
     "libc::kill": TRANSPORT / "linux/job_control.rs",
     "libc::F_DUPFD_CLOEXEC": TRANSPORT / "linux/io.rs",
-    "libc::poll": TRANSPORT / "linux/io.rs",
     "libc::tcgetattr": TRANSPORT / "linux/termios.rs",
     "libc::tcsetattr": TRANSPORT / "linux/termios.rs",
 }
@@ -135,12 +134,32 @@ def check(root: Path) -> list[str]:
     outside_transport = {
         path: text for path, text in source_text.items() if TRANSPORT not in path.parents
     }
-    raw_ownership = (
+    pty_raw_ownership = (
         "openpty", "forkpty", "login_tty", "master_fd", "slave_fd",
-        "RawFd", "OwnedFd", "AsRawFd", "FromRawFd",
     )
-    for marker in raw_ownership:
+    for marker in pty_raw_ownership:
         escaped = [path for path, text in outside_transport.items() if marker in text]
+        if escaped:
+            failures.append(
+                f"terminal transport ownership escaped for {marker}: "
+                + ", ".join(map(str, escaped))
+            )
+
+    # Raw descriptors and readiness polling are ordinary OS mechanisms also
+    # used by non-PTY subsystems (for example the owned AT-SPI D-Bus bridge).
+    # Reject their escape only when the same source actually reaches into the
+    # terminal transport/PTY boundary; otherwise this guard would claim
+    # ownership over unrelated sockets.
+    terminal_raw_context = (
+        "terminal_transport", "open_pty_pair", "attach_child_pty",
+        "/dev/ptmx", "TIOCSCTTY", "TIOCSWINSZ", "master_fd", "slave_fd",
+    )
+    for marker in ("RawFd", "OwnedFd", "AsRawFd", "FromRawFd"):
+        escaped = [
+            path
+            for path, text in outside_transport.items()
+            if marker in text and any(context in text for context in terminal_raw_context)
+        ]
         if escaped:
             failures.append(
                 f"terminal transport ownership escaped for {marker}: "

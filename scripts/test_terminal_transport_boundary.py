@@ -414,6 +414,21 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("RawFd" in failure for failure in failures))
         self.assertTrue(any("OwnedFd" in failure for failure in failures))
 
+    def test_unrelated_socket_poll_and_raw_fd_pass(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        accessibility = root / guard.APP_SRC / "terminal_accessibility_platform" / "worker.rs"
+        accessibility.parent.mkdir(parents=True, exist_ok=True)
+        accessibility.write_text(
+            "use std::os::fd::AsRawFd;\n"
+            "fn wait_for_dbus_socket(fd: libc::c_int) {\n"
+            "    let mut event = libc::pollfd { fd, events: libc::POLLIN, revents: 0 };\n"
+            "    unsafe { libc::poll(&mut event, 1, 0); }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(guard.check(root), [])
+
     def test_unqualified_syscall_and_pre_exec_escape_fail(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
