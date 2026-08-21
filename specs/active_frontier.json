@@ -2470,7 +2470,6 @@
         "dat-terminal-focus-authority-6aw"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.4",
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
       ],
@@ -2677,7 +2676,6 @@
             "T3, agent-launch, and MCP terminal integration lose the native-cutover blocker while retaining their own separate selection and acceptance boundaries."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.4",
             "dat-terminal-emulator-epic-jzv.8",
             "dat-terminal-emulator-epic-jzv.9"
           ],
@@ -2697,10 +2695,11 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
+      "landing_commit": "d9da1fd",
       "summary": "Deliver complete scrollback/reflow/search/link behavior plus tabs, splits, profiles, themes, fonts, terminate-only lifecycle, maximize, shell, and terminfo integration without detached Datum PTYs.",
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.3"
@@ -2710,7 +2709,7 @@
       ],
       "completion": {
         "outcome": "Datum's TerminalCore-backed terminal becomes a truthful daily-driver surface with complete history, reflow, search, links, session layout, profiles, shell identity, and lifecycle UX.",
-        "canonical_next_step_id": "DTC-P27",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2727,7 +2726,7 @@
           {
             "id": "DTC-P27",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Complete truthful shell identity and daily-driver UX: Datum terminfo, shell integration, tabs/splits/profiles/themes/fonts, search/history, links, graphics/security prompts, lifecycle, and maximize behavior.",
             "depends_on": [],
             "requirement_refs": [
@@ -2736,7 +2735,17 @@
                 "marker": "DTC-P27"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d9da1fd"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:TERMINAL-T3-UX:DTC-P27-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -2750,31 +2759,6 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-dtc-p27-daily-driver-20260821",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "cc0aa33",
-        "claimed_at": "2026-08-21T15:18:45Z",
-        "heartbeat_at": "2026-08-21T15:18:45Z",
-        "expires_at": "2026-08-21T23:18:45Z",
-        "scope": [
-          "crates/terminal-core",
-          "crates/gui-app/src/terminal_core_adapter",
-          "crates/gui-app/src/terminal_session",
-          "crates/gui-app/src/runtime_terminal_input.rs",
-          "crates/gui-app/src/runtime_terminal_pointer.rs",
-          "crates/gui-protocol/src/terminal_lane.rs",
-          "crates/gui-render/src",
-          "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
-          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
-          "scripts",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
-        ]
       }
     },
     {
@@ -2784,11 +2768,12 @@
       "issue_id": "dat-terminal-emulator-epic-jzv.5",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md",
-        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
       ],
-      "state": "blocked",
+      "state": "in_progress",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Close synchronized output, OSC 8/52, kitty keyboard, kitty graphics/sixel, security policy, and complete accessibility behavior.",
       "dependencies": [
@@ -2797,7 +2782,72 @@
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.6",
         "dat-terminal-emulator-epic-jzv.11"
-      ]
+      ],
+      "completion": {
+        "outcome": "Datum proves the modern terminal protocol, graphics, security, and accessibility ceiling against its production TerminalCore path.",
+        "canonical_next_step_id": "DTC-P28",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "DTC-P28",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Prove Bash, zsh, fish, SSH, tmux, less, Vim/Neovim, htop/btop, Python, Git, Cargo, and standards probes on the production terminal build.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P28"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The production-acceptance task gains named shell and TUI compatibility evidence while retaining its own release boundary."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.6",
+            "dat-terminal-emulator-epic-jzv.11"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-dtc-p28-compatibility-20260821",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "d9da1fd0067ffacb263d7d058f84b657b8565784",
+        "claimed_at": "2026-08-21T20:38:06Z",
+        "heartbeat_at": "2026-08-21T20:38:06Z",
+        "expires_at": "2026-08-22T04:38:06Z",
+        "scope": [
+          "crates/terminal-core",
+          "crates/gui-app/src/terminal_compatibility",
+          "crates/gui-app/src/terminal_session",
+          "scripts",
+          "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+          "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ]
+      }
     },
     {
       "key": "TERMINAL-T4A-AGENT-LAUNCH",

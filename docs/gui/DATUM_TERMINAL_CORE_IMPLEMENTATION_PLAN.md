@@ -1856,7 +1856,25 @@ session-adapter boundary.
 - <!-- REQ:TERMINAL-T3-UX:DTC-P27 --> **DTC-P27 — truthful shell identity and daily-driver UX.** Datum terminfo,
   shell integration, tabs/splits/profiles/themes/fonts, search/history, links,
   graphics/security prompts, terminate-only lifecycle, and maximize behavior.
-- **DTC-P28 — compatibility proof.** Bash/zsh/fish, SSH, tmux, less, Vim/Neovim,
+  <!-- EVIDENCE:TERMINAL-T3-UX:DTC-P27-CLOSED --> Completed through `d9da1fd`.
+  Production now installs and advertises only the embedded `datum` terminfo
+  entry; preserves inherited shell behavior while supplying protected Datum
+  context; treats OSC 7/133 as bounded, untrusted session metadata; and exposes
+  configurable launch templates for executable/argv, cwd, environment, theme,
+  font scale, scrollback, cursor, and visual bell. TerminalCore remains the sole
+  history/reflow/search/link/graphics authority. Tabs and recursive splits own
+  independent PTYs and cores, preserve identity during reorder/restart, launch
+  in the verified active cwd, show title/activity outside cells, and support
+  terminate-only close, force escalation, and terminal maximize. The owner
+  accepted the repaired terminal round after hands-on QA covering focus, Tab,
+  cursor placement, color/glyph rendering, tab creation/reorder/close, copy and
+  selection, prompt latency, and dock resize. The full locked/offline workspace
+  test suite, strict terminal-core/gui-app clippy, dependency authority, source
+  health, transport/convergence/native-interaction mutation suites, spec
+  governance, project state, rustfmt, and diff hygiene passed. DTC-P28 retains
+  the named shell/TUI compatibility matrix; DTC-P30 retains final release and
+  owner acceptance.
+- <!-- REQ:TERMINAL-T3-PROTOCOLS:DTC-P28 --> **DTC-P28 — compatibility proof.** Bash/zsh/fish, SSH, tmux, less, Vim/Neovim,
   htop/btop, Python, Git, Cargo and standards probes on the production build.
 - **DTC-P29 — agent pipeline proof.** Codex, Claude Code, Cursor-compatible CLI,
   local-agent TUI, discovery, authenticated MCP, pinned context/authority,
