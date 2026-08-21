@@ -62,6 +62,7 @@ closed with an actionable `agent doctor` result.
 ## 4. Agent adapter registry and launcher
 
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-01 -->
+<!-- EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-01-CLOSED -->
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-02 -->
 `datum-eda agent list`, `datum-eda agent doctor <adapter>`, and
 `datum-eda agent launch <adapter> [-- <native args>...]` are the canonical
