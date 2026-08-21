@@ -67,6 +67,8 @@ impl TerminalSessionRegistry {
         } else {
             state.status = self.sessions[self.active_index].status.clone();
         }
+        self.sessions[self.active_index].unread_output = false;
+        self.sessions[self.active_index].seen_bell_count = state.bell_count;
         self.sync_lane_tabs(state);
         Ok(())
     }
@@ -218,6 +220,8 @@ impl TerminalSessionRegistry {
                 let mut discarded = TerminalLaneState::default();
                 state.swap_session_projection(&mut discarded);
                 state.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+                self.sessions[self.active_index].unread_output = false;
+                self.sessions[self.active_index].seen_bell_count = state.bell_count;
             }
         }
         self.sync_lane_tabs(state);

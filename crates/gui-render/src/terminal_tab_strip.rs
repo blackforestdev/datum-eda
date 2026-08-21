@@ -362,9 +362,19 @@ pub(super) fn render_terminal_tab_strip(
     }
 }
 
-fn top_tab_label(tab: &TerminalTabState, tab_width: f32) -> String {
-    let max_chars = (((tab_width - CLOSE_WIDTH_PX - 16.0) / 7.0) as usize).max(1);
-    truncate_text(&tab.label, max_chars)
+pub(super) fn top_tab_label(tab: &TerminalTabState, tab_width: f32) -> String {
+    let attention = if tab.unread_bell_count > 0 {
+        " !"
+    } else if tab.unread_output {
+        " •"
+    } else {
+        ""
+    };
+    let available_chars = (((tab_width - CLOSE_WIDTH_PX - 16.0) / 7.0) as usize).max(1);
+    let label_chars = available_chars
+        .saturating_sub(attention.chars().count())
+        .max(1);
+    format!("{}{}", truncate_text(&tab.label, label_chars), attention)
 }
 
 fn render_tab(

@@ -10,6 +10,11 @@ pub struct TerminalTabState {
     pub attached: bool,
     pub status: String,
     pub restart_count: usize,
+    /// Output arrived while another session owned the visible terminal pane.
+    /// Renderers must pair any color cue with a non-color marker.
+    pub unread_output: bool,
+    /// Bells emitted while this session was not the visible terminal session.
+    pub unread_bell_count: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

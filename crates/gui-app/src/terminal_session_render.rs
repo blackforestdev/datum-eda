@@ -41,6 +41,88 @@ pub(super) fn terminal_tab_label(
 }
 
 impl TerminalSessionRegistry {
+    pub(crate) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        let active_index = self.active_index;
+        state.active_session_id = self.active_pending_id.clone().or_else(|| {
+            (!self.sessions[self.active_index].hidden_after_close)
+                .then(|| self.active().session_id().to_string())
+        });
+        let tabs = self
+            .sessions
+            .iter_mut()
+            .enumerate()
+            .filter(|(_, slot)| !slot.hidden_after_close)
+            .map(|(index, slot)| {
+                let active = self.active_pending_id.is_none() && index == active_index;
+                if active {
+                    slot.status = state.status.clone();
+                }
+                let projected_lane = if active { &*state } else { &slot.parked_lane };
+                let event_log_path = slot.session.event_log_path();
+                slot.activity.refresh(&event_log_path);
+                datum_gui_protocol::TerminalTabState {
+                    session_id: slot.session.session_id().to_string(),
+                    previous_session_id: slot.previous_session_id.clone(),
+                    label: terminal_tab_label(
+                        &slot.label,
+                        slot.label_is_explicit,
+                        projected_lane.title.as_deref(),
+                        projected_lane.progress,
+                        projected_lane.latest_notification.is_some(),
+                    ),
+                    event_log_path: event_log_path.display().to_string(),
+                    activity_event_count: slot.activity.event_count(),
+                    activity_summary: slot.activity.summary_lines(2).unwrap_or_else(|err| {
+                        vec![format!(
+                            "activity summary unavailable for {}: {err}",
+                            event_log_path.display()
+                        )]
+                    }),
+                    active,
+                    attached: slot.attached,
+                    status: slot.status.clone(),
+                    restart_count: slot.restart_count,
+                    unread_output: !active && slot.unread_output,
+                    unread_bell_count: if active {
+                        0
+                    } else {
+                        projected_lane
+                            .bell_count
+                            .saturating_sub(slot.seen_bell_count)
+                    },
+                }
+            })
+            .chain(
+                self.pending_spawns
+                    .iter()
+                    .filter(|pending| !pending.canceled)
+                    .map(|pending| datum_gui_protocol::TerminalTabState {
+                        session_id: pending.pending_id.clone(),
+                        previous_session_id: None,
+                        label: pending.label.clone(),
+                        event_log_path: String::new(),
+                        activity_event_count: 0,
+                        activity_summary: vec!["starting terminal session".to_string()],
+                        active: self.active_pending_id.as_deref() == Some(&pending.pending_id),
+                        attached: true,
+                        status: "starting".to_string(),
+                        restart_count: 0,
+                        unread_output: false,
+                        unread_bell_count: 0,
+                    }),
+            )
+            .collect::<Vec<_>>();
+        if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
+            state.activity_summary = active_tab.activity_summary.clone();
+        }
+        if self.active_pending_id.is_none() {
+            let active_slot = &self.sessions[self.active_index];
+            state.columns = active_slot.columns;
+            state.rows = active_slot.rows;
+        }
+        state.tabs = tabs;
+    }
+
     pub(crate) fn active_render_row_count(&self) -> usize {
         if self.active_pending_id.is_some() {
             return 0;

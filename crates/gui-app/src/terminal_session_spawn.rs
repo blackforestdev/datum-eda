@@ -179,6 +179,8 @@ fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalS
         remove_when_closed: false,
         hidden_after_close: false,
         exact_exit_status: None,
+        unread_output: false,
+        seen_bell_count: 0,
     })
 }
 

@@ -31,6 +31,8 @@ fn terminal_dock_omits_persistent_header_and_routine_diagnostics() {
             attached: true,
             status: "running".to_string(),
             restart_count: 1,
+            unread_output: false,
+            unread_bell_count: 0,
         },
         datum_gui_protocol::TerminalTabState {
             session_id: "terminal-b".to_string(),
@@ -43,6 +45,8 @@ fn terminal_dock_omits_persistent_header_and_routine_diagnostics() {
             attached: false,
             status: "running".to_string(),
             restart_count: 0,
+            unread_output: true,
+            unread_bell_count: 1,
         },
     ];
 

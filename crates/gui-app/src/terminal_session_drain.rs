@@ -56,6 +56,9 @@ fn flush_output_batch(
     debug_assert_eq!(slot.core.context_id(), slot.session.context_id);
     let _ = record_terminal_output_event(&slot.session, bytes);
     let is_active = active_index == Some(index);
+    if !is_active {
+        slot.unread_output = true;
+    }
     let lane = if is_active {
         &mut *active_lane
     } else {

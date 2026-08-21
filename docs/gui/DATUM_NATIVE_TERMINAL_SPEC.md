@@ -162,7 +162,7 @@ Datum-owned terminal source.
 | NT-CAP-11 | Links/files | OSC 8 hyperlinks, detected URL/path hints, modifier-click/open/copy, cwd-relative paths, untrusted-target confirmation policy |
 | NT-CAP-12 | Modern protocols | Focus reporting, synchronized output, OSC palettes/title/cwd, controlled OSC 52, kitty keyboard, and governed notifications/progress behavior |
 | NT-CAP-13 | Graphics | Datum-owned kitty graphics and sixel slices; image lifetime, clipping, scroll/resize behavior, memory bounds and disabled-by-policy mode |
-| NT-CAP-14 | Sessions | Tabs, splits, rename/title, new-in-cwd, restart, close/kill confirmation, attach/detach, maximized terminal, process-exit state |
+| NT-CAP-14 | Sessions | Tabs, splits, rename/title, new-in-cwd, restart, close/kill confirmation, always-owned background sessions, maximized terminal, process-exit state |
 | NT-CAP-15 | Profiles/appearance | Shell/argv/cwd/env templates, font/fallback/size, theme/palette, cursor, scrollback, bell and protocol-security settings |
 | NT-CAP-16 | Accessibility | Keyboard-only control, screen-reader text/cursor/selection/search exposure, high contrast, non-color cues, reduced motion |
 | NT-CAP-17 | Agent/tool integration | Codex, Claude Code, Cursor/local agent CLIs and arbitrary TUIs run unmodified; each supported adapter natively discovers `datum-eda`, standard authenticated Datum MCP, pinned context, scoped authority, and portable workflows per decision 028 |
@@ -227,9 +227,9 @@ never invokes an engine operation.
 
 Feedback placement follows consequence, not implementation convenience:
 
-- A detached terminal displays a persistent terminal-local `Detached — input
-  disabled` state with a reattach affordance. The content surface is read-only;
-  typing produces no PTY bytes and never falls back to a hidden line editor.
+- A background terminal remains Datum-owned and continues draining into its own
+  core. Only the selected tab accepts input; switching tabs is a focus change,
+  never a detached PTY lifecycle or a hidden line editor.
 - An explicit successful copy may display a brief terminal-local confirmation
   and accessibility announcement. Routine copy success may otherwise remain
   silent according to profile policy.
@@ -266,6 +266,12 @@ Terminal notification text is display-only. Desktop delivery is configured by
 `DATUM_TERMINAL_NOTIFICATIONS=off|unfocused|always`; the compatibility default
 is `unfocused`, and no additional time-based throttle or content policy is
 applied beyond TerminalCore's existing payload/work bounds.
+
+Output and bells received by a background session remain scoped to that tab.
+The tab exposes unread output with a visible bullet and unread bells with a
+distinct exclamation marker, so color is never the sole attention cue. Selecting
+the tab acknowledges both without changing terminal cells or inventing a
+detach/reattach lifecycle.
 
 Datum context files are outside design authority and never journaled. Sensitive
 MCP authentication uses process environment or protected runtime descriptors,

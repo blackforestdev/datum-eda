@@ -15,7 +15,7 @@ use anyhow::Result;
 use datum_gui_protocol::{
     CheckRunReviewState, DatumCursorContext, DatumProjectionContext, DatumSceneBoundsContext,
     DatumSelectionContext, DatumToolSessionLifecycle, ProductionStatus, ReviewWorkspaceState,
-    TerminalLaneState, TerminalTabState,
+    TerminalLaneState,
 };
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, mpsc::Receiver};
@@ -79,6 +79,8 @@ struct TerminalSessionSlot {
     remove_when_closed: bool,
     hidden_after_close: bool,
     exact_exit_status: Option<String>,
+    unread_output: bool,
+    seen_bell_count: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -143,6 +145,8 @@ impl TerminalSessionRegistry {
                 remove_when_closed: false,
                 hidden_after_close: false,
                 exact_exit_status: None,
+                unread_output: false,
+                seen_bell_count: 0,
             }],
             pending_spawns: Vec::new(),
             active_pending_id: None,
@@ -179,6 +183,8 @@ impl TerminalSessionRegistry {
             .any(|pending| pending.pending_id == session_id)
         {
             if self.active_pending_id.is_none() {
+                self.sessions[self.active_index].seen_bell_count = lane.bell_count;
+                self.sessions[self.active_index].unread_output = false;
                 lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
             }
             self.active_pending_id = Some(session_id.to_string());
@@ -196,9 +202,13 @@ impl TerminalSessionRegistry {
         if self.active_pending_id.take().is_some() {
             lane.swap_session_projection(&mut self.sessions[target].parked_lane);
         } else if target != previous {
+            self.sessions[previous].seen_bell_count = lane.bell_count;
+            self.sessions[previous].unread_output = false;
             lane.swap_session_projection(&mut self.sessions[previous].parked_lane);
             lane.swap_session_projection(&mut self.sessions[target].parked_lane);
         }
+        self.sessions[target].seen_bell_count = lane.bell_count;
+        self.sessions[target].unread_output = false;
         self.projection_managed = true;
         Ok(())
     }
@@ -277,6 +287,8 @@ impl TerminalSessionRegistry {
         slot.remove_when_closed = false;
         slot.hidden_after_close = false;
         slot.exact_exit_status = None;
+        slot.unread_output = false;
+        slot.seen_bell_count = state.bell_count;
         slot.session.resize(slot.columns, slot.rows)?;
         Ok(())
     }
@@ -352,81 +364,6 @@ impl TerminalSessionRegistry {
         let event_log_path = slot.session.event_log_path();
         slot.activity.refresh(&event_log_path);
         slot.activity.summary_lines(max_spans)
-    }
-
-    pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
-        let active_index = self.active_index;
-        state.active_session_id = self.active_pending_id.clone().or_else(|| {
-            (!self.sessions[self.active_index].hidden_after_close)
-                .then(|| self.active().session_id().to_string())
-        });
-        let tabs = self
-            .sessions
-            .iter_mut()
-            .enumerate()
-            .filter(|(_, slot)| !slot.hidden_after_close)
-            .map(|(index, slot)| {
-                if self.active_pending_id.is_none() && index == active_index {
-                    slot.status = state.status.clone();
-                }
-                let projected_lane = if self.active_pending_id.is_none() && index == active_index {
-                    &*state
-                } else {
-                    &slot.parked_lane
-                };
-                let event_log_path = slot.session.event_log_path();
-                slot.activity.refresh(&event_log_path);
-                TerminalTabState {
-                    session_id: slot.session.session_id().to_string(),
-                    previous_session_id: slot.previous_session_id.clone(),
-                    label: render::terminal_tab_label(
-                        &slot.label,
-                        slot.label_is_explicit,
-                        projected_lane.title.as_deref(),
-                        projected_lane.progress,
-                        projected_lane.latest_notification.is_some(),
-                    ),
-                    event_log_path: event_log_path.display().to_string(),
-                    activity_event_count: slot.activity.event_count(),
-                    activity_summary: slot.activity.summary_lines(2).unwrap_or_else(|err| {
-                        vec![format!(
-                            "activity summary unavailable for {}: {err}",
-                            event_log_path.display()
-                        )]
-                    }),
-                    active: self.active_pending_id.is_none() && index == active_index,
-                    attached: slot.attached,
-                    status: slot.status.clone(),
-                    restart_count: slot.restart_count,
-                }
-            })
-            .chain(
-                self.pending_spawns
-                    .iter()
-                    .filter(|pending| !pending.canceled)
-                    .map(|pending| TerminalTabState {
-                        session_id: pending.pending_id.clone(),
-                        previous_session_id: None,
-                        label: pending.label.clone(),
-                        event_log_path: String::new(),
-                        activity_event_count: 0,
-                        activity_summary: vec!["starting terminal session".to_string()],
-                        active: self.active_pending_id.as_deref() == Some(&pending.pending_id),
-                        attached: true,
-                        status: "starting".to_string(),
-                        restart_count: 0,
-                    }),
-            )
-            .collect::<Vec<_>>();
-        if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
-            state.activity_summary = active_tab.activity_summary.clone();
-        }
-        if self.active_pending_id.is_none() {
-            let active_slot = &self.sessions[self.active_index];
-            state.columns = active_slot.columns;
-            state.rows = active_slot.rows;
-        }
-        state.tabs = tabs;
     }
 
     #[allow(dead_code)]

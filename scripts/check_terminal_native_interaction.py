@@ -93,6 +93,7 @@ REQUIRED = {
         "CoreEvent::ClipboardRequest",
         "TerminalNotificationRequest",
         "CoreEvent::Notification",
+        "slot.unread_output = true",
     ),
     "terminal_session_drain_tests.rs": (
         "osc52_becomes_a_typed_session_scoped_request_without_changing_cells",
@@ -103,12 +104,17 @@ REQUIRED = {
     ),
     "terminal_session.rs": (
         "label_is_explicit",
+    ),
+    "terminal_session_render.rs": (
         "terminal_tab_label",
+        "unread_bell_count",
+        "unread_output",
     ),
     "terminal_session_naming_tests.rs": (
         "shell_titles_drive_tabs_until_the_user_renames_them",
         "inactive_shell_title_stays_with_its_parked_session",
         "progress_and_latest_notification_are_visible_in_their_session_tab",
+        "inactive_output_and_bells_remain_session_scoped_until_activation",
     ),
     "runtime_terminal_notifications.rs": (
         "DATUM_TERMINAL_NOTIFICATIONS",
@@ -176,6 +182,12 @@ REQUIRED = {
     ),
 }
 
+RENDER_REQUIRED = (
+    "unread_bell_count",
+    "unread_output",
+    "inactive_tabs_use_non_color_output_and_bell_attention_markers",
+)
+
 LEGACY_ENCODERS = (
     "terminal_sgr_mouse_button_sequence",
     "terminal_x10_mouse_button_sequence",
@@ -229,6 +241,7 @@ def check(sources: dict[str, str], render: str, failures: list[str]) -> None:
         "snapshot.cursor().position",
         "search_highlights",
         "TERMINAL_SEARCH_ALL_BG",
+        *RENDER_REQUIRED,
     ):
         if marker not in render:
             failures.append(f"native terminal IME rendering is missing {marker}")
@@ -239,7 +252,14 @@ def main() -> int:
         str(path.relative_to(APP)): path.read_text(encoding="utf-8")
         for path in APP.rglob("*.rs")
     }
-    render = (RENDER / "terminal_core_render.rs").read_text(encoding="utf-8")
+    render = "\n".join(
+        (RENDER / name).read_text(encoding="utf-8")
+        for name in (
+            "terminal_core_render.rs",
+            "terminal_tab_strip.rs",
+            "terminal_tab_strip_tests.rs",
+        )
+    )
     failures: list[str] = []
     check(sources, render, failures)
     if failures:

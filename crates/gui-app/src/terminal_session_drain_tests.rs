@@ -116,6 +116,8 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
                 remove_when_closed: false,
                 hidden_after_close: false,
                 exact_exit_status: None,
+                unread_output: false,
+                seen_bell_count: 0,
             }
         })
         .collect();
@@ -171,6 +173,24 @@ fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal() {
     assert_eq!(second.output_events, 1);
     assert_eq!(second.output_bytes, 512);
     assert!(!second.pending);
+}
+
+#[test]
+fn inactive_output_and_bell_mark_only_the_originating_tab_unread() {
+    let mut registry = synthetic_registry(2);
+    registry.sessions[1]
+        .session
+        .transport
+        .push_synthetic_output(b"background\x07");
+    let mut lane = TerminalLaneState::default();
+
+    let report = registry.drain_all(&mut lane);
+    assert_eq!(report.output_bytes, 11);
+    registry.sync_lane_tabs(&mut lane);
+    assert!(!lane.tabs[0].unread_output);
+    assert_eq!(lane.tabs[0].unread_bell_count, 0);
+    assert!(lane.tabs[1].unread_output);
+    assert_eq!(lane.tabs[1].unread_bell_count, 1);
 }
 
 #[test]

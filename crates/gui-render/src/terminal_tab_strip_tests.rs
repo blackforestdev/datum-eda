@@ -1,6 +1,27 @@
 use super::*;
 
 #[test]
+fn inactive_tabs_use_non_color_output_and_bell_attention_markers() {
+    let mut tab = datum_gui_protocol::TerminalTabState {
+        session_id: "terminal-1".to_string(),
+        previous_session_id: None,
+        label: "agent shell".to_string(),
+        event_log_path: String::new(),
+        activity_event_count: 0,
+        activity_summary: Vec::new(),
+        active: false,
+        attached: true,
+        status: "running".to_string(),
+        restart_count: 0,
+        unread_output: true,
+        unread_bell_count: 0,
+    };
+    assert!(crate::terminal_tab_strip::top_tab_label(&tab, 152.0).ends_with(" •"));
+    tab.unread_bell_count = 2;
+    assert!(crate::terminal_tab_strip::top_tab_label(&tab, 152.0).ends_with(" !"));
+}
+
+#[test]
 fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
@@ -17,6 +38,8 @@ fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last
             attached: true,
             status: "running".to_string(),
             restart_count: 0,
+            unread_output: false,
+            unread_bell_count: 0,
         })
         .collect();
 
@@ -110,6 +133,8 @@ fn dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker() {
             attached: true,
             status: "running".to_string(),
             restart_count: 0,
+            unread_output: false,
+            unread_bell_count: 0,
         })
         .collect();
     state.ui.terminal_tab_drag = Some(datum_gui_protocol::TerminalTabDragVisualState {
@@ -168,6 +193,8 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         attached: true,
         status: state.ui.terminal.status.clone(),
         restart_count: 0,
+        unread_output: false,
+        unread_bell_count: 0,
     }];
 
     let retained = RetainedScene::from_workspace(&state, 1280, 800);

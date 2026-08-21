@@ -17,12 +17,25 @@ def valid_sources() -> dict[str, str]:
     return {name: "\n".join(markers) for name, markers in guard.REQUIRED.items()}
 
 
+def valid_render() -> str:
+    return " ".join(
+        (
+            "ime_preedit",
+            "render_ime_preedit",
+            "snapshot.cursor().position",
+            "search_highlights",
+            "TERMINAL_SEARCH_ALL_BG",
+            *guard.RENDER_REQUIRED,
+        )
+    )
+
+
 class TerminalNativeInteractionGuardTest(unittest.TestCase):
     def test_valid_multifile_boundary_passes(self) -> None:
         failures: list[str] = []
         guard.check(
             valid_sources(),
-            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            valid_render(),
             failures,
         )
         self.assertEqual([], failures)
@@ -215,6 +228,20 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("DATUM_TERMINAL_NOTIFICATIONS" in failure for failure in failures))
         self.assertTrue(any("sync_channel" in failure for failure in failures))
         self.assertTrue(any("progress_and_latest" in failure for failure in failures))
+
+    def test_inactive_output_and_bell_attention_cannot_become_color_only(self) -> None:
+        sources = valid_sources()
+        sources["terminal_session_drain.rs"] = sources[
+            "terminal_session_drain.rs"
+        ].replace("slot.unread_output = true", "discard_inactive_attention")
+        render = valid_render().replace(
+            "inactive_tabs_use_non_color_output_and_bell_attention_markers",
+            "deleted_non_color_attention_proof",
+        )
+        failures: list[str] = []
+        guard.check(sources, render, failures)
+        self.assertTrue(any("slot.unread_output" in failure for failure in failures))
+        self.assertTrue(any("non_color_output" in failure for failure in failures))
 
 
 if __name__ == "__main__":

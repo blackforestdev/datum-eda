@@ -115,3 +115,40 @@ fn progress_and_latest_notification_are_visible_in_their_session_tab() {
     assert_eq!(lane.tabs[0].label, "shell 1 · !");
     let _ = fs::remove_dir_all(root);
 }
+
+#[test]
+fn inactive_output_and_bells_remain_session_scoped_until_activation() {
+    let root = std::env::temp_dir().join(format!(
+        "datum-terminal-attention-label-{}",
+        std::process::id()
+    ));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(&root).expect("terminal attention test root should create");
+    let context = TerminalLaunchContext::for_project_root(&root);
+    let mut registry =
+        TerminalSessionRegistry::spawn(&context).expect("spawn initial terminal session");
+    let first_id = registry.active().session_id().to_string();
+    registry
+        .spawn_and_activate(&context)
+        .expect("spawn second terminal session");
+    registry.sessions[0].unread_output = true;
+    registry.sessions[0].seen_bell_count = 1;
+    registry.sessions[0].parked_lane.bell_count = 3;
+    let mut lane = TerminalLaneState::default();
+
+    registry.sync_lane_tabs(&mut lane);
+    assert!(lane.tabs[0].unread_output);
+    assert_eq!(lane.tabs[0].unread_bell_count, 2);
+    assert!(!lane.tabs[1].unread_output);
+    assert_eq!(lane.tabs[1].unread_bell_count, 0);
+
+    registry
+        .activate_with_lane(&first_id, &mut lane)
+        .expect("activate attention-bearing session");
+    registry.sync_lane_tabs(&mut lane);
+    assert!(lane.tabs[0].active);
+    assert!(!lane.tabs[0].unread_output);
+    assert_eq!(lane.tabs[0].unread_bell_count, 0);
+    assert_eq!(registry.sessions[0].seen_bell_count, 3);
+    let _ = fs::remove_dir_all(root);
+}
