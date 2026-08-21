@@ -447,3 +447,7 @@ const fn mouse_encoding(encoding: MouseEncoding) -> Option<&'static str> {
 #[cfg(test)]
 #[path = "terminal_core_adapter_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "terminal_shadow.rs"]
+mod shadow;
