@@ -492,7 +492,18 @@ pub struct TerminalCore {
 
 impl TerminalCore {
     pub fn new(limits: CoreLimits, size: TerminalSize) -> Result<Self, ScreenError> {
-        let state = ScreenState::new(size, &limits)?;
+        Self::new_with_cursor_style(limits, size, crate::CursorShape::Block, true)
+    }
+
+    pub fn new_with_cursor_style(
+        limits: CoreLimits,
+        size: TerminalSize,
+        cursor_shape: crate::CursorShape,
+        cursor_blinking: bool,
+    ) -> Result<Self, ScreenError> {
+        let mut state = ScreenState::new(size, &limits)?;
+        state.cursor.shape = cursor_shape;
+        state.cursor.blinking = cursor_blinking;
         Ok(Self { limits, state })
     }
 

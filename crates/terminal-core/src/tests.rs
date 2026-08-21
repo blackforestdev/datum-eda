@@ -1,5 +1,15 @@
 use super::*;
 
+#[test]
+fn application_may_choose_the_initial_cursor_style() {
+    let limits = CoreLimits::try_from(raw_limits(1_048_576)).unwrap();
+    let size = TerminalSize::new(80, 24, 0, 0).unwrap();
+    let core = TerminalCore::new_with_cursor_style(limits, size, CursorShape::Bar, false).unwrap();
+
+    assert_eq!(core.state().cursor().shape, CursorShape::Bar);
+    assert!(!core.state().cursor().blinking);
+}
+
 fn raw_limits(value: usize) -> CoreLimitValues {
     CoreLimitValues {
         parameter_count: value,

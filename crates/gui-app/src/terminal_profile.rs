@@ -5,7 +5,7 @@ use datum_gui_protocol::{
     TERMINAL_FONT_SCALE_DEFAULT_MILLIS, TERMINAL_FONT_SCALE_MAX_MILLIS,
     TERMINAL_FONT_SCALE_MIN_MILLIS, TerminalTheme,
 };
-use datum_terminal_core::CoreLimitValues;
+use datum_terminal_core::{CoreLimitValues, CursorShape};
 use std::{
     ffi::OsString,
     path::{Path, PathBuf},
@@ -46,6 +46,13 @@ pub(super) struct TerminalProfileArgs {
     /// Retained scrollback text in MiB for the custom profile (1..=64).
     #[arg(long = "terminal-scrollback-mebibytes")]
     history_mebibytes: Option<usize>,
+    /// Initial cursor: blinking-block, steady-block, blinking-underline,
+    /// steady-underline, blinking-bar, or steady-bar.
+    #[arg(long = "terminal-cursor")]
+    cursor: Option<String>,
+    /// Visual bell presentation for this profile: visual or off.
+    #[arg(long = "terminal-bell")]
+    bell: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -59,6 +66,9 @@ pub(super) struct TerminalLaunchProfile {
     font_scale_millis: u16,
     history_lines: usize,
     history_bytes: usize,
+    cursor_shape: CursorShape,
+    cursor_blinking: bool,
+    visual_bell_enabled: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -95,6 +105,9 @@ impl Default for TerminalLaunchProfile {
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
             history_lines: crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES.history_lines,
             history_bytes: crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES.history_bytes,
+            cursor_shape: CursorShape::Block,
+            cursor_blinking: true,
+            visual_bell_enabled: true,
         }
     }
 }
@@ -126,6 +139,14 @@ impl TerminalLaunchProfile {
             history_bytes: self.history_bytes,
             ..crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES
         }
+    }
+
+    pub(super) fn cursor_preference(&self) -> (CursorShape, bool) {
+        (self.cursor_shape, self.cursor_blinking)
+    }
+
+    pub(super) fn visual_bell_enabled(&self) -> bool {
+        self.visual_bell_enabled
     }
 
     pub(super) fn resolve(
@@ -209,6 +230,8 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
         || args.font_scale_percent.is_some()
         || args.history_lines.is_some()
         || args.history_mebibytes.is_some()
+        || args.cursor.is_some()
+        || args.bell.is_some()
         || args.custom_name != "custom"
         || args.selected == args.custom_name;
     if !has_custom {
@@ -261,6 +284,22 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
             approved.history_bytes / (1024 * 1024)
         );
     }
+    let (cursor_shape, cursor_blinking) = match args.cursor.as_deref() {
+        None | Some("blinking-block") => (CursorShape::Block, true),
+        Some("steady-block") => (CursorShape::Block, false),
+        Some("blinking-underline") => (CursorShape::Underline, true),
+        Some("steady-underline") => (CursorShape::Underline, false),
+        Some("blinking-bar") => (CursorShape::Bar, true),
+        Some("steady-bar") => (CursorShape::Bar, false),
+        Some(value) => anyhow::bail!(
+            "unknown terminal cursor {value:?}; expected blinking-block, steady-block, blinking-underline, steady-underline, blinking-bar, or steady-bar"
+        ),
+    };
+    let visual_bell_enabled = match args.bell.as_deref() {
+        None | Some("visual") => true,
+        Some("off") => false,
+        Some(value) => anyhow::bail!("unknown terminal bell {value:?}; expected visual or off"),
+    };
     let mut environment = Vec::new();
     for assignment in &args.environment {
         let (key, value) = assignment
@@ -283,6 +322,9 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
         font_scale_millis,
         history_lines,
         history_bytes,
+        cursor_shape,
+        cursor_blinking,
+        visual_bell_enabled,
     }))
 }
 
@@ -369,6 +411,10 @@ mod tests {
             "24000",
             "--terminal-scrollback-mebibytes",
             "12",
+            "--terminal-cursor",
+            "steady-bar",
+            "--terminal-bell",
+            "off",
         ]);
         let profile = catalog.selected();
         let resolved = profile.resolve_with_shell(
@@ -391,16 +437,34 @@ mod tests {
         assert_eq!(profile.font_scale_millis(), 1_300);
         assert_eq!(profile.core_limit_values().history_lines, 24_000);
         assert_eq!(profile.core_limit_values().history_bytes, 12 * 1024 * 1024);
-        let adapter =
-            crate::terminal_core_adapter::TerminalCoreSessionAdapter::new_with_limit_values(
+        assert_eq!(profile.cursor_preference(), (CursorShape::Bar, false));
+        assert!(!profile.visual_bell_enabled());
+        let mut adapter =
+            crate::terminal_core_adapter::TerminalCoreSessionAdapter::new_with_profile(
                 "profile-session",
                 "profile-context",
                 80,
                 24,
-                profile.core_limit_values(),
+                profile,
             )
             .unwrap();
         assert_eq!(adapter.test_history_limits(), (24_000, 12 * 1024 * 1024));
+        let cursor = adapter.test_render_snapshot().cursor();
+        assert_eq!(cursor.shape, CursorShape::Bar);
+        assert!(!cursor.blinking);
+        let mut lane = datum_gui_protocol::TerminalLaneState::default();
+        adapter.apply_output(&mut lane, b"\x1b[3 q").unwrap();
+        let cursor = adapter.test_render_snapshot().cursor();
+        assert_eq!(cursor.shape, CursorShape::Underline);
+        assert!(cursor.blinking);
+        let update = adapter.apply_output(&mut lane, b"\x07").unwrap();
+        assert!(
+            update
+                .events
+                .iter()
+                .any(|event| matches!(event, datum_terminal_core::CoreEvent::Bell))
+        );
+        assert_eq!(lane.bell_count, 0);
     }
 
     #[test]
@@ -415,6 +479,8 @@ mod tests {
             vec!["--terminal-scrollback-lines", "100001"],
             vec!["--terminal-scrollback-mebibytes", "0"],
             vec!["--terminal-scrollback-mebibytes", "65"],
+            vec!["--terminal-cursor", "beam"],
+            vec!["--terminal-bell", "audible"],
         ] {
             let mut argv = vec!["fixture"];
             argv.extend(values);
@@ -457,6 +523,9 @@ mod tests {
             font_scale_millis: TERMINAL_FONT_SCALE_DEFAULT_MILLIS,
             history_lines: 12_345,
             history_bytes: 8 * 1024 * 1024,
+            cursor_shape: CursorShape::Bar,
+            cursor_blinking: false,
+            visual_bell_enabled: false,
         };
         let session = spawn_terminal_session(&context).unwrap();
         let deadline = std::time::Instant::now() + Duration::from_secs(2);

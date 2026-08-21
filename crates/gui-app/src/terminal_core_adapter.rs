@@ -92,37 +92,47 @@ pub(crate) struct TerminalCoreSessionAdapter {
     parser: StreamingParser,
     core: TerminalCore,
     bell_count: usize,
+    visual_bell_enabled: bool,
     pending_render_damage: Vec<Damage>,
 }
 
 impl TerminalCoreSessionAdapter {
-    #[cfg(test)]
-    pub(crate) fn new(
+    pub(crate) fn new_with_profile(
         session_id: impl Into<String>,
         context_id: impl Into<String>,
         columns: u16,
         rows: u16,
+        profile: &crate::terminal_profile::TerminalLaunchProfile,
     ) -> Result<Self, TerminalCoreAdapterError> {
-        Self::new_with_limit_values(
+        let (cursor_shape, cursor_blinking) = profile.cursor_preference();
+        Self::new_with_settings(
             session_id,
             context_id,
             columns,
             rows,
-            PRODUCTION_CORE_LIMIT_VALUES,
+            profile.core_limit_values(),
+            cursor_shape,
+            cursor_blinking,
+            profile.visual_bell_enabled(),
         )
     }
 
-    pub(crate) fn new_with_limit_values(
+    #[allow(clippy::too_many_arguments)]
+    fn new_with_settings(
         session_id: impl Into<String>,
         context_id: impl Into<String>,
         columns: u16,
         rows: u16,
         values: CoreLimitValues,
+        cursor_shape: CursorShape,
+        cursor_blinking: bool,
+        visual_bell_enabled: bool,
     ) -> Result<Self, TerminalCoreAdapterError> {
         let limits = CoreLimits::try_from(values).map_err(TerminalCoreAdapterError::Limits)?;
         let size =
             TerminalSize::new(columns, rows, 0, 0).map_err(TerminalCoreAdapterError::Size)?;
-        let core = TerminalCore::new(limits, size).map_err(TerminalCoreAdapterError::Screen)?;
+        let core = TerminalCore::new_with_cursor_style(limits, size, cursor_shape, cursor_blinking)
+            .map_err(TerminalCoreAdapterError::Screen)?;
         Ok(Self {
             session_id: session_id.into(),
             context_id: context_id.into(),
@@ -130,6 +140,7 @@ impl TerminalCoreSessionAdapter {
             parser: StreamingParser::new(limits),
             core,
             bell_count: 0,
+            visual_bell_enabled,
             pending_render_damage: vec![Damage::Full],
         })
     }
@@ -140,49 +151,6 @@ impl TerminalCoreSessionAdapter {
 
     pub(crate) fn context_id(&self) -> &str {
         &self.context_id
-    }
-
-    #[cfg(test)]
-    pub(crate) fn bracketed_paste_enabled(&self) -> bool {
-        self.core.state().modes().bracketed_paste
-    }
-
-    #[cfg(test)]
-    pub(crate) fn test_render_snapshot(&self) -> RenderSnapshot {
-        self.core
-            .render_snapshot()
-            .expect("test core snapshot should remain within governed limits")
-    }
-
-    #[cfg(test)]
-    pub(crate) fn test_plain_lines(&self) -> Vec<String> {
-        use datum_terminal_core::CellContent;
-
-        self.test_render_snapshot()
-            .rows()
-            .map(|row| {
-                row.cells()
-                    .iter()
-                    .filter_map(|cell| match &cell.content {
-                        CellContent::Cluster(cluster) => Some(cluster.text()),
-                        CellContent::Empty | CellContent::Continuation { .. } => None,
-                    })
-                    .collect()
-            })
-            .collect()
-    }
-
-    #[cfg(test)]
-    pub(crate) fn test_history_limits(&self) -> (usize, usize) {
-        (
-            self.limits.history_lines.get(),
-            self.limits.history_bytes.get(),
-        )
-    }
-
-    #[cfg(test)]
-    pub(crate) fn test_plain_text(&self) -> String {
-        self.test_plain_lines().join("\n")
     }
 
     pub(crate) fn take_render_state(
@@ -210,8 +178,16 @@ impl TerminalCoreSessionAdapter {
         let core = &mut self.core;
         let limits = self.limits;
         let bell_count = &mut self.bell_count;
+        let visual_bell_enabled = self.visual_bell_enabled;
         let report = parser.feed(bytes, |action| {
-            apply_action(core, limits, bell_count, action, &mut update);
+            apply_action(
+                core,
+                limits,
+                bell_count,
+                visual_bell_enabled,
+                action,
+                &mut update,
+            );
         });
         debug_assert_eq!(report.consumed, bytes.len());
         self.merge_render_damage(&update.damage);
@@ -228,8 +204,16 @@ impl TerminalCoreSessionAdapter {
         let core = &mut self.core;
         let limits = self.limits;
         let bell_count = &mut self.bell_count;
+        let visual_bell_enabled = self.visual_bell_enabled;
         parser.finish(|action| {
-            apply_action(core, limits, bell_count, action, &mut update);
+            apply_action(
+                core,
+                limits,
+                bell_count,
+                visual_bell_enabled,
+                action,
+                &mut update,
+            );
         });
         self.merge_render_damage(&update.damage);
         self.project(lane)?;
@@ -323,6 +307,7 @@ fn apply_action(
     core: &mut TerminalCore,
     limits: CoreLimits,
     bell_count: &mut usize,
+    visual_bell_enabled: bool,
     action: datum_terminal_core::Action,
     batch: &mut TerminalCoreAdapterUpdate,
 ) {
@@ -342,7 +327,7 @@ fn apply_action(
                 }
             }
             for event in update.events() {
-                if matches!(event, CoreEvent::Bell) {
+                if visual_bell_enabled && matches!(event, CoreEvent::Bell) {
                     *bell_count = bell_count.saturating_add(1);
                 }
                 push_event_bounded(batch, limits, event.clone());
@@ -413,6 +398,81 @@ const fn mouse_encoding(encoding: MouseEncoding) -> Option<&'static str> {
         MouseEncoding::Sgr => Some("sgr"),
         MouseEncoding::Urxvt => Some("urxvt"),
         MouseEncoding::SgrPixels => Some("sgr_pixels"),
+    }
+}
+
+#[cfg(test)]
+impl TerminalCoreSessionAdapter {
+    pub(crate) fn new(
+        session_id: impl Into<String>,
+        context_id: impl Into<String>,
+        columns: u16,
+        rows: u16,
+    ) -> Result<Self, TerminalCoreAdapterError> {
+        Self::new_with_limit_values(
+            session_id,
+            context_id,
+            columns,
+            rows,
+            PRODUCTION_CORE_LIMIT_VALUES,
+        )
+    }
+
+    pub(crate) fn new_with_limit_values(
+        session_id: impl Into<String>,
+        context_id: impl Into<String>,
+        columns: u16,
+        rows: u16,
+        values: CoreLimitValues,
+    ) -> Result<Self, TerminalCoreAdapterError> {
+        Self::new_with_settings(
+            session_id,
+            context_id,
+            columns,
+            rows,
+            values,
+            CursorShape::Block,
+            true,
+            true,
+        )
+    }
+
+    pub(crate) fn bracketed_paste_enabled(&self) -> bool {
+        self.core.state().modes().bracketed_paste
+    }
+
+    pub(crate) fn test_render_snapshot(&self) -> RenderSnapshot {
+        self.core
+            .render_snapshot()
+            .expect("test core snapshot should remain within governed limits")
+    }
+
+    pub(crate) fn test_plain_lines(&self) -> Vec<String> {
+        use datum_terminal_core::CellContent;
+
+        self.test_render_snapshot()
+            .rows()
+            .map(|row| {
+                row.cells()
+                    .iter()
+                    .filter_map(|cell| match &cell.content {
+                        CellContent::Cluster(cluster) => Some(cluster.text()),
+                        CellContent::Empty | CellContent::Continuation { .. } => None,
+                    })
+                    .collect()
+            })
+            .collect()
+    }
+
+    pub(crate) fn test_history_limits(&self) -> (usize, usize) {
+        (
+            self.limits.history_lines.get(),
+            self.limits.history_bytes.get(),
+        )
+    }
+
+    pub(crate) fn test_plain_text(&self) -> String {
+        self.test_plain_lines().join("\n")
     }
 }
 

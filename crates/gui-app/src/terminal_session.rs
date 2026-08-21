@@ -137,12 +137,12 @@ impl TerminalSessionRegistry {
     ) -> Result<Self> {
         let terminal_wake = TerminalWakeGate::new(terminal_event_proxy);
         let session = spawn_terminal_session_with_wake(context, terminal_wake.clone())?;
-        let core = TerminalCoreSessionAdapter::new_with_limit_values(
+        let core = TerminalCoreSessionAdapter::new_with_profile(
             session.session_id.clone(),
             session.context_id.clone(),
             80,
             24,
-            session.terminal_profile.core_limit_values(),
+            &session.terminal_profile,
         )?;
         let first_session_id = session.session_id().to_string();
         Ok(Self {
@@ -316,12 +316,12 @@ impl TerminalSessionRegistry {
         let previous_session_id = slot.session.session_id().to_string();
         let restart_context = context_for_terminal_restart(&slot.session, context);
         restart_terminal_session(&mut slot.session, state, &restart_context, terminal_wake)?;
-        slot.core = TerminalCoreSessionAdapter::new_with_limit_values(
+        slot.core = TerminalCoreSessionAdapter::new_with_profile(
             slot.session.session_id.clone(),
             slot.session.context_id.clone(),
             slot.columns,
             slot.rows,
-            slot.session.terminal_profile.core_limit_values(),
+            &slot.session.terminal_profile,
         )?;
         slot.status = state.status.clone();
         slot.attached = true;
