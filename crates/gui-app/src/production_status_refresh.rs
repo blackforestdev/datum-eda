@@ -221,6 +221,12 @@ impl Runtime {
         if restarted {
             self.log_review_event("terminal session restarted after verified teardown");
         }
+        for request in report.clipboard_requests {
+            self.handle_terminal_clipboard_write_request(request);
+        }
+        for notification in report.notifications {
+            self.handle_terminal_notification(notification);
+        }
         for notice in spawn_notices {
             self.log_review_event(notice);
         }

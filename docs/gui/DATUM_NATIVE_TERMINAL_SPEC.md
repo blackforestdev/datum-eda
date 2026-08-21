@@ -254,8 +254,18 @@ Terminal output is hostile input. The adapter/core boundary must prevent escape
 sequences from escaping the terminal surface. OSC 52 is disabled or confirmation-
 gated by default for clipboard writes; hyperlink/path opening is user-initiated;
 graphics allocations and scrollback are bounded; paste preserves visible user
-agency; and closing a live process tree distinguishes detach, SIGHUP, and force
-termination.
+agency; and closing a live process tree follows Datum's terminate-only
+confirmation and bounded HUP/TERM/KILL lifecycle. Datum never leaves a detached
+local PTY behind.
+
+The production OSC 52 adapter accepts only bounded UTF-8 text from the focused
+active session and requires explicit COPY/Enter confirmation before changing
+the requested desktop clipboard or primary selection. Clipboard-read queries,
+background writes, malformed Base64, and unsupported selections are denied.
+Terminal notification text is display-only. Desktop delivery is configured by
+`DATUM_TERMINAL_NOTIFICATIONS=off|unfocused|always`; the compatibility default
+is `unfocused`, and no additional time-based throttle or content policy is
+applied beyond TerminalCore's existing payload/work bounds.
 
 Datum context files are outside design authority and never journaled. Sensitive
 MCP authentication uses process environment or protected runtime descriptors,

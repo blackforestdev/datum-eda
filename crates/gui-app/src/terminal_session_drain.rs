@@ -20,10 +20,23 @@ pub(crate) struct TerminalDrainReport {
     pub(crate) tabs_changed: bool,
     pub(crate) pending: bool,
     pub(crate) notices: Vec<String>,
+    pub(crate) clipboard_requests: Vec<TerminalClipboardWriteRequest>,
+    pub(crate) notifications: Vec<TerminalNotificationRequest>,
     #[cfg(test)]
     serviced: Vec<(usize, &'static str, usize)>,
     #[cfg(test)]
     output_batches: usize,
+}
+
+pub(crate) struct TerminalClipboardWriteRequest {
+    pub(crate) session_id: String,
+    pub(crate) selection: datum_terminal_core::ClipboardSelection,
+    pub(crate) encoded_contents: Vec<u8>,
+}
+
+pub(crate) struct TerminalNotificationRequest {
+    pub(crate) session_id: String,
+    pub(crate) text: String,
 }
 
 fn flush_output_batch(
@@ -48,8 +61,9 @@ fn flush_output_batch(
     } else {
         &mut slot.parked_lane
     };
+    lane.latest_notification = None;
     match slot.core.apply_output(lane, bytes) {
-        Ok(update) => consume_core_update(&slot.session, report, update),
+        Ok(update) => consume_core_update(&slot.session, lane, report, update),
         Err(error) => report
             .notices
             .push(format!("terminal core output failed: {error}")),
@@ -67,6 +81,7 @@ fn flush_output_batch(
 
 fn consume_core_update(
     session: &super::TerminalSession,
+    lane: &mut TerminalLaneState,
     report: &mut TerminalDrainReport,
     update: TerminalCoreAdapterUpdate,
 ) {
@@ -88,8 +103,23 @@ fn consume_core_update(
                 .notices
                 .push(format!("terminal core {:?} limit reached", kind).to_lowercase()),
             datum_terminal_core::CoreEvent::Notification(text) => {
-                report.notices.push(text.as_str().to_owned());
+                let text = text.as_str().to_owned();
+                lane.latest_notification = Some(text.clone());
+                report.notifications.push(TerminalNotificationRequest {
+                    session_id: session.session_id().to_string(),
+                    text,
+                });
             }
+            datum_terminal_core::CoreEvent::ClipboardRequest {
+                selection,
+                encoded_contents,
+            } => report
+                .clipboard_requests
+                .push(TerminalClipboardWriteRequest {
+                    session_id: session.session_id().to_string(),
+                    selection,
+                    encoded_contents: encoded_contents.as_slice().to_vec(),
+                }),
             _ => {}
         }
     }
@@ -238,7 +268,7 @@ impl TerminalSessionRegistry {
                         &mut slot.parked_lane
                     };
                     match slot.core.finish(lane) {
-                        Ok(update) => consume_core_update(&slot.session, &mut report, update),
+                        Ok(update) => consume_core_update(&slot.session, lane, &mut report, update),
                         Err(error) => report
                             .notices
                             .push(format!("terminal core finish failed: {error}")),

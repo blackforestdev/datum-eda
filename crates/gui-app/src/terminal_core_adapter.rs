@@ -240,6 +240,29 @@ impl TerminalCoreSessionAdapter {
         lane.current_working_directory = state
             .working_directory()
             .map(|directory| directory.as_str().to_owned());
+        lane.progress = match state.progress() {
+            datum_terminal_core::ProgressState::Clear => {
+                datum_gui_protocol::TerminalProgressState::Clear
+            }
+            datum_terminal_core::ProgressState::Set { percent } => {
+                datum_gui_protocol::TerminalProgressState::Set {
+                    percent: percent.get(),
+                }
+            }
+            datum_terminal_core::ProgressState::Error { percent } => {
+                datum_gui_protocol::TerminalProgressState::Error {
+                    percent: percent.get(),
+                }
+            }
+            datum_terminal_core::ProgressState::Paused { percent } => {
+                datum_gui_protocol::TerminalProgressState::Paused {
+                    percent: percent.get(),
+                }
+            }
+            datum_terminal_core::ProgressState::Indeterminate => {
+                datum_gui_protocol::TerminalProgressState::Indeterminate
+            }
+        };
         lane.bell_count = self.bell_count;
         lane.columns = state.size().columns.get();
         lane.rows = state.size().rows.get();

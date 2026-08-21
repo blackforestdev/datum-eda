@@ -59,6 +59,34 @@ pub enum TerminalLinkKind {
     Other,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TerminalClipboardSelection {
+    Clipboard,
+    Primary,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TerminalClipboardConfirmation {
+    pub selection: TerminalClipboardSelection,
+    pub byte_count: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum TerminalProgressState {
+    #[default]
+    Clear,
+    Set {
+        percent: u8,
+    },
+    Error {
+        percent: u8,
+    },
+    Paused {
+        percent: u8,
+    },
+    Indeterminate,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
@@ -89,6 +117,12 @@ pub struct TerminalLaneState {
     /// Matching Escape release remains link-chrome-owned after cancellation so
     /// it cannot also eject keyboard focus from the terminal.
     pub link_escape_release_pending: bool,
+    /// Presentation-only summary for a focused-session OSC 52 write. The
+    /// decoded payload remains private to gui-app until explicit confirmation.
+    pub clipboard_confirmation: Option<TerminalClipboardConfirmation>,
+    pub clipboard_escape_release_pending: bool,
+    pub latest_notification: Option<String>,
+    pub progress: TerminalProgressState,
     pub status: String,
     /// Application-close authority, distinct from the active session's
     /// teardown status so per-session refreshes cannot erase Retry/Cancel.
@@ -123,6 +157,10 @@ impl TerminalLaneState {
             search,
             link_confirmation,
             link_escape_release_pending,
+            clipboard_confirmation,
+            clipboard_escape_release_pending,
+            latest_notification,
+            progress,
             status,
         );
     }
@@ -153,6 +191,10 @@ impl Default for TerminalLaneState {
             search: TerminalSearchState::default(),
             link_confirmation: None,
             link_escape_release_pending: false,
+            clipboard_confirmation: None,
+            clipboard_escape_release_pending: false,
+            latest_notification: None,
+            progress: TerminalProgressState::Clear,
             status: "running".to_string(),
             application_shutdown_blocked: None,
         }
@@ -175,6 +217,10 @@ mod tests {
             link_confirmation: Some(TerminalLinkTarget {
                 kind: TerminalLinkKind::HttpUri,
                 target: "https://active.example".to_string(),
+            }),
+            clipboard_confirmation: Some(TerminalClipboardConfirmation {
+                selection: TerminalClipboardSelection::Clipboard,
+                byte_count: 5,
             }),
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
@@ -208,6 +254,13 @@ mod tests {
                 .as_ref()
                 .map(|link| link.target.as_str()),
             Some("https://active.example")
+        );
+        assert_eq!(
+            parked
+                .clipboard_confirmation
+                .as_ref()
+                .map(|request| request.byte_count),
+            Some(5)
         );
         assert_eq!(
             (

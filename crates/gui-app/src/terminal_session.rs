@@ -369,6 +369,11 @@ impl TerminalSessionRegistry {
                 if self.active_pending_id.is_none() && index == active_index {
                     slot.status = state.status.clone();
                 }
+                let projected_lane = if self.active_pending_id.is_none() && index == active_index {
+                    &*state
+                } else {
+                    &slot.parked_lane
+                };
                 let event_log_path = slot.session.event_log_path();
                 slot.activity.refresh(&event_log_path);
                 TerminalTabState {
@@ -377,11 +382,9 @@ impl TerminalSessionRegistry {
                     label: render::terminal_tab_label(
                         &slot.label,
                         slot.label_is_explicit,
-                        if self.active_pending_id.is_none() && index == active_index {
-                            state.title.as_deref()
-                        } else {
-                            slot.parked_lane.title.as_deref()
-                        },
+                        projected_lane.title.as_deref(),
+                        projected_lane.progress,
+                        projected_lane.latest_notification.is_some(),
                     ),
                     event_log_path: event_log_path.display().to_string(),
                     activity_event_count: slot.activity.event_count(),
@@ -441,6 +444,7 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
 
 #[path = "terminal_session_drain.rs"]
 mod drain;
+pub(crate) use drain::{TerminalClipboardWriteRequest, TerminalNotificationRequest};
 #[path = "terminal_session_interaction.rs"]
 mod interaction;
 #[path = "terminal_session_lifecycle.rs"]

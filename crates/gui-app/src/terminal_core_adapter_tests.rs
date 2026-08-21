@@ -57,7 +57,7 @@ fn adapter_keeps_session_context_identity_and_projects_core_state() {
     adapter
         .apply_output(
             &mut lane,
-            b"\x8c\x1b]2;agent session\x07\x1b]7;file:///tmp/project\x07\x1b[?2004h\x1b[?1003h\x1b[?1006h",
+            b"\x8c\x1b]2;agent session\x07\x1b]7;file:///tmp/project\x07\x1b]9;4;1;42\x07\x1b[?2004h\x1b[?1003h\x1b[?1006h",
         )
         .unwrap();
 
@@ -75,6 +75,10 @@ fn adapter_keeps_session_context_identity_and_projects_core_state() {
     assert!(adapter.bracketed_paste_enabled());
     assert_eq!(lane.mouse_reporting_mode.as_deref(), Some("any_event"));
     assert_eq!(lane.mouse_coordinate_encoding.as_deref(), Some("sgr"));
+    assert_eq!(
+        lane.progress,
+        datum_gui_protocol::TerminalProgressState::Set { percent: 42 }
+    );
     assert_eq!(lane.screen_cursor_col, 3);
 }
 

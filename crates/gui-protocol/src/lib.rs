@@ -47,8 +47,9 @@ pub use source_shard_status::{
 };
 mod terminal_lane;
 pub use terminal_lane::{
-    TerminalLaneState, TerminalLinkKind, TerminalLinkTarget, TerminalSearchMatch,
-    TerminalSearchPoint, TerminalSearchState, TerminalTabState,
+    TerminalClipboardConfirmation, TerminalClipboardSelection, TerminalLaneState, TerminalLinkKind,
+    TerminalLinkTarget, TerminalProgressState, TerminalSearchMatch, TerminalSearchPoint,
+    TerminalSearchState, TerminalTabState,
 };
 mod workspace_layout;
 pub use workspace_layout::{

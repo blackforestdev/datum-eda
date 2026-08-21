@@ -164,6 +164,58 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("label_is_explicit" in failure for failure in failures))
         self.assertTrue(any("shell_titles_drive_tabs" in failure for failure in failures))
 
+    def test_osc52_cannot_bypass_focused_confirmation_or_disappear_in_adapter(self) -> None:
+        sources = valid_sources()
+        sources["runtime_terminal_clipboard.rs"] = sources[
+            "runtime_terminal_clipboard.rs"
+        ].replace("clipboard_request_is_eligible", "allow_every_session")
+        sources["terminal_session_drain.rs"] = sources[
+            "terminal_session_drain.rs"
+        ].replace("CoreEvent::ClipboardRequest", "ignored_clipboard_event")
+        sources["terminal_session_drain_tests.rs"] = sources[
+            "terminal_session_drain_tests.rs"
+        ].replace(
+            "osc52_becomes_a_typed_session_scoped_request_without_changing_cells",
+            "deleted_osc52_adapter_proof",
+        )
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("clipboard_request_is_eligible" in failure for failure in failures))
+        self.assertTrue(any("CoreEvent::ClipboardRequest" in failure for failure in failures))
+        self.assertTrue(any("osc52_becomes" in failure for failure in failures))
+
+    def test_notifications_and_progress_cannot_return_to_an_invisible_sink(self) -> None:
+        sources = valid_sources()
+        sources["terminal_session_drain.rs"] = sources[
+            "terminal_session_drain.rs"
+        ].replace("CoreEvent::Notification", "ignore_notification")
+        sources["runtime_terminal_notifications.rs"] = sources[
+            "runtime_terminal_notifications.rs"
+        ].replace("DATUM_TERMINAL_NOTIFICATIONS", "hard_coded_policy").replace(
+            "sync_channel::<DesktopNotification>(PRODUCTION_CORE_LIMIT_VALUES.pending_events)",
+            "unbounded_notification_queue()",
+        )
+        sources["terminal_session_naming_tests.rs"] = sources[
+            "terminal_session_naming_tests.rs"
+        ].replace(
+            "progress_and_latest_notification_are_visible_in_their_session_tab",
+            "deleted_progress_projection_proof",
+        )
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
+            failures,
+        )
+        self.assertTrue(any("CoreEvent::Notification" in failure for failure in failures))
+        self.assertTrue(any("DATUM_TERMINAL_NOTIFICATIONS" in failure for failure in failures))
+        self.assertTrue(any("sync_channel" in failure for failure in failures))
+        self.assertTrue(any("progress_and_latest" in failure for failure in failures))
+
 
 if __name__ == "__main__":
     unittest.main()

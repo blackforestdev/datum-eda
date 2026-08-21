@@ -6,7 +6,8 @@ use super::{
     push_rect_border, truncate_text,
 };
 use crate::terminal_session_chrome::{
-    render_terminal_lifecycle_controls, render_terminal_link_controls,
+    render_terminal_clipboard_write_controls, render_terminal_lifecycle_controls,
+    render_terminal_link_controls, terminal_clipboard_write_controls_width,
     terminal_lifecycle_controls_width, terminal_link_controls_width,
 };
 
@@ -60,14 +61,23 @@ pub(super) fn render_terminal_tab_strip(
         .is_none()
         .then_some(state.ui.terminal.link_confirmation.as_ref())
         .flatten();
-    let search_active =
-        state.ui.terminal.search.active && lifecycle_label.is_none() && link_confirmation.is_none();
-    let trailing_width =
-        if lifecycle_label.is_some() || link_confirmation.is_some() || search_active {
-            (strip.width * 0.46).clamp(320.0, 620.0)
-        } else {
-            estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0
-        };
+    let clipboard_confirmation = lifecycle_label
+        .is_none()
+        .then_some(state.ui.terminal.clipboard_confirmation.as_ref())
+        .flatten();
+    let search_active = state.ui.terminal.search.active
+        && lifecycle_label.is_none()
+        && clipboard_confirmation.is_none()
+        && link_confirmation.is_none();
+    let trailing_width = if lifecycle_label.is_some()
+        || clipboard_confirmation.is_some()
+        || link_confirmation.is_some()
+        || search_active
+    {
+        (strip.width * 0.46).clamp(320.0, 620.0)
+    } else {
+        estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0
+    };
     let trailing_x = strip.x + strip.width - 12.0 - trailing_width;
     let tab_y = strip.y + 6.0;
     let tab_height = (strip.height - 6.0).max(1.0);
@@ -264,6 +274,36 @@ pub(super) fn render_terminal_tab_strip(
             centered_text_top(chrome, LIFECYCLE_CONTROL_SIZE_PX),
             &state.ui.terminal.status,
             state.ui.terminal.application_shutdown_blocked.as_deref(),
+            text_runs,
+            hit_regions,
+        );
+    } else if let Some(clipboard) = clipboard_confirmation {
+        let chrome = lifecycle_chrome_rect(strip, trailing_x, trailing_width);
+        panel_quads.push(Quad::from_rect(chrome, PANEL_BG));
+        push_rect_border(panel_quads, chrome, TEXT_ACCENT, 1.0);
+        let label_columns = (((chrome.width - terminal_clipboard_write_controls_width() - 20.0)
+            / 7.0) as usize)
+            .max(1);
+        let selection = match clipboard.selection {
+            datum_gui_protocol::TerminalClipboardSelection::Clipboard => "clipboard",
+            datum_gui_protocol::TerminalClipboardSelection::Primary => "primary selection",
+        };
+        let label = format!(
+            "Program requests copying {} bytes to {selection}",
+            clipboard.byte_count
+        );
+        draw_text(
+            &truncate_text(&label, label_columns),
+            chrome.x + 8.0,
+            centered_text_top(chrome, LIFECYCLE_LABEL_SIZE_PX),
+            LIFECYCLE_LABEL_SIZE_PX,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            text_runs,
+        );
+        render_terminal_clipboard_write_controls(
+            chrome,
+            centered_text_top(chrome, LIFECYCLE_CONTROL_SIZE_PX),
             text_runs,
             hit_regions,
         );

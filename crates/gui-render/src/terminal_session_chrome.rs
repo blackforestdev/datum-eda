@@ -91,6 +91,35 @@ pub(crate) fn render_terminal_link_controls(
     );
 }
 
+pub(crate) const fn terminal_clipboard_write_controls_width() -> f32 {
+    (4.0 * 7.0 + 16.0) + (6.0 * 7.0 + 16.0)
+}
+
+pub(crate) fn render_terminal_clipboard_write_controls(
+    rect: RectPx,
+    y: f32,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
+    let mut x = (rect.x + rect.width - terminal_clipboard_write_controls_width()).max(rect.x);
+    x = push_control(
+        "COPY",
+        HitTarget::TerminalClipboardConfirmWrite,
+        x,
+        y,
+        text_runs,
+        hit_regions,
+    );
+    push_control(
+        "CANCEL",
+        HitTarget::TerminalClipboardCancelWrite,
+        x,
+        y,
+        text_runs,
+        hit_regions,
+    );
+}
+
 fn push_control(
     label: &str,
     target: HitTarget,

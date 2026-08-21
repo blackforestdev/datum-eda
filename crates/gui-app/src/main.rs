@@ -52,6 +52,7 @@ mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_input;
 mod runtime_terminal_links;
+mod runtime_terminal_notifications;
 mod runtime_terminal_pointer;
 mod runtime_terminal_render;
 mod runtime_terminal_search;
@@ -334,6 +335,7 @@ impl ApplicationHandler for App {
             }
             WindowEvent::Focused(focused) => {
                 if let Some(runtime) = &mut self.runtime {
+                    runtime.window_focused = focused;
                     if !focused {
                         runtime.pan_gesture.cancel();
                         runtime.cancel_terminal_tab_drag();
@@ -706,6 +708,10 @@ struct Runtime {
     terminal_production_refresh_due: Option<std::time::Instant>,
     terminal_production_refresh_attempts: u8,
     clipboard: Option<Clipboard>,
+    pending_terminal_clipboard_write:
+        Option<runtime_terminal_clipboard::PendingTerminalClipboardWrite>,
+    terminal_notification_bridge: runtime_terminal_notifications::TerminalNotificationBridge,
+    window_focused: bool,
     application_shutdown_started: Option<std::time::Instant>,
     application_shutdown_blocked: bool,
 }
@@ -850,6 +856,10 @@ impl Runtime {
             terminal_production_refresh_due: None,
             terminal_production_refresh_attempts: 0,
             clipboard: Clipboard::new().ok(),
+            pending_terminal_clipboard_write: None,
+            terminal_notification_bridge:
+                runtime_terminal_notifications::TerminalNotificationBridge::from_environment(),
+            window_focused: true,
             application_shutdown_started: None,
             application_shutdown_blocked: false,
         };
@@ -1281,6 +1291,9 @@ impl Runtime {
     // (console sink) or terminal chrome, never the grid.
 
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
+        if self.handle_terminal_clipboard_confirmation_key(event) {
+            return true;
+        }
         if self.handle_terminal_link_confirmation_key(event) {
             return true;
         }
@@ -1491,16 +1504,33 @@ impl Runtime {
     }
 
     fn write_clipboard_text(&mut self, text: &str) -> Result<()> {
+        self.write_terminal_clipboard_text(
+            datum_gui_protocol::TerminalClipboardSelection::Clipboard,
+            text,
+        )
+    }
+
+    fn write_terminal_clipboard_text(
+        &mut self,
+        selection: datum_gui_protocol::TerminalClipboardSelection,
+        text: &str,
+    ) -> Result<()> {
+        let kind = match selection {
+            datum_gui_protocol::TerminalClipboardSelection::Clipboard => {
+                LinuxClipboardKind::Clipboard
+            }
+            datum_gui_protocol::TerminalClipboardSelection::Primary => LinuxClipboardKind::Primary,
+        };
         if let Some(clipboard) = &mut self.clipboard
             && clipboard
                 .set()
-                .clipboard(LinuxClipboardKind::Clipboard)
+                .clipboard(kind)
                 .text(text.to_string())
                 .is_ok()
         {
             return Ok(());
         }
-        self.write_clipboard_text_fallback(text)
+        self.write_clipboard_text_fallback(selection, text)
     }
 
     fn read_clipboard_text_fallback(&self) -> Result<String> {
@@ -1514,9 +1544,17 @@ impl Runtime {
         Ok(String::from_utf8_lossy(&output.stdout).to_string())
     }
 
-    fn write_clipboard_text_fallback(&self, text: &str) -> Result<()> {
+    fn write_clipboard_text_fallback(
+        &self,
+        selection: datum_gui_protocol::TerminalClipboardSelection,
+        text: &str,
+    ) -> Result<()> {
+        let selection = match selection {
+            datum_gui_protocol::TerminalClipboardSelection::Clipboard => "clipboard",
+            datum_gui_protocol::TerminalClipboardSelection::Primary => "primary",
+        };
         let mut child = Command::new("/usr/bin/xclip")
-            .args(["-selection", "clipboard"])
+            .args(["-selection", selection])
             .stdin(Stdio::piped())
             .spawn()
             .context("spawn xclip for clipboard write")?;
@@ -2189,6 +2227,8 @@ impl Runtime {
                 self.cancel_terminal_link_confirmation();
                 true
             }
+            HitTarget::TerminalClipboardConfirmWrite => self.confirm_terminal_clipboard_write(),
+            HitTarget::TerminalClipboardCancelWrite => self.cancel_terminal_clipboard_write(),
             HitTarget::ProductionArtifact(artifact_id) => {
                 let handled = self.dispatch_session_command(
                     SessionCommand::FocusProductionArtifact(artifact_id.clone()),

@@ -203,6 +203,37 @@ fn tiny_chunk_flood_is_applied_once_per_session_per_turn() {
 }
 
 #[test]
+fn osc52_becomes_a_typed_session_scoped_request_without_changing_cells() {
+    let mut registry = synthetic_registry(2);
+    registry.sessions[0]
+        .session
+        .transport
+        .push_synthetic_output(b"visible\x1b]52;c;RGF0dW0=\x07\x1b]9;build done\x07");
+    registry.sessions[1]
+        .session
+        .transport
+        .push_synthetic_output(b"peer");
+    let mut lane = TerminalLaneState::default();
+    let report = registry.drain_all(&mut lane);
+
+    assert_eq!(report.clipboard_requests.len(), 1);
+    let request = &report.clipboard_requests[0];
+    assert_eq!(request.session_id, "synthetic-0");
+    assert_eq!(
+        request.selection,
+        datum_terminal_core::ClipboardSelection::Clipboard
+    );
+    assert_eq!(request.encoded_contents, b"RGF0dW0=");
+    assert_eq!(report.notifications.len(), 1);
+    assert_eq!(report.notifications[0].session_id, "synthetic-0");
+    assert_eq!(report.notifications[0].text, "build done");
+    assert_eq!(lane.latest_notification.as_deref(), Some("build done"));
+    assert!(registry.test_session_text(0).contains("visible"));
+    assert!(!registry.test_session_text(0).contains("RGF0dW0"));
+    assert!(registry.test_session_text(1).contains("peer"));
+}
+
+#[test]
 fn split_control_and_utf8_chunks_batch_without_cross_session_leakage() {
     let mut registry = synthetic_registry(2);
     for bytes in [b"\x1b[31".as_slice(), b"mred".as_slice()] {

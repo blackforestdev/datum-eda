@@ -317,3 +317,40 @@ fn http_link_confirmation_replaces_routine_hint_with_explicit_actions() {
             .any(|run| run.text.contains("Ctrl+Shift+T new terminal"))
     );
 }
+
+#[test]
+fn osc52_confirmation_names_the_destination_and_requires_copy_or_cancel() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.terminal.status = "running".to_string();
+    state.ui.terminal.clipboard_confirmation =
+        Some(datum_gui_protocol::TerminalClipboardConfirmation {
+            selection: datum_gui_protocol::TerminalClipboardSelection::Clipboard,
+            byte_count: 5,
+        });
+    let layout = ShellLayout::for_window(1280, 800, Some(260));
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    crate::terminal_tab_strip::render_terminal_tab_strip(
+        &state,
+        layout.bottom_strip,
+        &mut quads,
+        &mut text,
+        &mut hits,
+    );
+
+    assert!(
+        text.iter()
+            .any(|run| run.text.contains("copying 5 bytes to clipboard"))
+    );
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalClipboardConfirmWrite)
+    );
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalClipboardCancelWrite)
+    );
+}

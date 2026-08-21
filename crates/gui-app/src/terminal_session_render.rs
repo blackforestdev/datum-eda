@@ -6,15 +6,38 @@ pub(super) fn terminal_tab_label(
     fallback: &str,
     explicit: bool,
     terminal_title: Option<&str>,
+    progress: datum_gui_protocol::TerminalProgressState,
+    has_notification: bool,
 ) -> String {
-    if explicit {
-        return fallback.to_string();
+    let mut label = if explicit {
+        fallback.to_string()
+    } else {
+        terminal_title
+            .map(str::trim)
+            .filter(|title| !title.is_empty())
+            .map(ToOwned::to_owned)
+            .unwrap_or_else(|| fallback.to_string())
+    };
+    let suffix = match progress {
+        datum_gui_protocol::TerminalProgressState::Clear => has_notification.then_some(" · !"),
+        datum_gui_protocol::TerminalProgressState::Set { percent } => {
+            label.push_str(&format!(" · {percent}%"));
+            None
+        }
+        datum_gui_protocol::TerminalProgressState::Error { percent } => {
+            label.push_str(&format!(" · error {percent}%"));
+            None
+        }
+        datum_gui_protocol::TerminalProgressState::Paused { percent } => {
+            label.push_str(&format!(" · paused {percent}%"));
+            None
+        }
+        datum_gui_protocol::TerminalProgressState::Indeterminate => Some(" · …"),
+    };
+    if let Some(suffix) = suffix {
+        label.push_str(suffix);
     }
-    terminal_title
-        .map(str::trim)
-        .filter(|title| !title.is_empty())
-        .map(ToOwned::to_owned)
-        .unwrap_or_else(|| fallback.to_string())
+    label
 }
 
 impl TerminalSessionRegistry {

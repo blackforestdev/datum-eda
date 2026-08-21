@@ -82,6 +82,20 @@ REQUIRED = {
     "runtime_terminal_clipboard.rs": (
         "terminal_link_target_at_cursor",
         "terminal_clipboard_link_target",
+        "handle_terminal_clipboard_write_request",
+        "decode_clipboard_text",
+        "clipboard_request_is_eligible",
+        "clipboard_confirmation_exclusively_owns_enter_escape_and_other_keys",
+        "only_a_focused_active_running_session_may_arm_osc52_confirmation",
+    ),
+    "terminal_session_drain.rs": (
+        "TerminalClipboardWriteRequest",
+        "CoreEvent::ClipboardRequest",
+        "TerminalNotificationRequest",
+        "CoreEvent::Notification",
+    ),
+    "terminal_session_drain_tests.rs": (
+        "osc52_becomes_a_typed_session_scoped_request_without_changing_cells",
     ),
     "terminal_session_controls.rs": (
         "context_for_new_terminal",
@@ -94,6 +108,15 @@ REQUIRED = {
     "terminal_session_naming_tests.rs": (
         "shell_titles_drive_tabs_until_the_user_renames_them",
         "inactive_shell_title_stays_with_its_parked_session",
+        "progress_and_latest_notification_are_visible_in_their_session_tab",
+    ),
+    "runtime_terminal_notifications.rs": (
+        "DATUM_TERMINAL_NOTIFICATIONS",
+        "TerminalNotificationPolicy",
+        "notification_policy_matches_off_unfocused_and_always_contract",
+        'Command::new("/usr/bin/notify-send")',
+        "sync_channel::<DesktopNotification>(PRODUCTION_CORE_LIMIT_VALUES.pending_events)",
+        ".status()",
     ),
     "terminal_working_directory.rs": (
         "context_for_new_terminal",

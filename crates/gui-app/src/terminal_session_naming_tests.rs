@@ -90,3 +90,28 @@ fn inactive_shell_title_stays_with_its_parked_session() {
     assert_eq!(lane.tabs[1].label, "foreground shell");
     let _ = fs::remove_dir_all(root);
 }
+
+#[test]
+fn progress_and_latest_notification_are_visible_in_their_session_tab() {
+    let root = std::env::temp_dir().join(format!(
+        "datum-terminal-progress-label-{}",
+        std::process::id()
+    ));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(&root).expect("terminal progress test root should create");
+    let context = TerminalLaunchContext::for_project_root(&root);
+    let mut registry =
+        TerminalSessionRegistry::spawn(&context).expect("spawn initial terminal session");
+    let mut lane = TerminalLaneState {
+        progress: datum_gui_protocol::TerminalProgressState::Set { percent: 42 },
+        ..TerminalLaneState::default()
+    };
+
+    registry.sync_lane_tabs(&mut lane);
+    assert_eq!(lane.tabs[0].label, "shell 1 · 42%");
+    lane.progress = datum_gui_protocol::TerminalProgressState::Clear;
+    lane.latest_notification = Some("build complete".to_string());
+    registry.sync_lane_tabs(&mut lane);
+    assert_eq!(lane.tabs[0].label, "shell 1 · !");
+    let _ = fs::remove_dir_all(root);
+}
