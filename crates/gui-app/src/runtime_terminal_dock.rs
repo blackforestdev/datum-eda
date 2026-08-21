@@ -50,6 +50,7 @@ impl Runtime {
     pub(super) fn pointer_cursor_icon(&mut self, pointer: (f32, f32)) -> winit::window::CursorIcon {
         if let Some(icon) = self
             .dock_resize_cursor_icon(pointer)
+            .or_else(|| self.terminal_split_cursor_icon(pointer))
             .or_else(|| self.terminal_tab_cursor_icon(pointer))
             .or_else(|| self.terminal_link_cursor_icon(pointer))
         {
@@ -64,6 +65,105 @@ impl Runtime {
             }
             None => winit::window::CursorIcon::Default,
         }
+    }
+
+    pub(super) fn terminal_split_cursor_icon(
+        &mut self,
+        pointer: (f32, f32),
+    ) -> Option<winit::window::CursorIcon> {
+        let direction = if let Some(drag) = self.terminal_split_drag.as_ref() {
+            Some(drag.direction)
+        } else {
+            let path = match self.prepared_scene().hit_test(pointer.0, pointer.1) {
+                Some(HitTarget::TerminalSplitDivider(path)) => Some(path.clone()),
+                _ => None,
+            };
+            path.and_then(|path| {
+                self.active_terminal_split_dividers()
+                    .into_iter()
+                    .find(|divider| divider.path == path)
+                    .map(|divider| divider.direction)
+            })
+        }?;
+        Some(match direction {
+            datum_gui_protocol::TerminalSplitDirection::SideBySide => {
+                winit::window::CursorIcon::EwResize
+            }
+            datum_gui_protocol::TerminalSplitDirection::Stacked => {
+                winit::window::CursorIcon::NsResize
+            }
+        })
+    }
+
+    fn active_terminal_split_dividers(
+        &self,
+    ) -> Vec<datum_gui_viewport::TerminalSplitDividerGeometry> {
+        let root = self.terminal_screen_geometry();
+        self.workspace()
+            .ui
+            .terminal
+            .active_tab_id
+            .as_deref()
+            .and_then(|tab_id| {
+                self.workspace()
+                    .ui
+                    .terminal
+                    .tab_layouts
+                    .iter()
+                    .find(|tab| tab.tab_id == tab_id)
+            })
+            .map(|tab| datum_gui_viewport::terminal_split_dividers(root, tab))
+            .unwrap_or_default()
+    }
+
+    pub(super) fn begin_terminal_split_drag(&mut self) -> bool {
+        let Some(pointer) = self.last_cursor_pos else {
+            return false;
+        };
+        let path = match self.prepared_scene().hit_test(pointer.0, pointer.1) {
+            Some(HitTarget::TerminalSplitDivider(path)) => path.clone(),
+            _ => return false,
+        };
+        let Some(divider) = self
+            .active_terminal_split_dividers()
+            .into_iter()
+            .find(|divider| divider.path == path)
+        else {
+            return false;
+        };
+        self.terminal_split_drag = Some(TerminalSplitDividerDrag {
+            path,
+            direction: divider.direction,
+            split_bounds: divider.split_bounds,
+        });
+        true
+    }
+
+    pub(super) fn advance_terminal_split_drag(&mut self, pointer: (f32, f32)) -> bool {
+        let Some(drag) = self.terminal_split_drag.as_ref() else {
+            return false;
+        };
+        let path = drag.path.clone();
+        let ratio = drag.ratio_millis_at(pointer);
+        if let Err(error) = self.terminal_sessions.set_active_split_ratio(&path, ratio) {
+            self.log_review_event(format!("terminal split resize failed: {error}"));
+            self.terminal_split_drag = None;
+            return false;
+        }
+        self.sync_terminal_tabs();
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn finish_terminal_split_drag(&mut self) -> Option<winit::window::CursorIcon> {
+        self.terminal_split_drag.take()?;
+        self.resize_terminal_to_dock();
+        self.invalidate_frame();
+        Some(
+            self.last_cursor_pos
+                .and_then(|pointer| self.terminal_split_cursor_icon(pointer))
+                .unwrap_or(winit::window::CursorIcon::Default),
+        )
     }
 
     pub(super) fn dock_resize_cursor_icon(
@@ -251,6 +351,7 @@ impl Runtime {
         ui.terminal_tab_drag = None;
         ui.terminal_clipboard_menu = None;
         self.terminal_text_selection_drag = None;
+        self.terminal_split_drag = None;
         // TF-01: keyboard focus must not outlive the surface that owns it —
         // a closed dock with Terminal focus would swallow keys without a
         // visible recipient. Closing the dock hands ownership back to the editor.
@@ -473,6 +574,31 @@ mod hover_tests {
             .nth(1)
             .unwrap()
             .split("/// The terminal lane geometry")
+            .next()
+            .unwrap();
+        assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);
+    }
+
+    #[test]
+    fn terminal_split_drag_previews_layout_and_commits_one_pty_resize_on_release() {
+        let source = include_str!("runtime_terminal_dock.rs");
+        let drag = source
+            .split("pub(super) fn advance_terminal_split_drag")
+            .nth(1)
+            .unwrap()
+            .split("pub(super) fn finish_terminal_split_drag")
+            .next()
+            .unwrap();
+        assert!(drag.contains("set_active_split_ratio"));
+        assert!(drag.contains("self.sync_terminal_tabs()"));
+        assert!(drag.contains("self.invalidate_frame()"));
+        assert!(!drag.contains("self.resize_terminal_to_dock()"));
+
+        let finish = source
+            .split("pub(super) fn finish_terminal_split_drag")
+            .nth(1)
+            .unwrap()
+            .split("pub(super) fn dock_resize_cursor_icon")
             .next()
             .unwrap();
         assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);

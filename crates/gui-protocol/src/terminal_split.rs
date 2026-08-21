@@ -14,6 +14,14 @@ pub enum TerminalSplitDirection {
     Stacked,
 }
 
+/// One edge in a root-to-split path. Paths keep divider identity stable even
+/// when sibling leaves have unrelated process/session identifiers.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TerminalSplitChild {
+    First,
+    Second,
+}
+
 /// A persistent terminal-pane ownership tree.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TerminalSplitNode {
@@ -59,6 +67,27 @@ impl TerminalSplitNode {
                 first.collect_session_ids(ids);
                 second.collect_session_ids(ids);
             }
+        }
+    }
+
+    pub fn set_ratio_at_path(&mut self, path: &[TerminalSplitChild], ratio_millis: u16) -> bool {
+        if path.is_empty() {
+            let Self::Split {
+                ratio_millis: ratio,
+                ..
+            } = self
+            else {
+                return false;
+            };
+            *ratio = ratio_millis.clamp(100, 900);
+            return true;
+        }
+        let Self::Split { first, second, .. } = self else {
+            return false;
+        };
+        match path[0] {
+            TerminalSplitChild::First => first.set_ratio_at_path(&path[1..], ratio_millis),
+            TerminalSplitChild::Second => second.set_ratio_at_path(&path[1..], ratio_millis),
         }
     }
 }
@@ -114,5 +143,21 @@ mod tests {
         );
         assert!(tab.is_consistent());
         assert!(!tab.root.contains_session("another-tab"));
+        let mut resized = tab.clone();
+        assert!(
+            resized
+                .root
+                .set_ratio_at_path(&[TerminalSplitChild::Second], 735,)
+        );
+        let TerminalSplitNode::Split { second, .. } = &resized.root else {
+            panic!("root remains split");
+        };
+        assert!(matches!(
+            second.as_ref(),
+            TerminalSplitNode::Split {
+                ratio_millis: 735,
+                ..
+            }
+        ));
     }
 }

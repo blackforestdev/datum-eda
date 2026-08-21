@@ -56,6 +56,7 @@ pub enum HitTarget {
     /// An inactive visible split leaf. Clicking it promotes that exact owned
     /// session to the tab's focused input/render authority.
     TerminalPaneScreen(String),
+    TerminalSplitDivider(Vec<datum_gui_protocol::TerminalSplitChild>),
     CheckFinding(String),
     ProductionArtifact(String),
     ProductionArtifactFile(String),

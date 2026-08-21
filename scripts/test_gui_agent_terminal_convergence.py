@@ -17,62 +17,6 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
-    def test_terminal_split_ownership_and_proofs_are_pinned(self) -> None:
-        main = """
-TerminalKeyAction::SplitRight => {}
-TerminalKeyAction::SplitDown => {}
-HitTarget::TerminalPaneScreen(session_id) => {}
-"""
-        controls = "spawn_terminal_split(); begin_split_and_activate(); resize_terminal_to_dock();"
-        terminal_input = """
-TerminalKeyAction::SplitRight;
-TerminalKeyAction::SplitDown;
-terminal_split_shortcut();
-KeyCode::KeyO;
-KeyCode::KeyE;
-"""
-        spawn = """
-fn split_spawn_stays_in_one_tab_and_focuses_the_completed_leaf() {}
-fn failed_split_spawn_removes_its_leaf_without_removing_the_tab() {}
-"""
-        split_state = "replace_terminal_session_identity();"
-        bottom_dock = "render_pane(); HitTarget::TerminalPaneScreen;"
-        geometry = "fn recursive_splits_have_distinct_identity_whole_cells_and_gutters() {}"
-        render_tests = "fn split_panes_retain_independent_rows_geometry_and_hit_identity() {}"
-        failures: list[str] = []
-        guard.check_terminal_splits(
-            main,
-            controls,
-            terminal_input,
-            spawn,
-            split_state,
-            bottom_dock,
-            geometry,
-            render_tests,
-            failures,
-        )
-        self.assertEqual([], failures)
-
-        failures = []
-        guard.check_terminal_splits(
-            main.replace("TerminalKeyAction::SplitRight =>", "removed"),
-            controls.replace("begin_split_and_activate", "removed"),
-            terminal_input.replace("KeyCode::KeyO", "removed"),
-            spawn.replace(
-                "failed_split_spawn_removes_its_leaf_without_removing_the_tab", "removed"
-            ),
-            split_state.replace("replace_terminal_session_identity", "removed"),
-            bottom_dock.replace("render_pane(", "removed("),
-            geometry.replace(
-                "recursive_splits_have_distinct_identity_whole_cells_and_gutters", "removed"
-            ),
-            render_tests.replace(
-                "split_panes_retain_independent_rows_geometry_and_hit_identity", "removed"
-            ),
-            failures,
-        )
-        self.assertGreaterEqual(len(failures), 8)
-
     def test_terminal_session_tabs_must_append_in_projected_order(self) -> None:
         tab_strip = """
 for tab in tabs {

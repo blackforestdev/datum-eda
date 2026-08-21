@@ -119,6 +119,23 @@ impl TerminalSessionRegistry {
         }
     }
 
+    pub(crate) fn set_active_split_ratio(
+        &mut self,
+        path: &[datum_gui_protocol::TerminalSplitChild],
+        ratio_millis: u16,
+    ) -> Result<()> {
+        let session_id = self.active().session_id().to_string();
+        let tab = self
+            .terminal_tabs
+            .iter_mut()
+            .find(|tab| tab.root.contains_session(&session_id))
+            .ok_or_else(|| anyhow!("active terminal tab layout not found: {session_id}"))?;
+        if !tab.root.set_ratio_at_path(path, ratio_millis) {
+            return Err(anyhow!("terminal split divider path is stale"));
+        }
+        Ok(())
+    }
+
     fn active_tab_for_session(&self, session_id: &str) -> Option<&TerminalTabLayout> {
         self.terminal_tabs
             .iter()

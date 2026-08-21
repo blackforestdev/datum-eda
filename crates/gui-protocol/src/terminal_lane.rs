@@ -1,4 +1,6 @@
-pub use crate::terminal_split::{TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout};
+pub use crate::terminal_split::{
+    TerminalSplitChild, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalTabState {

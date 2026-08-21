@@ -80,6 +80,7 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
+mod terminal_split_drag;
 mod terminal_tab_drag;
 mod terminal_transport;
 mod terminal_working_directory;
@@ -105,6 +106,7 @@ use terminal_session::{
 use terminal_session_events::{
     prepare_terminal_command_execution, record_manual_terminal_command_handoff,
 };
+use terminal_split_drag::TerminalSplitDividerDrag;
 
 #[cfg(feature = "visual")]
 const COPY_BYTES_PER_PIXEL: u32 = 4;
@@ -336,12 +338,15 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(focused) => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.window_focused = focused;
+                    let terminal_split_finished =
+                        !focused && runtime.finish_terminal_split_drag().is_some();
                     if !focused {
                         runtime.pan_gesture.cancel();
                         runtime.cancel_terminal_tab_drag();
                         runtime.cancel_terminal_text_selection_drag();
                     }
-                    if !focused && runtime.clear_interaction_overlay() {
+                    if !focused && (runtime.clear_interaction_overlay() || terminal_split_finished)
+                    {
                         self.request_redraw_if_needed();
                     }
                 }
@@ -352,8 +357,12 @@ impl ApplicationHandler for App {
                     runtime.pan_gesture.cancel();
                     runtime.cancel_terminal_tab_drag();
                     runtime.cancel_terminal_text_selection_drag();
+                    let terminal_split_finished = runtime.finish_terminal_split_drag().is_some();
                     let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
-                    if runtime.clear_interaction_overlay() || terminal_hover_cleared {
+                    if runtime.clear_interaction_overlay()
+                        || terminal_hover_cleared
+                        || terminal_split_finished
+                    {
                         self.request_redraw_if_needed();
                     }
                     self.apply_cursor(None);
@@ -370,6 +379,17 @@ impl ApplicationHandler for App {
                             self.request_redraw_if_needed();
                         }
                         self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
+                        return;
+                    }
+                    if runtime.terminal_split_drag.is_some() {
+                        let changed = runtime.advance_terminal_split_drag(next_pos);
+                        let icon = runtime
+                            .terminal_split_cursor_icon(next_pos)
+                            .unwrap_or(winit::window::CursorIcon::Default);
+                        if changed {
+                            self.request_redraw_if_needed();
+                        }
+                        self.apply_cursor_icon(icon);
                         return;
                     }
                     if runtime.terminal_clipboard_menu_active() {
@@ -481,6 +501,14 @@ impl ApplicationHandler for App {
                         self.request_redraw_if_needed();
                         return;
                     }
+                    if runtime.begin_terminal_split_drag() {
+                        let icon = runtime
+                            .last_cursor_pos
+                            .and_then(|pointer| runtime.terminal_split_cursor_icon(pointer))
+                            .unwrap_or(winit::window::CursorIcon::Default);
+                        self.apply_cursor_icon(icon);
+                        return;
+                    }
                     if runtime.begin_terminal_tab_drag() {
                         self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
@@ -526,6 +554,11 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     if let Some(icon) = runtime.finish_dock_resize_drag() {
+                        self.apply_cursor_icon(icon);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if let Some(icon) = runtime.finish_terminal_split_drag() {
                         self.apply_cursor_icon(icon);
                         self.request_redraw_if_needed();
                         return;
@@ -680,6 +713,7 @@ struct Runtime {
     dock_drag_active: bool,
     terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
     terminal_tab_drag_release_suppressed: bool,
+    terminal_split_drag: Option<TerminalSplitDividerDrag>,
     terminal_text_selection_drag: Option<runtime_terminal_pointer::TerminalSelectionPoint>,
     /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
     /// view state; never journaled.
@@ -835,6 +869,7 @@ impl Runtime {
             dock_drag_active: false,
             terminal_tab_drag: None,
             terminal_tab_drag_release_suppressed: false,
+            terminal_split_drag: None,
             terminal_text_selection_drag: None,
             divider_drag: None,
             terminal_mouse_button: None,
@@ -2302,7 +2337,8 @@ impl Runtime {
             HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
             HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
-            HitTarget::DockResizeHandle => false, // handled in mouse press
+            // Divider gestures are handled directly by mouse press/release.
+            HitTarget::DockResizeHandle | HitTarget::TerminalSplitDivider(_) => false,
         }
     }
 

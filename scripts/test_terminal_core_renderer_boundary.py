@@ -53,14 +53,20 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.SCENE).write_text(
-            "terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>\n",
+            "terminal_panes: &[crate::TerminalPaneRenderState]\n",
+            encoding="utf-8",
+        )
+        (root / guard.PANE_RENDER).write_text(
+            "pub struct TerminalPaneRenderState { pub session_id: String, "
+            "pub snapshot: datum_terminal_core::RenderSnapshot, "
+            "pub damage: Vec<datum_terminal_core::Damage> }\n",
             encoding="utf-8",
         )
         (root / guard.APP / "main.rs").write_text(
             "mod runtime_terminal_render;\n", encoding="utf-8"
         )
         (root / guard.APP / "runtime_terminal_render.rs").write_text(
-            "take_active_render_state() from_workspace_with_terminal_renderer( "
+            "take_active_tab_render_states( from_workspace_with_terminal_renderer( "
             "Some(&mut self.terminal_render_cache)\n",
             encoding="utf-8",
         )
@@ -69,8 +75,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.APP / "terminal_session.rs").write_text("", encoding="utf-8")
-        (root / guard.APP / "terminal_session_render.rs").write_text("", encoding="utf-8")
-        (root / guard.APP / "runtime_terminal_dock.rs").write_text(
+        (root / guard.APP / "terminal_session_render.rs").write_text(
             "geometry.screen.width.round() as u32\n", encoding="utf-8"
         )
         renderer_proofs = "\n".join(
@@ -116,12 +121,12 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         )
         self.assertTrue(
             self.mutate(
-                guard.APP / "runtime_terminal_render.rs", "take_active_render_state()", ""
+                guard.APP / "runtime_terminal_render.rs", "take_active_tab_render_states(", ""
             )
         )
         self.assertTrue(
             self.mutate(
-                guard.APP / "runtime_terminal_dock.rs",
+                guard.APP / "terminal_session_render.rs",
                 "geometry.screen.width.round() as u32",
                 "0",
             )

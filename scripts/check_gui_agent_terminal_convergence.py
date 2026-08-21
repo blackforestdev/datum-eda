@@ -13,7 +13,6 @@ LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
 TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
 TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_spawn.rs"
 TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal_session_render.rs"
-TERMINAL_SPLIT_STATE = ROOT / "crates" / "gui-app" / "src" / "terminal_split_state.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
@@ -323,41 +322,6 @@ def check_terminal_session_creation(
         failures.append("terminal label non-reuse production proof is missing")
 
 
-def check_terminal_splits(main: str, terminal_controls: str, terminal_input: str,
-                          terminal_session_spawn: str, terminal_split_state: str,
-                          bottom_dock: str, terminal_grid_geometry: str,
-                          terminal_core_render_tests: str, failures: list[str]) -> None:
-    """Keep split PTYs independently owned, focused, sized, and rendered."""
-    for marker in (
-        "TerminalKeyAction::SplitRight",
-        "TerminalKeyAction::SplitDown",
-        "terminal_split_shortcut(",
-        "KeyCode::KeyO",
-        "KeyCode::KeyE",
-    ):
-        if marker not in terminal_input:
-            failures.append(f"terminal split input is missing {marker}")
-    for marker in ("spawn_terminal_split", "begin_split_and_activate", "resize_terminal_to_dock"):
-        if marker not in terminal_controls:
-            failures.append(f"terminal split runtime is missing {marker}")
-    for marker in ("TerminalKeyAction::SplitRight =>", "TerminalKeyAction::SplitDown =>",
-                   "HitTarget::TerminalPaneScreen(session_id)"):
-        if marker not in main:
-            failures.append(f"terminal split dispatch is missing {marker}")
-    for marker in ("split_spawn_stays_in_one_tab_and_focuses_the_completed_leaf",
-                   "failed_split_spawn_removes_its_leaf_without_removing_the_tab",
-                   "replace_terminal_session_identity"):
-        if marker not in terminal_session_spawn + terminal_split_state:
-            failures.append(f"terminal split lifecycle proof is missing {marker}")
-    for marker in ("render_pane(", "HitTarget::TerminalPaneScreen"):
-        if marker not in bottom_dock:
-            failures.append(f"terminal split renderer is missing {marker}")
-    if "recursive_splits_have_distinct_identity_whole_cells_and_gutters" not in terminal_grid_geometry:
-        failures.append("terminal split whole-cell geometry proof is missing")
-    if "split_panes_retain_independent_rows_geometry_and_hit_identity" not in terminal_core_render_tests:
-        failures.append("terminal split retained-render proof is missing")
-
-
 def check_terminal_input_identity(
     terminal_lane: str,
     production_sources: str,
@@ -510,7 +474,6 @@ def main() -> int:
     terminal_grid_geometry = TERMINAL_GRID_GEOMETRY.read_text()
     terminal_input = TERMINAL_INPUT.read_text()
     terminal_session = TERMINAL_SESSION.read_text()
-    terminal_split_state = TERMINAL_SPLIT_STATE.read_text()
     terminal_session_naming_tests = TERMINAL_SESSION_NAMING_TESTS.read_text() + "\n".join(
         TERMINAL_SESSION.with_name(name).read_text()
         for name in ("terminal_context.rs", "terminal_context_io.rs")
@@ -576,9 +539,6 @@ def main() -> int:
         terminal_session_naming_tests,
         failures,
     )
-    check_terminal_splits(main, terminal_controls, terminal_input, terminal_session_spawn,
-                          terminal_split_state, bottom_dock, terminal_grid_geometry,
-                          terminal_core_render_tests, failures)
     check_terminal_input_identity(terminal_lane, focus_mutation_sources, failures)
     check_terminal_input_mode(focus_mutation_sources, bottom_dock, failures)
     check_terminal_transport_boundary(focus_mutation_sources, terminal_transport, failures)

@@ -22,7 +22,7 @@
 
 use crate::editor::ScreenRectPx;
 use datum_gui_protocol::{
-    ScreenPointPx, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
+    ScreenPointPx, TerminalSplitChild, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
 };
 
 /// Fixed mono cell advance used by the terminal lane renderer (px).
@@ -64,6 +64,15 @@ pub struct TerminalPaneGeometry {
     pub session_id: String,
     pub focused: bool,
     pub geometry: TerminalScreenGeometry,
+}
+
+/// One interactive divider in a terminal split tree.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TerminalSplitDividerGeometry {
+    pub path: Vec<TerminalSplitChild>,
+    pub direction: TerminalSplitDirection,
+    pub split_bounds: ScreenRectPx,
+    pub gutter: ScreenRectPx,
 }
 
 impl TerminalScreenGeometry {
@@ -136,6 +145,68 @@ pub fn terminal_split_geometries(
     let mut panes = Vec::new();
     solve_split_node(&tab.root, root.screen, &tab.focused_session_id, &mut panes);
     panes
+}
+
+pub fn terminal_split_dividers(
+    root: TerminalScreenGeometry,
+    tab: &TerminalTabLayout,
+) -> Vec<TerminalSplitDividerGeometry> {
+    let mut dividers = Vec::new();
+    let mut path = Vec::new();
+    solve_split_dividers(&tab.root, root.screen, &mut path, &mut dividers);
+    dividers
+}
+
+fn solve_split_dividers(
+    node: &TerminalSplitNode,
+    bounds: ScreenRectPx,
+    path: &mut Vec<TerminalSplitChild>,
+    dividers: &mut Vec<TerminalSplitDividerGeometry>,
+) {
+    let TerminalSplitNode::Split {
+        direction,
+        ratio_millis,
+        first,
+        second,
+    } = node
+    else {
+        return;
+    };
+    let ratio = f32::from((*ratio_millis).clamp(100, 900)) / 1000.0;
+    let (first_bounds, second_bounds) = split_bounds(bounds, *direction, ratio);
+    dividers.push(TerminalSplitDividerGeometry {
+        path: path.clone(),
+        direction: *direction,
+        split_bounds: bounds,
+        gutter: split_gutter(first_bounds, second_bounds, *direction),
+    });
+    path.push(TerminalSplitChild::First);
+    solve_split_dividers(first, first_bounds, path, dividers);
+    path.pop();
+    path.push(TerminalSplitChild::Second);
+    solve_split_dividers(second, second_bounds, path, dividers);
+    path.pop();
+}
+
+fn split_gutter(
+    first: ScreenRectPx,
+    second: ScreenRectPx,
+    direction: TerminalSplitDirection,
+) -> ScreenRectPx {
+    match direction {
+        TerminalSplitDirection::SideBySide => ScreenRectPx {
+            x: first.x + first.width,
+            y: first.y,
+            width: (second.x - (first.x + first.width)).max(0.0),
+            height: first.height,
+        },
+        TerminalSplitDirection::Stacked => ScreenRectPx {
+            x: first.x,
+            y: first.y + first.height,
+            width: first.width,
+            height: (second.y - (first.y + first.height)).max(0.0),
+        },
+    }
 }
 
 fn solve_split_node(
@@ -398,6 +469,7 @@ mod tests {
             },
         };
         let panes = terminal_split_geometries(root, &tab);
+        let dividers = terminal_split_dividers(root, &tab);
 
         assert_eq!(
             panes
@@ -425,5 +497,18 @@ mod tests {
         assert!(panes[1].geometry.content.x - left_right_edge >= TERMINAL_SPLIT_GUTTER_PX);
         let top_bottom_edge = panes[1].geometry.content.y + panes[1].geometry.content.height;
         assert!(panes[2].geometry.content.y - top_bottom_edge >= TERMINAL_SPLIT_GUTTER_PX);
+        assert_eq!(dividers.len(), 2);
+        assert!(dividers[0].path.is_empty());
+        assert_eq!(dividers[0].direction, TerminalSplitDirection::SideBySide);
+        assert!(
+            (dividers[0].gutter.width - TERMINAL_SPLIT_GUTTER_PX).abs() < 0.001,
+            "side-by-side gutter preserves its governed width"
+        );
+        assert_eq!(dividers[1].path, [TerminalSplitChild::Second]);
+        assert_eq!(dividers[1].direction, TerminalSplitDirection::Stacked);
+        assert!(
+            (dividers[1].gutter.height - TERMINAL_SPLIT_GUTTER_PX).abs() < 0.001,
+            "stacked gutter preserves its governed height"
+        );
     }
 }

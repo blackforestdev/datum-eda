@@ -18,6 +18,7 @@ GPU = RENDER / "src/render/gpu.rs"
 SCENE = RENDER / "src/render/scene.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
 VISUAL = RENDER / "src/visual_capture.rs"
+PANE_RENDER = RENDER / "src/terminal_pane_render.rs"
 
 REQUIRED_PROOFS = (
     "immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry",
@@ -44,12 +45,12 @@ def check(root: Path) -> list[str]:
     scene = read(root, SCENE)
     tests = read(root, TESTS)
     visual = read(root, VISUAL)
+    pane_render = read(root, PANE_RENDER)
     main = read(root, APP / "main.rs")
     runtime_render = read(root, APP / "runtime_terminal_render.rs")
     adapter = read(root, APP / "terminal_core_adapter.rs")
     session = read(root, APP / "terminal_session.rs")
     session_render = read(root, APP / "terminal_session_render.rs")
-    dock = read(root, APP / "runtime_terminal_dock.rs")
 
     if 'datum-terminal-core = { path = "../terminal-core" }' not in manifest:
         failures.append("gui-render must consume the first-party TerminalCore path crate")
@@ -112,14 +113,22 @@ def check(root: Path) -> list[str]:
             failures.append(f"GPU image path lacks marker: {marker}")
 
     for marker in (
-        "take_active_render_state()",
+        "take_active_tab_render_states(",
         "from_workspace_with_terminal_renderer(",
         "Some(&mut self.terminal_render_cache)",
     ):
         if marker not in main + runtime_render:
             failures.append(f"production runtime bypasses retained core rendering: {marker}")
-    if "terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>" not in scene:
-        failures.append("prepared scene does not accept an immutable TerminalCore snapshot")
+    if "terminal_panes: &[crate::TerminalPaneRenderState]" not in scene:
+        failures.append("prepared scene does not accept immutable per-pane TerminalCore snapshots")
+    for marker in (
+        "pub struct TerminalPaneRenderState",
+        "pub session_id: String",
+        "pub snapshot: datum_terminal_core::RenderSnapshot",
+        "pub damage: Vec<datum_terminal_core::Damage>",
+    ):
+        if marker not in pane_render:
+            failures.append(f"per-pane immutable renderer input lacks marker: {marker}")
     for marker in (
         "pixel_width: u32",
         "pixel_height: u32",
@@ -128,8 +137,8 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in adapter + session + session_render:
             failures.append(f"DPI/damage adapter lacks marker: {marker}")
-    if "geometry.screen.width.round() as u32" not in dock:
-        failures.append("PTY/core resize does not receive the rendered pixel surface width")
+    if "geometry.screen.width.round() as u32" not in session_render:
+        failures.append("each split PTY/core resize does not receive its rendered pixel width")
 
     proof_corpus = tests + visual + read(root, APP / "terminal_core_adapter_tests.rs")
     for proof in REQUIRED_PROOFS:

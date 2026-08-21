@@ -19,9 +19,6 @@
     },
     "crates/engine/src/substrate/replay.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 809 (formatted: 810)"
-    },
-    "crates/gui-protocol/src/lib.rs": {
-      "reason": "rustfmt reflow exceeds inline_test_lines ceiling 1869 (formatted: 1870)"
     }
   }
 }

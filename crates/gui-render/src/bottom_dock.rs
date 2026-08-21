@@ -1,7 +1,7 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
 use datum_gui_viewport::{
     TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry,
-    terminal_split_geometries,
+    terminal_split_dividers, terminal_split_geometries,
 };
 
 use super::{
@@ -234,6 +234,14 @@ pub(super) fn render_bottom_tabs(
                             (panel_quads, text_runs, hit_regions),
                         );
                     }
+                    if let Some(active_layout) = active_layout {
+                        render_terminal_split_dividers(
+                            root_geometry,
+                            active_layout,
+                            panel_quads,
+                            hit_regions,
+                        );
+                    }
                 } else if let Some(pane) = terminal_render.panes.iter().find(|pane| pane.focused) {
                     crate::terminal_core_render::render_terminal_core_snapshot(
                         state,
@@ -248,6 +256,22 @@ pub(super) fn render_bottom_tabs(
                 render_empty_terminal_surface(&root_geometry, panel_quads, hit_regions);
             }
         }
+    }
+}
+
+fn render_terminal_split_dividers(
+    root_geometry: TerminalScreenGeometry,
+    active_layout: &datum_gui_protocol::TerminalTabLayout,
+    panel_quads: &mut Vec<Quad>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
+    for divider in terminal_split_dividers(root_geometry, active_layout) {
+        let gutter: RectPx = divider.gutter.into();
+        panel_quads.push(Quad::from_rect(gutter, PANEL_CARD_BORDER));
+        hit_regions.push(HitRegion {
+            target: HitTarget::TerminalSplitDivider(divider.path),
+            rect: gutter,
+        });
     }
 }
 
@@ -294,5 +318,32 @@ mod tests {
             let content: RectPx = geometry.content.into();
             assert_eq!(content, solved.content, "dock {dock_height}px");
         }
+    }
+
+    #[test]
+    fn split_divider_renders_one_path_stable_resize_target_in_its_gutter() {
+        use datum_gui_protocol::{TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout};
+
+        let shell = ShellLayout::for_window(1280, 800, Some(320));
+        let root = terminal_screen_geometry(shell.bottom_strip.into());
+        let tab = TerminalTabLayout {
+            tab_id: "split-tab".to_string(),
+            focused_session_id: "right".to_string(),
+            root: TerminalSplitNode::Split {
+                direction: TerminalSplitDirection::SideBySide,
+                ratio_millis: 500,
+                first: Box::new(TerminalSplitNode::session("left")),
+                second: Box::new(TerminalSplitNode::session("right")),
+            },
+        };
+        let mut quads = Vec::new();
+        let mut hits = Vec::new();
+        render_terminal_split_dividers(root, &tab, &mut quads, &mut hits);
+
+        assert_eq!(quads.len(), 1);
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].target, HitTarget::TerminalSplitDivider(Vec::new()));
+        assert!((hits[0].rect.width - datum_gui_viewport::TERMINAL_SPLIT_GUTTER_PX).abs() < 0.001);
+        assert_eq!(hits[0].rect.height, root.screen.height);
     }
 }

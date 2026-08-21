@@ -94,7 +94,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
         | HitTarget::MarkingMenuItem { .. }
-        | HitTarget::DockResizeHandle => false,
+        | HitTarget::DockResizeHandle
+        | HitTarget::TerminalSplitDivider(_) => false,
     }
 }
 
@@ -182,6 +183,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
             label: id(),
         },
         HitTarget::DockResizeHandle,
+        HitTarget::TerminalSplitDivider(Vec::new()),
     ];
     let mut entry_targets = 0usize;
     for target in &samples {
