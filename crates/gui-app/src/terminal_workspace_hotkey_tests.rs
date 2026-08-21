@@ -7,7 +7,8 @@
 
 use super::{
     TerminalClipboardShortcut, terminal_character_sequence, terminal_clipboard_shortcut,
-    terminal_new_session_shortcut, terminal_space_sequence, terminal_tab_sequence,
+    terminal_new_session_shortcut, terminal_search_shortcut, terminal_space_sequence,
+    terminal_tab_sequence,
 };
 use crate::keyboard_focus::{KeyClass, RouteDecision, key_route};
 use datum_gui_protocol::{ApplicationFocus as KeyboardFocus, PaneId};
@@ -47,6 +48,22 @@ fn ctrl_shift_t_is_the_nonrepeating_new_session_shortcut() {
         ElementState::Pressed,
         false,
         key,
+        ModifiersState::CONTROL,
+    ));
+}
+
+#[test]
+fn ctrl_shift_f_is_a_terminal_local_search_shortcut() {
+    assert!(terminal_search_shortcut(
+        ElementState::Pressed,
+        false,
+        PhysicalKey::Code(KeyCode::KeyF),
+        ModifiersState::CONTROL | ModifiersState::SHIFT,
+    ));
+    assert!(!terminal_search_shortcut(
+        ElementState::Pressed,
+        false,
+        PhysicalKey::Code(KeyCode::KeyF),
         ModifiersState::CONTROL,
     ));
 }

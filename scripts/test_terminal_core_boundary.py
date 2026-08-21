@@ -160,7 +160,8 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "search.rs").write_text(
             (source / "search.rs").read_text()
             + "\nself.limits.search_work.get()\nSearchDirection::Forward\n"
-            + "SearchDirection::Backward\nresolve_logical_point\nSearchMatchState::Trimmed\n",
+            + "SearchDirection::Backward\nresolve_logical_point\nSearchMatchState::Trimmed\n"
+            + "search_all_literal\nsearch_all_regex\n",
             encoding="utf-8",
         )
         (source / "search_regex.rs").write_text(
@@ -436,20 +437,23 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
             search.read_text()
             .replace("self.limits.search_work.get()", "usize::MAX")
             .replace("SearchMatchState::Trimmed", "SearchMatchState::Unknown")
+            .replace("pub fn search_all(", "pub fn removed_search_all(")
         )
         regex = root / guard.CRATE / "src/search_regex.rs"
         regex.write_text(regex.read_text().replace("State::Split", "removed_split"))
         proofs = root / guard.CRATE / "src/search_tests.rs"
         proofs.write_text(
-            proofs.read_text().replace(
-                "hostile_regex_exhausts_search_work_without_backtracking", "removed"
-            )
+            proofs.read_text()
+            .replace("hostile_regex_exhausts_search_work_without_backtracking", "removed")
+            .replace("all_match_search_shares_one_work_budget", "removed_all_match_budget")
         )
         failures = guard.check(root)
         self.assertTrue(any("search_work" in item for item in failures))
         self.assertTrue(any("SearchMatchState::Trimmed" in item for item in failures))
         self.assertTrue(any("State::Split" in item for item in failures))
         self.assertTrue(any("hostile_regex_exhausts" in item for item in failures))
+        self.assertTrue(any("search_all" in item for item in failures))
+        self.assertTrue(any("all_match_search_shares" in item for item in failures))
 
     def test_input_limit_kitty_mouse_override_and_proof_removal_fails(self) -> None:
         temporary, root = self.fixture()

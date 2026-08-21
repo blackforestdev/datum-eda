@@ -131,11 +131,9 @@ fn search_distinguishes_soft_wrap_from_hard_newline() {
 fn matches_keep_logical_identity_across_output_and_reflow() {
     let mut core = core(8, 2, 128, 65_536);
     print(&mut core, "prefix needle suffix");
+    let query = SearchQuery::literal("needle", SearchCase::Sensitive);
     let found = core
-        .search(
-            &SearchQuery::literal("needle", SearchCase::Sensitive),
-            SearchCursor::forward(None),
-        )
+        .search(&query, SearchCursor::forward(None))
         .unwrap()
         .matched()
         .unwrap();
@@ -146,14 +144,12 @@ fn matches_keep_logical_identity_across_output_and_reflow() {
     assert!(core.state().contains_logical_point(found.start()));
     assert!(core.state().contains_logical_point(found.end()));
     let found_after = core
-        .search(
-            &SearchQuery::literal("needle", SearchCase::Sensitive),
-            SearchCursor::forward(None),
-        )
+        .search(&query, SearchCursor::forward(None))
         .unwrap()
         .matched()
         .unwrap();
     assert_eq!(found_after, found);
+    assert_eq!(core.search_all(&query).unwrap().matches(), &[found]);
 }
 
 #[test]
@@ -262,6 +258,48 @@ fn invalid_and_empty_patterns_fail_closed() {
             Err(SearchError::InvalidPattern)
         );
     }
+}
+
+#[test]
+fn all_match_search_is_ordered_bounded_and_includes_overlaps() {
+    let mut core = core(8, 3, 128, 65_536);
+    print(&mut core, "aaaa");
+    hard_line(&mut core);
+    print(&mut core, "aa");
+
+    let literal = core
+        .search_all(&SearchQuery::literal("aa", SearchCase::Sensitive))
+        .unwrap();
+    assert_eq!(literal.matches().len(), 4);
+    assert!(
+        literal
+            .matches()
+            .windows(2)
+            .all(|pair| pair[0].start() < pair[1].start())
+    );
+    assert!(literal.work() > literal.matches().len());
+
+    let regex = core
+        .search_all(&SearchQuery::regex("a+", SearchCase::Sensitive))
+        .unwrap();
+    assert!(!regex.matches().is_empty());
+    assert!(
+        regex
+            .matches()
+            .windows(2)
+            .all(|pair| pair[0].start() < pair[1].start())
+    );
+}
+
+#[test]
+fn all_match_search_shares_one_work_budget() {
+    let mut core = core(20, 2, 128, 24);
+    print(&mut core, "aaaaaaaaaaaaaaaaaaaa");
+
+    assert!(matches!(
+        core.search_all(&SearchQuery::literal("a", SearchCase::Sensitive)),
+        Err(SearchError::Limit(_))
+    ));
 }
 
 fn core(columns: u16, rows: u16, history_lines: usize, search_work: usize) -> TerminalCore {

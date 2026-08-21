@@ -109,6 +109,7 @@ REQUIRED_MODULES = {
         "pub enum SearchQuery",
         "pub struct SearchMatch",
         "pub fn search(",
+        "pub fn search_all(",
         "pub fn search_match_state(",
     ),
     "search_regex.rs": (
@@ -273,6 +274,8 @@ REQUIRED_SEARCH_PROOFS = (
     "alternate_search_never_observes_primary_history",
     "hostile_regex_exhausts_search_work_without_backtracking",
     "invalid_and_empty_patterns_fail_closed",
+    "all_match_search_is_ordered_bounded_and_includes_overlaps",
+    "all_match_search_shares_one_work_budget",
 )
 
 REQUIRED_INPUT_PROOFS = (
@@ -536,6 +539,8 @@ def check(root: Path) -> list[str]:
         "SearchDirection::Backward",
         "resolve_logical_point",
         "SearchMatchState::Trimmed",
+        "search_all_literal",
+        "search_all_regex",
     ):
         if marker not in search:
             failures.append(f"DTC-P14 bounded stable-search marker is missing: {marker}")

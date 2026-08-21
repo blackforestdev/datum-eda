@@ -72,6 +72,10 @@ pub enum SearchMatchState {
 }
 
 impl SearchMatch {
+    pub const fn new(start: LogicalPoint, end: LogicalPoint) -> Self {
+        Self { start, end }
+    }
+
     pub const fn start(self) -> LogicalPoint {
         self.start
     }
@@ -84,6 +88,22 @@ impl SearchMatch {
 pub struct SearchResult {
     matched: Option<SearchMatch>,
     work: usize,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SearchBatch {
+    matches: Vec<SearchMatch>,
+    work: usize,
+}
+
+impl SearchBatch {
+    pub fn matches(&self) -> &[SearchMatch] {
+        &self.matches
+    }
+
+    pub const fn work(&self) -> usize {
+        self.work
+    }
 }
 
 impl SearchResult {
@@ -170,6 +190,27 @@ impl TerminalCore {
         };
         Ok(SearchResult {
             matched: found,
+            work: work.used,
+        })
+    }
+
+    /// Return every match in document order under one shared search-work
+    /// budget. This is the bounded authority used by terminal all-match
+    /// highlighting; callers must not emulate it with an unbounded sequence of
+    /// independent searches.
+    pub fn search_all(&self, query: &SearchQuery) -> Result<SearchBatch, SearchError> {
+        let mut work = WorkMeter::new(self.limits.search_work.get());
+        let units = document_units(self, &mut work)?;
+        let matches = match query {
+            SearchQuery::Literal { text, case } => {
+                search_all_literal(&units, text, *case, &mut work)?
+            }
+            SearchQuery::Regex { pattern, case } => {
+                search_all_regex(&units, pattern, *case, &mut work)?
+            }
+        };
+        Ok(SearchBatch {
+            matches,
             work: work.used,
         })
     }
@@ -304,6 +345,35 @@ fn search_literal(
     Ok(None)
 }
 
+fn search_all_literal(
+    units: &[Unit],
+    text: &str,
+    case: SearchCase,
+    work: &mut WorkMeter,
+) -> Result<Vec<SearchMatch>, SearchError> {
+    let pattern = pattern_units(text)?;
+    work.charge(pattern.len())?;
+    let mut matches = Vec::new();
+    for start in 0..units.len() {
+        if start + pattern.len() > units.len() {
+            break;
+        }
+        let mut equal = true;
+        for (unit, expected) in units[start..start + pattern.len()].iter().zip(&pattern) {
+            work.charge(1)?;
+            if !compare(&unit.text, expected, case) {
+                equal = false;
+                break;
+            }
+        }
+        if equal && let Some(found) = make_match(units, start, start + pattern.len()) {
+            work.charge(1)?;
+            matches.push(found);
+        }
+    }
+    Ok(matches)
+}
+
 fn search_regex(
     units: &[Unit],
     pattern: &str,
@@ -332,6 +402,33 @@ fn search_regex(
         }
     }
     Ok(None)
+}
+
+fn search_all_regex(
+    units: &[Unit],
+    pattern: &str,
+    case: SearchCase,
+    work: &mut WorkMeter,
+) -> Result<Vec<SearchMatch>, SearchError> {
+    if pattern.is_empty() {
+        return Err(SearchError::EmptyPattern);
+    }
+    let program = crate::search_regex::compile(pattern, work)?;
+    let texts = units
+        .iter()
+        .map(|unit| unit.text.clone())
+        .collect::<Vec<_>>();
+    let mut matches = Vec::new();
+    for start in 0..=units.len() {
+        if let Some(end) = program.match_at(&texts, start, case == SearchCase::Sensitive, work)?
+            && let Some(found) = make_match(units, start, end)
+            && matches.last() != Some(&found)
+        {
+            work.charge(1)?;
+            matches.push(found);
+        }
+    }
+    Ok(matches)
 }
 
 fn make_match(units: &[Unit], start: usize, end: usize) -> Option<SearchMatch> {

@@ -12,6 +12,36 @@ pub struct TerminalTabState {
     pub restart_count: usize,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TerminalSearchPoint {
+    pub line: u64,
+    pub cluster: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TerminalSearchMatch {
+    pub start: TerminalSearchPoint,
+    pub end: TerminalSearchPoint,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct TerminalSearchState {
+    pub active: bool,
+    /// Escape closes search on key press, but its matching release remains
+    /// search-owned so it cannot also eject keyboard focus from the terminal.
+    pub escape_release_pending: bool,
+    pub query: String,
+    pub case_sensitive: bool,
+    pub regex: bool,
+    pub matches: Vec<TerminalSearchMatch>,
+    /// Sorted, disjoint match ranges for bounded renderer lookup. Navigation
+    /// retains the exact possibly-overlapping matches above.
+    pub highlights: Vec<TerminalSearchMatch>,
+    pub active_match: Option<usize>,
+    pub matched: Option<TerminalSearchMatch>,
+    pub status: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub activity_summary: Vec<String>,
@@ -35,6 +65,7 @@ pub struct TerminalLaneState {
     pub mouse_reporting_mode: Option<String>,
     pub mouse_coordinate_encoding: Option<String>,
     pub scroll_offset: usize,
+    pub search: TerminalSearchState,
     pub status: String,
     /// Application-close authority, distinct from the active session's
     /// teardown status so per-session refreshes cannot erase Retry/Cancel.
@@ -66,6 +97,7 @@ impl TerminalLaneState {
             mouse_reporting_mode,
             mouse_coordinate_encoding,
             scroll_offset,
+            search,
             status,
         );
     }
@@ -93,6 +125,7 @@ impl Default for TerminalLaneState {
             mouse_reporting_mode: None,
             mouse_coordinate_encoding: None,
             scroll_offset: 0,
+            search: TerminalSearchState::default(),
             status: "running".to_string(),
             application_shutdown_blocked: None,
         }
@@ -107,6 +140,11 @@ mod tests {
     fn session_projection_swap_preserves_workspace_chrome_and_focus() {
         let mut active = TerminalLaneState {
             title: Some("active title".to_string()),
+            search: TerminalSearchState {
+                active: true,
+                query: "active query".to_string(),
+                ..Default::default()
+            },
             active_session_id: Some("active-id".to_string()),
             activity_summary: vec!["activity".to_string()],
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
@@ -119,6 +157,11 @@ mod tests {
         );
         let mut parked = TerminalLaneState {
             title: Some("parked title".to_string()),
+            search: TerminalSearchState {
+                active: true,
+                query: "parked query".to_string(),
+                ..Default::default()
+            },
             ..Default::default()
         };
 
@@ -126,6 +169,8 @@ mod tests {
 
         assert_eq!(active.title.as_deref(), Some("parked title"));
         assert_eq!(parked.title.as_deref(), Some("active title"));
+        assert_eq!(active.search.query, "parked query");
+        assert_eq!(parked.search.query, "active query");
         assert_eq!(
             (
                 active.active_session_id,

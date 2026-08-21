@@ -252,3 +252,27 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         "hovered close glyph must use Datum magenta"
     );
 }
+
+#[test]
+fn active_terminal_search_replaces_the_routine_hint_with_query_chrome() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.terminal.search.active = true;
+    state.ui.terminal.search.query = "needle".into();
+    state.ui.terminal.search.status = "match · ignore case · literal".into();
+    let strip = ShellLayout::for_window(1280, 800, Some(260)).bottom_strip;
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    crate::terminal_tab_strip::render_terminal_tab_strip(
+        &state, strip, &mut quads, &mut text, &mut hits,
+    );
+
+    assert!(text.iter().any(|run| run.text.contains("Find: needle")));
+    assert!(
+        !text
+            .iter()
+            .any(|run| run.text.contains("Ctrl+Shift+T new terminal"))
+    );
+}

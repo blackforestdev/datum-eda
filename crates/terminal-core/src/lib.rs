@@ -114,8 +114,8 @@ pub use reducer::{Reduction, ScreenError};
 pub use reducer_action::{EraseDisplay, EraseLine, FoundationMode, ScreenAction};
 pub use screen::{ScreenState, TerminalCore};
 pub use search::{
-    SearchCase, SearchCursor, SearchDirection, SearchError, SearchMatch, SearchMatchState,
-    SearchQuery, SearchResult,
+    SearchBatch, SearchCase, SearchCursor, SearchDirection, SearchError, SearchMatch,
+    SearchMatchState, SearchQuery, SearchResult,
 };
 pub use selection::{CopiedText, Selection, SelectionError, SelectionScope, SelectionState};
 pub use semantics::{CoreError, CoreUpdate};

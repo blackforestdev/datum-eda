@@ -22,7 +22,7 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         failures: list[str] = []
         guard.check(
             valid_sources(),
-            "ime_preedit render_ime_preedit snapshot.cursor().position",
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
             failures,
         )
         self.assertEqual([], failures)
@@ -49,7 +49,7 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         failures: list[str] = []
         guard.check(
             sources,
-            "ime_preedit render_ime_preedit snapshot.cursor().position",
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
             failures,
         )
         self.assertIn(
@@ -70,12 +70,30 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         failures: list[str] = []
         guard.check(
             sources,
-            "ime_preedit render_ime_preedit snapshot.cursor().position",
+            "ime_preedit render_ime_preedit snapshot.cursor().position search_highlights TERMINAL_SEARCH_ALL_BG",
             failures,
         )
         self.assertTrue(any("MAX_MESSAGE_BYTES" in failure for failure in failures))
         self.assertTrue(any("real_accessibility_bus" in failure for failure in failures))
         self.assertTrue(any("forbidden substrate" in failure for failure in failures))
+
+    def test_search_wrap_stability_or_all_match_rendering_removal_fails(self) -> None:
+        sources = valid_sources()
+        sources["runtime_terminal_search.rs"] = sources[
+            "runtime_terminal_search.rs"
+        ].replace(
+            "search_navigation_wraps_and_stable_refresh_preserves_current_match",
+            "deleted_search_proof",
+        )
+        failures: list[str] = []
+        guard.check(
+            sources,
+            "ime_preedit render_ime_preedit snapshot.cursor().position",
+            failures,
+        )
+        self.assertTrue(any("stable_refresh" in failure for failure in failures))
+        self.assertTrue(any("search_highlights" in failure for failure in failures))
+        self.assertTrue(any("TERMINAL_SEARCH_ALL_BG" in failure for failure in failures))
 
 
 if __name__ == "__main__":

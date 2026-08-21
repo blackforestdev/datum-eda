@@ -240,6 +240,9 @@ impl Runtime {
             self.resize_terminal_to_dock();
             self.invalidate_frame();
         }
+        if report.active_projection_changed && self.workspace().ui.terminal.search.active {
+            self.maintain_terminal_search_after_output();
+        }
         self.refresh_terminal_activity_summary();
         if report.active_projection_changed {
             self.invalidate_frame();

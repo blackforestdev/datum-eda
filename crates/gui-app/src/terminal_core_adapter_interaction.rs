@@ -2,8 +2,8 @@
 
 use datum_terminal_core::{
     CellContent, Damage, FocusInput, HyperlinkId, ImeInput, InputDisposition, KeyInput,
-    LogicalPoint, MouseInput, RenderRow, RenderRowSource, RenderSnapshot, SearchCursor,
-    SearchQuery, SearchResult, Selection, SelectionScope,
+    LogicalPoint, MouseInput, RenderRow, RenderRowSource, RenderSnapshot, SearchBatch, SearchMatch,
+    SearchMatchState, SearchQuery, Selection, SelectionScope,
 };
 
 use super::{TerminalCoreAdapterError, TerminalCoreSessionAdapter};
@@ -99,15 +99,42 @@ impl TerminalCoreSessionAdapter {
             .map_err(TerminalCoreAdapterError::Selection)
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn search(
+    pub(crate) fn search_all(
         &self,
         query: &SearchQuery,
-        cursor: SearchCursor,
-    ) -> Result<SearchResult, TerminalCoreAdapterError> {
+    ) -> Result<SearchBatch, TerminalCoreAdapterError> {
         self.core
-            .search(query, cursor)
+            .search_all(query)
             .map_err(TerminalCoreAdapterError::Search)
+    }
+
+    pub(crate) fn search_match_state(&self, matched: SearchMatch) -> SearchMatchState {
+        self.core.search_match_state(matched)
+    }
+
+    pub(crate) fn scroll_offset_for_logical_point(
+        &self,
+        visible_rows: usize,
+        point: LogicalPoint,
+    ) -> Result<Option<usize>, TerminalCoreAdapterError> {
+        let snapshot = self
+            .core
+            .render_snapshot()
+            .map_err(TerminalCoreAdapterError::Snapshot)?;
+        let rows = snapshot.rows().collect::<Vec<_>>();
+        let Some(row_index) = rows
+            .iter()
+            .position(|row| logical_point_in_row_span(row, point))
+        else {
+            return Ok(None);
+        };
+        let shown = visible_rows.max(1).min(rows.len().max(1));
+        let centered = rows
+            .len()
+            .saturating_sub(shown)
+            .saturating_add(shown / 2)
+            .saturating_sub(row_index);
+        Ok(Some(centered.min(rows.len().saturating_sub(shown))))
     }
 
     #[allow(dead_code)]
@@ -265,6 +292,19 @@ fn logical_point_in_row(row: &RenderRow, column: usize) -> LogicalPoint {
         line: row.logical_start().line,
         cluster,
     }
+}
+
+fn logical_point_in_row_span(row: &RenderRow, point: LogicalPoint) -> bool {
+    if row.logical_start().line != point.line {
+        return false;
+    }
+    let clusters = row
+        .cells()
+        .iter()
+        .filter(|cell| !matches!(cell.content, CellContent::Continuation { .. }))
+        .count() as u32;
+    point.cluster >= row.logical_start().cluster
+        && point.cluster < row.logical_start().cluster.saturating_add(clusters.max(1))
 }
 
 fn finish_accessibility_link(

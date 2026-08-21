@@ -1,6 +1,6 @@
 //! Damage-driven retained row plans for immutable TerminalCore snapshots.
 
-use datum_gui_protocol::ReviewWorkspaceState;
+use datum_gui_protocol::{ReviewWorkspaceState, TerminalSearchMatch};
 use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TerminalScreenGeometry};
 use datum_terminal_core::{
     Color, Damage, RenderPalette, RenderRowSource, RenderSnapshot, Selection,
@@ -15,6 +15,8 @@ pub struct TerminalRenderCache {
     columns: u16,
     palette: Option<RenderPalette>,
     selection: Option<Selection>,
+    search_matches: Vec<TerminalSearchMatch>,
+    search_match: Option<TerminalSearchMatch>,
     session_id: Option<String>,
     scroll_offset: usize,
     #[cfg(test)]
@@ -72,6 +74,8 @@ impl TerminalRenderCache {
             || self.columns != geometry.columns
             || self.palette.as_ref() != Some(snapshot.palette())
             || self.selection != snapshot.selection()
+            || self.search_matches != state.ui.terminal.search.highlights
+            || self.search_match != state.ui.terminal.search.matched
             || self.session_id != state.ui.terminal.active_session_id
             || self.scroll_offset != scroll
             || damage.iter().any(|entry| {
@@ -104,14 +108,18 @@ impl TerminalRenderCache {
                 super::terminal_core_render::render_row(
                     row,
                     snapshot,
-                    RectPx {
-                        x: screen.x,
+                    super::terminal_core_render::TerminalRowRenderContext {
+                        screen: RectPx {
+                            x: screen.x,
+                            y: 0.0,
+                            width: screen.width,
+                            height: screen.height,
+                        },
                         y: 0.0,
-                        width: screen.width,
-                        height: screen.height,
+                        max_columns: usize::from(geometry.columns),
+                        search_highlights: &state.ui.terminal.search.highlights,
+                        active_search_match: state.ui.terminal.search.matched,
                     },
-                    0.0,
-                    usize::from(geometry.columns),
                     &mut cached.quads,
                     &mut cached.text,
                 );
@@ -151,6 +159,8 @@ impl TerminalRenderCache {
         self.columns = geometry.columns;
         self.palette = Some(snapshot.palette().clone());
         self.selection = snapshot.selection();
+        self.search_matches = state.ui.terminal.search.highlights.clone();
+        self.search_match = state.ui.terminal.search.matched;
         self.session_id = state.ui.terminal.active_session_id.clone();
         self.scroll_offset = scroll;
     }

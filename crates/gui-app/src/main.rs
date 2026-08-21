@@ -53,6 +53,7 @@ mod runtime_terminal_dock;
 mod runtime_terminal_input;
 mod runtime_terminal_pointer;
 mod runtime_terminal_render;
+mod runtime_terminal_search;
 mod runtime_view_actions;
 mod terminal_accessibility;
 mod terminal_accessibility_bridge;
@@ -1272,6 +1273,9 @@ impl Runtime {
     // (console sink) or terminal chrome, never the grid.
 
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
+        if self.handle_terminal_search_key(event) {
+            return true;
+        }
         let application_cursor_keys = self.workspace().ui.terminal.application_cursor_keys;
         let application_keypad = self.workspace().ui.terminal.application_keypad;
         let action = terminal_key_action(
@@ -1324,6 +1328,10 @@ impl Runtime {
             }
             TerminalKeyAction::CopyClipboard => self.copy_terminal_scrollback(),
             TerminalKeyAction::PasteClipboard => self.paste_terminal_input(),
+            TerminalKeyAction::Search => {
+                self.begin_terminal_search();
+                true
+            }
             TerminalKeyAction::Ignore => false,
         }
     }

@@ -20,6 +20,7 @@ pub(super) enum TerminalKeyAction {
     ScrollbackBottom,
     CopyClipboard,
     PasteClipboard,
+    Search,
     Ignore,
 }
 
@@ -63,6 +64,9 @@ pub(super) fn terminal_key_action(
     }
     if terminal_new_session_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
         return TerminalKeyAction::NewSession;
+    }
+    if terminal_search_shortcut(event.state, event.repeat, event.physical_key, modifiers) {
+        return TerminalKeyAction::Search;
     }
     if let Some(shortcut) =
         terminal_clipboard_shortcut(event.state, event.repeat, event.physical_key, modifiers)
@@ -219,6 +223,19 @@ pub(super) fn terminal_new_session_shortcut(
         && modifiers.control_key()
         && modifiers.shift_key()
         && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyT))
+}
+
+pub(super) fn terminal_search_shortcut(
+    state: ElementState,
+    repeat: bool,
+    physical_key: PhysicalKey,
+    modifiers: ModifiersState,
+) -> bool {
+    state == ElementState::Pressed
+        && !repeat
+        && modifiers.control_key()
+        && modifiers.shift_key()
+        && matches!(physical_key, PhysicalKey::Code(KeyCode::KeyF))
 }
 
 #[cfg(test)]

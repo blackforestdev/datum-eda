@@ -5,7 +5,7 @@
 //! palette entries, decorations, selection, cursor, clipping, history, and
 //! graphics placement all originate in one immutable `RenderSnapshot`.
 
-use datum_gui_protocol::ReviewWorkspaceState;
+use datum_gui_protocol::{ReviewWorkspaceState, TerminalSearchMatch, TerminalSearchPoint};
 use datum_gui_viewport::{TERMINAL_CELL_HEIGHT_PX, TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry};
 use datum_terminal_core::{
     CellAttribute, CellContent, CellStyle, CellWidth, Color, CursorShape, GraphicAnchorResolution,
@@ -20,12 +20,24 @@ use super::{
 use crate::bottom_dock::terminal_block_elements::{
     render_terminal_block_elements_with_color, text_without_geometric_blocks,
 };
-use crate::bottom_dock::{TERMINAL_FONT_SIZE_PX, TERMINAL_SELECTION_BG, TERMINAL_SELECTION_FG};
+use crate::bottom_dock::{
+    TERMINAL_FONT_SIZE_PX, TERMINAL_SEARCH_ALL_BG, TERMINAL_SEARCH_BG, TERMINAL_SELECTION_BG,
+    TERMINAL_SELECTION_FG,
+};
 
 const CURSOR_STROKE_PX: f32 = 1.0;
 const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
 const CURSOR_BAR_WIDTH_PX: f32 = 3.0;
 const CURSOR_UNDERLINE_HEIGHT_PX: f32 = 3.0;
+
+#[derive(Clone, Copy)]
+pub(super) struct TerminalRowRenderContext<'a> {
+    pub(super) screen: RectPx,
+    pub(super) y: f32,
+    pub(super) max_columns: usize,
+    pub(super) search_highlights: &'a [TerminalSearchMatch],
+    pub(super) active_search_match: Option<TerminalSearchMatch>,
+}
 
 pub(super) fn prepare_terminal_graphics(
     snapshot: &RenderSnapshot,
@@ -130,9 +142,13 @@ pub(super) fn render_terminal_core_snapshot(
         render_row(
             row,
             snapshot,
-            screen,
-            y,
-            usize::from(geometry.columns),
+            TerminalRowRenderContext {
+                screen,
+                y,
+                max_columns: usize::from(geometry.columns),
+                search_highlights: &state.ui.terminal.search.highlights,
+                active_search_match: state.ui.terminal.search.matched,
+            },
             panel_quads,
             text_runs,
         );
@@ -199,14 +215,12 @@ fn render_ime_preedit(
 pub(super) fn render_row(
     row: &RenderRow,
     snapshot: &RenderSnapshot,
-    screen: RectPx,
-    y: f32,
-    max_columns: usize,
+    context: TerminalRowRenderContext<'_>,
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
     let mut logical_cluster = row.logical_start().cluster;
-    for (column, cell) in row.cells().iter().take(max_columns).enumerate() {
+    for (column, cell) in row.cells().iter().take(context.max_columns).enumerate() {
         if matches!(cell.content, CellContent::Continuation { .. }) {
             continue;
         }
@@ -219,14 +233,22 @@ pub(super) fn render_row(
                 },
             )
         });
+        let point = TerminalSearchPoint {
+            line: row.logical_start().line.get(),
+            cluster: logical_cluster,
+        };
+        let active_search = context
+            .active_search_match
+            .is_some_and(|matched| search_match_contains(matched, point));
+        let searched = search_highlight_contains(context.search_highlights, point);
         logical_cluster = logical_cluster.saturating_add(1);
         let width_cells = match &cell.content {
             CellContent::Cluster(cluster) if cluster.width() == CellWidth::Two => 2,
             _ => 1,
         };
         let cell_rect = RectPx {
-            x: screen.x + column as f32 * TERMINAL_CELL_WIDTH_PX,
-            y,
+            x: context.screen.x + column as f32 * TERMINAL_CELL_WIDTH_PX,
+            y: context.y,
             width: width_cells as f32 * TERMINAL_CELL_WIDTH_PX,
             height: TERMINAL_CELL_HEIGHT_PX,
         };
@@ -236,6 +258,10 @@ pub(super) fn render_row(
         }
         if selected {
             quads.push(Quad::from_rect(cell_rect, TERMINAL_SELECTION_BG));
+        } else if active_search {
+            quads.push(Quad::from_rect(cell_rect, TERMINAL_SEARCH_BG));
+        } else if searched {
+            quads.push(Quad::from_rect(cell_rect, TERMINAL_SEARCH_ALL_BG));
         }
         let decoration = match cell.style.underline_color {
             Color::Default => foreground,
@@ -277,9 +303,30 @@ pub(super) fn render_row(
             text_runs,
         );
         if let Some(run) = text_runs.last_mut() {
-            run.clip_bounds = Some(intersection(cell_rect, screen));
+            run.clip_bounds = Some(intersection(cell_rect, context.screen));
         }
     }
+}
+
+fn search_match_contains(matched: TerminalSearchMatch, point: TerminalSearchPoint) -> bool {
+    let point = (point.line, point.cluster);
+    let start = (matched.start.line, matched.start.cluster);
+    let end = (matched.end.line, matched.end.cluster);
+    if start <= end {
+        point >= start && point <= end
+    } else {
+        point >= end && point <= start
+    }
+}
+
+fn search_highlight_contains(
+    highlights: &[TerminalSearchMatch],
+    point: TerminalSearchPoint,
+) -> bool {
+    let key = (point.line, point.cluster);
+    let preceding =
+        highlights.partition_point(|matched| (matched.start.line, matched.start.cluster) <= key);
+    preceding != 0 && search_match_contains(highlights[preceding - 1], point)
 }
 
 fn style_colors(style: CellStyle, palette: &RenderPalette) -> ([f32; 3], [f32; 3]) {

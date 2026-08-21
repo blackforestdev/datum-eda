@@ -55,10 +55,12 @@ pub(super) fn render_terminal_tab_strip(
         .or_else(|| {
             (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
         });
-    let trailing_width = lifecycle_label.map_or_else(
-        || estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0,
-        |_| (strip.width * 0.46).clamp(320.0, 620.0),
-    );
+    let search_active = state.ui.terminal.search.active && lifecycle_label.is_none();
+    let trailing_width = if lifecycle_label.is_some() || search_active {
+        (strip.width * 0.46).clamp(320.0, 620.0)
+    } else {
+        estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0
+    };
     let trailing_x = strip.x + strip.width - 12.0 - trailing_width;
     let tab_y = strip.y + 6.0;
     let tab_height = (strip.height - 6.0).max(1.0);
@@ -257,6 +259,26 @@ pub(super) fn render_terminal_tab_strip(
             state.ui.terminal.application_shutdown_blocked.as_deref(),
             text_runs,
             hit_regions,
+        );
+    } else if search_active {
+        let chrome = lifecycle_chrome_rect(strip, trailing_x, trailing_width);
+        panel_quads.push(Quad::from_rect(chrome, PANEL_BG));
+        push_rect_border(panel_quads, chrome, TEXT_ACCENT, 1.0);
+        let search = &state.ui.terminal.search;
+        let label = if search.query.is_empty() {
+            format!("Find:  {}", search.status)
+        } else {
+            format!("Find: {}  ·  {}", search.query, search.status)
+        };
+        let columns = ((chrome.width - 16.0) / 7.0) as usize;
+        draw_text(
+            &truncate_text(&label, columns.max(1)),
+            chrome.x + 8.0,
+            centered_text_top(chrome, LIFECYCLE_LABEL_SIZE_PX),
+            LIFECYCLE_LABEL_SIZE_PX,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            text_runs,
         );
     } else {
         draw_text(

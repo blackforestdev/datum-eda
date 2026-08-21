@@ -1,7 +1,5 @@
 use super::*;
-use datum_terminal_core::{
-    CellAttribute, Color, InputDisposition, PaletteIndex, SearchCursor, SearchQuery,
-};
+use datum_terminal_core::{CellAttribute, Color, InputDisposition, PaletteIndex, SearchQuery};
 
 fn adapter(session: &str) -> TerminalCoreSessionAdapter {
     TerminalCoreSessionAdapter::new(session, format!("context-{session}"), 12, 4).unwrap()
@@ -186,6 +184,33 @@ fn incoming_output_preserves_the_users_scrollback_anchor() {
 }
 
 #[test]
+fn search_match_resolves_to_a_stable_scrollback_window() {
+    let mut adapter = adapter("search-reveal");
+    let mut lane = TerminalLaneState::default();
+    for index in 0..12 {
+        adapter
+            .apply_output(&mut lane, format!("line-{index}\r\n").as_bytes())
+            .unwrap();
+    }
+    let matched = adapter
+        .search_all(&SearchQuery::literal(
+            "line-2",
+            datum_terminal_core::SearchCase::Sensitive,
+        ))
+        .unwrap()
+        .matches()[0];
+    let scroll = adapter
+        .scroll_offset_for_logical_point(4, matched.start())
+        .unwrap()
+        .unwrap();
+
+    assert!(
+        scroll > 0,
+        "an old match must move the viewport into history"
+    );
+}
+
+#[test]
 fn native_input_selection_search_and_links_use_the_same_core_state() {
     use datum_terminal_core::{
         FocusInput, ImeInput, KeyCode, KeyEventKind, KeyInput, KeyModifiers, MouseAction,
@@ -255,12 +280,9 @@ fn native_input_selection_search_and_links_use_the_same_core_state() {
     assert_eq!(adapter.copy_selection().unwrap(), "linked");
 
     let result = adapter
-        .search(
-            &SearchQuery::literal("text", SearchCase::Sensitive),
-            SearchCursor::forward(None),
-        )
+        .search_all(&SearchQuery::literal("text", SearchCase::Sensitive))
         .unwrap();
-    assert!(result.matched().is_some());
+    assert!(!result.matches().is_empty());
     assert_eq!(
         adapter
             .hyperlink_at_visible_cell(4, 0, 0, 2)

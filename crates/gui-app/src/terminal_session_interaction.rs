@@ -5,8 +5,8 @@
 
 use anyhow::Result;
 use datum_terminal_core::{
-    FocusInput, ImeInput, InputDisposition, KeyInput, LogicalPoint, MouseInput, SearchCursor,
-    SearchQuery, SearchResult, SelectionScope,
+    FocusInput, ImeInput, InputDisposition, KeyInput, LogicalPoint, MouseInput, SearchBatch,
+    SearchMatch, SearchMatchState, SearchQuery, SelectionScope,
 };
 
 use super::TerminalSessionRegistry;
@@ -84,16 +84,30 @@ impl TerminalSessionRegistry {
         Ok(self.sessions[self.active_index].core.copy_selection()?)
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn search_active(
+    pub(crate) fn search_all_active(&self, query: &SearchQuery) -> Result<SearchBatch> {
+        self.ensure_active_ready()?;
+        Ok(self.sessions[self.active_index].core.search_all(query)?)
+    }
+
+    pub(crate) fn active_search_match_state(
         &self,
-        query: &SearchQuery,
-        cursor: SearchCursor,
-    ) -> Result<SearchResult> {
+        matched: SearchMatch,
+    ) -> Result<SearchMatchState> {
         self.ensure_active_ready()?;
         Ok(self.sessions[self.active_index]
             .core
-            .search(query, cursor)?)
+            .search_match_state(matched))
+    }
+
+    pub(crate) fn active_scroll_offset_for_logical_point(
+        &self,
+        visible_rows: usize,
+        point: LogicalPoint,
+    ) -> Result<Option<usize>> {
+        self.ensure_active_ready()?;
+        Ok(self.sessions[self.active_index]
+            .core
+            .scroll_offset_for_logical_point(visible_rows, point)?)
     }
 
     #[allow(dead_code)]

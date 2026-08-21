@@ -185,6 +185,69 @@ fn retained_rows_rebuild_only_for_declared_damage_or_geometry_change() {
 }
 
 #[test]
+fn all_search_matches_are_highlighted_and_active_match_invalidates_retained_rows() {
+    let snapshot = snapshot(b"find me find");
+    let row = snapshot.rows().next().unwrap();
+    let line = row.logical_start().line.get();
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let first = datum_gui_protocol::TerminalSearchMatch {
+        start: datum_gui_protocol::TerminalSearchPoint { line, cluster: 0 },
+        end: datum_gui_protocol::TerminalSearchPoint { line, cluster: 3 },
+    };
+    let second = datum_gui_protocol::TerminalSearchMatch {
+        start: datum_gui_protocol::TerminalSearchPoint { line, cluster: 8 },
+        end: datum_gui_protocol::TerminalSearchPoint { line, cluster: 11 },
+    };
+    state.ui.terminal.search.matches = vec![first, second];
+    state.ui.terminal.search.highlights = vec![first, second];
+    state.ui.terminal.search.matched = Some(first);
+    let geometry = geometry();
+    let mut quads = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut Vec::new(),
+        &mut Vec::new(),
+    );
+    assert_eq!(
+        quads
+            .iter()
+            .filter(|quad| quad.color == TERMINAL_SEARCH_BG)
+            .count(),
+        4
+    );
+    assert_eq!(
+        quads
+            .iter()
+            .filter(|quad| quad.color == TERMINAL_SEARCH_ALL_BG)
+            .count(),
+        4
+    );
+
+    let mut cache = TerminalRenderCache::new();
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Full],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    let before = cache.rebuilt_rows();
+    state.ui.terminal.search.matched = Some(second);
+    cache.render(
+        &state,
+        &snapshot,
+        &[],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert!(cache.rebuilt_rows() > before);
+}
+
+#[test]
 fn sixel_snapshot_produces_clipped_gpu_image_placement() {
     let snapshot = snapshot(b"\x1bP0;1;0q\"1;1;2;2#2;2;100;0;0@@$AA\x1b\\");
     assert_eq!(snapshot.graphics().len(), 1);

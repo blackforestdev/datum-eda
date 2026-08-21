@@ -295,10 +295,16 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         && key_route(focus, KeyClass::RawPty, dock_visible) == RouteDecision::Terminal;
     let escape_released = matches!(event.logical_key, Key::Named(NamedKey::Escape))
         && event.state == ElementState::Released;
+    let terminal_search_owns_escape = app.runtime.as_ref().is_some_and(|runtime| {
+        let search = &runtime.workspace().ui.terminal.search;
+        search.active || search.escape_release_pending
+    });
 
     // TF-02: focus-exit ordering is part of the authority. Raw PTY routing
     // owns the Escape press, but must not consume its release before this arm.
-    if pre_raw_escape_route(focus, dock_visible, escape_released).is_some() {
+    if !terminal_search_owns_escape
+        && pre_raw_escape_route(focus, dock_visible, escape_released).is_some()
+    {
         if let Some(runtime) = &mut app.runtime {
             let pane = runtime.workspace().ui.layout.focused;
             runtime.set_application_focus(ApplicationFocus::Editor(pane));

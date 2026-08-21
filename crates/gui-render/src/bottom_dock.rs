@@ -23,6 +23,8 @@ pub(super) const TERMINAL_LETTER_SPACING_EM: f32 =
     (TERMINAL_CELL_WIDTH_PX - TERMINAL_FONT_SIZE_PX * 0.6) / TERMINAL_FONT_SIZE_PX;
 pub(super) const TERMINAL_SELECTION_BG: [f32; 3] = design_tokens::chrome::TERMINAL_SELECTION;
 pub(super) const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+pub(super) const TERMINAL_SEARCH_BG: [f32; 3] = [0.34, 0.25, 0.08];
+pub(super) const TERMINAL_SEARCH_ALL_BG: [f32; 3] = [0.23, 0.19, 0.08];
 
 #[derive(Debug, Clone, Copy)]
 struct BottomDockLayout {

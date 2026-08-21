@@ -13,6 +13,8 @@ REQUIRED = {
     "terminal_input.rs": (
         "TerminalKeyAction::CoreKey",
         "terminal_core_key_input",
+        "TerminalKeyAction::Search",
+        "terminal_search_shortcut",
     ),
     "main.rs": (
         "encode_active_key",
@@ -33,8 +35,9 @@ REQUIRED = {
         ".core.encode_key",
         ".core.encode_mouse",
         ".core.copy_selection",
-        "pub(crate) fn search_active",
-        ".search(query, cursor)",
+        "pub(crate) fn search_all_active",
+        ".core.search_all(query)",
+        "pub(crate) fn active_search_match_state",
         "pub(crate) fn active_hyperlink_at",
         "pub(crate) fn active_accessibility_snapshot",
     ),
@@ -45,8 +48,16 @@ REQUIRED = {
         "pub(crate) fn encode_mouse",
         "pub(crate) fn set_selection",
         "pub(crate) fn copy_selection",
-        "pub(crate) fn search",
+        "pub(crate) fn search_all",
+        "pub(crate) fn search_match_state",
         "TerminalAccessibilitySnapshot",
+    ),
+    "runtime_terminal_search.rs": (
+        "handle_terminal_search_key",
+        "search_all_active",
+        "maintain_terminal_search_after_output",
+        "escape_release_pending",
+        "search_navigation_wraps_and_stable_refresh_preserves_current_match",
     ),
     "terminal_accessibility_bridge.rs": (
         "TerminalAccessibilityEvent",
@@ -143,7 +154,13 @@ def check(sources: dict[str, str], render: str, failures: list[str]) -> None:
                         f"Datum-owned accessibility bridge imported forbidden substrate: {name}:{marker}"
                     )
 
-    for marker in ("ime_preedit", "render_ime_preedit", "snapshot.cursor().position"):
+    for marker in (
+        "ime_preedit",
+        "render_ime_preedit",
+        "snapshot.cursor().position",
+        "search_highlights",
+        "TERMINAL_SEARCH_ALL_BG",
+    ):
         if marker not in render:
             failures.append(f"native terminal IME rendering is missing {marker}")
 
