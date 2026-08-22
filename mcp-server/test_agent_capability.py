@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from stdio_tool_host import StdioToolHost
 from test_support import FakeDaemonClient
@@ -39,6 +40,9 @@ class ScopedHostFixture:
             "approval_policy": approval_policy,
             "unattended_tools": unattended_tools,
         }
+        context_authority, discovery_authority, agent_environment = (
+            write_agent_authority_fixture(self.root, "terminal-authority")
+        )
         common = {
             "contract": "datum_terminal_context_v1",
             "project_root": os.fspath(self.root),
@@ -49,7 +53,7 @@ class ScopedHostFixture:
             "pinned_context_id": "context-authority",
             "model_revision": "revision-authority",
             "accepted_transaction_tip": "transaction-authority",
-        } | authority
+        } | authority | context_authority
         self._write(self.live_path, common | {"context_kind": "live"})
         self._write(self.pinned_path, common | {"context_kind": "pinned"})
         self._write(
@@ -65,16 +69,17 @@ class ScopedHostFixture:
                 "model_revision": "revision-authority",
                 "accepted_transaction_tip": "transaction-authority",
             }
-            | authority,
+            | authority
+            | discovery_authority,
         )
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, agent_environment, clear=True):
             self.scope = load_discovery_scope(self.discovery_path)
-        self.daemon = FakeDaemonClient()
-        try:
-            self.host = StdioToolHost(self.daemon, self.scope)
-        except Exception:
-            self.temp.cleanup()
-            raise
+            self.daemon = FakeDaemonClient()
+            try:
+                self.host = StdioToolHost(self.daemon, self.scope)
+            except Exception:
+                self.temp.cleanup()
+                raise
 
     def close(self) -> None:
         self.temp.cleanup()

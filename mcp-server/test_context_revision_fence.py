@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from stdio_tool_host import StdioToolHost
 from test_support import FakeDaemonClient
@@ -23,6 +24,9 @@ class TestContextRevisionFence(unittest.TestCase):
         self.live_path = self.root / "live.json"
         self.pinned_path = self.root / "pinned.json"
         self.discovery_path = self.root / "discovery.json"
+        context_authority, discovery_authority, self.agent_environment = (
+            write_agent_authority_fixture(self.root, "terminal-fenced")
+        )
         common = {
             "contract": "datum_terminal_context_v1",
             "project_root": os.fspath(self.root),
@@ -41,7 +45,7 @@ class TestContextRevisionFence(unittest.TestCase):
                 "id": "component-selected",
                 "object_ids": ["net-selected"],
             },
-        }
+        } | context_authority
         self.live_document = common | {"context_kind": "live"}
         self.pinned_document = common | {"context_kind": "pinned"}
         self._write_json(self.live_path, self.live_document)
@@ -67,12 +71,13 @@ class TestContextRevisionFence(unittest.TestCase):
                 ],
                 "approval_policy": "owner-enabled-unattended",
                 "unattended_tools": ["datum.proposal.accept_apply"],
-            },
+            }
+            | discovery_authority,
         )
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, self.agent_environment, clear=True):
             scope = load_discovery_scope(self.discovery_path)
-        self.daemon = FakeDaemonClient()
-        self.host = StdioToolHost(self.daemon, scope)
+            self.daemon = FakeDaemonClient()
+            self.host = StdioToolHost(self.daemon, scope)
 
     def tearDown(self) -> None:
         self._temp.cleanup()
@@ -112,7 +117,7 @@ class TestContextRevisionFence(unittest.TestCase):
         discovery = json.loads(self.discovery_path.read_text(encoding="utf-8"))
         discovery["model_revision"] = "revision-tampered"
         self._write_json(self.discovery_path, discovery)
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, self.agent_environment, clear=True):
             with self.assertRaisesRegex(ValueError, "pinned model_revision mismatch"):
                 load_discovery_scope(self.discovery_path)
 
@@ -120,7 +125,7 @@ class TestContextRevisionFence(unittest.TestCase):
         discovery = json.loads(self.discovery_path.read_text(encoding="utf-8"))
         discovery["accepted_transaction_tip"] = "transaction-tampered"
         self._write_json(self.discovery_path, discovery)
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, self.agent_environment, clear=True):
             with self.assertRaisesRegex(
                 ValueError, "pinned accepted_transaction_tip mismatch"
             ):
@@ -245,12 +250,12 @@ class TestContextRevisionFence(unittest.TestCase):
     def test_unreadable_live_authority_returns_typed_unavailable_refusal(self) -> None:
         self.live_path.write_text("{broken", encoding="utf-8")
         payload = self._call(self._fence())
-        self.assertEqual(payload["error"]["code"], "context_fence_unavailable")
+        self.assertEqual(payload["error"]["code"], "session_authority_revoked")
         self.assertEqual(
             payload["error"]["details"]["reason"],
-            "authority_document_unavailable",
+            "live_context_unavailable",
         )
-        self.assertIn("live context", payload["error"]["details"]["authority_error"])
+        self.assertNotIn("authority_error", payload["error"]["details"])
         self.assertEqual(self.daemon.calls, [])
 
     def test_live_identity_change_returns_typed_unavailable_refusal(self) -> None:
@@ -259,15 +264,12 @@ class TestContextRevisionFence(unittest.TestCase):
             self.live_document | {"terminal_session_id": "terminal-other"},
         )
         payload = self._call(self._fence())
-        self.assertEqual(payload["error"]["code"], "context_fence_unavailable")
+        self.assertEqual(payload["error"]["code"], "session_authority_revoked")
         self.assertEqual(
             payload["error"]["details"]["reason"],
-            "authority_document_unavailable",
+            "live_context_unavailable",
         )
-        self.assertIn(
-            "session identity mismatch",
-            payload["error"]["details"]["authority_error"],
-        )
+        self.assertNotIn("authority_error", payload["error"]["details"])
         self.assertEqual(self.daemon.calls, [])
 
     def test_hidden_compatibility_alias_cannot_bypass_fence(self) -> None:

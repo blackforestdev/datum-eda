@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from stdio_tool_host import StdioToolHost
 from test_support import FakeDaemonClient
@@ -21,6 +22,7 @@ class TestDiscoveryScope(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp).resolve()
             discovery = root / "discovery.json"
+            _, authority, environment = write_agent_authority_fixture(root, "terminal-7")
             discovery.write_text(
                 json.dumps(
                     {
@@ -29,10 +31,11 @@ class TestDiscoveryScope(unittest.TestCase):
                         "terminal_session_id": "terminal-7",
                         "context_id": "context-9",
                     }
+                    | authority
                 ),
                 encoding="utf-8",
             )
-            with patch.dict(os.environ, {}, clear=True):
+            with patch.dict(os.environ, environment, clear=True):
                 scope = load_discovery_scope(discovery)
                 self.assertEqual(scope.project_root, root)
                 self.assertEqual(scope.terminal_session_id, "terminal-7")

@@ -1,9 +1,7 @@
 use crate::{
     terminal_activity_snapshot::TerminalActivitySummaryCache,
     terminal_context::{
-        TerminalContext, read_session_created_unix_ms, unix_time_ms,
-        update_terminal_lifecycle_file, update_terminal_lifecycle_file_exact,
-        write_terminal_context_files,
+        TerminalContext, read_session_created_unix_ms, unix_time_ms, write_terminal_context_files,
     },
     terminal_core_adapter::TerminalCoreSessionAdapter,
     terminal_process::spawn_terminal_process,
@@ -22,6 +20,7 @@ use std::sync::{Arc, Mutex, mpsc::Receiver};
 use winit::event_loop::EventLoopProxy;
 
 pub(super) use crate::terminal_transport::TerminalTransportEvent as TerminalEvent;
+pub(super) use lifecycle_context::{mark_terminal_session_exit, mark_terminal_session_lifecycle};
 
 pub(super) struct TerminalSession {
     transport: TerminalTransportSession,
@@ -582,59 +581,6 @@ pub(super) fn restart_terminal_session(
     Ok(())
 }
 
-pub(super) fn mark_terminal_session_lifecycle(
-    session: &TerminalSession,
-    lifecycle: DatumToolSessionLifecycle,
-    process_exit_code: Option<i32>,
-) -> Result<()> {
-    update_terminal_lifecycle_file(
-        &session.context_path,
-        lifecycle,
-        process_exit_code,
-        Some(session.process_group_id()),
-    )?;
-    update_terminal_lifecycle_file(
-        &session.latest_context_path,
-        lifecycle,
-        process_exit_code,
-        Some(session.process_group_id()),
-    )?;
-    update_terminal_lifecycle_file(
-        &session.session_path,
-        lifecycle,
-        process_exit_code,
-        Some(session.process_group_id()),
-    )
-}
-
-pub(super) fn mark_terminal_session_exit(
-    session: &TerminalSession,
-    status: crate::terminal_transport::TerminalExitStatus,
-) -> Result<()> {
-    let (code, signal, core_dumped) = match status {
-        crate::terminal_transport::TerminalExitStatus::Code(code) => (Some(code), None, None),
-        crate::terminal_transport::TerminalExitStatus::Signal {
-            signal,
-            core_dumped,
-        } => (None, Some(signal), Some(core_dumped)),
-    };
-    for path in [
-        &session.context_path,
-        &session.latest_context_path,
-        &session.session_path,
-    ] {
-        update_terminal_lifecycle_file_exact(
-            path,
-            DatumToolSessionLifecycle::Exited,
-            code,
-            signal,
-            core_dumped,
-            Some(session.process_group_id()),
-        )?;
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 impl TerminalSessionRegistry {
     fn test_session_text(&self, index: usize) -> String {
@@ -648,6 +594,8 @@ impl TerminalSessionRegistry {
 
 #[path = "terminal_session_handle.rs"]
 mod handle;
+#[path = "terminal_session_lifecycle_context.rs"]
+mod lifecycle_context;
 #[path = "terminal_session_reorder.rs"]
 mod reorder;
 #[path = "terminal_split_state.rs"]

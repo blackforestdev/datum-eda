@@ -22,12 +22,14 @@ class DiscoveryScope:
     schema: str
     project_root: Path
     terminal_session_id: str
+    agent_launch_id: str | None
     context_id: str | None
     document: dict[str, Any]
     live_context_id: str | None = None
     live_context_path: Path | None = None
     pinned_context_path: Path | None = None
     pinned_document: dict[str, Any] | None = None
+    credential_descriptor_path: Path | None = None
 
     def read_live_context(self) -> dict[str, Any]:
         if self.live_context_path is None:
@@ -68,6 +70,13 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         )
     project_root = _required_path(document, "project_root")
     terminal_session_id = _required_string(document, "terminal_session_id")
+    agent_launch_id = document.get("agent_launch_id")
+    if schema == "datum_agent_discovery_v1":
+        agent_launch_id = _required_string(document, "agent_launch_id")
+    elif agent_launch_id is not None and (
+        not isinstance(agent_launch_id, str) or not agent_launch_id
+    ):
+        raise ValueError("discovery agent_launch_id must be a non-empty string when present")
     context_id = document.get("pinned_context_id") or document.get("context_id")
     if context_id is not None and (not isinstance(context_id, str) or not context_id):
         raise ValueError("discovery context_id must be a non-empty string when present")
@@ -79,6 +88,11 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         raise ValueError("discovery live_context_id must be a non-empty string when present")
     live_context_path = _optional_context_path(document, "live_context_path")
     pinned_context_path = _optional_context_path(document, "pinned_context_path")
+    credential_descriptor_path = _optional_context_path(
+        document, "credential_descriptor"
+    )
+    if schema == "datum_agent_discovery_v1" and credential_descriptor_path is None:
+        raise ValueError("agent discovery credential_descriptor is required")
     if (live_context_path is None) != (pinned_context_path is None):
         raise ValueError(
             "discovery live_context_path and pinned_context_path must be declared together"
@@ -105,12 +119,14 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         schema=schema,
         project_root=project_root,
         terminal_session_id=terminal_session_id,
+        agent_launch_id=agent_launch_id,
         context_id=context_id,
         document=document,
         live_context_id=live_context_id,
         live_context_path=live_context_path,
         pinned_context_path=pinned_context_path,
         pinned_document=pinned_document,
+        credential_descriptor_path=credential_descriptor_path,
     )
 
 

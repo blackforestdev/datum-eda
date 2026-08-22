@@ -1,6 +1,7 @@
 use std::{
     fs,
     io::Write,
+    os::unix::fs::PermissionsExt,
     path::PathBuf,
     process::{Command, Stdio},
     time::{SystemTime, UNIX_EPOCH},
@@ -21,6 +22,38 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
     let root = unique_fixture_root();
     fs::create_dir_all(&root).expect("fixture root");
     let discovery = root.join("discovery.json");
+    let credential = root.join(".agent-credential.json");
+    let authority = root.join("agent-authority.json");
+    let event_log = root.join(".datum/tool-sessions/terminal-events.jsonl");
+    fs::create_dir_all(event_log.parent().expect("event log parent"))
+        .expect("event log parent should create");
+    fs::write(
+        &credential,
+        serde_json::to_vec(&json!({
+            "schema": "datum_agent_credential_v1",
+            "credential_id": "credential-mcp-test",
+            "terminal_session_id": "terminal-mcp-test",
+            "project_root": root,
+            "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }))
+        .expect("serialize credential"),
+    )
+    .expect("write credential");
+    fs::set_permissions(&credential, fs::Permissions::from_mode(0o600))
+        .expect("protect credential");
+    fs::write(
+        &authority,
+        serde_json::to_vec(&json!({
+            "schema": "datum_agent_authority_v1",
+            "credential_id": "credential-mcp-test",
+            "terminal_session_id": "terminal-mcp-test",
+            "project_root": root,
+            "state": "active"
+        }))
+        .expect("serialize authority"),
+    )
+    .expect("write authority");
+    fs::set_permissions(&authority, fs::Permissions::from_mode(0o600)).expect("protect authority");
     fs::write(
         &discovery,
         serde_json::to_vec(&json!({
@@ -28,6 +61,10 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
             "project_root": root,
             "terminal_session_id": "terminal-mcp-test",
             "context_id": "context-mcp-test",
+            "agent_launch_id": "agent-launch-mcp-test",
+            "credential_descriptor": authority,
+            "session_lifecycle": "running",
+            "storage": {"event_log_path": event_log},
             "capability_profile": "datum_agent_capability_v1",
             "capabilities": ["inspect", "propose"],
             "approval_policy": "owner-review-required",
@@ -40,6 +77,9 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
     let mut child = Command::new(env!("CARGO_BIN_EXE_datum-eda"))
         .args(["mcp", "serve", "--discovery"])
         .arg(&discovery)
+        .env("DATUM_AGENT_CREDENTIAL_FILE", &credential)
+        .env("DATUM_AGENT_LAUNCH_ID", "agent-launch-mcp-test")
+        .env("DATUM_AGENT_ADAPTER_ID", "integration-test")
         .env_remove("DATUM_PROJECT_ROOT")
         .env_remove("DATUM_TERMINAL_SESSION_ID")
         .stdin(Stdio::piped())

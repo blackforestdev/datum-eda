@@ -609,17 +609,6 @@
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
-    "crates/engine/src/substrate/mod.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 722
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
     "crates/engine/src/substrate/operation_application.rs": {
       "kind": "rust-production",
       "limits": {

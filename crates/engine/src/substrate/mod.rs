@@ -67,6 +67,7 @@ mod schematic_sheet_journal_ops;
 mod schematic_sheet_maps;
 mod source_shard;
 mod source_shard_ref_builders;
+mod transaction;
 mod transaction_links;
 mod undo_redo;
 mod variant;
@@ -103,6 +104,7 @@ use operation_application::apply_operation;
 pub use proposal::*;
 pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};
 pub use rules_journal_ops::validate_native_project_rule_payload;
+pub use transaction::*;
 pub use variant::{VARIANT_OVERLAY_SHARD_SCHEMA_VERSION, VariantOverlayShard};
 use zone_fill::derive_model_zone_fills;
 pub use zone_fill::{
@@ -376,77 +378,6 @@ pub struct ImportMapEntry {
     #[serde(default)]
     pub source_object_ref: String,
     pub source_hash: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct OperationBatch {
-    pub batch_id: Uuid,
-    pub expected_model_revision: Option<ModelRevision>,
-    pub provenance: CommitProvenance,
-    pub operations: Vec<Operation>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CommitProvenance {
-    pub actor: String,
-    pub source: CommitSource,
-    pub reason: String,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum CommitSource {
-    Manual,
-    Cli,
-    Test,
-    Tool,
-    Assistant,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct CommitDiff {
-    pub created: Vec<ObjectId>,
-    pub modified: Vec<ObjectId>,
-    pub deleted: Vec<ObjectId>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TransactionRecord {
-    pub transaction_id: Uuid,
-    pub batch_id: Uuid,
-    #[serde(default)]
-    pub transaction_kind: TransactionKind,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub undo_of: Option<Uuid>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub redo_of: Option<Uuid>,
-    pub before_model_revision: ModelRevision,
-    pub after_model_revision: ModelRevision,
-    pub provenance: CommitProvenance,
-    pub diff: CommitDiff,
-    pub operations: Vec<Operation>,
-    #[serde(default)]
-    pub inverse_operations: Vec<Operation>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-#[serde(rename_all = "snake_case")]
-pub enum TransactionKind {
-    #[default]
-    Normal,
-    Undo,
-    Redo,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CommitReport {
-    pub transaction: TransactionRecord,
-    pub journal_len: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct JournalCursor {
-    pub applied_transaction_count: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

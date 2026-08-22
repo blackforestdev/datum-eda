@@ -3,8 +3,9 @@ use std::path::Path;
 use uuid::Uuid;
 
 use super::{
-    CommitDiff, CommitReport, DesignModel, EngineError, JournalCursor, ModelRevision, Operation,
-    OperationBatch, TransactionKind, TransactionRecord, compute_model_revision,
+    AgentCommitProvenance, CommitDiff, CommitReport, DesignModel, EngineError, JournalCursor,
+    ModelRevision, Operation, OperationBatch, TransactionKind, TransactionRecord,
+    compute_model_revision,
     journal::{
         append_transaction_journal, inverse_operations_for_batch, promote_staged_shard_writes,
         sort_source_shards, stage_operation_shard_writes, update_staged_source_hashes,
@@ -69,6 +70,7 @@ impl DesignModel {
             before_model_revision,
             after_model_revision: self.model_revision.clone(),
             provenance: batch.provenance,
+            agent_provenance: agent_commit_provenance_from_environment()?,
             diff,
             operations: batch.operations,
             inverse_operations: Vec::new(),
@@ -202,6 +204,54 @@ impl DesignModel {
     }
 }
 
+fn agent_commit_provenance_from_environment() -> Result<Option<AgentCommitProvenance>, EngineError>
+{
+    let Some(value) = std::env::var_os("DATUM_AGENT_PROVENANCE") else {
+        return Ok(None);
+    };
+    let value = value.into_string().map_err(|_| {
+        EngineError::Validation("DATUM_AGENT_PROVENANCE must be UTF-8 JSON".to_string())
+    })?;
+    parse_agent_commit_provenance(&value).map(Some)
+}
+
+fn parse_agent_commit_provenance(value: &str) -> Result<AgentCommitProvenance, EngineError> {
+    let provenance: AgentCommitProvenance = serde_json::from_str(value).map_err(|error| {
+        EngineError::Validation(format!("invalid DATUM_AGENT_PROVENANCE: {error}"))
+    })?;
+    validate_agent_commit_provenance(&provenance)?;
+    Ok(provenance)
+}
+
+fn validate_agent_commit_provenance(provenance: &AgentCommitProvenance) -> Result<(), EngineError> {
+    for (field, value) in [
+        ("agent_identity", provenance.agent_identity.as_str()),
+        ("agent_launch_id", provenance.agent_launch_id.as_str()),
+        (
+            "terminal_session_id",
+            provenance.terminal_session_id.as_str(),
+        ),
+        ("context_id", provenance.context_id.as_str()),
+        (
+            "expected_model_revision",
+            provenance.expected_model_revision.as_str(),
+        ),
+        (
+            "requested_capability",
+            provenance.requested_capability.as_str(),
+        ),
+        ("approval_policy", provenance.approval_policy.as_str()),
+        ("tool_name", provenance.tool_name.as_str()),
+    ] {
+        if value.trim().is_empty() {
+            return Err(EngineError::Validation(format!(
+                "agent commit provenance {field} must not be blank"
+            )));
+        }
+    }
+    Ok(())
+}
+
 fn refresh_journaled_report_revision(
     committed: &mut DesignModel,
     report: &mut CommitReport,
@@ -297,4 +347,45 @@ fn batch_without_object_revision_guards(
         .retain(|operation| !matches!(operation, Operation::GuardObjectRevision { .. }));
     validate_non_empty_operation_batch(&batch)?;
     Ok(batch)
+}
+
+#[cfg(test)]
+mod agent_provenance_tests {
+    use super::*;
+
+    #[test]
+    fn parses_complete_secret_free_agent_commit_provenance() {
+        let value = serde_json::json!({
+            "agent_identity": "claude-code",
+            "agent_launch_id": "agent-launch-context-7",
+            "terminal_session_id": "terminal-7",
+            "context_id": "context-7",
+            "expected_model_revision": "revision-7",
+            "accepted_transaction_tip": "transaction-6",
+            "requested_capability": "apply-approved",
+            "approval_policy": "owner-review-required",
+            "approval_reference": "proposal-7",
+            "tool_name": "datum.proposal.apply"
+        });
+        let parsed = parse_agent_commit_provenance(&value.to_string())
+            .expect("complete provenance should parse");
+        assert_eq!(parsed.agent_identity, "claude-code");
+        assert_eq!(parsed.terminal_session_id, "terminal-7");
+        assert_eq!(parsed.context_id, "context-7");
+        assert_eq!(parsed.approval_reference.as_deref(), Some("proposal-7"));
+        let serialized = serde_json::to_string(&parsed).expect("provenance should serialize");
+        assert!(!serialized.contains("secret"));
+        assert!(!serialized.contains("credential"));
+    }
+
+    #[test]
+    fn rejects_blank_or_unknown_agent_commit_provenance() {
+        let blank = r#"{"agent_identity":"","agent_launch_id":"launch","terminal_session_id":"session","context_id":"context","expected_model_revision":"revision","accepted_transaction_tip":null,"requested_capability":"inspect","approval_policy":"owner-review-required","approval_reference":null,"tool_name":"datum.project.show"}"#;
+        assert!(parse_agent_commit_provenance(blank).is_err());
+        let unknown = blank.replace(
+            "\"agent_identity\":\"\"",
+            "\"agent_identity\":\"agent\",\"secret\":\"forbidden\"",
+        );
+        assert!(parse_agent_commit_provenance(&unknown).is_err());
+    }
 }

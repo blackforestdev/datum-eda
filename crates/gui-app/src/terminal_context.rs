@@ -1,4 +1,7 @@
 use crate::terminal_active_context::TerminalActiveContextCommands;
+use crate::terminal_agent_credential::{
+    agent_launch_id, authority_descriptor_path, create_session_authority,
+};
 use crate::terminal_check_context::profile_latest_check_runs_context;
 use crate::terminal_context_contract::{
     TerminalAgentCommands, TerminalAgentDiscovery, TerminalCheckCommands, TerminalContextCommands,
@@ -90,7 +93,20 @@ pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<
         created_unix_ms: unix_time_ms()?,
         process_group_id: None,
     };
-    write_terminal_context_files_scoped(&terminal_context, context, false)?;
+    create_session_authority(
+        &terminal_context.context_path,
+        &terminal_context.session_id,
+        &context.project_root,
+        terminal_context.created_unix_ms,
+    )?;
+    if let Err(error) = write_terminal_context_files_scoped(&terminal_context, context, false) {
+        let _ = crate::terminal_agent_credential::revoke_session_authority(
+            &terminal_context.context_path,
+            &terminal_context.session_id,
+            terminal_context.created_unix_ms,
+        );
+        return Err(error);
+    }
     Ok(terminal_context)
 }
 
@@ -180,6 +196,7 @@ fn write_terminal_context_files_scoped(
         session_id: terminal_context.session_id.clone(),
         terminal_session_id: terminal_context.session_id.clone(),
         terminal_launch_profile: context.terminal_profile.name().to_string(),
+        agent_launch_id: agent_launch_id(&terminal_context.context_id),
         session_lifecycle: DatumToolSessionLifecycle::Running,
         actor_type: "ExternalAgent",
         capabilities: agent_capabilities.to_vec(),
@@ -358,6 +375,7 @@ fn write_terminal_context_files_scoped(
             project_root: context.project_root.display().to_string(),
             project_id: context.project_id.clone(),
             terminal_session_id: terminal_context.session_id.clone(),
+            agent_launch_id: agent_launch_id(&terminal_context.context_id),
             live_context_id,
             live_context_path: terminal_context.context_path.display().to_string(),
             pinned_context_id: terminal_context.context_id.clone(),
@@ -368,6 +386,12 @@ fn write_terminal_context_files_scoped(
             capability_profile: "datum_agent_capability_v1",
             approval_policy,
             unattended_tools,
+            credential_descriptor: authority_descriptor_path(
+                &terminal_context.context_path,
+                &terminal_context.session_id,
+            )
+            .display()
+            .to_string(),
         };
         let discovery_text = format!(
             "{}\n",
@@ -708,6 +732,35 @@ mod tests {
         assert_eq!(discovery["capability_profile"], "datum_agent_capability_v1");
         assert_eq!(discovery["approval_policy"], "owner-review-required");
         assert_eq!(discovery["unattended_tools"], serde_json::json!([]));
+        let credential_path = crate::terminal_agent_credential::credential_path(
+            &terminal.context_path,
+            &terminal.session_id,
+        );
+        let credential_text =
+            fs::read_to_string(&credential_path).expect("agent credential should read");
+        let credential: serde_json::Value =
+            serde_json::from_str(&credential_text).expect("agent credential should parse");
+        let secret = credential["secret"]
+            .as_str()
+            .expect("agent credential should carry a secret");
+        assert!(secret.len() >= 64);
+        for public_path in [
+            &terminal.context_path,
+            &pinned_context_path,
+            &discovery_path,
+            &terminal.latest_context_path,
+            &terminal.session_path,
+        ] {
+            assert!(
+                !fs::read_to_string(public_path)
+                    .expect("published context should read")
+                    .contains(secret),
+                "bearer credential must remain absent from {}",
+                public_path.display()
+            );
+        }
+        assert!(discovery.get("credential").is_none());
+        assert!(discovery.get("secret").is_none());
         let pinned: serde_json::Value =
             serde_json::from_slice(&pinned_before).expect("pinned context authority should parse");
         for field in [

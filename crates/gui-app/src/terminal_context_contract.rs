@@ -23,6 +23,7 @@ pub(super) struct TerminalContextEnvelope {
     pub(super) session_id: String,
     pub(super) terminal_session_id: String,
     pub(super) terminal_launch_profile: String,
+    pub(super) agent_launch_id: String,
     pub(super) session_lifecycle: DatumToolSessionLifecycle,
     pub(super) actor_type: &'static str,
     pub(super) capabilities: Vec<&'static str>,
@@ -112,6 +113,7 @@ pub(super) struct TerminalAgentDiscovery {
     pub(super) project_root: String,
     pub(super) project_id: Option<String>,
     pub(super) terminal_session_id: String,
+    pub(super) agent_launch_id: String,
     pub(super) live_context_id: String,
     pub(super) live_context_path: String,
     pub(super) pinned_context_id: String,
@@ -122,6 +124,7 @@ pub(super) struct TerminalAgentDiscovery {
     pub(super) capability_profile: &'static str,
     pub(super) approval_policy: &'static str,
     pub(super) unattended_tools: Vec<String>,
+    pub(super) credential_descriptor: String,
 }
 
 #[derive(Debug, Serialize)]

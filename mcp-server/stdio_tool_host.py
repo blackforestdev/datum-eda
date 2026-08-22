@@ -12,6 +12,16 @@ from agent_capability import (
     authorize_tool_call,
     load_agent_capability_grant,
     scoped_authorized_tool_catalog,
+    required_capability,
+)
+from agent_audit import (
+    AgentAuditWriter,
+    agent_invocation,
+    build_invocation_provenance,
+)
+from agent_session_authority import (
+    SessionAuthorityError,
+    load_session_authority,
 )
 from context_revision_fence import (
     ContextFenceError,
@@ -39,6 +49,8 @@ class StdioToolHost:
         self._resources = None if discovery is None else DatumResourceCatalog(discovery)
         self._discovery = discovery
         self._agent_grant = load_agent_capability_grant(discovery, TOOL_BY_NAME)
+        self._session_authority = load_session_authority(discovery)
+        self._agent_audit = AgentAuditWriter(discovery)
         self._notifications_enabled = notifications_enabled
         self._subscriptions: set[str] = set()
         self._pending_notifications: list[dict[str, Any]] = []
@@ -49,6 +61,20 @@ class StdioToolHost:
         method = message.get("method")
         msg_id = message.get("id")
         params = message.get("params", {})
+
+        if self._session_authority is not None:
+            try:
+                self._session_authority.assert_active()
+            except SessionAuthorityError as exc:
+                if method == "tools/call":
+                    name = params.get("name") if isinstance(params, dict) else None
+                    result = {
+                        "content": [
+                            {"type": "json", "json": _datum_error_envelope(name, exc)}
+                        ]
+                    }
+                    return {"jsonrpc": "2.0", "id": msg_id, "result": result}
+                return _protocol_error(msg_id, -32020, str(exc))
 
         if method == "initialize":
             requested_version = params.get("protocolVersion")
@@ -114,7 +140,7 @@ class StdioToolHost:
             try:
                 result = self._call_tool(name, arguments)
             except Exception as exc:
-                if isinstance(exc, (AgentCapabilityError, ContextFenceError)):
+                if isinstance(exc, (AgentCapabilityError, ContextFenceError, SessionAuthorityError)):
                     result = {
                         "content": [
                             {"type": "json", "json": _datum_error_envelope(name, exc)}
@@ -201,21 +227,51 @@ class StdioToolHost:
             )
 
     def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-        authorize_tool_call(
-            self._agent_grant,
-            self._discovery,
-            name,
-            arguments,
-            TOOL_BY_NAME,
-        )
-        fenced_arguments = validate_context_fence(
-            self._discovery, name, arguments, TOOL_BY_NAME
-        )
-        response = dispatch_tool_call(self._daemon, name, fenced_arguments)
-        if response.error is not None:
-            raise RuntimeError(response.error.message)
+        invocation = None
+        try:
+            authorized_capability = authorize_tool_call(
+                self._agent_grant,
+                self._discovery,
+                name,
+                arguments,
+                TOOL_BY_NAME,
+            )
+            if self._discovery is not None and self._agent_grant is not None:
+                spec = TOOL_BY_NAME.get(name, {})
+                capability = authorized_capability or required_capability(
+                    name, spec, TOOL_BY_NAME
+                )
+                agent_identity = (
+                    self._session_authority.agent_identity
+                    if self._session_authority is not None
+                    else "direct-agent"
+                )
+                invocation = build_invocation_provenance(
+                    self._discovery,
+                    agent_identity,
+                    self._agent_grant.approval_policy,
+                    capability,
+                    name,
+                    arguments,
+                )
+            fenced_arguments = validate_context_fence(
+                self._discovery, name, arguments, TOOL_BY_NAME
+            )
+            if invocation is None:
+                response = dispatch_tool_call(self._daemon, name, fenced_arguments)
+            else:
+                with agent_invocation(invocation):
+                    response = dispatch_tool_call(self._daemon, name, fenced_arguments)
+            if response.error is not None:
+                raise RuntimeError(response.error.message)
+        except Exception as error:
+            if invocation is not None:
+                self._agent_audit.record(invocation, "refused", error=error)
+            raise
 
         result = response.result
+        if invocation is not None:
+            self._agent_audit.record(invocation, "succeeded", result=result)
         if isinstance(name, str) and name.startswith("datum."):
             result = _datum_target_envelope(name, result)
 
@@ -285,7 +341,7 @@ def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:
 def _datum_error_envelope(name: str, exc: Exception) -> dict[str, Any]:
     code = "tool_call_failed"
     details = {"exception_type": exc.__class__.__name__}
-    if isinstance(exc, (AgentCapabilityError, ContextFenceError)):
+    if isinstance(exc, (AgentCapabilityError, ContextFenceError, SessionAuthorityError)):
         code = exc.code
         details = exc.details
     return {

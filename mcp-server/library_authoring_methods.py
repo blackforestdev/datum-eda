@@ -6,6 +6,8 @@ from __future__ import annotations
 import os
 from typing import Any
 
+from agent_audit import current_agent_subprocess_environment
+
 LIBRARY_AUTHORING_CLI_METHODS = {
     "add_pool_package_model_3d",
     "add_pool_package_silkscreen_arc",
@@ -63,9 +65,13 @@ LIBRARY_AUTHORING_CLI_METHODS = {
 
 def cli_run_kwargs_for_method(method: str) -> dict[str, Any]:
     run_kwargs: dict[str, Any] = {"capture_output": True, "text": True, "check": False}
+    agent_environment = current_agent_subprocess_environment()
+    if agent_environment is not None:
+        run_kwargs["env"] = agent_environment
     if method in LIBRARY_AUTHORING_CLI_METHODS:
-        env = dict(os.environ)
-        env["DATUM_COMMIT_SOURCE"] = "tool"
+        env = dict(run_kwargs.get("env", os.environ))
+        if agent_environment is None:
+            env["DATUM_COMMIT_SOURCE"] = "tool"
         env["DATUM_TOOL_SURFACE"] = "mcp"
         run_kwargs["env"] = env
     return run_kwargs

@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import DiscoveryScope, load_discovery_scope
 from resources_catalog import RESOURCE_TEMPLATES
 from stdio_tool_host import StdioToolHost
@@ -23,6 +24,7 @@ def _scope() -> DiscoveryScope:
         schema="datum_terminal_context_v1",
         project_root=Path("/tmp/project"),
         terminal_session_id="session-test",
+        agent_launch_id=None,
         context_id="context-test",
         document={
             "contract": "datum_terminal_context_v1",
@@ -54,6 +56,9 @@ class TestMcpResourcesPrompts(unittest.TestCase):
             live_path = root / "live.json"
             pinned_path = root / "pinned.json"
             discovery_path = root / "discovery.json"
+            context_authority, discovery_authority, agent_environment = (
+                write_agent_authority_fixture(root, "terminal-split")
+            )
             common = {
                 "contract": "datum_terminal_context_v1",
                 "project_root": os.fspath(root),
@@ -66,7 +71,7 @@ class TestMcpResourcesPrompts(unittest.TestCase):
                 "capabilities": ["inspect", "propose"],
                 "approval_policy": "owner-review-required",
                 "unattended_tools": [],
-            }
+            } | context_authority
             live_path.write_text(
                 json.dumps(
                     common
@@ -103,10 +108,11 @@ class TestMcpResourcesPrompts(unittest.TestCase):
                         "approval_policy": "owner-review-required",
                         "unattended_tools": [],
                     }
+                    | discovery_authority
                 ),
                 encoding="utf-8",
             )
-            with patch.dict(os.environ, {}, clear=True):
+            with patch.dict(os.environ, agent_environment, clear=True):
                 host = StdioToolHost(
                     FakeDaemonClient(), load_discovery_scope(discovery_path)
                 )

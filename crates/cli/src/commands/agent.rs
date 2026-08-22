@@ -178,6 +178,8 @@ fn launch_agent(format: &OutputFormat, args: AgentLaunchArgs) -> Result<(String,
     command
         .current_dir(&args.project_root)
         .env("DATUM_AGENT_DISCOVERY", &discovery)
+        .env("DATUM_AGENT_LAUNCH_ID", &launch_id)
+        .env("DATUM_AGENT_ADAPTER_ID", adapter.id)
         .env("DATUM_PROJECT_ROOT", &args.project_root)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())

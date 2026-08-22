@@ -1,6 +1,7 @@
 //! Application adapter from Datum session context to opaque PTY transport.
 
 use crate::{
+    terminal_agent_credential::{agent_launch_id, credential_path},
     terminal_capability::{DATUM_TERM, DATUM_TERM_PROGRAM, install_session_terminfo},
     terminal_context::{
         DATUM_CLI, DATUM_LEGACY_CLI, terminal_discovery_path, terminal_pinned_context_path,
@@ -39,6 +40,14 @@ pub(super) fn spawn_terminal_process(
         .env("DATUM_SESSION_ID", &terminal_context.session_id)
         .env("DATUM_DISCOVERY", discovery_path.as_os_str())
         .env("DATUM_AGENT_DISCOVERY", discovery_path.as_os_str())
+        .env(
+            "DATUM_AGENT_CREDENTIAL_FILE",
+            credential_path(&terminal_context.context_path, &terminal_context.session_id),
+        )
+        .env(
+            "DATUM_AGENT_LAUNCH_ID",
+            agent_launch_id(&terminal_context.context_id),
+        )
         .env(
             "DATUM_LIVE_CONTEXT",
             terminal_context.context_path.as_os_str(),

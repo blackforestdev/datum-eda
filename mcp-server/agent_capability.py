@@ -145,16 +145,16 @@ def authorize_tool_call(
     name: Any,
     arguments: Any,
     catalog: dict[str, dict[str, Any]],
-) -> None:
+) -> str | None:
     """Enforce capability and project scope before any daemon dispatch."""
 
     if grant is None or discovery is None:
-        return
+        return None
     if not isinstance(name, str) or not isinstance(arguments, dict):
-        return
+        return None
     spec = catalog.get(name)
     if spec is None:
-        return
+        return None
     required = required_capability(name, spec, catalog)
     if not grant.allows(required):
         raise _denied(
@@ -197,6 +197,7 @@ def authorize_tool_call(
             raise _denied(
                 discovery, grant, name, required, "project_scope_mismatch"
             )
+    return required
 
 
 def required_capability(
