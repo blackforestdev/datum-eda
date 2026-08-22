@@ -26,20 +26,10 @@ fn write_probe(path: &Path) {
         path,
         br#"#!/bin/sh
 set -eu
-adapter=
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --probe-adapter) adapter=$2; shift 2 ;;
-    *) shift ;;
-  esac
-done
-test -t 0
-test -t 1
-test -t 2
 test "$PWD" = "$DATUM_EXPECT_PROJECT"
 test "$DATUM_AGENT_DISCOVERY" = "$DATUM_EXPECT_DISCOVERY"
 test "$SSH_AUTH_SOCK" = "$DATUM_EXPECT_AUTH"
-printf 'AGENT_PTY_OK:%s:%s\n' "$adapter" "$DATUM_AGENT_DISCOVERY"
+exec python3 "$DATUM_AGENT_MCP_PROBE" "$@"
 "#,
     )
     .expect("write agent probe");
@@ -94,6 +84,19 @@ fn profile(
                 OsString::from("SSH_AUTH_SOCK"),
                 Some(OsString::from("/tmp/datum-agent-auth-fixture.sock")),
             ),
+            (
+                OsString::from("DATUM_EXPECT_CLI"),
+                Some(cli.as_os_str().to_owned()),
+            ),
+            (
+                OsString::from("DATUM_AGENT_MCP_PROBE"),
+                Some(
+                    Path::new(env!("CARGO_MANIFEST_DIR"))
+                        .join("../../scripts/agent_mcp_adapter_probe.py")
+                        .into_os_string(),
+                ),
+            ),
+            (OsString::from("DATUM_MCP_ENDPOINT"), None),
         ],
         ..TerminalLaunchProfile::default()
     }
@@ -103,7 +106,18 @@ fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
     let project = root.join(adapter);
     fs::create_dir_all(&project).expect("project root");
     let discovery = project.join("discovery.json");
-    fs::write(&discovery, br#"{"schema":"datum_agent_discovery_v1"}"#).expect("discovery document");
+    fs::write(
+        &discovery,
+        serde_json::to_vec(&serde_json::json!({
+            "schema": "datum_agent_discovery_v1",
+            "project_root": project,
+            "terminal_session_id": format!("terminal-{adapter}"),
+            "context_id": format!("context-{adapter}"),
+            "model_revision": "revision-test"
+        }))
+        .expect("serialize discovery"),
+    )
+    .expect("discovery document");
     let mut context = TerminalLaunchContext::for_project_root(&project);
     context.terminal_profile = profile(cli, &project, &discovery, probe, adapter);
     let session = spawn_terminal_session(&context).expect("spawn agent CLI through owned PTY");
@@ -128,9 +142,15 @@ fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
         "{adapter} did not exit successfully; output={rendered:?}"
     );
     assert!(
-        rendered.contains(&format!("AGENT_PTY_OK:{adapter}:{}", discovery.display())),
-        "{adapter} did not preserve PTY/cwd/auth/discovery identity; output={rendered:?}"
+        rendered.contains(&format!("AGENT_MCP_OK:{adapter}:{}", discovery.display())),
+        "{adapter} did not discover and enumerate native MCP; output={rendered:?}"
     );
+    if adapter == "local-generic" {
+        assert!(
+            rendered.contains("standard Datum MCP command: datum-eda mcp serve --discovery"),
+            "generic adapter did not present its portable MCP command: {rendered:?}"
+        );
+    }
     assert!(
         !project
             .join(".datum/runtime")
@@ -146,7 +166,7 @@ fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
 
 #[test]
 #[ignore = "run with scripts/run_agent_launch_pty_proof.sh"]
-fn governed_agents_launch_through_owned_pty_with_context_intact() {
+fn governed_agents_enumerate_native_mcp_through_owned_pty() {
     let cli = PathBuf::from(
         std::env::var_os("DATUM_AGENT_CLI_PROOF_BIN")
             .expect("proof runner provides DATUM_AGENT_CLI_PROOF_BIN"),

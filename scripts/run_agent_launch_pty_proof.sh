@@ -9,5 +9,5 @@ CARGO_TARGET_DIR="$proof_target" cargo build -p datum-eda-cli --locked --offline
 DATUM_AGENT_CLI_PROOF_BIN="$proof_target/debug/datum-eda" \
   CARGO_TARGET_DIR="$proof_target" \
   cargo test -p datum-gui-app \
-    terminal_agent_launch_tests::governed_agents_launch_through_owned_pty_with_context_intact \
+    terminal_agent_launch_tests::governed_agents_enumerate_native_mcp_through_owned_pty \
     --locked --offline -- --ignored --nocapture
