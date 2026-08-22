@@ -353,6 +353,20 @@ prose, carries canonical identities in the typed fields, and provides a durable
 non-focusing route to bounded Console history even when the transient strip is
 not visible.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06B-TYPED-HISTORY-RECOVERY -->
+Commit `005f751` routes production action and target identities through typed
+Console fields while visible prose remains user-facing, and the standing Console
+boundary gate rejects future internal-identity interpolation through untyped
+publication helpers. `View / Console History` is a permanent GUI-local route;
+expanded bounded history renders at session start and after strip expiry without
+manufacturing a feedback record or taking focus. Console, pointer, and menu
+interaction ownership are extracted from the runtime monolith, whose genuine
+production ceiling ratchets from 2392 to 2391 lines after relocating premature
+test declarations. Source-health, boundary, menu, rustfmt, and governance gates
+pass; guarded protocol, renderer, and menu tests pass; and the unrestricted
+guarded GUI-app suite passes 272 tests with eight declared proof-only ignores.
+`dat-console-id-leakage-zgu` and `dat-console-history-reachability-ogv` are closed.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06C -->
 CONSOLE-I06C makes the acceptance rail executable: Console state/routing tests
 and exact build goldens run in standing guarded gates; the critical-consequence
