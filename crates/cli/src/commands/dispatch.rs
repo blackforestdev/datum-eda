@@ -1513,6 +1513,7 @@ pub(crate) fn execute_project_command(
 pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     let format = &cli.format;
     match cli.command {
+        Commands::Agent { action } => execute_agent_command(format, action),
         Commands::Context { action } => match action {
             ContextCommands::Get(args) => {
                 Ok((render_output(format, &query_context_envelope(&args)?), 0))

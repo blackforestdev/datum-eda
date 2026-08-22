@@ -3,7 +3,9 @@
 //! This module owns declarations only. Command parsing, probing, ephemeral
 //! materialization, and process launch belong to AI-DISC-02 and AI-DISC-03.
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+use serde::Serialize;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub enum SupportedVersionRange {
     /// Accept a version only when `agent doctor` verifies the declared CLI
     /// contract. Fast-moving clients do not receive an invented semver floor.
@@ -12,13 +14,13 @@ pub enum SupportedVersionRange {
     UnversionedLocal,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct VersionProbe {
     pub args: &'static [&'static str],
     pub supported: SupportedVersionRange,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub enum ResumeArguments {
     /// Resume the most recent native conversation.
     Latest(&'static [&'static str]),
@@ -28,7 +30,7 @@ pub enum ResumeArguments {
     Unsupported,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct LaunchContract {
     pub binary_candidates: &'static [&'static str],
     pub version_probe: VersionProbe,
@@ -37,7 +39,7 @@ pub struct LaunchContract {
     pub resume_identity: ResumeArguments,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct EnvironmentContract {
     /// Preserve the terminal's already-governed inherited environment so
     /// PATH, locale, authentication sockets, and client credentials continue
@@ -46,7 +48,7 @@ pub struct EnvironmentContract {
     pub adapter_overlay_allowlist: &'static [&'static str],
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub enum McpConfigShape {
     CodexTomlTable,
     ClaudeJsonFile,
@@ -54,19 +56,22 @@ pub enum McpConfigShape {
     PrintedStdioCommand,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub enum ApprovalRequirement {
     ClientNativeApproval,
     PrintedForUserSetup,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub enum EphemeralConfigStrategy {
     /// Generate an isolated client config home for the launch and remove it
     /// after the child and MCP broker exit. User-global config is untouched.
     IsolatedConfigHome { environment_key: &'static str },
     /// Generate a session JSON file and pass it using the listed native flags.
     CommandLineFile { flags: &'static [&'static str] },
+    /// Pass native process-local config overrides; no client config home or
+    /// project file is changed.
+    CommandLineOverrides { flag: &'static str },
     /// Cursor currently discovers project MCP only at this documented path.
     /// The launcher must review, atomically overlay, and restore it; persistent
     /// installation remains a separate explicit operation.
@@ -76,20 +81,20 @@ pub enum EphemeralConfigStrategy {
     DiscoveryOnly,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct McpContract {
     pub shape: McpConfigShape,
     pub approval: ApprovalRequirement,
     pub ephemeral: EphemeralConfigStrategy,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct ProjectInstructions {
     pub files: &'static [&'static str],
     pub optional_roots: &'static [&'static str],
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 pub struct AgentAdapter {
     pub id: &'static str,
     pub display_name: &'static str,
@@ -135,16 +140,14 @@ pub const AGENT_ADAPTERS: &[AgentAdapter] = &[
         mcp: McpContract {
             shape: McpConfigShape::CodexTomlTable,
             approval: ApprovalRequirement::ClientNativeApproval,
-            ephemeral: EphemeralConfigStrategy::IsolatedConfigHome {
-                environment_key: "CODEX_HOME",
-            },
+            ephemeral: EphemeralConfigStrategy::CommandLineOverrides { flag: "-c" },
         },
         instructions: ProjectInstructions {
             files: &["AGENTS.md"],
             optional_roots: &[".agents/skills", ".codex/skills", ".codex/plugins"],
         },
         capability_limits: &["native-mcp", "native-resume", "project-instructions"],
-        known_deltas: &["ephemeral CODEX_HOME must preserve access to existing authentication"],
+        known_deltas: &["per-process MCP overrides merge with existing client configuration"],
         verification_fixture: "codex-agent-adapter-v1",
     },
     AgentAdapter {
@@ -307,6 +310,9 @@ mod tests {
                 }
                 EphemeralConfigStrategy::CommandLineFile { flags } => {
                     assert!(flags.contains(&"--mcp-config"));
+                }
+                EphemeralConfigStrategy::CommandLineOverrides { flag } => {
+                    assert_eq!(flag, "-c");
                 }
                 EphemeralConfigStrategy::ReviewedProjectOverlay { relative_path } => {
                     assert_eq!(relative_path, ".cursor/mcp.json");

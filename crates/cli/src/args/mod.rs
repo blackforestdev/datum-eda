@@ -12,6 +12,7 @@
 #[allow(unused_imports)] // Scope anchor: keeps crate-root names visible here.
 use super::*;
 
+mod agent;
 mod artifact;
 mod board_component;
 mod board_dimension;
@@ -51,6 +52,7 @@ mod surface;
 
 pub(crate) use self::prelude::*;
 
+pub(crate) use self::agent::{AgentCommands, AgentDoctorArgs, AgentLaunchArgs};
 pub(crate) use self::artifact::{
     ArtifactCancelOutputJobRunArgs, ArtifactCommands, ArtifactCompareArgs, ArtifactFilesArgs,
     ArtifactGenerateArgs, ArtifactListArgs, ArtifactPreviewArgs, ArtifactShowArgs,

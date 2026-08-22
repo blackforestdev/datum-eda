@@ -23,6 +23,7 @@
 #[allow(unused_imports)] // scope prelude anchor for family files.
 use super::*;
 
+mod agent;
 mod artifacts;
 mod board;
 mod check;
@@ -53,6 +54,7 @@ mod support;
 // families have not yet moved into commands/.
 mod views;
 
+pub(crate) use self::agent::*;
 pub(crate) use self::artifacts::*;
 pub(crate) use self::board::*;
 pub(crate) use self::check::*;

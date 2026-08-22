@@ -16,6 +16,11 @@ pub(crate) struct Cli {
 #[derive(Subcommand)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Commands {
+    /// Discover, diagnose, and launch supported terminal agents
+    Agent {
+        #[command(subcommand)]
+        action: AgentCommands,
+    },
     /// Inspect Datum session/context discovery state
     Context {
         #[command(subcommand)]
