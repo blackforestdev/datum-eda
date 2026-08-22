@@ -111,6 +111,7 @@ internal Datum daemon. Client exit tears down its broker and revokes its lease.
 ### 5.2 Optional Streamable HTTP
 
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-02 -->
+<!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-02-CLOSED -->
 
 Shared long-lived access may use Streamable HTTP only on loopback with Origin
 validation, negotiated protocol version, scoped authentication, expiry,
