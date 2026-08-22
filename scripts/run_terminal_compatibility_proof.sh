@@ -30,6 +30,9 @@ done
 python3 scripts/check_terminal_compatibility_matrix.py
 revision="$(git rev-parse HEAD)"
 evidence_dir="${DATUM_P28_EVIDENCE_DIR:-target/p28-evidence}"
+if [[ "$evidence_dir" != /* ]]; then
+  evidence_dir="$repo_root/$evidence_dir"
+fi
 mkdir -p "$evidence_dir"
 evidence="$evidence_dir/${revision}-linux-x86_64.json"
 
