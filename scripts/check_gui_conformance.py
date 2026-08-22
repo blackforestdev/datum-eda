@@ -11,6 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 GATES = [
     (
+        "output-only Datum Console boundary",
+        [sys.executable, "scripts/check_datum_console_boundary.py"],
+    ),
+    (
         "token/value/prototype parity",
         [sys.executable, "scripts/check_gui_design_tokens.py"],
     ),

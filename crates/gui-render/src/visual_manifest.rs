@@ -11,6 +11,7 @@ pub struct FixtureManifest {
     pub project_path: PathBuf,
     pub board_file: Option<PathBuf>,
     pub project_kind: String,
+    pub console_scenario: Option<String>,
     pub viewport: VisualViewport,
     pub ui_scale_factors: Vec<f32>,
     pub golden: VisualGolden,
@@ -59,6 +60,7 @@ impl FixtureManifest {
             project_path: PathBuf::from(required_string(&doc, &["input", "project_path"])?),
             board_file: optional_string(&doc, &["input", "board_file"])?.map(PathBuf::from),
             project_kind: required_string(&doc, &["input", "project_kind"])?,
+            console_scenario: optional_string(&doc, &["input", "console_scenario"])?,
             viewport: VisualViewport {
                 width_px: required_i64(&doc, &["viewport", "width_px"])?
                     .try_into()
@@ -122,6 +124,14 @@ impl FixtureManifest {
             other => bail!(
                 "Layer A Phase 1 only accepts project_kind = \"datum-native\" or \"kicad-board\"; got {other:?}"
             ),
+        }
+        if let Some(scenario) = self.console_scenario.as_deref()
+            && !matches!(
+                scenario,
+                "routine-focused" | "tool-terminal-open" | "refusal-narrow" | "history-expanded"
+            )
+        {
+            bail!("unsupported input.console_scenario {scenario:?}");
         }
         if self.viewport.width_px == 0 || self.viewport.height_px == 0 {
             bail!("viewport dimensions must be non-zero");
@@ -373,6 +383,22 @@ mod tests {
         assert_eq!(manifest.viewport.width_px, 1024);
         assert_eq!(manifest.viewport.center_mm, [100.0, 75.0]);
         assert_eq!(manifest.ui_scale_factors, vec![1.0]);
+        assert_eq!(manifest.console_scenario, None);
+    }
+
+    #[test]
+    fn accepts_only_governed_console_scenarios() {
+        let valid = include_str!("../testdata/golden/console/routine-focused.fixture.toml");
+        let manifest = FixtureManifest::parse(valid).expect("Console fixture should parse");
+        assert_eq!(
+            manifest.console_scenario.as_deref(),
+            Some("routine-focused")
+        );
+
+        let invalid = valid.replace("routine-focused", "interactive-command-entry");
+        let error = FixtureManifest::parse(&invalid)
+            .expect_err("an ungoverned Console scenario should fail");
+        assert!(format!("{error:#}").contains("unsupported input.console_scenario"));
     }
 
     #[test]

@@ -13,6 +13,12 @@ const FIXTURE_NAMES: &[&str] = &[
     "text-intent-repro",
     "text-transform-repro",
 ];
+const CONSOLE_FIXTURE_NAMES: &[&str] = &[
+    "routine-focused",
+    "tool-terminal-open",
+    "refusal-narrow",
+    "history-expanded",
+];
 
 #[test]
 #[ignore = "requires local visual rendering authority; run explicitly until visual CI is pinned"]
@@ -54,6 +60,25 @@ fn board_multi_scale_visual_smoke_renders_nonblank() -> Result<()> {
 }
 
 #[test]
+#[ignore = "requires local visual rendering authority; run explicitly for Console owner review"]
+fn console_visual_goldens_match() -> Result<()> {
+    for fixture_name in CONSOLE_FIXTURE_NAMES {
+        let manifest = console_fixture_manifest_path(fixture_name);
+        let outcomes = run_fixture(&manifest)
+            .with_context(|| format!("run Console visual fixture {}", manifest.display()))?;
+        for outcome in outcomes {
+            assert_eq!(
+                outcome.result.differing_pixels, 0,
+                "Console fixture {fixture_name} scale {} should match its owner-reviewed build golden",
+                outcome.scale_factor
+            );
+        }
+        assert_no_generated_artifacts(&manifest)?;
+    }
+    Ok(())
+}
+
+#[test]
 #[ignore = "requires local visual rendering authority; checks Design Book artboard goldens"]
 fn design_system_artboards_match() -> Result<()> {
     check_design_artboards()
@@ -62,6 +87,12 @@ fn design_system_artboards_match() -> Result<()> {
 fn fixture_manifest_path(fixture_name: &str) -> PathBuf {
     repo_root()
         .join("crates/gui-render/testdata/golden/board")
+        .join(format!("{fixture_name}.fixture.toml"))
+}
+
+fn console_fixture_manifest_path(fixture_name: &str) -> PathBuf {
+    repo_root()
+        .join("crates/gui-render/testdata/golden/console")
         .join(format!("{fixture_name}.fixture.toml"))
 }
 

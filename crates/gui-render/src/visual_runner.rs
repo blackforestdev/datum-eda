@@ -1,7 +1,10 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
-use datum_gui_protocol::{LiveReviewRequest, ReviewWorkspaceState};
+use datum_gui_protocol::{
+    ApplicationFocus, ConsoleFeedbackDraft, ConsoleFeedbackSource, ConsoleJournalProjectionRecord,
+    DockTab, LiveReviewRequest, PaneId, ReviewWorkspaceState,
+};
 use image::RgbaImage;
 
 use crate::visual_capture::OffscreenRenderer;
@@ -249,8 +252,101 @@ fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspace
         profile: None,
         kicad_board_source: None,
     };
-    datum_gui_protocol::load_board_editor_workspace_state(&request)
-        .with_context(|| format!("load fixture project {}", request.project_root.display()))
+    let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
+        .with_context(|| format!("load fixture project {}", request.project_root.display()))?;
+    inject_console_scenario(&mut state, manifest.console_scenario.as_deref())?;
+    Ok(state)
+}
+
+fn inject_console_scenario(state: &mut ReviewWorkspaceState, scenario: Option<&str>) -> Result<()> {
+    const FIXTURE_TIME_MS: u64 = 50_491_000;
+    match scenario {
+        None => {}
+        Some("routine-focused") => {
+            state.ui.layout.focused = PaneId(1);
+            state.ui.focus = ApplicationFocus::Editor(PaneId(1));
+            state.ui.publish_console_feedback(
+                ConsoleFeedbackDraft::action_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    FIXTURE_TIME_MS,
+                    "Fit schematic to focused pane",
+                )
+                .with_action_id("view.fit-focused"),
+            );
+        }
+        Some("tool-terminal-open") => {
+            state.ui.active_dock_tab = Some(DockTab::Terminal);
+            state.ui.dock_height_px = 220;
+            state.ui.publish_console_feedback(
+                ConsoleFeedbackDraft::tool_prompt(
+                    ConsoleFeedbackSource::Tool,
+                    FIXTURE_TIME_MS,
+                    "Move — select a component",
+                )
+                .with_action_id("tool.move"),
+            );
+        }
+        Some("refusal-narrow") => {
+            state.ui.publish_console_feedback(
+                ConsoleFeedbackDraft::action_refusal(
+                    ConsoleFeedbackSource::Tool,
+                    FIXTURE_TIME_MS,
+                    "Rotate is unavailable — select a component first",
+                )
+                .with_action_id("tool.rotate"),
+            );
+        }
+        Some("history-expanded") => {
+            for (offset_ms, source, message) in [
+                (
+                    0,
+                    ConsoleFeedbackSource::Viewport,
+                    "Fit board to focused pane",
+                ),
+                (900, ConsoleFeedbackSource::Selection, "Selected U4"),
+                (1_800, ConsoleFeedbackSource::Tool, "Moved U4 by 2.54 mm"),
+            ] {
+                state
+                    .ui
+                    .publish_console_feedback(ConsoleFeedbackDraft::action_echo(
+                        source,
+                        FIXTURE_TIME_MS + offset_ms,
+                        message,
+                    ));
+            }
+            state.ui.console_journal.begin_session(482);
+            state.ui.console_journal.reconcile(
+                &[
+                    ConsoleJournalProjectionRecord {
+                        journal_ordinal: 483,
+                        transaction_id: "fixture-transaction-483".to_owned(),
+                        transaction_kind: "edit".to_owned(),
+                        commit_source: "gui".to_owned(),
+                        reason: "move U4".to_owned(),
+                        operation_count: 1,
+                        created_count: 0,
+                        modified_count: 1,
+                        deleted_count: 0,
+                    },
+                    ConsoleJournalProjectionRecord {
+                        journal_ordinal: 484,
+                        transaction_id: "fixture-transaction-484".to_owned(),
+                        transaction_kind: "edit".to_owned(),
+                        commit_source: "gui".to_owned(),
+                        reason: "rotate R7".to_owned(),
+                        operation_count: 1,
+                        created_count: 0,
+                        modified_count: 1,
+                        deleted_count: 0,
+                    },
+                ],
+                484,
+            );
+            state.ui.console.set_history_expanded(true);
+        }
+        Some(other) => bail!("unsupported input.console_scenario {other:?}"),
+    }
+    Ok(())
 }
 
 fn repo_root() -> PathBuf {
