@@ -3804,7 +3804,7 @@
       },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I06A",
+        "canonical_next_step_id": "CONSOLE-I06B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3929,7 +3929,7 @@
           {
             "id": "CONSOLE-I06A",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Restore decision-022 source health through cohesive Console ownership extraction and same-change downward ratchets for every touched legacy module.",
             "depends_on": [
               "CONSOLE-I05"
@@ -3940,7 +3940,17 @@
                 "marker": "CONSOLE-I06A"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "22c00aa"
+              },
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06A-SOURCE-HEALTH"
+              }
+            ]
           },
           {
             "id": "CONSOLE-I06B",

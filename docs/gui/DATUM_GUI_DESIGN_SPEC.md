@@ -338,6 +338,15 @@ extraction from every Console-touched legacy module and same-change downward
 ratchets. Raising ceilings, registering new debt, textual `include!` splits, and
 forwarding-only modules are forbidden.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06A-SOURCE-HEALTH -->
+Commit `22c00aa` extracts the supervision schema, Console GPU resources/draw
+pass, and prepared-scene Console integration into normal bounded Rust modules.
+The legacy ceilings ratchet downward to protocol 4802 pre-test / 1855 inline,
+render root 8949 expanded, GPU 899, and scene 800. Source-health policy and all
+13 governance regressions pass, as do guarded protocol/render tests and the
+Console boundary gate. `dat-console-source-health-0t2` is closed with this
+evidence.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06B -->
 CONSOLE-I06B removes internal action/object identifiers from user-facing Console
 prose, carries canonical identities in the typed fields, and provides a durable
