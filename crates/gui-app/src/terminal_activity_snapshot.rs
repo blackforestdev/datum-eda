@@ -57,8 +57,9 @@ pub(super) fn load_terminal_activity_summary_lines(
 /// offset of the last fully consumed line plus the folded span state, so a
 /// refresh costs O(new bytes). Summary output is byte-identical to
 /// [`load_terminal_activity_summary_lines`] because both fold events through
-/// the same [`ActivitySpanBuilder`]. The span data itself is unchanged — it
-/// still feeds the future Command Console.
+/// the same [`ActivitySpanBuilder`]. The span data itself is unchanged and
+/// stays terminal-domain state (decision 033 retired the Command Console;
+/// terminal activity never routes into the output-only Datum Console).
 #[derive(Default)]
 pub(crate) struct TerminalActivitySummaryCache {
     path: Option<PathBuf>,
