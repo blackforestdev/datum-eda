@@ -3155,8 +3155,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-context-20260822",
         "claimed_at": "2026-08-22T02:50:04Z",
-        "heartbeat_at": "2026-08-22T03:01:27Z",
-        "expires_at": "2026-08-22T11:01:27Z",
+        "heartbeat_at": "2026-08-22T03:31:42Z",
+        "expires_at": "2026-08-22T11:31:42Z",
         "scope": [
           "crates/gui-app",
           "crates/gui-protocol",
@@ -3168,7 +3168,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "05bf60e"
+        "head": "f394243"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.8",
@@ -3179,7 +3179,7 @@
       ],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
-        "canonical_next_step_id": "AI-CTX-02",
+        "canonical_next_step_id": "AI-CTX-03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3220,7 +3220,7 @@
           {
             "id": "AI-CTX-02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Require context identity and expected model revision on proposal and apply envelopes, with structured stale-state refusal and explicit refresh or rebase.",
             "depends_on": [
               "AI-CTX-01"
@@ -3231,12 +3231,22 @@
                 "marker": "AI-CTX-02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "f394243"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-02-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-CTX-03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Enforce inspect, propose, apply-approved, and explicitly enabled unattended grants at the project and terminal-session boundary.",
             "depends_on": [
               "AI-CTX-01"
