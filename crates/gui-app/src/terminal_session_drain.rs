@@ -2,7 +2,6 @@ use super::{
     TerminalEvent, TerminalSessionRegistry, TerminalSessionSlot, mark_terminal_session_exit,
 };
 use crate::{
-    terminal_core_adapter::TerminalCoreAdapterUpdate,
     terminal_session_events::{
         record_terminal_exit_event, record_terminal_output_event,
         record_terminal_termination_failure_event,
@@ -10,6 +9,10 @@ use crate::{
     terminal_transport::{GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT},
 };
 use datum_gui_protocol::TerminalLaneState;
+
+#[path = "terminal_session_core_events.rs"]
+mod core_events;
+use core_events::consume_core_update;
 
 #[derive(Default)]
 pub(crate) struct TerminalDrainReport {
@@ -79,52 +82,6 @@ fn flush_output_batch(
     #[cfg(test)]
     {
         report.output_batches += 1;
-    }
-}
-
-fn consume_core_update(
-    session: &super::TerminalSession,
-    lane: &mut TerminalLaneState,
-    report: &mut TerminalDrainReport,
-    update: TerminalCoreAdapterUpdate,
-) {
-    for response in update.replies {
-        if let Err(error) = session.write_bytes(&response) {
-            report
-                .notices
-                .push(format!("terminal status response failed: {error}"));
-        }
-    }
-    for error in update.semantic_errors {
-        report
-            .notices
-            .push(format!("terminal core semantic limit/error: {error}"));
-    }
-    for event in update.events {
-        match event {
-            datum_terminal_core::CoreEvent::LimitReached(kind) => report
-                .notices
-                .push(format!("terminal core {:?} limit reached", kind).to_lowercase()),
-            datum_terminal_core::CoreEvent::Notification(text) => {
-                let text = text.as_str().to_owned();
-                lane.latest_notification = Some(text.clone());
-                report.notifications.push(TerminalNotificationRequest {
-                    session_id: session.session_id().to_string(),
-                    text,
-                });
-            }
-            datum_terminal_core::CoreEvent::ClipboardRequest {
-                selection,
-                encoded_contents,
-            } => report
-                .clipboard_requests
-                .push(TerminalClipboardWriteRequest {
-                    session_id: session.session_id().to_string(),
-                    selection,
-                    encoded_contents: encoded_contents.as_slice().to_vec(),
-                }),
-            _ => {}
-        }
     }
 }
 

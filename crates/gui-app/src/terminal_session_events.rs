@@ -70,6 +70,20 @@ struct TerminalTerminationSurvivor {
     session_id: i32,
 }
 
+#[derive(Debug, Serialize)]
+struct TerminalShellMetadataEvent<'a> {
+    event: &'static str,
+    schema_version: u64,
+    session_id: &'a str,
+    origin: &'static str,
+    trust: &'static str,
+    kind: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    value: Option<&'a str>,
+    process_exit_code: Option<i32>,
+    occurred_unix_ms: u128,
+}
+
 pub(super) fn prepare_terminal_command_execution(
     session: &TerminalSession,
     origin: &str,
@@ -244,6 +258,41 @@ pub(super) fn record_terminal_output_event(session: &TerminalSession, bytes: &[u
         session.clear_active_execution_id(&execution_id);
     }
     result
+}
+
+pub(super) fn record_terminal_shell_metadata_event(
+    session: &TerminalSession,
+    kind: &str,
+    value: Option<&str>,
+    process_exit_code: Option<i32>,
+) -> Result<()> {
+    let occurred_unix_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .context("terminal shell metadata timestamp")?
+        .as_millis();
+    let event = TerminalShellMetadataEvent {
+        event: "terminal_shell_metadata",
+        schema_version: 1,
+        session_id: session.session_id(),
+        origin: "pty_osc",
+        trust: "untrusted",
+        kind,
+        value,
+        process_exit_code,
+        occurred_unix_ms,
+    };
+    let path = session.event_log_path();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .with_context(|| format!("open terminal shell metadata log {}", path.display()))?;
+    writeln!(
+        file,
+        "{}",
+        serde_json::to_string(&event).context("serialize terminal shell metadata")?
+    )
+    .with_context(|| format!("append terminal shell metadata {}", path.display()))
 }
 
 fn terminal_command_execution_finished(session: &TerminalSession, execution_id: &str) -> bool {

@@ -262,6 +262,71 @@ fn osc52_becomes_a_typed_session_scoped_request_without_changing_cells() {
 }
 
 #[test]
+fn osc7_and_osc133_are_untrusted_session_metadata_not_design_authority() {
+    let mut registry = synthetic_registry(2);
+    registry.sessions[0]
+        .session
+        .transport
+        .push_synthetic_output(
+            b"visible\x1b]7;file://host/work/project\x07\x1b]133;A\x07\x1b]133;B\x07\x1b]133;C\x07\x1b]133;D;17\x07",
+        );
+    registry.sessions[1]
+        .session
+        .transport
+        .push_synthetic_output(b"peer\x1b]133;A\x07");
+
+    let mut lane = TerminalLaneState::default();
+    let report = registry.drain_all(&mut lane);
+    assert!(report.notices.is_empty(), "{:?}", report.notices);
+    assert_eq!(
+        lane.current_working_directory.as_deref(),
+        Some("file://host/work/project")
+    );
+    assert_eq!(
+        lane.shell_metadata.phase,
+        datum_gui_protocol::TerminalShellPhase::CommandFinished
+    );
+    assert_eq!(lane.shell_metadata.last_exit_code, Some(17));
+    assert_eq!(lane.shell_metadata.event_sequence, 4);
+    assert_eq!(
+        registry.sessions[1].parked_lane.shell_metadata.phase,
+        datum_gui_protocol::TerminalShellPhase::Prompt
+    );
+    assert_eq!(
+        registry.sessions[1]
+            .parked_lane
+            .shell_metadata
+            .event_sequence,
+        1
+    );
+    assert!(registry.test_session_text(0).contains("visible"));
+    assert!(!registry.test_session_text(0).contains("file://host"));
+
+    let event_log = crate::terminal_session_events::io_event_log::read_event_log_family_text(
+        &registry.sessions[0].session.event_log_path(),
+    );
+    let metadata = event_log
+        .lines()
+        .filter(|line| line.contains("\"event\":\"terminal_shell_metadata\""))
+        .collect::<Vec<_>>();
+    assert_eq!(metadata.len(), 5);
+    assert!(metadata.iter().all(|line| {
+        line.contains("\"origin\":\"pty_osc\"") && line.contains("\"trust\":\"untrusted\"")
+    }));
+    assert!(metadata.iter().any(|line| {
+        line.contains("\"kind\":\"command_finished\"") && line.contains("\"process_exit_code\":17")
+    }));
+    for forbidden in [
+        "terminal_command_handoff",
+        "terminal_command_lifecycle",
+        "approval",
+        "operation",
+    ] {
+        assert!(!event_log.contains(forbidden));
+    }
+}
+
+#[test]
 fn split_control_and_utf8_chunks_batch_without_cross_session_leakage() {
     let mut registry = synthetic_registry(2);
     for bytes in [b"\x1b[31".as_slice(), b"mred".as_slice()] {

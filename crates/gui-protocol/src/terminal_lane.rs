@@ -96,6 +96,34 @@ pub enum TerminalProgressState {
     Indeterminate,
 }
 
+/// Session-local presentation state reported by the shell integration
+/// protocol. OSC 133 is untrusted terminal output: this state may improve
+/// chrome/history UX, but it never represents a Datum command or approval.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum TerminalShellPhase {
+    #[default]
+    Unknown,
+    Prompt,
+    CommandInput,
+    CommandOutput,
+    CommandFinished,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct TerminalShellMetadata {
+    pub phase: TerminalShellPhase,
+    pub last_exit_code: Option<i32>,
+    pub event_sequence: u64,
+}
+
+impl TerminalShellMetadata {
+    pub fn observe(&mut self, phase: TerminalShellPhase, exit_code: Option<i32>) {
+        self.phase = phase;
+        self.last_exit_code = exit_code;
+        self.event_sequence = self.event_sequence.saturating_add(1);
+    }
+}
+
 pub const TERMINAL_FONT_SCALE_DEFAULT_MILLIS: u16 = 1_000;
 pub const TERMINAL_FONT_SCALE_MIN_MILLIS: u16 = 600;
 pub const TERMINAL_FONT_SCALE_MAX_MILLIS: u16 = 2_000;
@@ -147,6 +175,7 @@ pub struct TerminalLaneState {
     pub active_session_id: Option<String>,
     pub title: Option<String>,
     pub current_working_directory: Option<String>,
+    pub shell_metadata: TerminalShellMetadata,
     pub bell_count: usize,
     pub columns: u16,
     pub rows: u16,
@@ -193,6 +222,7 @@ impl TerminalLaneState {
         swap_fields!(
             title,
             current_working_directory,
+            shell_metadata,
             bell_count,
             columns,
             rows,
@@ -232,6 +262,7 @@ impl Default for TerminalLaneState {
             active_session_id: None,
             title: None,
             current_working_directory: None,
+            shell_metadata: TerminalShellMetadata::default(),
             bell_count: 0,
             columns: 80,
             rows: 24,
