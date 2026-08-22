@@ -1,5 +1,6 @@
-//! Output-only Datum Console publication boundary (decision 033).
+//! Output-only Datum Console publication and interaction boundary (decision 033).
 
+use super::*;
 use datum_gui_protocol::{ConsoleFeedbackDraft, ConsoleFeedbackState};
 
 pub(super) fn occurred_unix_ms() -> u64 {
@@ -13,6 +14,137 @@ pub(super) fn occurred_unix_ms() -> u64 {
 
 pub(super) fn publish(console: &mut ConsoleFeedbackState, draft: ConsoleFeedbackDraft) -> u64 {
     console.publish(draft)
+}
+
+impl Runtime {
+    pub(super) fn publish_console_feedback(&mut self, draft: ConsoleFeedbackDraft) {
+        let announcement = console_accessibility::announcement_for_draft(&draft, false);
+        publish(&mut self.session.workspace_mut().ui.console, draft);
+        self.terminal_accessibility.announce_console(announcement);
+        // Visible feedback is frame state. Invalidate here rather than relying on
+        // every producer to remember a separate redraw side effect.
+        self.invalidate_frame();
+    }
+
+    pub(super) fn log_console_echo(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(ConsoleFeedbackDraft::action_echo(
+            source,
+            occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    pub(super) fn log_console_echo_for_action(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        action_id: impl Into<String>,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(
+            ConsoleFeedbackDraft::action_echo(source, occurred_unix_ms(), message)
+                .with_action_id(action_id),
+        );
+    }
+
+    pub(super) fn log_console_echo_for_target(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        target_id: impl Into<String>,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(
+            ConsoleFeedbackDraft::action_echo(source, occurred_unix_ms(), message)
+                .with_target_id(target_id),
+        );
+    }
+
+    pub(super) fn log_console_refusal(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(ConsoleFeedbackDraft::action_refusal(
+            source,
+            occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    pub(super) fn log_console_refusal_for_action(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        action_id: impl Into<String>,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(
+            ConsoleFeedbackDraft::action_refusal(source, occurred_unix_ms(), message)
+                .with_action_id(action_id),
+        );
+    }
+
+    pub(super) fn log_console_refusal_for_target(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        target_id: impl Into<String>,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(
+            ConsoleFeedbackDraft::action_refusal(source, occurred_unix_ms(), message)
+                .with_target_id(target_id),
+        );
+    }
+
+    pub(super) fn log_console_tool_prompt(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(ConsoleFeedbackDraft::tool_prompt(
+            source,
+            occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    pub(super) fn toggle_console_history(&mut self) -> bool {
+        let console = &mut self.session.workspace_mut().ui.console;
+        console.set_history_expanded(!console.history_expanded());
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn handle_console_history_scroll(&mut self, scroll_lines: f32) -> bool {
+        if scroll_lines.abs() <= 0.01 || !self.workspace().ui.console.history_expanded() {
+            return false;
+        }
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        let history_panel = self
+            .prepared_scene()
+            .console_overlay_layout()
+            .and_then(|layout| layout.history_panel);
+        if !history_panel.is_some_and(|panel| panel.contains(x, y)) {
+            return false;
+        }
+        let console = &mut self.session.workspace_mut().ui.console;
+        let next = if scroll_lines > 0.0 {
+            console.history_scroll_offset().saturating_add(1).min(
+                datum_gui_protocol::CONSOLE_FEEDBACK_CAPACITY
+                    + datum_gui_protocol::CONSOLE_JOURNAL_PROJECTION_CAPACITY
+                    + 2,
+            )
+        } else {
+            console.history_scroll_offset().saturating_sub(1)
+        };
+        console.set_history_scroll_offset(next);
+        self.invalidate_frame();
+        true
+    }
 }
 
 #[cfg(test)]

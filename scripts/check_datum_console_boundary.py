@@ -11,6 +11,27 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "crates/gui-protocol/src/console_feedback.rs"
 RENDERER = ROOT / "crates/gui-render/src/datum_console.rs"
 APP_ROOT = ROOT / "crates/gui-app/src"
+UNTYPED_CONSOLE_CALL = re.compile(
+    r"\blog_console_(?:echo|refusal|tool_prompt)\s*\((?P<body>.*?)\n\s*\);",
+    re.DOTALL,
+)
+INTERNAL_INTERPOLATION = re.compile(
+    r"\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)[^}]*\}"
+)
+INTERNAL_NAMES = {
+    "action_id",
+    "artifact_id",
+    "command",
+    "event_label",
+    "fingerprint",
+    "layer_id",
+    "object_id",
+    "other",
+    "pane_id",
+    "path",
+    "target",
+    "target_id",
+}
 
 
 def fail(message: str) -> None:
@@ -149,10 +170,38 @@ def assert_producer_routes_remain_separated() -> None:
         fail("ERC/DRC finding branch routes into Console")
 
 
+def assert_internal_ids_stay_typed() -> None:
+    """Reject internal identity interpolation through untyped prose helpers."""
+    for path in APP_ROOT.glob("*.rs"):
+        source = path.read_text()
+        for call in UNTYPED_CONSOLE_CALL.finditer(source):
+            names = {
+                match.group("name")
+                for match in INTERNAL_INTERPOLATION.finditer(call.group("body"))
+            }
+            leaked = sorted(names & INTERNAL_NAMES)
+            if leaked:
+                fail(
+                    f"Console prose interpolates internal identity {', '.join(leaked)} in "
+                    f"{path.relative_to(ROOT)}; use a typed action_id/target_id helper"
+                )
+
+    boundary = (APP_ROOT / "console_feedback.rs").read_text()
+    for helper, typed_builder in [
+        ("log_console_echo_for_action", ".with_action_id("),
+        ("log_console_echo_for_target", ".with_target_id("),
+        ("log_console_refusal_for_action", ".with_action_id("),
+        ("log_console_refusal_for_target", ".with_target_id("),
+    ]:
+        if helper not in boundary or typed_builder not in boundary:
+            fail(f"typed Console publication helper is incomplete: {helper}")
+
+
 def main() -> int:
     assert_state_has_no_authoring_or_terminal_api()
     assert_renderer_is_consumer_only()
     assert_producer_routes_remain_separated()
+    assert_internal_ids_stay_typed()
     print(
         "Datum Console boundary passed: typed consequence-only state, consumer-only renderer, "
         "and terminal/progress/finding routes remain separated."

@@ -17,7 +17,10 @@ pub(super) fn render_datum_console(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> Option<ConsoleOverlayLayout> {
-    let record = state.ui.console.visible_latest()?;
+    let record = state.ui.console.visible_latest();
+    if record.is_none() && !state.ui.console.history_expanded() {
+        return None;
+    }
     let panes = shell.viewport_panes(&state.ui.layout);
     let focused = panes.focused_pane();
     let body = focused.rect.body();
@@ -29,57 +32,72 @@ pub(super) fn render_datum_console(
     let row_height = 16.0 * scale;
     let strip_height = row_height + pad_y * 2.0;
     let max_width = body.width * MAX_PANE_WIDTH_FRACTION;
-    if body.width < 96.0 * scale || body.height < strip_height + bottom || max_width <= pad_x * 2.0
-    {
+    if body.width < 96.0 * scale || body.height < strip_height + bottom {
         return None;
     }
+    let (strip, text_clip) = if let Some(record) = record {
+        if max_width <= pad_x * 2.0 {
+            return None;
+        }
+        let (glyph, semantic_prefix, text_color) = presentation(record.category, record.severity);
+        let visible_text = match glyph {
+            Some(glyph) => format!("{glyph} {semantic_prefix}{}", record.message),
+            None => format!("  {semantic_prefix}{}", record.message),
+        };
+        let natural_text_width =
+            estimated_text_run_width_px(&visible_text, TEXT_SIZE * scale, TextFace::Mono) - 16.0;
+        let strip_width = (natural_text_width + pad_x * 2.0)
+            .min(max_width)
+            .max((pad_x * 2.0 + 1.0).min(max_width));
+        let strip = RectPx {
+            x: body.x + left,
+            y: body.y + body.height - bottom - strip_height,
+            width: strip_width,
+            height: strip_height,
+        };
+        let text_clip = RectPx {
+            x: strip.x + pad_x,
+            y: strip.y + pad_y,
+            width: (strip.width - pad_x * 2.0).max(1.0),
+            height: row_height,
+        };
 
-    let (glyph, semantic_prefix, text_color) = presentation(record.category, record.severity);
-    let visible_text = match glyph {
-        Some(glyph) => format!("{glyph} {semantic_prefix}{}", record.message),
-        None => format!("  {semantic_prefix}{}", record.message),
-    };
-    let natural_text_width =
-        estimated_text_run_width_px(&visible_text, TEXT_SIZE * scale, TextFace::Mono) - 16.0;
-    let strip_width = (natural_text_width + pad_x * 2.0)
-        .min(max_width)
-        .max((pad_x * 2.0 + 1.0).min(max_width));
-    let strip = RectPx {
-        x: body.x + left,
-        y: body.y + body.height - bottom - strip_height,
-        width: strip_width,
-        height: strip_height,
-    };
-    let text_clip = RectPx {
-        x: strip.x + pad_x,
-        y: strip.y + pad_y,
-        width: (strip.width - pad_x * 2.0).max(1.0),
-        height: row_height,
-    };
-
-    push_card(quads, strip, record.severity, scale);
-    if record.category == ConsoleFeedbackCategory::ToolPrompt {
-        push_tool_diamond(
-            quads,
-            text_clip.x + 4.5 * scale,
-            text_clip.y + row_height * 0.5,
-            scale,
+        push_card(quads, strip, record.severity, scale);
+        if record.category == ConsoleFeedbackCategory::ToolPrompt {
+            push_tool_diamond(
+                quads,
+                text_clip.x + 4.5 * scale,
+                text_clip.y + row_height * 0.5,
+                scale,
+            );
+        }
+        draw_text_clipped(
+            &visible_text,
+            text_clip.x,
+            text_clip.y,
+            TEXT_SIZE,
+            text_color,
+            TextFace::Mono,
+            text_clip,
+            text_runs,
         );
-    }
-    draw_text_clipped(
-        &visible_text,
-        text_clip.x,
-        text_clip.y,
-        TEXT_SIZE,
-        text_color,
-        TextFace::Mono,
-        text_clip,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ConsoleHistoryToggle,
-        rect: strip,
-    });
+        hit_regions.push(HitRegion {
+            target: HitTarget::ConsoleHistoryToggle,
+            rect: strip,
+        });
+        (strip, text_clip)
+    } else {
+        // History has its own permanent View-menu affordance. A zero-height
+        // anchor lets the panel occupy the same place after the strip fades,
+        // without resurrecting a synthetic feedback record or fake strip.
+        let anchor = RectPx {
+            x: body.x + left,
+            y: body.y + body.height - bottom,
+            width: 0.0,
+            height: 0.0,
+        };
+        (anchor, anchor)
+    };
 
     let history_panel = if state.ui.console.history_expanded() {
         Some(render_history(
@@ -529,6 +547,26 @@ mod tests {
         render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut Vec::new()).unwrap();
         assert!(text[0].text.starts_with("! Refused: "));
         assert!(quads.len() >= 6, "error card carries border and left rule");
+    }
+
+    #[test]
+    fn history_renders_without_a_visible_feedback_strip() {
+        let shell = ShellLayout::for_surface(1280, 800, 1.0, None);
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.console.set_history_expanded(true);
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+
+        let layout = render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits)
+            .expect("expanded history owns presentation independently of the transient strip");
+
+        assert_eq!(layout.strip.height, 0.0);
+        assert!(layout.history_panel.is_some());
+        assert!(text.iter().any(|run| run.text == "SESSION HISTORY"));
+        assert!(hits.iter().any(|hit| {
+            matches!(hit.target, HitTarget::ConsoleHistoryToggle) && hit.rect.height > 0.0
+        }));
     }
 
     #[test]

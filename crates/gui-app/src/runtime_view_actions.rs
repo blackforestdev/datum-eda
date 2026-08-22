@@ -130,6 +130,7 @@ impl Runtime {
             "view.cursor.full" => self.set_crosshair_style(CrosshairStyle::FullViewport),
             "view.cursor.small" => self.set_crosshair_style(CrosshairStyle::Local),
             "view.cursor.none" => self.set_crosshair_style(CrosshairStyle::None),
+            "view.console_history" => self.toggle_console_history(),
             "view.console_duration.4s" => {
                 self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::FourSeconds)
             }
@@ -143,9 +144,10 @@ impl Runtime {
                 self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::Never)
             }
             other => {
-                self.log_console_refusal(
+                self.log_console_refusal_for_action(
                     ConsoleFeedbackSource::Viewport,
-                    format!("view action {other} is unavailable"),
+                    other,
+                    "View action is unavailable",
                 );
                 self.invalidate_frame();
                 true

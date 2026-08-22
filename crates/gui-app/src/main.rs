@@ -50,6 +50,8 @@ mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
+mod runtime_menu_actions;
+mod runtime_primary_pointer;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
@@ -75,12 +77,8 @@ mod terminal_check_context;
 mod terminal_context;
 mod terminal_context_contract;
 mod terminal_context_io;
-#[cfg(test)]
-mod terminal_control_input;
 mod terminal_core_adapter;
 mod terminal_input;
-#[cfg(test)]
-mod terminal_new_session_cwd_tests;
 mod terminal_process;
 mod terminal_profile;
 mod terminal_proposal_context;
@@ -1631,79 +1629,9 @@ impl Runtime {
         Ok(())
     }
 
-    fn publish_console_feedback(&mut self, draft: datum_gui_protocol::ConsoleFeedbackDraft) {
-        let announcement = console_accessibility::announcement_for_draft(&draft, false);
-        console_feedback::publish(&mut self.session.workspace_mut().ui.console, draft);
-        self.terminal_accessibility.announce_console(announcement);
-        // Visible feedback is frame state. Invalidate here rather than relying on
-        // every producer to remember a separate redraw side effect.
-        self.invalidate_frame();
-    }
-
-    fn log_console_echo(
-        &mut self,
-        source: datum_gui_protocol::ConsoleFeedbackSource,
-        message: impl Into<String>,
-    ) {
-        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::action_echo(
-            source,
-            console_feedback::occurred_unix_ms(),
-            message,
-        ));
-    }
-
-    fn log_console_refusal(&mut self, source: ConsoleFeedbackSource, message: impl Into<String>) {
-        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::action_refusal(
-            source,
-            console_feedback::occurred_unix_ms(),
-            message,
-        ));
-    }
-
-    fn log_console_tool_prompt(
-        &mut self,
-        source: ConsoleFeedbackSource,
-        message: impl Into<String>,
-    ) {
-        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::tool_prompt(
-            source,
-            console_feedback::occurred_unix_ms(),
-            message,
-        ));
-    }
-
     fn log_terminal_event(&mut self, message: impl Into<String>) {
         self.session.workspace_mut().ui.terminal.status = message.into();
         self.invalidate_frame();
-    }
-
-    fn handle_console_history_scroll(&mut self, scroll_lines: f32) -> bool {
-        if scroll_lines.abs() <= 0.01 || !self.workspace().ui.console.history_expanded() {
-            return false;
-        }
-        let Some((x, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        let history_panel = self
-            .prepared_scene()
-            .console_overlay_layout()
-            .and_then(|layout| layout.history_panel);
-        if !history_panel.is_some_and(|panel| panel.contains(x, y)) {
-            return false;
-        }
-        let console = &mut self.session.workspace_mut().ui.console;
-        let next = if scroll_lines > 0.0 {
-            console.history_scroll_offset().saturating_add(1).min(
-                datum_gui_protocol::CONSOLE_FEEDBACK_CAPACITY
-                    + datum_gui_protocol::CONSOLE_JOURNAL_PROJECTION_CAPACITY
-                    + 2,
-            )
-        } else {
-            console.history_scroll_offset().saturating_sub(1)
-        };
-        console.set_history_scroll_offset(next);
-        self.invalidate_frame();
-        true
     }
 
     fn apply_session_result(
@@ -1894,9 +1822,10 @@ impl Runtime {
                     return true;
                 };
                 let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {
-                    self.log_console_refusal(
+                    self.log_console_refusal_for_target(
                         ConsoleFeedbackSource::Tool,
-                        format!("delete unsupported target {target}"),
+                        target,
+                        "Delete is unavailable for this object type",
                     );
                     return true;
                 };
@@ -1966,146 +1895,11 @@ impl Runtime {
         let mut bytes = command.into_bytes();
         bytes.push(b'\r');
         self.write_foreign_shell_bytes(&bytes);
-        self.log_console_echo(
+        self.log_console_echo_for_action(
             ConsoleFeedbackSource::Tool,
-            format!("queued authoring command {event_label}"),
+            event_label,
+            "Authoring command sent to Terminal",
         );
-    }
-
-    fn handle_primary_click(&mut self) -> bool {
-        if self.dismiss_marking_menu() {
-            return true;
-        }
-        let Some((x, y)) = self.last_cursor_pos else {
-            self.trace_click("primary click ignored: no cursor position".to_string());
-            return false;
-        };
-        // Focus and dispatch are one gesture: after activating a different pane,
-        // continue resolving this same click in that pane's camera/content.
-        let mut focus_changed = false;
-        if let Some(pane_id) = self.pane_at_screen(x, y) {
-            // TF-01 deliberate exit: a canvas click is editor keyboard entry,
-            // releasing any terminal/overlay key ownership before dispatch.
-            self.set_application_focus(keyboard_focus::focus_after_canvas_click(pane_id));
-            if pane_id != self.workspace().ui.layout.focused {
-                self.swap_pane_focus(|layout| layout.focused = pane_id);
-                self.log_console_echo(
-                    ConsoleFeedbackSource::Viewport,
-                    format!("focused pane {}", pane_id.0),
-                );
-                self.trace_click(format!(
-                    "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
-                    pane_id.0
-                ));
-                focus_changed = true;
-            }
-        }
-        let prepared_started = std::time::Instant::now();
-        let (prepared_target, world_point) = {
-            let prepared = self.prepared_scene();
-            (
-                prepared.hit_test(x, y).cloned(),
-                prepared.world_point_at_screen(x, y),
-            )
-        };
-        let prepared_elapsed = prepared_started.elapsed();
-        if self.terminal_clipboard_menu_active()
-            && !matches!(
-                prepared_target.as_ref(),
-                Some(
-                    HitTarget::TerminalClipboardCopy
-                        | HitTarget::TerminalClipboardPaste
-                        | HitTarget::TerminalProfileNext
-                        | HitTarget::TerminalThemeNext
-                        | HitTarget::TerminalLinkCopy
-                        | HitTarget::TerminalLinkOpen
-                )
-            )
-        {
-            self.dismiss_terminal_clipboard_menu();
-            return true;
-        }
-        if let Some(target) = prepared_target {
-            self.trace_click(format!(
-                "primary click ({x:.1}, {y:.1}) prepared target {target:?}; prepare {}ms; dock {:?}",
-                prepared_elapsed.as_millis(),
-                self.workspace().ui.active_dock_tab
-            ));
-            return self.select_hit_target(&target) || focus_changed;
-        }
-        if let Some((world_point, SceneSurface::Schematic)) = world_point {
-            // S3/UVT-004 plumbing: a focused schematic-pane click now resolves a
-            // world point in the schematic camera AND hit-tests the symbol regions.
-            // Firing selection off it is S5, so this resolves+traces only; the board
-            // path below stays byte-identical.
-            return self.resolve_schematic_primary_click((x, y), world_point) || focus_changed;
-        }
-        if let Some((world_point, SceneSurface::Board)) = world_point {
-            let retained_started = std::time::Instant::now();
-            let retained_target = {
-                let retained = self.retained_scene.get_or_insert_with(|| {
-                    RetainedScene::from_workspace_for_surface(
-                        self.session.workspace(),
-                        self.config.width,
-                        self.config.height,
-                        self.scale_factor,
-                    )
-                });
-                retained
-                    .hit_test_authored_world(world_point, self.session.workspace())
-                    .cloned()
-            };
-            let retained_elapsed = retained_started.elapsed();
-            let target_object_id = match &retained_target {
-                Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => {
-                    Some(id.clone())
-                }
-                _ => None,
-            };
-            if self.handle_authoring_canvas_click(world_point, target_object_id) {
-                self.trace_click(format!(
-                    "primary click ({x:.1}, {y:.1}) world ({}, {}) handled by authoring tool {}; prepare {}ms; retained {}ms",
-                    world_point.x,
-                    world_point.y,
-                    self.workspace().tool.label(),
-                    prepared_elapsed.as_millis(),
-                    retained_elapsed.as_millis()
-                ));
-                return true;
-            }
-            if let Some(target) = retained_target {
-                self.trace_click(format!(
-                    "primary click ({x:.1}, {y:.1}) world ({}, {}) retained target {target:?}; prepare {}ms; retained {}ms; dock {:?}",
-                    world_point.x,
-                    world_point.y,
-                    prepared_elapsed.as_millis(),
-                    retained_elapsed.as_millis(),
-                    self.workspace().ui.active_dock_tab
-                ));
-                return self.select_hit_target(&target) || focus_changed;
-            }
-            self.trace_click(format!(
-                "primary click ({x:.1}, {y:.1}) world ({}, {}) no retained target; prepare {}ms; retained {}ms; dock {:?}",
-                world_point.x,
-                world_point.y,
-                prepared_elapsed.as_millis(),
-                retained_elapsed.as_millis(),
-                self.workspace().ui.active_dock_tab
-            ));
-            return focus_changed;
-        }
-        self.trace_click(format!(
-            "primary click ({x:.1}, {y:.1}) no prepared or viewport target; prepare {}ms; dock {:?}",
-            prepared_elapsed.as_millis(),
-            self.workspace().ui.active_dock_tab
-        ));
-        focus_changed
-    }
-
-    fn trace_click(&self, message: String) {
-        if std::env::var_os("DATUM_TRACE_CLICKS").is_some() {
-            eprintln!("[datum-click] {message}");
-        }
     }
 
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
@@ -2133,9 +1927,10 @@ impl Runtime {
                     action_id.clone(),
                 ));
                 if handled {
-                    self.log_console_echo(
+                    self.log_console_echo_for_action(
                         ConsoleFeedbackSource::Selection,
-                        format!("selected review action {action_id}"),
+                        action_id,
+                        "Review action selected",
                     );
                 }
                 handled
@@ -2146,9 +1941,10 @@ impl Runtime {
                 ));
                 if handled {
                     self.session.workspace_mut().ui.hovered_object = None;
-                    self.log_console_echo(
+                    self.log_console_echo_for_target(
                         ConsoleFeedbackSource::Selection,
-                        format!("selected authored object {object_id}"),
+                        object_id,
+                        "Object selected",
                     );
                 }
                 handled
@@ -2295,9 +2091,10 @@ impl Runtime {
                         .copied()
                         .unwrap_or(true);
                     let state = if visible { "visible" } else { "hidden" };
-                    self.log_console_echo(
+                    self.log_console_echo_for_target(
                         ConsoleFeedbackSource::Viewport,
-                        format!("layer {layer_id} {state}"),
+                        layer_id,
+                        format!("Layer visibility {state}"),
                     );
                     self.invalidate_scene();
                 }
@@ -2424,9 +2221,10 @@ impl Runtime {
                     SessionCommand::FocusProductionArtifact(artifact_id.clone()),
                 );
                 if handled {
-                    self.log_console_echo(
+                    self.log_console_echo_for_target(
                         ConsoleFeedbackSource::Production,
-                        format!("focused production artifact {artifact_id}"),
+                        artifact_id,
+                        "Production artifact selected",
                     );
                 }
                 handled
@@ -2436,9 +2234,10 @@ impl Runtime {
                     SessionCommand::FocusProductionArtifactFile(path.clone()),
                 );
                 if handled {
-                    self.log_console_echo(
+                    self.log_console_echo_for_target(
                         ConsoleFeedbackSource::Production,
-                        format!("focused production artifact file {path}"),
+                        path,
+                        "Production artifact file selected",
                     );
                 }
                 handled
@@ -2457,9 +2256,10 @@ impl Runtime {
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
                 self.write_foreign_shell_bytes(&bytes);
-                self.log_console_echo(
+                self.log_console_echo_for_action(
                     ConsoleFeedbackSource::Production,
-                    format!("ran production output command {}", handoff.command),
+                    &handoff.command,
+                    "Production output command sent to Terminal",
                 );
                 true
             }
@@ -2477,9 +2277,10 @@ impl Runtime {
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
                 self.write_foreign_shell_bytes(&bytes);
-                self.log_console_echo(
+                self.log_console_echo_for_action(
                     ConsoleFeedbackSource::Production,
-                    format!("ran production terminal command {}", handoff.command),
+                    &handoff.command,
+                    "Production command sent to Terminal",
                 );
                 true
             }
@@ -2491,12 +2292,7 @@ impl Runtime {
                 .select_artifact_preview_hit_target(target)
                 .unwrap_or(false),
             HitTarget::ArtifactPreviewViewport => false,
-            HitTarget::ConsoleHistoryToggle => {
-                let console = &mut self.session.workspace_mut().ui.console;
-                console.set_history_expanded(!console.history_expanded());
-                self.invalidate_frame();
-                true
-            }
+            HitTarget::ConsoleHistoryToggle => self.toggle_console_history(),
             HitTarget::ConsoleHistoryFilter(filter) => {
                 self.session
                     .workspace_mut()
@@ -2512,88 +2308,6 @@ impl Runtime {
             // Divider gestures are handled directly by mouse press/release.
             HitTarget::DockResizeHandle | HitTarget::TerminalSplitDivider(_) => false,
         }
-    }
-
-    fn marking_menu_active(&self) -> bool {
-        self.workspace().ui.marking_menu.is_some()
-    }
-
-    fn update_marking_menu_preview(&mut self, pos: (f32, f32)) -> bool {
-        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
-            return false;
-        };
-        let dx = (pos.0 - menu.anchor_x_px as f32).round() as i32;
-        let dy = (pos.1 - menu.anchor_y_px as f32).round() as i32;
-        let next_slot = marking_slot_for_delta(dx, dy);
-        if menu.gesture_dx_px == dx && menu.gesture_dy_px == dy && menu.preview_slot == next_slot {
-            return false;
-        }
-        menu.gesture_dx_px = dx;
-        menu.gesture_dy_px = dy;
-        menu.preview_slot = next_slot;
-        self.invalidate_frame();
-        true
-    }
-
-    fn dismiss_marking_menu(&mut self) -> bool {
-        if self.session.workspace().ui.marking_menu.is_none() {
-            return false;
-        }
-        self.session.workspace_mut().ui.marking_menu = None;
-        // TF-01: the marking menu is a transient Overlay key owner; dismissing
-        // it restores keyboard ownership to the editor.
-        let pane = self.workspace().ui.layout.focused;
-        self.set_application_focus(ApplicationFocus::Editor(pane));
-        self.invalidate_frame();
-        true
-    }
-
-    fn toggle_menu(&mut self, menu: &str) -> bool {
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.terminal_clipboard_menu = None;
-        ui.active_menu = if ui.active_menu.as_deref() == Some(menu) {
-            None
-        } else {
-            Some(menu.to_string())
-        };
-        self.invalidate_frame();
-        true
-    }
-
-    fn activate_menu_item(&mut self, menu_name: &str, label: &str) -> bool {
-        let item = datum_gui_protocol::load_default_gui_menu_model()
-            .ok()
-            .and_then(|model| {
-                model
-                    .menubar
-                    .into_iter()
-                    .find(|menu| menu.menu == menu_name)
-                    .and_then(|menu| menu.items.into_iter().find(|item| item.label == label))
-            });
-        self.session.workspace_mut().ui.active_menu = None;
-        let Some(item) = item else {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Menu,
-                format!("menu item {menu_name}/{label} unavailable"),
-            );
-            self.invalidate_frame();
-            return true;
-        };
-        if let Some(action) = item.gui_local.as_deref() {
-            return self.activate_gui_local_menu_action(action);
-        }
-        let reason = item
-            .not_built
-            .as_deref()
-            .or(item.verb.as_deref())
-            .or(item.submenu.as_deref())
-            .unwrap_or("disabled in Phase 1");
-        self.log_console_refusal(
-            ConsoleFeedbackSource::Menu,
-            format!("{menu_name}/{label} disabled: {reason}"),
-        );
-        self.invalidate_frame();
-        true
     }
 
     fn trace_timing(&self, message: String) {
@@ -2675,6 +2389,11 @@ fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
     };
     Some(slot.to_string())
 }
+
+#[cfg(test)]
+mod terminal_control_input;
+#[cfg(test)]
+mod terminal_new_session_cwd_tests;
 
 #[cfg(test)]
 fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {

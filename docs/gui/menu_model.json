@@ -212,6 +212,11 @@
           "gui_local": "view.cursor.none"
         },
         {
+          "label": "Console History",
+          "icon": "commands",
+          "gui_local": "view.console_history"
+        },
+        {
           "label": "Console Duration: 4 Seconds",
           "icon": "commands",
           "gui_local": "view.console_duration.4s"

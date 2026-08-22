@@ -198,6 +198,7 @@ mod tests {
             "view.fill_schematic",
             "view.preset_single",
             "view.preset_board_schematic",
+            "view.console_history",
             "view.console_duration.4s",
             "view.console_duration.6s",
             "view.console_duration.10s",
