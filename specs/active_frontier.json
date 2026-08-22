@@ -3588,8 +3588,8 @@
         "harness": "codex-cli",
         "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
         "claimed_at": "2026-08-22T12:35:10-07:00",
-        "heartbeat_at": "2026-08-22T12:35:10-07:00",
-        "expires_at": "2026-08-22T20:35:10-07:00",
+        "heartbeat_at": "2026-08-22T13:13:47-07:00",
+        "expires_at": "2026-08-22T21:13:47-07:00",
         "scope": [
           "console-product-contract",
           "research/command-feedback",
@@ -3602,7 +3602,7 @@
       },
       "completion": {
         "outcome": "Datum has an evidence-based, owner-reviewed, numbered-decision-backed contract that cleanly separates terminal output, verb/action feedback, optional typed editor commands, notifications, progress, diagnostics, and history, with a bounded implementation successor explicitly selected.",
-        "canonical_next_step_id": "CONSOLE-C01",
+        "canonical_next_step_id": "CONSOLE-C03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3619,7 +3619,7 @@
           {
             "id": "CONSOLE-C01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Contain the flawed build framing and inventory Console state, producers, destinations, visual ownership, and historical provenance.",
             "depends_on": [],
             "requirement_refs": [
@@ -3628,12 +3628,18 @@
                 "marker": "CONSOLE-C01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C01-INVENTORY"
+              }
+            ]
           },
           {
             "id": "CONSOLE-C02",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Produce dedicated primary-source research and a consequence-based taxonomy for feedback, command, progress, diagnostic, notice, history, and terminal-output ownership.",
             "depends_on": [
               "CONSOLE-C01"
@@ -3644,12 +3650,18 @@
                 "marker": "CONSOLE-C02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C02-RESEARCH"
+              }
+            ]
           },
           {
             "id": "CONSOLE-C03",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Create and owner-review alternative visual prototypes for the selected feedback and optional command surfaces across viewport, terminal, responsive, and accessibility states.",
             "depends_on": [
               "CONSOLE-C02"

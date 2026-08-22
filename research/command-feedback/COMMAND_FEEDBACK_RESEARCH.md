@@ -38,6 +38,8 @@ This document is the missing study.
 
 ## 2. What the code actually contains (inventory summary)
 
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C01-INVENTORY -->
+
 Full producer-by-producer inventory was taken 2026-08-22 (105 call sites of
 `Runtime::log_review_event`, the single production route into the sink via
 `terminal_narration::route_gui_narration` → `ConsoleLaneState::push_line`).
@@ -112,6 +114,8 @@ passive state was drafted as the home for *all output* (1–8) because the sink
 already existed.
 
 ## 4. External evidence
+
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C02-RESEARCH -->
 
 ### 4.1 AutoCAD — the canonical editor command line
 
@@ -302,13 +306,13 @@ strip/session chrome — exists).
 Research narrows but does not decide. Evidence-based leanings are marked; the
 disposition is the owner's.
 
-1. **Is the interactive Editor Command Line retained, deferred, or retired?**
-   Evidence: every command-driven EDA tool that has one keeps it (EAGLE's
-   survived Fusion); it is doctrine's "typed twin of the marking menu"; but it
-   is *input*, downstream of the write path and verb registry, and nothing in
-   the feedback problem requires it now. *Lean: retain in doctrine, defer
-   build; design the feedback surface so its passive form is upgrade-compatible
-   with (or cleanly separate from) a later input row.*
+1. **Interactive Editor Command Line — RESOLVED by owner, 2026-08-22:** retire
+   it from the target product contract. The Datum Console remains unilaterally
+   output-only: it accepts no authored text, dispatches no verb, and emits no
+   design operation. Datum Terminal remains the command-line input surface;
+   manual GUI verbs remain tools, menus, shortcuts, and marking gestures over
+   typed operation authority. Candidate B remains in the visual study only as
+   rejected comparative evidence, not a future upgrade path.
 2. **Is Action Feedback a separate surface or the passive state of that command
    line?** AutoCAD says they are one (prompt/history/input in one anatomy);
    Blender/Horizon say feedback and prompting live fine without any input row.
@@ -353,29 +357,31 @@ disposition is the owner's.
 
 ## 9. Sources
 
-External references are cited inline in §4. Primary URLs:
+The product conclusions above were rechecked against current primary sources on
+2026-08-22. Secondary historical material informed detail such as older EAGLE
+lineage and AutoCAD preferences but does not control the recommendations.
 
-- AutoCAD: help.autodesk.com command-window/positioning/DYNMODE/entering-commands
-  pages; Architect's Desktop "AutoCAD 2013 Command Line Enhancements";
-  autocadtips1.com CLIPROMPTLINES; JTB World AutoCAD 2014 (smart command line).
-- EAGLE/Fusion: web.mit.edu EAGLE help (command syntax, SCRIPT);
-  build-electronic-circuits.com command line & scripts; Autodesk Fusion
-  Electronics command-line reference (ECD-CLI); Autodesk forums.
-- Altium: altium.com documentation — Board Insight System, Interactive
-  Routing, Messages Panel, Design Validation.
-- KiCad: docs.kicad.org 8.0 PCB Editor; kicad.org 8.0.0 release notes;
-  gitlab.com/kicad issue #17295.
-- Horizon EDA: docs.horizon-eda.org (Tools, Spacebar Menu); blog.horizon-eda.org
-  "How to implement a tool".
-- Blender: docs.blender.org manual (Status Bar, Info Editor, Operators);
-  projects.blender.org #130427.
-- Notifications: VS Code issues #44319/#153330/#23684 + UX guidelines
-  (notifications, status bar); JetBrains IntelliJ Platform UX (notification
-  types, balloon); GNOME HIG (toasts, notifications); libadwaita AdwToast;
-  freedesktop notification urgency spec; KDE HIG / KNotification.
-- Accessibility: WCAG 2.1 Understanding 4.1.3 & 2.2.1; GTK 4.14 accessibility
-  announcements; docs.gtk.org gtk_accessible_announce; Scott O'Hara "A toast
-  to a11y toasts"; designsystemproblems.com toast accessibility.
+- Autodesk AutoCAD: [command-window control and F2 history](https://help.autodesk.com/view/ACD/2022/ENU/?guid=GUID-363A3BFA-CAF2-469E-9F35-0BF64139811C),
+  [command-window navigation and extended history](https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-06F6A6E9-C355-43F5-8706-49F0E5E552BF.htm),
+  and [current command-window opening workflow](https://help.autodesk.com/view/ACD/2027/ENU/?caas=caas%2Fdocumentation%2FACD%2F2014%2FENU%2Ffiles%2FGUID-C9DB1661-36D0-4E5B-99A0-43A6ACA46110-htm.html).
+- Autodesk Fusion Electronics: [command-line control, abbreviations, history,
+  scripts, and mixed icon/text input](https://help.autodesk.com/view/fusion360/ENU/?guid=ECD-CMD-CTRL-CPT),
+  [command catalog](https://help.autodesk.com/cloudhelp/ENU/Fusion-ECAD/files/ECD-CMD-LINE-CMDS.htm),
+  and [Electronics shortcuts](https://help.autodesk.com/view/NINVFUS/ENU/?guid=GUID-F0491540-0324-470A-B651-2238D0EFAC30).
+- Altium Designer: [Board Insight HUD](https://www.altium.com/documentation/altium-designer/pcb/board-insight-system),
+  [Messages panel environment contract](https://www.altium.com/documentation/altium-designer/design-environment-elements),
+  and [validation, severity, cross-probe, and remediation behavior](https://www.altium.com/documentation/altium-designer/schematic/design-validation).
+- KiCad: [PCB Editor manual](https://docs.kicad.org/8.0/en/pcbnew/pcbnew.html)
+  and [KiCad 8 release notes](https://www.kicad.org/blog/2024/02/Version-8.0.0-Released/).
+- Horizon EDA: [shared tool model and active-tool bottom bar](https://docs.horizon-eda.org/en/stable/tools.html)
+  and [Spacebar Menu](https://docs.horizon-eda.org/en/latest/spacebar-menu.html).
+- Blender: [Status Bar keymap/progress/report contract](https://docs.blender.org/manual/en/latest/interface/window_system/status_bar.html)
+  and [Info Editor operator/message history](https://docs.blender.org/manual/en/latest/editors/info_editor.html).
+- Notification systems: [VS Code notifications and contextual-progress guidance](https://code.visualstudio.com/api/ux-guidelines/notifications),
+  [GNOME feedback taxonomy](https://developer.gnome.org/hig/patterns/feedback.html),
+  and [GNOME notification visibility/recoverability guidance](https://developer.gnome.org/hig/patterns/feedback/notifications.html).
+- Accessibility: [WCAG 2.1 §4.1.3](https://www.w3.org/TR/WCAG21/#status-messages)
+  and [W3C status-message explanation](https://www.w3.org/WAI/WCAG21/Understanding/status-messages.html).
 
 Internal evidence: `crates/gui-protocol/src/workspace_layout.rs` (sink),
 `crates/gui-app/src/terminal_narration.rs` (route), the 105 `log_review_event`

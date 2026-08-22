@@ -183,10 +183,19 @@ CONSOLE-C01 contains the roadmap defect and inventories code, message producers,
 destinations, visual ownership, and historical provenance without treating the
 current sink as product authority.
 
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C01-INVENTORY -->
+Inventory evidence is maintained in
+`research/command-feedback/COMMAND_FEEDBACK_RESEARCH.md` §2 and its internal
+source ledger; the research record remains evidence, not doctrine.
+
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C02 -->
 CONSOLE-C02 produces dedicated primary-source research and a consequence-based
 message taxonomy that distinguishes terminal output, action feedback, interactive
 editor commands, notifications, progress, diagnostics, and durable history.
+
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C02-RESEARCH -->
+Research synthesis and the consequence-to-destination matrix are maintained in
+`research/command-feedback/COMMAND_FEEDBACK_RESEARCH.md` §§3–9.
 
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C03 -->
 CONSOLE-C03 turns the research into alternative visual prototypes covering
