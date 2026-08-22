@@ -35,7 +35,10 @@ pub(super) fn render_datum_console(
     }
 
     let (glyph, semantic_prefix, text_color) = presentation(record.category, record.severity);
-    let visible_text = format!("{glyph} {semantic_prefix}{}", record.message);
+    let visible_text = match glyph {
+        Some(glyph) => format!("{glyph} {semantic_prefix}{}", record.message),
+        None => format!("  {semantic_prefix}{}", record.message),
+    };
     let natural_text_width =
         estimated_text_run_width_px(&visible_text, TEXT_SIZE * scale, TextFace::Mono) - 16.0;
     let strip_width = (natural_text_width + pad_x * 2.0)
@@ -55,6 +58,14 @@ pub(super) fn render_datum_console(
     };
 
     push_card(quads, strip, record.severity, scale);
+    if record.category == ConsoleFeedbackCategory::ToolPrompt {
+        push_tool_diamond(
+            quads,
+            text_clip.x + 4.5 * scale,
+            text_clip.y + row_height * 0.5,
+            scale,
+        );
+    }
     draw_text_clipped(
         &visible_text,
         text_clip.x,
@@ -281,10 +292,10 @@ fn history_rows(state: &ReviewWorkspaceState) -> Vec<HistoryRow> {
 fn presentation(
     category: ConsoleFeedbackCategory,
     severity: ConsoleFeedbackSeverity,
-) -> (&'static str, &'static str, [f32; 3]) {
+) -> (Option<&'static str>, &'static str, [f32; 3]) {
     match category {
         ConsoleFeedbackCategory::ActionEcho => (
-            "·",
+            Some("·"),
             "",
             if severity == ConsoleFeedbackSeverity::Success {
                 design_tokens::chrome::STATUS_SUCCESS
@@ -292,9 +303,11 @@ fn presentation(
                 design_tokens::chrome::TEXT_SECONDARY
             },
         ),
-        ConsoleFeedbackCategory::ToolPrompt => ("◇", "Tool: ", design_tokens::chrome::TEXT_PRIMARY),
+        ConsoleFeedbackCategory::ToolPrompt => {
+            (None, "Tool: ", design_tokens::chrome::TEXT_PRIMARY)
+        }
         ConsoleFeedbackCategory::ActionRefusal => (
-            "!",
+            Some("!"),
             "Refused: ",
             if severity == ConsoleFeedbackSeverity::Warning {
                 design_tokens::chrome::STATUS_WARN
@@ -303,6 +316,29 @@ fn presentation(
             },
         ),
     }
+}
+
+fn push_tool_diamond(quads: &mut Vec<Quad>, center_x: f32, center_y: f32, scale: f32) {
+    let outer_radius = 4.0 * scale;
+    quads.push(Quad {
+        points: [
+            (center_x, center_y - outer_radius),
+            (center_x + outer_radius, center_y),
+            (center_x, center_y + outer_radius),
+            (center_x - outer_radius, center_y),
+        ],
+        color: design_tokens::chrome::ACCENT,
+    });
+    let inner_radius = 2.2 * scale;
+    quads.push(Quad {
+        points: [
+            (center_x, center_y - inner_radius),
+            (center_x + inner_radius, center_y),
+            (center_x, center_y + inner_radius),
+            (center_x - inner_radius, center_y),
+        ],
+        color: design_tokens::chrome::SURFACE_01,
+    });
 }
 
 fn push_card(quads: &mut Vec<Quad>, rect: RectPx, severity: ConsoleFeedbackSeverity, scale: f32) {
@@ -456,7 +492,15 @@ mod tests {
         assert!(layout.strip.width <= layout.pane_body.width * 0.72 + 0.01);
         assert_eq!(text[0].clip_bounds, Some(layout.text_clip));
         assert!(!text[0].text.contains('\n'));
-        assert!(text[0].text.starts_with("◇ Tool: "));
+        assert!(text[0].text.starts_with("  Tool: "));
+        assert!(
+            quads.iter().any(|quad| {
+                quad.color == design_tokens::chrome::ACCENT
+                    && quad.points[0].0 == quad.points[2].0
+                    && quad.points[1].1 == quad.points[3].1
+            }),
+            "tool prompt should carry a renderer-owned diamond icon"
+        );
     }
 
     #[test]
