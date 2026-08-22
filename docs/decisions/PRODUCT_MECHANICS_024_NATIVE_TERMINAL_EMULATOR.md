@@ -81,10 +81,11 @@ safety net.
   021, and detached-session focus MUST give feedback, not silently swallow keys.
 - **TE-006 (GUI never writes to the PTY).** GUI actions MUST NOT synthesize CLI
   strings into the terminal as an action mechanism (reaffirms decision 005 and
-  the `ConsoleLaneState` doctrine). The existing board-text CLI-string-into-PTY
+  the no-PTY-write boundary; decision 033 supersedes `ConsoleLaneState` as
+  product doctrine). The existing board-text CLI-string-into-PTY
   path is a pre-existing violation to be removed onto the typed-Operation write
-  path / Command Console — a **separate** write-path track, not part of this
-  terminal build.
+  path — a **separate** track, not part of this terminal build. Decision 033
+  retires Console input; the output-only Datum Console cannot author mutations.
 - **TE-007 (the cell grid is a gui-app concern).** The `Grid<Cell>` model lives
   in `gui-app` beside the parser, not in `gui-protocol` — it never serializes and
   the engine never sees it; it is neither engine truth nor a scene projection.
@@ -123,8 +124,10 @@ This decision builds on and is subordinate to:
   rather than fork a second focus notion.
 - **Decision 013 (vacated supervision surface):** the reframed
   GUI-message/diagnostics need (formerly a proposed "Output tab") respects 013 —
-  no standalone supervision/Output tab; the sanctioned homes are the Command
-  Console + `ConsoleLaneState` sink and files-in-workdir + viewers.
+  no standalone supervision/Output tab. Decision 033 routes GUI action feedback
+  to the output-only Datum Console, terminal lifecycle to terminal chrome,
+  diagnostics to owning findings/log surfaces, and artifacts to files-in-
+  workdir plus viewers. `ConsoleLaneState` is legacy migration debt.
 
 It does not amend any of them; on conflict the higher decision wins and this
 document is the one to fix.
@@ -138,8 +141,9 @@ fixes the terminal being un-typeable and hotkeys leaking into the PTY as a
 by-product of unification. The cost is the multi-month terminal-core build and
 permanent compatibility maintenance accepted by decision 029. The one job this decision
 *removes* from the terminal — being the GUI's CLI-string write path — is
-re-homed on the typed write-path/Command Console track, restoring the
-one-mutation-path law.
+re-homed solely on the direct typed write-path track, restoring the one-
+mutation-path law. The output-only Console observes results but cannot invoke
+them (decision 033).
 
 ## Phase 0 requirement anchors (TERMINAL-P0-FOCUS)
 

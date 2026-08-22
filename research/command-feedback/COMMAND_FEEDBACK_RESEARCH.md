@@ -301,10 +301,11 @@ strip/session chrome — exists).
 | Session audit ("what just happened") | 8 | history (expandable), journal-backed for committed ops | Retention question for the owner (§7) |
 | Typed verb input | 9 | the Command Console *input* row — **owner disposition** | The only genuinely open product question |
 
-## 7. Open questions for the owner packet (not resolved here)
+## 7. Owner disposition (resolved 2026-08-22)
 
-Research narrows but does not decide. Evidence-based leanings are marked; the
-disposition is the owner's.
+The owner reviewed this research and the comparative prototype, then approved
+the complete disposition below. Product Mechanics 033 is the resulting
+authority; this research remains its evidence.
 
 1. **Interactive Editor Command Line — RESOLVED by owner, 2026-08-22:** retire
    it from the target product contract. The Datum Console remains unilaterally
@@ -313,31 +314,18 @@ disposition is the owner's.
    manual GUI verbs remain tools, menus, shortcuts, and marking gestures over
    typed operation authority. Candidate B remains in the visual study only as
    rejected comparative evidence, not a future upgrade path.
-2. **Is Action Feedback a separate surface or the passive state of that command
-   line?** AutoCAD says they are one (prompt/history/input in one anatomy);
-   Blender/Horizon say feedback and prompting live fine without any input row.
-   The visual study renders both so this is chosen by eye, not argument.
-3. **Where does each message category go?** §6 is the researched proposal; the
-   owner ratifies or amends the mapping — in particular whether the ~55
-   terminal-status producers leave the lane.
-4. **Viewport-anchored or shell-anchored?** Doctrine text says "lower-left of
-   the viewport" (per-pane, follows focus — Altium HUD-like); AutoCAD/Blender
-   anchor feedback to the application shell. With Datum's tiled panes,
-   per-pane strips multiply chrome; a shell strip needs a focus-owner label
-   (the status-bar guidance already requires exactly this for pane-derived
-   fields). The study renders both across tiled/maximized/terminal-open/small
-   states.
-5. **What history is retained, and why?** Options: none (strip only), N-line
-   scrollback (AutoCAD CLIPROMPTLINES model), session log (Blender Info /
-   notification center), journal-projected audit. Retention interacts with the
-   240-cap `Vec<String>` and with the typed-`Notice` design.
-6. **What, if anything, must land before the GUI write path?** The current
-   frontier makes the read-only console block `dat-gui-write-path-qiu`. This
-   study found no technical dependency in either direction: the write path
-   needs verbs + dispatch, not a display lane; the feedback surface needs a
-   typed message record, not the write path. The dependency reads as
-   sequencing convenience, not necessity — flagged for the owner's roadmap
-   decision (roadmap edits are owner-only).
+2. **Visual model:** Candidate A is the Datum Console. Candidate C remains a
+   separate, complementary notification tier; Candidate B is rejected.
+3. **Routing:** the §6 matrix is ratified. In particular, terminal lifecycle
+   producers leave editor feedback and route to terminal chrome, with severe or
+   persistent facts also going to Notices.
+4. **Placement:** the Console is a lower-left overlay in the focused viewport
+   pane (P1/P3/P5). It reserves no canvas geometry; unfocused panes are silent.
+5. **History:** expandable, deterministically bounded session history. Committed
+   design operations project from the canonical journal instead of being copied
+   into a rival string log.
+6. **Sequencing:** Console implementation is the selected next task, but there
+   is no hard technical dependency between it and the direct GUI write path.
 
 ## 8. Implications the next spec pass must carry (whatever is chosen)
 

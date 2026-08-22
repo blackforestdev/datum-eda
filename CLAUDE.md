@@ -197,7 +197,7 @@ product-mechanics docs.
   `TerminalCore`, with exclusive PTY screen truth and verified support for
   normal shells, TUIs, Codex, Claude Code, Cursor-compatible CLI agents, and
   local agents. TF-01..TF-05 cover focus/input only; a focus fix, parser, PTY,
-  cell grid, or Command Console must never be reported as completion of the
+  cell grid, or output-only Datum Console must never be reported as completion of the
   terminal product. Delivery is T0 shell truth → T1 core/transport → T2 native
   renderer/input → T3 daily-driver UX/protocols → T4a–T4d discovery/MCP/
   context/workflow interoperability → T4e production proof. An inherited

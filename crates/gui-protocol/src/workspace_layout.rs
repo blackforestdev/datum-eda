@@ -92,15 +92,16 @@ pub struct WorkspaceFilterState {
     pub layer_visibility: BTreeMap<String, bool>,
 }
 
-/// The invisible console sink for GUI-action narration — the AutoCAD/Eagle
-/// command-echo lane (fit board, layer toggle, selection, view zoom, ...).
+/// Legacy untyped sink for GUI-action narration (fit board, layer toggle,
+/// selection, view zoom, ...).
 ///
 /// Doctrine: GUI-action echoes are NOT terminal output. The integrated PTY
 /// terminal is a real shell that GUI actions must never write to. The correct
-/// visible home for these echoes is the editor command console, which does not
-/// exist yet (it is downstream of the authoring write-path). Until that surface
-/// is built, narration lands here in an invisible model-only sink — never on the
-/// PTY, never on the terminal display buffer.
+/// visible home for classified GUI action feedback is the output-only Datum
+/// Console (decision 033). This `Vec<String>` is migration debt, not that
+/// product contract: the implementation successor replaces it with a typed,
+/// bounded feedback model before rendering. It remains an invisible model-only
+/// sink in the interim — never on the PTY or terminal display buffer.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct ConsoleLaneState {
     pub lines: Vec<String>,

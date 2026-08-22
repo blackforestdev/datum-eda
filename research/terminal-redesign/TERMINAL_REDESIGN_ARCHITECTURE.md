@@ -4,6 +4,11 @@ Companion to `TERMINAL_CURRENT_STATE_MAP.md`. Synthesizes a 3-agent build-vs-ado
 research pass into a recommendation and a concrete architecture. **Research only —
 no code changed.** Input to a governed decision record / redesign spec.
 
+> **Superseded Console conclusion (2026-08-22):** Product Mechanics 033 controls
+> the output-only Datum Console and consequence-based feedback routing. Any
+> references below to interactive Console input or an untyped console sink as
+> the final destination are historical research, not current product authority.
+
 Target set by owner: a **pro-grade native terminal** (Ghostty/Alacritty-class) built
 into Datum — run code agents natively, multi-tab bash/python, full syntax
 colorization, real emulator — plus the sanctioned Datum context "back-door."

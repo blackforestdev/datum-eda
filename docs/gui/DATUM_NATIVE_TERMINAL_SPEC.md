@@ -2,7 +2,8 @@
 
 Status: active target contract
 
-Authority: Product Mechanics 005 and 024 as amended by 027, 028, 029, and 030.
+Authority: Product Mechanics 005 and 024 as amended by 027, 028, 029, 030, and
+033.
 Decision 027 controls terminal-emulation quality; decision 028 controls agent
 discovery and interoperability; decision 029 controls implementation ownership
 and dependency authority; decision 030 controls the first-party core
@@ -16,8 +17,9 @@ losing shell correctness, interactive applications, code agents, text
 interaction, session ergonomics, or safe access to Datum tooling.
 
 The word **terminal** in this specification always means the PTY-backed foreign
-shell surface. The viewport Command Console is a separate Datum command surface.
-Neither may impersonate the other.
+shell surface. The output-only Datum Console is a separate viewport action-
+feedback surface under decision 033. It is not a command-input surface. Neither
+may impersonate the other.
 
 ## 2. Architecture
 
@@ -137,7 +139,8 @@ terminal rows for:
 - command handoff summaries;
 - session-open/rename/restart messages;
 - engine notices or operation echoes; or
-- instructions that belong in help, notifications, or the Command Console.
+- instructions that belong in help, notifications, or the output-only Datum
+  Console.
 
 The screen rectangle has a dedicated hit target and clipping/scissor region.
 The PTY row/column size is derived from that exact rectangle after chrome.
@@ -239,9 +242,11 @@ Feedback placement follows consequence, not implementation convenience:
 - PTY write failure displays persistent terminal-local error chrome with
   retry/restart actions. It also publishes structured diagnostic detail to the
   Notices/log surfaces when available.
-- Routine narration and historical diagnostics may flow to `ConsoleLaneState`
-  for the read-only Command Console. Interaction-blocking state and failed user
-  actions may not exist only in that presently invisible sink.
+- GUI action echoes and refused GUI actions flow through the typed Datum Console
+  feedback model. Terminal lifecycle/session facts remain terminal-local;
+  severe or persistent failures also publish to Notices. Structured diagnostics
+  retain their owning findings/log surface. The legacy `ConsoleLaneState` string
+  sink is migration debt, not routing authority.
 
 No item above writes into, overlays, or reserves a row in the terminal cell
 rectangle. T0-C02 owns only truthful cell geometry; detached lifecycle belongs
@@ -288,7 +293,8 @@ through the terminal core, and proves from renderer-facing state that:
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C01 -->
 1. **T0-C01 — foreign-shell screen authority.** Remove every application-owned
    row and non-PTY grid writer. Route activity, diagnostics, lifecycle messages,
-   and GUI command echoes to chrome, the Command Console, notifications, or logs.
+   and GUI action echoes to terminal chrome, the output-only Datum Console,
+   notifications, findings surfaces, or logs according to decision 033.
 <!-- REQ:TERMINAL-T0-SHELL-TRUTH:T0-C02 -->
 2. **T0-C02 — truthful viewport geometry.** Give the terminal cell rectangle its
    own hit target and derive PTY rows/columns from that exact visible rectangle;

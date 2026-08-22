@@ -643,6 +643,12 @@
     "progress_anchor": "TERMINAL-T2-NATIVE",
     "notes": "Ratifies a std-only Datum-authored Linux D-Bus/AT-SPI accessibility bridge while rejecting AccessKit, libatspi, D-Bus crates, copied bindings/source, helper subprocesses, and any new third-party package; TerminalCore remains the sole terminal semantic authority."
   },
+  "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md": {
+    "class": "doctrine",
+    "controlling": true,
+    "progress_anchor": "CONSOLE-CONTRACT-RECOVERY",
+    "notes": "Ratifies the output-only Datum Console, focused-pane Candidate-A overlay, bounded history with journal projection, consequence-based routing, accessibility boundary, and independence from the GUI write path; retires interactive Console input and adds no dependency."
+  },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",

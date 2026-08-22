@@ -3573,6 +3573,7 @@
       "issue_id": "dat-output-lane-t6v",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md",
+        "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
@@ -3588,8 +3589,8 @@
         "harness": "codex-cli",
         "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
         "claimed_at": "2026-08-22T12:35:10-07:00",
-        "heartbeat_at": "2026-08-22T13:13:47-07:00",
-        "expires_at": "2026-08-22T21:13:47-07:00",
+        "heartbeat_at": "2026-08-22T13:27:48-07:00",
+        "expires_at": "2026-08-22T21:27:48-07:00",
         "scope": [
           "console-product-contract",
           "research/command-feedback",
@@ -3602,7 +3603,7 @@
       },
       "completion": {
         "outcome": "Datum has an evidence-based, owner-reviewed, numbered-decision-backed contract that cleanly separates terminal output, verb/action feedback, optional typed editor commands, notifications, progress, diagnostics, and history, with a bounded implementation successor explicitly selected.",
-        "canonical_next_step_id": "CONSOLE-C03",
+        "canonical_next_step_id": "CONSOLE-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3661,7 +3662,7 @@
           {
             "id": "CONSOLE-C03",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Create and owner-review alternative visual prototypes for the selected feedback and optional command surfaces across viewport, terminal, responsive, and accessibility states.",
             "depends_on": [
               "CONSOLE-C02"
@@ -3672,12 +3673,18 @@
                 "marker": "CONSOLE-C03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C03-OWNER-REVIEWED"
+              }
+            ]
           },
           {
             "id": "CONSOLE-C04",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Record the owner's disposition on interactive editor-command retention, feedback ownership, visual model, history, and GUI-write-path dependency.",
             "depends_on": [
               "CONSOLE-C03"
@@ -3688,7 +3695,13 @@
                 "marker": "CONSOLE-C04"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply with the requested Console disposition packet after reviewing the research and visual prototype.",
               "requests": [
@@ -3707,7 +3720,7 @@
           {
             "id": "CONSOLE-C05",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Ratify the owner-selected mechanism in a numbered decision and reconcile GUI, terminal, conformance, code-vocabulary, tracker, and roadmap authorities.",
             "depends_on": [
               "CONSOLE-C04"
@@ -3718,12 +3731,23 @@
                 "marker": "CONSOLE-C05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "decision",
+                "path": "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-RATIFIED"
+              },
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-CONFORMANCE"
+              }
+            ]
           },
           {
             "id": "CONSOLE-C06",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Verify governance and conformance, close recovery evidence, and explicitly select a fully specified bounded implementation successor.",
             "depends_on": [
               "CONSOLE-C05"

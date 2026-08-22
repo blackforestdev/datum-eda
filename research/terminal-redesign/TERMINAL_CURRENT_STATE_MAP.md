@@ -5,6 +5,12 @@ read-only survey of the ~16,350-line terminal subsystem in `crates/gui-app`,
 `gui-protocol`, `gui-render`, plus governing docs/decisions. **Research only —
 no code changed.** Not a spec; input to one.
 
+> **Superseded Console conclusion (2026-08-22):** Product Mechanics 033 retires
+> interactive editor-command input and ratifies an output-only Datum Console.
+> References below to a typed Command Console or `ConsoleLaneState` as product
+> authority are retained only as historical provenance. The direct typed GUI
+> write path remains separate and does not depend on the Console.
+
 ---
 
 ## Headline

@@ -459,13 +459,36 @@ surface (Active-Frontier step 2) and already has a controlling prototype, a toke
 mirror, and a golden harness — so all three dispositions are exercisable today.
 The intended trajectory is a **doc-by-doc pass** that applies this same discipline
 to the other GUI specs as each surface reaches buildable definition — e.g. the
-marking-menu shell (`DATUM_GUI_CONTEXT_MENU_CONTENT.md`, Active-Frontier step 3),
-the command console (step 4), and the schematic/library surfaces (step 6) — each
+marking-menu shell (`DATUM_GUI_CONTEXT_MENU_CONTENT.md`), the output-only Datum
+Console, and the schematic/library surfaces — each
 turning its own prototype/claims into an actionable, honestly-dispositioned
 conformance rail. This spec is the **template and precedent** for that pass; it does
 not itself perform it. Sequencing for the rollout lives in the Active Frontier
 (`specs/PROGRESS.md`), which threads each surface's conformance rail behind the
 build slice it governs.
+
+### 7.1 Output-only Datum Console disposition
+
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-CONFORMANCE -->
+
+Product Mechanics 033 and
+`docs/gui/prototypes/command-feedback-study.html` Candidate A control the Console
+implementation successor. These claims are honestly **TO-ENFORCE** until that
+slice lands:
+
+| ID | Claim | Future proof home |
+|---|---|---|
+| DC1 | Console state is typed and bounded; no input, verb dispatch, operation, PTY write, or terminal-cell mutation path exists | `crates/gui-protocol` state tests plus `crates/gui-app` routing tests |
+| DC2 | Only the focused pane renders one lower-left overlay; it reserves zero canvas layout geometry and truncates before wrapping | `crates/gui-render` Console layout/snapshot tests |
+| DC3 | Routine, tool-prompt, and refusal modes preserve severity/text/icon redundancy and deterministic lifetime/history behavior | `crates/gui-render` Console state goldens plus `crates/gui-protocol` history tests |
+| DC4 | Committed operations project from journal authority; consumer echoes never become a second journal | `crates/gui-app` Console projection tests |
+| DC5 | Terminal lifecycle, Notices, progress, and ERC/DRC findings follow decision-033 destinations instead of entering the Console catch-all | `crates/gui-app` producer-routing matrix tests |
+| DC6 | Each visible status transition has an equivalent non-focus-stealing AT-SPI announcement | Datum AT-SPI bridge integration tests |
+
+The owner review of Candidate A and placement P1/P3/P5 is **HUMAN** evidence for
+the specification phase. Implementation acceptance requires new build goldens
+and owner review against that committed reference; it must not pixel-diff wgpu
+output against HTML.
 
 ## 8. S5 disposition ledger (S5-C10)
 

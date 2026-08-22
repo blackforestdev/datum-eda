@@ -1,8 +1,10 @@
 //! Datum-owned narration routing at the native-terminal boundary.
 //!
 //! Terminal cells are foreign-shell state. Application narration has one
-//! production route into `ConsoleLaneState`; keeping that route outside the
-//! runtime makes the no-grid-write invariant directly testable.
+//! legacy route into `ConsoleLaneState`; keeping it outside the runtime makes
+//! the no-grid-write invariant directly testable. Decision 033 requires the
+//! Console implementation successor to classify these producers and replace
+//! this untyped sink before anything becomes visible.
 
 use datum_gui_protocol::ConsoleLaneState;
 

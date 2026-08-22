@@ -46,7 +46,8 @@ views, and performance are in scope.
   interpreted by `TerminalCore`, is the sole authority allowed to mutate terminal
   cells. Datum diagnostics, activity summaries, lifecycle messages, command
   echoes, and GUI notices never enter the terminal grid or consume terminal rows.
-  They use terminal chrome, notifications, the Command Console, or logs.
+  They use terminal chrome, notifications, the output-only Datum Console,
+  findings surfaces, or logs according to decision 033.
 - **FT-002 — Datum-owned core and bounded interfaces.** Datum implements its
   terminal core behind closed interfaces covering input bytes, resize, modes,
   damage, selection coordinates, render-state extraction, title/CWD/bell events,
@@ -126,7 +127,7 @@ views, and performance are in scope.
   command must first identify the change as an unintended regression or an
   intentional owner-reviewed replacement. Only the latter permits `--bless`.
 - **FT-013 — no partial-product substitution.** A focus fix, PTY swap, parser test,
-  cell grid, or command-console surface is not a completed native terminal. Each
+  cell grid, or Datum Console surface is not a completed native terminal. Each
   is only evidence for its named slice. The epic closes only when the full
   governed product matrix is verified on a production Datum build.
 

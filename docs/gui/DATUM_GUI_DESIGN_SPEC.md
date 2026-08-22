@@ -121,20 +121,17 @@ Reference prototypes: `docs/gui/prototypes/board-editor.html` (pass 3, PCB|Schem
 split with cross-probe) and `docs/gui/prototypes/workspace-panes.html` (the recursive
 tiling + View-menu model).
 
-## Command Surfaces — console, terminal, AI (three, not one)
+## Command and feedback surfaces — Console, terminal, AI
 
-Three distinct input surfaces got muddled in the M7 spike. They are **separate by
-design**, and correcting this is a decision-level fix (clarifies 005 terminal,
-006 assistant, 019 shell).
+Product Mechanics 033 resolves the legacy Console conflation. These surfaces
+have distinct authority:
 
-1. **Command Console (Eagle / AutoCAD).** A single-line command input in the
-   **lower-left of the viewport**. Type a command (`mo`, `route`, `net`…), hover
-   the target, press Enter → it acts on the object under the cursor. **Every verb
-   is a console command**, and the console language *is* the scripting language
-   (Eagle's ULP → Datum's Python/verbs). It is the **typed twin of the marking
-   menu** — identical verbs, different muscle memory (type vs. flick) — a
-   manual-first power surface. It **drives the editor, not the OS**; it is not a
-   shell. *(This is the original intent that the spec distorted into "a terminal.")*
+1. **Datum Console (output only).** A compact action-feedback overlay at the
+   **lower-left of the focused viewport pane**. It reports GUI verb/action
+   echoes, active-tool guidance, refused actions, and bounded session history.
+   It accepts no authored text, takes no input focus, dispatches no verb, emits
+   no operation, and never writes to terminal cells. The former AutoCAD/EAGLE-
+   like interactive command-line proposal is retired, not deferred.
 2. **Native Terminal (VS Code-style).** A real PTY system terminal
    (Alacritty/Ghostty/Konsole-grade), **fully integrated, not a bolt-on**, with
    **multiple tabs/sessions**. It runs any OS task and is where **code agents run**
@@ -152,31 +149,27 @@ design**, and correcting this is a decision-level fix (clarifies 005 terminal,
    viewer or a paperspace viewport (decision 020), not a supervision lane (the same
    meta-supervision pattern as the vacated 013 misfire).
 
-**Why it got muddled:** the spec collapsed the *console* (drive the editor by
-typing verbs) into the *terminal* (run OS commands), then split "AI" into its own
-lane — a surface that was neither a real command line nor a real shell, plus a
-redundant agent tab. Two surfaces pretending to be one; one split into two. Net
-result on the shell: the console is viewport-anchored (lower-left); the bottom dock
-is **the terminal alone (multi-tab)** — no Assistant tab, no Output tab. CAM/export
-output is files in the working directory (produced via the terminal), viewed in the
-gerber/drill viewer or a paperspace viewport (decision 020).
+**Why it got muddled:** historical material combined an obsolete Output/faux-
+console lane, a proposed typed editor command line, passive action feedback, and
+terminal-safe narration. The shell contract is now unambiguous: the output-only
+Datum Console is viewport-anchored; the bottom dock is **the terminal alone
+(multi-tab)** — no Assistant tab and no Output tab. CAM/export output is files in
+the working directory, viewed in its owning viewer or paperspace viewport.
 
-**The unifying law — five doorways, one vocabulary.** menu bar (discovery) ·
-marking menu (gesture) · **command console (typed)** · scripting (verbs in a file)
-· AI (intent). All five drive the **same verb registry**, so **every program action
-must be a verb** — a *complete* set (capability stays a parameter of a small verb
-set, but nothing is unreachable). A missing verb = an action the AI can't do, the
-console can't type, and a script can't call. **Verb-registry completeness is
-first-order**; the menu_model `not_built` entries are the visible gap.
+**The unifying law — four action doorways, one vocabulary.** menu bar
+(discovery) · marking menu (gesture) · scripting (verbs in a file) · AI (intent).
+All four drive the **same verb registry**. The Console observes and explains
+their consequences but is not a fifth invocation doorway. A missing verb is
+still an action that scripts and AI cannot invoke consistently, so verb-registry
+completeness remains first-order.
 
-### Console and action-feedback contract recovery
+### Output-only Datum Console contract
 
-The previously scheduled “read-only Command Console” build is not an authorized
-product mechanism. It conflated the retired application-output/faux-console
-surface, the optional typed editor command line, passive verb feedback,
-notifications, structured diagnostics, and the terminal-safe `ConsoleLaneState`
-holding sink. No visible Console implementation may begin until the following
-planning and owner-decision sequence replaces that conflated contract.
+Product Mechanics 033 ratifies the selected mechanism. The Console is a
+focused-pane, lower-left output overlay with a bounded expandable session
+history. Candidate A in `docs/gui/prototypes/command-feedback-study.html` is the
+controlling visual study; Candidate B is rejected comparative evidence, and
+Candidate C remains the complementary notification-system direction.
 
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C01 -->
 CONSOLE-C01 contains the roadmap defect and inventories code, message producers,
@@ -202,15 +195,32 @@ CONSOLE-C03 turns the research into alternative visual prototypes covering
 focused/tiled viewports, collapsed/expanded states, terminal coexistence,
 narrow-window behavior, and accessibility, then records owner review.
 
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C03-OWNER-REVIEWED -->
+The owner reviewed `docs/gui/prototypes/command-feedback-study.html` and selected
+Candidate A with viewport placement P1/P3/P5; Candidate C is complementary and
+Candidate B is rejected.
+
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04 -->
 <!-- OWNER:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04:CONSOLE-C04 -->
 CONSOLE-C04 obtains explicit owner disposition on whether the interactive editor
 command line is retained, deferred, or retired and on the authoritative home of
 each feedback class. Research and prototypes do not decide this boundary.
 
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04-OWNER-APPROVED -->
+The owner disposition is recorded in Product Mechanics 033: typed Console input
+is retired; the Console is output-only; placement is the focused pane's lower-
+left overlay; history is bounded and expandable with journal-projected committed
+operations; research §6 routing is ratified; and Console and GUI write-path work
+remain technically independent.
+
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05 -->
 CONSOLE-C05 ratifies the chosen mechanism in a numbered decision and reconciles
 GUI, terminal, conformance, code-vocabulary, tracker, and roadmap authorities.
+
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-RATIFIED -->
+Product Mechanics 033 is the controlling decision. “Datum Console” is the
+user-facing name; `ConsoleLaneState` is explicitly legacy implementation debt
+whose successor is a typed, output-only feedback model.
 
 <!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C06 -->
 CONSOLE-C06 verifies governance and conformance, closes the recovery work with
