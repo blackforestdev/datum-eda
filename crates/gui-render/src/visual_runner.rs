@@ -262,7 +262,7 @@ fn inject_console_scenario(state: &mut ReviewWorkspaceState, scenario: Option<&s
     const FIXTURE_TIME_MS: u64 = 50_491_000;
     match scenario {
         None => {}
-        Some("routine-focused") => {
+        Some("routine-focused" | "routine-scale-matrix") => {
             state.ui.layout.focused = PaneId(1);
             state.ui.focus = ApplicationFocus::Editor(PaneId(1));
             state.ui.publish_console_feedback(
@@ -270,6 +270,33 @@ fn inject_console_scenario(state: &mut ReviewWorkspaceState, scenario: Option<&s
                     ConsoleFeedbackSource::Viewport,
                     FIXTURE_TIME_MS,
                     "Fit schematic to focused pane",
+                )
+                .with_action_id("view.fit-focused"),
+            );
+        }
+        Some("routine-maximized") => {
+            state.ui.layout.focused = PaneId(1);
+            state.ui.layout.zoomed = Some(PaneId(1));
+            state.ui.focus = ApplicationFocus::Editor(PaneId(1));
+            state.ui.publish_console_feedback(
+                ConsoleFeedbackDraft::action_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    FIXTURE_TIME_MS,
+                    "Focused pane maximized",
+                )
+                .with_action_id("view.maximize_pane"),
+            );
+        }
+        Some("routine-unfocused") => {
+            state.ui.layout.focused = PaneId(1);
+            state.ui.active_dock_tab = Some(DockTab::Terminal);
+            state.ui.dock_height_px = 220;
+            state.ui.focus = ApplicationFocus::Terminal;
+            state.ui.publish_console_feedback(
+                ConsoleFeedbackDraft::action_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    FIXTURE_TIME_MS,
+                    "Focused pane remains the feedback owner",
                 )
                 .with_action_id("view.fit-focused"),
             );

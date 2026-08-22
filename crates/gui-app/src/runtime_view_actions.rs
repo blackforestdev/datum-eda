@@ -164,6 +164,13 @@ impl Runtime {
             .ui
             .console
             .set_duration_preference(duration);
+        if console_preferences::persist_duration_preference(duration).is_err() {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Viewport,
+                "Console duration applies for this session but could not be saved",
+            );
+            return true;
+        }
         let label = match duration {
             datum_gui_protocol::ConsoleFeedbackDuration::FourSeconds => "4 seconds",
             datum_gui_protocol::ConsoleFeedbackDuration::SixSeconds => "6 seconds",

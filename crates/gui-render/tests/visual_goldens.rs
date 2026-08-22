@@ -15,6 +15,9 @@ const FIXTURE_NAMES: &[&str] = &[
 ];
 const CONSOLE_FIXTURE_NAMES: &[&str] = &[
     "routine-focused",
+    "routine-maximized",
+    "routine-unfocused",
+    "routine-scale-matrix",
     "tool-terminal-open",
     "refusal-narrow",
     "history-expanded",
@@ -60,7 +63,6 @@ fn board_multi_scale_visual_smoke_renders_nonblank() -> Result<()> {
 }
 
 #[test]
-#[ignore = "requires local visual rendering authority; run explicitly for Console owner review"]
 fn console_visual_goldens_match() -> Result<()> {
     for fixture_name in CONSOLE_FIXTURE_NAMES {
         let manifest = console_fixture_manifest_path(fixture_name);

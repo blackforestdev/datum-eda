@@ -18,7 +18,16 @@ pub(super) fn publish(console: &mut ConsoleFeedbackState, draft: ConsoleFeedback
 
 impl Runtime {
     pub(super) fn publish_console_feedback(&mut self, draft: ConsoleFeedbackDraft) {
-        let announcement = console_accessibility::announcement_for_draft(&draft, false);
+        self.publish_console_feedback_with_criticality(draft, false);
+    }
+
+    fn publish_console_feedback_with_criticality(
+        &mut self,
+        draft: ConsoleFeedbackDraft,
+        critical_consequence: bool,
+    ) {
+        let announcement =
+            console_accessibility::announcement_for_draft(&draft, critical_consequence);
         publish(&mut self.session.workspace_mut().ui.console, draft);
         self.terminal_accessibility.announce_console(announcement);
         // Visible feedback is frame state. Invalidate here rather than relying on
@@ -98,16 +107,15 @@ impl Runtime {
         );
     }
 
-    pub(super) fn log_console_tool_prompt(
+    pub(super) fn log_console_critical_refusal_for_action(
         &mut self,
         source: ConsoleFeedbackSource,
+        action_id: impl Into<String>,
         message: impl Into<String>,
     ) {
-        self.publish_console_feedback(ConsoleFeedbackDraft::tool_prompt(
-            source,
-            occurred_unix_ms(),
-            message,
-        ));
+        let draft = ConsoleFeedbackDraft::action_refusal(source, occurred_unix_ms(), message)
+            .with_action_id(action_id);
+        self.publish_console_feedback_with_criticality(draft, true);
     }
 
     pub(super) fn toggle_console_history(&mut self) -> bool {

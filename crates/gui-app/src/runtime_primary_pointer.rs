@@ -5,6 +5,53 @@
 use super::*;
 
 impl Runtime {
+    pub(super) fn queue_authoring_terminal_handoff(
+        &mut self,
+        handoff: TerminalCommandHandoff,
+        event_label: &str,
+    ) {
+        if self
+            .workspace()
+            .backing
+            .as_ref()
+            .is_some_and(|backing| backing.request.board_file.is_some())
+        {
+            self.set_active_dock(DockTab::Terminal);
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "authoring tools require a native Datum project; open with --project-root instead of --board <kicad_pcb>"
+                    .to_string(),
+            );
+            return;
+        }
+        self.set_active_dock(DockTab::Terminal);
+        self.mark_terminal_workspace_refresh_pending();
+        let command = prepare_terminal_command_execution(
+            self.terminal_sessions.active(),
+            "authoring_tool_command",
+            &handoff,
+        )
+        .unwrap_or_else(|err| {
+            self.log_terminal_event(format!("terminal handoff prepare failed: {err}"));
+            handoff.command.clone()
+        });
+        let mut bytes = command.into_bytes();
+        bytes.push(b'\r');
+        if self.write_foreign_shell_bytes(&bytes) {
+            self.log_console_echo_for_action(
+                ConsoleFeedbackSource::Tool,
+                event_label,
+                "Authoring command sent to Terminal",
+            );
+        } else {
+            self.log_console_critical_refusal_for_action(
+                ConsoleFeedbackSource::Tool,
+                event_label,
+                "Authoring command could not be sent to Terminal",
+            );
+        }
+    }
+
     pub(super) fn trace_click(&self, message: String) {
         if std::env::var_os("DATUM_TRACE_CLICKS").is_some() {
             eprintln!("[datum-click] {message}");

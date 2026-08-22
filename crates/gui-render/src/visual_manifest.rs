@@ -128,7 +128,13 @@ impl FixtureManifest {
         if let Some(scenario) = self.console_scenario.as_deref()
             && !matches!(
                 scenario,
-                "routine-focused" | "tool-terminal-open" | "refusal-narrow" | "history-expanded"
+                "routine-focused"
+                    | "routine-maximized"
+                    | "routine-unfocused"
+                    | "routine-scale-matrix"
+                    | "tool-terminal-open"
+                    | "refusal-narrow"
+                    | "history-expanded"
             )
         {
             bail!("unsupported input.console_scenario {scenario:?}");

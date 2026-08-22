@@ -8,11 +8,62 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CARGO_GUARD = [
+    sys.executable,
+    "scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+]
 
 GATES = [
     (
         "output-only Datum Console boundary",
         [sys.executable, "scripts/check_datum_console_boundary.py"],
+    ),
+    (
+        "Console typed state and producer routing tests",
+        CARGO_GUARD
+        + [
+            "cargo",
+            "test",
+            "-p",
+            "datum-gui-protocol",
+            "-p",
+            "datum-gui-app",
+            "console_",
+        ],
+    ),
+    (
+        "Console render behavior tests",
+        CARGO_GUARD
+        + [
+            "cargo",
+            "test",
+            "-p",
+            "datum-gui-render",
+            "datum_console",
+            "--lib",
+            "--features",
+            "visual",
+        ],
+    ),
+    (
+        "Console exact visual goldens",
+        CARGO_GUARD
+        + [
+            "cargo",
+            "test",
+            "-p",
+            "datum-gui-render",
+            "--test",
+            "visual_goldens",
+            "--features",
+            "visual",
+            "console_visual_goldens_match",
+            "--",
+            "--nocapture",
+        ],
     ),
     (
         "token/value/prototype parity",
@@ -28,7 +79,8 @@ GATES = [
     ),
     (
         "GUI render conformance tests",
-        [
+        CARGO_GUARD
+        + [
             "cargo",
             "test",
             "-p",

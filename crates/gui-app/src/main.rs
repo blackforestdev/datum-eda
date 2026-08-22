@@ -38,6 +38,7 @@ mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod console_accessibility;
 mod console_feedback;
+mod console_preferences;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
@@ -781,6 +782,9 @@ impl Runtime {
         // camera is the fit camera the launch path already computed.
         let initial_focus = state.ui.layout.focused;
         state.ui.focus = ApplicationFocus::Editor(initial_focus);
+        if let Some(duration) = console_preferences::load_duration_preference() {
+            state.ui.console.set_duration_preference(duration);
+        }
         let initial_content = state.ui.layout.focused_content();
         let initial_pane_camera = match initial_content {
             PaneContent::Board => camera,
@@ -1692,10 +1696,7 @@ impl Runtime {
         }
         let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
         if handled {
-            self.log_console_tool_prompt(
-                ConsoleFeedbackSource::Tool,
-                format!("tool {}", tool.label()),
-            );
+            self.log_console_echo(ConsoleFeedbackSource::Tool, "Selection tool active");
         }
         handled
     }
@@ -1860,46 +1861,6 @@ impl Runtime {
             Some(HitTarget::ReviewAction(id)) => Some(id),
             _ => None,
         }
-    }
-
-    fn queue_authoring_terminal_handoff(
-        &mut self,
-        handoff: TerminalCommandHandoff,
-        event_label: &str,
-    ) {
-        if self
-            .workspace()
-            .backing
-            .as_ref()
-            .is_some_and(|backing| backing.request.board_file.is_some())
-        {
-            self.set_active_dock(DockTab::Terminal);
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "authoring tools require a native Datum project; open with --project-root instead of --board <kicad_pcb>"
-                    .to_string(),
-            );
-            return;
-        }
-        self.set_active_dock(DockTab::Terminal);
-        self.mark_terminal_workspace_refresh_pending();
-        let command = prepare_terminal_command_execution(
-            self.terminal_sessions.active(),
-            "authoring_tool_command",
-            &handoff,
-        )
-        .unwrap_or_else(|err| {
-            self.log_terminal_event(format!("terminal handoff prepare failed: {err}"));
-            handoff.command.clone()
-        });
-        let mut bytes = command.into_bytes();
-        bytes.push(b'\r');
-        self.write_foreign_shell_bytes(&bytes);
-        self.log_console_echo_for_action(
-            ConsoleFeedbackSource::Tool,
-            event_label,
-            "Authoring command sent to Terminal",
-        );
     }
 
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
@@ -2255,12 +2216,19 @@ impl Runtime {
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
-                self.write_foreign_shell_bytes(&bytes);
-                self.log_console_echo_for_action(
-                    ConsoleFeedbackSource::Production,
-                    &handoff.command,
-                    "Production output command sent to Terminal",
-                );
+                if self.write_foreign_shell_bytes(&bytes) {
+                    self.log_console_echo_for_action(
+                        ConsoleFeedbackSource::Production,
+                        &handoff.command,
+                        "Production output command sent to Terminal",
+                    );
+                } else {
+                    self.log_console_critical_refusal_for_action(
+                        ConsoleFeedbackSource::Production,
+                        &handoff.command,
+                        "Production output command could not be sent to Terminal",
+                    );
+                }
                 true
             }
             HitTarget::ProductionTerminalCommand(handoff) => {
@@ -2276,12 +2244,19 @@ impl Runtime {
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
-                self.write_foreign_shell_bytes(&bytes);
-                self.log_console_echo_for_action(
-                    ConsoleFeedbackSource::Production,
-                    &handoff.command,
-                    "Production command sent to Terminal",
-                );
+                if self.write_foreign_shell_bytes(&bytes) {
+                    self.log_console_echo_for_action(
+                        ConsoleFeedbackSource::Production,
+                        &handoff.command,
+                        "Production command sent to Terminal",
+                    );
+                } else {
+                    self.log_console_critical_refusal_for_action(
+                        ConsoleFeedbackSource::Production,
+                        &handoff.command,
+                        "Production command could not be sent to Terminal",
+                    );
+                }
                 true
             }
             HitTarget::ArtifactPreviewZoomIn

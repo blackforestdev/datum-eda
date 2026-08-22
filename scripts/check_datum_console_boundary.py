@@ -142,6 +142,11 @@ def assert_producer_routes_remain_separated() -> None:
         code = code_without_comments_or_strings(path.read_text())
         if re.search(r"\blog_review_event\b", code):
             fail(f"legacy catch-all narration returned in {path.relative_to(ROOT)}")
+        if re.search(r"\blog_console_tool_prompt\b", code):
+            fail(
+                "Phase 1 has no active multi-step tool; production tool-prompt publication "
+                f"must remain absent until typed live key hints exist ({path.relative_to(ROOT)})"
+            )
 
     terminal_owned = [
         *APP_ROOT.glob("runtime_terminal_*.rs"),
@@ -195,6 +200,11 @@ def assert_internal_ids_stay_typed() -> None:
     ]:
         if helper not in boundary or typed_builder not in boundary:
             fail(f"typed Console publication helper is incomplete: {helper}")
+
+    critical_helper = "log_console_critical_refusal_for_action"
+    producer_uses = sum(path.read_text().count(critical_helper) for path in APP_ROOT.glob("*.rs"))
+    if critical_helper not in boundary or producer_uses < 4:
+        fail("critical Console announcement has no production command-admission path")
 
 
 def main() -> int:
