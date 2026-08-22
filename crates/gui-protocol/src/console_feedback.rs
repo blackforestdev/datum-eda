@@ -44,6 +44,26 @@ pub enum ConsoleFeedbackLifetime {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ConsoleFeedbackDuration {
+    FourSeconds,
+    #[default]
+    SixSeconds,
+    TenSeconds,
+    Never,
+}
+
+impl ConsoleFeedbackDuration {
+    pub fn milliseconds(self) -> Option<u64> {
+        match self {
+            Self::FourSeconds => Some(4_000),
+            Self::SixSeconds => Some(6_000),
+            Self::TenSeconds => Some(10_000),
+            Self::Never => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ConsoleHistoryFilter {
     #[default]
     All,
@@ -206,6 +226,10 @@ pub struct ConsoleFeedbackState {
     history_expanded: bool,
     history_filter: ConsoleHistoryFilter,
     history_scroll_offset: usize,
+    duration_preference: ConsoleFeedbackDuration,
+    visibility_elapsed_ms: u64,
+    last_visibility_tick_ms: Option<u64>,
+    inspected: bool,
 }
 
 impl Default for ConsoleFeedbackState {
@@ -217,6 +241,10 @@ impl Default for ConsoleFeedbackState {
             history_expanded: false,
             history_filter: ConsoleHistoryFilter::All,
             history_scroll_offset: 0,
+            duration_preference: ConsoleFeedbackDuration::default(),
+            visibility_elapsed_ms: 0,
+            last_visibility_tick_ms: None,
+            inspected: false,
         }
     }
 }
@@ -224,6 +252,7 @@ impl Default for ConsoleFeedbackState {
 impl ConsoleFeedbackState {
     pub fn publish(&mut self, draft: ConsoleFeedbackDraft) -> u64 {
         let sequence = self.next_sequence;
+        let occurred_unix_ms = draft.occurred_unix_ms;
         self.next_sequence = self.next_sequence.saturating_add(1);
         self.records.push_back(ConsoleFeedbackRecord {
             sequence,
@@ -240,11 +269,68 @@ impl ConsoleFeedbackState {
             self.records.pop_front();
             self.dropped_count = self.dropped_count.saturating_add(1);
         }
+        self.visibility_elapsed_ms = 0;
+        self.last_visibility_tick_ms = Some(occurred_unix_ms);
+        self.inspected = false;
         sequence
     }
 
     pub fn latest(&self) -> Option<&ConsoleFeedbackRecord> {
         self.records.back()
+    }
+
+    pub fn visible_latest(&self) -> Option<&ConsoleFeedbackRecord> {
+        let latest = self.latest()?;
+        if latest.category != ConsoleFeedbackCategory::ActionEcho {
+            return Some(latest);
+        }
+        match self.duration_preference.milliseconds() {
+            Some(limit) if self.visibility_elapsed_ms >= limit => None,
+            _ => Some(latest),
+        }
+    }
+
+    /// Advance deterministic presentation time. Inspection and expanded
+    /// history pause elapsed time without removing the underlying record.
+    /// Returns true only when visible-overlay state changes.
+    pub fn advance_visibility(&mut self, now_unix_ms: u64, inspected: bool) -> bool {
+        let was_visible = self.visible_latest().is_some();
+        let previous = self.last_visibility_tick_ms.replace(now_unix_ms);
+        if let Some(previous) = previous
+            && !self.inspected
+            && !self.history_expanded
+        {
+            self.visibility_elapsed_ms = self
+                .visibility_elapsed_ms
+                .saturating_add(now_unix_ms.saturating_sub(previous));
+        }
+        self.inspected = inspected;
+        was_visible != self.visible_latest().is_some()
+    }
+
+    pub fn remaining_auto_hide_ms(&self) -> Option<u64> {
+        let latest = self.visible_latest()?;
+        if latest.category != ConsoleFeedbackCategory::ActionEcho
+            || self.inspected
+            || self.history_expanded
+        {
+            return None;
+        }
+        self.duration_preference
+            .milliseconds()
+            .map(|limit| limit.saturating_sub(self.visibility_elapsed_ms))
+    }
+
+    pub fn inspected(&self) -> bool {
+        self.inspected
+    }
+
+    pub fn duration_preference(&self) -> ConsoleFeedbackDuration {
+        self.duration_preference
+    }
+
+    pub fn set_duration_preference(&mut self, duration: ConsoleFeedbackDuration) {
+        self.duration_preference = duration;
     }
 
     pub fn records(&self) -> impl DoubleEndedIterator<Item = &ConsoleFeedbackRecord> {
@@ -383,5 +469,66 @@ mod tests {
         assert_eq!(feedback.history_scroll_offset(), 7);
         assert_eq!(feedback.latest().unwrap().sequence, sequence);
         assert_eq!(feedback.dropped_count(), 0);
+    }
+
+    #[test]
+    fn transient_echo_fades_but_remains_recoverable_in_history() {
+        let mut feedback = ConsoleFeedbackState::default();
+        feedback.publish(ConsoleFeedbackDraft::action_echo(
+            ConsoleFeedbackSource::Viewport,
+            1_000,
+            "fit board",
+        ));
+        assert!(feedback.visible_latest().is_some());
+
+        assert!(feedback.advance_visibility(7_000, false));
+        assert!(feedback.visible_latest().is_none());
+        assert_eq!(feedback.latest().unwrap().message, "fit board");
+        assert_eq!(feedback.records().count(), 1);
+    }
+
+    #[test]
+    fn inspection_pauses_and_resumes_remaining_echo_lifetime() {
+        let mut feedback = ConsoleFeedbackState::default();
+        feedback.publish(ConsoleFeedbackDraft::action_echo(
+            ConsoleFeedbackSource::Viewport,
+            0,
+            "zoom in",
+        ));
+        feedback.advance_visibility(3_000, true);
+        feedback.advance_visibility(20_000, true);
+        feedback.advance_visibility(20_000, false);
+        feedback.advance_visibility(22_999, false);
+        assert!(feedback.visible_latest().is_some());
+        assert!(feedback.advance_visibility(23_000, false));
+        assert!(feedback.visible_latest().is_none());
+    }
+
+    #[test]
+    fn prompts_refusals_and_never_preference_ignore_echo_deadline() {
+        for draft in [
+            ConsoleFeedbackDraft::tool_prompt(ConsoleFeedbackSource::Tool, 0, "select a component"),
+            ConsoleFeedbackDraft::action_refusal(
+                ConsoleFeedbackSource::Tool,
+                0,
+                "no component selected",
+            ),
+        ] {
+            let mut feedback = ConsoleFeedbackState::default();
+            feedback.publish(draft);
+            feedback.advance_visibility(60_000, false);
+            assert!(feedback.visible_latest().is_some());
+        }
+
+        let mut feedback = ConsoleFeedbackState::default();
+        feedback.set_duration_preference(ConsoleFeedbackDuration::Never);
+        feedback.publish(ConsoleFeedbackDraft::action_echo(
+            ConsoleFeedbackSource::Viewport,
+            0,
+            "fit board",
+        ));
+        feedback.advance_visibility(u64::MAX, false);
+        assert!(feedback.visible_latest().is_some());
+        assert_eq!(feedback.remaining_auto_hide_ms(), None);
     }
 }

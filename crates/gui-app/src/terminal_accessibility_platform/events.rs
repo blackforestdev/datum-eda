@@ -1,13 +1,29 @@
 //! AT-SPI event projection from immutable terminal accessibility changes.
 
+use crate::console_accessibility::AccessibilityAnnouncement;
 use crate::terminal_accessibility::TerminalAccessibilitySnapshot;
 use crate::terminal_accessibility_bridge::TerminalAccessibilityEvent;
 
-use super::atspi::TERMINAL_PATH;
+use super::atspi::{ROOT_PATH, TERMINAL_PATH};
 use super::body::BodyWriter;
 use super::dbus::Message;
 
 const EVENT_OBJECT: &str = "org.a11y.atspi.Event.Object";
+
+pub(super) fn announcement_message(
+    serial: u32,
+    announcement: &AccessibilityAnnouncement,
+) -> Message {
+    event_message_at_path(
+        serial,
+        ROOT_PATH,
+        "Announcement",
+        &announcement.text,
+        announcement.priority.atspi_value(),
+        0,
+        VariantValue::String(&announcement.text),
+    )
+}
 
 pub(super) fn messages(
     mut serial: impl FnMut() -> u32,
@@ -109,6 +125,26 @@ fn event_message(
     detail2: i32,
     value: VariantValue<'_>,
 ) -> Message {
+    event_message_at_path(
+        serial,
+        TERMINAL_PATH,
+        member,
+        detail,
+        detail1,
+        detail2,
+        value,
+    )
+}
+
+fn event_message_at_path(
+    serial: u32,
+    path: &str,
+    member: &str,
+    detail: &str,
+    detail1: i32,
+    detail2: i32,
+    value: VariantValue<'_>,
+) -> Message {
     let mut body = BodyWriter::new();
     body.string(detail);
     body.i32(detail1);
@@ -128,7 +164,7 @@ fn event_message(
     body.array(8, |_| {});
     Message::signal(
         serial,
-        TERMINAL_PATH,
+        path,
         EVENT_OBJECT,
         member,
         "siiva{sv}",
@@ -147,6 +183,7 @@ fn clamp_i32(value: usize) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
     use crate::terminal_accessibility::{
         TerminalAccessibilityBounds, TerminalAccessibilitySnapshot,
     };
@@ -221,5 +258,24 @@ mod tests {
         assert_eq!(focus.i32().unwrap(), 1);
         assert_eq!(focus.i32().unwrap(), 0);
         assert!(focus.variant_bool().unwrap());
+    }
+
+    #[test]
+    fn console_announcement_uses_application_root_and_priority_payload() {
+        let message = announcement_message(
+            41,
+            &AccessibilityAnnouncement {
+                text: "Action refused. Error: no component selected".to_string(),
+                priority: AnnouncementPriority::Medium,
+            },
+        );
+        assert_eq!(message.header.path.as_deref(), Some(ROOT_PATH));
+        assert_eq!(message.header.member.as_deref(), Some("Announcement"));
+        let mut body = message.body_reader();
+        assert_eq!(
+            body.string().unwrap(),
+            "Action refused. Error: no component selected"
+        );
+        assert_eq!(body.i32().unwrap(), 1);
     }
 }

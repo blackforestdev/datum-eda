@@ -1,10 +1,12 @@
 //! Background lifecycle for Datum's Linux accessibility-bus service.
 
+use std::collections::VecDeque;
 use std::io::{self, Read, Write};
 use std::os::fd::AsRawFd;
 use std::os::unix::net::UnixStream;
 use std::sync::{Arc, Mutex};
 
+use crate::console_accessibility::AccessibilityAnnouncement;
 use crate::terminal_accessibility::TerminalAccessibilitySnapshot;
 use crate::terminal_accessibility_bridge::TerminalAccessibilityEvent;
 
@@ -15,14 +17,19 @@ use super::events;
 
 const SOCKET_INTERFACE: &str = "org.a11y.atspi.Socket";
 const WAKE_BYTES: usize = 64;
+const ANNOUNCEMENT_CAPACITY: usize = 64;
 
 struct PendingUpdate {
     snapshot: TerminalAccessibilitySnapshot,
     events: Vec<TerminalAccessibilityEvent>,
+    terminal_available: bool,
+    announcements: VecDeque<AccessibilityAnnouncement>,
 }
 
 struct Shared {
     pending: Option<PendingUpdate>,
+    latest_snapshot: TerminalAccessibilitySnapshot,
+    terminal_available: bool,
 }
 
 pub(crate) struct PlatformBridge {
@@ -35,11 +42,24 @@ impl PlatformBridge {
         snapshot: TerminalAccessibilitySnapshot,
         events: Vec<TerminalAccessibilityEvent>,
     ) -> io::Result<Self> {
+        Self::start_update(PendingUpdate {
+            snapshot,
+            events,
+            terminal_available: true,
+            announcements: VecDeque::new(),
+        })
+    }
+
+    fn start_update(update: PendingUpdate) -> io::Result<Self> {
         let (wake, worker_wake) = UnixStream::pair()?;
         wake.set_nonblocking(true)?;
         worker_wake.set_nonblocking(true)?;
+        let latest_snapshot = update.snapshot.clone();
+        let terminal_available = update.terminal_available;
         let shared = Arc::new(Mutex::new(Shared {
-            pending: Some(PendingUpdate { snapshot, events }),
+            pending: Some(update),
+            latest_snapshot,
+            terminal_available,
         }));
         let worker_shared = Arc::clone(&shared);
         std::thread::Builder::new()
@@ -50,23 +70,59 @@ impl PlatformBridge {
         Ok(bridge)
     }
 
+    pub(crate) fn start_announcement(announcement: AccessibilityAnnouncement) -> io::Result<Self> {
+        let mut announcements = VecDeque::new();
+        push_bounded_announcement(&mut announcements, announcement);
+        Self::start_update(PendingUpdate {
+            snapshot: empty_snapshot(),
+            events: Vec::new(),
+            terminal_available: false,
+            announcements,
+        })
+    }
+
     pub(crate) fn publish(
         &mut self,
         snapshot: TerminalAccessibilitySnapshot,
         events: Vec<TerminalAccessibilityEvent>,
     ) {
         if let Ok(mut shared) = self.shared.lock() {
+            shared.latest_snapshot = snapshot.clone();
+            shared.terminal_available = true;
             match &mut shared.pending {
                 Some(pending) => {
                     pending.snapshot = snapshot;
+                    pending.terminal_available = true;
                     for event in events {
                         if !pending.events.contains(&event) {
                             pending.events.push(event);
                         }
                     }
                 }
-                None => shared.pending = Some(PendingUpdate { snapshot, events }),
+                None => {
+                    shared.pending = Some(PendingUpdate {
+                        snapshot,
+                        events,
+                        terminal_available: true,
+                        announcements: VecDeque::new(),
+                    })
+                }
             }
+        }
+        self.notify();
+    }
+
+    pub(crate) fn publish_announcement(&mut self, announcement: AccessibilityAnnouncement) {
+        if let Ok(mut shared) = self.shared.lock() {
+            let snapshot = shared.latest_snapshot.clone();
+            let terminal_available = shared.terminal_available;
+            let pending = shared.pending.get_or_insert_with(|| PendingUpdate {
+                snapshot,
+                events: Vec::new(),
+                terminal_available,
+                announcements: VecDeque::new(),
+            });
+            push_bounded_announcement(&mut pending.announcements, announcement);
         }
         self.notify();
     }
@@ -80,6 +136,16 @@ impl PlatformBridge {
     }
 }
 
+fn push_bounded_announcement(
+    announcements: &mut VecDeque<AccessibilityAnnouncement>,
+    announcement: AccessibilityAnnouncement,
+) {
+    if announcements.len() == ANNOUNCEMENT_CAPACITY {
+        announcements.pop_front();
+    }
+    announcements.push_back(announcement);
+}
+
 fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
     let mut connection = None;
     let mut service = None;
@@ -88,7 +154,7 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
         if let Some(update) = update {
             let mut newly_connected = false;
             if connection.is_none() {
-                match connect(&update.snapshot) {
+                match connect(&update.snapshot, update.terminal_available) {
                     Ok((next_connection, next_service)) => {
                         connection = Some(next_connection);
                         service = Some(next_service);
@@ -105,16 +171,26 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
             let send_failed = if let (Some(active), Some(state)) = (&mut connection, &mut service) {
                 let previous = (!newly_connected).then(|| state.snapshot.clone());
                 state.snapshot = update.snapshot;
+                state.terminal_available = update.terminal_available;
                 let messages = events::messages(
                     || active.take_serial(),
                     previous.as_ref(),
                     &state.snapshot,
                     &update.events,
                 );
-                messages
+                let terminal_failed = messages
                     .iter()
                     .try_for_each(|message| active.send(message))
-                    .is_err()
+                    .is_err();
+                let mut announcement_failed = false;
+                for announcement in &update.announcements {
+                    let message = events::announcement_message(active.take_serial(), announcement);
+                    if active.send(&message).is_err() {
+                        announcement_failed = true;
+                        break;
+                    }
+                }
+                terminal_failed || announcement_failed
             } else {
                 false
             };
@@ -160,10 +236,13 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
     }
 }
 
-fn connect(snapshot: &TerminalAccessibilitySnapshot) -> io::Result<(BusConnection, ServiceState)> {
+fn connect(
+    snapshot: &TerminalAccessibilitySnapshot,
+    terminal_available: bool,
+) -> io::Result<(BusConnection, ServiceState)> {
     let address = BusConnection::accessibility_address()?;
     let mut connection = BusConnection::connect(&address)?;
-    let mut service = ServiceState::new(snapshot.clone());
+    let mut service = ServiceState::new(snapshot.clone(), terminal_available);
     service.set_bus_name(connection.unique_name().to_owned());
     let serial = connection.take_serial();
     let request = Message::method_call(
@@ -189,6 +268,20 @@ fn connect(snapshot: &TerminalAccessibilitySnapshot) -> io::Result<(BusConnectio
     service.registry_parent = (bus_name, path);
     connection.enter_nonblocking()?;
     Ok((connection, service))
+}
+
+fn empty_snapshot() -> TerminalAccessibilitySnapshot {
+    TerminalAccessibilitySnapshot {
+        session_id: String::new(),
+        title: "Terminal".to_string(),
+        text: String::new(),
+        caret: 0,
+        selection: None,
+        links: Vec::new(),
+        focused: false,
+        bell_count: 0,
+        bounds: Default::default(),
+    }
 }
 
 fn take_update(shared: &Mutex<Shared>) -> Option<PendingUpdate> {
@@ -241,6 +334,7 @@ fn drain_wake(wake: &mut UnixStream) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::console_accessibility::AnnouncementPriority;
     use crate::terminal_accessibility::TerminalAccessibilityBounds;
 
     fn snapshot(text: &str) -> TerminalAccessibilitySnapshot {
@@ -263,7 +357,11 @@ mod tests {
             pending: Some(PendingUpdate {
                 snapshot: snapshot("a"),
                 events: vec![TerminalAccessibilityEvent::TextChanged],
+                terminal_available: true,
+                announcements: VecDeque::new(),
             }),
+            latest_snapshot: snapshot("a"),
+            terminal_available: true,
         });
         {
             let mut state = shared.lock().unwrap();
@@ -283,9 +381,29 @@ mod tests {
     }
 
     #[test]
+    fn pending_announcements_preserve_bounded_fifo_payload_order() {
+        let mut pending = VecDeque::new();
+        for index in 0..ANNOUNCEMENT_CAPACITY + 3 {
+            push_bounded_announcement(
+                &mut pending,
+                AccessibilityAnnouncement {
+                    text: format!("announcement {index}"),
+                    priority: AnnouncementPriority::Medium,
+                },
+            );
+        }
+        assert_eq!(pending.len(), ANNOUNCEMENT_CAPACITY);
+        assert_eq!(pending.front().unwrap().text, "announcement 3");
+        assert_eq!(
+            pending.back().unwrap().text,
+            format!("announcement {}", ANNOUNCEMENT_CAPACITY + 2)
+        );
+    }
+
+    #[test]
     #[ignore = "requires a live Linux accessibility bus"]
     fn real_accessibility_bus_accepts_datum_registration() {
-        let (connection, service) = connect(&snapshot("Datum accessibility probe")).unwrap();
+        let (connection, service) = connect(&snapshot("Datum accessibility probe"), true).unwrap();
         assert!(connection.unique_name().starts_with(':'));
         assert_eq!(service.bus_name, connection.unique_name());
         assert!(!service.registry_parent.0.is_empty());

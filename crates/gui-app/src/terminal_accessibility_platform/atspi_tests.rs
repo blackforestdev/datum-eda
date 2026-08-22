@@ -1,4 +1,4 @@
-use super::atspi::{ServiceState, TERMINAL_PATH};
+use super::atspi::{ROOT_PATH, ServiceState, TERMINAL_PATH};
 use super::body::BodyWriter;
 use super::dbus::Message;
 use crate::terminal_accessibility::{
@@ -51,7 +51,7 @@ fn call(interface: &str, member: &str, signature: &str, body: Vec<u8>) -> Messag
 
 #[test]
 fn text_offsets_are_unicode_scalars_not_utf8_bytes() {
-    let mut service = ServiceState::new(snapshot());
+    let mut service = ServiceState::new(snapshot(), true);
     let mut body = BodyWriter::new();
     body.i32(6);
     body.i32(10);
@@ -70,7 +70,7 @@ fn text_offsets_are_unicode_scalars_not_utf8_bytes() {
 
 #[test]
 fn terminal_semantics_expose_role_selection_and_links() {
-    let mut service = ServiceState::new(snapshot());
+    let mut service = ServiceState::new(snapshot(), true);
     let role = service.dispatch(1, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
     assert_eq!(role.body_reader().u32().unwrap(), 60);
     let count = service.dispatch(2, &call(HYPERTEXT, "GetNLinks", "", Vec::new()));
@@ -94,7 +94,7 @@ fn terminal_semantics_expose_role_selection_and_links() {
 
 #[test]
 fn properties_focus_and_geometry_match_the_immutable_snapshot() {
-    let mut service = ServiceState::new(snapshot());
+    let mut service = ServiceState::new(snapshot(), true);
     let name = service.dispatch(
         1,
         &call(PROPERTIES, "Get", "ss", two_strings(ACCESSIBLE, "Name")),
@@ -130,7 +130,7 @@ fn properties_focus_and_geometry_match_the_immutable_snapshot() {
 
 #[test]
 fn malformed_object_calls_fail_closed_without_mutating_service_state() {
-    let mut service = ServiceState::new(snapshot());
+    let mut service = ServiceState::new(snapshot(), true);
     let invalid = service.dispatch(1, &call(HYPERTEXT, "GetLink", "i", i32_arg(9)));
     assert_eq!(invalid.kind, super::dbus::MessageType::Error);
     assert_eq!(service.application_id, 0);
@@ -151,6 +151,20 @@ fn malformed_object_calls_fail_closed_without_mutating_service_state() {
     );
     assert_eq!(invalid.kind, super::dbus::MessageType::Error);
     assert_eq!(service.application_id, 0);
+}
+
+#[test]
+fn application_service_has_no_terminal_child_when_started_by_console() {
+    let mut service = ServiceState::new(snapshot(), false);
+    let children = service.dispatch(
+        1,
+        &call_at(ROOT_PATH, ACCESSIBLE, "GetChildren", "", Vec::new()),
+    );
+    assert_eq!(children.header.signature, "a(so)");
+    let mut children_body = children.body_reader();
+    assert_eq!(children_body.u32().unwrap(), 0);
+    let terminal = service.dispatch(2, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
+    assert_eq!(terminal.kind, super::dbus::MessageType::Error);
 }
 
 fn call_at(path: &str, interface: &str, member: &str, signature: &str, body: Vec<u8>) -> Message {

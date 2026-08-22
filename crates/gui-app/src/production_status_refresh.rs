@@ -106,12 +106,20 @@ impl App {
         if let Some(runtime) = &mut self.runtime {
             changed |= runtime.poll_terminal_output();
             changed |= runtime.poll_scheduled_production_refresh();
+            changed |= runtime.poll_console_lifetime();
             if runtime.application_terminal_shutdown_complete() {
                 event_loop.exit();
                 return;
             }
             changed |= runtime.poll_application_terminal_shutdown();
-            next_refresh_due = runtime.next_production_refresh_due();
+            next_refresh_due = match (
+                runtime.next_production_refresh_due(),
+                runtime.next_console_refresh_due(),
+            ) {
+                (Some(a), Some(b)) => Some(a.min(b)),
+                (Some(due), None) | (None, Some(due)) => Some(due),
+                (None, None) => None,
+            };
         }
         if changed {
             self.request_redraw_if_needed();
@@ -125,6 +133,42 @@ impl App {
 }
 
 impl Runtime {
+    fn console_is_inspected(&mut self) -> bool {
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        self.prepared_scene()
+            .console_overlay_layout()
+            .is_some_and(|layout| {
+                layout.strip.contains(x, y)
+                    || layout
+                        .history_panel
+                        .is_some_and(|history| history.contains(x, y))
+            })
+    }
+
+    pub(super) fn poll_console_lifetime(&mut self) -> bool {
+        let inspected = self.console_is_inspected();
+        let changed = self
+            .session
+            .workspace_mut()
+            .ui
+            .console
+            .advance_visibility(crate::console_feedback::occurred_unix_ms(), inspected);
+        if changed {
+            self.invalidate_frame();
+        }
+        changed
+    }
+
+    pub(super) fn next_console_refresh_due(&self) -> Option<Instant> {
+        self.workspace()
+            .ui
+            .console
+            .remaining_auto_hide_ms()
+            .map(|remaining| Instant::now() + Duration::from_millis(remaining.max(1)))
+    }
+
     pub(super) fn handle_terminal_output_wake(&mut self) -> bool {
         self.terminal_sessions.acknowledge_output_poll();
         self.poll_terminal_output()

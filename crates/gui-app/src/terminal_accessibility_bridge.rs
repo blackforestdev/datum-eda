@@ -4,9 +4,13 @@
 //! AT-SPI event intent without retaining PTY bytes or inventing a second grid.
 
 use crate::Runtime;
+use crate::console_accessibility::AccessibilityAnnouncement;
 use crate::terminal_accessibility::{TerminalAccessibilityBounds, TerminalAccessibilitySnapshot};
 use crate::terminal_accessibility_platform::PlatformBridge;
 use datum_gui_protocol::ApplicationFocus;
+use std::collections::VecDeque;
+
+const ANNOUNCEMENT_LOG_CAPACITY: usize = 64;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum TerminalAccessibilityEvent {
@@ -23,6 +27,7 @@ pub(crate) struct LinuxTerminalAccessibilityBridge {
     current: Option<TerminalAccessibilitySnapshot>,
     platform: Option<PlatformBridge>,
     publish_platform: bool,
+    announcement_log: VecDeque<AccessibilityAnnouncement>,
 }
 
 impl Default for LinuxTerminalAccessibilityBridge {
@@ -31,11 +36,28 @@ impl Default for LinuxTerminalAccessibilityBridge {
             current: None,
             platform: None,
             publish_platform: true,
+            announcement_log: VecDeque::new(),
         }
     }
 }
 
 impl LinuxTerminalAccessibilityBridge {
+    pub(crate) fn announce_console(&mut self, announcement: AccessibilityAnnouncement) {
+        if self.announcement_log.len() == ANNOUNCEMENT_LOG_CAPACITY {
+            self.announcement_log.pop_front();
+        }
+        self.announcement_log.push_back(announcement.clone());
+        if !self.publish_platform {
+            return;
+        }
+        match &mut self.platform {
+            Some(platform) => platform.publish_announcement(announcement),
+            None => {
+                self.platform = PlatformBridge::start_announcement(announcement).ok();
+            }
+        }
+    }
+
     pub(crate) fn update(
         &mut self,
         next: TerminalAccessibilitySnapshot,
@@ -94,6 +116,7 @@ impl LinuxTerminalAccessibilityBridge {
             current: None,
             platform: None,
             publish_platform: false,
+            announcement_log: VecDeque::new(),
         }
     }
 }
@@ -158,5 +181,17 @@ mod tests {
             ]
         );
         assert_eq!(bridge.current().unwrap().text.chars().count(), 2);
+    }
+
+    #[test]
+    fn console_announces_without_a_terminal_snapshot() {
+        let mut bridge = LinuxTerminalAccessibilityBridge::without_platform();
+        assert!(bridge.current().is_none());
+        bridge.announce_console(AccessibilityAnnouncement {
+            text: "Action. Information: fit board".to_string(),
+            priority: crate::console_accessibility::AnnouncementPriority::Medium,
+        });
+        assert_eq!(bridge.announcement_log.len(), 1);
+        assert!(bridge.current().is_none());
     }
 }

@@ -198,6 +198,10 @@ mod tests {
             "view.fill_schematic",
             "view.preset_single",
             "view.preset_board_schematic",
+            "view.console_duration.4s",
+            "view.console_duration.6s",
+            "view.console_duration.10s",
+            "view.console_duration.never",
         ] {
             let item = by_action
                 .get(action)

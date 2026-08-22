@@ -304,6 +304,19 @@ CONSOLE-I05 publishes equivalent non-focus-stealing AT-SPI status announcements
 and proves redundant severity/text/icon semantics, inspection pause, history
 recovery, and user-adjustable duration behavior.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I05-ACCESSIBLE-LIFETIME -->
+Each typed transition maps once to an application-root AT-SPI Announcement whose
+payload redundantly names consequence class and severity. Ordinary refusals stay
+medium/polite; high priority requires an explicit critical consequence. The
+application accessibility service starts without a terminal session and exposes
+no phantom terminal child; pending payloads retain bounded FIFO order. Routine
+echoes use a six-second default, pause while the strip/history is inspected,
+then resume; prompts and refusals persist until the next action, and fading never
+removes history. View-menu actions expose 4-second, 6-second, 10-second, and Never
+auto-hide session preferences. Protocol timing/recovery tests, menu reachability,
+focus invariance, announcement shape/priority, no-terminal service, and FIFO
+tests pass.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06 -->
 CONSOLE-I06 closes routing/state tests, render goldens, owner visual review,
 accessibility evidence, dependency authority, and the explicit exclusions for

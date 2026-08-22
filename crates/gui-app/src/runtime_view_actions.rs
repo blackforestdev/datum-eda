@@ -130,6 +130,18 @@ impl Runtime {
             "view.cursor.full" => self.set_crosshair_style(CrosshairStyle::FullViewport),
             "view.cursor.small" => self.set_crosshair_style(CrosshairStyle::Local),
             "view.cursor.none" => self.set_crosshair_style(CrosshairStyle::None),
+            "view.console_duration.4s" => {
+                self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::FourSeconds)
+            }
+            "view.console_duration.6s" => {
+                self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::SixSeconds)
+            }
+            "view.console_duration.10s" => {
+                self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::TenSeconds)
+            }
+            "view.console_duration.never" => {
+                self.set_console_duration(datum_gui_protocol::ConsoleFeedbackDuration::Never)
+            }
             other => {
                 self.log_console_refusal(
                     ConsoleFeedbackSource::Viewport,
@@ -139,6 +151,28 @@ impl Runtime {
                 true
             }
         }
+    }
+
+    pub(super) fn set_console_duration(
+        &mut self,
+        duration: datum_gui_protocol::ConsoleFeedbackDuration,
+    ) -> bool {
+        self.session
+            .workspace_mut()
+            .ui
+            .console
+            .set_duration_preference(duration);
+        let label = match duration {
+            datum_gui_protocol::ConsoleFeedbackDuration::FourSeconds => "4 seconds",
+            datum_gui_protocol::ConsoleFeedbackDuration::SixSeconds => "6 seconds",
+            datum_gui_protocol::ConsoleFeedbackDuration::TenSeconds => "10 seconds",
+            datum_gui_protocol::ConsoleFeedbackDuration::Never => "never hide",
+        };
+        self.log_console_echo(
+            ConsoleFeedbackSource::Viewport,
+            format!("Console duration {label}"),
+        );
+        true
     }
 
     /// Set the cursor-crosshair style — a session UI preference, never journaled.

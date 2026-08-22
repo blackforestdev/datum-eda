@@ -36,6 +36,7 @@ mod app_shell;
 mod application_terminal_shutdown;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
+mod console_accessibility;
 mod console_feedback;
 mod gui_runtime_support;
 mod interaction_refresh;
@@ -1631,7 +1632,9 @@ impl Runtime {
     }
 
     fn publish_console_feedback(&mut self, draft: datum_gui_protocol::ConsoleFeedbackDraft) {
+        let announcement = console_accessibility::announcement_for_draft(&draft, false);
         console_feedback::publish(&mut self.session.workspace_mut().ui.console, draft);
+        self.terminal_accessibility.announce_console(announcement);
         // Visible feedback is frame state. Invalidate here rather than relying on
         // every producer to remember a separate redraw side effect.
         self.invalidate_frame();

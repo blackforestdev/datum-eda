@@ -17,7 +17,7 @@ pub(super) fn render_datum_console(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> Option<ConsoleOverlayLayout> {
-    let record = state.ui.console.latest()?;
+    let record = state.ui.console.visible_latest()?;
     let panes = shell.viewport_panes(&state.ui.layout);
     let focused = panes.focused_pane();
     let body = focused.rect.body();

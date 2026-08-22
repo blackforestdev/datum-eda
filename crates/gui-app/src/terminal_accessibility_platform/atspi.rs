@@ -49,15 +49,17 @@ pub(super) struct ServiceState {
     pub(super) application_id: i32,
     pub(super) registry_parent: (String, String),
     pub(super) bus_name: String,
+    pub(super) terminal_available: bool,
 }
 
 impl ServiceState {
-    pub(super) fn new(snapshot: TerminalAccessibilitySnapshot) -> Self {
+    pub(super) fn new(snapshot: TerminalAccessibilitySnapshot, terminal_available: bool) -> Self {
         Self {
             snapshot,
             application_id: 0,
             registry_parent: (String::new(), NULL_PATH.into()),
             bus_name: String::new(),
+            terminal_available,
         }
     }
 
@@ -136,13 +138,19 @@ impl ServiceState {
     }
 
     fn accessible(&self, path: &str, member: &str, call: &Message) -> DispatchResult {
-        let terminal = path == TERMINAL_PATH;
+        let terminal = path == TERMINAL_PATH && self.terminal_available;
         let link = link_index(path).and_then(|index| self.snapshot.links.get(index));
         if !terminal && path != ROOT_PATH && link.is_none() {
             return Err(unknown_object());
         }
         match member {
             "GetChildAtIndex" if path == ROOT_PATH => {
+                if !self.terminal_available {
+                    return Err((
+                        "org.freedesktop.DBus.Error.InvalidArgs",
+                        "child index out of range",
+                    ));
+                }
                 let mut reader = call.body_reader();
                 if reader.i32().map_err(|_| invalid_args())? != 0 {
                     return Err((
@@ -155,7 +163,8 @@ impl ServiceState {
             "GetChildren" => Ok((
                 "a(so)",
                 object_array_body(
-                    (path == ROOT_PATH).then_some((self.bus_name.as_str(), TERMINAL_PATH)),
+                    (path == ROOT_PATH && self.terminal_available)
+                        .then_some((self.bus_name.as_str(), TERMINAL_PATH)),
                 ),
             )),
             "GetIndexInParent" => Ok(("i", i32_body(if terminal { 0 } else { -1 }))),
