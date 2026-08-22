@@ -193,13 +193,13 @@ impl Runtime {
             Ok(Some(bytes)) => match self.terminal_sessions.active().write_bytes(&bytes) {
                 Ok(()) => true,
                 Err(err) => {
-                    self.log_review_event(format!("terminal mouse report failed: {err}"));
+                    self.log_terminal_event(format!("terminal mouse report failed: {err}"));
                     true
                 }
             },
             Ok(None) => false,
             Err(err) => {
-                self.log_review_event(format!("terminal mouse encoding failed: {err}"));
+                self.log_terminal_event(format!("terminal mouse encoding failed: {err}"));
                 true
             }
         }

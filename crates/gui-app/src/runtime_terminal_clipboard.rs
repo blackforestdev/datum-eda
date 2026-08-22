@@ -50,21 +50,21 @@ impl Runtime {
                     .is_none()
                 && self.pending_terminal_clipboard_write.is_none(),
         ) {
-            self.log_review_event("terminal clipboard write request denied".to_string());
+            self.log_terminal_event("terminal clipboard write request denied".to_string());
             return false;
         }
         let selection = match request.selection {
             ClipboardSelection::Clipboard => TerminalClipboardSelection::Clipboard,
             ClipboardSelection::Primary => TerminalClipboardSelection::Primary,
             ClipboardSelection::Select => {
-                self.log_review_event("unsupported terminal select-clipboard request denied");
+                self.log_terminal_event("unsupported terminal select-clipboard request denied");
                 return false;
             }
         };
         let text = match decode_clipboard_text(&request.encoded_contents) {
             Ok(text) => text,
             Err(error) => {
-                self.log_review_event(format!("terminal clipboard payload rejected: {error}"));
+                self.log_terminal_event(format!("terminal clipboard payload rejected: {error}"));
                 return false;
             }
         };
@@ -176,9 +176,9 @@ impl Runtime {
             .terminal
             .clipboard_confirmation = None;
         if let Err(error) = result {
-            self.log_review_event(format!("terminal clipboard write failed: {error}"));
+            self.log_terminal_event(format!("terminal clipboard write failed: {error}"));
         } else {
-            self.log_review_event("confirmed terminal clipboard write".to_string());
+            self.log_terminal_event("confirmed terminal clipboard write".to_string());
         }
         self.invalidate_frame();
         true

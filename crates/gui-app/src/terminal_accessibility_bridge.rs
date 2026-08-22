@@ -121,7 +121,7 @@ impl Runtime {
                 self.terminal_accessibility.update(snapshot);
             }
             Err(error) => {
-                self.log_review_event(format!("terminal accessibility refresh failed: {error}"));
+                self.log_terminal_event(format!("terminal accessibility refresh failed: {error}"));
             }
         }
     }

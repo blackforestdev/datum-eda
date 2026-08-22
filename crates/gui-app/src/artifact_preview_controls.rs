@@ -1,4 +1,4 @@
-use datum_gui_protocol::{DockTab, SessionCommand};
+use datum_gui_protocol::{ConsoleFeedbackSource, DockTab, SessionCommand};
 use datum_gui_render::{HitTarget, PreparedScene};
 
 use super::Runtime;
@@ -33,7 +33,7 @@ impl Runtime {
         };
         let handled = self.dispatch_session_command(command);
         if handled {
-            self.log_review_event(event.to_string());
+            self.log_console_echo(ConsoleFeedbackSource::Production, event.to_string());
         }
         Some(handled)
     }

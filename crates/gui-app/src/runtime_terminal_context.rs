@@ -15,7 +15,7 @@ impl Runtime {
                 self.terminal_launch_context = context;
             }
             Err(err) => {
-                self.log_review_event(format!("terminal context refresh failed: {err}"));
+                self.log_terminal_event(format!("terminal context refresh failed: {err}"));
             }
         }
         let elapsed_ms = started.elapsed().as_millis();

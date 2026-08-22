@@ -256,6 +256,17 @@ decision-033 routing matrix: GUI action feedback may enter the Console; terminal
 lifecycle, Notices, progress, and ERC/DRC findings remain with their owning
 surfaces.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I02-CONSEQUENCE-ROUTING -->
+The former 103-call catch-all migration is complete: direct GUI consequences now
+publish typed action echoes, tool prompts, or refusals with Menu, Tool, Viewport,
+Selection, or Production sources. Terminal input, clipboard, context, dock,
+link, pointer, accessibility, session, restart, shutdown, and handoff failures
+route to terminal chrome; production refresh status stays on the production
+surface; check-finding selection stays on the checks surface. The legacy
+`log_review_event` symbol is absent. Focused routing tests scan the terminal,
+production-refresh, and check-finding producer boundaries to prevent regression,
+and targeted protocol/application tests pass under the guarded Cargo policy.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I03 -->
 CONSOLE-I03 renders Candidate A only at the lower-left of the focused pane as an
 overlay that reserves zero canvas geometry, with explicit tiled, maximized,

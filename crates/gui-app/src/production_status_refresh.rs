@@ -158,7 +158,6 @@ impl Runtime {
                 self.terminal_production_refresh_due = None;
                 self.terminal_production_refresh_attempts = 0;
                 self.invalidate_scene();
-                self.log_review_event("workspace scene/status refreshed".to_string());
                 true
             }
             Ok(ProductionStatusRefresh::Unchanged) => {
@@ -180,7 +179,9 @@ impl Runtime {
                 self.terminal_workspace_refresh_pending = false;
                 self.terminal_production_refresh_due = None;
                 self.terminal_production_refresh_attempts = 0;
-                self.log_review_event(format!("production status refresh failed: {err}"));
+                self.session.workspace_mut().production.latest_status =
+                    Some(format!("production status refresh failed: {err}"));
+                self.invalidate_frame();
                 true
             }
         }
@@ -206,7 +207,7 @@ impl Runtime {
                 &self.terminal_launch_context,
             )
             .unwrap_or_else(|error| {
-                self.log_review_event(format!("terminal restart completion failed: {error}"));
+                self.log_terminal_event(format!("terminal restart completion failed: {error}"));
                 false
             });
         if report.events == 0
@@ -219,7 +220,7 @@ impl Runtime {
             return false;
         }
         if restarted {
-            self.log_review_event("terminal session restarted after verified teardown");
+            self.log_terminal_event("terminal session restarted after verified teardown");
         }
         for request in report.clipboard_requests {
             self.handle_terminal_clipboard_write_request(request);
@@ -228,7 +229,7 @@ impl Runtime {
             self.handle_terminal_notification(notification);
         }
         for notice in spawn_notices {
-            self.log_review_event(notice);
+            self.log_terminal_event(notice);
         }
         if (self.terminal_production_refresh_pending || self.terminal_workspace_refresh_pending)
             && self.terminal_production_refresh_due.is_none()
@@ -237,7 +238,7 @@ impl Runtime {
                 Some(Instant::now() + TERMINAL_PRODUCTION_REFRESH_DELAY);
         }
         for notice in report.notices {
-            self.log_review_event(notice);
+            self.log_terminal_event(notice);
         }
         if report.tabs_changed || spawned {
             self.sync_terminal_tabs();

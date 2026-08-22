@@ -21,6 +21,11 @@ pub enum ConsoleFeedbackSeverity {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ConsoleFeedbackSource {
     Editor,
+    Menu,
+    Tool,
+    Viewport,
+    Selection,
+    Production,
     Workspace,
 }
 
@@ -68,11 +73,15 @@ impl ConsoleFeedbackDraft {
         }
     }
 
-    pub fn tool_prompt(occurred_unix_ms: u64, message: impl Into<String>) -> Self {
+    pub fn tool_prompt(
+        source: ConsoleFeedbackSource,
+        occurred_unix_ms: u64,
+        message: impl Into<String>,
+    ) -> Self {
         Self {
             occurred_unix_ms,
             severity: ConsoleFeedbackSeverity::Informational,
-            source: ConsoleFeedbackSource::Editor,
+            source,
             category: ConsoleFeedbackCategory::ToolPrompt,
             lifetime: ConsoleFeedbackLifetime::PersistentUntilNextAction,
             message: message.into(),
@@ -81,11 +90,15 @@ impl ConsoleFeedbackDraft {
         }
     }
 
-    pub fn action_refusal(occurred_unix_ms: u64, message: impl Into<String>) -> Self {
+    pub fn action_refusal(
+        source: ConsoleFeedbackSource,
+        occurred_unix_ms: u64,
+        message: impl Into<String>,
+    ) -> Self {
         Self {
             occurred_unix_ms,
             severity: ConsoleFeedbackSeverity::Error,
-            source: ConsoleFeedbackSource::Editor,
+            source,
             category: ConsoleFeedbackCategory::ActionRefusal,
             lifetime: ConsoleFeedbackLifetime::PersistentUntilNextAction,
             message: message.into(),
@@ -217,9 +230,13 @@ mod tests {
     fn refusal_is_persistent_typed_output() {
         let mut state = ConsoleFeedbackState::default();
         state.publish(
-            ConsoleFeedbackDraft::action_refusal(42, "select a board text object first")
-                .with_action_id("datum.board_text.edit")
-                .with_target_id("board:main"),
+            ConsoleFeedbackDraft::action_refusal(
+                ConsoleFeedbackSource::Tool,
+                42,
+                "select a board text object first",
+            )
+            .with_action_id("datum.board_text.edit")
+            .with_target_id("board:main"),
         );
 
         let record = state.latest().unwrap();

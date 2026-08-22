@@ -146,7 +146,7 @@ impl Runtime {
         let path = drag.path.clone();
         let ratio = drag.ratio_millis_at(pointer);
         if let Err(error) = self.terminal_sessions.set_active_split_ratio(&path, ratio) {
-            self.log_review_event(format!("terminal split resize failed: {error}"));
+            self.log_terminal_event(format!("terminal split resize failed: {error}"));
             self.terminal_split_drag = None;
             return false;
         }
@@ -244,7 +244,7 @@ impl Runtime {
                 .terminal_sessions
                 .reorder_session(drag.session_id(), target_id)
         {
-            self.log_review_event(format!("terminal tab reorder failed: {err}"));
+            self.log_terminal_event(format!("terminal tab reorder failed: {err}"));
         }
         self.select_hit_target(&HitTarget::TerminalSessionTab(
             drag.session_id().to_string(),
@@ -497,7 +497,7 @@ impl Runtime {
             }
             Err(err) => {
                 append_gui_diagnostic_line(format!("terminal resize failed: {err}"));
-                self.log_review_event(format!("terminal resize failed: {err}"));
+                self.log_terminal_event(format!("terminal resize failed: {err}"));
             }
         }
     }

@@ -40,7 +40,7 @@ impl Runtime {
                 if failures.is_empty() { "" } else { ": " },
                 failures
             );
-            self.log_review_event(status.clone());
+            self.log_terminal_event(status.clone());
             self.session
                 .workspace_mut()
                 .ui

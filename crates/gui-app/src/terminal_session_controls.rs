@@ -74,7 +74,7 @@ impl Runtime {
             .begin_spawn_and_activate(&context, &mut self.session.workspace_mut().ui.terminal)
         {
             Ok(pending_id) => {
-                self.log_review_event(format!("opening terminal session {pending_id}"));
+                self.log_terminal_event(format!("opening terminal session {pending_id}"));
                 self.set_active_dock(DockTab::Terminal);
                 self.sync_terminal_tabs();
                 self.invalidate_frame();
@@ -82,7 +82,7 @@ impl Runtime {
             Err(err) => {
                 let message = format!("terminal session open failed: {err}");
                 self.session.workspace_mut().ui.terminal.status = message.clone();
-                self.log_review_event(message);
+                self.log_terminal_event(message);
                 self.invalidate_frame();
             }
         }
@@ -105,7 +105,7 @@ impl Runtime {
             direction,
         ) {
             Ok(pending_id) => {
-                self.log_review_event(format!("opening terminal split {pending_id}"));
+                self.log_terminal_event(format!("opening terminal split {pending_id}"));
                 self.set_active_dock(DockTab::Terminal);
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
@@ -114,7 +114,7 @@ impl Runtime {
             Err(err) => {
                 let message = format!("terminal split open failed: {err}");
                 self.session.workspace_mut().ui.terminal.status = message.clone();
-                self.log_review_event(message);
+                self.log_terminal_event(message);
                 self.invalidate_frame();
             }
         }
@@ -132,7 +132,7 @@ impl Runtime {
                 self.sync_terminal_tabs();
                 self.resize_terminal_to_dock();
             }
-            Err(err) => self.log_review_event(format!("terminal session close failed: {err}")),
+            Err(err) => self.log_terminal_event(format!("terminal session close failed: {err}")),
         }
         true
     }
@@ -149,9 +149,8 @@ impl Runtime {
                 self.resize_terminal_to_dock();
                 self.invalidate_frame();
             }
-            Err(err) => {
-                self.log_review_event(format!("terminal session {session_id} close failed: {err}"))
-            }
+            Err(err) => self
+                .log_terminal_event(format!("terminal session {session_id} close failed: {err}")),
         }
         true
     }

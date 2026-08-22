@@ -14,22 +14,30 @@ fn terminal_owns_maximize(focus: ApplicationFocus, active_dock: Option<DockTab>)
     focus == ApplicationFocus::Terminal && active_dock == Some(DockTab::Terminal)
 }
 
+fn style_label(style: datum_gui_protocol::CrosshairStyle) -> &'static str {
+    match style {
+        datum_gui_protocol::CrosshairStyle::FullViewport => "full viewport",
+        datum_gui_protocol::CrosshairStyle::Local => "local",
+        datum_gui_protocol::CrosshairStyle::None => "off",
+    }
+}
+
 impl Runtime {
     pub(super) fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
         match action {
             "view.fit" => {
                 self.fit_camera();
-                self.log_review_event("menu view.fit".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
                 true
             }
             "view.zoom_in" => {
                 self.zoom_focused_view(1.2);
-                self.log_review_event("menu view.zoom_in".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "view zoom in");
                 true
             }
             "view.zoom_out" => {
                 self.zoom_focused_view(1.0 / 1.2);
-                self.log_review_event("menu view.zoom_out".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "view zoom out");
                 true
             }
             "terminal.toggle" => {
@@ -45,27 +53,27 @@ impl Runtime {
             // them here keeps the ops reachable through the one action dispatch.
             "view.split_vertical" => {
                 self.pane_split_focused(datum_gui_protocol::SplitOrientation::Vertical);
-                self.log_review_event("menu view.split_vertical".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "split pane vertical");
                 true
             }
             "view.split_horizontal" => {
                 self.pane_split_focused(datum_gui_protocol::SplitOrientation::Horizontal);
-                self.log_review_event("menu view.split_horizontal".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "split pane horizontal");
                 true
             }
             "view.close_pane" => {
                 self.pane_close_focused();
-                self.log_review_event("menu view.close_pane".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "close focused pane");
                 true
             }
             "view.focus_next" => {
                 self.pane_focus_next();
-                self.log_review_event("menu view.focus_next".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "focus next pane");
                 true
             }
             "view.focus_prev" => {
                 self.pane_focus_prev();
-                self.log_review_event("menu view.focus_prev".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "focus previous pane");
                 true
             }
             "view.maximize_pane" => {
@@ -77,27 +85,33 @@ impl Runtime {
                 } else {
                     self.pane_toggle_zoom();
                 }
-                self.log_review_event("menu view.maximize_pane".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "toggle pane maximize");
                 true
             }
             "view.preset_single" => {
                 self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::Single);
-                self.log_review_event("menu view.preset_single".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "workspace preset single");
                 true
             }
             "view.preset_board_schematic" => {
                 self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::BoardSchematic);
-                self.log_review_event("menu view.preset_board_schematic".to_string());
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    "workspace preset board and schematic",
+                );
                 true
             }
             "view.fill_board" => {
                 self.pane_set_focused_content(datum_gui_protocol::PaneContent::Board);
-                self.log_review_event("menu view.fill_board".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "focused pane shows board");
                 true
             }
             "view.fill_schematic" => {
                 self.pane_set_focused_content(datum_gui_protocol::PaneContent::Schematic);
-                self.log_review_event("menu view.fill_schematic".to_string());
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    "focused pane shows schematic",
+                );
                 true
             }
             // Secondary view-local actions (crosshair radio group, decision 023)
@@ -117,7 +131,10 @@ impl Runtime {
             "view.cursor.small" => self.set_crosshair_style(CrosshairStyle::Local),
             "view.cursor.none" => self.set_crosshair_style(CrosshairStyle::None),
             other => {
-                self.log_review_event(format!("menu action {other} is view-local but unwired"));
+                self.log_console_refusal(
+                    ConsoleFeedbackSource::Viewport,
+                    format!("view action {other} is unavailable"),
+                );
                 self.invalidate_frame();
                 true
             }
@@ -132,7 +149,10 @@ impl Runtime {
     ) -> bool {
         if self.session.workspace().ui.crosshair_style != style {
             self.session.workspace_mut().ui.crosshair_style = style;
-            self.log_review_event(format!("crosshair style {style:?}"));
+            self.log_console_echo(
+                ConsoleFeedbackSource::Viewport,
+                format!("crosshair style {}", style_label(style)),
+            );
             self.refresh_interaction_overlay();
         }
         true

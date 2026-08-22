@@ -26,7 +26,7 @@ impl Runtime {
         let Some(command) = self.selected_board_text().map(|text| {
             board_text_edit_terminal_command(text, BoardTextEditTerminalField::Content)
         }) else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(command, "editing selected board text content")
@@ -37,7 +37,7 @@ impl Runtime {
             .selected_board_text()
             .map(|text| board_text_edit_terminal_command(text, BoardTextEditTerminalField::Height))
         else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(command, "editing selected board text height")
@@ -47,7 +47,7 @@ impl Runtime {
         let Some(command) = self.selected_board_text().map(|text| {
             board_text_edit_terminal_command(text, BoardTextEditTerminalField::Rotation)
         }) else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(command, "editing selected board text rotation")
@@ -57,7 +57,7 @@ impl Runtime {
         let Some(command) = self.selected_board_text().map(|text| {
             board_text_edit_terminal_command(text, BoardTextEditTerminalField::LineSpacing)
         }) else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(
@@ -70,7 +70,7 @@ impl Runtime {
         let Some(command) = self.selected_board_text().map(|text| {
             board_text_edit_terminal_command(text, BoardTextEditTerminalField::RenderIntent)
         }) else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(
@@ -84,7 +84,7 @@ impl Runtime {
             .selected_board_text()
             .map(|text| board_text_edit_terminal_command(text, BoardTextEditTerminalField::Family))
         else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(command, "editing selected board text font")
@@ -94,7 +94,7 @@ impl Runtime {
         let Some(command) = self.selected_board_text().map(|text| {
             board_text_edit_terminal_command(text, BoardTextEditTerminalField::Alignment)
         }) else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(
@@ -116,11 +116,11 @@ impl Runtime {
             "prefill",
             &command,
         ) {
-            self.log_review_event(format!("terminal handoff event write failed: {err}"));
+            self.log_terminal_event(format!("terminal handoff event write failed: {err}"));
         }
         self.write_foreign_shell_bytes(command.as_bytes());
         self.invalidate_frame();
-        self.log_review_event(event.into());
+        self.log_console_echo(ConsoleFeedbackSource::Tool, event.into());
         true
     }
 
@@ -200,7 +200,7 @@ impl Runtime {
             .selected_board_text()
             .map(|text| board_text_quick_edit_terminal_command(text, action))
         else {
-            self.log_review_event("no board text selected".to_string());
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, "no board text selected");
             return false;
         };
         self.begin_selected_board_text_command_edit(command, event)

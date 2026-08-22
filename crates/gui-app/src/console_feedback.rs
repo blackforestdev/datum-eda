@@ -1,6 +1,6 @@
 //! Output-only Datum Console publication boundary (decision 033).
 
-use datum_gui_protocol::{ConsoleFeedbackDraft, ConsoleFeedbackSource, ConsoleFeedbackState};
+use datum_gui_protocol::{ConsoleFeedbackDraft, ConsoleFeedbackState};
 
 pub(super) fn occurred_unix_ms() -> u64 {
     std::time::SystemTime::now()
@@ -11,22 +11,16 @@ pub(super) fn occurred_unix_ms() -> u64 {
         .unwrap_or(u64::MAX)
 }
 
-pub(super) fn route_gui_action_echo(
-    console: &mut ConsoleFeedbackState,
-    message: impl Into<String>,
-) -> u64 {
-    console.publish(ConsoleFeedbackDraft::action_echo(
-        ConsoleFeedbackSource::Editor,
-        occurred_unix_ms(),
-        message,
-    ))
+pub(super) fn publish(console: &mut ConsoleFeedbackState, draft: ConsoleFeedbackDraft) -> u64 {
+    console.publish(draft)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::route_gui_action_echo;
+    use super::{occurred_unix_ms, publish};
     use datum_gui_protocol::{
-        ConsoleFeedbackCategory, ConsoleFeedbackSource, ConsoleFeedbackState, TerminalLaneState,
+        ConsoleFeedbackCategory, ConsoleFeedbackDraft, ConsoleFeedbackSource, ConsoleFeedbackState,
+        TerminalLaneState,
     };
 
     #[test]
@@ -35,12 +29,51 @@ mod tests {
         let terminal = TerminalLaneState::default();
         let terminal_before = terminal.clone();
 
-        route_gui_action_echo(&mut console, "fit board");
+        publish(
+            &mut console,
+            ConsoleFeedbackDraft::action_echo(
+                ConsoleFeedbackSource::Viewport,
+                occurred_unix_ms(),
+                "fit board",
+            ),
+        );
 
         let record = console.latest().unwrap();
-        assert_eq!(record.source, ConsoleFeedbackSource::Editor);
+        assert_eq!(record.source, ConsoleFeedbackSource::Viewport);
         assert_eq!(record.category, ConsoleFeedbackCategory::ActionEcho);
         assert_eq!(record.message, "fit board");
         assert_eq!(terminal, terminal_before);
+    }
+
+    #[test]
+    fn terminal_progress_and_findings_producers_stay_outside_console() {
+        let terminal_owned_sources = [
+            include_str!("application_terminal_shutdown.rs"),
+            include_str!("runtime_terminal_clipboard.rs"),
+            include_str!("runtime_terminal_context.rs"),
+            include_str!("runtime_terminal_dock.rs"),
+            include_str!("runtime_terminal_input.rs"),
+            include_str!("runtime_terminal_links.rs"),
+            include_str!("runtime_terminal_pointer.rs"),
+            include_str!("terminal_accessibility_bridge.rs"),
+            include_str!("terminal_session_controls.rs"),
+        ];
+        for source in terminal_owned_sources {
+            assert!(!source.contains("log_console_"));
+            assert!(!source.contains("log_review_event"));
+        }
+
+        let production_refresh = include_str!("production_status_refresh.rs");
+        assert!(!production_refresh.contains("log_console_"));
+        assert!(!production_refresh.contains("log_review_event"));
+
+        let runtime = include_str!("main.rs");
+        assert!(!runtime.contains("log_review_event"));
+        let finding_branch = runtime
+            .split("HitTarget::CheckFinding(fingerprint) =>")
+            .nth(1)
+            .and_then(|tail| tail.split("HitTarget::FitBoard =>").next())
+            .expect("check-finding route remains present");
+        assert!(!finding_branch.contains("log_console_"));
     }
 }

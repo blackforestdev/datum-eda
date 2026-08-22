@@ -31,13 +31,13 @@ impl Runtime {
                 follow_live_terminal_input(&mut self.session.workspace_mut().ui.terminal);
                 self.invalidate_frame();
             }
-            Ok(false) => self.log_review_event(
+            Ok(false) => self.log_terminal_event(
                 "terminal session is starting; input is not ready yet".to_string(),
             ),
             Err(err) => {
                 let message = format!("terminal input refused: {err}");
                 self.session.workspace_mut().ui.terminal.status = message.clone();
-                self.log_review_event(message);
+                self.log_terminal_event(message);
                 self.invalidate_frame();
             }
         }
@@ -121,7 +121,7 @@ impl Runtime {
                 true
             }
             Err(err) => {
-                self.log_review_event(format!("terminal IME encoding failed: {err}"));
+                self.log_terminal_event(format!("terminal IME encoding failed: {err}"));
                 true
             }
         }

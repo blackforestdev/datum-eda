@@ -3,11 +3,12 @@ use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
 use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
-    BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, HoverTarget, LiveDesignSession,
-    LiveReviewRequest, MarkingMenuState, PaneContent, PointNm, RectNm, SceneBounds, SessionCommand,
-    SessionEvent, TerminalCommandHandoff, WorkspaceTool, ensure_known_good_demo_request,
-    load_board_editor_workspace_state, load_kicad_schematic_workspace_state,
-    load_live_workspace_state, materialize_kicad_board_request,
+    BoardTextLineSpacingStep, BoardTextRotationStep, ConsoleFeedbackSource, DockTab, HoverTarget,
+    LiveDesignSession, LiveReviewRequest, MarkingMenuState, PaneContent, PointNm, RectNm,
+    SceneBounds, SessionCommand, SessionEvent, TerminalCommandHandoff, WorkspaceTool,
+    ensure_known_good_demo_request, load_board_editor_workspace_state,
+    load_kicad_schematic_workspace_state, load_live_workspace_state,
+    materialize_kicad_board_request,
 };
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
@@ -1330,9 +1331,9 @@ impl Runtime {
 
     // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
     // deliberately NO `push_terminal_line` here. Terminal cells are mutated
-    // only by PTY bytes interpreted by the terminal core; Datum notices,
-    // diagnostics, and lifecycle messages route through `log_review_event`
-    // (console sink) or terminal chrome, never the grid.
+    // only by PTY bytes interpreted by the terminal core. Terminal lifecycle
+    // and diagnostic messages stay in terminal chrome, never the Datum Console
+    // or the terminal grid.
 
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
         if self.handle_terminal_clipboard_confirmation_key(event) {
@@ -1361,7 +1362,7 @@ impl Runtime {
                     Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
                     Ok(None) => true,
                     Err(err) => {
-                        self.log_review_event(format!("terminal key encoding failed: {err}"));
+                        self.log_terminal_event(format!("terminal key encoding failed: {err}"));
                         true
                     }
                 }
@@ -1449,11 +1450,11 @@ impl Runtime {
         match self.terminal_sessions.encode_active_focus(input) {
             Ok(Some(bytes)) => {
                 if let Err(err) = self.terminal_sessions.active().write_bytes(&bytes) {
-                    self.log_review_event(format!("terminal focus report failed: {err}"));
+                    self.log_terminal_event(format!("terminal focus report failed: {err}"));
                 }
             }
             Ok(None) => {}
-            Err(err) => self.log_review_event(format!("terminal focus encoding failed: {err}")),
+            Err(err) => self.log_terminal_event(format!("terminal focus encoding failed: {err}")),
         }
     }
 
@@ -1463,7 +1464,7 @@ impl Runtime {
             .terminate_active(&mut self.session.workspace_mut().ui.terminal)
         {
             Ok(()) => {}
-            Err(err) => self.log_review_event(format!("terminal terminate failed: {err}")),
+            Err(err) => self.log_terminal_event(format!("terminal terminate failed: {err}")),
         }
         self.sync_terminal_tabs();
         self.invalidate_frame();
@@ -1475,10 +1476,12 @@ impl Runtime {
             &self.terminal_launch_context,
         ) {
             Ok(()) => {
-                self.log_review_event("terminal restart requested; waiting for verified teardown");
+                self.log_terminal_event(
+                    "terminal restart requested; waiting for verified teardown",
+                );
                 self.resize_terminal_to_dock();
             }
-            Err(err) => self.log_review_event(format!("terminal restart failed: {err}")),
+            Err(err) => self.log_terminal_event(format!("terminal restart failed: {err}")),
         }
         self.terminal_production_refresh_pending = false;
         self.terminal_workspace_refresh_pending = false;
@@ -1493,7 +1496,7 @@ impl Runtime {
             .terminal_sessions
             .activate_with_lane(session_id, &mut self.session.workspace_mut().ui.terminal)
         {
-            self.log_review_event(format!("terminal session activate failed: {err}"));
+            self.log_terminal_event(format!("terminal session activate failed: {err}"));
             return true;
         }
         self.set_active_dock(DockTab::Terminal);
@@ -1513,16 +1516,16 @@ impl Runtime {
             Err(_) => return false,
         };
         if self.write_clipboard_text(&text).is_err() {
-            self.log_review_event("clipboard copy failed".to_string());
+            self.log_terminal_event("clipboard copy failed".to_string());
             return true;
         }
-        self.log_review_event("terminal text copied".to_string());
+        self.log_terminal_event("terminal text copied".to_string());
         true
     }
 
     fn paste_terminal_input(&mut self) -> bool {
         let Ok(text) = self.read_clipboard_text() else {
-            self.log_review_event("clipboard paste failed".to_string());
+            self.log_terminal_event("clipboard paste failed".to_string());
             return false;
         };
         if text.is_empty() {
@@ -1534,7 +1537,7 @@ impl Runtime {
                     Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
                     Ok(None) => false,
                     Err(err) => {
-                        self.log_review_event(format!("terminal paste encoding failed: {err}"));
+                        self.log_terminal_event(format!("terminal paste encoding failed: {err}"));
                         true
                     }
                 }
@@ -1623,16 +1626,47 @@ impl Runtime {
         Ok(())
     }
 
-    fn log_review_event(&mut self, message: impl Into<String>) {
-        // Transitional I01 route: typed output-only Console publication, never
-        // terminal input or a design mutation. I02 classifies callers so terminal
-        // lifecycle, Notices, progress, and findings retain their own homes.
-        console_feedback::route_gui_action_echo(
-            &mut self.session.workspace_mut().ui.console,
-            message,
-        );
+    fn publish_console_feedback(&mut self, draft: datum_gui_protocol::ConsoleFeedbackDraft) {
+        console_feedback::publish(&mut self.session.workspace_mut().ui.console, draft);
         // Visible feedback is frame state. Invalidate here rather than relying on
         // every producer to remember a separate redraw side effect.
+        self.invalidate_frame();
+    }
+
+    fn log_console_echo(
+        &mut self,
+        source: datum_gui_protocol::ConsoleFeedbackSource,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::action_echo(
+            source,
+            console_feedback::occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    fn log_console_refusal(&mut self, source: ConsoleFeedbackSource, message: impl Into<String>) {
+        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::action_refusal(
+            source,
+            console_feedback::occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    fn log_console_tool_prompt(
+        &mut self,
+        source: ConsoleFeedbackSource,
+        message: impl Into<String>,
+    ) {
+        self.publish_console_feedback(datum_gui_protocol::ConsoleFeedbackDraft::tool_prompt(
+            source,
+            console_feedback::occurred_unix_ms(),
+            message,
+        ));
+    }
+
+    fn log_terminal_event(&mut self, message: impl Into<String>) {
+        self.session.workspace_mut().ui.terminal.status = message.into();
         self.invalidate_frame();
     }
 
@@ -1685,16 +1719,19 @@ impl Runtime {
 
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
         if !matches!(tool, WorkspaceTool::Select) {
-            self.log_review_event(format!(
-                "{} is disabled in the Phase 1 read-only GUI",
-                tool.label()
-            ));
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                format!("{} is disabled in the Phase 1 read-only GUI", tool.label()),
+            );
             self.invalidate_frame();
             return true;
         }
         let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
         if handled {
-            self.log_review_event(format!("tool {}", tool.label()));
+            self.log_console_tool_prompt(
+                ConsoleFeedbackSource::Tool,
+                format!("tool {}", tool.label()),
+            );
         }
         handled
     }
@@ -1751,7 +1788,10 @@ impl Runtime {
                     .workspace_mut()
                     .finish_place_board_via_handoff(world)
                 else {
-                    self.log_review_event("place via requires a board net context".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "place via requires a board net context".to_string(),
+                    );
                     self.invalidate_frame();
                     return true;
                 };
@@ -1765,7 +1805,10 @@ impl Runtime {
                     .workspace_mut()
                     .finish_place_board_text_handoff(world)
                 else {
-                    self.log_review_event("place text requires project backing".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "place text requires project backing".to_string(),
+                    );
                     self.invalidate_frame();
                     return true;
                 };
@@ -1779,7 +1822,10 @@ impl Runtime {
                     .workspace_mut()
                     .finish_move_component_handoff(world)
                 else {
-                    self.log_review_event("move requires a selected component target".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "move requires a selected component target".to_string(),
+                    );
                     self.invalidate_frame();
                     return true;
                 };
@@ -1789,21 +1835,33 @@ impl Runtime {
             }
             WorkspaceTool::Move => {
                 let Some(target) = target_object_id.clone() else {
-                    self.log_review_event("move requires clicking a component first".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "move requires clicking a component first".to_string(),
+                    );
                     return true;
                 };
                 if !target.starts_with("component:") {
-                    self.log_review_event("move currently supports components only".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "move currently supports components only".to_string(),
+                    );
                     return true;
                 }
             }
             WorkspaceTool::Delete => {
                 let Some(target) = target_object_id else {
-                    self.log_review_event("delete requires an authored object target".to_string());
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "delete requires an authored object target".to_string(),
+                    );
                     return true;
                 };
                 let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {
-                    self.log_review_event(format!("delete unsupported target {target}"));
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        format!("delete unsupported target {target}"),
+                    );
                     return true;
                 };
                 self.queue_authoring_terminal_handoff(handoff, "delete-authored-object");
@@ -1851,7 +1909,8 @@ impl Runtime {
             .is_some_and(|backing| backing.request.board_file.is_some())
         {
             self.set_active_dock(DockTab::Terminal);
-            self.log_review_event(
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
                 "authoring tools require a native Datum project; open with --project-root instead of --board <kicad_pcb>"
                     .to_string(),
             );
@@ -1865,13 +1924,16 @@ impl Runtime {
             &handoff,
         )
         .unwrap_or_else(|err| {
-            self.log_review_event(format!("terminal handoff prepare failed: {err}"));
+            self.log_terminal_event(format!("terminal handoff prepare failed: {err}"));
             handoff.command.clone()
         });
         let mut bytes = command.into_bytes();
         bytes.push(b'\r');
         self.write_foreign_shell_bytes(&bytes);
-        self.log_review_event(format!("queued authoring command {event_label}"));
+        self.log_console_echo(
+            ConsoleFeedbackSource::Tool,
+            format!("queued authoring command {event_label}"),
+        );
     }
 
     fn handle_primary_click(&mut self) -> bool {
@@ -1891,7 +1953,10 @@ impl Runtime {
             self.set_application_focus(keyboard_focus::focus_after_canvas_click(pane_id));
             if pane_id != self.workspace().ui.layout.focused {
                 self.swap_pane_focus(|layout| layout.focused = pane_id);
-                self.log_review_event(format!("click-to-focus pane {}", pane_id.0));
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    format!("focused pane {}", pane_id.0),
+                );
                 self.trace_click(format!(
                     "primary click ({x:.1}, {y:.1}) focus-swapped to pane {}",
                     pane_id.0
@@ -2032,7 +2097,10 @@ impl Runtime {
                     action_id.clone(),
                 ));
                 if handled {
-                    self.log_review_event(format!("selected review action {action_id}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Selection,
+                        format!("selected review action {action_id}"),
+                    );
                 }
                 handled
             }
@@ -2042,7 +2110,10 @@ impl Runtime {
                 ));
                 if handled {
                     self.session.workspace_mut().ui.hovered_object = None;
-                    self.log_review_event(format!("selected authored object {object_id}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Selection,
+                        format!("selected authored object {object_id}"),
+                    );
                 }
                 handled
             }
@@ -2070,26 +2141,23 @@ impl Runtime {
                             surface: PaneContent::Board,
                         });
                     if let Some(target) = target {
-                        let fit = self.fit_scene_object(&target);
-                        self.log_review_event(format!(
-                            "selected check finding {fingerprint}; target {target}{}",
-                            if fit { "; fit" } else { "" }
-                        ));
-                    } else {
-                        self.log_review_event(format!("selected check finding {fingerprint}"));
+                        self.fit_scene_object(&target);
                     }
                 }
                 handled
             }
             HitTarget::FitBoard => {
                 self.fit_camera();
-                self.log_review_event("fit board".to_string());
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, "fit board");
                 true
             }
             HitTarget::FitReviewTarget => {
                 let handled = self.fit_review_target();
                 if handled {
-                    self.log_review_event("fit active review target".to_string());
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        "fit active review target",
+                    );
                 }
                 handled
             }
@@ -2098,14 +2166,20 @@ impl Runtime {
                 let handled =
                     self.dispatch_session_command(SessionCommand::SelectPreviousReviewAction);
                 if handled {
-                    self.log_review_event("selected previous review action".to_string());
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Selection,
+                        "selected previous review action",
+                    );
                 }
                 handled
             }
             HitTarget::ReviewNext => {
                 let handled = self.dispatch_session_command(SessionCommand::SelectNextReviewAction);
                 if handled {
-                    self.log_review_event("selected next review action".to_string());
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Selection,
+                        "selected next review action",
+                    );
                 }
                 handled
             }
@@ -2117,7 +2191,10 @@ impl Runtime {
                     } else {
                         "off"
                     };
-                    self.log_review_event(format!("authored visibility {state}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        format!("authored visibility {state}"),
+                    );
                 }
                 handled
             }
@@ -2129,7 +2206,10 @@ impl Runtime {
                     } else {
                         "off"
                     };
-                    self.log_review_event(format!("proposal visibility {state}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        format!("proposal visibility {state}"),
+                    );
                 }
                 handled
             }
@@ -2141,7 +2221,10 @@ impl Runtime {
                     } else {
                         "off"
                     };
-                    self.log_review_event(format!("unrouted visibility {state}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        format!("unrouted visibility {state}"),
+                    );
                 }
                 handled
             }
@@ -2153,7 +2236,10 @@ impl Runtime {
                     } else {
                         "off"
                     };
-                    self.log_review_event(format!("dim unrelated {state}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        format!("dim unrelated {state}"),
+                    );
                 }
                 handled
             }
@@ -2173,7 +2259,10 @@ impl Runtime {
                         .copied()
                         .unwrap_or(true);
                     let state = if visible { "visible" } else { "hidden" };
-                    self.log_review_event(format!("layer {layer_id} {state}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Viewport,
+                        format!("layer {layer_id} {state}"),
+                    );
                     self.invalidate_scene();
                 }
                 handled
@@ -2299,7 +2388,10 @@ impl Runtime {
                     SessionCommand::FocusProductionArtifact(artifact_id.clone()),
                 );
                 if handled {
-                    self.log_review_event(format!("focused production artifact {artifact_id}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Production,
+                        format!("focused production artifact {artifact_id}"),
+                    );
                 }
                 handled
             }
@@ -2308,7 +2400,10 @@ impl Runtime {
                     SessionCommand::FocusProductionArtifactFile(path.clone()),
                 );
                 if handled {
-                    self.log_review_event(format!("focused production artifact file {path}"));
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Production,
+                        format!("focused production artifact file {path}"),
+                    );
                 }
                 handled
             }
@@ -2320,13 +2415,16 @@ impl Runtime {
                     handoff,
                 )
                 .unwrap_or_else(|err| {
-                    self.log_review_event(format!("terminal handoff prepare failed: {err}"));
+                    self.log_terminal_event(format!("terminal handoff prepare failed: {err}"));
                     handoff.command.clone()
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
                 self.write_foreign_shell_bytes(&bytes);
-                self.log_review_event(format!("ran production output command {}", handoff.command));
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Production,
+                    format!("ran production output command {}", handoff.command),
+                );
                 true
             }
             HitTarget::ProductionTerminalCommand(handoff) => {
@@ -2337,16 +2435,16 @@ impl Runtime {
                     handoff,
                 )
                 .unwrap_or_else(|err| {
-                    self.log_review_event(format!("terminal handoff prepare failed: {err}"));
+                    self.log_terminal_event(format!("terminal handoff prepare failed: {err}"));
                     handoff.command.clone()
                 });
                 let mut bytes = command.into_bytes();
                 bytes.push(b'\r');
                 self.write_foreign_shell_bytes(&bytes);
-                self.log_review_event(format!(
-                    "ran production terminal command {}",
-                    handoff.command
-                ));
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Production,
+                    format!("ran production terminal command {}", handoff.command),
+                );
                 true
             }
             HitTarget::ArtifactPreviewZoomIn
@@ -2423,7 +2521,10 @@ impl Runtime {
             });
         self.session.workspace_mut().ui.active_menu = None;
         let Some(item) = item else {
-            self.log_review_event(format!("menu item {menu_name}/{label} unavailable"));
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Menu,
+                format!("menu item {menu_name}/{label} unavailable"),
+            );
             self.invalidate_frame();
             return true;
         };
@@ -2436,7 +2537,10 @@ impl Runtime {
             .or(item.verb.as_deref())
             .or(item.submenu.as_deref())
             .unwrap_or("disabled in Phase 1");
-        self.log_review_event(format!("{menu_name}/{label} disabled: {reason}"));
+        self.log_console_refusal(
+            ConsoleFeedbackSource::Menu,
+            format!("{menu_name}/{label} disabled: {reason}"),
+        );
         self.invalidate_frame();
         true
     }

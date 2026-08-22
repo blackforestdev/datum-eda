@@ -155,21 +155,21 @@ impl Runtime {
             return false;
         };
         if let Err(error) = launch_http_target(&target) {
-            self.log_review_event(format!("terminal link handoff failed: {error}"));
+            self.log_terminal_event(format!("terminal link handoff failed: {error}"));
             return true;
         }
         self.session.workspace_mut().ui.terminal.link_confirmation = None;
-        self.log_review_event("confirmed terminal HTTP link handed to desktop".to_string());
+        self.log_terminal_event("confirmed terminal HTTP link handed to desktop".to_string());
         self.invalidate_frame();
         true
     }
 
     pub(super) fn copy_terminal_link_target(&mut self, target: &TerminalLinkTarget) -> bool {
         if self.write_clipboard_text(&target.target).is_err() {
-            self.log_review_event("terminal link copy failed".to_string());
+            self.log_terminal_event("terminal link copy failed".to_string());
             return true;
         }
-        self.log_review_event("terminal link target copied".to_string());
+        self.log_terminal_event("terminal link target copied".to_string());
         true
     }
 }
