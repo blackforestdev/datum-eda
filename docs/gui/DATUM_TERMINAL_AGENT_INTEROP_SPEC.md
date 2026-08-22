@@ -188,6 +188,7 @@ context, expected revision, approval, operation batch, diff, and journal result.
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01 -->
 <!-- EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01-CLOSED -->
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-02 -->
+<!-- EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-02-CLOSED -->
 
 The canonical workflow inventory binds one intent to CLI, MCP tool/resource/
 prompt, required capabilities, context inputs, review gate, and evidence. Thin
