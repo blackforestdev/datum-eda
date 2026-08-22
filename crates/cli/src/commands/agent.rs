@@ -601,3 +601,7 @@ mod tests {
         fs::remove_dir_all(project).expect("remove fixture");
     }
 }
+
+#[cfg(test)]
+#[path = "agent_acceptance_tests.rs"]
+mod acceptance_tests;
