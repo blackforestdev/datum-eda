@@ -163,38 +163,50 @@ gerber/drill viewer or a paperspace viewport (decision 020).
 
 **The unifying law — five doorways, one vocabulary.** menu bar (discovery) ·
 marking menu (gesture) · **command console (typed)** · scripting (verbs in a file)
-
-### Read-only Command Console display slice
-
-The first bounded Console delivery exposes the already-collected
-`ConsoleLaneState` without prematurely enabling the later typed-authoring
-surface.
-
-<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-01 -->
-CONSOLE-RO-01 inventories the existing console state, narration ingress, and
-viewport ownership, then freezes the read-only boundary for this slice.
-
-<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-02 -->
-CONSOLE-RO-02 renders the console as a visible viewport-anchored surface using
-the existing Datum layout and rendering authorities.
-
-<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-03 -->
-CONSOLE-RO-03 routes existing GUI narration, engine messages, and diagnostics
-to that surface without writing any application text into terminal cells.
-
-<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-04 -->
-CONSOLE-RO-04 keeps the slice strictly read-only: it accepts no authored text,
-dispatches no command, and emits no design operation.
-
-<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-05 -->
-CONSOLE-RO-05 proves empty, populated, overflow, and accessibility behavior,
-passes the governed GUI boundaries, and records closure evidence before the
-separate write-path task may proceed.
 · AI (intent). All five drive the **same verb registry**, so **every program action
 must be a verb** — a *complete* set (capability stays a parameter of a small verb
 set, but nothing is unreachable). A missing verb = an action the AI can't do, the
 console can't type, and a script can't call. **Verb-registry completeness is
 first-order**; the menu_model `not_built` entries are the visible gap.
+
+### Console and action-feedback contract recovery
+
+The previously scheduled “read-only Command Console” build is not an authorized
+product mechanism. It conflated the retired application-output/faux-console
+surface, the optional typed editor command line, passive verb feedback,
+notifications, structured diagnostics, and the terminal-safe `ConsoleLaneState`
+holding sink. No visible Console implementation may begin until the following
+planning and owner-decision sequence replaces that conflated contract.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C01 -->
+CONSOLE-C01 contains the roadmap defect and inventories code, message producers,
+destinations, visual ownership, and historical provenance without treating the
+current sink as product authority.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C02 -->
+CONSOLE-C02 produces dedicated primary-source research and a consequence-based
+message taxonomy that distinguishes terminal output, action feedback, interactive
+editor commands, notifications, progress, diagnostics, and durable history.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C03 -->
+CONSOLE-C03 turns the research into alternative visual prototypes covering
+focused/tiled viewports, collapsed/expanded states, terminal coexistence,
+narrow-window behavior, and accessibility, then records owner review.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04 -->
+<!-- OWNER:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C04:CONSOLE-C04 -->
+CONSOLE-C04 obtains explicit owner disposition on whether the interactive editor
+command line is retained, deferred, or retired and on the authoritative home of
+each feedback class. Research and prototypes do not decide this boundary.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05 -->
+CONSOLE-C05 ratifies the chosen mechanism in a numbered decision and reconciles
+GUI, terminal, conformance, code-vocabulary, tracker, and roadmap authorities.
+
+<!-- REQ:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C06 -->
+CONSOLE-C06 verifies governance and conformance, closes the recovery work with
+durable evidence, and explicitly selects a bounded implementation successor only
+when that successor is fully specified and authorized.
 
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.

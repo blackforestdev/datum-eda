@@ -3567,27 +3567,42 @@
       "landing_commit": "4f6cc2b"
     },
     {
-      "key": "CONSOLE-READONLY",
+      "key": "CONSOLE-CONTRACT-RECOVERY",
       "order": 18,
-      "title": "Build the read-only Command Console display",
+      "title": "Research and ratify the Console and action-feedback contract",
       "issue_id": "dat-output-lane-t6v",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "specified",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": true,
-      "summary": "Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track.",
+      "summary": "Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built.",
       "dependencies": [],
-      "unblocks": [
-        "dat-gui-write-path-qiu"
-      ],
+      "unblocks": [],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
+        "claimed_at": "2026-08-22T12:35:10-07:00",
+        "heartbeat_at": "2026-08-22T12:35:10-07:00",
+        "expires_at": "2026-08-22T20:35:10-07:00",
+        "scope": [
+          "console-product-contract",
+          "research/command-feedback",
+          "docs/gui/console-specification",
+          "specs/active_frontier.json",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": ".",
+        "head": "6b252c6f44177b00bd2c9e366895a8b215f4c0a7"
+      },
       "completion": {
-        "outcome": "Datum visibly presents its existing ConsoleLaneState as a bounded, accessible, read-only viewport surface without creating a rival terminal or prematurely authorizing typed design mutation.",
-        "canonical_next_step_id": "CONSOLE-RO-01",
+        "outcome": "Datum has an evidence-based, owner-reviewed, numbered-decision-backed contract that cleanly separates terminal output, verb/action feedback, optional typed editor commands, notifications, progress, diagnostics, and history, with a bounded implementation successor explicitly selected.",
+        "canonical_next_step_id": "CONSOLE-C01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3602,79 +3617,109 @@
         },
         "steps": [
           {
-            "id": "CONSOLE-RO-01",
+            "id": "CONSOLE-C01",
             "kind": "planning",
-            "status": "pending",
-            "action": "Inventory ConsoleLaneState, its existing narration ingress, viewport ownership, and the exact read-only boundary before implementation begins.",
+            "status": "in_progress",
+            "action": "Contain the flawed build framing and inventory Console state, producers, destinations, visual ownership, and historical provenance.",
             "depends_on": [],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "CONSOLE-RO-01"
+                "marker": "CONSOLE-C01"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "CONSOLE-RO-02",
-            "kind": "execution",
+            "id": "CONSOLE-C02",
+            "kind": "planning",
             "status": "pending",
-            "action": "Render the existing console state in a visible viewport-anchored surface through Datum's established layout and rendering authorities.",
+            "action": "Produce dedicated primary-source research and a consequence-based taxonomy for feedback, command, progress, diagnostic, notice, history, and terminal-output ownership.",
             "depends_on": [
-              "CONSOLE-RO-01"
+              "CONSOLE-C01"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "CONSOLE-RO-02"
+                "marker": "CONSOLE-C02"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "CONSOLE-RO-03",
-            "kind": "execution",
+            "id": "CONSOLE-C03",
+            "kind": "planning",
             "status": "pending",
-            "action": "Project existing GUI narration, engine messages, and diagnostics into the console while preserving PTY-only terminal-cell authority.",
+            "action": "Create and owner-review alternative visual prototypes for the selected feedback and optional command surfaces across viewport, terminal, responsive, and accessibility states.",
             "depends_on": [
-              "CONSOLE-RO-02"
+              "CONSOLE-C02"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "CONSOLE-RO-03"
+                "marker": "CONSOLE-C03"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "CONSOLE-RO-04",
-            "kind": "execution",
+            "id": "CONSOLE-C04",
+            "kind": "owner_decision",
             "status": "pending",
-            "action": "Enforce a read-only authority boundary that accepts no authored text, dispatches no command, and emits no design operation.",
+            "action": "Record the owner's disposition on interactive editor-command retention, feedback ownership, visual model, history, and GUI-write-path dependency.",
             "depends_on": [
-              "CONSOLE-RO-03"
+              "CONSOLE-C03"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "CONSOLE-RO-04"
+                "marker": "CONSOLE-C04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply with the requested Console disposition packet after reviewing the research and visual prototype.",
+              "requests": [
+                {
+                  "id": "CONSOLE-DISPOSITION",
+                  "question": "Which researched Console/action-feedback product model should Datum ratify, and what revisions are required before ratification?",
+                  "recommended_response": "Select or revise one presented candidate only after reviewing its message taxonomy, visual states, accessibility behavior, and interaction boundary.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                    "marker": "CONSOLE-C04"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "CONSOLE-C05",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Ratify the owner-selected mechanism in a numbered decision and reconcile GUI, terminal, conformance, code-vocabulary, tracker, and roadmap authorities.",
+            "depends_on": [
+              "CONSOLE-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-C05"
               }
             ],
             "completion_evidence": []
           },
           {
-            "id": "CONSOLE-RO-05",
-            "kind": "execution",
+            "id": "CONSOLE-C06",
+            "kind": "planning",
             "status": "pending",
-            "action": "Prove empty, populated, overflow, accessibility, and boundary behavior; attach closure evidence without authorizing the separate typed write path.",
+            "action": "Verify governance and conformance, close recovery evidence, and explicitly select a fully specified bounded implementation successor.",
             "depends_on": [
-              "CONSOLE-RO-04"
+              "CONSOLE-C05"
             ],
             "requirement_refs": [
               {
                 "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "CONSOLE-RO-05"
+                "marker": "CONSOLE-C06"
               }
             ],
             "completion_evidence": []
@@ -3682,11 +3727,9 @@
         ],
         "post_completion": {
           "effects": [
-            "The GUI write-path task loses its read-only Console prerequisite but retains separate typed-authoring and mutation authority."
+            "A bounded Console/action-feedback implementation successor may be selected only from the owner-ratified contract; the separate GUI write path retains its own typed-operation authority."
           ],
-          "unblocks_issue_ids": [
-            "dat-gui-write-path-qiu"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -3808,10 +3851,9 @@
       "authorization": "planning",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution.",
+      "summary": "Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker.",
       "dependencies": [
         "dat-marking-menu-shell-g0w",
-        "dat-output-lane-t6v",
         "dat-project-write-ownership-lock-0ne"
       ],
       "unblocks": [

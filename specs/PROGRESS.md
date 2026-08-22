@@ -72,9 +72,9 @@
 - **Verify full terminal and agent interoperability** (`TERMINAL-T4-VERIFY`; `dat-terminal-emulator-epic-jzv.6`).
    Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.5`, `dat-terminal-emulator-epic-jzv.11`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
-- **Build the read-only Command Console display** (`CONSOLE-READONLY`; `dat-output-lane-t6v`).
-   Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track. *state `specified`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
-   *Dependencies:* none. *Unblocks:* dat-gui-write-path-qiu. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
+- **Research and ratify the Console and action-feedback contract** (`CONSOLE-CONTRACT-RECOVERY`; `dat-output-lane-t6v`).
+   Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
@@ -92,8 +92,8 @@
    Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go. *state `specified`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
 - **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
-   Execute the P0-W3 direct typed-operation path after the read-only command surfaces land and the owner authorizes execution. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-output-lane-t6v`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
+   Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
 - **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
