@@ -3294,11 +3294,29 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-terminal-workflow-20260822",
+        "claimed_at": "2026-08-22T10:43:54Z",
+        "heartbeat_at": "2026-08-22T10:43:54Z",
+        "expires_at": "2026-08-22T18:43:54Z",
+        "scope": [
+          "crates/cli",
+          "mcp-server",
+          "scripts",
+          "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+          "specs",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "ab0bf7e"
+      },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.10"
@@ -3325,7 +3343,7 @@
           {
             "id": "AI-WF-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Define one canonical workflow inventory binding each intent to CLI and MCP tools, resources, prompts, capabilities, context inputs, review gates, and evidence.",
             "depends_on": [],
             "requirement_refs": [

@@ -67,7 +67,7 @@
    Separate live and immutable pinned context, fence mutations by revision, and grant short-lived inspect/propose/apply-approved authority with complete audit provenance. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.8`, `dat-terminal-emulator-epic-jzv.9`. *Unblocks:* dat-terminal-emulator-epic-jzv.11. *Governing:* `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
 - **Project portable workflows and verify agent parity** (`TERMINAL-T4D-WORKFLOW-PARITY`; `dat-terminal-emulator-epic-jzv.11`).
-   Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
+   Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.5`, `dat-terminal-emulator-epic-jzv.10`. *Unblocks:* dat-terminal-emulator-epic-jzv.6. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Verify full terminal and agent interoperability** (`TERMINAL-T4-VERIFY`; `dat-terminal-emulator-epic-jzv.6`).
