@@ -1,3 +1,6 @@
+#[path = "scene_console.rs"]
+mod scene_console;
+
 // Per-pane coordinate + hit resolution (UVT-004) stays a real child module so
 // it can reach private prepared/retained scene types without growing lib.rs.
 #[path = "coordinate_hit.rs"]
@@ -33,7 +36,6 @@ impl PreparedScene {
         let mut viewport_underlay_quads = Vec::new();
         let mut viewport_overlay_quads = Vec::new();
         let mut board_interaction_quads = Vec::new();
-        let mut console_overlay_quads = Vec::new();
         let mut text_runs = Vec::new();
         let mut terminal_graphics = Vec::new();
         let mut hit_regions = Vec::new();
@@ -78,7 +80,7 @@ impl PreparedScene {
         viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
 
         render_phase1_shell_chrome(state, &layout, &mut panel_quads, &mut text_runs);
-        render_menu_bar(
+        menu_chrome::render_menu_bar(
             state,
             &layout,
             &mut panel_quads,
@@ -87,14 +89,14 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
-        render_side_panels(
+        side_panels::render_side_panels(
             state,
             &layout,
             &mut panel_quads,
             &mut text_runs,
             &mut hit_regions,
         );
-        render_bottom_tabs(
+        bottom_dock::render_bottom_tabs(
             state,
             (!terminal_panes.is_empty()).then_some(bottom_dock::TerminalRenderInput {
                 panes: terminal_panes,
@@ -140,15 +142,9 @@ impl PreparedScene {
                 crosshair_style,
             );
         }
-        let console_overlay_layout = render_datum_console(
-            state,
-            &layout,
-            scale,
-            &mut console_overlay_quads,
-            &mut text_runs,
-            &mut hit_regions,
-        );
-        render_marking_menu(
+        let (console_overlay_vertices, console_overlay_layout) =
+            scene_console::prepare(state, &layout, scale, &mut text_runs, &mut hit_regions);
+        marking_menu::render_marking_menu(
             state,
             &layout,
             &mut panel_quads,
@@ -164,7 +160,6 @@ impl PreparedScene {
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
         let board_interaction_vertices = quads_to_vertices(&board_interaction_quads);
-        let console_overlay_vertices = quads_to_vertices(&console_overlay_quads);
         // P2.2a: describe the companion schematic pass. It is active only when the
         // layout has a Schematic pane AND the workspace carries a projected
         // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
@@ -302,14 +297,6 @@ impl PreparedScene {
 
     fn board_interaction_vertices(&self) -> &[Vertex] {
         &self.board_interaction_vertices
-    }
-
-    fn console_overlay_vertices(&self) -> &[Vertex] {
-        &self.console_overlay_vertices
-    }
-
-    pub fn console_overlay_layout(&self) -> Option<ConsoleOverlayLayout> {
-        self.console_overlay_layout
     }
 
     fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {

@@ -55,14 +55,7 @@ impl Renderer {
             "datum-gui-render-board-interaction-vertex-buffer",
             board_interaction,
         );
-        Self::upload_vertices(
-            device,
-            queue,
-            &mut self.console_overlay_vertex_buffer,
-            &mut self.console_overlay_vertex_capacity,
-            "datum-gui-render-console-overlay-vertex-buffer",
-            console_overlay,
-        );
+        self.console_gpu.upload(device, queue, console_overlay);
         Self::upload_vertices(
             device,
             queue,

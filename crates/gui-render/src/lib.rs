@@ -44,11 +44,6 @@ mod terminal_tab_strip;
 mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
-use bottom_dock::render_bottom_tabs;
-use datum_console::render_datum_console;
-use marking_menu::render_marking_menu;
-use menu_chrome::render_menu_bar;
-use side_panels::render_side_panels;
 #[cfg(feature = "visual")]
 pub mod visual_diff;
 #[cfg(feature = "visual")]

@@ -380,6 +380,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn gui_action_feedback_cannot_mutate_terminal_projection() {
+        let mut state = crate::load_fixture_workspace_state();
+        let terminal_before = state.ui.terminal.clone();
+
+        state
+            .ui
+            .publish_console_feedback(ConsoleFeedbackDraft::action_echo(
+                ConsoleFeedbackSource::Workspace,
+                42,
+                "fit board",
+            ));
+
+        assert_eq!(state.ui.console.latest().unwrap().message, "fit board");
+        assert_eq!(
+            state.ui.terminal, terminal_before,
+            "GUI action feedback must not mutate terminal session projection"
+        );
+    }
+
+    #[test]
     fn records_are_typed_sequenced_and_bounded() {
         let mut state = ConsoleFeedbackState::default();
         for index in 0..CONSOLE_FEEDBACK_CAPACITY + 3 {

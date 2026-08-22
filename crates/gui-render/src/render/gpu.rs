@@ -38,8 +38,7 @@ pub struct Renderer {
     viewport_overlay_vertex_capacity: usize,
     board_interaction_vertex_buffer: Option<wgpu::Buffer>,
     board_interaction_vertex_capacity: usize,
-    console_overlay_vertex_buffer: Option<wgpu::Buffer>,
-    console_overlay_vertex_capacity: usize,
+    console_gpu: gpu_console::ConsoleGpuResources,
     menu_overlay_vertex_buffer: Option<wgpu::Buffer>,
     menu_overlay_vertex_capacity: usize,
     world_vertex_buffer: Option<wgpu::Buffer>,
@@ -56,6 +55,8 @@ pub struct Renderer {
     msaa_samples: u32,
 }
 
+#[path = "gpu_console.rs"]
+mod gpu_console;
 #[path = "gpu_vertex_upload.rs"]
 mod gpu_vertex_upload;
 #[path = "terminal_graphics.rs"]
@@ -400,8 +401,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_overlay_vertex_capacity: 0,
             board_interaction_vertex_buffer: None,
             board_interaction_vertex_capacity: 0,
-            console_overlay_vertex_buffer: None,
-            console_overlay_vertex_capacity: 0,
+            console_gpu: gpu_console::ConsoleGpuResources::default(),
             menu_overlay_vertex_buffer: None,
             menu_overlay_vertex_capacity: 0,
             world_vertex_buffer: None,
@@ -440,15 +440,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let world_strokes = retained.world_strokes();
-        let schematic_pass = match (prepared.schematic_scene_viewport, schematic_retained) {
-            (Some(scene_viewport), Some(sr)) if !sr.world_vertices().is_empty() => {
-                let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
-                let proj =
-                    Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
-                Some((scene_viewport, field, proj, sr))
-            }
-            _ => None,
-        };
+        let schematic_pass = gpu_surface_pass::prepare_schematic_pass(prepared, schematic_retained);
         // S4 grid and interaction overlays remain immediate screen-space geometry;
         // offscreen captures supply neither cursor nor hover quads.
         let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
@@ -691,24 +683,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 );
                 pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
             }
-            if !console_overlay_vertices.is_empty()
-                && let Some(layout) = prepared.console_overlay_layout()
-            {
-                pass.set_scissor_rect(
-                    layout.pane_body.x.max(0.0).floor() as u32,
-                    layout.pane_body.y.max(0.0).floor() as u32,
-                    layout.pane_body.width.max(1.0).ceil() as u32,
-                    layout.pane_body.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(
-                    0,
-                    self.console_overlay_vertex_buffer
-                        .as_ref()
-                        .expect("console overlay vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..console_overlay_vertices.len() as u32, 0..1);
-            }
+            self.draw_console(&mut pass, console_overlay_vertices, prepared);
             // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
             // composited AFTER the main text pass (below) so it occludes not only
             // the work-pane quads but every underlying text_run too; its own text

@@ -1,5 +1,20 @@
 use super::*;
 
+pub(super) fn prepare_schematic_pass<'a>(
+    prepared: &PreparedScene,
+    schematic_retained: Option<&'a RetainedScene>,
+) -> Option<(RectPx, RectPx, Projection, &'a RetainedScene)> {
+    match (prepared.schematic_scene_viewport, schematic_retained) {
+        (Some(scene_viewport), Some(scene)) if !scene.world_vertices().is_empty() => {
+            let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+            let projection =
+                Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
+            Some((scene_viewport, field, projection, scene))
+        }
+        _ => None,
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 impl Renderer {
     pub(crate) fn draw_surface_grids<'a>(

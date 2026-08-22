@@ -33,5 +33,5 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `erc_pin_taxonomy_surface` | `specs/ERC_SPEC.md` | 33 | `8f44622d66f182ef0d12cd5a49eb0033647eb56f1b277adc0645b5ae3033a8a9` |
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `8d10f280ffc6abcaf7990ce3120a4253a2ea54b474b0a0d56428b2e30bdd2dfa` |
-| `gui_supervision_surface` | `specs/PROGRESS.md` | 15 | `0cb536712554560e63413ee1eba3424c0b7b190ad008317609423153402f2ef9` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 94 | `891a1de9700a2c2e338098ef5ac2c98cc342dc2b38849d953949e5c6630c62ac` |
+| `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 94 | `226250907532b334a2bb3623fc14ff34b53614ac5eeb0d0df01e3bde90fdc704` |
