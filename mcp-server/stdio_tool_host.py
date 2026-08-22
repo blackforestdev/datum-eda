@@ -17,16 +17,24 @@ class StdioToolHost:
         self._daemon = daemon
 
     def handle_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
+        if not _valid_request(message):
+            return _protocol_error(None, -32600, "invalid request")
         method = message.get("method")
         msg_id = message.get("id")
         params = message.get("params", {})
 
         if method == "initialize":
+            requested_version = params.get("protocolVersion")
+            protocol_version = (
+                requested_version
+                if requested_version in {"2024-11-05", "2025-03-26", "2025-06-18"}
+                else "2024-11-05"
+            )
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
                 "result": {
-                    "protocolVersion": "2024-11-05",
+                    "protocolVersion": protocol_version,
                     "capabilities": {"tools": {}},
                     "serverInfo": {"name": "datum-eda", "version": "0.1.0"},
                 },

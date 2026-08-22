@@ -23,6 +23,18 @@ from tools_catalog_retirement import (
 
 
 class TestProtocolCatalog(unittest.TestCase):
+    def test_initialize_negotiates_supported_version(self) -> None:
+        host = StdioToolHost(FakeDaemonClient())
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 7,
+                "method": "initialize",
+                "params": {"protocolVersion": "2025-06-18"},
+            }
+        )
+        self.assertEqual(response["result"]["protocolVersion"], "2025-06-18")
+
     def test_tools_list_returns_registered_tools(self) -> None:
         host = StdioToolHost(FakeDaemonClient())
         response = host.handle_message({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})

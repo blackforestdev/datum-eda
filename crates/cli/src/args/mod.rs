@@ -92,7 +92,7 @@ pub(crate) use self::manufacturing::{
     ProjectDeletePanelProjectionArgs, ProjectUpdateManufacturingPlanArgs,
     ProjectUpdatePanelProjectionArgs, ReportManufacturingArgs, ValidateManufacturingSetArgs,
 };
-pub(crate) use self::mcp::{McpCommands, McpServeArgs};
+pub(crate) use self::mcp::{McpCommands, McpServeArgs, McpServeHttpArgs};
 pub(crate) use self::native_support::{
     NativeHiddenPowerBehaviorArg, NativePortDirectionArg, NativeSymbolDisplayModeArg,
 };
