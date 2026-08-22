@@ -206,6 +206,7 @@ skill cannot remove the underlying CLI/MCP workflow.
 ## 9. Shell integration boundary
 
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-03 -->
+<!-- EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-03-CLOSED -->
 
 OSC 7 may report cwd and OSC 133 may mark prompt/command/output boundaries for
 session UX, history, and new-session-in-cwd behavior. These signals are

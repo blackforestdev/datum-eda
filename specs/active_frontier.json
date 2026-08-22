@@ -3304,8 +3304,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-workflow-20260822",
         "claimed_at": "2026-08-22T10:43:54Z",
-        "heartbeat_at": "2026-08-22T11:43:33Z",
-        "expires_at": "2026-08-22T19:43:33Z",
+        "heartbeat_at": "2026-08-22T11:54:47Z",
+        "expires_at": "2026-08-22T19:54:47Z",
         "scope": [
           "crates/cli",
           "crates/gui-app",
@@ -3318,7 +3318,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5b1b232"
+        "head": "cc3aacc"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
@@ -3329,7 +3329,7 @@
       ],
       "completion": {
         "outcome": "Datum workflows remain canonical and portable across CLI and MCP, client projections stay parity-checked, shell metadata remains non-authoritative, and every governed agent proves the complete production round trip.",
-        "canonical_next_step_id": "AI-WF-03",
+        "canonical_next_step_id": "AI-WF-04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3396,7 +3396,7 @@
           {
             "id": "AI-WF-03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Integrate OSC 7 and OSC 133 as untrusted terminal-session metadata without allowing screen output to create design authority or operations.",
             "depends_on": [
               "AI-WF-01"
@@ -3407,12 +3407,22 @@
                 "marker": "AI-WF-03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "cc3aacc"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-03-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-WF-04",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prove launch, discovery, inspect, propose, review, apply, refresh, and resume parity for Codex, Claude Code, a Cursor-compatible CLI, and a local agent on a production Datum build.",
             "depends_on": [
               "AI-WF-02",
