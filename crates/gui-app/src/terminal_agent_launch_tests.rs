@@ -1,10 +1,12 @@
 use super::*;
+use crate::terminal_agent_authority::TerminalAgentAuthority;
 use crate::terminal_session::{TerminalEvent, TerminalLaunchContext, spawn_terminal_session};
 use std::{
     ffi::OsString,
     fs,
     os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
+    process::Command,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
@@ -36,45 +38,55 @@ exec python3 "$DATUM_AGENT_MCP_PROBE" "$@"
     fs::set_permissions(path, fs::Permissions::from_mode(0o700)).expect("probe mode");
 }
 
-fn profile(
-    cli: &Path,
-    project: &Path,
-    discovery: &Path,
-    probe: &Path,
-    adapter: &str,
-) -> TerminalLaunchProfile {
+struct WorkflowPhase<'a> {
+    cli: &'a Path,
+    project: &'a Path,
+    discovery: &'a Path,
+    probe: &'a Path,
+    adapter: &'a str,
+    phase: &'a str,
+    proposal_id: &'a str,
+    resume: bool,
+}
+
+fn profile(workflow: &WorkflowPhase<'_>) -> TerminalLaunchProfile {
     let mut args = vec![
         OsString::from("agent"),
         OsString::from("launch"),
-        OsString::from(adapter),
+        OsString::from(workflow.adapter),
         OsString::from("--project-root"),
-        project.as_os_str().to_owned(),
+        workflow.project.as_os_str().to_owned(),
         OsString::from("--discovery"),
-        discovery.as_os_str().to_owned(),
+        workflow.discovery.as_os_str().to_owned(),
         OsString::from("--binary"),
-        probe.as_os_str().to_owned(),
+        workflow.probe.as_os_str().to_owned(),
     ];
-    if adapter == "cursor-cli" {
+    if workflow.resume {
+        args.push(OsString::from("--resume"));
+    }
+    if workflow.adapter == "cursor-cli" {
         args.push(OsString::from("--approve-project-config"));
     }
     args.extend([
         OsString::from("--"),
         OsString::from("--probe-adapter"),
-        OsString::from(adapter),
+        OsString::from(workflow.adapter),
+        OsString::from("--probe-phase"),
+        OsString::from(workflow.phase),
     ]);
-    TerminalLaunchProfile {
-        name: format!("agent-{adapter}"),
-        executable: Some(cli.as_os_str().to_owned()),
+    let mut profile = TerminalLaunchProfile {
+        name: format!("agent-{}", workflow.adapter),
+        executable: Some(workflow.cli.as_os_str().to_owned()),
         args,
         cwd: TerminalCwdTemplate::Project,
         environment: vec![
             (
                 OsString::from("DATUM_EXPECT_PROJECT"),
-                Some(project.as_os_str().to_owned()),
+                Some(workflow.project.as_os_str().to_owned()),
             ),
             (
                 OsString::from("DATUM_EXPECT_DISCOVERY"),
-                Some(discovery.as_os_str().to_owned()),
+                Some(workflow.discovery.as_os_str().to_owned()),
             ),
             (
                 OsString::from("DATUM_EXPECT_AUTH"),
@@ -86,7 +98,11 @@ fn profile(
             ),
             (
                 OsString::from("DATUM_EXPECT_CLI"),
-                Some(cli.as_os_str().to_owned()),
+                Some(workflow.cli.as_os_str().to_owned()),
+            ),
+            (
+                OsString::from("DATUM_CLI_BIN"),
+                Some(workflow.cli.as_os_str().to_owned()),
             ),
             (
                 OsString::from("DATUM_AGENT_MCP_PROBE"),
@@ -96,30 +112,75 @@ fn profile(
                         .into_os_string(),
                 ),
             ),
+            (
+                OsString::from("DATUM_PROOF_PROPOSAL_ID"),
+                Some(OsString::from(workflow.proposal_id)),
+            ),
             (OsString::from("DATUM_MCP_ENDPOINT"), None),
         ],
         ..TerminalLaunchProfile::default()
-    }
+    };
+    profile.agent_authority = TerminalAgentAuthority::ApplyApproved;
+    profile
 }
 
-fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
-    let project = root.join(adapter);
-    fs::create_dir_all(&project).expect("project root");
+fn cli_json(cli: &Path, arguments: &[&str]) -> serde_json::Value {
+    let output = Command::new(cli)
+        .arg("--format")
+        .arg("json")
+        .args(arguments)
+        .output()
+        .expect("run production Datum CLI");
+    assert!(
+        output.status.success(),
+        "production Datum CLI failed: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    serde_json::from_slice(&output.stdout).expect("production Datum CLI JSON")
+}
+
+fn project_context(cli: &Path, project: &Path) -> (String, Option<String>) {
+    let project_arg = project.to_str().expect("UTF-8 proof path");
+    let journal = cli_json(cli, &["journal", "list", project_arg]);
+    let revision = journal["model_revision"]
+        .as_str()
+        .expect("journal model revision")
+        .to_string();
+    let cursor = journal["cursor_index"].as_u64().expect("journal cursor") as usize;
+    let tip = cursor.checked_sub(1).and_then(|index| {
+        journal["transactions"][index]["transaction_id"]
+            .as_str()
+            .map(str::to_string)
+    });
+    (revision, tip)
+}
+
+fn run_phase(
+    cli: &Path,
+    project: &Path,
+    probe: &Path,
+    adapter: &str,
+    phase: &str,
+    proposal_id: &str,
+    resume: bool,
+) {
     let discovery = project.join("discovery.json");
-    fs::write(
-        &discovery,
-        serde_json::to_vec(&serde_json::json!({
-            "schema": "datum_agent_discovery_v1",
-            "project_root": project,
-            "terminal_session_id": format!("terminal-{adapter}"),
-            "context_id": format!("context-{adapter}"),
-            "model_revision": "revision-test"
-        }))
-        .expect("serialize discovery"),
-    )
-    .expect("discovery document");
-    let mut context = TerminalLaunchContext::for_project_root(&project);
-    context.terminal_profile = profile(cli, &project, &discovery, probe, adapter);
+    fs::write(&discovery, b"{}\n").expect("agent launch discovery placeholder");
+    let (revision, accepted_transaction_tip) = project_context(cli, project);
+    let mut context = TerminalLaunchContext::for_project_root(project);
+    context.project_name = Some(format!("Agent Workflow {adapter}"));
+    context.source_revision = Some(revision);
+    context.accepted_transaction_tip = accepted_transaction_tip;
+    context.terminal_profile = profile(&WorkflowPhase {
+        cli,
+        project,
+        discovery: &discovery,
+        probe,
+        adapter,
+        phase,
+        proposal_id,
+        resume,
+    });
     let session = spawn_terminal_session(&context).expect("spawn agent CLI through owned PTY");
     let deadline = Instant::now() + AGENT_PROBE_TIMEOUT;
     let mut output = Vec::new();
@@ -139,18 +200,46 @@ fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
     assert_eq!(
         exit,
         Some(crate::terminal_transport::TerminalExitStatus::Code(0)),
-        "{adapter} did not exit successfully; output={rendered:?}"
+        "{adapter} {phase} phase did not exit successfully; output={rendered:?}"
     );
     assert!(
-        rendered.contains(&format!("AGENT_MCP_OK:{adapter}:{}", discovery.display())),
-        "{adapter} did not discover and enumerate native MCP; output={rendered:?}"
+        rendered.contains(&format!("AGENT_WORKFLOW_OK:{adapter}:{phase}")),
+        "{adapter} did not complete {phase} workflow phase; output={rendered:?}"
     );
-    if adapter == "local-generic" {
-        assert!(
-            rendered.contains("standard Datum MCP command: datum-eda mcp serve --discovery"),
-            "generic adapter did not present its portable MCP command: {rendered:?}"
-        );
-    }
+}
+
+fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str, ordinal: u128) {
+    let project = root.join(adapter);
+    let project_arg = project.to_str().expect("UTF-8 proof path");
+    cli_json(
+        cli,
+        &[
+            "project",
+            "new",
+            project_arg,
+            "--name",
+            &format!("Agent {adapter}"),
+        ],
+    );
+    let proposal_id = format!("00000000-0000-4000-8000-{ordinal:012x}");
+    run_phase(
+        cli,
+        &project,
+        probe,
+        adapter,
+        "propose",
+        &proposal_id,
+        false,
+    );
+    run_phase(
+        cli,
+        &project,
+        probe,
+        adapter,
+        "resume",
+        &proposal_id,
+        adapter != "local-generic",
+    );
     assert!(
         !project
             .join(".datum/runtime")
@@ -166,7 +255,7 @@ fn run_adapter(cli: &Path, root: &Path, probe: &Path, adapter: &str) {
 
 #[test]
 #[ignore = "run with scripts/run_agent_launch_pty_proof.sh"]
-fn governed_agents_enumerate_native_mcp_through_owned_pty() {
+fn governed_agents_complete_production_workflow_through_owned_pty() {
     let cli = PathBuf::from(
         std::env::var_os("DATUM_AGENT_CLI_PROOF_BIN")
             .expect("proof runner provides DATUM_AGENT_CLI_PROOF_BIN"),
@@ -176,8 +265,11 @@ fn governed_agents_enumerate_native_mcp_through_owned_pty() {
     fs::create_dir_all(&root).expect("fixture root");
     let probe = root.join("agent-probe.sh");
     write_probe(&probe);
-    for adapter in ["codex", "claude-code", "cursor-cli", "local-generic"] {
-        run_adapter(&cli, &root, &probe, adapter);
+    for (index, adapter) in ["codex", "claude-code", "cursor-cli", "local-generic"]
+        .into_iter()
+        .enumerate()
+    {
+        run_adapter(&cli, &root, &probe, adapter, index as u128 + 1);
     }
     fs::remove_dir_all(root).expect("remove fixture root");
 }

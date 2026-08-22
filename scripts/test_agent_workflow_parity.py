@@ -20,6 +20,9 @@ FILES = (
     "crates/cli/src/agent_adapters.rs",
     "mcp-server/workflow_catalog.json",
     "mcp-server/workflow_projections.json",
+    "crates/gui-app/src/terminal_agent_launch_tests.rs",
+    "scripts/agent_mcp_adapter_probe.py",
+    "scripts/run_agent_launch_pty_proof.sh",
 )
 
 
@@ -57,6 +60,23 @@ class TestAgentWorkflowParity(unittest.TestCase):
         document["adapters"][1]["adapter_instruction_files"] = ["AGENTS.md"]
         path.write_text(json.dumps(document))
         self.assertTrue(any("AgentAdapter instruction files" in error for error in check(root)))
+
+    def test_production_workflow_phase_removal_fails(self) -> None:
+        root = self.fixture()
+        path = root / "scripts/agent_mcp_adapter_probe.py"
+        path.write_text(path.read_text().replace('"datum.proposal.apply"', '"removed.apply"'))
+        self.assertTrue(any("workflow proof lacks" in error for error in check(root)))
+
+    def test_production_pty_proof_removal_fails(self) -> None:
+        root = self.fixture()
+        path = root / "crates/gui-app/src/terminal_agent_launch_tests.rs"
+        path.write_text(
+            path.read_text().replace(
+                "governed_agents_complete_production_workflow_through_owned_pty",
+                "removed_workflow_proof",
+            )
+        )
+        self.assertTrue(any("workflow proof lacks" in error for error in check(root)))
 
 
 if __name__ == "__main__":

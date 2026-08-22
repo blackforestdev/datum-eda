@@ -12,6 +12,28 @@ from typing import Any
 
 MARKER = "<!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->"
 EXPECTED_ADAPTERS = ("codex", "claude-code", "cursor-cli", "local-generic")
+PROOF_MARKERS = {
+    "crates/gui-app/src/terminal_agent_launch_tests.rs": (
+        "governed_agents_complete_production_workflow_through_owned_pty",
+        '"propose"',
+        '"resume"',
+    ),
+    "scripts/agent_mcp_adapter_probe.py": (
+        "_proposal_phase(",
+        "_resume_phase(",
+        '"datum.proposal.create_output_job"',
+        '"datum.proposal.preview"',
+        '"datum.proposal.apply"',
+        '"stale_context"',
+        '"datum.journal.list"',
+        '"session_authority_revoked"',
+    ),
+    "scripts/run_agent_launch_pty_proof.sh": (
+        "governed_agents_complete_production_workflow_through_owned_pty",
+        "test_agent_session_authority.py",
+        "test_context_revision_fence.py",
+    ),
+}
 SEMANTIC_KEYS = {
     "workflow_ids",
     "required_capability",
@@ -89,6 +111,15 @@ def check(root: Path) -> list[str]:
                 continue
             if MARKER not in text:
                 failures.append(f"{adapter_id} projection lacks canonical marker: {relative}")
+    for relative, markers in PROOF_MARKERS.items():
+        try:
+            proof = (root / relative).read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            failures.append(f"workflow proof input is unavailable: {relative}")
+            continue
+        for marker in markers:
+            if marker not in proof:
+                failures.append(f"workflow proof lacks {marker!r}: {relative}")
     return failures
 
 
