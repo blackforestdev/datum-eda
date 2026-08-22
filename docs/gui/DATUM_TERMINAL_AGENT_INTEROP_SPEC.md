@@ -85,6 +85,7 @@ Required profiles are `codex`, `claude-code`, `cursor-cli`, and
 MCP command without pretending an unknown client supports automatic setup.
 
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-03 -->
+<!-- EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-03-CLOSED -->
 The launcher uses a protected per-session directory and shows the executable,
 cwd, MCP server name, capability grant, and config lifetime before launch. It
 must not rewrite user-global configuration. Persistent project setup is a
