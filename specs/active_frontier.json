@@ -3304,8 +3304,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-workflow-20260822",
         "claimed_at": "2026-08-22T10:43:54Z",
-        "heartbeat_at": "2026-08-22T10:43:54Z",
-        "expires_at": "2026-08-22T18:43:54Z",
+        "heartbeat_at": "2026-08-22T11:37:02Z",
+        "expires_at": "2026-08-22T19:37:02Z",
         "scope": [
           "crates/cli",
           "mcp-server",
@@ -3315,7 +3315,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ab0bf7e"
+        "head": "4cc8386"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
@@ -3326,7 +3326,7 @@
       ],
       "completion": {
         "outcome": "Datum workflows remain canonical and portable across CLI and MCP, client projections stay parity-checked, shell metadata remains non-authoritative, and every governed agent proves the complete production round trip.",
-        "canonical_next_step_id": "AI-WF-01",
+        "canonical_next_step_id": "AI-WF-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3343,7 +3343,7 @@
           {
             "id": "AI-WF-01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Define one canonical workflow inventory binding each intent to CLI and MCP tools, resources, prompts, capabilities, context inputs, review gates, and evidence.",
             "depends_on": [],
             "requirement_refs": [
@@ -3352,12 +3352,22 @@
                 "marker": "AI-WF-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "4cc8386"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-WF-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Generate or parity-validate thin Codex, Claude Code, Cursor-compatible, and local-agent projections from the canonical workflow inventory.",
             "depends_on": [
               "AI-WF-01"

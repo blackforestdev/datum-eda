@@ -186,6 +186,7 @@ context, expected revision, approval, operation batch, diff, and journal result.
 ## 8. Portable workflows and client projections
 
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01 -->
+<!-- EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01-CLOSED -->
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-02 -->
 
 The canonical workflow inventory binds one intent to CLI, MCP tool/resource/
