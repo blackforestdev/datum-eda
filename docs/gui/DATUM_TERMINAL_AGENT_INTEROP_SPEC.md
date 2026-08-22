@@ -121,6 +121,7 @@ local agent compatibility.
 ### 5.3 Server primitives
 
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-03 -->
+<!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-03-CLOSED -->
 
 Tools retain the `datum.<group>.<verb>` taxonomy. Resources include at minimum:
 
