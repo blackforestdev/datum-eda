@@ -135,6 +135,7 @@ Tools retain the `datum.<group>.<verb>` taxonomy. Resources include at minimum:
 - `datum://artifact/{artifact_id}`
 - `datum://render/board/{revision}.svg`
 - `datum://render/schematic/{revision}.svg`
+- `datum://workflows` for the canonical portable workflow inventory;
 - resource templates for stable object IDs and paginated collections.
 
 When negotiated, the server supports resource list-change and update

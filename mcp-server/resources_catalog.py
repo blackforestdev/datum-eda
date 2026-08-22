@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+from pathlib import Path
 from typing import Any
 
 from discovery_scope import DiscoveryScope
@@ -87,6 +88,7 @@ class DatumResourceCatalog:
             _resource("datum://project/current", "Current Datum project"),
             _resource("datum://context/live", "Live Datum context"),
             _resource("datum://checks/current", "Current Datum checks"),
+            _resource("datum://workflows", "Canonical Datum workflows"),
         ]
         context_id = self._scope.context_id
         if context_id:
@@ -140,6 +142,12 @@ class DatumResourceCatalog:
                 ),
                 "check_status": live_document.get("check_status"),
             }
+        elif uri == "datum://workflows":
+            value = json.loads(
+                Path(__file__)
+                .with_name("workflow_catalog.json")
+                .read_text(encoding="utf-8")
+            )
         elif self._matches_current(uri, "context/pinned", self._scope.context_id):
             value = pinned_document
         elif self._matches_current(
