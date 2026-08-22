@@ -360,6 +360,7 @@ fn write_terminal_context_files_scoped(
             pinned_context_id: terminal_context.context_id.clone(),
             pinned_context_path: pinned_context_path.display().to_string(),
             model_revision: context.source_revision.clone(),
+            accepted_transaction_tip: context.accepted_transaction_tip.clone(),
         };
         let discovery_text = format!(
             "{}\n",
@@ -688,6 +689,10 @@ mod tests {
         assert_ne!(
             discovery["live_context_id"], discovery["pinned_context_id"],
             "live and pinned context identities must be explicit and distinct"
+        );
+        assert_eq!(
+            discovery["accepted_transaction_tip"].as_str(),
+            launch.accepted_transaction_tip.as_deref()
         );
         let mut refreshed_launch = launch.clone();
         refreshed_launch.selection_context = datum_gui_protocol::DatumSelectionContext {

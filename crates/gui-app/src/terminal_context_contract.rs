@@ -114,6 +114,7 @@ pub(super) struct TerminalAgentDiscovery {
     pub(super) pinned_context_id: String,
     pub(super) pinned_context_path: String,
     pub(super) model_revision: Option<String>,
+    pub(super) accepted_transaction_tip: Option<String>,
 }
 
 #[derive(Debug, Serialize)]

@@ -32,7 +32,15 @@ class DiscoveryScope:
     def read_live_context(self) -> dict[str, Any]:
         if self.live_context_path is None:
             return self.document
-        return _load_json_object(self.live_context_path, "live context")
+        document = _load_json_object(self.live_context_path, "live context")
+        _match_context_identity(
+            document,
+            self.terminal_session_id,
+            self.context_id,
+            self.live_context_id,
+            "live",
+        )
+        return document
 
     def read_pinned_context(self) -> dict[str, Any]:
         return self.pinned_document or self.document
@@ -85,6 +93,7 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         _match_context_identity(
             pinned_document, terminal_session_id, context_id, live_context_id, "pinned"
         )
+        _match_pinned_authority(document, pinned_document)
 
     _match_environment("DATUM_PROJECT_ROOT", project_root)
     _match_environment("DATUM_TERMINAL_SESSION_ID", terminal_session_id)
@@ -148,6 +157,14 @@ def _match_context_identity(
         raise ValueError(f"discovery {expected_kind} live context identity mismatch")
     if document.get("context_kind") != expected_kind:
         raise ValueError(f"discovery {expected_kind} context kind mismatch")
+
+
+def _match_pinned_authority(
+    discovery: dict[str, Any], pinned_document: dict[str, Any]
+) -> None:
+    for field in ("model_revision", "accepted_transaction_tip"):
+        if discovery.get(field) != pinned_document.get(field):
+            raise ValueError(f"discovery pinned {field} mismatch")
 
 
 def _required_path(document: dict[str, Any], key: str) -> Path:

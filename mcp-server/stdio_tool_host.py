@@ -7,6 +7,11 @@ import json
 import sys
 from typing import Any, TextIO
 
+from context_revision_fence import (
+    ContextFenceError,
+    scoped_tool_catalog,
+    validate_context_fence,
+)
 from datum_result_normalization import normalize_datum_result
 from discovery_scope import DiscoveryScope
 from prompts_catalog import PROMPTS, get_prompt
@@ -67,7 +72,13 @@ class StdioToolHost:
         if method == "ping":
             return {"jsonrpc": "2.0", "id": msg_id, "result": {}}
         if method == "tools/list":
-            return {"jsonrpc": "2.0", "id": msg_id, "result": {"tools": TOOLS}}
+            return {
+                "jsonrpc": "2.0",
+                "id": msg_id,
+                "result": {
+                    "tools": scoped_tool_catalog(TOOLS, TOOL_BY_NAME, self._discovery)
+                },
+            }
 
         if method == "resources/list":
             return self._resource_result(msg_id, "resources", self._resources.list_resources())
@@ -90,6 +101,13 @@ class StdioToolHost:
             try:
                 result = self._call_tool(name, arguments)
             except Exception as exc:
+                if isinstance(exc, ContextFenceError):
+                    result = {
+                        "content": [
+                            {"type": "json", "json": _datum_error_envelope(name, exc)}
+                        ]
+                    }
+                    return {"jsonrpc": "2.0", "id": msg_id, "result": result}
                 if isinstance(name, str) and name.startswith("datum."):
                     result = {"content": [{"type": "json", "json": _datum_error_envelope(name, exc)}]}
                     return {"jsonrpc": "2.0", "id": msg_id, "result": result}
@@ -170,7 +188,10 @@ class StdioToolHost:
             )
 
     def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-        response = dispatch_tool_call(self._daemon, name, arguments)
+        fenced_arguments = validate_context_fence(
+            self._discovery, name, arguments, TOOL_BY_NAME
+        )
+        response = dispatch_tool_call(self._daemon, name, fenced_arguments)
         if response.error is not None:
             raise RuntimeError(response.error.message)
 
@@ -242,14 +263,19 @@ def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:
 
 
 def _datum_error_envelope(name: str, exc: Exception) -> dict[str, Any]:
+    code = "tool_call_failed"
+    details = {"exception_type": exc.__class__.__name__}
+    if isinstance(exc, ContextFenceError):
+        code = exc.code
+        details = exc.details
     return {
         "ok": False,
         "schema": {"name": name, "version": 1},
         "context": _datum_result_context(None),
         "error": {
-            "code": "tool_call_failed",
+            "code": code,
             "message": str(exc),
-            "details": {"exception_type": exc.__class__.__name__},
+            "details": details,
         },
     }
 
