@@ -163,6 +163,33 @@ gerber/drill viewer or a paperspace viewport (decision 020).
 
 **The unifying law — five doorways, one vocabulary.** menu bar (discovery) ·
 marking menu (gesture) · **command console (typed)** · scripting (verbs in a file)
+
+### Read-only Command Console display slice
+
+The first bounded Console delivery exposes the already-collected
+`ConsoleLaneState` without prematurely enabling the later typed-authoring
+surface.
+
+<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-01 -->
+CONSOLE-RO-01 inventories the existing console state, narration ingress, and
+viewport ownership, then freezes the read-only boundary for this slice.
+
+<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-02 -->
+CONSOLE-RO-02 renders the console as a visible viewport-anchored surface using
+the existing Datum layout and rendering authorities.
+
+<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-03 -->
+CONSOLE-RO-03 routes existing GUI narration, engine messages, and diagnostics
+to that surface without writing any application text into terminal cells.
+
+<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-04 -->
+CONSOLE-RO-04 keeps the slice strictly read-only: it accepts no authored text,
+dispatches no command, and emits no design operation.
+
+<!-- REQ:CONSOLE-READONLY:CONSOLE-RO-05 -->
+CONSOLE-RO-05 proves empty, populated, overflow, and accessibility behavior,
+passes the governed GUI boundaries, and records closure evidence before the
+separate write-path task may proceed.
 · AI (intent). All five drive the **same verb registry**, so **every program action
 must be a verb** — a *complete* set (capability stays a parameter of a small verb
 set, but nothing is unreachable). A missing verb = an action the AI can't do, the

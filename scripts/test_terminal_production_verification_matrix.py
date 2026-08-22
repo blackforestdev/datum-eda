@@ -69,6 +69,16 @@ class TerminalProductionMatrixTests(unittest.TestCase):
         self.mutate(root, lambda matrix: matrix.pop("owner_acceptance"))
         self.assertTrue(any("hands-on checklist" in problem for problem in guard.failures(root)))
 
+    def test_owner_acceptance_must_be_durably_recorded(self) -> None:
+        root = self.fixture()
+        self.mutate(
+            root,
+            lambda matrix: matrix["owner_acceptance"].update(
+                status="ready", owner_response=""
+            ),
+        )
+        self.assertTrue(any("durably recorded" in problem for problem in guard.failures(root)))
+
 
 if __name__ == "__main__":
     unittest.main()

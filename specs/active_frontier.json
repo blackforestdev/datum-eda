@@ -737,15 +737,16 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "planned",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": false,
       "summary": "Deliver T0-T4e: shell-screen truth, Datum-owned core and PTY, native rendering/input, daily-driver UX/protocols, native agent discovery/MCP/context/workflows, and final production proof.",
       "dependencies": [],
       "unblocks": [
         "trustworthy daily-driver embedded terminal and agent surface"
-      ]
+      ],
+      "landing_commit": "4f6cc2b"
     },
     {
       "key": "TERMINAL-AGENT-INTEROP-CONTRACT",
@@ -2763,9 +2764,7 @@
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.4"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.6"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum proves the modern terminal protocol, graphics, security, and accessibility ceiling against its production TerminalCore path.",
         "canonical_next_step_id": null,
@@ -2811,9 +2810,7 @@
           "effects": [
             "The production-acceptance task gains named shell and TUI compatibility evidence while retaining its own release boundary."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.6"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -3299,9 +3296,7 @@
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.10"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.6"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum workflows remain canonical and portable across CLI and MCP, client projections stay parity-checked, shell metadata remains non-authoritative, and every governed agent proves the complete production round trip.",
         "canonical_next_step_id": null,
@@ -3426,9 +3421,7 @@
           "effects": [
             "The full terminal and agent verification package loses the workflow-parity prerequisite while retaining its own explicit selection and acceptance boundary."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.6"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -3447,9 +3440,9 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation.",
       "claim": null,
@@ -3460,7 +3453,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "The production Datum terminal and agent surface is verified against its complete conformance, interoperability, performance, security, accessibility, visual, lifecycle, and owner-acceptance contract.",
-        "canonical_next_step_id": "T4V-03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3527,7 +3520,7 @@
           {
             "id": "T4V-03",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Perform owner hands-on acceptance of the production terminal and agent workflows, then authorize terminal-epic closure only if the complete matrix is accepted.",
             "depends_on": [
               "T4V-02"
@@ -3538,7 +3531,13 @@
                 "marker": "T4V-03"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4-VERIFY:T4V-03-OWNER-ACCEPTED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `approve T4V-03 production acceptance`, or `T4V-03: reject — <blocking observation>`.",
               "requests": [
@@ -3564,7 +3563,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "4f6cc2b"
     },
     {
       "key": "CONSOLE-READONLY",
@@ -3578,13 +3578,120 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": true,
       "summary": "Expose the existing ConsoleLaneState as a visible read-only command-echo surface; typed authoring remains on the GUI write-path track.",
       "dependencies": [],
       "unblocks": [
-        "visible GUI action narration and diagnostics"
-      ]
+        "dat-gui-write-path-qiu"
+      ],
+      "completion": {
+        "outcome": "Datum visibly presents its existing ConsoleLaneState as a bounded, accessible, read-only viewport surface without creating a rival terminal or prematurely authorizing typed design mutation.",
+        "canonical_next_step_id": "CONSOLE-RO-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "CONSOLE-RO-01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory ConsoleLaneState, its existing narration ingress, viewport ownership, and the exact read-only boundary before implementation begins.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-RO-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-RO-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Render the existing console state in a visible viewport-anchored surface through Datum's established layout and rendering authorities.",
+            "depends_on": [
+              "CONSOLE-RO-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-RO-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-RO-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Project existing GUI narration, engine messages, and diagnostics into the console while preserving PTY-only terminal-cell authority.",
+            "depends_on": [
+              "CONSOLE-RO-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-RO-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-RO-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Enforce a read-only authority boundary that accepts no authored text, dispatches no command, and emits no design operation.",
+            "depends_on": [
+              "CONSOLE-RO-03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-RO-04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-RO-05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove empty, populated, overflow, accessibility, and boundary behavior; attach closure evidence without authorizing the separate typed write path.",
+            "depends_on": [
+              "CONSOLE-RO-04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-RO-05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The GUI write-path task loses its read-only Console prerequisite but retains separate typed-authoring and mutation authority."
+          ],
+          "unblocks_issue_ids": [
+            "dat-gui-write-path-qiu"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "GUI-SURFACE-SPECS",

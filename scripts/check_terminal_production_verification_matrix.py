@@ -86,8 +86,8 @@ def failures(root: Path = ROOT) -> list[str]:
     acceptance = matrix.get("owner_acceptance", {})
     if acceptance.get("frontier_step") != "T4V-03" or len(acceptance.get("checklist", [])) < 4:
         problems.append("T4 production matrix lacks the T4V-03 hands-on checklist")
-    if acceptance.get("status") != "ready":
-        problems.append("T4V-03 owner acceptance is not ready after production verification")
+    if acceptance.get("status") != "accepted" or not acceptance.get("owner_response"):
+        problems.append("T4V-03 owner acceptance is not durably recorded")
     return problems
 
 

@@ -455,9 +455,14 @@ golden mismatch without reblessing it.
 
 <!-- REQ:TERMINAL-T4-VERIFY:T4V-03 -->
 <!-- OWNER:TERMINAL-T4-VERIFY:T4V-03:T4V-03 -->
+<!-- EVIDENCE:TERMINAL-T4-VERIFY:T4V-03-OWNER-ACCEPTED -->
 T4V-03 is the owner's hands-on acceptance boundary. The terminal epic closes
 only after the owner accepts the production behavior and the final governance
 transaction attaches the complete evidence.
+On 2026-08-22 the owner replied exactly `approve T4V-03 production
+acceptance`, accepting the checked-in production matrix and the completed
+hands-on shell, TUI, agent, selection, resize, session, and lifecycle checks.
+No blocking terminal defect remained in the accepted scope.
 
 Every slice is a bounded tracked execution unit. Only T4e verification closes
 the native-terminal epic.

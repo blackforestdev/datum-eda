@@ -210,7 +210,10 @@
   ],
   "owner_acceptance": {
     "frontier_step": "T4V-03",
-    "status": "ready",
+    "status": "accepted",
+    "accepted_on": "2026-08-22",
+    "owner_response": "approve T4V-03 production acceptance",
+    "evidence": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md#EVIDENCE:TERMINAL-T4-VERIFY:T4V-03-OWNER-ACCEPTED",
     "checklist": [
       "shell prompt, typing, long output, colors, cursor, and glyphs",
       "Vim or Neovim, tmux, and an interactive code agent",
