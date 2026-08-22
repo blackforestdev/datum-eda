@@ -2843,9 +2843,7 @@
         "dat-terminal-emulator-epic-jzv.3",
         "dat-terminal-emulator-epic-jzv.7"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.10"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum launches supported agent clients through ordinary owned PTYs with native discovery and ephemeral session-scoped configuration.",
         "canonical_next_step_id": null,
@@ -2969,9 +2967,7 @@
           "effects": [
             "The context-authority package gains the native launcher and discovery prerequisite."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.10"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -2999,9 +2995,7 @@
         "dat-terminal-emulator-epic-jzv.3",
         "dat-terminal-emulator-epic-jzv.7"
       ],
-      "unblocks": [
-        "dat-terminal-emulator-epic-jzv.10"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum exposes a protocol-clean standard MCP broker with governed transports, typed primitives, stable resources, notifications, prompts, and native adapter discovery.",
         "canonical_next_step_id": null,
@@ -3126,9 +3120,7 @@
           "effects": [
             "The context-authority package loses the standard MCP broker prerequisite while retaining its own explicit selection and acceptance boundary."
           ],
-          "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.10"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -3145,31 +3137,11 @@
         "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Separate live and immutable pinned context, fence mutations by revision, and grant short-lived inspect/propose/apply-approved authority with complete audit provenance.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-terminal-context-20260822",
-        "claimed_at": "2026-08-22T02:50:04Z",
-        "heartbeat_at": "2026-08-22T04:13:01Z",
-        "expires_at": "2026-08-22T12:13:01Z",
-        "scope": [
-          "crates/gui-app",
-          "crates/gui-protocol",
-          "crates/cli",
-          "mcp-server",
-          "scripts",
-          "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
-          "specs",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "fc26884"
-      },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
@@ -3179,7 +3151,7 @@
       ],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
-        "canonical_next_step_id": "AI-CTX-04",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3272,7 +3244,7 @@
           {
             "id": "AI-CTX-04",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove session-lifetime revocation, absence of secrets from discovery and telemetry, and durable agent/session/context/approval provenance in audit and journal records.",
             "depends_on": [
               "AI-CTX-02",
@@ -3284,7 +3256,17 @@
                 "marker": "AI-CTX-04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "c10dadc"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-04-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -3298,7 +3280,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "c10dadc"
     },
     {
       "key": "TERMINAL-T4D-WORKFLOW-PARITY",
@@ -3311,9 +3294,9 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "ready",
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip.",
       "dependencies": [
@@ -3322,7 +3305,99 @@
       ],
       "unblocks": [
         "dat-terminal-emulator-epic-jzv.6"
-      ]
+      ],
+      "completion": {
+        "outcome": "Datum workflows remain canonical and portable across CLI and MCP, client projections stay parity-checked, shell metadata remains non-authoritative, and every governed agent proves the complete production round trip.",
+        "canonical_next_step_id": "AI-WF-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "AI-WF-01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Define one canonical workflow inventory binding each intent to CLI and MCP tools, resources, prompts, capabilities, context inputs, review gates, and evidence.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-WF-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-WF-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Generate or parity-validate thin Codex, Claude Code, Cursor-compatible, and local-agent projections from the canonical workflow inventory.",
+            "depends_on": [
+              "AI-WF-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-WF-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-WF-03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Integrate OSC 7 and OSC 133 as untrusted terminal-session metadata without allowing screen output to create design authority or operations.",
+            "depends_on": [
+              "AI-WF-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-WF-03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "AI-WF-04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove launch, discovery, inspect, propose, review, apply, refresh, and resume parity for Codex, Claude Code, a Cursor-compatible CLI, and a local agent on a production Datum build.",
+            "depends_on": [
+              "AI-WF-02",
+              "AI-WF-03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "AI-WF-04"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The full terminal and agent verification package loses the workflow-parity prerequisite while retaining its own explicit selection and acceptance boundary."
+          ],
+          "unblocks_issue_ids": [
+            "dat-terminal-emulator-epic-jzv.6"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "TERMINAL-T4-VERIFY",

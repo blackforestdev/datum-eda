@@ -168,6 +168,7 @@ affected IDs, and refresh/rebase options. Silent last-write-wins is prohibited.
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03 -->
 <!-- EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03-CLOSED -->
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-04 -->
+<!-- EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-04-CLOSED -->
 
 Capability profiles are cumulative and explicit:
 
@@ -182,6 +183,9 @@ authority. Every committed design mutation records agent, launch/session,
 context, expected revision, approval, operation batch, diff, and journal result.
 
 ## 8. Portable workflows and client projections
+
+<!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-01 -->
+<!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-02 -->
 
 The canonical workflow inventory binds one intent to CLI, MCP tool/resource/
 prompt, required capabilities, context inputs, review gate, and evidence. Thin
@@ -198,6 +202,8 @@ skill cannot remove the underlying CLI/MCP workflow.
 
 ## 9. Shell integration boundary
 
+<!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-03 -->
+
 OSC 7 may report cwd and OSC 133 may mark prompt/command/output boundaries for
 session UX, history, and new-session-in-cwd behavior. These signals are
 untrusted presentation metadata. Datum does not parse terminal output into a
@@ -207,6 +213,7 @@ typed design operation, auto-run a discovered command, or infer approval.
 
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-04 -->
 <!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-04-CLOSED -->
+<!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-04 -->
 
 Each required adapter must prove on a production Datum build:
 
