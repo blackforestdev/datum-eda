@@ -433,6 +433,7 @@ accessibility, and Datum-shell integration.
   performance, security, accessibility, and owner acceptance matrix.
 
 <!-- REQ:TERMINAL-T4-VERIFY:T4V-01 -->
+<!-- EVIDENCE:TERMINAL-T4-VERIFY:T4V-01-CLOSED -->
 T4V-01 assembles the checked-in production matrix from the completed T0–T4d
 evidence. It records exact commands, revisions, artifacts, known deltas, and
 the remaining production runs without treating earlier package closure as a

@@ -3448,7 +3448,7 @@
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
       "state": "in_progress",
-      "authorization": "planning",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation.",
@@ -3457,8 +3457,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-verify-20260822",
         "claimed_at": "2026-08-22T12:14:34Z",
-        "heartbeat_at": "2026-08-22T12:14:34Z",
-        "expires_at": "2026-08-22T20:14:34Z",
+        "heartbeat_at": "2026-08-22T12:21:06Z",
+        "expires_at": "2026-08-22T20:21:06Z",
         "scope": [
           "crates/cli",
           "crates/gui-app",
@@ -3472,7 +3472,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "4b04bcc"
+        "head": "2b75eb3"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
@@ -3481,7 +3481,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "The production Datum terminal and agent surface is verified against its complete conformance, interoperability, performance, security, accessibility, visual, lifecycle, and owner-acceptance contract.",
-        "canonical_next_step_id": "T4V-01",
+        "canonical_next_step_id": "T4V-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3498,7 +3498,7 @@
           {
             "id": "T4V-01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Assemble the checked-in final production matrix from T0 through T4d evidence, with exact commands, revisions, artifacts, known deltas, and remaining live verification runs.",
             "depends_on": [],
             "requirement_refs": [
@@ -3507,12 +3507,22 @@
                 "marker": "T4V-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "2b75eb3"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4-VERIFY:T4V-01-CLOSED"
+              }
+            ]
           },
           {
             "id": "T4V-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Run and record the production conformance, performance, security, accessibility, visual, shell, TUI, agent, MCP, lifecycle, and teardown matrix; repair every blocking defect.",
             "depends_on": [
               "T4V-01"
