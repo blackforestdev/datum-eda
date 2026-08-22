@@ -37,6 +37,7 @@ mod imports;
 mod inventory;
 mod library;
 mod manufacturing;
+mod mcp;
 // Shared core files from the dissolved command_project.rs /
 // command_project_surface.rs hosts (Wave 2 endgame): the scope prelude,
 // project-core loaders, cross-family support helpers, and native root types.
@@ -65,6 +66,7 @@ pub(crate) use self::imports::*;
 pub(crate) use self::inventory::*;
 pub(crate) use self::library::*;
 pub(crate) use self::manufacturing::*;
+pub(crate) use self::mcp::*;
 pub(crate) use self::native_types::{
     NativeBoardRoot, NativeComponentPad, NativeOutline, NativePoint,
 };

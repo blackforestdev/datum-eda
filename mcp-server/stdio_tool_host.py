@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 import sys
-from typing import Any
+from typing import Any, TextIO
 
 from datum_result_normalization import normalize_datum_result
 from tool_dispatch import dispatch_tool_call
@@ -75,14 +75,43 @@ class StdioToolHost:
 
         return {"content": [{"type": "json", "json": result}]}
 
-    def run_stdio(self) -> None:
-        for line in sys.stdin:
+    def run_stdio(self, stdin: TextIO | None = None, stdout: TextIO | None = None) -> None:
+        input_stream = stdin or sys.stdin
+        output_stream = stdout or sys.stdout
+        for line in input_stream:
             line = line.strip()
             if not line:
                 continue
-            response = self.handle_message(json.loads(line))
+            try:
+                message = json.loads(line)
+            except json.JSONDecodeError:
+                response = _protocol_error(None, -32700, "parse error")
+            else:
+                if not _valid_request(message):
+                    response = _protocol_error(None, -32600, "invalid request")
+                else:
+                    response = self.handle_message(message)
             if response is not None:
-                print(json.dumps(response), flush=True)
+                print(json.dumps(response, separators=(",", ":")), file=output_stream, flush=True)
+
+
+def _protocol_error(msg_id: Any, code: int, message: str) -> dict[str, Any]:
+    return {
+        "jsonrpc": "2.0",
+        "id": msg_id,
+        "error": {"code": code, "message": message},
+    }
+
+
+def _valid_request(message: Any) -> bool:
+    if not isinstance(message, dict):
+        return False
+    if message.get("jsonrpc") != "2.0" or not isinstance(message.get("method"), str):
+        return False
+    msg_id = message.get("id")
+    return "id" not in message or msg_id is None or (
+        isinstance(msg_id, (str, int)) and not isinstance(msg_id, bool)
+    )
 
 
 def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:

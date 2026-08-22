@@ -23,6 +23,7 @@ mod gerber_plan;
 mod inventory;
 mod journal;
 mod manufacturing;
+mod mcp;
 mod native_support;
 mod output;
 mod pool;
@@ -91,6 +92,7 @@ pub(crate) use self::manufacturing::{
     ProjectDeletePanelProjectionArgs, ProjectUpdateManufacturingPlanArgs,
     ProjectUpdatePanelProjectionArgs, ReportManufacturingArgs, ValidateManufacturingSetArgs,
 };
+pub(crate) use self::mcp::{McpCommands, McpServeArgs};
 pub(crate) use self::native_support::{
     NativeHiddenPowerBehaviorArg, NativePortDirectionArg, NativeSymbolDisplayModeArg,
 };

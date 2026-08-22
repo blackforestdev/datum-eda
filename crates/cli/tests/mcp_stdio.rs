@@ -1,0 +1,96 @@
+use std::{
+    fs,
+    io::Write,
+    path::PathBuf,
+    process::{Command, Stdio},
+    time::{SystemTime, UNIX_EPOCH},
+};
+
+use serde_json::{Value, json};
+
+fn unique_fixture_root() -> PathBuf {
+    let nonce = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock")
+        .as_nanos();
+    std::env::temp_dir().join(format!("datum-mcp-stdio-{}-{nonce}", std::process::id()))
+}
+
+#[test]
+fn canonical_mcp_command_emits_protocol_only_on_stdout() {
+    let root = unique_fixture_root();
+    fs::create_dir_all(&root).expect("fixture root");
+    let discovery = root.join("discovery.json");
+    fs::write(
+        &discovery,
+        serde_json::to_vec(&json!({
+            "schema": "datum_agent_discovery_v1",
+            "project_root": root,
+            "terminal_session_id": "terminal-mcp-test",
+            "context_id": "context-mcp-test"
+        }))
+        .expect("serialize discovery"),
+    )
+    .expect("write discovery");
+
+    let mut child = Command::new(env!("CARGO_BIN_EXE_datum-eda"))
+        .args(["mcp", "serve", "--discovery"])
+        .arg(&discovery)
+        .env_remove("DATUM_PROJECT_ROOT")
+        .env_remove("DATUM_TERMINAL_SESSION_ID")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("spawn canonical MCP command");
+    child
+        .stdin
+        .take()
+        .expect("child stdin")
+        .write_all(b"{\"jsonrpc\":\"2.0\",\"id\":41,\"method\":\"initialize\",\"params\":{}}\n")
+        .expect("write initialize");
+    let output = child.wait_with_output().expect("wait for MCP broker");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        output.stderr.is_empty(),
+        "protocol success must not log: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let stdout = String::from_utf8(output.stdout).expect("UTF-8 JSON-RPC stdout");
+    let lines = stdout.lines().collect::<Vec<_>>();
+    assert_eq!(lines.len(), 1, "stdout must contain one protocol message");
+    let response: Value = serde_json::from_str(lines[0]).expect("JSON-RPC response");
+    assert_eq!(response["jsonrpc"], "2.0");
+    assert_eq!(response["id"], 41);
+    assert_eq!(response["result"]["serverInfo"]["name"], "datum-eda");
+
+    fs::remove_dir_all(&root).expect("remove fixture root");
+}
+
+#[test]
+fn invalid_discovery_reports_only_to_stderr() {
+    let root = unique_fixture_root();
+    fs::create_dir_all(&root).expect("fixture root");
+    let discovery = root.join("discovery.json");
+    fs::write(&discovery, br#"{"schema":"future_v99"}"#).expect("write discovery");
+    let output = Command::new(env!("CARGO_BIN_EXE_datum-eda"))
+        .args(["mcp", "serve", "--discovery"])
+        .arg(&discovery)
+        .output()
+        .expect("run canonical MCP command");
+    assert!(!output.status.success());
+    assert!(output.stdout.is_empty());
+    let error: Value = serde_json::from_slice(&output.stderr).expect("structured stderr log");
+    assert_eq!(error["component"], "datum-mcp");
+    assert!(
+        error["message"]
+            .as_str()
+            .is_some_and(|message| message.contains("unsupported discovery schema"))
+    );
+    fs::remove_dir_all(&root).expect("remove fixture root");
+}

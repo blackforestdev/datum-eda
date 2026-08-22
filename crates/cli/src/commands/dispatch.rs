@@ -1,5 +1,4 @@
 // commands/dispatch.rs — the single exhaustive ProjectCommands router.
-//
 // Phase 5 endgame: ONE compiler-enforced exhaustive match (no `_ =>` arm).
 // The command_exec_* forwarding layer is dissolved — arms either run their
 // family's `args.run(format)` inherent method (impls live in the owning
@@ -1514,6 +1513,7 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     let format = &cli.format;
     match cli.command {
         Commands::Agent { action } => execute_agent_command(format, action),
+        Commands::Mcp { action } => execute_mcp_command(format, action),
         Commands::Context { action } => match action {
             ContextCommands::Get(args) => {
                 Ok((render_output(format, &query_context_envelope(&args)?), 0))

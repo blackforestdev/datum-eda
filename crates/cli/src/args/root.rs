@@ -21,6 +21,11 @@ pub(crate) enum Commands {
         #[command(subcommand)]
         action: AgentCommands,
     },
+    /// Serve Datum through the standard Model Context Protocol
+    Mcp {
+        #[command(subcommand)]
+        action: McpCommands,
+    },
     /// Inspect Datum session/context discovery state
     Context {
         #[command(subcommand)]
