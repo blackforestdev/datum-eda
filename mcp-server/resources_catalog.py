@@ -81,7 +81,8 @@ class DatumResourceCatalog:
         self._scope = scope
 
     def list_resources(self) -> list[dict[str, str]]:
-        document = self._scope.document
+        live_document = self._scope.read_live_context()
+        pinned_document = self._scope.read_pinned_context()
         resources = [
             _resource("datum://project/current", "Current Datum project"),
             _resource("datum://context/live", "Live Datum context"),
@@ -97,7 +98,7 @@ class DatumResourceCatalog:
                     _resource(f"datum://selection/{context_id}", "Datum selection"),
                 ]
             )
-        revision = document.get("model_revision")
+        revision = pinned_document.get("model_revision")
         if _stable_id(revision):
             resources.append(
                 _resource(f"datum://model/revision/{revision}", "Datum model revision")
@@ -107,15 +108,16 @@ class DatumResourceCatalog:
             ("visible_proposal_ids", "proposal", "Datum proposal"),
             ("visible_artifact_ids", "artifact", "Datum artifact"),
         ):
-            for value in _stable_ids(document.get(key)):
+            for value in _stable_ids(live_document.get(key)):
                 resources.append(_resource(f"datum://{prefix}/{value}", label))
         return resources
 
     def read(self, uri: str) -> dict[str, Any]:
-        document = self._scope.document
+        live_document = self._scope.read_live_context()
+        pinned_document = self._scope.read_pinned_context()
         if uri == "datum://project/current":
             value = {
-                key: document.get(key)
+                key: live_document.get(key)
                 for key in (
                     "project_root",
                     "project_id",
@@ -128,22 +130,24 @@ class DatumResourceCatalog:
                 )
             }
         elif uri == "datum://context/live":
-            value = document
+            value = live_document
         elif uri == "datum://checks/current":
             value = {
-                "latest_check_run_id": document.get("latest_check_run_id"),
-                "visible_check_run_ids": document.get("visible_check_run_ids", []),
-                "visible_finding_fingerprints": document.get(
+                "latest_check_run_id": live_document.get("latest_check_run_id"),
+                "visible_check_run_ids": live_document.get("visible_check_run_ids", []),
+                "visible_finding_fingerprints": live_document.get(
                     "visible_finding_fingerprints", []
                 ),
-                "check_status": document.get("check_status"),
+                "check_status": live_document.get("check_status"),
             }
         elif self._matches_current(uri, "context/pinned", self._scope.context_id):
-            value = document
-        elif self._matches_current(uri, "model/revision", document.get("model_revision")):
-            value = document
+            value = pinned_document
+        elif self._matches_current(
+            uri, "model/revision", pinned_document.get("model_revision")
+        ):
+            value = pinned_document
         elif self._matches_current(uri, "selection", self._scope.context_id):
-            value = document.get("selection_context", {})
+            value = pinned_document.get("selection_context", {})
         else:
             value = self._read_visible_identity(uri)
         return {
@@ -167,7 +171,7 @@ class DatumResourceCatalog:
         return _stable_id(expected) and uri == f"datum://{prefix}/{expected}"
 
     def _read_visible_identity(self, uri: str) -> dict[str, Any]:
-        document = self._scope.document
+        document = self._scope.read_live_context()
         for prefix, key in (
             ("check", "visible_finding_fingerprints"),
             ("proposal", "visible_proposal_ids"),

@@ -17,6 +17,9 @@ pub(super) struct TerminalContextEnvelope {
     pub(super) model_revision: Option<String>,
     pub(super) source_revision: Option<String>,
     pub(super) context_id: String,
+    pub(super) live_context_id: String,
+    pub(super) pinned_context_id: String,
+    pub(super) context_kind: &'static str,
     pub(super) session_id: String,
     pub(super) terminal_session_id: String,
     pub(super) terminal_launch_profile: String,
@@ -89,12 +92,28 @@ pub(super) struct TerminalCheckRunProfileLatest {
 #[derive(Debug, Serialize)]
 pub(super) struct TerminalContextStorage {
     pub(super) context_path: String,
+    pub(super) live_context_path: String,
+    pub(super) pinned_context_path: String,
+    pub(super) discovery_path: String,
     pub(super) latest_context_path: String,
     pub(super) compatibility_context_path: String,
     pub(super) legacy_context_path: String,
     pub(super) session_path: String,
     pub(super) event_log_path: String,
     pub(super) schema_version: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct TerminalAgentDiscovery {
+    pub(super) schema: &'static str,
+    pub(super) project_root: String,
+    pub(super) project_id: Option<String>,
+    pub(super) terminal_session_id: String,
+    pub(super) live_context_id: String,
+    pub(super) live_context_path: String,
+    pub(super) pinned_context_id: String,
+    pub(super) pinned_context_path: String,
+    pub(super) model_revision: Option<String>,
 }
 
 #[derive(Debug, Serialize)]

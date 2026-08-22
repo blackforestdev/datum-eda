@@ -24,6 +24,18 @@ class DiscoveryScope:
     terminal_session_id: str
     context_id: str | None
     document: dict[str, Any]
+    live_context_id: str | None = None
+    live_context_path: Path | None = None
+    pinned_context_path: Path | None = None
+    pinned_document: dict[str, Any] | None = None
+
+    def read_live_context(self) -> dict[str, Any]:
+        if self.live_context_path is None:
+            return self.document
+        return _load_json_object(self.live_context_path, "live context")
+
+    def read_pinned_context(self) -> dict[str, Any]:
+        return self.pinned_document or self.document
 
 
 def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
@@ -48,9 +60,31 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         )
     project_root = _required_path(document, "project_root")
     terminal_session_id = _required_string(document, "terminal_session_id")
-    context_id = document.get("context_id")
+    context_id = document.get("pinned_context_id") or document.get("context_id")
     if context_id is not None and (not isinstance(context_id, str) or not context_id):
         raise ValueError("discovery context_id must be a non-empty string when present")
+
+    live_context_id = document.get("live_context_id")
+    if live_context_id is not None and (
+        not isinstance(live_context_id, str) or not live_context_id
+    ):
+        raise ValueError("discovery live_context_id must be a non-empty string when present")
+    live_context_path = _optional_context_path(document, "live_context_path")
+    pinned_context_path = _optional_context_path(document, "pinned_context_path")
+    if (live_context_path is None) != (pinned_context_path is None):
+        raise ValueError(
+            "discovery live_context_path and pinned_context_path must be declared together"
+        )
+    pinned_document = None
+    if live_context_path is not None and pinned_context_path is not None:
+        live_document = _load_json_object(live_context_path, "live context")
+        pinned_document = _load_json_object(pinned_context_path, "pinned context")
+        _match_context_identity(
+            live_document, terminal_session_id, context_id, live_context_id, "live"
+        )
+        _match_context_identity(
+            pinned_document, terminal_session_id, context_id, live_context_id, "pinned"
+        )
 
     _match_environment("DATUM_PROJECT_ROOT", project_root)
     _match_environment("DATUM_TERMINAL_SESSION_ID", terminal_session_id)
@@ -64,7 +98,56 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         terminal_session_id=terminal_session_id,
         context_id=context_id,
         document=document,
+        live_context_id=live_context_id,
+        live_context_path=live_context_path,
+        pinned_context_path=pinned_context_path,
+        pinned_document=pinned_document,
     )
+
+
+def _optional_context_path(document: dict[str, Any], key: str) -> Path | None:
+    value = document.get(key)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"discovery {key} must be a non-empty absolute path")
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError(f"discovery {key} must be absolute")
+    try:
+        canonical = path.resolve(strict=True)
+    except OSError as exc:
+        raise ValueError(f"discovery {key} is unavailable: {path}") from exc
+    if not canonical.is_file():
+        raise ValueError(f"discovery {key} is not a regular file: {canonical}")
+    return canonical
+
+
+def _load_json_object(path: Path, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"discovery {label} is not valid UTF-8 JSON: {path}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"discovery {label} root must be an object")
+    return value
+
+
+def _match_context_identity(
+    document: dict[str, Any],
+    terminal_session_id: str,
+    pinned_context_id: str | None,
+    live_context_id: str | None,
+    expected_kind: str,
+) -> None:
+    if document.get("terminal_session_id") != terminal_session_id:
+        raise ValueError(f"discovery {expected_kind} context session identity mismatch")
+    if pinned_context_id is not None and document.get("pinned_context_id") != pinned_context_id:
+        raise ValueError(f"discovery {expected_kind} pinned context identity mismatch")
+    if live_context_id is not None and document.get("live_context_id") != live_context_id:
+        raise ValueError(f"discovery {expected_kind} live context identity mismatch")
+    if document.get("context_kind") != expected_kind:
+        raise ValueError(f"discovery {expected_kind} context kind mismatch")
 
 
 def _required_path(document: dict[str, Any], key: str) -> Path:

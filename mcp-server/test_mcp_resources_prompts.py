@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import io
 import json
+import os
 from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
-from discovery_scope import DiscoveryScope
+from discovery_scope import DiscoveryScope, load_discovery_scope
 from resources_catalog import RESOURCE_TEMPLATES
 from stdio_tool_host import StdioToolHost
 from test_support import FakeDaemonClient
@@ -42,6 +44,110 @@ def _scope() -> DiscoveryScope:
 
 
 class TestMcpResourcesPrompts(unittest.TestCase):
+    def test_live_context_refreshes_while_pinned_context_stays_immutable(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            live_path = root / "live.json"
+            pinned_path = root / "pinned.json"
+            discovery_path = root / "discovery.json"
+            common = {
+                "contract": "datum_terminal_context_v1",
+                "project_root": os.fspath(root),
+                "terminal_session_id": "terminal-split",
+                "context_id": "context-pinned",
+                "live_context_id": "live-terminal-split",
+                "pinned_context_id": "context-pinned",
+                "model_revision": "revision-pinned",
+            }
+            live_path.write_text(
+                json.dumps(
+                    common
+                    | {
+                        "context_kind": "live",
+                        "selection_context": {"id": "live-before"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            pinned_path.write_text(
+                json.dumps(
+                    common
+                    | {
+                        "context_kind": "pinned",
+                        "selection_context": {"id": "pinned-selection"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            discovery_path.write_text(
+                json.dumps(
+                    {
+                        "schema": "datum_agent_discovery_v1",
+                        "project_root": os.fspath(root),
+                        "terminal_session_id": "terminal-split",
+                        "live_context_id": "live-terminal-split",
+                        "live_context_path": os.fspath(live_path),
+                        "pinned_context_id": "context-pinned",
+                        "pinned_context_path": os.fspath(pinned_path),
+                        "model_revision": "revision-pinned",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with patch.dict(os.environ, {}, clear=True):
+                host = StdioToolHost(
+                    FakeDaemonClient(), load_discovery_scope(discovery_path)
+                )
+            live_path.write_text(
+                json.dumps(
+                    common
+                    | {
+                        "context_kind": "live",
+                        "selection_context": {"id": "live-after"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            pinned_path.write_text(
+                json.dumps(
+                    common
+                    | {
+                        "context_kind": "pinned",
+                        "selection_context": {"id": "tampered-after-pin"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            live = host.handle_message(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 20,
+                    "method": "resources/read",
+                    "params": {"uri": "datum://context/live"},
+                }
+            )
+            pinned = host.handle_message(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 21,
+                    "method": "resources/read",
+                    "params": {"uri": "datum://context/pinned/context-pinned"},
+                }
+            )
+            self.assertEqual(
+                json.loads(live["result"]["contents"][0]["text"])[
+                    "selection_context"
+                ]["id"],
+                "live-after",
+            )
+            self.assertEqual(
+                json.loads(pinned["result"]["contents"][0]["text"])[
+                    "selection_context"
+                ]["id"],
+                "pinned-selection",
+            )
+
     def test_initialize_declares_typed_protocol_capabilities(self) -> None:
         response = StdioToolHost(FakeDaemonClient(), _scope()).handle_message(
             {

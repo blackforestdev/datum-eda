@@ -1,9 +1,9 @@
 use crate::terminal_active_context::TerminalActiveContextCommands;
 use crate::terminal_check_context::profile_latest_check_runs_context;
 use crate::terminal_context_contract::{
-    TerminalAgentCommands, TerminalCheckCommands, TerminalContextCommands, TerminalContextEnvelope,
-    TerminalContextStorage, TerminalJournalCommands, TerminalLibraryCommands,
-    TerminalProductionCommands, TerminalProposalCommands,
+    TerminalAgentCommands, TerminalAgentDiscovery, TerminalCheckCommands, TerminalContextCommands,
+    TerminalContextEnvelope, TerminalContextStorage, TerminalJournalCommands,
+    TerminalLibraryCommands, TerminalProductionCommands, TerminalProposalCommands,
 };
 use crate::terminal_context_io::{atomic_write_text, atomic_write_texts};
 use crate::terminal_proposal_context::{latest_proposal_id, visible_proposal_ids};
@@ -30,6 +30,22 @@ pub(super) struct TerminalContext {
     pub(super) model_revision: Option<String>,
     pub(super) created_unix_ms: u128,
     pub(super) process_group_id: Option<i32>,
+}
+
+pub(super) fn terminal_discovery_path(context: &TerminalContext) -> PathBuf {
+    context
+        .context_path
+        .with_file_name(format!("{}.discovery.json", context.session_id))
+}
+
+pub(super) fn terminal_pinned_context_path(context: &TerminalContext) -> PathBuf {
+    context
+        .context_path
+        .with_file_name(format!("{}.pinned.json", context.context_id))
+}
+
+fn terminal_live_context_id(context: &TerminalContext) -> String {
+    format!("live-{}", context.session_id)
 }
 
 pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<TerminalContext> {
@@ -123,6 +139,9 @@ fn write_terminal_context_files_scoped(
             .as_deref()
             .unwrap_or("unknown-revision")
     );
+    let live_context_id = terminal_live_context_id(terminal_context);
+    let pinned_context_path = terminal_pinned_context_path(terminal_context);
+    let discovery_path = terminal_discovery_path(terminal_context);
     let session = DatumToolSessionMetadata {
         session_id: terminal_context.session_id.clone(),
         context_id: terminal_context.context_id.clone(),
@@ -155,6 +174,9 @@ fn write_terminal_context_files_scoped(
         model_revision: context.source_revision.clone(),
         source_revision: context.source_revision.clone(),
         context_id: terminal_context.context_id.clone(),
+        live_context_id: live_context_id.clone(),
+        pinned_context_id: terminal_context.context_id.clone(),
+        context_kind: "live",
         session_id: terminal_context.session_id.clone(),
         terminal_session_id: terminal_context.session_id.clone(),
         terminal_launch_profile: context.terminal_profile.name().to_string(),
@@ -203,6 +225,9 @@ fn write_terminal_context_files_scoped(
         active_context_commands,
         storage: TerminalContextStorage {
             context_path: terminal_context.context_path.display().to_string(),
+            live_context_path: terminal_context.context_path.display().to_string(),
+            pinned_context_path: pinned_context_path.display().to_string(),
+            discovery_path: discovery_path.display().to_string(),
             latest_context_path: terminal_context.latest_context_path.display().to_string(),
             compatibility_context_path: terminal_context.latest_context_path.display().to_string(),
             legacy_context_path: terminal_context.latest_context_path.display().to_string(),
@@ -219,7 +244,7 @@ fn write_terminal_context_files_scoped(
         projection_context: context.projection_context.clone(),
         datum_cli: DATUM_CLI,
         legacy_cli: DATUM_LEGACY_CLI,
-        discovery: terminal_context.context_path.display().to_string(),
+        discovery: discovery_path.display().to_string(),
         discovery_command: "datum-eda context get --session \"$DATUM_SESSION_ID\"",
         context_commands: TerminalContextCommands {
             get: "datum-eda context get --session \"$DATUM_SESSION_ID\"",
@@ -315,14 +340,38 @@ fn write_terminal_context_files_scoped(
     let text = serde_json::to_string_pretty(&envelope).context("serialize terminal context")?;
     let context_text = format!("{text}\n");
     if !publish_aliases {
-        return atomic_write_text(&terminal_context.context_path, &context_text).with_context(
-            || {
-                format!(
-                    "write terminal context {}",
-                    terminal_context.context_path.display()
-                )
-            },
+        let mut pinned_value = serde_json::to_value(&envelope)
+            .context("serialize immutable pinned terminal context")?;
+        pinned_value["context_kind"] = serde_json::Value::String("pinned".to_string());
+        pinned_value["storage"]["context_path"] =
+            serde_json::Value::String(pinned_context_path.display().to_string());
+        let pinned_text = format!(
+            "{}\n",
+            serde_json::to_string_pretty(&pinned_value)
+                .context("serialize pinned terminal context")?
         );
+        let discovery = TerminalAgentDiscovery {
+            schema: "datum_agent_discovery_v1",
+            project_root: context.project_root.display().to_string(),
+            project_id: context.project_id.clone(),
+            terminal_session_id: terminal_context.session_id.clone(),
+            live_context_id,
+            live_context_path: terminal_context.context_path.display().to_string(),
+            pinned_context_id: terminal_context.context_id.clone(),
+            pinned_context_path: pinned_context_path.display().to_string(),
+            model_revision: context.source_revision.clone(),
+        };
+        let discovery_text = format!(
+            "{}\n",
+            serde_json::to_string_pretty(&discovery)
+                .context("serialize terminal agent discovery")?
+        );
+        return atomic_write_texts(&[
+            (&terminal_context.context_path, &context_text),
+            (&pinned_context_path, &pinned_text),
+            (&discovery_path, &discovery_text),
+        ])
+        .context("publish live, pinned, and discovery terminal context bundle");
     }
     let session_text =
         serde_json::to_string_pretty(&session).context("serialize tool session metadata")?;
@@ -605,6 +654,11 @@ mod tests {
 
         let mut terminal = write_terminal_context(&launch).expect("bootstrap context should write");
         assert!(terminal.context_path.exists());
+        let discovery_path = terminal_discovery_path(&terminal);
+        let pinned_context_path = terminal_pinned_context_path(&terminal);
+        assert!(discovery_path.exists());
+        assert!(pinned_context_path.exists());
+        let pinned_before = fs::read(&pinned_context_path).expect("pinned context should read");
         assert!(!terminal.latest_context_path.exists());
         assert!(!terminal.session_path.exists());
 
@@ -613,6 +667,45 @@ mod tests {
             .expect("pid-bearing context aliases should publish");
         assert!(terminal.latest_context_path.exists());
         assert!(terminal.session_path.exists());
+        assert_eq!(
+            fs::read(&pinned_context_path).expect("pinned context should remain readable"),
+            pinned_before,
+            "publishing mutable live aliases must not rewrite the pinned work context"
+        );
+        let discovery: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(&discovery_path).expect("agent discovery should read"),
+        )
+        .expect("agent discovery should parse");
+        assert_eq!(discovery["schema"], "datum_agent_discovery_v1");
+        assert_eq!(
+            discovery["live_context_path"],
+            terminal.context_path.display().to_string()
+        );
+        assert_eq!(
+            discovery["pinned_context_path"],
+            pinned_context_path.display().to_string()
+        );
+        assert_ne!(
+            discovery["live_context_id"], discovery["pinned_context_id"],
+            "live and pinned context identities must be explicit and distinct"
+        );
+        let mut refreshed_launch = launch.clone();
+        refreshed_launch.selection_context = datum_gui_protocol::DatumSelectionContext {
+            kind: "authored_object".to_string(),
+            id: Some("object-after-launch".to_string()),
+        };
+        write_terminal_context_files(&terminal, &refreshed_launch)
+            .expect("live terminal context should refresh");
+        let live_after: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(&terminal.context_path).expect("live context should read"),
+        )
+        .expect("live context should parse");
+        assert_eq!(live_after["selection_context"]["id"], "object-after-launch");
+        assert_eq!(
+            fs::read(&pinned_context_path).expect("pinned context should remain readable"),
+            pinned_before,
+            "GUI focus changes must update only live context"
+        );
         let _ = fs::remove_dir_all(&root);
     }
 

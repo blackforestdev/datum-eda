@@ -217,12 +217,12 @@ fn context_session_id(value: &serde_json::Value) -> Option<String> {
 
 fn resolve_context_path(args: &ContextGetArgs) -> Result<PathBuf> {
     if let Some(path) = &args.path {
-        return Ok(path.clone());
+        return resolve_live_context_path(path);
     }
     if let Ok(path) = std::env::var("DATUM_DISCOVERY")
         && !path.is_empty()
     {
-        return Ok(PathBuf::from(path));
+        return resolve_live_context_path(Path::new(&path));
     }
     if let Ok(path) = std::env::var("DATUM_TERMINAL_CONTEXT")
         && !path.is_empty()
@@ -241,6 +241,29 @@ fn resolve_context_path(args: &ContextGetArgs) -> Result<PathBuf> {
         return Ok(root.join(GUI_TERMINAL_CONTEXT_PATH));
     }
     bail!("context path required: pass --path, --project-root, or set DATUM_DISCOVERY")
+}
+
+fn resolve_live_context_path(path: &Path) -> Result<PathBuf> {
+    let value = read_context_envelope(path)?;
+    if value.get("schema").and_then(Value::as_str) != Some("datum_agent_discovery_v1") {
+        return Ok(path.to_path_buf());
+    }
+    let live_path = value
+        .get("live_context_path")
+        .and_then(Value::as_str)
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| anyhow::anyhow!("agent discovery is missing live_context_path"))?;
+    let live_path = PathBuf::from(live_path);
+    if !live_path.is_absolute() {
+        bail!("agent discovery live_context_path must be absolute");
+    }
+    if !live_path.is_file() {
+        bail!(
+            "agent discovery live context is unavailable: {}",
+            live_path.display()
+        );
+    }
+    Ok(live_path)
 }
 
 fn enrich_context_envelope(context_path: &Path, args: &ContextGetArgs, value: &mut Value) {

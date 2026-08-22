@@ -20,6 +20,7 @@ fn execute(cli: Cli) -> Result<String> {
 mod main_tests_context;
 mod main_tests_context_active;
 mod main_tests_context_check_context;
+mod main_tests_context_discovery;
 mod main_tests_context_source_shards;
 mod main_tests_context_terminal_lifecycle;
 mod main_tests_context_terminal_rotation;

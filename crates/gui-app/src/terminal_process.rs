@@ -3,8 +3,8 @@
 use crate::{
     terminal_capability::{DATUM_TERM, DATUM_TERM_PROGRAM, install_session_terminfo},
     terminal_context::{
-        DATUM_CLI, DATUM_LEGACY_CLI, tool_session_event_log_path, write_terminal_context,
-        write_terminal_context_files,
+        DATUM_CLI, DATUM_LEGACY_CLI, terminal_discovery_path, terminal_pinned_context_path,
+        tool_session_event_log_path, write_terminal_context, write_terminal_context_files,
     },
     terminal_session::{TerminalLaunchContext, TerminalSession},
     terminal_transport::{TerminalTransportRequest, TerminalWakeGate, prepare_terminal_transport},
@@ -19,6 +19,8 @@ pub(super) fn spawn_terminal_process(
         .terminal_profile
         .resolve(&context.project_root, &context.launch_working_directory);
     let mut terminal_context = write_terminal_context(context)?;
+    let discovery_path = terminal_discovery_path(&terminal_context);
+    let pinned_context_path = terminal_pinned_context_path(&terminal_context);
     let terminfo_root = install_session_terminfo(&terminal_context.session_path)?;
     let mut request =
         TerminalTransportRequest::new(&profile.executable, profile.cwd).args(profile.args);
@@ -35,7 +37,13 @@ pub(super) fn spawn_terminal_process(
         .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
         .env("DATUM_CONTEXT_ID", &terminal_context.context_id)
         .env("DATUM_SESSION_ID", &terminal_context.session_id)
-        .env("DATUM_DISCOVERY", terminal_context.context_path.as_os_str())
+        .env("DATUM_DISCOVERY", discovery_path.as_os_str())
+        .env("DATUM_AGENT_DISCOVERY", discovery_path.as_os_str())
+        .env(
+            "DATUM_LIVE_CONTEXT",
+            terminal_context.context_path.as_os_str(),
+        )
+        .env("DATUM_PINNED_CONTEXT", pinned_context_path.as_os_str())
         .env(
             "DATUM_TOOL_SESSION_EVENT_LOG",
             tool_session_event_log_path(&terminal_context.session_path).as_os_str(),
