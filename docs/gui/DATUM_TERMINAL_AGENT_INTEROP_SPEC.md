@@ -143,6 +143,9 @@ user-invoked workflow templates and never bypass tool approval.
 
 ## 6. Context and concurrency
 
+<!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-01 -->
+<!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-02 -->
+
 `live_context` follows GUI state. `pinned_context` is immutable for an agent work
 unit. Launch pins the initial context; an explicit agent/user action may pin a
 new one. Changing pane focus or selection never retargets an existing request.
@@ -159,6 +162,9 @@ A mismatch returns a structured stale-context result with current revision,
 affected IDs, and refresh/rebase options. Silent last-write-wins is prohibited.
 
 ## 7. Authority and security
+
+<!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03 -->
+<!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-04 -->
 
 Capability profiles are cumulative and explicit:
 
@@ -197,6 +203,7 @@ typed design operation, auto-run a discovered command, or infer approval.
 ## 10. Verification matrix
 
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-04 -->
+<!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-04-CLOSED -->
 
 Each required adapter must prove on a production Datum build:
 
