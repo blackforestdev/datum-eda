@@ -42,6 +42,7 @@ mod png_pixels;
 mod reducer;
 mod reducer_action;
 mod reducer_damage;
+mod reducer_print;
 mod reflow;
 mod screen;
 mod search;

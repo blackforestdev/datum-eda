@@ -4,7 +4,8 @@ use crate::{
 };
 
 pub(crate) struct DamagePlan {
-    entries: Vec<Damage>,
+    entries: [Option<Damage>; 5],
+    len: usize,
     history: HistoryFingerprint,
     graphic_count: usize,
 }
@@ -19,21 +20,41 @@ struct HistoryFingerprint {
 impl DamagePlan {
     pub(crate) fn capture(action: &ScreenAction, core: &TerminalCore) -> Self {
         let state = &core.state;
-        Self {
-            entries: classify(action, core),
+        let mut plan = Self {
+            entries: [None; 5],
+            len: 0,
             history: history_fingerprint(core),
             graphic_count: state.graphics.iter().len(),
+        };
+        classify(action, core, &mut plan);
+        plan
+    }
+
+    pub(crate) fn capture_metadata(core: &TerminalCore) -> Self {
+        Self {
+            entries: [None; 5],
+            len: 0,
+            history: history_fingerprint(core),
+            graphic_count: core.state.graphics.iter().len(),
         }
     }
 
-    pub(crate) fn finish(mut self, core: &TerminalCore) -> Vec<Damage> {
+    fn push(&mut self, damage: Damage) {
+        debug_assert!(self.len < self.entries.len());
+        self.entries[self.len] = Some(damage);
+        self.len += 1;
+    }
+
+    pub(crate) fn finish(mut self, core: &TerminalCore, damage: &mut crate::DamageSet) {
         if self.history != history_fingerprint(core) {
-            self.entries.push(Damage::History);
+            self.push(Damage::History);
         }
         if self.graphic_count != core.state.graphics.iter().len() {
-            self.entries.push(Damage::Graphics);
+            self.push(Damage::Graphics);
         }
-        self.entries
+        for entry in self.entries.into_iter().take(self.len).flatten() {
+            damage.push_coalesced(entry);
+        }
     }
 }
 
@@ -46,12 +67,11 @@ fn history_fingerprint(core: &TerminalCore) -> HistoryFingerprint {
     }
 }
 
-fn classify(action: &ScreenAction, core: &TerminalCore) -> Vec<Damage> {
+fn classify(action: &ScreenAction, core: &TerminalCore, damage: &mut DamagePlan) {
     let state = &core.state;
     let cursor = state.cursor.position;
     let margins = state.margins;
     let size = state.size;
-    let mut damage = Vec::with_capacity(3);
     match action {
         ScreenAction::Print(cluster) => {
             damage.push(print_damage(core, cursor, cluster.width()));
@@ -124,7 +144,6 @@ fn classify(action: &ScreenAction, core: &TerminalCore) -> Vec<Damage> {
         | ScreenAction::SetStyle(_)
         | ScreenAction::SetProtection(_) => {}
     }
-    damage
 }
 
 fn print_damage(core: &TerminalCore, at: CellPoint, new_width: CellWidth) -> Damage {

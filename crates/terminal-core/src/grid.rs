@@ -85,18 +85,22 @@ impl GridBuffer {
         let Some(cells) = self.rows.get_mut(row).map(|row| &mut row.cells) else {
             return;
         };
-        let Some(content) = cells.get(column).map(|cell| cell.content.clone()) else {
+        let Some(content) = cells.get(column).map(|cell| match &cell.content {
+            CellContent::Continuation { lead } => (1_u8, Some(*lead)),
+            CellContent::Cluster(cluster) if cluster.width() == CellWidth::Two => (2, None),
+            _ => (0, None),
+        }) else {
             return;
         };
         match content {
-            CellContent::Continuation { lead } => {
+            (1, Some(lead)) => {
                 let lead = usize::from(lead.get());
                 if let Some(cell) = cells.get_mut(lead) {
                     *cell = Cell::default();
                 }
                 cells[column] = Cell::default();
             }
-            CellContent::Cluster(cluster) if cluster.width() == CellWidth::Two => {
+            (2, _) => {
                 cells[column] = Cell::default();
                 if column + 1 < cells.len() {
                     cells[column + 1] = Cell::default();
@@ -123,14 +127,16 @@ impl GridBuffer {
         if width == CellWidth::Two {
             self.clear_cluster_at(row, column_index + 1);
         }
-        self.rows[row].cells[column_index] = cell.clone();
         if width == CellWidth::Two {
+            self.rows[row].cells[column_index] = cell.clone();
             self.rows[row].cells[column_index + 1] = Cell {
                 content: CellContent::Continuation { lead: column },
                 style: cell.style,
                 hyperlink: cell.hyperlink,
                 protected: cell.protected,
             };
+        } else {
+            self.rows[row].cells[column_index] = cell;
         }
     }
 }

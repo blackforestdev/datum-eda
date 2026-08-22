@@ -55,6 +55,7 @@ impl HistorySnapshot {
 #[derive(Clone, Debug)]
 pub(crate) struct HistoryStore {
     rows: VecDeque<GridRow>,
+    logical_lines: usize,
     payload_bytes: usize,
     trimmed_rows: u64,
     line_limit: HistoryLinesLimit,
@@ -65,6 +66,7 @@ impl HistoryStore {
     pub(crate) fn new(line_limit: HistoryLinesLimit, byte_limit: HistoryBytesLimit) -> Self {
         Self {
             rows: VecDeque::new(),
+            logical_lines: 0,
             payload_bytes: 0,
             trimmed_rows: 0,
             line_limit,
@@ -73,6 +75,13 @@ impl HistoryStore {
     }
 
     pub(crate) fn push(&mut self, row: GridRow) {
+        if self
+            .rows
+            .back()
+            .is_none_or(|previous| previous.logical_line != row.logical_line)
+        {
+            self.logical_lines = self.logical_lines.saturating_add(1);
+        }
         self.payload_bytes = self.payload_bytes.saturating_add(row.payload_bytes());
         self.rows.push_back(row);
         self.trim_to_limits();
@@ -80,6 +89,7 @@ impl HistoryStore {
 
     pub(crate) fn clear(&mut self) {
         self.rows.clear();
+        self.logical_lines = 0;
         self.payload_bytes = 0;
         self.trimmed_rows = 0;
     }
@@ -94,6 +104,7 @@ impl HistoryStore {
 
     pub(crate) fn replace_rows(&mut self, rows: Vec<GridRow>) {
         self.rows = rows.into();
+        self.logical_lines = logical_line_count(&self.rows);
         self.payload_bytes = self.rows.iter().map(GridRow::payload_bytes).sum();
         self.trim_to_limits();
     }
@@ -133,7 +144,7 @@ impl HistoryStore {
     }
 
     fn trim_to_limits(&mut self) {
-        while logical_line_count(&self.rows) > self.line_limit.get()
+        while self.logical_lines > self.line_limit.get()
             || self.payload_bytes > self.byte_limit.get()
         {
             let Some(front) = self.rows.front() else {
@@ -149,6 +160,7 @@ impl HistoryStore {
                 self.payload_bytes = self.payload_bytes.saturating_sub(removed.payload_bytes());
                 self.trimmed_rows = self.trimmed_rows.saturating_add(1);
             }
+            self.logical_lines = self.logical_lines.saturating_sub(1);
         }
     }
 }

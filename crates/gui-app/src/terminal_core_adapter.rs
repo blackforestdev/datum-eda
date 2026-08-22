@@ -6,9 +6,9 @@
 
 use datum_gui_protocol::TerminalLaneState;
 use datum_terminal_core::{
-    CoreError, CoreEvent, CoreLimitValues, CoreLimits, CursorShape, Damage, InputError, LimitKind,
-    MouseEncoding, MouseTracking, RenderSnapshot, SearchError, SelectionError, StreamingParser,
-    TerminalCore, TerminalSize,
+    CoreError, CoreEvent, CoreLimitValues, CoreLimits, CursorShape, Damage, InputError, LimitError,
+    LimitKind, MouseEncoding, MouseTracking, RenderSnapshot, SearchError, SelectionError,
+    StreamingParser, TerminalCore, TerminalSize,
 };
 use std::error::Error;
 use std::fmt;
@@ -179,17 +179,63 @@ impl TerminalCoreSessionAdapter {
         let limits = self.limits;
         let bell_count = &mut self.bell_count;
         let visual_bell_enabled = self.visual_bell_enabled;
-        let report = parser.feed(bytes, |action| {
-            apply_action(
-                core,
-                limits,
-                bell_count,
-                visual_bell_enabled,
-                action,
+        let mut core_update = core.begin_update();
+        let mut first_error = None;
+        let mut pending_event_limit_reached = false;
+        let mut consumed = 0;
+        while consumed < bytes.len() {
+            if parser.can_fast_path_ascii() && (0x20..=0x7e).contains(&bytes[consumed]) {
+                let run_end = bytes[consumed..]
+                    .iter()
+                    .position(|byte| !(0x20..=0x7e).contains(byte))
+                    .map_or(bytes.len(), |offset| consumed + offset);
+                if run_end - consumed > 1 {
+                    if let Err(error) =
+                        core.apply_ascii_run(&bytes[consumed..run_end], &mut core_update)
+                        && first_error.is_none()
+                    {
+                        first_error = Some(error);
+                    }
+                    consumed = run_end;
+                    continue;
+                }
+            }
+            let report = parser.feed(&bytes[consumed..consumed + 1], |action| {
+                if visual_bell_enabled
+                    && matches!(
+                        &action,
+                        datum_terminal_core::Action::Execute(control) if control.byte() == 0x07
+                    )
+                {
+                    *bell_count = bell_count.saturating_add(1);
+                }
+                if let Err(error) = core.apply_into(action, &mut core_update) {
+                    pending_event_limit_reached |= matches!(
+                        &error,
+                        CoreError::Limit(LimitError::Exceeded {
+                            kind: LimitKind::PendingEvents,
+                            ..
+                        })
+                    );
+                    if first_error.is_none() {
+                        first_error = Some(error);
+                    }
+                }
+            });
+            debug_assert_eq!(report.consumed, 1);
+            consumed += report.consumed;
+        }
+        merge_core_update(limits, bell_count, false, &core_update, &mut update);
+        if pending_event_limit_reached {
+            push_event_bounded(
                 &mut update,
+                limits,
+                CoreEvent::LimitReached(LimitKind::PendingEvents),
             );
-        });
-        debug_assert_eq!(report.consumed, bytes.len());
+        }
+        if let Some(error) = first_error {
+            update.semantic_errors.push(error);
+        }
         self.merge_render_damage(&update.damage);
         self.project(lane)?;
         Ok(update)
@@ -312,35 +358,43 @@ fn apply_action(
     batch: &mut TerminalCoreAdapterUpdate,
 ) {
     match core.apply(action) {
-        Ok(update) => {
-            for reply in update.replies() {
-                let total = batch.reply_bytes.saturating_add(reply.bytes().len());
-                if limits.reply_bytes.check(total).is_ok() {
-                    batch.replies.push(reply.bytes().to_vec());
-                    batch.reply_bytes = total;
-                } else {
-                    push_event_bounded(
-                        batch,
-                        limits,
-                        CoreEvent::LimitReached(LimitKind::ReplyBytes),
-                    );
-                }
-            }
-            for event in update.events() {
-                if visual_bell_enabled && matches!(event, CoreEvent::Bell) {
-                    *bell_count = bell_count.saturating_add(1);
-                }
-                push_event_bounded(batch, limits, event.clone());
-            }
-            for damage in update.damage().iter() {
-                push_damage_bounded(&mut batch.damage, limits, damage);
-            }
-        }
+        Ok(update) => merge_core_update(limits, bell_count, visual_bell_enabled, &update, batch),
         Err(error) => {
             if batch.semantic_errors.is_empty() {
                 batch.semantic_errors.push(error);
             }
         }
+    }
+}
+
+fn merge_core_update(
+    limits: CoreLimits,
+    bell_count: &mut usize,
+    visual_bell_enabled: bool,
+    update: &datum_terminal_core::CoreUpdate,
+    batch: &mut TerminalCoreAdapterUpdate,
+) {
+    for reply in update.replies() {
+        let total = batch.reply_bytes.saturating_add(reply.bytes().len());
+        if limits.reply_bytes.check(total).is_ok() {
+            batch.replies.push(reply.bytes().to_vec());
+            batch.reply_bytes = total;
+        } else {
+            push_event_bounded(
+                batch,
+                limits,
+                CoreEvent::LimitReached(LimitKind::ReplyBytes),
+            );
+        }
+    }
+    for event in update.events() {
+        if visual_bell_enabled && matches!(event, CoreEvent::Bell) {
+            *bell_count = bell_count.saturating_add(1);
+        }
+        push_event_bounded(batch, limits, event.clone());
+    }
+    for damage in update.damage().iter() {
+        push_damage_bounded(&mut batch.damage, limits, damage);
     }
 }
 

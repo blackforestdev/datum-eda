@@ -83,6 +83,34 @@ fn adapter_keeps_session_context_identity_and_projects_core_state() {
 }
 
 #[test]
+fn batched_ascii_path_matches_incremental_parser_state_across_terminal_boundaries() {
+    let stream = b"first printable run wraps here\r\n\x1b(0lqqk\x1b(B\r\n\x1b[31mred text\x1b[0m \xe7\x95\x8c e\xcc\x81\r\nlast line";
+    let mut batched = adapter("batched-ascii");
+    let mut incremental = adapter("incremental-ascii");
+    let mut batched_lane = TerminalLaneState::default();
+    let mut incremental_lane = TerminalLaneState::default();
+
+    let batched_update = batched.apply_output(&mut batched_lane, stream).unwrap();
+    let mut incremental_replies = Vec::new();
+    let mut incremental_events = Vec::new();
+    for byte in stream {
+        let update = incremental
+            .apply_output(&mut incremental_lane, std::slice::from_ref(byte))
+            .unwrap();
+        incremental_replies.extend(update.replies);
+        incremental_events.extend(update.events);
+    }
+
+    assert_eq!(
+        batched.test_render_snapshot(),
+        incremental.test_render_snapshot()
+    );
+    assert_eq!(batched_lane, incremental_lane);
+    assert_eq!(batched_update.replies, incremental_replies);
+    assert_eq!(batched_update.events, incremental_events);
+}
+
+#[test]
 fn terminal_replies_are_emitted_once_and_never_enter_terminal_cells() {
     let mut adapter = adapter("session-reply");
     let mut lane = TerminalLaneState::default();

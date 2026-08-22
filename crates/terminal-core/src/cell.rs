@@ -102,8 +102,14 @@ impl Error for ClusterError {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Cluster {
-    text: String,
+    text: ClusterText,
     width: CellWidth,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+enum ClusterText {
+    Inline { bytes: [u8; 4], len: u8 },
+    Heap(String),
 }
 
 impl Cluster {
@@ -117,15 +123,58 @@ impl Cluster {
             return Err(ClusterError::Empty);
         }
         limit.check(text.len()).map_err(ClusterError::TooLarge)?;
-        Ok(Self { text, width })
+        Ok(Self {
+            text: ClusterText::from_string(text),
+            width,
+        })
+    }
+
+    pub(crate) fn from_char(
+        character: char,
+        width: CellWidth,
+        limit: ClusterBytesLimit,
+    ) -> Result<Self, ClusterError> {
+        let mut bytes = [0; 4];
+        let len = character.encode_utf8(&mut bytes).len();
+        limit.check(len).map_err(ClusterError::TooLarge)?;
+        Ok(Self {
+            text: ClusterText::Inline {
+                bytes,
+                len: len as u8,
+            },
+            width,
+        })
     }
 
     pub fn text(&self) -> &str {
-        &self.text
+        self.text.as_str()
     }
 
     pub const fn width(&self) -> CellWidth {
         self.width
+    }
+}
+
+impl ClusterText {
+    fn from_string(text: String) -> Self {
+        if text.len() <= 4 {
+            let mut bytes = [0; 4];
+            bytes[..text.len()].copy_from_slice(text.as_bytes());
+            Self::Inline {
+                bytes,
+                len: text.len() as u8,
+            }
+        } else {
+            Self::Heap(text)
+        }
+    }
+
+    fn as_str(&self) -> &str {
+        match self {
+            Self::Inline { bytes, len } => std::str::from_utf8(&bytes[..usize::from(*len)])
+                .expect("inline terminal cluster originates from valid UTF-8"),
+            Self::Heap(text) => text,
+        }
     }
 }
 

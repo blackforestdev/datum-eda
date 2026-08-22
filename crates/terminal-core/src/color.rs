@@ -5,7 +5,7 @@ pub struct Rgb {
     pub blue: u8,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct PaletteIndex(u8);
 
 impl PaletteIndex {

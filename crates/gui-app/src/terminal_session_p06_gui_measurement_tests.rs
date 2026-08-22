@@ -157,9 +157,11 @@ fn measure_gui_path(count: usize, label: &str) -> GuiPathMeasurement {
         let report = registry.drain_all(&mut lane);
         turns.push(duration_us(turn.elapsed()));
         bytes += report.output_bytes;
-        if (0..count).all(|index| {
-            projection_contains(&registry, &lane, index, &format!("DTC06GUIDONE{index}"))
-        }) {
+        if bytes >= expected
+            && (0..count).all(|index| {
+                projection_contains(&registry, &lane, index, &format!("DTC06GUIDONE{index}"))
+            })
+        {
             break;
         }
         if report.output_bytes == 0 {

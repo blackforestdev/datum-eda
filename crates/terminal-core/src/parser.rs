@@ -95,6 +95,10 @@ impl StreamingParser {
         state_kind(&self.state)
     }
 
+    pub fn can_fast_path_ascii(&self) -> bool {
+        matches!(self.state, State::Ground) && !self.utf8.is_pending()
+    }
+
     pub fn feed(&mut self, input: &[u8], mut emit: impl FnMut(Action)) -> FeedReport {
         let take = input.len().min(self.limits.parser_work.get());
         let mut actions = 0;

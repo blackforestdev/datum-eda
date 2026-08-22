@@ -1,8 +1,7 @@
 use crate::grid::GridAllocationError;
 use crate::{
-    Cell, CellContent, CellPoint, CellWidth, Column, DamageSet, EraseDisplay, EraseLine,
-    FoundationMode, LimitError, Margins, ModeState, SavedCursorState, ScreenAction, ScreenBuffer,
-    TerminalCore,
+    Cell, CellPoint, Column, DamageSet, EraseDisplay, EraseLine, FoundationMode, LimitError,
+    Margins, ModeState, SavedCursorState, ScreenAction, ScreenBuffer, TerminalCore,
 };
 use std::error::Error;
 use std::fmt;
@@ -57,7 +56,21 @@ impl Reduction {
 
 impl TerminalCore {
     pub fn reduce(&mut self, action: ScreenAction) -> Result<Reduction, ScreenError> {
-        let damage_plan = crate::reducer_damage::DamagePlan::capture(&action, self);
+        let mut damage = DamageSet::new(self.limits.pending_damage);
+        self.reduce_into(action, &mut damage)?;
+        Ok(Reduction { damage })
+    }
+
+    pub(crate) fn reduce_into(
+        &mut self,
+        action: ScreenAction,
+        damage: &mut DamageSet,
+    ) -> Result<(), ScreenError> {
+        let damage_plan = if damage.contains_full() {
+            crate::reducer_damage::DamagePlan::capture_metadata(self)
+        } else {
+            crate::reducer_damage::DamagePlan::capture(&action, self)
+        };
         let clear_graphics = match &action {
             ScreenAction::Reset => Some(None),
             ScreenAction::SwitchBuffer {
@@ -77,11 +90,8 @@ impl TerminalCore {
             Some(Some(buffer)) => self.state.graphics.clear_buffer(buffer),
             None => self.prune_graphics(),
         }
-        let mut damage = DamageSet::new(self.limits.pending_damage);
-        for entry in damage_plan.finish(self) {
-            damage.push_coalesced(entry);
-        }
-        Ok(Reduction { damage })
+        damage_plan.finish(self, damage);
+        Ok(())
     }
 
     fn apply_action(&mut self, action: ScreenAction) {
@@ -122,120 +132,6 @@ impl TerminalCore {
         }
     }
 
-    fn print(&mut self, cluster: crate::Cluster) {
-        self.state.last_printed = Some(cluster.clone());
-        if self.state.cursor.pending_wrap {
-            self.wrap_line();
-        }
-        let width = match cluster.width() {
-            CellWidth::One => 1,
-            CellWidth::Two => 2,
-        };
-        let (_, right) = self.horizontal_bounds_for_cursor();
-        let column = self.state.cursor.position.column.get();
-        if width == 2 && column >= right {
-            if self.state.modes.auto_wrap {
-                self.wrap_line();
-            } else {
-                return;
-            }
-        }
-        if self.state.modes.insert {
-            self.insert_cells(width);
-        }
-        let row = usize::from(self.state.cursor.position.row.get());
-        let column = self.state.cursor.position.column;
-        let anchor = self.state.cursor.position;
-        let cell = Cell {
-            content: CellContent::Cluster(cluster),
-            style: self.state.style,
-            hyperlink: self.state.current_hyperlink,
-            protected: self.state.protected,
-        };
-        self.state.active_grid_mut().set_cluster(row, column, cell);
-        self.state.grapheme_anchor = Some(anchor);
-
-        let end = column.get().saturating_add(width - 1);
-        if end >= right {
-            self.state.cursor.position.column = Column::new(right, self.state.size.columns)
-                .unwrap_or(self.state.cursor.position.column);
-            self.state.cursor.pending_wrap = self.state.modes.auto_wrap;
-        } else {
-            self.state.cursor.position.column = Column::new(end + 1, self.state.size.columns)
-                .unwrap_or(self.state.cursor.position.column);
-        }
-    }
-
-    fn append_cluster(&mut self, at: CellPoint, cluster: crate::Cluster) {
-        let row = usize::from(at.row.get());
-        let column = usize::from(at.column.get());
-        let Some(existing) = self
-            .state
-            .active_grid()
-            .rows
-            .get(row)
-            .and_then(|row| row.cells.get(column))
-            .cloned()
-        else {
-            self.state.grapheme_anchor = None;
-            return;
-        };
-        if !matches!(existing.content, CellContent::Cluster(_)) {
-            self.state.grapheme_anchor = None;
-            return;
-        }
-        let (_, right) = self.horizontal_bounds_for_cursor();
-        if cluster.width() == CellWidth::Two && at.column.get() >= right {
-            if !self.state.modes.auto_wrap {
-                return;
-            }
-            self.state.active_grid_mut().clear_cluster_at(row, column);
-            self.state.cursor.position = at;
-            self.state.cursor.pending_wrap = false;
-            self.wrap_line();
-        } else {
-            self.state.cursor.position = at;
-            self.state.cursor.pending_wrap = false;
-        }
-        let anchor = self.state.cursor.position;
-        let cell = Cell {
-            content: CellContent::Cluster(cluster.clone()),
-            style: existing.style,
-            hyperlink: existing.hyperlink,
-            protected: existing.protected,
-        };
-        self.state.active_grid_mut().set_cluster(
-            usize::from(anchor.row.get()),
-            anchor.column,
-            cell,
-        );
-        self.state.last_printed = Some(cluster.clone());
-        self.state.grapheme_anchor = Some(anchor);
-        let width = if cluster.width() == CellWidth::Two {
-            2
-        } else {
-            1
-        };
-        let (_, right) = self.horizontal_bounds_for_cursor();
-        let end = anchor.column.get().saturating_add(width - 1);
-        if end >= right {
-            self.state.cursor.position.column =
-                Column::new(right, self.state.size.columns).unwrap_or(anchor.column);
-            self.state.cursor.pending_wrap = self.state.modes.auto_wrap;
-        } else {
-            self.state.cursor.position.column =
-                Column::new(end + 1, self.state.size.columns).unwrap_or(anchor.column);
-        }
-    }
-
-    fn wrap_line(&mut self) {
-        let row = usize::from(self.state.cursor.position.row.get());
-        self.state.active_grid_mut().rows[row].soft_wrapped = true;
-        self.state.cursor.pending_wrap = false;
-        self.carriage_return();
-        self.line_feed();
-    }
-
     fn backspace(&mut self) {
         let (left, _) = self.horizontal_bounds_for_cursor();
         let column = self
@@ -249,12 +145,12 @@ impl TerminalCore {
         self.set_cursor(self.state.cursor.position.row.get(), column);
     }
 
-    fn carriage_return(&mut self) {
+    pub(crate) fn carriage_return(&mut self) {
         let (left, _) = self.horizontal_bounds_for_cursor();
         self.set_cursor(self.state.cursor.position.row.get(), left);
     }
 
-    fn line_feed(&mut self) {
+    pub(crate) fn line_feed(&mut self) {
         self.state.cursor.pending_wrap = false;
         let row = self.state.cursor.position.row.get();
         let source = &self.state.active_grid().rows[usize::from(row)];
@@ -346,7 +242,7 @@ impl TerminalCore {
         self.set_cursor(margins.top.get(), margins.left.get());
     }
 
-    fn insert_cells(&mut self, count: u16) {
+    pub(crate) fn insert_cells(&mut self, count: u16) {
         let row = usize::from(self.state.cursor.position.row.get());
         let start = usize::from(self.state.cursor.position.column.get());
         let (_, right) = self.horizontal_bounds_for_cursor();
@@ -653,7 +549,7 @@ impl TerminalCore {
         });
     }
 
-    fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {
+    pub(crate) fn horizontal_bounds_for_cursor(&self) -> (u16, u16) {
         let column = self.state.cursor.position.column.get();
         let left = self.state.margins.left.get();
         let right = self.state.margins.right.get();

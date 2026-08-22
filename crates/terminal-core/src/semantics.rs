@@ -89,22 +89,52 @@ impl CoreUpdate {
 
 impl TerminalCore {
     pub fn apply(&mut self, action: Action) -> Result<CoreUpdate, CoreError> {
-        let mut update = CoreUpdate::new(self);
+        let mut update = self.begin_update();
+        self.apply_into(action, &mut update)?;
+        Ok(update)
+    }
+
+    pub fn begin_update(&self) -> CoreUpdate {
+        CoreUpdate::new(self)
+    }
+
+    pub fn apply_into(&mut self, action: Action, update: &mut CoreUpdate) -> Result<(), CoreError> {
         if !matches!(action, Action::Print(_)) {
             self.state.grapheme_anchor = None;
         }
         match action {
-            Action::Print(character) => self.apply_print(character, &mut update)?,
-            Action::Execute(control) => self.apply_control(control.byte(), &mut update)?,
-            Action::Escape(sequence) => self.apply_escape(sequence, &mut update)?,
-            Action::Csi(sequence) => self.apply_csi(sequence, &mut update)?,
-            Action::ControlString(string) => self.apply_control_string(string, &mut update)?,
+            Action::Print(character) => self.apply_print(character, update)?,
+            Action::Execute(control) => self.apply_control(control.byte(), update)?,
+            Action::Escape(sequence) => self.apply_escape(sequence, update)?,
+            Action::Csi(sequence) => self.apply_csi(sequence, update)?,
+            Action::ControlString(string) => self.apply_control_string(string, update)?,
             Action::Error(ParseError::LimitExceeded(kind)) => {
-                self.push_event(CoreEvent::LimitReached(kind), &mut update)?;
+                self.push_event(CoreEvent::LimitReached(kind), update)?;
             }
             Action::Cancelled { .. } | Action::Error(_) => {}
         }
-        Ok(update)
+        Ok(())
+    }
+
+    pub fn apply_ascii_run(
+        &mut self,
+        bytes: &[u8],
+        update: &mut CoreUpdate,
+    ) -> Result<(), CoreError> {
+        if bytes.is_empty() || !bytes.iter().all(|byte| (0x20..=0x7e).contains(byte)) {
+            return Err(CoreError::InvalidPrintable);
+        }
+        update.recognized = true;
+        if self.state.modes.synchronized_output {
+            let mut discarded = DamageSet::new(self.limits.pending_damage);
+            self.print_ascii_run(bytes, &mut discarded)
+                .map_err(|_| CoreError::InvalidPrintable)?;
+            self.state.synchronized_dirty = true;
+        } else {
+            self.print_ascii_run(bytes, &mut update.damage)
+                .map_err(|_| CoreError::InvalidPrintable)?;
+        }
+        Ok(())
     }
 
     pub(crate) fn apply_print(
@@ -113,6 +143,12 @@ impl TerminalCore {
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
         let mapped = self.state.charsets.map(character);
+        if mapped.is_ascii() {
+            let cluster =
+                Cluster::from_char(mapped, crate::CellWidth::One, self.limits.cluster_bytes)
+                    .map_err(|_| CoreError::InvalidPrintable)?;
+            return self.apply_screen(ScreenAction::Print(cluster), update);
+        }
         if let Some(anchor) = self.state.grapheme_anchor
             && let Some(crate::Cell {
                 content: crate::CellContent::Cluster(existing),
@@ -133,9 +169,10 @@ impl TerminalCore {
                 update,
             );
         }
-        let text = mapped.to_string();
-        let width = crate::terminal_cluster_width(&text);
-        let cluster = Cluster::new(text, width, self.limits.cluster_bytes)
+        let mut encoded = [0; 4];
+        let text = mapped.encode_utf8(&mut encoded);
+        let width = crate::terminal_cluster_width(text);
+        let cluster = Cluster::from_char(mapped, width, self.limits.cluster_bytes)
             .map_err(|_| CoreError::InvalidPrintable)?;
         self.apply_screen(ScreenAction::Print(cluster), update)
     }
@@ -230,15 +267,14 @@ impl TerminalCore {
         action: ScreenAction,
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
-        let reduction = self.reduce(action)?;
         update.recognized = true;
         if self.state.modes.synchronized_output {
+            let mut discarded = DamageSet::new(self.limits.pending_damage);
+            self.reduce_into(action, &mut discarded)?;
             self.state.synchronized_dirty = true;
             return Ok(());
         }
-        for damage in reduction.damage().iter() {
-            self.push_damage(damage, update)?;
-        }
+        self.reduce_into(action, &mut update.damage)?;
         Ok(())
     }
 
