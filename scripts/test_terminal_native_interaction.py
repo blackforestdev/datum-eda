@@ -182,8 +182,8 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         sources["runtime_terminal_clipboard.rs"] = sources[
             "runtime_terminal_clipboard.rs"
         ].replace("clipboard_request_is_eligible", "allow_every_session")
-        sources["terminal_session_drain.rs"] = sources[
-            "terminal_session_drain.rs"
+        sources["terminal_session_core_events.rs"] = sources[
+            "terminal_session_core_events.rs"
         ].replace("CoreEvent::ClipboardRequest", "ignored_clipboard_event")
         sources["terminal_session_drain_tests.rs"] = sources[
             "terminal_session_drain_tests.rs"
@@ -203,8 +203,8 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
 
     def test_notifications_and_progress_cannot_return_to_an_invisible_sink(self) -> None:
         sources = valid_sources()
-        sources["terminal_session_drain.rs"] = sources[
-            "terminal_session_drain.rs"
+        sources["terminal_session_core_events.rs"] = sources[
+            "terminal_session_core_events.rs"
         ].replace("CoreEvent::Notification", "ignore_notification")
         sources["runtime_terminal_notifications.rs"] = sources[
             "runtime_terminal_notifications.rs"

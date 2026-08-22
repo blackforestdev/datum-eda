@@ -90,10 +90,12 @@ REQUIRED = {
     ),
     "terminal_session_drain.rs": (
         "TerminalClipboardWriteRequest",
-        "CoreEvent::ClipboardRequest",
         "TerminalNotificationRequest",
-        "CoreEvent::Notification",
         "slot.unread_output = true",
+    ),
+    "terminal_session_core_events.rs": (
+        "CoreEvent::ClipboardRequest",
+        "CoreEvent::Notification",
     ),
     "terminal_session_drain_tests.rs": (
         "osc52_becomes_a_typed_session_scoped_request_without_changing_cells",
