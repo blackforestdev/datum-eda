@@ -96,6 +96,7 @@ separate explicit install/remove operation with a reviewable diff.
 ### 5.1 Primary stdio broker
 
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-01 -->
+<!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-01-CLOSED -->
 
 The portable connection is a standard MCP stdio subprocess equivalent to:
 

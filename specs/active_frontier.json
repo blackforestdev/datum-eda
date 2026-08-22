@@ -3030,7 +3030,7 @@
       ],
       "completion": {
         "outcome": "Datum exposes a protocol-clean standard MCP broker with governed transports, typed primitives, stable resources, notifications, prompts, and native adapter discovery.",
-        "canonical_next_step_id": "AI-MCP-01",
+        "canonical_next_step_id": "AI-MCP-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3047,7 +3047,7 @@
           {
             "id": "AI-MCP-01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement the protocol-clean standard MCP stdio broker over Datum discovery without non-protocol stdout.",
             "depends_on": [],
             "requirement_refs": [
@@ -3056,12 +3056,22 @@
                 "marker": "AI-MCP-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "e74a35e"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-01-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-MCP-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement the optional loopback-only authenticated Streamable HTTP transport with Origin validation and bounded lifecycle.",
             "depends_on": [
               "AI-MCP-01"

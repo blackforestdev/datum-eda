@@ -2,8 +2,7 @@
 // Phase 5 endgame: ONE compiler-enforced exhaustive match (no `_ =>` arm).
 // The command_exec_* forwarding layer is dissolved — arms either run their
 // family's `args.run(format)` inherent method (impls live in the owning
-// commands/<family>/ files) or inline the short destructure-and-render body
-// directly.
+// commands/<family>/ files) or inline the short destructure-and-render body directly.
 
 use super::*;
 use crate::command_modify::{

@@ -26,6 +26,16 @@ This directory is intentionally split to keep runtime logic and tests isolated.
 
 ## Local Validation
 
+The canonical production entrypoint validates the protected discovery scope
+before allowing protocol traffic and reserves stdout exclusively for MCP:
+
+```bash
+datum-eda mcp serve --discovery "$DATUM_AGENT_DISCOVERY"
+```
+
+Source-tree development may invoke `server.py --self-test`, but agents and
+client configuration use the CLI entrypoint above.
+
 ```bash
 python3 mcp-server/server.py --self-test
 bash scripts/run_drift_gates.sh
