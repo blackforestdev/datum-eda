@@ -73,8 +73,11 @@
    Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.5`, `dat-terminal-emulator-epic-jzv.11`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
 - **Research and ratify the Console and action-feedback contract** (`CONSOLE-CONTRACT-RECOVERY`; `dat-output-lane-t6v`).
-   Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
+   Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
+- **Build the output-only Datum Console** (`DATUM-CONSOLE-OUTPUT`; `dat-datum-console-output-djd`).
+   Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*

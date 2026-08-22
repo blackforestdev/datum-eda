@@ -3577,33 +3577,16 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
-      "parallel": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": false,
       "summary": "Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
-        "claimed_at": "2026-08-22T12:35:10-07:00",
-        "heartbeat_at": "2026-08-22T13:27:48-07:00",
-        "expires_at": "2026-08-22T21:27:48-07:00",
-        "scope": [
-          "console-product-contract",
-          "research/command-feedback",
-          "docs/gui/console-specification",
-          "specs/active_frontier.json",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": ".",
-        "head": "6b252c6f44177b00bd2c9e366895a8b215f4c0a7"
-      },
       "completion": {
         "outcome": "Datum has an evidence-based, owner-reviewed, numbered-decision-backed contract that cleanly separates terminal output, verb/action feedback, optional typed editor commands, notifications, progress, diagnostics, and history, with a bounded implementation successor explicitly selected.",
-        "canonical_next_step_id": "CONSOLE-C06",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3747,7 +3730,7 @@
           {
             "id": "CONSOLE-C06",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Verify governance and conformance, close recovery evidence, and explicitly select a fully specified bounded implementation successor.",
             "depends_on": [
               "CONSOLE-C05"
@@ -3758,7 +3741,13 @@
                 "marker": "CONSOLE-C06"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C06-SUCCESSOR-SELECTED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -3770,11 +3759,154 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
+      },
+      "landing_commit": "20a4627"
+    },
+    {
+      "key": "DATUM-CONSOLE-OUTPUT",
+      "order": 19,
+      "title": "Build the output-only Datum Console",
+      "issue_id": "dat-datum-console-output-djd",
+      "related_issue_ids": [
+        "dat-notification-system-ztp"
+      ],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
+      ],
+      "state": "ready",
+      "authorization": "execution",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
+        "canonical_next_step_id": "CONSOLE-I01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "CONSOLE-I01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Replace legacy ConsoleLaneState and Vec<String> narration with a typed, bounded, output-only feedback model and prove the absence of input, dispatch, operation-authoring, PTY-write, and terminal-cell paths.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Classify and route existing producers according to decision 033, preserving terminal lifecycle, Notices, progress, and findings ownership.",
+            "depends_on": [
+              "CONSOLE-I01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Render Candidate A only in the focused pane lower-left as a zero-layout-reservation overlay across tiled, maximized, terminal-open, unfocused, and narrow states.",
+            "depends_on": [
+              "CONSOLE-I02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Add deliberate expandable bounded session history with overflow disclosure and journal projection for committed operations, never a rival audit log.",
+            "depends_on": [
+              "CONSOLE-I03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Publish non-focus-stealing accessible announcements and prove severity, recovery, lifetime, inspection, and preference behavior.",
+            "depends_on": [
+              "CONSOLE-I04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I06",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Close routing and state tests, build goldens, owner visual review, accessibility proof, dependency authority, and every explicit product-boundary exclusion.",
+            "depends_on": [
+              "CONSOLE-I05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The output-only Datum Console is a production GUI feedback surface; notification, findings, terminal, and GUI write-path work remain separately governed."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
       }
     },
     {
       "key": "GUI-SURFACE-SPECS",
-      "order": 19,
+      "order": 20,
       "title": "Complete schematic and library GUI surface specifications",
       "issue_id": "dat-gui-surface-specs-usb",
       "governing_docs": [
@@ -3793,7 +3925,7 @@
     },
     {
       "key": "UVT-S5A-BUILD",
-      "order": 20,
+      "order": 21,
       "title": "Build UVT S5A selection and compound inspection",
       "issue_id": "dat-uvt-s5a-build-1wv",
       "governing_docs": [
@@ -3814,7 +3946,7 @@
     },
     {
       "key": "GUI-P2-CROSSPROBE",
-      "order": 21,
+      "order": 22,
       "title": "Build GUI Phase 2 P2.3 cross-probe",
       "issue_id": "dat-gui-p2-cross-probe-27z",
       "governing_docs": [
@@ -3836,7 +3968,7 @@
     },
     {
       "key": "GUI-P2-INSPECTOR",
-      "order": 22,
+      "order": 23,
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "issue_id": "dat-gui-p2-full-inspector-0ye",
       "governing_docs": [
@@ -3856,7 +3988,7 @@
     },
     {
       "key": "GUI-MARKING-MENU",
-      "order": 23,
+      "order": 24,
       "title": "Build the inert marking-menu shell",
       "issue_id": "dat-marking-menu-shell-g0w",
       "governing_docs": [
@@ -3875,7 +4007,7 @@
     },
     {
       "key": "GUI-WRITE-PATH",
-      "order": 24,
+      "order": 25,
       "title": "Enable the GUI journaled write path",
       "issue_id": "dat-gui-write-path-qiu",
       "governing_docs": [
@@ -3899,7 +4031,7 @@
     },
     {
       "key": "NATIVE-AUTHORING",
-      "order": 25,
+      "order": 26,
       "title": "Build native schematic and PCB authoring depth",
       "issue_id": "dat-native-authoring-depth-sf9",
       "governing_docs": [
@@ -3922,7 +4054,7 @@
     },
     {
       "key": "DOC-SYSTEM-SPEC",
-      "order": 26,
+      "order": 27,
       "title": "Specify the documentation-system object model",
       "issue_id": "dat-documentation-system-spec-y8z",
       "governing_docs": [
@@ -3940,7 +4072,7 @@
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
-      "order": 27,
+      "order": 28,
       "title": "Expose operational ownership in canonical next-task output",
       "issue_id": "dat-next-output-ownership-uqz",
       "governing_docs": [
@@ -3960,7 +4092,7 @@
     },
     {
       "key": "STATE-TASK-DETAILS",
-      "order": 28,
+      "order": 29,
       "title": "Make canonical task completion plans deterministic",
       "issue_id": "dat-task-completion-alignment-4jp",
       "governing_docs": [
@@ -4110,7 +4242,7 @@
     },
     {
       "key": "STATE-DETAIL-PRESENTATION",
-      "order": 29,
+      "order": 30,
       "title": "Make task-detail presentation verbatim and non-concurrent",
       "issue_id": "dat-task-detail-presentation-bjk",
       "governing_docs": [

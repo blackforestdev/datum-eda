@@ -227,6 +227,46 @@ CONSOLE-C06 verifies governance and conformance, closes the recovery work with
 durable evidence, and explicitly selects a bounded implementation successor only
 when that successor is fully specified and authorized.
 
+<!-- EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C06-SUCCESSOR-SELECTED -->
+The selected implementation successor is `dat-datum-console-output-djd`, governed
+by Product Mechanics 033 and the bounded CONSOLE-I01..I06 contract below. It is
+execution-ready without a hard dependency on the GUI write path or notification
+backbone and does not authorize either adjacent feature.
+
+#### Datum Console implementation successor
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I01 -->
+CONSOLE-I01 replaces legacy `ConsoleLaneState` / `Vec<String>` with a typed,
+deterministically bounded output-only consumer-feedback model and proves that no
+input, focus, verb-dispatch, operation-authoring, PTY-write, or terminal-cell path
+exists.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I02 -->
+CONSOLE-I02 inventories and classifies every current producer, then enforces the
+decision-033 routing matrix: GUI action feedback may enter the Console; terminal
+lifecycle, Notices, progress, and ERC/DRC findings remain with their owning
+surfaces.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I03 -->
+CONSOLE-I03 renders Candidate A only at the lower-left of the focused pane as an
+overlay that reserves zero canvas geometry, with explicit tiled, maximized,
+terminal-open, unfocused, and narrow-pane behavior.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I04 -->
+CONSOLE-I04 adds deliberately opened, bounded session history with deterministic
+overflow disclosure. Committed operations project from journal authority;
+consumer echoes never become a rival audit log.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I05 -->
+CONSOLE-I05 publishes equivalent non-focus-stealing AT-SPI status announcements
+and proves redundant severity/text/icon semantics, inspection pause, history
+recovery, and user-adjustable duration behavior.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06 -->
+CONSOLE-I06 closes routing/state tests, render goldens, owner visual review,
+accessibility evidence, dependency authority, and the explicit exclusions for
+Console input, notification tiers, findings UI, and GUI mutation.
+
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.
 
