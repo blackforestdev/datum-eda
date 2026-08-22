@@ -76,12 +76,12 @@
    Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
 - **Build the output-only Datum Console** (`DATUM-CONSOLE-OUTPUT`; `dat-datum-console-output-djd`).
-   Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
-   Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* native schematic and library authoring surfaces. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+   Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
+   *Dependencies:* none. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
    Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `planning`.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`.

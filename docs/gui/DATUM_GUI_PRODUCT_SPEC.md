@@ -63,6 +63,41 @@ Internal research inputs to mine before any external re-research:
 External reference review should be used to verify current professional UX
 expectations, not to restart research from zero.
 
+## Schematic and Library Surface Specification Successor
+
+The `GUI-SURFACE-SPECS` Frontier item turns the product model into buildable
+schematic-editor and library-browser surface contracts. It is planning work
+only: it does not authorize implementation, dependencies, or a GUI mutation
+path.
+
+<!-- REQ:GUI-SURFACE-SPECS:SURFACE-S01 -->
+SURFACE-S01 inventories current schematic and library requirements, prototypes,
+research, code seams, object authority, and unresolved product questions before
+either surface contract is refined.
+
+<!-- REQ:GUI-SURFACE-SPECS:SURFACE-S02 -->
+SURFACE-S02 produces a buildable schematic-editor visual and interaction
+contract, including document/hierarchy behavior, viewport tooling inheritance,
+read-only versus authoring boundaries, accessibility, and honest conformance
+dispositions.
+
+<!-- REQ:GUI-SURFACE-SPECS:SURFACE-S03 -->
+SURFACE-S03 produces a buildable library-browser and library-object surface
+contract across symbols, units, parts, packages, footprints, padstacks,
+pin-pad maps, models, metadata, and validation, with honest conformance
+dispositions.
+
+<!-- REQ:GUI-SURFACE-SPECS:SURFACE-S04 -->
+SURFACE-S04 reconciles the two surface contracts with the shared shell,
+selection/inspection tooling, manual-first workflow, engine authority, visual
+prototype inventory, specification governance, and roadmap dependencies.
+
+<!-- REQ:GUI-SURFACE-SPECS:SURFACE-S05 -->
+<!-- OWNER:GUI-SURFACE-SPECS:SURFACE-S05:SURFACE-S05 -->
+SURFACE-S05 records the owner's visual and product disposition, resolves or
+explicitly defers every remaining owner question, and selects a bounded
+implementation successor without granting execution authority implicitly.
+
 ## Shell Contract
 
 The recovered GUI shell must include:

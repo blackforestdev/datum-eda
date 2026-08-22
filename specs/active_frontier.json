@@ -3775,34 +3775,16 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
-        "claimed_at": "2026-08-22T13:45:35-07:00",
-        "heartbeat_at": "2026-08-22T14:37:47-07:00",
-        "expires_at": "2026-08-22T22:37:47-07:00",
-        "scope": [
-          "crates/gui-protocol/console-feedback",
-          "crates/gui-app/console-routing",
-          "crates/gui-render/console-surface",
-          "docs/gui/console-conformance",
-          "specs/active_frontier.json",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": ".",
-        "head": "240ca2ec09e2d4844e609900bb1aa1baef6f74d8"
-      },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I06",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3927,7 +3909,7 @@
           {
             "id": "CONSOLE-I06",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Close routing and state tests, build goldens, owner visual review, accessibility proof, dependency authority, and every explicit product-boundary exclusion.",
             "depends_on": [
               "CONSOLE-I05"
@@ -3938,7 +3920,22 @@
                 "marker": "CONSOLE-I06"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED"
+              },
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-CONFORMANCE"
+              },
+              {
+                "kind": "commit",
+                "revision": "51b8987"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -3950,7 +3947,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "51b8987"
     },
     {
       "key": "GUI-SURFACE-SPECS",
@@ -3963,13 +3961,137 @@
       ],
       "state": "planned",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": true,
       "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
       "dependencies": [],
       "unblocks": [
-        "native schematic and library authoring surfaces"
-      ]
+        "dat-native-authoring-depth-sf9",
+        "dat-sheet-interaction-reentry-9ee"
+      ],
+      "completion": {
+        "outcome": "Datum has owner-approved, buildable schematic-editor and library-browser surface specifications with explicit conformance and authority boundaries.",
+        "canonical_next_step_id": "SURFACE-S01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "SURFACE-S01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory current schematic and library requirements, prototypes, research, code seams, object authority, and unresolved product questions.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                "marker": "SURFACE-S01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "SURFACE-S02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Produce the buildable schematic-editor visual, interaction, accessibility, authority, and conformance contract.",
+            "depends_on": [
+              "SURFACE-S01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                "marker": "SURFACE-S02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "SURFACE-S03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Produce the buildable library-browser and library-object visual, interaction, accessibility, authority, and conformance contract.",
+            "depends_on": [
+              "SURFACE-S01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                "marker": "SURFACE-S03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "SURFACE-S04",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Reconcile both surface contracts with shared tooling, manual-first and engine authority, prototypes, governance, and roadmap dependencies.",
+            "depends_on": [
+              "SURFACE-S02",
+              "SURFACE-S03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                "marker": "SURFACE-S04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "SURFACE-S05",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Record the owner's visual and product disposition, resolve or defer remaining questions, and select a bounded implementation successor.",
+            "depends_on": [
+              "SURFACE-S04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                "marker": "SURFACE-S05"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply with the requested schematic and library surface disposition packet after reviewing the completed research, specifications, and visual prototypes.",
+              "requests": [
+                {
+                  "id": "SCHEMATIC-LIBRARY-SURFACE-DISPOSITION",
+                  "question": "Which completed schematic-editor and library-browser visual/product contracts should Datum ratify, and what revisions are required before implementation selection?",
+                  "recommended_response": "Approve or revise each presented contract only after reviewing its visual states, interaction and accessibility behavior, shared-tooling use, and mutation-authority boundary.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+                    "marker": "SURFACE-S05"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Owner-approved schematic and library surface contracts may feed bounded implementation successors without authorizing execution implicitly."
+          ],
+          "unblocks_issue_ids": [
+            "dat-native-authoring-depth-sf9",
+            "dat-sheet-interaction-reentry-9ee"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "UVT-S5A-BUILD",

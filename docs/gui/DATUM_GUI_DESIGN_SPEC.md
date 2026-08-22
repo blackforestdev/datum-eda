@@ -322,6 +322,20 @@ CONSOLE-I06 closes routing/state tests, render goldens, owner visual review,
 accessibility evidence, dependency authority, and the explicit exclusions for
 Console input, notification tiers, findings UI, and GUI mutation.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED -->
+The implementation acceptance rail is closed. Four deterministic build fixtures
+cover the routine focused-pane echo, terminal-open tool prompt, narrow refusal,
+and expanded journal-backed history; their exact-diff goldens live under
+`crates/gui-render/testdata/golden/console/`. The project owner approved these
+implementation visuals on 2026-08-22 against Candidate A and the B3 history
+study. `scripts/check_datum_console_boundary.py` enforces the output-only state,
+renderer, and producer-routing exclusions. The guarded GUI package suite,
+workspace Clippy with warnings denied, migration proof matrix, dependency
+authority, Cargo resource policy, Console golden suite, specification
+governance/parity, and project-state validation pass. The unrelated aggregate
+GUI menu CSV/JSON parity drift remains separately tracked as `dat-s24`; it does
+not weaken or substitute for any Console proof.
+
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.
 

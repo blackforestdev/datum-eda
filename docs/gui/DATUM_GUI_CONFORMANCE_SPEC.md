@@ -473,22 +473,24 @@ build slice it governs.
 
 Product Mechanics 033 and
 `docs/gui/prototypes/command-feedback-study.html` Candidate A control the Console
-implementation successor. These claims are honestly **TO-ENFORCE** until that
-slice lands:
+implementation successor. The landed implementation closes the following
+machine dispositions:
 
-| ID | Claim | Future proof home |
+| ID | Claim | Disposition and proof |
 |---|---|---|
-| DC1 | Console state is typed and bounded; no input, verb dispatch, operation, PTY write, or terminal-cell mutation path exists | `crates/gui-protocol` state tests plus `crates/gui-app` routing tests |
-| DC2 | Only the focused pane renders one lower-left overlay; it reserves zero canvas layout geometry and truncates before wrapping | `crates/gui-render` Console layout/snapshot tests |
-| DC3 | Routine, tool-prompt, and refusal modes preserve severity/text/icon redundancy and deterministic lifetime/history behavior | `crates/gui-render` Console state goldens plus `crates/gui-protocol` history tests |
-| DC4 | Committed operations project from journal authority; consumer echoes never become a second journal | `crates/gui-app` Console projection tests |
-| DC5 | Terminal lifecycle, Notices, progress, and ERC/DRC findings follow decision-033 destinations instead of entering the Console catch-all | `crates/gui-app` producer-routing matrix tests |
-| DC6 | Each visible status transition has an equivalent non-focus-stealing AT-SPI announcement | Datum AT-SPI bridge integration tests |
+| DC1 | Console state is typed and bounded; no input, verb dispatch, operation, PTY write, or terminal-cell mutation path exists | **ENFORCED** — `console_feedback::tests::records_are_typed_sequenced_and_bounded`, `console_feedback::tests::publication_is_typed_and_cannot_mutate_terminal_state`, and `scripts/check_datum_console_boundary.py` |
+| DC2 | Only the focused pane renders one lower-left overlay; it reserves zero canvas layout geometry and truncates before wrapping | **ENFORCED** — `datum_console::tests::overlay_follows_exactly_one_focused_pane_across_scale_matrix`, `maximized_terminal_open_and_narrow_layouts_preserve_body_anchor`, and `prepared_scene_threads_console_geometry_and_clipped_text` |
+| DC3 | Routine, tool-prompt, and refusal modes preserve severity/text/icon redundancy and deterministic lifetime/history behavior | **ENFORCED** — `console_visual_goldens_match`, the four build goldens under `testdata/golden/console/`, and protocol lifetime/history tests |
+| DC4 | Committed operations project from journal authority; consumer echoes never become a second journal | **ENFORCED** — `native_board_scene_loads_resolver_materialized_board_state`, `journal_history_excludes_launch_baseline_and_reports_exact_omission`, and `expanded_history_distinguishes_feedback_from_ordinal_journal_truth` |
+| DC5 | Terminal lifecycle, Notices, progress, and ERC/DRC findings follow decision-033 destinations instead of entering the Console catch-all | **ENFORCED** — `console_feedback::tests::terminal_progress_and_findings_producers_stay_outside_console` plus `scripts/check_datum_console_boundary.py` |
+| DC6 | Each visible status transition has an equivalent non-focus-stealing AT-SPI announcement | **ENFORCED** — `ordinary_refusal_is_polite_and_severity_is_redundant_in_text`, `console_announces_without_a_terminal_snapshot`, `console_announcement_uses_application_root_and_priority_payload`, and bounded-FIFO/no-phantom-terminal tests |
 
 The owner review of Candidate A and placement P1/P3/P5 is **HUMAN** evidence for
-the specification phase. Implementation acceptance requires new build goldens
-and owner review against that committed reference; it must not pixel-diff wgpu
-output against HTML.
+the specification phase. **HUMAN implementation evidence is closed:** on
+2026-08-22 the project owner approved the four committed wgpu build goldens
+(`routine-focused`, `tool-terminal-open`, `refusal-narrow`, and
+`history-expanded`) against Candidate A and B3. This was a visual review of the
+build output against the HTML reference, never a cross-engine pixel comparison.
 
 ## 8. S5 disposition ledger (S5-C10)
 
