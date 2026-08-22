@@ -43,6 +43,11 @@ class SelectViolations(unittest.TestCase):
         self.assertEqual(v, [])
         self.assertEqual(stale, [])
 
+    def test_staged_mode_rejects_stale_exemption_in_staged_file(self) -> None:
+        v, stale = check_rustfmt.select_violations(set(), {"exempt.rs"}, {"exempt.rs"})
+        self.assertEqual(v, [])
+        self.assertEqual(stale, ["exempt.rs"])
+
 
 class ExemptionManifest(unittest.TestCase):
     def test_manifest_loads_and_every_exempted_file_exists(self) -> None:

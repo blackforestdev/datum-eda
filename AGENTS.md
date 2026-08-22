@@ -241,3 +241,20 @@ resource, not an unowned side effect.
   exit; shared-cache cleanup happens only at an observed idle boundary.
 - Any new shell proof runner that compiles Rust must use the guarded runner and
   pass `python3 scripts/check_cargo_resource_policy.py`.
+
+## Rust formatting discipline
+
+Cargo's apparent file arguments are not a safe scoping boundary: arguments
+after `cargo fmt --` are forwarded to rustfmt while Cargo can still discover
+and format other workspace targets. In a shared worktree that can silently
+rewrite another session's files.
+
+- For selected files, use `python3 scripts/format_rust.py <file.rs>...`. It
+  formats each source through stdin and writes back only the exact paths named.
+- Never use `cargo fmt -- <file.rs>...` or invoke mutating workspace-wide
+  formatting while another session may own dirty Rust files.
+- Use `python3 scripts/check_rustfmt.py --staged` for a non-mutating staged
+  check. Whole-workspace `cargo fmt --all -- --check` remains allowed because
+  `--check` cannot modify the shared worktree.
+- Before and after any formatting mutation, inspect `git status --short` and
+  confirm that every changed path belongs to the current session.

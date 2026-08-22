@@ -8,12 +8,13 @@ and is downward-only: an exempted file that is actually rustfmt-clean is a
 stale exemption and fails the gate until its row is removed.
 
 `--staged` restricts failures to files staged for commit (for the pre-commit
-hook): another agent's dirty-but-unstaged files never block a commit, and the
-stale-exemption check is skipped because it is a handoff concern, not a
-per-commit one. Staged mode runs rustfmt directly on the staged files rather
-than through `cargo fmt`, so a new file not yet reachable from a crate root is
-still checked. rustfmt inspects the working tree, so a file staged with
-further unstaged edits is judged by its working-tree content.
+hook): another agent's dirty-but-unstaged files never block a commit. A staged
+exempt file that has become rustfmt-clean is rejected so accidental workspace
+formatting cannot silently consume its exemption. Staged mode runs rustfmt
+directly on the staged files rather than through `cargo fmt`, so a new file not
+yet reachable from a crate root is still checked. rustfmt inspects the working
+tree, so a file staged with further unstaged edits is judged by its working-tree
+content.
 """
 
 from __future__ import annotations
@@ -93,7 +94,7 @@ def select_violations(
     """Return (violations, stale_exemptions). staged=None means whole-tree mode."""
     violations = dirty - exemptions
     if staged is not None:
-        return sorted(violations & staged), []
+        return sorted(violations & staged), sorted((exemptions & staged) - dirty)
     return sorted(violations), sorted(exemptions - dirty)
 
 
@@ -110,7 +111,7 @@ def main() -> int:
         print(f"rustfmt gate FAILED: the following {scope} not rustfmt-clean:")
         for rel in violations:
             print(f"  - {rel}")
-        print("Run `cargo fmt --all` (or rustfmt on the listed files) and re-run.")
+        print("Run `python3 scripts/format_rust.py <listed-files>` and re-run.")
     if stale:
         print("rustfmt gate FAILED: stale exemptions (file is now rustfmt-clean; remove its row):")
         for rel in stale:
