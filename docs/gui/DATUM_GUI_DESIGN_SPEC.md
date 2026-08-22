@@ -272,6 +272,16 @@ CONSOLE-I03 renders Candidate A only at the lower-left of the focused pane as an
 overlay that reserves zero canvas geometry, with explicit tiled, maximized,
 terminal-open, unfocused, and narrow-pane behavior.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I03-FOCUSED-PANE-OVERLAY -->
+`crates/gui-render/src/datum_console.rs` builds one typed Candidate-A strip from
+the latest visible Console record. A dedicated post-scene GPU buffer is scissored
+to the focused pane body, avoiding the board-only scene scissor; placement uses
+the body lower-left, a 72% width cap, one clipped line, and reserves no shell or
+canvas geometry. Scale-matrix tests move focus Board-to-Schematic and cover
+tiled, maximized, terminal-open, 900-pixel narrow, empty, echo, prompt, and
+refusal states. Prepared-scene tests prove the geometry and clipped text reach
+the renderer together.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I04 -->
 CONSOLE-I04 adds deliberately opened, bounded session history with deterministic
 overflow disclosure. Committed operations project from journal authority;

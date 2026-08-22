@@ -20,6 +20,7 @@ use wgpu::util::DeviceExt;
 pub use datum_gui_viewport::CameraState;
 
 mod bottom_dock;
+mod datum_console;
 #[cfg(feature = "visual")]
 pub mod design_artboards;
 mod design_tokens;
@@ -44,6 +45,7 @@ mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
+use datum_console::render_datum_console;
 use marking_menu::render_marking_menu;
 use menu_chrome::render_menu_bar;
 use side_panels::render_side_panels;

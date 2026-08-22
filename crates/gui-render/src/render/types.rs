@@ -125,6 +125,8 @@ pub struct PreparedScene {
     viewport_underlay_vertices: Vec<Vertex>,
     viewport_overlay_vertices: Vec<Vertex>,
     board_interaction_vertices: Vec<Vertex>,
+    console_overlay_vertices: Vec<Vertex>,
+    console_overlay_layout: Option<ConsoleOverlayLayout>,
     visible_draw_commands: Vec<RetainedDrawCommand>,
     text_runs: Vec<TextRun>,
     terminal_graphics: Vec<PreparedTerminalGraphic>,
@@ -157,6 +159,15 @@ pub struct PreparedScene {
     crosshair_style: datum_gui_protocol::CrosshairStyle,
     schematic_underlay_vertices: Vec<Vertex>,
     schematic_overlay_vertices: Vec<Vertex>,
+}
+
+/// Inspectable placement proof for the one visible focused-pane Console strip.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ConsoleOverlayLayout {
+    pub pane_id: datum_gui_protocol::PaneId,
+    pub pane_body: RectPx,
+    pub strip: RectPx,
+    pub text_clip: RectPx,
 }
 
 #[derive(Debug, Clone, PartialEq)]

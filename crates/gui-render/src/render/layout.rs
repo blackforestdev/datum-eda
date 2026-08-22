@@ -134,6 +134,19 @@ impl PaneRect {
             scene,
         }
     }
+
+    /// The pane content body below its header, before scene-specific insets.
+    /// Screen-space overlays anchor here so they do not inherit board-only
+    /// canvas gutters or move when the focused document type changes.
+    pub fn body(self) -> RectPx {
+        let y = self.header.y + self.header.height;
+        RectPx {
+            x: self.frame.x,
+            y,
+            width: self.frame.width,
+            height: (self.frame.y + self.frame.height - y).max(0.0),
+        }
+    }
 }
 
 /// One leaf pane placed in screen space by the tile walk: its stable `PaneId`,

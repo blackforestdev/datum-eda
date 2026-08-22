@@ -16,6 +16,7 @@ impl Renderer {
         viewport_underlay: &[Vertex],
         viewport_overlay: &[Vertex],
         board_interaction: &[Vertex],
+        console_overlay: &[Vertex],
         menu_overlay: &[Vertex],
         world: &[Vertex],
         schematic_world: Option<&RetainedScene>,
@@ -53,6 +54,14 @@ impl Renderer {
             &mut self.board_interaction_vertex_capacity,
             "datum-gui-render-board-interaction-vertex-buffer",
             board_interaction,
+        );
+        Self::upload_vertices(
+            device,
+            queue,
+            &mut self.console_overlay_vertex_buffer,
+            &mut self.console_overlay_vertex_capacity,
+            "datum-gui-render-console-overlay-vertex-buffer",
+            console_overlay,
         );
         Self::upload_vertices(
             device,

@@ -38,6 +38,8 @@ pub struct Renderer {
     viewport_overlay_vertex_capacity: usize,
     board_interaction_vertex_buffer: Option<wgpu::Buffer>,
     board_interaction_vertex_capacity: usize,
+    console_overlay_vertex_buffer: Option<wgpu::Buffer>,
+    console_overlay_vertex_capacity: usize,
     menu_overlay_vertex_buffer: Option<wgpu::Buffer>,
     menu_overlay_vertex_capacity: usize,
     world_vertex_buffer: Option<wgpu::Buffer>,
@@ -398,6 +400,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_overlay_vertex_capacity: 0,
             board_interaction_vertex_buffer: None,
             board_interaction_vertex_capacity: 0,
+            console_overlay_vertex_buffer: None,
+            console_overlay_vertex_capacity: 0,
             menu_overlay_vertex_buffer: None,
             menu_overlay_vertex_capacity: 0,
             world_vertex_buffer: None,
@@ -432,6 +436,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
         let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
         let board_interaction_vertices = prepared.board_interaction_vertices();
+        let console_overlay_vertices = prepared.console_overlay_vertices();
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
         let world_vertices = retained.world_vertices();
         let world_strokes = retained.world_strokes();
@@ -467,6 +472,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_underlay_vertices,
             viewport_overlay_vertices,
             board_interaction_vertices,
+            console_overlay_vertices,
             menu_overlay_vertices,
             world_vertices,
             schematic_pass.as_ref().map(|(_, _, _, scene)| *scene),
@@ -684,6 +690,24 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                         .slice(..),
                 );
                 pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
+            }
+            if !console_overlay_vertices.is_empty()
+                && let Some(layout) = prepared.console_overlay_layout()
+            {
+                pass.set_scissor_rect(
+                    layout.pane_body.x.max(0.0).floor() as u32,
+                    layout.pane_body.y.max(0.0).floor() as u32,
+                    layout.pane_body.width.max(1.0).ceil() as u32,
+                    layout.pane_body.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.console_overlay_vertex_buffer
+                        .as_ref()
+                        .expect("console overlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..console_overlay_vertices.len() as u32, 0..1);
             }
             // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
             // composited AFTER the main text pass (below) so it occludes not only

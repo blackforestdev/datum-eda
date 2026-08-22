@@ -33,6 +33,7 @@ impl PreparedScene {
         let mut viewport_underlay_quads = Vec::new();
         let mut viewport_overlay_quads = Vec::new();
         let mut board_interaction_quads = Vec::new();
+        let mut console_overlay_quads = Vec::new();
         let mut text_runs = Vec::new();
         let mut terminal_graphics = Vec::new();
         let mut hit_regions = Vec::new();
@@ -139,6 +140,13 @@ impl PreparedScene {
                 crosshair_style,
             );
         }
+        let console_overlay_layout = render_datum_console(
+            state,
+            &layout,
+            scale,
+            &mut console_overlay_quads,
+            &mut text_runs,
+        );
         render_marking_menu(
             state,
             &layout,
@@ -155,6 +163,7 @@ impl PreparedScene {
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
         let board_interaction_vertices = quads_to_vertices(&board_interaction_quads);
+        let console_overlay_vertices = quads_to_vertices(&console_overlay_quads);
         // P2.2a: describe the companion schematic pass. It is active only when the
         // layout has a Schematic pane AND the workspace carries a projected
         // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
@@ -221,6 +230,8 @@ impl PreparedScene {
             viewport_underlay_vertices,
             viewport_overlay_vertices,
             board_interaction_vertices,
+            console_overlay_vertices,
+            console_overlay_layout,
             visible_draw_commands,
             text_runs,
             terminal_graphics,
@@ -290,6 +301,14 @@ impl PreparedScene {
 
     fn board_interaction_vertices(&self) -> &[Vertex] {
         &self.board_interaction_vertices
+    }
+
+    fn console_overlay_vertices(&self) -> &[Vertex] {
+        &self.console_overlay_vertices
+    }
+
+    pub fn console_overlay_layout(&self) -> Option<ConsoleOverlayLayout> {
+        self.console_overlay_layout
     }
 
     fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {
