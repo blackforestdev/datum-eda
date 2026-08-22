@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cargo_guard=(python3 "$ROOT/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$ROOT"
 
 if [[ -z "${WAYLAND_DISPLAY:-}" && -z "${DISPLAY:-}" ]]; then
@@ -17,7 +18,7 @@ export DATUM_GUI_LOG="$LOG_OUT"
 export DATUM_GUI_VERBOSE_LOG="${DATUM_GUI_VERBOSE_LOG:-1}"
 export DATUM_TRACE_TIMING="${DATUM_TRACE_TIMING:-1}"
 
-cargo run -p datum-gui-app --features visual --bin datum-gui -- \
+"${cargo_guard[@]}" cargo run -p datum-gui-app --features visual --bin datum-gui -- \
   --project-root "$PROJECT_ROOT" \
   --window-size 1280x768 \
   --visual-scale-factor "${DATUM_GUI_SMOKE_SCALE:-1}" \
@@ -28,7 +29,7 @@ cargo run -p datum-gui-app --features visual --bin datum-gui -- \
   --interaction-smoke \
   --resize-torture-smoke
 
-cargo run -p datum-gui-app --features visual --bin datum-gui -- \
+"${cargo_guard[@]}" cargo run -p datum-gui-app --features visual --bin datum-gui -- \
   --project-root "$PROJECT_ROOT" \
   --window-size 1280x768 \
   --visual-scale-factor "${DATUM_GUI_SMOKE_SCALE:-1}" \

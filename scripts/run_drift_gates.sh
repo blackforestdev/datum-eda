@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
+cd "$repo_root"
+
+python3 scripts/test_cargo_resource_policy.py
+python3 scripts/check_cargo_resource_policy.py
+
 echo "== rustfmt: workspace formatting gate =="
 python3 scripts/test_rustfmt_gate.py
 python3 scripts/check_rustfmt.py
 
 echo "== clippy: workspace lint gate (-D warnings) =="
-cargo clippy --workspace --all-targets -- -D warnings
+"${cargo_guard[@]}" cargo clippy --workspace --all-targets -- -D warnings
 
 python3 scripts/check_progress_coverage.py
 python3 scripts/test_project_status.py
@@ -80,7 +87,7 @@ python3 -m unittest discover -s mcp-server -p 'test_agent_session_authority.py'
 python3 -m unittest discover -s mcp-server -p 'test_workflow_catalog.py'
 python3 scripts/test_agent_workflow_parity.py
 python3 scripts/check_agent_workflow_parity.py
-cargo run -q -p datum-verb-registry --bin datum-verb-catalog -- --check
+"${cargo_guard[@]}" cargo run -q -p datum-verb-registry --bin datum-verb-catalog -- --check
 bash scripts/run_migration_proof_gates.sh
 python3 scripts/check_cli_module_coverage.py
 python3 mcp-server/server.py --self-test

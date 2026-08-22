@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$repo_root"
 
 if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
@@ -51,7 +52,7 @@ if [[ "$tier" == backend-canary ]]; then
   screenshot_path="${evidence_path%.json}.png"
   log_path="${evidence_path%.json}.log"
   gui_args=(
-    cargo run -p datum-gui-app --release --locked --offline --features visual --bin datum-gui --
+    "${cargo_guard[@]}" cargo run -p datum-gui-app --release --locked --offline --features visual --bin datum-gui --
     --project-root crates/engine/testdata/golden/text/native/text-fidelity-repro
     --window-size 1280x768 --visual-scale-factor 1
     --visual-test --window-visual-test --screenshot-out "$screenshot_path"
@@ -126,7 +127,7 @@ DATUM_P06_TIER="$tier" \
 DATUM_P06_SEED="$seed" \
 DATUM_P06_RUN_ORDINAL="$run_ordinal" \
 DATUM_P06_EVIDENCE="$evidence_path" \
-cargo test -p datum-gui-app --release --locked --offline \
+"${cargo_guard[@]}" cargo test -p datum-gui-app --release --locked --offline \
   "$test_name" -- --ignored --exact --nocapture --test-threads=1
 
 python3 - "$evidence_path" <<'PY'

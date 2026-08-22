@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$repo_root"
 
 if [[ "$(uname -s)" != Linux ]]; then
@@ -39,7 +40,7 @@ evidence="$evidence_dir/${revision}-linux-x86_64.json"
 DATUM_P28_TOOL_ROOT="$tool_root" \
 DATUM_P28_REVISION="$revision" \
 DATUM_P28_EVIDENCE="$evidence" \
-cargo test -p datum-gui-app --locked --offline \
+"${cargo_guard[@]}" cargo test -p datum-gui-app --locked --offline \
   terminal_profile::compatibility_tests::production_pty_proves_named_shell_tui_and_tool_compatibility \
   -- --ignored --exact --nocapture --test-threads=1
 

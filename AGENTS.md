@@ -216,3 +216,28 @@ VT/state model, PTY/session layer, and fallbacks are Datum-owned. Other
 terminals are behavioral references only. Run
 `python3 scripts/check_dependency_authority.py` before landing dependency or
 terminal work.
+
+## Rust build resource discipline
+
+Datum's verification workload is larger and more concurrent than Cargo's
+generic development defaults assume. Treat compiler output as a bounded
+resource, not an unowned side effect.
+
+- Run full-workspace, proof, Clippy, release, compatibility, and GUI-smoke Cargo
+  commands through `python3 scripts/run_cargo_guarded.py --workload proof --
+  cargo ...`. The guard serializes expensive compilation, performs disk
+  preflight, and disables incremental state for one-shot proof work.
+- Focused edit/check cycles may use `--workload interactive`; this preserves the
+  caller's incremental-compilation choice while retaining serialization and
+  resource checks.
+- Never place a proof `CARGO_TARGET_DIR` under `/tmp`. Datum's `/tmp` is a small
+  tmpfs reserved for fixtures, sockets, logs, screenshots, and source clones;
+  Rust artifacts belong on the disk-backed project filesystem.
+- Never launch parallel Cargo proof builds, even with separate target
+  directories. Run non-compiling Python gates concurrently if useful, then run
+  expensive Rust proof commands serially.
+- Never clean or sweep the shared target while any Cargo or rustc process may be
+  active. Disposable proof targets must have explicit ownership and cleanup on
+  exit; shared-cache cleanup happens only at an observed idle boundary.
+- Any new shell proof runner that compiles Rust must use the guarded runner and
+  pass `python3 scripts/check_cargo_resource_policy.py`.

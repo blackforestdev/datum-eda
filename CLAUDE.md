@@ -261,6 +261,14 @@ The per-domain tool contracts in `docs/contracts/` specify the target each
 domain builds toward on the landed substrate.
 
 ## Working Posture (for agents)
+- **Cargo output is a governed resource.** Full-workspace, proof, Clippy,
+  release, compatibility, and GUI-smoke compilation goes through
+  `python3 scripts/run_cargo_guarded.py --workload proof -- cargo ...`; focused
+  edit/check cycles use `--workload interactive`. Proof targets never live on
+  `/tmp`, expensive Cargo jobs run serially, and no agent cleans the shared
+  target until Cargo/rustc activity is known idle. The checked-in policy and
+  enforcement gate are `scripts/cargo_resource_policy.json` and
+  `scripts/check_cargo_resource_policy.py`.
 - **Source health is blocking governance.** Before touching an oversized source
   module, read decision 022 and `docs/SOURCE_HEALTH_POLICY.md`. New source debt
   cannot be registered into existence; legacy ceilings are exact and
