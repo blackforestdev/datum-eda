@@ -76,6 +76,8 @@ python3 -m unittest discover -s mcp-server -p 'test_context_revision_fence.py'
 python3 -m unittest discover -s mcp-server -p 'test_agent_capability.py'
 python3 -m unittest discover -s mcp-server -p 'test_agent_session_authority.py'
 python3 -m unittest discover -s mcp-server -p 'test_workflow_catalog.py'
+python3 scripts/test_agent_workflow_parity.py
+python3 scripts/check_agent_workflow_parity.py
 cargo run -q -p datum-verb-registry --bin datum-verb-catalog -- --check
 bash scripts/run_migration_proof_gates.sh
 python3 scripts/check_cli_module_coverage.py

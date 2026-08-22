@@ -9,6 +9,14 @@ tool) working in this repository. It covers the **issue tracker** and the
 > ethos live there and in `docs/`. Read it. This file does not restate it — it
 > adds the tracker workflow and points back to it.
 
+## Portable Datum workflows
+
+<!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->
+
+The standard Datum MCP resource `datum://workflows` is the canonical workflow
+inventory. This file may explain repository operation, but it must not redefine
+workflow capabilities, review gates, or mutation semantics for Codex.
+
 ---
 
 ## Issue tracker: beads (`br`)

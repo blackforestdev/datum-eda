@@ -13,6 +13,14 @@ or a visualization shell around imported EDA files. Import/export are interop
 infrastructure (migration, fixtures, compatibility, reverse engineering) —
 they support the product; they do not define its identity.
 
+## Portable Datum workflows
+
+<!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->
+
+Use the standard Datum MCP resource `datum://workflows` as the canonical
+workflow inventory. This file controls repository operation but does not create
+Claude-only workflow capabilities, review gates, or mutation semantics.
+
 ## Ethos (controlling)
 - **Manual-first.** Every core EDA workflow must be possible without AI. If a
   user cannot perform a workflow manually, it is not complete — even if an
