@@ -113,8 +113,12 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         (source / "reducer.rs").write_text(
             (source / "reducer.rs").read_text()
             + "\nimpl TerminalCore {}\nself.apply_action(action)\nrepair_row(row)\n"
-            + "hyperlink: self.state.current_hyperlink\n"
             + "pub(crate) fn prune_graphics(\nclear_buffer\nScreenAction::Reset\n",
+            encoding="utf-8",
+        )
+        (source / "reducer_print.rs").write_text(
+            (source / "reducer_print.rs").read_text()
+            + "\nfn print_cluster() {}\nhyperlink: self.state.current_hyperlink\n",
             encoding="utf-8",
         )
         (source / "grid.rs").write_text(
@@ -197,7 +201,7 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         )
         (source / "history.rs").write_text(
             (source / "history.rs").read_text()
-            + "\nlogical_line_count(&self.rows) > self.line_limit.get()\n"
+            + "\nself.logical_lines > self.line_limit.get()\n"
             + "self.payload_bytes > self.byte_limit.get()\n",
             encoding="utf-8",
         )
@@ -386,7 +390,7 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         history = root / guard.CRATE / "src/history.rs"
         history.write_text(
             history.read_text().replace(
-                "logical_line_count(&self.rows) > self.line_limit.get()", "false"
+                "self.logical_lines > self.line_limit.get()", "false"
             )
         )
         screen = root / guard.CRATE / "src/screen.rs"
@@ -489,9 +493,11 @@ class TerminalCoreBoundaryTest(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         control = root / guard.CRATE / "src/control_string.rs"
         control.write_text(control.read_text().replace("52 => self.clipboard_request", "removed"))
-        reducer = root / guard.CRATE / "src/reducer.rs"
-        reducer.write_text(
-            reducer.read_text().replace("hyperlink: self.state.current_hyperlink", "hyperlink: None")
+        reducer_print = root / guard.CRATE / "src/reducer_print.rs"
+        reducer_print.write_text(
+            reducer_print.read_text().replace(
+                "hyperlink: self.state.current_hyperlink", "hyperlink: None"
+            )
         )
         proofs = root / guard.CRATE / "src/semantic_tests.rs"
         proofs.write_text(

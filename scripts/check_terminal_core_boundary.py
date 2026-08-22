@@ -102,6 +102,7 @@ REQUIRED_MODULES = {
         "work.charge(pixel_count)?",
     ),
     "reducer.rs": ("pub enum ScreenError", "pub struct Reduction", "pub fn reduce("),
+    "reducer_print.rs": ("fn print_cluster", "hyperlink: self.state.current_hyperlink"),
     "reducer_action.rs": ("pub enum ScreenAction", "pub enum EraseLine", "pub enum FoundationMode"),
     "reflow.rs": ("pub fn resize(", "fn reflow_rows(", "fn resolve_visible_point("),
     "screen.rs": ("pub struct ScreenState", "pub struct TerminalCore"),
@@ -494,7 +495,7 @@ def check(root: Path) -> list[str]:
 
     history = sources.get("history.rs", "")
     reflow = sources.get("reflow.rs", "")
-    if "logical_line_count(&self.rows) > self.line_limit.get()" not in history:
+    if "self.logical_lines > self.line_limit.get()" not in history:
         failures.append("DTC-P12 history must enforce its owner-supplied logical-line limit")
     if "self.payload_bytes > self.byte_limit.get()" not in history:
         failures.append("DTC-P12 history must enforce its owner-supplied payload-byte limit")
@@ -605,7 +606,7 @@ def check(root: Path) -> list[str]:
             failures.append(f"DTC-P15 deterministic input protocol proof is missing: {marker}")
     metadata = sources.get("control_string.rs", "")
     event = sources.get("event.rs", "")
-    reducer = sources.get("reducer.rs", "")
+    reducer_print = sources.get("reducer_print.rs", "")
     for marker in (
         "8 => self.set_hyperlink",
         "52 => self.clipboard_request",
@@ -618,7 +619,7 @@ def check(root: Path) -> list[str]:
     for marker in ("ClipboardRequest", "OpenUriRequest", "ShellMark", "Notification", "Progress"):
         if marker not in event:
             failures.append(f"DTC-P16 typed metadata event is missing: {marker}")
-    if "hyperlink: self.state.current_hyperlink" not in reducer:
+    if "hyperlink: self.state.current_hyperlink" not in reducer_print:
         failures.append("DTC-P16 printed cells must retain the current OSC 8 hyperlink")
     semantic_tests = crate / "src" / "semantic_tests.rs"
     metadata_proof_text = (
