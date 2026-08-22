@@ -8,13 +8,28 @@ import sys
 from typing import Any, TextIO
 
 from datum_result_normalization import normalize_datum_result
+from discovery_scope import DiscoveryScope
+from prompts_catalog import PROMPTS, get_prompt
+from resources_catalog import DatumResourceCatalog, RESOURCE_TEMPLATES
 from tool_dispatch import dispatch_tool_call
 from tools_catalog import TOOLS
+from tools_catalog_data import TOOL_BY_NAME
 
 
 class StdioToolHost:
-    def __init__(self, daemon: Any) -> None:
+    def __init__(
+        self,
+        daemon: Any,
+        discovery: DiscoveryScope | None = None,
+        *,
+        notifications_enabled: bool = True,
+    ) -> None:
         self._daemon = daemon
+        self._resources = None if discovery is None else DatumResourceCatalog(discovery)
+        self._discovery = discovery
+        self._notifications_enabled = notifications_enabled
+        self._subscriptions: set[str] = set()
+        self._pending_notifications: list[dict[str, Any]] = []
 
     def handle_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         if not _valid_request(message):
@@ -30,12 +45,19 @@ class StdioToolHost:
                 if requested_version in {"2024-11-05", "2025-03-26", "2025-06-18"}
                 else "2024-11-05"
             )
+            capabilities: dict[str, Any] = {"tools": {"listChanged": False}}
+            if self._resources is not None:
+                capabilities["resources"] = {
+                    "subscribe": self._notifications_enabled,
+                    "listChanged": self._notifications_enabled,
+                }
+                capabilities["prompts"] = {"listChanged": False}
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
                 "result": {
                     "protocolVersion": protocol_version,
-                    "capabilities": {"tools": {}},
+                    "capabilities": capabilities,
                     "serverInfo": {"name": "datum-eda", "version": "0.1.0"},
                 },
             }
@@ -46,6 +68,21 @@ class StdioToolHost:
             return {"jsonrpc": "2.0", "id": msg_id, "result": {}}
         if method == "tools/list":
             return {"jsonrpc": "2.0", "id": msg_id, "result": {"tools": TOOLS}}
+
+        if method == "resources/list":
+            return self._resource_result(msg_id, "resources", self._resources.list_resources())
+        if method == "resources/templates/list":
+            return self._resource_result(msg_id, "resourceTemplates", RESOURCE_TEMPLATES)
+        if method == "resources/read":
+            return self._read_resource(msg_id, params)
+        if method in {"resources/subscribe", "resources/unsubscribe"}:
+            return self._change_subscription(
+                msg_id, params, method == "resources/subscribe"
+            )
+        if method == "prompts/list":
+            return self._resource_result(msg_id, "prompts", PROMPTS)
+        if method == "prompts/get":
+            return self._get_prompt(msg_id, params)
 
         if method == "tools/call":
             name = params.get("name")
@@ -61,6 +98,8 @@ class StdioToolHost:
                     "id": msg_id,
                     "error": {"code": -32010, "message": str(exc)},
                 }
+            if TOOL_BY_NAME.get(name, {}).get("x_public_write_surface_class"):
+                self._publish_resource_changes()
             return {"jsonrpc": "2.0", "id": msg_id, "result": result}
 
         if msg_id is None:
@@ -71,6 +110,64 @@ class StdioToolHost:
             "id": msg_id,
             "error": {"code": -32601, "message": "method not found"},
         }
+
+    def drain_notifications(self) -> list[dict[str, Any]]:
+        pending, self._pending_notifications = self._pending_notifications, []
+        return pending
+
+    def _resource_result(self, msg_id: Any, key: str, value: Any) -> dict[str, Any]:
+        if self._resources is None or self._discovery is None:
+            return _protocol_error(msg_id, -32601, "method not found")
+        return {"jsonrpc": "2.0", "id": msg_id, "result": {key: value}}
+
+    def _read_resource(self, msg_id: Any, params: Any) -> dict[str, Any]:
+        if self._resources is None or not isinstance(params, dict):
+            return _protocol_error(msg_id, -32602, "invalid resource request")
+        uri = params.get("uri")
+        if not isinstance(uri, str):
+            return _protocol_error(msg_id, -32602, "resource uri must be a string")
+        try:
+            result = self._resources.read(uri)
+        except ValueError as exc:
+            return _protocol_error(msg_id, -32002, str(exc))
+        return {"jsonrpc": "2.0", "id": msg_id, "result": result}
+
+    def _change_subscription(
+        self, msg_id: Any, params: Any, subscribe: bool
+    ) -> dict[str, Any]:
+        if self._resources is None or not self._notifications_enabled:
+            return _protocol_error(msg_id, -32601, "resource subscriptions are unavailable")
+        uri = params.get("uri") if isinstance(params, dict) else None
+        if not isinstance(uri, str) or not self._resources.supports(uri):
+            return _protocol_error(msg_id, -32602, "resource uri is unavailable")
+        if subscribe:
+            self._subscriptions.add(uri)
+        else:
+            self._subscriptions.discard(uri)
+        return {"jsonrpc": "2.0", "id": msg_id, "result": {}}
+
+    def _get_prompt(self, msg_id: Any, params: Any) -> dict[str, Any]:
+        if self._discovery is None or not isinstance(params, dict):
+            return _protocol_error(msg_id, -32601, "prompts are unavailable")
+        try:
+            result = get_prompt(
+                self._discovery, params.get("name"), params.get("arguments", {})
+            )
+        except ValueError as exc:
+            return _protocol_error(msg_id, -32602, str(exc))
+        return {"jsonrpc": "2.0", "id": msg_id, "result": result}
+
+    def _publish_resource_changes(self) -> None:
+        if not self._notifications_enabled:
+            return
+        for uri in sorted(self._subscriptions):
+            self._pending_notifications.append(
+                {
+                    "jsonrpc": "2.0",
+                    "method": "notifications/resources/updated",
+                    "params": {"uri": uri},
+                }
+            )
 
     def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         response = dispatch_tool_call(self._daemon, name, arguments)
@@ -101,6 +198,12 @@ class StdioToolHost:
                     response = self.handle_message(message)
             if response is not None:
                 print(json.dumps(response, separators=(",", ":")), file=output_stream, flush=True)
+            for notification in self.drain_notifications():
+                print(
+                    json.dumps(notification, separators=(",", ":")),
+                    file=output_stream,
+                    flush=True,
+                )
 
 
 def _protocol_error(msg_id: Any, code: int, message: str) -> dict[str, Any]:

@@ -47,8 +47,13 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
         .stdin
         .take()
         .expect("child stdin")
-        .write_all(b"{\"jsonrpc\":\"2.0\",\"id\":41,\"method\":\"initialize\",\"params\":{}}\n")
-        .expect("write initialize");
+        .write_all(
+            b"{\"jsonrpc\":\"2.0\",\"id\":41,\"method\":\"initialize\",\"params\":{}}\n\
+{\"jsonrpc\":\"2.0\",\"id\":42,\"method\":\"resources/list\",\"params\":{}}\n\
+{\"jsonrpc\":\"2.0\",\"id\":43,\"method\":\"resources/templates/list\",\"params\":{}}\n\
+{\"jsonrpc\":\"2.0\",\"id\":44,\"method\":\"prompts/list\",\"params\":{}}\n",
+        )
+        .expect("write MCP capability requests");
     let output = child.wait_with_output().expect("wait for MCP broker");
     assert!(
         output.status.success(),
@@ -63,11 +68,37 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
 
     let stdout = String::from_utf8(output.stdout).expect("UTF-8 JSON-RPC stdout");
     let lines = stdout.lines().collect::<Vec<_>>();
-    assert_eq!(lines.len(), 1, "stdout must contain one protocol message");
+    assert_eq!(lines.len(), 4, "stdout must contain only protocol messages");
     let response: Value = serde_json::from_str(lines[0]).expect("JSON-RPC response");
     assert_eq!(response["jsonrpc"], "2.0");
     assert_eq!(response["id"], 41);
     assert_eq!(response["result"]["serverInfo"]["name"], "datum-eda");
+    assert!(response["result"]["capabilities"]["resources"].is_object());
+    assert!(response["result"]["capabilities"]["prompts"].is_object());
+    let resources: Value = serde_json::from_str(lines[1]).expect("resources response");
+    assert!(
+        resources["result"]["resources"]
+            .as_array()
+            .is_some_and(|items| items
+                .iter()
+                .any(|item| item["uri"] == "datum://context/live"))
+    );
+    let templates: Value = serde_json::from_str(lines[2]).expect("templates response");
+    assert!(
+        templates["result"]["resourceTemplates"]
+            .as_array()
+            .is_some_and(|items| items
+                .iter()
+                .any(|item| { item["uriTemplate"] == "datum://objects/{kind}{?cursor,limit}" }))
+    );
+    let prompts: Value = serde_json::from_str(lines[3]).expect("prompts response");
+    assert!(
+        prompts["result"]["prompts"]
+            .as_array()
+            .is_some_and(|items| items
+                .iter()
+                .any(|item| item["name"] == "datum.prepare-proposal"))
+    );
 
     fs::remove_dir_all(&root).expect("remove fixture root");
 }

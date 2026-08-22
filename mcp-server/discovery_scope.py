@@ -23,6 +23,7 @@ class DiscoveryScope:
     project_root: Path
     terminal_session_id: str
     context_id: str | None
+    document: dict[str, Any]
 
 
 def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
@@ -62,6 +63,7 @@ def load_discovery_scope(path: str | os.PathLike[str]) -> DiscoveryScope:
         project_root=project_root,
         terminal_session_id=terminal_session_id,
         context_id=context_id,
+        document=document,
     )
 
 

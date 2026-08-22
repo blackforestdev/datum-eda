@@ -879,9 +879,9 @@ from server_runtime_library import install_library_methods; from server_runtime_
 # subprocess env is inherited, so an explicit operator value wins. Library
 # authoring methods keep their pinned "tool" value (cli_run_kwargs_for_method).
 MCP_DEFAULT_COMMIT_SOURCE = "assistant"
-def run_server() -> None:
+def run_server(discovery: Any | None = None) -> None:
     os.environ.setdefault("DATUM_COMMIT_SOURCE", MCP_DEFAULT_COMMIT_SOURCE)
-    host = StdioToolHost(EngineDaemonClient())
+    host = StdioToolHost(EngineDaemonClient(), discovery)
     host.run_stdio()
 if __name__ == "__main__":
     run_server()

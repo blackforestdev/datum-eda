@@ -35,11 +35,11 @@ if __name__ == "__main__":
     parser.add_argument("--allow-origin", action="append", default=[])
     args = parser.parse_args()
     try:
-        load_discovery_scope(args.discovery)
+        discovery = load_discovery_scope(args.discovery)
         if args.transport == "stdio":
             if args.port is not None or args.token_file or args.allow_origin:
                 parser.error("HTTP options require --transport http")
-            run_server()
+            run_server(discovery)
         else:
             if args.port is None or args.token_file is None:
                 parser.error("HTTP transport requires --port and --token-file")
@@ -48,7 +48,9 @@ if __name__ == "__main__":
                 args.port,
                 token,
                 args.allow_origin,
-                StdioToolHost(EngineDaemonClient()),
+                StdioToolHost(
+                    EngineDaemonClient(), discovery, notifications_enabled=False
+                ),
             )
             print(
                 json.dumps(
