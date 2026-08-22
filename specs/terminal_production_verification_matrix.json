@@ -1,0 +1,203 @@
+{
+  "schema": "datum-terminal-production-verification-matrix-v1",
+  "frontier_task": "TERMINAL-T4-VERIFY",
+  "planning_step": "T4V-01",
+  "assembled_from_revision": "d099022ec9398c8f5f1894d0a0f3a7d5ab9851c2",
+  "production_path": "Linux PTY -> TerminalTransportSession -> TerminalCoreSessionAdapter -> immutable RenderSnapshot -> Datum GPU/text and AT-SPI projections",
+  "completed_packages": [
+    {
+      "key": "TERMINAL-T0-SHELL-TRUTH",
+      "landing_commit": "1d6d49ae554bc3515e39c38cc1675b77a3da8e0f",
+      "evidence": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md#T0"
+    },
+    {
+      "key": "TERMINAL-P0-FOCUS",
+      "landing_commit": "ed115c7c199fa6cbafe978d80142dbd985f47307",
+      "evidence": "specs/active_frontier.json#TERMINAL-P0-FOCUS"
+    },
+    {
+      "key": "TERMINAL-T1-INPUT",
+      "landing_commit": "cc61a0dc7e1d5490586d15ef85b7fafc154ce02e",
+      "evidence": "specs/active_frontier.json#TERMINAL-T1-INPUT"
+    },
+    {
+      "key": "TERMINAL-T1-PTY",
+      "landing_commit": "1491113",
+      "evidence": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md#DTC-P06E"
+    },
+    {
+      "key": "TERMINAL-T1-CORE",
+      "landing_commit": "144a7ba3e566f41111ebdb3c7f7a53e0e6a13ade",
+      "evidence": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md#DTC-P21"
+    },
+    {
+      "key": "TERMINAL-T2-NATIVE",
+      "landing_commit": "0ecc5dd",
+      "evidence": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md#DTC-P26"
+    },
+    {
+      "key": "TERMINAL-T3-UX",
+      "landing_commit": "d9da1fd",
+      "evidence": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md#DTC-P27"
+    },
+    {
+      "key": "TERMINAL-T3-PROTOCOLS",
+      "landing_commit": "beb062f",
+      "evidence": "specs/terminal_compatibility_matrix.json"
+    },
+    {
+      "key": "TERMINAL-T4A-AGENT-LAUNCH",
+      "landing_commit": "aac97d2",
+      "evidence": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md#AI-DISC-04"
+    },
+    {
+      "key": "TERMINAL-T4B-MCP",
+      "landing_commit": "db5a009",
+      "evidence": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md#AI-MCP-04"
+    },
+    {
+      "key": "TERMINAL-T4C-CONTEXT-AUTHORITY",
+      "landing_commit": "c10dadc",
+      "evidence": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md#AI-CTX-04"
+    },
+    {
+      "key": "TERMINAL-T4D-WORKFLOW-PARITY",
+      "landing_commit": "4b04bcc",
+      "evidence": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md#AI-WF-04"
+    }
+  ],
+  "checked_in_evidence": [
+    {
+      "id": "named-shell-tui-matrix",
+      "path": "specs/terminal_compatibility_matrix.json",
+      "artifact": "specs/evidence/terminal/dtc-p28-cbdf9e419b54b44e9af7a909df0dc536c4bc89b5.json",
+      "result": "13 real programs and five Datum-authored standards domains passed"
+    },
+    {
+      "id": "owned-transport-release-evidence",
+      "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+      "marker": "EVIDENCE:TERMINAL-T1-PTY:DTC-P06D-VERIFIED",
+      "result": "Wayland-first bounded release, GUI, lifecycle, resize, resource, and eight-session evidence passed"
+    },
+    {
+      "id": "terminal-core-proof",
+      "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+      "marker": "EVIDENCE:TERMINAL-T1-CORE:DTC-P21-CLOSED",
+      "result": "Datum-authored parser, screen, Unicode, protocol, graphics, reflow, search, and deterministic proof corpus passed"
+    },
+    {
+      "id": "linux-atspi-proof",
+      "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+      "marker": "EVIDENCE:TERMINAL-T2-NATIVE:DTC-P24B-CLOSED",
+      "result": "immutable TerminalCore accessibility semantics passed deterministic, live-bus, direct-query, and Orca observation"
+    },
+    {
+      "id": "agent-production-roundtrip",
+      "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+      "marker": "EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-04-CLOSED",
+      "result": "Codex, Claude Code, Cursor-compatible, and local-generic clients completed production PTY/MCP workflow parity"
+    }
+  ],
+  "t4v02_runs": [
+    {
+      "id": "workspace-offline",
+      "domain": "build-test-lint",
+      "command": "cargo test --workspace --all-targets --locked --offline && cargo check --workspace --all-targets --locked --offline && cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
+      "status": "pending"
+    },
+    {
+      "id": "terminal-core-release",
+      "domain": "conformance-throughput",
+      "command": "python3 scripts/run_terminal_core_proof.py",
+      "status": "pending"
+    },
+    {
+      "id": "transport-smoke",
+      "domain": "latency-throughput-resources-resize",
+      "command": "scripts/run_terminal_transport_proof_gates.sh smoke",
+      "status": "pending"
+    },
+    {
+      "id": "transport-gui",
+      "domain": "production-render-drain",
+      "command": "scripts/run_terminal_transport_proof_gates.sh gui",
+      "status": "pending"
+    },
+    {
+      "id": "transport-sustained",
+      "domain": "sustained-throughput-backlog",
+      "command": "scripts/run_terminal_transport_proof_gates.sh throughput-60s",
+      "status": "pending"
+    },
+    {
+      "id": "transport-lifecycle",
+      "domain": "lifecycle-resource-reaping",
+      "command": "scripts/run_terminal_transport_proof_gates.sh lifecycle-1000",
+      "status": "pending"
+    },
+    {
+      "id": "transport-soak",
+      "domain": "bounded-eight-session-soak",
+      "command": "scripts/run_terminal_transport_proof_gates.sh ci",
+      "status": "pending"
+    },
+    {
+      "id": "wayland-canary",
+      "domain": "primary-backend-visual-interaction",
+      "command": "scripts/run_terminal_transport_proof_gates.sh backend-canary",
+      "status": "pending"
+    },
+    {
+      "id": "named-shell-tui",
+      "domain": "shell-tui-tools",
+      "command": "scripts/run_terminal_compatibility_proof.sh",
+      "status": "pending"
+    },
+    {
+      "id": "agent-workflow",
+      "domain": "agent-mcp-authority",
+      "command": "scripts/run_agent_launch_pty_proof.sh",
+      "status": "pending"
+    },
+    {
+      "id": "accessibility-live-bus",
+      "domain": "linux-atspi",
+      "command": "cargo test -p datum-gui-app --locked --offline terminal_accessibility_platform::worker::tests::real_accessibility_bus_accepts_datum_registration -- --ignored --exact --nocapture",
+      "status": "pending"
+    },
+    {
+      "id": "repository-drift",
+      "domain": "security-governance-boundaries",
+      "command": "scripts/run_drift_gates.sh",
+      "status": "pending"
+    }
+  ],
+  "known_deltas": [
+    {
+      "id": "external-vt-suites",
+      "disposition": "vttest and esctest2 are optional black-box witnesses and are not counted as normative parity; Datum-authored deterministic VT/DEC fixtures are authoritative"
+    },
+    {
+      "id": "orca-cache-extension",
+      "disposition": "Orca's optional cache probe is unsupported; the standard AT-SPI application, terminal, text, caret, selection, focus, title, link, and event surfaces are implemented"
+    },
+    {
+      "id": "platform",
+      "disposition": "Linux x86_64/glibc with Wayland primary and X11 fallback is the governed platform; macOS, Windows, musl, and other architectures are not claimed"
+    },
+    {
+      "id": "local-agent-resume",
+      "disposition": "The generic local adapter relaunches with preserved Datum context because its governed client-neutral contract has no invented native resume syntax"
+    }
+  ],
+  "owner_acceptance": {
+    "frontier_step": "T4V-03",
+    "status": "blocked_on_t4v02",
+    "checklist": [
+      "shell prompt, typing, long output, colors, cursor, and glyphs",
+      "Vim or Neovim, tmux, and an interactive code agent",
+      "copy, paste, selection, search, link opening, and font zoom",
+      "focus handoff, resize, tabs, splits, close, kill, and restart"
+    ]
+  }
+}
