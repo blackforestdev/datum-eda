@@ -440,10 +440,18 @@ the remaining production runs without treating earlier package closure as a
 substitute for final verification.
 
 <!-- REQ:TERMINAL-T4-VERIFY:T4V-02 -->
+<!-- EVIDENCE:TERMINAL-T4-VERIFY:T4V-02-CLOSED -->
 T4V-02 executes the matrix on the production build across conformance,
 performance, security, accessibility, visual behavior, shells, TUIs, agents,
 MCP, lifecycle, and teardown. Any failure remains a product defect or an
 explicitly reviewed known delta; an omitted or mocked result does not pass.
+The production revision `fdf3e1a` passed the complete offline workspace suite,
+TerminalCore and transport performance/resource tiers, the ten-minute
+eight-session soak, one thousand lifecycle cycles, Wayland-primary and
+X11-fallback compositor canaries, thirteen real shell/TUI/tool probes, governed
+agent PTY/MCP workflows, and live AT-SPI registration. The checked-in evidence
+summary records exact artifacts and the separately governed whole-GUI interim
+golden mismatch without reblessing it.
 
 <!-- REQ:TERMINAL-T4-VERIFY:T4V-03 -->
 <!-- OWNER:TERMINAL-T4-VERIFY:T4V-03:T4V-03 -->

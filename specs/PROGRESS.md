@@ -70,7 +70,7 @@
    Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.5`, `dat-terminal-emulator-epic-jzv.10`. *Unblocks:* dat-terminal-emulator-epic-jzv.6. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
 - **Verify full terminal and agent interoperability** (`TERMINAL-T4-VERIFY`; `dat-terminal-emulator-epic-jzv.6`).
-   Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation. *state `planned`; authorization `owner_decision`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-terminal-emulator-epic-jzv.5`, `dat-terminal-emulator-epic-jzv.11`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build the read-only Command Console display** (`CONSOLE-READONLY`; `dat-output-lane-t6v`).

@@ -78,12 +78,16 @@ def failures(root: Path = ROOT) -> list[str]:
             problems.append(f"T4V-02 run {entry.get('id')} lacks domain or exact command")
         if entry.get("status") not in {"pending", "passed", "failed", "known-delta"}:
             problems.append(f"T4V-02 run {entry.get('id')} has an invalid status")
+        if entry.get("status") == "pending" or not entry.get("evidence"):
+            problems.append(f"T4V-02 run {entry.get('id')} lacks a completed evidence record")
     deltas = {entry.get("id") for entry in matrix.get("known_deltas", [])}
     if deltas != REQUIRED_DELTAS:
         problems.append("T4 production known-delta inventory changed without review")
     acceptance = matrix.get("owner_acceptance", {})
     if acceptance.get("frontier_step") != "T4V-03" or len(acceptance.get("checklist", [])) < 4:
         problems.append("T4 production matrix lacks the T4V-03 hands-on checklist")
+    if acceptance.get("status") != "ready":
+        problems.append("T4V-03 owner acceptance is not ready after production verification")
     return problems
 
 

@@ -1,0 +1,43 @@
+{
+  "schema": "datum-terminal-t4v02-evidence-v1",
+  "frontier_step": "T4V-02",
+  "production_revision": "fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab",
+  "guard_revision": "6a964400638cca7426bce208856f5868b94fb6bd",
+  "host": {
+    "architecture": "x86_64",
+    "kernel": "Linux 6.12.101+deb13-amd64",
+    "libc": "glibc 2.41",
+    "primary_backend": "Wayland",
+    "fallback_backend": "X11"
+  },
+  "results": {
+    "workspace": "all workspace targets tested and checked offline; strict clippy passed",
+    "terminal_core": "8388608 bytes, 5033984 actions, 4.1 MiB/s, zero errors",
+    "transport_smoke": "8 sessions, 8 MiB aggregate output, 155.03 MiB/s, exact checksums",
+    "production_gui": "3.81 MiB/s single and 5.20 MiB/s aggregate; governed drain latency limits passed",
+    "sustained": "75.73 MiB/s single and 90.96 MiB/s aggregate for 60 seconds; exact bytes and checksums",
+    "lifecycle": "1000 of 1000 cycles, zero survivors, final 4 FDs and 2 threads",
+    "soak": "600 seconds, 8 sessions, 95723520 exact bytes each direction, 1000 resizes, zero failures",
+    "backends": "Wayland primary and X11 fallback each created, initialized, displayed, and captured a production window",
+    "compatibility": "13 real programs and 5 Datum-authored standards domains passed",
+    "agents": "governed agent production PTY/MCP workflow and 8 CLI adapter tests passed",
+    "accessibility": "live Linux AT-SPI registration passed",
+    "boundaries": "dependency, transport, TerminalCore, adapter, renderer, native interaction, Kitty, snapshot, source-health, spec, project-state, and alignment gates passed"
+  },
+  "artifacts": [
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-smoke-wayland-primary-run1.json",
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-gui-wayland-primary-run1.json",
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-throughput-60s-wayland-primary-run1.json",
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-lifecycle-1000-wayland-primary-run1.json",
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-ci-wayland-primary-run1.json",
+    "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-backend-canary-wayland-primary-run1.json",
+    "target/p06-evidence/6a964400638cca7426bce208856f5868b94fb6bd-backend-canary-x11-fallback-run1.json",
+    "target/p28-evidence/952726b6608281c3165660c4bfba245d57938f4f-linux-x86_64.json"
+  ],
+  "reviewed_delta": {
+    "gate": "scripts/run_drift_gates.sh",
+    "status": "known-delta",
+    "reason": "The composed gate reached the pre-existing full-shell golden mismatch: 1.728% differing pixels versus the 0.5% interim threshold. Terminal-specific Wayland and X11 production canaries passed. No golden was reblessed; this unrelated whole-GUI visual baseline remains owner-controlled."
+  },
+  "remaining_boundary": "T4V-03 owner hands-on production acceptance"
+}

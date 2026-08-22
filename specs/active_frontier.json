@@ -3447,33 +3447,12 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-terminal-verify-20260822",
-        "claimed_at": "2026-08-22T12:14:34Z",
-        "heartbeat_at": "2026-08-22T12:21:06Z",
-        "expires_at": "2026-08-22T20:21:06Z",
-        "scope": [
-          "crates/cli",
-          "crates/gui-app",
-          "crates/gui-protocol",
-          "crates/gui-render",
-          "crates/terminal-core",
-          "mcp-server",
-          "scripts",
-          "docs/gui",
-          "specs",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "2b75eb3"
-      },
+      "claim": null,
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.11"
@@ -3481,7 +3460,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "The production Datum terminal and agent surface is verified against its complete conformance, interoperability, performance, security, accessibility, visual, lifecycle, and owner-acceptance contract.",
-        "canonical_next_step_id": "T4V-02",
+        "canonical_next_step_id": "T4V-03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3522,7 +3501,7 @@
           {
             "id": "T4V-02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Run and record the production conformance, performance, security, accessibility, visual, shell, TUI, agent, MCP, lifecycle, and teardown matrix; repair every blocking defect.",
             "depends_on": [
               "T4V-01"
@@ -3533,7 +3512,17 @@
                 "marker": "T4V-02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "fdf3e1a"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4-VERIFY:T4V-02-CLOSED"
+              }
+            ]
           },
           {
             "id": "T4V-03",

@@ -56,6 +56,14 @@ class TerminalProductionMatrixTests(unittest.TestCase):
         self.mutate(root, lambda matrix: matrix["t4v02_runs"][0].update(command=""))
         self.assertTrue(any("exact command" in problem for problem in guard.failures(root)))
 
+    def test_pending_or_unrecorded_run_fails(self) -> None:
+        root = self.fixture()
+        self.mutate(
+            root,
+            lambda matrix: matrix["t4v02_runs"][0].update(status="pending", evidence=""),
+        )
+        self.assertTrue(any("completed evidence" in problem for problem in guard.failures(root)))
+
     def test_owner_acceptance_cannot_disappear(self) -> None:
         root = self.fixture()
         self.mutate(root, lambda matrix: matrix.pop("owner_acceptance"))

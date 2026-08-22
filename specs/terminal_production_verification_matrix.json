@@ -3,6 +3,7 @@
   "frontier_task": "TERMINAL-T4-VERIFY",
   "planning_step": "T4V-01",
   "assembled_from_revision": "d099022ec9398c8f5f1894d0a0f3a7d5ab9851c2",
+  "executed_product_revision": "fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab",
   "production_path": "Linux PTY -> TerminalTransportSession -> TerminalCoreSessionAdapter -> immutable RenderSnapshot -> Datum GPU/text and AT-SPI projections",
   "completed_packages": [
     {
@@ -68,6 +69,11 @@
   ],
   "checked_in_evidence": [
     {
+      "id": "t4v02-production-matrix",
+      "path": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json",
+      "result": "Production verification passed with one reviewed, non-terminal full-shell visual-golden delta"
+    },
+    {
       "id": "named-shell-tui-matrix",
       "path": "specs/terminal_compatibility_matrix.json",
       "artifact": "specs/evidence/terminal/dtc-p28-cbdf9e419b54b44e9af7a909df0dc536c4bc89b5.json",
@@ -103,73 +109,85 @@
       "id": "workspace-offline",
       "domain": "build-test-lint",
       "command": "cargo test --workspace --all-targets --locked --offline && cargo check --workspace --all-targets --locked --offline && cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json#workspace"
     },
     {
       "id": "terminal-core-release",
       "domain": "conformance-throughput",
       "command": "python3 scripts/run_terminal_core_proof.py",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json#terminal_core"
     },
     {
       "id": "transport-smoke",
       "domain": "latency-throughput-resources-resize",
       "command": "scripts/run_terminal_transport_proof_gates.sh smoke",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-smoke-wayland-primary-run1.json"
     },
     {
       "id": "transport-gui",
       "domain": "production-render-drain",
       "command": "scripts/run_terminal_transport_proof_gates.sh gui",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-gui-wayland-primary-run1.json"
     },
     {
       "id": "transport-sustained",
       "domain": "sustained-throughput-backlog",
       "command": "scripts/run_terminal_transport_proof_gates.sh throughput-60s",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-throughput-60s-wayland-primary-run1.json"
     },
     {
       "id": "transport-lifecycle",
       "domain": "lifecycle-resource-reaping",
       "command": "scripts/run_terminal_transport_proof_gates.sh lifecycle-1000",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-lifecycle-1000-wayland-primary-run1.json"
     },
     {
       "id": "transport-soak",
       "domain": "bounded-eight-session-soak",
       "command": "scripts/run_terminal_transport_proof_gates.sh ci",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p06-evidence/fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab-ci-wayland-primary-run1.json"
     },
     {
       "id": "wayland-canary",
       "domain": "primary-backend-visual-interaction",
       "command": "scripts/run_terminal_transport_proof_gates.sh backend-canary",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "Wayland and X11 artifacts listed in the checked-in T4V-02 evidence summary"
     },
     {
       "id": "named-shell-tui",
       "domain": "shell-tui-tools",
       "command": "scripts/run_terminal_compatibility_proof.sh",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "target/p28-evidence/952726b6608281c3165660c4bfba245d57938f4f-linux-x86_64.json"
     },
     {
       "id": "agent-workflow",
       "domain": "agent-mcp-authority",
       "command": "scripts/run_agent_launch_pty_proof.sh",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json#agents"
     },
     {
       "id": "accessibility-live-bus",
       "domain": "linux-atspi",
       "command": "cargo test -p datum-gui-app --locked --offline terminal_accessibility_platform::worker::tests::real_accessibility_bus_accepts_datum_registration -- --ignored --exact --nocapture",
-      "status": "pending"
+      "status": "passed",
+      "evidence": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json#accessibility"
     },
     {
       "id": "repository-drift",
       "domain": "security-governance-boundaries",
       "command": "scripts/run_drift_gates.sh",
-      "status": "pending"
+      "status": "known-delta",
+      "evidence": "specs/evidence/terminal/t4v02-fdf3e1a48ffcf3ed1c980fb1b1754a8db92262ab.json#reviewed_delta"
     }
   ],
   "known_deltas": [
@@ -192,7 +210,7 @@
   ],
   "owner_acceptance": {
     "frontier_step": "T4V-03",
-    "status": "blocked_on_t4v02",
+    "status": "ready",
     "checklist": [
       "shell prompt, typing, long output, colors, cursor, and glyphs",
       "Vim or Neovim, tmux, and an interactive code agent",
