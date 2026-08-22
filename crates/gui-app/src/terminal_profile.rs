@@ -571,3 +571,6 @@ mod tests {
 #[cfg(test)]
 #[path = "terminal_compatibility_tests.rs"]
 mod compatibility_tests;
+#[cfg(test)]
+#[path = "terminal_agent_launch_tests.rs"]
+mod terminal_agent_launch_tests;
