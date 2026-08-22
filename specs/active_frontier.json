@@ -2860,7 +2860,7 @@
       ],
       "completion": {
         "outcome": "Datum launches supported agent clients through ordinary owned PTYs with native discovery and ephemeral session-scoped configuration.",
-        "canonical_next_step_id": "AI-DISC-02",
+        "canonical_next_step_id": "AI-DISC-03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -2901,7 +2901,7 @@
           {
             "id": "AI-DISC-02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Add datum-eda agent list, doctor, and launch with ephemeral session-scoped configuration and no user-global mutation.",
             "depends_on": [
               "AI-DISC-01"
@@ -2912,12 +2912,22 @@
                 "marker": "AI-DISC-02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "846cca6"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-02-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-DISC-03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Launch each adapter through the real PTY with project cwd, authentication environment, and Datum discovery identity intact.",
             "depends_on": [
               "AI-DISC-02"
@@ -2964,10 +2974,10 @@
         "harness": "codex-cli",
         "session": "root-terminal-agent-launch-20260821",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "34c4828",
+        "head": "846cca6",
         "claimed_at": "2026-08-21T21:11:33Z",
-        "heartbeat_at": "2026-08-21T21:23:08Z",
-        "expires_at": "2026-08-22T05:23:08Z",
+        "heartbeat_at": "2026-08-22T00:31:43Z",
+        "expires_at": "2026-08-22T08:31:43Z",
         "scope": [
           "crates/cli",
           "crates/gui-app/src/terminal_agent",

@@ -64,6 +64,7 @@ closed with an actionable `agent doctor` result.
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-01 -->
 <!-- EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-01-CLOSED -->
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-02 -->
+<!-- EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-02-CLOSED -->
 `datum-eda agent list`, `datum-eda agent doctor <adapter>`, and
 `datum-eda agent launch <adapter> [-- <native args>...]` are the canonical
 surface. Direct shell launch remains supported but is reported as unverified
