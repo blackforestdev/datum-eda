@@ -3145,11 +3145,31 @@
         "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Separate live and immutable pinned context, fence mutations by revision, and grant short-lived inspect/propose/apply-approved authority with complete audit provenance.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-terminal-context-20260822",
+        "claimed_at": "2026-08-22T02:50:04Z",
+        "heartbeat_at": "2026-08-22T02:50:04Z",
+        "expires_at": "2026-08-22T10:50:04Z",
+        "scope": [
+          "crates/gui-app",
+          "crates/gui-protocol",
+          "crates/cli",
+          "mcp-server",
+          "scripts",
+          "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+          "specs",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "71ebb86"
+      },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
@@ -3176,7 +3196,7 @@
           {
             "id": "AI-CTX-01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Separate mutable live GUI context from immutable pinned agent work context and expose both identities through discovery and MCP resources.",
             "depends_on": [],
             "requirement_refs": [
