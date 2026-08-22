@@ -241,6 +241,15 @@ deterministically bounded output-only consumer-feedback model and proves that no
 input, focus, verb-dispatch, operation-authoring, PTY-write, or terminal-cell path
 exists.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I01-TYPED-STATE -->
+`crates/gui-protocol/src/console_feedback.rs` owns the typed 240-record state,
+sequence/overflow accounting, and output-only categories; its unit tests prove
+typed retention and bounds. `crates/gui-app/src/console_feedback.rs` is the sole
+publication boundary and is tested without terminal mutation. The legacy type,
+string-push API, and terminal-narration module are absent, publication explicitly
+invalidates frame state, and guarded workspace clippy plus targeted protocol/app
+tests pass.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I02 -->
 CONSOLE-I02 inventories and classifies every current producer, then enforces the
 decision-033 routing matrix: GUI action feedback may enter the Console; terminal

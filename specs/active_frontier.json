@@ -3787,8 +3787,8 @@
         "harness": "codex-cli",
         "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
         "claimed_at": "2026-08-22T13:45:35-07:00",
-        "heartbeat_at": "2026-08-22T13:45:35-07:00",
-        "expires_at": "2026-08-22T21:45:35-07:00",
+        "heartbeat_at": "2026-08-22T13:55:34-07:00",
+        "expires_at": "2026-08-22T21:55:34-07:00",
         "scope": [
           "crates/gui-protocol/console-feedback",
           "crates/gui-app/console-routing",
@@ -3802,7 +3802,7 @@
       },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I01",
+        "canonical_next_step_id": "CONSOLE-I02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3819,7 +3819,7 @@
           {
             "id": "CONSOLE-I01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Replace legacy ConsoleLaneState and Vec<String> narration with a typed, bounded, output-only feedback model and prove the absence of input, dispatch, operation-authoring, PTY-write, and terminal-cell paths.",
             "depends_on": [],
             "requirement_refs": [
@@ -3828,12 +3828,18 @@
                 "marker": "CONSOLE-I01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I01-TYPED-STATE"
+              }
+            ]
           },
           {
             "id": "CONSOLE-I02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Classify and route existing producers according to decision 033, preserving terminal lifecycle, Notices, progress, and findings ownership.",
             "depends_on": [
               "CONSOLE-I01"

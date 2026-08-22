@@ -47,12 +47,14 @@ pub use source_shard_status::{
 };
 mod terminal_lane;
 pub use terminal_lane::*;
+mod console_feedback;
 mod terminal_split;
+pub use console_feedback::*;
 mod workspace_layout;
 pub use workspace_layout::{
-    ApplicationFocus, ConsoleLaneState, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState,
-    PANE_RATIO_MAX, PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild,
-    SplitOrientation, TerminalClipboardMenuState, TerminalTabDragVisualState, ViewportInteraction,
+    ApplicationFocus, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState, PANE_RATIO_MAX,
+    PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild, SplitOrientation,
+    TerminalClipboardMenuState, TerminalTabDragVisualState, ViewportInteraction,
     WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState,
 };
 mod production_proposals;
@@ -4868,12 +4870,23 @@ mod tests {
         let terminal_before = state.ui.terminal.clone();
 
         let echo = "fit board".to_string();
-        state.ui.push_console_line(echo.clone());
+        state
+            .ui
+            .publish_console_feedback(ConsoleFeedbackDraft::action_echo(
+                ConsoleFeedbackSource::Workspace,
+                42,
+                echo.clone(),
+            ));
 
         // The echo lands in the invisible console sink.
         assert!(
-            state.ui.console.lines.contains(&echo),
-            "GUI-action narration should land in the console sink"
+            state
+                .ui
+                .console
+                .latest()
+                .map(|record| record.message.as_str())
+                == Some(echo.as_str()),
+            "GUI-action narration should land in typed Console state"
         );
         // GUI narration cannot mutate terminal session projection state.
         assert_eq!(

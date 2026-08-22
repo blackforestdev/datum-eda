@@ -7,7 +7,9 @@
 //! enter `commit()`/the design journal and are not typed design Operations. They
 //! project over the resolved model; they never mutate it.
 
-use crate::{ArtifactPreviewViewportState, TerminalLaneState};
+use crate::{
+    ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState, TerminalLaneState,
+};
 use std::collections::BTreeMap;
 
 /// The user-selected cursor-crosshair presentation for every drawing surface
@@ -92,32 +94,6 @@ pub struct WorkspaceFilterState {
     pub layer_visibility: BTreeMap<String, bool>,
 }
 
-/// Legacy untyped sink for GUI-action narration (fit board, layer toggle,
-/// selection, view zoom, ...).
-///
-/// Doctrine: GUI-action echoes are NOT terminal output. The integrated PTY
-/// terminal is a real shell that GUI actions must never write to. The correct
-/// visible home for classified GUI action feedback is the output-only Datum
-/// Console (decision 033). This `Vec<String>` is migration debt, not that
-/// product contract: the implementation successor replaces it with a typed,
-/// bounded feedback model before rendering. It remains an invisible model-only
-/// sink in the interim — never on the PTY or terminal display buffer.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct ConsoleLaneState {
-    pub lines: Vec<String>,
-}
-
-impl ConsoleLaneState {
-    /// Append one GUI-owned narration line while preserving the bounded sink.
-    pub fn push_line(&mut self, line: String) {
-        self.lines.push(line);
-        if self.lines.len() > 240 {
-            let overflow = self.lines.len() - 240;
-            self.lines.drain(0..overflow);
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
     /// The one application-level input/selection owner. `WorkspaceLayout`
@@ -150,7 +126,7 @@ pub struct WorkspaceUiState {
     pub crosshair_style: CrosshairStyle,
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
-    pub console: ConsoleLaneState,
+    pub console: ConsoleFeedbackState,
     pub artifact_preview: ArtifactPreviewViewportState,
     pub layout: WorkspaceLayout,
 }
@@ -175,7 +151,7 @@ impl WorkspaceUiState {
             crosshair_style: CrosshairStyle::default(),
             filters,
             terminal: TerminalLaneState::default(),
-            console: ConsoleLaneState::default(),
+            console: ConsoleFeedbackState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
             layout: WorkspaceLayout::default(),
         }
@@ -192,12 +168,9 @@ impl WorkspaceUiState {
         }
     }
 
-    /// Append a GUI-action narration echo to the invisible console sink.
-    ///
-    /// Mirrors the terminal lane's 240-line cap but never touches the PTY lane:
-    /// this is a model-only field with no visible surface yet.
-    pub fn push_console_line(&mut self, line: String) {
-        self.console.push_line(line);
+    /// Publish one typed GUI-owned fact to the output-only Console state.
+    pub fn publish_console_feedback(&mut self, draft: ConsoleFeedbackDraft) -> u64 {
+        self.console.publish(draft)
     }
 }
 

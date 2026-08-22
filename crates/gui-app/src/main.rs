@@ -35,6 +35,7 @@ mod app_shell;
 mod application_terminal_shutdown;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
+mod console_feedback;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
@@ -76,7 +77,6 @@ mod terminal_context_io;
 mod terminal_control_input;
 mod terminal_core_adapter;
 mod terminal_input;
-mod terminal_narration;
 #[cfg(test)]
 mod terminal_new_session_cwd_tests;
 mod terminal_process;
@@ -1624,15 +1624,16 @@ impl Runtime {
     }
 
     fn log_review_event(&mut self, message: impl Into<String>) {
-        // GUI-action narration is the AutoCAD/Eagle command-echo: it belongs in
-        // the (not-yet-built) editor command console, never in the real PTY
-        // terminal. Route it to the invisible console sink. No repaint is forced
-        // here — the sink has no visible surface, and every narrating action
-        // already invalidates the frame independently.
-        terminal_narration::route_gui_narration(
+        // Transitional I01 route: typed output-only Console publication, never
+        // terminal input or a design mutation. I02 classifies callers so terminal
+        // lifecycle, Notices, progress, and findings retain their own homes.
+        console_feedback::route_gui_action_echo(
             &mut self.session.workspace_mut().ui.console,
             message,
         );
+        // Visible feedback is frame state. Invalidate here rather than relying on
+        // every producer to remember a separate redraw side effect.
+        self.invalidate_frame();
     }
 
     fn apply_session_result(
