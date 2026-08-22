@@ -3155,8 +3155,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-context-20260822",
         "claimed_at": "2026-08-22T02:50:04Z",
-        "heartbeat_at": "2026-08-22T02:50:04Z",
-        "expires_at": "2026-08-22T10:50:04Z",
+        "heartbeat_at": "2026-08-22T03:01:27Z",
+        "expires_at": "2026-08-22T11:01:27Z",
         "scope": [
           "crates/gui-app",
           "crates/gui-protocol",
@@ -3168,7 +3168,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "71ebb86"
+        "head": "05bf60e"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.8",
@@ -3179,7 +3179,7 @@
       ],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
-        "canonical_next_step_id": "AI-CTX-01",
+        "canonical_next_step_id": "AI-CTX-02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3196,7 +3196,7 @@
           {
             "id": "AI-CTX-01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Separate mutable live GUI context from immutable pinned agent work context and expose both identities through discovery and MCP resources.",
             "depends_on": [],
             "requirement_refs": [
@@ -3205,12 +3205,22 @@
                 "marker": "AI-CTX-01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "05bf60e"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-01-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-CTX-02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Require context identity and expected model revision on proposal and apply envelopes, with structured stale-state refusal and explicit refresh or rebase.",
             "depends_on": [
               "AI-CTX-01"

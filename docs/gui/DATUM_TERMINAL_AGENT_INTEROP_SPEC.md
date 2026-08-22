@@ -144,6 +144,7 @@ user-invoked workflow templates and never bypass tool approval.
 ## 6. Context and concurrency
 
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-01 -->
+<!-- EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-01-CLOSED -->
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-02 -->
 
 `live_context` follows GUI state. `pinned_context` is immutable for an agent work
