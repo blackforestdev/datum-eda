@@ -16,6 +16,7 @@ ADAPTER = SRC / "terminal_core_adapter.rs"
 SESSION = SRC / "terminal_session.rs"
 SESSION_RENDER = SRC / "terminal_session_render.rs"
 DRAIN = SRC / "terminal_session_drain.rs"
+CORE_EVENTS = SRC / "terminal_session_core_events.rs"
 SPAWN = SRC / "terminal_session_spawn.rs"
 TERMINAL_PROCESS = SRC / "terminal_process.rs"
 TERMINAL_CAPABILITY = SRC / "terminal_capability.rs"
@@ -87,6 +88,7 @@ def check(root: Path) -> list[str]:
     session = read(root, SESSION)
     session_render = read(root, SESSION_RENDER)
     drain = read(root, DRAIN)
+    core_events = read(root, CORE_EVENTS)
     spawn = read(root, SPAWN)
     tests = read(root, SRC / "terminal_core_adapter_tests.rs")
     terminal_lane = read(root, TERMINAL_LANE)
@@ -151,8 +153,8 @@ def check(root: Path) -> list[str]:
         "parser: StreamingParser",
         "core: TerminalCore",
         "PRODUCTION_CORE_LIMIT_VALUES",
-        "parser.feed(bytes",
-        "core.apply(action)",
+        "parser.feed(&bytes",
+        "core.apply_into(action",
         ".render_snapshot()",
     ):
         if marker not in adapter:
@@ -187,7 +189,6 @@ def check(root: Path) -> list[str]:
         "debug_assert_eq!(slot.core.session_id(), slot.session.session_id())",
         "debug_assert_eq!(slot.core.context_id(), slot.session.context_id)",
         "slot.core.apply_output(lane, bytes)",
-        "session.write_bytes(&response)",
         "slot.core.finish(lane)",
     )
     for marker in ordered:
@@ -197,6 +198,8 @@ def check(root: Path) -> list[str]:
         failures.append("production drain must not feed the provisional parser")
     if drain.find(ordered[0]) > drain.find(ordered[2]):
         failures.append("session/context identity must be checked before applying PTY output")
+    if "session.write_bytes(&response)" not in core_events:
+        failures.append("PTY/core lifecycle boundary lacks reply-write ownership")
 
     for proof in REQUIRED_PROOFS:
         if proof not in tests:

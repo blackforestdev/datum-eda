@@ -33,7 +33,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "struct TerminalCoreSessionAdapter {\n"
             "    parser: StreamingParser,\n    core: TerminalCore,\n}\n"
             f"const PRODUCTION_CORE_LIMIT_VALUES: CoreLimitValues = CoreLimitValues {{\n{limits}\n}};\n"
-            "fn apply(){ parser.feed(bytes, |action| core.apply(action)); self.core.render_snapshot(); }\n",
+            "fn apply(){ parser.feed(&bytes, |action| core.apply_into(action)); self.core.render_snapshot(); }\n",
             encoding="utf-8",
         )
         (root / guard.SESSION).write_text(
@@ -79,9 +79,11 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "debug_assert_eq!(slot.core.session_id(), slot.session.session_id());\n"
             "debug_assert_eq!(slot.core.context_id(), slot.session.context_id);\n"
             "slot.core.apply_output(lane, bytes);\n"
-            "session.write_bytes(&response);\n"
             "slot.core.finish(lane);\n}\n",
             encoding="utf-8",
+        )
+        (root / guard.CORE_EVENTS).write_text(
+            "fn consume(){ session.write_bytes(&response); }\n", encoding="utf-8"
         )
         (source / "terminal_core_adapter_tests.rs").write_text(
             "\n".join(f"fn {proof}() {{}}" for proof in guard.REQUIRED_PROOFS),
@@ -167,7 +169,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
 
     def test_missing_reply_resize_finish_or_identity_fails(self) -> None:
         mutations = (
-            (guard.DRAIN, "session.write_bytes(&response);", ""),
+            (guard.CORE_EVENTS, "session.write_bytes(&response);", ""),
             (guard.SESSION_RENDER, ".resize(cols, rows, pixel_width, pixel_height)?;", ""),
             (guard.DRAIN, "slot.core.finish(lane);", ""),
             (guard.DRAIN, "debug_assert_eq!(slot.core.context_id(), slot.session.context_id);", ""),
