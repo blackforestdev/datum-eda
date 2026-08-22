@@ -218,6 +218,7 @@ typed design operation, auto-run a discovered command, or infer approval.
 <!-- REQ:TERMINAL-T4B-MCP:AI-MCP-04 -->
 <!-- EVIDENCE:TERMINAL-T4B-MCP:AI-MCP-04-CLOSED -->
 <!-- REQ:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-04 -->
+<!-- EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-04-CLOSED -->
 
 Each required adapter must prove on a production Datum build:
 

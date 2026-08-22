@@ -432,5 +432,23 @@ accessibility, and Datum-shell integration.
 - **T4e Production verification:** full terminal, agent, conformance,
   performance, security, accessibility, and owner acceptance matrix.
 
+<!-- REQ:TERMINAL-T4-VERIFY:T4V-01 -->
+T4V-01 assembles the checked-in production matrix from the completed T0–T4d
+evidence. It records exact commands, revisions, artifacts, known deltas, and
+the remaining production runs without treating earlier package closure as a
+substitute for final verification.
+
+<!-- REQ:TERMINAL-T4-VERIFY:T4V-02 -->
+T4V-02 executes the matrix on the production build across conformance,
+performance, security, accessibility, visual behavior, shells, TUIs, agents,
+MCP, lifecycle, and teardown. Any failure remains a product defect or an
+explicitly reviewed known delta; an omitted or mocked result does not pass.
+
+<!-- REQ:TERMINAL-T4-VERIFY:T4V-03 -->
+<!-- OWNER:TERMINAL-T4-VERIFY:T4V-03:T4V-03 -->
+T4V-03 is the owner's hands-on acceptance boundary. The terminal epic closes
+only after the owner accepts the production behavior and the final governance
+transaction attaches the complete evidence.
+
 Every slice is a bounded tracked execution unit. Only T4e verification closes
 the native-terminal epic.

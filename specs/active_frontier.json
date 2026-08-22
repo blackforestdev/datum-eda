@@ -2764,8 +2764,7 @@
         "dat-terminal-emulator-epic-jzv.4"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.6",
-        "dat-terminal-emulator-epic-jzv.11"
+        "dat-terminal-emulator-epic-jzv.6"
       ],
       "completion": {
         "outcome": "Datum proves the modern terminal protocol, graphics, security, and accessibility ceiling against its production TerminalCore path.",
@@ -2813,8 +2812,7 @@
             "The production-acceptance task gains named shell and TUI compatibility evidence while retaining its own release boundary."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.6",
-            "dat-terminal-emulator-epic-jzv.11"
+            "dat-terminal-emulator-epic-jzv.6"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -3147,7 +3145,6 @@
         "dat-terminal-emulator-epic-jzv.9"
       ],
       "unblocks": [
-        "dat-terminal-emulator-epic-jzv.11"
       ],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
@@ -3274,7 +3271,6 @@
             "The workflow-parity package loses the context-authority prerequisite while retaining its own explicit selection and acceptance boundary."
           ],
           "unblocks_issue_ids": [
-            "dat-terminal-emulator-epic-jzv.11"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -3294,32 +3290,11 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Keep workflows canonical in CLI/MCP, parity-check thin client projections, enforce the OSC metadata boundary, and prove the named agent round trip.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "root-terminal-workflow-20260822",
-        "claimed_at": "2026-08-22T10:43:54Z",
-        "heartbeat_at": "2026-08-22T11:54:47Z",
-        "expires_at": "2026-08-22T19:54:47Z",
-        "scope": [
-          "crates/cli",
-          "crates/gui-app",
-          "crates/gui-protocol",
-          "crates/terminal-core",
-          "mcp-server",
-          "scripts",
-          "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
-          "specs",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "cc3aacc"
-      },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.10"
@@ -3329,7 +3304,7 @@
       ],
       "completion": {
         "outcome": "Datum workflows remain canonical and portable across CLI and MCP, client projections stay parity-checked, shell metadata remains non-authoritative, and every governed agent proves the complete production round trip.",
-        "canonical_next_step_id": "AI-WF-04",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3422,7 +3397,7 @@
           {
             "id": "AI-WF-04",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prove launch, discovery, inspect, propose, review, apply, refresh, and resume parity for Codex, Claude Code, a Cursor-compatible CLI, and a local agent on a production Datum build.",
             "depends_on": [
               "AI-WF-02",
@@ -3434,7 +3409,17 @@
                 "marker": "AI-WF-04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "4b04bcc"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4D-WORKFLOW-PARITY:AI-WF-04-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -3448,7 +3433,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "4b04bcc"
     },
     {
       "key": "TERMINAL-T4-VERIFY",
@@ -3461,18 +3447,125 @@
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
         "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md"
       ],
-      "state": "blocked",
-      "authorization": "execution",
-      "canonical_next": false,
+      "state": "in_progress",
+      "authorization": "planning",
+      "canonical_next": true,
       "parallel": false,
       "summary": "Close only after T4a-T4d and quantified conformance/performance/security/accessibility evidence prove real native discovery and end-to-end Codex, Claude, Cursor/local-agent, CLI/MCP, shell, and TUI operation.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "root-terminal-verify-20260822",
+        "claimed_at": "2026-08-22T12:14:34Z",
+        "heartbeat_at": "2026-08-22T12:14:34Z",
+        "expires_at": "2026-08-22T20:14:34Z",
+        "scope": [
+          "crates/cli",
+          "crates/gui-app",
+          "crates/gui-protocol",
+          "crates/gui-render",
+          "crates/terminal-core",
+          "mcp-server",
+          "scripts",
+          "docs/gui",
+          "specs",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "4b04bcc"
+      },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.5",
         "dat-terminal-emulator-epic-jzv.11"
       ],
-      "unblocks": [
-        "terminal epic verification and closure"
-      ]
+      "unblocks": [],
+      "completion": {
+        "outcome": "The production Datum terminal and agent surface is verified against its complete conformance, interoperability, performance, security, accessibility, visual, lifecycle, and owner-acceptance contract.",
+        "canonical_next_step_id": "T4V-01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "T4V-01",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Assemble the checked-in final production matrix from T0 through T4d evidence, with exact commands, revisions, artifacts, known deltas, and remaining live verification runs.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "T4V-01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "T4V-02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Run and record the production conformance, performance, security, accessibility, visual, shell, TUI, agent, MCP, lifecycle, and teardown matrix; repair every blocking defect.",
+            "depends_on": [
+              "T4V-01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "T4V-02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "T4V-03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Perform owner hands-on acceptance of the production terminal and agent workflows, then authorize terminal-epic closure only if the complete matrix is accepted.",
+            "depends_on": [
+              "T4V-02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                "marker": "T4V-03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `approve T4V-03 production acceptance`, or `T4V-03: reject — <blocking observation>`.",
+              "requests": [
+                {
+                  "id": "T4V-FINAL-ACCEPTANCE",
+                  "question": "Does the production Datum terminal and agent surface pass the checked-in matrix and the required hands-on workflows?",
+                  "recommended_response": "Approve only after T4V-02 is green and hands-on shell, TUI, agent, selection, resize, session, and lifecycle checks have no blocking defect.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+                    "marker": "T4V-03"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The fully fledged Datum-native terminal epic may close only with the accepted production matrix attached."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "CONSOLE-READONLY",
