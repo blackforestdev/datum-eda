@@ -73,6 +73,7 @@ python3 scripts/check_schematic_private_writers.py
 python3 scripts/check_daemon_write_parity.py
 python3 scripts/check_mcp_public_taxonomy.py
 python3 -m unittest discover -s mcp-server -p 'test_context_revision_fence.py'
+python3 -m unittest discover -s mcp-server -p 'test_agent_capability.py'
 cargo run -q -p datum-verb-registry --bin datum-verb-catalog -- --check
 bash scripts/run_migration_proof_gates.sh
 python3 scripts/check_cli_module_coverage.py

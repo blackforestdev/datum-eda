@@ -392,6 +392,10 @@ fn update_session_metadata(object: &mut Map<String, Value>) {
         .and_then(Value::as_str)
         .unwrap_or("unknown-context")
         .to_string();
+    let capabilities = object
+        .get("capabilities")
+        .cloned()
+        .unwrap_or_else(|| serde_json::json!(["inspect", "propose"]));
     let mut session = object
         .get("session")
         .and_then(Value::as_object)
@@ -408,14 +412,7 @@ fn update_session_metadata(object: &mut Map<String, Value>) {
         .or_insert(Value::String("ExternalAgent".to_string()));
     session
         .entry("capabilities".to_string())
-        .or_insert_with(|| {
-            Value::Array(
-                ["read", "check", "artifact", "propose", "apply-approved"]
-                    .into_iter()
-                    .map(|capability| Value::String(capability.to_string()))
-                    .collect(),
-            )
-        });
+        .or_insert(capabilities);
     for key in [
         "lifecycle",
         "created_unix_ms",

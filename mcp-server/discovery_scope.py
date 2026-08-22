@@ -165,6 +165,14 @@ def _match_pinned_authority(
     for field in ("model_revision", "accepted_transaction_tip"):
         if discovery.get(field) != pinned_document.get(field):
             raise ValueError(f"discovery pinned {field} mismatch")
+    for field in (
+        "capabilities",
+        "capability_profile",
+        "approval_policy",
+        "unattended_tools",
+    ):
+        if field in discovery and discovery[field] != pinned_document.get(field):
+            raise ValueError(f"discovery pinned {field} mismatch")
 
 
 def _required_path(document: dict[str, Any], key: str) -> Path:

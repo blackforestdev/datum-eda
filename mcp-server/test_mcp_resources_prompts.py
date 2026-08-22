@@ -39,6 +39,10 @@ def _scope() -> DiscoveryScope:
             "visible_proposal_ids": ["proposal-test"],
             "visible_artifact_ids": ["artifact-test"],
             "check_status": {"status": "failed"},
+            "capability_profile": "datum_agent_capability_v1",
+            "capabilities": ["inspect", "propose"],
+            "approval_policy": "owner-review-required",
+            "unattended_tools": [],
         },
     )
 
@@ -58,6 +62,10 @@ class TestMcpResourcesPrompts(unittest.TestCase):
                 "live_context_id": "live-terminal-split",
                 "pinned_context_id": "context-pinned",
                 "model_revision": "revision-pinned",
+                "capability_profile": "datum_agent_capability_v1",
+                "capabilities": ["inspect", "propose"],
+                "approval_policy": "owner-review-required",
+                "unattended_tools": [],
             }
             live_path.write_text(
                 json.dumps(
@@ -90,6 +98,10 @@ class TestMcpResourcesPrompts(unittest.TestCase):
                         "pinned_context_id": "context-pinned",
                         "pinned_context_path": os.fspath(pinned_path),
                         "model_revision": "revision-pinned",
+                        "capability_profile": "datum_agent_capability_v1",
+                        "capabilities": ["inspect", "propose"],
+                        "approval_policy": "owner-review-required",
+                        "unattended_tools": [],
                     }
                 ),
                 encoding="utf-8",

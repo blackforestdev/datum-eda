@@ -7,6 +7,12 @@ import json
 import sys
 from typing import Any, TextIO
 
+from agent_capability import (
+    AgentCapabilityError,
+    authorize_tool_call,
+    load_agent_capability_grant,
+    scoped_authorized_tool_catalog,
+)
 from context_revision_fence import (
     ContextFenceError,
     scoped_tool_catalog,
@@ -32,6 +38,7 @@ class StdioToolHost:
         self._daemon = daemon
         self._resources = None if discovery is None else DatumResourceCatalog(discovery)
         self._discovery = discovery
+        self._agent_grant = load_agent_capability_grant(discovery, TOOL_BY_NAME)
         self._notifications_enabled = notifications_enabled
         self._subscriptions: set[str] = set()
         self._pending_notifications: list[dict[str, Any]] = []
@@ -76,7 +83,13 @@ class StdioToolHost:
                 "jsonrpc": "2.0",
                 "id": msg_id,
                 "result": {
-                    "tools": scoped_tool_catalog(TOOLS, TOOL_BY_NAME, self._discovery)
+                    "tools": scoped_tool_catalog(
+                        scoped_authorized_tool_catalog(
+                            TOOLS, TOOL_BY_NAME, self._agent_grant
+                        ),
+                        TOOL_BY_NAME,
+                        self._discovery,
+                    )
                 },
             }
 
@@ -101,7 +114,7 @@ class StdioToolHost:
             try:
                 result = self._call_tool(name, arguments)
             except Exception as exc:
-                if isinstance(exc, ContextFenceError):
+                if isinstance(exc, (AgentCapabilityError, ContextFenceError)):
                     result = {
                         "content": [
                             {"type": "json", "json": _datum_error_envelope(name, exc)}
@@ -188,6 +201,13 @@ class StdioToolHost:
             )
 
     def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        authorize_tool_call(
+            self._agent_grant,
+            self._discovery,
+            name,
+            arguments,
+            TOOL_BY_NAME,
+        )
         fenced_arguments = validate_context_fence(
             self._discovery, name, arguments, TOOL_BY_NAME
         )
@@ -265,7 +285,7 @@ def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:
 def _datum_error_envelope(name: str, exc: Exception) -> dict[str, Any]:
     code = "tool_call_failed"
     details = {"exception_type": exc.__class__.__name__}
-    if isinstance(exc, ContextFenceError):
+    if isinstance(exc, (AgentCapabilityError, ContextFenceError)):
         code = exc.code
         details = exc.details
     return {

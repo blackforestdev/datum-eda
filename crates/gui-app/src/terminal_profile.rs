@@ -1,5 +1,6 @@
 //! User-selected terminal launch templates over the owned PTY transport.
 
+use crate::terminal_agent_authority::TerminalAgentAuthority;
 use anyhow::{Context, Result};
 use datum_gui_protocol::{
     TERMINAL_FONT_SCALE_DEFAULT_MILLIS, TERMINAL_FONT_SCALE_MAX_MILLIS,
@@ -53,6 +54,12 @@ pub(super) struct TerminalProfileArgs {
     /// Visual bell presentation for this profile: visual or off.
     #[arg(long = "terminal-bell")]
     bell: Option<String>,
+    /// Datum-domain agent authority: inspect, propose, apply-approved, or unattended.
+    #[arg(long = "terminal-agent-authority", default_value = "propose")]
+    agent_authority: String,
+    /// Canonical MCP tool permitted for unattended use; repeat to grant a narrow set.
+    #[arg(long = "terminal-agent-unattended-tool", value_name = "DATUM.TOOL")]
+    unattended_tools: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -69,6 +76,8 @@ pub(super) struct TerminalLaunchProfile {
     cursor_shape: CursorShape,
     cursor_blinking: bool,
     visual_bell_enabled: bool,
+    agent_authority: TerminalAgentAuthority,
+    unattended_tools: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -108,6 +117,8 @@ impl Default for TerminalLaunchProfile {
             cursor_shape: CursorShape::Block,
             cursor_blinking: true,
             visual_bell_enabled: true,
+            agent_authority: TerminalAgentAuthority::Propose,
+            unattended_tools: Vec::new(),
         }
     }
 }
@@ -149,6 +160,18 @@ impl TerminalLaunchProfile {
         self.visual_bell_enabled
     }
 
+    pub(super) fn agent_capabilities(&self) -> &'static [&'static str] {
+        self.agent_authority.capabilities()
+    }
+
+    pub(super) fn agent_approval_policy(&self) -> &'static str {
+        self.agent_authority.approval_policy()
+    }
+
+    pub(super) fn unattended_tools(&self) -> &[String] {
+        &self.unattended_tools
+    }
+
     pub(super) fn resolve(
         &self,
         project_root: &Path,
@@ -186,12 +209,18 @@ impl TerminalLaunchProfile {
 impl TerminalProfileCatalog {
     pub(super) fn from_args(args: &TerminalProfileArgs) -> Result<Self> {
         let custom = custom_profile(args)?;
+        let agent_authority = TerminalAgentAuthority::parse(&args.agent_authority)?;
+        agent_authority.validate_unattended_tools(&args.unattended_tools)?;
         let mut profiles = vec![
             TerminalLaunchProfile::default(),
             TerminalLaunchProfile::login(),
         ];
         if let Some(custom) = custom {
             profiles.push(custom);
+        }
+        for profile in &mut profiles {
+            profile.agent_authority = agent_authority;
+            profile.unattended_tools = args.unattended_tools.clone();
         }
         let selected = profiles
             .iter()
@@ -325,6 +354,8 @@ fn custom_profile(args: &TerminalProfileArgs) -> Result<Option<TerminalLaunchPro
         cursor_shape,
         cursor_blinking,
         visual_bell_enabled,
+        agent_authority: TerminalAgentAuthority::Propose,
+        unattended_tools: Vec::new(),
     }))
 }
 
@@ -358,6 +389,15 @@ mod tests {
     #[test]
     fn default_and_login_profiles_preserve_active_cwd_and_exact_argv() {
         let mut catalog = parse(&[]);
+        assert_eq!(
+            catalog.selected().agent_capabilities(),
+            ["inspect", "propose"]
+        );
+        assert_eq!(
+            catalog.selected().agent_approval_policy(),
+            "owner-review-required"
+        );
+        assert!(catalog.selected().unattended_tools().is_empty());
         assert_eq!(
             catalog.selected().core_limit_values(),
             crate::terminal_core_adapter::PRODUCTION_CORE_LIMIT_VALUES
@@ -481,12 +521,58 @@ mod tests {
             vec!["--terminal-scrollback-mebibytes", "65"],
             vec!["--terminal-cursor", "beam"],
             vec!["--terminal-bell", "audible"],
+            vec!["--terminal-agent-authority", "root"],
+            vec!["--terminal-agent-authority", "unattended"],
+            vec![
+                "--terminal-agent-unattended-tool",
+                "datum.proposal.accept_apply",
+            ],
+            vec![
+                "--terminal-agent-authority",
+                "unattended",
+                "--terminal-agent-unattended-tool",
+                "accept_apply_proposal",
+            ],
         ] {
             let mut argv = vec!["fixture"];
             argv.extend(values);
             let args = FixtureArgs::try_parse_from(argv).unwrap();
             assert!(TerminalProfileCatalog::from_args(&args.terminal).is_err());
         }
+    }
+
+    #[test]
+    fn agent_authority_profiles_are_cumulative_and_unattended_is_tool_scoped() {
+        assert_eq!(
+            parse(&["--terminal-agent-authority", "inspect"])
+                .selected()
+                .agent_capabilities(),
+            ["inspect"]
+        );
+        assert_eq!(
+            parse(&["--terminal-agent-authority", "apply-approved"])
+                .selected()
+                .agent_capabilities(),
+            ["inspect", "propose", "apply-approved"]
+        );
+        let catalog = parse(&[
+            "--terminal-agent-authority",
+            "unattended",
+            "--terminal-agent-unattended-tool",
+            "datum.proposal.accept_apply",
+        ]);
+        assert_eq!(
+            catalog.selected().agent_capabilities(),
+            ["inspect", "propose", "apply-approved", "unattended"]
+        );
+        assert_eq!(
+            catalog.selected().agent_approval_policy(),
+            "owner-enabled-unattended"
+        );
+        assert_eq!(
+            catalog.selected().unattended_tools(),
+            ["datum.proposal.accept_apply"]
+        );
     }
 
     #[test]
@@ -526,6 +612,8 @@ mod tests {
             cursor_shape: CursorShape::Bar,
             cursor_blinking: false,
             visual_bell_enabled: false,
+            agent_authority: TerminalAgentAuthority::Propose,
+            unattended_tools: Vec::new(),
         };
         let session = spawn_terminal_session(&context).unwrap();
         let deadline = std::time::Instant::now() + Duration::from_secs(2);

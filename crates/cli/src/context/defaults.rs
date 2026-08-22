@@ -10,12 +10,23 @@ pub(super) fn insert_context_defaults(object: &mut Map<String, Value>, source_sh
         object,
         "capabilities",
         Value::Array(
-            ["read", "check", "artifact", "propose", "apply-approved"]
+            ["inspect", "propose"]
                 .into_iter()
                 .map(|capability| Value::String(capability.to_string()))
                 .collect(),
         ),
     );
+    insert_default(
+        object,
+        "capability_profile",
+        Value::String("datum_agent_capability_v1".to_string()),
+    );
+    insert_default(
+        object,
+        "approval_policy",
+        Value::String("owner-review-required".to_string()),
+    );
+    insert_default(object, "unattended_tools", Value::Array(Vec::new()));
     insert_default(object, "visible_artifact_ids", Value::Array(Vec::new()));
     insert_default(object, "visible_output_job_ids", Value::Array(Vec::new()));
     insert_default(

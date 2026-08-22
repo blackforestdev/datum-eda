@@ -142,17 +142,17 @@ fn write_terminal_context_files_scoped(
     let live_context_id = terminal_live_context_id(terminal_context);
     let pinned_context_path = terminal_pinned_context_path(terminal_context);
     let discovery_path = terminal_discovery_path(terminal_context);
+    let agent_capabilities = context.terminal_profile.agent_capabilities();
+    let approval_policy = context.terminal_profile.agent_approval_policy();
+    let unattended_tools = context.terminal_profile.unattended_tools().to_vec();
     let session = DatumToolSessionMetadata {
         session_id: terminal_context.session_id.clone(),
         context_id: terminal_context.context_id.clone(),
         actor_type: "ExternalAgent".to_string(),
-        capabilities: vec![
-            "read".to_string(),
-            "check".to_string(),
-            "artifact".to_string(),
-            "propose".to_string(),
-            "apply-approved".to_string(),
-        ],
+        capabilities: agent_capabilities
+            .iter()
+            .map(|capability| (*capability).to_string())
+            .collect(),
         created_model_revision: context.source_revision.clone(),
         lifecycle: DatumToolSessionLifecycle::Running,
         created_unix_ms: terminal_context.created_unix_ms,
@@ -182,7 +182,10 @@ fn write_terminal_context_files_scoped(
         terminal_launch_profile: context.terminal_profile.name().to_string(),
         session_lifecycle: DatumToolSessionLifecycle::Running,
         actor_type: "ExternalAgent",
-        capabilities: vec!["read", "check", "artifact", "propose", "apply-approved"],
+        capabilities: agent_capabilities.to_vec(),
+        capability_profile: "datum_agent_capability_v1",
+        approval_policy,
+        unattended_tools: unattended_tools.clone(),
         created_unix_ms: terminal_context.created_unix_ms,
         updated_unix_ms,
         process_group_id: terminal_context.process_group_id,
@@ -361,6 +364,10 @@ fn write_terminal_context_files_scoped(
             pinned_context_path: pinned_context_path.display().to_string(),
             model_revision: context.source_revision.clone(),
             accepted_transaction_tip: context.accepted_transaction_tip.clone(),
+            capabilities: agent_capabilities.to_vec(),
+            capability_profile: "datum_agent_capability_v1",
+            approval_policy,
+            unattended_tools,
         };
         let discovery_text = format!(
             "{}\n",
@@ -694,6 +701,26 @@ mod tests {
             discovery["accepted_transaction_tip"].as_str(),
             launch.accepted_transaction_tip.as_deref()
         );
+        assert_eq!(
+            discovery["capabilities"],
+            serde_json::json!(["inspect", "propose"])
+        );
+        assert_eq!(discovery["capability_profile"], "datum_agent_capability_v1");
+        assert_eq!(discovery["approval_policy"], "owner-review-required");
+        assert_eq!(discovery["unattended_tools"], serde_json::json!([]));
+        let pinned: serde_json::Value =
+            serde_json::from_slice(&pinned_before).expect("pinned context authority should parse");
+        for field in [
+            "capabilities",
+            "capability_profile",
+            "approval_policy",
+            "unattended_tools",
+        ] {
+            assert_eq!(
+                discovery[field], pinned[field],
+                "discovery must duplicate immutable pinned {field} authority"
+            );
+        }
         let mut refreshed_launch = launch.clone();
         refreshed_launch.selection_context = datum_gui_protocol::DatumSelectionContext {
             kind: "authored_object".to_string(),

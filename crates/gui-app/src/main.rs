@@ -65,6 +65,7 @@ mod terminal_accessibility_bridge;
 mod terminal_accessibility_platform;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
+mod terminal_agent_authority;
 mod terminal_capability;
 mod terminal_check_context;
 mod terminal_context;

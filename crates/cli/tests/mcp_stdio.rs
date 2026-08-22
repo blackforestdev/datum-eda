@@ -27,7 +27,11 @@ fn canonical_mcp_command_emits_protocol_only_on_stdout() {
             "schema": "datum_agent_discovery_v1",
             "project_root": root,
             "terminal_session_id": "terminal-mcp-test",
-            "context_id": "context-mcp-test"
+            "context_id": "context-mcp-test",
+            "capability_profile": "datum_agent_capability_v1",
+            "capabilities": ["inspect", "propose"],
+            "approval_policy": "owner-review-required",
+            "unattended_tools": []
         }))
         .expect("serialize discovery"),
     )

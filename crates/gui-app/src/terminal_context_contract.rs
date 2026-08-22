@@ -26,6 +26,9 @@ pub(super) struct TerminalContextEnvelope {
     pub(super) session_lifecycle: DatumToolSessionLifecycle,
     pub(super) actor_type: &'static str,
     pub(super) capabilities: Vec<&'static str>,
+    pub(super) capability_profile: &'static str,
+    pub(super) approval_policy: &'static str,
+    pub(super) unattended_tools: Vec<String>,
     pub(super) created_unix_ms: u128,
     pub(super) updated_unix_ms: u128,
     pub(super) process_group_id: Option<i32>,
@@ -115,6 +118,10 @@ pub(super) struct TerminalAgentDiscovery {
     pub(super) pinned_context_path: String,
     pub(super) model_revision: Option<String>,
     pub(super) accepted_transaction_tip: Option<String>,
+    pub(super) capabilities: Vec<&'static str>,
+    pub(super) capability_profile: &'static str,
+    pub(super) approval_policy: &'static str,
+    pub(super) unattended_tools: Vec<String>,
 }
 
 #[derive(Debug, Serialize)]

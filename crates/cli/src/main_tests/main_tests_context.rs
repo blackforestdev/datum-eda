@@ -43,7 +43,7 @@ fn context_get_returns_gui_terminal_discovery_envelope() {
     assert_eq!(value["actor_type"], "ExternalAgent");
     assert_eq!(
         value["capabilities"],
-        serde_json::json!(["read", "check", "artifact", "propose", "apply-approved"])
+        serde_json::json!(["inspect", "propose"])
     );
     assert_eq!(value["visible_output_job_ids"], serde_json::json!([]));
     assert_eq!(value["visible_check_run_ids"], serde_json::json!([]));

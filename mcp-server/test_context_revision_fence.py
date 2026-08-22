@@ -33,6 +33,10 @@ class TestContextRevisionFence(unittest.TestCase):
             "pinned_context_id": "context-pinned",
             "model_revision": "revision-pinned",
             "accepted_transaction_tip": "transaction-pinned",
+            "capability_profile": "datum_agent_capability_v1",
+            "capabilities": ["inspect", "propose", "apply-approved", "unattended"],
+            "approval_policy": "owner-enabled-unattended",
+            "unattended_tools": ["datum.proposal.accept_apply"],
             "selection_context": {
                 "id": "component-selected",
                 "object_ids": ["net-selected"],
@@ -54,6 +58,15 @@ class TestContextRevisionFence(unittest.TestCase):
                 "pinned_context_path": os.fspath(self.pinned_path),
                 "model_revision": "revision-pinned",
                 "accepted_transaction_tip": "transaction-pinned",
+                "capability_profile": "datum_agent_capability_v1",
+                "capabilities": [
+                    "inspect",
+                    "propose",
+                    "apply-approved",
+                    "unattended",
+                ],
+                "approval_policy": "owner-enabled-unattended",
+                "unattended_tools": ["datum.proposal.accept_apply"],
             },
         )
         with patch.dict(os.environ, {}, clear=True):
