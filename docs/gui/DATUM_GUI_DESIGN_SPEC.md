@@ -323,18 +323,40 @@ accessibility evidence, dependency authority, and the explicit exclusions for
 Console input, notification tiers, findings UI, and GUI mutation.
 
 <!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED -->
-The implementation acceptance rail is closed. Four deterministic build fixtures
-cover the routine focused-pane echo, terminal-open tool prompt, narrow refusal,
-and expanded journal-backed history; their exact-diff goldens live under
-`crates/gui-render/testdata/golden/console/`. The project owner approved these
-implementation visuals on 2026-08-22 against Candidate A and the B3 history
-study. `scripts/check_datum_console_boundary.py` enforces the output-only state,
-renderer, and producer-routing exclusions. The guarded GUI package suite,
-workspace Clippy with warnings denied, migration proof matrix, dependency
-authority, Cargo resource policy, Console golden suite, specification
-governance/parity, and project-state validation pass. The unrelated aggregate
-GUI menu CSV/JSON parity drift remains separately tracked as `dat-s24`; it does
-not weaken or substitute for any Console proof.
+The 2026-08-22 closure claim is withdrawn pending CONSOLE-I06A..I06D. An
+adversarial post-implementation audit proved that source health and aggregate GUI
+conformance were red at the closure commit, that the Console golden test was
+ignored and absent from standing gates, and that several decision-033 production
+contracts remained incomplete. The four existing build fixtures and owner visual
+approval remain useful evidence, but they are not sufficient production-closure
+evidence until the recovery steps below pass and this marker is updated with the
+complete green rail.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06A -->
+CONSOLE-I06A restores decision-022 source health through cohesive ownership
+extraction from every Console-touched legacy module and same-change downward
+ratchets. Raising ceilings, registering new debt, textual `include!` splits, and
+forwarding-only modules are forbidden.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06B -->
+CONSOLE-I06B removes internal action/object identifiers from user-facing Console
+prose, carries canonical identities in the typed fields, and provides a durable
+non-focusing route to bounded Console history even when the transient strip is
+not visible.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06C -->
+CONSOLE-I06C makes the acceptance rail executable: Console state/routing tests
+and exact build goldens run in standing guarded gates; the critical-consequence
+announcement path is reachable; duration preference persistence and the required
+layout/accessibility visual matrix are honestly proved; and unsupported prompt or
+history behavior is corrected or explicitly narrowed in the contract.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D -->
+<!-- OWNER:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D:CONSOLE-I06D -->
+CONSOLE-I06D records the owner's disposition of the running-app shell capture.
+The review must separately decide the denser viewport grid and active terminal-tab
+styling, and must stabilize dynamic revision text before any shell golden is
+re-blessed. A blanket `--bless` against unexplained drift is not acceptance.
 
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.

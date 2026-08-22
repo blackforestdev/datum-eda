@@ -3775,16 +3775,36 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "landed",
-      "authorization": "none",
-      "canonical_next": false,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": true,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "console-recovery-20260822-codex",
+        "claimed_at": "2026-08-22T15:44:03-07:00",
+        "heartbeat_at": "2026-08-22T15:44:03-07:00",
+        "expires_at": "2026-08-22T23:44:03-07:00",
+        "scope": [
+          "crates/gui-protocol/console-feedback",
+          "crates/gui-app/console-routing",
+          "crates/gui-render/console-surface",
+          "scripts/gui-console-conformance",
+          "docs/gui/console-conformance",
+          "specs/source_module_size_manifest.json",
+          "specs/active_frontier.json",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": ".",
+        "head": "04ef7e57ee500ee184cfd32a6d1dd228893341ac"
+      },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": null,
+        "canonical_next_step_id": "CONSOLE-I06A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3907,12 +3927,93 @@
             ]
           },
           {
-            "id": "CONSOLE-I06",
+            "id": "CONSOLE-I06A",
             "kind": "execution",
-            "status": "complete",
-            "action": "Close routing and state tests, build goldens, owner visual review, accessibility proof, dependency authority, and every explicit product-boundary exclusion.",
+            "status": "pending",
+            "action": "Restore decision-022 source health through cohesive Console ownership extraction and same-change downward ratchets for every touched legacy module.",
             "depends_on": [
               "CONSOLE-I05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06A"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I06B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Replace leaked internal identifiers with canonical user wording plus typed identities, and make bounded history deliberately reachable without a visible strip.",
+            "depends_on": [
+              "CONSOLE-I06A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06B"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I06C",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Make Console goldens, state/routing tests, critical announcements, preference persistence, and the required visual/accessibility matrix part of the standing guarded acceptance rail.",
+            "depends_on": [
+              "CONSOLE-I06B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06C"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "CONSOLE-I06D",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Record the owner's shell visual disposition after separating grid, active-terminal-tab, and dynamic-revision drift.",
+            "depends_on": [
+              "CONSOLE-I06C"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06D"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply with approve or revise for each of GRID, TERMINAL-TAB, and REVISION-STABILITY after reviewing the regenerated running-app comparison.",
+              "requests": [
+                {
+                  "id": "CONSOLE-SHELL-VISUAL-DISPOSITION",
+                  "question": "Should the denser viewport grid and active terminal-tab styling become the shell golden, and is dynamic revision text stabilized before blessing?",
+                  "recommended_response": "Review grid and terminal-tab styling independently; preserve intended terminal focus styling, fix or explicitly approve grid density, and exclude deterministic revision churn before re-blessing.",
+                  "source_ref": {
+                    "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                    "marker": "CONSOLE-I06D"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "CONSOLE-I06",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Close routing/state tests, standing render goldens, owner visual review, accessibility proof, source health, dependency authority, and every explicit product-boundary exclusion.",
+            "depends_on": [
+              "CONSOLE-I06A",
+              "CONSOLE-I06B",
+              "CONSOLE-I06C",
+              "CONSOLE-I06D"
             ],
             "requirement_refs": [
               {
@@ -3920,22 +4021,7 @@
                 "marker": "CONSOLE-I06"
               }
             ],
-            "completion_evidence": [
-              {
-                "kind": "review",
-                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED"
-              },
-              {
-                "kind": "document",
-                "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
-                "marker": "EVIDENCE:CONSOLE-CONTRACT-RECOVERY:CONSOLE-C05-CONFORMANCE"
-              },
-              {
-                "kind": "commit",
-                "revision": "51b8987"
-              }
-            ]
+            "completion_evidence": []
           }
         ],
         "post_completion": {
@@ -3947,8 +4033,7 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      },
-      "landing_commit": "51b8987"
+      }
     },
     {
       "key": "GUI-SURFACE-SPECS",
@@ -3961,7 +4046,7 @@
       ],
       "state": "planned",
       "authorization": "planning",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": true,
       "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
       "dependencies": [],
