@@ -166,6 +166,7 @@ affected IDs, and refresh/rebase options. Silent last-write-wins is prohibited.
 ## 7. Authority and security
 
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03 -->
+<!-- EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03-CLOSED -->
 <!-- REQ:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-04 -->
 
 Capability profiles are cumulative and explicit:

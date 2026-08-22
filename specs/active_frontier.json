@@ -3155,8 +3155,8 @@
         "harness": "codex-cli",
         "session": "root-terminal-context-20260822",
         "claimed_at": "2026-08-22T02:50:04Z",
-        "heartbeat_at": "2026-08-22T03:31:42Z",
-        "expires_at": "2026-08-22T11:31:42Z",
+        "heartbeat_at": "2026-08-22T04:13:01Z",
+        "expires_at": "2026-08-22T12:13:01Z",
         "scope": [
           "crates/gui-app",
           "crates/gui-protocol",
@@ -3168,7 +3168,7 @@
           ".beads/issues.jsonl"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f394243"
+        "head": "fc26884"
       },
       "dependencies": [
         "dat-terminal-emulator-epic-jzv.8",
@@ -3179,7 +3179,7 @@
       ],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
-        "canonical_next_step_id": "AI-CTX-03",
+        "canonical_next_step_id": "AI-CTX-04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3246,7 +3246,7 @@
           {
             "id": "AI-CTX-03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Enforce inspect, propose, apply-approved, and explicitly enabled unattended grants at the project and terminal-session boundary.",
             "depends_on": [
               "AI-CTX-01"
@@ -3257,12 +3257,22 @@
                 "marker": "AI-CTX-03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "fc26884"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+                "marker": "EVIDENCE:TERMINAL-T4C-CONTEXT-AUTHORITY:AI-CTX-03-CLOSED"
+              }
+            ]
           },
           {
             "id": "AI-CTX-04",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prove session-lifetime revocation, absence of secrets from discovery and telemetry, and durable agent/session/context/approval provenance in audit and journal records.",
             "depends_on": [
               "AI-CTX-02",
