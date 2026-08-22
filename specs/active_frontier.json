@@ -3775,13 +3775,31 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "01a0277d-5742-7ef3-b1d9-d2fed67792c4",
+        "claimed_at": "2026-08-22T13:45:35-07:00",
+        "heartbeat_at": "2026-08-22T13:45:35-07:00",
+        "expires_at": "2026-08-22T21:45:35-07:00",
+        "scope": [
+          "crates/gui-protocol/console-feedback",
+          "crates/gui-app/console-routing",
+          "crates/gui-render/console-surface",
+          "docs/gui/console-conformance",
+          "specs/active_frontier.json",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": ".",
+        "head": "240ca2ec09e2d4844e609900bb1aa1baef6f74d8"
+      },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
         "canonical_next_step_id": "CONSOLE-I01",
@@ -3801,7 +3819,7 @@
           {
             "id": "CONSOLE-I01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Replace legacy ConsoleLaneState and Vec<String> narration with a typed, bounded, output-only feedback model and prove the absence of input, dispatch, operation-authoring, PTY-write, and terminal-cell paths.",
             "depends_on": [],
             "requirement_refs": [
