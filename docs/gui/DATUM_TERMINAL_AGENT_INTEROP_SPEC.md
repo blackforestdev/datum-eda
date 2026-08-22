@@ -95,6 +95,8 @@ separate explicit install/remove operation with a reviewable diff.
 
 ### 5.1 Primary stdio broker
 
+<!-- REQ:TERMINAL-T4B-MCP:AI-MCP-01 -->
+
 The portable connection is a standard MCP stdio subprocess equivalent to:
 
 ```bash
@@ -107,12 +109,16 @@ internal Datum daemon. Client exit tears down its broker and revokes its lease.
 
 ### 5.2 Optional Streamable HTTP
 
+<!-- REQ:TERMINAL-T4B-MCP:AI-MCP-02 -->
+
 Shared long-lived access may use Streamable HTTP only on loopback with Origin
 validation, negotiated protocol version, scoped authentication, expiry,
 revocation, bounded sessions, and no token passthrough. It is never required for
 local agent compatibility.
 
 ### 5.3 Server primitives
+
+<!-- REQ:TERMINAL-T4B-MCP:AI-MCP-03 -->
 
 Tools retain the `datum.<group>.<verb>` taxonomy. Resources include at minimum:
 
@@ -187,6 +193,8 @@ typed design operation, auto-run a discovered command, or infer approval.
 
 ## 10. Verification matrix
 
+<!-- REQ:TERMINAL-T4B-MCP:AI-MCP-04 -->
+
 Each required adapter must prove on a production Datum build:
 
 1. version probe, launch and native TUI behavior;
@@ -199,6 +207,7 @@ Each required adapter must prove on a production Datum build:
 8. resource update or explicit-refresh behavior;
 9. terminal/agent restart and native resume without context confusion;
 <!-- REQ:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-04 -->
+<!-- EVIDENCE:TERMINAL-T4A-AGENT-LAUNCH:AI-DISC-04-CLOSED -->
 10. missing client, rejected project config, expired credential, daemon loss,
     unsupported feature, teardown, and revocation behavior.
 
