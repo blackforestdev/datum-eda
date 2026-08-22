@@ -447,6 +447,10 @@ impl ApplicationHandler for App {
                         MouseScrollDelta::LineDelta(_, y) => y,
                         MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
                     };
+                    if runtime.handle_console_history_scroll(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if runtime.report_terminal_mouse_wheel(scroll_lines) {
                         self.request_redraw_if_needed();
                         return;
@@ -1670,6 +1674,35 @@ impl Runtime {
         self.invalidate_frame();
     }
 
+    fn handle_console_history_scroll(&mut self, scroll_lines: f32) -> bool {
+        if scroll_lines.abs() <= 0.01 || !self.workspace().ui.console.history_expanded() {
+            return false;
+        }
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        let history_panel = self
+            .prepared_scene()
+            .console_overlay_layout()
+            .and_then(|layout| layout.history_panel);
+        if !history_panel.is_some_and(|panel| panel.contains(x, y)) {
+            return false;
+        }
+        let console = &mut self.session.workspace_mut().ui.console;
+        let next = if scroll_lines > 0.0 {
+            console.history_scroll_offset().saturating_add(1).min(
+                datum_gui_protocol::CONSOLE_FEEDBACK_CAPACITY
+                    + datum_gui_protocol::CONSOLE_JOURNAL_PROJECTION_CAPACITY
+                    + 2,
+            )
+        } else {
+            console.history_scroll_offset().saturating_sub(1)
+        };
+        console.set_history_scroll_offset(next);
+        self.invalidate_frame();
+        true
+    }
+
     fn apply_session_result(
         &mut self,
         result: datum_gui_protocol::SessionCommandResult,
@@ -2455,6 +2488,21 @@ impl Runtime {
                 .select_artifact_preview_hit_target(target)
                 .unwrap_or(false),
             HitTarget::ArtifactPreviewViewport => false,
+            HitTarget::ConsoleHistoryToggle => {
+                let console = &mut self.session.workspace_mut().ui.console;
+                console.set_history_expanded(!console.history_expanded());
+                self.invalidate_frame();
+                true
+            }
+            HitTarget::ConsoleHistoryFilter(filter) => {
+                self.session
+                    .workspace_mut()
+                    .ui
+                    .console
+                    .set_history_filter(*filter);
+                self.invalidate_frame();
+                true
+            }
             HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
             HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),

@@ -8,7 +8,8 @@
 //! project over the resolved model; they never mutate it.
 
 use crate::{
-    ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState, TerminalLaneState,
+    ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
+    ConsoleJournalHistoryState, TerminalLaneState,
 };
 use std::collections::BTreeMap;
 
@@ -127,6 +128,7 @@ pub struct WorkspaceUiState {
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
     pub console: ConsoleFeedbackState,
+    pub console_journal: ConsoleJournalHistoryState,
     pub artifact_preview: ArtifactPreviewViewportState,
     pub layout: WorkspaceLayout,
 }
@@ -152,6 +154,7 @@ impl WorkspaceUiState {
             filters,
             terminal: TerminalLaneState::default(),
             console: ConsoleFeedbackState::default(),
+            console_journal: ConsoleJournalHistoryState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
             layout: WorkspaceLayout::default(),
         }

@@ -1,10 +1,10 @@
 //! Candidate-A output-only Datum Console overlay (decision 033).
 
 use super::{
-    ConsoleOverlayLayout, Quad, RectPx, ReviewWorkspaceState, ShellLayout, TextFace, TextRun,
-    design_tokens, draw_text_clipped, estimated_text_run_width_px,
+    ConsoleOverlayLayout, HitRegion, HitTarget, Quad, RectPx, ReviewWorkspaceState, ShellLayout,
+    TextFace, TextRun, design_tokens, draw_text_clipped, estimated_text_run_width_px,
 };
-use datum_gui_protocol::{ConsoleFeedbackCategory, ConsoleFeedbackSeverity};
+use datum_gui_protocol::{ConsoleFeedbackCategory, ConsoleFeedbackSeverity, ConsoleHistoryFilter};
 
 const MAX_PANE_WIDTH_FRACTION: f32 = 0.72;
 const TEXT_SIZE: f32 = 12.0;
@@ -15,6 +15,7 @@ pub(super) fn render_datum_console(
     scale: f32,
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
 ) -> Option<ConsoleOverlayLayout> {
     let record = state.ui.console.latest()?;
     let panes = shell.viewport_panes(&state.ui.layout);
@@ -64,13 +65,217 @@ pub(super) fn render_datum_console(
         text_clip,
         text_runs,
     );
+    hit_regions.push(HitRegion {
+        target: HitTarget::ConsoleHistoryToggle,
+        rect: strip,
+    });
+
+    let history_panel = if state.ui.console.history_expanded() {
+        Some(render_history(
+            state,
+            body,
+            strip,
+            scale,
+            quads,
+            text_runs,
+            hit_regions,
+        ))
+    } else {
+        None
+    };
 
     Some(ConsoleOverlayLayout {
         pane_id: focused.id,
         pane_body: body,
         strip,
         text_clip,
+        history_panel,
     })
+}
+
+#[allow(clippy::too_many_arguments)]
+fn render_history(
+    state: &ReviewWorkspaceState,
+    body: RectPx,
+    strip: RectPx,
+    scale: f32,
+    quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) -> RectPx {
+    let gap = 6.0 * scale;
+    let width = (520.0 * scale).min((body.width - 24.0 * scale).max(1.0));
+    let max_height = 170.0 * scale;
+    let available = (strip.y - body.y - gap).max(1.0);
+    let height = max_height.min(available);
+    let panel = RectPx {
+        x: strip.x,
+        y: strip.y - gap - height,
+        width,
+        height,
+    };
+    quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
+    let header_h = 26.0 * scale;
+    let header = RectPx {
+        height: header_h,
+        ..panel
+    };
+    quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_02));
+    push_border(quads, panel, design_tokens::chrome::BORDER_STRONG, scale);
+    draw_text_clipped(
+        "SESSION HISTORY",
+        panel.x + 11.0 * scale,
+        panel.y + 6.0 * scale,
+        10.5,
+        design_tokens::chrome::TEXT_SECONDARY,
+        TextFace::UiStrong,
+        header,
+        text_runs,
+    );
+    hit_regions.push(HitRegion {
+        target: HitTarget::ConsoleHistoryToggle,
+        rect: header,
+    });
+
+    let chip_w = 48.0 * scale;
+    let chip_gap = 5.0 * scale;
+    let chips = [
+        (ConsoleHistoryFilter::All, "all"),
+        (ConsoleHistoryFilter::Operations, "ops"),
+        (ConsoleHistoryFilter::Errors, "errors"),
+    ];
+    let mut chip_x = panel.x + panel.width - 11.0 * scale - chip_w * 3.0 - chip_gap * 2.0;
+    for (filter, label) in chips {
+        let chip = RectPx {
+            x: chip_x,
+            y: panel.y + 5.0 * scale,
+            width: chip_w,
+            height: 16.0 * scale,
+        };
+        let selected = state.ui.console.history_filter() == filter;
+        push_border(
+            quads,
+            chip,
+            if selected {
+                design_tokens::chrome::ACCENT
+            } else {
+                design_tokens::chrome::BORDER_SUBTLE
+            },
+            scale,
+        );
+        draw_text_clipped(
+            label,
+            chip.x + 6.0 * scale,
+            chip.y + 1.0 * scale,
+            9.5,
+            if selected {
+                design_tokens::chrome::ACCENT
+            } else {
+                design_tokens::chrome::TEXT_MUTED
+            },
+            TextFace::Mono,
+            chip,
+            text_runs,
+        );
+        hit_regions.push(HitRegion {
+            target: HitTarget::ConsoleHistoryFilter(filter),
+            rect: chip,
+        });
+        chip_x += chip_w + chip_gap;
+    }
+
+    let rows_clip = RectPx {
+        x: panel.x + 1.0 * scale,
+        y: panel.y + header_h,
+        width: panel.width - 2.0 * scale,
+        height: panel.height - header_h - 1.0 * scale,
+    };
+    let rows = history_rows(state);
+    let row_h = 19.0 * scale;
+    let visible_count = (rows_clip.height / row_h).floor().max(0.0) as usize;
+    let scroll = state.ui.console.history_scroll_offset();
+    let end = rows.len().saturating_sub(scroll.min(rows.len()));
+    let start = end.saturating_sub(visible_count);
+    let mut y = rows_clip.y + 3.0 * scale;
+    for row in &rows[start..end] {
+        draw_text_clipped(
+            &row.text,
+            rows_clip.x + 10.0 * scale,
+            y,
+            11.5,
+            row.color,
+            TextFace::Mono,
+            rows_clip,
+            text_runs,
+        );
+        y += row_h;
+    }
+    panel
+}
+
+struct HistoryRow {
+    text: String,
+    color: [f32; 3],
+}
+
+fn history_rows(state: &ReviewWorkspaceState) -> Vec<HistoryRow> {
+    let filter = state.ui.console.history_filter();
+    let mut rows = Vec::new();
+    if filter != ConsoleHistoryFilter::Operations {
+        if state.ui.console.dropped_count() > 0 {
+            rows.push(HistoryRow {
+                text: format!(
+                    "… {} earlier feedback records omitted",
+                    state.ui.console.dropped_count()
+                ),
+                color: design_tokens::chrome::TEXT_MUTED,
+            });
+        }
+        rows.extend(state.ui.console.records().filter_map(|record| {
+            if filter == ConsoleHistoryFilter::Errors
+                && !matches!(
+                    record.severity,
+                    ConsoleFeedbackSeverity::Warning | ConsoleFeedbackSeverity::Error
+                )
+            {
+                return None;
+            }
+            let seconds = (record.occurred_unix_ms / 1_000) % 86_400;
+            Some(HistoryRow {
+                text: format!(
+                    "{:02}:{:02}:{:02}  {}  gui",
+                    seconds / 3_600,
+                    (seconds / 60) % 60,
+                    seconds % 60,
+                    record.message
+                ),
+                color: if record.severity == ConsoleFeedbackSeverity::Error {
+                    design_tokens::chrome::TEXT_PRIMARY
+                } else {
+                    design_tokens::chrome::TEXT_SECONDARY
+                },
+            })
+        }));
+    }
+    if filter != ConsoleHistoryFilter::Errors {
+        if state.ui.console_journal.omitted_session_record_count() > 0 {
+            rows.push(HistoryRow {
+                text: format!(
+                    "… {} earlier session operations omitted",
+                    state.ui.console_journal.omitted_session_record_count()
+                ),
+                color: design_tokens::chrome::TEXT_MUTED,
+            });
+        }
+        rows.extend(state.ui.console_journal.records().map(|record| HistoryRow {
+            text: format!(
+                "#{}  {}  op·journal #{}",
+                record.journal_ordinal, record.reason, record.journal_ordinal
+            ),
+            color: design_tokens::chrome::ACCENT_HOVER,
+        }));
+    }
+    rows
 }
 
 fn presentation(
@@ -143,10 +348,41 @@ fn push_card(quads: &mut Vec<Quad>, rect: RectPx, severity: ConsoleFeedbackSever
     }
 }
 
+fn push_border(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], scale: f32) {
+    let hairline = scale.max(1.0);
+    for edge in [
+        RectPx {
+            width: rect.width,
+            height: hairline,
+            ..rect
+        },
+        RectPx {
+            y: rect.y + rect.height - hairline,
+            width: rect.width,
+            height: hairline,
+            ..rect
+        },
+        RectPx {
+            width: hairline,
+            ..rect
+        },
+        RectPx {
+            x: rect.x + rect.width - hairline,
+            width: hairline,
+            ..rect
+        },
+    ] {
+        quads.push(Quad::from_rect(edge, color));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use datum_gui_protocol::{ConsoleFeedbackDraft, ConsoleFeedbackSource, DockTab, PaneId};
+    use datum_gui_protocol::{
+        ConsoleFeedbackDraft, ConsoleFeedbackSource, ConsoleJournalProjectionRecord, DockTab,
+        PaneId,
+    };
 
     fn state_with(draft: ConsoleFeedbackDraft) -> ReviewWorkspaceState {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
@@ -176,8 +412,15 @@ mod tests {
                 let shell = ShellLayout::for_surface(width, height, scale, None);
                 let mut quads = Vec::new();
                 let mut text = Vec::new();
-                let layout = render_datum_console(&state, &shell, scale, &mut quads, &mut text)
-                    .expect("visible record renders");
+                let layout = render_datum_console(
+                    &state,
+                    &shell,
+                    scale,
+                    &mut quads,
+                    &mut text,
+                    &mut Vec::new(),
+                )
+                .expect("visible record renders");
 
                 assert_eq!(layout.pane_id, focused);
                 assert_inside(layout.strip, layout.pane_body);
@@ -202,7 +445,9 @@ mod tests {
         let shell_before = shell.clone();
         let mut quads = Vec::new();
         let mut text = Vec::new();
-        let layout = render_datum_console(&state, &shell, 1.0, &mut quads, &mut text).unwrap();
+        let layout =
+            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut Vec::new())
+                .unwrap();
 
         assert_eq!(shell, shell_before, "Console reserves no shell geometry");
         assert_eq!(layout.pane_id, PaneId(1));
@@ -219,7 +464,15 @@ mod tests {
         let shell = ShellLayout::for_surface(1280, 800, 1.0, None);
         let empty = datum_gui_protocol::load_fixture_workspace_state();
         assert!(
-            render_datum_console(&empty, &shell, 1.0, &mut Vec::new(), &mut Vec::new()).is_none()
+            render_datum_console(
+                &empty,
+                &shell,
+                1.0,
+                &mut Vec::new(),
+                &mut Vec::new(),
+                &mut Vec::new(),
+            )
+            .is_none()
         );
 
         let state = state_with(ConsoleFeedbackDraft::action_refusal(
@@ -229,7 +482,7 @@ mod tests {
         ));
         let mut quads = Vec::new();
         let mut text = Vec::new();
-        render_datum_console(&state, &shell, 1.0, &mut quads, &mut text).unwrap();
+        render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut Vec::new()).unwrap();
         assert!(text[0].text.starts_with("! Refused: "));
         assert!(quads.len() >= 6, "error card carries border and left rule");
     }
@@ -257,6 +510,50 @@ mod tests {
         assert!(!prepared.console_overlay_vertices().is_empty());
         assert!(prepared.text_runs.iter().any(|run| {
             run.text == "· selected U1" && run.clip_bounds == Some(layout.text_clip)
+        }));
+    }
+
+    #[test]
+    fn expanded_history_distinguishes_feedback_from_ordinal_journal_truth() {
+        let mut state = state_with(ConsoleFeedbackDraft::action_refusal(
+            ConsoleFeedbackSource::Tool,
+            50_000,
+            "no board text selected",
+        ));
+        state.ui.console.set_history_expanded(true);
+        state.ui.console_journal.begin_session(40);
+        state.ui.console_journal.reconcile(
+            &[ConsoleJournalProjectionRecord {
+                journal_ordinal: 41,
+                transaction_id: "tx-41".to_string(),
+                transaction_kind: "normal".to_string(),
+                commit_source: "manual".to_string(),
+                reason: "move U4".to_string(),
+                operation_count: 1,
+                created_count: 0,
+                modified_count: 1,
+                deleted_count: 0,
+            }],
+            41,
+        );
+        let shell = ShellLayout::for_surface(1280, 800, 1.0, None);
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        let layout =
+            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits).unwrap();
+
+        assert!(layout.history_panel.is_some());
+        assert!(text.iter().any(|run| run.text.contains("gui")));
+        assert!(
+            text.iter()
+                .any(|run| run.text == "#41  move U4  op·journal #41")
+        );
+        assert!(hits.iter().any(|hit| {
+            matches!(
+                hit.target,
+                HitTarget::ConsoleHistoryFilter(ConsoleHistoryFilter::Operations)
+            )
         }));
     }
 }

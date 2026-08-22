@@ -7,6 +7,7 @@ use std::collections::VecDeque;
 
 /// The deterministic in-memory history bound inherited from the former sink.
 pub const CONSOLE_FEEDBACK_CAPACITY: usize = 240;
+pub const CONSOLE_JOURNAL_PROJECTION_CAPACITY: usize = 240;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ConsoleFeedbackSeverity {
@@ -40,6 +41,72 @@ pub enum ConsoleFeedbackCategory {
 pub enum ConsoleFeedbackLifetime {
     Transient,
     PersistentUntilNextAction,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ConsoleHistoryFilter {
+    #[default]
+    All,
+    Operations,
+    Errors,
+}
+
+/// Read-only summary of one applied canonical journal transaction. Journal
+/// order is authoritative; no wall-clock timestamp is fabricated here.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct ConsoleJournalProjectionRecord {
+    pub journal_ordinal: usize,
+    pub transaction_id: String,
+    pub transaction_kind: String,
+    pub commit_source: String,
+    pub reason: String,
+    pub operation_count: usize,
+    pub created_count: usize,
+    pub modified_count: usize,
+    pub deleted_count: usize,
+}
+
+/// Session-local observation of resolver-journal truth. This is deliberately a
+/// sibling of consumer feedback, never content inside its deque.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct ConsoleJournalHistoryState {
+    session_baseline_applied_count: usize,
+    records: VecDeque<ConsoleJournalProjectionRecord>,
+    omitted_session_record_count: usize,
+}
+
+impl ConsoleJournalHistoryState {
+    pub fn begin_session(&mut self, applied_transaction_count: usize) {
+        self.session_baseline_applied_count = applied_transaction_count;
+        self.records.clear();
+        self.omitted_session_record_count = 0;
+    }
+
+    pub fn reconcile(
+        &mut self,
+        projection: &[ConsoleJournalProjectionRecord],
+        applied_transaction_count: usize,
+    ) {
+        self.records = projection
+            .iter()
+            .filter(|record| record.journal_ordinal > self.session_baseline_applied_count)
+            .cloned()
+            .collect();
+        while self.records.len() > CONSOLE_JOURNAL_PROJECTION_CAPACITY {
+            self.records.pop_front();
+        }
+        let observed_count =
+            applied_transaction_count.saturating_sub(self.session_baseline_applied_count);
+        self.omitted_session_record_count = observed_count.saturating_sub(self.records.len());
+    }
+
+    pub fn records(&self) -> impl DoubleEndedIterator<Item = &ConsoleJournalProjectionRecord> {
+        self.records.iter()
+    }
+
+    pub fn omitted_session_record_count(&self) -> usize {
+        self.omitted_session_record_count
+    }
 }
 
 /// A publisher-owned fact before the Console assigns its local sequence.
@@ -137,6 +204,8 @@ pub struct ConsoleFeedbackState {
     next_sequence: u64,
     dropped_count: u64,
     history_expanded: bool,
+    history_filter: ConsoleHistoryFilter,
+    history_scroll_offset: usize,
 }
 
 impl Default for ConsoleFeedbackState {
@@ -146,6 +215,8 @@ impl Default for ConsoleFeedbackState {
             next_sequence: 1,
             dropped_count: 0,
             history_expanded: false,
+            history_filter: ConsoleHistoryFilter::All,
+            history_scroll_offset: 0,
         }
     }
 }
@@ -199,6 +270,23 @@ impl ConsoleFeedbackState {
     pub fn set_history_expanded(&mut self, expanded: bool) {
         self.history_expanded = expanded;
     }
+
+    pub fn history_filter(&self) -> ConsoleHistoryFilter {
+        self.history_filter
+    }
+
+    pub fn set_history_filter(&mut self, filter: ConsoleHistoryFilter) {
+        self.history_filter = filter;
+        self.history_scroll_offset = 0;
+    }
+
+    pub fn history_scroll_offset(&self) -> usize {
+        self.history_scroll_offset
+    }
+
+    pub fn set_history_scroll_offset(&mut self, offset: usize) {
+        self.history_scroll_offset = offset;
+    }
 }
 
 #[cfg(test)]
@@ -248,5 +336,52 @@ mod tests {
         );
         assert_eq!(record.action_id.as_deref(), Some("datum.board_text.edit"));
         assert_eq!(record.target_id.as_deref(), Some("board:main"));
+    }
+
+    #[test]
+    fn journal_history_excludes_launch_baseline_and_reports_exact_omission() {
+        let mut history = ConsoleJournalHistoryState::default();
+        history.begin_session(10);
+        let projection = (12..=260)
+            .map(|ordinal| ConsoleJournalProjectionRecord {
+                journal_ordinal: ordinal,
+                transaction_id: format!("tx-{ordinal}"),
+                transaction_kind: "normal".to_string(),
+                commit_source: "manual".to_string(),
+                reason: format!("operation {ordinal}"),
+                operation_count: 1,
+                created_count: 0,
+                modified_count: 1,
+                deleted_count: 0,
+            })
+            .collect::<Vec<_>>();
+
+        history.reconcile(&projection, 260);
+
+        assert_eq!(history.records().count(), 240);
+        assert_eq!(history.records().next().unwrap().journal_ordinal, 21);
+        assert_eq!(history.records().next_back().unwrap().journal_ordinal, 260);
+        assert_eq!(history.omitted_session_record_count(), 10);
+    }
+
+    #[test]
+    fn history_filters_and_scroll_are_consumer_state_only() {
+        let mut feedback = ConsoleFeedbackState::default();
+        feedback.publish(ConsoleFeedbackDraft::action_echo(
+            ConsoleFeedbackSource::Viewport,
+            42,
+            "fit board",
+        ));
+        let sequence = feedback.latest().unwrap().sequence;
+
+        feedback.set_history_expanded(true);
+        feedback.set_history_filter(ConsoleHistoryFilter::Errors);
+        feedback.set_history_scroll_offset(7);
+
+        assert!(feedback.history_expanded());
+        assert_eq!(feedback.history_filter(), ConsoleHistoryFilter::Errors);
+        assert_eq!(feedback.history_scroll_offset(), 7);
+        assert_eq!(feedback.latest().unwrap().sequence, sequence);
+        assert_eq!(feedback.dropped_count(), 0);
     }
 }

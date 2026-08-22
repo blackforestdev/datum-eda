@@ -93,6 +93,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ArtifactPreviewViewport
         | HitTarget::ToggleArtifactPreviewGeometry
         | HitTarget::ToggleArtifactPreviewDrills
+        | HitTarget::ConsoleHistoryToggle
+        | HitTarget::ConsoleHistoryFilter(_)
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
         | HitTarget::MarkingMenuItem { .. }
@@ -174,6 +176,8 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::ArtifactPreviewViewport,
         HitTarget::ToggleArtifactPreviewGeometry,
         HitTarget::ToggleArtifactPreviewDrills,
+        HitTarget::ConsoleHistoryToggle,
+        HitTarget::ConsoleHistoryFilter(datum_gui_protocol::ConsoleHistoryFilter::All),
         HitTarget::MenuTitle(id()),
         HitTarget::MenuItem {
             menu: id(),

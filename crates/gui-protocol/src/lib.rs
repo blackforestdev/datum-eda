@@ -747,6 +747,8 @@ pub struct GuiSupervisionSnapshot {
 pub struct GuiJournalSupervision {
     pub applied_transaction_count: usize,
     pub accepted_transaction_tip: Option<String>,
+    pub projection: Vec<ConsoleJournalProjectionRecord>,
+    pub projection_omitted_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
@@ -2408,6 +2410,10 @@ fn load_workspace_state_impl(
         &state.source_shards,
         &state.checks,
     )?;
+    state
+        .ui
+        .console_journal
+        .begin_session(state.supervision.journal.applied_transaction_count);
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
         board_path,
@@ -2499,6 +2505,24 @@ fn load_gui_supervision_snapshot(
             .checked_sub(1)
             .and_then(|index| model.journal.get(index))
             .map(|transaction| transaction.transaction_id.to_string());
+        let applied = model.journal_cursor.applied_transaction_count;
+        let projection_start = applied.saturating_sub(CONSOLE_JOURNAL_PROJECTION_CAPACITY);
+        snapshot.journal.projection_omitted_count = projection_start;
+        snapshot.journal.projection = model.journal[projection_start..applied]
+            .iter()
+            .enumerate()
+            .map(|(offset, transaction)| ConsoleJournalProjectionRecord {
+                journal_ordinal: projection_start + offset + 1,
+                transaction_id: transaction.transaction_id.to_string(),
+                transaction_kind: format!("{:?}", transaction.transaction_kind).to_lowercase(),
+                commit_source: format!("{:?}", transaction.provenance.source).to_lowercase(),
+                reason: transaction.provenance.reason.clone(),
+                operation_count: transaction.operations.len(),
+                created_count: transaction.diff.created.len(),
+                modified_count: transaction.diff.modified.len(),
+                deleted_count: transaction.diff.deleted.len(),
+            })
+            .collect();
     }
     Ok(snapshot)
 }
@@ -4878,7 +4902,7 @@ mod tests {
                 echo.clone(),
             ));
 
-        // The echo lands in the invisible console sink.
+        // The echo lands in the output-only Console consumer state.
         assert!(
             state
                 .ui
@@ -5077,6 +5101,20 @@ mod tests {
             snapshot.journal.accepted_transaction_tip.as_deref(),
             expected_transaction_tip.as_deref()
         );
+        assert_eq!(snapshot.journal.projection_omitted_count, 0);
+        assert_eq!(snapshot.journal.projection.len(), 1);
+        let projected = &snapshot.journal.projection[0];
+        assert_eq!(projected.journal_ordinal, 1);
+        assert_eq!(projected.transaction_kind, "normal");
+        assert_eq!(projected.commit_source, "test");
+        assert_eq!(
+            projected.reason,
+            "place board text for resolver-backed GUI scene"
+        );
+        assert_eq!(projected.operation_count, 1);
+        assert_eq!(projected.created_count, 1);
+        assert_eq!(projected.modified_count, 0);
+        assert_eq!(projected.deleted_count, 0);
         assert_eq!(snapshot.scene.board_text_count, scene.board_texts.len());
     }
 

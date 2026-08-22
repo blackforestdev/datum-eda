@@ -146,6 +146,7 @@ impl PreparedScene {
             scale,
             &mut console_overlay_quads,
             &mut text_runs,
+            &mut hit_regions,
         );
         render_marking_menu(
             state,

@@ -76,4 +76,19 @@ mod tests {
             .expect("check-finding route remains present");
         assert!(!finding_branch.contains("log_console_"));
     }
+
+    #[test]
+    fn history_controls_never_take_keyboard_focus() {
+        use crate::keyboard_focus::focus_after_hit_target;
+        use datum_gui_protocol::{ApplicationFocus, ConsoleHistoryFilter, PaneId};
+        use datum_gui_render::HitTarget;
+
+        let editor = ApplicationFocus::Editor(PaneId(1));
+        for target in [
+            HitTarget::ConsoleHistoryToggle,
+            HitTarget::ConsoleHistoryFilter(ConsoleHistoryFilter::Operations),
+        ] {
+            assert_eq!(focus_after_hit_target(editor, true, &target), editor);
+        }
+    }
 }

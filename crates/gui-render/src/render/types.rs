@@ -70,6 +70,8 @@ pub enum HitTarget {
     ArtifactPreviewViewport,
     ToggleArtifactPreviewGeometry,
     ToggleArtifactPreviewDrills,
+    ConsoleHistoryToggle,
+    ConsoleHistoryFilter(datum_gui_protocol::ConsoleHistoryFilter),
     MenuTitle(String),
     MenuItem {
         menu: String,
@@ -168,6 +170,7 @@ pub struct ConsoleOverlayLayout {
     pub pane_body: RectPx,
     pub strip: RectPx,
     pub text_clip: RectPx,
+    pub history_panel: Option<RectPx>,
 }
 
 #[derive(Debug, Clone, PartialEq)]

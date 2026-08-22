@@ -287,6 +287,18 @@ CONSOLE-I04 adds deliberately opened, bounded session history with deterministic
 overflow disclosure. Committed operations project from journal authority;
 consumer echoes never become a rival audit log.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I04-JOURNAL-PROJECTED-HISTORY -->
+The Console strip opens a bounded B3-style history panel without taking keyboard
+focus. Consumer feedback and resolver-journal summaries remain sibling states:
+feedback retains its own sequence and overflow count, while applied transactions
+project in journal order with ordinal, transaction identity, kind, source,
+provenance reason, operation count, and diff counts. Launch establishes a session
+baseline; refresh reconciliation observes later transactions once and reports
+exact omissions. The panel exposes all/ops/errors filters and bounded wheel
+scrolling, renders journal rows as `op·journal #<ordinal>`, and never invents a
+journal timestamp. Protocol bound/filter tests, renderer history tests,
+non-focus tests, and a resolver-backed native-project projection test pass.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I05 -->
 CONSOLE-I05 publishes equivalent non-focus-stealing AT-SPI status announcements
 and proves redundant severity/text/icon semantics, inspection pause, history

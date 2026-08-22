@@ -77,6 +77,7 @@ fn refresh_workspace_after_terminal_output(
         && next.production == before.production
         && next.checks == before.checks
         && next.source_shards == before.source_shards
+        && next.supervision == before.supervision
     {
         return Ok(ProductionStatusRefresh::Unchanged);
     }
@@ -86,6 +87,11 @@ fn refresh_workspace_after_terminal_output(
     workspace.production = next.production;
     workspace.source_shards = next.source_shards;
     workspace.checks = next.checks;
+    workspace.ui.console_journal.reconcile(
+        &next.supervision.journal.projection,
+        next.supervision.journal.applied_transaction_count,
+    );
+    workspace.supervision = next.supervision;
     workspace.active_review_target_id = next.active_review_target_id;
     workspace.backing = next.backing;
     *production_pending = false;
