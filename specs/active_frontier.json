@@ -4919,12 +4919,42 @@
             "completion_evidence": []
           },
           {
+            "id": "REV-C01A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Present the committed REV-C01 code/spec proof packet and obtain owner approval or revision of the factual baseline before standards research begins.",
+            "depends_on": [
+              "REV-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C01A"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed proof packet, reply `REV-C01-BASELINE: approve` or `REV-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
+              "requests": [
+                {
+                  "id": "REV-C01A",
+                  "question": "Does the cited proof packet accurately and completely establish Datum's current revision authorities, contradictions, and missing capabilities as the factual baseline for REV-C02?",
+                  "recommended_response": "Approve only after each material finding is supported by clickable code/spec evidence and reproducible commands, with facts separated from interpretations and recommendations.",
+                  "source_ref": {
+                    "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                    "marker": "REV-C01A"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-C02",
             "kind": "planning",
             "status": "pending",
             "action": "Build a clause-addressable primary-source standards matrix for configuration identification, baselines, change control, status accounting, audit, drawing revision, approvals, effectivity, records, release, and retention.",
             "depends_on": [
-              "REV-C01"
+              "REV-C01A"
             ],
             "requirement_refs": [
               {

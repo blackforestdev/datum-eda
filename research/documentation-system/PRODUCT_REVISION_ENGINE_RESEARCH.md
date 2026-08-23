@@ -198,6 +198,18 @@ Inventory every existing technical, object, model, library, variant, rules,
 artifact, document, workspace, and Git revision concept; identify collisions,
 missing identities, stale-state paths, and private writers.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C01A -->
+<!-- OWNER:PRODUCT-REVISION-SPEC:REV-C01A:REV-C01A -->
+### REV-C01A — Owner acceptance of the proven baseline
+
+Before REV-C02 begins, present the owner with a committed proof packet that
+contains clickable code/spec evidence, reproducible search or test commands,
+an authority inventory, a contradiction and missing-capability matrix, and a
+clear separation of observed fact from interpretation and recommendation. The
+owner approves or revises whether that packet is a sufficiently accurate and
+complete factual baseline for standards research. This gate does not approve a
+Product Revision Engine mechanism or implementation.
+
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C02 -->
 ### REV-C02 — Standards matrix
 

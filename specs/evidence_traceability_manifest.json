@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "0e380339110154308b820ee7e7d38c5fbf2c75929b4b9cd01218d0be079ed33b",
-      "review_note": "Research inventory and cross-domain traceability identify workspace architecture as integrated into the governed Publish Space specification while retaining Product Revision Engine research as the next planning program."
+      "reviewed_digest": "b338031219f909f6e42eeaf9b98c9eaebf9be29d70adc659dcc6f35d279c05a5",
+      "review_note": "Research inventory and cross-domain traceability identify workspace architecture as integrated into the governed Publish Space specification and now list the REV-C01 internal authority audit as supporting evidence for the active Product Revision Engine planning program."
     },
     {
       "id": "terminal-focus-incident",
@@ -105,6 +105,7 @@
       "status": "in_progress",
       "sources": [
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
         "research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md"
       ],
@@ -115,8 +116,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "8be2770a94f3a0686c32c440f54152f38dc807687591cef7dbf0e513a6931a7d",
-      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020; the Revision Engine boundary remains explicit and its specification is the selected successor."
+      "reviewed_digest": "ed3bd0666519a8816d3de409d8c531940209202b0edc9cbe933259e4c3c6d882",
+      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020. REV-C01 now inventories the implemented revision authorities, collisions, contradictions, and missing product capabilities as the committed factual packet awaiting owner review at REV-C01A."
     },
     {
       "id": "parametric-footprint-editor",
