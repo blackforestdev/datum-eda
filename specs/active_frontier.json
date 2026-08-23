@@ -4324,6 +4324,7 @@
         "expires_at": "2026-08-23T02:03:58-07:00",
         "scope": [
           "research/documentation-system",
+          "research/README.md",
           "research/workspace-architecture",
           "docs/RESEARCH_TRACEABILITY.md",
           "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",

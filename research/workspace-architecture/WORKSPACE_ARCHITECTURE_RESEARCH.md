@@ -36,6 +36,8 @@ Status meanings:
 
 - **Open:** the owner has not answered the actual question.
 - **Partial:** direction is established, but a named part remains unresolved.
+- **Research-gated:** answering now would ratify assumptions that a required
+  broader research/specification track must resolve first.
 - **Answered in principle:** product intent is clear; research must still
   validate and specify the mechanism.
 
@@ -55,8 +57,8 @@ Status meanings:
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
 | 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` publication packages. A SheetSet holds ordered references to authoritative Sheets rather than owning duplicate pages, so one unchanged Sheet may appear in several packages. Package-specific divergence uses `Fork Sheet`; inherited named Viewports remain linked until selected ones use `Make Unique`. The user or project template decides initial content, and instances remain freely reconfigurable. Verified customer redaction is tracked separately by `dat-publish-redaction-contract-wzs`. |
-| 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Open** | No owner disposition yet. |
-| 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Open** | No owner disposition yet. |
+| 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Research-gated** | The question is too narrow: release must resolve a complete approved product/configuration baseline across Design, library, rules, Publish definitions/instances, checks, manufacturing plans, artifacts, approvals, and effectivity—not only one `model_revision`. `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md` and `dat-product-revision-engine-k9f` must establish the standards-driven authority model before owner disposition. |
+| 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Research-gated** | Released-output immutability, pending-change indication, revision allocation, affected-document scope, supersession, and regeneration are Product Revision Engine decisions. Existing releases must not be silently overwritten, but the exact Draft/change/release lifecycle remains deliberately undecided pending that research. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Open** | No owner disposition yet. |
 | 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Open** | Question 2 settles tiled/split/maximized editor coexistence; the control and navigation model for choosing content still requires owner discussion and Claude’s comparative visual study. |
 | 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Open** | Layouts are user-reconfigurable under question 2; persistence scope and ownership are not yet decided. |
@@ -344,6 +346,31 @@ stable historical and governance locators. In particular:
 Preserving a pathname does not preserve superseded terminology as product
 authority. Current prose, object names, UI labels, and conformance obligations
 must use Design Space and Publish Space.
+
+### Product Revision Engine re-entry
+
+Questions 15 and 16 exposed a product-wide configuration-control requirement,
+not a local Sheet setting. The owner requires every controlled document to be
+revision governed, with changes to schematics, boards, libraries, Footprints,
+rules, Publish content, and manufacturing artifacts handled as consequential
+engineering changes. The system must be obvious when action is required while
+otherwise receding into the background.
+
+`research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md` and
+`dat-product-revision-engine-k9f` establish the mandatory deep-research and
+specification track. Git-compatible JSON remains valuable for history and
+collaboration, but the Datum Product Revision Engine is the actual revision and
+release manager. It must maintain coherent local/offline authority without Git;
+an optional Datum-owned Git adapter maps commits, branches, remotes, and signed
+tags to engine concepts without making them authoritative. Git commits do not
+automatically become engineering release revisions, and external Git changes
+must re-enter Datum semantic validation. The current title-block research claim
+that commit batches may seed revision rows must be audited and reconciled
+through configuration identification, change control, approval, effectivity,
+status accounting, and audit requirements.
+
+No answer to questions 15/16, title-block revision behavior, or release pinning
+may be inferred until this track supplies an owner-approved authority model.
 
 ## Internal evidence identified for DOC-C01
 

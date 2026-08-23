@@ -1,0 +1,231 @@
+# Datum Product Revision Engine Research
+
+> **Status:** In progress — scope and primary-source baseline established
+> (`dat-product-revision-engine-k9f`). No object model, lifecycle, revision
+> scheme, standards-conformance claim, or implementation is yet ratified.
+
+## Why this research exists
+
+Datum cannot reduce engineering revision control to Git commits, a title-block
+counter, or a frozen PDF. A released electronic product is a governed
+configuration spanning schematic and PCB authority, library definitions,
+rules, variants, manufacturing plans, checks, waivers, Publish documents,
+generated artifacts, approvals, and effectivity. A moved connector or changed
+Footprint can invalidate the relationship between the physical product and its
+released documentation even when files remain syntactically valid.
+
+The owner requires revision integrity to be universal and obvious when action
+is needed, while otherwise receding into the background. Every controlled
+document must participate in revision governance. The simple Datum project must
+remain simple; regulated aerospace, defense, medical, and other organizations
+must be able to apply stronger profiles without a second product architecture.
+
+Questions 15 and 16 in the workspace/documentation owner ledger are suspended
+until this research defines the release and baseline concepts they currently
+assume.
+
+## Controlling posture
+
+- The Datum Product Revision Engine is the revision, configuration, change,
+  approval, baseline, and release authority. It must remain coherent in local
+  and offline operation without requiring a Git repository or remote service.
+- Git-compatible JSON is a persistence, history, exchange, and collaboration
+  substrate reached through an optional Datum-owned adapter; Git is not by
+  itself Datum's engineering-release authority.
+- Every committed Datum mutation has technical revision and provenance.
+- An issued engineering revision identifies an approved configuration, not a
+  count of edits or Git commits.
+- A released configuration is never silently rewritten by later Design,
+  library, Publish, rule, or generator changes.
+- Any divergence from a released baseline must be visible, impact-analyzed,
+  and traceable to a controlled change disposition.
+- Title-block revision/status fields are projections of governed document and
+  release authority, not editable claims and not raw commit metadata.
+- Datum specifies configurable policy and evidence mechanisms; it must not
+  imply third-party certification merely because a profile is selected.
+
+## Initial internal audit
+
+Datum already has useful substrate pieces:
+
+- `model_revision`, stable object identity/revision, typed operations, the
+  commit journal, and revision guards provide technical change identity.
+- `docs/POOL_ARCHITECTURE.md` explicitly states that pool JSON is designed for
+  Git while Git is not the product-level revision model; library approval and
+  same-identity resolution remain Datum semantics.
+- `docs/LIBRARY_ARCHITECTURE.md` requires placed component bindings to pin Part,
+  Symbol, Package, Footprint, and PinPadMap revisions.
+- decision 007 distinguishes model, workspace, artifact, and stale-projection
+  revisions and separately forces distributed-collaboration research.
+- decision 020 proposes live Draft views and model-revision-pinned released
+  Sheets, but it does not define a complete product configuration baseline.
+- `research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md`
+  already proposes controlled documents, drawing registers, release states,
+  revision history, and transmittals.
+
+The title-block research also contains a material conflation to correct: the
+commit journal may supply change evidence, but a commit or operation batch must
+not automatically become an issued document revision or revision-table row.
+Configuration identification, change authority, approval, effectivity, and
+release must mediate that transition.
+
+## Preliminary vocabulary to test, not yet ratified
+
+- **Technical revision:** immutable identity of a committed object/model/file
+  state used for concurrency, provenance, replay, diff, and staleness.
+- **Configuration Item (CI):** an owner/profile-designated product, asset,
+  document, rule set, plan, or other unit placed under formal control.
+- **Engineering change:** proposed and dispositioned intent describing why a
+  controlled configuration changes, its affected identities, impact, checks,
+  approvals, and effectivity.
+- **Configuration baseline:** approved manifest of exact CI revisions and
+  release evidence at a point in the product lifecycle.
+- **Document revision:** controlled issue identity for a document or package;
+  distinct from its technical edit history.
+- **Release:** role-authorized act that freezes a baseline, resolves title-block
+  facts, generates/verifies artifacts, and records issue/transmittal evidence.
+- **Effectivity:** scope in which an approved change applies, such as product
+  variant, serial/lot range, build, customer, site, or date.
+- **Status accounting:** queryable current and historical state of baselines,
+  changes, approvals, affected CIs, releases, and implementation.
+
+The research must determine which concepts remain universal Datum primitives,
+which are profile-enabled, and which terminology changes for lightweight use.
+
+## Revision layers that must not collapse
+
+1. Object and model technical revisions advance with committed mutations.
+2. Git commits capture deterministic storage snapshots and collaborative
+   history; optional signed tags may mirror important Datum releases.
+3. Engineering changes govern movement away from an approved baseline.
+4. Configuration baselines identify the exact product/document/artifact set.
+5. Document/package revisions identify issued communication to a recipient.
+6. Transmittals record what was delivered, to whom, when, and under what
+   classification or egress policy.
+
+## Datum core and Git adapter boundary
+
+The revision engine is not implemented as a thin wrapper that delegates product
+meaning to Git. Datum owns the semantic state machine and durable records for
+technical revisions, engineering changes, CI membership, baselines, approvals,
+document revisions, releases, and status accounting. A project without Git
+must still be able to author, inspect, compare, approve, release, reproduce, and
+audit its governed Datum configurations using local engine authority.
+
+An optional `GitAdapter` may:
+
+- materialize deterministic Datum shards into commits;
+- associate a Datum technical revision or release with a commit identity;
+- create or verify annotated/signed tags as release mirrors;
+- exchange branches/remotes and report repository divergence;
+- ingest externally changed shards as candidate technical changes for Datum
+  resolution, semantic validation, impact analysis, and explicit acceptance.
+
+The adapter may not infer approval from commit existence, infer an engineering
+revision from commit order, treat a branch or tag name as a Datum lifecycle
+transition, or bypass typed operations and the journal. Git failure, absence,
+or remoteness must not corrupt Datum revision state. An organization profile
+may require successful Git synchronization/signing before a release, but that
+is a release policy evaluated by Datum rather than Git becoming the authority.
+
+The distributed-collaboration research must later settle semantic merge,
+concurrent operations, remote signatures, and exchange policy. This revision
+track owns the product-level meaning of the states being exchanged.
+
+## Primary-source standards baseline
+
+The following sources establish the research perimeter. Exact requirements
+from paywalled standards must be verified from lawfully accessible normative
+copies before Datum claims a conforming profile.
+
+| Source | Initial relevance | Status |
+|---|---|---|
+| [ISO 10007:2017](https://www.iso.org/standard/70400.html) | Configuration-management planning, identification, change control, status accounting, and audit across the product lifecycle | Official scope reviewed; normative text pending lawful access |
+| [MIL-HDBK-61B](https://quicksearch.dla.mil/WMX/Default.aspx?token=5764667) | DoD configuration-management guidance for hardware/software, digital artifacts, identification, change control, accounting, and audits | Official public source identified; full extraction pending |
+| [NASA NPR 7123.1B Appendix C](https://nodis3.gsfc.nasa.gov/displayCA.cfm?Internal_ID=N_PR_7123_001B_&page_name=AppendixC) | CI identification, baseline acceptance, change requests, approvals, implementation, release, unintended-effect monitoring, and status records | Official public requirements reviewed at overview level |
+| [NASA Systems Engineering Handbook §6.5](https://www.nasa.gov/reference/6-0-crosscutting-technical-management/) | Baselines, change authority, unique CI/document identifiers, release, and product integrity | Official guidance reviewed at overview level |
+| [ASME Y14.35-2025](https://www.asme.org/codes-standards/find-codes-standards/revision-of-engineering-drawings-and-associated-documents) | Identification and recording of engineering product-definition and associated-document revisions | Official scope reviewed; normative text pending lawful access |
+| [Git tag documentation](https://git-scm.com/docs/git-tag.html) | Annotated/signed release-point identity available to an outer Git integration | Official behavior reviewed; not an engineering CM standard |
+
+Standards families requiring deliberate follow-up include ASME Y14.34/Y14.100,
+SAE/EIA-649, AS9100-series quality/configuration obligations, MIL-STD-31000
+technical data packages, ISO 9001 documented-information controls, relevant
+IPC product/documentation records, and applicable ECSS configuration/change
+control. Edition, status, licensing, scope, and normative availability must be
+verified before use.
+
+## Research and specification workstreams
+
+### REV-C01 — Internal authority inventory
+
+Inventory every existing technical, object, model, library, variant, rules,
+artifact, document, workspace, and Git revision concept; identify collisions,
+missing identities, stale-state paths, and private writers.
+
+### REV-C02 — Standards matrix
+
+Build a requirement/disposition matrix for configuration identification,
+baselines, change control, status accounting, audits, drawing revision,
+approval/signature, effectivity, records, transmittal, and retention. Separate
+normative requirements, organization policy, and Datum product choices.
+
+### REV-C03 — Authority and operation model
+
+Define the exact objects, identities, relationships, lifecycle states, roles,
+typed operations, refusal states, invariants, and query surfaces. Establish the
+one path from technical change through approved release without making every
+edit an issued revision.
+
+### REV-C04 — Git and distributed/offline integration
+
+Define mapping among Datum revisions, commits, branches, merges, annotated or
+signed tags, remote exchange, air-gapped operation, semantic conflicts, and
+release signatures. Specify a Datum-owned adapter contract: Git integration
+must remain optional, external Git changes must re-enter semantic validation,
+and Git must not create a second release authority.
+
+### REV-C05 — Impact, staleness, and reproducibility
+
+Specify dependency traversal across Design, library, rules, checks, Publish,
+manufacturing, and artifacts; affected/unaffected classification; stale and
+orphan states; baseline comparison; regeneration; and byte-reproducible release
+verification.
+
+### REV-C06 — Human experience and visual contract
+
+Define a quiet always-on default, prominent actionable divergence, release and
+approval workflows, revision/title-block projections, change impact review,
+history, and regulated-profile depth. Claude-owned HTML studies must validate
+the eventual interaction model before ratification.
+
+### REV-C07 — Owner disposition and governed ratification
+
+Resolve owner questions, reconcile affected research and decisions, and ratify
+mechanism only in numbered decision/spec governance with licensing and
+standards claims explicit.
+
+### REV-C08 — Frontier placement and proof contract
+
+Place bounded implementation slices, migration, conformance gates, fixtures,
+and production acceptance on the Active Frontier. Research completion must not
+implicitly authorize implementation.
+
+## First owner decisions to develop slowly
+
+1. Does the first post-release change allocate the next document revision
+   immediately, or retain the last released revision plus a conspicuous pending
+   change identity until approval?
+2. Is revision assignment package-wide, per controlled document, per Sheet, or
+   profile-selectable with a baseline manifest composing mixed revisions?
+3. Which project objects are always CIs, which may be designated as CIs, and
+   which remain technical history only?
+4. What constitutes an affected document when source, library, rule, template,
+   generator, or metadata changes?
+5. What is the minimum no-configuration user experience, and which profiles
+   activate review boards, signatories, effectivity, classifications, and
+   formal audits?
+6. How do release correction, withdrawal, supersession, rollback, branch/merge,
+   and emergency deviation work without rewriting history?
+
+These are discussion prompts, not an invitation to answer them in one batch.
+The owner dialogue remains one question at a time.
