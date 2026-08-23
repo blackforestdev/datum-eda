@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "92b434df619d2cffe1189f81658494b96693ae813d2581f9d228e93dbd1cbe46",
-      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C01 recorded its completed current-state inventory."
+      "reviewed_digest": "180c1724d1f354015c409d4ceeef0bf022068277ffde809f9971be9d38cb7645",
+      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C02 established the documentation vocabulary and authority map."
     },
     {
       "id": "terminal-focus-incident",
@@ -113,8 +113,8 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "4b5b5eedbb263154ce16e1488bbc52f9e5d08afd793133a8a6a522b0110396a5",
-      "review_note": "DOC-C01 completed a code, decision, research, prototype, and terminology inventory against the legacy decision being amended, the inherited shell, and the global research ledger; DOC-C02 now owns vocabulary and authority mapping."
+      "reviewed_digest": "c1107d1f9e4b2176fdd5a5562dcdb62b0448c486463bfefba91c4ff5be509376",
+      "review_note": "DOC-C02 reconciled the owner-approved Project, Workspace, Pane, Design, Publish, Sheet, Viewport, projection, and revision terms against the legacy decision, inherited shell, and global research ledger; DOC-C03 now owns the object and mutation model."
     },
     {
       "id": "parametric-footprint-editor",
@@ -222,8 +222,8 @@
         "docs/gui/DATUM_RENDERING_BOOK.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "reviewed_digest": "1ca2abe63009159465d38bd6bc302b7b9293b8cbda51c2895ffda2f611221d7c",
-      "review_note": "Rendering, text-placement, and title-block visual studies remain visual/content constraints, while DOC-C01 explicitly records that they do not yet specify Publish authority, navigation, composition, or revision behavior."
+      "reviewed_digest": "d4e4a5bf1ba39132de602d261c2942989eec8f17458dbfe70eca20cc96c0d4cf",
+      "review_note": "Rendering, text-placement, and title-block studies remain visual/content constraints under the DOC-C02 authority map; they do not create Publish ownership, navigation, composition, or revision behavior by themselves."
     },
     {
       "id": "prototype-selection",

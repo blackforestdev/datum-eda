@@ -225,6 +225,19 @@ DOC-C02 establishes the architectural vocabulary and authority map: what is a
 workspace or editor surface, what lives in Model Space, what lives in Paper
 Space, and how panes and paper-space viewports project those authorities.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C02-VOCABULARY-AUTHORITY-MAP -->
+DOC-C02 is complete as a planning authority map in
+`research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md`. The map
+defines Project, DesignModel, Workspace, Pane, Design Space, Editor Surface,
+Design Asset, Publish Space, Sheet, ViewportDefinition, ViewportInstance,
+Projected Table, Publish Annotation, SheetSet, Publish Template, Artifact, and
+Product Revision Engine without overlapping ownership. It fixes the mutation
+boundary: Workspace/Panes are consumer state; Design and Publish source use
+distinct typed operation families through the one commit/journal authority;
+Publish projections cannot write through to Design; and release meaning belongs
+to the Product Revision Engine. This evidence advances object-model planning
+only and does not ratify or authorize implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C03 -->
 DOC-C03 specifies the object and mutation model for Sheet, Viewport, projected
 Table, annotation, and SheetSet, including live versus released revision

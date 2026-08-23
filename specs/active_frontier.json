@@ -4352,7 +4352,7 @@
       },
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
-        "canonical_next_step_id": "DOC-C02",
+        "canonical_next_step_id": "DOC-C03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4389,7 +4389,7 @@
           {
             "id": "DOC-C02",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Define the architectural vocabulary and authority map for application workspaces, editor surfaces, Model Space, Paper Space, panes, model assets, sheets, and viewports.",
             "depends_on": [
               "DOC-C01"
@@ -4400,7 +4400,13 @@
                 "marker": "DOC-C02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "EVIDENCE:DOC-SYSTEM-SPEC:DOC-C02-VOCABULARY-AUTHORITY-MAP"
+              }
+            ]
           },
           {
             "id": "DOC-C03",

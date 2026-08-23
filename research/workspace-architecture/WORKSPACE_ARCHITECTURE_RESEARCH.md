@@ -605,6 +605,88 @@ schematic `Sheet*` migration seam, Publish participation in the Product Revision
 Engine, and the missing Claude-owned visual studies without treating any
 research sketch as already-ratified mechanism.
 
+## DOC-C02 vocabulary and authority map
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C02-VOCABULARY-AUTHORITY-MAP -->
+
+This map translates the owner-approved vocabulary into non-overlapping
+architectural roles. It controls subsequent DOC-system drafting, but remains a
+planning contract until DOC-C05 owner disposition and DOC-C06 ratification.
+
+### Canonical vocabulary
+
+| Term | Exact Datum meaning | Authority and persistence | Explicitly not |
+|---|---|---|---|
+| `Project` | A scalable design authority and organizational container whose internal scope is chosen by the designer. It may hold one small circuit or many products, boards, assemblies, variants, shared assets, publication packages, and external references. | Owns project identity and the deterministic shards/relationships resolved into Datum authority. Project structure and authored relationships change only through typed operations. | One PCB, one product, one window layout, or an enterprise hierarchy imposed on every user. |
+| `DesignModel` | The engine-resolved canonical authority over all project Design and Publish source objects and their relationships. | Resolver-owned; stable identity, technical revisions, typed operations, `commit()`, journal, and deterministic persistence apply. | A GUI scene, an editor-local cache, a Git checkout by itself, or a publication snapshot. |
+| `Workspace` | The one configurable human working environment inside Datum's one native application window: recursive pane tree, open content, focus, zoom/stage, tools, Inspector binding, docks, and optional saved arrangements. | Consumer/UI state. It may persist for convenience, but never advances technical, document, or release revision and never substitutes for source shards. | A Design authority container, a synonym for Schematic/Board, a Publish package, or a second native window. |
+| `Pane` | One leaf in the Workspace tile tree showing one `(document, view)` projection. | Screen/session state with independent camera and focused context. Splitting, closing, retargeting, resizing, zooming, and restoring Panes are not journaled Design/Publish mutations. | A Publish Viewport, a document copy, or an authority partition. |
+| `Design Space` | The authority side on which engineering and reusable asset content is authored through domain-appropriate editors. | Design objects and properties are canonical source and use typed Design operations. The classification spans spatial and non-spatial editors. | One universal canvas, one global application mode, a replacement for `Workspace`, or physical paper. |
+| `Editor Surface` | A focused domain persona—Schematic, Board, Symbol, Footprint, future Panelization/3D, rules, library data, and related views—over Datum's shared tooling backbone. | It projects Design objects and emits authorized typed operations; transient interaction remains consumer state. | A separate model authority or bespoke reimplementation of shared camera/grid/snap/selection/constraint services. |
+| `Design Asset` | An authoritative project or library object usable by Design and project relationships, including schematic content, boards, Symbols, Footprints, packages, parts, 3D models, panels, rules, variants, and manufacturing plans where applicable. | Stable identity and technical revision under the canonical model/pool contracts. | Content copied into a Sheet merely because a Viewport displays it. |
+| `Publish Space` | Datum's single universal authoring domain for composing, controlling, and publishing project information. It manages Publish source objects and can reference any supported Design asset or generated artifact. | Publish composition is canonical authored source: changes use typed Publish operations through `commit()` and the journal. Workspace presentation of Publish is still consumer state. | A global mode that evicts Design Panes, a per-editor generator, a Sheet, a PDF, or authority to edit projected Design geometry. |
+| `Sheet` | One individually publishable page with stable identity, a physical page/media definition, and ordered Publish-owned composition content. | Canonical Publish source. A Sheet may start blank or be seeded from a template and may be referenced by multiple SheetSets. | A schematic page, schematic hierarchy node, Workspace Pane, SheetSet, or output file. |
+| `ViewportDefinition` | A versioned named reusable Publish composition describing a Design/artifact source selector, projection/orientation, crop/extent, scale, visibility, render intent/style, and reusable associative annotation graph. | Canonical Publish source with stable identity and technical revision. `Edit Saved Viewport` is the explicit shared-change doorway. | The Design source, a screen camera, a Pane, or a frozen raster copy. |
+| `ViewportInstance` | One placement of a ViewportDefinition on a Sheet, owning frame/position, label placement, lock, and permitted local presentation overrides. | Canonical Publish source scoped to its Sheet. `Use Existing` links to a definition; `Make Unique` creates a new definition while preserving Design associations. | A second Design object or an implicit mutation path into the referenced source. |
+| `Projected Table` | A Sheet item whose rows/cells are a deterministic projection of model, package, artifact, or SheetSet facts, such as BOM, drill table, layer stack, net/pin data, or drawing index. | The table definition/placement/style is Publish source; resolved cell facts are projections and are not copied/journaled as rival truth. | A manually forked shadow database or a special kind of Viewport merely because it displays derived content. |
+| `Publish Annotation` | Publish-owned note, dimension, leader, balloon, datum/tolerance mark, callout, graphic, or image placed on a Sheet or associated with a ViewportDefinition/Instance. | Canonical Publish source. Associative anchors may resolve stable Design features, but Publish annotations are reference/documentation authority only. | A driving Design constraint or permission to write back to projected geometry. |
+| `SheetSet` | One ordered publication package containing references to Sheets and package-level identity/metadata. A Project may contain any number. | Canonical Publish/package source. Ordering controls `n/N` and package composition; sharing a Sheet does not duplicate it. | The owner of duplicate Sheet bodies, the only package a Project may have, or by itself a released baseline. |
+| `Publish Template` | A reusable authored starting configuration for Sheets, SheetSets, title blocks, graphics, fields, Viewports, and other Publish content. | Governed reusable source; instantiation creates freely editable project Publish objects. Saving project changes back to a template is explicit. | A restriction on later composition or an implicit live link unless a separately typed link is chosen. |
+| `Artifact` | Generated output plus provenance/validation metadata resolved from an exact technical source state. | Derived evidence with its own stable run/artifact identity and source revision reference; regeneration does not privately mutate Design or Publish source. | A released product baseline, a Sheet, or proof of document approval. |
+| `Product Revision Engine` | The separate Datum authority for configuration items, engineering changes, baselines, approvals, document/package revisions, releases, effectivity, status accounting, reproduction, and audit. | Standalone local/offline authority with an optional non-authoritative Git adapter. | A Sheet-local freeze flag, `model_revision`, a journal counter, title-block text, or Git itself. |
+
+### Authority flow and mutation boundaries
+
+```text
+Project
+└── resolved DesignModel authority
+    ├── Design source ──typed Design ops──> commit + journal
+    ├── Publish source ─typed Publish ops──> commit + journal
+    │   └── SheetSet ─> Sheet ─> ViewportInstance ─> ViewportDefinition
+    │                                         └─projects─> Design/artifact source
+    ├── derived artifacts/checks/renders (projection + evidence)
+    └── Product Revision Engine integration (baseline/release authority)
+
+Workspace (consumer state only)
+└── recursive Panes ─> Design editors, Publish editors, or auxiliary views
+```
+
+The boundaries are mandatory:
+
+1. A Workspace action changes no Design or Publish authority unless the focused
+   surface separately emits a typed domain operation.
+2. A Pane projects content; it does not own or duplicate that content.
+3. Design and Publish both participate in the canonical `DesignModel`, but use
+   distinct object families and mutation authority.
+4. A Viewport projection reads Design/artifact authority. Selecting projected
+   geometry may establish an associative Publish reference, but only `Open
+   Source in Design` enters a Design editor; it is navigation, not mutation.
+5. Publish-owned dimensions never drive Design geometry. Driving and reference
+   Design dimensions remain Design authority.
+6. Resolved fields, tables, Viewport imagery, and title-block values are
+   projections. Their authored definitions/bindings are journaled; repeated
+   resolved values are not stored as a competing truth.
+7. Technical revisions make source states addressable. Only the Product
+   Revision Engine may turn exact states into approved baselines, document
+   revisions, releases, or transmittals.
+
+### Naming and migration rules
+
+- `Model Space` and `Paper Space` are prohibited in new Datum product semantics;
+  they remain only in external-prior-art discussion, original-question quotes,
+  and the preserved decision-020 pathname.
+- User-facing compact labels may use `Design | Publish`; specifications use
+  `Design Space` and `Publish Space`.
+- `Sheet` is Publish-only. The existing schematic `Sheet`, `SheetDefinition`,
+  `SheetInstance`, `SheetFrame`, `sheet_id`, and `Schematic · Sheet` labels are
+  explicit migration inventory, not sanctioned dual meanings.
+- `Pane` is the user-facing screen composition term. `Viewport` without a
+  qualifier means the Publish definition/instance system in product prose.
+  Renderer internals may use viewport for a pixel rectangle or GPU camera only
+  when the scope is unmistakable.
+- Design/Publish are classifications of content and authority. They may coexist
+  in any Pane arrangement and never trigger implicit whole-Workspace replacement.
+
 ## External research state
 
 Primary-source review has begun for AutoCAD layouts/model and paper space,
