@@ -6,6 +6,13 @@
 > never previously created — the integrated-terminal/command-console idea once
 > floated as 021 was folded into the design spec's "Command Surfaces" section, not
 > a numbered record). Visual reference: `docs/gui/prototypes/workspace-panes.html`.
+>
+> **Owner correction (2026-08-23):** the original record incorrectly attributed
+> pane floating, picture-in-picture, and native-window detachment to owner
+> direction. Those mechanisms were never approved and are withdrawn. Datum owns
+> one cohesive native application window; recursive tiling, pane Zoom, and
+> Full-Screen Stage provide arbitrary multi-view and focused working modes inside
+> it.
 
 ## Context / problem
 
@@ -17,18 +24,18 @@ first Phase-2 slice hard-coded a fixed two-pane Board|Schematic split. Neither i
 the product: the owner wants **SolidWorks-style splittable viewports** with
 **tmux-style recursive nesting** (a split whose child is itself a split), managed
 from the **View menu**, where any pane can hold whatever the task needs — and,
-when a task calls for it, the ability to **maximize** a pane or **float** one over
-the others.
+when a task calls for it, the ability to **maximize** that pane within the same
+Datum window.
 
-The tension the owner weighed: pure tiling is simple and predictable (the tiling-
-WM ideal), but sometimes you want to get the other panes out of the way, or
-overlap a small reference window while working. The resolution below gives both
-without a floating window-manager free-for-all.
+The user may work in one focused Design or Publish space, or compose schematic,
+PCB, footprint, symbol, Publish, and reference content in any recursively split
+arrangement. The window topology remains cohesive while the internal view
+composition remains unconstrained.
 
 ## Decision
 
-**The workspace viewport is a recursive tile tree, tile-first, with two bounded
-overlay modes layered on top.**
+**The workspace viewport is a recursive tile tree with a bounded focus ladder
+over the unchanged tree.**
 
 - **A binary split tree.** A node is either a **Leaf** (one pane = a
   `(document, view)` pair) or a **Split** (`orientation: Horizontal | Vertical`, a
@@ -57,23 +64,17 @@ overlay modes layered on top.**
   ratio is workspace view state — never journaled — exactly like which panes exist,
   focus, and zoom. Dragging a gutter resizes the split; it does **not** change focus
   or run pane content interaction.
-- **Tile is the foundation; two overlay modes are deliberate escape hatches, not
-  the default:**
-  1. **Zoom / maximize a pane** — temporarily fill the whole workspace with the
-     focused pane and hide the rest, then restore the exact layout. This is the
-     "get the others out of the way / minimize" need; it never destroys the tree
-     (it is a transient view state over it). (tmux `zoom`; VS Code "maximize editor
-     group".)
-  2. **Float / detach a pane** — an explicit "detach this pane" action floats it as
-     a picture-in-picture over the others (or pops it to its own OS window) — e.g.
-     a datasheet hovering over the board while routing. **Opt-in and deliberate,
-     never the ambient behavior**, so day-to-day work stays clean tiling.
+- **Tile is the foundation; Zoom / maximize is the bounded focus mode.** It
+  temporarily fills the whole workspace with the focused pane and hides the
+  other pane leaves, then restores the exact layout. It never destroys or
+  detaches part of the tree; it is transient view state over the one cohesive
+  window. Full-Screen Stage extends that focus ladder by hiding application
+  chrome, as ratified below.
 
 **Build order (governed sequencing):** the tiling tree + View-menu control is the
-foundation and is built first (it is what Phase-2 split-view grows into). **Zoom**
-is a small addition that covers the owner's minimize instinct. **Float/detach** is
-a later escape hatch, added when tiling+zoom demonstrably do not cover a real
-working need — not gold-plated up front.
+foundation and is built first (it is what Phase-2 split-view grows into), followed
+by **Zoom** and **Full-Screen Stage** over that same tree. No floating, PiP, or
+native-window detachment path is authorized.
 
 ## How it rides the substrate (why this is Datum-shaped)
 
@@ -81,7 +82,7 @@ working need — not gold-plated up front.
   view)` over the resolved `DesignModel`; it copies nothing and mutates nothing.
   Editing in one pane updates every pane showing related model objects.
 - **The pane layout is consumer view state, NOT a journaled design operation.**
-  Which panes exist, their split ratios, focus, zoom, and float are **workspace/
+  Which panes exist, their split ratios, focus, and zoom are **workspace/
   session state** — the same class as window layout, hover, or selection.
   Interactive/view behaviors produce operations but are not operations and are
   never journaled (CLAUDE.md ethos). The layout persists as a per-user workspace
@@ -108,12 +109,10 @@ space — follows focus; layout is consumer state, not journaled). Same word
 
 ## Prior art
 
-- **tmux** — recursive pane tiling + `zoom` (maximize) + popup overlays. The
-  purist tiling reference, and even it has the two escape hatches.
-- **VS Code** — tiled editor grid, "maximize editor group," and detach-to-window.
-- **Altium Designer / SolidWorks** — split viewports (H/V), tiled documents/panels,
-  dockable-or-floating panels. SolidWorks' split-viewport is the owner's reference.
-- **Blender / Maya** — tiling "areas" with pop-out-to-floating-window.
+- **tmux** — recursive pane tiling + `zoom` (maximize), the structural tiling
+  reference.
+- **Altium Designer / SolidWorks** — split viewports (H/V) and tiled
+  documents/panels. SolidWorks' split-viewport is the owner's reference.
 
 ## Consequences / relationships
 
@@ -121,21 +120,19 @@ space — follows focus; layout is consumer state, not journaled). Same word
   slice becomes the **first implementation** of this model (single-pane default →
   one split → the full tree).
 - Governs the Phase-2 GUI build: split-view → nested tiling → **divider-drag
-  resize** → real schematic pane → cross-probe → zoom → float, sequenced in the
-  Active Frontier.
+  resize** → real schematic pane → cross-probe → zoom → Full-Screen Stage,
+  sequenced in the Active Frontier.
 - Object model (built): `WorkspaceLayout` (the pane tree), `PaneNode`
   (`Leaf`/`Split` with `ratio`), `PaneContent` (`(document, view)`), pane
   focus/zoom state, and `SplitChild`/`set_ratio_at_path` (root-to-node split
-  addressing for divider-drag resize). Float state remains future — all consumer/
-  workspace state, persisted as preference, never journaled.
+  addressing for divider-drag resize). All are consumer/workspace state,
+  persisted as preference and never journaled.
 - Reference prototype: `docs/gui/prototypes/workspace-panes.html`.
 
 ## Open questions (for the spec pass, owner to steer)
 
 - **v1 content types** — schematic + PCB are certain; footprint/symbol editors and
   PDF/report panes land as those surfaces come online. Which are in the first cut?
-- **Float mechanism** — PIP-over-the-workspace vs detach-to-OS-window (or both);
-  deferred until the tiling+zoom foundation is real.
 - **Layout persistence scope** — per-project, per-user-global, or named layouts.
 - **Preset layouts** — which named presets ship (Single · Board+Schematic · …).
 

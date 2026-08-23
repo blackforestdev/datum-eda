@@ -4,6 +4,11 @@ Status: draft hypothesis + how/mechanism woven 2026-06-18; quality gates tied
 to 000-001 mechanisms.
 Date: 2026-06-18
 
+Owner correction 2026-08-23: PiP, floating-window, detached-window, and
+multi-monitor composition requirements were never approved and are withdrawn.
+Quality applies to recursive internal tiling, pane Zoom, and Full-Screen Stage
+inside one cohesive native Datum window.
+
 Driven by:
 - `docs/DATUM_PRODUCT_MECHANICS.md`
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md`
@@ -49,8 +54,8 @@ presented as product-ready:
 - project state must be durable and recoverable
 - checks must be deterministic and navigable
 - generated artifacts must be tied to model revisions and settings
-- workspace composition must be stable across tabs, panes, PiP, tile,
-  floating windows, and workbench profiles
+- workspace composition must be stable across tabs, recursive panes, tile,
+  Zoom, Full-Screen Stage, and workbench profiles
 - optional AI/tooling must operate through the same inspectable primitives as
   manual users
 
@@ -288,13 +293,12 @@ Project/workspace quality requires:
 - clear dirty state and save state
 - clear model revision and artifact revision indicators
 - stable tab restore
-- stable split/tile/floating/PiP behavior
+- stable split/tile/Zoom/Full-Screen Stage behavior
 - saved workbench profiles that do not alter source authority
-- multi-monitor behavior that does not lose windows or project context
 
 Workspace persistence is quality-gated separately from source persistence.
-Saving or restoring tabs, panes, PiP views, floating windows, sidecars,
-camera positions, and workbench profiles must not advance `model_revision` or
+Saving or restoring tabs, panes, sidecars, camera positions, and workbench
+profiles must not advance `model_revision` or
 rewrite source shards. A workspace restore can fail partially and still open
 the project because source authority lives in the resolved `DesignModel` and
 journal, not in the layout graph.

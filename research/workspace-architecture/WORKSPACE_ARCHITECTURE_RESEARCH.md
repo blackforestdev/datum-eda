@@ -73,7 +73,7 @@ Status meanings:
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Answered** | Required order is: production-accepted Product Revision Engine foundation; domain-neutral Publish Space foundation; Sheet primitive; Viewport definition/instance and projection primitives; one narrow schematic-publication end-to-end proof; then fabrication and assembly publishing workflows. Publish establishes its authority boundary, revision participation, composition coordinates/units/media, typed operations, Design/artifact references, rendering/export architecture, templates/packages, staleness, validation, and refusals before domain-specific publication drives the architecture. Sheets and Viewports are its first core capabilities rather than a rival pre-Publish subsystem. |
 | 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Answered** | Datum uses the hybrid already established by the visual authority: persistent left Project Navigator, pane-local content identity, recursive panes, focused-pane context, and View-menu tree operations/presets. Single-click selects; double-click or Enter opens the target in a new pane adjacent to the focused pane without evicting existing content. Project discovery remains local: either visually navigate by scrolling or right-click at the relevant Project node/region and choose `Search`. Search then receives keyboard input; each typed character incrementally narrows the matching items and updates the navigator selection. Search UI is invocation-local rather than permanently visible, results remain in the navigator, and no global Project-search surface is introduced. The navigator owns independent vertical scrolling with a right-edge scrollbar and accepts mouse-wheel and two-finger trackpad scrolling while pointed into it; those events never pan or zoom a Design/Publish pane. Design/Publish remain content classifications, never a global pane-evicting mode. |
 | 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Retired — obsolete premise** | The question assumes separate Board and Documentation workspaces, which conflicts with Datum’s unified Workspace and recursive pane tree. The settled model restores the user’s pane arrangement for the Project as non-authoritative workspace state; Board, Schematic, Library, Design, and Publish content may coexist in that one tree and do not trigger implicit workspace-specific layout replacement. Explicitly saved layout presets remain a separate optional capability already supported by decision 021, not an answer smuggled into this obsolete question. |
-| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Answered in principle — authority audited** | Datum has one cohesive primary application shell and also permits deliberate opt-in float/detach for advanced and multi-monitor work. Decisions 007 and ratified 021 already establish that end state; 021 deliberately defers only the narrower mechanism fork (in-shell PiP, native OS window, or both) and its implementation timing until tile+zoom prove insufficient. The broad single-window-versus-detach question must not be re-asked. |
+| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Answered — prior false attribution corrected** | Datum has one cohesive native application window. The user may maximize/fullscreen one Design or Publish space or compose any required internal multi-view arrangement through the recursive pane tree, including Schematic, PCB, Publish, and other content together. Workspaces, Sheets, and panes do not detach into additional native windows, and no PiP product path exists. The contrary language introduced by draft decision 007 and the original decision 021 record was never owner-approved and must be removed from operative specifications. |
 
 ## Decision and prototype authority matrix
 
@@ -103,7 +103,19 @@ record until that governance transaction lands.
 | 17 | Build order is Revision foundation → Publish foundation → Sheet → Viewport → schematic proof → fabrication/assembly. | Owner disposition | DOC-C06 Frontier/dependency ratification |
 | 18 | Persistent Project Navigator + document/view panes + View-menu tree control + focused context is the inherited hybrid. Single-click selects; double-click or Enter opens beside; discovery is local through visual scrolling or right-click → Search followed by incremental type-to-select filtering. | Ratified decisions 019/021; GUI Design/Product/Conformance specs; board/schematic/workspace prototypes; owner disposition | DOC-C06 integration and Publish tree content inventory only; the navigation model is closed |
 | 19 | Retired: separate Board/Documentation workspace persistence conflicts with the unified recursive-pane Workspace. The user’s Project arrangement may restore as non-authoritative workspace state; content focus never swaps it implicitly. | Decisions 007/021; `workspace-panes.html`; owner disposition | Any named-layout product expansion must be specified separately rather than reopening Q19 |
-| 20 | Cohesive primary shell plus deliberate optional float/detach is already the intended end state. | Decisions 007/021 | PiP versus native window versus both; later proof-triggered timing |
+| 20 | One cohesive native Datum window; arbitrary internal recursive splits plus pane Zoom and Full-Screen Stage; no workspace, Sheet, or pane detachment and no PiP. | Owner disposition; `workspace-panes.html`; corrected decisions 007/021 | DOC-C06 terminology integration only; native-window topology is closed |
+
+### Question 20 provenance correction
+
+The detachment concept did not originate with the owner. Git history traces the
+first broad workspace PiP/float/multi-monitor language to draft decision 007 in
+commit `22aeebe` (2026-06-19), then traces the false “owner-directed” attribution
+and explicit PiP/native-window mechanism to decision 021 in commit `f682f21`
+(2026-07-09). The controlling `workspace-panes.html` visual shows the approved
+recursive internal pane tree and View-menu operations; it does not establish a
+detached-window mechanism. The 2026-08-23 owner disposition corrects the record:
+one cohesive native Datum window, arbitrary internal multi-view composition,
+pane Zoom, and Full-Screen Stage only.
 
 ### Visual-source scope and conflict rule
 
@@ -474,7 +486,9 @@ universal control:
 - [VS Code editor groups](https://code.visualstudio.com/docs/editing/userinterface)
   combine Explorer discovery, group-local tabs, recent-history switching,
   keyboard group focus, and optional floating windows. Tabs represent open
-  working items, not the full project hierarchy.
+  working items, not the full project hierarchy. Datum uses only the discovery
+  and group-local distinction here; its optional-window behavior is explicitly
+  rejected by question 20.
 - [SOLIDWORKS document windows](https://help.solidworks.com/2021/english/Solidworks/sldworks/c_document_windows.htm)
   combine a left manager tree with multiple independently viewable documents
   and multiple views of one document. The tree and document/window navigation

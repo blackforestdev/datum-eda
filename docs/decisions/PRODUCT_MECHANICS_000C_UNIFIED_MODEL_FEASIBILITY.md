@@ -4,6 +4,10 @@ Status: draft hypothesis + how/mechanism woven 2026-06-18; identity,
 ComponentInstance, journal, and M7 sequencing ratified; remaining forks open.
 Date: 2026-06-17 (mechanism woven 2026-06-18)
 
+Owner correction 2026-08-23: PiP/window-detachment was never an approved
+workspace mechanism. UI-feasibility evaluation is bounded to the cohesive
+window's recursive tiling, pane Zoom, and Full-Screen Stage.
+
 Driven by:
 - `docs/decisions/PRODUCT_MECHANICS_000_UNIFIED_DESIGN_MODEL.md`
 - `docs/decisions/PRODUCT_MECHANICS_000B_VIEW_COMPOSITION_AND_LIVE_PRODUCTION.md`
@@ -358,8 +362,8 @@ Proof needed:
 ### UI Complexity
 
 Question:
-- Does composable tab/PiP/tiled layout solve workflow pain without creating
-  SolidWorks-style window juggling?
+- Does composable recursive pane tiling solve workflow pain without creating
+  window juggling?
 
 Required answer:
 - one active editing context remains primary

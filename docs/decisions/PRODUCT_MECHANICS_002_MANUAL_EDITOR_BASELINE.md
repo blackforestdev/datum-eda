@@ -4,6 +4,10 @@ Status: draft hypothesis + how/mechanism woven 2026-06-18; aligned with
 000-001 commit/journal model.
 Date: 2026-06-18
 
+Owner correction 2026-08-23: references to PiP and floating views inherited an
+unapproved window-composition path and are withdrawn. Manual comparison uses
+the cohesive window's recursive internal panes, Zoom, and Full-Screen Stage.
+
 Driven by:
 - `docs/DATUM_PRODUCT_MECHANICS.md`
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md`
@@ -216,7 +220,7 @@ Minimum manufacturing/output capability:
 - preview Gerber, NC drill, soldermask, paste, fabrication drawing, assembly
   drawing, BOM, and pick-and-place projections
 - inspect generated production geometry beside source layout using tabs,
-  panes, PiP, tile, or floating views
+  panes, or recursive tiled views
 - edit manufacturing notes, output settings, variant/output-job selection, and
   basic panel/manufacturing-plan metadata
 - generate versioned artifacts tied to model revision and settings

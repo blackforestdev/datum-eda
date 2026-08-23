@@ -97,8 +97,8 @@ document's **mode**; the mode carries its own toolset and menus.
   assumes.
 - **Tiling ("tmux for EDA")**: the viewport splits into panes; each pane is a
   **(document, view) pair**. This one abstraction covers both "2D + 3D of the same
-  board" and "schematic here, PCB there, footprint in a PIP." Panes tile or float
-  (picture-in-picture).
+  board" and "schematic here, PCB there, footprint beside both." Panes remain in
+  the one cohesive Datum window and may be tiled in any recursive arrangement.
 - **Context follows focus**: the focused pane owns the pane-header tools and menus, and
   the Inspector / Layers / Filters panels bind to the focused pane's document and
   selection.
@@ -109,13 +109,13 @@ document's **mode**; the mode carries its own toolset and menus.
   message bus, for free.
 **Ratified as decision 021** (`docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md`):
 the workspace is a **recursive binary tile tree**, **tile-first**, View-menu-managed,
-with two bounded overlay modes on top — **Zoom/maximize** a pane (the "get the others
-out of the way" need) and deliberate **Float/detach** (PIP over the others). Panes hold
-`(document, view)` pairs over the one `DesignModel`; the layout is **consumer/workspace
-state, never journaled**. Distinct from decision-020 **paper-space viewports** (a
-projection window onto a sheet) — a **workspace pane** is the interactive editor tiling.
-The former "PIP vs tile-only" sub-decision is resolved there (tile foundation + zoom +
-float escape hatch).
+with a two-tier focus ladder — **Zoom/maximize** the focused pane while retaining
+chrome, or **Full-Screen Stage** it across the complete application window. Panes
+hold `(document, view)` pairs over the one `DesignModel`; the layout is
+**consumer/workspace state, never journaled**. Distinct from decision-020
+**paper-space viewports** (a projection window onto a sheet) — a **workspace
+pane** is the interactive editor tiling. No floating, PiP, or native-window
+detachment path is authorized.
 
 Reference prototypes: `docs/gui/prototypes/board-editor.html` (pass 3, PCB|Schematic
 split with cross-probe) and `docs/gui/prototypes/workspace-panes.html` (the recursive

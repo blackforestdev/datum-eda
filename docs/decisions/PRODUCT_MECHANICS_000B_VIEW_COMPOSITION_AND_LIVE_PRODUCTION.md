@@ -4,12 +4,17 @@ Status: draft hypothesis + how/mechanism woven 2026-06-18; identity,
 ComponentInstance, journal, and M7 sequencing ratified; remaining forks open.
 Date: 2026-06-17
 
+Owner correction 2026-08-23: the draft's PiP, floating-window, and detachable
+composition language was never owner-approved and is withdrawn. Datum owns one
+cohesive native application window with arbitrary internal recursive tiling,
+pane Zoom, and Full-Screen Stage.
+
 Driven by:
 - `docs/decisions/PRODUCT_MECHANICS_000_UNIFIED_DESIGN_MODEL.md`
 - `docs/decisions/PRODUCT_MECHANICS_000C_UNIFIED_MODEL_FEASIBILITY.md`
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_RESEARCH_SYNTHESIS.md`
 - `docs/DATUM_PRODUCT_MECHANICS.md`
-- project-owner product discussion on tabs, PiP/tiled views, live CAM
+- project-owner product discussion on tabs, tiled views, live CAM
   visibility, and panelization as production-stage work
 
 ## Decision Scope
@@ -19,7 +24,7 @@ Define how Datum composes visual/tool surfaces over the unified
 
 This decision covers:
 - tabs as view containers
-- tiled, floating, and picture-in-picture layouts
+- recursive tiled layouts and focused/fullscreen pane presentation
 - live manufacturing projections
 - Gerber and NC drill viewing beside layout
 - panelization as manufacturing projection
@@ -48,8 +53,6 @@ Any projection or tool session may be opened as a tab. Tabs can be arranged as:
 - vertical split
 - horizontal split
 - grid/tiled layout
-- floating window
-- picture-in-picture
 - pinned sidecar
 - overlay
 - saved workbench layout
@@ -117,8 +120,6 @@ Supports:
 - split vertical
 - split horizontal
 - tiled/grid
-- floating
-- picture-in-picture
 - pinned sidecar
 - overlay
 
@@ -139,10 +140,10 @@ Examples:
 A secondary tab or overlay linked to active selection.
 
 Examples:
-- schematic PiP pinned while routing physical layout
+- schematic pane pinned beside physical layout while routing
 - live Gerber preview pinned beside layout
 - DRC findings sidecar
-- 3D preview floating over layout
+- 3D preview tiled beside layout
 - waveform tab pinned while editing simulation source
 
 ### Viewport
@@ -395,13 +396,13 @@ stable surrogate identity, not as a mutation of the original authored geometry
 
 The tab model should make live production review natural:
 
-- layout tab focused, Gerber PiP
+- layout tab focused, Gerber in an adjacent pane
 - layout tab left, NC drill tab right
 - layout tab top, DRC/checks sidecar bottom
-- panel tab focused, board source PiP
+- panel tab focused, board source in an adjacent pane
 - manufacturing workbench with output job, Gerber, drill, BOM/PnP, and panel
   tabs tiled
-- 3D tab floating while editing component placement
+- 3D tab tiled beside component placement
 - simulation waveform tab pinned while editing electrical projection
 
 This is not cosmetic. It is a quality-control mechanism.
@@ -506,8 +507,8 @@ Genuinely open forks:
 
 1. Should panelization be available before full board editing, or only after
    board editing is stable?
-2. Which tab layout modes are required first: split, PiP, floating, pinned
-   sidecar, or saved workbench?
+2. Which internal tab layout modes are required first: split, pinned sidecar,
+   or saved workbench?
 3. Should Datum ship with fab/CM panelization presets, or start with generic
    rules only?
 4. Beyond the Gerber-copper + Excellon-drill subset, in what order should

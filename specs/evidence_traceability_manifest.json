@@ -47,7 +47,7 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md"
       ],
-      "reviewed_digest": "71608c0dab530c94df69664500b76a813bc4106d0787d4b0e89f3a91eeb9ccb5",
+      "reviewed_digest": "c884021b3112b546882ec470820f03983581e4933037e2469a1b56ab52253a65",
       "review_note": "Feedback proximity and Console research are reconciled with their guidance, shell specification, and ratified Console decision."
     },
     {
@@ -73,7 +73,7 @@
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
-      "reviewed_digest": "8c6ce26fafaafedbc7dc3242cae63fbd7d6b02c9c43bee2f8b90b93d6ae61f78",
+      "reviewed_digest": "939a38a29ceea76cb0ddeac7e62f76de91f2092f95b294bd9841f40076046220",
       "review_note": "Context-menu research feeds the content inventory and shell interaction specification."
     },
     {
@@ -113,7 +113,7 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "fc1dcfd2bff0d869266ad0a94cd93e77fc21dc188dba03c3ed36614d6f047807",
+      "reviewed_digest": "8a5c2a1b76b58f44de79eda5298ff10b0a3c09655dbc732e6380d343839c9a03",
       "review_note": "Active DOC-SYSTEM-SPEC research must remain reconciled with the legacy decision being amended, the inherited shell, and the global research ledger."
     },
     {
@@ -150,7 +150,7 @@
       "status": "integrated",
       "sources": ["research/product-mechanics/DATUM_PRODUCT_MECHANICS_RESEARCH.md"],
       "consumers": ["docs/DATUM_PRODUCT_MECHANICS.md"],
-      "reviewed_digest": "b574aa00ded7387e72e9ca45c33f70da393e651819b3fa5febef56b8aef2920d",
+      "reviewed_digest": "96f91a5e5119f19175fd379ed246d4ff2882adbbbb303cc5ad72d64a7f782616",
       "review_note": "The product-mechanics research is retained against the controlling product doctrine."
     },
     {
@@ -181,7 +181,7 @@
         "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
       ],
-      "reviewed_digest": "79269291dcd7023f369433dafec0c7ece6a83e8ff426ee36e37df5fda21750d8",
+      "reviewed_digest": "a12a278bc1336b99fed18db92bc3d5ef1856ea7188dd9c6ea4f8d365ab8ce161",
       "review_note": "Editor-shell and pane prototypes are reviewed together against the shell, conformance, document/view, and pane-tiling authorities."
     },
     {
@@ -192,7 +192,7 @@
         "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
-      "reviewed_digest": "fe62a935a8bed7e088a7c8f305f6bc3d92bafa2580c8dc1485d34cd37b1fc0ca",
+      "reviewed_digest": "c24f4e750d11c18864c332cb4089e71c1fe6a6a0bda59658cdb99089c1069d0a",
       "review_note": "The owner-disposed Console visual study remains paired with its decision and shell contract."
     },
     {
@@ -206,7 +206,7 @@
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
-      "reviewed_digest": "6f77191d0f210d92f8dbb7d42591b64180929caf346bb531875717f4ff635b26",
+      "reviewed_digest": "75df301e3f9686661788d536a565b65b5e7c10e36441099793b675bf7a4715a0",
       "review_note": "Context-menu visual authority and comparative open-fork evidence stay attached to the shell interaction contract."
     },
     {

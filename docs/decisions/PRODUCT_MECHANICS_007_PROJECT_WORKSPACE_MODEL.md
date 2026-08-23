@@ -4,6 +4,12 @@ Status: draft hypothesis + how/mechanism woven 2026-06-18; aligned with
 000-001 source/workspace authority split.
 Date: 2026-06-18
 
+Owner correction 2026-08-23: this draft introduced picture-in-picture,
+floating panes, native-window detachment, and multi-monitor window composition
+without owner approval. Those paths are withdrawn. Datum owns one cohesive
+native application window with arbitrary recursive internal tiling, pane Zoom,
+and Full-Screen Stage.
+
 Driven by:
 - `docs/DATUM_PRODUCT_MECHANICS.md`
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md`
@@ -17,10 +23,9 @@ Driven by:
 Define the user-facing project and workspace model around Datum's canonical
 `DesignModel`.
 
-This decision covers project identity, workspace state, tabs, panes,
-picture-in-picture, tiled views, floating views, pinned sidecars, saved
-workbench profiles, and the distinction between source authority and UI
-composition.
+This decision covers project identity, workspace state, tabs, panes, tiled
+views, pinned sidecars, saved workbench profiles, and the distinction between
+source authority and UI composition.
 
 ## Product Intent
 
@@ -43,11 +48,12 @@ metadata, settings, storage layout, design-model identity, artifact identity,
 and pointers to workspace state.
 
 A `Workspace` is the current interactive arrangement of project views and tools.
-It may contain many tabs, panes, PiP views, tiled layouts, floating views,
-pinned sidecars, terminals, inspectors, and saved workbench profiles.
+It may contain many tabs, panes, recursively tiled layouts, pinned sidecars,
+terminals, inspectors, and saved workbench profiles inside one native Datum
+window.
 
 Tabs and panes are live sessions over the project model. Closing, moving,
-tiling, or floating a tab must not delete or re-author schematic, PCB, library,
+or tiling a tab must not delete or re-author schematic, PCB, library,
 rules, manufacturing, or artifact truth.
 
 The persistence boundary is concrete:
@@ -81,14 +87,14 @@ Users should be able to:
 - split tabs vertically or horizontally
 - tile tabs into a grid
 - pin a related view as a sidecar
-- open a PiP view linked to active selection
-- float a tab or pane onto another monitor
+- maximize or full-screen any focused Design or Publish pane and restore the
+  exact preceding internal layout
 - save and restore workbench profiles for common tasks
 - preserve navigation history across projections and related objects
 - restore recent workspace state without treating it as source design data
 
 The workspace should support both focused single-view work and dense
-multi-monitor professional review.
+professional multi-view composition inside the cohesive Datum window.
 
 ## Manual Workflow Requirements
 
@@ -194,8 +200,6 @@ The interactive state of a project session.
 Owns:
 - open tabs
 - pane arrangement
-- floating windows
-- PiP views
 - pinned sidecars
 - inspector/tool visibility
 - active selection and navigation stack
@@ -240,13 +244,12 @@ A container for one or more tabs.
 
 ### LayoutGraph
 
-The current arrangement of panes, tabs, floating windows, overlays, PiP views,
-and pinned sidecars.
+The current arrangement of panes, tabs, overlays, and pinned sidecars inside the
+one Datum window.
 
 Schema concepts:
-- nodes: pane, split, tile, floating window, overlay, PiP, sidecar
-- edges: containment, focus, pin-to-selection, projection-link, monitor/window
-  placement
+- nodes: pane, split, tile, overlay, sidecar
+- edges: containment, focus, pin-to-selection, projection-link
 - tab references by `view_tab_id`
 - camera/view-state references scoped to projection and object IDs
 
@@ -266,7 +269,7 @@ Expected initial profiles:
 - manufacturing review
 - terminal/automation
 - focused single-view
-- multi-monitor review
+- dense multi-view review
 
 Workbench profiles may be project-defined or user-defined. A profile stores
 layout templates and tool defaults, not source shards. Applying a profile may
@@ -308,18 +311,16 @@ decision:
 - vertical split
 - horizontal split
 - tiled/grid layout
-- floating window
-- picture-in-picture
 - pinned sidecar
 - overlay
 - saved workbench layout
 
 Expected examples:
-- schematic focused with PCB PiP for selected component
+- schematic focused with PCB in an adjacent pane for selected component
 - PCB layout focused with schematic sidecar for selected net
 - PCB layout tiled beside live Gerber and NC drill projections
 - rules/checks sidecar pinned during routing
-- 3D preview floating during placement
+- 3D preview tiled beside placement
 - terminal tab beside check output and proposal diff
 - manufacturing workbench with output job, Gerber, drill, BOM/PnP, and panel
   tabs tiled
@@ -360,7 +361,7 @@ The first proof slice should demonstrate:
 - electrical and physical tabs over the same model
 - live manufacturing projection tab over the same model
 - split or tiled layout with cross-selection between source and projection
-- one PiP or pinned sidecar showing related context
+- one pinned sidecar showing related context
 - one saved workbench profile restored across sessions
 - source-authority persistence through deterministic shards and the journal,
   with `model_revision` advancing only after source transactions
@@ -377,8 +378,8 @@ The first proof slice should demonstrate:
 
 ## Open Owner Questions
 
-1. Which workspace modes are mandatory first: split, tiled, PiP, floating,
-   pinned sidecar, or saved profiles?
+1. Which workspace modes are mandatory first: split, tiled, pinned sidecar, or
+   saved profiles?
 2. Should persisted `WorkspaceState` default to project-local shared records,
    user-local sidecar records, or both with explicit owner scope?
 3. How much of terminal session state should be restored with a workspace?

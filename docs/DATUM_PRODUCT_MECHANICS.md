@@ -169,8 +169,8 @@ Datum should be built around durable EDA primitives:
   output pages.
 - `ViewTab`: a live visual or tool session over the design model.
 - `Pane`: a UI container that holds one or more tabs.
-- `LayoutGraph`: the current focused, split, tiled, floating, PiP, pinned, or
-  overlay arrangement of panes and tabs.
+- `LayoutGraph`: the current focused, split, tiled, pinned, or overlay
+  arrangement of panes and tabs inside one cohesive native Datum window.
 - `WorkbenchProfile`: a saved arrangement of tabs, panes, toolbars,
   inspectors, and overlays for a task.
 - `ManufacturingProjection`: a live production view such as Gerber, NC drill,
@@ -431,8 +431,9 @@ Datum should treat tabs as composable view/tool containers over the design
 model.
 
 Any projection or tool session may be opened as a tab and arranged as focused,
-split vertical, split horizontal, tiled, floating, picture-in-picture, pinned
-sidecar, overlay, or saved workbench layout.
+split vertical, split horizontal, tiled, pinned sidecar, overlay, or saved
+workbench layout inside the cohesive Datum window. A focused Design or Publish
+pane may Zoom or enter Full-Screen Stage without detaching from that window.
 
 Tabs are not data authorities. Closing a tab closes a view or tool session, not
 the design data.

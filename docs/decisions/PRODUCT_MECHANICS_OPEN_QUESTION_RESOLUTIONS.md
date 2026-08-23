@@ -357,6 +357,12 @@ honesty, lean tooling) constrains every resolution; none contradicts it.
 ### Q: Workbench profiles: project-defined, user-defined, or both, and which arrangement/persistence modes ship first?
 (007 Q1, 007 Q4, 000B tab-layout fork)
 
+Owner correction 2026-08-23: the floating/PiP/multi-monitor recommendation in
+this unratified research entry was never approved and is superseded. Datum owns
+one cohesive native application window. Only internal recursive tiling, pane
+Zoom, and Full-Screen Stage carry forward; profile ownership remains a separate
+unresolved topic.
+
 - Recommended path: Profiles: both, three-tier (built-in/user/project)
   resolved explicit-user-selection > user-local-default >
   project-defined-default > built-in; ship the eight built-in named
@@ -365,28 +371,22 @@ honesty, lean tooling) constrains every resolution; none contradicts it.
   split nodes of the `LayoutGraph`) + one saved workbench profile restore
   in the first slice. Pinned sidecar second (model it as a
   non-resizable/collapsible split node, not a separate primitive).
-  PiP/floating/multi-monitor third — they need winit child-window
-  management with zero proof yield. The documented first-proof slice
-  (physical layout tab + live Gerber/NC tab from one `DesignModel`) is
-  satisfied by one recursive split.
+  The documented first-proof slice (physical layout tab + live Gerber/NC tab
+  from one `DesignModel`) is satisfied by one recursive split. No later
+  floating, PiP, detached-window, or multi-monitor window mode is authorized.
 - Production example: Altium: default workbench is tabs + Split
-  Vertical/Split Horizontal with named Workspace arrangements;
-  floating/undock is a secondary power-user mode; built-in + user-saved +
-  A365 team-shared layouts coexist. KiCad uses fixed docked panels (AUI)
+  Vertical/Split Horizontal with named Workspace arrangements; built-in +
+  user-saved + A365 team-shared layouts coexist. KiCad uses fixed docked panels (AUI)
   with separate top-level editor windows — the isolated-document-windows
   anti-pattern 007 rejects, making Altium's in-app split the better
   precedent; KiCad has no profile system, reinforcing Altium as target.
 - Engineering reason: A recursive split `LayoutGraph` (binary split tree)
   is the minimal type expressing focused/vertical/horizontal/tiled as one
-  shape; PiP/floating/overlay are additive z-order/window-manager
-  concerns. Profiles carry no authority (layout templates + tool
+  shape. Profiles carry no authority (layout templates + tool
   defaults, not source shards) so all three ownership tiers cost only a
   resolution-order rule + the `owner_scope` tag already in
   `WorkspaceState`; none can advance `model_revision`.
-- Residual risk: Deferring floating/multi-monitor may disappoint the
-  dense-multi-monitor reviewer; mitigate by designing `LayoutGraph` node
-  types for floating/monitor placement now even if the renderer ships
-  them later. A project profile referencing missing tabs/output-jobs must
+- Residual risk: A project profile referencing missing tabs/output-jobs must
   degrade (open available, skip missing), tied to the workspace
   schema-degradation policy.
 - Ratification class: recommended-default-pending-ratification.
