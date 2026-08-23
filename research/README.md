@@ -80,6 +80,7 @@ directory does not sit in git unloved.
 | GUI compound selection/editing | `gui-compound-selection/`       | `GUI_COMPOUND_SELECTION_RESEARCH.md`          | integrated | `docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md`           |
 | Application Status Bar         | `application-status-bar/`       | `APPLICATION_STATUS_BAR_RESEARCH.md`          | integrated | `docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md`                |
 | S5 selection visual language   | `selection-visual-language/`    | `SELECTION_VISUAL_LANGUAGE_RESEARCH.md`       | integrated | `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`             |
+| Workspace architecture         | `workspace-architecture/`       | `WORKSPACE_ARCHITECTURE_RESEARCH.md`          | in-progress | (pending — DOC-SYSTEM-SPEC)                                       |
 
 ## Future Research (Backlog)
 

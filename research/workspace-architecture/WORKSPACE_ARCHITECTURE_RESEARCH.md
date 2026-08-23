@@ -1,0 +1,146 @@
+# Datum Workspace Architecture Research
+
+> **Status:** In progress — owner discussion and evidence collection
+> (`DOC-SYSTEM-SPEC`, `DOC-C01`).
+>
+> **Purpose:** Preserve the original owner-question ledger, confirmed product
+> intent, unresolved decisions, internal evidence, external prior art, and
+> visual-research requirements before Datum ratifies workspace, Model Space,
+> Paper Space, or documentation-system mechanisms.
+
+This is a research record, not an implementation specification. An answer is
+not a ratified mechanism until the later DOC-C05 owner disposition and DOC-C06
+governance reconciliation close. Partial answers remain visibly partial; later
+research may refine a mechanism but must not overwrite the owner's intent.
+
+## Method and ownership
+
+- Questions are handled in their original order, one at a time.
+- Necessary follow-ups retain the parent number (`1a`, `1b`, and so on) and do
+  not replace the next original question.
+- Each confirmed answer is recorded before discussion advances.
+- Internal evidence comes from Datum code, decisions, contracts, research, and
+  current prototypes.
+- External claims require primary-source research across relevant EDA, CAD,
+  publishing, standards, lifecycle, and collaboration systems.
+- Codex owns research synthesis, specification, decision packets, roadmap, and
+  beads. Claude owns any required visual source-of-truth HTML under
+  `docs/gui/prototypes/*.html`; Codex supplies an evidence-backed brief and does
+  not edit or stage those artifacts.
+
+## Original 20-question ledger
+
+Status meanings:
+
+- **Open:** the owner has not answered the actual question.
+- **Partial:** direction is established, but a named part remains unresolved.
+- **Answered in principle:** product intent is clear; research must still
+  validate and specify the mechanism.
+
+| # | Original question | Status | Current owner intent and unresolved portion |
+|---|---|---|---|
+| 1 | Is a Datum “workspace” a top-level professional activity—such as Schematic, Board, Library, and Documentation—or is the entire project one workspace containing switchable editor surfaces? | **Answered in principle** | The Project is the scalable overarching design authority and organizational context. It may contain one or many schematic Model Spaces, boards, products, variants, assemblies, shared assets, documentation/release packages, and external design references. Datum does not impose one-PCB or one-product walls. Schematic, PCB, Library, Documentation, and related capabilities are surfaces within that project context rather than mandatory isolated project silos. Final UI terminology and navigation presentation remain question 18, not a reopening of this product decision. |
+| 2 | Should multiple editor types remain simultaneously visible in panes—for example Board beside Schematic—or does selecting a workspace replace the central editing surface? | **Open** | Existing code/prototypes permit Board and Schematic panes, but owner intent has not yet decided the general product rule. |
+| 3 | Are Symbol Editor and Footprint Editor independent workspaces, or contextual editors entered from the Library/Schematic/Board workflow? | **Open** | No owner disposition yet. |
+| 4 | Does “Model Space” include every authoritative design asset—schematics, boards, symbols, footprints, 3D models, panelization, and BOM data—or should each domain have its own model-space instance? | **Partial** | Each design domain may have its own continuous working plane; Schematic, PCB, and Footprint were named examples. Exact domain vocabulary, instance cardinality, and whether BOM/3D/panelization are Model Spaces or projections remain open. |
+| 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal Paper Space/documentation mechanism. Any supported model or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. |
+| 6 | Existing terminology collides: EDA calls a schematic page a “sheet,” while decision 020 calls a physical publication page a `Sheet`. Would the owner accept distinct terms such as `SchematicPage` and `DrawingSheet`? | **Open** | The collision is confirmed, but final names are not selected. An effectively continuous schematic plane may remove the design-page concept rather than merely rename it. |
+| 7 | Is Paper Space strictly a publication/composition surface, with all design editing requiring navigation back to Model Space? | **Answered in principle** | Yes. Authoritative design work occurs in Model Space; Paper Space is how project information is composed, controlled, and published. |
+| 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Partial** | Editing projected model objects while remaining in Paper Space conflicts with the owner’s Model-Space-only authoring rule. The navigation/transition behavior after activating a viewport remains open. |
+| 9 | Should a viewport permit direct manipulation of projected model objects while remaining in Paper Space, or only manipulation of its frame, crop, scale, visibility, dimensions, and paper annotations? | **Answered in principle** | While remaining in Paper Space, manipulation belongs to viewport presentation and paper-owned content, not projected model objects. |
+| 10 | Should model-space annotations and paper-space annotations be separate classes? | **Partial** | Publication annotations, fabrication notes, document-control information, and publication dimensions belong to Paper Space. Model Space retains electrical annotations and may contain cosmetic organizational graphics. Exact type boundaries and viewport visibility controls remain open. |
+| 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Partial** | Documentation dimensions belong to Paper Space. Model constraints/design-intent dimensions and the existing board-dimension model remain unresolved. |
+| 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
+| 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered in principle** | Both are intended: free placement plus user-authored templates, title blocks, company graphics, and logos. Exact default-new-document behavior remains to specify. |
+| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Partial** | The owner described ordered collections spanning many schematic and manufacturing sheets. Multiple independent sets in one scalable project remain to be explicitly decided. |
+| 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Open** | No owner disposition yet. |
+| 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Open** | No owner disposition yet. |
+| 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Open** | No owner disposition yet. |
+| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Open** | Requires owner discussion and Claude’s comparative visual study. |
+| 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Open** | No owner disposition yet. |
+| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Open** | No owner disposition yet. |
+
+## Confirmed intent outside the original 20
+
+### Continuous schematic Model Space
+
+The schematic design surface is effectively unbounded and independent of
+physical paper. Primary circuits and subcircuits may coexist spatially on the
+same plane. The designer navigates directly across that plane; large projects
+must not be divided into publication pages merely to satisfy paper size.
+
+Paper size, orientation, viewport crop and scale, title blocks, logos,
+photographs, publication annotations, fabrication notes, DFM/document-control
+content, color/monochrome presentation, plotting, and page-oriented export
+belong to Paper Space. Required standards and the exact PDF/PostScript/EPS and
+plot/output contract remain research questions.
+
+### Designer-defined organization
+
+Datum does not prescribe circuit categories such as “Power,” “MCU,” “Analog,”
+or “Digital I/O.” Organization depends on the design and discipline. Electrical
+connectivity is established only through typed electrical constructs—wires,
+nets, buses, ports, labels, power symbols, connectors, and related objects—and
+is checked by ERC. Intentional violations use governed waiver/deviation
+evidence rather than silent suppression.
+
+Cosmetic labeled or colored boundaries are optional and carry no connectivity,
+rule, hierarchy, allocation, or publication semantics. Sections may also be
+persistently grouped, locked, transformed, copied, and pasted for manipulation;
+the detailed persistent-group contract is postponed until its own discussion.
+
+### Scalable Project
+
+A Datum Project is not constrained to one PCB or one complete product. It is a
+scalable design authority and organizational container. The designer decides
+whether and where to introduce products, boards, assemblies, modules, variants,
+references, releases, or other boundaries. Datum supplies scalable containment
+without forcing enterprise structure on the simple case.
+
+### Distributed collaboration horizon
+
+How multiple local, remote, air-gapped, intermittent, or high-latency teams
+share one logical project is intentionally postponed from this discussion, not
+discarded. `dat-distributed-collaboration-architecture-lt1` and Frontier item
+`DISTRIBUTED-COLLAB-SPEC` make the research/specification pass mandatory before
+multi-user implementation. Candidate direction is Git-like durable local/offline
+revision authority plus an optional Google-Docs-like live experience over typed
+Datum operations; no mechanism is yet ratified.
+
+## Internal evidence identified for DOC-C01
+
+- `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md` already
+  separates authoritative project state, persisted workspace composition, and
+  volatile session state, but its project and collaboration assumptions require
+  reconciliation with the scalable-project intent.
+- `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md` defines a
+  document/view shell over one resolved model but does not settle the current
+  workspace terminology questions.
+- `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` contains
+  the correct universal publication direction but still says schematic
+  “sheets” are Model Space assets and currently permits edit-through viewports.
+- `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md` and
+  `docs/gui/prototypes/workspace-panes.html` establish recursive pane tiling and
+  focused-pane ownership, not Model/Paper or workspace topology.
+- `docs/DATUM_SHARED_TOOLING_TAXONOMY.md` recommends thin editor personas over
+  shared services; terminology must be reconciled rather than copied blindly.
+- Current `PaneContent` is limited to Board and Schematic, while
+  `ReviewWorkspaceState` still reflects historical review-shell ownership.
+- The engine currently models schematic `Sheet`, `SheetDefinition`,
+  `SheetInstance`, and `SheetFrame`; these combine electrical hierarchy,
+  spatial content, and paper-era naming that must be audited against the
+  continuous-plane decision.
+- Existing title-block prototypes specify title-block visual treatment but no
+  complete Paper Space composition or Model/Paper transition. The existing
+  workspace-panes prototype specifies pane tiling but not the required universal
+  documentation surface. Claude will therefore need an evidence-backed visual
+  brief after the authority model is sufficiently resolved.
+
+## External research state
+
+Primary-source review has begun for AutoCAD layouts/model and paper space,
+SolidWorks drawing views, Altium Draftsman, and KiCad schematic hierarchy. It
+was paused at the owner’s request before synthesis. External findings will be
+added only when the relevant owner question is ready for evidence-backed
+discussion; prior art will inform mechanisms without overriding Datum’s stated
+product intent.
