@@ -196,3 +196,40 @@ with the substrate, not a bolt-on:
   the full editor; how it reads for AI/CLI (the op targets the model, not the viewport).
 - **v1 scope** — which comes first: schematic-sheet paper space, or the fab-drawing sheet
   template? (Sequencing to be placed on the Active Frontier.)
+
+## Governed specification pass
+
+The next work is an owner-led architecture and specification discussion, not an
+implementation authorization. It must distinguish Datum's application workspaces
+and editor surfaces from the Model Space/Paper Space doctrine so that “workspace,”
+“pane,” “viewport,” “model asset,” and “sheet” cannot be used interchangeably.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C01 -->
+DOC-C01 inventories current code, decisions, research, and GUI prototypes for
+Board, Schematic, Symbol, Footprint, panelization, and documentation surfaces.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C02 -->
+DOC-C02 establishes the architectural vocabulary and authority map: what is a
+workspace or editor surface, what lives in Model Space, what lives in Paper
+Space, and how panes and paper-space viewports project those authorities.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C03 -->
+DOC-C03 specifies the object and mutation model for Sheet, Viewport, projected
+Table, annotation, and SheetSet, including live versus released revision
+resolution and the edit-through-viewport boundary.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C04 -->
+DOC-C04 creates or updates HTML visual studies for navigation, composition,
+viewport manipulation, Model/Paper transitions, responsive states, and release
+state. The owner reviews these studies before mechanism is ratified.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C05 -->
+<!-- OWNER:DOC-SYSTEM-SPEC:DOC-C05:DOC-C05 -->
+DOC-C05 records the owner's choices for vocabulary, workspace topology,
+viewport behavior, v1 document type, release semantics, and visual disposition.
+
+<!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
+DOC-C06 reconciles the approved architecture into a dedicated governed spec,
+decision 020, research, prototypes, conformance obligations, beads, and the
+Active Frontier. It may select a bounded implementation successor but does not
+authorize implementation by itself.

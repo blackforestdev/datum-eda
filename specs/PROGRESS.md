@@ -76,9 +76,8 @@
    Remove legacy Console conflation, research the actual feedback and optional typed-command needs, establish an owner-reviewed visual contract, and ratify the implementation boundary before any visible surface is built. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
 - **Build the output-only Datum Console** (`DATUM-CONSOLE-OUTPUT`; `dat-datum-console-output-djd`).
-   Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
@@ -101,8 +100,9 @@
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
-   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `specified`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* schematic and fabrication documentation implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
+   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Expose operational ownership in canonical next-task output** (`STATE-NEXT-OWNERSHIP`; `dat-next-output-ownership-uqz`).
    Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* memory-independent next-task narration. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.

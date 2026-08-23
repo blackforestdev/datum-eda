@@ -323,15 +323,17 @@ accessibility evidence, dependency authority, and the explicit exclusions for
 Console input, notification tiers, findings UI, and GUI mutation.
 
 <!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED -->
-The 2026-08-22 closure claim was withdrawn pending CONSOLE-I06A..I06C. An
-adversarial post-implementation audit proved that source health and aggregate GUI
-conformance were red at the closure commit, that the Console golden test was
-ignored and absent from standing gates, and that several decision-033 production
-contracts remained incomplete. The four existing build fixtures and owner visual
-approval remain useful evidence, but they are not sufficient production-closure
-evidence until the recovery steps below pass and this marker is updated with the
-complete green Console-specific rail. Whole-shell visual parity remains a
-separately tracked GUI concern and does not expand the Console feature boundary.
+The 2026-08-22 closure claim was withdrawn after an adversarial audit found red
+source-health and acceptance-rail evidence. CONSOLE-I06A..I06C subsequently
+closed those Console-specific gaps: typed/routing/accessibility tests and ten
+exact Console visual renders run on the standing guarded rail; source health,
+the Console boundary, dependency authority, and spec governance pass; and the
+owner-approved Candidate A placement remains unchanged. Commit `9a61a82`
+corrects the final audit boundary: whole-shell grid, Terminal chrome, and dynamic
+revision parity remain separately tracked GUI concerns and do not expand the
+Console feature or its production closure. Product Mechanics 033 exclusions for
+input, notification, findings, Terminal, and GUI mutation authority remain in
+force.
 
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06A -->
 CONSOLE-I06A restores decision-022 source health through cohesive ownership

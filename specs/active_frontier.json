@@ -3775,31 +3775,16 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "console-closure-correction-20260822-codex",
-        "claimed_at": "2026-08-22T17:32:50-07:00",
-        "heartbeat_at": "2026-08-22T17:32:50-07:00",
-        "expires_at": "2026-08-23T01:32:50-07:00",
-        "scope": [
-          "docs/gui/console-conformance",
-          "specs/active_frontier.json",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": ".",
-        "head": "ce70003037753ff76ce3b0c1294de31b2bae4711"
-      },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I06",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4002,7 +3987,7 @@
           {
             "id": "CONSOLE-I06",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Close Console-specific routing/state tests, standing render goldens, owner visual review, accessibility proof, source health, dependency authority, and every explicit product-boundary exclusion without absorbing unrelated shell visual debt.",
             "depends_on": [
               "CONSOLE-I06A",
@@ -4015,7 +4000,17 @@
                 "marker": "CONSOLE-I06"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "9a61a82"
+              },
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -4027,7 +4022,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "9a61a82"
     },
     {
       "key": "GUI-SURFACE-SPECS",
@@ -4311,13 +4307,150 @@
       ],
       "state": "specified",
       "authorization": "planning",
-      "canonical_next": false,
-      "parallel": true,
+      "canonical_next": true,
+      "parallel": false,
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "dependencies": [],
       "unblocks": [
-        "schematic and fabrication documentation implementation"
-      ]
+        "dat-dimension-selection-reentry-kxk"
+      ],
+      "completion": {
+        "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
+        "canonical_next_step_id": "DOC-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "DOC-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory current code, decisions, research, and GUI prototypes for Datum's editor surfaces, workspaces, Model Space assets, Paper Space concepts, and viewport terminology before proposing architecture.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DOC-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define the architectural vocabulary and authority map for application workspaces, editor surfaces, Model Space, Paper Space, panes, model assets, sheets, and viewports.",
+            "depends_on": [
+              "DOC-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DOC-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Specify Sheet, Viewport, projected Table, annotation, and SheetSet authority, operations, live/released revision behavior, and edit-through-viewport boundaries.",
+            "depends_on": [
+              "DOC-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DOC-C04",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Create and review HTML visual studies for workspace navigation, Model/Paper transitions, sheet composition, viewport manipulation, responsive states, and release state.",
+            "depends_on": [
+              "DOC-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DOC-C05",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Record the owner's disposition for vocabulary, workspace topology, viewport behavior, v1 document type, release semantics, and the visual studies.",
+            "depends_on": [
+              "DOC-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C05"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply with approve or revise for each architecture and visual disposition requested by the DOC-C05 decision packet.",
+              "requests": [
+                {
+                  "id": "WORKSPACE-ARCHITECTURE-DISPOSITION",
+                  "question": "Does the proposed workspace, Model Space, Paper Space, pane, and viewport architecture match the owner's intended Datum workflow?",
+                  "recommended_response": "Review the vocabulary, authority map, end-to-end workflows, v1 scope, release behavior, and visual studies as separate decisions before ratification.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DOC-C06",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile the approved architecture into a governed specification, decision 020, research, prototypes, conformance obligations, beads, and Frontier sequencing without authorizing implementation implicitly.",
+            "depends_on": [
+              "DOC-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "DOC-C06"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "A bounded documentation-system implementation successor may be selected only from the owner-approved workspace architecture and visual contract."
+          ],
+          "unblocks_issue_ids": [
+            "dat-dimension-selection-reentry-kxk"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
