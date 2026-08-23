@@ -1145,8 +1145,12 @@ categories.</div>
 <div class="sec-label" id="frame-g"><span class="n">G</span><span>Working versus released context</span><span class="or">OR-6</span><span class="rule"></span></div>
 <div class="cap"><span class="lock">Boundary:</span> the Product Revision Engine owns baselines, allocation,
 approvals, and release (REV-C01..C08). This study shows <b>status, impact, and navigation only</b> — no
-release commands, roles, or signatures appear anywhere. <b>OR-6 (presentation):</b> the quiet-working /
-released-badge / affected-successor language below.</div>
+release commands, roles, or signatures appear anywhere. <b>OR-6 (presentation):</b> the three states below,
+each with its own trigger — G1 is the permanent quiet default; G2 becomes prominent <b>only while viewing an
+immutable baseline</b>; G3 appears <b>only when an actual successor-impact finding exists</b> and never
+claims a new revision is required (that determination belongs to the engine). G4 renders the single seam
+the future engine plugs into. Field precedent: SolidWorks PDM state/revision separation and version-tab
+"newer exists" warning; DraftSight's restrained navigator lock icons.</div>
 <div class="grid3">
   <div>
     <div class="minibox" style="height:300px;background:var(--canvas)"><div style="display:flex;flex-direction:column;height:300px">
@@ -1178,12 +1182,86 @@ released-badge / affected-successor language below.</div>
       <div style="flex:1;position:relative"><div class="pubcv"><div class="paper" style="width:330px;height:224px">
         <div class="vp" style="left:20px;top:18px;width:150px;height:100px"></div>
       </div></div>
-        <span class="finding" style="position:absolute;left:12px;top:42px;max-width:calc(100% - 24px)">⚠ Board · main changed after this baseline — successor work exists · VIEW IMPACT</span>
+        <span class="finding" style="position:absolute;left:12px;top:42px;max-width:calc(100% - 24px)">⚠ baseline unchanged — later Design changes may affect successor documentation · OPEN IMPACT ANALYSIS</span>
       </div>
       <div class="status"><span class="seg"><span class="lab">config</span><span style="color:var(--rel)">baseline</span></span><span class="seg warnc">affected ×2</span><span class="push seg"></span></div>
     </div></div>
-    <div class="cell-cap"><b>G3 — affected successor indication.</b> the released Sheet never rewrites;
-    a typed, navigable staleness finding points at successor work — no allocation or approval UI here</div>
+    <div class="cell-cap"><b>G3 — successor-impact finding (only when one exists).</b> the released Sheet
+    never rewrites and the finding never claims a new revision is required — it reports impact and
+    navigates to the analysis; allocation/approval are engine decisions, not shown here</div>
+  </div>
+</div>
+
+<div style="height:14px"></div>
+<div class="grid2" id="frame-g4">
+  <div>
+    <div class="card" style="height:392px">
+      <div class="chd">G4 — the Revision Engine seam <span class="m">one ConfigurationRef, no rival state</span></div>
+      <svg width="100%" height="252" viewBox="0 0 720 252" style="display:block">
+        <rect x="8" y="10" width="216" height="88" rx="7" fill="none" stroke="var(--bd-str)" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="20" y="32" font-family="var(--sans)" font-size="12.5" font-weight="600" fill="var(--tx2)">Product Revision Engine</text>
+        <text x="20" y="48" font-family="PlexMono,monospace" font-size="9.5" fill="var(--tx3)">REV-C01..C08 — future</text>
+        <text x="20" y="66" font-family="PlexMono,monospace" font-size="9.5" fill="var(--tx3)">baselines · changes · approvals</text>
+        <text x="20" y="80" font-family="PlexMono,monospace" font-size="9.5" fill="var(--tx3)">releases · effectivity · audit</text>
+        <g font-family="PlexMono,monospace" font-size="10">
+          <rect x="258" y="8" width="204" height="26" rx="4" fill="#151a22" stroke="var(--info)"/>
+          <text x="268" y="25" fill="var(--tx2)">ConfigurationRef · working</text>
+          <rect x="258" y="42" width="204" height="26" rx="4" fill="#101710" stroke="#3B6E45"/>
+          <text x="268" y="59" fill="var(--tx2)">🔒 baseline BL-2026-08-14-A</text>
+        </g>
+        <g stroke="var(--tx3)" stroke-width="1.2" fill="none"><path d="M224 40h30M224 58h30"/><path d="M462 22h34v58"/><path d="M462 55h34"/></g>
+        <rect x="470" y="86" width="132" height="30" rx="4" fill="var(--s02)" stroke="var(--bd-str)"/>
+        <text x="484" y="105" font-family="PlexMono,monospace" font-size="10" fill="var(--tx)">resolver</text>
+        <g stroke="var(--tx3)" stroke-width="1.2" fill="none"><path d="M536 116v22"/></g>
+        <rect x="330" y="142" width="382" height="66" rx="6" fill="none" stroke="var(--bd-sub)"/>
+        <g font-family="PlexMono,monospace" font-size="9.5" fill="var(--tx3)">
+          <text x="342" y="160">Design sources @ exact revisions</text>
+          <text x="342" y="176">ViewportDefinitions @ exact revisions</text>
+          <text x="342" y="192">captured title-block facts (REV · STATUS · ISSUED)</text>
+        </g>
+        <g stroke="var(--tx3)" stroke-width="1.2" fill="none"><path d="M330 175h-56"/></g>
+        <rect x="132" y="152" width="142" height="46" rx="5" fill="var(--s02)" stroke="var(--bd-str)"/>
+        <text x="146" y="171" font-family="PlexMono,monospace" font-size="10" fill="var(--tx)">Sheet render</text>
+        <text x="146" y="187" font-family="PlexMono,monospace" font-size="9" fill="var(--tx3)">render == CAM</text>
+        <text x="8" y="234" font-family="PlexMono,monospace" font-size="9.5" fill="var(--warn)">staleness = resolved source revision ≠ baseline manifest → typed finding (G3)</text>
+        <text x="8" y="248" font-family="PlexMono,monospace" font-size="9.5" fill="var(--tx3)">Sheets/Viewports own no draft-released flag; title-block REV/STATUS are projections, never typed</text>
+      </svg>
+      <div style="font-size:11.5px;color:var(--tx3);margin-top:8px;line-height:1.6">The engine hands every
+      Publish pane exactly one <b style="color:var(--tx2)">ConfigurationRef</b>; the same seam serves
+      Design viewports, projected tables, and title-block fields. PDM's revision-table synchronization is
+      the field precedent for projected revision facts. Names are DOC-C03 planning vocabulary; REV-C03
+      finalizes them.</div>
+    </div>
+  </div>
+  <div>
+    <div class="minibox" style="height:392px"><div style="display:flex;height:392px">
+      <div class="panel grow" style="border-bottom:none;flex:0 0 280px;border-right:1px solid var(--bd-sub)">
+        <div class="panel-hd"><span>Project</span><span class="count">restrained icons</span></div>
+        <div class="panel-bd">
+          <div class="trow grp">Publish · All Sheets</div>
+          <div class="trow l2"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-01 Overview</div>
+          <div class="trow l2 sel"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-04 Sensor Detail <span class="meta" style="color:#3B6E45">🔒 BL-A</span></div>
+          <div class="trow l2"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-07 Cabling</div>
+        </div>
+      </div>
+      <div class="panel grow" style="border-bottom:none">
+        <div class="panel-hd"><span>Inspector</span></div>
+        <div class="panel-bd" style="padding:0">
+          <div class="insp-title"><span class="ref">SN-04 Sensor Detail</span><span class="chip" style="color:#5c9c6a;border-color:#3B6E45">BASELINE VIEW</span></div>
+          <div class="sect-hd">Configuration</div>
+          <div class="kv"><span class="k">Resolving</span><span class="v mono">🔒 BL-2026-08-14-A</span></div>
+          <div class="kv"><span class="k">Released</span><span class="v mono">2026-08-14 · REV A</span></div>
+          <div class="kv"><span class="k">Title block</span><span class="v">projection — never typed</span></div>
+          <div class="sect-hd">Viewports vs baseline</div>
+          <div class="kv"><span class="k"></span><span class="v mono">board_main_VP_01 · in baseline ✓</span></div>
+          <div class="kv"><span class="k"></span><span class="v mono" style="color:var(--warn)">sch_sensor_VP_01 · source changed ⚠</span></div>
+          <div class="kv"><span class="k"></span><span class="v" style="color:var(--info)">Open impact analysis ↗</span></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="cell-cap"><b>G4 in the shell.</b> Navigator stays restrained (one small lock + baseline tag
+    on baseline-viewed sheets only — the DraftSight posture); the Inspector carries the configuration
+    context, per-viewport baseline comparison, and the navigable impact doorway</div>
   </div>
 </div>
 
@@ -1292,7 +1370,7 @@ release states carry glyph + word; overflow truncates readably.</div>
   <tr><td>OR-3</td><td><a href="#frame-e">Frame E</a> — Open Source in Design: adjacent pane (recommended) vs retarget-with-Back.</td></tr>
   <tr><td>OR-4</td><td><a href="#frame-d">Frame D</a> — two-part: (a) the linked / override / unique glyph-and-word vocabulary (D4); (b) when the treatment appears — persistent vs on-demand with persistent errors (<a href="#frame-d4b">D4b</a>).</td></tr>
   <tr><td>OR-5</td><td><a href="#frame-f">Frame F</a> — two-part: (a) sharing presentation — package dashboard (F1, candidate R) vs duplicate-looking rows (<a href="#frame-f4">F4</a>, candidate N) vs single-home + ↳ reference selections (<a href="#frame-f6">F6</a>, candidate S — DraftSight-informed, recommended); (b) duplication choreography — promoted diagram vs contextual <b>Duplicate as New Sheet…</b> with inline rename (F5); F2 mechanics are locked either way.</td></tr>
-  <tr><td>OR-6</td><td><a href="#frame-g">Frame G</a> — working / released / affected status presentation, inside the approved Revision Engine boundary.</td></tr>
+  <tr><td>OR-6</td><td><a href="#frame-g">Frame G</a> — working / released / affected status presentation with per-state triggers (G1 always · G2 only while viewing a baseline · G3 only on an actual finding), plus the <a href="#frame-g4">G4</a> ConfigurationRef seam anchoring the future Revision Engine across Publish sheets and Design viewports.</td></tr>
   <tr><td>OR-7</td><td><a href="#frame-b">Frames B</a> + <a href="#frame-h">H</a> — overall visual disposition across coexistence, Zoom/Stage, and responsive states.</td></tr>
   <tr><td>OR-8</td><td><a href="#frame-c">Frames C</a>/<a href="#frame-b">B</a>/<a href="#frame-g">G</a> — <b style="color:var(--tx)">title-block rendition in Publish contexts</b> (owner-directed addition): every appearance here is a projection of the locked Direction B composition (Rendering Book §8); the owner reviews field values, compact-scale fidelity, and on-sheet placement. Any change to the locked Direction B design itself is a separate owner-driven title-block session, not part of this study's approval.</td></tr>
 </table>
