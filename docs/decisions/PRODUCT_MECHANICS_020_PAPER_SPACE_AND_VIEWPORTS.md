@@ -292,6 +292,16 @@ copies. Creation and search remain on the relevant local node menu. This is a
 DOC-C05 owner disposition for later DOC-C06 ratification, not implementation
 authorization.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-2-OWNER-APPROVED -->
+On 2026-08-23 the owner approved Frame C's Sheet-creation choreography. `New
+Blank Sheet` asks for media and orientation and creates a genuinely empty Sheet
+with no Viewports, title block, or template residue. `New Sheet from Template`
+creates a Sheet prepopulated with the selected template's title block and
+starter content. The result remains freely editable; a template accelerates
+creation but imposes no lasting structural restriction. This disposition does
+not reopen the already settled support for both blank and template entry, and
+does not authorize implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
 decision 020, research, prototypes, conformance obligations, beads, and the

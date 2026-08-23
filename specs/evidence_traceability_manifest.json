@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "3cc707e24e95be8d7878bf63bb2cfbbcafab0f11873a4c11a171f658aa6fe5bd",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 has approved OR-1 with All Sheets naming and explicit reference-versus-authority cues, and continues with OR-2."
+      "reviewed_digest": "e01c7960ad62768fe3bc31b8d09a1dcb10a6afe2e5af17acbe706d507c9f84a7",
+      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 has approved OR-1 and OR-2 and continues with OR-3."
     },
     {
       "id": "parametric-footprint-editor",
@@ -226,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "bae94bc1cbdd21814c2bd3ae63da17aa3feaa10ab8f292ee2d4020275344a290",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; OR-1 is owner-approved with All Sheets naming and explicit reference-versus-authority cues while OR-2..OR-8 remain pending DOC-C05 disposition."
+      "reviewed_digest": "cb385174b2ea97404c05aef669e9d9e2680dcc13f506c750ac1cfabd46ae406d",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; OR-1 and OR-2 are owner-approved while OR-3..OR-8 remain pending DOC-C05 disposition."
     },
     {
       "id": "prototype-selection",
