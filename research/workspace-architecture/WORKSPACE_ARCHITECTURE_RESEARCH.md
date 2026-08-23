@@ -48,7 +48,7 @@ Status meanings:
 | 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal `Publish Space` mechanism. Any supported design or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. Compact UI may label Publish Space simply `Publish`. `Paper Space` is retired except when discussing external precedent or preserving this original question. |
 | 6 | Existing terminology collides: EDA calls a schematic page a “sheet,” while decision 020 calls a physical publication page a `Sheet`. Would the owner accept distinct terms such as `SchematicPage` and `DrawingSheet`? | **Answered** | Continuous schematic Design Space has no page or sheet object, so no `SchematicPage` term is needed. `Sheet` belongs exclusively to Publish Space: it is an individual publishable page with a page/media definition, zero or more viewports, and publish-owned content. Publish Space manages a user-extensible collection of Sheets rather than being a Sheet itself. A Sheet may begin blank; a user-selected template may populate it. |
 | 7 | Is Paper Space strictly a publication/composition surface, with all design editing requiring navigation back to Model Space? | **Answered in principle** | Yes. Authoritative design work occurs in Design Space; Publish Space is how project information is composed, controlled, and published. |
-| 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Partial** | Editing projected design objects while remaining in Publish Space conflicts with the owner’s Design-Space-only authoring rule. The navigation/transition behavior after activating a viewport remains open. |
+| 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Answered in principle** | A viewport remains a Publish Space projection and annotation target; it never becomes an edit-through aperture into authoritative design objects. The semantic navigation action is `Open Source in Design`, following the SolidWorks drawing-to-part/assembly pattern. Whether it is bound to a context-menu command, double-click, or both—and whether the Design editor opens adjacent or retargets a pane—remains visual/usability study rather than authority semantics. |
 | 9 | Should a viewport permit direct manipulation of projected model objects while remaining in Paper Space, or only manipulation of its frame, crop, scale, visibility, dimensions, and paper annotations? | **Answered in principle** | While remaining in Publish Space, manipulation belongs to viewport presentation and publish-owned content, not projected design objects. |
 | 10 | Should model-space annotations and paper-space annotations be separate classes? | **Partial** | Publication annotations, fabrication notes, document-control information, and publication dimensions belong to Publish Space. Design Space retains electrical annotations and may contain cosmetic organizational graphics. Exact type boundaries and viewport visibility controls remain open. |
 | 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Partial** | Documentation dimensions belong to Publish Space. Design constraints/design-intent dimensions and the existing board-dimension model remain unresolved. |
@@ -159,8 +159,34 @@ Paper size, orientation, viewport crop and scale, title blocks, logos,
 photographs, publication annotations, fabrication notes, DFM/document-control
 content, color/monochrome presentation, plotting, and page-oriented export
 belong to Publish Space. Required standards and the exact
-PDF/PostScript/EPS and
-plot/output contract remain research questions.
+PDF/PostScript/EPS and plot/output contract remain research questions.
+
+### Viewport annotation and source navigation
+
+A viewport is a Publish Space object that projects Design Space content. The
+user may select projected geometry as an attachment/reference target for
+publish-owned dimensions, text, datum symbols, tolerances, leaders, and related
+documentation. Those actions annotate the Sheet or viewport presentation; they
+do not mutate the projected design source. The exact authority of reference
+dimensions versus driving design constraints remains question 11.
+
+Authoritative source editing uses an explicit semantic action, `Open Source in
+Design`. The action navigates to the viewport’s referenced Schematic, PCB,
+Footprint, Symbol, assembly, or other Design editor instead of making Publish
+Space an edit-through surface. Its input binding is deliberately unsettled:
+the context menu provides a discoverable candidate, and double-click may be a
+speed shortcut if interaction research finds no selection/annotation conflict.
+Pane placement and return choreography likewise remain visual-study work.
+
+This follows the useful boundary in official SolidWorks documentation without
+copying its window model. SolidWorks exposes context commands that open a part
+or assembly from a drawing and can preserve the drawing view orientation, while
+its drawing environment independently supports dimensions, notes, datum
+symbols, geometric tolerances, and other annotations:
+
+- [Open Model in Position](https://help.solidworks.com/2026/english/SolidWorks/sldworks/c_open_part_in_position.htm)
+- [Drawings Overview](https://help.solidworks.com/2026/English/SolidWorks/sldworks/c_drawings_overview.htm)
+- [Inserting Datum Feature Symbols](https://help.solidworks.com/2026/english/swtutorialonline/t_inserting_datum_feature_symbol.htm)
 
 ### Designer-defined organization
 
