@@ -54,7 +54,7 @@ Status meanings:
 | 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Answered** | Both spaces support dimensions with distinct, enforced authority. Design Space supports driving dimensions that constrain geometry and reference dimensions that only measure it. Smart Dimension creates a driving dimension by default; if that would over-constrain the design, Datum refuses it and explicitly offers `Create as Reference` rather than silently changing intent. Only Design Space dimensions may drive geometry under the current boundary. Publish dimensions remain associative reference documentation and cannot write back. The existing board-dimension type must be reconciled to this split. |
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
-| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` publication packages. The user or project template decides which sets and initial Sheets exist. Instantiated sets remain freely reconfigurable: add, remove, or reorder Sheets and add/remove Viewports on any Sheet. Templates are starting configurations, not structural restrictions. Whether one Sheet may participate in multiple sets remains follow-up 14a. |
+| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` publication packages. A SheetSet holds ordered references to authoritative Sheets rather than owning duplicate pages, so one unchanged Sheet may appear in several packages. Package-specific divergence uses `Fork Sheet`; inherited named Viewports remain linked until selected ones use `Make Unique`. The user or project template decides initial content, and instances remain freely reconfigurable. Verified customer redaction is tracked separately by `dat-publish-redaction-contract-wzs`. |
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Open** | No owner disposition yet. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Open** | No owner disposition yet. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Open** | No owner disposition yet. |
@@ -120,8 +120,29 @@ exact built-in catalog is product-content research, not an architectural
 restriction. Saving later changes back into a reusable template must be an
 explicit action rather than a side effect of editing an instantiated SheetSet.
 
-Follow-up 14a must decide whether one Sheet can be referenced by multiple
-SheetSets or whether Sheet membership is exclusive.
+SheetSets hold ordered references to authoritative Sheets; they do not own or
+implicitly copy those Sheets. One unchanged Sheet may therefore appear in
+multiple packages. When a customer, fabrication, service, or other package
+needs different content, `Fork Sheet` creates an independently addressable
+Sheet variant from the existing composition. Viewport instances in the fork
+initially retain their links to the same named definitions so unchanged work
+continues to update parametrically.
+
+For a Viewport that must diverge, `Make Unique` creates a new stable
+`ViewportDefinition` identity, preserves its parametric association to Design
+geometry, breaks only the reuse link to the prior definition, assigns the next
+available numbered name (for example `board_XYZ_Viewport_01` to
+`board_XYZ_Viewport_02`), and immediately exposes that name for inline editing.
+Plain `Rename` remains label-only and never changes identity or linkage.
+
+Customer redaction is not satisfied by hiding layers or annotations: concealed
+geometry, metadata, vector structure, attachments, or embedded source could
+still escape in an output artifact. `dat-publish-redaction-contract-wzs` is a
+mandatory intake tracker for an evidence-backed, allowlisted export and
+verification contract. It is related to the current documentation-system spec;
+DOC-C06 must determine its exact dependency and Frontier placement before any
+implementation authorization. It must not be replaced by ordinary Viewport
+visibility controls.
 
 ### Tiled editor workspaces
 
