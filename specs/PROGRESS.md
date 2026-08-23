@@ -100,9 +100,8 @@
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
-   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk, dat-distributed-collaboration-architecture-lt1. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `specs/PUBLISH_SPACE_SPEC.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Expose operational ownership in canonical next-task output** (`STATE-NEXT-OWNERSHIP`; `dat-next-output-ownership-uqz`).
    Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* memory-independent next-task narration. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
@@ -113,8 +112,12 @@
    Make the human task-detail output a verbatim response contract with fixed order and explicit one-active-step, no-inferred-parallelism semantics. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
 - **Specify distributed project collaboration and semantic merge** (`DISTRIBUTED-COLLAB-SPEC`; `dat-distributed-collaboration-architecture-lt1`).
-   Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `blocked`; authorization `planning`.*
+   Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `planned`; authorization `planning`.*
    *Dependencies:* `dat-documentation-system-spec-y8z`. *Unblocks:* multi-user project collaboration implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md`.
+- **Specify the Datum Product Revision Engine** (`PRODUCT-REVISION-SPEC`; `dat-product-revision-engine-k9f`).
+   Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized. *state `planned`; authorization `planning`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `specs/PUBLISH_SPACE_SPEC.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage

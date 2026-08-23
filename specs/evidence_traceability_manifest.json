@@ -9,7 +9,7 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "2af1f76f7103deaa111378a8af902f2e24fff6ae22dc99bd828243f9f1d76308",
+      "reviewed_digest": "0e380339110154308b820ee7e7d38c5fbf2c75929b4b9cd01218d0be079ed33b",
       "review_note": "Research inventory and cross-domain traceability identify workspace architecture as integrated into the governed Publish Space specification while retaining Product Revision Engine research as the next planning program."
     },
     {
@@ -115,7 +115,7 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "15323eea31658f275a16c8270ee5d3af7a5f5969b46160bc0c2363398aec0e5d",
+      "reviewed_digest": "8be2770a94f3a0686c32c440f54152f38dc807687591cef7dbf0e513a6931a7d",
       "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020; the Revision Engine boundary remains explicit and its specification is the selected successor."
     },
     {

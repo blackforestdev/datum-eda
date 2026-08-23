@@ -4306,9 +4306,9 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "dependencies": [],
@@ -4316,22 +4316,9 @@
         "dat-dimension-selection-reentry-kxk",
         "dat-distributed-collaboration-architecture-lt1"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-doc-c06-20260823",
-        "claimed_at": "2026-08-23T18:59:30Z",
-        "heartbeat_at": "2026-08-23T18:59:30Z",
-        "expires_at": "2026-08-24T02:59:30Z",
-        "scope": [
-          "DOC-C06 documentation-system specification and governance reconciliation"
-        ],
-        "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "104f0f69a677bcd2f838b6ee06875b5783fca440"
-      },
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and governed Publish Space specification that cleanly separates Design authority, Publish composition, Workspace/Panes, and Publish Viewports before any implementation begins.",
-        "canonical_next_step_id": "DOC-C06",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4470,7 +4457,7 @@
           {
             "id": "DOC-C06",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Reconcile the approved architecture into a governed specification, decision 020, research, prototypes, conformance obligations, beads, and Frontier sequencing without authorizing implementation implicitly.",
             "depends_on": [
               "DOC-C05"
@@ -4481,12 +4468,23 @@
                 "marker": "DOC-C06"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/PUBLISH_SPACE_SPEC.md",
+                "marker": "EVIDENCE:DOC-SYSTEM-SPEC:DOC-C06-GOVERNED-RECONCILIATION"
+              },
+              {
+                "kind": "commit",
+                "revision": "f105f11"
+              }
+            ]
           }
         ],
         "post_completion": {
           "effects": [
-            "A bounded documentation-system implementation successor may be selected only from the owner-approved workspace architecture and visual contract."
+            "The governed Publish Space contract may feed later bounded implementation only after Product Revision Engine production acceptance.",
+            "PRODUCT-REVISION-SPEC becomes the explicitly selected planning successor."
           ],
           "unblocks_issue_ids": [
             "dat-dimension-selection-reentry-kxk",
@@ -4496,7 +4494,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "f105f11"
     },
     {
       "key": "STATE-NEXT-OWNERSHIP",
@@ -4848,7 +4847,7 @@
         "docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md",
         "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md"
       ],
-      "state": "blocked",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": false,
       "parallel": false,
@@ -4859,6 +4858,199 @@
       "unblocks": [
         "multi-user project collaboration implementation"
       ]
+    },
+    {
+      "key": "PRODUCT-REVISION-SPEC",
+      "order": 32,
+      "title": "Specify the Datum Product Revision Engine",
+      "issue_id": "dat-product-revision-engine-k9f",
+      "governing_docs": [
+        "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "specs/PUBLISH_SPACE_SPEC.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
+      "dependencies": [],
+      "unblocks": [],
+      "claim": null,
+      "completion": {
+        "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
+        "canonical_next_step_id": "REV-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "REV-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory Datum's existing technical, object, model, library, variant, rules, artifact, document, workspace, and Git revision authorities and contradictions.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Build a clause-addressable primary-source standards matrix for configuration identification, baselines, change control, status accounting, audit, drawing revision, approvals, effectivity, records, release, and retention.",
+            "depends_on": [
+              "REV-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define authoritative revision-engine vocabulary, objects, identities, relationships, lifecycle states, roles, typed operations, invariants, refusals, and queries.",
+            "depends_on": [
+              "REV-C01",
+              "REV-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C04",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Specify complete standalone local/offline authority plus optional Git and distributed integration without making Git product or release authority.",
+            "depends_on": [
+              "REV-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C05",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Specify dependency impact, staleness, library uptake, manufacturing regeneration, baseline comparison, and reproducible release evidence.",
+            "depends_on": [
+              "REV-C03",
+              "REV-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C06",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define quiet-default and regulated-profile UX, change/release workflows, revision projections, impact review, accessibility, and the required Claude-owned visual source of truth.",
+            "depends_on": [
+              "REV-C03",
+              "REV-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C06"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-C07",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Record owner dispositions and ratify the exact Product Revision Engine mechanism, standards claims, dependency posture, and visual contract in governed decisions/specifications.",
+            "depends_on": [
+              "REV-C02",
+              "REV-C03",
+              "REV-C04",
+              "REV-C05",
+              "REV-C06"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C07"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply to the ordered Product Revision Engine disposition packet after reviewing the completed standards matrix, authority model, integration contract, impact model, and visual study.",
+              "requests": [
+                {
+                  "id": "PRODUCT-REVISION-ENGINE-DISPOSITION",
+                  "question": "Which researched Product Revision Engine mechanism and visual contract should Datum ratify, and what revisions are required before implementation planning?",
+                  "recommended_response": "Approve or revise each presented mechanism only after its standard, authority, evidence, and usability consequences are explicit.",
+                  "source_ref": {
+                    "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                    "marker": "REV-C07"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "REV-C08",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Place bounded implementation slices, migration, conformance gates, standards-profile audit witnesses, evidence reproduction, and production acceptance on the Frontier without authorizing implementation implicitly.",
+            "depends_on": [
+              "REV-C07"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "REV-C08"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "A bounded Product Revision Engine implementation program may be selected only from the owner-approved specification.",
+            "Publish Space implementation remains blocked until the Revision Engine foundation reaches production acceptance."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }

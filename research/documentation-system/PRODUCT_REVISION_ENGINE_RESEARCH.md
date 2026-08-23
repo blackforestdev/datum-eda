@@ -243,6 +243,7 @@ history, and regulated-profile depth. Claude-owned HTML studies must validate
 the eventual interaction model before ratification.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
+<!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->
 ### REV-C07 — Owner disposition and governed ratification
 
 Resolve owner questions, reconcile affected research and decisions, and ratify

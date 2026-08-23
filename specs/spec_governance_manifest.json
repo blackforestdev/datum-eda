@@ -100,6 +100,11 @@
    "progress_anchor": "DOC-SYSTEM-SPEC",
    "notes": "DOC-C06 controlling Publish Space contract: owner-approved workspace/navigation, Publish object and mutation authority, Product Revision Engine seam, conformance obligations, and post-revision implementation sequence. Planning only; implementation is not authorized."
   },
+  "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-SPEC",
+   "notes": "Governed REV-C01..C08 research and specification plan for the Datum-owned Product Revision Engine. Mechanism remains unratified and implementation unauthorized until REV-C07/C08 complete."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."
