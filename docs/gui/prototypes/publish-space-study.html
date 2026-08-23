@@ -478,6 +478,38 @@ it owns the header tools (select · place viewport · note · dimension · table
 panel, the Inspector, and the single Console overlay. The selected <b>Publish Viewport</b> (accent frame +
 handles + SCALE label) reads nothing like a workspace pane.</div>
 
+<div style="height:14px"></div>
+<div class="cap" id="pane-titles"><b>B1b — pane-title wording (DOC-C05 owner decision, pending).</b> The
+legacy label "Schematic · Sheet n/N" is banned (Sheet is Publish-only), so this study carries
+<b>candidate</b> wordings that were never separately reviewed until now. Each row below is a real
+pane-header at real size; the top row of each group is the pattern used throughout this study and
+recommended by Codex. Whichever pattern is chosen also normalizes the legacy "Board · Layout" wording
+still visible in some minis to the same rule.</div>
+<div class="grid2">
+  <div>
+    <div class="card">
+      <div class="chd">Design pane title <span class="m">DESIGN-PANE-TITLE</span></div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg>Schematic · sensor-node</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0 0 12px"><b>candidate A (in study · recommended).</b> editor type · local design identity — scales to "Board · main", "Footprint · LQFP-48"</div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg>Schematic</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0 0 12px"><b>candidate B.</b> editor type only — quietest, but ambiguous the moment a project holds two schematics</div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg>sensor-node · Schematic</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0"><b>candidate C.</b> identity first — reads document-first, but breaks the icon-then-type rhythm every other pane uses</div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="chd">Publish pane title <span class="m">PUBLISH-PANE-TITLE</span></div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 16h8M8 12h8" opacity=".5"/></svg>Publish · FAB-01 Assembly Top</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0 0 12px"><b>candidate A (in study · recommended).</b> space · sheet number + title — mirrors the Design pattern; truncates to "Publish · FAB-01" when chrome (e.g. a baseline chip) needs room</div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 16h8M8 12h8" opacity=".5"/></svg>Sheet FAB-01 · Assembly Top</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0 0 12px"><b>candidate B.</b> object-first ("Sheet" is legal here — it is Publish-only vocabulary) — but drops the space name the Design pattern leads with</div>
+      <div class="pane-hd" style="border:1px solid var(--bd-sub);border-radius:5px;margin-bottom:8px;background:#16181f"><span class="ptitle" style="color:var(--tx)"><svg class="modeicon" style="color:var(--acc)" viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 16h8M8 12h8" opacity=".5"/></svg>FAB-01 · Assembly Top</span><span class="pane-ctl"><span class="focusdot"></span></span></div>
+      <div class="cell-cap" style="margin:0"><b>candidate C.</b> number + title only — shortest; relies on the mode icon alone to say "this is Publish"</div>
+    </div>
+  </div>
+</div>
+
 <div style="height:16px"></div>
 <div class="grid4">
   <div>
@@ -1372,6 +1404,7 @@ release states carry glyph + word; overflow truncates readably.</div>
   <tr><td>OR-5</td><td><a href="#frame-f">Frame F</a> — two-part: (a) sharing presentation — package dashboard (F1, candidate R) vs duplicate-looking rows (<a href="#frame-f4">F4</a>, candidate N) vs single-home + ↳ reference selections (<a href="#frame-f6">F6</a>, candidate S — DraftSight-informed, recommended); (b) duplication choreography — promoted diagram vs contextual <b>Duplicate as New Sheet…</b> with inline rename (F5); F2 mechanics are locked either way.</td></tr>
   <tr><td>OR-6</td><td><a href="#frame-g">Frame G</a> — working / released / affected status presentation with per-state triggers (G1 always · G2 only while viewing a baseline · G3 only on an actual finding), plus the <a href="#frame-g4">G4</a> ConfigurationRef seam anchoring the future Revision Engine across Publish sheets and Design viewports.</td></tr>
   <tr><td>OR-7</td><td><a href="#frame-b">Frames B</a> + <a href="#frame-h">H</a> — overall visual disposition across coexistence, Zoom/Stage, and responsive states.</td></tr>
+  <tr><td style="color:var(--info)">C05</td><td><a href="#pane-titles">B1b</a> — pane-title wording (DESIGN-PANE-TITLE / PUBLISH-PANE-TITLE): candidate strips for the pending DOC-C05 owner decision; the study uses candidate A of each pending that disposition.</td></tr>
   <tr><td>OR-8</td><td><a href="#frame-c">Frames C</a>/<a href="#frame-b">B</a>/<a href="#frame-g">G</a> — <b style="color:var(--tx)">title-block rendition in Publish contexts</b> (owner-directed addition): every appearance here is a projection of the locked Direction B composition (Rendering Book §8); the owner reviews field values, compact-scale fidelity, and on-sheet placement. Any change to the locked Direction B design itself is a separate owner-driven title-block session, not part of this study's approval.</td></tr>
 </table>
 
