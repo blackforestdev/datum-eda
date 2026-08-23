@@ -261,6 +261,20 @@ DOC-C04 creates or updates HTML visual studies for navigation, composition,
 viewport manipulation, Model/Paper transitions, responsive states, and release
 state. The owner reviews these studies before mechanism is ratified.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C04-PUBLISH-SPACE-VISUAL-STUDY -->
+DOC-C04 is complete as an owner-disposition-ready visual contract in
+`docs/gui/prototypes/publish-space-study.html` (commit `cfe7a60`). Frames A-H
+cover Project Navigator discovery and local search, coexisting Design and
+Publish panes, blank/template Sheet creation, Viewport manipulation and reuse,
+annotation/source navigation, SheetSet sharing and forks, working/released
+context, and responsive/accessibility states. The study preserves the approved
+single-window recursive-pane shell, Direction-B title block, output-only Datum
+Console, and Design/Publish authority boundary. Its OR-1..OR-8 candidates and
+two pane-title wording candidates remain explicitly unratified pending DOC-C05
+owner disposition. The prototype is registered as a source in exactly the
+`prototype-rendering-and-publish` evidence route; this evidence neither
+authorizes implementation nor defines Product Revision Engine mechanics.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C05 -->
 <!-- OWNER:DOC-SYSTEM-SPEC:DOC-C05:DOC-C05 -->
 DOC-C05 records the owner's choices for vocabulary, workspace topology,

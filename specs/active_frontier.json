@@ -4305,8 +4305,8 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
@@ -4315,44 +4315,10 @@
         "dat-dimension-selection-reentry-kxk",
         "dat-distributed-collaboration-architecture-lt1"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "workspace-architecture-20260822-codex",
-        "claimed_at": "2026-08-22T18:03:58-07:00",
-        "heartbeat_at": "2026-08-22T18:03:58-07:00",
-        "expires_at": "2026-08-23T02:03:58-07:00",
-        "scope": [
-          "AGENTS.md",
-          "CLAUDE.md",
-          "research/documentation-system",
-          "research/README.md",
-          "research/workspace-architecture",
-          "docs/RESEARCH_TRACEABILITY.md",
-          "docs/DATUM_PRODUCT_MECHANICS.md",
-          "docs/decisions/PRODUCT_MECHANICS_000B_VIEW_COMPOSITION_AND_LIVE_PRODUCTION.md",
-          "docs/decisions/PRODUCT_MECHANICS_000C_UNIFIED_MODEL_FEASIBILITY.md",
-          "docs/decisions/PRODUCT_MECHANICS_002_MANUAL_EDITOR_BASELINE.md",
-          "docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md",
-          "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md",
-          "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
-          "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md",
-          "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-          "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
-          "docs/gui/workspace-and-documentation-specification",
-          "scripts/check_evidence_traceability.py",
-          "scripts/run_drift_gates.sh",
-          "specs/active_frontier.json",
-          "specs/evidence_traceability_manifest.json",
-          "specs/spec_governance_manifest.json",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": ".",
-        "head": "3a46df75e5a4cde8a982b7fd93464ad0427d1083"
-      },
+      "claim": null,
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
-        "canonical_next_step_id": "DOC-C04",
+        "canonical_next_step_id": "DOC-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4433,7 +4399,7 @@
           {
             "id": "DOC-C04",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Create and review HTML visual studies for workspace navigation, Model/Paper transitions, sheet composition, viewport manipulation, responsive states, and release state.",
             "depends_on": [
               "DOC-C03"
@@ -4444,7 +4410,13 @@
                 "marker": "DOC-C04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "EVIDENCE:DOC-SYSTEM-SPEC:DOC-C04-PUBLISH-SPACE-VISUAL-STUDY"
+              }
+            ]
           },
           {
             "id": "DOC-C05",
@@ -4462,12 +4434,93 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply with approve or revise for each architecture and visual disposition requested by the DOC-C05 decision packet.",
+              "response_format": "Review one item at a time in the listed order. Begin with OR-1 and reply `OR-1: approve` or `OR-1: revise — <requested change>`; later items remain open until presented.",
               "requests": [
                 {
-                  "id": "WORKSPACE-ARCHITECTURE-DISPOSITION",
-                  "question": "Does the proposed workspace, Model Space, Paper Space, pane, and viewport architecture match the owner's intended Datum workflow?",
-                  "recommended_response": "Review the vocabulary, authority map, end-to-end workflows, v1 scope, release behavior, and visual studies as separate decisions before ratification.",
+                  "id": "OR-1",
+                  "question": "Approve or revise Frame A's Project Navigator hierarchy: Sheet Sets, Sheets, and Saved Viewports as sibling groups under Publish, with creation and search on the local node menu?",
+                  "recommended_response": "Approve the sibling-group hierarchy and local creation/search placement.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-2",
+                  "question": "Approve or revise Frame C's blank-versus-template Sheet creation choreography: choose media, then create an empty page or a Direction-B seeded page?",
+                  "recommended_response": "Approve both blank and template entry paths.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-3",
+                  "question": "Approve or revise Frame E's Open Source in Design behavior: open the source in a new adjacent pane instead of retargeting the focused Publish pane?",
+                  "recommended_response": "Approve the adjacent-pane behavior so Publish context remains visible.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-4",
+                  "question": "Approve or revise Frame D's Viewport linked, linked-with-overrides, and unique visual language using explicit frame chips and Inspector state?",
+                  "recommended_response": "Approve the icon-plus-word states and Inspector detail.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-5",
+                  "question": "Approve or revise Frame F's SheetSet sharing and fork presentation using package cards, shared Sheet references, and a selective Make Unique fork diagram?",
+                  "recommended_response": "Approve the package-card and selective-fork presentation.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-6",
+                  "question": "Approve or revise Frame G's quiet working, released-baseline, and affected-successor status presentation within the Product Revision Engine boundary?",
+                  "recommended_response": "Approve the quiet working state, explicit immutable baseline identity, and navigable successor-impact finding.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-7",
+                  "question": "Approve or revise Frames B and H's overall Design/Publish coexistence, pane Zoom/Stage, responsive, terminal-open, and accessibility disposition?",
+                  "recommended_response": "Approve the single-window recursive-pane disposition across the shown states.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "OR-8",
+                  "question": "Approve or revise the locked Direction-B title-block rendition as projected in Frames B, C, and G, including field values, compact-scale fidelity, and on-Sheet placement?",
+                  "recommended_response": "Approve these Publish-context renditions without reopening the locked Direction-B design.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "DESIGN-PANE-TITLE",
+                  "question": "Approve or revise the Design pane title pattern shown as `Schematic · sensor-node`?",
+                  "recommended_response": "Approve the editor type followed by the local design identity.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                    "marker": "DOC-C05"
+                  }
+                },
+                {
+                  "id": "PUBLISH-PANE-TITLE",
+                  "question": "Approve or revise the Publish pane title pattern shown as `Publish · FAB-01 Assembly Top`?",
+                  "recommended_response": "Approve Publish followed by the Sheet number and title.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
                     "marker": "DOC-C05"

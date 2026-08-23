@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "13913aa72606161c3673f0939276521905157c7f17993bd4818b5bfb88c15b0c",
-      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C03 completed the Publish object and mutation contract."
+      "reviewed_digest": "b6869f6b3d2fbbbad3971a8ad444c3da8a1840eb169bece75f3744a8c74b42fa",
+      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C04 completed the Publish visual study and exposed its candidates for owner disposition."
     },
     {
       "id": "terminal-focus-incident",
@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "4621107a0711d2ef328c677dab2819a6d6c427886880f8fc12af09afcf11aa63",
-      "review_note": "DOC-C03 authority and object research now feeds a governed DOC-C04 visual brief that preserves owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary."
+      "reviewed_digest": "cf1b8067edeb4fa93de63af1b68eaf23355d8e615341ac9daaa101cc675e4aa1",
+      "review_note": "DOC-C01..C03 research and authority contracts now feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 owner disposition remains open."
     },
     {
       "id": "parametric-footprint-editor",
@@ -183,8 +183,8 @@
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "2c029815aea0bd7a57591e3ef03e9eb70bca810dc3dca49d0e5630947c26a4ad",
-      "review_note": "Editor-shell and pane prototypes constrain the DOC-C04 Publish study brief alongside the shell, conformance, document/view, and pane-tiling authorities; the brief must extend rather than redesign them."
+      "reviewed_digest": "303218bcfcc8af5dcc4062cc05c2df981cad4e4ea9146deb1c8296af13054665",
+      "review_note": "Editor-shell and pane prototypes constrain the completed DOC-C04 Publish study alongside the shell, conformance, document/view, and pane-tiling authorities; the study extends rather than redesigns them."
     },
     {
       "id": "prototype-command-feedback",
@@ -215,6 +215,7 @@
       "id": "prototype-rendering-and-publish",
       "status": "active",
       "sources": [
+        "docs/gui/prototypes/publish-space-study.html",
         "docs/gui/prototypes/rendering-study.html",
         "docs/gui/prototypes/text-placement-study.html",
         "docs/gui/prototypes/title-block-sizes.html",
@@ -225,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "c53bb5c760711ee0cfc520d6a433d161cdf19bb107798744c511634f544ac191",
-      "review_note": "Rendering, text-placement, and title-block studies constrain both the DOC-C03 object contract and governed DOC-C04 brief; the new study must add navigation, composition, reuse, responsive, and revision-boundary states."
+      "reviewed_digest": "58b37f8975406cec689bc3f4f97dfdaef8791f997c2f8aa5f1f643a23234a40c",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; its OR-1..OR-8 candidates remain pending DOC-C05 owner disposition."
     },
     {
       "id": "prototype-selection",
