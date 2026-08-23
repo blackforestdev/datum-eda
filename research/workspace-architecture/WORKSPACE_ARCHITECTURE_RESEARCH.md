@@ -51,7 +51,7 @@ Status meanings:
 | 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Answered** | A viewport remains a Publish Space projection and annotation target; it never becomes an edit-through aperture into authoritative design objects. Its local right-click menu exposes `Open Source in Design`, following the SolidWorks drawing-to-part/assembly pattern. Double-click is deliberately unassigned rather than treated as an implicit second doorway. Whether the Design editor opens adjacent or retargets a pane remains visual/usability study rather than authority semantics. |
 | 9 | Should a viewport permit direct manipulation of projected model objects while remaining in Paper Space, or only manipulation of its frame, crop, scale, visibility, dimensions, and paper annotations? | **Answered in principle** | While remaining in Publish Space, manipulation belongs to viewport presentation and publish-owned content, not projected design objects. |
 | 10 | Should model-space annotations and paper-space annotations be separate classes? | **Answered** | Design annotations and Publish annotations have distinct authority. Publish reuse centers on a versioned named `ViewportDefinition` and per-Sheet `ViewportInstance`, not globally shared loose annotations. `New Viewport` creates a clean unique definition; `Use Existing` creates a linked instance such as `board_XYZ_Viewport_01`; ordinary Sheet edits remain instance-local; `Edit Saved Viewport` explicitly changes the shared definition; and `Make Unique` severs only the reuse link while preserving parametric association to Design geometry. Release pinning remains questions 15/16. |
-| 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Answered** | Both spaces support dimensions with distinct, enforced authority. A Design Space dimension may participate in the constraint system and drive authoritative geometry. A Publish Space dimension is associative documentation: it follows projected geometry but can never drive, mutate, or write back into Design. Detailed Design reference-versus-driving defaults remain follow-up 11a, and the existing board-dimension type must be reconciled to this split. |
+| 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Answered** | Both spaces support dimensions with distinct, enforced authority. Design Space supports driving dimensions that constrain geometry and reference dimensions that only measure it. Smart Dimension creates a driving dimension by default; if that would over-constrain the design, Datum refuses it and explicitly offers `Create as Reference` rather than silently changing intent. Only Design Space dimensions may drive geometry under the current boundary. Publish dimensions remain associative reference documentation and cannot write back. The existing board-dimension type must be reconciled to this split. |
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
 | 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Partial** | The owner described ordered collections spanning many schematic and manufacturing sheets. Multiple independent sets in one scalable project remain to be explicitly decided. |
@@ -176,9 +176,15 @@ geometry. This remains true even when the Viewport itself is a linked instance
 of a named definition. Publish edits use Publish operations only; authoritative
 Design changes require the explicit Design doorway.
 
-Follow-up 11a must settle whether Design Space supports both reference and
-driving dimensions and which behavior the smart-dimension action creates by
-default. The existing engine board-dimension type must later be classified and
+Design Space supports both driving and reference dimensions. Smart Dimension
+creates a driving dimension by default. If the proposed constraint would
+over-constrain the design, Datum refuses that driving mutation and explicitly
+offers `Create as Reference`; it never silently converts the user’s intent.
+Only Design Space may host driving dimensions under the current approved
+boundary. Any future proposal for Publish-driven write-back requires a new
+owner decision rather than an incremental interaction shortcut.
+
+The existing engine board-dimension type must later be classified and
 reconciled against this authority split rather than treated as precedent.
 
 ### Viewport annotation and source navigation
