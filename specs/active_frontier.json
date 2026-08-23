@@ -4434,17 +4434,8 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "OR-1 through OR-8 are settled or carried forward. Continue with the pane-title wording one item at a time. Reply `DESIGN-PANE-TITLE: approve` or `DESIGN-PANE-TITLE: revise — <requested wording>`; the Publish pane title remains open until presented.",
+              "response_format": "OR-1 through OR-8 and the Design-pane title are settled or carried forward. Complete DOC-C05 by replying `PUBLISH-PANE-TITLE: approve` or `PUBLISH-PANE-TITLE: revise — <requested wording>`.",
               "requests": [
-                {
-                  "id": "DESIGN-PANE-TITLE",
-                  "question": "Approve or revise the Design pane title pattern shown as `Schematic · sensor-node`?",
-                  "recommended_response": "Approve the editor type followed by the local design identity.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
                 {
                   "id": "PUBLISH-PANE-TITLE",
                   "question": "Approve or revise the Publish pane title pattern shown as `Publish · FAB-01 Assembly Top`?",

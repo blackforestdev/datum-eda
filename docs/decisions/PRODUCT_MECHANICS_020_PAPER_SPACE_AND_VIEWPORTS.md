@@ -388,6 +388,17 @@ separate responsive-shell contract governs them and must not be inferred as an
 owner-ratified Publish mechanic. This carry-forward disposition does not
 authorize implementation.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-DESIGN-PANE-TITLE-OWNER-APPROVED -->
+On 2026-08-23 the owner selected B1b Design-pane Candidate A. Design pane titles
+use `Editor Type · Local Design Identity`, for example
+`Schematic · sensor-node`, `Board · main`, `Footprint · LQFP-48`, or
+`Symbol · STM32F103`. The type-first order preserves the shared pane-header
+rhythm while the local identity disambiguates multiple assets of the same
+editor type. Type-only titles and identity-first titles are rejected. Legacy
+`Schematic · Sheet n/N` and `Board · Layout` wording must be normalized during
+DOC-C06 reconciliation. This wording disposition does not authorize
+implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
 decision 020, research, prototypes, conformance obligations, beads, and the
