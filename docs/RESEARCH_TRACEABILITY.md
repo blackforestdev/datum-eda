@@ -13,6 +13,21 @@ Prevent strategy drift by making one thing explicit:
 - whether it is implemented, in progress, or intentionally deferred
 - why deferment exists (when applicable)
 
+## Enforced evidence routes
+
+`specs/evidence_traceability_manifest.json` is the machine-checked reverse
+index for this human synthesis. It covers every tracked `research/**/*.md` and
+`docs/gui/prototypes/*.html` artifact exactly once, names the governed specs and
+decisions that consume each evidence set, and records a digest over both sides.
+`scripts/check_evidence_traceability.py`, wired into the standing drift gates,
+fails when an artifact is orphaned, a consumer is ungoverned or missing, or
+either evidence or specification changes without an explicit route review.
+
+This prevents implementation state, agent memory, or a newer isolated draft
+from silently displacing already-ratified decisions and visual sources of
+truth. The prose matrix below remains useful synthesis; the manifest supplies
+coverage, reverse routing, and freshness enforcement.
+
 ## Source Corpus
 
 Primary research source for this mapping:

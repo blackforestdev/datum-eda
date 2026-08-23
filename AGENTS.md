@@ -17,6 +17,16 @@ The standard Datum MCP resource `datum://workflows` is the canonical workflow
 inventory. This file may explain repository operation, but it must not redefine
 workflow capabilities, review gates, or mutation semantics for Codex.
 
+## Research and visual evidence
+
+Before drafting or modifying a specification, decision, GUI contract, research
+report, or `docs/gui/prototypes/*.html`, find its owning route in
+`specs/evidence_traceability_manifest.json` and review every listed source and
+consumer. Runtime code is implementation evidence and cannot silently override
+a ratified decision or controlling prototype. Any source or consumer edit makes
+`python3 scripts/check_evidence_traceability.py` fail until the complete route
+is reconciled and its reviewed digest is deliberately updated.
+
 ---
 
 ## Issue tracker: beads (`br`)

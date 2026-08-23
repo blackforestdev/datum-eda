@@ -35,6 +35,11 @@ Research artifacts feed **derived guidance documents** which live in
 - **Spec integration**: research → guidance doc → spec edit (PR).
   Do not edit `/specs/` directly from a research finding without a
   guidance-doc intermediary.
+- **Machine-checked evidence route**: every research Markdown file must appear
+  in exactly one route in `specs/evidence_traceability_manifest.json`. The
+  route names its governed consumers and hashes both sides, so editing either
+  research or its consuming specification requires an explicit cross-review
+  and `python3 scripts/check_evidence_traceability.py` must pass.
 - **No attribution** in any research artifact, per
   `/CLAUDE.md § Attribution Policy`.
 
@@ -129,3 +134,5 @@ read-only from this repo's perspective.
    column.
 5. When spec edits land, update `Status` and reference the spec PR
    in `/docs/RESEARCH_TRACEABILITY.md`.
+6. Add the artifact to exactly one evidence route and review every consumer
+   listed by that route before recording its new digest.

@@ -86,6 +86,19 @@ change you MUST:
    unblocks, and its state. A spec describing future work that does not appear in
    the Active Frontier is not done being written.
 
+**Research/prototype evidence is part of specification governance.** Before
+drafting, modifying, reviewing, or implementing a specification or decision,
+inspect its route in `specs/evidence_traceability_manifest.json` and read every
+listed research source, GUI prototype, governed specification, and decision.
+The route digest covers both evidence and consumers: changing either side makes
+`scripts/check_evidence_traceability.py` fail until the entire route is reviewed
+and its digest is deliberately refreshed in the same change. Every Markdown
+artifact under `research/` and every `docs/gui/prototypes/*.html` file must have
+exactly one owning route. Code/runtime incompleteness or drift never overrides a
+ratified decision or controlling visual source. If sources conflict, preserve
+the higher authority, record the conflict, and reconcile it through the normal
+owner/decision transaction rather than inventing a replacement from memory.
+
 **Roadmap wayfinding (the bullseye rule).** Decision 025 makes
 `specs/active_frontier.json` the canonical structured roadmap. The Active
 Frontier at the top of `specs/PROGRESS.md` is its generated human projection.

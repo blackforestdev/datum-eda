@@ -1,0 +1,248 @@
+{
+  "description": "Machine-checked routes from every tracked research report and GUI prototype to the governed specifications and decisions that consume it. reviewed_digest covers both sources and consumers so modifying either side requires an explicit cross-review.",
+  "routes": [
+    {
+      "id": "research-governance-index",
+      "status": "active",
+      "sources": [
+        "research/README.md",
+        "research/README_AUDIT_2026-08-18.md"
+      ],
+      "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
+      "reviewed_digest": "dafff4bf00d7bd9281d4ea552e072870b7bfb878650fb0572026031b4fc03f40",
+      "review_note": "Research inventory and audit feed the governed cross-domain traceability ledger."
+    },
+    {
+      "id": "terminal-focus-incident",
+      "status": "integrated",
+      "sources": ["research/TERMINAL_FOCUS_TAB_BUG_2026-08-16.md"],
+      "consumers": ["docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "reviewed_digest": "2be3e2d35e398b15c085387fb29739ad0e07f05f8f48b2b82bd3fc8eb25bed3b",
+      "review_note": "The historical focus/tab incident is retained against the native terminal interaction contract."
+    },
+    {
+      "id": "gui-rendering-substrate",
+      "status": "integrated",
+      "sources": [
+        "research/airwire-rendering/AIRWIRE_RENDERING_RESEARCH.md",
+        "research/copper-rendering/COPPER_RENDERING_RESEARCH.md",
+        "research/gui-visual-regression/GUI_VISUAL_REGRESSION_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_RENDERING_BOOK.md",
+        "docs/gui/DATUM_GUI_VISUAL_REGRESSION_HARNESS.md"
+      ],
+      "reviewed_digest": "14e29c76a2e222553394549e3484b3145e3f7e76c5a050faa7521fd4ac7058ba",
+      "review_note": "Material rendering and regression research constrain the Rendering Book and visual proof harness."
+    },
+    {
+      "id": "gui-feedback-and-status",
+      "status": "integrated",
+      "sources": [
+        "research/application-status-bar/APPLICATION_STATUS_BAR_RESEARCH.md",
+        "research/command-feedback/COMMAND_FEEDBACK_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md"
+      ],
+      "reviewed_digest": "71608c0dab530c94df69664500b76a813bc4106d0787d4b0e89f3a91eeb9ccb5",
+      "review_note": "Feedback proximity and Console research are reconciled with their guidance, shell specification, and ratified Console decision."
+    },
+    {
+      "id": "gui-selection",
+      "status": "integrated",
+      "sources": [
+        "research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md",
+        "research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md",
+        "docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md",
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md"
+      ],
+      "reviewed_digest": "5fe8bbe378e16a050e3dcba2d6b16de20010377752d2feea70f50930bf69c629",
+      "review_note": "Compound semantics and visual language jointly constrain the universal selection contract."
+    },
+    {
+      "id": "gui-context-menus",
+      "status": "integrated",
+      "sources": ["research/gui-context-menus/CONTEXT_MENU_RESEARCH.md"],
+      "consumers": [
+        "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
+      ],
+      "reviewed_digest": "8c6ce26fafaafedbc7dc3242cae63fbd7d6b02c9c43bee2f8b90b93d6ae61f78",
+      "review_note": "Context-menu research feeds the content inventory and shell interaction specification."
+    },
+    {
+      "id": "standards-and-compliance-research",
+      "status": "active",
+      "sources": [
+        "research/component-modeling/COMPONENT_MODELING_RESEARCH.md",
+        "research/data-exchange-interop/DATA_EXCHANGE_INTEROP_RESEARCH.md",
+        "research/emc-signal-integrity/EMC_SIGNAL_INTEGRITY_RESEARCH.md",
+        "research/industry-vertical-compliance/INDUSTRY_VERTICAL_COMPLIANCE_RESEARCH.md",
+        "research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md",
+        "research/materials-environmental/MATERIALS_ENVIRONMENTAL_RESEARCH.md",
+        "research/plm-lifecycle-integration/PLM_LIFECYCLE_INTEGRATION_RESEARCH.md",
+        "research/process-quality/PROCESS_QUALITY_RESEARCH.md",
+        "research/schematic-drawing-conventions/SCHEMATIC_DRAWING_CONVENTIONS_RESEARCH.md",
+        "research/standards-audit/STANDARDS_AUDIT.md",
+        "research/standards-audit/STANDARDS_AUDIT_SKIP_RATIFICATION_SYNTHESIS.md"
+      ],
+      "consumers": [
+        "specs/STANDARDS_COMPLIANCE_SPEC.md",
+        "docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md",
+        "docs/IPC_FOOTPRINT_SYSTEM.md"
+      ],
+      "reviewed_digest": "4cab7af0607932d95b272fc1e0ea6818ac298db3adcdd60e32ef7831a1cc750f",
+      "review_note": "The complete standards corpus is reviewed as one cross-domain input set against the standards specification and integration guidance."
+    },
+    {
+      "id": "workspace-documentation-and-revision",
+      "status": "in_progress",
+      "sources": [
+        "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
+        "research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/RESEARCH_TRACEABILITY.md"
+      ],
+      "reviewed_digest": "f4a204d0fa41871a61bb7ba80e1b8ca9c48988c48716d735239671a88237af45",
+      "review_note": "Active DOC-SYSTEM-SPEC research must remain reconciled with the legacy decision being amended, the inherited shell, and the global research ledger."
+    },
+    {
+      "id": "parametric-footprint-editor",
+      "status": "active",
+      "sources": [
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+        "docs/IPC_FOOTPRINT_SYSTEM.md"
+      ],
+      "reviewed_digest": "28d8fc949982ef5baf45467e6f13d2d3e3efca7bff6711ab57bfab0ec711288b",
+      "review_note": "Parametric editor and DXF research feed the library-authoring and footprint-system contracts."
+    },
+    {
+      "id": "text-and-typography",
+      "status": "integrated",
+      "sources": [
+        "research/gui-typography/TEXT_PLACEMENT_CLEARSPACE_RESEARCH.md",
+        "research/gui-typography/TYPE_COLOUR_GRAUWERT_RESEARCH.md",
+        "research/pcb-text-rendering/DATUM_TEXT_ENGINE_PHASE_2_RESEARCH.md",
+        "research/pcb-text-rendering/DATUM_TEXT_ENGINE_PHASE_3_RESEARCH.md",
+        "research/pcb-text-rendering/OUTLINE_TEXT_GERBER_COMPACTION_RESEARCH.md",
+        "research/pcb-text-rendering/PCB_TEXT_RENDERING_RESEARCH.md"
+      ],
+      "consumers": ["docs/gui/DATUM_RENDERING_BOOK.md"],
+      "reviewed_digest": "ab90d1e928cfb60e90d4f0e1c0cd9ac60041462905c35e45eb3239af504821cf",
+      "review_note": "Typography, clearance, text-engine, and manufacturing compaction research are jointly governed by the Rendering Book."
+    },
+    {
+      "id": "product-mechanics-research",
+      "status": "integrated",
+      "sources": ["research/product-mechanics/DATUM_PRODUCT_MECHANICS_RESEARCH.md"],
+      "consumers": ["docs/DATUM_PRODUCT_MECHANICS.md"],
+      "reviewed_digest": "b574aa00ded7387e72e9ca45c33f70da393e651819b3fa5febef56b8aef2920d",
+      "review_note": "The product-mechanics research is retained against the controlling product doctrine."
+    },
+    {
+      "id": "terminal-redesign-research",
+      "status": "integrated",
+      "sources": [
+        "research/terminal-redesign/TERMINAL_CURRENT_STATE_MAP.md",
+        "research/terminal-redesign/TERMINAL_REDESIGN_ARCHITECTURE.md"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md",
+        "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md"
+      ],
+      "reviewed_digest": "ba10ffd9db775a52bc84d78af56a7aa41e3dd6eaf35ed14a426d71e7db8ea0ad",
+      "review_note": "Terminal state inventory and redesign research feed the native terminal contract and implementation plan."
+    },
+    {
+      "id": "prototype-editor-shell-and-panes",
+      "status": "active",
+      "sources": [
+        "docs/gui/prototypes/board-editor.html",
+        "docs/gui/prototypes/schematic-editor.html",
+        "docs/gui/prototypes/workspace-panes.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
+      ],
+      "reviewed_digest": "79269291dcd7023f369433dafec0c7ece6a83e8ff426ee36e37df5fda21750d8",
+      "review_note": "Editor-shell and pane prototypes are reviewed together against the shell, conformance, document/view, and pane-tiling authorities."
+    },
+    {
+      "id": "prototype-command-feedback",
+      "status": "integrated",
+      "sources": ["docs/gui/prototypes/command-feedback-study.html"],
+      "consumers": [
+        "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
+      ],
+      "reviewed_digest": "fe62a935a8bed7e088a7c8f305f6bc3d92bafa2580c8dc1485d34cd37b1fc0ca",
+      "review_note": "The owner-disposed Console visual study remains paired with its decision and shell contract."
+    },
+    {
+      "id": "prototype-context-and-open-forks",
+      "status": "active",
+      "sources": [
+        "docs/gui/prototypes/context-menu-marking-menu.html",
+        "docs/gui/prototypes/open-decisions.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
+      ],
+      "reviewed_digest": "6f77191d0f210d92f8dbb7d42591b64180929caf346bb531875717f4ff635b26",
+      "review_note": "Context-menu visual authority and comparative open-fork evidence stay attached to the shell interaction contract."
+    },
+    {
+      "id": "prototype-rendering-and-publish",
+      "status": "active",
+      "sources": [
+        "docs/gui/prototypes/rendering-study.html",
+        "docs/gui/prototypes/text-placement-study.html",
+        "docs/gui/prototypes/title-block-sizes.html",
+        "docs/gui/prototypes/title-block-study.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_RENDERING_BOOK.md",
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
+      ],
+      "reviewed_digest": "fd7b8688d05bf00e99b3016e61b56d0a98f1dc608ace66796dd8cd136e78522f",
+      "review_note": "Rendering, text-placement, and title-block visual studies constrain both the Rendering Book and evolving Publish contract."
+    },
+    {
+      "id": "prototype-selection",
+      "status": "integrated",
+      "sources": ["docs/gui/prototypes/selection-study.html"],
+      "consumers": [
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+        "docs/gui/DATUM_RENDERING_BOOK.md"
+      ],
+      "reviewed_digest": "345de8c8e7d00c664a42cb4f3f70508a99b3cc260311ea61eca858fc0b274641",
+      "review_note": "The owner-reviewed selection visual study remains paired with functional and rendering authorities."
+    },
+    {
+      "id": "prototype-terminal",
+      "status": "integrated",
+      "sources": ["docs/gui/prototypes/terminal-study.html"],
+      "consumers": ["docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "reviewed_digest": "850cc303c167816146465091556c73c476f6c8d3fdf20c3e8958a13484c2f458",
+      "review_note": "The terminal visual study remains attached to the native terminal product contract."
+    }
+  ]
+}

@@ -31,6 +31,7 @@
   "docs/gui/menu_model.json",
   "docs/gui/icon_set.json",
   "specs/source_module_size_manifest.json",
+  "specs/evidence_traceability_manifest.json",
   "specs/active_frontier.json",
   "docs/PROJECT_STATE_POLICY.md"
  ],
@@ -668,6 +669,10 @@
    "class": "governed",
    "progress_anchor": "TERMINAL-AGENT-INTEROP-CONTRACT",
    "notes": "Buildable agent adapter, standard MCP, pinned-context authority, portable-workflow parity, and production verification contract under decision 028."
+  },
+  "specs/evidence_traceability_manifest.json": {
+   "class": "governed",
+   "notes": "Machine-checked research/prototype-to-spec routes. Every evidence artifact has one owner route; digests span sources and consumers so either-side edits require explicit cross-review."
   }
  }
 }

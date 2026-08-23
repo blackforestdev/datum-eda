@@ -21,6 +21,14 @@ research may refine a mechanism but must not overwrite the owner's intent.
 - Necessary follow-ups retain the parent number (`1a`, `1b`, and so on) and do
   not replace the next original question.
 - Each confirmed answer is recorded before discussion advances.
+- Before asking an owner question, reconcile it against the authority matrix
+  below. Carry forward ratified decisions and locked prototypes verbatim;
+  runtime absence or drift is implementation evidence, never permission to
+  reopen product intent.
+- Each question packet must state (1) what is already controlled, (2) which
+  source controls it, (3) any genuine conflict requiring reconciliation, and
+  (4) only the residual owner choice. A broad original question may be closed
+  in principle even when a narrower implementation or visual fork remains.
 - Internal evidence comes from Datum code, decisions, contracts, research, and
   current prototypes.
 - External claims require primary-source research across relevant EDA, CAD,
@@ -63,9 +71,58 @@ Status meanings:
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Boundary answered** | The Product Revision Engine—not the Publish object model—owns Draft binding, pinning, baselines, and revision allocation. Release resolves a complete approved product/configuration baseline across Design, libraries, rules, Publish definitions/instances, checks, manufacturing plans, artifacts, approvals, and effectivity, never merely one `model_revision`. Exact Draft behavior remains for `dat-product-revision-engine-k9f`. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Boundary answered** | An existing released configuration and its documents are immutable. Any controlled change in Design Space or Publish Space must be handled by the Product Revision Engine as successor revision work and cannot be released under the unchanged prior revision index. The engine will specify affected-document scope, allocation timing, pending-change identity, approvals, supersession, and regeneration; this documentation specification must not invent those mechanics. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Answered** | Required order is: production-accepted Product Revision Engine foundation; domain-neutral Publish Space foundation; Sheet primitive; Viewport definition/instance and projection primitives; one narrow schematic-publication end-to-end proof; then fabrication and assembly publishing workflows. Publish establishes its authority boundary, revision participation, composition coordinates/units/media, typed operations, Design/artifact references, rendering/export architecture, templates/packages, staleness, validation, and refusals before domain-specific publication drives the architecture. Sheets and Viewports are its first core capabilities rather than a rival pre-Publish subsystem. |
-| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Open** | Question 2 settles tiled/split/maximized editor coexistence; the control and navigation model for choosing content still requires owner discussion and Claude’s comparative visual study. |
-| 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Open** | Layouts are user-reconfigurable under question 2; persistence scope and ownership are not yet decided. |
-| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Open** | Pane fullscreen/maximize inside the shell is established under question 2; detachable native windows remain undecided. |
+| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Partial — authority audited** | Existing authority already requires a persistent left Project tree, a document/view workspace, recursive panes, focused-pane context, View-menu split/fill/focus/presets, and tabs **or** a switcher. Board/Schematic editor prototypes place the Project tree over the focused-pane context panel; `workspace-panes.html` proves the recursive pane and View-menu mechanism. The true open scope is exact stable-target opening, Project-tree gestures, tabs versus compact switcher, scalable search/overflow, and how Design/Publish content extends the existing tree without becoming a global pane-evicting mode. |
+| 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Partial — authority audited** | Persistence itself is already required and remains non-authoritative workspace state. Decision 021 requires per-user preference persistence; decision 007 defines project-default, user-local, and shared-profile owner scopes plus named workbench profiles. The genuine open choice is default write/restore precedence and which layout/profile scopes ship first—not whether layout persistence exists. |
+| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Answered in principle — authority audited** | Datum has one cohesive primary application shell and also permits deliberate opt-in float/detach for advanced and multi-monitor work. Decisions 007 and ratified 021 already establish that end state; 021 deliberately defers only the narrower mechanism fork (in-shell PiP, native OS window, or both) and its implementation timing until tile+zoom prove insufficient. The broad single-window-versus-detach question must not be re-asked. |
+
+## Decision and prototype authority matrix
+
+This matrix is the anti-drift control for the 20-question dialogue. “Owner
+disposition” means approved direction awaiting DOC-C06 consolidation into the
+numbered decisions; it does not outrank an unreconciled conflicting decision
+record until that governance transaction lands.
+
+| Q | Carried-forward authority | Controlling evidence | Residual work only |
+|---|---|---|---|
+| 1 | One scalable Project hosts many coordinated document/editor views; Workspace composition is not source authority. | Decisions 007 and ratified 019; owner scalable-project disposition | DOC-C06 terminology/topology reconciliation |
+| 2 | Heterogeneous editor surfaces coexist in recursive, user-configurable panes; focus owns mutation context; layout is consumer state. | Ratified decision 021; `workspace-panes.html`; `board-editor.html`; owner disposition | Extend the content inventory to Publish without changing the pane law |
+| 3 | Symbol/Footprint are real editor surfaces supported by pane content; owner selected contextual adjacent entry plus direct library entry. | Decision 021 content inventory; GUI Design Spec; owner disposition | Visual choreography and stable asset target contract |
+| 4 | Workspace is UI composition; Design Space is the owner-selected authority term spanning domain editors; `Model Space` is retired product vocabulary. | Decisions 007/019/023; owner disposition | Amend legacy terminology during DOC-C06 |
+| 5 | One universal publication mechanism, not per-editor publishing silos; owner-selected name is Publish Space. | Decision 020 universal mechanism; owner disposition | Replace legacy vocabulary and specify the new engine boundary |
+| 6 | `Sheet` belongs only to Publish Space; the continuous schematic Design Space has no publication-page object. | Owner disposition; decision 020 is the legacy collision to amend | Engine migration from legacy schematic `Sheet*` names |
+| 7 | Design authoring and Publish composition have separate authority. | Decision 020 separation plus owner disposition | Encode the non-write-through boundary in the amended decision |
+| 8 | Publish Viewports never become edit-through Design apertures; `Open Source in Design` is the explicit local command. | Owner disposition superseding decision 020’s reach-through paragraph | Visual placement/return choreography only |
+| 9 | In Publish, direct manipulation owns Viewport presentation and Publish content, never projected Design objects. | Owner disposition; decision 020 operation inventory to amend | Exact selection/handle/tool contract |
+| 10 | Design and Publish annotations are distinct; named versioned ViewportDefinition plus per-Sheet ViewportInstance governs reuse and `Make Unique`. | Owner dispositions; decision 020 associative-annotation substrate | Formal object/operation schema |
+| 11 | Design dimensions may drive or reference; Publish dimensions are associative reference documentation and never write back. | Owner dispositions; decisions 020/023 as substrate | Standards-driven dimension semantics and conformance |
+| 12 | A Sheet freely mixes supported projections, tables, images, and Publish annotations; templates do not impose domain walls. | Decision 020 content breadth; owner disposition | Supported-type inventory and export proof |
+| 13 | Publish supports both blank and template-seeded Sheets; templates remain editable accelerators. | Decision 020 template direction; owner disposition | Template schema and starter-content research |
+| 14 | A Project may own many SheetSets; Sheets can be shared; package variants use Fork Sheet and Make Unique; security-grade redaction is separate. | Owner dispositions; decision 020 package substrate; `dat-publish-redaction-contract-wzs` | Formal package/variant/redaction contracts |
+| 15 | Draft binding, pinning, and baseline resolution belong to the Product Revision Engine, not a Sheet-local rule. | Owner boundary; `dat-product-revision-engine-k9f` | Revision-engine specification |
+| 16 | Existing releases are immutable; controlled Design/Publish changes require successor revision treatment before release. | Owner boundary; Product Revision Engine research | Allocation, impact, approval, supersession, regeneration |
+| 17 | Build order is Revision foundation → Publish foundation → Sheet → Viewport → schematic proof → fabrication/assembly. | Owner disposition | DOC-C06 Frontier/dependency ratification |
+| 18 | Persistent Project tree + document/view panes + View-menu tree control + focused context + tabs or switcher is the inherited hybrid. | Ratified decisions 019/021; GUI Design/Product/Conformance specs; board/schematic/workspace prototypes | Exact open-target/navigation binding and Publish extension |
+| 19 | Layout persistence is required, separate from Design authority, and supports owner-scoped workspace state and named profiles. | Decisions 007/021; Open Question Resolutions recommendation remains unratified | Default scope, precedence, sharing, and first shipped profiles |
+| 20 | Cohesive primary shell plus deliberate optional float/detach is already the intended end state. | Decisions 007/021 | PiP versus native window versus both; later proof-triggered timing |
+
+### Visual-source scope and conflict rule
+
+- `board-editor.html` and `schematic-editor.html` control the editor-shell visual
+  composition: persistent left Project tree over a pane-following context panel,
+  central pane field, right Inspector, and terminal dock.
+- `workspace-panes.html`, ratified in commit `f682f21` with decision 021,
+  controls recursive pane tiling, focused-pane ownership, View-menu tree
+  operations, fill-focused-pane content classes, and layout presets. Its
+  simplified omission of the lower left context panel is not a decision to
+  delete Layers/Sheets from the editor shell.
+- `DATUM_GUI_CONFORMANCE_SPEC.md` §2.3–2.4 explicitly enforces the left Project
+  tree above Layers and pane-following binding. Runtime’s current static Project
+  card and generic `PaneContent::{Board,Schematic}` are incomplete realization,
+  not competing product authority.
+- A future Claude visual study may extend these sources for scalable Project and
+  Publish navigation, but its brief must enumerate every carried-forward locked
+  element and identify any proposed amendment rather than silently redesigning
+  the shell.
 
 ## Confirmed intent outside the original 20
 
