@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "ad9997f60dc0210c68c3d37da4881424975eb0db7790ffe41c1831f3a419138d",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 has approved the quiet OR-4 overlay treatment and continues with OR-5."
+      "reviewed_digest": "76a17208d3f6eb5651fa0d5733f1386fc87201c3c6556a671dbe5c4986d47318",
+      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; amended D4b now renders the approved on-demand OR-4 treatment and DOC-C05 continues with OR-5."
     },
     {
       "id": "parametric-footprint-editor",
@@ -226,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "2529e605d01432237cefa2879b3df6b08dfa0095070ff6669e9043e2ec6d13d1",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; OR-1..OR-4 and OR-8 are settled while the visual-only OR-5..OR-7 treatments remain pending DOC-C05 disposition."
+      "reviewed_digest": "d4048cf5356c61e0dd777c9a9715fb080973488b97f1320ff263d1d8ba79dbba",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; amended D4b makes OR-4 vocabulary and appearance timing independently reviewable, with on-demand approved, while OR-5..OR-7 remain pending."
     },
     {
       "id": "prototype-selection",

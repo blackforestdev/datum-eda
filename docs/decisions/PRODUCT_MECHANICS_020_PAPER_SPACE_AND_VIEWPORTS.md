@@ -320,15 +320,18 @@ DOC-C05 therefore carries OR-8 forward and does not reopen the locked title
 block or ask for duplicate approval.
 
 <!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-4-OWNER-APPROVED -->
-On 2026-08-23 the owner approved a quieter revision of Frame D's Viewport reuse
-state treatment. The Inspector always exposes the complete linked,
-linked-with-overrides, or unique state. A compact glyph-plus-word chip appears
-beside a healthy Viewport only while that Viewport is selected or hovered;
-healthy chips do not remain continuously visible and consume Sheet working
-space. Broken-source and stale-reference findings remain visibly persistent
-until resolved. These are editor overlays and never print or export. The
-underlying ViewportDefinition/ViewportInstance mechanics remain unchanged, and
-this visual disposition does not authorize implementation.
+On 2026-08-23 the owner approved both explicit parts of Frame D's amended OR-4
+study (prototype commit `92d5fdd`). D4's linked, linked-with-overrides, and
+unique vocabulary uses a glyph plus a word and never color alone. For D4b
+appearance timing, Candidate D (`on demand`) is selected and Candidate P
+(`persistent`) is rejected because permanent healthy chips consume Sheet real
+estate and add visual noise. The Inspector always exposes complete state; hover
+reveals the compact healthy chip; selection reveals the chip and handles while
+detail remains in the Inspector. Broken-source and stale-reference findings
+remain visibly persistent until resolved. These are editor overlays and never
+print or export. The underlying ViewportDefinition/ViewportInstance mechanics
+remain unchanged, and this visual disposition does not authorize
+implementation.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
