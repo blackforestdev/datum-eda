@@ -111,10 +111,11 @@
       "consumers": [
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "3d4c09e3def49877735480ecd9b5ad58b4a6916c75b8af9ac476433eccbc4b90",
-      "review_note": "DOC-C03 reconciled the complete Publish object, operation, reference, resolution, refusal, and Revision Engine integration contract against owner intent, primary CAD sources, the inherited shell, and legacy decision 020; DOC-C04 now owns visual proof."
+      "reviewed_digest": "4621107a0711d2ef328c677dab2819a6d6c427886880f8fc12af09afcf11aa63",
+      "review_note": "DOC-C03 authority and object research now feeds a governed DOC-C04 visual brief that preserves owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary."
     },
     {
       "id": "parametric-footprint-editor",
@@ -179,10 +180,11 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
         "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
-        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md"
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "a12a278bc1336b99fed18db92bc3d5ef1856ea7188dd9c6ea4f8d365ab8ce161",
-      "review_note": "Editor-shell and pane prototypes are reviewed together against the shell, conformance, document/view, and pane-tiling authorities."
+      "reviewed_digest": "2c029815aea0bd7a57591e3ef03e9eb70bca810dc3dca49d0e5630947c26a4ad",
+      "review_note": "Editor-shell and pane prototypes constrain the DOC-C04 Publish study brief alongside the shell, conformance, document/view, and pane-tiling authorities; the brief must extend rather than redesign them."
     },
     {
       "id": "prototype-command-feedback",
@@ -220,10 +222,11 @@
       ],
       "consumers": [
         "docs/gui/DATUM_RENDERING_BOOK.md",
-        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "9050983dbd8075bceb7bac4d0c8202b5db9a112e37444fdaf9d08f83c6437c5e",
-      "review_note": "Rendering, text-placement, and title-block studies constrain the DOC-C03 Sheet/View/annotation contract but remain incomplete visual evidence until DOC-C04 adds navigation, composition, reuse, responsive, and revision states."
+      "reviewed_digest": "c53bb5c760711ee0cfc520d6a433d161cdf19bb107798744c511634f544ac191",
+      "review_note": "Rendering, text-placement, and title-block studies constrain both the DOC-C03 object contract and governed DOC-C04 brief; the new study must add navigation, composition, reuse, responsive, and revision-boundary states."
     },
     {
       "id": "prototype-selection",

@@ -670,6 +670,11 @@
    "progress_anchor": "TERMINAL-AGENT-INTEROP-CONTRACT",
    "notes": "Buildable agent adapter, standard MCP, pinned-context authority, portable-workflow parity, and production verification contract under decision 028."
   },
+  "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md": {
+   "class": "governed",
+   "progress_anchor": "DOC-SYSTEM-SPEC",
+   "notes": "DOC-C04 brief for Claude-owned Publish Space HTML visual research. Carries forward the one-window recursive-pane shell, Project Navigator, Design/Publish authority split, Publish object model, and Revision Engine boundary; authorizes no implementation."
+  },
   "specs/evidence_traceability_manifest.json": {
    "class": "governed",
    "notes": "Machine-checked research/prototype-to-spec routes. Every evidence artifact has one owner route; digests span sources and consumers so either-side edits require explicit cross-review."
