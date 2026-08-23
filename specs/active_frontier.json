@@ -4868,29 +4868,16 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-rev-c01-20260823",
-        "claimed_at": "2026-08-23T22:26:48Z",
-        "heartbeat_at": "2026-08-23T22:26:48Z",
-        "expires_at": "2026-08-24T06:26:48Z",
-        "scope": [
-          "REV-C01 internal revision-authority inventory and owner proof packet"
-        ],
-        "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "d10b691978665708bb1d5054242dcb78853e7edb"
-      },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C01",
+        "canonical_next_step_id": "REV-C01A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4907,7 +4894,7 @@
           {
             "id": "REV-C01",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Inventory Datum's existing technical, object, model, library, variant, rules, artifact, document, workspace, and Git revision authorities and contradictions.",
             "depends_on": [],
             "requirement_refs": [
@@ -4916,7 +4903,12 @@
                 "marker": "REV-C01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "1a4a041"
+              }
+            ]
           },
           {
             "id": "REV-C01A",
