@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "dafff4bf00d7bd9281d4ea552e072870b7bfb878650fb0572026031b4fc03f40",
-      "review_note": "Research inventory and audit feed the governed cross-domain traceability ledger."
+      "reviewed_digest": "92b434df619d2cffe1189f81658494b96693ae813d2581f9d228e93dbd1cbe46",
+      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C01 recorded its completed current-state inventory."
     },
     {
       "id": "terminal-focus-incident",
@@ -113,8 +113,8 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "8a5c2a1b76b58f44de79eda5298ff10b0a3c09655dbc732e6380d343839c9a03",
-      "review_note": "Active DOC-SYSTEM-SPEC research must remain reconciled with the legacy decision being amended, the inherited shell, and the global research ledger."
+      "reviewed_digest": "4b5b5eedbb263154ce16e1488bbc52f9e5d08afd793133a8a6a522b0110396a5",
+      "review_note": "DOC-C01 completed a code, decision, research, prototype, and terminology inventory against the legacy decision being amended, the inherited shell, and the global research ledger; DOC-C02 now owns vocabulary and authority mapping."
     },
     {
       "id": "parametric-footprint-editor",
@@ -222,8 +222,8 @@
         "docs/gui/DATUM_RENDERING_BOOK.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "reviewed_digest": "fd7b8688d05bf00e99b3016e61b56d0a98f1dc608ace66796dd8cd136e78522f",
-      "review_note": "Rendering, text-placement, and title-block visual studies constrain both the Rendering Book and evolving Publish contract."
+      "reviewed_digest": "1ca2abe63009159465d38bd6bc302b7b9293b8cbda51c2895ffda2f611221d7c",
+      "review_note": "Rendering, text-placement, and title-block visual studies remain visual/content constraints, while DOC-C01 explicitly records that they do not yet specify Publish authority, navigation, composition, or revision behavior."
     },
     {
       "id": "prototype-selection",

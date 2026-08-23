@@ -528,34 +528,82 @@ No global Project-search surface is introduced. Double-click or Enter opens the
 selected target beside the focused pane. This closes question 18; later Publish
 tree content inventory must extend this model without reopening it.
 
-## Internal evidence identified for DOC-C01
+## DOC-C01 current-state inventory
 
-- `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md` already
-  separates authoritative project state, persisted workspace composition, and
-  volatile session state, but its project and collaboration assumptions require
-  reconciliation with the scalable-project intent.
-- `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md` defines a
-  document/view shell over one resolved model but does not settle the current
-  workspace terminology questions.
-- `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` contains
-  the correct universal publication direction but still says schematic
-  “sheets” are Model Space assets and currently permits edit-through viewports.
-- `docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md` and
-  `docs/gui/prototypes/workspace-panes.html` establish recursive pane tiling and
-  focused-pane ownership, not Model/Paper or workspace topology.
-- `docs/DATUM_SHARED_TOOLING_TAXONOMY.md` recommends thin editor personas over
-  shared services; terminology must be reconciled rather than copied blindly.
-- Current `PaneContent` is limited to Board and Schematic, while
-  `ReviewWorkspaceState` still reflects historical review-shell ownership.
-- The engine currently models schematic `Sheet`, `SheetDefinition`,
-  `SheetInstance`, and `SheetFrame`; these combine electrical hierarchy,
-  spatial content, and paper-era naming that must be audited against the
-  continuous-plane decision.
-- Existing title-block prototypes specify title-block visual treatment but no
-  complete Paper Space composition or Model/Paper transition. The existing
-  workspace-panes prototype specifies pane tiling but not the required universal
-  documentation surface. Claude will therefore need an evidence-backed visual
-  brief after the authority model is sufficiently resolved.
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C01-CURRENT-STATE-INVENTORY -->
+
+This inventory records what exists at `c03cfc5`, what is only planned or
+visually studied, and where inherited names conflict with the owner-approved
+direction. It is descriptive evidence, not permission to preserve current code
+shapes or begin implementation.
+
+### Runtime and engine inventory
+
+| Surface or authority | Current implementation | What it proves | DOC-system consequence |
+|---|---|---|---|
+| Resolved project authority | `crates/engine/src/substrate/mod.rs` owns `DesignModel`, including stable domain objects, component instances, relationships, variants, manufacturing plans, panel projections, output jobs/runs, artifact metadata/runs, checks, proposals, and the transaction journal under one `model_revision`. | Datum already has one resolver-owned authority and technical revision substrate. | Publish objects must join this authority through deterministic shards, stable identity, typed operations, `commit()`, and resolver projection; a second document database or private writer is forbidden. |
+| Board Design surface | `crates/engine/src/board/mod.rs` owns `Board`; `board_types.rs` includes `Dimension` and `BoardText`; the native operation enum already creates/sets/deletes board dimensions and text. | Board geometry and annotations are Design data today. | DOC-C02/C03 must distinguish driving/reference Design dimensions from Publish-only associative dimensions. Existing `Dimension` is not precedent for Publish ownership. |
+| Schematic Design surface | `crates/engine/src/schematic/mod.rs` owns `Schematic` with `Sheet`, `SheetFrame`, `SheetDefinition`, and `SheetInstance`; `Sheet` owns symbols, wires, ports, text, and drawings. `substrate/operation.rs` exposes `CreateSchematicSheet`, `SetSchematicSheetName`, and many `sheet_id`-scoped authoring operations. | The current engine inherited a page/hierarchy-shaped schematic vocabulary and a paper-era frame. It has real typed authoring identity, not merely display labels. | This is the largest migration collision. Approved intent reserves `Sheet` for Publish Space and makes the schematic Design surface continuous. DOC-C03 must define the replacement electrical hierarchy/addressing model before later implementation renames or migrates these types and operations. `SheetFrame` cannot silently become the Publish title-block object. |
+| Library Design assets | `crates/engine/src/pool/symbol.rs`, `footprint.rs`, `package.rs`, and `pool/mod.rs` own Symbol, Footprint, Package, Part, pad/pin mappings, graphics, physical geometry, 3D references, standards basis, and provenance. | Symbol and Footprint are authoritative assets with specialist editing needs, not ad-hoc pane modes. | Publish may project these assets, but editing remains in their Design editors. Contextual adjacent-pane entry is workspace choreography, not asset ownership. |
+| Panelization/manufacturing | `crates/engine/src/substrate/artifact.rs` owns `PanelProjection`, `ManufacturingPlan`, `OutputJob`, `OutputJobRun`, and `ArtifactMetadata`; matching typed operation families exist. `PanelProjection` is currently a list of positioned board instances used by production output. | Datum has model-bound manufacturing projections and revision-stamped artifacts, but not a complete interactive panelization editor or publication document. | A panel or generated artifact may be a future Viewport source. It must not be mislabeled as a Publish Viewport or treated as proof that Sheet composition exists. |
+| Publish authority | No `Sheet` with page/media composition semantics, `SheetSet`, `ViewportDefinition`, `ViewportInstance`, projected `Table`, Publish annotation family, title-block template authority, controlled-document object, or Publish operation family exists in the engine. | Publish is unimplemented, not hidden under an existing type. | DOC-C02/C03 must specify these objects and their references before implementation. Names from research snippets are hypotheses until ratified. |
+| Revision/release authority | The engine has technical `ObjectRevision`/`ModelRevision`, operation guards, journal provenance, and artifact model-revision stamps. It has no complete product baseline, engineering-change, approval, document-revision, release, effectivity, status-accounting, or audit authority. | Existing revision data supports concurrency, provenance, and staleness only. | DOC-C03 may define which Publish objects participate in revision governance and their integration seam, but Product Revision Engine REV-C01..C08 owns release mechanics. A Git commit, journal transaction, or `model_revision` is not an issued revision. |
+
+### GUI and workspace inventory
+
+| Surface | Current implementation/authority | Status and boundary |
+|---|---|---|
+| Workspace pane tree | `crates/gui-protocol/src/workspace_layout.rs` implements `WorkspaceLayout`, recursive `PaneNode::{Leaf, Split}`, stable `PaneId`, split ratios, focus, and zoom. Decision 021 governs it. | Landed consumer/workspace state. It never advances Design or Publish revision. One cohesive native window is controlling. |
+| Pane contents | `PaneContent` contains only `Board` and `Schematic`; its comment explicitly defers Footprint, Symbol, Datasheet, 3D, and CheckReport until real surfaces exist. | Publish is also absent and must be added only with a real surface. A pane is a screen-space `(document, view)` projection, never a paper Viewport. |
+| GUI scene/session state | `ReviewWorkspaceState` in `crates/gui-protocol/src/lib.rs` still owns a primary board review scene plus an optional sibling schematic scene and review/supervision state. | This is historical review-shell architecture being evolved, not the target project/document authority. It cannot dictate the documentation object model. |
+| Project navigation | The visual authority places a persistent Project tree above the pane-following lower-left context panel. Runtime/conformance currently provides fixture-driven read-only tree content rather than the approved scalable Project Navigator interaction. | The approved navigator law remains: independent vertical scrolling; local right-click Search with incremental type-to-select; single-click select; double-click or Enter opens adjacent without eviction. Publish tree inventory is still missing. |
+| Focused context | Pane focus owns tools, menus, Inspector, Layers/Filters, and local feedback. `ApplicationFocus` separately distinguishes editor pane, terminal, and overlay. | Design and Publish content may coexist in the same recursive tree; `Design | Publish` are authority classifications, not global modes that replace the tree. |
+
+### Decision and specification inventory
+
+| Source | Carried-forward authority | Conflict or unfinished work |
+|---|---|---|
+| Product Mechanics 007 | Project authority is distinct from workspace and session composition; workspace persistence is non-authoritative. | Draft primitives such as tabs, overlays, profiles, and `workspace_revision` exceed landed code and require reconciliation with the scalable Project and the retired Q19 premise. Distributed collaboration remains mandatory later work. |
+| Product Mechanics 019 + GUI Product/Design specs | Datum is one manual-first desktop product with document/view surfaces over one `DesignModel`; graphical edits use native typed operations. | `Schematic sheets`, global document/mode switching, and surviving Model/Paper terminology reflect the inherited page model and must be reconciled in DOC-C06. |
+| Product Mechanics 021 | Recursive panes, focused-pane ownership, ratio resize, Zoom, Full-Screen Stage, and one native window are ratified. Workspace panes are explicitly not publication viewports. | Its content lists still say model-space and schematic sheet and do not yet include Publish content. These are terminology/inventory repairs, not permission to reopen tiling. |
+| Product Mechanics 020 | One universal publication mechanism, heterogeneous projected content, independent Viewport move/resize/scale, paper-scale annotations, and render/export fidelity are the valuable foundation. | Its title and operative prose still use Model/Paper; it treats schematic sheets as model assets, proposes edit-through Viewports, collapses a Viewport to one object rather than definition/instance, and understates complete revision baselines. DOC-C06 must amend rather than layer contradictory prose on top. |
+| Shared Tooling Taxonomy / Product Mechanics 023 | Editor personas inherit shared grid, camera, snap, selection, transforms, measurement, constraints, Inspector, and rendering services. | Publish needs a persona/configuration over shared services, while its authored objects and mutation authority remain distinct from Design. |
+| Rendering Book §8 | Owner-approved title-block face, visual language, four band/strip configurations, field hierarchy, and per-Viewport scale label. | It is a visual/content contract, not a Sheet, formula, document-control, or release object model. Its remaining “sheet frame design” wording and proportional-size assumptions require standards validation in the later specification. |
+
+### Research and visual-source inventory
+
+| Evidence | Controlled result | Missing proof or required reconciliation |
+|---|---|---|
+| `docs/gui/prototypes/board-editor.html` and `schematic-editor.html` | Persistent left Project tree, pane field, right Inspector, terminal dock, focused context, and Board/Schematic visual language. | Both still display legacy `Schematic · Sheet` labels. Neither visualizes Publish Space. |
+| `docs/gui/prototypes/workspace-panes.html` | Recursive nested tiling, focused-pane context, View-menu tree operations, fill-focused-pane classes, and layout presets. | It is the pane law—not a Publish study. It lacks Publish content, scalable navigator states, local Project search, contextual adjacent specialist-editor entry/return, and the approved continuous schematic naming. |
+| `docs/gui/prototypes/title-block-study.html` and `title-block-sizes.html` | Owner-approved title-block compositions, hierarchy, orientations, and scaling study. | They study the block on a page, not blank/template Sheet creation, Viewport definition/instance reuse, SheetSet composition, source navigation, responsiveness, staleness, or release UX. |
+| `docs/gui/prototypes/rendering-study.html` and `text-placement-study.html` | Rendering and typography constraints that Publish output must inherit. | They do not define Publish authority or navigation. |
+| `research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md` | Standards perimeter, anchor/field/formula hypotheses, firm customization, and document-control concerns. | Its `DrawingSheet`, revision-row, release-state, and profile sketches are research only. The claim that each commit batch can seed a revision row conflicts with Product Revision Engine separation and must be removed or narrowed during ratification. |
+| `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md` | Standalone Datum release authority, optional Git adapter, full configuration baseline, immutable releases, and clause-addressable audit requirement. | REV-C01..C08 remain unratified and unimplemented. DOC work must expose integration points without deciding lifecycle mechanics. |
+| This workspace research and owner ledger | All 20 original questions are answered, boundary-answered, or retired; it records scalable Project, Workspace/Design/Publish vocabulary, continuous schematic Design, Viewport definition/instance reuse, SheetSet behavior, and build order. | These dispositions remain research evidence until DOC-C05 owner review and DOC-C06 decision/spec reconciliation. |
+
+### Terminology collision register
+
+| Inherited term | Current collision | Required direction |
+|---|---|---|
+| Workspace | Sometimes means the whole application arrangement and sometimes an editor/domain surface. | Reserve `Workspace` for the overall configurable pane/focus/tool environment. Use editor surface or Design/Publish content for pane targets. |
+| Model Space | Used in decision 020 and older GUI prose for both authority and spatial editors. | Retired Datum vocabulary. Use `Design Space`; retain Model Space only for quoted questions or external precedent. |
+| Paper Space | Used in decision 020 and older GUI prose for publication composition. | Retired Datum vocabulary. Use `Publish Space`; preserve decision 020's filename only as a stable locator. |
+| Sheet | Existing engine type for schematic electrical/page content and proposed type for a physical publication page. | Reserve `Sheet` exclusively for Publish. Replace the schematic page/hierarchy model during a separately specified migration; do not alias both meanings. |
+| Viewport | Renderer/camera rectangles, workspace panes, and proposed paper projection windows all use the word informally. | Product vocabulary uses `Pane` for screen tiling and `ViewportDefinition`/`ViewportInstance` for Publish projections. Low-level render viewport may remain an implementation geometry term when clearly scoped. |
+| Revision | Used for object/model concurrency, Git history, artifact source stamps, document issue, and product release. | Keep technical, Git, engineering-change, baseline, document/package, and transmittal layers distinct under the Product Revision Engine. |
+
+### DOC-C01 conclusion
+
+The landed substrate can host the future system, but the documentation system
+itself does not exist. The next specification work must therefore define an
+authority vocabulary before defining structs: one scalable Project; one
+non-authoritative Workspace; Design Space editor surfaces; one universal
+Publish Space; screen Panes; Publish-only Sheets; and versioned
+ViewportDefinitions with per-Sheet ViewportInstances. It must also define the
+schematic `Sheet*` migration seam, Publish participation in the Product Revision
+Engine, and the missing Claude-owned visual studies without treating any
+research sketch as already-ratified mechanism.
 
 ## External research state
 

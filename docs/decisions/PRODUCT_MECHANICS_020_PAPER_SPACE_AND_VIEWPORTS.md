@@ -208,6 +208,18 @@ and editor surfaces from the Model Space/Paper Space doctrine so that “workspa
 DOC-C01 inventories current code, decisions, research, and GUI prototypes for
 Board, Schematic, Symbol, Footprint, panelization, and documentation surfaces.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C01-CURRENT-STATE-INVENTORY -->
+DOC-C01 is complete at the current-state boundary. The detailed inventory is
+`research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md` under
+“DOC-C01 current-state inventory.” It proves that the shared resolver, typed
+operation substrate, recursive pane Workspace, Design assets, manufacturing
+projections, and visual studies exist, while Publish authority and operations do
+not. It also records the blocking legacy collisions: schematic `Sheet*` and
+`sheet_id` operations versus Publish-only `Sheet`, workspace Pane versus Publish
+Viewport, retired Model/Paper terminology, and technical revision versus issued
+product/document revision. This evidence authorizes DOC-C02 specification only;
+it does not authorize implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C02 -->
 DOC-C02 establishes the architectural vocabulary and authority map: what is a
 workspace or editor surface, what lives in Model Space, what lives in Paper
