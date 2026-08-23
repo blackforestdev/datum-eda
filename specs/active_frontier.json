@@ -4305,7 +4305,7 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "state": "specified",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -4314,6 +4314,23 @@
       "unblocks": [
         "dat-dimension-selection-reentry-kxk"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "workspace-architecture-20260822-codex",
+        "claimed_at": "2026-08-22T18:03:58-07:00",
+        "heartbeat_at": "2026-08-22T18:03:58-07:00",
+        "expires_at": "2026-08-23T02:03:58-07:00",
+        "scope": [
+          "research/documentation-system",
+          "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+          "docs/gui/workspace-and-documentation-specification",
+          "specs/active_frontier.json",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": ".",
+        "head": "3a46df75e5a4cde8a982b7fd93464ad0427d1083"
+      },
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
         "canonical_next_step_id": "DOC-C01",

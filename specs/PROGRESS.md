@@ -100,7 +100,7 @@
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
-   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
    *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Expose operational ownership in canonical next-task output** (`STATE-NEXT-OWNERSHIP`; `dat-next-output-ownership-uqz`).
