@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "180c1724d1f354015c409d4ceeef0bf022068277ffde809f9971be9d38cb7645",
-      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C02 established the documentation vocabulary and authority map."
+      "reviewed_digest": "13913aa72606161c3673f0939276521905157c7f17993bd4818b5bfb88c15b0c",
+      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C03 completed the Publish object and mutation contract."
     },
     {
       "id": "terminal-focus-incident",
@@ -113,8 +113,8 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "c1107d1f9e4b2176fdd5a5562dcdb62b0448c486463bfefba91c4ff5be509376",
-      "review_note": "DOC-C02 reconciled the owner-approved Project, Workspace, Pane, Design, Publish, Sheet, Viewport, projection, and revision terms against the legacy decision, inherited shell, and global research ledger; DOC-C03 now owns the object and mutation model."
+      "reviewed_digest": "3d4c09e3def49877735480ecd9b5ad58b4a6916c75b8af9ac476433eccbc4b90",
+      "review_note": "DOC-C03 reconciled the complete Publish object, operation, reference, resolution, refusal, and Revision Engine integration contract against owner intent, primary CAD sources, the inherited shell, and legacy decision 020; DOC-C04 now owns visual proof."
     },
     {
       "id": "parametric-footprint-editor",
@@ -222,8 +222,8 @@
         "docs/gui/DATUM_RENDERING_BOOK.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "reviewed_digest": "d4e4a5bf1ba39132de602d261c2942989eec8f17458dbfe70eca20cc96c0d4cf",
-      "review_note": "Rendering, text-placement, and title-block studies remain visual/content constraints under the DOC-C02 authority map; they do not create Publish ownership, navigation, composition, or revision behavior by themselves."
+      "reviewed_digest": "9050983dbd8075bceb7bac4d0c8202b5db9a112e37444fdaf9d08f83c6437c5e",
+      "review_note": "Rendering, text-placement, and title-block studies constrain the DOC-C03 Sheet/View/annotation contract but remain incomplete visual evidence until DOC-C04 adds navigation, composition, reuse, responsive, and revision states."
     },
     {
       "id": "prototype-selection",

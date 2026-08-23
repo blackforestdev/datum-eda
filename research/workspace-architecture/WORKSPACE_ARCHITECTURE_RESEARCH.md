@@ -687,6 +687,289 @@ The boundaries are mandatory:
 - Design/Publish are classifications of content and authority. They may coexist
   in any Pane arrangement and never trigger implicit whole-Workspace replacement.
 
+## DOC-C03 Publish object and mutation model
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C03-OBJECT-MUTATION-CONTRACT -->
+
+This contract defines the source objects and behavioral boundaries that later
+implementation must realize. Rust spellings remain implementation choices, but
+an implementation may not collapse identities, persistence classes, or
+operations described here.
+
+### Primary-source mechanics retained and rejected
+
+- Autodesk documents a layout as a physical output composition containing one
+  or more independently positioned/scaled Viewports, title blocks, tables,
+  notes, and dimensions; each Viewport controls source extent, scale, layer
+  visibility, size, location, and locking. Datum retains that compositional
+  separation and independent property model. Datum rejects AutoCAD's
+  double-click edit-through transition because the owner selected the explicit
+  `Open Source in Design` boundary.
+  ([AutoCAD layouts](https://help.autodesk.com/view/ACD/2026/ENU/?guid=ACD_FOUNDATIONS_MAIN12),
+  [layout Viewports](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-2B5D404A-DCAB-4AF6-A5C1-51593B38F519.htm))
+- SOLIDWORKS separates drawing Sheet format/size from model-referenced drawing
+  Views, allows any model's Views on a drawing, makes orientation/display/scale
+  view properties, and provides an explicit context action to open the source
+  model in the displayed position. Datum retains the Sheet/View separation,
+  heterogeneous source references, and explicit source doorway without copying
+  SOLIDWORKS file or window architecture.
+  ([Create a Drawing](https://help.solidworks.com/2026/english/SolidWorks/sldworks/c_create_drawing.htm),
+  [View properties](https://help.solidworks.com/2026/English/SolidWorks/sldworks/HIDD_DVE_NAMED_VIEW.htm),
+  [Open Model in Position](https://help.solidworks.com/2026/english/SolidWorks/sldworks/c_open_part_in_position.htm?format=P&value=))
+- Revit distinguishes applying template properties once from assigning a live
+  template link. Datum uses the same necessary semantic distinction through
+  `New Viewport`, `Use Existing`, explicit per-property instance overrides,
+  `Edit Saved Viewport`, and `Make Unique`, expressed through Datum identity and
+  journal semantics rather than Revit objects.
+  ([Apply a View Template](https://help.autodesk.com/cloudhelp/2026/ENU/Revit-Customize/files/GUID-DA062846-32C9-4FFF-9BC1-BBB548868ACA.htm))
+- KiCad's separate worksheet description confirms that page-frame/title-block
+  layout benefits from a reusable asset, but Datum rejects a standalone page-
+  layout application and a format that cannot compose arbitrary Design sources.
+  ([KiCad Drawing Sheet Editor](https://docs.kicad.org/6.0/en/pl_editor/pl_editor.pdf))
+
+### Shared identity and value rules
+
+Every Publish source object has a stable `ObjectId`, an `ObjectRevision`, a
+human-facing name where applicable, and deterministic JSON-shard persistence.
+Every authored mutation uses a typed operation through the engine-owned native
+write facade and the one `commit()`/journal path. References use stable IDs and
+typed target roles, never filenames, display labels, tree positions, or rendered
+pixel coordinates. A Project may contain zero or many of every Publish object.
+
+A single project-owned `PublishCatalog` indexes the Project's SheetSets, Sheets,
+ViewportDefinitions, reusable title-block/template assets, and other Publish
+objects for deterministic resolution and Project Navigator discovery. It is an
+index/root of identities, not a mandatory product hierarchy and not a global
+singleton across Projects. Flat and deeply organized Projects use the same
+catalog mechanism.
+
+Physical coordinates use signed integer nanometers in a Sheet-local Cartesian
+space with origin at the lower-left media corner, +X right, and +Y up. UI and
+output renderers transform that authority into their display coordinate systems.
+Standards profiles may choose border-zone labeling origins independently; a
+zone-grid convention never changes geometry coordinates. Angles use the
+project-wide integer angular convention. Exact scales are reduced positive
+rational numbers; floating-point scale is never persisted.
+
+### `Sheet`
+
+A Sheet owns:
+
+- stable identity, name, and object revision;
+- `PageMedia`: standard family/size identifier or Custom width/height,
+  orientation, physical units for UI entry, margins/printable guidance, and a
+  drafting-standard profile reference;
+- an explicit ordered `SheetItem` list controlling composition and render order;
+- optional template-instantiation provenance that never restricts later edits;
+- authored Sheet metadata and field-binding overrides;
+- no release-state flag, baseline snapshot, or mutable revision label of its own.
+
+`SheetItem` is a typed reference, not an unstructured drawing blob:
+
+```text
+ViewportInstance | ProjectedTable | PublishAnnotation |
+TitleBlockInstance | PublishGraphic | ImageInstance
+```
+
+Images are governed assets with content hash, media type, intrinsic dimensions,
+egress classification, and deterministic embedding/reference policy. Arbitrary
+opaque attachments are not Sheet items. A Sheet can be blank, mix supported item
+types freely, and contain zero or many Viewports. Media overflow is visible and
+validated; it is not silently cropped or rescaled.
+
+### `ViewportDefinition` and `ViewportInstance`
+
+A `ViewportDefinition` owns reusable view meaning:
+
+- typed `ViewportSourceRef` with stable source identity and source-view kind;
+- projection/orientation and source coordinate system;
+- crop/extent or a declared whole-source extent;
+- `ScaleMode`: exact rational scale or deterministic fit-to-frame policy with
+  explicit padding and rounding;
+- layer/category/variant/configuration visibility selectors;
+- render style/intent, color/monochrome policy, and projection quality;
+- optional clip geometry;
+- the reusable associative Publish-annotation graph;
+- a definition name and object revision.
+
+`ViewportSourceRef` is a closed, extensible enum. Initial source families are
+Schematic Design context, Board and selected board side/layer presentation,
+Symbol, Footprint, PanelProjection, and generated Artifact view. Future 3D,
+assembly, harness, simulation, and other source kinds extend the enum only when
+their owning authority and renderer exist. A source reference may carry a typed
+subview selector and variant/configuration selector, but never an arbitrary
+query string or path.
+
+A `ViewportInstance` owns one Sheet placement:
+
+- stable identity, owning Sheet ID, and referenced ViewportDefinition ID;
+- frame position and size, clip/frame presentation, z-order through the Sheet
+  item list, label placement/text override, and lock state;
+- explicit optional per-property overrides for projection, crop, scale,
+  visibility, and render style;
+- instance-local Publish annotations and explicit visibility/placement
+  overrides for reusable definition annotations.
+
+Property inheritance is deterministic: instance override, else current
+definition value. Ordinary editing of a placed Viewport changes the instance or
+adds an explicit override; it never silently edits the shared definition.
+`Edit Saved Viewport` enters definition-authoring context, previews every linked
+consumer and its overrides, then changes the definition through typed ops.
+`Make Unique` materializes the instance's effective properties and reusable
+annotation graph into a new named definition, points the instance to it, clears
+materialized overrides, preserves stable Design feature associations, assigns
+the next available numbered name, and offers inline rename. `Rename` changes a
+label only and never changes identity, linkage, or definition revision by itself.
+
+Resize changes only the frame. Scale changes only content scale. Move changes
+only Sheet placement. Fit-to-frame is an authored scale mode whose resolved
+scale changes deterministically when frame or source extent changes. A Viewport
+may be locked against accidental presentation edits; locking never freezes its
+source or constitutes release.
+
+### Projected tables
+
+A `ProjectedTable` owns stable identity, Sheet placement/frame, typed source
+references, a closed query/projection kind, column definitions, deterministic
+filter/sort/group policy, style, pagination/overflow behavior, and optional
+row-to-feature cross-references. BOM, drill/hole, layer stack, net/pin, Sheet
+index, and drawing-register tables are configurations of this shared object.
+
+Table definitions and layout are authored Publish source. Resolved rows/cells
+are derived at render/export time from an explicit working configuration or
+baseline resolver and never become a shadow database. Free-form tabular content
+uses an ordinary authored table variant rather than falsifying a projected
+source. Values that cannot resolve render an explicit diagnostic marker and
+block controlled output according to profile policy; they never become blank
+silently.
+
+### Publish annotations, graphics, and title blocks
+
+Publish annotations are typed as static `Note`, associative/reference
+`Dimension`, `Leader`, `Balloon`, datum/tolerance symbol, `Callout`, and
+`ViewReference`. Each owns stable identity, geometry/style, paper-scale text and
+arrow sizing, and an explicit scope:
+
+- Sheet-local;
+- ViewportDefinition reusable graph; or
+- ViewportInstance-local.
+
+An associative `PublishAnchorRef` contains the ViewportInstance, stable Design
+object/feature identity, typed geometric role, and deterministic fallback
+behavior. Loss or ambiguity of the target creates a stale/broken-reference
+finding; Datum never fuzzy-retargets or converts it to static geometry silently.
+Publish dimensions are reference-only. Any driving constraint requires a Design
+editor and typed Design operation.
+
+`TitleBlockDefinition` is a reusable governed Publish asset containing anchored
+graphics, field slots/bindings, embedded governed images, page-scope rules, and
+standards/profile metadata. `TitleBlockInstance` places it on a Sheet and owns
+explicit permitted overrides. Resolved field values are projections from
+Project, Sheet, SheetSet, Product Revision Engine, organization profile, and
+captured release facts. Revision/status/approval values are never editable
+claims and never inferred directly from commit count.
+
+### `SheetSet`, forks, and templates
+
+A `SheetSet` owns stable identity, name, ordered `SheetUse` references,
+package-level metadata/bindings, intended document/package role, and Product
+Revision Engine integration identity. A `SheetUse` may carry package-local sheet
+number/display-label data but does not own the Sheet body. The same Sheet may be
+referenced by multiple SheetSets.
+
+`Fork Sheet` creates a new Sheet identity by copying the current authored Sheet
+composition. New ViewportInstances initially reference the same definitions;
+instance-local state is copied; no Design source is copied. Subsequent
+definition reuse remains linked until `Make Unique`. Forking never claims that
+the new Sheet is released or redaction-safe.
+
+A `PublishTemplate` is a reusable graph of SheetSet/Sheet/item seeds, title
+blocks, Viewport definitions, bindings, graphics, and defaults. Instantiation is
+one explicit atomic operation batch that creates normal editable project-owned
+objects with template provenance. Later project edits do not mutate the template;
+`Save as Template` is a separate reviewed mutation. Templates may accelerate but
+never restrict heterogeneous composition.
+
+### Required typed operation families
+
+The exact public verb catalog is specified later, but the engine operation model
+must cover these semantic families without generic JSON patch operations:
+
+- Sheet: create/delete/rename, set media/profile/metadata, insert/remove/reorder
+  item, fork, and set field override;
+- Viewport definition: create/delete/rename, set source/projection/crop/scale/
+  visibility/style/clip, add/set/remove reusable annotation;
+- Viewport instance: place/remove/move/resize/lock, set/clear each permitted
+  override, add/set/remove local annotation, use existing definition, make
+  unique, and retarget only through an explicit validated operation;
+- projected table: create/delete/move/resize and set source/query/columns/filter/
+  sort/group/style/overflow;
+- annotation/graphic/image/title block: create/delete/transform/set style,
+  set/rebind/clear associative anchor, set binding, embed/reference governed
+  asset, and set/clear permitted instance override;
+- SheetSet/template: create/delete/rename, add/remove/reorder SheetUse,
+  fork Sheet, instantiate template, and explicitly save/update a template.
+- catalog: register/unregister a Publish object and update optional authored
+  organizational relationships without making folders or categories semantic.
+
+Every update guards the expected object revision. Multi-object semantics such
+as `Make Unique`, `Fork Sheet`, template instantiation, and Sheet deletion with
+references are atomic batches with complete inverse data for undo. Deleting a
+referenced definition, Sheet, Design source, or governed image refuses until the
+caller resolves, retargets, or explicitly removes dependents through typed ops.
+
+`Open Source in Design`, Pane creation/placement, selection, hover, camera pan/
+zoom, fit-preview, and transient drag geometry are GUI/workspace actions, not
+Publish operations. A completed drag emits the corresponding authored operation.
+
+### Resolution, staleness, release, and refusal boundary
+
+Publish resolution always receives an explicit `ConfigurationRef` from the
+Product Revision Engine:
+
+- a working configuration for ordinary authoring/preview; or
+- an immutable approved baseline for reproduction of released output.
+
+Sheet, Viewport, and SheetSet objects do not implement a competing Draft/
+Released state machine and do not pin a lone `model_revision`. The Revision
+Engine owns baseline composition, affected-object analysis, pending change,
+allocation, approval, release, supersession, withdrawal, and regeneration.
+Publish exposes exact object dependencies, deterministic resolution, staleness,
+and broken-reference findings so that engine can make those decisions.
+
+Minimum refusal/finding cases include missing or wrong-kind source, deleted or
+ambiguous stable feature, cyclic definition/template reference, non-positive or
+unrepresentable scale, invalid crop/clip, media overflow, unsupported render
+intent, unresolved mandatory field, stale generated artifact, invalid SheetSet
+reference/order, attempted Publish-to-Design write-through, mutation against an
+immutable baseline, and output whose configured checks/egress policy fail.
+Warnings and refusals are typed and address the responsible object/action; they
+are not console prose as authority.
+
+Visibility, crop, or omission is not verified redaction. Customer/security
+redaction requires the separate allowlisted export and evidence contract tracked
+by `dat-publish-redaction-contract-wzs`.
+
+### Bounded first implementation proof after Revision acceptance
+
+The first Publish proof is deliberately narrow but uses the general substrate:
+
+1. one project-owned Publish root/catalog and working ConfigurationRef;
+2. one blank or template-seeded Sheet with one supported ISO/ANSI media choice;
+3. one Schematic-source ViewportDefinition and one ViewportInstance;
+4. exact move/frame-resize/scale separation, source crop, lock, and
+   `Open Source in Design` navigation;
+5. one title-block instance with Project/Sheet/revision-engine field projections;
+6. one static Note and one associative reference Dimension;
+7. one SheetSet containing the Sheet;
+8. deterministic on-screen and PDF output plus a revision-baseline reproduction
+   witness.
+
+This proof does not authorize fabrication/assembly templates, arbitrary 3D,
+redaction, PS/EPS/plotter breadth, or all projected tables. Those extend the
+same accepted objects after the schematic vertical slice proves the authority,
+mutation, render, and revision seams.
+
 ## External research state
 
 Primary-source review has begun for AutoCAD layouts/model and paper space,

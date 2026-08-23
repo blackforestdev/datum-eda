@@ -243,6 +243,19 @@ DOC-C03 specifies the object and mutation model for Sheet, Viewport, projected
 Table, annotation, and SheetSet, including live versus released revision
 resolution and the edit-through-viewport boundary.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C03-OBJECT-MUTATION-CONTRACT -->
+DOC-C03 is complete as an owner-reviewable planning contract in
+`research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md`. It defines
+PublishCatalog, Sheet/PageMedia/SheetItem, ViewportDefinition/Instance,
+ProjectedTable, PublishAnnotation/anchors, title-block definition/instance,
+SheetSet/SheetUse, forks, templates, stable references, exact coordinate/scale
+rules, typed operation families, atomicity, staleness, refusal states, and the
+bounded schematic proof. Publish resolution consumes a Product Revision Engine
+working configuration or immutable baseline; it does not own a rival release
+state or pin one `model_revision`. `Open Source in Design` remains non-mutating
+navigation and no Viewport permits Design write-through. This evidence supplies
+the semantic brief for DOC-C04 visual studies and does not authorize code.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C04 -->
 DOC-C04 creates or updates HTML visual studies for navigation, composition,
 viewport manipulation, Model/Paper transitions, responsive states, and release
