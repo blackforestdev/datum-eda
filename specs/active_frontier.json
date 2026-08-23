@@ -4305,7 +4305,7 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -4315,7 +4315,19 @@
         "dat-dimension-selection-reentry-kxk",
         "dat-distributed-collaboration-architecture-lt1"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-doc-c06-20260823",
+        "claimed_at": "2026-08-23T18:59:30Z",
+        "heartbeat_at": "2026-08-23T18:59:30Z",
+        "expires_at": "2026-08-24T02:59:30Z",
+        "scope": [
+          "DOC-C06 documentation-system specification and governance reconciliation"
+        ],
+        "worktree": "main:/home/bfadmin/Documents/datum-eda",
+        "head": "104f0f69a677bcd2f838b6ee06875b5783fca440"
+      },
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
         "canonical_next_step_id": "DOC-C06",
