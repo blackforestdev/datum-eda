@@ -50,7 +50,7 @@ Status meanings:
 | 7 | Is Paper Space strictly a publication/composition surface, with all design editing requiring navigation back to Model Space? | **Answered in principle** | Yes. Authoritative design work occurs in Design Space; Publish Space is how project information is composed, controlled, and published. |
 | 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Answered** | A viewport remains a Publish Space projection and annotation target; it never becomes an edit-through aperture into authoritative design objects. Its local right-click menu exposes `Open Source in Design`, following the SolidWorks drawing-to-part/assembly pattern. Double-click is deliberately unassigned rather than treated as an implicit second doorway. Whether the Design editor opens adjacent or retargets a pane remains visual/usability study rather than authority semantics. |
 | 9 | Should a viewport permit direct manipulation of projected model objects while remaining in Paper Space, or only manipulation of its frame, crop, scale, visibility, dimensions, and paper annotations? | **Answered in principle** | While remaining in Publish Space, manipulation belongs to viewport presentation and publish-owned content, not projected design objects. |
-| 10 | Should model-space annotations and paper-space annotations be separate classes? | **Partial** | Design annotations and Publish annotations have distinct authority. Publish reuse centers on a saved/named Viewport composition rather than globally sharing loose annotations. When adding a viewport to a Sheet, the user may create a clean projection or choose an existing named viewport such as `board_XYZ_Viewport_01`, which carries its presentation and associated parametric annotations. Whether edits to a placed reuse instance stay local or update the saved viewport remains follow-up 10a. |
+| 10 | Should model-space annotations and paper-space annotations be separate classes? | **Answered** | Design annotations and Publish annotations have distinct authority. Publish reuse centers on a versioned named `ViewportDefinition` and per-Sheet `ViewportInstance`, not globally shared loose annotations. `New Viewport` creates a clean unique definition; `Use Existing` creates a linked instance such as `board_XYZ_Viewport_01`; ordinary Sheet edits remain instance-local; `Edit Saved Viewport` explicitly changes the shared definition; and `Make Unique` severs only the reuse link while preserving parametric association to Design geometry. Release pinning remains questions 15/16. |
 | 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Partial** | Documentation dimensions belong to Publish Space. Design constraints/design-intent dimensions and the existing board-dimension model remain unresolved. |
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
@@ -177,14 +177,30 @@ existing path may select a composition such as `board_XYZ_Viewport_01` and
 bring forward its source reference, crop, orientation, scale, visibility,
 presentation settings, and associated parametric annotations. This makes the
 Viewport composition—not an unscoped global annotation collection—the unit of
-intentional Publish reuse. Exact terminology and the definition/instance data
-model remain subject to research and specification.
+intentional Publish reuse.
 
-Reusing an existing Viewport must not silently molest a previously composed or
-published drawing. Follow-up 10a must decide whether edits to a placed instance
-are local by default, update the saved Viewport definition, or require an
-explicit promotion/update action. Revision freezing remains questions 15 and
-16 rather than being inferred here.
+The approved parametric model has three layers:
+
+1. Design source geometry and stable feature identities.
+2. A versioned named `ViewportDefinition` owning its source selector,
+   projection/crop/scale/visibility/render properties, and reusable associative
+   annotation graph.
+3. A per-Sheet `ViewportInstance` owning placement, frame, label placement,
+   permitted local presentation overrides, and a reference to the definition.
+
+`New Viewport` creates a clean unique definition and instance. `Use Existing`
+creates a linked instance of the chosen named definition. Ordinary Sheet edits
+remain instance-local and cannot silently change the shared definition;
+`Edit Saved Viewport` is the explicit shared-change doorway and must expose the
+affected consumers. `Make Unique` clones the definition for this placement and
+severs future definition updates while preserving its parametric associations
+to Design geometry. Thus the design-association link and the Publish-reuse link
+remain independently controllable.
+
+Every definition and instance has stable identity and revision, and every
+change remains a typed journaled operation. Draft-versus-released resolution,
+staleness, and revision pinning remain questions 15 and 16 rather than being
+inferred here.
 
 Authoritative source editing uses an explicit semantic action, `Open Source in
 Design`. The action navigates to the viewport’s referenced Schematic, PCB,
@@ -204,6 +220,14 @@ symbols, geometric tolerances, and other annotations:
 - [Open Model in Position](https://help.solidworks.com/2026/english/SolidWorks/sldworks/c_open_part_in_position.htm)
 - [Drawings Overview](https://help.solidworks.com/2026/English/SolidWorks/sldworks/c_drawings_overview.htm)
 - [Inserting Datum Feature Symbols](https://help.solidworks.com/2026/english/swtutorialonline/t_inserting_datum_feature_symbol.htm)
+- [SolidWorks Predefined Views](https://help.solidworks.com/2026/English/SolidWorks/sldworks/c_predefined_views.htm)
+- [Revit: Apply a View Template](https://help.autodesk.com/cloudhelp/2026/ENU/Revit-Customize/files/GUID-DA062846-32C9-4FFF-9BC1-BBB548868ACA.htm)
+
+The Revit reference is useful only for its explicit one-time-versus-linked
+reuse distinction: applying template properties makes an independent result,
+while assigning the template preserves a link. Datum uses its own
+definition/instance and journal model rather than inheriting Revit’s object or
+window architecture.
 
 ### Designer-defined organization
 
