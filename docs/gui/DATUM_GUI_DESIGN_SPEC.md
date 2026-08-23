@@ -374,6 +374,21 @@ announcement path is reachable; duration preference persistence and the required
 layout/accessibility visual matrix are honestly proved; and unsupported prompt or
 history behavior is corrected or explicitly narrowed in the contract.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06C-STANDING-ACCEPTANCE-RAIL -->
+Commit `cc9ed27` puts protocol/application state, producer routing, renderer
+behavior, and exact Console goldens on the guarded GUI conformance rail. The
+golden matrix covers focused, maximized, Terminal-focused/editor-unfocused,
+terminal-open tool-prompt, narrow refusal, expanded history, and 1.0/1.25/1.5/2.0
+UI scales at zero differing pixels. Duration persists atomically as machine-local
+UI preference state and never enters project or journal authority. Failed
+authoring/production command admission is the real assertive-announcement path
+and can no longer emit a false success echo. Phase 1 Select is honestly a routine
+echo: production tool-prompt publication stays forbidden until a real multi-step
+tool supplies typed live key hints. The guarded rail passes 17 state/routing/
+accessibility/preference tests, six render tests, and ten exact visual renders;
+the aggregate then stops solely at the separately governed CONSOLE-I06D shell
+parity owner boundary. `dat-console-acceptance-rail-gaps-8o7` is closed.
+
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D -->
 <!-- OWNER:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D:CONSOLE-I06D -->
 CONSOLE-I06D records the owner's disposition of the running-app shell capture.

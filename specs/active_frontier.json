@@ -3775,36 +3775,17 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "console-recovery-20260822-codex",
-        "claimed_at": "2026-08-22T15:44:03-07:00",
-        "heartbeat_at": "2026-08-22T16:22:19-07:00",
-        "expires_at": "2026-08-23T00:22:19-07:00",
-        "scope": [
-          "crates/gui-protocol/console-feedback",
-          "crates/gui-app/console-routing",
-          "crates/gui-render/console-surface",
-          "scripts/gui-console-conformance",
-          "docs/gui/console-conformance",
-          "specs/source_module_size_manifest.json",
-          "specs/active_frontier.json",
-          ".beads/issues.jsonl"
-        ],
-        "worktree": ".",
-        "head": "005f7519eee6f827741dbc9c9d0f5314aaedbae9"
-      },
+      "claim": null,
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I06C",
+        "canonical_next_step_id": "CONSOLE-I06D",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3981,7 +3962,7 @@
           {
             "id": "CONSOLE-I06C",
             "kind": "execution",
-            "status": "pending",
+            "status": "complete",
             "action": "Make Console goldens, state/routing tests, critical announcements, preference persistence, and the required visual/accessibility matrix part of the standing guarded acceptance rail.",
             "depends_on": [
               "CONSOLE-I06B"
@@ -3992,7 +3973,17 @@
                 "marker": "CONSOLE-I06C"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "cc9ed27"
+              },
+              {
+                "kind": "document",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06C-STANDING-ACCEPTANCE-RAIL"
+              }
+            ]
           },
           {
             "id": "CONSOLE-I06D",
