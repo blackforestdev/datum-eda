@@ -380,6 +380,56 @@ status accounting, and audit requirements.
 No answer to questions 15/16, title-block revision behavior, or release pinning
 may be inferred until this track supplies an owner-approved authority model.
 
+### Question 18 evidence packet: navigation layers
+
+The original tabs-versus-sidebar-versus-persona wording conflates distinct
+navigation scopes. Question 2 already requires heterogeneous simultaneous
+panes, so a global `Design | Publish` application mode that replaces the central
+surface would contradict an approved invariant: one pane may need to show a
+Design editor while another shows a Publish Sheet or reference surface.
+
+Internal authority currently supports these separate roles:
+
+- the persistent, collapsible Project/Structure navigator discovers the full
+  scalable project rather than only currently opened content;
+- each leaf in the ratified recursive pane tree owns one focused
+  `(document, view)` projection and a header that identifies that content;
+- pane split, retarget, close, focus, zoom, and presets are workspace consumer
+  state rather than project hierarchy or Design authority;
+- the GUI product spec requires document tabs **or** a document switcher, so a
+  global flat tab strip is not already ratified;
+- command-palette and keyboard focus/history navigation can optimize repeat
+  access without creating another persistent hierarchy.
+
+External primary-source precedents reinforce the separation rather than one
+universal control:
+
+- [VS Code editor groups](https://code.visualstudio.com/docs/editing/userinterface)
+  combine Explorer discovery, group-local tabs, recent-history switching,
+  keyboard group focus, and optional floating windows. Tabs represent open
+  working items, not the full project hierarchy.
+- [SOLIDWORKS document windows](https://help.solidworks.com/2021/english/Solidworks/sldworks/c_document_windows.htm)
+  combine a left manager tree with multiple independently viewable documents
+  and multiple views of one document. The tree and document/window navigation
+  have different ownership.
+- [Blender workspaces](https://docs.blender.org/manual/en/latest/interface/window_system/workspaces.html)
+  are named task-oriented arrangements of editor Areas. This supports Datum
+  named layout presets, but not treating Design and Publish authority as
+  mutually exclusive global personas.
+- [AutoCAD Model/Layout tabs](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-DE4888EE-F07D-40D7-94AB-0AD9A1741153.htm)
+  provide a direct space/layout switch, but copy poorly into Datum because a
+  scalable Project can contain many Design contexts, SheetSets, Sheets, and
+  simultaneous heterogeneous panes.
+
+The evidence-backed candidate is therefore a layered hybrid with non-overlapping
+semantics: Project Navigator for complete structure; pane-local identity and
+working-set switching for open content; a fast global switcher for keyboard
+recall/search; and named workspace layouts for task arrangements. `Design` and
+`Publish` classify content/authority and may filter or scope navigation, but do
+not become an application-wide mode that evicts other panes. Exact tab presence,
+location, overflow, compact states, and pointer/keyboard choreography remain for
+Claude's comparative visual study and owner disposition.
+
 ## Internal evidence identified for DOC-C01
 
 - `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md` already
