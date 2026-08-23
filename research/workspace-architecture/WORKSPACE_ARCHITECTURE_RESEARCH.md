@@ -40,7 +40,7 @@ Status meanings:
 | # | Original question | Status | Current owner intent and unresolved portion |
 |---|---|---|---|
 | 1 | Is a Datum “workspace” a top-level professional activity—such as Schematic, Board, Library, and Documentation—or is the entire project one workspace containing switchable editor surfaces? | **Answered in principle** | The Project is the scalable overarching design authority and organizational context. It may contain one or many schematic Model Spaces, boards, products, variants, assemblies, shared assets, documentation/release packages, and external design references. Datum does not impose one-PCB or one-product walls. Schematic, PCB, Library, Documentation, and related capabilities are surfaces within that project context rather than mandatory isolated project silos. Final UI terminology and navigation presentation remain question 18, not a reopening of this product decision. |
-| 2 | Should multiple editor types remain simultaneously visible in panes—for example Board beside Schematic—or does selecting a workspace replace the central editing surface? | **Open** | Existing code/prototypes permit Board and Schematic panes, but owner intent has not yet decided the general product rule. |
+| 2 | Should multiple editor types remain simultaneously visible in panes—for example Board beside Schematic—or does selecting a workspace replace the central editing surface? | **Answered in principle** | Board, Schematic, and future editor/model spaces are distinct surfaces that may remain simultaneously visible in independently configurable panes. Users may split, tile, retarget, resize, maximize, or temporarily fullscreen panes according to preference and task speed; selecting one editor does not require replacing the entire central surface. Pane composition is workspace/session state, never design authority. The running Datum split shown in the owner’s 2026-08-22 capture and `docs/gui/prototypes/workspace-panes.html` are existing visual evidence. |
 | 3 | Are Symbol Editor and Footprint Editor independent workspaces, or contextual editors entered from the Library/Schematic/Board workflow? | **Open** | No owner disposition yet. |
 | 4 | Does “Model Space” include every authoritative design asset—schematics, boards, symbols, footprints, 3D models, panelization, and BOM data—or should each domain have its own model-space instance? | **Partial** | Each design domain may have its own continuous working plane; Schematic, PCB, and Footprint were named examples. Exact domain vocabulary, instance cardinality, and whether BOM/3D/panelization are Model Spaces or projections remain open. |
 | 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal Paper Space/documentation mechanism. Any supported model or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. |
@@ -56,11 +56,23 @@ Status meanings:
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Open** | No owner disposition yet. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Open** | No owner disposition yet. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Open** | No owner disposition yet. |
-| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Open** | Requires owner discussion and Claude’s comparative visual study. |
-| 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Open** | No owner disposition yet. |
-| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Open** | No owner disposition yet. |
+| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Open** | Question 2 settles tiled/split/maximized editor coexistence; the control and navigation model for choosing content still requires owner discussion and Claude’s comparative visual study. |
+| 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Open** | Layouts are user-reconfigurable under question 2; persistence scope and ownership are not yet decided. |
+| 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Open** | Pane fullscreen/maximize inside the shell is established under question 2; detachable native windows remain undecided. |
 
 ## Confirmed intent outside the original 20
+
+### Tiled editor/model spaces
+
+Board, Schematic, and future editor/model spaces are distinct surfaces that may
+be visible at the same time inside one configurable pane tree. The user can
+split, tile, retarget, resize, maximize, or temporarily fullscreen a pane for
+speed, much like an expert tiling-window workflow. The focused pane owns its
+relevant tools and contextual inspection. This composition is workspace/session
+state and does not create, copy, or partition model authority. The current
+running Board/Schematic split and `docs/gui/prototypes/workspace-panes.html`
+already demonstrate the core disposition; later visual research must extend it
+to all intended editor and Paper Space surfaces.
 
 ### Continuous schematic Model Space
 
