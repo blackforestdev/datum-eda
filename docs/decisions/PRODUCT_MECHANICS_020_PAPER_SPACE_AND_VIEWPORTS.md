@@ -269,9 +269,10 @@ Publish panes, blank/template Sheet creation, Viewport manipulation and reuse,
 annotation/source navigation, SheetSet sharing and forks, working/released
 context, and responsive/accessibility states. The study preserves the approved
 single-window recursive-pane shell, Direction-B title block, output-only Datum
-Console, and Design/Publish authority boundary. Its OR-1..OR-8 candidates and
-two pane-title wording candidates remain explicitly unratified pending DOC-C05
-owner disposition. The prototype is registered as a source in exactly the
+Console, and Design/Publish authority boundary. OR-1 has received owner
+disposition but awaits DOC-C06 ratification; OR-2..OR-8 and two pane-title
+wording candidates remain explicitly unratified pending DOC-C05 owner
+disposition. The prototype is registered as a source in exactly the
 `prototype-rendering-and-publish` evidence route; this evidence neither
 authorizes implementation nor defines Product Revision Engine mechanics.
 
@@ -279,6 +280,17 @@ authorizes implementation nor defines Product Revision Engine mechanics.
 <!-- OWNER:DOC-SYSTEM-SPEC:DOC-C05:DOC-C05 -->
 DOC-C05 records the owner's choices for vocabulary, workspace topology,
 viewport behavior, v1 document type, release semantics, and visual disposition.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-1-OWNER-APPROVED -->
+On 2026-08-23 the owner approved Claude's Frame A sibling-group structure with
+the naming and identity clarification recommended during review: `Sheet Sets`,
+`All Sheets`, and `Saved Viewports` are sibling groups beneath Publish. `All
+Sheets` is the authoritative project-wide Sheet collection. A Sheet may also
+appear beneath each Sheet Set that references it, but those appearances must be
+visually distinguished as references rather than independent or authoritative
+copies. Creation and search remain on the relevant local node menu. This is a
+DOC-C05 owner disposition for later DOC-C06 ratification, not implementation
+authorization.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,

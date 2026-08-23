@@ -4434,17 +4434,8 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Review one item at a time in the listed order. Begin with OR-1 and reply `OR-1: approve` or `OR-1: revise — <requested change>`; later items remain open until presented.",
+              "response_format": "Review one item at a time in the listed order. OR-1 is approved. Continue with OR-2 and reply `OR-2: approve` or `OR-2: revise — <requested change>`; later items remain open until presented.",
               "requests": [
-                {
-                  "id": "OR-1",
-                  "question": "Approve or revise Frame A's Project Navigator hierarchy: Sheet Sets, Sheets, and Saved Viewports as sibling groups under Publish, with creation and search on the local node menu?",
-                  "recommended_response": "Approve the sibling-group hierarchy and local creation/search placement.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
                 {
                   "id": "OR-2",
                   "question": "Approve or revise Frame C's blank-versus-template Sheet creation choreography: choose media, then create an empty page or a Direction-B seeded page?",
