@@ -41,7 +41,7 @@ Status meanings:
 |---|---|---|---|
 | 1 | Is a Datum “workspace” a top-level professional activity—such as Schematic, Board, Library, and Documentation—or is the entire project one workspace containing switchable editor surfaces? | **Answered in principle** | The Project is the scalable overarching design authority and organizational context. It may contain one or many schematic Model Spaces, boards, products, variants, assemblies, shared assets, documentation/release packages, and external design references. Datum does not impose one-PCB or one-product walls. Schematic, PCB, Library, Documentation, and related capabilities are surfaces within that project context rather than mandatory isolated project silos. Final UI terminology and navigation presentation remain question 18, not a reopening of this product decision. |
 | 2 | Should multiple editor types remain simultaneously visible in panes—for example Board beside Schematic—or does selecting a workspace replace the central editing surface? | **Answered in principle** | Board, Schematic, and future editor/model spaces are distinct surfaces that may remain simultaneously visible in independently configurable panes. Users may split, tile, retarget, resize, maximize, or temporarily fullscreen panes according to preference and task speed; selecting one editor does not require replacing the entire central surface. Pane composition is workspace/session state, never design authority. The running Datum split shown in the owner’s 2026-08-22 capture and `docs/gui/prototypes/workspace-panes.html` are existing visual evidence. |
-| 3 | Are Symbol Editor and Footprint Editor independent workspaces, or contextual editors entered from the Library/Schematic/Board workflow? | **Answered in principle** | Symbol and Footprint are separate specialist editor surfaces because their authoring contracts are substantial, but access is local and contextual: invoke the relevant editor from the selected symbol/component/package/footprint through the local menu and open it in a nearby pane for a fast round trip. They must also remain directly openable for library work. Exact pane-opening/return choreography is follow-up 3a and visual-study work, not a reason to collapse them into the parent editor. |
+| 3 | Are Symbol Editor and Footprint Editor independent workspaces, or contextual editors entered from the Library/Schematic/Board workflow? | **Answered** | Symbol and Footprint are separate specialist editor surfaces because their authoring contracts are substantial, but access is local and contextual: invoke the relevant editor from the selected symbol/component/package/footprint through the local menu. By default Datum opens a new adjacent pane containing the relevant specialist editor and preserves the invoking editor beside it. A single keystroke closes that transient pane and restores the preceding pane layout. They remain directly openable for library work. This default choreography does not prevent later user-configurable placement. |
 | 4 | Does “Model Space” include every authoritative design asset—schematics, boards, symbols, footprints, 3D models, panelization, and BOM data—or should each domain have its own model-space instance? | **Partial** | Each design domain may have its own continuous working plane; Schematic, PCB, and Footprint were named examples. Exact domain vocabulary, instance cardinality, and whether BOM/3D/panelization are Model Spaces or projections remain open. |
 | 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal Paper Space/documentation mechanism. Any supported model or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. |
 | 6 | Existing terminology collides: EDA calls a schematic page a “sheet,” while decision 020 calls a physical publication page a `Sheet`. Would the owner accept distinct terms such as `SchematicPage` and `DrawingSheet`? | **Open** | The collision is confirmed, but final names are not selected. An effectively continuous schematic plane may remove the design-page concept rather than merely rename it. |
@@ -91,12 +91,19 @@ dimensions for physical accuracy. Symbol authoring has similarly specialized
 electrical and graphical requirements. These are target research/specification
 needs, not claims that the mechanisms already exist.
 
-Follow-up 3a must determine the exact local pane transition—split, retarget,
-sidecar, temporary maximize, return behavior, and unsaved/committed context—and
-Claude’s visual study must demonstrate it. Asset ownership (editing an
-authoritative shared library item versus a project-local derivative) is a
-separate library-authority question and must not be inferred from “local” UI
-access.
+The default contextual transition opens a new adjacent pane containing the
+Symbol or Footprint editor, leaving the invoking editor visible. A single
+keystroke closes the transient pane and restores the preceding pane layout, so
+entry and exit are both fast. The specialist content lives in its own editor
+type within that pane; it is not an editing mode imposed on the invoking
+Schematic or Board surface. This is the initial default, not a permanent bar on
+user-configurable placement or temporary maximize behavior. Claude’s visual
+study must demonstrate the entry, active-editor, dismissal, and restored-layout
+states.
+
+Asset ownership (editing an authoritative shared library item versus a
+project-local derivative) and the save/commit boundary are separate
+library-authority questions and must not be inferred from “local” UI access.
 
 ### Continuous schematic Model Space
 
