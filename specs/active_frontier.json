@@ -4434,17 +4434,8 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Review one genuinely unresolved visual item at a time. OR-1, OR-2, OR-3, OR-4, and OR-8 are settled. Continue with OR-5 and reply `OR-5: approve` or `OR-5: revise — <requested visual change>`; later items remain open until presented.",
+              "response_format": "Review one genuinely unresolved visual item at a time. OR-1, OR-2, OR-3, OR-4, OR-5, and OR-8 are settled. Continue with OR-6 and reply `OR-6: approve` or `OR-6: revise — <requested visual change>`; later items remain open until presented.",
               "requests": [
-                {
-                  "id": "OR-5",
-                  "question": "SheetSet sharing, Fork Sheet, and Make Unique mechanics are already settled. Approve or revise only Frame F's package-card and selective-fork visual explanation?",
-                  "recommended_response": "Approve the package-card and selective-fork presentation.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
                 {
                   "id": "OR-6",
                   "question": "Release immutability and successor-change authority are already settled. Approve or revise only Frame G's quiet-working, released-baseline, and affected-successor status presentation, without defining Revision Engine mechanics?",

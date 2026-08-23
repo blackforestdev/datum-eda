@@ -283,15 +283,14 @@ DOC-C05 records the owner's choices for vocabulary, workspace topology,
 viewport behavior, v1 document type, release semantics, and visual disposition.
 
 <!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-1-OWNER-APPROVED -->
-On 2026-08-23 the owner approved Claude's Frame A sibling-group structure with
-the naming and identity clarification recommended during review: `Sheet Sets`,
+On 2026-08-23 the owner approved Frame A's sibling-group structure with the
+naming and identity clarification recommended during review: `Publish Sets`,
 `All Sheets`, and `Saved Viewports` are sibling groups beneath Publish. `All
-Sheets` is the authoritative project-wide Sheet collection. A Sheet may also
-appear beneath each Sheet Set that references it, but those appearances must be
-visually distinguished as references rather than independent or authoritative
-copies. Creation and search remain on the relevant local node menu. This is a
-DOC-C05 owner disposition for later DOC-C06 ratification, not implementation
-authorization.
+Sheets` is the sole authoritative project-wide Sheet collection. Publish Sets
+contain visibly distinct references to those Sheets rather than additional
+Sheet rows or authoritative homes. Creation and search remain on the relevant
+local node menu. This is a DOC-C05 owner disposition for later DOC-C06
+ratification, not implementation authorization.
 
 <!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-2-OWNER-APPROVED -->
 On 2026-08-23 the owner approved Frame C's Sheet-creation choreography. `New
@@ -332,6 +331,25 @@ remain visibly persistent until resolved. These are editor overlays and never
 print or export. The underlying ViewportDefinition/ViewportInstance mechanics
 remain unchanged, and this visual disposition does not authorize
 implementation.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-5-OWNER-APPROVED -->
+On 2026-08-23 the owner approved Frame F6's single-home reference presentation
+for OR-5. `All Sheets` owns every Sheet exactly once. A user-named `Publish Set`
+is an ordered selection of visibly linked references to authoritative Sheets;
+the same Sheet may be referenced by multiple Publish Sets, while numbering and
+ordering remain local to each set and never alter Sheet identity. Selecting a
+reference resolves to the one authoritative Sheet, whose Inspector may show all
+Publish Set memberships. Datum imposes no customer, fabrication, review, or
+other package taxonomy.
+
+Creating an independent composition is a separate, rare contextual action
+labelled `Duplicate as New Sheet…`; it creates a new stable Sheet identity and
+immediately requests a meaningful user-authored name. Any mechanically generated
+name is provisional only, and lasting document-control identity must never use
+`(copy)` terminology. This action is not how Publish Sets are assembled. The
+internal `SheetSet`/`SheetUse` vocabulary remains an implementation candidate
+for DOC-C06 reconciliation; the approved user-facing term is `Publish Set`.
+This visual and naming disposition does not authorize implementation.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
