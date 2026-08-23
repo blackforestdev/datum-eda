@@ -399,6 +399,21 @@ editor type. Type-only titles and identity-first titles are rejected. Legacy
 DOC-C06 reconciliation. This wording disposition does not authorize
 implementation.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-PUBLISH-PANE-TITLE-OWNER-APPROVED -->
+On 2026-08-23 the owner selected B1b Publish-pane Candidate A. Publish pane
+titles use `Publish · Sheet Number Sheet Title`, for example
+`Publish · FAB-01 Assembly Top`. This mirrors the approved type-first Design
+pattern while retaining the Publish-space classification and enough Sheet
+identity to distinguish simultaneously open pages. Object-first
+`Sheet FAB-01 · Assembly Top` and number/title-only forms are rejected. This
+wording disposition does not authorize implementation.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OWNER-DISPOSITION-COMPLETE -->
+DOC-C05 is complete. The owner has approved or carried forward OR-1 through
+OR-8 plus the Design- and Publish-pane title rules. These dispositions are
+planning authority for DOC-C06 reconciliation only; they do not authorize
+implementation or settle Product Revision Engine lifecycle mechanics.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
 decision 020, research, prototypes, conformance obligations, beads, and the

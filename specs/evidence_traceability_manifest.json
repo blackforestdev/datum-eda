@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "dbce44b3c3e2d7d93e3ff7f8ffbd97e1b39e4105669e87578ef7f9b9c52c6997",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 now records the approved type-first Design-pane title rule with local asset identity and leaves only Publish-pane wording open."
+      "reviewed_digest": "f826797789a5436c8ea17d7d692beca2c70ab15c06635b4726157ee68eb93394",
+      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 is complete with OR-1..OR-8 and both pane-title rules approved or carried forward, so DOC-C06 reconciliation is next."
     },
     {
       "id": "parametric-footprint-editor",
@@ -226,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "74afd7fbe9d4c6d73b28361c7239caa9edce0bad3355274714c0aa192979e82a",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; B1b Design-pane Candidate A is approved, while Publish-pane wording remains pending."
+      "reviewed_digest": "f30b31129df091e465e650710903c3811d98912dff6f40b08e1943f6a6854719",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; both B1b type-first pane-title candidates are approved and DOC-C05 visual disposition is complete."
     },
     {
       "id": "prototype-selection",

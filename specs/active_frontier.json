@@ -4306,7 +4306,7 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
       ],
       "state": "planned",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
@@ -4318,7 +4318,7 @@
       "claim": null,
       "completion": {
         "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
-        "canonical_next_step_id": "DOC-C05",
+        "canonical_next_step_id": "DOC-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4421,7 +4421,7 @@
           {
             "id": "DOC-C05",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Record the owner's disposition for vocabulary, workspace topology, viewport behavior, v1 document type, release semantics, and the visual studies.",
             "depends_on": [
               "DOC-C04"
@@ -4432,7 +4432,13 @@
                 "marker": "DOC-C05"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+                "marker": "EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OWNER-DISPOSITION-COMPLETE"
+              }
+            ],
             "owner_input": {
               "response_format": "OR-1 through OR-8 and the Design-pane title are settled or carried forward. Complete DOC-C05 by replying `PUBLISH-PANE-TITLE: approve` or `PUBLISH-PANE-TITLE: revise — <requested wording>`.",
               "requests": [
