@@ -269,10 +269,11 @@ Publish panes, blank/template Sheet creation, Viewport manipulation and reuse,
 annotation/source navigation, SheetSet sharing and forks, working/released
 context, and responsive/accessibility states. The study preserves the approved
 single-window recursive-pane shell, Direction-B title block, output-only Datum
-Console, and Design/Publish authority boundary. OR-1 has received owner
-disposition but awaits DOC-C06 ratification; OR-2..OR-8 and two pane-title
-wording candidates remain explicitly unratified pending DOC-C05 owner
-disposition. The prototype is registered as a source in exactly the
+Console, and Design/Publish authority boundary. OR-1, OR-2, OR-3, and OR-8 have
+received owner disposition but await DOC-C06 ratification; the visual-only
+presentations in OR-4..OR-7 and two pane-title wording candidates remain
+explicitly unratified pending DOC-C05 owner disposition. The prototype is
+registered as a source in exactly the
 `prototype-rendering-and-publish` evidence route; this evidence neither
 authorizes implementation nor defines Product Revision Engine mechanics.
 
@@ -301,6 +302,22 @@ starter content. The result remains freely editable; a template accelerates
 creation but imposes no lasting structural restriction. This disposition does
 not reopen the already settled support for both blank and template entry, and
 does not authorize implementation.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-3-CARRIED-FORWARD -->
+The owner corrected the DOC-C05 packet on 2026-08-23 because Frame E's source
+navigation had already been answered: `Open Source in Design` opens the
+referenced Design editor in a new adjacent pane and preserves the invoking
+Publish context. The Viewport's local right-click menu is the primary doorway,
+double-click remains unassigned, and the transient adjacent pane retains the
+approved quick-close/restore behavior. DOC-C05 carries this disposition forward
+rather than treating it as a new decision.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-8-CARRIED-FORWARD -->
+The Direction-B title-block composition was already locked in the Rendering
+Book, and Claude's DOC-C04 commit `cfe7a60` records the owner's 2026-08-23 review
+and approval of its compact Publish-context renditions in Frames B, C, and G.
+DOC-C05 therefore carries OR-8 forward and does not reopen the locked title
+block or ask for duplicate approval.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,

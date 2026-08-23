@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "e01c7960ad62768fe3bc31b8d09a1dcb10a6afe2e5af17acbe706d507c9f84a7",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 has approved OR-1 and OR-2 and continues with OR-3."
+      "reviewed_digest": "18312936660842f2f1d0a86898522cc07358a33191e6e1511474284af4ace6b2",
+      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 carries forward settled OR-3 and OR-8 evidence and continues with the genuinely open OR-4 visual treatment."
     },
     {
       "id": "parametric-footprint-editor",
@@ -226,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "cb385174b2ea97404c05aef669e9d9e2680dcc13f506c750ac1cfabd46ae406d",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; OR-1 and OR-2 are owner-approved while OR-3..OR-8 remain pending DOC-C05 disposition."
+      "reviewed_digest": "6b8b73ca2622831eb833ae0d3815580637b28630d3ba11e15b29f547687799e8",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; OR-1, OR-2, OR-3, and OR-8 are settled while the visual-only OR-4..OR-7 treatments remain pending DOC-C05 disposition."
     },
     {
       "id": "prototype-selection",

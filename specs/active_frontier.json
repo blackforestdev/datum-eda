@@ -4434,20 +4434,11 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Review one item at a time in the listed order. OR-1 and OR-2 are approved. Continue with OR-3 and reply `OR-3: approve` or `OR-3: revise — <requested change>`; later items remain open until presented.",
+              "response_format": "Review one genuinely unresolved visual item at a time. OR-1, OR-2, OR-3, and OR-8 are settled. Continue with OR-4 and reply `OR-4: approve` or `OR-4: revise — <requested visual change>`; later items remain open until presented.",
               "requests": [
                 {
-                  "id": "OR-3",
-                  "question": "Approve or revise Frame E's Open Source in Design behavior: open the source in a new adjacent pane instead of retargeting the focused Publish pane?",
-                  "recommended_response": "Approve the adjacent-pane behavior so Publish context remains visible.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
-                {
                   "id": "OR-4",
-                  "question": "Approve or revise Frame D's Viewport linked, linked-with-overrides, and unique visual language using explicit frame chips and Inspector state?",
+                  "question": "The linked, linked-with-overrides, and unique Viewport mechanics are already settled. Approve or revise only Frame D's proposed visual treatment using explicit frame chips plus Inspector detail?",
                   "recommended_response": "Approve the icon-plus-word states and Inspector detail.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
@@ -4456,7 +4447,7 @@
                 },
                 {
                   "id": "OR-5",
-                  "question": "Approve or revise Frame F's SheetSet sharing and fork presentation using package cards, shared Sheet references, and a selective Make Unique fork diagram?",
+                  "question": "SheetSet sharing, Fork Sheet, and Make Unique mechanics are already settled. Approve or revise only Frame F's package-card and selective-fork visual explanation?",
                   "recommended_response": "Approve the package-card and selective-fork presentation.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
@@ -4465,7 +4456,7 @@
                 },
                 {
                   "id": "OR-6",
-                  "question": "Approve or revise Frame G's quiet working, released-baseline, and affected-successor status presentation within the Product Revision Engine boundary?",
+                  "question": "Release immutability and successor-change authority are already settled. Approve or revise only Frame G's quiet-working, released-baseline, and affected-successor status presentation, without defining Revision Engine mechanics?",
                   "recommended_response": "Approve the quiet working state, explicit immutable baseline identity, and navigable successor-impact finding.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
@@ -4474,17 +4465,8 @@
                 },
                 {
                   "id": "OR-7",
-                  "question": "Approve or revise Frames B and H's overall Design/Publish coexistence, pane Zoom/Stage, responsive, terminal-open, and accessibility disposition?",
+                  "question": "The single-window recursive-pane, Design/Publish coexistence, Zoom, and Stage mechanics are already settled. Approve or revise only Frames B and H's visual application across wide, ordinary, narrow, terminal-open, and accessibility states?",
                   "recommended_response": "Approve the single-window recursive-pane disposition across the shown states.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
-                {
-                  "id": "OR-8",
-                  "question": "Approve or revise the locked Direction-B title-block rendition as projected in Frames B, C, and G, including field values, compact-scale fidelity, and on-Sheet placement?",
-                  "recommended_response": "Approve these Publish-context renditions without reopening the locked Direction-B design.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
                     "marker": "DOC-C05"
