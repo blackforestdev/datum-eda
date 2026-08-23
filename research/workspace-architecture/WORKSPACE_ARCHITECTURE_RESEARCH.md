@@ -364,7 +364,12 @@ release manager. It must maintain coherent local/offline authority without Git;
 an optional Datum-owned Git adapter maps commits, branches, remotes, and signed
 tags to engine concepts without making them authoritative. Git commits do not
 automatically become engineering release revisions, and external Git changes
-must re-enter Datum semantic validation. The current title-block research claim
+must re-enter Datum semantic validation. The owner has approved complete
+standalone revision, baseline, approval, release, reproduction, and audit
+authority when Git is absent. The engine must also expose traceable audit
+evidence against each configured applicable industry-standard authority,
+edition, clause, control, disposition, and proof without claiming that software
+alone confers certification. The current title-block research claim
 that commit batches may seed revision rows must be audited and reconciled
 through configuration identification, change control, approval, effectivity,
 status accounting, and audit requirements.

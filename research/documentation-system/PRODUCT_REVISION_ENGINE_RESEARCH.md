@@ -29,6 +29,9 @@ assume.
 - The Datum Product Revision Engine is the revision, configuration, change,
   approval, baseline, and release authority. It must remain coherent in local
   and offline operation without requiring a Git repository or remote service.
+- The owner has ratified complete standalone authority: without Git, Datum must
+  still support revision, baseline, approval, release, reproduction, status
+  accounting, and audit rather than falling back to a reduced revision model.
 - Git-compatible JSON is a persistence, history, exchange, and collaboration
   substrate reached through an optional Datum-owned adapter; Git is not by
   itself Datum's engineering-release authority.
@@ -43,6 +46,33 @@ assume.
   release authority, not editable claims and not raw commit metadata.
 - Datum specifies configurable policy and evidence mechanisms; it must not
   imply third-party certification merely because a profile is selected.
+
+## Standards-audit contract
+
+The owner requires the Product Revision Engine to be fully auditable against
+applicable industry standards. This is a stronger requirement than retaining a
+generic activity log and a narrower claim than automatic certification.
+
+For every enabled standards or organization profile, Datum must preserve a
+machine-queryable and human-reviewable chain from:
+
+1. the exact authority, edition, clause, and applicability decision;
+2. through the Datum control, invariant, role, workflow, or required record;
+3. to the exact baseline, change, approval, check, artifact, and release
+   evidence that satisfied or failed it;
+4. including justified non-applicable, tailored, equivalent-control, waiver,
+   deviation, and unresolved states;
+5. with immutable provenance sufficient for an independent auditor to
+   reproduce the disposition without relying on mutable UI text.
+
+Profiles must distinguish normative requirements from guidance, Datum product
+policy, and organization-specific procedure. They must identify licensed or
+otherwise unavailable normative text rather than silently paraphrasing it as
+authority. An audit report must state the profile and editions evaluated,
+scope and effectivity, evidence set, exceptions, unresolved findings, and the
+Datum engine version that performed the evaluation. Passing a Datum audit
+means the recorded evidence satisfies that configured requirements matrix; it
+does not assert accreditation, regulator acceptance, or product certification.
 
 ## Initial internal audit
 
@@ -167,7 +197,10 @@ missing identities, stale-state paths, and private writers.
 Build a requirement/disposition matrix for configuration identification,
 baselines, change control, status accounting, audits, drawing revision,
 approval/signature, effectivity, records, transmittal, and retention. Separate
-normative requirements, organization policy, and Datum product choices.
+normative requirements, organization policy, and Datum product choices. Record
+exact authority, edition, clause, applicability, Datum control, required
+evidence, verification method, and unresolved or tailored disposition so the
+matrix can drive repeatable audits rather than remain explanatory prose.
 
 ### REV-C03 — Authority and operation model
 
@@ -207,7 +240,8 @@ standards claims explicit.
 ### REV-C08 — Frontier placement and proof contract
 
 Place bounded implementation slices, migration, conformance gates, fixtures,
-and production acceptance on the Active Frontier. Research completion must not
+standards-profile audit witnesses, evidence export/reproduction checks, and
+production acceptance on the Active Frontier. Research completion must not
 implicitly authorize implementation.
 
 ## First owner decisions to develop slowly
