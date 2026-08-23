@@ -351,6 +351,26 @@ internal `SheetSet`/`SheetUse` vocabulary remains an implementation candidate
 for DOC-C06 reconciliation; the approved user-facing term is `Publish Set`.
 This visual and naming disposition does not authorize implementation.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-6-OWNER-APPROVED -->
+On 2026-08-23 the owner approved Frames G1–G4 as OR-6's visual presentation.
+Ordinary working Publish context remains quiet while configuration detail stays
+available without a persistent warning or release badge. Deliberately viewing
+an immutable released baseline is unmistakable through a lock glyph plus word,
+exact baseline identity, consistent restrained shell cues, and mutation
+refusal. When a real successor-impact finding exists, the released Sheet remains
+unchanged while a typed, navigable finding opens impact analysis; the finding
+does not itself allocate a revision or claim that reissue is required.
+
+G4's single `ConfigurationRef` seam is approved: the Product Revision Engine
+supplies either working configuration or exact immutable baseline context to the
+resolver, and Sheets, Viewports, title blocks, and panes do not own rival
+draft/released state. Literal examples such as `REV A`, `WORKING`, release dates,
+and baseline identifiers are illustrative only. Revision allocation, working
+revision inheritance, naming syntax, approvals, effectivity, supersession, and
+release semantics remain reserved for the Product Revision Engine specification.
+This disposition approves presentation and authority placement only; it does
+not authorize implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
 decision 020, research, prototypes, conformance obligations, beads, and the

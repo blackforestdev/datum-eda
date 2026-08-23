@@ -114,8 +114,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "9987d6b805760616e8822295b450eb9465552d115c331c6725ea3ab4c64de4c7",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 now records OR-5's approved single authoritative Sheet home, Publish Set reference selections, and deliberate new-Sheet naming boundary."
+      "reviewed_digest": "65fdc4419134a624b2fb40d1f5e55a50aad3a3693fd13c17b9a5a541e9426772",
+      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 now records OR-6's approved quiet-working, immutable-baseline, successor-impact, and single-ConfigurationRef presentation while reserving lifecycle semantics for the Revision Engine."
     },
     {
       "id": "parametric-footprint-editor",
@@ -226,8 +226,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "0f1c8e4f85d1e77a287218ee2ddd00c9a99df7c5a7ca929f98fef28e60799377",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; Frame F6 now carries the approved OR-5 single-home Sheet and Publish Set reference presentation, while OR-6 and OR-7 remain pending."
+      "reviewed_digest": "7c0b6653d3f8f5060615f3392e99fc297ae3f515b2bab7ff27a9b69321239f75",
+      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; Frames G1-G4 now carry the approved OR-6 presentation and ConfigurationRef seam, while OR-7 and the pane-title wording candidates remain pending."
     },
     {
       "id": "prototype-selection",
