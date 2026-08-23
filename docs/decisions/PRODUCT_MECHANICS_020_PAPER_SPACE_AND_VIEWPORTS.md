@@ -271,7 +271,7 @@ context, and responsive/accessibility states. The study preserves the approved
 single-window recursive-pane shell, Direction-B title block, output-only Datum
 Console, and Design/Publish authority boundary. OR-1, OR-2, OR-3, and OR-8 have
 received owner disposition but await DOC-C06 ratification; the visual-only
-presentations in OR-4..OR-7 and two pane-title wording candidates remain
+presentations in OR-5..OR-7 and two pane-title wording candidates remain
 explicitly unratified pending DOC-C05 owner disposition. The prototype is
 registered as a source in exactly the
 `prototype-rendering-and-publish` evidence route; this evidence neither
@@ -318,6 +318,17 @@ Book, and Claude's DOC-C04 commit `cfe7a60` records the owner's 2026-08-23 revie
 and approval of its compact Publish-context renditions in Frames B, C, and G.
 DOC-C05 therefore carries OR-8 forward and does not reopen the locked title
 block or ask for duplicate approval.
+
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-4-OWNER-APPROVED -->
+On 2026-08-23 the owner approved a quieter revision of Frame D's Viewport reuse
+state treatment. The Inspector always exposes the complete linked,
+linked-with-overrides, or unique state. A compact glyph-plus-word chip appears
+beside a healthy Viewport only while that Viewport is selected or hovered;
+healthy chips do not remain continuously visible and consume Sheet working
+space. Broken-source and stale-reference findings remain visibly persistent
+until resolved. These are editor overlays and never print or export. The
+underlying ViewportDefinition/ViewportInstance mechanics remain unchanged, and
+this visual disposition does not authorize implementation.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
