@@ -371,6 +371,23 @@ release semantics remain reserved for the Product Revision Engine specification.
 This disposition approves presentation and authority placement only; it does
 not authorize implementation.
 
+<!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C05-OR-7-CARRIED-FORWARD -->
+The owner corrected the DOC-C05 packet on 2026-08-23 because OR-7's workspace
+topology had already been settled. Datum has one cohesive native application
+window whose working area may contain one Pane or any user-chosen recursive
+vertical/horizontal split of Design, Publish, and other supported content.
+Pane focus, Zoom, Full-Screen Stage, and the prohibition on detached workspace
+windows remain governed by the existing workspace decisions; Publish inherits
+that machinery and does not reopen it.
+
+Frames B and H are therefore accepted as consistency evidence that Publish can
+occupy single, tiled, Zoom, Stage, wide, ordinary, narrow, and terminal-open
+arrangements. They are not an independent architecture choice. Specific
+responsive collapse priorities depicted by the study are illustrative until a
+separate responsive-shell contract governs them and must not be inferred as an
+owner-ratified Publish mechanic. This carry-forward disposition does not
+authorize implementation.
+
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,
 decision 020, research, prototypes, conformance obligations, beads, and the

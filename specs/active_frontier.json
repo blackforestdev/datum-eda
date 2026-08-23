@@ -4434,17 +4434,8 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Review one genuinely unresolved visual item at a time. OR-1, OR-2, OR-3, OR-4, OR-5, OR-6, and OR-8 are settled. Continue with OR-7 and reply `OR-7: approve` or `OR-7: revise — <requested visual change>`; pane-title wording remains open until presented.",
+              "response_format": "OR-1 through OR-8 are settled or carried forward. Continue with the pane-title wording one item at a time. Reply `DESIGN-PANE-TITLE: approve` or `DESIGN-PANE-TITLE: revise — <requested wording>`; the Publish pane title remains open until presented.",
               "requests": [
-                {
-                  "id": "OR-7",
-                  "question": "The single-window recursive-pane, Design/Publish coexistence, Zoom, and Stage mechanics are already settled. Approve or revise only Frames B and H's visual application across wide, ordinary, narrow, terminal-open, and accessibility states?",
-                  "recommended_response": "Approve the single-window recursive-pane disposition across the shown states.",
-                  "source_ref": {
-                    "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
-                    "marker": "DOC-C05"
-                  }
-                },
                 {
                   "id": "DESIGN-PANE-TITLE",
                   "question": "Approve or revise the Design pane title pattern shown as `Schematic · sensor-node`?",
