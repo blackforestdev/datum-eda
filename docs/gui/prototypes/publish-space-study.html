@@ -930,8 +930,10 @@ M2.5 × 4 PLACES</div>
 <div class="cap"><span class="lock">Locked:</span> a SheetSet holds <b>ordered references</b>, never
 duplicate Sheet bodies; one unchanged Sheet may appear in several packages; <b>Fork Sheet</b> creates a
 distinct Sheet whose inherited ViewportInstances stay linked to their definitions until <b>Make Unique</b>
-severs exactly one. <b>OR-5 (presentation):</b> the package-card visualization below — shared Sheets drawn
-once with reference threads — versus a purely tree-based presentation in the Navigator.</div>
+severs exactly one. Those reference semantics are settled doctrine and are not under review here.
+<b>OR-5</b> chooses only the <b>presentation</b> — see the two-part split after F2: sharing shown as a
+package dashboard (F1, proposed for rejection) versus in the Navigator + Inspector (F4); duplication as a
+promoted surface versus a contextual, invisible-until-invoked action (F5).</div>
 <div class="grid2">
   <div>
     <div class="card" style="height:320px">
@@ -957,7 +959,11 @@ once with reference threads — versus a purely tree-based presentation in the N
       are package-local projections of SheetSet order; the shared FAB-01 body exists once.</div>
       <div class="warnbanner" style="margin-top:10px"><span class="i">⚠</span><span>Hidden layers or omitted content are <b>not verified redaction</b> — customer-safe export is a separate security-grade contract (<span style="font-family:var(--mono);font-size:11px">dat-publish-redaction-contract-wzs</span>).</span></div>
     </div>
-    <div class="cell-cap"><b>F1 + F3 — packages, sharing, and the redaction boundary.</b></div>
+    <div class="cell-cap"><b>F1 candidate R — package dashboard (Codex proposes REJECTING this
+    presentation).</b> it explains the reference semantics but reads as if "Fabrication Release" /
+    "Customer Docs" were Datum-blessed documentation categories — colliding with the scalable-project
+    principle. The redaction disclaimer (F3) is a boundary statement of the study and survives
+    independently of this candidate.</div>
   </div>
   <div>
     <div class="minibox" style="height:320px;background:var(--canvas)"><div class="pubcv" style="flex-direction:column;gap:24px">
@@ -981,8 +987,89 @@ once with reference threads — versus a purely tree-based presentation in the N
         fork copies composition · instances stay linked to the same definitions ·<br>
         Make Unique severed only the diverging schematic viewport (⛒ sch_VP_02)</div>
     </div></div>
-    <div class="cell-cap"><b>F2 — Fork Sheet + selective Make Unique.</b> the design-association link and
+    <div class="cell-cap"><b>F2 — duplication mechanics (semantics locked; term under review).</b>
+    the operation copies composition into a new Sheet identity; instances stay linked to the same
+    definitions until Make Unique severs exactly one. Codex proposes the user-facing verb
+    <b>Duplicate as New Sheet…</b> instead of the developer term "Fork Sheet" — see F5. The design-association link and
     the publish-reuse link remain independently controllable</div>
+  </div>
+</div>
+
+<div style="height:14px"></div>
+<div class="cap" id="frame-f4"><b>OR-5 is two questions.</b> <b>(a) Sharing presentation:</b> how Datum
+shows "this Sheet is referenced by more than one SheetSet" — the dashboard above (candidate R) versus the
+ordinary Navigator plus a quiet Inspector membership field (candidate N, below left). <b>(b) Duplication
+choreography:</b> whether duplication is a promoted surface or an invisible-until-invoked contextual
+action named in user language (F5, below right). In every candidate, SheetSets are entirely
+user-defined — name, purpose, ordering, contents; the names below are one user's inventions, not Datum
+categories.</div>
+<div class="grid2">
+  <div>
+    <div class="minibox" style="height:330px"><div style="display:flex;height:330px">
+      <div class="panel grow" style="border-bottom:none;flex:0 0 300px;border-right:1px solid var(--bd-sub)">
+        <div class="panel-hd"><span>Project</span><span class="count">DOA2526</span></div>
+        <div class="panel-bd" style="height:294px">
+          <div class="trow grp">Publish</div>
+          <div class="trow open"><span class="chev">▾</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h9l5 5v11H5z"/></svg></span>Sheet Sets <span class="meta">2</span></div>
+          <div class="trow l2 open"><span class="chev">▾</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h12v14H4z"/><path d="M8 3h12v14" opacity=".5"/></svg></span>EMC Lab Submission <span class="meta">3 sheets</span></div>
+          <div class="trow l3"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-01 Overview <span class="meta">1/3</span></div>
+          <div class="trow l3 sel"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-04 Sensor Detail <span class="meta">2/3</span></div>
+          <div class="trow l3"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-07 Cabling <span class="meta">3/3</span></div>
+          <div class="trow l2 open"><span class="chev">▾</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h12v14H4z"/><path d="M8 3h12v14" opacity=".5"/></svg></span>Bringup Review <span class="meta">2 sheets</span></div>
+          <div class="trow l3" style="color:var(--tx)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-04 Sensor Detail <span class="meta">1/2</span></div>
+          <div class="trow l3"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-02 Power Tree <span class="meta">2/2</span></div>
+        </div>
+      </div>
+      <div class="panel grow" style="border-bottom:none">
+        <div class="panel-hd"><span>Inspector</span></div>
+        <div class="panel-bd" style="padding:0;height:294px">
+          <div class="insp-title"><span class="ref">SN-04 Sensor Detail</span><span class="chip">SELECTED</span></div>
+          <div class="sect-hd">Sheet</div>
+          <div class="kv"><span class="k">Media</span><span class="v mono">A3 · landscape</span></div>
+          <div class="kv"><span class="k">Items</span><span class="v mono">4</span></div>
+          <div class="sect-hd">Membership</div>
+          <div class="kv"><span class="k">Used in</span><span class="v">2 Sheet Sets</span></div>
+          <div class="kv"><span class="k"></span><span class="v mono">EMC Lab Submission · 2/3</span></div>
+          <div class="kv"><span class="k"></span><span class="v mono">Bringup Review · 1/2</span></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="cell-cap"><b>F4 candidate N — Navigator + quiet Inspector membership (Codex's
+    proposal).</b> the same shared-reference fact, read where the user already works: SN-04 appears under
+    both user-named sets with per-set numbering; selecting it shows a quiet "Used in 2 Sheet Sets" field.
+    No dashboard surface exists</div>
+  </div>
+  <div>
+    <div class="minibox" style="height:330px;position:relative">
+      <div class="panel grow" style="border-bottom:none;width:300px;height:330px;border-right:1px solid var(--bd-sub)">
+        <div class="panel-hd"><span>Project</span><span class="count">DOA2526</span></div>
+        <div class="panel-bd">
+          <div class="trow l2 open"><span class="chev">▾</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h12v14H4z"/><path d="M8 3h12v14" opacity=".5"/></svg></span>EMC Lab Submission</div>
+          <div class="trow l3 sel"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-04 Sensor Detail</div>
+          <div class="trow l3" style="color:var(--tx)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span><span style="background:var(--acc-tint);outline:1px solid var(--acc);padding:0 3px">SN-08 Sensor Detail (copy)</span></div>
+          <div class="trow l3"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/></svg></span>SN-07 Cabling</div>
+        </div>
+      </div>
+      <div class="lmenu" style="position:absolute;left:150px;top:52px">
+        <div class="mi">Open Beside</div>
+        <div class="mi">Rename<span class="k">label only</span></div>
+        <div class="msep"></div>
+        <div class="mi on">Duplicate as New Sheet…</div>
+        <div class="msep"></div>
+        <div class="mi">Remove from Sheet Set</div>
+      </div>
+      <div style="position:absolute;left:330px;bottom:16px;right:16px;font-family:var(--mono);font-size:10.5px;color:var(--tx3);line-height:1.9">
+        creates a new Sheet identity + editable copy<br>
+        Design associations preserved<br>
+        shared definition links kept until Make Unique<br>
+        inline rename offered immediately<br>
+        original Sheet unchanged<br>
+        <span style="color:var(--tx2)">invisible unless deliberately invoked</span>
+      </div>
+    </div>
+    <div class="cell-cap"><b>F5 — contextual "Duplicate as New Sheet…" (term candidate replacing "Fork
+    Sheet").</b> a local-menu action with immediate inline rename (the accent-boxed row); F2's link
+    mechanics apply unchanged underneath; no promoted duplication surface exists</div>
   </div>
 </div>
 
@@ -1136,7 +1223,7 @@ release states carry glyph + word; overflow truncates readably.</div>
   <tr><td>OR-2</td><td><a href="#frame-c">Frame C</a> — blank-versus-template Sheet entry choreography (media chooser → empty page vs Direction-B seeded page).</td></tr>
   <tr><td>OR-3</td><td><a href="#frame-e">Frame E</a> — Open Source in Design: adjacent pane (recommended) vs retarget-with-Back.</td></tr>
   <tr><td>OR-4</td><td><a href="#frame-d">Frame D</a> — two-part: (a) the linked / override / unique glyph-and-word vocabulary (D4); (b) when the treatment appears — persistent vs on-demand with persistent errors (<a href="#frame-d4b">D4b</a>).</td></tr>
-  <tr><td>OR-5</td><td><a href="#frame-f">Frame F</a> — SheetSet sharing/fork presentation (package cards + fork diagram).</td></tr>
+  <tr><td>OR-5</td><td><a href="#frame-f">Frame F</a> — two-part: (a) sharing presentation — package dashboard (F1, candidate R) vs Navigator + quiet Inspector membership (<a href="#frame-f4">F4</a>, candidate N); (b) duplication choreography — promoted diagram vs contextual <b>Duplicate as New Sheet…</b> with inline rename (F5); F2 mechanics are locked either way.</td></tr>
   <tr><td>OR-6</td><td><a href="#frame-g">Frame G</a> — working / released / affected status presentation, inside the approved Revision Engine boundary.</td></tr>
   <tr><td>OR-7</td><td><a href="#frame-b">Frames B</a> + <a href="#frame-h">H</a> — overall visual disposition across coexistence, Zoom/Stage, and responsive states.</td></tr>
   <tr><td>OR-8</td><td><a href="#frame-c">Frames C</a>/<a href="#frame-b">B</a>/<a href="#frame-g">G</a> — <b style="color:var(--tx)">title-block rendition in Publish contexts</b> (owner-directed addition): every appearance here is a projection of the locked Direction B composition (Rendering Book §8); the owner reviews field values, compact-scale fidelity, and on-sheet placement. Any change to the locked Direction B design itself is a separate owner-driven title-block session, not part of this study's approval.</td></tr>
