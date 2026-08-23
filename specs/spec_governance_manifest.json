@@ -95,6 +95,11 @@
    "class": "governed",
    "progress_anchor": "IMPORT_SPEC"
   },
+  "specs/PUBLISH_SPACE_SPEC.md": {
+   "class": "governed",
+   "progress_anchor": "DOC-SYSTEM-SPEC",
+   "notes": "DOC-C06 controlling Publish Space contract: owner-approved workspace/navigation, Publish object and mutation authority, Product Revision Engine seam, conformance obligations, and post-revision implementation sequence. Planning only; implementation is not authorized."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."

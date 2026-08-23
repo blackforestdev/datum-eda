@@ -1,12 +1,34 @@
-# PRODUCT_MECHANICS_020 — Paper Space / Model Space Separation & Viewports
+# PRODUCT_MECHANICS_020 — Design Space / Publish Space and Viewports
 
-> **Status:** Ratified (owner-directed, 2026-07-08). Foundational documentation-model
-> decision. Subordinate to the substrate doctrine (model is authority; one mutation
-> path; render == CAM fidelity) and pairs with the title-block system (Rendering Book
-> §8) and the doc-control research
-> (`research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md`).
+> **Status:** Ratified (owner-directed, 2026-07-08); architecture reconciled
+> through DOC-C06 on 2026-08-23. Foundational documentation-model decision.
+> The filename is preserved as a stable legacy locator; its former Model/Paper
+> terminology is not current Datum vocabulary.
 
-## Context / problem
+## Controlling 2026-08-23 reconciliation
+
+Datum owns one configurable `Workspace` in one native window. `Design Space`
+classifies authoritative engineering authoring; `Publish Space` classifies the
+universal documentation-composition authority. Both may coexist in recursively
+split Panes. A `Sheet` exists only in Publish Space. A Publish
+`ViewportDefinition` provides reusable view meaning and a `ViewportInstance`
+places it on a Sheet. Viewports project Design/artifact authority and never
+provide edit-through mutation; `Open Source in Design` is explicit navigation
+to an adjacent Design Pane.
+
+Publish source uses stable identity, typed operations, `commit()`, the journal,
+and deterministic persistence. The Product Revision Engine supplies the single
+working or immutable-baseline `ConfigurationRef` and exclusively owns baselines,
+revision allocation, approvals, releases, effectivity, and audit. Sheet-local
+Draft/Released state and lone-`model_revision` release semantics are rejected.
+
+The complete controlling contract is
+`specs/PUBLISH_SPACE_SPEC.md`. The original rationale below is retained as
+historical context only. Wherever it uses Model/Paper vocabulary, schematic
+Sheets, edit-through Viewports, or Sheet-local release behavior, this
+reconciliation and the governed specification supersede it.
+
+## Historical context / original problem statement
 
 How does Datum produce documentation — schematic sheets, fabrication drawings,
 assembly drawings, drill drawings, panelization drawings, cover sheets? Two models:
@@ -23,7 +45,7 @@ No EDA tool offers a *general* paper space with arbitrary scaled viewports of an
 asset on one page (Altium Draftsman is the nearest — a board-documentation space — but
 board-only and narrow). This is a genuine gap and a differentiator.
 
-## Decision
+## Historical 2026-07-08 decision text (superseded where noted above)
 
 **Datum separates model space from paper space.** Documentation is authored in paper
 space by placing viewports — live projections of model-space assets — onto sheets that

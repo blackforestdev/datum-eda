@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "b6869f6b3d2fbbbad3971a8ad444c3da8a1840eb169bece75f3744a8c74b42fa",
-      "review_note": "Research inventory and truthfulness audit remain reconciled with the cross-domain traceability ledger after DOC-C04 completed the Publish visual study and exposed its candidates for owner disposition."
+      "reviewed_digest": "2af1f76f7103deaa111378a8af902f2e24fff6ae22dc99bd828243f9f1d76308",
+      "review_note": "Research inventory and cross-domain traceability identify workspace architecture as integrated into the governed Publish Space specification while retaining Product Revision Engine research as the next planning program."
     },
     {
       "id": "terminal-focus-incident",
@@ -109,13 +109,14 @@
         "research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md"
       ],
       "consumers": [
+        "specs/PUBLISH_SPACE_SPEC.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "f826797789a5436c8ea17d7d692beca2c70ab15c06635b4726157ee68eb93394",
-      "review_note": "DOC-C01..C03 research and authority contracts feed the completed DOC-C04 visual study while preserving owner intent, the inherited shell, legacy-decision reconciliation, and the Revision Engine boundary; DOC-C05 is complete with OR-1..OR-8 and both pane-title rules approved or carried forward, so DOC-C06 reconciliation is next."
+      "reviewed_digest": "15323eea31658f275a16c8270ee5d3af7a5f5969b46160bc0c2363398aec0e5d",
+      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020; the Revision Engine boundary remains explicit and its specification is the selected successor."
     },
     {
       "id": "parametric-footprint-editor",
@@ -222,12 +223,13 @@
         "docs/gui/prototypes/title-block-study.html"
       ],
       "consumers": [
+        "specs/PUBLISH_SPACE_SPEC.md",
         "docs/gui/DATUM_RENDERING_BOOK.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "f30b31129df091e465e650710903c3811d98912dff6f40b08e1943f6a6854719",
-      "review_note": "The DOC-C04 Publish Space study extends the rendering, text-placement, and locked title-block authorities with reviewed navigation, composition, viewport reuse, responsive, accessibility, and revision-boundary states; both B1b type-first pane-title candidates are approved and DOC-C05 visual disposition is complete."
+      "reviewed_digest": "e206d549d34503c02622e832ea9ed3acad2bd1d4e8502e37ad228f44fa59aa58",
+      "review_note": "The owner-approved DOC-C04 Publish Space visual contract is integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles."
     },
     {
       "id": "prototype-selection",

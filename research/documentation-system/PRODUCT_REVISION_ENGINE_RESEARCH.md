@@ -191,12 +191,14 @@ verified before use.
 
 ## Research and specification workstreams
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C01 -->
 ### REV-C01 — Internal authority inventory
 
 Inventory every existing technical, object, model, library, variant, rules,
 artifact, document, workspace, and Git revision concept; identify collisions,
 missing identities, stale-state paths, and private writers.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C02 -->
 ### REV-C02 — Standards matrix
 
 Build a requirement/disposition matrix for configuration identification,
@@ -207,6 +209,7 @@ exact authority, edition, clause, applicability, Datum control, required
 evidence, verification method, and unresolved or tailored disposition so the
 matrix can drive repeatable audits rather than remain explanatory prose.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C03 -->
 ### REV-C03 — Authority and operation model
 
 Define the exact objects, identities, relationships, lifecycle states, roles,
@@ -214,6 +217,7 @@ typed operations, refusal states, invariants, and query surfaces. Establish the
 one path from technical change through approved release without making every
 edit an issued revision.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
 
 Define mapping among Datum revisions, commits, branches, merges, annotated or
@@ -222,6 +226,7 @@ release signatures. Specify a Datum-owned adapter contract: Git integration
 must remain optional, external Git changes must re-enter semantic validation,
 and Git must not create a second release authority.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C05 -->
 ### REV-C05 — Impact, staleness, and reproducibility
 
 Specify dependency traversal across Design, library, rules, checks, Publish,
@@ -229,6 +234,7 @@ manufacturing, and artifacts; affected/unaffected classification; stale and
 orphan states; baseline comparison; regeneration; and byte-reproducible release
 verification.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C06 -->
 ### REV-C06 — Human experience and visual contract
 
 Define a quiet always-on default, prominent actionable divergence, release and
@@ -236,12 +242,14 @@ approval workflows, revision/title-block projections, change impact review,
 history, and regulated-profile depth. Claude-owned HTML studies must validate
 the eventual interaction model before ratification.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 ### REV-C07 — Owner disposition and governed ratification
 
 Resolve owner questions, reconcile affected research and decisions, and ratify
 mechanism only in numbered decision/spec governance with licensing and
 standards claims explicit.
 
+<!-- REQ:PRODUCT-REVISION-SPEC:REV-C08 -->
 ### REV-C08 — Frontier placement and proof contract
 
 Place bounded implementation slices, migration, conformance gates, fixtures,

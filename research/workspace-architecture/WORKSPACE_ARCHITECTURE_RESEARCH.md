@@ -61,13 +61,13 @@ Status meanings:
 | 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal `Publish Space` mechanism. Any supported design or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. Compact UI may label Publish Space simply `Publish`. `Paper Space` is retired except when discussing external precedent or preserving this original question. |
 | 6 | Existing terminology collides: EDA calls a schematic page a “sheet,” while decision 020 calls a physical publication page a `Sheet`. Would the owner accept distinct terms such as `SchematicPage` and `DrawingSheet`? | **Answered** | Continuous schematic Design Space has no page or sheet object, so no `SchematicPage` term is needed. `Sheet` belongs exclusively to Publish Space: it is an individual publishable page with a page/media definition, zero or more viewports, and publish-owned content. Publish Space manages a user-extensible collection of Sheets rather than being a Sheet itself. A Sheet may begin blank; a user-selected template may populate it. |
 | 7 | Is Paper Space strictly a publication/composition surface, with all design editing requiring navigation back to Model Space? | **Answered in principle** | Yes. Authoritative design work occurs in Design Space; Publish Space is how project information is composed, controlled, and published. |
-| 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Answered** | A viewport remains a Publish Space projection and annotation target; it never becomes an edit-through aperture into authoritative design objects. Its local right-click menu exposes `Open Source in Design`, following the SolidWorks drawing-to-part/assembly pattern. Double-click is deliberately unassigned rather than treated as an implicit second doorway. Whether the Design editor opens adjacent or retargets a pane remains visual/usability study rather than authority semantics. |
+| 8 | Decision 020 proposes edit-through-viewport behavior. Should entering a viewport author through it, or transition the pane to the source Model Space? | **Answered** | A viewport remains a Publish Space projection and annotation target; it never becomes an edit-through aperture into authoritative design objects. Its local right-click menu exposes `Open Source in Design`, following the SolidWorks drawing-to-part/assembly pattern. The source opens in a new adjacent Pane so Publish context remains visible; quick close restores the prior layout. Double-click is deliberately unassigned rather than treated as an implicit second doorway. |
 | 9 | Should a viewport permit direct manipulation of projected model objects while remaining in Paper Space, or only manipulation of its frame, crop, scale, visibility, dimensions, and paper annotations? | **Answered in principle** | While remaining in Publish Space, manipulation belongs to viewport presentation and publish-owned content, not projected design objects. |
 | 10 | Should model-space annotations and paper-space annotations be separate classes? | **Answered** | Design annotations and Publish annotations have distinct authority. Publish reuse centers on a versioned named `ViewportDefinition` and per-Sheet `ViewportInstance`, not globally shared loose annotations. `New Viewport` creates a clean unique definition; `Use Existing` creates a linked instance such as `board_XYZ_Viewport_01`; ordinary Sheet edits remain instance-local; `Edit Saved Viewport` explicitly changes the shared definition; and `Make Unique` severs only the reuse link while preserving parametric association to Design geometry. Release pinning remains questions 15/16. |
 | 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Answered** | Both spaces support dimensions with distinct, enforced authority. Design Space supports driving dimensions that constrain geometry and reference dimensions that only measure it. Smart Dimension creates a driving dimension by default; if that would over-constrain the design, Datum refuses it and explicitly offers `Create as Reference` rather than silently changing intent. Only Design Space dimensions may drive geometry under the current boundary. Publish dimensions remain associative reference documentation and cannot write back. The existing board-dimension type must be reconciled to this split. |
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
-| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` publication packages. A SheetSet holds ordered references to authoritative Sheets rather than owning duplicate pages, so one unchanged Sheet may appear in several packages. Package-specific divergence uses `Fork Sheet`; inherited named Viewports remain linked until selected ones use `Make Unique`. The user or project template decides initial content, and instances remain freely reconfigurable. Verified customer redaction is tracked separately by `dat-publish-redaction-contract-wzs`. |
+| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` objects, presented to users as `Publish Sets`. `All Sheets` is the sole authoritative home for Sheet bodies; Publish Sets hold visibly linked, set-local ordered references, so one unchanged Sheet may appear in several sets. Package-specific divergence uses `Duplicate as New Sheet`; inherited named Viewports remain linked until selected ones use `Make Unique`. Datum imposes no customer/fabrication taxonomy. Verified customer redaction is tracked separately by `dat-publish-redaction-contract-wzs`. |
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Boundary answered** | The Product Revision Engine—not the Publish object model—owns Draft binding, pinning, baselines, and revision allocation. Release resolves a complete approved product/configuration baseline across Design, libraries, rules, Publish definitions/instances, checks, manufacturing plans, artifacts, approvals, and effectivity, never merely one `model_revision`. Exact Draft behavior remains for `dat-product-revision-engine-k9f`. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Boundary answered** | An existing released configuration and its documents are immutable. Any controlled change in Design Space or Publish Space must be handled by the Product Revision Engine as successor revision work and cannot be released under the unchanged prior revision index. The engine will specify affected-document scope, allocation timing, pending-change identity, approvals, supersession, and regeneration; this documentation specification must not invent those mechanics. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Answered** | Required order is: production-accepted Product Revision Engine foundation; domain-neutral Publish Space foundation; Sheet primitive; Viewport definition/instance and projection primitives; one narrow schematic-publication end-to-end proof; then fabrication and assembly publishing workflows. Publish establishes its authority boundary, revision participation, composition coordinates/units/media, typed operations, Design/artifact references, rendering/export architecture, templates/packages, staleness, validation, and refusals before domain-specific publication drives the architecture. Sheets and Viewports are its first core capabilities rather than a rival pre-Publish subsystem. |
@@ -97,7 +97,7 @@ record until that governance transaction lands.
 | 11 | Design dimensions may drive or reference; Publish dimensions are associative reference documentation and never write back. | Owner dispositions; decisions 020/023 as substrate | Standards-driven dimension semantics and conformance |
 | 12 | A Sheet freely mixes supported projections, tables, images, and Publish annotations; templates do not impose domain walls. | Decision 020 content breadth; owner disposition | Supported-type inventory and export proof |
 | 13 | Publish supports both blank and template-seeded Sheets; templates remain editable accelerators. | Decision 020 template direction; owner disposition | Template schema and starter-content research |
-| 14 | A Project may own many SheetSets; Sheets can be shared; package variants use Fork Sheet and Make Unique; security-grade redaction is separate. | Owner dispositions; decision 020 package substrate; `dat-publish-redaction-contract-wzs` | Formal package/variant/redaction contracts |
+| 14 | A Project may own many user-named Publish Sets; All Sheets owns each Sheet once; sets use linked references; variants use Duplicate as New Sheet and Make Unique; security-grade redaction is separate. | Owner dispositions; decision 020 package substrate; `dat-publish-redaction-contract-wzs` | Formal package/variant/redaction contracts |
 | 15 | Draft binding, pinning, and baseline resolution belong to the Product Revision Engine, not a Sheet-local rule. | Owner boundary; `dat-product-revision-engine-k9f` | Revision-engine specification |
 | 16 | Existing releases are immutable; controlled Design/Publish changes require successor revision treatment before release. | Owner boundary; Product Revision Engine research | Allocation, impact, approval, supersession, regeneration |
 | 17 | Build order is Revision foundation → Publish foundation → Sheet → Viewport → schematic proof → fabrication/assembly. | Owner disposition | DOC-C06 Frontier/dependency ratification |
@@ -194,10 +194,11 @@ exact built-in catalog is product-content research, not an architectural
 restriction. Saving later changes back into a reusable template must be an
 explicit action rather than a side effect of editing an instantiated SheetSet.
 
-SheetSets hold ordered references to authoritative Sheets; they do not own or
+SheetSets (user-facing `Publish Sets`) hold ordered references to authoritative
+Sheets in `All Sheets`; they do not own or
 implicitly copy those Sheets. One unchanged Sheet may therefore appear in
 multiple packages. When a customer, fabrication, service, or other package
-needs different content, `Fork Sheet` creates an independently addressable
+needs different content, `Duplicate as New Sheet` creates an independently addressable
 Sheet variant from the existing composition. Viewport instances in the fork
 initially retain their links to the same named definitions so unchanged work
 continues to update parametrically.
@@ -580,7 +581,7 @@ shapes or begin implementation.
 | `docs/gui/prototypes/rendering-study.html` and `text-placement-study.html` | Rendering and typography constraints that Publish output must inherit. | They do not define Publish authority or navigation. |
 | `research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md` | Standards perimeter, anchor/field/formula hypotheses, firm customization, and document-control concerns. | Its `DrawingSheet`, revision-row, release-state, and profile sketches are research only. The claim that each commit batch can seed a revision row conflicts with Product Revision Engine separation and must be removed or narrowed during ratification. |
 | `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md` | Standalone Datum release authority, optional Git adapter, full configuration baseline, immutable releases, and clause-addressable audit requirement. | REV-C01..C08 remain unratified and unimplemented. DOC work must expose integration points without deciding lifecycle mechanics. |
-| This workspace research and owner ledger | All 20 original questions are answered, boundary-answered, or retired; it records scalable Project, Workspace/Design/Publish vocabulary, continuous schematic Design, Viewport definition/instance reuse, SheetSet behavior, and build order. | These dispositions remain research evidence until DOC-C05 owner review and DOC-C06 decision/spec reconciliation. |
+| This workspace research and owner ledger | All 20 original questions are answered, boundary-answered, or retired; it records scalable Project, Workspace/Design/Publish vocabulary, continuous schematic Design, Viewport definition/instance reuse, Publish Set behavior, and build order. | DOC-C05 owner review is complete. DOC-C06 reconciles this evidence into `specs/PUBLISH_SPACE_SPEC.md` and amended decision 020 without authorizing implementation. |
 
 ### Terminology collision register
 
@@ -877,7 +878,7 @@ Revision Engine integration identity. A `SheetUse` may carry package-local sheet
 number/display-label data but does not own the Sheet body. The same Sheet may be
 referenced by multiple SheetSets.
 
-`Fork Sheet` creates a new Sheet identity by copying the current authored Sheet
+`Duplicate as New Sheet` creates a new Sheet identity by copying the current authored Sheet
 composition. New ViewportInstances initially reference the same definitions;
 instance-local state is copied; no Design source is copied. Subsequent
 definition reuse remains linked until `Make Unique`. Forking never claims that
@@ -913,7 +914,7 @@ must cover these semantic families without generic JSON patch operations:
   organizational relationships without making folders or categories semantic.
 
 Every update guards the expected object revision. Multi-object semantics such
-as `Make Unique`, `Fork Sheet`, template instantiation, and Sheet deletion with
+as `Make Unique`, `Duplicate as New Sheet`, template instantiation, and Sheet deletion with
 references are atomic batches with complete inverse data for undo. Deleting a
 referenced definition, Sheet, Design source, or governed image refuses until the
 caller resolves, retargets, or explicitly removes dependents through typed ops.
@@ -970,11 +971,19 @@ redaction, PS/EPS/plotter breadth, or all projected tables. Those extend the
 same accepted objects after the schematic vertical slice proves the authority,
 mutation, render, and revision seams.
 
-## External research state
+## DOC-C05 owner disposition and DOC-C06 integration
 
-Primary-source review has begun for AutoCAD layouts/model and paper space,
-SolidWorks drawing views, Altium Draftsman, and KiCad schematic hierarchy. It
-was paused at the owner’s request before synthesis. External findings will be
-added only when the relevant owner question is ready for evidence-backed
-discussion; prior art will inform mechanisms without overriding Datum’s stated
-product intent.
+The owner approved or carried forward every visual question in
+`docs/gui/prototypes/publish-space-study.html`. The final visual contract uses
+the All Sheets / linked Publish Sets hierarchy, blank and template Sheet entry,
+adjacent `Open Source in Design`, on-demand healthy Viewport state with
+persistent failures, one authoritative Sheet identity, quiet working and exact
+baseline status, one-window recursive tiling, and type-first Design/Publish Pane
+titles. The detailed Product Revision Engine lifecycle remains outside this
+contract.
+
+Primary-source AutoCAD, SOLIDWORKS, Revit, and KiCad findings were synthesized
+into the DOC-C03 contract. DOC-C06 promotes the accepted result into
+`specs/PUBLISH_SPACE_SPEC.md`, amends decision 020's operative vocabulary, and
+routes the next planning stage to the Product Revision Engine specification.
+No Publish implementation is authorized.

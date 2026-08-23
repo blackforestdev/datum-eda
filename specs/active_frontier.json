@@ -4303,7 +4303,8 @@
       "title": "Specify the documentation-system object model",
       "issue_id": "dat-documentation-system-spec-y8z",
       "governing_docs": [
-        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md"
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+        "specs/PUBLISH_SPACE_SPEC.md"
       ],
       "state": "in_progress",
       "authorization": "planning",
@@ -4329,7 +4330,7 @@
         "head": "104f0f69a677bcd2f838b6ee06875b5783fca440"
       },
       "completion": {
-        "outcome": "Datum has an owner-approved workspace architecture and documentation-system specification that cleanly separates application surfaces, Model Space authority, Paper Space composition, pane projection, and paper-space viewports before any implementation begins.",
+        "outcome": "Datum has an owner-approved workspace architecture and governed Publish Space specification that cleanly separates Design authority, Publish composition, Workspace/Panes, and Publish Viewports before any implementation begins.",
         "canonical_next_step_id": "DOC-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
