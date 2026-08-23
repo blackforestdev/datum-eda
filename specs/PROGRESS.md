@@ -101,7 +101,7 @@
    *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
    Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
+   *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk, dat-distributed-collaboration-architecture-lt1. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Expose operational ownership in canonical next-task output** (`STATE-NEXT-OWNERSHIP`; `dat-next-output-ownership-uqz`).
    Make the selector report tracker status, assignee, and live-claim state so agents cannot silently reintroduce stale conversational ownership. *state `landed`; authorization `none`.*
@@ -112,6 +112,9 @@
 - **Make task-detail presentation verbatim and non-concurrent** (`STATE-DETAIL-PRESENTATION`; `dat-task-detail-presentation-bjk`).
    Make the human task-detail output a verbatim response contract with fixed order and explicit one-active-step, no-inferred-parallelism semantics. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md`, `docs/PROJECT_STATE_POLICY.md`.
+- **Specify distributed project collaboration and semantic merge** (`DISTRIBUTED-COLLAB-SPEC`; `dat-distributed-collaboration-architecture-lt1`).
+   Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-documentation-system-spec-y8z`. *Unblocks:* multi-user project collaboration implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage

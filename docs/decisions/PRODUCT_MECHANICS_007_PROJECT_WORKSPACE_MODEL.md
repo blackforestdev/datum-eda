@@ -342,9 +342,10 @@ artifact metadata, not in a screen layout.
 ## Explicit Non-Goals
 
 This decision does not require:
-- cloud collaboration
-- enterprise project vaults
-- real-time multi-user editing
+- selecting or implementing distributed collaboration, project-vault, or
+  real-time multi-user mechanisms in this decision; those are a mandatory
+  researched successor under `dat-distributed-collaboration-architecture-lt1`,
+  not permanently excluded capabilities
 - final on-disk storage format
 - final workspace serialization format
 - every tab type in the first release
@@ -388,3 +389,22 @@ The first proof slice should demonstrate:
    they do not mutate `DesignModel` source state?
 7. What is the minimum schema versioning policy for workspace/profile records
    so old layouts degrade safely instead of blocking project open?
+
+## Mandatory distributed-collaboration re-entry
+
+The owner's scalable-project intent includes teams working in one logical Datum
+Project across rooms, countries, air-gapped sites, intermittent links, and
+potentially planetary latency. Sharded deterministic JSON was intentionally
+chosen to remain inspectable and Git-compatible, but textual storage alone does
+not settle semantic merge, simultaneous editing, conflict policy, access
+control, provenance, or release authority.
+
+`dat-distributed-collaboration-architecture-lt1` is therefore a mandatory
+research and specification gate after the workspace/documentation architecture
+is settled and before any multi-user collaboration implementation is
+authorized. It must examine a Git-like local/offline revision foundation plus
+an optional Google-Docs-like live experience, without presupposing either as the
+ratified mechanism. The eventual contract must preserve full offline and
+air-gapped operation, typed-operation changesets, stable identities,
+deterministic shards, semantic validation and conflict handling, optional live
+presence, signed exchange, permissions, audit, and reproducible release.

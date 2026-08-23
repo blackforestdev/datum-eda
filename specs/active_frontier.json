@@ -4312,7 +4312,8 @@
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "dependencies": [],
       "unblocks": [
-        "dat-dimension-selection-reentry-kxk"
+        "dat-dimension-selection-reentry-kxk",
+        "dat-distributed-collaboration-architecture-lt1"
       ],
       "claim": {
         "agent": "codex",
@@ -4461,7 +4462,8 @@
             "A bounded documentation-system implementation successor may be selected only from the owner-approved workspace architecture and visual contract."
           ],
           "unblocks_issue_ids": [
-            "dat-dimension-selection-reentry-kxk"
+            "dat-dimension-selection-reentry-kxk",
+            "dat-distributed-collaboration-architecture-lt1"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -4809,6 +4811,27 @@
         }
       },
       "landing_commit": "b5e065810e5ef0b2700742c32f08526518a77223"
+    },
+    {
+      "key": "DISTRIBUTED-COLLAB-SPEC",
+      "order": 31,
+      "title": "Specify distributed project collaboration and semantic merge",
+      "issue_id": "dat-distributed-collaboration-architecture-lt1",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized.",
+      "dependencies": [
+        "dat-documentation-system-spec-y8z"
+      ],
+      "unblocks": [
+        "multi-user project collaboration implementation"
+      ]
     }
   ]
 }
