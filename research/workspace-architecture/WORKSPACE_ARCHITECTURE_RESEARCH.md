@@ -42,7 +42,7 @@ Status meanings:
 | 1 | Is a Datum “workspace” a top-level professional activity—such as Schematic, Board, Library, and Documentation—or is the entire project one workspace containing switchable editor surfaces? | **Answered in principle** | The Project is the scalable overarching design authority and organizational context. It may contain one or many schematic Model Spaces, boards, products, variants, assemblies, shared assets, documentation/release packages, and external design references. Datum does not impose one-PCB or one-product walls. Schematic, PCB, Library, Documentation, and related capabilities are surfaces within that project context rather than mandatory isolated project silos. Final UI terminology and navigation presentation remain question 18, not a reopening of this product decision. |
 | 2 | Should multiple editor types remain simultaneously visible in panes—for example Board beside Schematic—or does selecting a workspace replace the central editing surface? | **Answered in principle** | Board, Schematic, and future editor/model spaces are distinct surfaces that may remain simultaneously visible in independently configurable panes. Users may split, tile, retarget, resize, maximize, or temporarily fullscreen panes according to preference and task speed; selecting one editor does not require replacing the entire central surface. Pane composition is workspace/session state, never design authority. The running Datum split shown in the owner’s 2026-08-22 capture and `docs/gui/prototypes/workspace-panes.html` are existing visual evidence. |
 | 3 | Are Symbol Editor and Footprint Editor independent workspaces, or contextual editors entered from the Library/Schematic/Board workflow? | **Answered** | Symbol and Footprint are separate specialist editor surfaces because their authoring contracts are substantial, but access is local and contextual: invoke the relevant editor from the selected symbol/component/package/footprint through the local menu. By default Datum opens a new adjacent pane containing the relevant specialist editor and preserves the invoking editor beside it. A single keystroke closes that transient pane and restores the preceding pane layout. They remain directly openable for library work. This default choreography does not prevent later user-configurable placement. |
-| 4 | Does “Model Space” include every authoritative design asset—schematics, boards, symbols, footprints, 3D models, panelization, and BOM data—or should each domain have its own model-space instance? | **Partial** | Each design domain may have its own continuous working plane; Schematic, PCB, and Footprint were named examples. Exact domain vocabulary, instance cardinality, and whether BOM/3D/panelization are Model Spaces or projections remain open. |
+| 4 | Does “Model Space” include every authoritative design asset—schematics, boards, symbols, footprints, 3D models, panelization, and BOM data—or should each domain have its own model-space instance? | **Answered in principle** | The original question conflated a workspace class with the assets and editor types it can host. `Editable Workspace` is the umbrella for all non-Paper-Space authoring work, including spatial canvases and non-spatial authoritative editors. Individual domains retain their appropriate editor types and may have one or more independently addressable working contexts. `Paper Space` is the publishable/composition workspace class. One terminology follow-up remains: whether `Model Space` survives as an exact synonym for `Editable Workspace` or is retired to prevent continued interchange. |
 | 5 | Should Paper Space be one project-wide Documentation workspace capable of referencing every model asset, or should Schematic, Board, and Manufacturing each expose their own paper-space mode? | **Answered in principle** | Datum has one universal Paper Space/documentation mechanism. Any supported model or artifact can be presented through a viewport; separate per-editor publishing systems are rejected. |
 | 6 | Existing terminology collides: EDA calls a schematic page a “sheet,” while decision 020 calls a physical publication page a `Sheet`. Would the owner accept distinct terms such as `SchematicPage` and `DrawingSheet`? | **Open** | The collision is confirmed, but final names are not selected. An effectively continuous schematic plane may remove the design-page concept rather than merely rename it. |
 | 7 | Is Paper Space strictly a publication/composition surface, with all design editing requiring navigation back to Model Space? | **Answered in principle** | Yes. Authoritative design work occurs in Model Space; Paper Space is how project information is composed, controlled, and published. |
@@ -61,6 +61,28 @@ Status meanings:
 | 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Open** | Pane fullscreen/maximize inside the shell is established under question 2; detachable native windows remain undecided. |
 
 ## Confirmed intent outside the original 20
+
+### Editable and publishable workspace classes
+
+`Workspace` is the umbrella interaction concept. An `Editable Workspace` hosts
+authoritative non-publication work through the editor type appropriate to the
+content: spatial canvases such as Schematic, PCB, Symbol, Footprint, 3D, or
+Panelization, as well as non-spatial authoritative editors such as tables,
+trees, forms, or other project-data views. This does not collapse those editor
+types into one universal plane; it establishes the shared side of the
+authoring-versus-publication boundary.
+
+`Paper Space` is the publishable workspace class. It composes projections of
+authoritative project information with paper-owned presentation and
+documentation content. Publication does not transfer design authority into the
+projection.
+
+The owner identified that prior discussion had used `Model Space` and
+`Workspace` interchangeably. A terminology follow-up must decide whether
+`Model Space` is retained as an exact user-facing synonym for `Editable
+Workspace` or retired from the canonical vocabulary. Until that disposition,
+older uses of `Model Space` in this ledger describe the editable side of the
+boundary and must not be interpreted as a separate object class.
 
 ### Tiled editor/model spaces
 
