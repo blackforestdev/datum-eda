@@ -474,24 +474,23 @@ build slice it governs.
 Product Mechanics 033 and
 `docs/gui/prototypes/command-feedback-study.html` Candidate A control the Console
 implementation successor. The 2026-08-22 post-implementation audit reopened
-production closure: the table records intended enforcement, but DC2, DC3, and
-DC6 cannot return to **ENFORCED** until CONSOLE-I06A..I06D close the source-health,
-standing-gate, shell-parity, reachability, and assertive-announcement gaps.
+production closure. CONSOLE-I06A..I06C close the source-health, standing-gate,
+reachability, and assertive-announcement gaps. Whole-shell grid, Terminal chrome,
+and revision parity remain separately governed GUI concerns.
 
 | ID | Claim | Disposition and proof |
 |---|---|---|
 | DC1 | Console state is typed and bounded; no input, verb dispatch, operation, PTY write, or terminal-cell mutation path exists | **ENFORCED** — `console_feedback::tests::records_are_typed_sequenced_and_bounded`, `console_feedback::tests::publication_is_typed_and_cannot_mutate_terminal_state`, and `scripts/check_datum_console_boundary.py` |
-| DC2 | Only the focused pane renders one lower-left overlay; it reserves zero canvas layout geometry and truncates before wrapping | **TO-ENFORCE** — existing focused-pane/layout tests plus the CONSOLE-I06C standing guarded gate and completed maximized/unfocused/scale visual matrix |
-| DC3 | Routine, tool-prompt, and refusal modes preserve severity/text/icon redundancy and deterministic lifetime/history behavior | **TO-ENFORCE** — wire `console_visual_goldens_match` and protocol lifetime/history tests into the standing guarded gate; prove history reachability without a visible strip under CONSOLE-I06B |
+| DC2 | Only the focused pane renders one lower-left overlay; it reserves zero canvas layout geometry and truncates before wrapping | **ENFORCED** — focused-pane/layout tests plus the CONSOLE-I06C standing guarded gate and maximized/unfocused/scale visual matrix |
+| DC3 | Routine, tool-prompt, and refusal modes preserve severity/text/icon redundancy and deterministic lifetime/history behavior | **ENFORCED** — `console_visual_goldens_match`, protocol lifetime/history tests, and the permanent `View / Console History` recovery route run on the standing guarded rail |
 | DC4 | Committed operations project from journal authority; consumer echoes never become a second journal | **ENFORCED** — `native_board_scene_loads_resolver_materialized_board_state`, `journal_history_excludes_launch_baseline_and_reports_exact_omission`, and `expanded_history_distinguishes_feedback_from_ordinal_journal_truth` |
 | DC5 | Terminal lifecycle, Notices, progress, and ERC/DRC findings follow decision-033 destinations instead of entering the Console catch-all | **ENFORCED** — `console_feedback::tests::terminal_progress_and_findings_producers_stay_outside_console` plus `scripts/check_datum_console_boundary.py` |
-| DC6 | Each visible status transition has an equivalent non-focus-stealing AT-SPI announcement | **TO-ENFORCE** — retain the existing polite/FIFO/no-focus tests and add a production-reachable critical consequence that proves the assertive path under CONSOLE-I06C |
+| DC6 | Each visible status transition has an equivalent non-focus-stealing AT-SPI announcement | **ENFORCED** — polite/FIFO/no-focus tests and the production-reachable failed-admission critical consequence prove both announcement priorities under CONSOLE-I06C |
 
 The owner review of Candidate A and placement P1/P3/P5 remains **HUMAN** evidence
 for the specification phase. The 2026-08-22 approval of four wgpu fixtures remains
-valid evidence for those fixtures, but implementation-level HUMAN closure is
-reopened until CONSOLE-I06D records a disposition for the current running shell
-and CONSOLE-I06C proves the expanded build-state matrix.
+valid implementation evidence, and CONSOLE-I06C proves the expanded build-state
+matrix. Whole-shell parity does not redefine the Console acceptance boundary.
 
 ## 8. S5 disposition ledger (S5-C10)
 

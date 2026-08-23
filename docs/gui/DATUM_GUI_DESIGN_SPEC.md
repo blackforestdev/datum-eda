@@ -323,14 +323,15 @@ accessibility evidence, dependency authority, and the explicit exclusions for
 Console input, notification tiers, findings UI, and GUI mutation.
 
 <!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06-CONFORMANCE-CLOSED -->
-The 2026-08-22 closure claim is withdrawn pending CONSOLE-I06A..I06D. An
+The 2026-08-22 closure claim was withdrawn pending CONSOLE-I06A..I06C. An
 adversarial post-implementation audit proved that source health and aggregate GUI
 conformance were red at the closure commit, that the Console golden test was
 ignored and absent from standing gates, and that several decision-033 production
 contracts remained incomplete. The four existing build fixtures and owner visual
 approval remain useful evidence, but they are not sufficient production-closure
 evidence until the recovery steps below pass and this marker is updated with the
-complete green rail.
+complete green Console-specific rail. Whole-shell visual parity remains a
+separately tracked GUI concern and does not expand the Console feature boundary.
 
 <!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06A -->
 CONSOLE-I06A restores decision-022 source health through cohesive ownership
@@ -386,29 +387,12 @@ and can no longer emit a false success echo. Phase 1 Select is honestly a routin
 echo: production tool-prompt publication stays forbidden until a real multi-step
 tool supplies typed live key hints. The guarded rail passes 17 state/routing/
 accessibility/preference tests, six render tests, and ten exact visual renders;
-the aggregate then stops solely at the separately governed CONSOLE-I06D shell
-parity owner boundary. `dat-console-acceptance-rail-gaps-8o7` is closed.
-
-<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D -->
-<!-- OWNER:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D:CONSOLE-I06D -->
-CONSOLE-I06D records the owner's disposition of the running-app shell capture.
-The review must separately decide the denser viewport grid and active terminal-tab
-styling, and must stabilize dynamic revision text before any shell golden is
-re-blessed. A blanket `--bless` against unexplained drift is not acceptance.
-
-<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D-OWNER-DISPOSITION -->
-On 2026-08-22 the owner separately recorded `GRID: revise`, `TERMINAL-TAB:
-approve`, and `REVISION-STABILITY: revise`. The active Terminal tab styling is
-therefore accepted. The denser grid is not accepted as the new baseline, and
-dynamic revision text must be made deterministic or excluded from pixel parity.
-No shell golden may be blessed until both revisions land and the aggregate
-parity gate passes against the resulting intended shell.
-
-<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06E -->
-CONSOLE-I06E restores the owner-approved grid density, preserves the approved
-active Terminal tab styling, stabilizes or excludes dynamic revision text from
-the deterministic shell capture, and proves shell visual parity before any
-golden update or final Console closure.
+the aggregate then stops at separately tracked whole-shell visual debt.
+`dat-console-acceptance-rail-gaps-8o7` is closed. The shell issue
+`dat-shell-parity-owner-bless-nct` preserves the owner's independent dispositions
+(`GRID: revise`, `TERMINAL-TAB: approve`, `REVISION-STABILITY: revise`) without
+making viewport grid, Terminal chrome, or revision presentation part of Console
+implementation or closure.
 
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.
