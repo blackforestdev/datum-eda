@@ -3775,17 +3775,34 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority.",
       "dependencies": [],
       "unblocks": [],
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "console-shell-repair-20260822-codex",
+        "claimed_at": "2026-08-22T17:10:44-07:00",
+        "heartbeat_at": "2026-08-22T17:10:44-07:00",
+        "expires_at": "2026-08-23T01:10:44-07:00",
+        "scope": [
+          "crates/gui-app/shell-capture",
+          "crates/gui-render/grid-and-terminal-chrome",
+          "scripts/gui-visual-parity",
+          "docs/gui/console-conformance",
+          "specs/active_frontier.json",
+          ".beads/issues.jsonl"
+        ],
+        "worktree": ".",
+        "head": "ce70003037753ff76ce3b0c1294de31b2bae4711"
+      },
       "completion": {
         "outcome": "Datum renders a typed, bounded, accessible, output-only action-feedback surface in the focused pane, with correct consequence routing and journal-projected history, while terminal input, notifications, findings, and GUI mutations retain their separate authorities.",
-        "canonical_next_step_id": "CONSOLE-I06D",
+        "canonical_next_step_id": "CONSOLE-I06E",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -3988,7 +4005,7 @@
           {
             "id": "CONSOLE-I06D",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Record the owner's shell visual disposition after separating grid, active-terminal-tab, and dynamic-revision drift.",
             "depends_on": [
               "CONSOLE-I06C"
@@ -3999,7 +4016,13 @@
                 "marker": "CONSOLE-I06D"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D-OWNER-DISPOSITION"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply with approve or revise for each of GRID, TERMINAL-TAB, and REVISION-STABILITY after reviewing the regenerated running-app comparison.",
               "requests": [
@@ -4016,6 +4039,22 @@
             }
           },
           {
+            "id": "CONSOLE-I06E",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Restore approved grid density, preserve active Terminal tab styling, stabilize revision text, and prove deterministic shell parity.",
+            "depends_on": [
+              "CONSOLE-I06D"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+                "marker": "CONSOLE-I06E"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "CONSOLE-I06",
             "kind": "governance",
             "status": "pending",
@@ -4024,7 +4063,8 @@
               "CONSOLE-I06A",
               "CONSOLE-I06B",
               "CONSOLE-I06C",
-              "CONSOLE-I06D"
+              "CONSOLE-I06D",
+              "CONSOLE-I06E"
             ],
             "requirement_refs": [
               {

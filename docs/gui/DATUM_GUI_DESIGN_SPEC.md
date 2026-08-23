@@ -396,6 +396,20 @@ The review must separately decide the denser viewport grid and active terminal-t
 styling, and must stabilize dynamic revision text before any shell golden is
 re-blessed. A blanket `--bless` against unexplained drift is not acceptance.
 
+<!-- EVIDENCE:DATUM-CONSOLE-OUTPUT:CONSOLE-I06D-OWNER-DISPOSITION -->
+On 2026-08-22 the owner separately recorded `GRID: revise`, `TERMINAL-TAB:
+approve`, and `REVISION-STABILITY: revise`. The active Terminal tab styling is
+therefore accepted. The denser grid is not accepted as the new baseline, and
+dynamic revision text must be made deterministic or excluded from pixel parity.
+No shell golden may be blessed until both revisions land and the aggregate
+parity gate passes against the resulting intended shell.
+
+<!-- REQ:DATUM-CONSOLE-OUTPUT:CONSOLE-I06E -->
+CONSOLE-I06E restores the owner-approved grid density, preserves the approved
+active Terminal tab styling, stabilizes or excludes dynamic revision text from
+the deterministic shell capture, and proves shell visual parity before any
+golden update or final Console closure.
+
 **Future:** SPICE / behavioral-model integration (deferred) benefits directly from
 the multi-tab terminal + parallel-agent model.
 
