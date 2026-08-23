@@ -261,6 +261,25 @@ multi-user implementation. Candidate direction is Git-like durable local/offline
 revision authority plus an optional Google-Docs-like live experience over typed
 Datum operations; no mechanism is yet ratified.
 
+### Stable decision locators
+
+The owner approved preserving the existing numbered-decision filenames as
+stable historical and governance locators. In particular:
+
+- `PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md` remains correctly named
+  under the approved Workspace vocabulary.
+- `PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md` retains its legacy path
+  so Frontier, manifest, tracker, research, and historical references remain
+  stable.
+- DOC-C06 must update decision 020’s visible title and operative content to
+  `Design Space / Publish Space and Viewports`, explicitly state that its path
+  is a preserved legacy locator, and remove legacy terminology from current
+  product semantics.
+
+Preserving a pathname does not preserve superseded terminology as product
+authority. Current prose, object names, UI labels, and conformance obligations
+must use Design Space and Publish Space.
+
 ## Internal evidence identified for DOC-C01
 
 - `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md` already
