@@ -54,7 +54,7 @@ Status meanings:
 | 11 | Where should engineering dimensions live: as authoritative design intent in Model Space, documentation in Paper Space, or both with distinct authority? | **Answered** | Both spaces support dimensions with distinct, enforced authority. Design Space supports driving dimensions that constrain geometry and reference dimensions that only measure it. Smart Dimension creates a driving dimension by default; if that would over-constrain the design, Datum refuses it and explicitly offers `Create as Reference` rather than silently changing intent. Only Design Space dimensions may drive geometry under the current boundary. Publish dimensions remain associative reference documentation and cannot write back. The existing board-dimension type must be reconciled to this split. |
 | 12 | Can one `DrawingSheet` freely mix schematic details, PCB views, 3D views, BOM tables, photographs, fabrication notes, and manufacturing-artifact views, or should templates restrict which source types may coexist? | **Answered in principle** | Free heterogeneous composition is required. Templates assist composition but do not impose source-type walls. |
 | 13 | Should Paper Space support arbitrary blank composition, template-driven composition, or both? | **Answered** | Publish Space supports both. A new Sheet may begin blank with its page definition and zero viewports, enabling arbitrary free composition. A user-selected custom template may instead prepopulate viewports, title blocks, company graphics, logos, and other publish-owned content. Templates automate setup but do not restrict later customization. |
-| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Partial** | The owner described ordered collections spanning many schematic and manufacturing sheets. Multiple independent sets in one scalable project remain to be explicitly decided. |
+| 14 | Is a `SheetSet` a single ordered publication package, or can one project have several sets such as Design Review, Fabrication Release, Assembly, Service Manual, and Customer Documentation? | **Answered** | A scalable Project may contain any number of independently configurable ordered `SheetSet` publication packages. The user or project template decides which sets and initial Sheets exist. Instantiated sets remain freely reconfigurable: add, remove, or reorder Sheets and add/remove Viewports on any Sheet. Templates are starting configurations, not structural restrictions. Whether one Sheet may participate in multiple sets remains follow-up 14a. |
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Open** | No owner disposition yet. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Open** | No owner disposition yet. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Open** | No owner disposition yet. |
@@ -104,6 +104,24 @@ title blocks, graphics, annotations, or other publish-owned content. Templates
 are accelerators and reusable starting points, not restrictions on subsequent
 composition. Detailed template, documentation, and Sheet lifecycle mechanics
 remain later questions in this specification pass.
+
+### Sheet Sets and publishing templates
+
+A Project may contain any number of independent ordered `SheetSet` publication
+packages, including user-defined review, fabrication, assembly, service, or
+customer deliverables. The user or a selected project/publishing template
+decides the initial sets, Sheets, Viewports, and publish-owned content.
+
+Template instantiation never locks the result to the template’s original
+shape. Users may add, remove, or reorder Sheets; add or remove Viewports on any
+Sheet; and otherwise reconfigure the publication package while working. Datum
+may ship a small curated starter set—potentially one default template—but the
+exact built-in catalog is product-content research, not an architectural
+restriction. Saving later changes back into a reusable template must be an
+explicit action rather than a side effect of editing an instantiated SheetSet.
+
+Follow-up 14a must decide whether one Sheet can be referenced by multiple
+SheetSets or whether Sheet membership is exclusive.
 
 ### Tiled editor workspaces
 
