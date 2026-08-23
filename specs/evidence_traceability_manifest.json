@@ -113,7 +113,7 @@
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "f4a204d0fa41871a61bb7ba80e1b8ca9c48988c48716d735239671a88237af45",
+      "reviewed_digest": "a85b9e4dbb632963c79096795615bdf5dca56ce9f06103bf583da2490941055e",
       "review_note": "Active DOC-SYSTEM-SPEC research must remain reconciled with the legacy decision being amended, the inherited shell, and the global research ledger."
     },
     {

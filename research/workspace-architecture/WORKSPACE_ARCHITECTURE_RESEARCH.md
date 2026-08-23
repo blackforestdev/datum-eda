@@ -71,7 +71,7 @@ Status meanings:
 | 15 | Should Draft sheets always follow the live model while Released sheets resolve against an immutable `model_revision`? | **Boundary answered** | The Product Revision Engine—not the Publish object model—owns Draft binding, pinning, baselines, and revision allocation. Release resolves a complete approved product/configuration baseline across Design, libraries, rules, Publish definitions/instances, checks, manufacturing plans, artifacts, approvals, and effectivity, never merely one `model_revision`. Exact Draft behavior remains for `dat-product-revision-engine-k9f`. |
 | 16 | When the model changes after release, should the released sheet remain frozen until a new document revision is deliberately created? | **Boundary answered** | An existing released configuration and its documents are immutable. Any controlled change in Design Space or Publish Space must be handled by the Product Revision Engine as successor revision work and cannot be released under the unchanged prior revision index. The engine will specify affected-document scope, allocation timing, pending-change identity, approvals, supersession, and regeneration; this documentation specification must not invent those mechanics. |
 | 17 | What should Datum implement first after specification: schematic publication, fabrication/assembly drawings, or the general sheet/viewport substrate with one narrow proof template? | **Answered** | Required order is: production-accepted Product Revision Engine foundation; domain-neutral Publish Space foundation; Sheet primitive; Viewport definition/instance and projection primitives; one narrow schematic-publication end-to-end proof; then fabrication and assembly publishing workflows. Publish establishes its authority boundary, revision participation, composition coordinates/units/media, typed operations, Design/artifact references, rendering/export architecture, templates/packages, staleness, validation, and refusals before domain-specific publication drives the architecture. Sheets and Viewports are its first core capabilities rather than a rival pre-Publish subsystem. |
-| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Partial — authority audited** | Existing authority already requires a persistent left Project tree, a document/view workspace, recursive panes, focused-pane context, View-menu split/fill/focus/presets, and tabs **or** a switcher. Board/Schematic editor prototypes place the Project tree over the focused-pane context panel; `workspace-panes.html` proves the recursive pane and View-menu mechanism. The true open scope is exact stable-target opening, Project-tree gestures, tabs versus compact switcher, scalable search/overflow, and how Design/Publish content extends the existing tree without becoming a global pane-evicting mode. |
+| 18 | Should workspace navigation be document-tab based, persistent-sidebar based, mode/persona based, or a hybrid? | **Answered** | Datum uses the hybrid already established by the visual authority: persistent left Project Navigator, pane-local content identity, recursive panes, focused-pane context, and View-menu tree operations/presets. Single-click selects; double-click or Enter opens the target in a new pane adjacent to the focused pane without evicting existing content. Project discovery remains local: either visually navigate by scrolling or right-click at the relevant Project node/region and choose `Search`. Search then receives keyboard input; each typed character incrementally narrows the matching items and updates the navigator selection. Search UI is invocation-local rather than permanently visible, results remain in the navigator, and no global Project-search surface is introduced. The navigator owns independent vertical scrolling with a right-edge scrollbar and accepts mouse-wheel and two-finger trackpad scrolling while pointed into it; those events never pan or zoom a Design/Publish pane. Design/Publish remain content classifications, never a global pane-evicting mode. |
 | 19 | Should pane layouts persist per workspace and per project—for example Board remembering a Board/Schematic split while Documentation remembers sheet composition? | **Partial — authority audited** | Persistence itself is already required and remains non-authoritative workspace state. Decision 021 requires per-user preference persistence; decision 007 defines project-default, user-local, and shared-profile owner scopes plus named workbench profiles. The genuine open choice is default write/restore precedence and which layout/profile scopes ship first—not whether layout persistence exists. |
 | 20 | Is the desired end state one cohesive Datum window, or may advanced users detach workspaces/sheets into additional native windows? | **Answered in principle — authority audited** | Datum has one cohesive primary application shell and also permits deliberate opt-in float/detach for advanced and multi-monitor work. Decisions 007 and ratified 021 already establish that end state; 021 deliberately defers only the narrower mechanism fork (in-shell PiP, native OS window, or both) and its implementation timing until tile+zoom prove insufficient. The broad single-window-versus-detach question must not be re-asked. |
 
@@ -101,7 +101,7 @@ record until that governance transaction lands.
 | 15 | Draft binding, pinning, and baseline resolution belong to the Product Revision Engine, not a Sheet-local rule. | Owner boundary; `dat-product-revision-engine-k9f` | Revision-engine specification |
 | 16 | Existing releases are immutable; controlled Design/Publish changes require successor revision treatment before release. | Owner boundary; Product Revision Engine research | Allocation, impact, approval, supersession, regeneration |
 | 17 | Build order is Revision foundation → Publish foundation → Sheet → Viewport → schematic proof → fabrication/assembly. | Owner disposition | DOC-C06 Frontier/dependency ratification |
-| 18 | Persistent Project tree + document/view panes + View-menu tree control + focused context + tabs or switcher is the inherited hybrid. | Ratified decisions 019/021; GUI Design/Product/Conformance specs; board/schematic/workspace prototypes | Exact open-target/navigation binding and Publish extension |
+| 18 | Persistent Project Navigator + document/view panes + View-menu tree control + focused context is the inherited hybrid. Single-click selects; double-click or Enter opens beside; discovery is local through visual scrolling or right-click → Search followed by incremental type-to-select filtering. | Ratified decisions 019/021; GUI Design/Product/Conformance specs; board/schematic/workspace prototypes; owner disposition | DOC-C06 integration and Publish tree content inventory only; the navigation model is closed |
 | 19 | Layout persistence is required, separate from Design authority, and supports owner-scoped workspace state and named profiles. | Decisions 007/021; Open Question Resolutions recommendation remains unratified | Default scope, precedence, sharing, and first shipped profiles |
 | 20 | Cohesive primary shell plus deliberate optional float/detach is already the intended end state. | Decisions 007/021 | PiP versus native window versus both; later proof-triggered timing |
 
@@ -455,8 +455,18 @@ Internal authority currently supports these separate roles:
   state rather than project hierarchy or Design authority;
 - the GUI product spec requires document tabs **or** a document switcher, so a
   global flat tab strip is not already ratified;
-- command-palette and keyboard focus/history navigation can optimize repeat
-  access without creating another persistent hierarchy.
+- general command-palette and focus/history navigation remain available for
+  commands and pane movement, but do not create a second Project-search surface.
+
+Owner disposition adds the concrete Project Navigator interaction boundary:
+
+- single-click selects a Project item and updates its contextual information;
+- double-click or Enter opens the selected target in a new adjacent pane while
+  preserving the existing pane composition;
+- the navigator is an independently scrollable region with its vertical
+  scrollbar on the right edge;
+- mouse-wheel and two-finger trackpad gestures scroll the navigator while the
+  pointer is over it and never leak through as pan/zoom input to an editor pane.
 
 External primary-source precedents reinforce the separation rather than one
 universal control:
@@ -477,15 +487,32 @@ universal control:
   provide a direct space/layout switch, but copy poorly into Datum because a
   scalable Project can contain many Design contexts, SheetSets, Sheets, and
   simultaneous heterogeneous panes.
+- [SOLIDWORKS FeatureManager filtering](https://help.solidworks.com/2024/english/SolidWorks/sldworks/t_filtering_the_featuremanager_design_tree.htm)
+  provides precedent for incremental filtering within a potentially large
+  engineering tree and supports matching by names, types, and tags. Datum uses
+  this behavior through a local context invocation rather than a permanently
+  visible field.
+- [JetBrains project-tree speed search](https://www.jetbrains.com/help/idea/speed-search-in-the-tool-windows.html)
+  and [Search Everywhere](https://www.jetbrains.com/help/idea/searching-everywhere.html)
+  demonstrate both local-tree and keyboard-global search layers. Datum adopts
+  the local scoped behavior, improves it by including collapsed descendants,
+  and rejects the separate global Project-search layer as slower and less local
+  than right-clicking or scrolling in the persistent navigator.
 
-The evidence-backed candidate is therefore a layered hybrid with non-overlapping
-semantics: Project Navigator for complete structure; pane-local identity and
-working-set switching for open content; a fast global switcher for keyboard
-recall/search; and named workspace layouts for task arrangements. `Design` and
-`Publish` classify content/authority and may filter or scope navigation, but do
-not become an application-wide mode that evicts other panes. Exact tab presence,
-location, overflow, compact states, and pointer/keyboard choreography remain for
-Claude's comparative visual study and owner disposition.
+The approved result is therefore a layered hybrid with non-overlapping
+semantics: the Project Navigator owns complete-structure discovery; pane-local
+identity owns currently visible content; and named workspace layouts own task
+arrangements. `Design` and `Publish` classify content/authority and may scope
+navigation, but do not become an application-wide mode that evicts other panes.
+For large projects, discovery remains deliberately local: the user either
+visually navigates with the right-edge scrollbar, mouse wheel, or two-finger
+trackpad scrolling, or right-clicks the relevant Project node/region and chooses
+`Search`. The local search receives keyboard focus; every typed character
+incrementally narrows the matching set and updates the navigator selection,
+including matches in collapsed descendants. It is not an always-visible filter.
+No global Project-search surface is introduced. Double-click or Enter opens the
+selected target beside the focused pane. This closes question 18; later Publish
+tree content inventory must extend this model without reopening it.
 
 ## Internal evidence identified for DOC-C01
 
