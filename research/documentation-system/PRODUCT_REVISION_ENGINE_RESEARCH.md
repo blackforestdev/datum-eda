@@ -20,9 +20,10 @@ document must participate in revision governance. The simple Datum project must
 remain simple; regulated aerospace, defense, medical, and other organizations
 must be able to apply stronger profiles without a second product architecture.
 
-Questions 15 and 16 in the workspace/documentation owner ledger are suspended
-until this research defines the release and baseline concepts they currently
-assume.
+Questions 15 and 16 in the workspace/documentation owner ledger are closed at
+their authority boundary: this engine owns their detailed behavior. This
+research must define the release and baseline concepts those questions assumed
+without delaying completion of the remaining workspace questions.
 
 ## Controlling posture
 
@@ -40,6 +41,10 @@ assume.
   count of edits or Git commits.
 - A released configuration is never silently rewritten by later Design,
   library, Publish, rule, or generator changes.
+- A controlled Design Space or Publish Space change after release must become
+  successor revision work; the changed configuration may not be released under
+  the unchanged prior revision index. Allocation timing and affected-document
+  propagation remain research questions rather than being inferred here.
 - Any divergence from a released baseline must be visible, impact-analyzed,
   and traceable to a controlled change disposition.
 - Title-block revision/status fields are projections of governed document and
