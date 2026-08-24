@@ -116,8 +116,11 @@
    *Dependencies:* `dat-documentation-system-spec-y8z`. *Unblocks:* multi-user project collaboration implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md`.
 - **Specify the Datum Product Revision Engine** (`PRODUCT-REVISION-SPEC`; `dat-product-revision-engine-k9f`).
    Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `specs/PUBLISH_SPACE_SPEC.md`.
+   *Dependencies:* none. *Unblocks:* dat-global-preferences-engine-qcv. *Governing:* `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `specs/PUBLISH_SPACE_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
+- **Specify the Datum Global Preferences Engine** (`GLOBAL-PREFERENCES-SPEC`; `dat-global-preferences-engine-qcv`).
+   Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy. *state `planned`; authorization `planning`.*
+   *Dependencies:* `dat-product-revision-engine-k9f`. *Unblocks:* revision-policy system selection and governed global Preferences implementation. *Governing:* `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## Spec Governance Coverage

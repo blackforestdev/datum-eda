@@ -282,3 +282,17 @@ those boundaries rather than treating this prose as ratification.
 Q2 and Q3 remain blocked until that disposition is recorded.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-IDENTITY-PACKET -->
+
+## Owner disposition ledger
+
+### REV-C03-ID-Q1 — Scheme registry and factory preference
+
+**Approved 2026-08-24.** All five rendered v1 behaviors remain registry/profile
+choices. Datum has one engine. `Sequential Alphanumeric (Legacy)` is the factory
+system preference; ISO 19650 is selectable, and future standards can be added as
+profiles. The not-yet-built Global Preferences engine will seed new Project
+policy, never govern existing Projects dynamically. This decision chooses the
+default profile family but allocates no token, selects no origin event, and does
+not answer ID-Q2.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q1-APPROVED -->

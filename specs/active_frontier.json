@@ -4874,7 +4874,9 @@
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
-      "unblocks": [],
+      "unblocks": [
+        "dat-global-preferences-engine-qcv"
+      ],
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
@@ -5105,14 +5107,38 @@
         "post_completion": {
           "effects": [
             "A bounded Product Revision Engine implementation program may be selected only from the owner-approved specification.",
-            "Publish Space implementation remains blocked until the Revision Engine foundation reaches production acceptance."
+            "Publish Space implementation remains blocked until the Revision Engine foundation reaches production acceptance.",
+            "GLOBAL-PREFERENCES-SPEC is the ordered architecture follow-on and must specify the policy-resolution authority before integrated system-preference UX is implemented."
           ],
-          "unblocks_issue_ids": [],
+          "unblocks_issue_ids": [
+            "dat-global-preferences-engine-qcv"
+          ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
         }
       }
+    },
+    {
+      "key": "GLOBAL-PREFERENCES-SPEC",
+      "order": 33,
+      "title": "Specify the Datum Global Preferences Engine",
+      "issue_id": "dat-global-preferences-engine-qcv",
+      "governing_docs": [
+        "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
+      "dependencies": [
+        "dat-product-revision-engine-k9f"
+      ],
+      "unblocks": [
+        "revision-policy system selection and governed global Preferences implementation"
+      ]
     }
   ]
 }

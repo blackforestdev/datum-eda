@@ -738,3 +738,27 @@ enabled minting-event kinds, optional phase-build identity, suitability/status
 exposure, and prototype-to-production sequence transition before Q2 or Q3.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q2-PREREQUISITE -->
+
+### REV-C03-ID-Q1 — Revision profile registry and factory preference
+
+**Approved 2026-08-24.** Datum retains one Product Revision Engine with a
+profile-policy registry; it does not implement competing revision engines. The
+v1 registry exposes the researched sequential numeric, sequential alphabetic,
+issue/revision, ISO 19650-oriented, and organization-custom behaviors. The
+factory system preference is `Sequential Alphanumeric (Legacy)`. ISO 19650 is a
+selectable professional profile, and the registry remains extensible to later
+standards without changing engine identity.
+
+The Global Preferences engine is not implemented. Until its separately tracked
+specification and implementation land, Revision code receives an explicit
+resolved policy in tests and bounded execution. A future system preference
+seeds new Project policy only; that Project-owned copy is the governed authority.
+Changing a system preference cannot silently alter an existing Project, a CI
+namespace, or any issued identity. Alphabetic/numeric token configuration and
+human-identity origin remain scheme policy; this disposition allocates no token
+and does not answer REV-C03-ID-Q2.
+
+**Follow-on:** `dat-global-preferences-engine-qcv`, blocked on completion of the
+Product Revision Engine specification.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q1-APPROVED -->

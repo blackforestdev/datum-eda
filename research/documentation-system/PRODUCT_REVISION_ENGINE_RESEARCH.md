@@ -260,6 +260,16 @@ prerequisite are maintained in
 label, origin rule, minting-event set, composition/build label, status-axis
 policy, reset policy, or allocation choreography is ratified yet.
 
+The owner-approved rollout deliberately separates policy consumption from the
+not-yet-built Global Preferences authority. Revision specification continues
+against an explicit resolved `RevisionPolicy` input. The factory system
+preference is `Sequential Alphanumeric (Legacy)`; ISO 19650 and later standards
+remain selectable profiles. A future Preferences engine seeds new Project
+policy but never remains a live authority over an existing Project or issued
+identity. Its specification is tracked by `dat-global-preferences-engine-qcv`
+and follows completion of this specification; no current code may claim that
+general Preferences storage, precedence, migration, or GUI exists.
+
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
 
