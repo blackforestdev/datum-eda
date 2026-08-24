@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "495f38b1b0d7824e4214a7bcfab0862a72c74920f1b2a3865d6a298cb55043f3",
-      "review_note": "The research inventory and human traceability synthesis now register the REV-C03 Product Revision Engine authority model alongside the owner-approved baseline and standards matrix, with planning-only status explicit."
+      "reviewed_digest": "1de524fc2c982984dd1d35c2f72ed2102b8888ce598980a28bfdb76f8a05a683",
+      "review_note": "The research inventory and human traceability synthesis now register the REV-C03 revision-identity prerequisite packet alongside the authority model, owner-approved baseline, and standards matrix. They consistently mark Q2/Q3 blocked, every revision scheme/default unratified, visual review required, and implementation unauthorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -106,6 +106,7 @@
       "sources": [
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md",
+        "research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
         "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
@@ -118,8 +119,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "b24ab08447e61b924fc2b1ae6bff72dc2162248e760c8e67a2249e1c39b36c10",
-      "review_note": "The REV-C03 working authority model and owner-approved Q1 disposition were cross-reviewed against every Publish/workspace consumer. One EngineeringChange identity, profile-specific labels, append-only lifecycle, and distinct waiver/deviation records introduce no conflict with the exact Working/Baseline ConfigurationRef seam, Publish composition and staleness ownership, one-window workspace exclusion from baselines, immutable issued documents without Sheet-local release state, or planning-only status."
+      "reviewed_digest": "9ab8a49f6f13214e4206f6cb41e21f860233e34b8db5a213d39860355abc3574",
+      "review_note": "The REV-C03 authority model, owner-approved Q1 disposition, and revision-identity prerequisite packet were cross-reviewed against every Publish/workspace consumer. The candidate explicit scheme registry, per-CI namespaces, primary baseline-manifest composition, optional product labels, and identity-free successor collection preserve the exact Working/Baseline ConfigurationRef seam, Publish composition and staleness ownership, illustrative-only visual labels, immutable issued documents, and planning-only status."
     },
     {
       "id": "parametric-footprint-editor",

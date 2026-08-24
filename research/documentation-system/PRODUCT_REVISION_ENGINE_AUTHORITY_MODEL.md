@@ -104,7 +104,7 @@ Every governed record has four non-interchangeable identity facets:
 |---|---|---|
 | Stable ID | Machine reference across rename, reordering, and storage movement. | UUID-based Datum identity; never derived from label/path/revision. |
 | Human number/name | Search, drawing, package, and organization vocabulary. | Scoped, uniqueness-policy controlled, rename rules explicit. |
-| Issue/revision label | Human milestone sequence such as `A`, `B`, `01`, or organization scheme. | Allocated only by policy; unique within its revision namespace; never parsed as technical ordering without the scheme. |
+| Issue/revision label | Human milestone label interpreted only through its assigned revision scheme. | Allocated only by policy; unique within its revision namespace; never parsed as technical ordering without the scheme. Alphabetic and numeric labels elsewhere in this working model are illustrations, not defaults. |
 | Content/record digest | Exact integrity and independent verification. | Deterministic digest over the canonical immutable payload and referenced identities. |
 
 `ObjectRevision` and `ModelRevision` remain existing technical identity types.
@@ -195,6 +195,7 @@ the Release.
 EngineeringRevision {
   id,
   revision_namespace,
+  revision_scheme_ref,
   revision_label,
   subject_or_scope,
   baseline_id,
@@ -206,9 +207,11 @@ EngineeringRevision {
 ```
 
 An EngineeringRevision cannot exist in issued form without a baseline and
-Release. A profile may reserve a label during successor work, but reservation
-is a separate expiring `RevisionReservation`, not an issued revision and never
-appears as released title-block truth.
+Release. No revision scheme or default label sequence is ratified by this
+working model. A profile may reserve a scheme-governed label during successor
+work, but reservation is a separate expiring `RevisionReservation`, not an
+issued revision and never appears as released title-block truth. Merely
+collecting successor work binds no revision identity or reservation.
 
 ### `EngineeringChange`
 
@@ -671,9 +674,10 @@ These are not approval requests yet; each needs a proof-backed decision packet:
    labels/stages, or distinct ECR/ECO/DCO object types that share a substrate?
    This model recommends one semantic object to avoid forcing enterprise method.
 2. Should a lightweight project automatically open background successor Change
-   work after the first released baseline changes, or require an explicit
-   “Begin revision” action? This model recommends automatic collection plus an
-   unmistakable revision-dirty state, with explicit rationale at release.
+   work after the working configuration first diverges from a released
+   baseline, or require an explicit “Begin revision” action? This question is
+   blocked on the revision-identity prerequisite: collection must not imply,
+   reserve, or allocate a revision identity.
 3. Is `EngineeringRevision` allocated per CI, per explicit release scope, or
    both under separate namespaces? This model recommends both, because a
    scalable Project may issue individual board/document CIs and coordinated
@@ -704,3 +708,24 @@ label stages as ECR, ECO, DCO, or local terms without creating competing engine
 objects. Waivers and deviations remain distinct bounded-departure records.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q1-APPROVED -->
+
+### REV-C03-Q2 — Deferred for revision-identity prerequisite
+
+**Owner revision 2026-08-24.** Q2 is not a choreography choice until Datum's
+revision-identity scheme and complex-product composition rules are ratified.
+Automatic successor-work collection is acceptable only when fully decoupled
+from presumed next-in-sequence identity. Q2 and Q3 remain unanswered pending a
+dedicated evidence-backed decision packet and concrete owner-reviewed title-
+block and UI renderings.
+
+The prerequisite packet must decide:
+
+1. a profile-policy scheme registry covering linear alphabetic, linear numeric,
+   ISO 19650 status plus revision, and organization-custom behavior, with no
+   unratified default;
+2. per-CI revision namespaces plus baseline-manifest identity as the primary
+   complex-product composition mechanism, with product-level labels optional;
+3. that successor-work collection binds no revision identity and allocation is
+   a scheme-governed designer/release-time action.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q2-PREREQUISITE -->

@@ -252,6 +252,11 @@ edit an issued revision.
 The evidence-constrained working model is maintained in
 `PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`. Its candidate mechanisms and
 explicit owner questions remain unratified until the later owner-decision gate.
+The owner's REV-C03-Q2 sequencing objection exposed revision identity as a
+prerequisite to Q2 and Q3. The evidence and visual-review contract for that
+prerequisite are maintained in
+`REV_C03_REVISION_IDENTITY_DECISION_PACKET.md`; no revision scheme, default
+label, composition label, or allocation choreography is ratified yet.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
