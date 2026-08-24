@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "8598abb9fd9fd4f15235daeb38f70438cccb0cc9fa089477b51fef4890a28b0c",
-      "review_note": "The research inventory and human traceability synthesis now register the REV-C02 Product Revision Engine standards matrix alongside the owner-approved REV-C01 baseline and preserve planning-only status."
+      "reviewed_digest": "495f38b1b0d7824e4214a7bcfab0862a72c74920f1b2a3865d6a298cb55043f3",
+      "review_note": "The research inventory and human traceability synthesis now register the REV-C03 Product Revision Engine authority model alongside the owner-approved baseline and standards matrix, with planning-only status explicit."
     },
     {
       "id": "terminal-focus-incident",
@@ -105,6 +105,7 @@
       "status": "in_progress",
       "sources": [
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "research/documentation-system/PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
         "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
@@ -117,8 +118,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "21aae7a766da48fda0379c261f80fc17d8a867d81d2e0f5fbb29a95a553e67c3",
-      "review_note": "The clause-addressable REV-C02 matrix was cross-reviewed against every Publish/workspace consumer. It preserves Publish ownership of composition and staleness presentation, Revision Engine ownership of configuration context and release authority, planning-only status, and licensed-text gates for ISO, SAE/EIA, IAQG 9100, and ASME claims."
+      "reviewed_digest": "98d1ae9b88c5921cd5f71aaf07b120881fdf768077944cc8a3fb5ae60325785c",
+      "review_note": "The REV-C03 working authority model was cross-reviewed against every Publish/workspace consumer. It preserves the exact Working/Baseline ConfigurationRef seam, Publish composition and staleness ownership, one-window workspace exclusion from baselines, immutable issued documents without Sheet-local release state, and planning-only status."
     },
     {
       "id": "parametric-footprint-editor",

@@ -249,6 +249,10 @@ typed operations, refusal states, invariants, and query surfaces. Establish the
 one path from technical change through approved release without making every
 edit an issued revision.
 
+The evidence-constrained working model is maintained in
+`PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`. Its candidate mechanisms and
+explicit owner questions remain unratified until the later owner-decision gate.
+
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
 
