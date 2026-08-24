@@ -4881,14 +4881,14 @@
         "agent": "codex",
         "harness": "codex-cli",
         "session": "codex-rev-c03-20260824",
-        "claimed_at": "2026-08-24T15:03:37Z",
-        "heartbeat_at": "2026-08-24T15:03:37Z",
-        "expires_at": "2026-08-24T23:03:37Z",
+        "claimed_at": "2026-08-24T23:10:30Z",
+        "heartbeat_at": "2026-08-24T23:10:30Z",
+        "expires_at": "2026-08-25T07:10:30Z",
         "scope": [
           "REV-C03 authoritative vocabulary, object, lifecycle, operation, invariant, refusal, and query model"
         ],
         "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "eb24c49ec82abb7059445429ba90ca06d6823588"
+        "head": "58d557de43f74b0ae0996ce191023cbf6f885232"
       },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",

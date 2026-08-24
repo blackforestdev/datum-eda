@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "20292d331e749c5c273139fd5ac1bdf11d5e95a654bf6cd01b059c0d5403edaa",
-      "review_note": "The research inventory and human traceability synthesis register the owner-approved REV-C03-ID-Q1 profile/default decision, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-on. ID-Q2 onward remain pending, source-strength gates are preserved, and neither revision nor Preferences implementation is authorized."
+      "reviewed_digest": "46b77570a2968fe44d2504b4b3adccc46cadde1206daf4209cfd316c4a7d1a5e",
+      "review_note": "The research inventory and human traceability synthesis register the owner-approved REV-C03-ID-Q1 profile/default and ID-Q2 provisional-origin decisions, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-on including the unresolved whole-drawing watermark preference. ID-Q3 onward remain pending, source-strength gates are preserved, and neither Revision nor Preferences implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "d5c9c9744d8b96d4c523a52217b61289d6031d5d95f0e413c2de3af4ff62740c",
-      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, identity packet, V1-V7 prototype, and ID-Q1 disposition were cross-reviewed against every Publish/workspace consumer. One profile-driven engine, the Sequential Alphanumeric (Legacy) factory preference, selectable ISO 19650/later profiles, Project-owned copied policy, and the deferred Global Preferences dependency preserve per-CI namespaces, baseline-manifest composition, the Working/Baseline ConfigurationRef seam, Publish ownership, immutable issued documents, identity-free successor collection, source-strength gates, and planning-only status."
+      "reviewed_digest": "d5768734b6773eb6bba4ef0a7a77898cf5665f1303eec07187fb6fe94296545e",
+      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, identity packet, V1-V7 prototype, and ID-Q1/ID-Q2 dispositions were cross-reviewed against every Publish/workspace consumer. One profile-driven engine, the Sequential Alphanumeric (Legacy) factory preference with an honestly marked provisional RevisionReservation, selectable ISO 19650/later profiles, Project-owned copied policy, and the deferred Global Preferences watermark setting preserve per-CI namespaces, baseline-manifest composition, the Working/Baseline ConfigurationRef seam, Publish ownership, immutable issued documents, identity-free successor collection, ASME licensed-text gating, source-strength gates, and planning-only status."
     },
     {
       "id": "parametric-footprint-editor",

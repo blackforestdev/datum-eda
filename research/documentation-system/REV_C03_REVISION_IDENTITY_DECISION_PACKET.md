@@ -296,3 +296,22 @@ default profile family but allocates no token, selects no origin event, and does
 not answer ID-Q2.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q1-APPROVED -->
+
+### REV-C03-ID-Q2 — Human-identity origin before issue
+
+**Approved 2026-08-24.** V2 Candidate P is the factory
+`Sequential Alphanumeric (Legacy)` treatment. A governed pre-issue Publish
+drawing may present an honestly marked provisional `RevisionReservation`; the
+reservation is not an issued `EngineeringRevision`, baseline, approval, or
+Release. Technical history remains independent, and only a profile-authorized
+boundary may create issued revision authority. `UNALLOCATED` remains a valid
+engine/Inspector fact where no reservation exists, but it is not the preferred
+primary drawing annotation for this profile.
+
+The V2 ASME dash is neither selected here nor treated as a provisional mark. It
+remains a separately gated standards-profile candidate pending licensed-clause
+verification. A proposed full-drawing provisional watermark checkbox is carried
+to the future Global Preferences specification; its default and output behavior
+are not decided by ID-Q2.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q2-APPROVED -->

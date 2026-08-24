@@ -256,9 +256,15 @@ The owner's REV-C03-Q2 sequencing objection exposed revision identity as a
 prerequisite to Q2 and Q3. The evidence and visual-review contract for that
 prerequisite are maintained in
 `REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md` and
-`REV_C03_REVISION_IDENTITY_DECISION_PACKET.md`; no revision scheme, default
-label, origin rule, minting-event set, composition/build label, status-axis
-policy, reset policy, or allocation choreography is ratified yet.
+`REV_C03_REVISION_IDENTITY_DECISION_PACKET.md`. ID-Q1 now ratifies the profile
+registry and factory `Sequential Alphanumeric (Legacy)` preference. ID-Q2
+ratifies its honestly marked provisional `RevisionReservation` treatment while
+preserving the rule that only a profile-authorized boundary creates an issued
+`EngineeringRevision`. The minting-event set, composition/build label,
+status-axis policy, reset policy, and allocation choreography remain unratified.
+A proposed full-drawing provisional-watermark preference is deferred to
+`dat-global-preferences-engine-qcv`; no current Preferences implementation is
+assumed.
 
 The owner-approved rollout deliberately separates policy consumption from the
 not-yet-built Global Preferences authority. Revision specification continues

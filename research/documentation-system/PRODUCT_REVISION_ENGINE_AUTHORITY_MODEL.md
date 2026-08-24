@@ -762,3 +762,29 @@ and does not answer REV-C03-ID-Q2.
 Product Revision Engine specification.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q1-APPROVED -->
+
+### REV-C03-ID-Q2 — Human-identity origin before issue
+
+**Approved 2026-08-24.** The factory `Sequential Alphanumeric (Legacy)` profile
+uses the visually reviewed V2 Candidate P treatment: before issue, a governed
+Publish drawing may carry an honestly marked provisional `RevisionReservation`
+rather than presenting the vague `UNALLOCATED` state as its primary human-facing
+revision communication. The reservation is visibly provisional and not issued.
+It is not an `EngineeringRevision`, baseline, approval, or Release, and it can
+never project as released title-block truth. Technical transaction history
+continues independently throughout the provisional state. Only a later
+profile-authorized boundary can create an issued `EngineeringRevision`.
+
+The ASME initial-release dash remains a separate standards-profile behavior,
+not a provisional-mark synonym and not part of this approval. Its exact meaning
+remains subject to the licensed-clause review already recorded by the evidence
+packet.
+
+A future Global Preferences presentation setting may let the user project a
+provisional watermark across the entire drawing. The setting's default, allowed
+wording, template interaction, print/export behavior, and whether a governed
+profile may require it are deliberately deferred to
+`dat-global-preferences-engine-qcv`; this approval does not silently invent that
+unbuilt preference authority.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q2-APPROVED -->
