@@ -688,3 +688,19 @@ These are not approval requests yet; each needs a proof-backed decision packet:
 6. Should withdrawn/obsolete/superseded be universal standing events or only
    profile-enabled vocabulary? This model recommends universal typed standing
    relationships with profile-selected allowed terms and transition rules.
+
+## Owner disposition ledger
+
+### REV-C03-Q1 — EngineeringChange identity and lifecycle
+
+**Approved 2026-08-24.** The reviewed authority is `EngineeringChange`, lines
+213–250, and `EngineeringChange lifecycle`, lines 414–431, as frozen in commit
+`f473ffe`.
+
+Datum has one engine-level `EngineeringChange` identity with the append-only
+lifecycle `Draft -> ImpactReview -> Authorized -> Implementing -> Verification
+-> Closed` and the `Rejected`, `Deferred`, and `Cancelled` exits. Profiles may
+label stages as ECR, ECO, DCO, or local terms without creating competing engine
+objects. Waivers and deviations remain distinct bounded-departure records.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q1-APPROVED -->
