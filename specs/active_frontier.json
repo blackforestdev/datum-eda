@@ -4868,13 +4868,26 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
       "unblocks": [],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-rev-c02-20260824",
+        "claimed_at": "2026-08-24T14:54:50Z",
+        "heartbeat_at": "2026-08-24T14:54:50Z",
+        "expires_at": "2026-08-24T22:54:50Z",
+        "scope": [
+          "REV-C02 clause-addressable primary-source standards matrix"
+        ],
+        "worktree": "main:/home/bfadmin/Documents/datum-eda",
+        "head": "d76d290263793c08dfa56ac7ea30e414e241d458"
+      },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
         "canonical_next_step_id": "REV-C02",
@@ -4953,7 +4966,7 @@
           {
             "id": "REV-C02",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Build a clause-addressable primary-source standards matrix for configuration identification, baselines, change control, status accounting, audit, drawing revision, approvals, effectivity, records, release, and retention.",
             "depends_on": [
               "REV-C01A"

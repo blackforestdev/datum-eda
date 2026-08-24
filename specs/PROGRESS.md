@@ -115,7 +115,7 @@
    Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `planned`; authorization `planning`.*
    *Dependencies:* `dat-documentation-system-spec-y8z`. *Unblocks:* multi-user project collaboration implementation. *Governing:* `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md`.
 - **Specify the Datum Product Revision Engine** (`PRODUCT-REVISION-SPEC`; `dat-product-revision-engine-k9f`).
-   Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized. *state `planned`; authorization `planning`; **CANONICAL NEXT**.*
+   Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `specs/PUBLISH_SPACE_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
