@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "5e24cdacbe274e9e5c45b0fbdea0d1ed568fae044133ec92e6717fdb1599bbaf",
-      "review_note": "The research inventory and human traceability synthesis now register the revision sequencing/origin research and its expanded REV-C03 decision packet alongside the authority model, owner-approved baseline, and standards matrix. They consistently mark Q2/Q3 blocked, all six identity/origin questions unratified, visual review required, source-strength gates preserved, and implementation unauthorized."
+      "reviewed_digest": "4808b81c471c53206464119557c05f529024046c0cc6f20afdb5cb12cb6be62b",
+      "review_note": "The research inventory and human traceability synthesis now register the revision sequencing/origin research, expanded REV-C03 decision packet, and reviewed V1-V7 visual study alongside the authority model, owner-approved baseline, and standards matrix. They consistently mark Q2/Q3 blocked, all six identity/origin questions unratified, source-strength gates preserved, and implementation unauthorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -108,6 +108,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md",
         "research/documentation-system/REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md",
         "research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md",
+        "docs/gui/prototypes/revision-identity-study.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
         "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
@@ -120,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "071b83a9e2637b86f1334a024815ca4547df1df2cfd88806fca32284fa856689",
-      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, and expanded identity packet were cross-reviewed against every Publish/workspace consumer. Candidate scheme/origin/minting/build/status/reset choices preserve per-CI namespaces, primary baseline-manifest composition, the Working/Baseline ConfigurationRef seam, Publish composition and staleness ownership, illustrative-only visual labels, immutable issued documents, identity-free successor collection, REV-C02 source-strength gates, and planning-only status."
+      "reviewed_digest": "36947b997af66d0fe88cfc605a7c6ecdcf815756163990c9c5f6e4f21d390f64",
+      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, expanded identity packet, and V1-V7 prototype were cross-reviewed against every Publish/workspace consumer and rendered at 1680x4400. Candidate scheme/origin/minting/build/status/reset choices preserve per-CI namespaces, primary baseline-manifest composition, the Working/Baseline ConfigurationRef seam, Publish ownership, illustrative-only labels, immutable issued documents, identity-free successor collection, accessibility distinctions, REV-C02 source-strength gates, and planning-only status."
     },
     {
       "id": "parametric-footprint-editor",
