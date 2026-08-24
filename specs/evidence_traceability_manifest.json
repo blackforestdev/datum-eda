@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "b338031219f909f6e42eeaf9b98c9eaebf9be29d70adc659dcc6f35d279c05a5",
-      "review_note": "Research inventory and cross-domain traceability identify workspace architecture as integrated into the governed Publish Space specification and now list the REV-C01 internal authority audit as supporting evidence for the active Product Revision Engine planning program."
+      "reviewed_digest": "8598abb9fd9fd4f15235daeb38f70438cccb0cc9fa089477b51fef4890a28b0c",
+      "review_note": "The research inventory and human traceability synthesis now register the REV-C02 Product Revision Engine standards matrix alongside the owner-approved REV-C01 baseline and preserve planning-only status."
     },
     {
       "id": "terminal-focus-incident",
@@ -105,6 +105,7 @@
       "status": "in_progress",
       "sources": [
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
         "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
         "research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md"
@@ -116,8 +117,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "62629ccb3531fa545da6fc878afa3bb70de9205b64b8ce207de32c52d0bf1954",
-      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020. The corrected REV-C01 packet incorporates the owner's disposition, library, ZoneFill, revision-fence, journal-tail, derived-cache, title-block-claim, and Publish/Revision seam corrections and received explicit REV-C01A factual-baseline approval on 2026-08-24; REV-C02 standards research is now selected."
+      "reviewed_digest": "21aae7a766da48fda0379c261f80fc17d8a867d81d2e0f5fbb29a95a553e67c3",
+      "review_note": "The clause-addressable REV-C02 matrix was cross-reviewed against every Publish/workspace consumer. It preserves Publish ownership of composition and staleness presentation, Revision Engine ownership of configuration context and release authority, planning-only status, and licensed-text gates for ISO, SAE/EIA, IAQG 9100, and ASME claims."
     },
     {
       "id": "parametric-footprint-editor",

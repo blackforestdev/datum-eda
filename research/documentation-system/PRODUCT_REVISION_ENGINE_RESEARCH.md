@@ -1,6 +1,7 @@
 # Datum Product Revision Engine Research
 
-> **Status:** In progress — scope and primary-source baseline established
+> **Status:** In progress — internal baseline approved and clause-addressable
+> standards matrix drafted
 > (`dat-product-revision-engine-k9f`). No object model, lifecycle, revision
 > scheme, standards-conformance claim, or implementation is yet ratified.
 
@@ -177,8 +178,10 @@ copies before Datum claims a conforming profile.
 |---|---|---|
 | [ISO 10007:2017](https://www.iso.org/standard/70400.html) | Configuration-management planning, identification, change control, status accounting, and audit across the product lifecycle | Official scope reviewed; normative text pending lawful access |
 | [MIL-HDBK-61B](https://quicksearch.dla.mil/WMX/Default.aspx?token=5764667) | DoD configuration-management guidance for hardware/software, digital artifacts, identification, change control, accounting, and audits | Official public source identified; full extraction pending |
-| [NASA NPR 7123.1B Appendix C](https://nodis3.gsfc.nasa.gov/displayCA.cfm?Internal_ID=N_PR_7123_001B_&page_name=AppendixC) | CI identification, baseline acceptance, change requests, approvals, implementation, release, unintended-effect monitoring, and status records | Official public requirements reviewed at overview level |
+| [NASA NPR 7123.1D Change 2 §3.2.15](https://nodis3.gsfc.nasa.gov/displayDir.cfm?Internal_ID=N_PR_7123_001D_&page_name=Chapter3) | Current NASA requirements for tailored CM process, configuration identification/change control, integrity, traceability, security, and lifecycle records | Official public current requirement reviewed clause-by-clause; replaces the historical 1B perimeter citation |
 | [NASA Systems Engineering Handbook §6.5](https://www.nasa.gov/reference/6-0-crosscutting-technical-management/) | Baselines, change authority, unique CI/document identifiers, release, and product integrity | Official guidance reviewed at overview level |
+| [ECSS-M-ST-40C Rev.1](https://ecss.nl/standard/ecss-m-st-40c-rev-1-configuration-and-information-management/) | Public normative configuration and information management requirements, including identification, control, status, verification, approvals, delivery, and retention | Official complete public text reviewed clause-by-clause for the ECSS profile |
+| [MIL-STD-31000B (2018-10-31)](https://quicksearch.dla.mil/WMX/Default.aspx?token=5754451) | Contract-tailored technical data package identity, content, metadata, approval, and index controls | Official public normative text reviewed for invoked TDP profiles |
 | [ASME Y14.35-2025](https://www.asme.org/codes-standards/find-codes-standards/revision-of-engineering-drawings-and-associated-documents) | Identification and recording of engineering product-definition and associated-document revisions | Official scope reviewed; normative text pending lawful access |
 | [Git tag documentation](https://git-scm.com/docs/git-tag.html) | Annotated/signed release-point identity available to an outer Git integration | Official behavior reviewed; not an engineering CM standard |
 
@@ -188,6 +191,12 @@ technical data packages, ISO 9001 documented-information controls, relevant
 IPC product/documentation records, and applicable ECSS configuration/change
 control. Edition, status, licensing, scope, and normative availability must be
 verified before use.
+
+The clause-level source register, requirement/disposition rows, licensing gates,
+and coverage proof are maintained in
+`PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md`. That artifact distinguishes
+normative profile requirements, official guidance, publisher scope, and Datum
+product policy; its summaries never substitute for the cited authority.
 
 ## Research and specification workstreams
 

@@ -86,7 +86,7 @@ directory does not sit in git unloved.
 | Application Status Bar         | `application-status-bar/`       | `APPLICATION_STATUS_BAR_RESEARCH.md`          | integrated | `docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md`                |
 | S5 selection visual language   | `selection-visual-language/`    | `SELECTION_VISUAL_LANGUAGE_RESEARCH.md`       | integrated | `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`             |
 | Workspace architecture         | `workspace-architecture/`       | `WORKSPACE_ARCHITECTURE_RESEARCH.md`          | integrated | `specs/PUBLISH_SPACE_SPEC.md`; decision 020                          |
-| Product revision engine        | `documentation-system/`         | `PRODUCT_REVISION_ENGINE_RESEARCH.md`; `REV_C01_INTERNAL_AUTHORITY_AUDIT.md` | in-progress | (pending — dat-product-revision-engine-k9f)                       |
+| Product revision engine        | `documentation-system/`         | `PRODUCT_REVISION_ENGINE_RESEARCH.md`; `REV_C01_INTERNAL_AUTHORITY_AUDIT.md`; `PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md` | in-progress | (pending — dat-product-revision-engine-k9f)                       |
 
 ## Future Research (Backlog)
 
