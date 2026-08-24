@@ -718,6 +718,11 @@ from presumed next-in-sequence identity. Q2 and Q3 remain unanswered pending a
 dedicated evidence-backed decision packet and concrete owner-reviewed title-
 block and UI renderings.
 
+The sequencing/origin synthesis is recorded in
+`REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md`; it supplies candidate evidence,
+not a standards-profile mapping or owner disposition. Its strongest normative
+claims remain subject to the REV-C02 source-strength and licensed-text gates.
+
 The prerequisite packet must decide:
 
 1. a profile-policy scheme registry covering linear alphabetic, linear numeric,
@@ -727,5 +732,9 @@ The prerequisite packet must decide:
    complex-product composition mechanism, with product-level labels optional;
 3. that successor-work collection binds no revision identity and allocation is
    a scheme-governed designer/release-time action.
+
+The visual decision packet must additionally resolve human-identity origin,
+enabled minting-event kinds, optional phase-build identity, suitability/status
+exposure, and prototype-to-production sequence transition before Q2 or Q3.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q2-PREREQUISITE -->
