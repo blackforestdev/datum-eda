@@ -4869,7 +4869,7 @@
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
       "state": "planned",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
@@ -4877,7 +4877,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C01A",
+        "canonical_next_step_id": "REV-C02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4917,7 +4917,7 @@
           {
             "id": "REV-C01A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Present the committed REV-C01 code/spec proof packet and obtain owner approval or revision of the factual baseline before standards research begins.",
             "depends_on": [
               "REV-C01"
@@ -4928,7 +4928,13 @@
                 "marker": "REV-C01A"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-SPEC:REV-C01A-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the committed proof packet, reply `REV-C01-BASELINE: approve` or `REV-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
               "requests": [

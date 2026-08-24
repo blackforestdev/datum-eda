@@ -116,8 +116,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "c2ee304beb419f7087add65ca526b58ef4240315cb501ddf18840b7e8e4b8b63",
-      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020. The REV-C01 packet now incorporates the owner's first REV-C01A revision round: disposition authorities, library annotations, bounded ZoneFill staleness, revision fences, journal-tail identity, missing derived caches, title-block claim corrections, and the exact Publish/Revision staleness seam; final factual-baseline approval remains pending."
+      "reviewed_digest": "62629ccb3531fa545da6fc878afa3bb70de9205b64b8ce207de32c52d0bf1954",
+      "review_note": "DOC-C01..C05 research and owner dispositions are integrated into the governed Publish Space specification and amended decision 020. The corrected REV-C01 packet incorporates the owner's disposition, library, ZoneFill, revision-fence, journal-tail, derived-cache, title-block-claim, and Publish/Revision seam corrections and received explicit REV-C01A factual-baseline approval on 2026-08-24; REV-C02 standards research is now selected."
     },
     {
       "id": "parametric-footprint-editor",

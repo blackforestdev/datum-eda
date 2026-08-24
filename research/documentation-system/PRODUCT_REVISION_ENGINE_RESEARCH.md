@@ -210,6 +210,17 @@ owner approves or revises whether that packet is a sufficiently accurate and
 complete factual baseline for standards research. This gate does not approve a
 Product Revision Engine mechanism or implementation.
 
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C01A-APPROVED -->
+**Owner review — approved 2026-08-24.** After one explicit revision round, the
+owner approved the corrected REV-C01 factual baseline with
+`REV-C01-BASELINE: approve`. The accepted packet is
+`research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md`, evidenced
+by commits `1a4a041` and `009f45c`; commit `d324dce` registered the correction
+as Frontier evidence. This approval establishes only the current-authority,
+contradiction, and missing-capability baseline for REV-C02. It does not approve
+vocabulary, lifecycle, standards conformance, architecture, dependencies, or
+implementation.
+
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C02 -->
 ### REV-C02 — Standards matrix
 
