@@ -2,7 +2,9 @@
 
 > **Status:** Committed factual baseline for owner review at REV-C01A.
 > **Scope:** Datum repository state at `264b1a2` plus the audit-only governance
-> changes that carry this packet. This document inventories what exists; it does
+> changes that carry this packet. Revised after the owner's first REV-C01A
+> review to add disposition, library-state, ZoneFill-staleness, revision-fence,
+> derived-cache, and title-block-claim evidence. This document inventories what exists; it does
 > not ratify Product Revision Engine vocabulary, lifecycle, policy, or code.
 
 ## Question this audit answers
@@ -27,8 +29,9 @@ Product Revision Engine.
 The implemented substrate provides stable object identity, monotonic object
 revision fields, a deterministic model fingerprint, optimistic-concurrency
 guards, journaled typed operations, proposals, exact library pins, variant
-revision fields, and model-revision-stamped generated evidence. These mechanisms
-support replay, staleness detection, diff, undo, and reproducibility.
+revision fields, waiver/deviation dispositions, bounded ZoneFill staleness,
+revision fences, and model-revision-stamped generated evidence. These mechanisms
+support replay, bounded staleness detection, diff, undo, and reproducibility.
 
 No implemented Datum authority currently creates or governs configuration
 items, approved baselines, engineering changes, document revisions, releases,
@@ -48,16 +51,20 @@ be resolved before a product mechanism is specified.
 | Existing concept | Implemented identity and persistence | Mutation / production path | What it actually proves | What it does **not** prove |
 |---|---|---|---|---|
 | Object revision | `ObjectRevision(u64)` on resolved `DomainObject`; absent JSON fields resolve as `0` ([substrate/mod.rs](../../crates/engine/src/substrate/mod.rs)) | Typed operations can guard and bump object revisions through `commit()` | A particular domain object's technical version and stale-write protection | Approval, release, effectivity, or why the version is fit for use |
-| Model revision | `ModelRevision(String)` on `DesignModel`; SHA-256 of project ID, included shard path/hash pairs, and object ID/revision/source-shard triples | Recomputed after resolved/authored state changes; selected evidence and sidecars are excluded | Deterministic technical fingerprint of the authored model inputs chosen by the resolver | An issued engineering revision, approved baseline, document revision, or Git identity |
+| Model revision | `ModelRevision(String)` on `DesignModel`; its computation is SHA-256 of project ID, included shard path/hash pairs, and object ID/revision/source-shard triples | Computed from resolved/authored state when no valid journal exists; when a journal exists, the resolver carries the last valid transaction's recorded `after_model_revision`; selected evidence and sidecars are excluded | Technical identity used for concurrency, journal chaining, and authored-state staleness | An issued engineering revision, approved baseline, document revision, or Git identity; the computation still omits the accepted transaction tip required by decision 000D |
 | Transaction / journal lineage | Append-only `.datum/journal/transactions.jsonl`; transaction UUID, batch UUID, before/after model revisions, provenance, diff, operations, inverse operations | The journaled commit path stages shards, appends the record, promotes staged bytes, and updates the cursor | A replayable typed mutation with actor/source/reason, technical before/after identity, and undo/redo linkage | Timestamp, parent transaction DAG, approver/signature, affected shard hashes, validation disposition, baseline membership, release or effectivity |
+| Revision-guard surfaces | Journaled commit requires `expected_model_revision`; MCP write/proposal/apply tools require a pinned context fence containing context ID, expected model revision, and accepted transaction tip; daemon native writes reject stale model revisions; CLI undo/redo can guard both model revision and transaction tip; GUI supervision reports accepted tip | Context-fence validation, daemon refusal, commit validation, optional CLI undo/redo guards, and read-only GUI/context projections | Cross-surface stale-context refusal and visibility of both model identity and journal position | A product baseline, approval, or release; carrying both values separately does not make `ModelRevision` incorporate the journal tip |
 | Proposal state | Sidecar `Proposal` with `Draft`, `Accepted`, `Deferred`, `Rejected`, or `Applied`, pinned to `prepared_against: ModelRevision` | Proposal create/preview/validate/accept/apply paths; application returns through journaled commit | Reviewed intent and whether a proposed operation batch may be applied to its prepared model | A formal engineering change order, configuration-control-board approval, release approval, or issued revision |
 | Library revision pin | `LibraryBinding.pinned_object_revision` and `RevisionedRef { object_id, object_revision }` | Component/library typed operations through the shared mutation path | Exact technical library object revision selected by a project | Library qualification, independent approval, effectivity, or controlled uptake into a released product |
+| Pool lifecycle and symbol review annotations | Pool `Part.lifecycle` is `Active`, `Nrnd`, `Eol`, `Obsolete`, or `Unknown`; symbols may carry `LibraryCheckState` and `LibraryObjectProvenance` review fields | Pool/library object authoring | Supply/lifecycle classification and object-local check/reviewer annotations | A governed library-release lifecycle, typed approval role/signature, product effectivity, or baseline qualification |
 | Model-attachment review | `ModelReviewState { approved: bool, reviewed_by, reviewed_at }` inside pool data | Pool-object authoring | A small, object-local review annotation | A typed role, immutable signature, formal approval record, baseline, or release authority |
 | Variant revision | `VariantOverlay` carries `base_model_revision` and `variant_revision: ObjectRevision` | Variant overlay operations through journaled source shards | Technical identity of a sparse variant overlay against a base model | A released product variant, variant effectivity, or approved option configuration |
 | Rules and standards basis | Rule objects carry their own revision counters; check coverage includes strings such as `rule_revision` and `revision_or_profile`; IPC basis `revision` identifies a standards edition | Rule operations bump stored rule revisions; check producers record configured basis | Technical rule evolution and the standards/profile basis a check says it evaluated | Approval of a ruleset, verified standards conformance, or product release |
 | Manufacturing plan, panel, and output-job revision | Each authored record carries `object_revision`; names/prefixes are ordinary strings | Manufacturing/output-job typed operations | Technical version of the output recipe or panel definition | That a prefix such as `release-a` or `rev-a` is a governed revision or release |
 | Generated artifact/run identity | `OutputJobRun`, `ArtifactProductionProjection`, and `ArtifactMetadata` pin `ModelRevision`; files/projections carry SHA-256 evidence | Generated-evidence persistence paths, intentionally outside authored model-revision changes | Which technical model generated an output and whether recorded bytes validate | Approved configuration membership, document issue, signed release, recipient, effectivity, or retention |
-| Check profile named `release` | Aggregate check profile over relationship, ERC, DRC, standards, and manufacturing domains | CLI check runner refuses when active error findings remain | Deterministic checks were run and no active error finding blocked that gate | A released baseline or any human/role approval |
+| Waiver and accepted-deviation disposition | `CheckWaiver`; `CheckDeviation { accepted_by, approval_status: Accepted }`; check findings use `active`, `waived`, or `accepted_deviation`; typed create/delete waiver/deviation operations are journaled | Native-write waiver/deviation facade and schematic-root operations; check projection applies dispositions before summary/gating | An authored disposition can prevent a matching finding from counting as an active error in the `release` check gate | A typed approval role/signature, configuration-control approval, effectivity, expiration, or product release |
+| Check profile named `release` | Aggregate check profile over relationship, ERC, DRC, standards, and manufacturing domains after waiver/deviation disposition | CLI check runner refuses only when `active` error findings remain; `waived` and `accepted_deviation` findings do not count as active errors | Deterministic checks were run and no undispositioned active error finding blocked that gate | A released baseline or formal human/role approval |
+| ZoneFill stale projection | `ZoneFill` pins `source_zone_revision` and `model_revision`; resolver comparison can derive typed `ZoneFillState::Stale`; checks expose `zone_fill_stale` | Generated-evidence resolution and check production | Bounded dependency staleness for persisted copper-fill evidence against its source zone/model | General dependency-impact propagation across Design, libraries, Publish, manufacturing, and released artifacts |
 | GUI `rev` presentation | Menubar/status-bar text truncates `scene.source_revision`; schematic import synthesizes a source string from project and sheet UUIDs | Scene import and renderer projection | A short source/scene token is visible | A Datum engineering or document revision |
 | Workspace/session state | Pane layout, focus, zoom, filters, console, and related consumer state are expressly never journaled as design operations | Session/UI mutation only | Current user presentation context | Design, document, configuration, or release revision |
 | Git repository identity | Repository governance/proof scripts query Git commits; some runtime proof metadata can carry a `source_revision` string | External repository tooling, not the Datum engine | Source-tree or test-evidence identity where explicitly recorded | Datum approval, product baseline, document revision, release, or standalone revision control |
@@ -80,6 +87,14 @@ runs, output-job runs, check runs, zone fills, import maps, proposals, and
 forward-annotation reviews. Generated evidence can therefore be recorded or
 replayed without changing the authored `ModelRevision`.
 
+**Observed fact.** `ProjectResolver` computes a candidate fingerprint but, when
+a valid journal exists, installs the last transaction's recorded
+`after_model_revision` as the resolved model revision
+([project_resolver.rs](../../crates/engine/src/substrate/project_resolver.rs)).
+This preserves journal continuity; it does not change the fact that
+`compute_model_revision` itself omits the transaction tip ratified by decision
+000D.
+
 **Interpretation.** This is a valuable distinction between authored model state
 and evidence about that state. A future configuration baseline cannot simply be
 an alias for `ModelRevision`, because the required release evidence is
@@ -99,6 +114,17 @@ the transaction journal, promotes the staged writes, and updates the journal
 cursor ([commit.rs](../../crates/engine/src/substrate/commit.rs)). Repository
 write-fence gates pass and preserve the one canonical mutation path, with the
 explicit legacy converter exceptions enumerated by the guard.
+
+**Observed fact.** Revision protection is also exposed outside `commit()`. The
+MCP context fence requires `context_id`, `expected_model_revision`, and
+`accepted_transaction_tip` for guarded write/proposal/apply surfaces
+([context_revision_fence.py](../../mcp-server/context_revision_fence.py)); the
+engine daemon refuses a stale expected revision
+([dispatch.rs](../../crates/engine-daemon/src/dispatch.rs)); CLI undo/redo can
+validate both the model revision and exact journal-tip transaction
+([journal_mutation.rs](../../crates/cli/src/commands/project/journal_mutation.rs));
+and GUI supervision projects the accepted transaction tip
+([supervision.rs](../../crates/gui-protocol/src/supervision.rs)).
 
 **Interpretation.** This is strong technical provenance and concurrency control.
 It is not, by itself, controlled change authorization or an audit-complete
@@ -132,12 +158,43 @@ findings ([gate.rs](../../crates/cli/src/commands/check/gate.rs),
 whether current deterministic checks objected. It cannot yet prove that an
 authorized role approved an exact configuration and issued those bytes.
 
+### Finding disposition and bounded staleness
+
+**Observed fact.** `CheckWaiver` and `CheckDeviation` are authored schematic
+dispositions; a deviation carries `accepted_by` and the currently single-valued
+`DeviationApprovalStatus::Accepted`
+([check_disposition.rs](../../crates/engine/src/schematic/check_disposition.rs),
+[schematic/mod.rs](../../crates/engine/src/schematic/mod.rs)). Typed
+create/delete operations persist both through the journal. Check projection
+changes matching findings from `active` to `waived` or `accepted_deviation`, and
+the `release` gate counts only `active` errors.
+
+**Interpretation.** Datum therefore has a real disposition authority that
+modulates check gating. Its free-form actor fields and one-state approval enum
+remain weaker than the controlled roles, attestations, policy, and effectivity
+required for formal release approval.
+
+**Observed fact.** Persisted `ZoneFill` evidence records both source-zone and
+model revisions. Resolution compares those identities, derives
+`ZoneFillState::Stale`, and emits a typed `zone_fill_stale` finding
+([zone_fill.rs](../../crates/engine/src/substrate/zone_fill.rs)).
+
+**Interpretation.** Dependency staleness is not wholly absent. One bounded
+generated-evidence path is implemented. What remains absent is a general typed
+impact graph across library, Design, rules, Publish, manufacturing, documents,
+and released configurations.
+
 ### Document and Publish authority
 
-**Observed fact.** The governed Publish Space specification reserves release,
-baseline, staleness, revision fields, and immutable issued-document behavior to
-the Product Revision Engine. No corresponding document/release structs or typed
-operations exist in the engine today ([PUBLISH_SPACE_SPEC.md](../../specs/PUBLISH_SPACE_SPEC.md)).
+**Observed fact.** The governed Publish Space specification reserves
+configuration identification, baselines, approvals, revision allocation,
+release, effectivity, supersession, withdrawal, status accounting,
+reproduction, and audit to the Product Revision Engine. Publish owns its
+render/export, staleness determination and display, and refusal substrate; the
+Revision Engine supplies the working or immutable-baseline configuration context
+that makes that staleness determinable. No corresponding document/release
+structs or typed operations exist in the engine today
+([PUBLISH_SPACE_SPEC.md](../../specs/PUBLISH_SPACE_SPEC.md)).
 
 **Observed fact.** Earlier title-block research says revision ledgers and status
 are projections from the commit journal and suggests auto-appending revision
@@ -175,16 +232,18 @@ authority and any optional mapping to commits/tags remain specification work.
 
 | ID | Evidence in conflict | Observed discrepancy | Required later disposition |
 |---|---|---|---|
-| REV-GAP-01 | Decision 000D says `ModelRevision` hashes object revisions **plus accepted-transaction tip**; `compute_model_revision` does not hash the journal tip | Code and controlling decision describe different technical identities | REV-C03 must preserve the higher authority or deliberately amend it with migration consequences |
+| REV-GAP-01 | Decision 000D says `ModelRevision` hashes object revisions **plus accepted-transaction tip**; `compute_model_revision` does not hash the journal tip. The resolver carries the last valid transaction's recorded `after_model_revision`, while MCP/context/GUI surfaces track the transaction tip separately | Code and controlling decision describe different technical identities; journal-tail carry-forward and dual revision/tip fences confirm rather than resolve the omission | REV-C03 must preserve the higher authority or deliberately amend it with migration consequences |
 | REV-GAP-02 | Decision 000D says transactions include a parent transaction DAG field, affected shard IDs/hashes, validation state, and cache invalidations; `TransactionRecord` has none of those fields | The implemented journal is less complete than the ratified storage model claims | Specify which fields belong in technical journal records versus Product Revision Engine records |
 | REV-GAP-03 | Decision 000D says artifact metadata includes timestamp and ties artifact revision to output-job, board/panel, and variant revisions; `ArtifactMetadata` lacks timestamp and exact per-source object revisions | Current artifacts pin the model and hashes but not the complete claimed reproduction tuple | Define release-manifest and artifact-evidence ownership, then reconcile code/spec |
 | REV-GAP-04 | Decision 000D says transactions are the sole producer of revisions; resolver materialization accepts missing `object_revision` as `0`, and `ModelRevision` is recomputed directly from shards/objects | “Revision” currently includes both transaction-produced counters and resolver-computed content identity | Narrow the doctrine wording or enforce transaction-only creation/migration semantics |
 | REV-GAP-05 | Title-block research proposes journal-derived, auto-appended revision ledgers; current revision research says commits are not issued revisions | Research sources disagree about document revision authority | REV-C03 must make the revision engine authoritative and revise the title-block research before implementation |
 | REV-GAP-06 | GUI renders `rev` from `scene.source_revision`; schematic scenes synthesize a project/sheet identity string | User-facing “rev” can label a value that is not an engineering revision | Rename the current chrome or bind it to a future typed revision projection; visual disposition belongs in REV-C06 |
 | REV-GAP-07 | CLI calls a deterministic check aggregate `release`, but no release object or transition exists | Passing the gate can be misread as completing release | Rename or explicitly scope the gate when Product Revision Engine vocabulary is ratified |
-| REV-GAP-08 | `ModelReviewState.approved: bool` and proposal `Accepted` use approval-like language without controlled roles/signatures | Local review/acceptance can be confused with formal configuration approval | Establish typed approval classes and prevent weaker states from satisfying release policy |
+| REV-GAP-08 | `ModelReviewState.approved: bool`, proposal `Accepted`, symbol check/reviewer annotations, `CheckDeviation.accepted_by`, and waiver/deviation dispositions use approval-like language without controlled roles/signatures; the latter also changes `release`-gate counting | Several local review/acceptance/disposition states can be confused with formal configuration approval, and one has direct gate consequences | Establish typed approval classes and prevent weaker states from satisfying formal release policy without an explicit profile disposition |
 | REV-GAP-09 | Manufacturing tests and records permit free-form `rev-*` / `release-*` names and prefixes | A label can look authoritative without any lifecycle relationship | Treat these strings as names only and reserve governed revision projections for engine-owned fields |
 | REV-GAP-10 | Generated evidence is excluded from `ModelRevision`, while a release must include exact checks and output bytes | One fingerprint cannot identify the complete released configuration/evidence set | A baseline/release manifest needs its own immutable identity over both controlled inputs and qualifying evidence |
+| REV-GAP-11 | Title-block research claims an **existing** six-state PLM machine and a repository `EngineeringChangeOrder`; repository code contains neither authority | Research presents proposed concepts as already implemented and then derives document release/history behavior from them | Correct the research claims and require later document-control design to cite actual Product Revision Engine objects |
+| REV-GAP-12 | Decision 000D ratifies persisted derived caches carrying graph revision and every source object revision, with resolver cache-staleness validation; no corresponding general resolved-net/derived-cache record or resolver implementation exists | The ratified revision-keyed cache mechanism is absent; ZoneFill is a bounded generated-evidence staleness path, not the general cache system described | Inventory intended cache classes in REV-C03/C05 and either implement the ratified mechanism or amend 000D explicitly |
 
 ## Missing product capabilities
 
@@ -205,7 +264,7 @@ The following are **absent**, not merely hidden behind an unfinished GUI:
 | Retention and record integrity | Retention policy, immutable evidence, correction/supersession, clock/time authority, export and independent verification |
 | Standalone local authority | Durable engine records and workflows that work without Git or a remote service |
 | Optional Git adapter | Explicit mapping and divergence state among Datum identities and Git commits/tags without transferring release authority to Git |
-| Dependency impact propagation | Typed stale/affected/unaffected results from changed library/design/rules through Publish, manufacturing, and released artifacts |
+| General dependency impact propagation | Beyond implemented ZoneFill revision comparison and artifact/model pins, typed stale/affected/unaffected traversal from changed library/design/rules through Publish, manufacturing, documents, and released artifacts |
 
 ## Private-writer and mutation-path result
 
@@ -224,6 +283,21 @@ No new dependency was introduced. This establishes that the Product Revision
 Engine can be designed on top of the existing one-mutation-path substrate; it
 does not erase the documented terminal legacy-converter exception.
 
+The first owner-review correction round also ran focused behavioral proof:
+
+```text
+python3 -m unittest test_context_revision_fence.py  # from mcp-server/: 13 passed
+python3 scripts/run_cargo_guarded.py --workload interactive -- \
+  cargo test -p eda-engine zone_fill --lib          # 24 passed
+python3 scripts/run_cargo_guarded.py --workload interactive -- \
+  cargo test -p eda-engine waiver --lib             # 12 passed
+python3 scripts/run_cargo_guarded.py --workload interactive -- \
+  cargo test -p datum-eda-cli project_accept_deviation  # 3 passed
+```
+
+These tests establish the newly inventoried behavior; they do not prove any
+formal product release or standards conformance.
+
 ## Reproduction commands
 
 Run from the repository root:
@@ -237,9 +311,17 @@ rg -n "ObjectRevision|ModelRevision|compute_model_revision|SourceShardAuthority"
 rg -n "struct OperationBatch|struct TransactionRecord|struct Proposal|ProposalStatus|journaled commit requires" \
   crates/engine/src/substrate
 
+# Cross-surface revision and journal-tip guards.
+rg -n "expected_model_revision|accepted_transaction_tip|expected_tip_transaction" \
+  mcp-server crates/engine-daemon crates/cli crates/gui-protocol
+
 # Library, variant, rules, manufacturing, and generated-evidence concepts.
-rg -n "pinned_object_revision|variant_revision|rule_revision|struct OutputJob|struct ArtifactMetadata|struct ModelReviewState" \
+rg -n "pinned_object_revision|variant_revision|rule_revision|struct OutputJob|struct ArtifactMetadata|struct ModelReviewState|LibraryCheckState|LibraryObjectProvenance|enum Lifecycle" \
   crates/engine/src
+
+# Finding dispositions and bounded ZoneFill staleness.
+rg -n "CheckWaiver|CheckDeviation|DeviationApprovalStatus|accepted_deviation|ZoneFillState|zone_fill_stale" \
+  crates/engine/src crates/cli/src
 
 # Potentially misleading user/product language.
 rg -n "ReleaseCheckGateView|profile_id: \"release\"|source_revision|draw_text\(\"rev\"" \
@@ -258,7 +340,7 @@ python3 scripts/check_dependency_authority.py
 
 ## Audit coverage and limits
 
-This packet covers implemented Rust record types and mutation paths; governing
+This packet covers implemented Rust and MCP record types and mutation paths; governing
 storage, workspace, Publish, pool, library, and title-block prose; GUI revision
 presentation; repository Git invocation; and known write-fence exceptions.
 
@@ -287,6 +369,18 @@ Those decisions require standards evidence and later owner dispositions.
 5. Keep Git optional and subordinate through a Datum-owned adapter.
 
 ## REV-C01A owner decision boundary
+
+### Review history
+
+- **Round 1 — revise (2026-08-23):** the owner required the packet to add
+  waiver/accepted-deviation disposition authority; pool lifecycle and symbol
+  review annotations; bounded ZoneFill staleness; MCP, daemon, undo/redo, and GUI
+  revision-guard surfaces; the false title-block-research claims about an
+  existing six-state PLM machine and `EngineeringChangeOrder`; and the absent
+  general persisted derived-cache mechanism. The owner also corrected the
+  Publish/Revision seam and required the journal-tail `model_revision` behavior
+  to be explicit. This revision incorporates all six dispositions. REV-C01A
+  remains pending until the owner reviews the corrected committed packet.
 
 Approval means only:
 
