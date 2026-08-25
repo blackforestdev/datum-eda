@@ -356,10 +356,19 @@ authority. No implementation or dependency is authorized.
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C06 -->
 ### REV-C06 — Human experience and visual contract
 
-Define a quiet always-on default, prominent actionable divergence, release and
-approval workflows, revision/title-block projections, change impact review,
-history, and regulated-profile depth. Claude-owned HTML studies must validate
-the eventual interaction model before ratification.
+The Codex-owned visual-study authority is
+[`REV_C06_UX_VISUAL_STUDY_BRIEF.md`](REV_C06_UX_VISUAL_STUDY_BRIEF.md). It
+preserves the approved revision identity/authority visuals and requires a
+Claude-owned extension covering local shell entry, quiet successor work,
+Change lifecycle, impact explanation, library uptake, baseline comparison,
+regeneration, release readiness, approvals, atomic issuance, reproduction,
+offline/Git posture, responsive behavior, and accessibility.
+
+The brief does not ask the owner to approve prose. Claude must first render all
+twelve coverage frames and map them to six bounded owner questions. Codex then
+audits the result and presents exactly one question at a time with exact source
+and prototype ranges, consequences, recommendation, and response syntax. No
+implementation or owner disposition is implied by the brief.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->
