@@ -844,7 +844,8 @@ Sequential Alphanumeric and ISO 19650 profiles may use the capability.
 
 ### REV-C03-ID-Q5 — Profile-owned suitability/status axis
 
-**Approved 2026-08-25.** The visually reviewed V6a treatment is authoritative:
+**Approved 2026-08-25; owner clarification recorded the same day.** The visually
+reviewed V6a behavior and V3d title-block projection are jointly authoritative:
 suitability/status exposure belongs to profiles that define that axis. The
 factory `Sequential Alphanumeric (Legacy)` profile does not expose ISO
 suitability codes, while ordinary Datum lifecycle truth such as Provisional,
@@ -854,11 +855,35 @@ ISO status.
 The ISO 19650 profile stores revision identity and suitability/status as
 separate authoritative fields that may change independently. A formatter may
 display both compactly, but the engine refuses any profile, operation, or
-projection that conflates them. Organization-custom and future standards
-profiles may define their own typed status policies.
+projection that conflates them. Its full title-block projection follows V3d:
+`REVISION` and `STATUS` occupy separately labeled cells, with container,
+namespace, and lifecycle state also remaining distinct. Organization-custom and
+future standards profiles may define their own typed status policies.
 
 Future Global Preferences seeds the selected Revision Profile for new Projects;
 the copied Project policy remains authoritative. Interfaces omit a meaningless
 empty suitability field when the active profile defines no such axis.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q5-APPROVED -->
+
+### REV-C03-ID-Q6 — Prototype-to-production identity transition
+
+**Approved 2026-08-25.** Datum supports both visually reviewed V6b transition
+policies. Candidate A is the factory behavior: prototype and production work
+continue in one CI namespace and one revision sequence. Candidate B is an
+enterprise/organization-profile option: an explicit governed transition closes
+the prototype namespace, creates a separately governed production identity,
+and records immutable supersession lineage between them.
+
+Candidate B is never a counter reset inside one namespace. Closed namespaces
+remain queryable, historical identities retain their original meanings, and no
+transition may erase, reuse, or reinterpret an allocated token. Global
+Preferences may seed the new-Project policy; the copied Project policy remains
+authoritative. Selecting ISO 19650 does not itself force Candidate B because
+ISO provisional/contractual sequencing and product prototype/production
+re-identification are distinct concerns.
+
+Every transition is an explicit typed, policy-authorized operation. No phase
+change, release, label edit, or profile switch silently changes identity.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q6-APPROVED -->

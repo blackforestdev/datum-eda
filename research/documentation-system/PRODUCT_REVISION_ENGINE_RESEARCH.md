@@ -267,10 +267,14 @@ never mints independently of the selected profile. ID-Q4 ratifies optional
 first-class `BuildIdentity` over a baseline manifest, with quiet V4a as the
 factory presentation and V4b phase/build hierarchy as a
 Global Preferences or governed-enterprise-profile selection over the same data
-model. ID-Q5 ratifies the V6a profile-owned status model:
-Sequential Alphanumeric exposes no ISO suitability axis, while ISO 19650 keeps
-revision and suitability/status independently authoritative. Reset policy and
-allocation choreography remain unratified.
+model. ID-Q5 jointly ratifies the V6a profile-owned status model and the V3d
+ISO title-block projection: Sequential Alphanumeric exposes no ISO suitability
+axis, while ISO 19650 keeps revision and suitability/status independently
+authoritative and renders them in separately labeled title-block cells. Reset
+policy is resolved by ID-Q6: one continuing namespace is the factory behavior,
+while an enterprise/profile policy may perform an explicit prototype-to-
+production namespace transition with immutable supersession lineage. Allocation
+choreography outside these identity dispositions remains unratified.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.

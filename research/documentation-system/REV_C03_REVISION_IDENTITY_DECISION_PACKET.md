@@ -352,16 +352,34 @@ without build identities display neither surface.
 
 ### REV-C03-ID-Q5 — Profile-owned suitability/status axis
 
-**Approved 2026-08-25.** V6a is selected. Suitability/status is exposed only by
-profiles that define it. `Sequential Alphanumeric (Legacy)` does not show an ISO
-suitability axis; ordinary Datum lifecycle states remain visible and distinct.
-ISO 19650 keeps revision and suitability/status as separate independently
-changing authoritative fields. Custom and future standards profiles may define
-typed status policies, but Datum refuses any conflation with revision identity.
-Global Preferences seeds the new-Project profile; existing Projects retain
-their copied policy.
+**Approved 2026-08-25; owner clarification recorded the same day.** V6a and V3d
+are jointly selected. Suitability/status is exposed only by profiles that define
+it. `Sequential Alphanumeric (Legacy)` does not show an ISO suitability axis;
+ordinary Datum lifecycle states remain visible and distinct. ISO 19650 keeps
+revision and suitability/status as separate independently changing authoritative
+fields, and its full title block follows V3d with separately labeled `REVISION`
+and `STATUS` cells. Container, namespace, and lifecycle state remain isolated
+from both. Custom and future standards profiles may define typed status policies,
+but Datum refuses any conflation with revision identity. Global Preferences
+seeds the new-Project profile; existing Projects retain their copied policy.
 
 V6b is not part of ID-Q5; it remains the separate prototype-to-production
 namespace question for ID-Q6.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q5-APPROVED -->
+
+### REV-C03-ID-Q6 — Prototype-to-production identity transition
+
+**Approved 2026-08-25.** V6b is selected with both governed policies supported.
+Candidate A is the factory default: one CI namespace and continuous revision
+sequence through prototype and production. Candidate B is an enterprise/profile
+option that explicitly closes the prototype namespace, creates a separate
+production identity, and records immutable supersession lineage.
+
+Candidate B is not a counter reset. Historical namespaces remain queryable and
+tokens are never reused or reinterpreted. Global Preferences seeds the
+new-Project transition policy; existing Projects retain their copied policy.
+ISO 19650 selection does not automatically choose Candidate B. Every transition
+requires an explicit typed, policy-authorized operation.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q6-APPROVED -->
