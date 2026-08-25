@@ -398,3 +398,14 @@ does not own a parallel EngineeringRevision namespace. This authority question
 is distinct from identity-packet Q3/V5b, which controls the allocation action.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q3-APPROVED -->
+
+### REV-C03-AUTH-Q4 — Coordinated multi-revision Release
+
+**Approved 2026-08-25.** One atomic `Release` may issue one or several
+independently numbered EngineeringRevisions across affected revision-bearing
+CIs. Each retains its own namespace, scheme, predecessor, and governing Change.
+Unchanged members referenced by the new baseline retain their existing issued
+revisions; the baseline records complete composition and the Release records
+coordinated authorization and issuance.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q4-APPROVED -->

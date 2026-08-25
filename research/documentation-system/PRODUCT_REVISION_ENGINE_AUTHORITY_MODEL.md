@@ -690,7 +690,8 @@ These are not approval requests yet; each needs a proof-backed decision packet:
    both under separate namespaces? Resolved below as per revision-bearing CI
    only, including an optional explicitly authored aggregate Product/System CI.
 4. May a Release contain several independently numbered engineering revisions
-   coordinated by one baseline/release event? This model recommends yes.
+   coordinated by one baseline/release event? Resolved below as yes, while
+   unchanged baseline members retain their previously issued revisions.
 5. Is `ControlledDocument` the correct stable authority between editable
    Publish sources and immutable DocumentIssues, or should PublishSet directly
    carry document identity? This model recommends the separate object so one
@@ -946,3 +947,21 @@ revision namespace. This is core identity architecture, not a Global
 Preferences option.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q3-APPROVED -->
+
+### REV-C03-Q4 — Coordinated multi-revision Release
+
+**Approved 2026-08-25.** One `Release` may atomically issue one or several
+independently numbered `EngineeringRevision` records belonging to different
+revision-bearing `ConfigurationItem` records. Each revision retains its own CI
+namespace, scheme, predecessor, and governing changes; labels are not required
+to match.
+
+The Release issues only affected successor revisions. An unchanged CI appearing
+in the new `ConfigurationBaseline` reuses its already-issued revision and is not
+silently reminted. The baseline records the complete exact composition,
+including reused revisions, while the Release records the coordinated
+authorization and issuance event. This permits a board, assembly, controlled
+document, and optional aggregate Product CI to become effective together
+without fragmenting one governed change across artificial release events.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q4-APPROVED -->

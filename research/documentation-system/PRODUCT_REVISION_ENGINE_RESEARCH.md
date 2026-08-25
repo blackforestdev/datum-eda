@@ -284,7 +284,11 @@ Change before mutation. REV-C03-Q3 selects V8-A: every issued
 explicit aggregate Product/System CI. Baselines own exact composition,
 `BuildIdentity` optionally labels a baseline, and arbitrary `ReleaseScope`
 cannot own a competing revision namespace. Profiles may select revision-bearing
-CIs and presentation, but cannot redefine these identity kinds.
+CIs and presentation, but cannot redefine these identity kinds. REV-C03-Q4
+permits one atomic `Release` to issue several affected CIs' independently
+numbered successor revisions. Unchanged baseline members reuse their existing
+issued revisions; the baseline, not label coincidence, proves the complete
+configuration.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.
