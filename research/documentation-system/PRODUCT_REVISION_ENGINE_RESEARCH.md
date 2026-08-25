@@ -264,11 +264,13 @@ preserving the rule that only a profile-authorized boundary creates an issued
 Sequential Alphanumeric uses explicit Issue/Release, ISO 19650 uses its
 profile-defined WIP/Shared/Published transitions, and typed boundary context
 never mints independently of the selected profile. ID-Q4 ratifies optional
-first-class `BuildIdentity` over a baseline manifest,
-with quiet V4a as the factory presentation and V4b phase/build hierarchy as a
+first-class `BuildIdentity` over a baseline manifest, with quiet V4a as the
+factory presentation and V4b phase/build hierarchy as a
 Global Preferences or governed-enterprise-profile selection over the same data
-model. The status-axis policy, reset policy, and allocation choreography remain
-unratified.
+model. ID-Q5 ratifies the V6a profile-owned status model:
+Sequential Alphanumeric exposes no ISO suitability axis, while ISO 19650 keeps
+revision and suitability/status independently authoritative. Reset policy and
+allocation choreography remain unratified.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.

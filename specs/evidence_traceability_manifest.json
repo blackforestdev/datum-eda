@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "365ca623046f02c07524c548c243c313108ee1b01ec6a11a1bce57fed22df8f2",
-      "review_note": "The research inventory and human traceability synthesis register the owner-approved REV-C03-ID-Q1 through ID-Q4 decisions, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-ons for provisional watermark and V4a/V4b BuildIdentity presentation. ID-Q5 onward remain pending, source-strength gates are preserved, and neither Revision nor Preferences implementation is authorized."
+      "reviewed_digest": "48579c7732fa55b5041134a9441bb47adb5fae68ad97dd6505c66d2a561b550a",
+      "review_note": "The research inventory and human traceability synthesis register the owner-approved REV-C03-ID-Q1 through ID-Q5 decisions, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-ons for provisional watermark, V4a/V4b BuildIdentity presentation, and profile-owned suitability/status exposure. ID-Q6 remains pending, source-strength gates are preserved, and neither Revision nor Preferences implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "b2cf9f86fb46ff59424b6714aad26bcc2f7d2c1b1d6954b404ae04156af6837f",
-      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, identity packet, V1-V7 prototype, and ID-Q1 through ID-Q4 dispositions were cross-reviewed against every Publish/workspace consumer. One profile-driven engine, optional BuildIdentity over the baseline manifest, V4a factory and V4b enterprise presentation over one model, Project-owned copied policy, and typed non-minting boundary context preserve per-CI namespaces, the Working/Baseline ConfigurationRef seam, Publish ownership, immutable issued documents, Transmittal separation, identity-free successor collection, ASME licensed-text gating, source-strength gates, and planning-only status."
+      "reviewed_digest": "fbc11c1c6bc54afeb2c1eea7875244efadd34e9f6e7968b20fc42051a08ff513",
+      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, identity packet, V1-V7 prototype, and ID-Q1 through ID-Q5 dispositions were cross-reviewed against every Publish/workspace consumer. One profile-driven engine, optional BuildIdentity over the baseline manifest, V4a/V4b presentation over one model, V6a profile-owned suitability/status with revision-axis separation, Project-owned copied policy, and typed non-minting boundary context preserve per-CI namespaces, the Working/Baseline ConfigurationRef seam, Publish ownership, immutable issued documents, Transmittal separation, identity-free successor collection, ASME licensed-text gating, source-strength gates, and planning-only status."
     },
     {
       "id": "parametric-footprint-editor",

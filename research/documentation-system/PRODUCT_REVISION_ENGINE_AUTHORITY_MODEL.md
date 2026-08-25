@@ -841,3 +841,24 @@ policy are governed by the resolved organization/profile policy, and both
 Sequential Alphanumeric and ISO 19650 profiles may use the capability.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q4-APPROVED -->
+
+### REV-C03-ID-Q5 — Profile-owned suitability/status axis
+
+**Approved 2026-08-25.** The visually reviewed V6a treatment is authoritative:
+suitability/status exposure belongs to profiles that define that axis. The
+factory `Sequential Alphanumeric (Legacy)` profile does not expose ISO
+suitability codes, while ordinary Datum lifecycle truth such as Provisional,
+Not Issued, Issued, and Released remains visible and must not be mislabeled as
+ISO status.
+
+The ISO 19650 profile stores revision identity and suitability/status as
+separate authoritative fields that may change independently. A formatter may
+display both compactly, but the engine refuses any profile, operation, or
+projection that conflates them. Organization-custom and future standards
+profiles may define their own typed status policies.
+
+Future Global Preferences seeds the selected Revision Profile for new Projects;
+the copied Project policy remains authoritative. Interfaces omit a meaningless
+empty suitability field when the active profile defines no such axis.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q5-APPROVED -->
