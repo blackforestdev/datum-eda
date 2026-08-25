@@ -369,10 +369,13 @@ six bounded owner questions. `REV-C06-Q1` is owner-approved as rendered
 candidate `Q1-A-amended`: the Navigator exposes permanent, expanded Revision
 groups with informative empty-state rows from Project creation. Reveal on first
 record and collapse-by-default are rejected; any later hiding/collapse control
-belongs only to the future Global Preferences presentation policy. Q2–Q6 remain
-pending and must be presented exactly one at a time with exact source and
-prototype ranges, consequences, recommendation, and response syntax. No
-implementation is authorized.
+belongs only to the future Global Preferences presentation policy. `REV-C06-Q2`
+is owner-approved as `Q2-A-amended`: one cohesive Release pane keeps all nine
+section summaries visible, permits only user-requested collapse of clean detail,
+and refuses collapse for unresolved or invalidated facts. Q3–Q6 remain pending
+and must be presented exactly one at a time with exact source and prototype
+ranges, consequences, recommendation, and response syntax. No implementation is
+authorized.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->

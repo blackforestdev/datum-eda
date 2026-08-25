@@ -382,6 +382,24 @@ use instead of creating hidden-authority debt for an unaware designer.
 Choose progressive disclosure in one Release pane or a staged review flow over
 the same authoritative ReleaseCandidate.
 
+**Owner disposition — approved 2026-08-25.** The reviewed authority is UX-V8
+in section 5, the `ReleaseCandidate` structure and lifecycle in
+`PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`, and the two-state
+`Q2-A-amended` proof in
+`docs/gui/prototypes/revision-ux-release-study.html`, commit `021798a5`.
+
+Datum adopts `Q2-A-amended`: one cohesive Release pane projects the one
+authoritative `ReleaseCandidate`. Its nine required semantic section headings,
+typed verdict/status, and count remain visible in expanded and user-collapsed
+states. A user may collapse only clean detail rows; the default state is fully
+expanded. Blockers, `Unknown`, stale facts, invalidated attestations, missing
+requirements, and unresolved departures refuse collapse and remain reachable
+through the pinned blocker rail. Datum does not impose a staged wizard or treat
+review screens as authority. Ordered review remains profile policy over the
+same record.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q2-APPROVED -->
+
 ### REV-C06-Q3 — Impact-analysis information shape
 
 Choose the primary summary/path relationship and how `Unknown` remains visible
