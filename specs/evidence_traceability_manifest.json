@@ -223,6 +223,8 @@
       "id": "prototype-rendering-and-publish",
       "status": "active",
       "sources": [
+        "docs/gui/prototypes/publish-composition-study.html",
+        "docs/gui/prototypes/publish-lifecycle-study.html",
         "docs/gui/prototypes/publish-space-study.html",
         "docs/gui/prototypes/rendering-study.html",
         "docs/gui/prototypes/text-placement-study.html",
@@ -235,8 +237,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "fec50a58c50abac8bf01e606b9f9d603e52270621b3f6ab8dc98cd651da14b07",
-      "review_note": "The owner-approved DOC-C04 Publish Space visual contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted."
+      "reviewed_digest": "8d3ffd9ad5c85dda0589eb49dd7f6600b2c341cb50b988c880b36640ed7fd946",
+      "review_note": "The owner-approved DOC-C04 Publish Space visual contract is registered as one cross-linked three-file study: publish-space-study.html owns frames A-B and the complete OR-1..OR-8 index, publish-composition-study.html owns frames C-E, and publish-lifecycle-study.html owns frames F-H. The split preserves every frame anchor and ratified visual while restoring source-health; all cross-file index links resolve to the file owning their target. The contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted."
     },
     {
       "id": "prototype-selection",
