@@ -315,3 +315,21 @@ to the future Global Preferences specification; its default and output behavior
 are not decided by ID-Q2.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q2-APPROVED -->
+
+### REV-C03-ID-Q3 — Profile-owned issuance transitions
+
+**Approved 2026-08-24.** Boundary-to-revision behavior is owned by the active
+Revision Profile, not by a separate universal event checklist. Global
+Preferences will seed new Projects with a selected profile; the copied Project
+policy is then authoritative. `Sequential Alphanumeric (Legacy)` converts its
+V2-P reservation through an explicit `Issue/Release` operation. ISO 19650 uses
+its profile-defined WIP, Shared, and Published transitions while keeping status
+separate from revision identity.
+
+Manufacturing, delivery, review, certification, baseline, and phase-build facts
+are typed context and mint identity only when the selected profile maps them.
+Edits, saves, exports, timers, transaction counts, and retransmittals do not
+implicitly mint. Retransmission creates a `Transmittal` against the unchanged
+Release. Phase-build naming remains open for ID-Q4.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q3-APPROVED -->

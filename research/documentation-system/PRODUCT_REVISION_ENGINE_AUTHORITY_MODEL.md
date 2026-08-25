@@ -788,3 +788,32 @@ profile may require it are deliberately deferred to
 unbuilt preference authority.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q2-APPROVED -->
+
+### REV-C03-ID-Q3 — Profile-owned issuance transitions
+
+**Approved 2026-08-24.** Revision-identity minting policy belongs to the active
+Revision Profile; Datum has no universal list of boundary events that mint
+identities independently of profile policy. The future Global Preferences
+selection seeds a new Project with a resolved profile, and the Project-owned
+copy remains authoritative thereafter.
+
+The factory `Sequential Alphanumeric (Legacy)` profile uses the approved V2-P
+reservation treatment and converts the reserved sequential identity into an
+issued identity only through an explicit `Issue/Release` operation. The
+ISO 19650 profile maps its own WIP, Shared, and Published transitions without
+conflating suitability/status with revision identity. Other registry profiles
+may define different explicit transition maps without changing the engine.
+
+Manufacturing, delivery, review, certification, baseline, and phase-build
+events remain typed boundary context. They mint identity only when the resolved
+profile explicitly maps that event to an issuance transition. Editing, saving,
+exporting, elapsed time, transaction count, and retransmission never implicitly
+mint identity. Retransmitting unchanged released material creates a
+`Transmittal` against the existing Release. Phase-build naming and release-scope
+identity remain undecided until REV-C03-ID-Q4.
+
+The resolved policy input must therefore carry an editioned transition map from
+typed boundary context to reservation/allocation/issuance behavior. Historical
+identities retain the profile-policy version that interpreted their transition.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q3-APPROVED -->

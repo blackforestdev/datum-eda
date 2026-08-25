@@ -260,7 +260,10 @@ prerequisite are maintained in
 registry and factory `Sequential Alphanumeric (Legacy)` preference. ID-Q2
 ratifies its honestly marked provisional `RevisionReservation` treatment while
 preserving the rule that only a profile-authorized boundary creates an issued
-`EngineeringRevision`. The minting-event set, composition/build label,
+`EngineeringRevision`. ID-Q3 ratifies profile-owned issuance transitions:
+Sequential Alphanumeric uses explicit Issue/Release, ISO 19650 uses its
+profile-defined WIP/Shared/Published transitions, and typed boundary context
+never mints independently of the selected profile. The composition/build label,
 status-axis policy, reset policy, and allocation choreography remain unratified.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
