@@ -66,7 +66,7 @@ product terms.
 | `ViewportInstance` | One placement of a ViewportDefinition on one Sheet. | A second Design object. |
 | `ProjectedTable` | Authored table projection definition whose resolved cells come from exact sources. | A shadow database. |
 | `PublishAnnotation` | Publish-owned documentation, static or associatively anchored. | A driving Design constraint. |
-| `SheetSet` | User-named ordered publication selection containing Sheet references. | The authoritative home of Sheet bodies or a forced package taxonomy. |
+| `SheetSet` | User-named ordered publication selection containing Sheet references. | The authoritative home of Sheet bodies, a controlled-document identity, or a release state machine. |
 | `PublishTemplate` | Reusable seed graph that creates ordinary editable Publish objects. | A restriction on later composition. |
 | `ConfigurationRef` | Revision-engine-owned working or immutable-baseline resolution context. | A Sheet-local Draft/Released flag. |
 
@@ -195,9 +195,13 @@ claims or values inferred from Git/commit counts.
 ### 5.5 Publish Sets, duplication, and templates
 
 A `SheetSet` (user-facing `Publish Set`) owns identity, user name, ordered
-`SheetUse` references, package bindings/metadata, and revision-engine integration
-identity. `SheetUse` owns set-local order and numbering but never the Sheet body.
-One Sheet may be referenced by multiple Publish Sets.
+`SheetUse` references, authoring metadata, and explicit source bindings to
+separate revision-engine `ControlledDocument` definitions. It never owns a
+document number, EngineeringRevision, release state, immutable DocumentIssue,
+ReleasePackage, or Transmittal. `SheetUse` owns set-local order and numbering but
+never the Sheet body. One Sheet may be referenced by multiple Publish Sets, and
+one Publish Set may explicitly source multiple ControlledDocuments with
+distinct purpose, number, and policy.
 
 `Duplicate as New Sheet` is a rare contextual action creating a new Sheet
 identity and editable composition copy while preserving Design associations and

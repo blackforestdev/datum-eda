@@ -409,3 +409,17 @@ revisions; the baseline records complete composition and the Release records
 coordinated authorization and issuance.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q4-APPROVED -->
+
+### REV-C03-AUTH-Q5 — ControlledDocument authority
+
+**Approved 2026-08-25.** The owner selected V9-A. PublishSet remains mutable
+authoring composition/order and carries no document number, revision, release,
+issue, package, or delivery identity. A separate `ControlledDocument` is
+designated by a revision-bearing CI; its EngineeringRevision owns the human
+revision. Immutable DocumentIssue references that revision and exact rendered
+evidence, ReleasePackage selects exact issues, and Transmittal records delivery.
+One authored composition may explicitly source several ControlledDocuments.
+The existing dependent-object deletion refusal overrides V9's contrary cleanup
+wording, tracked by `dat-revision-v9-prototype-conformance-p7q`.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q5-APPROVED -->

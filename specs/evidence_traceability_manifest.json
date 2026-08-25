@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "2c3191e308b80618dac083a278a7c5d51149e7d9ba2563277dcadf29890e00f7",
-      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q2 automatic lightweight successor collection, REV-C03-Q3's V8-A per-CI revision ownership, and REV-C03-Q4 coordinated multi-revision issuance. The reviewed V1-V8 study and explicitly unimplemented Global Preferences follow-ons remain linked. V5's literal UNALLOCATED wording is tracked for Claude-owned reconciliation by dat-revision-v5-wording-11b. Q5 onward remain in progress; source-strength gates are preserved and no implementation is authorized."
+      "reviewed_digest": "f5138de6c1ed5ca8f062895a76628c5cae83319e2f8a9bb0117bc333e2765c67",
+      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions and REV-C03-Q2 through Q5, including V9-A's separation of mutable Publish Sets, CI-designated ControlledDocuments, immutable revision-referencing DocumentIssues, packages, and transmittals. The reviewed V1-V9 study and explicitly unimplemented Global Preferences follow-ons remain linked. V5 wording and V9 deletion/source-health cleanup are separately tracked. Q6 remains in progress; source-strength gates are preserved and no implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "c571cf12bf17eb65486b20a272ae8aaae99d2c254cbcc9cc520fbc4d89cb2e74",
-      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V8 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. Owner-approved V8-A makes a revision-bearing CI, including an optional explicit aggregate Product/System CI, the sole EngineeringRevision owner; ConfigurationBaseline retains exact composition, BuildIdentity remains an optional label, and arbitrary ReleaseScope cannot own a competing revision. Q4 allows one Release to atomically issue several affected CIs' independently numbered revisions while unchanged baseline members retain their existing issued revisions. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
+      "reviewed_digest": "77afa8e6fd36cd1dcf0bec5d006d148f17d4c82622147a3fabbeefe949cfbb2c",
+      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V9 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. Owner-approved V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments; DocumentIssue references the governing EngineeringRevision and frozen rendition, ReleasePackage selects exact issues, and Transmittal records delivery. The existing referenced-object deletion refusal overrides V9's cleanup wording. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording and V9 source-health cleanup remain tracked separately."
     },
     {
       "id": "parametric-footprint-editor",
@@ -234,8 +234,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "e206d549d34503c02622e832ea9ed3acad2bd1d4e8502e37ad228f44fa59aa58",
-      "review_note": "The owner-approved DOC-C04 Publish Space visual contract is integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles."
+      "reviewed_digest": "fec50a58c50abac8bf01e606b9f9d603e52270621b3f6ab8dc98cd651da14b07",
+      "review_note": "The owner-approved DOC-C04 Publish Space visual contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted."
     },
     {
       "id": "prototype-selection",

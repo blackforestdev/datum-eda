@@ -81,7 +81,7 @@ These are behavioral references, not dependencies or authorities.
 | `Controlled subject` | Existing Datum authority selected for configuration control: project, design object/aggregate, library object, ruleset, variant, Publish object, manufacturing plan, output job, generator, or other registered kind. | A copied PLM shadow object. |
 | `Configuration Item` (`CI`) | Stable designation that places one controlled subject or explicit aggregate under defined change authority and policy. | A mandatory decomposition of every Project. |
 | `Working configuration` | Resolver view of current authored state at an exact model revision and transaction tip. | A baseline or mutable object stored as competing design truth. |
-| `Engineering revision` | Human-governed issue identity allocated to an approved configuration of one revision-bearing CI or release scope. | A transaction count, Git commit, filename suffix, or mutable counter. |
+| `Engineering revision` | Human-governed issue identity allocated to an approved configuration of one revision-bearing CI. | A transaction count, Git commit, filename suffix, mutable counter, or release-scope identity. |
 | `Configuration baseline` | Immutable manifest of exact controlled-subject revisions and qualifying context established by authority at one point. | A branch, tag, workspace, or alias for `ModelRevision`. |
 | `Engineering change` | Governed intent, impact, authorization, implementation, and verification record relating predecessor and successor controlled configurations. | The operation batch itself or an automatically approved proposal. |
 | `Successor work` | Mutable technical work based on a released/baselined predecessor and destined for a possible successor issue. | A mutation of the predecessor release. |
@@ -314,7 +314,7 @@ ControlledDocument {
 }
 
 DocumentIssue {
-  id, controlled_document_id, revision_label,
+  id, controlled_document_id, engineering_revision_id,
   configuration_ref: Baseline,
   source_revision_refs[], render_context,
   output_artifact_refs[], approval_attestations[],
@@ -342,6 +342,14 @@ Sheet or PublishSet may feed multiple controlled documents only through
 explicit definitions; no title-block text manufactures identity. A Package
 can be retransmitted without creating a new issue if its exact bytes and
 policy remain unchanged; the new Transmittal records the new delivery event.
+
+Exactly one revision-bearing CI designates each revision-controlled
+`ControlledDocument`. Its `DocumentIssue.engineering_revision_id` references
+that CI's issued `EngineeringRevision`; an issue has no independent revision
+counter. Renaming, reordering, or otherwise editing the source PublishSet can
+affect a future issue and staleness analysis but cannot mutate an existing
+DocumentIssue. Deleting a bound Sheet or PublishSet refuses until every
+ControlledDocument dependency is explicitly removed or retargeted.
 
 ### `ReleaseCandidate` and `Release`
 
@@ -694,9 +702,8 @@ These are not approval requests yet; each needs a proof-backed decision packet:
    unchanged baseline members retain their previously issued revisions.
 5. Is `ControlledDocument` the correct stable authority between editable
    Publish sources and immutable DocumentIssues, or should PublishSet directly
-   carry document identity? This model recommends the separate object so one
-   composition can serve distinct controlled-document purposes without making
-   the PublishSet a release state machine.
+   carry document identity? Resolved below as V9-A: the stable authority remains
+   separate and PublishSet never becomes a release state machine.
 6. Should withdrawn/obsolete/superseded be universal standing events or only
    profile-enabled vocabulary? This model recommends universal typed standing
    relationships with profile-selected allowed terms and transition rules.
@@ -965,3 +972,29 @@ document, and optional aggregate Product CI to become effective together
 without fragmenting one governed change across artificial release events.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q4-APPROVED -->
+
+### REV-C03-Q5 — ControlledDocument authority
+
+**Approved 2026-08-25.** Select visual study V9-A. `PublishSet` remains an
+editable, user-named ordered selection of Sheet references. It never owns a
+document number, EngineeringRevision, release state, immutable issue, package,
+or delivery identity.
+
+`ControlledDocument` is the separate stable authority for authored publication
+meaning, document number, purpose, and control policy. A revision-bearing CI
+designates it; the CI's `EngineeringRevision` owns the human revision identity.
+Immutable `DocumentIssue` references that EngineeringRevision and freezes the
+exact baseline, source revisions, render context, output bytes, approvals, and
+digest. `ReleasePackage` selects exact issues and `Transmittal` records delivery
+of exact package bytes.
+
+One Sheet or PublishSet composition may explicitly source multiple
+ControlledDocuments with distinct purposes, numbers, and policies without
+duplicating the editable composition. Later source edits cannot mutate released
+issues. The existing referenced-object law controls deletion: deleting a bound
+Sheet or PublishSet refuses until dependent ControlledDocuments are explicitly
+removed or retargeted. V9's contrary deletion wording and its new source-health
+overflow are presentation defects tracked by
+`dat-revision-v9-prototype-conformance-p7q`; neither changes V9-A.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q5-APPROVED -->

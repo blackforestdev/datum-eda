@@ -288,7 +288,11 @@ CIs and presentation, but cannot redefine these identity kinds. REV-C03-Q4
 permits one atomic `Release` to issue several affected CIs' independently
 numbered successor revisions. Unchanged baseline members reuse their existing
 issued revisions; the baseline, not label coincidence, proves the complete
-configuration.
+configuration. REV-C03-Q5 selects V9-A: mutable Publish Sets remain authored
+selection/order objects, while a CI-designated `ControlledDocument` carries
+stable document meaning and its EngineeringRevision. Immutable DocumentIssue
+references that revision and exact rendered evidence; ReleasePackage and
+Transmittal retain exact package and delivery identity.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.
