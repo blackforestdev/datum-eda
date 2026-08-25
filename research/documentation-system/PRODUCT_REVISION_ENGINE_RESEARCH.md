@@ -375,7 +375,10 @@ section summaries visible, permits only user-requested collapse of clean detail,
 and refuses collapse for unresolved or invalidated facts. `REV-C06-Q3` is
 owner-approved as `Q3-A-amended`: summary-first assessment retains permanent
 Unknown/scope rows, while row drill opens the canonical witness tree beside the
-summary without replacing it. Q4–Q6 remain pending and must be presented exactly
+summary without replacing it. `REV-C06-Q4` is owner-approved as `Q4-revised`:
+lightweight and regulated profiles retain one complete, stable Change hierarchy;
+profiles change obligation and detail without changing identity, meaning,
+position, or discoverability. Q5–Q6 remain pending and must be presented exactly
 one at a time with exact source and prototype ranges, consequences,
 recommendation, and response syntax. No implementation is authorized.
 

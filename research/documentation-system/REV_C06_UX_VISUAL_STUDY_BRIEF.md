@@ -426,6 +426,22 @@ never inferred from an absent row.
 Approve whether the same visual hierarchy scales cleanly from a one-person
 Legacy-profile release to role/quorum/effectivity/audit-heavy profiles.
 
+**Owner disposition — approved 2026-08-25.** The reviewed authority is UX-V3
+in section 5, the scalable `EngineeringChange`, lifecycle, and capability model
+in `PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`, and the complete paired
+`Q4-revised` panes in
+`docs/gui/prototypes/revision-ux-shell-study.html`, commit `bbdfa5b`.
+
+Datum adopts `Q4-revised`. Lightweight and regulated profiles project one
+stable `EngineeringChange` hierarchy with every section heading visible in the
+same order. Lightweight policy labels non-required facts as optional or
+self-authorized and supplies informative empty states; regulated policy marks
+applicable facts required, exposes unsatisfied blockers, and may require scoped
+role separation, order, quorum, or independence. Profiles change obligation and
+detail, never record identity, field meaning, position, or discoverability.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q4-APPROVED -->
+
 ### REV-C06-Q5 — Final issuance boundary
 
 Choose the exact final confirmation and immutable success treatment for the
