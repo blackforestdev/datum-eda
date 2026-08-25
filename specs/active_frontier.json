@@ -4880,19 +4880,19 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-rev-c05-20260825",
-        "claimed_at": "2026-08-25T20:32:48Z",
-        "heartbeat_at": "2026-08-25T20:32:48Z",
-        "expires_at": "2026-08-26T04:32:48Z",
+        "session": "codex-rev-c06-20260825",
+        "claimed_at": "2026-08-25T20:57:18Z",
+        "heartbeat_at": "2026-08-25T20:57:18Z",
+        "expires_at": "2026-08-26T04:57:18Z",
         "scope": [
-          "REV-C05 dependency impact, staleness, regeneration, baseline comparison, and reproducible release evidence"
+          "REV-C06 quiet-default and regulated-profile UX, workflows, accessibility, and Claude-owned visual contract"
         ],
         "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "634f3219e03cb787df28d1148078d3da34515a7a"
+        "head": "858aeb6ff302d3fa8c79c4ae806397bca370a797"
       },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C05",
+        "canonical_next_step_id": "REV-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5036,7 +5036,7 @@
           {
             "id": "REV-C05",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Specify dependency impact, staleness, library uptake, manufacturing regeneration, baseline comparison, and reproducible release evidence.",
             "depends_on": [
               "REV-C03",
@@ -5048,12 +5048,17 @@
                 "marker": "REV-C05"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "858aeb6"
+              }
+            ]
           },
           {
             "id": "REV-C06",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Define quiet-default and regulated-profile UX, change/release workflows, revision projections, impact review, accessibility, and the required Claude-owned visual source of truth.",
             "depends_on": [
               "REV-C03",
