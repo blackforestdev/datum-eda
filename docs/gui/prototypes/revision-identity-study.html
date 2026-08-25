@@ -651,6 +651,131 @@ on one artifact</div>
 only technical revisions; the board's title block can show nothing but the scope's number; independent
 member respins force whole-scope reminting — the consequences are drawn, not argued</div>
 
+<!-- ================================================================ V9 -->
+<div class="sec-label" id="v9"><span class="n">V9</span><span>Document authority — ControlledDocument vs PublishSet-owned identity</span><span class="q">AUTH-Q5</span><span class="rule"></span></div>
+<div class="cap"><b>Maps to</b> <span class="mono" style="font-size:11px">PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md</span>
+owner question 5. The same multi-sheet assembly publication under two candidates. Preserved in both:
+<b>All Sheets owns Sheet bodies; Publish Sets are editable, user-named ordered references (F6)</b>.
+Constraint from the Q3 disposition: <b>DocumentIssue never mints its own revision counter</b> — it
+references the governing document CI's EngineeringRevision. <b>No candidate is selected.</b></div>
+
+<!-- Candidate A chain -->
+<div class="card" style="margin-bottom:14px;padding:12px 16px">
+  <div class="chd">Candidate A — the document-control chain <span class="m">separate stable authority</span></div>
+  <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px">
+    <span class="tstep">PublishSet<br><span style="color:var(--tx3)">editable composition + order</span></span><span class="tarrow">—source binding→</span>
+    <span class="tstep">ControlledDocument<br><span style="color:var(--tx3)">stable number · purpose · policy</span></span><span class="tarrow">—revision-bearing CI→</span>
+    <span class="tstep">EngineeringRevision<br><span style="color:var(--tx3)">B · ci document:ASM-01</span></span><span class="tarrow">—exact rendering→</span>
+    <span class="tstep">DocumentIssue<br><span style="color:var(--tx3)">immutable · references rev B</span></span><span class="tarrow">—selected→</span>
+    <span class="tstep">ReleasePackage</span><span class="tarrow">—delivered→</span>
+    <span class="tstep">Transmittal</span>
+  </div>
+</div>
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="panel-hd"><span>Navigator · candidate A</span><span class="count">F6 preserved</span></div>
+      <div class="trow grp">Publish</div>
+      <div class="trow l2">All Sheets <span class="meta">5 · owns bodies</span></div>
+      <div class="trow l2">EMC Lab Submission <span class="meta mono">publish set · 3 refs · editable</span></div>
+      <div class="trow grp">Document control</div>
+      <div class="trow l2" style="color:var(--tx)">DOC-ASM-01 Assembly Manual <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow" style="padding-left:44px">Issue B <span class="meta mono">ISS-0012 · 🔒 immutable</span></div>
+      <div class="trow" style="padding-left:44px;color:var(--tx3)">Issue A <span class="meta mono">ISS-0007 · superseded</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">the set stays a set; the document is its own stable object bound to the set as source</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">DOC-ASM-01 · Assembly Manual</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE A</span></div>
+      <div class="sect-hd">Stable authority</div>
+      <div class="kv"><span class="k">Source binding</span><span class="v mono">PublishSet "EMC Lab Submission" (editable)</span></div>
+      <div class="kv"><span class="k">Revision CI</span><span class="v mono">document:ASM-01 → B 🔒 · RLS-0007</span></div>
+      <div class="sect-hd">Issue · package · delivery</div>
+      <div class="kv"><span class="k">DocumentIssue</span><span class="v mono">ISS-0012 · references rev B · sha256 9e11…</span></div>
+      <div class="kv"><span class="k"></span><span class="v" style="font-size:11px;color:var(--tx3)">no independent issue counter exists (Q3 boundary)</span></div>
+      <div class="kv"><span class="k">Package</span><span class="v mono">PKG-EMC-01 ⊃ ISS-0012</span></div>
+      <div class="kv"><span class="k">Transmittal</span><span class="v mono">TX-0031 → EMC Lab · 2026-08-25</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:330px">
+      <div class="chd">Mutation test <span class="m">released identity must not move</span></div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.8">
+        rename the set → <span class="idchip issued" style="font-size:9px">🔒 DOC-ASM-01 · B unchanged</span><br>
+        reorder the set → <span class="idchip issued" style="font-size:9px">🔒 Issue B bytes unchanged</span><br>
+        reuse set for a customer doc → <span class="idchip issued" style="font-size:9px">new ControlledDocument, same set</span><br>
+        delete the set → <span class="idchip stale" style="font-size:9px">⚠ next issue refuses — binding broken</span></div>
+      <div class="paperbox" style="height:96px;margin-top:10px"><div class="paper" style="width:300px;height:64px">
+        <svg width="300" height="64" style="position:absolute;inset:0">
+          <line x1="0" y1="4" x2="300" y2="4" stroke="#5A5340" stroke-width="1.2"/>
+          <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+            <text x="12" y="18">DOC No.</text><text x="120" y="18">REV · ci doc:ASM-01</text><text x="240" y="18">ISSUE</text></g>
+          <text x="12" y="38" font-family="PlexMono,monospace" font-size="9" fill="#332F26">DOC-ASM-01</text>
+          <text x="120" y="42" font-family="PlexCMed,sans-serif" font-size="17" fill="#25211A">B</text>
+          <text x="238" y="38" font-family="PlexMono,monospace" font-size="8" fill="#332F26">ISS-0012</text>
+          <text x="120" y="56" font-family="PlexCMed,sans-serif" font-size="8" fill="#3B6E45">RELEASED 🔒</text>
+        </svg>
+      </div></div>
+    </div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V9-A — separate ControlledDocument.</b> the editable set feeds a
+stable document authority; revision belongs to the document CI; the issue is an immutable rendering that
+references that revision; packages and transmittals bind to issues, so later set edits can never move
+released identity</div>
+
+<!-- Candidate B -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="panel-hd"><span>Navigator · candidate B</span><span class="count">set owns identity</span></div>
+      <div class="trow grp">Publish</div>
+      <div class="trow l2">All Sheets <span class="meta">5 · owns bodies</span></div>
+      <div class="trow l2" style="color:var(--tx)">EMC Lab Submission <span class="meta mono">DOC-0009 · rev B · 🔒 RELEASED</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">an editable, user-renamable ordered reference list now carries document number, revision, and release state itself — the set has become a release state machine</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">EMC Lab Submission</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">CANDIDATE B</span></div>
+      <div class="sect-hd">One object, two natures</div>
+      <div class="kv"><span class="k">Name</span><span class="v mono">EMC Lab Submission <span style="color:var(--tx3)">· mutable</span></span></div>
+      <div class="kv"><span class="k">Composition</span><span class="v mono">3 ordered refs <span style="color:var(--tx3)">· mutable</span></span></div>
+      <div class="kv"><span class="k">Doc number</span><span class="v mono">DOC-0009 <span style="color:var(--tx3)">· must never change</span></span></div>
+      <div class="kv"><span class="k">Revision</span><span class="v mono">B 🔒 <span style="color:var(--tx3)">· must never move</span></span></div>
+      <div class="kv"><span class="k">Release state</span><span class="v mono">RELEASED <span style="color:var(--tx3)">· on an editable object</span></span></div>
+      <div class="sect-hd">Delivery</div>
+      <div class="kv"><span class="k">Transmittal</span><span class="v mono" style="color:var(--warn)">TX-0031 → "the set as of when?" ⚠</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:330px">
+      <div class="chd">Mutation test <span class="m">the same edits, rendered honestly</span></div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.8">
+        rename the set → <span class="idchip stale" style="font-size:9px">⚠ released doc name changed silently</span><br>
+        reorder the set → <span class="idchip stale" style="font-size:9px">⚠ rev B now claims different content</span><br>
+        reuse for a customer doc → <span class="idchip stale" style="font-size:9px">⚠ needs 2nd number → duplicate set + sheets order</span><br>
+        delete the set → <span class="idchip stale" style="font-size:9px">⚠ released document identity vanishes</span></div>
+      <div class="paperbox" style="height:96px;margin-top:10px"><div class="paper" style="width:300px;height:64px">
+        <svg width="300" height="64" style="position:absolute;inset:0">
+          <line x1="0" y1="4" x2="300" y2="4" stroke="#5A5340" stroke-width="1.2"/>
+          <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+            <text x="12" y="18">DOC No. · from mutable set</text><text x="170" y="18">REV</text><text x="230" y="18">SOURCE</text></g>
+          <text x="12" y="38" font-family="PlexMono,monospace" font-size="9" fill="#332F26">DOC-0009</text>
+          <text x="170" y="42" font-family="PlexCMed,sans-serif" font-size="17" fill="#25211A">B</text>
+          <text x="228" y="38" font-family="PlexMono,monospace" font-size="6.5" fill="#7a4a42">set "EMC Lab…"</text>
+          <text x="12" y="56" font-family="PlexMono,monospace" font-size="6.5" fill="#7a4a42">⚠ identity rides a mutable, renamable object</text>
+        </svg>
+      </div></div>
+    </div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V9-B — PublishSet owns document identity directly.</b> fewer
+objects, but the editable composition and the immutable released identity live on one thing — every
+ordinary set edit becomes a threat to released truth, and delivery can only point at "the set", not an
+immutable issue</div>
+
 <!-- ================================================================ Q index -->
 <div class="sec-label" id="owner-questions"><span class="n">Q</span><span>Owner questions — where each is rendered</span><span class="rule"></span></div>
 <table class="orindex" style="border-collapse:collapse;width:100%;max-width:1150px">
@@ -660,6 +785,7 @@ member respins force whole-scope reminting — the consequences are drawn, not a
   <tr><td>Q4</td><td><a href="#v4">V4</a> EVT2 as optional release-scope label over the baseline manifest; phase ⊃ build ⊃ spin typed and distinct.</td></tr>
   <tr><td>Q5</td><td><a href="#v6">V6a</a> independent status/revision axes + <a href="#v3">V3d</a> separate title-block cells.</td></tr>
   <tr><td>Q6</td><td><a href="#v6">V6b</a> continuing-sequence vs namespace-transition candidates with preserved lineage.</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q5</td><td><a href="#v9">V9</a> — authority-model question 5 (document authority): candidate A (PublishSet → ControlledDocument → EngineeringRevision → immutable DocumentIssue → ReleasePackage → Transmittal; set edits never move released identity) vs candidate B (PublishSet owns number/revision/release directly; mutation hazards rendered). DocumentIssue references the governing CI revision — never an independent counter.</td></tr>
   <tr><td style="color:var(--info)">AUTH-Q3</td><td><a href="#v8">V8</a> — authority-model question 3 (EngineeringRevision scope ownership): candidates A (per-CI + optional aggregate Product CI), B (per-CI and per-ReleaseScope coexisting, namespace-kind-tagged), C (ReleaseScope only, consequences rendered). Distinct from identity-packet Q3 / V5b, which covers the allocation action.</td></tr>
 </table>
 
