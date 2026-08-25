@@ -279,7 +279,9 @@ the candidate structural invariant, and successor-work collection binds no
 revision identity. The visual review must still test whether the owner accepts
 those boundaries rather than treating this prose as ratification.
 
-Q2 and Q3 remain blocked until that disposition is recorded.
+The six identity dispositions are now recorded below. The prerequisite is
+complete; the original REV-C03-Q2 successor-collection and REV-C03-Q3 allocation-
+scope decisions resume in the authority model.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-IDENTITY-PACKET -->
 

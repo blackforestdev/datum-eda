@@ -275,6 +275,11 @@ policy is resolved by ID-Q6: one continuing namespace is the factory behavior,
 while an enterprise/profile policy may perform an explicit prototype-to-
 production namespace transition with immutable supersession lineage. Allocation
 choreography outside these identity dispositions remains unratified.
+Original REV-C03-Q2 now ratifies automatic lightweight successor collection:
+the first post-release divergence opens a quiet Draft `EngineeringChange`
+without reserving revision identity; explicit revision preparation later enters
+the approved V2-P provisional state. Governed profiles may require an authorized
+Change before mutation. REV-C03-Q3 allocation scope remains unratified.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.

@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "7a59b2b8c369f789a36ae9101c25a4e61b717e6352df8f60c739b718af5bfe17",
-      "review_note": "The research inventory and human traceability synthesis register all six owner-approved REV-C03 identity decisions, including joint V6a/V3d ISO isolation and V6b prototype-to-production policy, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-ons. The identity prerequisite is complete while the remaining REV-C03 model remains in progress; source-strength gates are preserved and no implementation is authorized."
+      "reviewed_digest": "85d6fdb1769798b18a9635ce8a4024cef0604403d019f14f353c54836394c2f7",
+      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions plus REV-C03-Q2 automatic lightweight successor collection, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-ons. V5's literal UNALLOCATED wording is tracked for Claude-owned reconciliation by dat-revision-v5-wording-11b. Q3 onward remain in progress; source-strength gates are preserved and no implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "20fb344b87c5c21637af8af4353cd36861a1639802e5e0992d0de378fe4fd3cc",
-      "review_note": "The REV-C03 authority model, sequencing/origin synthesis, identity packet, V1-V7 prototype, and all six identity dispositions were cross-reviewed against every Publish/workspace consumer. V6a/V3d preserve ISO axis and title-block isolation; V6b preserves a continuous factory namespace or explicit enterprise namespace transition with immutable lineage. BuildIdentity, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Publish ownership, immutable issued documents, Transmittal separation, identity-free successor collection, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved."
+      "reviewed_digest": "b4f30dc2c953ea96d2e1c5d8d3c0b8ddb27b5007735b011ae5ebfd42cde462c5",
+      "review_note": "The REV-C03 authority model, identity packet, V1-V7 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. Automatic Draft Change collection remains distinct from explicit V2-P reservation and profile issuance; released baselines stay immutable. V5's technical zero-identity state is valid, but its user wording requires the tracked Claude-owned reconciliation. BuildIdentity, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved."
     },
     {
       "id": "parametric-footprint-editor",

@@ -709,14 +709,14 @@ objects. Waivers and deviations remain distinct bounded-departure records.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q1-APPROVED -->
 
-### REV-C03-Q2 — Deferred for revision-identity prerequisite
+### REV-C03-Q2 prerequisite history — completed
 
 **Owner revision 2026-08-24.** Q2 is not a choreography choice until Datum's
 revision-identity scheme and complex-product composition rules are ratified.
 Automatic successor-work collection is acceptable only when fully decoupled
-from presumed next-in-sequence identity. Q2 and Q3 remain unanswered pending a
+from presumed next-in-sequence identity. Q2 and Q3 were deferred pending a
 dedicated evidence-backed decision packet and concrete owner-reviewed title-
-block and UI renderings.
+block and UI renderings; all six identity dispositions are now recorded below.
 
 The sequencing/origin synthesis is recorded in
 `REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md`; it supplies candidate evidence,
@@ -887,3 +887,31 @@ Every transition is an explicit typed, policy-authorized operation. No phase
 change, release, label edit, or profile switch silently changes identity.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q6-APPROVED -->
+
+### REV-C03-Q2 — Automatic lightweight successor collection
+
+**Approved 2026-08-25.** In the lightweight profile, the first committed
+divergence from a released baseline atomically opens a quiet Draft
+`EngineeringChange` and begins collecting successor transactions against the
+exact predecessor baseline. Datum does not interrupt the designer with a
+mandatory `Begin revision` action before allowing the technical work.
+
+Automatic collection creates no `RevisionReservation`, `EngineeringRevision`,
+baseline, approval, `Release`, or `DocumentIssue`. Its user-facing Change or
+Inspector wording is `Successor work — revision identity not yet reserved`, not
+the vague `UNALLOCATED` title-block treatment. When the designer later performs
+explicit revision preparation, the selected profile may create the already
+approved V2-P provisional reservation; only the profile's explicit issuance
+transition creates an issued revision.
+
+The designer may name, split, merge, or reassign the collected work while the
+append-only transaction history and predecessor relationship remain intact.
+Release requires complete governing-Change or accepted administrative-
+disposition coverage for every successor difference. Governed profiles may
+instead require an explicit authorized Change before mutation.
+
+The current prototype V5 engine state remains semantically valid, but its
+literal `UNALLOCATED` user wording requires Claude-owned visual reconciliation
+to the approved text above before the visual contract closes.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q2-APPROVED -->
