@@ -465,12 +465,28 @@ Baseline, EngineeringRevision, DocumentIssue, Release, and ReleasePackage are
 immutable records, not editable lifecycle objects. Their current standing is
 derived from later events/relationships:
 
+The core records three typed standing facts rather than one mutable status
+field:
+
 ```text
-Current | Superseded | Withdrawn | Obsolete | Historical
+SupersessionEstablished { predecessor, successor, effectivity, authority }
+AuthorizationWithdrawn { record, authority, reason, effective_at, effectivity? }
+ObsolescenceDeclared { record, authority, reason, effective_at, effectivity? }
 ```
 
-These words do not rewrite the record and do not all apply to every kind.
-Withdrawal does not erase prior effectivity or transmittal history.
+Supersession requires an identified successor and preserves the predecessor as
+truth for its retained or historical effectivity. Withdrawal removes
+authorization for use without implying a successor. Obsolescence deliberately
+declares the record or controlled subject no longer applicable and likewise
+does not require a successor. `Current` and `Historical` are query projections,
+not standing events or mutable lifecycle states.
+
+Profiles govern which facts apply to each record kind, required authority and
+rationale, effectivity, allowed event sequences, and displayed terminology.
+They cannot replace typed meaning with arbitrary strings. Standing facts do not
+rewrite records or erase prior effectivity, packages, transmittals, or history.
+Delivery never changes standing; whether a withdrawn or obsolete record may be
+transmitted is a separate profile and egress-policy authorization decision.
 
 ## Role and authority model
 
@@ -705,8 +721,8 @@ These are not approval requests yet; each needs a proof-backed decision packet:
    carry document identity? Resolved below as V9-A: the stable authority remains
    separate and PublishSet never becomes a release state machine.
 6. Should withdrawn/obsolete/superseded be universal standing events or only
-   profile-enabled vocabulary? This model recommends universal typed standing
-   relationships with profile-selected allowed terms and transition rules.
+   profile-enabled vocabulary? Resolved below as V10-C: universal typed facts
+   with profile-governed applicability, authority, transitions, and terminology.
 
 ## Owner disposition ledger
 
@@ -998,3 +1014,20 @@ overflow are presentation defects tracked by
 `dat-revision-v9-prototype-conformance-p7q`; neither changes V9-A.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q5-APPROVED -->
+
+### REV-C03-Q6 — Typed standing facts and profile vocabulary
+
+**Approved 2026-08-25.** Select visual study V10-C. Datum core owns typed
+`SupersessionEstablished`, `AuthorizationWithdrawn`, and
+`ObsolescenceDeclared` facts. Profiles govern applicability by record kind,
+required authority and rationale, effectivity, permitted event sequences, and
+user-facing terminology, but cannot redefine the core meanings as arbitrary
+strings.
+
+Standing events never mutate or erase issued records, baselines, packages,
+transmittals, prior effectivity, or audit history. `Current` and `Historical`
+remain derived projections. Delivery does not change standing and does not
+itself authorize transmission of a withdrawn or obsolete record; transmission
+remains subject to profile and egress-policy authorization.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q6-APPROVED -->

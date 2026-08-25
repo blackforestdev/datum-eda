@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "f5138de6c1ed5ca8f062895a76628c5cae83319e2f8a9bb0117bc333e2765c67",
-      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions and REV-C03-Q2 through Q5, including V9-A's separation of mutable Publish Sets, CI-designated ControlledDocuments, immutable revision-referencing DocumentIssues, packages, and transmittals. The reviewed V1-V9 study and explicitly unimplemented Global Preferences follow-ons remain linked. V5 wording and V9 deletion/source-health cleanup are separately tracked. Q6 remains in progress; source-strength gates are preserved and no implementation is authorized."
+      "reviewed_digest": "26f86f33d6b75afcb7f5cdd652786378225aeaa2750cfc6797deff87bbd40707",
+      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions and REV-C03-Q1 through Q6. V9-A separates mutable Publish Sets, CI-designated ControlledDocuments, immutable revision-referencing DocumentIssues, packages, and transmittals. V10-C establishes typed supersession, authorization-withdrawal, and obsolescence facts with profile-governed applicability and vocabulary. The split V1-V10 studies and explicitly unimplemented Global Preferences follow-ons remain linked. V5 wording and the V10 disposition annotation are separately tracked; source-strength gates are preserved and no implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -122,8 +122,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "aa01d3ab8abcdd27e3a49ddbd3e2884ef3bafcc6a85678cbe58bf8ae0f5d6834",
-      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 visual studies, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. Owner-approved V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments; its deletion refusal is corrected and the split restores revision-study source health. V10 faithfully distinguishes supersession, withdrawal, and obsolescence, preserves immutable history and delivery neutrality, and renders fixed-word, free-form, and typed/profile-governed candidates without selecting one. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
+      "reviewed_digest": "490f1e10c848fc888cfc52ed06958e2db37b61fffaa84334042d6d2cdfe23642",
+      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 visual studies, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments and immutable revision-referencing issues. Owner-approved V10-C makes supersession, authorization withdrawal, and obsolescence typed core facts while profiles govern applicability, authority, rationale, effectivity, sequences, and terminology. History remains immutable; Current/Historical are projections; delivery changes no standing and grants no egress authority. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording and the V10 visual disposition annotation remain tracked separately."
     },
     {
       "id": "parametric-footprint-editor",

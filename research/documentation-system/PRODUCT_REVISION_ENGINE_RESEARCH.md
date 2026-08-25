@@ -293,6 +293,13 @@ selection/order objects, while a CI-designated `ControlledDocument` carries
 stable document meaning and its EngineeringRevision. Immutable DocumentIssue
 references that revision and exact rendered evidence; ReleasePackage and
 Transmittal retain exact package and delivery identity.
+
+REV-C03-Q6 selects V10-C. The core stores typed supersession, authorization-
+withdrawal, and obsolescence facts; profiles govern per-kind applicability,
+authority, rationale, effectivity, allowed sequences, and display terms without
+reducing the facts to strings. Issued history remains immutable, Current and
+Historical are projections, and delivery never changes standing or bypasses
+egress authorization. This completes the REV-C03 owner-question ledger.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.

@@ -423,3 +423,15 @@ The existing dependent-object deletion refusal overrides V9's contrary cleanup
 wording, tracked by `dat-revision-v9-prototype-conformance-p7q`.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q5-APPROVED -->
+
+### REV-C03-AUTH-Q6 — Typed standing facts
+
+**Approved 2026-08-25.** The owner selected V10-C. Datum core owns typed
+`SupersessionEstablished`, `AuthorizationWithdrawn`, and
+`ObsolescenceDeclared` facts. Profiles control record-kind applicability,
+authority, rationale, effectivity, permitted sequences, and display vocabulary
+without changing the typed meanings. Issued history remains immutable;
+Current/Historical are projections; delivery changes no standing and grants no
+independent permission to transmit withdrawn or obsolete material.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q6-APPROVED -->
