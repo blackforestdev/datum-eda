@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datum — Revision Identity Study</title>
+<title>Datum — Revision Authority Study</title>
 <!-- EVIDENCE: REV-C03 revision-identity visual source of truth
      (REV_C03_REVISION_IDENTITY_DECISION_PACKET.md V1-V7, lines 184-256).
      Claude-owned prototype. Codex owns research/spec/governance and must not edit this file.
@@ -113,399 +113,392 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 <div class="wrap">
 
 <header class="page">
-  <h1>Datum <b>·</b> Revision Identity Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C03 visual source of truth</span></h1>
+  <h1>Datum <b>·</b> Revision Authority Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C03 visual source of truth</span></h1>
   <div class="sub">
-    Renders V1–V7 of <code>research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md</code>
+    Authority-model comparisons (V8–V10) of the revision system; identity/scheme studies V1–V7 live in the companion <a href="revision-identity-study.html" style="color:var(--info);text-decoration:none">Revision Identity Study</a>. Decision packet: <code>research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md</code>
     (lines 184–256) so owner questions 1–6 (lines 258–275) can each be answered against drawn candidates.
     Evidence base: <code>REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md</code>. All labels shown anywhere on this
     page are <b style="color:var(--tx2)">EXAMPLE projections</b>, never allocations.
   </div>
-  <div class="lawbar">⚖<span><b>No Datum default has been ratified.</b> Every scheme below is an equal
-  candidate. ASME sequence details are licensed-text-gated candidates (REV-STD-DRAW-001..002). ISO
-  STATUS and REVISION are separate axes everywhere. Child revisions never roll up into a product label.
-  Successor work carries no revision identity.</span></div>
+  <div class="lawbar">⚖<span><b>No pending candidate is pre-selected.</b> The ratified V9-A chain and referenced-object deletion refusal are preserved. Standing facts never mutate issued records, baselines, packages, transmittals, or audit history. Current/Historical are projections. Delivery never changes standing. Child revisions never roll up into a product label.</span></div>
 </header>
 
-<!-- ================================================================ V1 -->
-<div class="sec-label" id="v1"><span class="n">V1</span><span>Scheme registry — equal candidates, no default</span><span class="q">Q1</span><span class="q">Q3</span><span class="rule"></span></div>
-<div class="cap">One policy-selection surface: <b>Project Policy → Revision Scheme Registry</b>. Nothing is
-selected; a project/template/profile must choose and configure a scheme before any engineering revision
-identity can be allocated. Registry entries are immutable while referenced; a scheme change is a successor
-policy version with explicit migration — it never reinterprets historical labels.</div>
-<div class="grid2">
-<div>
-  <div class="scheme">
-    <div class="shd"><span class="snm">Numeric spin</span><span class="skind">LinearNumeric</span><span class="lw yes">proposed for lightweight profile</span></div>
-    <div class="ex">01 → 02 → 03<span class="tag">EXAMPLE</span></div>
-    <div class="rules">
-      <span class="k">Namespace scope</span><span class="v">per-CI (board:main, document:ASM-01, …)</span>
-      <span class="k">Initial allocation</span><span class="v">first minting event (e.g. first manufacturing release)</span>
-      <span class="k">Next token</span><span class="v">+1 · configured start, step, width, prefix/suffix</span>
-      <span class="k">Exclusions / rollover</span><span class="v">none · refuse allocation outside configured range</span>
-    </div>
-  </div>
-  <div class="scheme">
-    <div class="shd"><span class="snm">Alphabetic drawing</span><span class="skind">LinearAlphabetic</span><span class="lw no">profile candidate</span></div>
-    <div class="ex">A → B → C<span class="tag">EXAMPLE</span></div>
-    <div class="rules">
-      <span class="k">Namespace scope</span><span class="v">per-drawing or per-sheet (configured)</span>
-      <span class="k">Initial allocation</span><span class="v">unreleased "—" then A at first post-release change <span class="gated">licensed-text gated</span></span>
-      <span class="k">Next token</span><span class="v">ordered configured symbols; case configured</span>
-      <span class="k">Exclusions / rollover</span><span class="v">skip I·O·Q·S·X·Z; Y → AA <span class="gated">licensed-text gated</span> · refuse next when undefined</span>
-    </div>
-  </div>
-  <div class="scheme">
-    <div class="shd"><span class="snm">Issue / revision</span><span class="skind">IssueRevision</span><span class="lw no">profile candidate</span></div>
-    <div class="ex">2.3<span class="tag">EXAMPLE</span></div>
-    <div class="rules">
-      <span class="k">Namespace scope</span><span class="v">per controlled document / CI</span>
-      <span class="k">Initial allocation</span><span class="v">issue 1 at first release-class event</span>
-      <span class="k">Next token</span><span class="v">typed minting event names the component: issue +1 (revision resets) or revision +1</span>
-      <span class="k">Exclusions / rollover</span><span class="v">refuse inference of which component advances</span>
-    </div>
-  </div>
-</div>
-<div>
-  <div class="scheme">
-    <div class="shd"><span class="snm">ISO 19650-oriented container</span><span class="skind">Iso19650InformationContainer</span><span class="lw no">profile candidate</span></div>
-    <div class="ex">REVISION P02<span class="tag">EXAMPLE</span></div>
-    <div class="ex" style="margin-left:8px">STATUS S3<span class="tag">EXAMPLE · separate axis</span></div>
-    <div class="rules">
-      <span class="k">Namespace scope</span><span class="v">per information container; preliminary (P) and contractual (C) sequences independent</span>
-      <span class="k">Initial allocation</span><span class="v">revision minted at first share beyond authoring team</span>
-      <span class="k">Next token</span><span class="v">P0n +1 per re-share; C0n +1 per publication</span>
-      <span class="k">Exclusions / rollover</span><span class="v">refuse any profile that conflates permitted-use STATUS with REVISION identity</span>
-    </div>
-  </div>
-  <div class="scheme">
-    <div class="shd"><span class="snm">Organization custom</span><span class="skind">OrganizationCustom</span><span class="lw no">profile candidate</span></div>
-    <div class="ex">EVT-QUAL-3<span class="tag">EXAMPLE</span></div>
-    <div class="rules">
-      <span class="k">Namespace scope</span><span class="v">as declared by the editioned scheme</span>
-      <span class="k">Initial allocation</span><span class="v">first token of a finite ordered list, or deterministic structured rule</span>
-      <span class="k">Next token</span><span class="v">next ordered token / structured successor rule</span>
-      <span class="k">Exclusions / rollover</span><span class="v">refuse ambiguous ordering, duplicate tokens, or mutation of an in-use scheme</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(224,162,58,.4)">
-    <div class="chd" style="color:var(--warn)">No default has been ratified</div>
-    <div style="font-size:12px;color:var(--tx3)">The lightweight-profile flag above marks a <b
-    style="color:var(--tx2)">proposal</b> only (owner question 1). Allocation refuses everywhere until a
-    scheme is selected and configured for the namespace.</div>
-  </div>
-</div>
+<!-- ================================================================ V8 -->
+<div class="sec-label" id="v8"><span class="n">V8</span><span>EngineeringRevision scope authority — three structural candidates</span><span class="q">AUTH-Q3</span><span class="rule"></span></div>
+<div class="cap"><b>Maps to</b> <span class="mono" style="font-size:11px">PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md</span>
+owner question 3 (what kind of object may OWN an EngineeringRevision namespace) — <b>not</b> the identity
+packet's Q3/V5b (which asks how a user allocates one). The same complex product is rendered under all
+three candidates. <b>No candidate is selected.</b> First, the four object kinds that must never blur:</div>
+<div class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px">
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">EngineeringRevision</div>
+    <div style="font-size:11px;color:var(--tx3)">human-issued label (<span class="mono">C</span>, <span class="mono">07</span>) inside one namespace; minted by a typed event</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">ConfigurationBaseline</div>
+    <div style="font-size:11px;color:var(--tx3)">immutable manifest pinning exact member revisions — the composition truth in every candidate</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">BuildIdentity</div>
+    <div style="font-size:11px;color:var(--tx3)">optional release-scope label (<span class="mono">EVT2</span>) over a baseline; names, never composes, never a member revision</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">Release</div>
+    <div style="font-size:11px;color:var(--tx3)">the atomic authorized event (<span class="mono">RLS-0007</span>) that freezes the baseline and issues identities</div></div>
 </div>
 
-<!-- ================================================================ V2 -->
-<div class="sec-label" id="v2"><span class="n">V2</span><span>Origin — unreleased truth</span><span class="q">Q2</span><span class="rule"></span></div>
-<div class="cap">The <b>same pre-release drawing</b> in two competing origin candidates, plus the
-licensed-gated ASME rendering. Neither candidate is default; both keep the full technical history
-available; neither can be confused with issued authority.</div>
+<!-- Candidate A -->
 <div class="grid3">
   <div>
-    <div class="paperbox" style="height:230px"><div class="paper" style="width:380px;height:168px">
-      <svg width="380" height="168" style="position:absolute;inset:0">
-        <line x1="0" y1="104" x2="380" y2="104" stroke="#5A5340" stroke-width="1.3"/>
-        <g font-family="PlexMono,monospace" font-size="8" fill="#9A9180" letter-spacing="1">
-          <text x="18" y="122">DRAWING No.</text><text x="170" y="122">REVISION</text><text x="300" y="122">SHEET</text></g>
-        <text x="18" y="142" font-family="PlexMono,monospace" font-size="12" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="300" y="150" font-family="PlexC,sans-serif" font-weight="600" font-size="26" fill="#4B463E">01</text>
-      </svg>
-      <span class="idchip unalloc" style="position:absolute;left:168px;top:126px">⊘ UNALLOCATED</span>
-      <div style="position:absolute;left:18px;top:14px;font-family:var(--mono);font-size:8px;color:#9A9180">
-        technical history: 47 transactions · model a41f09 · VIEW DETAILS</div>
-    </div></div>
-    <div class="cell-cap"><b>V2 candidate O — no identity until boundary.</b> REVISION reads
-    ⊘ UNALLOCATED (word + glyph); the automatic technical clock is one click away, never dressed as a revision</div>
-  </div>
-  <div>
-    <div class="paperbox" style="height:230px"><div class="paper" style="width:380px;height:168px">
-      <svg width="380" height="168" style="position:absolute;inset:0">
-        <line x1="0" y1="104" x2="380" y2="104" stroke="#5A5340" stroke-width="1.3"/>
-        <g font-family="PlexMono,monospace" font-size="8" fill="#9A9180" letter-spacing="1">
-          <text x="18" y="122">DRAWING No.</text><text x="170" y="122">REVISION</text><text x="300" y="122">SHEET</text></g>
-        <text x="18" y="142" font-family="PlexMono,monospace" font-size="12" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="300" y="150" font-family="PlexC,sans-serif" font-weight="600" font-size="26" fill="#4B463E">01</text>
-      </svg>
-      <span class="idchip prov" style="position:absolute;left:168px;top:126px">◌ PROVISIONAL · draft of P01 — NOT ISSUED</span>
-    </div></div>
-    <div class="cell-cap"><b>V2 candidate P — honest provisional identity.</b> dashed amber token,
-    "draft of", never the released treatment; issued revisions render solid green (compare V3)</div>
-  </div>
-  <div>
-    <div class="paperbox" style="height:230px;align-items:flex-end;padding-bottom:12px"><div class="paper" style="width:380px;height:158px">
-      <svg width="380" height="158" style="position:absolute;inset:0">
-        <line x1="0" y1="94" x2="380" y2="94" stroke="#5A5340" stroke-width="1.3"/>
-        <g font-family="PlexMono,monospace" font-size="8" fill="#9A9180" letter-spacing="1">
-          <text x="18" y="112">DRAWING No.</text><text x="170" y="112">REV</text><text x="300" y="112">SHEET</text></g>
-        <text x="18" y="142" font-family="PlexMono,monospace" font-size="12" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="170" y="148" font-family="PlexCMed,sans-serif" font-size="20" fill="#332F26">—</text>
-        <text x="300" y="150" font-family="PlexC,sans-serif" font-weight="600" font-size="26" fill="#4B463E">01</text>
-      </svg>
-      </div>
-      <span class="gated" style="position:absolute;left:12px;top:8px;font-size:9.5px;padding:2px 8px;max-width:95%">ASME-profile candidate — UNRATIFIED · licensed-text gated (REV-STD-DRAW-001..002) · not a core meaning of dash</span>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate A</span><span class="count">per-CI only</span></div>
+      <div class="trow grp">Configuration items</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">ci board:main → C</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">ci assembly:main → 07</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">ci fw:main → v1.3.5</span></div>
+      <div class="trow grp">Optional aggregate CI</div>
+      <div class="trow l2" style="color:var(--tx)">Product SENSOR-NODE <span class="meta mono">ci product:sensor-node → 04</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">"the product revision" exists only because a Product CI was explicitly declared — it is one more CI, not a roll-up</div>
     </div>
-    <div class="cell-cap"><b>V2 — ASME initial-release dash.</b> rendered only as a gated profile
-    candidate; Datum asserts no meaning for "—" until licensed-clause review and owner mapping</div>
-  </div>
-</div>
-
-<!-- ================================================================ V3 -->
-<div class="sec-label" id="v3"><span class="n">V3</span><span>Released title-block projections per scheme</span><span class="q">Q1</span><span class="rule"></span></div>
-<div class="cap">One controlled drawing, released, projected under each scheme candidate at real
-title-block size. Compact bands shorten presentation; the Inspector card preserves the full scheme and
-namespace identity. All values are EXAMPLE projections.</div>
-<div class="grid3">
-  <div>
-    <div class="paperbox" style="height:150px"><div class="paper" style="width:430px;height:96px">
-      <svg width="430" height="96" style="position:absolute;inset:0">
-        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
-        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M262 16 V84 M338 16 V84"/></g>
-        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
-          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">NAMESPACE</text><text x="272" y="26">REVISION</text><text x="348" y="26">BASELINE</text></g>
-        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="160" y="48" font-family="PlexMono,monospace" font-size="10" fill="#332F26">document:ASM-01</text>
-        <text x="272" y="52" font-family="PlexCMed,sans-serif" font-size="21" fill="#25211A">03</text>
-        <text x="344" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
-        <text x="272" y="74" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
-      </svg>
-    </div></div>
-    <div class="cell-cap"><b>V3a — numeric spin.</b> EXAMPLE 03</div>
   </div>
   <div>
-    <div class="paperbox" style="height:150px"><div class="paper" style="width:430px;height:96px">
-      <svg width="430" height="96" style="position:absolute;inset:0">
-        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
-        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M262 16 V84 M338 16 V84"/></g>
-        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
-          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">NAMESPACE</text><text x="272" y="26">REV</text><text x="348" y="26">BASELINE</text></g>
-        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="160" y="48" font-family="PlexMono,monospace" font-size="10" fill="#332F26">document:ASM-01</text>
-        <text x="272" y="52" font-family="PlexCMed,sans-serif" font-size="21" fill="#25211A">C</text>
-        <text x="344" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
-        <text x="272" y="74" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
-      </svg>
-      </div>
-      <span class="gated" style="position:absolute;right:10px;top:8px">alphabetic profile · sequence rules licensed-gated</span>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE A</span></div>
+      <div class="sect-hd">Issues (all owners are CIs)</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono">C 🔒</span></div>
+      <div class="kv"><span class="k">assembly:main</span><span class="v mono">07 🔒</span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono">B 🔒</span></div>
+      <div class="kv"><span class="k">product:sensor-node</span><span class="v mono">04 🔒 <span style="color:var(--tx3)">(aggregate CI)</span></span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — owns composition</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 <span style="color:var(--tx3)">· optional BuildIdentity, not a revision</span></span></div>
     </div>
-    <div class="cell-cap"><b>V3b — alphabetic drawing.</b> EXAMPLE C</div>
   </div>
   <div>
-    <div class="paperbox" style="height:150px"><div class="paper" style="width:430px;height:96px">
-      <svg width="430" height="96" style="position:absolute;inset:0">
-        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
-        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M262 16 V84 M338 16 V84"/></g>
-        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
-          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">NAMESPACE</text><text x="272" y="26">ISSUE · REV</text><text x="348" y="26">BASELINE</text></g>
-        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="160" y="48" font-family="PlexMono,monospace" font-size="10" fill="#332F26">document:ASM-01</text>
-        <text x="272" y="52" font-family="PlexCMed,sans-serif" font-size="21" fill="#25211A">2.3</text>
-        <text x="344" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
-        <text x="272" y="74" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
-      </svg>
-    </div></div>
-    <div class="cell-cap"><b>V3c — issue/revision.</b> EXAMPLE issue 2 · revision 3</div>
-  </div>
-  <div>
-    <div class="paperbox" style="height:150px"><div class="paper" style="width:430px;height:96px">
-      <svg width="430" height="96" style="position:absolute;inset:0">
-        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
-        <g stroke="#CDC4AF" stroke-width="1"><path d="M132 16 V84 M232 16 V84 M312 16 V84 M370 16 V84"/></g>
-        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
-          <text x="14" y="26">CONTAINER</text><text x="142" y="26">NAMESPACE</text><text x="242" y="26">REVISION</text><text x="320" y="26">STATUS</text><text x="378" y="26">STATE</text></g>
-        <text x="14" y="48" font-family="PlexMono,monospace" font-size="10" fill="#332F26">ASM-0007</text>
-        <text x="142" y="48" font-family="PlexMono,monospace" font-size="9.5" fill="#332F26">doc:ASM-01</text>
-        <text x="242" y="52" font-family="PlexCMed,sans-serif" font-size="19" fill="#25211A">P02</text>
-        <text x="320" y="52" font-family="PlexCMed,sans-serif" font-size="19" fill="#25211A">S3</text>
-        <text x="378" y="46" font-family="PlexCMed,sans-serif" font-size="9" fill="#3B6E45">SHARED</text>
-        <text x="242" y="74" font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180">two fields — never one conflated counter</text>
-      </svg>
-    </div></div>
-    <div class="cell-cap"><b>V3d — ISO 19650-oriented.</b> EXAMPLE REVISION P02 + STATUS S3 as separate cells</div>
-  </div>
-  <div>
-    <div class="paperbox" style="height:150px"><div class="paper" style="width:430px;height:96px">
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
       <svg width="430" height="96" style="position:absolute;inset:0">
         <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
         <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M300 16 V84"/></g>
         <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
-          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">REVISION · ORG SCHEME v2</text><text x="310" y="26">BASELINE</text></g>
-        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-ASM-0007</text>
-        <text x="160" y="52" font-family="PlexCMed,sans-serif" font-size="18" fill="#25211A">EVT-QUAL-3</text>
+          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">REVISION · ci board:main</text><text x="310" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="160" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">C</text>
         <text x="310" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
-        <text x="160" y="74" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
+        <text x="160" y="76" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
       </svg>
     </div></div>
-    <div class="cell-cap"><b>V3e — organization custom.</b> EXAMPLE EVT-QUAL-3 (editioned token list)</div>
-  </div>
-  <div>
-    <div class="card" style="height:150px;padding:0;overflow:hidden">
-      <div class="insp-title"><span class="ref">DA-EE-ASM-0007</span><span class="chip">INSPECTOR</span></div>
-      <div class="kv"><span class="k">Scheme</span><span class="v mono">numeric-spin v1 · LinearNumeric</span></div>
-      <div class="kv"><span class="k">Namespace</span><span class="v mono">document:ASM-01 · per-CI</span></div>
-      <div class="kv"><span class="k">Revision</span><span class="v mono">03 · issued by RLS-0007 <span class="idchip issued" style="margin-left:6px">🔒 ISSUED</span></span></div>
-    </div>
-    <div class="cell-cap"><b>V3f — Inspector detail.</b> compact bands may shorten; the full scheme +
-    namespace + allocating event always live here</div>
   </div>
 </div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-A — EngineeringRevision per revision-bearing CI (incl. optional
+aggregate Product CI).</b> one revision kind, one owner kind; the board's title block carries its own CI
+revision; composition stays in the baseline; EVT2 stays a label</div>
 
-<!-- ================================================================ V4 -->
-<div class="sec-label" id="v4"><span class="n">V4</span><span>Complex product — baseline manifest + phase-build identity</span><span class="q">Q4</span><span class="rule"></span></div>
-<div class="cap">The baseline manifest is the <b>primary composition heading</b>; four members revise
-independently in their own namespaces and schemes. The optional <b>EVT2</b> build label is a separate
-release-scope identity <b>over</b> the manifest — never a shared child revision, never a roll-up.
-Phase ⊃ build ⊃ spin stay typed and distinct.</div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="insp-title"><span class="ref">ConfigurationBaseline BL-2026-08-24-01</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">RELEASE CANDIDATE</span></div>
-      <div class="sect-hd">Release scope label (optional · separate identity)</div>
-      <div class="kv"><span class="k">Build</span><span class="v mono">EVT2 <span style="color:var(--tx3)">· scheme org-build v1 · NOT a member revision</span></span></div>
-      <div class="sect-hd">Manifest members — independent namespaces</div>
-      <div class="kv"><span class="k">Board MAIN</span><span class="v mono">board:main → C <span style="color:var(--tx3)">(alphabetic profile)</span></span></div>
-      <div class="kv"><span class="k">Assembly PCBA</span><span class="v mono">assembly:main → 07 <span style="color:var(--tx3)">(numeric spin)</span></span></div>
-      <div class="kv"><span class="k">Doc ASM-01</span><span class="v mono">document:ASM-01 → B <span style="color:var(--tx3)">(alphabetic profile)</span></span></div>
-      <div class="kv"><span class="k">Firmware</span><span class="v mono">fw:main → v1.3.5 <span style="color:var(--tx3)">(org custom)</span></span></div>
-      <div class="sect-hd">Law</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11.5px;color:var(--tx3)">Member labels
-      need not match; the manifest — not any coincident label — proves the released composition. No automatic roll-up exists.</span></div>
-    </div>
-    <div class="cell-cap"><b>V4a — release-candidate Inspector.</b> baseline heads; EVT2 rides above the manifest</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="panel-hd"><span>Navigator</span><span class="count">phase ⊃ build ⊃ spin</span></div>
-      <div class="trow grp">Program</div>
-      <div class="trow">Phase EVT <span class="meta">phase — not a build</span></div>
-      <div class="trow l2">Build EVT1 <span class="meta">baseline BL-…-07-14-02</span></div>
-      <div class="trow l2" style="color:var(--tx)">Build EVT2 <span class="meta">baseline BL-2026-08-24-01</span></div>
-      <div class="trow l2" style="padding-left:44px">Board MAIN <span class="meta mono">board:main C · spin</span></div>
-      <div class="trow l2" style="padding-left:44px">Board MAIN <span class="meta mono">board:main B · prior spin</span></div>
-      <div class="trow grp">Relationships (typed)</div>
-      <div class="trow" style="font-family:var(--mono);font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding-top:3px;padding-bottom:6px">
-        EVT2 —labels→ BL-2026-08-24-01 —pins→ board:main C · assembly:main 07 · document:ASM-01 B · fw:main v1.3.5</div>
-    </div>
-    <div class="cell-cap"><b>V4b — Navigator.</b> phase EVT contains builds EVT1/EVT2; each build labels a
-    baseline; each baseline pins exact member revisions (spins) — three distinct, related identity kinds</div>
-  </div>
-</div>
-
-<!-- ================================================================ V5 -->
-<div class="sec-label" id="v5"><span class="n">V5</span><span>Successor work — no identity until allocation</span><span class="q">Q2</span><span class="q">Q3</span><span class="rule"></span></div>
-<div class="grid2">
-  <div>
-    <div class="card">
-      <div class="chd">First post-release divergence <span class="m">automatic collection · zero identity</span></div>
-      <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--tx2);background:var(--s02);border:1px solid var(--bd-sub);border-radius:6px;padding:12px 16px">
-        SUCCESSOR WORK<br>
-        Based on: BL-2026-08-24-01<br>
-        Change: Draft CHG-0031<br>
-        Engineering revision: <span class="idchip unalloc">⊘ UNALLOCATED</span><br>
-        <span style="color:var(--tx3)">No revision identity has been reserved or issued.</span></div>
-      <div style="font-size:11.5px;color:var(--tx3);margin-top:9px">Transactions collect under the Draft
-      change; the released baseline is untouched; no next-in-sequence token exists anywhere in this state.</div>
-    </div>
-    <div class="cell-cap"><b>V5a — successor state.</b> exact packet wording; identity-free by construction</div>
-  </div>
-  <div>
-    <div class="card">
-      <div class="chd">Explicit allocation <span class="m">designer declares the boundary</span></div>
-      <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Boundary crossed</span><span class="v">Manufacturing release ▾ <span style="color:var(--tx3);font-size:11px">(phase build · share/delivery · review baseline · certification submission · declared baseline)</span></span></div>
-      <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Namespace / scope</span><span class="v mono">board:main</span></div>
-      <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Scheme in force</span><span class="v mono">alphabetic profile v1</span></div>
-      <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Proposed label</span><span class="v mono">D <span class="idchip prov" style="margin-left:6px">◌ PREVIEW — not authority</span></span></div>
-      <div style="font-size:11.5px;color:var(--tx3);margin-top:8px">The preview binds nothing. Identity
-      exists only after the typed allocation or reservation event commits.</div>
-    </div>
-    <div class="cell-cap"><b>V5b — allocation surface.</b> boundary + namespace + scheme → previewed label; authority only at the typed event</div>
-  </div>
-</div>
-
-<!-- ================================================================ V6 -->
-<div class="sec-label" id="v6"><span class="n">V6</span><span>Status axis · prototype→production transition</span><span class="q">Q5</span><span class="q">Q6</span><span class="rule"></span></div>
-<div class="grid2">
-  <div>
-    <div class="card">
-      <div class="chd">Revision and suitability move independently <span class="m">ISO-oriented profile</span></div>
-      <div class="timeline" style="flex-wrap:wrap;gap:6px 0">
-        <span class="tstep">REVISION P02<br><span style="color:var(--info)">STATUS S1</span></span><span class="tarrow">→</span>
-        <span class="tstep">REVISION P02<br><span style="color:var(--info)">STATUS S3</span></span><span class="tarrow">→</span>
-        <span class="tstep">REVISION P02<br><span style="color:var(--info)">STATUS S4</span></span><span class="tarrow">→</span>
-        <span class="tstep" style="border-color:var(--acc)">REVISION P03<br><span style="color:var(--info)">STATUS S1</span></span>
-      </div>
-      <div style="font-size:11.5px;color:var(--tx3);margin-top:9px">Three status changes, one revision
-      change — two axes, four states, never one conflated counter (a formatted projection like
-      "S3-P02" may display both, but they remain separate fields).</div>
-    </div>
-    <div class="cell-cap"><b>V6a — status ≠ revision.</b></div>
-  </div>
-  <div>
-    <div class="card">
-      <div class="chd">Prototype → production <span class="m">two candidates · lineage never breaks</span></div>
-      <div style="font-family:var(--mono);font-size:11.5px;line-height:2.1;color:var(--tx2)">
-        <b style="color:var(--tx);font-family:var(--sans)">Candidate A — one continuing sequence:</b><br>
-        board:main · 01 → 02 → 03 <span style="color:var(--tx3)">(proto)</span> → 04 → 05 <span style="color:var(--tx3)">(production — same namespace)</span><br>
-        <b style="color:var(--tx);font-family:var(--sans)">Candidate B — namespace transition:</b><br>
-        board:main-proto · 01 → 02 → 03 <span class="idchip stale" style="font-size:9px">⚠ CLOSED</span><br>
-        board:main-prod&nbsp; · A <span style="color:var(--tx3)">· supersedes board:main-proto 03 — lineage recorded, both identities unambiguous forever</span></div>
-    </div>
-    <div class="cell-cap"><b>V6b — transition candidates.</b> a reset never erases lineage and never lets
-    two identities collide; the closed namespace stays queryable</div>
-  </div>
-</div>
-
-<!-- ================================================================ V7 -->
-<div class="sec-label" id="v7"><span class="n">V7</span><span>Accessibility and ambiguity proof</span><span class="rule"></span></div>
+<!-- Candidate B -->
 <div class="grid3">
   <div>
-    <div class="card"><div class="chd">Identity states — word + glyph</div>
-      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
-        <span class="idchip unalloc">⊘ UNALLOCATED</span>
-        <span class="idchip prov">◌ PROVISIONAL — NOT ISSUED</span>
-        <span class="idchip issued">🔒 ISSUED · RELEASED</span>
-        <span class="idchip stale">⚠ NAMESPACE CLOSED</span>
-      </div>
-      <div style="font-size:11px;color:var(--tx3);margin-top:9px">Every state carries word + glyph + border
-      treatment; color is never the only channel</div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate B</span><span class="count">per-CI + ReleaseScope</span></div>
+      <div class="trow grp">Configuration items</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">ci board:main → C</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">ci assembly:main → 07</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">ci fw:main → v1.3.5</span></div>
+      <div class="trow grp">Release scopes (arbitrary, non-CI)</div>
+      <div class="trow l2" style="color:var(--tx)">Fab package 2026-Q3 <span class="meta mono">scope fab-pkg → 02</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">two revision-identity kinds coexist; every display must carry its namespace kind (ci vs scope) or ambiguity returns</div>
     </div>
   </div>
   <div>
-    <div class="card"><div class="chd">Keyboard reach + narrow panes</div>
-      <div class="kv kbd-ring" style="grid-template-columns:130px 1fr;margin-bottom:8px"><span class="k">Revision</span><span class="v mono">03 · 🔒 ISSUED</span></div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;border:1px solid var(--bd-sub);border-radius:4px;padding:4px 9px">board:main · alphabetic profile v1 · issued by RLS-00…</div>
-      <div style="font-size:11px;color:var(--tx3);margin-top:8px">focus ring on every identity field;
-      narrow chrome truncates before wrapping — the Inspector always holds the full scheme + namespace</div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE B</span></div>
+      <div class="sect-hd">Issues — CI owners</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono">C 🔒 <span style="color:var(--tx3)">· kind ci</span></span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono">B 🔒 <span style="color:var(--tx3)">· kind ci</span></span></div>
+      <div class="sect-hd">Issues — scope owner</div>
+      <div class="kv"><span class="k">fab-pkg 2026-Q3</span><span class="v mono">02 🔒 <span style="color:var(--tx3)">· kind scope — not a CI</span></span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — still owns composition</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 · BuildIdentity ≠ scope revision 02</span></div>
     </div>
   </div>
   <div>
-    <div class="card"><div class="chd">Compact chrome → full identity</div>
-      <div style="font-size:12px;color:var(--tx2)">A compact title block may print only <span class="mono">C</span>.
-      The Inspector for that drawing always resolves it as:<br>
-      <span class="mono" style="font-size:11px;color:var(--tx3)">board:main · alphabetic profile v1 ·
-      revision C · issued by RLS-0007 · baseline BL-2026-08-24-01</span></div>
-      <div style="font-size:11px;color:var(--tx3);margin-top:8px">display labels are projections; identity
-      is namespace + scheme + token + allocating event</div>
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
+      <svg width="430" height="96" style="position:absolute;inset:0">
+        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
+        <g stroke="#CDC4AF" stroke-width="1"><path d="M126 16 V84 M240 16 V84 M348 16 V84"/></g>
+        <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+          <text x="14" y="26">DRAWING No.</text><text x="134" y="26">REV · ci board:main</text><text x="248" y="26">SCOPE REV · fab-pkg</text><text x="356" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="9.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="134" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">C</text>
+        <text x="248" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">02</text>
+        <text x="356" y="44" font-family="PlexMono,monospace" font-size="6.5" fill="#332F26">BL-2026-</text>
+        <text x="356" y="56" font-family="PlexMono,monospace" font-size="6.5" fill="#332F26">08-24-01</text>
+        <text x="142" y="76" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
+      </svg>
+    </div></div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-B — EngineeringRevision per CI AND per arbitrary ReleaseScope.</b>
+the board carries its CI revision and the fab-package scope revision side by side — coexistence is
+unambiguous only while every cell is namespace-kind-tagged; the cost is two revision-shaped identities
+on one artifact</div>
+
+<!-- Candidate C -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate C</span><span class="count">ReleaseScope only</span></div>
+      <div class="trow grp">Members (no CI revisions exist)</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">technical rev a41f09 only</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">technical rev 77c2e1 only</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">technical rev 09bd44 only</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">technical rev f31a02 only</span></div>
+      <div class="trow grp">Release scope (sole owner kind)</div>
+      <div class="trow l2" style="color:var(--tx)">EVT fab scope <span class="meta mono">scope evt-fab → 03</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">consequence: a board respun alone mints scope 04 — unchanged members appear re-revised; no per-board issued REV exists for silkscreen/fab without scope context</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE C</span></div>
+      <div class="sect-hd">Issues (only scope owners exist)</div>
+      <div class="kv"><span class="k">evt-fab</span><span class="v mono">03 🔒 · kind scope</span></div>
+      <div class="sect-hd">Members carry no issued revision</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono" style="color:var(--tx3)">⊘ no EngineeringRevision — pinned by baseline only</span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono" style="color:var(--tx3)">⊘ no EngineeringRevision — pinned by baseline only</span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — sole member identity</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 · label over scope 03</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
+      <svg width="430" height="96" style="position:absolute;inset:0">
+        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
+        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M300 16 V84"/></g>
+        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
+          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">SCOPE REV · evt-fab</text><text x="310" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="160" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">03</text>
+        <text x="310" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
+        <text x="160" y="76" font-family="PlexMono,monospace" font-size="7.5" fill="#7a4a42">⊘ no per-board revision — scope identity only</text>
+      </svg>
+    </div></div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-C — EngineeringRevision only per ReleaseScope.</b> members keep
+only technical revisions; the board's title block can show nothing but the scope's number; independent
+member respins force whole-scope reminting — the consequences are drawn, not argued</div>
+
+<!-- ================================================================ V9 -->
+<div class="sec-label" id="v9"><span class="n">V9</span><span>Document authority — ControlledDocument vs PublishSet-owned identity</span><span class="q">AUTH-Q5</span><span class="rule"></span></div>
+<div class="cap"><b>Maps to</b> <span class="mono" style="font-size:11px">PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md</span>
+owner question 5. The same multi-sheet assembly publication under two candidates. Preserved in both:
+<b>All Sheets owns Sheet bodies; Publish Sets are editable, user-named ordered references (F6)</b>.
+Constraint from the Q3 disposition: <b>DocumentIssue never mints its own revision counter</b> — it
+references the governing document CI's EngineeringRevision. <b>No candidate is selected.</b></div>
+
+<!-- Candidate A chain -->
+<div class="card" style="margin-bottom:14px;padding:12px 16px">
+  <div class="chd">Candidate A — the document-control chain <span class="m">separate stable authority</span></div>
+  <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px">
+    <span class="tstep">PublishSet<br><span style="color:var(--tx3)">editable composition + order</span></span><span class="tarrow">—source binding→</span>
+    <span class="tstep">ControlledDocument<br><span style="color:var(--tx3)">stable number · purpose · policy</span></span><span class="tarrow">—revision-bearing CI→</span>
+    <span class="tstep">EngineeringRevision<br><span style="color:var(--tx3)">B · ci document:ASM-01</span></span><span class="tarrow">—exact rendering→</span>
+    <span class="tstep">DocumentIssue<br><span style="color:var(--tx3)">immutable · references rev B</span></span><span class="tarrow">—selected→</span>
+    <span class="tstep">ReleasePackage</span><span class="tarrow">—delivered→</span>
+    <span class="tstep">Transmittal</span>
+  </div>
+</div>
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="panel-hd"><span>Navigator · candidate A</span><span class="count">F6 preserved</span></div>
+      <div class="trow grp">Publish</div>
+      <div class="trow l2">All Sheets <span class="meta">5 · owns bodies</span></div>
+      <div class="trow l2">EMC Lab Submission <span class="meta mono">publish set · 3 refs · editable</span></div>
+      <div class="trow grp">Document control</div>
+      <div class="trow l2" style="color:var(--tx)">DOC-ASM-01 Assembly Manual <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow" style="padding-left:44px">Issue B <span class="meta mono">ISS-0012 · 🔒 immutable</span></div>
+      <div class="trow" style="padding-left:44px;color:var(--tx3)">Issue A <span class="meta mono">ISS-0007 · superseded</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">the set stays a set; the document is its own stable object bound to the set as source</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">DOC-ASM-01 · Assembly Manual</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE A</span></div>
+      <div class="sect-hd">Stable authority</div>
+      <div class="kv"><span class="k">Source binding</span><span class="v mono">PublishSet "EMC Lab Submission" (editable)</span></div>
+      <div class="kv"><span class="k">Revision CI</span><span class="v mono">document:ASM-01 → B 🔒 · RLS-0007</span></div>
+      <div class="sect-hd">Issue · package · delivery</div>
+      <div class="kv"><span class="k">DocumentIssue</span><span class="v mono">ISS-0012 · references rev B · sha256 9e11…</span></div>
+      <div class="kv"><span class="k"></span><span class="v" style="font-size:11px;color:var(--tx3)">no independent issue counter exists (Q3 boundary)</span></div>
+      <div class="kv"><span class="k">Package</span><span class="v mono">PKG-EMC-01 ⊃ ISS-0012</span></div>
+      <div class="kv"><span class="k">Transmittal</span><span class="v mono">TX-0031 → EMC Lab · 2026-08-25</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:330px">
+      <div class="chd">Mutation test <span class="m">released identity must not move</span></div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.8">
+        rename the set → <span class="idchip issued" style="font-size:9px">🔒 DOC-ASM-01 · B unchanged</span><br>
+        reorder the set → <span class="idchip issued" style="font-size:9px">🔒 Issue B bytes unchanged</span><br>
+        reuse set for a customer doc → <span class="idchip issued" style="font-size:9px">new ControlledDocument, same set</span><br>
+        delete the set → <span class="idchip stale" style="font-size:9px">⛔ DELETE REFUSED — bound by DOC-ASM-01 · retarget or remove the document first</span></div>
+      <div class="paperbox" style="height:96px;margin-top:10px"><div class="paper" style="width:300px;height:64px">
+        <svg width="300" height="64" style="position:absolute;inset:0">
+          <line x1="0" y1="4" x2="300" y2="4" stroke="#5A5340" stroke-width="1.2"/>
+          <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+            <text x="12" y="18">DOC No.</text><text x="120" y="18">REV · ci doc:ASM-01</text><text x="240" y="18">ISSUE</text></g>
+          <text x="12" y="38" font-family="PlexMono,monospace" font-size="9" fill="#332F26">DOC-ASM-01</text>
+          <text x="120" y="42" font-family="PlexCMed,sans-serif" font-size="17" fill="#25211A">B</text>
+          <text x="238" y="38" font-family="PlexMono,monospace" font-size="8" fill="#332F26">ISS-0012</text>
+          <text x="120" y="56" font-family="PlexCMed,sans-serif" font-size="8" fill="#3B6E45">RELEASED 🔒</text>
+        </svg>
+      </div></div>
     </div>
   </div>
 </div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V9-A — separate ControlledDocument.</b> the editable set feeds a
+stable document authority; revision belongs to the document CI; the issue is an immutable rendering that
+references that revision; packages and transmittals bind to issues, so later set edits can never move
+released identity</div>
+
+<!-- Candidate B -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="panel-hd"><span>Navigator · candidate B</span><span class="count">set owns identity</span></div>
+      <div class="trow grp">Publish</div>
+      <div class="trow l2">All Sheets <span class="meta">5 · owns bodies</span></div>
+      <div class="trow l2" style="color:var(--tx)">EMC Lab Submission <span class="meta mono">DOC-0009 · rev B · 🔒 RELEASED</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">an editable, user-renamable ordered reference list now carries document number, revision, and release state itself — the set has become a release state machine</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">EMC Lab Submission</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">CANDIDATE B</span></div>
+      <div class="sect-hd">One object, two natures</div>
+      <div class="kv"><span class="k">Name</span><span class="v mono">EMC Lab Submission <span style="color:var(--tx3)">· mutable</span></span></div>
+      <div class="kv"><span class="k">Composition</span><span class="v mono">3 ordered refs <span style="color:var(--tx3)">· mutable</span></span></div>
+      <div class="kv"><span class="k">Doc number</span><span class="v mono">DOC-0009 <span style="color:var(--tx3)">· must never change</span></span></div>
+      <div class="kv"><span class="k">Revision</span><span class="v mono">B 🔒 <span style="color:var(--tx3)">· must never move</span></span></div>
+      <div class="kv"><span class="k">Release state</span><span class="v mono">RELEASED <span style="color:var(--tx3)">· on an editable object</span></span></div>
+      <div class="sect-hd">Delivery</div>
+      <div class="kv"><span class="k">Transmittal</span><span class="v mono" style="color:var(--warn)">TX-0031 → "the set as of when?" ⚠</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:330px">
+      <div class="chd">Mutation test <span class="m">the same edits, rendered honestly</span></div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.8">
+        rename the set → <span class="idchip stale" style="font-size:9px">⚠ released doc name changed silently</span><br>
+        reorder the set → <span class="idchip stale" style="font-size:9px">⚠ rev B now claims different content</span><br>
+        reuse for a customer doc → <span class="idchip stale" style="font-size:9px">⚠ needs 2nd number → duplicate set + sheets order</span><br>
+        delete the set → <span class="idchip stale" style="font-size:9px">⚠ released document identity vanishes</span></div>
+      <div class="paperbox" style="height:96px;margin-top:10px"><div class="paper" style="width:300px;height:64px">
+        <svg width="300" height="64" style="position:absolute;inset:0">
+          <line x1="0" y1="4" x2="300" y2="4" stroke="#5A5340" stroke-width="1.2"/>
+          <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+            <text x="12" y="18">DOC No. · from mutable set</text><text x="170" y="18">REV</text><text x="230" y="18">SOURCE</text></g>
+          <text x="12" y="38" font-family="PlexMono,monospace" font-size="9" fill="#332F26">DOC-0009</text>
+          <text x="170" y="42" font-family="PlexCMed,sans-serif" font-size="17" fill="#25211A">B</text>
+          <text x="228" y="38" font-family="PlexMono,monospace" font-size="6.5" fill="#7a4a42">set "EMC Lab…"</text>
+          <text x="12" y="56" font-family="PlexMono,monospace" font-size="6.5" fill="#7a4a42">⚠ identity rides a mutable, renamable object</text>
+        </svg>
+      </div></div>
+    </div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V9-B — PublishSet owns document identity directly.</b> fewer
+objects, but the editable composition and the immutable released identity live on one thing — every
+ordinary set edit becomes a threat to released truth, and delivery can only point at "the set", not an
+immutable issue</div>
+
+<!-- ================================================================ V10 -->
+<div class="sec-label" id="v10"><span class="n">V10</span><span>Standing facts — Superseded · Withdrawn · Obsolete</span><span class="q">AUTH-Q6</span><span class="rule"></span></div>
+<div class="cap"><b>Maps to</b> <span class="mono" style="font-size:11px">PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md</span>
+owner question 6. Laws in every candidate: standing facts <b>never mutate or erase</b> issued records,
+baselines, packages, transmittals, or audit history; <b>Current/Historical are projections</b>, not
+mutable lifecycle states; <b>delivery never changes standing</b> (ECSS-M-ST-40C). First, the three facts
+as distinct consequences — then three candidates for how their vocabulary and rules are governed.
+<b>No candidate is selected.</b></div>
+<div class="grid3">
+  <div>
+    <div class="card" style="height:236px"><div class="chd">SUPERSEDED <span class="m">successor exists</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Record</span><span class="v mono">ISS-0012 · DOC-ASM-01 rev B 🔒</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Successor</span><span class="v mono">ISS-0019 · rev C (linked)</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Effectivity</span><span class="v mono">units from SN-0450; earlier units stay on B</span></div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:8px">the superseded issue remains immutable, queryable, and true for its effectivity — it is pointed past, never edited</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:236px"><div class="chd">WITHDRAWN <span class="m">authorization removed</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Record</span><span class="v mono">ISS-0012 · rev B 🔒</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Authority</span><span class="v mono">QA hold · R. Osei (quality role)</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Reason</span><span class="v mono">connector recall RN-114</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Effective</span><span class="v mono">2026-08-25 14:00</span></div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:8px">no successor implied; the record and its transmittals stay in history with the withdrawal event beside them</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:236px"><div class="chd">OBSOLETE <span class="m">deliberately no longer applicable</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Record</span><span class="v mono">DOC-PWR-02 rev D 🔒</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Disposition</span><span class="v mono">no successor — product line retired</span></div>
+      <div class="kv" style="grid-template-columns:96px 1fr;padding:2px 0"><span class="k">Authority</span><span class="v mono">declared · owner disposition 2026-08-25</span></div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:8px">distinct from supersession (no successor) and withdrawal (not an authorization removal) — an end-of-applicability statement over intact history</div>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin:14px 0;padding:10px 16px"><div style="font-size:12px;color:var(--tx2)">
+<b>Delivery never changes standing:</b> <span class="mono" style="font-size:11px">TX-0042 redelivers ISS-0012 on 2026-08-26 — after the withdrawal — and ISS-0012 remains WITHDRAWN;</span>
+<span style="color:var(--tx3)">a transmittal records a delivery event, never a status transition (ECSS: delivery does not change document status)</span></div></div>
+<div class="grid3">
+  <div>
+    <div class="card" style="height:280px"><div class="chd">Candidate A — fixed universal words</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.7">every issued-record kind carries exactly
+      <span class="mono">Superseded · Withdrawn · Obsolete</span>, uniformly, with fixed rules.</div>
+      <div style="margin-top:9px;font-size:11.5px;color:var(--tx3);line-height:1.8">
+      consequence: an org needing "Rescinded" or "Retired" cannot have it;<br>
+      kinds where a word is near-meaningless still offer it;<br>
+      no per-kind authority or transition tailoring;<br>
+      simplest to learn — least adaptable</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:280px"><div class="chd">Candidate B — free-form profile vocabulary</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.7">profiles invent standing labels as text:
+      <span class="mono">"Cancelled" · "Void" · "Killed" · "Archived"</span></div>
+      <div style="margin-top:9px;font-size:11.5px;color:var(--tx3);line-height:1.8">
+      consequence: no typed core — is "Void" a supersession or a withdrawal?;<br>
+      cross-project queries and audit mappings become string guesses;<br>
+      two organizations' data cannot be compared;<br>
+      the untyped-string disease REV-C01 catalogued, reborn as status</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="height:280px"><div class="chd">Candidate C — typed facts · profile-governed presentation</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.6">core owns the three typed facts above;
+      the profile governs the rest:</div>
+      <div class="kv" style="grid-template-columns:104px 1fr;padding:2px 0;margin-top:6px"><span class="k">Applicability</span><span class="v mono" style="font-size:10.5px">DocumentIssue: all 3 · Baseline: supersede only</span></div>
+      <div class="kv" style="grid-template-columns:104px 1fr;padding:2px 0"><span class="k">Authority</span><span class="v mono" style="font-size:10.5px">withdrawal requires quality role + reason</span></div>
+      <div class="kv" style="grid-template-columns:104px 1fr;padding:2px 0"><span class="k">Transitions</span><span class="v mono" style="font-size:10.5px">withdrawn → superseded permitted; reverse refused</span></div>
+      <div class="kv" style="grid-template-columns:104px 1fr;padding:2px 0"><span class="k">Terminology</span><span class="v mono" style="font-size:10.5px">typed Withdrawn shown as "Rescinded" (org term)</span></div>
+      <div style="margin-top:7px;font-size:11px;color:var(--tx3)">display words are projections over typed facts — queryable, comparable, auditable across organizations</div>
+    </div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V10 — three governance candidates over the same three facts.</b>
+A fixes the words and the rules; B surrenders the facts to strings; C types the facts and lets profiles
+govern applicability, authority, transitions, and display terms. History is immutable in all three</div>
 
 <!-- ================================================================ Q index -->
-<div class="sec-label" id="owner-questions"><span class="n">Q</span><span>Owner questions — where each is rendered</span><span class="rule"></span></div>
+<div class="sec-label" id="owner-questions"><span class="n">Q</span><span>Authority questions — where each is rendered</span><span class="rule"></span></div>
 <table class="orindex" style="border-collapse:collapse;width:100%;max-width:1150px">
-  <tr><td>Q1</td><td><a href="#v1">V1</a> registry (five equal candidates, lightweight-proposal flags, no default) + <a href="#v3">V3</a> title-block projections of every scheme.</td></tr>
-  <tr><td>Q2</td><td><a href="#v2">V2</a> unallocated vs honest-provisional origin candidates + <a href="#v5">V5</a> successor work with zero identity.</td></tr>
-  <tr><td>Q3</td><td><a href="#v5">V5b</a> boundary-crossing selector (manufacturing release · phase build · share/delivery · review baseline · certification submission · declared baseline) + <a href="#v1">V1</a> initial-allocation rules.</td></tr>
-  <tr><td>Q4</td><td><a href="#v4">V4</a> EVT2 as optional release-scope label over the baseline manifest; phase ⊃ build ⊃ spin typed and distinct.</td></tr>
-  <tr><td>Q5</td><td><a href="#v6">V6a</a> independent status/revision axes + <a href="#v3">V3d</a> separate title-block cells.</td></tr>
-  <tr><td>Q6</td><td><a href="#v6">V6b</a> continuing-sequence vs namespace-transition candidates with preserved lineage.</td></tr>
-  <tr><td style="color:var(--info)">AUTH</td><td>Authority-model comparisons live in the companion <a href="revision-authority-study.html">Revision Authority Study</a>: <a href="revision-authority-study.html#v8">V8</a> scope ownership · <a href="revision-authority-study.html#v9">V9</a> document authority · <a href="revision-authority-study.html#v10">V10</a> standing facts.</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q3</td><td><a href="#v8">V8</a> — EngineeringRevision scope ownership: per-CI (+ optional aggregate Product CI) vs per-CI + ReleaseScope vs ReleaseScope-only. Resolved: per revision-bearing CI only.</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q5</td><td><a href="#v9">V9</a> — document authority: ControlledDocument chain vs PublishSet-owned identity; mutation tests rendered. Resolved: V9-A ratified; bound-set deletion refuses (PUBLISH_SPACE_SPEC §6).</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q6</td><td><a href="#v10">V10</a> — standing facts: Superseded/Withdrawn/Obsolete as distinct consequences; candidates A (fixed words) · B (free-form strings) · C (typed facts + profile-governed applicability/authority/transitions/terminology). Pending.</td></tr>
+  <tr><td>Q1–Q6</td><td>Identity/scheme questions render in the companion <a href="revision-identity-study.html">Revision Identity Study</a> (V1–V7).</td></tr>
 </table>
 
-<div class="cap" style="margin-top:30px;font-size:11.5px">Exclusions, by law of this page: no default
-selection · no ratified ASME sequence details (licensed-text gated) · no STATUS/REVISION conflation ·
-no automatic roll-up of member revisions into product labels · no revision identity on successor work ·
-all tokens are EXAMPLE projections, allocations exist only through typed events.</div>
+<div class="cap" style="margin-top:30px;font-size:11.5px">Laws of this page: no candidate pre-selected ·
+standing facts never mutate issued records, baselines, packages, transmittals, or audit history ·
+Current/Historical are projections · delivery never changes standing · the ratified V9-A chain and
+referenced-object deletion refusal are preserved.</div>
 
 </div>
 </body>
