@@ -372,10 +372,12 @@ record and collapse-by-default are rejected; any later hiding/collapse control
 belongs only to the future Global Preferences presentation policy. `REV-C06-Q2`
 is owner-approved as `Q2-A-amended`: one cohesive Release pane keeps all nine
 section summaries visible, permits only user-requested collapse of clean detail,
-and refuses collapse for unresolved or invalidated facts. Q3–Q6 remain pending
-and must be presented exactly one at a time with exact source and prototype
-ranges, consequences, recommendation, and response syntax. No implementation is
-authorized.
+and refuses collapse for unresolved or invalidated facts. `REV-C06-Q3` is
+owner-approved as `Q3-A-amended`: summary-first assessment retains permanent
+Unknown/scope rows, while row drill opens the canonical witness tree beside the
+summary without replacing it. Q4–Q6 remain pending and must be presented exactly
+one at a time with exact source and prototype ranges, consequences,
+recommendation, and response syntax. No implementation is authorized.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->

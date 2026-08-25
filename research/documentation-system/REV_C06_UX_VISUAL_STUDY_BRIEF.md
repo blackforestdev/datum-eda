@@ -405,6 +405,22 @@ same record.
 Choose the primary summary/path relationship and how `Unknown` remains visible
 without overwhelming the normal case.
 
+**Owner disposition — approved 2026-08-25.** The reviewed authority is UX-V4
+in section 5, the durable impact-result and witness requirements in
+`REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md`, and the scale,
+open-beside, and zero-unknown `Q3-A-amended` proof in
+`docs/gui/prototypes/revision-ux-impact-study.html`, commit `118113b`.
+
+Datum adopts `Q3-A-amended`, not original Q3-A. The impact summary is the
+primary view. Selecting a summary row opens the canonical Q3-B witness tree
+beside the summary; it never replaces or hides the summary. The tree remains
+the authoritative drill representation rather than becoming discarded
+comparative UI. `ImpactUnknown` and graph-scope rows are permanent even when
+they report zero and complete. A clean result is an explicit evaluated claim,
+never inferred from an absent row.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q3-APPROVED -->
+
 ### REV-C06-Q4 — Lightweight versus regulated disclosure
 
 Approve whether the same visual hierarchy scales cleanly from a one-person
