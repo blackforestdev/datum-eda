@@ -232,6 +232,44 @@ double-click/Enter open-beside, recursive tiling, one native window. Three doorw
   </div>
 </div>
 
+<div style="height:14px"></div>
+<div class="cap"><b>Design-first: the "hide revision system" preference — owner-directed.</b> Half of all
+users will never release anything, and the engine must serve them by staying out of the way. One
+presentation preference removes the entire revision surface from the shell. It is presentation policy over
+unchanged engine truth: the technical clock (journal, undo, history) keeps recording silently, so the day
+this user wants a baseline or a release, everything is already there — they paid zero ceremony for it.
+Anticipated by the owner-approved Q1 rationale ("policy over the same engine truth, deferred to the Global
+Preferences specification").</div>
+<div class="grid2">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">Preferences · Appearance</span><span class="chip">HIDE REVISION SYSTEM — THE TOGGLE</span></div>
+      <div class="sect-hd">Revision system presentation</div>
+      <div class="kv"><span class="k">Show revision system</span><span class="v mono">OFF — hidden by you</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">hides the Revision navigator group and revision rows everywhere; nothing else changes. The engine keeps its journal — undo, history, and on-demand baselines stay available. Restore anytime; nothing is lost either way.</span></div>
+      <div class="sect-hd">What it never does</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">never blocks or prompts · never disables the journal · never degrades the project · never needs migration to undo</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">also reachable from the shell: right-click the Revision group → Hide revision system</span></div>
+    </div>
+    <div class="cell-cap"><b>the toggle.</b> a deliberate user gesture — hidden by you is not hidden from you</div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:330px">
+      <div class="insp-title"><span class="ref">Navigator · design-first session</span><span class="chip">REVISION SYSTEM HIDDEN</span></div>
+      <div class="sect-hd">Design</div>
+      <div class="trow" style="font-size:12px">Schematic · sensor-node</div>
+      <div class="trow" style="font-size:12px">Board · main</div>
+      <div class="sect-hd">Publish</div>
+      <div class="trow" style="font-size:12px">All Sheets <span class="meta">5</span></div>
+      <div class="kv" style="grid-template-columns:1fr;margin-top:8px"><span class="v" style="font-size:11px;color:var(--tx3)">no Revision group, no chips, no prompts — schematic to board to outputs with zero revision ceremony. This is a supported, first-class workflow, not a degraded one.</span></div>
+      <div class="sect-hd">The invariant this render pins</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px;color:var(--rel)">the revision engine never blocks, prompts, or delays authoring — gates exist only where the user asks for certification (issuing a release) or an org opted into a regulated profile</span></div>
+    </div>
+    <div class="cell-cap"><b>the shell with it off.</b> design a board from a schematic; the engine helps silently or not at all</div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:14px"><b>Design-first preference.</b> <span class="cand">OWNER-DIRECTED — PENDING RATIFICATION</span> · mechanism belongs to the Global Preferences specification; the never-blocks invariant belongs in the REV-C07 consolidation</div>
+
 <!-- ================================================================ UX-V2 -->
 <div class="sec-label" id="ux-v2"><span class="n">UX-V2</span><span>Quiet successor work</span><span class="rule"></span></div>
 <div class="cap"><b>All five states render approved dispositions — no candidates here.</b> First divergence
