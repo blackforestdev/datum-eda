@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "b4f30dc2c953ea96d2e1c5d8d3c0b8ddb27b5007735b011ae5ebfd42cde462c5",
-      "review_note": "The REV-C03 authority model, identity packet, V1-V7 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. Automatic Draft Change collection remains distinct from explicit V2-P reservation and profile issuance; released baselines stay immutable. V5's technical zero-identity state is valid, but its user wording requires the tracked Claude-owned reconciliation. BuildIdentity, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved."
+      "reviewed_digest": "0312e9ec5ceeea3f27489140e1059eba88a7917adebc9d75612d7d8a59216996",
+      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V8 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8 renders AUTH-Q3 candidates A/B/C without selecting one and cleanly separates EngineeringRevision, ConfigurationBaseline, BuildIdentity, and Release in Navigator, Inspector, and title-block contexts. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
     },
     {
       "id": "parametric-footprint-editor",
