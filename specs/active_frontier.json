@@ -4880,19 +4880,19 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-rev-c04-20260825",
-        "claimed_at": "2026-08-25T20:01:28Z",
-        "heartbeat_at": "2026-08-25T20:01:28Z",
-        "expires_at": "2026-08-26T04:01:28Z",
+        "session": "codex-rev-c05-20260825",
+        "claimed_at": "2026-08-25T20:32:48Z",
+        "heartbeat_at": "2026-08-25T20:32:48Z",
+        "expires_at": "2026-08-26T04:32:48Z",
         "scope": [
-          "REV-C04 standalone local/offline authority and optional Git/distributed integration contract"
+          "REV-C05 dependency impact, staleness, regeneration, baseline comparison, and reproducible release evidence"
         ],
         "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "e89cba031b6d14e3ccf5b275b8fa4912bc74aaed"
+        "head": "634f3219e03cb787df28d1148078d3da34515a7a"
       },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C04",
+        "canonical_next_step_id": "REV-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5015,7 +5015,7 @@
           {
             "id": "REV-C04",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Specify complete standalone local/offline authority plus optional Git and distributed integration without making Git product or release authority.",
             "depends_on": [
               "REV-C03"
@@ -5026,12 +5026,17 @@
                 "marker": "REV-C04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "634f321"
+              }
+            ]
           },
           {
             "id": "REV-C05",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Specify dependency impact, staleness, library uptake, manufacturing regeneration, baseline comparison, and reproducible release evidence.",
             "depends_on": [
               "REV-C03",
