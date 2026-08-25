@@ -490,6 +490,167 @@ Phase ⊃ build ⊃ spin stay typed and distinct.</div>
   </div>
 </div>
 
+<!-- ================================================================ V8 -->
+<div class="sec-label" id="v8"><span class="n">V8</span><span>EngineeringRevision scope authority — three structural candidates</span><span class="q">AUTH-Q3</span><span class="rule"></span></div>
+<div class="cap"><b>Maps to</b> <span class="mono" style="font-size:11px">PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md</span>
+owner question 3 (what kind of object may OWN an EngineeringRevision namespace) — <b>not</b> the identity
+packet's Q3/V5b (which asks how a user allocates one). The same complex product is rendered under all
+three candidates. <b>No candidate is selected.</b> First, the four object kinds that must never blur:</div>
+<div class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px">
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">EngineeringRevision</div>
+    <div style="font-size:11px;color:var(--tx3)">human-issued label (<span class="mono">C</span>, <span class="mono">07</span>) inside one namespace; minted by a typed event</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">ConfigurationBaseline</div>
+    <div style="font-size:11px;color:var(--tx3)">immutable manifest pinning exact member revisions — the composition truth in every candidate</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">BuildIdentity</div>
+    <div style="font-size:11px;color:var(--tx3)">optional release-scope label (<span class="mono">EVT2</span>) over a baseline; names, never composes, never a member revision</div></div>
+  <div class="card" style="padding:10px 12px"><div class="chd" style="margin-bottom:4px">Release</div>
+    <div style="font-size:11px;color:var(--tx3)">the atomic authorized event (<span class="mono">RLS-0007</span>) that freezes the baseline and issues identities</div></div>
+</div>
+
+<!-- Candidate A -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate A</span><span class="count">per-CI only</span></div>
+      <div class="trow grp">Configuration items</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">ci board:main → C</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">ci assembly:main → 07</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">ci fw:main → v1.3.5</span></div>
+      <div class="trow grp">Optional aggregate CI</div>
+      <div class="trow l2" style="color:var(--tx)">Product SENSOR-NODE <span class="meta mono">ci product:sensor-node → 04</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">"the product revision" exists only because a Product CI was explicitly declared — it is one more CI, not a roll-up</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE A</span></div>
+      <div class="sect-hd">Issues (all owners are CIs)</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono">C 🔒</span></div>
+      <div class="kv"><span class="k">assembly:main</span><span class="v mono">07 🔒</span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono">B 🔒</span></div>
+      <div class="kv"><span class="k">product:sensor-node</span><span class="v mono">04 🔒 <span style="color:var(--tx3)">(aggregate CI)</span></span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — owns composition</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 <span style="color:var(--tx3)">· optional BuildIdentity, not a revision</span></span></div>
+    </div>
+  </div>
+  <div>
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
+      <svg width="430" height="96" style="position:absolute;inset:0">
+        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
+        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M300 16 V84"/></g>
+        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
+          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">REVISION · ci board:main</text><text x="310" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="160" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">C</text>
+        <text x="310" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
+        <text x="160" y="76" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
+      </svg>
+    </div></div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-A — EngineeringRevision per revision-bearing CI (incl. optional
+aggregate Product CI).</b> one revision kind, one owner kind; the board's title block carries its own CI
+revision; composition stays in the baseline; EVT2 stays a label</div>
+
+<!-- Candidate B -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate B</span><span class="count">per-CI + ReleaseScope</span></div>
+      <div class="trow grp">Configuration items</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">ci board:main → C</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">ci assembly:main → 07</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">ci document:ASM-01 → B</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">ci fw:main → v1.3.5</span></div>
+      <div class="trow grp">Release scopes (arbitrary, non-CI)</div>
+      <div class="trow l2" style="color:var(--tx)">Fab package 2026-Q3 <span class="meta mono">scope fab-pkg → 02</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">two revision-identity kinds coexist; every display must carry its namespace kind (ci vs scope) or ambiguity returns</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE B</span></div>
+      <div class="sect-hd">Issues — CI owners</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono">C 🔒 <span style="color:var(--tx3)">· kind ci</span></span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono">B 🔒 <span style="color:var(--tx3)">· kind ci</span></span></div>
+      <div class="sect-hd">Issues — scope owner</div>
+      <div class="kv"><span class="k">fab-pkg 2026-Q3</span><span class="v mono">02 🔒 <span style="color:var(--tx3)">· kind scope — not a CI</span></span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — still owns composition</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 · BuildIdentity ≠ scope revision 02</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
+      <svg width="430" height="96" style="position:absolute;inset:0">
+        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
+        <g stroke="#CDC4AF" stroke-width="1"><path d="M126 16 V84 M240 16 V84 M348 16 V84"/></g>
+        <g font-family="PlexMono,monospace" font-size="6.5" fill="#9A9180" letter-spacing=".8">
+          <text x="14" y="26">DRAWING No.</text><text x="134" y="26">REV · ci board:main</text><text x="248" y="26">SCOPE REV · fab-pkg</text><text x="356" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="9.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="134" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">C</text>
+        <text x="248" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">02</text>
+        <text x="356" y="44" font-family="PlexMono,monospace" font-size="6.5" fill="#332F26">BL-2026-</text>
+        <text x="356" y="56" font-family="PlexMono,monospace" font-size="6.5" fill="#332F26">08-24-01</text>
+        <text x="142" y="76" font-family="PlexCMed,sans-serif" font-size="10" fill="#3B6E45">RELEASED 🔒</text>
+      </svg>
+    </div></div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-B — EngineeringRevision per CI AND per arbitrary ReleaseScope.</b>
+the board carries its CI revision and the fab-package scope revision side by side — coexistence is
+unambiguous only while every cell is namespace-kind-tagged; the cost is two revision-shaped identities
+on one artifact</div>
+
+<!-- Candidate C -->
+<div class="grid3">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="panel-hd"><span>Navigator · candidate C</span><span class="count">ReleaseScope only</span></div>
+      <div class="trow grp">Members (no CI revisions exist)</div>
+      <div class="trow l2">Board MAIN <span class="meta mono">technical rev a41f09 only</span></div>
+      <div class="trow l2">Assembly PCBA <span class="meta mono">technical rev 77c2e1 only</span></div>
+      <div class="trow l2">Doc ASM-01 <span class="meta mono">technical rev 09bd44 only</span></div>
+      <div class="trow l2">Firmware <span class="meta mono">technical rev f31a02 only</span></div>
+      <div class="trow grp">Release scope (sole owner kind)</div>
+      <div class="trow l2" style="color:var(--tx)">EVT fab scope <span class="meta mono">scope evt-fab → 03</span></div>
+      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:4px 11px 8px">consequence: a board respun alone mints scope 04 — unchanged members appear re-revised; no per-board issued REV exists for silkscreen/fab without scope context</div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:308px">
+      <div class="insp-title"><span class="ref">Release RLS-0007</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">CANDIDATE C</span></div>
+      <div class="sect-hd">Issues (only scope owners exist)</div>
+      <div class="kv"><span class="k">evt-fab</span><span class="v mono">03 🔒 · kind scope</span></div>
+      <div class="sect-hd">Members carry no issued revision</div>
+      <div class="kv"><span class="k">board:main</span><span class="v mono" style="color:var(--tx3)">⊘ no EngineeringRevision — pinned by baseline only</span></div>
+      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono" style="color:var(--tx3)">⊘ no EngineeringRevision — pinned by baseline only</span></div>
+      <div class="sect-hd">Composition + label</div>
+      <div class="kv"><span class="k">Baseline</span><span class="v mono">BL-2026-08-24-01 — sole member identity</span></div>
+      <div class="kv"><span class="k">Build label</span><span class="v mono">EVT2 · label over scope 03</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="paperbox" style="height:308px"><div class="paper" style="width:430px;height:96px">
+      <svg width="430" height="96" style="position:absolute;inset:0">
+        <line x1="0" y1="6" x2="430" y2="6" stroke="#5A5340" stroke-width="1.3"/>
+        <g stroke="#CDC4AF" stroke-width="1"><path d="M150 16 V84 M300 16 V84"/></g>
+        <g font-family="PlexMono,monospace" font-size="7.5" fill="#9A9180" letter-spacing="1">
+          <text x="14" y="26">DRAWING No.</text><text x="160" y="26">SCOPE REV · evt-fab</text><text x="310" y="26">BASELINE</text></g>
+        <text x="14" y="48" font-family="PlexMono,monospace" font-size="11.5" fill="#332F26">DA-EE-PCB-0004</text>
+        <text x="160" y="54" font-family="PlexCMed,sans-serif" font-size="22" fill="#25211A">03</text>
+        <text x="310" y="48" font-family="PlexMono,monospace" font-size="8" fill="#332F26">BL-2026-08-24-01</text>
+        <text x="160" y="76" font-family="PlexMono,monospace" font-size="7.5" fill="#7a4a42">⊘ no per-board revision — scope identity only</text>
+      </svg>
+    </div></div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:16px"><b>V8-C — EngineeringRevision only per ReleaseScope.</b> members keep
+only technical revisions; the board's title block can show nothing but the scope's number; independent
+member respins force whole-scope reminting — the consequences are drawn, not argued</div>
+
 <!-- ================================================================ Q index -->
 <div class="sec-label" id="owner-questions"><span class="n">Q</span><span>Owner questions — where each is rendered</span><span class="rule"></span></div>
 <table class="orindex" style="border-collapse:collapse;width:100%;max-width:1150px">
@@ -499,6 +660,7 @@ Phase ⊃ build ⊃ spin stay typed and distinct.</div>
   <tr><td>Q4</td><td><a href="#v4">V4</a> EVT2 as optional release-scope label over the baseline manifest; phase ⊃ build ⊃ spin typed and distinct.</td></tr>
   <tr><td>Q5</td><td><a href="#v6">V6a</a> independent status/revision axes + <a href="#v3">V3d</a> separate title-block cells.</td></tr>
   <tr><td>Q6</td><td><a href="#v6">V6b</a> continuing-sequence vs namespace-transition candidates with preserved lineage.</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q3</td><td><a href="#v8">V8</a> — authority-model question 3 (EngineeringRevision scope ownership): candidates A (per-CI + optional aggregate Product CI), B (per-CI and per-ReleaseScope coexisting, namespace-kind-tagged), C (ReleaseScope only, consequences rendered). Distinct from identity-packet Q3 / V5b, which covers the allocation action.</td></tr>
 </table>
 
 <div class="cap" style="margin-top:30px;font-size:11.5px">Exclusions, by law of this page: no default
