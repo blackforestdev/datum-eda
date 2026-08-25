@@ -1,7 +1,8 @@
 # REV-C06 Product Revision UX and Visual Study Brief
 
-> **Status:** REV-C06 planning authority for a Claude-owned HTML study; not an
-> owner disposition, ratified mechanism, or implementation authorization.
+> **Status:** REV-C06 planning authority and owner-disposition ledger for a
+> Claude-owned HTML study; not a ratified mechanism or implementation
+> authorization.
 > Claude owns edits under `docs/gui/prototypes/*.html`. Codex owns this brief,
 > the authority audit, traceability registration, and later owner packets.
 
@@ -352,6 +353,29 @@ exact response syntax.
 
 Choose how revision authority becomes discoverable in the existing Project
 Navigator while preserving local right-click entry and adjacent-pane opening.
+
+**Owner disposition — approved 2026-08-25.** The reviewed authority is the
+interaction doctrine in section 4, UX-V1 in section 5, and the rendered
+`Q1-A-amended` candidate in
+`docs/gui/prototypes/revision-ux-shell-study.html`, commit `02ee14a`.
+
+Datum adopts `Q1-A-amended`. The Project Navigator contains a permanent
+`Revision` group whose `Changes`, `Baselines`, `Releases`, `Controlled
+Documents`, and `Evidence` groups are visible and expanded by default from
+Project creation. Each empty group renders an informative row naming what
+creates its first record. Datum does not collapse these groups by default and
+does not wait for a first controlled record to reveal revision authority.
+
+Future hiding or collapsing may exist only as a presentation preference under
+the separately tracked Global Preferences specification
+(`dat-global-preferences-engine-qcv`). Such a preference may change projection,
+never engine authority or record existence. The existing local right-click
+doorway, double-click/Enter open-beside behavior, recursive tiling, and
+single-native-window law remain unchanged. The controlling rationale is
+structural honesty: the Navigator exposes what the engine governs before first
+use instead of creating hidden-authority debt for an unaware designer.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q1-APPROVED -->
 
 ### REV-C06-Q2 — Release workflow composition
 
