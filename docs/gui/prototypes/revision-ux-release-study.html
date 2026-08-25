@@ -197,50 +197,68 @@ affected facts and returns to Preparing. Q2 chooses the workflow composition ove
 </div>
 
 <div style="height:14px"></div>
+<div class="cap"><b>Q2-A-amended — owner-directed, pending final visual approval.</b> One cohesive pane;
+all nine required section headings with typed verdict/status and count remain visible in every state.
+Only clean detail rows may collapse, by user gesture; blockers, Unknown, stale facts, invalidated
+attestations, missing requirements, and unresolved departures never collapse automatically. Both states
+below prove the boundary. No staged navigation exists; ordered review is profile policy.</div>
 <div class="grid2">
   <div>
-    <div class="card" style="padding:0;overflow:hidden;height:470px">
-      <div class="insp-title"><span class="ref">RC-0009 · EVT2 release</span><span class="chip">Q2-A-AMENDED · PINNED RAIL</span></div>
-      <div style="position:relative;padding:8px 13px;background:var(--s02);border-bottom:1px solid var(--bd-str);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px">
-        <span class="stage on">Ready for Review</span>
-        <span style="color:var(--tx3)">digest 9a02…</span>
-        <span class="idchip warnc" style="font-size:9.5px">⚠ 3 blockers · jump: impact · evidence · attestation</span>
-        <span style="margin-left:auto;color:var(--tx3)">rail stays pinned while the pane scrolls</span>
+    <div class="card" style="padding:0;overflow:hidden;height:640px">
+      <div class="insp-title"><span class="ref">RC-0009 · EVT2 release</span><span class="chip">Q2-A-AMENDED · EXPANDED STATE</span></div>
+      <div style="padding:7px 13px;background:var(--s02);border-bottom:1px solid var(--bd-str);display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10px">
+        <span class="stage on">Ready for Review</span><span style="color:var(--tx3)">digest 9a02…</span>
+        <span class="idchip warnc" style="font-size:9px">⚠ 3 · jump: impact · evidence · attestations</span>
+        <span style="margin-left:auto;color:var(--tx3)">pinned rail</span>
       </div>
-      <div class="sect-hd">Members + allocations — expanded (default)</div>
-      <div class="kv"><span class="k">board:main</span><span class="v mono">◌ reserve C · CHG-0031</span></div>
-      <div class="kv"><span class="k">document:ASM-01</span><span class="v mono">◌ reserve B · CHG-0031</span></div>
-      <div class="kv"><span class="k">assembly:main</span><span class="v mono">reuse 07 — unchanged, no remint</span></div>
-      <div class="sect-hd">Documents ✓ · 1 — collapsed by user · status still visible</div>
-      <div class="sect-hd" style="color:var(--warn)">Evidence ⚠ 1 blocker — collapse refused</div>
-      <div class="kv"><span class="k">DRL-01</span><span class="v mono" style="color:var(--err)">⛝ Orphaned — producer missing</span></div>
-      <div class="sect-hd" style="color:var(--warn)">Impact ⚠ 1 Unknown — collapse refused</div>
+      <div class="sect-hd">1 · Scope + proposed members ✓ · 3</div>
+      <div class="kv"><span class="k">Members</span><span class="v mono">board:main · document:ASM-01 · assembly:main</span></div>
+      <div class="sect-hd">2 · Revision allocations ◌ · 2 reserved + 1 reuse</div>
+      <div class="kv"><span class="k">Proposed</span><span class="v mono">◌ C (board:main) · ◌ B (doc:ASM-01) · reuse 07</span></div>
+      <div class="sect-hd">3 · Governing Changes + departures ✓ · 1 + 1</div>
+      <div class="kv"><span class="k">Change</span><span class="v mono">CHG-0031 · 1 accepted deviation linked</span></div>
+      <div class="sect-hd" style="color:var(--warn)">4 · Impact ⚠ 1 Unknown — never collapses</div>
       <div class="kv"><span class="k">GBR-01 path</span><span class="v mono" style="color:var(--warn)">? Unknown — evaluator missing</span></div>
-      <div class="sect-hd">Rules of this pane</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">default fully expanded · collapse is a user gesture only, never automatic · collapsed sections keep heading + status + count · blockers, Unknown, and invalidated attestations refuse collapse · ordered review, where required, is profile policy over this same pane — never page gating</span></div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)"><span class="cand">CANDIDATE — NOT APPROVED</span></span></div>
+      <div class="sect-hd" style="color:var(--warn)">5 · Evidence ⚠ 1 blocker — never collapses</div>
+      <div class="kv"><span class="k">DRL-01</span><span class="v mono" style="color:var(--err)">⛝ Orphaned — producer missing</span></div>
+      <div class="sect-hd">6 · Effectivity ✓</div>
+      <div class="kv"><span class="k">Applies</span><span class="v mono">units from SN-0450</span></div>
+      <div class="sect-hd">7 · Documents / packages ✓ · 2</div>
+      <div class="kv"><span class="k">Proposed</span><span class="v mono">ISS-0019 · PKG-EVT2-01</span></div>
+      <div class="sect-hd">8 · Policy / profile ✓</div>
+      <div class="kv"><span class="k">Active</span><span class="v mono">regulated · quorum policy P-QA-2</span></div>
+      <div class="sect-hd" style="color:var(--warn)">9 · Attestations ⚠ 1 of 2 pending — never collapses</div>
+      <div class="kv"><span class="k">Bound to</span><span class="v mono">digest 9a02… · quality ✓ · engineering pending</span></div>
     </div>
-    <div class="cell-cap"><b>Q2-A-amended — one pane, pinned readiness rail, user-gesture collapse (owner-review sharpening).</b></div>
+    <div class="cell-cap"><b>State 1 — fully expanded (default).</b> nine headings, nine verdicts, every detail row</div>
   </div>
   <div>
-    <div class="card" style="height:470px">
-      <div class="chd">Why the amendment <span class="m">derived from the Q1 disposition</span></div>
-      <div style="font-size:12.5px;color:var(--tx2);line-height:1.75">The pane mirrors the single
-      ReleaseCandidate record — one baseline manifest, one allocation set, one evidence list, one digest.
-      A staged flow would fragment one record into six pseudo-objects and imply that completing screens,
-      not satisfying authority, makes a release valid.</div>
-      <div style="font-size:11.5px;color:var(--tx3);line-height:1.75;margin-top:9px">System auto-collapse
-      would reintroduce reveal-on-demand through the side door — the unaware designer who never expands
-      Evidence never learns what evidence a release carries. So the system hides nothing; only the user
-      folds detail, and state survives every fold.</div>
-      <div style="font-size:11.5px;color:var(--tx3);line-height:1.75;margin-top:9px">The pinned rail is
-      staged review's one good idea, kept: in a long regulated candidate, a blocker merely expanded
-      somewhere in 3,000px of scroll is hidden by distance. The rail keeps state, digest, and blocker
-      jump-links in view always. Side-by-side comparison comes free from Datum tiling — the same
-      candidate may open in two panes.</div>
+    <div class="card" style="padding:0;overflow:hidden;height:640px">
+      <div class="insp-title"><span class="ref">RC-0009 · EVT2 release</span><span class="chip">Q2-A-AMENDED · USER-COLLAPSED STATE</span></div>
+      <div style="padding:7px 13px;background:var(--s02);border-bottom:1px solid var(--bd-str);display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10px">
+        <span class="stage on">Ready for Review</span><span style="color:var(--tx3)">digest 9a02…</span>
+        <span class="idchip warnc" style="font-size:9px">⚠ 3 · jump: impact · evidence · attestations</span>
+        <span style="margin-left:auto;color:var(--tx3)">pinned rail</span>
+      </div>
+      <div class="sect-hd">▸ 1 · Scope + proposed members ✓ · 3 — collapsed by user</div>
+      <div class="sect-hd">▸ 2 · Revision allocations ◌ · 2 reserved + 1 reuse — collapsed by user</div>
+      <div class="sect-hd">▸ 3 · Governing Changes + departures ✓ · 1 + 1 — collapsed by user</div>
+      <div class="sect-hd" style="color:var(--warn)">▾ 4 · Impact ⚠ 1 Unknown — collapse refused</div>
+      <div class="kv"><span class="k">GBR-01 path</span><span class="v mono" style="color:var(--warn)">? Unknown — evaluator missing</span></div>
+      <div class="sect-hd" style="color:var(--warn)">▾ 5 · Evidence ⚠ 1 blocker — collapse refused</div>
+      <div class="kv"><span class="k">DRL-01</span><span class="v mono" style="color:var(--err)">⛝ Orphaned — producer missing</span></div>
+      <div class="sect-hd">▸ 6 · Effectivity ✓ — collapsed by user</div>
+      <div class="sect-hd">▸ 7 · Documents / packages ✓ · 2 — collapsed by user</div>
+      <div class="sect-hd">▸ 8 · Policy / profile ✓ — collapsed by user</div>
+      <div class="sect-hd" style="color:var(--warn)">▾ 9 · Attestations ⚠ 1 of 2 pending — collapse refused</div>
+      <div class="kv"><span class="k">Bound to</span><span class="v mono">digest 9a02… · quality ✓ · engineering pending</span></div>
+      <div class="sect-hd">Boundary proof</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">every heading, verdict, and count survives collapse with its ▸ expansion affordance; the three warning sections cannot be folded; the rail still names all three blockers</span></div>
     </div>
+    <div class="cell-cap"><b>State 2 — representative user-collapsed.</b> clean sections folded to heading + verdict + count; nothing warned is foldable</div>
   </div>
 </div>
+<div class="cell-cap" style="margin-bottom:14px"><b>Q2-A-amended.</b> <span class="cand">OWNER-DIRECTED — PENDING FINAL VISUAL APPROVAL</span> · derivation: hiding is debt (Q1 disposition); the pane mirrors the one ReleaseCandidate record; staged flows fragment one record into six pseudo-objects; the pinned rail keeps blockers in view at any scroll depth; side-by-side comparison comes free from Datum tiling</div>
 
 <!-- ================================================================ UX-V9 -->
 <div class="sec-label" id="ux-v9"><span class="n">UX-V9</span><span>Approval and the atomic issuance boundary</span><span class="q">Q5</span><span class="rule"></span></div>
