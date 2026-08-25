@@ -336,10 +336,22 @@ being smuggled into the revision engine.
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C05 -->
 ### REV-C05 — Impact, staleness, and reproducibility
 
-Specify dependency traversal across Design, library, rules, checks, Publish,
-manufacturing, and artifacts; affected/unaffected classification; stale and
-orphan states; baseline comparison; regeneration; and byte-reproducible release
-verification.
+The candidate contract is
+[`REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md`](REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md).
+It specifies dependency traversal across Design, library, rules, checks,
+Publish, manufacturing, and artifacts; durable affected/unaffected/unknown
+proofs; precise stale and orphan states; explicit pinned-library uptake;
+identity-aligned baseline comparison; topological immutable regeneration; and
+byte-reproducible release evidence.
+
+The contract deliberately separates changed, affected, stale, orphaned,
+standing, and non-reproducible facts. A missing impact path is not proof of no
+impact; a newer library object never silently rebinds a placed instance;
+historical evidence stays valid against its frozen baseline; and reproducible
+means byte-identical specified outputs from exact source, producer, invocation,
+and environment evidence. Informative Reproducible Builds, SLSA, and in-toto
+patterns strengthen provenance without being misrepresented as EDA conformance
+authority. No implementation or dependency is authorized.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C06 -->
 ### REV-C06 — Human experience and visual contract
