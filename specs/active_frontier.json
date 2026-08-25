@@ -4880,19 +4880,19 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-rev-c03-20260825",
-        "claimed_at": "2026-08-25T15:09:54Z",
-        "heartbeat_at": "2026-08-25T15:09:54Z",
-        "expires_at": "2026-08-25T23:09:54Z",
+        "session": "codex-rev-c04-20260825",
+        "claimed_at": "2026-08-25T20:01:28Z",
+        "heartbeat_at": "2026-08-25T20:01:28Z",
+        "expires_at": "2026-08-26T04:01:28Z",
         "scope": [
-          "REV-C03 authoritative vocabulary, object, lifecycle, operation, invariant, refusal, and query model"
+          "REV-C04 standalone local/offline authority and optional Git/distributed integration contract"
         ],
         "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "36c50214ec8d601061ed43487ae8520404fd2847"
+        "head": "e89cba031b6d14e3ccf5b275b8fa4912bc74aaed"
       },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C03",
+        "canonical_next_step_id": "REV-C04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -4989,7 +4989,7 @@
           {
             "id": "REV-C03",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Define authoritative revision-engine vocabulary, objects, identities, relationships, lifecycle states, roles, typed operations, invariants, refusals, and queries.",
             "depends_on": [
               "REV-C01",
@@ -5001,12 +5001,21 @@
                 "marker": "REV-C03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "f473ffe"
+              },
+              {
+                "kind": "commit",
+                "revision": "e89cba0"
+              }
+            ]
           },
           {
             "id": "REV-C04",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Specify complete standalone local/offline authority plus optional Git and distributed integration without making Git product or release authority.",
             "depends_on": [
               "REV-C03"
