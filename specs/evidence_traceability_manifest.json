@@ -109,6 +109,7 @@
         "research/documentation-system/REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md",
         "research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md",
         "docs/gui/prototypes/revision-identity-study.html",
+        "docs/gui/prototypes/revision-authority-study.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
         "research/documentation-system/REV_C01_INTERNAL_AUTHORITY_AUDIT.md",
         "research/documentation-system/TITLE_BLOCK_AND_DOC_CONTROL_RESEARCH.md",
@@ -121,8 +122,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "77afa8e6fd36cd1dcf0bec5d006d148f17d4c82622147a3fabbeefe949cfbb2c",
-      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V9 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. Owner-approved V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments; DocumentIssue references the governing EngineeringRevision and frozen rendition, ReleasePackage selects exact issues, and Transmittal records delivery. The existing referenced-object deletion refusal overrides V9's cleanup wording. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording and V9 source-health cleanup remain tracked separately."
+      "reviewed_digest": "aa01d3ab8abcdd27e3a49ddbd3e2884ef3bafcc6a85678cbe58bf8ae0f5d6834",
+      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 visual studies, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. Owner-approved V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments; its deletion refusal is corrected and the split restores revision-study source health. V10 faithfully distinguishes supersession, withdrawal, and obsolescence, preserves immutable history and delivery neutrality, and renders fixed-word, free-form, and typed/profile-governed candidates without selecting one. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
     },
     {
       "id": "parametric-footprint-editor",
