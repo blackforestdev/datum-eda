@@ -317,11 +317,21 @@ general Preferences storage, precedence, migration, or GUI exists.
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
 
-Define mapping among Datum revisions, commits, branches, merges, annotated or
-signed tags, remote exchange, air-gapped operation, semantic conflicts, and
-release signatures. Specify a Datum-owned adapter contract: Git integration
-must remain optional, external Git changes must re-enter semantic validation,
-and Git must not create a second release authority.
+The candidate contract is
+[`REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md`](REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md).
+It specifies complete local authority, durable recovery semantics,
+algorithm-qualified Git mapping receipts, transport-neutral air-gapped
+exchange, canonical attestations, honest clock/trust evidence, external-change
+quarantine and semantic re-entry, and failure-isolated release mirroring.
+
+Git remains optional and subordinate. A Project policy may require a verified
+pre-release Git mapping receipt, or block distribution until a post-release
+mirror succeeds, but the local atomic Datum `Release` remains the only issuance
+event. A clean textual merge is only candidate input until isolated resolution,
+semantic comparison/validation, and typed commit succeed. The exact
+multi-writer merge, replica, live-session, permission, and server mechanisms
+remain reserved to `dat-distributed-collaboration-architecture-lt1` rather than
+being smuggled into the revision engine.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C05 -->
 ### REV-C05 — Impact, staleness, and reproducibility

@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "26f86f33d6b75afcb7f5cdd652786378225aeaa2750cfc6797deff87bbd40707",
-      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions and REV-C03-Q1 through Q6. V9-A separates mutable Publish Sets, CI-designated ControlledDocuments, immutable revision-referencing DocumentIssues, packages, and transmittals. V10-C establishes typed supersession, authorization-withdrawal, and obsolescence facts with profile-governed applicability and vocabulary. The split V1-V10 studies and explicitly unimplemented Global Preferences follow-ons remain linked. V5 wording and the V10 disposition annotation are separately tracked; source-strength gates are preserved and no implementation is authorized."
+      "reviewed_digest": "bbd76669bb224534163ca187c292151891efdfc3c9fb5c3472f8403f7cdb70ee",
+      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q1 through Q6, and the new REV-C04 standalone/offline and optional-Git integration contract. V9-A separates mutable Publish Sets from controlled issued records; V10-C establishes typed standing facts. REV-C04 preserves local issuance authority while Git and air-gap exchanges remain mapped, verified, quarantined adapter inputs. The split V1-V10 studies, distributed-collaboration re-entry, and unimplemented Global Preferences follow-ons remain linked; source-strength gates are preserved and no implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -108,6 +108,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md",
         "research/documentation-system/REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md",
         "research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md",
+        "research/documentation-system/REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md",
         "docs/gui/prototypes/revision-identity-study.html",
         "docs/gui/prototypes/revision-authority-study.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md",
@@ -122,8 +123,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "490f1e10c848fc888cfc52ed06958e2db37b61fffaa84334042d6d2cdfe23642",
-      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 visual studies, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments and immutable revision-referencing issues. Owner-approved V10-C makes supersession, authorization withdrawal, and obsolescence typed core facts while profiles govern applicability, authority, rationale, effectivity, sequences, and terminology. History remains immutable; Current/Historical are projections; delivery changes no standing and grants no egress authority. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, the ConfigurationRef seam, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording and the V10 visual disposition annotation remain tracked separately."
+      "reviewed_digest": "153040290fceb748230bb862b3bb0aa80dfc83194ad2aea4711d7f0a1ba2f805",
+      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 visual studies, all six identity dispositions, Q2 successor choreography, and the REV-C04 offline/Git integration contract were cross-reviewed against every Publish/workspace consumer. V8-A and Q4 preserve per-CI revision ownership, baseline composition, and coordinated affected-revision issuance. V9-A keeps editable Publish Sets separate from CI-designated ControlledDocuments and immutable revision-referencing issues. Owner-approved V10-C makes standing facts typed and profile-governed. REV-C04 adds complete standalone local authority, algorithm-qualified Git mapping receipts, canonical attestations, transport-neutral air-gap exchange, external-change quarantine and semantic re-entry, and failure-isolated release mirroring; Git remains optional and cannot issue or rewrite Datum authority. Full multi-writer merge and live collaboration remain reserved to dat-distributed-collaboration-architecture-lt1. Automatic Draft Change collection, V2-P reservation, immutable releases, Project-owned policy, the ConfigurationRef seam, licensed-text and source-strength gates, and planning-only status remain preserved."
     },
     {
       "id": "parametric-footprint-editor",
