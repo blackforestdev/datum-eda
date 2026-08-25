@@ -194,10 +194,10 @@ the Release.
 ```text
 EngineeringRevision {
   id,
+  configuration_item_id,
   revision_namespace,
   revision_scheme_ref,
   revision_label,
-  subject_or_scope,
   baseline_id,
   predecessor_revision?,
   governing_change_ids[],
@@ -212,6 +212,14 @@ working model. A profile may reserve a scheme-governed label during successor
 work, but reservation is a separate expiring `RevisionReservation`, not an
 issued revision and never appears as released title-block truth. Merely
 collecting successor work binds no revision identity or reservation.
+
+The revision namespace is owned by exactly one revision-bearing
+`ConfigurationItem`. That CI may designate one controlled subject or an
+explicitly authored aggregate Product/System; aggregate membership never rolls
+member revisions into a coincident product label. An arbitrary `ReleaseScope`
+cannot own a competing EngineeringRevision. Exact multi-CI composition remains
+the authority of `ConfigurationBaseline`, an optional `BuildIdentity` labels
+that baseline, and `Release` coordinates issuance.
 
 ### `EngineeringChange`
 
@@ -679,9 +687,8 @@ These are not approval requests yet; each needs a proof-backed decision packet:
    blocked on the revision-identity prerequisite: collection must not imply,
    reserve, or allocate a revision identity.
 3. Is `EngineeringRevision` allocated per CI, per explicit release scope, or
-   both under separate namespaces? This model recommends both, because a
-   scalable Project may issue individual board/document CIs and coordinated
-   multi-CI product configurations.
+   both under separate namespaces? Resolved below as per revision-bearing CI
+   only, including an optional explicitly authored aggregate Product/System CI.
 4. May a Release contain several independently numbered engineering revisions
    coordinated by one baseline/release event? This model recommends yes.
 5. Is `ControlledDocument` the correct stable authority between editable
@@ -915,3 +922,27 @@ literal `UNALLOCATED` user wording requires Claude-owned visual reconciliation
 to the approved text above before the visual contract closes.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q2-APPROVED -->
+
+### REV-C03-Q3 — EngineeringRevision ownership
+
+**Approved 2026-08-25.** Select visual study V8-A. An
+`EngineeringRevision` is allocated only within the namespace of one
+revision-bearing `ConfigurationItem`. A CI may designate one controlled subject
+or an explicitly authored aggregate Product/System. Aggregate designation is
+optional and never inferred from Project containment, baseline membership, or
+matching member labels.
+
+`ConfigurationBaseline` remains the exact composition authority. Optional
+`BuildIdentity` labels a baseline without becoming a member revision, and
+`Release` coordinates the atomic issuance event. Arbitrary `ReleaseScope`
+cannot own a competing EngineeringRevision; this rejects V8-B's two
+revision-shaped identities and V8-C's loss of independently issued member
+revisions.
+
+Profiles may decide which designated CIs require revision control and how their
+labels are projected. They cannot redefine the owner kind, collapse a baseline
+or build label into an EngineeringRevision, or create a scope-owned parallel
+revision namespace. This is core identity architecture, not a Global
+Preferences option.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q3-APPROVED -->

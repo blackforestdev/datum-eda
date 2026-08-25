@@ -279,7 +279,12 @@ Original REV-C03-Q2 now ratifies automatic lightweight successor collection:
 the first post-release divergence opens a quiet Draft `EngineeringChange`
 without reserving revision identity; explicit revision preparation later enters
 the approved V2-P provisional state. Governed profiles may require an authorized
-Change before mutation. REV-C03-Q3 allocation scope remains unratified.
+Change before mutation. REV-C03-Q3 selects V8-A: every issued
+`EngineeringRevision` belongs to a revision-bearing CI, including an optional
+explicit aggregate Product/System CI. Baselines own exact composition,
+`BuildIdentity` optionally labels a baseline, and arbitrary `ReleaseScope`
+cannot own a competing revision namespace. Profiles may select revision-bearing
+CIs and presentation, but cannot redefine these identity kinds.
 A proposed full-drawing provisional-watermark preference is deferred to
 `dat-global-preferences-engine-qcv`; no current Preferences implementation is
 assumed.

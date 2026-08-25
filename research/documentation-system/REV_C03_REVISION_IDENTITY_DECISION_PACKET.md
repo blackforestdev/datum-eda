@@ -385,3 +385,16 @@ ISO 19650 selection does not automatically choose Candidate B. Every transition
 requires an explicit typed, policy-authorized operation.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q6-APPROVED -->
+
+### REV-C03-AUTH-Q3 — EngineeringRevision ownership
+
+**Approved 2026-08-25.** The owner selected visual candidate V8-A. An
+`EngineeringRevision` belongs only to a revision-bearing `ConfigurationItem`;
+an explicitly authored aggregate Product/System CI provides product-level
+revision identity when required without rolling up member labels. Exact
+composition remains in `ConfigurationBaseline`, optional `BuildIdentity` names
+the baseline, and `Release` coordinates issuance. Arbitrary `ReleaseScope`
+does not own a parallel EngineeringRevision namespace. This authority question
+is distinct from identity-packet Q3/V5b, which controls the allocation action.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-Q3-APPROVED -->

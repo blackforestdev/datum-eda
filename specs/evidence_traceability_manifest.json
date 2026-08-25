@@ -9,8 +9,8 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "85d6fdb1769798b18a9635ce8a4024cef0604403d019f14f353c54836394c2f7",
-      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions plus REV-C03-Q2 automatic lightweight successor collection, the reviewed V1-V7 study, and the explicitly unimplemented Global Preferences follow-ons. V5's literal UNALLOCATED wording is tracked for Claude-owned reconciliation by dat-revision-v5-wording-11b. Q3 onward remain in progress; source-strength gates are preserved and no implementation is authorized."
+      "reviewed_digest": "e88d02b1c6cf3364a90cfe4d3dddffc1a337e867ea3f2442d63d6a889602779d",
+      "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q2 automatic lightweight successor collection, and REV-C03-Q3's owner-approved V8-A per-CI revision ownership. The reviewed V1-V8 study and explicitly unimplemented Global Preferences follow-ons remain linked. V5's literal UNALLOCATED wording is tracked for Claude-owned reconciliation by dat-revision-v5-wording-11b. Q4 onward remain in progress; source-strength gates are preserved and no implementation is authorized."
     },
     {
       "id": "terminal-focus-incident",
@@ -121,8 +121,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "0312e9ec5ceeea3f27489140e1059eba88a7917adebc9d75612d7d8a59216996",
-      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V8 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. V8 renders AUTH-Q3 candidates A/B/C without selecting one and cleanly separates EngineeringRevision, ConfigurationBaseline, BuildIdentity, and Release in Navigator, Inspector, and title-block contexts. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
+      "reviewed_digest": "f6bf3aa7481f54f50ce2f1f0c0c874e831acb198f25d2523e1372cfe6b542d88",
+      "review_note": "The REV-C03 authority model, identity packet, expanded V1-V8 prototype, all six identity dispositions, and Q2 successor choreography were cross-reviewed against every Publish/workspace consumer. Owner-approved V8-A makes a revision-bearing CI, including an optional explicit aggregate Product/System CI, the sole EngineeringRevision owner; ConfigurationBaseline retains exact composition, BuildIdentity remains an optional label, Release coordinates issuance, and arbitrary ReleaseScope cannot own a competing revision. Automatic Draft Change collection, V2-P reservation, profile issuance, immutable releases, Project-owned policy, per-CI namespaces, the ConfigurationRef seam, Transmittal separation, ASME licensed-text gating, source-strength gates, and planning-only status remain preserved. V5 wording reconciliation remains tracked separately."
     },
     {
       "id": "parametric-footprint-editor",
