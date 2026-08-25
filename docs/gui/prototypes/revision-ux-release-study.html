@@ -312,6 +312,46 @@ treatment; both candidates share the typed summary and least-destructive initial
   </div>
 </div>
 
+<div style="height:14px"></div>
+<div class="cap"><b>Q5-B-amended — arm-then-confirm commit bar, no modal.</b> The final review is the
+already-approved Q2-A-amended release pane; nothing overlays it and focus never leaves it. The commit bar
+is disabled until readiness is clean, and issuing is a two-step gesture <b>in place</b>: the first press
+arms the bar and states the exact typed consequence; only a second, deliberate press fires the atomic
+operation. Esc or any interaction outside the bar disarms. Modal-grade deliberateness, zero hidden
+workspace — the boundary modal permission goes deliberately unused.</div>
+<div class="grid2">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:300px">
+      <div class="insp-title"><span class="ref">Final review · RC-0009</span><span class="chip">Q5-B-AMENDED · STATE 1 — DISARMED</span></div>
+      <div class="kv"><span class="k">Readiness</span><span class="v mono">9 sections ✓ · blockers none · attestations 2 of 2 ✓</span></div>
+      <div class="kv"><span class="k">Digest</span><span class="v mono">9a02… · approvals bound ✓</span></div>
+      <div class="sect-hd">Commit bar — pinned, disabled until readiness is clean</div>
+      <div style="padding:10px 13px;display:flex;gap:8px;align-items:center;background:var(--s02)">
+        <span class="mono" style="font-size:10.5px;color:var(--warn)">irreversible</span>
+        <span style="margin-left:auto;font-size:11.5px;color:var(--tx3);padding:4px 12px;border:1px solid var(--bd-str);border-radius:4px">Back</span>
+        <span style="font-size:11.5px;font-weight:600;color:var(--onAccent);background:var(--acc);border-radius:4px;padding:4px 14px">Issue Release…</span>
+      </div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">the ellipsis is honest: this press arms — it does not issue; with any blocker present the button is disabled and names the blocking section instead</span></div>
+    </div>
+    <div class="cell-cap"><b>State 1.</b> the pane is the review; the bar waits</div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:300px">
+      <div class="insp-title"><span class="ref">Final review · RC-0009</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">Q5-B-AMENDED · STATE 2 — ARMED</span></div>
+      <div class="sect-hd">Armed — exact typed consequence, in the bar, in the pane</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px;color:var(--warn)">will issue RLS-0008 · creates baseline BL-2026-08-26-01 🔒 · issues board:main C · document:ASM-01 B · DocumentIssue ISS-0019 · PKG-EVT2-01 · reuses assembly:main 07 (no remint)</span></div>
+      <div style="padding:10px 13px;display:flex;gap:8px;align-items:center;background:var(--s02)">
+        <span class="mono" style="font-size:10.5px;color:var(--warn)">armed · Esc or any outside interaction disarms</span>
+        <span style="margin-left:auto;font-size:11.5px;color:var(--tx3);padding:4px 12px;border:1px solid var(--bd-str);border-radius:4px">Disarm</span>
+        <span style="font-size:11.5px;font-weight:600;color:var(--onAccent);background:var(--warn);border-radius:4px;padding:4px 14px">Confirm — issue RLS-0008</span>
+      </div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">the pane behind stays fully scrollable and inspectable while armed — deliberateness without a covered workspace; confirm fires the atomic operation exactly as V9 specifies</span></div>
+    </div>
+    <div class="cell-cap"><b>State 2.</b> second press is the irreversible act — nothing was hidden to get here</div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:14px"><b>Q5-B-amended.</b> <span class="cand">CANDIDATE — NOT APPROVED</span> · derivation: one record, one pane (Q2 disposition — a modal is a transient second rendering of the same record); arm-then-confirm replaces the interruption with an in-place deliberate gesture; the workspace is never covered at the decisive moment</div>
+
 <div class="cap" style="margin-top:26px;font-size:11.5px">Coverage index for all twelve frames: <a href="revision-ux-shell-study.html#coverage" style="color:var(--info)">file 1 · coverage map</a>.</div>
 
 </div>
