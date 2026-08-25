@@ -817,3 +817,27 @@ typed boundary context to reservation/allocation/issuance behavior. Historical
 identities retain the profile-policy version that interpreted their transition.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q3-APPROVED -->
+
+### REV-C03-ID-Q4 — Optional phase/build hierarchy presentation
+
+**Approved 2026-08-24.** Datum supports an optional first-class `BuildIdentity`
+over one immutable `ConfigurationBaseline` manifest. The factory presentation is
+the visually reviewed V4a treatment: a quiet build-and-baseline Inspector with
+no mandatory phase hierarchy. A future Global Preferences selection may instead
+seed new Projects with the V4b enterprise Phase -> Build -> Baseline Navigator
+hierarchy, and a governed enterprise profile may require that hierarchy. The
+Project-owned copied policy remains authoritative thereafter.
+
+V4a and V4b are presentations over one data model, not competing storage or
+identity mechanisms. V4b reveals typed organization already present in the
+same `BuildIdentity` relationships; enabling it does not migrate, duplicate, or
+reinterpret baseline data. Projects that do not use build identities incur no
+required hierarchy or visible workflow.
+
+Phase, Build, baseline, and member revision/spin remain distinct typed
+identities. A Build identity never becomes composition authority, forces member
+labels to match, or causes automatic revision roll-up. Naming and successor
+policy are governed by the resolved organization/profile policy, and both
+Sequential Alphanumeric and ISO 19650 profiles may use the capability.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q4-APPROVED -->

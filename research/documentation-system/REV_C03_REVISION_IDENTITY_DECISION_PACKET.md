@@ -333,3 +333,19 @@ implicitly mint. Retransmission creates a `Transmittal` against the unchanged
 Release. Phase-build naming remains open for ID-Q4.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q3-APPROVED -->
+
+### REV-C03-ID-Q4 — Optional phase/build hierarchy presentation
+
+**Approved 2026-08-24.** `BuildIdentity` is an optional first-class identity
+over one immutable `ConfigurationBaseline`. V4a is the factory presentation: a
+quiet build-and-baseline Inspector without mandatory phase hierarchy. Future
+Global Preferences may seed new Projects with the V4b enterprise
+Phase -> Build -> Baseline Navigator hierarchy, and governed enterprise profiles
+may require it. Existing Projects retain their copied Project policy.
+
+V4a and V4b project the same underlying identities. V4b adds organization, not
+a rival model or migration. Phase, Build, baseline, and member revision/spin
+remain distinct; there is no matching-label rule or automatic roll-up. Projects
+without build identities display neither surface.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C03-ID-Q4-APPROVED -->
