@@ -5343,7 +5343,8 @@
         "dat-global-preferences-engine-qcv"
       ],
       "unblocks": [
-        "dat-publish-space-foundation-z5s"
+        "dat-publish-space-foundation-z5s",
+        "dat-mcad-interop-l3p"
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
@@ -5513,12 +5514,36 @@
             "Publish Space implementation may be considered only through an explicit later Frontier selection.",
             "No certification claim, dependency, or distributed multi-writer implementation is implied."
           ],
-          "unblocks_issue_ids": ["dat-publish-space-foundation-z5s"],
+          "unblocks_issue_ids": [
+            "dat-publish-space-foundation-z5s",
+            "dat-mcad-interop-l3p"
+          ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
         }
       }
+    },
+    {
+      "key": "MCAD-INTEROP-PLACEHOLDER",
+      "order": 35,
+      "title": "Plan native ECAD-MCAD interoperability",
+      "issue_id": "dat-mcad-interop-l3p",
+      "governing_docs": [
+        "specs/STANDARDS_COMPLIANCE_SPEC.md",
+        "docs/DATUM_SHARED_TOOLING_TAXONOMY.md",
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
+      ],
+      "state": "planned",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Scheduled placeholder for three-rung native ECAD-MCAD interoperability: STEP assembly export, mechanical outline/constraint import, and IDX-class proposal/quarantine/evidence exchange. Datum never embeds a mechanical modeling kernel or permits an external MCAD master. Geometry/STEP-import dependencies require exact Product Mechanics 029 owner approval. Sequence only after Revision Engine production acceptance and Global Preferences, approximately with future 3D-viewer work; no research, specification, dependency, or implementation is authorized.",
+      "dependencies": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "unblocks": []
     }
   ]
 }
