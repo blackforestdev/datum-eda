@@ -41,7 +41,8 @@ implementation.
    `ImpactUnknown`, never `Unaffected`.
 7. Historical evidence remains valid against its frozen baseline; successor
    difference does not retroactively make it stale.
-8. Git and network services are optional adapters and never product authority.
+8. Git, PLM, PDM, and network/workflow services are optional subordinate
+   adapters and never revision, configuration, release, or product authority.
 9. Profiles may configure obligation, roles, terminology, and presentation but
    cannot redefine core identity kinds or typed fact meanings.
 10. Under any profile that has not explicitly adopted earlier control, the
@@ -190,6 +191,14 @@ confer no authority. Core capabilities include Author, Change coordinator,
 Reviewer, Verifier, Configuration authority, Release authority, Auditor, and
 Records authority.
 
+Assignment and bounded delegation shall be typed Datum operations. Delegation
+must identify delegator authority, delegate, delegated capabilities and scope,
+effective interval, rationale, and revocation/supersession lineage; it cannot
+expand capability beyond what the delegator may confer. Work queues are query
+projections over authoritative records, assignments, policy obligations, and
+findings. Queue movement or an external task-system state cannot approve,
+release, or otherwise mutate authority.
+
 `Effectivity` shall use typed predicates and an explicit resolution context.
 Unsupported, ambiguous, or unknown selection refuses; it never means universal.
 When enumerable, a Release shall retain both the authored expression and exact
@@ -331,6 +340,42 @@ comparison and validation, translation into permitted typed operations, review,
 and local commit. Transport need not be Git. Multi-writer semantic merge remains
 outside this specification.
 
+No PLM, PDM, document-management system, remote workflow service, or other
+external system may hold revision/configuration/release authority over Datum.
+Datum has no external-master mode. Such systems are subordinate adapters: they
+may consume mirrored immutable facts and return quarantined exchange material,
+but only Datum authorization evaluation and the canonical local commit path can
+create or advance authority.
+
+### 8.1 External authority manager scenario
+
+The supported enterprise pattern is an external configuration manager who is a
+Datum-authorized actor, not an external system acting as master:
+
+1. A Datum administrator establishes the manager's `ActorIdentity` and a scoped,
+   effective `RoleAssignment` granting Configuration authority, Release
+   authority, or both under Project policy.
+2. Datum exports an integrity-checked exchange envelope containing the exact
+   `ReleaseCandidate` target statement, policy/role versions, evidence digests,
+   and requested attestation intent. The manager may review it using an external
+   CM/PLM/PDM workflow.
+3. The external workflow returns a signed attestation envelope referencing that
+   exact target and assignment. Datum quarantines the envelope, verifies its
+   schema, Project, digest, signature/trust path, role scope/effectivity, policy,
+   freshness, quorum, independence, and separation requirements, and exposes
+   signature validity separately from authorization.
+4. Acceptance translates the verified envelope into a typed Datum attestation
+   operation and commits it locally. Stale, altered, replayed, unauthorized, or
+   unrepresentable material refuses without changing authority.
+5. Only Datum's later atomic `ReleaseConfiguration` may establish the baseline,
+   allocate/issue EngineeringRevisions and DocumentIssues, and create Release
+   authority. A subordinate adapter may then mirror those immutable results
+   outward with an algorithm-qualified receipt.
+
+The same pattern supports an external organization or air-gapped review. It
+does not permit the external tool to allocate identifiers, infer approval from
+its workflow state, or rewrite Datum history.
+
 ## 9. Required operation families
 
 The public mutation surface shall include typed families for:
@@ -346,9 +391,11 @@ The public mutation surface shall include typed families for:
   Transmittal, and receipt;
 - standards audit, finding disposition, holds, record disposition, and evidence;
 - dependency snapshot, semantic delta, impact disposition, library uptake,
-  baseline comparison, regeneration, reproduction manifest, and attempts; and
+  baseline comparison, regeneration, reproduction manifest, and attempts;
 - adapter mappings/divergence/mirroring, authority exchange, external-change
-  candidate disposition, trust/credential events, and trusted-time evidence.
+  candidate disposition, trust/credential events, and trusted-time evidence;
+- scoped role assignment, bounded delegation, revocation/supersession, and
+  signed external-attestation admission through quarantine.
 
 Bulk and template actions shall expand to these typed operations and commit
 atomically. No public generic JSON-patch or private adapter writer is permitted.
@@ -423,6 +470,14 @@ The approved Q1–Q6 dispositions are normative:
 6. Verdict-first reproduction over permanent counted evidence categories;
    deficient evidence refuses collapse and immutable manifest detail opens beside.
 
+Before production acceptance, the GUI shall also provide enterprise role
+workflow surfaces for assignment, bounded delegation, role-derived work queues,
+and authority visibility. Every actionable item shall show who may act, under
+which scope/policy, whether authority is active or blocked, and why. External
+attestation exchange shall visibly distinguish sent, quarantined, verified,
+authorized, locally committed, refused, and mirrored states; signature validity
+must never be presented as authorization.
+
 Existing one-window, recursive tiling, open-beside, focused-pane, output-only
 Console, accessibility, responsive, and no-rival-authority laws remain in force.
 
@@ -470,9 +525,13 @@ least:
    quarantine, semantic re-entry, replay/destination, and trust/authorization
    distinctions;
 9. all six approved visual behaviors, responsive states, keyboard/accessibility
-   semantics, and presentation-only hiding; and
+   semantics, and presentation-only hiding;
 10. operation/CLI/MCP parity, one-writer fences, source health, dependency
-    authority, spec parity, evidence traceability, and production acceptance.
+    authority, spec parity, evidence traceability, and production acceptance;
+    and
+11. enterprise assignment/delegation, role-derived queues, authority visibility,
+    and the external configuration-manager attestation exchange walkthrough,
+    including proof that no external system becomes authority.
 
 No proof-plan wording authorizes execution. Each implementation slice requires
 explicit Frontier placement and its stated authorization.
@@ -485,11 +544,18 @@ explicit Frontier placement and its stated authorization.
 - Verified Publish redaction/package variants:
   `dat-publish-redaction-contract-wzs`.
 - Exact cryptographic/signature/dependency choices: future numbered decisions.
+- Any product-specific PLM/PDM adapter implementation: future bounded Frontier
+  work and any required Product Mechanics 029 dependency authority; its posture
+  remains subordinate and cannot introduce an external-master mode.
 - Publish Space implementation: blocked until Revision Engine production
   acceptance.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C07-APPROVED -->
 REV-C07 owner ratification was recorded on 2026-08-25 after the corrected
 design-first invariant and first-class ignore workflow were incorporated. This
-specification is the normative translation of that approved packet and adds no
-new mechanism.
+specification began as the normative translation of that approved packet. The
+owner's later 2026-08-25 enterprise directive explicitly amends it with bounded
+delegation, mandatory pre-production role-workflow UX, the external
+configuration-manager scenario, and the no-external-master posture recorded by
+`EVIDENCE:PRODUCT-REVISION-SPEC:ENTERPRISE-AUTHORITY-POSTURE`. The amendment adds
+no dependency and authorizes no implementation.

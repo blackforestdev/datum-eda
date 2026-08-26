@@ -133,6 +133,26 @@ integrity and compatibility checks, semantic comparison, validation, translation
 to typed operations, review, and local commit. Simultaneous multi-writer merge
 remains reserved to `dat-distributed-collaboration-architecture-lt1`.
 
+## External enterprise authority posture
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:ENTERPRISE-AUTHORITY-POSTURE -->
+Datum remains the revision, configuration, and release authority when PLM, PDM,
+supplier, customer, or external configuration-management systems participate.
+No external-system-master mode is adopted. External systems integrate only as
+subordinate, failure-isolated adapters: they may receive mirrored immutable
+records and submit exchange envelopes, signed attestations, or candidate
+changes, but inbound material remains quarantined until Datum validates,
+translates, authorizes, and commits it through the canonical mutation path.
+
+An external configuration manager may hold scoped Configuration or Release
+capability **inside Datum** through `ActorIdentity` and `RoleAssignment`, and may
+exercise it remotely through signed attestation exchange. The human or
+organization may be external; the authoritative role, target statement,
+authorization evaluation, accepted attestation, baseline, revision, and Release
+remain Datum records. A future PLM/PDM adapter may mirror outward like the Git
+adapter; it cannot allocate, approve, issue, supersede, withdraw, obsolete, or
+rewrite Datum authority on its own.
+
 ## Human contract
 
 The approved REV-C06 visual contract is normative:
@@ -182,7 +202,9 @@ recovery, free-form revision labels, the existing CLI `release` check-profile
 name, current proposal/check departure records, Part lifecycle, library
 provenance, ZoneFill staleness, false legacy PLM/ECO claims, and ambiguous GUI
 technical `rev` wording without pretending those surfaces already implement this
-engine.
+engine. It must also implement and owner-review enterprise role workflow UX for
+assignment, bounded delegation, actionable queues, authority/provenance
+visibility, and the external configuration-manager exchange path.
 
 REV-C08 must place bounded implementation, migration, audit-witness,
 reproduction, and production-acceptance slices on the Frontier. This decision
@@ -199,6 +221,12 @@ design-first invariant to apply to every profile that has not explicitly adopted
 earlier control and declaring that ignoring the revision engine is a supported,
 first-class workflow. All other consolidated claims were verified faithful
 against the disposition ledger and drawn evidence.
+
+On 2026-08-25 the owner explicitly retained Datum-authoritative enterprise
+integration: no PLM/PDM or other external system may become revision authority;
+future adapters remain subordinate through quarantine/exchange and outward
+mirroring. The owner also directed enterprise role-workflow UX and a documented
+external configuration-manager scenario into pre-production scope.
 
 ## Dependency and licensing impact
 

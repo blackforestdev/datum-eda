@@ -346,6 +346,36 @@ pixel-exact approved-state goldens wired into standing gates, running-app owner
 visual review, narrow/HiDPI/focus/terminal-open layouts, and proof that Design
 authoring remains unblocked outside explicitly adopted earlier control.
 
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I10A -->
+### REV-I10A — Enterprise role-workflow UX
+
+Implement and owner-review the enterprise human workflow over the same typed
+authority used by REV-I03 and REV-I09:
+
+- role assignment and bounded delegation with capability, scope, effective
+  interval, rationale, provenance, revocation, and no privilege escalation;
+- role-derived personal/team queues that project pending actions, blockers,
+  separation/quorum obligations, and handoff state without becoming authority;
+- always-reachable authority visibility showing who may act, why, under which
+  policy/assignment, and whether that authority is active, expired, revoked,
+  unavailable, or blocked;
+- the external configuration-manager walkthrough from the normative spec,
+  including sent, quarantined, verified, signature-valid, authorized, locally
+  committed, refused, and outward-mirrored states; and
+- keyboard, assistive-technology, narrow-pane, offline, unavailable-adapter,
+  expired-delegation, and concurrent-stale-target behavior.
+
+No PLM/PDM UI or adapter state may appear to allocate, approve, issue, or own a
+Datum revision. Queue actions resolve to typed operations/proposals through the
+canonical mutation path. If visual design is not already owner-approved, this
+slice requires a Claude-owned prototype study and explicit owner disposition
+before implementation acceptance.
+
+**Exit evidence:** assignment/delegation/refusal tests; queue-to-authority
+traceability; separation/quorum and stale-target proofs; signed external
+attestation quarantine/admission walkthrough; adapter-failure isolation;
+accessibility inspection; standing visual goldens; and running-app owner review.
+
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I11 -->
 ### REV-I11 — Standards witnesses, retention, and migration closure
 
@@ -381,7 +411,8 @@ old-project migration, rollback/read-only fallback, and no silent claim upgrade.
 Production acceptance is a dedicated bounded step, not a prose declaration. It
 requires:
 
-- all REV-I01 through I11 acceptance evidence committed and addressable;
+- all REV-I01 through I11 acceptance evidence, including REV-I10A, committed
+  and addressable;
 - locked/offline guarded workspace tests and strict all-target Clippy;
 - all mutation/resolver/dependency/source-health/spec/evidence/parity gates;
 - crash, corruption, replay, authorization, impact-unknown, nondeterminism,
@@ -414,6 +445,7 @@ REV-I00 authorization
   -> I08 offline exchange/Git adapter
   -> I09 API/CLI/MCP parity
   -> I10 approved GUI
+  -> I10A enterprise role-workflow UX
   -> I11 standards/migration closure
   -> I12 production acceptance
 ```

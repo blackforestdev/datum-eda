@@ -122,7 +122,7 @@
    *Dependencies:* `dat-product-revision-engine-k9f`. *Unblocks:* dat-product-revision-engine-build-18f. *Governing:* `research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md`, `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build and production-accept the Datum Product Revision Engine** (`PRODUCT-REVISION-ENGINE`; `dat-product-revision-engine-build-18f`).
-   Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, adapter, parity, GUI, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization. *state `blocked`; authorization `owner_decision`.*
+   Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization. *state `blocked`; authorization `owner_decision`.*
    *Dependencies:* `dat-product-revision-engine-k9f`, `dat-global-preferences-engine-qcv`. *Unblocks:* dat-publish-space-foundation-z5s. *Governing:* `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`, `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`.
 <!-- ACTIVE FRONTIER:END -->
 

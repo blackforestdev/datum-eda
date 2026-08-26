@@ -5187,6 +5187,9 @@
         "scope": [
           "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
           "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+          "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+          "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
           "specs/evidence_traceability_manifest.json",
@@ -5334,7 +5337,7 @@
       "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, adapter, parity, GUI, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
+      "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5477,11 +5480,20 @@
             "completion_evidence": []
           },
           {
+            "id": "REV-I10A",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement and owner-review enterprise role assignment, bounded delegation, role-derived queues, authority visibility, and the external configuration-manager signed-attestation exchange workflow without giving PLM/PDM or adapter state revision authority.",
+            "depends_on": ["REV-I10"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10A"}],
+            "completion_evidence": []
+          },
+          {
             "id": "REV-I11",
             "kind": "execution",
             "status": "pending",
             "action": "Implement licensed-source-gated standards audit and retention witnesses and close every REV-GAP migration with machine-readable evidence and safe fallback.",
-            "depends_on": ["REV-I10"],
+            "depends_on": ["REV-I10A"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I11"}],
             "completion_evidence": []
           },

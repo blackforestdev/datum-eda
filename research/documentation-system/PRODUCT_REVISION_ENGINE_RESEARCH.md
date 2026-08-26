@@ -449,6 +449,17 @@ work, and does not authorize Publish Space implementation.
 
 <!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C08-IMPLEMENTATION-PLAN -->
 
+**Post-ratification owner directive — 2026-08-25.** Enterprise role-workflow UX
+for assignment, delegation, queues, and authority visibility is required before
+Revision Engine production acceptance. The normative specification carries an
+external configuration-manager walkthrough: an external human may hold scoped
+Datum Configuration/Release capability through `RoleAssignment` and signed
+attestation exchange, but no PLM, PDM, or other external system may hold
+revision authority over Datum. External systems remain subordinate adapters
+whose inbound material passes quarantine/exchange and whose outward role is
+mirroring. The owner selected this Datum-authoritative posture explicitly; no
+PLM-master decision packet is open.
+
 ## First owner decisions developed slowly (resolved by REV-C03)
 
 1. Does the first post-release change allocate the next document revision
