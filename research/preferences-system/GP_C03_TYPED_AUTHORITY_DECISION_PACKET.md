@@ -248,3 +248,189 @@ GP-C03-Q1: revise — <missing, incorrect, or overreaching clause>
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q1-PACKET -->
+
+### 5.8 Owner disposition
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q1-APPROVED -->
+
+**Approved 2026-08-25 — Q1-A.** The owner approved the exact §5.6 contract.
+Datum preferences therefore use one stable `PreferenceKey` and one
+authoritative subsystem-owned descriptor; providers and scopes may contribute
+typed values or constraints but cannot redefine the setting. The approval does
+not select the scope taxonomy, precedence, managed-policy transport,
+persistence, dependency, or UX.
+
+## 6. GP-C03-Q2 — scope identities and setting classes
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q2 -->
+
+### 6.1 The problem
+
+The word “scope” is currently carrying too many meanings. A factory default, a
+user's theme selection, an organization lock, a Project's released-document
+policy, a restored pane layout, and an export destination do not have the same
+authority or lifecycle merely because each can affect what the user sees or
+does.
+
+Datum needs one resolver capable of explaining all inputs that affect a
+registered key without turning every input into a writable Global Preference.
+This question selects the source taxonomy and the minimum setting classes. It
+does **not** select source precedence or managed-lock choreography.
+
+### 6.2 Evidence
+
+The owner-approved internal audit establishes three hard separations:
+
+- authored Project rules and release/manufacturing facts are governed Project
+  authority, not machine-local preferences
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:260-280`);
+- pane layout, open panes, focus, camera, and similar values are currently
+  session state rather than preferences
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:282-358`);
+- no common typed scope model exists today
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:342-372`).
+
+GP-C02 adds that configuration, restartable state, transient state, Project
+policy, and operation input require different authority and retention laws
+(`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:195-231`). Protected settings also
+need descriptor-declared source eligibility so an untrusted Project cannot
+choose executable paths or trust roots
+(`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:170-181`).
+
+### 6.3 Candidate A — one resolver, typed source families, strict exclusions
+
+The effective-value resolver accepts typed `ResolutionSource` facts, but only a
+subset are writable `PreferenceScope` contributions:
+
+| Source family | Meaning | Writable as a Global Preference? |
+|---|---|---|
+| `DescriptorDefault` | factory fallback declared by Q1's descriptor | no |
+| `Installation` | local installation/machine contribution | yes, when the descriptor permits |
+| `Organization` | identified organization recommendation, constraint, or managed contribution | through its managed provider, not ordinary user editing |
+| `User` | explicit choice for one user | yes, when permitted |
+| `ProjectPolicy` | governed fact copied/authored into the Project | no; mutated only through Project authority |
+| `Session` | explicit ephemeral override for the running session | only where Q6 permits |
+| `Context` | read-only applicable context supplied during resolution | no; Q6 defines its exact law |
+
+The descriptor also classifies each key by what it controls:
+
+1. `Presentation` — visual/interaction presentation without engineering meaning;
+2. `WorkflowDefault` — a remembered starting choice that never conceals or
+   replaces an explicit operation input;
+3. `Capability` — executable, environment, resource, agent, endpoint, or trust
+   configuration requiring protected-source eligibility;
+4. `ProjectPolicySeed` — a value eligible to initialize governed Project policy
+   through the explicit Q5 copy/receipt boundary.
+
+Restartable workspace state, transient interaction state, and explicit
+operation input remain separate data classes outside the preference store.
+They may be inspected alongside resolution where useful, but are never silently
+promoted into preferences. Remembering an operation's last choice requires a
+separate registered `WorkflowDefault` key.
+
+Consequences:
+
+- one resolver can explain a Project policy value without granting the
+  Preferences UI authority to edit it;
+- a descriptor can permit User/Organization sources for a theme while refusing
+  Project control of executable paths;
+- persistence technology may be shared later, but authority and reset behavior
+  remain distinct;
+- source identity says *who/where*, setting class says *what kind of effect*;
+  neither silently establishes precedence;
+- new setting classes or source kinds require governed schema evolution rather
+  than ad hoc strings.
+
+### 6.4 Candidate B — one flat ordered scope stack
+
+Factory, installation, organization, user, Project, session, context, and
+operation values are all writable layers in one last-winner stack.
+
+Consequences:
+
+- explicit operation input can be mistaken for persistent policy;
+- Project facts become editable through a machine-local Preferences surface;
+- a specific context may override a protected capability solely because it is
+  “closer”;
+- restartable layout state and engineering policy inherit the same reset,
+  export, and synchronization law;
+- the stack answers precedence before Datum has defined constraints, trust, or
+  applicability.
+
+This is simple to draw but false to Datum's authority boundaries.
+
+### 6.5 Candidate C — separate preference engines per subsystem
+
+GUI, Terminal, Revision, export, and other subsystems retain independent scope
+models and expose their own effective-value queries.
+
+Consequences:
+
+- each subsystem can choose locally convenient rules;
+- organization management must integrate with several incompatible models;
+- provenance and refusal wording drift;
+- cross-cutting settings such as reduced motion, Revision visibility, and
+  terminal capability cannot be inspected through one authority;
+- it preserves the fragmentation proved by GP-C01.
+
+### 6.6 Recommendation
+
+Adopt **Candidate A**.
+
+It gives Datum one explainable resolver without pretending that everything the
+resolver considers is a Global Preference. This is the smallest model that
+preserves user simplicity, Project authority, protected capability, managed
+environments, and explicit operation control at the same time.
+
+### 6.7 Exact contract approved if Q2-A is accepted
+
+Approval of Q2-A establishes only these clauses:
+
+1. `ResolutionSource` is the umbrella for facts considered by effective-value
+   resolution; being a resolution source does not grant write authority.
+2. The initial source families are `DescriptorDefault`, `Installation`,
+   `Organization`, `User`, `ProjectPolicy`, `Session`, and `Context`.
+3. `DescriptorDefault` is immutable descriptor data, not a persisted preference
+   scope.
+4. `Installation`, `Organization`, and `User` are persistent preference-source
+   scopes; their exact provider, precedence, recommendation, constraint, and
+   lock laws remain Q3, Q4, and GP-C04 decisions.
+5. `ProjectPolicy` participates only for descriptors that explicitly admit
+   Project authority. Its values are read through the resolver but mutated only
+   through the Project's governed mutation path, never by the Global Preferences
+   store or UI.
+6. `Session` and `Context` are reserved typed sources whose applicability,
+   mutability, lifetime, and precedence remain Q6 decisions.
+7. Every descriptor declares allowed source families and one setting class.
+   Ineligible contributions are refused rather than silently considered.
+8. The initial setting classes are `Presentation`, `WorkflowDefault`,
+   `Capability`, and `ProjectPolicySeed`. Additional classes require governed
+   schema evolution, not provider-defined strings.
+9. Restartable workspace state, transient interaction state, and explicit
+   operation input are not preference scopes. Remembering an operation choice
+   requires a separately registered `WorkflowDefault` preference.
+10. Source family and setting class do not imply precedence. Q2 approval does
+    not decide which eligible contribution wins, how managed conflicts resolve,
+    or whether a value can be locked.
+11. This decision does not select storage locations/formats, synchronization,
+    provider transport, dependencies, or final UI.
+
+### 6.8 Owner response
+
+Approve only if Candidate A gives Datum one coherent resolution vocabulary
+while keeping Project mutation, restartable state, transient state, and explicit
+operation input outside the writable preference-scope lattice.
+
+Reply exactly:
+
+```text
+GP-C03-Q2: approve Q2-A
+```
+
+or:
+
+```text
+GP-C03-Q2: revise — <missing, incorrect, or overreaching clause>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q2-PACKET -->
