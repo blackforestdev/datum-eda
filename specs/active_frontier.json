@@ -4866,10 +4866,11 @@
       "issue_id": "dat-product-revision-engine-k9f",
       "governing_docs": [
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+        "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
@@ -4877,22 +4878,9 @@
       "unblocks": [
         "dat-global-preferences-engine-qcv"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-rev-c06-20260825",
-        "claimed_at": "2026-08-25T20:57:18Z",
-        "heartbeat_at": "2026-08-25T20:57:18Z",
-        "expires_at": "2026-08-26T04:57:18Z",
-        "scope": [
-          "REV-C06 quiet-default and regulated-profile UX, workflows, accessibility, and Claude-owned visual contract"
-        ],
-        "worktree": "main:/home/bfadmin/Documents/datum-eda",
-        "head": "858aeb6ff302d3fa8c79c4ae806397bca370a797"
-      },
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C06",
+        "canonical_next_step_id": "REV-C07",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5058,7 +5046,7 @@
           {
             "id": "REV-C06",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Define quiet-default and regulated-profile UX, change/release workflows, revision projections, impact review, accessibility, and the required Claude-owned visual source of truth.",
             "depends_on": [
               "REV-C03",
@@ -5070,12 +5058,21 @@
                 "marker": "REV-C06"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "6aa34a1"
+              },
+              {
+                "kind": "commit",
+                "revision": "26958ac"
+              }
+            ]
           },
           {
             "id": "REV-C07",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Record owner dispositions and ratify the exact Product Revision Engine mechanism, standards claims, dependency posture, and visual contract in governed decisions/specifications.",
             "depends_on": [
               "REV-C02",
@@ -5092,15 +5089,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply to the ordered Product Revision Engine disposition packet after reviewing the completed standards matrix, authority model, integration contract, impact model, and visual study.",
+              "response_format": "After Claude's findings-first adversarial review, reply exactly `REV-C07-RATIFICATION: approve` or `REV-C07-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
               "requests": [
                 {
-                  "id": "PRODUCT-REVISION-ENGINE-DISPOSITION",
-                  "question": "Which researched Product Revision Engine mechanism and visual contract should Datum ratify, and what revisions are required before implementation planning?",
-                  "recommended_response": "Approve or revise each presented mechanism only after its standard, authority, evidence, and usability consequences are explicit.",
+                  "id": "REV-C07-RATIFICATION",
+                  "question": "Does the consolidated REV-C07 packet faithfully preserve the researched Product Revision Engine mechanism, all owner dispositions, standards/source-strength and dependency limits, the design-first never-blocks invariant, the Global Preferences deferral, and the approved visual contract without authorizing implementation?",
+                  "recommended_response": "Approve only after the findings-first adversarial audit confirms every consolidated claim against the cited authority and drawn evidence; otherwise identify the exact contradiction, omission, or boundary correction.",
                   "source_ref": {
-                    "path": "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
-                    "marker": "REV-C07"
+                    "path": "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md",
+                    "marker": "REV-C07-RATIFICATION"
                   }
                 }
               ]

@@ -105,6 +105,11 @@
    "progress_anchor": "PRODUCT-REVISION-SPEC",
    "notes": "Governed REV-C01..C08 research and specification plan for the Datum-owned Product Revision Engine. Mechanism remains unratified and implementation unauthorized until REV-C07/C08 complete."
   },
+  "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-SPEC",
+   "notes": "Candidate REV-C07 consolidation for adversarial review and explicit owner disposition. It is not a ratified decision, normative implementation specification, dependency approval, or implementation authorization."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."

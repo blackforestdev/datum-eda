@@ -386,8 +386,8 @@ owner-approved as `Q6-A-amended`, explicitly not original Q6-A: verdicts lead
 over permanent counted manifest categories, deficient evidence refuses collapse,
 and the complete immutable manifest opens beside the persistent summary.
 `ByteIdentical` remains separate from authenticity. All six REV-C06 owner
-questions are dispositioned; visual annotation and the governance closeout still
-precede REV-C07. No implementation is authorized.
+questions are dispositioned and the final visual annotations landed in
+`26958ac`; REV-C06 is complete. No implementation is authorized.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->
@@ -396,6 +396,16 @@ precede REV-C07. No implementation is authorized.
 Resolve owner questions, reconcile affected research and decisions, and ratify
 mechanism only in numbered decision/spec governance with licensing and
 standards claims explicit.
+
+The consolidated candidate is
+[`REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md`](REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md).
+It is a review packet rather than a ratified decision. It carries every prior
+owner disposition, the design-first never-blocks invariant, the future
+`Hide revision system` Global Preferences directive, standards/source-strength
+limits, dependency posture, migrations, and explicit exclusions into one
+findings-first adversarial review boundary. No numbered decision or normative
+implementation specification may be created until the owner approves or revises
+that packet.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C08 -->
 ### REV-C08 — Frontier placement and proof contract
