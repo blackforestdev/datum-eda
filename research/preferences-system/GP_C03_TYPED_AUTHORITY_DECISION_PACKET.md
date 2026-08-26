@@ -494,121 +494,132 @@ evidence:
 The resulting bounded requirements are recorded at
 `GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:265-344,346-398`.
 
-### 8.3 Reviewed visual evidence — PX-V5
+### 8.3 Reviewed visual evidence — PX-V5 amended
 
-**Authority:**
-`docs/gui/prototypes/preferences-ux-study.html#px-v5` (PX-V5, rendered and
-visually reviewed at 1680×6000 on 2026-08-25; source lines 273-286).
+**Authority:** `docs/gui/prototypes/preferences-ux-study.html#px-v5`, source
+lines 273–330 at commit `06f5931`. The amended study renders the user-held
+five-level release dial and inert pending request (lines 279–284), the four
+typed directive rows (287–292), backside management as the expected enterprise
+posture (298–315), and user-released full management plus an accessibility
+carve-out (317–330). Visibility never decreases as control increases.
 
-PX-V5 draws four escalating rows over one consistent anatomy:
+### 8.4 Owner disposition and exact contract
 
-1. `RECOMMENDED · ORG` — value offered, freely overridable;
-2. `CONSTRAINED · ORG` — editable within a visible allowed range;
-3. `PINNED ON · ORG` — exact managed value, policy/reason/setter visible;
-4. `LOCKED · ORG` — ordinary mutation refused, policy and appeal path visible.
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q3-APPROVED -->
 
-The anchor's law is that visibility never decreases as control increases. Each
-row retains the effective value, source, reason, and user's remaining freedom.
-No alternative visual treatment is presented because the owner requires Claude
-to render materially different candidates before a boundary opens.
+**Revised and approved 2026-08-26 — Q3 AuthorityRelease model.** The owner
+retained `Recommend`, `Constrain`, `Pin`, and `Lock`, but rejected organization
+control merely becoming effective through enrollment or provider presence.
+The following contract governs:
 
-### 8.4 Candidate Q3-A/PX-V5 — typed orthogonal control directives
+1. Organization control uses typed `Recommend(value)`,
+   `Constrain(predicate)`, `Pin(value)`, and `Lock(scopes)` directives.
+   Recommendation is overridable; Constraint can only narrow descriptor law;
+   Pin supplies one exact managed value; Lock refuses mutation from named
+   scopes. `NoControl` is absence, and apply-once seeding remains Q5.
+2. Every organization directive is inert on a machine until its user explicitly
+   releases authority to that organization at one of five ordered levels:
+   `None`, `RecommendationsOnly`, `Bounded`, `BacksideManagement`, or
+   `FullManagement`. Enrollment grants no level automatically.
+3. `AuthorityRelease` is a first-class typed fact naming the releasing user,
+   grantee organization, machine/scope, released level, effective date,
+   attribution, and revocability. Release and revocation are auditable events,
+   not hidden provider state.
+4. A request beyond the active release remains visible but inert as a pending
+   request. The user decides it in Preferences; Datum never interrupts work
+   with an authority prompt.
+5. Revocation lifts organization pins and locks and re-resolves retained user
+   values. The organization may withdraw its resources in response. Both the
+   user's revocation and any organization withdrawal remain attributed.
+6. `BacksideManagement` is the expected enterprise posture: organization
+   authority concentrates on validation, output, release, and document-control
+   settings while Design-time latitude remains user-held. `FullManagement` is
+   the user-released maximum, never an imposed enrollment mode.
+7. Governed-Project law—regulated profiles, quorum, controlled documents, and
+   other Project authority ratified by Q2—travels with the Project independent
+   of machine `AuthorityRelease`. It cannot be converted into machine preference
+   authority or bypassed by revoking an organization grant.
+8. A descriptor declares directive eligibility and combinations. Personal
+   accessibility descriptors are the only organization-control carve-out class,
+   and each exclusion requires a named descriptor justification in GP-C05A.
+9. Each directive retains provider/package identity, generation, accountable
+   actor/role, reason, effective interval, remaining freedom, and any expressly
+   permitted appeal/deviation path. There is no universal bypass.
+10. Managed Revision visibility therefore means an organization may pin it on
+    only after the user grants a sufficient level; the pin changes presentation,
+    not Revision authority or Project law.
+11. This user-release gate is Datum doctrine, not a claim that surveyed peers
+    use the same consent model. Q4 decides eligible-source precedence and
+    conflict; Q5–Q10 and GP-C04 retain their named boundaries.
 
-Adopt PX-V5 as the presentation of one typed engine model:
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q3-PACKET -->
 
-- `Recommend(value)` supplies an eligible ordinary value contribution while
-  leaving permitted user values editable and capable of winning under Q4.
-- `Constrain(predicate)` narrows the descriptor's legal value domain without,
-  by itself, selecting an effective value. It cannot widen descriptor law.
-- `Pin(value)` supplies an exact managed value. While applicable, the pin
-  governs the effective result; an existing user value remains stored and
-  inspectable so Q4 can define what resumes after the pin lifts.
-- `Lock(scopes)` refuses ordinary mutation from the named writable scopes while
-  active. A lock may accompany a managed value or constraint, but it is not
-  itself an untyped magic value.
+## 9. GP-C03-Q4 — precedence and conflict
 
-These directives may coexist only where the descriptor explicitly permits the
-combination. Each directive carries provider and policy/package identity,
-generation, accountable author/role, reason, effective interval, and any
-descriptor/profile-approved deviation or appeal path.
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q4 -->
 
-`NoControl` is represented by absence of an organization directive, not a
-synthetic winner. `SeedOnce` is not an ongoing control mode; it is an explicit
-copy operation decided by Q5.
+### 9.1 Decision being made
 
-### 8.5 Why this model fits Datum
+Q4 decides how already-eligible contributions are ranked, how control
+directives interact with stored user values, and what happens when applicable
+sources conflict. It does not reopen Q3 eligibility, mix Project authority into
+machine preference ranking, or decide session/context overrides (Q6).
 
-Q3-A/PX-V5 preserves the useful peer behaviors without importing their
-authority weaknesses:
+### 9.2 Evidence and reviewed visual — PX-V6
 
-- an individual designer sees a normal editable preference when no directive
-  applies;
-- teaching environments can pin Revision visibility on without changing
-  Revision engine truth;
-- an organization can bound resource settings without choosing one value;
-- security-sensitive capabilities can refuse ordinary mutation;
-- management remains locally resolved and inspectable even if a future package
-  arrived through a subordinate external adapter;
-- the GUI renders resolver facts rather than inferring control from disabled
-  widgets.
+GP-C02 requires value precedence and constraint authority to remain separate
+and every losing/refused contribution to remain queryable
+(`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:127-168`). GP-C02B adds that source
+family alone is not a universal priority, same-authority incompatible controls
+need a typed conflict unless the descriptor defines a join, and lifting control
+must re-resolve retained values
+(`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:365-380`).
 
-### 8.6 Exact contract approved if Q3-A/PX-V5 is accepted
+**Visual authority:** `docs/gui/prototypes/preferences-ux-study.html#px-v6`,
+source lines 333–359 at commit `06f5931`. PX-V6 explicitly ranks only eligible
+sources. Its ordinary stack renders User over Organization Recommendation over
+Installation over Descriptor Default (339–347); its control case renders an
+organization pin overriding—but not deleting—a user value, which resumes when
+the pin lifts (350–357). Under Q3, that pin is eligible only within an active
+`AuthorityRelease`, so the anchor needs no material visual amendment.
 
-Approval establishes only these clauses:
+### 9.3 Candidate Q4-A — staged eligibility, control, then value ranking
 
-1. Organization control is expressed through typed `Recommend`, `Constrain`,
-   `Pin`, and `Lock` directives; it is not one undifferentiated high-priority
-   value.
-2. `Recommend(value)` is an overridable ordinary contribution.
-3. `Constrain(predicate)` narrows the descriptor's legal domain and may exist
-   without supplying a value. It cannot widen descriptor validation law.
-4. `Pin(value)` supplies an exact managed value that governs the effective
-   result while applicable. Non-winning user contributions remain retained and
-   queryable.
-5. `Lock(scopes)` refuses new mutation from its named writable scopes while
-   active. It may accompany a managed value or constraint but remains a
-   separate typed fact.
-6. A descriptor declares which organization directives and combinations are
-   eligible. Ineligible or internally contradictory directives are refused or
-   reported as typed conflicts, never guessed into effect.
-7. Every directive carries provider, policy/package identity, generation,
-   accountable author/role, reason, effective interval, and any explicit
-   deviation/appeal metadata.
-8. A deviation or override exists only when the descriptor/profile authorizes
-   one; it is bounded, attributable, and auditable. Datum has no universal
-   password or administrator bypass.
-9. `NoControl` is absence of a directive. Apply-once/seed behavior belongs to
-   Q5 rather than the runtime control ladder.
-10. The Preferences surface must render the PX-V5 anatomy: word plus glyph,
-    effective value, source, reason, and remaining user freedom. Disabled or
-    colored styling alone is insufficient.
-11. Q3 does not decide precedence among ordinary contributions or competing
-    organization packages (Q4), Project seeding (Q5), session/context law (Q6),
-    unavailable-provider retention (Q7/GP-C04), storage, transport,
-    dependencies, or final detailed interaction beyond PX-V5.
+1. Validate descriptor identity and value domains, then classify each
+   contribution and control directive before ranking values.
+2. Admit organization directives only within the active `AuthorityRelease`;
+   requests beyond it remain visible/inert. Resolve governed Project law on its
+   separate Project-authority path.
+3. Apply eligible constraints and locks before ordinary value ranking. An
+   eligible Pin governs the exact effective value while active; retained user
+   values remain inspectable and automatically resume when the pin lifts.
+4. For ordinary machine/user preferences, rank explicit User value above an
+   organization Recommendation, Installation value, and Descriptor Default, in
+   that order. A descriptor may declare a typed deterministic merge instead of
+   scalar ranking; absence never masquerades as a contribution.
+5. Incompatible applicable Pins, Locks, or constraints from equal authority are
+   a typed unresolved conflict unless the descriptor declares a deterministic
+   join. Arrival order, provider order, and “last writer wins” cannot decide it.
+6. Every effective, losing, inert, refused, and conflicting contribution remains
+   queryable with provenance and reason. Q8 decides detailed refusal/fallback
+   behavior; Q4 does not silently publish a new value from a conflict.
 
-### 8.7 Recommendation
+### 9.4 Recommendation and owner response
 
-Approve **Q3-A/PX-V5**. It is supported by GP-C02, strengthened by the bounded
-domain-peer survey, and already rendered in the owner-directed visual source of
-truth. It gives management enough power for professional and teaching contexts
-without disguising control or creating a rival authority engine.
-
-### 8.8 Owner response
+Approve **Q4-A/PX-V6**. It preserves the visual stack, makes Q3's release gate
+an explicit prerequisite, keeps Project law separate, and avoids destructive or
+arrival-order conflict resolution.
 
 Reply exactly:
 
 ```text
-GP-C03-Q3: approve Q3-A/PX-V5
+GP-C03-Q4: approve Q4-A/PX-V6
 ```
 
 or:
 
 ```text
-GP-C03-Q3: revise — <required engine or visual correction>
+GP-C03-Q4: revise — <required precedence or conflict correction>
 ```
 
-A visual revision requires Claude to render the changed candidate in PX-V5
-before a revised owner boundary can open.
-
-<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q3-PACKET -->
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q4-PACKET -->

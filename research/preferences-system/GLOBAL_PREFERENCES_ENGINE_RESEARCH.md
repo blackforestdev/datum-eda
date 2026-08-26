@@ -34,6 +34,26 @@ it. Pinning visibility changes presentation only—it creates no new revision
 authority and cannot weaken the first-class workflow that ignores Revision
 authoring where earlier control was not explicitly adopted.
 
+The Q3 owner disposition further requires a typed, revocable, user-held
+`AuthorityRelease`: organization policy, including a Revision-visibility pin,
+is inert on a machine until the user releases a sufficient level. Enrollment
+never grants authority. Governed-Project law remains independently binding on
+the Project and is neither granted nor revoked through this machine dial.
+
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:USER-HELD-AUTHORITY-RELEASE -->
+### User-held organization authority release
+
+Organization directives use `Recommend`, `Constrain`, `Pin`, and `Lock`, but
+become eligible only within an explicit user grant of none, recommendations
+only, bounded, backside management, or full management. The grant and its
+revocation are typed, attributed facts; excess requests remain visible and
+inert in Preferences and never prompt. Revocation restores retained user
+values, while any organization withdrawal of resources is separately
+attributed. Backside management is the expected enterprise posture; full
+management is an expressly released maximum. Personal accessibility keys are
+the only descriptor-level organization-control carve-out class and require
+named justification in the v1 catalog.
+
 <!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:FIRST-RELEASE-ONBOARDING -->
 ### First-Release Onboarding
 

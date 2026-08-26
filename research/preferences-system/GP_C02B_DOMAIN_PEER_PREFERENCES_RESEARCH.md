@@ -345,6 +345,16 @@ state. GP-C03 Q7 and GP-C04 must decide retention and refusal details.
 
 ## 6. Requirements fed into GP-C03 Q3 and Q4
 
+### Owner-disposition qualification
+
+The professional peers below demonstrate differentiated apply, recommendation,
+constraint, pin, lock, distribution, and offline-policy mechanisms. They do not
+establish a consensus user-consent model: several permit administrator-imposed
+management. Datum's Q3 owner disposition deliberately adds a typed, revocable,
+user-held `AuthorityRelease`; organization directives remain inert until
+released. This is Datum doctrine informed by—but not attributed to—the peer
+survey. Governed-Project law remains independent of that machine grant.
+
 ### 6.1 Q3 — recommendations, constraints, pins, and locks
 
 Q3 must cite and reconcile PX-V5 with these peer-backed requirements:
