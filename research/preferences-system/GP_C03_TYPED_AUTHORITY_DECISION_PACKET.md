@@ -623,3 +623,14 @@ GP-C03-Q4: revise — <required precedence or conflict correction>
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q4-PACKET -->
+
+### 9.5 Owner disposition
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q4-APPROVED -->
+
+**Approved 2026-08-26 — Q4-A/PX-V6.** Datum resolves descriptor/source
+eligibility first, applicable controls second, and ordinary values third. User
+values outrank organization Recommendations, Installation values, and defaults;
+eligible Pins retain rather than destroy displaced values; incompatible
+equal-authority controls become typed conflicts rather than arrival-order wins.
+Project authority remains separate, and Q8 retains detailed fallback/refusal.

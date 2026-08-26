@@ -5170,6 +5170,7 @@
         "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
         "research/preferences-system/GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md",
         "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
+        "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
         "docs/gui/prototypes/preferences-ux-study.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
@@ -5294,18 +5295,23 @@
                 "kind": "review",
                 "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q3-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q4-APPROVED"
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing Q4's written evidence, the Q3 AuthorityRelease disposition, PX-V6, and the exact bounded contract, reply exactly `GP-C03-Q4: approve Q4-A/PX-V6` or `GP-C03-Q4: revise — <required precedence or conflict correction>`.",
+              "response_format": "After reviewing Q5's written evidence, PX-V7, and the exact bounded contract, reply exactly `GP-C03-Q5: approve Q5-A/PX-V7` or `GP-C03-Q5: revise — <required seeding or receipt correction>`.",
               "requests": [
                 {
-                  "id": "GP-C03-Q4",
-                  "question": "Should Datum resolve preferences in stages—eligibility first, then applicable controls, then ordinary value ranking—with User above Organization Recommendation above Installation above Descriptor Default, active released Pins retaining displaced user values, and incompatible equal-authority controls becoming typed conflicts rather than last-writer winners?",
-                  "recommended_response": "Approve Q4-A/PX-V6. It preserves PX-V6's visible contribution stack and retained user value, makes Q3 AuthorityRelease an explicit eligibility prerequisite, keeps governed Project law separate, and refuses arrival-order conflict resolution.",
+                  "id": "GP-C03-Q5",
+                  "question": "Should new-Project policy use one explicit, atomic, receipted copy from an immutable seed snapshot into Project authority, with no live link or silent follow-latest behavior, while deliberate one-time organization-package selection remains distinct from ongoing machine AuthorityRelease?",
+                  "recommended_response": "Approve Q5-A/PX-V7. It matches the rendered receipt, preserves Project ownership, records copied and omitted facts, allows later source changes only as explicit proposals, and prevents provider withdrawal or grant revocation from rewriting an existing Project.",
                   "source_ref": {
-                    "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
-                    "marker": "GP-C03-Q4"
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q5"
                   }
                 }
               ]

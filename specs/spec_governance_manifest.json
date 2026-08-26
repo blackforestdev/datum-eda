@@ -145,6 +145,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Evidence-backed GP-C03 one-question-at-a-time architecture packet. It sequences typed identity, scope, constraints, precedence, Project seeding, contextual resolution, validation/refusal, unknown identity, provenance queries, and Revision carry-forward decisions without authorizing Preferences implementation."
   },
+  "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Continuation of the GP-C03 one-question-at-a-time authority packet beginning with PX-V7-backed Project-policy seeding and its durable receipt; specification only."
+  },
   "docs/gui/prototypes/preferences-ux-study.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
