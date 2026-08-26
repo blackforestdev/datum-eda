@@ -5168,11 +5168,12 @@
       "issue_id": "dat-global-preferences-engine-qcv",
       "governing_docs": [
         "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+        "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5182,29 +5183,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "gp-c03-architecture-20260825",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "fdba0a48a205cba376bc3e58a0f3174c3fd3357b",
-        "claimed_at": "2026-08-26T02:24:36Z",
-        "heartbeat_at": "2026-08-26T02:35:17Z",
-        "expires_at": "2026-08-26T10:35:17Z",
-        "scope": [
-          "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
-          "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
-          "research/preferences-system/GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md",
-          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
-          "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
-          "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/evidence_traceability_manifest.json",
-          "specs/spec_governance_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5285,12 +5263,26 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
+            "kind": "owner_decision",
+            "status": "pending",
             "action": "Define typed identities, schemas, scopes, precedence, provenance, defaults, constraints, Project-policy seeding, contextual resolution, validation/refusal, unknown-field behavior, and queries through one-question-at-a-time owner dispositions.",
             "depends_on": ["GP-C02"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
-            "completion_evidence": []
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the cited Q1 problem, candidates, evidence, recommendation, and exact bounded contract, reply exactly `GP-C03-Q1: approve Q1-A` or `GP-C03-Q1: revise — <missing, incorrect, or overreaching clause>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q1",
+                  "question": "Should every Datum preference concept have one stable non-localized PreferenceKey and one authoritative subsystem-owned descriptor, with providers and scopes contributing typed values or constraints without redefining the setting?",
+                  "recommended_response": "Approve Q1-A: one stable key and one authoritative descriptor. It preserves one semantic authority, comparable typed contributions, explicit provenance, safe migration, and simple presentation while leaving scope, precedence, policy transport, persistence, dependencies, and UX undecided.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q1"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
