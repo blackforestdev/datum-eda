@@ -151,6 +151,51 @@ Release, its bytes, approvals, or standing. Authenticity is a separate fact. Q6 
   </div>
 </div>
 
+<div style="height:14px"></div>
+<div class="cap"><b>Q6-A-amended — verdict-first with permanent manifest categories.</b> The Q2/Q3 pattern
+applied to evidence: verdicts lead; six permanent category rows (Sources, Producer, Invocation,
+Environment, Outputs, Attempts) state their completeness and counts even when everything is clean —
+absence of gaps is a claim, never silence. Missing, unavailable, mismatched, or failed evidence stays
+expanded and cannot collapse. Selecting any row opens the complete immutable manifest — the Q6-B
+rendering — <b>beside</b> the summary, never replacing it. The summary never inlines every digest,
+environment variable, or argument. ByteIdentical and authenticity remain separate facts.
+<span class="cand">CANDIDATE — NOT APPROVED</span></div>
+<div class="grid2">
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:470px">
+      <div class="insp-title"><span class="ref">RLS-0007 evidence</span><span class="chip">Q6-A-AMENDED · STATE 1 — CLEAN</span></div>
+      <div class="kv"><span class="k">Reproduction</span><span class="v"><span class="idchip issued">✓ ByteIdentical · 12/12 outputs</span></span></div>
+      <div class="kv"><span class="k">Authenticity</span><span class="v mono">signature valid · signer authorized ✓ (separate fact)</span></div>
+      <div class="sect-hd">Manifest categories — permanent, counted, even when clean</div>
+      <div class="kv"><span class="k">Sources</span><span class="v mono">✓ complete · 4 subjects · digests recorded</span></div>
+      <div class="kv"><span class="k">Producer</span><span class="v mono">✓ recorded · datum-eda 1.4.2 · build 9917</span></div>
+      <div class="kv"><span class="k">Invocation</span><span class="v mono">✓ recorded · policy P-FAB-1</span></div>
+      <div class="kv"><span class="k">Environment</span><span class="v mono">✓ captured · digest e77a… · fonts pinned</span></div>
+      <div class="kv"><span class="k">Outputs</span><span class="v mono">✓ 12 files verified · per-file sha256</span></div>
+      <div class="kv"><span class="k">Attempts</span><span class="v mono">✓ 2 · latest independent ci-2 · 2026-08-26</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">every category states completeness even when nothing is wrong — a clean bill is evidence, not silence; any row opens the full immutable manifest beside this summary</span></div>
+    </div>
+    <div class="cell-cap"><b>State 1 — clean release.</b> verdicts lead; six categories permanently accounted</div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:470px">
+      <div class="insp-title"><span class="ref">RLS-0007 evidence</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">Q6-A-AMENDED · STATE 2 — DEFICIENT · MANIFEST BESIDE</span></div>
+      <div class="kv"><span class="k">Reproduction</span><span class="v"><span class="idchip errc">⛝ OutputMismatch — gerber-04 differs @ byte 1182</span></span></div>
+      <div class="sect-hd">Deficient categories — expanded, collapse refused</div>
+      <div class="kv"><span class="k">Producer</span><span class="v"><span class="idchip warnc">⚠ generator v2.1 not retained — Unavailable</span></span></div>
+      <div class="kv"><span class="k">Outputs</span><span class="v"><span class="idchip warnc">⚠ 11 of 12 verified · 1 mismatch — expanded</span></span></div>
+      <div class="kv"><span class="k">Sources · Invocation · Environment</span><span class="v mono">✓ complete — may fold by user gesture</span></div>
+      <div class="sect-hd">Manifest — opened beside · immutable</div>
+      <div class="kv"><span class="k">Sources</span><span class="v mono">board:main C · sha256 41f0… · +3 subjects</span></div>
+      <div class="kv"><span class="k">Invocation</span><span class="v mono">artifact generate --sheetset fab · P-FAB-1</span></div>
+      <div class="kv"><span class="k">gerber-04</span><span class="v mono" style="color:var(--err)">expected 9c1d… · reproduced b02a… · first delta byte 1182</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">the summary stayed put on the left of the split; the manifest opened beside it and the failed row carries its exact byte-level witness — a later failed reproduction never alters the Release, its bytes, approvals, or standing</span></div>
+    </div>
+    <div class="cell-cap"><b>State 2 — deficient release.</b> gaps cannot collapse; full manifest beside, summary never leaves</div>
+  </div>
+</div>
+<div class="cell-cap" style="margin-bottom:14px"><b>Q6-A-amended.</b> <span class="cand">CANDIDATE — NOT APPROVED</span> · derivation: Q2 permanent-sections + Q3 open-beside drill + Q1 informative-empties applied to reproduction evidence; the Q6-B manifest survives as the canonical drill view</div>
+
 <!-- ================================================================ UX-V11 -->
 <div class="sec-label" id="ux-v11"><span class="n">UX-V11</span><span>Offline posture and the Git adapter</span><span class="rule"></span></div>
 <div class="cap"><b>Approved facts:</b> AdapterAbsent is a capability state, never an error; a Release is
