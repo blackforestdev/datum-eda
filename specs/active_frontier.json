@@ -5180,12 +5180,13 @@
         "harness": "codex-cli",
         "session": "gp-c01-inventory-20260825",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "1dd2d0361c092e65e8f69cfeaee57c483be48778",
+        "head": "417d16c5148ce64d3f4d332b550925e4a3473b1f",
         "claimed_at": "2026-08-26T01:43:14Z",
-        "heartbeat_at": "2026-08-26T01:43:14Z",
-        "expires_at": "2026-08-26T09:43:14Z",
+        "heartbeat_at": "2026-08-26T02:09:38Z",
+        "expires_at": "2026-08-26T10:09:38Z",
         "scope": [
           "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+          "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
           "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
           "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
           "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
@@ -5193,6 +5194,7 @@
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
           "specs/evidence_traceability_manifest.json",
+          "specs/spec_governance_manifest.json",
           ".beads/issues.jsonl"
         ]
       },
