@@ -378,7 +378,10 @@ Unknown/scope rows, while row drill opens the canonical witness tree beside the
 summary without replacing it. `REV-C06-Q4` is owner-approved as `Q4-revised`:
 lightweight and regulated profiles retain one complete, stable Change hierarchy;
 profiles change obligation and detail without changing identity, meaning,
-position, or discoverability. Q5–Q6 remain pending and must be presented exactly
+position, or discoverability. `REV-C06-Q5` is owner-approved as
+`Q5-B-amended`, explicitly not original Q5-B: the cohesive Release pane uses an
+in-place arm-then-confirm commit bar, keeps the exact atomic consequence visible,
+and never overlays or replaces the pane with a modal. Q6 remains pending and must be presented exactly
 one at a time with exact source and prototype ranges, consequences,
 recommendation, and response syntax. No implementation is authorized.
 

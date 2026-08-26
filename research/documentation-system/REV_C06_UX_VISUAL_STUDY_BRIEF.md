@@ -447,6 +447,26 @@ detail, never record identity, field meaning, position, or discoverability.
 Choose the exact final confirmation and immutable success treatment for the
 atomic, hard-to-reverse Release operation.
 
+**Owner disposition — approved 2026-08-25.** The reviewed authority is UX-V9
+in section 5, the `ReleaseCandidate` / `Release` boundary, lifecycle, release
+capability, typed operation, and invariants in
+`PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`, and the two-state
+`Q5-B-amended` proof in
+`docs/gui/prototypes/revision-ux-release-study.html`, commit `323e2fb`.
+
+Datum adopts `Q5-B-amended`, explicitly not original Q5-B. Final issuance stays
+inside the already-approved cohesive Release pane and uses a pinned two-step
+commit bar. The first press arms but does not issue; it exposes the exact typed
+create, issue, and reuse consequences. Only the second deliberate confirmation
+invokes the atomic `ReleaseConfiguration` operation. The bar is unavailable
+until readiness is clean, `Esc`, explicit Disarm, or any interaction outside the
+bar disarms it, and the underlying pane remains visible, scrollable, and
+inspectable while armed. No modal or competing release authority is introduced.
+Successful issuance creates the separate immutable `Release` and issued records;
+it never mutates the candidate into release authority.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q5-APPROVED -->
+
 ### REV-C06-Q6 — Reproduction/evidence depth
 
 Choose what remains visible in the release summary versus Inspector/detail,
