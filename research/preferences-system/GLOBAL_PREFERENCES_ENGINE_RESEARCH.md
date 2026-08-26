@@ -52,6 +52,48 @@ Both requirements carry the owner's ratification-day direction that Datum
 should help rather than harm and should actively break poor documentation-
 control habits without obstructing Design authoring.
 
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:DOMAIN-PEER-ADDENDUM -->
+### Domain-peer architecture addendum
+
+Before GP-C03 Q3, a bounded GP-C02B addendum must survey SOLIDWORKS,
+SOLIDWORKS PDM administration, Altium Designer/managed Workspace, Autodesk
+Revit organization standards/templates, and one EDA peer. The addendum focuses
+on organization-managed distribution, standards/profile selection as
+configuration, portability, offline behavior, and the consequences for Q3, Q4,
+and GP-C05. Peer conventions remain evidence rather than Datum doctrine.
+
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:VISUAL-ANCHOR-LAW -->
+### GP-C03 visual-anchor law
+
+`docs/gui/prototypes/preferences-ux-study.html` drives GP-C03 decisions Q3
+through Q10. Every packet must cite and reconcile its reviewed anchor:
+
+- Q3 — `PX-V5` / `#px-v5`;
+- Q4 — `PX-V6` / `#px-v6`;
+- Q5 — `PX-V7` / `#px-v7`;
+- Q6 — `PX-V8` / `#px-v8`;
+- Q7 — `PX-V9` / `#px-v9`;
+- Q8 — `PX-V10` / `#px-v10`;
+- Q9 — `PX-V11` / `#px-v11`;
+- Q10 — `PX-V12` / `#px-v12`.
+
+If a packet proposes materially different presentation or interaction from its
+anchor, Claude must render that candidate in the prototype before the owner
+boundary opens. Prose may not outrun the visual source of truth.
+
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:V1-DESCRIPTOR-CATALOG -->
+### V1 Preference Descriptor Catalog
+
+The specification phase must deliver
+`specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md`: a complete initial catalog
+of every subsystem's v1 descriptor, legacy source, classification, scope
+eligibility, default, constraints, management and Project-seed eligibility,
+apply behavior, accessibility metadata, portability, migration/retirement, and
+implementation disposition. It must also classify apparent settings that are
+actually Project authority, restartable state, transient state, or operation
+input. This is governed specification evidence, never implementation-time
+improvisation.
+
 ## Non-negotiable boundaries
 
 - Global Preferences may seed a new Project; copied Project policy then belongs
@@ -105,6 +147,14 @@ recovery, import/export, synchronization, accessibility, and regulated design
 configuration. Distinguish transferable mechanisms from product-specific
 conventions and licensed-text-gated requirements.
 
+<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C02B -->
+### GP-C02B — Domain-peer preference architecture addendum
+
+Complete the owner-directed professional-domain comparison and extract bounded
+requirements for organization control, standards-profile configuration,
+portability, Q3/Q4 authority, and GP-C05 interaction. The addendum must precede
+the Q3 owner boundary and may not adopt an external server as Datum authority.
+
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C03 -->
 ### GP-C03 — Typed authority and resolution contract
 
@@ -131,6 +181,14 @@ Visibility and First-Release Onboarding across unmanaged, managed, teaching,
 keyboard-only, narrow, and assistive-technology states. Where visual judgment
 is material, issue a Claude-owned brief and reconcile the resulting
 `docs/gui/prototypes/*.html` source of truth before disposition.
+
+<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05A -->
+### GP-C05A — V1 Preference Descriptor Catalog
+
+After the authority, persistence, and interaction decisions are stable, publish
+the complete v1 catalog named above. GP-C06 ratification is blocked until every
+planned subsystem is covered and every entry is either selected for v1,
+explicitly deferred, or classified as not a preference.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->

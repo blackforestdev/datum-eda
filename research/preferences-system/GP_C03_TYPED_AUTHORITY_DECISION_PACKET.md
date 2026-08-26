@@ -109,14 +109,14 @@ The following names are provisional until their defining question is approved:
 |---|---|---|
 | `GP-C03-Q1` | Stable identity and descriptor ownership | GP-C01, GP-C02 |
 | `GP-C03-Q2` | Scope identities and setting classes | Q1 |
-| `GP-C03-Q3` | Recommendation, constraint, and lock model | Q1, Q2 |
-| `GP-C03-Q4` | Effective-value precedence and conflict disposition | Q1-Q3 |
-| `GP-C03-Q5` | New-Project policy seeding and receipt | Q1-Q4 |
-| `GP-C03-Q6` | Session/context contributions versus operation input and restartable state | Q1-Q4 |
-| `GP-C03-Q7` | Validation, refusal, protected scopes, and unavailable providers | Q1-Q4 |
-| `GP-C03-Q8` | Unknown, retired, aliased, and unavailable setting identities | Q1-Q4 |
-| `GP-C03-Q9` | Resolver query and provenance contract | Q1-Q8 |
-| `GP-C03-Q10` | Revision carry-forward preference/state identities | Q1-Q9 |
+| `GP-C03-Q3` | Recommendation, constraint, and lock model | Q1, Q2, GP-C02B, `PX-V5` |
+| `GP-C03-Q4` | Effective-value precedence and conflict disposition | Q1-Q3, GP-C02B, `PX-V6` |
+| `GP-C03-Q5` | New-Project policy seeding and receipt | Q1-Q4, `PX-V7` |
+| `GP-C03-Q6` | Session/context contributions versus operation input and restartable state | Q1-Q4, `PX-V8` |
+| `GP-C03-Q7` | Validation, refusal, protected scopes, and unavailable providers | Q1-Q4, `PX-V9` |
+| `GP-C03-Q8` | Unknown, retired, aliased, and unavailable setting identities | Q1-Q4, `PX-V10` |
+| `GP-C03-Q9` | Resolver query and provenance contract | Q1-Q8, `PX-V11` |
+| `GP-C03-Q10` | Revision carry-forward preference/state identities | Q1-Q9, `PX-V12` |
 
 This order is not approval of the question count or candidate answers. A
 question may be split when owner review reveals more than one independent
@@ -434,3 +434,181 @@ GP-C03-Q2: revise — <missing, incorrect, or overreaching clause>
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q2-PACKET -->
+
+### 6.9 Owner disposition
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q2-APPROVED -->
+
+**Approved 2026-08-25 — Q2-A.** The owner approved the exact §6.7 contract.
+Datum therefore uses one resolver over typed source families and setting
+classes while keeping Project mutation, restartable/transient state, and
+explicit operation input outside the writable Global Preferences lattice.
+Precedence, constraints, locks, providers, persistence, and UX remain open.
+
+## 7. Visual evidence law for Q3-Q10
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-PX-ANCHOR-LAW -->
+
+The owner directed that `docs/gui/prototypes/preferences-ux-study.html` drives
+every remaining GP-C03 decision. Q3 through Q10 must cite respectively PX-V5
+through PX-V12 as reviewed visual evidence. A packet candidate that materially
+differs from its assigned anchor cannot reach an owner boundary until Claude
+renders it in that study. This rule applies in addition to internal, external,
+standards, and domain-peer evidence; a visual cannot create engine authority
+that the written contract does not support.
+
+## 8. GP-C03-Q3 — recommendations, constraints, pins, and locks
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q3 -->
+
+### 8.1 The problem
+
+Q2 established `Organization` as a typed source family but deliberately did not
+decide what an organization may do. Datum must distinguish a helpful default
+from a bounded allowed range, an exact managed value, and a prohibition on
+ordinary mutation. Treating all four as “organization wins” would hide both
+authority and the user's remaining freedom.
+
+This question defines the runtime control vocabulary. Apply-once Project
+seeding remains Q5, precedence between multiple contributions remains Q4, and
+unavailable-provider/expiry behavior remains Q7 and GP-C04.
+
+### 8.2 Written evidence
+
+GP-C02 establishes that value precedence and constraint authority are separate
+axes and that a managed lock is not merely a high-precedence value
+(`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:127-150`). It also requires the
+effective query to name the managing source, reason, losing/refused values, and
+remaining edit/reset authority
+(`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:152-168`).
+
+The owner-directed domain-peer addendum adds official professional-tool
+evidence:
+
+- SOLIDWORKS separates apply from lock, first-start from every-start, and
+  exposes administrator identity and offline-lock policy;
+- Altium separates `Apply First Time`, `Apply and Lock`, and `Do Not Apply`;
+- Revit separates first-run copies from selected later organization updates;
+- no peer evidence justifies reducing these intents to one priority value.
+
+The resulting bounded requirements are recorded at
+`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:265-344,346-398`.
+
+### 8.3 Reviewed visual evidence — PX-V5
+
+**Authority:**
+`docs/gui/prototypes/preferences-ux-study.html#px-v5` (PX-V5, rendered and
+visually reviewed at 1680×6000 on 2026-08-25; source lines 273-286).
+
+PX-V5 draws four escalating rows over one consistent anatomy:
+
+1. `RECOMMENDED · ORG` — value offered, freely overridable;
+2. `CONSTRAINED · ORG` — editable within a visible allowed range;
+3. `PINNED ON · ORG` — exact managed value, policy/reason/setter visible;
+4. `LOCKED · ORG` — ordinary mutation refused, policy and appeal path visible.
+
+The anchor's law is that visibility never decreases as control increases. Each
+row retains the effective value, source, reason, and user's remaining freedom.
+No alternative visual treatment is presented because the owner requires Claude
+to render materially different candidates before a boundary opens.
+
+### 8.4 Candidate Q3-A/PX-V5 — typed orthogonal control directives
+
+Adopt PX-V5 as the presentation of one typed engine model:
+
+- `Recommend(value)` supplies an eligible ordinary value contribution while
+  leaving permitted user values editable and capable of winning under Q4.
+- `Constrain(predicate)` narrows the descriptor's legal value domain without,
+  by itself, selecting an effective value. It cannot widen descriptor law.
+- `Pin(value)` supplies an exact managed value. While applicable, the pin
+  governs the effective result; an existing user value remains stored and
+  inspectable so Q4 can define what resumes after the pin lifts.
+- `Lock(scopes)` refuses ordinary mutation from the named writable scopes while
+  active. A lock may accompany a managed value or constraint, but it is not
+  itself an untyped magic value.
+
+These directives may coexist only where the descriptor explicitly permits the
+combination. Each directive carries provider and policy/package identity,
+generation, accountable author/role, reason, effective interval, and any
+descriptor/profile-approved deviation or appeal path.
+
+`NoControl` is represented by absence of an organization directive, not a
+synthetic winner. `SeedOnce` is not an ongoing control mode; it is an explicit
+copy operation decided by Q5.
+
+### 8.5 Why this model fits Datum
+
+Q3-A/PX-V5 preserves the useful peer behaviors without importing their
+authority weaknesses:
+
+- an individual designer sees a normal editable preference when no directive
+  applies;
+- teaching environments can pin Revision visibility on without changing
+  Revision engine truth;
+- an organization can bound resource settings without choosing one value;
+- security-sensitive capabilities can refuse ordinary mutation;
+- management remains locally resolved and inspectable even if a future package
+  arrived through a subordinate external adapter;
+- the GUI renders resolver facts rather than inferring control from disabled
+  widgets.
+
+### 8.6 Exact contract approved if Q3-A/PX-V5 is accepted
+
+Approval establishes only these clauses:
+
+1. Organization control is expressed through typed `Recommend`, `Constrain`,
+   `Pin`, and `Lock` directives; it is not one undifferentiated high-priority
+   value.
+2. `Recommend(value)` is an overridable ordinary contribution.
+3. `Constrain(predicate)` narrows the descriptor's legal domain and may exist
+   without supplying a value. It cannot widen descriptor validation law.
+4. `Pin(value)` supplies an exact managed value that governs the effective
+   result while applicable. Non-winning user contributions remain retained and
+   queryable.
+5. `Lock(scopes)` refuses new mutation from its named writable scopes while
+   active. It may accompany a managed value or constraint but remains a
+   separate typed fact.
+6. A descriptor declares which organization directives and combinations are
+   eligible. Ineligible or internally contradictory directives are refused or
+   reported as typed conflicts, never guessed into effect.
+7. Every directive carries provider, policy/package identity, generation,
+   accountable author/role, reason, effective interval, and any explicit
+   deviation/appeal metadata.
+8. A deviation or override exists only when the descriptor/profile authorizes
+   one; it is bounded, attributable, and auditable. Datum has no universal
+   password or administrator bypass.
+9. `NoControl` is absence of a directive. Apply-once/seed behavior belongs to
+   Q5 rather than the runtime control ladder.
+10. The Preferences surface must render the PX-V5 anatomy: word plus glyph,
+    effective value, source, reason, and remaining user freedom. Disabled or
+    colored styling alone is insufficient.
+11. Q3 does not decide precedence among ordinary contributions or competing
+    organization packages (Q4), Project seeding (Q5), session/context law (Q6),
+    unavailable-provider retention (Q7/GP-C04), storage, transport,
+    dependencies, or final detailed interaction beyond PX-V5.
+
+### 8.7 Recommendation
+
+Approve **Q3-A/PX-V5**. It is supported by GP-C02, strengthened by the bounded
+domain-peer survey, and already rendered in the owner-directed visual source of
+truth. It gives management enough power for professional and teaching contexts
+without disguising control or creating a rival authority engine.
+
+### 8.8 Owner response
+
+Reply exactly:
+
+```text
+GP-C03-Q3: approve Q3-A/PX-V5
+```
+
+or:
+
+```text
+GP-C03-Q3: revise — <required engine or visual correction>
+```
+
+A visual revision requires Claude to render the changed candidate in PX-V5
+before a revised owner boundary can open.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q3-PACKET -->
