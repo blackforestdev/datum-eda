@@ -6,6 +6,16 @@
 > decision and governed Product Revision Engine specification; it does not
 > authorize Rust implementation, a third-party dependency, or Publish Space work.
 
+## 0. Review history
+
+- **2026-08-25 — owner revision after findings-first adversarial review.** Section
+  5 clause 1 was too narrow because it attached the never-blocks invariant only
+  to the factory lightweight profile. The owner required the invariant to cover
+  every profile that has not explicitly adopted earlier control and required an
+  explicit statement that ignoring the Revision Engine is a supported,
+  first-class workflow. All other consolidated claims were verified faithful
+  against the disposition ledger and drawn evidence.
+
 ## 1. The one decision
 
 Datum proposes to ratify a Datum-owned Product Revision Engine that provides
@@ -200,8 +210,9 @@ This invariant is proposed for explicit ratification because it was owner-
 directed after the six-question brief and rendered in
 `revision-ux-shell-study.html:236-271` (commit `e3112f7`):
 
-1. Under the factory lightweight profile, the Revision Engine never blocks,
-   prompts, or delays ordinary Design authoring.
+1. Under any profile that has not explicitly adopted earlier control, the
+   Revision Engine never blocks, prompts, or delays Design authoring; the only
+   gates are those in clause 2.
 2. Gates occur when the user asks Datum to certify/issue a Release, or when the
    Project has explicitly adopted a regulated profile that requires earlier
    control.
@@ -214,6 +225,9 @@ directed after the six-question brief and rendered in
 5. Permanent visible/expanded Revision groups remain the factory default approved
    by Q1. The hide control is an optional later preference, not a contradiction
    or retroactive change to Q1.
+
+Ignoring the revision engine entirely is a supported, first-class workflow, not
+a degraded one.
 
 ## 6. Standards and licensing boundary
 
