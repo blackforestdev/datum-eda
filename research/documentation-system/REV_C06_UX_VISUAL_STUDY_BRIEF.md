@@ -472,6 +472,24 @@ it never mutates the candidate into release authority.
 Choose what remains visible in the release summary versus Inspector/detail,
 while keeping byte identity and missing evidence unmistakable.
 
+**Owner disposition — approved 2026-08-25.** The reviewed authority is UX-V10
+in section 5, the reproducible release evidence and separate-authenticity
+contract in `REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md`, and the
+two-state `Q6-A-amended` proof in
+`docs/gui/prototypes/revision-ux-evidence-study.html`, commit `ecf9f78`.
+
+Datum adopts `Q6-A-amended`, explicitly not original Q6-A. Reproduction verdicts
+lead, followed by permanent counted completeness rows for Sources, Producer,
+Invocation, Environment, Outputs, and Attempts. Clean rows may fold only by user
+gesture; missing, unavailable, mismatched, or failed evidence remains expanded
+and refuses collapse. Selecting any category opens Q6-B's complete immutable
+manifest beside the persistent summary, never replacing it. The summary does not
+inline every digest, environment variable, filename, or argument. `ByteIdentical`
+and authenticity remain separate typed facts, and a later failed reproduction
+never mutates the Release, issued bytes, approvals, or standing.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C06-Q6-APPROVED -->
+
 If the study reveals a real architecture contradiction, stop and return it to
 Codex. Do not repair authority through an attractive visual.
 

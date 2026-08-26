@@ -381,9 +381,13 @@ profiles change obligation and detail without changing identity, meaning,
 position, or discoverability. `REV-C06-Q5` is owner-approved as
 `Q5-B-amended`, explicitly not original Q5-B: the cohesive Release pane uses an
 in-place arm-then-confirm commit bar, keeps the exact atomic consequence visible,
-and never overlays or replaces the pane with a modal. Q6 remains pending and must be presented exactly
-one at a time with exact source and prototype ranges, consequences,
-recommendation, and response syntax. No implementation is authorized.
+and never overlays or replaces the pane with a modal. `REV-C06-Q6` is
+owner-approved as `Q6-A-amended`, explicitly not original Q6-A: verdicts lead
+over permanent counted manifest categories, deficient evidence refuses collapse,
+and the complete immutable manifest opens beside the persistent summary.
+`ByteIdentical` remains separate from authenticity. All six REV-C06 owner
+questions are dispositioned; visual annotation and the governance closeout still
+precede REV-C07. No implementation is authorized.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C07 -->
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07 -->
