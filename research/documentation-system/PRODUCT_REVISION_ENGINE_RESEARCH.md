@@ -422,6 +422,25 @@ standards-profile audit witnesses, evidence export/reproduction checks, and
 production acceptance on the Active Frontier. Research completion must not
 implicitly authorize implementation.
 
+The bounded execution plan is
+[`specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`](../../specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md).
+It places `REV-I00` through `REV-I12` under
+`dat-product-revision-engine-build-18f`: technical integrity first, then typed
+authority, Project policy, change, impact/baselines, atomic release, immutable
+reproduction, offline/Git integration, surface parity, the approved GUI,
+standards/migration proof, and production acceptance. Each slice is serial and
+evidence-gated.
+
+The implementation epic remains blocked by this specification task and
+`dat-global-preferences-engine-qcv`. Global Preferences must first define the
+policy-resolution seam that seeds new Projects without replacing copied
+Project policy. After both specifications land, `REV-I00` still requires the
+owner's explicit `REVISION-ENGINE-EXECUTION` disposition. Frontier placement
+therefore authorizes planning only: it adds no dependency, begins no code or GUI
+work, and does not authorize Publish Space implementation.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C08-IMPLEMENTATION-PLAN -->
+
 ## First owner decisions developed slowly (resolved by REV-C03)
 
 1. Does the first post-release change allocate the next document revision

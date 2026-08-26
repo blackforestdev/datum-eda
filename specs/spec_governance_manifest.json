@@ -105,6 +105,11 @@
    "progress_anchor": "PRODUCT-REVISION-SPEC",
    "notes": "Product Mechanics 034 normative planning contract for standalone Datum revision/configuration/change/release authority, optional non-authoritative Git integration, impact/reproducibility, and the approved UX. REV-C08 planning and later authorization gates implementation."
   },
+  "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-ENGINE",
+   "notes": "Bounded REV-I00 through REV-I12 implementation, migration, conformance, audit, reproduction, and production-acceptance plan. Planning only: execution remains blocked on the Global Preferences specification and explicit owner authorization."
+  },
   "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "PRODUCT-REVISION-SPEC",

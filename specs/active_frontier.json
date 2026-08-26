@@ -4871,14 +4871,34 @@
         "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "specified",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "rev-c08-planning-20260825",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "2b7fe34e8047e0b83351df87494edd44a9e5b231",
+        "claimed_at": "2026-08-26T01:18:53Z",
+        "heartbeat_at": "2026-08-26T01:18:53Z",
+        "expires_at": "2026-08-26T09:18:53Z",
+        "scope": [
+          "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/spec_governance_manifest.json",
+          "specs/evidence_traceability_manifest.json",
+          ".beads/issues.jsonl"
+        ]
+      },
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
       "unblocks": [
-        "dat-global-preferences-engine-qcv"
+        "dat-global-preferences-engine-qcv",
+        "dat-product-revision-engine-build-18f"
       ],
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
@@ -5140,7 +5160,8 @@
             "GLOBAL-PREFERENCES-SPEC is the ordered architecture follow-on and must specify the policy-resolution authority before integrated system-preference UX is implemented."
           ],
           "unblocks_issue_ids": [
-            "dat-global-preferences-engine-qcv"
+            "dat-global-preferences-engine-qcv",
+            "dat-product-revision-engine-build-18f"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -5166,8 +5187,198 @@
         "dat-product-revision-engine-k9f"
       ],
       "unblocks": [
-        "revision-policy system selection and governed global Preferences implementation"
+        "revision-policy system selection and governed global Preferences implementation",
+        "dat-product-revision-engine-build-18f"
       ]
+    },
+    {
+      "key": "PRODUCT-REVISION-ENGINE",
+      "order": 34,
+      "title": "Build and production-accept the Datum Product Revision Engine",
+      "issue_id": "dat-product-revision-engine-build-18f",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+        "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
+      ],
+      "state": "blocked",
+      "authorization": "owner_decision",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, adapter, parity, GUI, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
+      "dependencies": [
+        "dat-product-revision-engine-k9f",
+        "dat-global-preferences-engine-qcv"
+      ],
+      "unblocks": [
+        "dat-publish-space-foundation-z5s"
+      ],
+      "completion": {
+        "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
+        "canonical_next_step_id": "REV-I00",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "REV-I00",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the completed Global Preferences policy seam, current implementation baseline, module ownership, dependency posture, real-project fixtures, and proof plan before authorizing the first Product Revision Engine execution slice.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I00"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed REV-I00 baseline packet, reply exactly `REVISION-ENGINE-EXECUTION: approve` or `REVISION-ENGINE-EXECUTION: revise — <specific scope, dependency, migration, ownership, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "REVISION-ENGINE-EXECUTION",
+                  "question": "Does the execution baseline preserve Product Mechanics 034, the Global Preferences policy boundary, source-health ownership, no-new-dependency posture, real-project evidence, and all required migration/proof gates closely enough to authorize REV-I01 only?",
+                  "recommended_response": "Approve only when the baseline proves REV-I01 can harden technical integrity without implementing a rival authority, adding a dependency, or starting Publish/GUI feature work.",
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I00"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "REV-I01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Harden transaction-tip identity, journal/integrity records, atomic authority writes, crash recovery, backup/restore, and per-Project write safety without conflating technical and engineering revision.",
+            "depends_on": ["REV-I00"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I01"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement versioned typed revision-authority identities, records, events, canonical persistence, integrity, and exact local resolution.",
+            "depends_on": ["REV-I01"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I02"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement Project revision policy, scheme registry, scoped roles, approval attestations, effectivity, and the specified Global Preferences seeding seam.",
+            "depends_on": ["REV-I02"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I03"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the append-only EngineeringChange lifecycle, identity-free successor collection, revision reservation, verification, and explicit mapping of proposals, reviews, waivers, and deviations.",
+            "depends_on": ["REV-I03"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I04"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement frozen dependency snapshots, witness-backed impact, explicit library uptake, evidence freshness, stable-ID comparison, regeneration planning, and immutable baselines.",
+            "depends_on": ["REV-I04"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I05"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I06",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement stale-aware ReleaseCandidates and atomic multi-CI Release, EngineeringRevision, ControlledDocument, DocumentIssue, ReleasePackage, Transmittal, and typed standing authority.",
+            "depends_on": ["REV-I05"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I06"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I07",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement immutable regeneration evidence and exact ReproductionManifest/ReproductionAttempt authority with byte-identical success and honest failure states.",
+            "depends_on": ["REV-I06"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I07"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I08",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement standalone audit exchange, external-change quarantine and semantic re-entry, algorithm-qualified mapping receipts, and the optional failure-isolated Git adapter.",
+            "depends_on": ["REV-I07"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I08"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I09",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Expose complete typed operations, queries, refusals, proposals, and evidence through engine, native-write, daemon, CLI, and MCP parity with no private writer.",
+            "depends_on": ["REV-I08"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I09"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I10",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement and visually verify the six owner-approved Revision Navigator, Change, Impact, Release, and reproduction GUI dispositions over engine truth.",
+            "depends_on": ["REV-I09"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I11",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement licensed-source-gated standards audit and retention witnesses and close every REV-GAP migration with machine-readable evidence and safe fallback.",
+            "depends_on": ["REV-I10"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I11"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "REV-I12",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Run bounded production acceptance across real-project offline release/reproduction/audit, negative evidence, migrations, performance/resources, accessibility, independent audit, and explicit owner review.",
+            "depends_on": ["REV-I11"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I12"}],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The Product Revision Engine foundation is production-accepted under Product Mechanics 034.",
+            "Publish Space implementation may be considered only through an explicit later Frontier selection.",
+            "No certification claim, dependency, or distributed multi-writer implementation is implied."
+          ],
+          "unblocks_issue_ids": ["dat-publish-space-foundation-z5s"],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }
