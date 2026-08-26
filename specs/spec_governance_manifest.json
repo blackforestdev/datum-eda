@@ -130,6 +130,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "GP-C01 factual internal baseline inventory. It distinguishes the sole Console-owned persisted UI choice, process/environment inputs, session state, Project authority, operation inputs, and missing managed Revision visibility and first-Release onboarding without selecting future architecture."
   },
+  "research/preferences-system/GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "GP-C02 primary-authority synthesis for typed preference identity, scope, precedence, provenance, managed constraints, persistence, recovery, schema evolution, exchange, synchronization, accessibility, and regulated configuration. It supplies bounded requirement candidates for GP-C03 without selecting architecture, dependencies, providers, or conformance claims."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."
