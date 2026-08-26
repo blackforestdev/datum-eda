@@ -135,6 +135,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "GP-C02 primary-authority synthesis for typed preference identity, scope, precedence, provenance, managed constraints, persistence, recovery, schema evolution, exchange, synchronization, accessibility, and regulated configuration. It supplies bounded requirement candidates for GP-C03 without selecting architecture, dependencies, providers, or conformance claims."
   },
+  "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Evidence-backed GP-C03 one-question-at-a-time architecture packet. It sequences typed identity, scope, constraints, precedence, Project seeding, contextual resolution, validation/refusal, unknown identity, provenance queries, and Revision carry-forward decisions without authorizing Preferences implementation."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."
