@@ -5185,12 +5185,12 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "gp-c02-external-research-20260825",
+        "session": "gp-c03-architecture-20260825",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "00bbe29c0ad51d4850d2c8f8737469ccf5b46090",
+        "head": "fdba0a48a205cba376bc3e58a0f3174c3fd3357b",
         "claimed_at": "2026-08-26T02:24:36Z",
-        "heartbeat_at": "2026-08-26T02:24:36Z",
-        "expires_at": "2026-08-26T10:24:36Z",
+        "heartbeat_at": "2026-08-26T02:35:17Z",
+        "expires_at": "2026-08-26T10:35:17Z",
         "scope": [
           "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
           "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
@@ -5207,7 +5207,7 @@
       },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C02",
+        "canonical_next_step_id": "GP-C03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5267,16 +5267,26 @@
           {
             "id": "GP-C02",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Research primary and authoritative sources for typed preference scope and precedence, managed policy, local persistence, schema evolution, migration, recovery, exchange, synchronization, accessibility, and regulated configuration.",
             "depends_on": ["GP-C01A"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "fdba0a4"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C02-EXTERNAL-RESEARCH"
+              }
+            ]
           },
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Define typed identities, schemas, scopes, precedence, provenance, defaults, constraints, Project-policy seeding, contextual resolution, validation/refusal, unknown-field behavior, and queries through one-question-at-a-time owner dispositions.",
             "depends_on": ["GP-C02"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
