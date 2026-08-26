@@ -89,6 +89,13 @@ Present the committed inventory as a findings-first packet. The owner approves
 or revises only the factual baseline before external research or architecture
 decisions proceed.
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C01A-APPROVED -->
+**Owner review — approved 2026-08-25.** The owner approved the committed
+`GP-C01-BASELINE` in `GP_C01_INTERNAL_AUTHORITY_AUDIT.md` without revision.
+This approval establishes the factual starting point for GP-C02; it does not
+select a future authority model, adopt an external convention, authorize a
+dependency, or authorize implementation.
+
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C02 -->
 ### GP-C02 — External and standards research
 

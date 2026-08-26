@@ -5171,8 +5171,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5182,9 +5182,32 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "gp-c02-external-research-20260825",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "00bbe29c0ad51d4850d2c8f8737469ccf5b46090",
+        "claimed_at": "2026-08-26T02:24:36Z",
+        "heartbeat_at": "2026-08-26T02:24:36Z",
+        "expires_at": "2026-08-26T10:24:36Z",
+        "scope": [
+          "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+          "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
+          "research/preferences-system/GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md",
+          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+          "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+          "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/evidence_traceability_manifest.json",
+          "specs/spec_governance_manifest.json",
+          ".beads/issues.jsonl"
+        ]
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C01A",
+        "canonical_next_step_id": "GP-C02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5220,11 +5243,17 @@
           {
             "id": "GP-C01A",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Present the committed internal proof packet and obtain owner approval or revision of the factual baseline before external research and architecture decisions.",
             "depends_on": ["GP-C01"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C01A-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the committed proof packet, reply exactly `GP-C01-BASELINE: approve` or `GP-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
               "requests": [{
@@ -5238,7 +5267,7 @@
           {
             "id": "GP-C02",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Research primary and authoritative sources for typed preference scope and precedence, managed policy, local persistence, schema evolution, migration, recovery, exchange, synchronization, accessibility, and regulated configuration.",
             "depends_on": ["GP-C01A"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02"}],
