@@ -120,6 +120,11 @@
    "progress_anchor": "PRODUCT-REVISION-SPEC",
    "notes": "Owner-ratified REV-C07 evidence packet promoted into Product Mechanics 034 and the governed Product Revision Engine specification. It remains provenance, not implementation or dependency authorization."
   },
+  "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Governed GP-C01 through GP-C07 research, owner-decision, specification, visual, and implementation-planning path. No Preferences implementation, synchronization service, dependency, or standards claim is authorized."
+  },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
    "reason": "M7 review-spike frontend spec; superseded by GUI decisions 014/015 and the North Star. Not an active implementation target (its own header still self-declares Active; the governed truth is historical)."

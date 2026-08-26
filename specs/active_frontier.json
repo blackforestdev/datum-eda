@@ -4871,29 +4871,10 @@
         "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "rev-c08-planning-20260825",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "2b7fe34e8047e0b83351df87494edd44a9e5b231",
-        "claimed_at": "2026-08-26T01:18:53Z",
-        "heartbeat_at": "2026-08-26T01:18:53Z",
-        "expires_at": "2026-08-26T09:18:53Z",
-        "scope": [
-          "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
-          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/spec_governance_manifest.json",
-          "specs/evidence_traceability_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
       "unblocks": [
@@ -4902,7 +4883,7 @@
       ],
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C08",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5139,7 +5120,7 @@
           {
             "id": "REV-C08",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Place bounded implementation slices, migration, conformance gates, standards-profile audit witnesses, evidence reproduction, and production acceptance on the Frontier without authorizing implementation implicitly.",
             "depends_on": [
               "REV-C07"
@@ -5150,7 +5131,17 @@
                 "marker": "REV-C08"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "07a20a1"
+              },
+              {
+                "kind": "document",
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-SPEC:REV-C08-IMPLEMENTATION-PLAN"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -5167,7 +5158,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "07a20a1"
     },
     {
       "key": "GLOBAL-PREFERENCES-SPEC",
@@ -5175,21 +5167,139 @@
       "title": "Specify the Datum Global Preferences Engine",
       "issue_id": "dat-global-preferences-engine-qcv",
       "governing_docs": [
+        "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
       "state": "planned",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
         "dat-product-revision-engine-k9f"
       ],
       "unblocks": [
-        "revision-policy system selection and governed global Preferences implementation",
         "dat-product-revision-engine-build-18f"
-      ]
+      ],
+      "completion": {
+        "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
+        "canonical_next_step_id": "GP-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "GP-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory every current setting, preference, environment/configuration input, Project policy, session option, GUI control, persistence path, default, precedence rule, migration, recovery behavior, contradiction, and missing authority with exact internal evidence.",
+            "depends_on": [],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "GP-C01A",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Present the committed internal proof packet and obtain owner approval or revision of the factual baseline before external research and architecture decisions.",
+            "depends_on": ["GP-C01"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed proof packet, reply exactly `GP-C01-BASELINE: approve` or `GP-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
+              "requests": [{
+                "id": "GP-C01A",
+                "question": "Does the cited proof packet accurately and completely establish Datum's current preference/configuration authorities, contradictions, and missing capabilities as the factual baseline for GP-C02?",
+                "recommended_response": "Approve only after each material finding has exact code/spec/prototype evidence and implemented facts are separated from assumptions and recommendations.",
+                "source_ref": {"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}
+              }]
+            }
+          },
+          {
+            "id": "GP-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Research primary and authoritative sources for typed preference scope and precedence, managed policy, local persistence, schema evolution, migration, recovery, exchange, synchronization, accessibility, and regulated configuration.",
+            "depends_on": ["GP-C01A"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "GP-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define typed identities, schemas, scopes, precedence, provenance, defaults, constraints, Project-policy seeding, contextual resolution, validation/refusal, unknown-field behavior, and queries through one-question-at-a-time owner dispositions.",
+            "depends_on": ["GP-C02"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "GP-C04",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Specify canonical local persistence, atomic recovery, schema/value migration, downgrade and unavailable-provider behavior, import/export, synchronization conflicts, audit, and the Project-policy seam.",
+            "depends_on": ["GP-C03"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C04"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "GP-C05",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, Revision carry-forwards, and any required Claude-owned visual source of truth.",
+            "depends_on": ["GP-C03", "GP-C04"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "GP-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Adversarially review and obtain owner ratification of the complete Preferences authority, integration, standards/source-strength, dependency, migration, accessibility, and visual contract.",
+            "depends_on": ["GP-C02", "GP-C03", "GP-C04", "GP-C05"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After the findings-first review, reply exactly `GP-C06-RATIFICATION: approve` or `GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
+              "requests": [{
+                "id": "GP-C06",
+                "question": "Does the consolidated packet faithfully define Datum's Global Preferences authority and its Project-policy boundary without authorizing implementation or weakening Product Mechanics 034?",
+                "recommended_response": "Approve only after every claim is traceable to the factual audit, external evidence, owner dispositions, and any required visual source of truth.",
+                "source_ref": {"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}
+              }]
+            }
+          },
+          {
+            "id": "GP-C07",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Place bounded implementation, migration, conformance, recovery, accessibility, real-project, and production-acceptance slices on the Frontier without implicit execution or dependency authorization.",
+            "depends_on": ["GP-C06"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C07"}],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "A bounded Global Preferences implementation program may be selected only from the owner-ratified specification.",
+            "The Product Revision Engine REV-I00 policy-resolution baseline may be prepared only after this specification lands."
+          ],
+          "unblocks_issue_ids": ["dat-product-revision-engine-build-18f"],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "PRODUCT-REVISION-ENGINE",
