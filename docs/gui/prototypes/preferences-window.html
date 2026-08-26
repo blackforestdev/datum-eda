@@ -24,11 +24,16 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .win{width:1100px;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
 .tbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--s01);border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12.5px}
 .tbar .dot{width:10px;height:10px;border-radius:50%;background:var(--bd-str)}
-.body{display:flex;min-height:560px}
-.nav{width:200px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0}
-.nav div{padding:7px 18px;font-size:12.5px;color:var(--tx2);cursor:default}
+.body{display:flex;height:600px}
+.nav{width:200px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0}
+.nav div{padding:8px 18px;font-size:12.5px;color:var(--tx2);cursor:pointer}
+.nav div:hover{background:var(--s02)}
 .nav .on{background:var(--s02);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
-.main{flex:1;padding:0 0 18px}
+.main{flex:1;overflow-y:scroll;padding-bottom:18px}
+.main::-webkit-scrollbar{width:11px}
+.main::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:6px;border:2px solid var(--bg)}
+.main::-webkit-scrollbar-track{background:var(--s01)}
+.main{scrollbar-width:thin;scrollbar-color:var(--bd-str) var(--s01)}
 .search{margin:14px 18px 4px;padding:7px 12px;background:var(--s01);border:1px solid var(--bd-sub);border-radius:5px;font-family:"PlexMono",monospace;font-size:12px;color:var(--tx3)}
 .ghead{font-family:"PlexMono",monospace;font-size:10.5px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;margin:18px 18px 4px}
 .row{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--bd-sub)}
@@ -43,56 +48,131 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .tog.off{background:var(--bd-str)}.tog.off:after{left:2px;right:auto}
 .stp{display:flex;border:1px solid var(--bd-str);border-radius:5px;overflow:hidden;font-size:12px}
 .stp div{padding:5px 12px;background:var(--s01)}.stp .on{background:var(--s03);color:var(--tx)}
-.prov{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);padding:0 18px 8px;margin-top:-4px}
+.prov{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);padding:4px 18px 8px;border-bottom:1px solid var(--bd-sub)}
 .prov b{color:var(--tx2);font-weight:500}
 .lock{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--warn)}
+.btn{border:1px solid var(--bd-str);border-radius:5px;padding:5px 14px;font-size:12px;background:var(--s02)}
 .sbar{display:flex;gap:8px;align-items:center;border-top:1px solid var(--bd-sub);background:var(--s01);padding:8px 18px;font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3)}
 .chip{border:1px dashed var(--warn);color:var(--warn);border-radius:4px;padding:1px 8px;font-family:"PlexMono",monospace;font-size:10px}
+section{display:none} section.on{display:block}
 </style></head><body>
-<div class="note">PROTOTYPE — the actual Preferences window, moldable. Everything here is a real setting from the audit or a ratified decision. Nothing below is final until you say it is. <span class="chip">CLAY — NOT RATIFIED</span></div>
+<div class="note">PROTOTYPE — the actual Preferences window, moldable. Left menu is clickable; the pane scrolls. <span class="chip">CLAY — NOT RATIFIED</span></div>
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav">
-      <div class="on">Appearance</div>
-      <div>Workspace</div>
-      <div>Terminal</div>
-      <div>Revision</div>
-      <div>Agents</div>
-      <div>Organization</div>
+    <div class="nav" id="nav">
+      <div data-s="appearance" class="on">Appearance</div>
+      <div data-s="workspace">Workspace</div>
+      <div data-s="terminal">Terminal</div>
+      <div data-s="revision">Revision</div>
+      <div data-s="agents">Agents</div>
+      <div data-s="organization">Organization</div>
     </div>
     <div class="main">
       <div class="search">⌕&nbsp; search settings…</div>
 
-      <div class="ghead">Schematic</div>
-      <div class="row"><div class="lbl"><b>Sheet background</b><span>on-screen only — plotted sheets follow the document template</span></div>
-        <div class="ctl"><div class="stp"><div class="on">Off-white paper</div><div>Dark</div></div></div></div>
-      <div class="prov">your choice · set Aug 24 · <b>reset to default (Dark)</b></div>
+      <section id="appearance" class="on">
+        <div class="ghead">Schematic</div>
+        <div class="row"><div class="lbl"><b>Sheet background</b><span>on-screen only — plotted sheets follow the document template</span></div>
+          <div class="ctl"><div class="stp"><div class="on">Off-white paper</div><div>Dark</div></div></div></div>
+        <div class="prov">your choice · set Aug 24 · <b>reset to default (Dark)</b></div>
+        <div class="ghead">Motion</div>
+        <div class="row"><div class="lbl"><b>Reduced motion</b><span>minimize animation and transitions</span></div>
+          <div class="ctl"><div class="tog off"></div></div></div>
+        <div class="prov">factory default · accessibility setting — organizations can never control this</div>
+        <div class="ghead">Application</div>
+        <div class="row"><div class="lbl"><b>Interface theme</b><span>Datum chrome</span></div>
+          <div class="ctl"><div class="sel">Datum Dark</div></div></div>
+        <div class="prov">factory default — you haven’t changed this</div>
+      </section>
 
-      <div class="ghead">Console</div>
-      <div class="row"><div class="lbl"><b>Feedback message duration</b><span>how long Console confirmations stay on screen</span></div>
-        <div class="ctl"><div class="stp"><div>4 s</div><div class="on">6 s</div><div>10 s</div><div>Never hide</div></div></div></div>
-      <div class="prov">factory default — you haven’t changed this</div>
+      <section id="workspace">
+        <div class="ghead">Viewport</div>
+        <div class="row"><div class="lbl"><b>Crosshair</b><span>cursor crosshair in board and schematic panes</span></div>
+          <div class="ctl"><div class="stp"><div class="on">Full viewport</div><div>Local</div><div>None</div></div></div></div>
+        <div class="prov">factory default — you haven’t changed this</div>
+        <div class="ghead">Panes</div>
+        <div class="row"><div class="lbl"><b>New-window layout</b><span>what opens when Datum starts</span></div>
+          <div class="ctl"><div class="sel">Board + Schematic</div></div></div>
+        <div class="prov">factory default · pane sizes and focus are remembered per session, not here</div>
+        <div class="ghead">Console</div>
+        <div class="row"><div class="lbl"><b>Feedback message duration</b><span>how long Console confirmations stay on screen</span></div>
+          <div class="ctl"><div class="stp"><div>4 s</div><div class="on">6 s</div><div>10 s</div><div>Never hide</div></div></div></div>
+        <div class="prov">factory default — you haven’t changed this</div>
+      </section>
 
-      <div class="ghead">Terminal</div>
-      <div class="row"><div class="lbl"><b>Font size</b><span>terminal text zoom</span></div>
-        <div class="ctl"><div class="sel">100%</div></div></div>
-      <div class="row"><div class="lbl"><b>Scrollback</b><span>lines kept per terminal</span></div>
-        <div class="ctl"><div class="sel">50,000 lines</div></div></div>
-      <div class="prov">set by <b>you</b> · allowed range 1,000–100,000 <span style="color:var(--tx3)">(org limit)</span></div>
+      <section id="terminal">
+        <div class="ghead">Text</div>
+        <div class="row"><div class="lbl"><b>Font size</b><span>terminal text zoom</span></div>
+          <div class="ctl"><div class="sel">100%</div></div></div>
+        <div class="prov">your choice · range 60%–200%</div>
+        <div class="ghead">Buffer</div>
+        <div class="row"><div class="lbl"><b>Scrollback</b><span>lines kept per terminal</span></div>
+          <div class="ctl"><div class="sel">50,000 lines</div></div></div>
+        <div class="prov">set by <b>you</b> · allowed range 1,000–100,000 <span>(org limit)</span></div>
+        <div class="ghead">Behavior</div>
+        <div class="row"><div class="lbl"><b>Notifications</b><span>when terminal activity notifies you</span></div>
+          <div class="ctl"><div class="stp"><div>Off</div><div class="on">When unfocused</div><div>Always</div></div></div></div>
+        <div class="prov">factory default — you haven’t changed this</div>
+        <div class="row"><div class="lbl"><b>Launch profile</b><span>shell and environment for new terminals</span></div>
+          <div class="ctl"><div class="sel">Default ($SHELL)</div></div></div>
+        <div class="prov">factory default · profiles: Default · Login · Custom…</div>
+      </section>
 
-      <div class="ghead">Revision</div>
-      <div class="row"><div class="lbl"><b>Show revision system</b><span>the Revision group in the Navigator and revision rows everywhere</span></div>
-        <div class="ctl"><span class="lock">🔒 kept ON by ACME · teaching policy — details</span><div class="tog"></div></div></div>
-      <div class="prov">pinned by <b>ACME Quality Systems</b> · “visibility teaches” · your setting (off) is kept and returns if the pin lifts</div>
+      <section id="revision">
+        <div class="ghead">Presentation</div>
+        <div class="row"><div class="lbl"><b>Show revision system</b><span>the Revision group in the Navigator and revision rows everywhere</span></div>
+          <div class="ctl"><span class="lock">🔒 kept ON by ACME · teaching policy — details</span><div class="tog"></div></div></div>
+        <div class="prov">pinned by <b>ACME Quality Systems</b> · “visibility teaches” · your setting (off) is kept and returns if the pin lifts</div>
+        <div class="ghead">This Project’s policy — shown here, owned by the Project</div>
+        <div class="row"><div class="lbl"><b>Revision scheme</b><span>sensor-node</span></div>
+          <div class="ctl"><span style="font-family:var(--mono);font-size:12px">Sequential Alphanumeric (A, B, C…)</span><span class="btn">edit in Project…</span></div></div>
+        <div class="prov">Project policy · copied at genesis from ACME profile v14 · <b>view seed receipt</b> · later org changes arrive as proposals, never silently</div>
+        <div class="row"><div class="lbl"><b>New-Project revision profile</b><span>what your next project starts with</span></div>
+          <div class="ctl"><div class="sel">ACME profile (ISO 19650)</div></div></div>
+        <div class="prov">org profile v14 · copies once at New Project, with a receipt — existing projects never follow later changes</div>
+      </section>
 
-      <div class="ghead">Agents</div>
-      <div class="row"><div class="lbl"><b>Unattended agent tools</b><span>what an AI agent may do without asking you</span></div>
-        <div class="ctl"><span class="lock">🔒 locked by ACME · security policy</span><div class="sel">None</div></div></div>
-      <div class="prov">locked by <b>ACME Quality Systems</b> · “agents never hold release authority” · appeal: qms-admin</div>
+      <section id="agents">
+        <div class="ghead">Authority</div>
+        <div class="row"><div class="lbl"><b>Default agent authority</b><span>what a newly launched agent may do</span></div>
+          <div class="ctl"><div class="stp"><div>Inspect</div><div class="on">Propose</div><div>Apply approved</div><div>Unattended</div></div></div></div>
+        <div class="prov">factory default · agents work through proposals you review</div>
+        <div class="row"><div class="lbl"><b>Unattended agent tools</b><span>what an AI agent may do without asking you</span></div>
+          <div class="ctl"><span class="lock">🔒 locked by ACME · security policy</span><div class="sel">None</div></div></div>
+        <div class="prov">locked by <b>ACME Quality Systems</b> · “agents never hold release authority” · appeal: qms-admin</div>
+      </section>
+
+      <section id="organization">
+        <div class="ghead">Authority released by you</div>
+        <div class="row"><div class="lbl"><b>ACME Quality Systems</b><span>what this org may manage on this machine</span></div>
+          <div class="ctl"><div class="sel">Backside management</div></div></div>
+        <div class="prov">granted by <b>you</b> · Aug 26 · levels: none → recommendations → bounded → <b>backside management</b> → full · revocable</div>
+        <div class="ghead">What ACME currently manages</div>
+        <div class="row"><div class="lbl"><b>Managed settings</b><span>under your current grant</span></div>
+          <div class="ctl"><span style="font-family:var(--mono);font-size:11.5px;color:var(--tx2)">2 pinned · 1 locked · 1 limit — list</span></div></div>
+        <div class="prov">document control · output policy · release ceremony · agent security</div>
+        <div class="ghead">Pending request</div>
+        <div class="row"><div class="lbl"><b>ACME requests: full management</b><span>inert until you release it — nothing changes unless you act</span></div>
+          <div class="ctl"><span class="btn">Review…</span><span class="btn" style="color:var(--tx3)">Ignore</span></div></div>
+        <div class="prov">requested Aug 25 · your call, no deadline · declining changes nothing</div>
+        <div class="ghead">Leaving</div>
+        <div class="row"><div class="lbl"><b>Revoke ACME’s authority</b><span>pins lift, your settings return; ACME may withdraw its resources</span></div>
+          <div class="ctl"><span class="btn" style="color:var(--warn);border-color:var(--warn)">Revoke…</span></div></div>
+        <div class="prov">typed, attributed event — both sides keep a record</div>
+      </section>
     </div>
   </div>
   <div class="sbar">This machine: authority released to ACME — <b style="color:var(--tx2)">backside management</b> · granted by you, Aug 26 · <span style="color:var(--info)">manage…</span></div>
 </div>
-<div class="note">Every gray line under a control is the answer to “why is it set to this?” — nothing on this screen hides who set what.</div>
+<div class="note">Every gray line under a control answers “why is it set to this?” — nothing on this screen hides who set what.</div>
+<script>
+const nav=document.getElementById('nav');
+function show(id){
+  document.querySelectorAll('#nav div').forEach(d=>d.classList.toggle('on',d.dataset.s===id));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));
+}
+nav.addEventListener('click',e=>{const d=e.target.closest('[data-s]');if(d){show(d.dataset.s);history.replaceState(null,'','#'+d.dataset.s);}});
+if(location.hash){const id=location.hash.slice(1);if(document.getElementById(id))show(id);}
+</script>
 </body></html>
