@@ -5174,8 +5174,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5185,28 +5185,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "gp-c02b-domain-peer-research-20260825",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "39a9236133a0b9fbe49ebd2dd26c8be3951478e6",
-        "claimed_at": "2026-08-26T03:55:44Z",
-        "heartbeat_at": "2026-08-26T03:55:44Z",
-        "expires_at": "2026-08-26T11:55:44Z",
-        "scope": [
-          "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
-          "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
-          "research/preferences-system/GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md",
-          "research/preferences-system/GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md",
-          "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/evidence_traceability_manifest.json",
-          "specs/spec_governance_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5294,6 +5272,10 @@
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02B"}],
             "completion_evidence": [
               {
+                "kind": "commit",
+                "revision": "de9b1f8"
+              },
+              {
                 "kind": "document",
                 "path": "research/preferences-system/GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C02B-DOMAIN-PEER-RESEARCH"
@@ -5302,12 +5284,26 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
+            "kind": "owner_decision",
+            "status": "pending",
             "action": "Define typed identities, schemas, scopes, precedence, provenance, defaults, constraints, Project-policy seeding, contextual resolution, validation/refusal, unknown-field behavior, and queries through one-question-at-a-time owner dispositions.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
-            "completion_evidence": []
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing Q3's written evidence, the GP-C02B domain-peer findings, PX-V5, and the exact bounded contract, reply exactly `GP-C03-Q3: approve Q3-A/PX-V5` or `GP-C03-Q3: revise — <required engine or visual correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q3",
+                  "question": "Should Datum adopt the PX-V5 typed organization-control model: overridable Recommendation, domain-narrowing Constraint, exact managed Pin, and scope-specific Lock, with visible attribution, reason, remaining freedom, and no universal bypass?",
+                  "recommended_response": "Approve Q3-A/PX-V5. GP-C02 and the SOLIDWORKS/Altium/Revit/KiCad addendum support distinct apply/recommend/constraint/lock intent, and PX-V5 already renders the required non-silent control anatomy. A visual revision must return to Claude before a revised boundary opens.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q3"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
