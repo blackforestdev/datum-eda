@@ -359,6 +359,8 @@ precedence, migration, or GUI exists
 
 ## 12. Factual baseline proposed for owner disposition
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C01-INTERNAL-AUDIT -->
+
 The GP-C01 baseline is:
 
 > Datum does not currently have a Global Preferences engine. It has one narrow,

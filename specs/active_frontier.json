@@ -5171,33 +5171,10 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "gp-c01-inventory-20260825",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "417d16c5148ce64d3f4d332b550925e4a3473b1f",
-        "claimed_at": "2026-08-26T01:43:14Z",
-        "heartbeat_at": "2026-08-26T02:09:38Z",
-        "expires_at": "2026-08-26T10:09:38Z",
-        "scope": [
-          "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
-          "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
-          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
-          "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
-          "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
-          "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/evidence_traceability_manifest.json",
-          "specs/spec_governance_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
         "dat-product-revision-engine-k9f"
@@ -5207,7 +5184,7 @@
       ],
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C01",
+        "canonical_next_step_id": "GP-C01A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5224,16 +5201,26 @@
           {
             "id": "GP-C01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Inventory every current setting, preference, environment/configuration input, Project policy, session option, GUI control, persistence path, default, precedence rule, migration, recovery behavior, contradiction, missing authority, managed revision-visibility mechanism, and first-release onboarding state with exact internal evidence.",
             "depends_on": [],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "1f06a34"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C01-INTERNAL-AUDIT"
+              }
+            ]
           },
           {
             "id": "GP-C01A",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Present the committed internal proof packet and obtain owner approval or revision of the factual baseline before external research and architecture decisions.",
             "depends_on": ["GP-C01"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}],
