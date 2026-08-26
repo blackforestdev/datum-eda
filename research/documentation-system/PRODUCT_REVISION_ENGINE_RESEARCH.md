@@ -414,6 +414,14 @@ commit `626da9f`, the owner approved `REV-C07-RATIFICATION`. Product Mechanics
 normative planning contract. This approval does not authorize implementation,
 dependencies, certification claims, or Publish Space development.
 
+Two ratification-day requirements are carried explicitly into
+`dat-global-preferences-engine-qcv`: organization-managed policy may pin the
+Revision system visible in teaching or governed environments even though hiding
+it remains a user right when unmanaged; and a user's first Release must be a
+specified onboarding moment rather than an accidental encounter. Both preserve
+the help-not-harm/design-first law while addressing poor documentation-control
+habits through honest presentation and guidance.
+
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C08 -->
 ### REV-C08 — Frontier placement and proof contract
 

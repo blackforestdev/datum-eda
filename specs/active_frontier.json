@@ -5171,10 +5171,28 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "gp-c01-inventory-20260825",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "1dd2d0361c092e65e8f69cfeaee57c483be48778",
+        "claimed_at": "2026-08-26T01:43:14Z",
+        "heartbeat_at": "2026-08-26T01:43:14Z",
+        "expires_at": "2026-08-26T09:43:14Z",
+        "scope": [
+          "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+          "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/evidence_traceability_manifest.json",
+          ".beads/issues.jsonl"
+        ]
+      },
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
         "dat-product-revision-engine-k9f"
@@ -5201,8 +5219,8 @@
           {
             "id": "GP-C01",
             "kind": "planning",
-            "status": "pending",
-            "action": "Inventory every current setting, preference, environment/configuration input, Project policy, session option, GUI control, persistence path, default, precedence rule, migration, recovery behavior, contradiction, and missing authority with exact internal evidence.",
+            "status": "in_progress",
+            "action": "Inventory every current setting, preference, environment/configuration input, Project policy, session option, GUI control, persistence path, default, precedence rule, migration, recovery behavior, contradiction, missing authority, managed revision-visibility mechanism, and first-release onboarding state with exact internal evidence.",
             "depends_on": [],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01"}],
             "completion_evidence": []
@@ -5256,7 +5274,7 @@
             "id": "GP-C05",
             "kind": "planning",
             "status": "pending",
-            "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, Revision carry-forwards, and any required Claude-owned visual source of truth.",
+            "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and any required Claude-owned visual source of truth.",
             "depends_on": ["GP-C03", "GP-C04"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
             "completion_evidence": []

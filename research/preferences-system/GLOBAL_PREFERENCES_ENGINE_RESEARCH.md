@@ -20,6 +20,38 @@ ISO revision/status projection, prototype-to-production namespace policy,
 successor-work control, and optional Revision-system visibility. These are
 inputs to preferences research, not permission to alter Product Mechanics 034.
 
+## Named owner carry-forward requirements
+
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:MANAGED-REVISION-VISIBILITY -->
+### Managed Revision Visibility
+
+`Hide revision system` is a user presentation right in unmanaged contexts, not
+an unconditional override of organization policy. Teaching, onboarding, and
+governed environments may apply typed managed policy that pins Revision-system
+visibility **on**. The UI must disclose the effective value, managing scope,
+and reason; it must not pretend the control is user-editable when policy owns
+it. Pinning visibility changes presentation only—it creates no new revision
+authority and cannot weaken the first-class workflow that ignores Revision
+authoring where earlier control was not explicitly adopted.
+
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:FIRST-RELEASE-ONBOARDING -->
+### First-Release Onboarding
+
+A user's first Release is a designed onboarding moment, not an accidental
+encounter with unexplained controls or a refusal. Preferences and presentation
+must specify discoverable, accessible, context-preserving first-release
+guidance that explains the two clocks, what will be issued, what remains
+editable, the consequences of confirmation, and where evidence can be reviewed.
+It must help without silently changing policy, bypassing the approved arm-then-
+confirm boundary, inventing revision identity, or turning routine later
+Releases into repeated tutorials. The exact trigger, completion memory, reset,
+managed replay/requirement, and accessible rendering remain GP-C03 through
+GP-C05 design questions.
+
+Both requirements carry the owner's ratification-day direction that Datum
+should help rather than harm and should actively break poor documentation-
+control habits without obstructing Design authoring.
+
 ## Non-negotiable boundaries
 
 - Global Preferences may seed a new Project; copied Project policy then belongs
@@ -45,7 +77,9 @@ Inventory every current setting, preference, environment/configuration input,
 Project policy, session-only option, GUI control, persistence path, default,
 precedence rule, migration, and recovery behavior. Separate implemented facts,
 contradictions, missing authority, and product-language assumptions with exact
-code/spec/prototype evidence.
+code/spec/prototype evidence. The inventory must explicitly prove the current
+presence or absence of managed visibility enforcement and first-release
+onboarding/completion state.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C01A -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C01A:GP-C01A -->
@@ -85,9 +119,11 @@ seam between preferences and governed Project policy.
 
 Define accessible discovery, search, editing, effective-value/provenance
 inspection, reset/override/refusal behavior, managed-state presentation, and
-the Revision carry-forward surfaces. Where visual judgment is material, issue a
-Claude-owned brief and reconcile the resulting `docs/gui/prototypes/*.html`
-source of truth before disposition.
+the Revision carry-forward surfaces. It must visually resolve Managed Revision
+Visibility and First-Release Onboarding across unmanaged, managed, teaching,
+keyboard-only, narrow, and assistive-technology states. Where visual judgment
+is material, issue a Claude-owned brief and reconcile the resulting
+`docs/gui/prototypes/*.html` source of truth before disposition.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->
