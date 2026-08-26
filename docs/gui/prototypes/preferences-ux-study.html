@@ -207,42 +207,58 @@ descriptor; everything else contributes. This card renders the ratified contract
 <div class="cell-cap" style="margin-bottom:14px"><b>PX-V4.</b> the descriptor is the setting; values are visitors</div>
 
 <!-- ================================================================ PX-V4B -->
-<div class="sec-label" id="px-v4b"><span class="n">PX-V4B</span><span>Source families and the writable lattice</span><span class="q">Q2</span><span class="rule"></span></div>
-<div class="cap"><b>This is the Q2-A contract, drawn.</b> One resolver may consider seven typed source
-families — but considering is not writing. Left: each family and its write law. Right: the three things
-that look like preferences and are excluded from the lattice entirely.</div>
-<div class="grid2">
+<div class="sec-label" id="px-v4b"><span class="n">PX-V4B</span><span>Q2 — how are preference sources organized?</span><span class="q">Q2</span><span class="rule"></span></div>
+<div class="cap"><b>You are deciding:</b> when many places can influence one setting — factory, machine, org,
+user, project, session — is that organized as <b>(A)</b> typed families where only some are writable,
+<b>(B)</b> one flat stack where everything is a writable layer, or <b>(C)</b> a separate preferences system
+per subsystem? Three candidates, same example setting.</div>
+<div class="grid3">
   <div>
-    <div class="card" style="padding:0;overflow:hidden;height:390px">
-      <div class="insp-title"><span class="ref">ResolutionSource families</span><span class="chip">Q2-A · SEVEN FAMILIES, ONE RESOLVER</span></div>
-      <div class="kv"><span class="k">DescriptorDefault</span><span class="v mono" style="color:var(--tx3)">read-only descriptor fact — never a stored scope</span></div>
-      <div class="kv"><span class="k">Installation</span><span class="v mono">writable — when the descriptor permits</span></div>
-      <div class="kv"><span class="k">Organization</span><span class="v mono">via its managed provider only — never ordinary user editing</span></div>
-      <div class="kv"><span class="k">User</span><span class="v mono">writable — when the descriptor permits</span></div>
-      <div class="kv"><span class="k">ProjectPolicy</span><span class="v mono" style="color:var(--warn)">read here · mutated ONLY through Project authority — never by this store or UI</span></div>
-      <div class="kv"><span class="k">Session</span><span class="v mono" style="color:var(--tx3)">reserved — ephemeral override where Q6 permits</span></div>
-      <div class="kv"><span class="k">Context</span><span class="v mono" style="color:var(--tx3)">reserved — read-only applicability, Q6 defines its law</span></div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">source family says who/where; it never silently implies precedence (that is Q4)</span></div>
+    <div class="card" style="padding:0;overflow:hidden;height:400px">
+      <div class="insp-title"><span class="ref">Q2-A</span><span class="chip">TYPED FAMILIES · STRICT WRITE LAW</span></div>
+      <div class="kv"><span class="k">Factory</span><span class="v mono" style="color:var(--tx3)">fact — read-only</span></div>
+      <div class="kv"><span class="k">Machine</span><span class="v mono">writable ✎</span></div>
+      <div class="kv"><span class="k">Org</span><span class="v mono">managed provider only</span></div>
+      <div class="kv"><span class="k">User</span><span class="v mono">writable ✎</span></div>
+      <div class="kv"><span class="k">Project</span><span class="v mono" style="color:var(--warn)">read-only here — edited in Project</span></div>
+      <div class="sect-hd">Never in the store at all</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px;color:var(--tx3)">pane layout · live state · one-shot command inputs</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">one resolver explains everything; only the right things are editable · recommended <span class="cand">CANDIDATE — NOT APPROVED</span></span></div>
     </div>
-    <div class="cell-cap"><b>PX-V4B families.</b> being explainable ≠ being writable</div>
+    <div class="cell-cap"><b>Q2-A.</b> explain everything, write only what each family may</div>
   </div>
   <div>
-    <div class="card" style="padding:0;overflow:hidden;height:390px">
-      <div class="insp-title"><span class="ref">Outside the lattice</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">Q2-A · NEVER PREFERENCES</span></div>
-      <div class="kv"><span class="k">Pane layout · focus · camera</span><span class="v mono" style="color:var(--tx3)">restartable workspace state — its own data class, own reset law</span></div>
-      <div class="kv"><span class="k">Hover · drag · live terminal bytes</span><span class="v mono" style="color:var(--tx3)">transient session state — never stored anywhere</span></div>
-      <div class="kv"><span class="k">Export destination · route endpoints</span><span class="v mono" style="color:var(--tx3)">explicit operation input — asked at use; remembering one requires a separate registered WorkflowDefault key</span></div>
-      <div class="sect-hd">And the four setting classes (rendered in PX-V3)</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">Presentation · WorkflowDefault · Capability (protected sources) · ProjectPolicySeed — every key declares exactly one; ineligible contributions are refused, never silently considered</span></div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)"><span class="cand">Q2-A · CANDIDATE — NOT APPROVED</span> · approving Q2-A ratifies this drawing’s law: one explainable resolver, strict write exclusions, no precedence decided</span></div>
+    <div class="card" style="padding:0;overflow:hidden;height:400px">
+      <div class="insp-title"><span class="ref">Q2-B</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">ONE FLAT STACK · ALL WRITABLE</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">6 · operation input <span class="meta" style="color:var(--warn)">✎ wins — closest</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">5 · session <span class="meta">✎</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">4 · project <span class="meta">✎</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">3 · user <span class="meta">✎</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">2 · org <span class="meta">✎</span></div>
+      <div class="trow" style="font-family:var(--mono);font-size:11px">1 · factory <span class="meta">✎</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--warn)">everything is a layer: a project file can set your terminal executable; a one-shot input becomes policy; Project facts editable from a settings page <span class="cand">CANDIDATE — NOT APPROVED</span></span></div>
     </div>
-    <div class="cell-cap"><b>PX-V4B exclusions.</b> the wall between preferences, Project truth, and one-shot input</div>
+    <div class="cell-cap"><b>Q2-B.</b> simple to draw — false to Datum's authority walls</div>
+  </div>
+  <div>
+    <div class="card" style="padding:0;overflow:hidden;height:400px">
+      <div class="insp-title"><span class="ref">Q2-C</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">PER-SUBSYSTEM SILOS</span></div>
+      <div class="sect-hd">GUI preferences</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">own scopes · own file · own rules</span></div>
+      <div class="sect-hd">Terminal preferences</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">different scopes · different rules</span></div>
+      <div class="sect-hd">Revision preferences</div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">third model · third answer to "who set this"</span></div>
+      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--warn)">no single place answers "what controls my setup"; org management integrates three times; this is today's fragmentation, kept <span class="cand">CANDIDATE — NOT APPROVED</span></span></div>
+    </div>
+    <div class="cell-cap"><b>Q2-C.</b> every subsystem convenient, the product incoherent</div>
   </div>
 </div>
+<div class="cell-cap" style="margin-bottom:14px"><b>Q2 decision.</b> A = one resolver + strict write law (drawn in detail in PX-V2/V3) · B = flat stack · C = silos · approving A decides only this organization — precedence (Q4), locks (Q3), session law (Q6) stay open</div>
 
 <!-- ================================================================ PX-V5 -->
 <div class="sec-label" id="px-v5"><span class="n">PX-V5</span><span>Recommendations, constraints, locks</span><span class="q">Q3</span><span class="rule"></span></div>
-<div class="cap">How organization control shows itself. Four escalating treatments over the same anatomy —
+<div class="cap"><b>You are deciding:</b> how much control an organization may exert over a user’s setting — and how each level must show itself on the row. How organization control shows itself. Four escalating treatments over the same anatomy —
 the candidate vocabulary for the Q3 packet. The law being tested: control is always visible, attributed,
 and reasoned; a constrained control is never a silent gray.</div>
 <div class="card" style="padding:0;overflow:hidden">
@@ -257,7 +273,7 @@ and reasoned; a constrained control is never a silent gray.</div>
 
 <!-- ================================================================ PX-V6 -->
 <div class="sec-label" id="px-v6"><span class="n">PX-V6</span><span>Precedence and conflict</span><span class="q">Q4</span><span class="rule"></span></div>
-<div class="cap">Who wins when several eligible sources contribute — and how a conflict announces itself.
+<div class="cap"><b>You are deciding:</b> when several sources hold values for one setting, which wins — and what happens to the losers. Who wins when several eligible sources contribute — and how a conflict announces itself.
 Order below is illustrative candidate material, not decided law.</div>
 <div class="grid2">
   <div>
@@ -285,7 +301,7 @@ Order below is illustrative candidate material, not decided law.</div>
 
 <!-- ================================================================ PX-V7 -->
 <div class="sec-label" id="px-v7"><span class="n">PX-V7</span><span>New-Project seeding and the receipt</span><span class="q">Q5</span><span class="rule"></span></div>
-<div class="cap">Genesis copies eligible ProjectPolicySeed values into Project authority — once, with a receipt.
+<div class="cap"><b>You are deciding:</b> how a new Project inherits defaults, and whether that inheritance is ever live. Genesis copies eligible ProjectPolicySeed values into Project authority — once, with a receipt.
 After the copy the Project owns its policy; later global changes never silently follow.</div>
 <div class="card" style="padding:0;overflow:hidden">
   <div class="insp-title"><span class="ref">Project sensor-node · genesis</span><span class="chip">Q5 · SEED RECEIPT</span></div>
@@ -299,7 +315,7 @@ After the copy the Project owns its policy; later global changes never silently 
 
 <!-- ================================================================ PX-V8 -->
 <div class="sec-label" id="px-v8"><span class="n">PX-V8</span><span>Session, context, and operation input</span><span class="q">Q6</span><span class="rule"></span></div>
-<div class="cap">Three things that look like preferences and are not stored as them: a session override dies
+<div class="cap"><b>You are deciding:</b> which ephemeral inputs may exist and their exact lifetimes. Three things that look like preferences and are not stored as them: a session override dies
 with the session and says so; context applies read-only; an operation input is asked at use.</div>
 <div class="card" style="padding:0;overflow:hidden">
   <div class="insp-title"><span class="ref">boundary cases</span><span class="chip">Q6 · WHAT DOES NOT PERSIST</span></div>
@@ -312,7 +328,7 @@ with the session and says so; context applies read-only; an operation input is a
 
 <!-- ================================================================ PX-V9 -->
 <div class="sec-label" id="px-v9"><span class="n">PX-V9</span><span>Refusal, protected scopes, unavailable providers</span><span class="q">Q7</span><span class="rule"></span></div>
-<div class="cap">Failure honesty: an invalid value is refused with the law that refused it; an ineligible source
+<div class="cap"><b>You are deciding:</b> what happens when a value is invalid, a source ineligible, or a provider unreachable. Failure honesty: an invalid value is refused with the law that refused it; an ineligible source
 is refused by class; a dead org provider degrades visibly, never silently.</div>
 <div class="card" style="padding:0;overflow:hidden">
   <div class="insp-title"><span class="ref">failure states</span><span class="chip">Q7 · REFUSALS AND DEGRADATION</span></div>
@@ -325,7 +341,7 @@ is refused by class; a dead org provider degrades visibly, never silently.</div>
 
 <!-- ================================================================ PX-V10 -->
 <div class="sec-label" id="px-v10"><span class="n">PX-V10</span><span>Unknown, retired, and aliased identities</span><span class="q">Q8</span><span class="rule"></span></div>
-<div class="cap">A stored key the registry no longer (or never) recognizes is preserved and shown — never
+<div class="cap"><b>You are deciding:</b> what happens to stored keys the registry no longer — or never — recognized. A stored key the registry no longer (or never) recognizes is preserved and shown — never
 guessed into effect, never silently deleted on the next write (the GP-GAP-04 fix).</div>
 <div class="card" style="padding:0;overflow:hidden">
   <div class="insp-title"><span class="ref">store hygiene</span><span class="chip">Q8 · FOREIGN AND RETIRED KEYS</span></div>
@@ -337,7 +353,7 @@ guessed into effect, never silently deleted on the next write (the GP-GAP-04 fix
 
 <!-- ================================================================ PX-V11 -->
 <div class="sec-label" id="px-v11"><span class="n">PX-V11</span><span>Explain this value — the provenance query</span><span class="q">Q9</span><span class="rule"></span></div>
-<div class="cap">Selecting any row opens its full explanation <b>beside</b> the list (open-beside law) — the same
+<div class="cap"><b>You are deciding:</b> what question the engine must answer about any effective value, and where that answer appears. Selecting any row opens its full explanation <b>beside</b> the list (open-beside law) — the same
 answer the CLI and MCP get from one resolver query. The pane never leaves; the answer is the engine’s, not the GUI’s.</div>
 <div class="card" style="padding:0;overflow:hidden">
   <div class="insp-title"><span class="ref">Explain · Show revision system</span><span class="chip">Q9 · OPENED BESIDE</span></div>
@@ -352,7 +368,7 @@ answer the CLI and MCP get from one resolver query. The pane never leaves; the a
 
 <!-- ================================================================ PX-V12 -->
 <div class="sec-label" id="px-v12"><span class="n">PX-V12</span><span>Revision carry-forwards</span><span class="q">Q10</span><span class="rule"></span></div>
-<div class="cap">The two owner-directed identities: managed Revision visibility in a teaching org, and
+<div class="cap"><b>You are deciding:</b> the identities, scopes, and reset laws of the two revision carry-forwards. The two owner-directed identities: managed Revision visibility in a teaching org, and
 first-Release onboarding as designed state — trigger, completion, reset, replay.</div>
 <div class="grid2">
   <div>
