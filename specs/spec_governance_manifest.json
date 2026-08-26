@@ -100,15 +100,20 @@
    "progress_anchor": "DOC-SYSTEM-SPEC",
    "notes": "DOC-C06 controlling Publish Space contract: owner-approved workspace/navigation, Publish object and mutation authority, Product Revision Engine seam, conformance obligations, and post-revision implementation sequence. Planning only; implementation is not authorized."
   },
+  "specs/PRODUCT_REVISION_ENGINE_SPEC.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-SPEC",
+   "notes": "Product Mechanics 034 normative planning contract for standalone Datum revision/configuration/change/release authority, optional non-authoritative Git integration, impact/reproducibility, and the approved UX. REV-C08 planning and later authorization gates implementation."
+  },
   "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "PRODUCT-REVISION-SPEC",
-   "notes": "Governed REV-C01..C08 research and specification plan for the Datum-owned Product Revision Engine. Mechanism remains unratified and implementation unauthorized until REV-C07/C08 complete."
+   "notes": "Governed REV-C01..C08 research and specification plan. REV-C07 is owner-ratified through Product Mechanics 034 and the Product Revision Engine specification; REV-C08 implementation/proof planning remains, with execution unauthorized."
   },
   "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md": {
    "class": "governed",
    "progress_anchor": "PRODUCT-REVISION-SPEC",
-   "notes": "Candidate REV-C07 consolidation for adversarial review and explicit owner disposition. It is not a ratified decision, normative implementation specification, dependency approval, or implementation authorization."
+   "notes": "Owner-ratified REV-C07 evidence packet promoted into Product Mechanics 034 and the governed Product Revision Engine specification. It remains provenance, not implementation or dependency authorization."
   },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
@@ -664,6 +669,12 @@
     "controlling": true,
     "progress_anchor": "CONSOLE-CONTRACT-RECOVERY",
     "notes": "Ratifies the output-only Datum Console, focused-pane Candidate-A overlay, bounded history with journal projection, consequence-based routing, accessibility boundary, and independence from the GUI write path; retires interactive Console input and adds no dependency."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md": {
+    "class": "doctrine",
+    "controlling": true,
+    "progress_anchor": "PRODUCT-REVISION-SPEC",
+    "notes": "Ratifies the standalone Datum Product Revision Engine, two-clock identity model, CI/baseline/change/release/document authority, optional subordinate Git adapter, exact impact/reproducibility rules, approved visual contract, and design-first non-blocking invariant; adds no dependency or implementation authorization."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",

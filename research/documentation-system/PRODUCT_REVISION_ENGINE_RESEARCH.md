@@ -1,9 +1,9 @@
 # Datum Product Revision Engine Research
 
-> **Status:** In progress — internal baseline approved and clause-addressable
-> standards matrix drafted
-> (`dat-product-revision-engine-k9f`). No object model, lifecycle, revision
-> scheme, standards-conformance claim, or implementation is yet ratified.
+> **Status:** REV-C01 through REV-C07 complete; mechanism ratified by Product
+> Mechanics 034 and `specs/PRODUCT_REVISION_ENGINE_SPEC.md`. REV-C08 planning is
+> next under `dat-product-revision-engine-k9f`. No implementation, dependency,
+> certification claim, or Publish Space development is authorized.
 
 ## Why this research exists
 
@@ -105,7 +105,7 @@ not automatically become an issued document revision or revision-table row.
 Configuration identification, change authority, approval, effectivity, and
 release must mediate that transition.
 
-## Preliminary vocabulary to test, not yet ratified
+## Preliminary vocabulary tested during REV-C03 (historical)
 
 - **Technical revision:** immutable identity of a committed object/model/file
   state used for concurrency, provenance, replay, diff, and staleness.
@@ -250,8 +250,10 @@ one path from technical change through approved release without making every
 edit an issued revision.
 
 The evidence-constrained working model is maintained in
-`PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`. Its candidate mechanisms and
-explicit owner questions remain unratified until the later owner-decision gate.
+`PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`. Its mechanisms and owner
+dispositions are now ratified through Product Mechanics 034; the working model
+remains detailed research provenance rather than higher authority than the
+decision and governed specification.
 The owner's REV-C03-Q2 sequencing objection exposed revision identity as a
 prerequisite to Q2 and Q3. The evidence and visual-review contract for that
 prerequisite are maintained in
@@ -274,7 +276,7 @@ authoritative and renders them in separately labeled title-block cells. Reset
 policy is resolved by ID-Q6: one continuing namespace is the factory behavior,
 while an enterprise/profile policy may perform an explicit prototype-to-
 production namespace transition with immutable supersession lineage. Allocation
-choreography outside these identity dispositions remains unratified.
+choreography was subsequently resolved by REV-C03-Q1 through Q6.
 Original REV-C03-Q2 now ratifies automatic lightweight successor collection:
 the first post-release divergence opens a quiet Draft `EngineeringChange`
 without reserving revision identity; explicit revision preparation later enters
@@ -317,7 +319,7 @@ general Preferences storage, precedence, migration, or GUI exists.
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C04 -->
 ### REV-C04 — Git and distributed/offline integration
 
-The candidate contract is
+The approved supporting contract is
 [`REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md`](REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md).
 It specifies complete local authority, durable recovery semantics,
 algorithm-qualified Git mapping receipts, transport-neutral air-gapped
@@ -336,7 +338,7 @@ being smuggled into the revision engine.
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C05 -->
 ### REV-C05 — Impact, staleness, and reproducibility
 
-The candidate contract is
+The approved supporting contract is
 [`REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md`](REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md).
 It specifies dependency traversal across Design, library, rules, checks,
 Publish, manufacturing, and artifacts; durable affected/unaffected/unknown
@@ -397,15 +399,20 @@ Resolve owner questions, reconcile affected research and decisions, and ratify
 mechanism only in numbered decision/spec governance with licensing and
 standards claims explicit.
 
-The consolidated candidate is
+The consolidated packet is
 [`REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md`](REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md).
-It is a review packet rather than a ratified decision. It carries every prior
-owner disposition, the design-first never-blocks invariant, the future
+It carries every prior owner disposition, the design-first never-blocks
+invariant, the future
 `Hide revision system` Global Preferences directive, standards/source-strength
 limits, dependency posture, migrations, and explicit exclusions into one
-findings-first adversarial review boundary. No numbered decision or normative
-implementation specification may be created until the owner approves or revises
-that packet.
+findings-first adversarial review boundary.
+
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C07-APPROVED -->
+**Owner review — approved 2026-08-25.** After the owner-directed correction in
+commit `626da9f`, the owner approved `REV-C07-RATIFICATION`. Product Mechanics
+034 and `specs/PRODUCT_REVISION_ENGINE_SPEC.md` are the ratified doctrine and
+normative planning contract. This approval does not authorize implementation,
+dependencies, certification claims, or Publish Space development.
 
 <!-- REQ:PRODUCT-REVISION-SPEC:REV-C08 -->
 ### REV-C08 — Frontier placement and proof contract
@@ -415,7 +422,7 @@ standards-profile audit witnesses, evidence export/reproduction checks, and
 production acceptance on the Active Frontier. Research completion must not
 implicitly authorize implementation.
 
-## First owner decisions to develop slowly
+## First owner decisions developed slowly (resolved by REV-C03)
 
 1. Does the first post-release change allocate the next document revision
    immediately, or retain the last released revision plus a conspicuous pending

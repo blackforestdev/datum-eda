@@ -9,7 +9,7 @@
         "research/README_AUDIT_2026-08-18.md"
       ],
       "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
-      "reviewed_digest": "0edce9043c73821cd921264eeebef09350023710ff1d78ba6e65f1f565f42885",
+      "reviewed_digest": "d5ea5829843c7f03646a1699f674d485dcb570d4beb54e9fc1722d5899411a22",
       "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q1 through Q6, REV-C04 standalone/offline and optional-Git integration, REV-C05 impact/reproducibility, and all REV-C06 Q1-Q6 amended/revised approvals. Q1 makes Navigator revision structure permanently visible; Q2 keeps one cohesive Release pane with persistent summaries; Q3 keeps summary and canonical witness tree simultaneously visible; Q4 keeps one complete Change hierarchy while profiles scale obligation and detail; Q5 keeps final atomic issuance in that pane through an exact-consequence arm-then-confirm bar; Q6 keeps verdicts and permanent counted manifest categories visible while opening immutable detail beside the summary. V9-A separates mutable Publish Sets from controlled issued records; V10-C establishes typed standing facts. Git and air-gap exchanges remain mapped, verified, quarantined adapter inputs. The split V1-V12 studies, distributed-collaboration re-entry, and unimplemented Global Preferences follow-ons remain linked; source-strength gates are preserved and no implementation is authorized."
     },
     {
@@ -125,14 +125,16 @@
         "research/workspace-architecture/WORKSPACE_ARCHITECTURE_RESEARCH.md"
       ],
       "consumers": [
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "specs/PUBLISH_SPACE_SPEC.md",
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "03126dd88f49e67c1bde16745bd574a98c4340bec8a0afabc91b53a127f27e5e",
-      "review_note": "The REV-C03 authority model, identity packet, split V1-V10 identity/authority studies, all six identity dispositions, Q2 successor choreography, REV-C04 offline/Git integration, REV-C05 impact/reproducibility contract, completed REV-C06 brief, the split UX-V1-V12 visual study, its non-authoritative cross-file decision index, and the candidate REV-C07 consolidation were cross-reviewed against every Publish/workspace consumer. REV-C06 Q1 adopts Q1-A-amended: permanent expanded Revision groups expose authority from Project creation. Q2 adopts Q2-A-amended: one cohesive Release pane retains all nine typed summaries and refuses collapse for unresolved facts. Q3 adopts Q3-A-amended: summary-first assessment opens the canonical witness tree beside the summary; Unknown/scope rows remain permanent. Q4 adopts Q4-revised: lightweight and regulated profiles expose the same complete Change hierarchy and stable order; policy changes obligation/detail, with optional empty states or required blockers, never identity, meaning, position, or discoverability. Q5 adopts Q5-B-amended, not original B: the cohesive pane uses an in-place arm-then-confirm bar, shows exact atomic create/issue/reuse consequences before the second deliberate press, and remains visible and inspectable without a modal. Q6 adopts Q6-A-amended, not original A: verdicts lead over permanent counted manifest categories, deficient evidence refuses collapse, and Q6-B's immutable manifest opens beside the persistent summary; byte identity and authenticity remain separate. The REV-C07 packet additionally preserves non-blocking Design authoring under every profile that has not explicitly adopted earlier control, makes ignoring the revision engine a supported first-class workflow, and defers presentation-only hiding to Global Preferences without weakening engine truth or Project policy. Baseline comparison retains exactly five typed results with administrative rename under Modified; the Publish G4 seam distinguishes successor impact from derived-evidence staleness while preserving historical evidence. V8-A/Q4 preserve per-CI revision ownership and coordinated affected-revision issuance; V9-A separates editable Publish Sets from controlled issued records; V10-C makes standing typed/profile-governed. REV-C04 keeps Git optional/non-authoritative. REV-C05 requires witness-backed impact, explicit pinned-library uptake, identity-aligned comparison, immutable regeneration, and byte-identical reproduction. Full multi-writer collaboration remains reserved to dat-distributed-collaboration-architecture-lt1. V2-P, Project-owned policy, ConfigurationRef, licensed-text/source-strength gates, dependency-029, and planning-only status remain preserved."
+      "reviewed_digest": "7042e23de4fd8e5ae498231dc44e72ce77f188ef5965af6f7a155cc08821b477",
+      "review_note": "The complete REV-C01 through REV-C07 evidence corpus was cross-reviewed into Product Mechanics 034 and the governed Product Revision Engine specification without widening the owner-ratified mechanism. The two-clock identity system, per-CI EngineeringRevision namespaces, immutable baseline composition, atomic affected-revision issuance, V9-A ControlledDocument chain, V10-C typed standing, standalone local authority, optional subordinate Git adapter, witness-backed impact, explicit library uptake, identity-aligned comparison, immutable regeneration, and byte-identical reproduction remain exact. REV-C06 Q1-Q6 retain their amended visual dispositions: permanent expanded Navigator structure, cohesive Release summaries with unresolved-collapse refusal, summary plus beside-opened witness tree, one profile-scaled Change hierarchy, in-pane arm-then-confirm issuance, and verdict-first counted evidence with beside-opened manifest. The corrected REV-C07 law applies non-blocking Design authoring to every profile that has not explicitly adopted earlier control and makes ignoring the revision engine a supported first-class workflow; presentation-only hiding remains deferred to Global Preferences without weakening truth or Project policy. Publish keeps composition and staleness presentation while consuming the one ConfigurationRef and Revision Engine facts. Licensed-text/source-strength, dependency-029, no-certification, no-multi-writer-merge, no-Publish-implementation, and planning-only REV-C08 boundaries remain preserved."
     },
     {
       "id": "parametric-footprint-editor",
@@ -200,7 +202,7 @@
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "303218bcfcc8af5dcc4062cc05c2df981cad4e4ea9146deb1c8296af13054665",
+      "reviewed_digest": "3fd8aca1a6e711865b5901c3dcdffe9db7ea2a98641c5aebd414a40a510aa8fd",
       "review_note": "Editor-shell and pane prototypes constrain the completed DOC-C04 Publish study alongside the shell, conformance, document/view, and pane-tiling authorities; the study extends rather than redesigns them."
     },
     {
@@ -246,7 +248,7 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "989e178712bb168e3b36236cc00b437e605726516eb35bf2718e5930d3e3e690",
+      "reviewed_digest": "9f5daf47cbc3b06433794d4062faabc9d06d1a785ecd68a898d61aef215b5670",
       "review_note": "The owner-approved DOC-C04 Publish Space visual contract is registered as one cross-linked three-file study: publish-space-study.html owns frames A-B and the complete OR-1..OR-8 index, publish-composition-study.html owns frames C-E, and publish-lifecycle-study.html owns frames F-H. The split preserves every frame anchor and ratified visual while restoring source-health; all cross-file index links resolve to the file owning their target. The contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted."
     },
     {

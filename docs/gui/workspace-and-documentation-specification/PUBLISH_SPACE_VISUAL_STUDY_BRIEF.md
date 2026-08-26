@@ -58,8 +58,10 @@ Review these sources together; later runtime drift never overrides them:
     dimensions alone may drive geometry.
 12. Existing title-block direction and token/color/typography laws remain
     controlling.
-13. Released configurations are immutable, but detailed allocation/approval/
-    release controls belong to the later Product Revision Engine study.
+13. Released configurations are immutable. Detailed allocation, approval, and
+    release controls are now governed by Product Mechanics 034 and
+    `specs/PRODUCT_REVISION_ENGINE_SPEC.md`; this Publish visual study does not
+    own or redraw them.
 
 ## Required visual frames
 

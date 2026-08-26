@@ -1,9 +1,8 @@
 # REV-C07 Product Revision Engine ratification packet
 
-> Status: **candidate for owner ratification; not yet a decision or implementation
-> authorization**. This packet consolidates the completed REV-C01 through REV-C06
-> work for adversarial review. Approval authorizes a numbered Product Mechanics
-> decision and governed Product Revision Engine specification; it does not
+> Status: **owner-ratified evidence; mechanism promoted to Product Mechanics 034
+> and `specs/PRODUCT_REVISION_ENGINE_SPEC.md`**. This packet preserves the
+> completed REV-C01 through REV-C07 review boundary. Ratification does not
 > authorize Rust implementation, a third-party dependency, or Publish Space work.
 
 ## 0. Review history
@@ -15,6 +14,10 @@
   explicit statement that ignoring the Revision Engine is a supported,
   first-class workflow. All other consolidated claims were verified faithful
   against the disposition ledger and drawn evidence.
+- **2026-08-25 — owner ratification.** The owner approved the corrected packet as
+  `REV-C07-RATIFICATION`. Product Mechanics 034 and the governed Product Revision
+  Engine specification carry the ratified mechanism. REV-C08 owns planning-only
+  implementation, migration, proof, and production-acceptance placement.
 
 ## 1. The one decision
 
@@ -279,9 +282,9 @@ gates. This packet does not select their Rust module layout or authorize work.
 - Implementation decomposition, migrations, proof fixtures, standards-profile
   witnesses, and production acceptance are REV-C08—not this owner decision.
 
-## 9. What approval will create
+## 9. What approval created
 
-After owner approval, Codex may create only the following governance artifacts:
+Owner approval authorized only the following governance artifacts:
 
 1. `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, recording
    the ratified mechanism and its non-authorization/dependency limits.
@@ -291,8 +294,8 @@ After owner approval, Codex may create only the following governance artifacts:
 4. REV-C08 implementation and proof planning on the Active Frontier, still
    planning-only until separately authorized.
 
-If the owner revises any mechanism, REV-C07 remains open and the affected source,
-visual, and packet claims must be corrected before decision/spec creation.
+The owner-required correction is recorded in section 0 and carried by both
+ratified artifacts. No additional mechanism was introduced during promotion.
 
 ## 10. Adversarial review checklist
 
@@ -314,18 +317,13 @@ Before owner signature, verify that this packet:
 
 <!-- OWNER:PRODUCT-REVISION-SPEC:REV-C07:REV-C07-RATIFICATION -->
 
-After Claude's findings-first adversarial review, respond with exactly one:
+The owner responded after the findings-first adversarial review and correction:
 
 ```text
 REV-C07-RATIFICATION: approve
 ```
 
-or
-
-```text
-REV-C07-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>
-```
-
+<!-- EVIDENCE:PRODUCT-REVISION-SPEC:REV-C07-OWNER-APPROVED -->
 Approval means the packet faithfully consolidates the mechanism and authorizes
 the governance artifacts in section 9. It does **not** authorize implementation,
 new dependencies, certification claims, or Publish Space development.

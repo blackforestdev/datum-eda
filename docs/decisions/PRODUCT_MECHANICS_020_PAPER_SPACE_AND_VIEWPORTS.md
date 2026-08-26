@@ -21,6 +21,8 @@ and deterministic persistence. The Product Revision Engine supplies the single
 working or immutable-baseline `ConfigurationRef` and exclusively owns baselines,
 revision allocation, approvals, releases, effectivity, and audit. Sheet-local
 Draft/Released state and lone-`model_revision` release semantics are rejected.
+Product Mechanics 034 and `specs/PRODUCT_REVISION_ENGINE_SPEC.md` now govern
+that Revision Engine boundary.
 
 The complete controlling contract is
 `specs/PUBLISH_SPACE_SPEC.md`. The original rationale below is retained as
@@ -389,7 +391,7 @@ resolver, and Sheets, Viewports, title blocks, and panes do not own rival
 draft/released state. Literal examples such as `REV A`, `WORKING`, release dates,
 and baseline identifiers are illustrative only. Revision allocation, working
 revision inheritance, naming syntax, approvals, effectivity, supersession, and
-release semantics remain reserved for the Product Revision Engine specification.
+release semantics are governed by `specs/PRODUCT_REVISION_ENGINE_SPEC.md`.
 This disposition approves presentation and authority placement only; it does
 not authorize implementation.
 
@@ -434,7 +436,8 @@ wording disposition does not authorize implementation.
 DOC-C05 is complete. The owner has approved or carried forward OR-1 through
 OR-8 plus the Design- and Publish-pane title rules. These dispositions are
 planning authority for DOC-C06 reconciliation only; they do not authorize
-implementation or settle Product Revision Engine lifecycle mechanics.
+implementation. Product Mechanics 034 later settled the Product Revision Engine
+lifecycle mechanics.
 
 <!-- REQ:DOC-SYSTEM-SPEC:DOC-C06 -->
 DOC-C06 reconciles the approved architecture into a dedicated governed spec,

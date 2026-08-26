@@ -4865,12 +4865,14 @@
       "title": "Specify the Datum Product Revision Engine",
       "issue_id": "dat-product-revision-engine-k9f",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "research/documentation-system/REV_C07_PRODUCT_REVISION_ENGINE_RATIFICATION_PACKET.md",
         "specs/PUBLISH_SPACE_SPEC.md"
       ],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
@@ -4880,7 +4882,7 @@
       ],
       "completion": {
         "outcome": "Datum has an owner-approved, standards-traceable Product Revision Engine specification with standalone local authority, an optional non-authoritative Git adapter, a reviewed visual contract, and bounded production-proof sequencing.",
-        "canonical_next_step_id": "REV-C07",
+        "canonical_next_step_id": "REV-C08",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5072,7 +5074,7 @@
           {
             "id": "REV-C07",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Record owner dispositions and ratify the exact Product Revision Engine mechanism, standards claims, dependency posture, and visual contract in governed decisions/specifications.",
             "depends_on": [
               "REV-C02",
@@ -5087,7 +5089,18 @@
                 "marker": "REV-C07"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-SPEC:REV-C07-RATIFIED"
+              },
+              {
+                "kind": "document",
+                "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-SPEC:REV-C07-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After Claude's findings-first adversarial review, reply exactly `REV-C07-RATIFICATION: approve` or `REV-C07-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
               "requests": [
@@ -5106,7 +5119,7 @@
           {
             "id": "REV-C08",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Place bounded implementation slices, migration, conformance gates, standards-profile audit witnesses, evidence reproduction, and production acceptance on the Frontier without authorizing implementation implicitly.",
             "depends_on": [
               "REV-C07"

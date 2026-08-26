@@ -4,10 +4,11 @@
 > DOC-C05; reconciled by DOC-C06 on 2026-08-23. This specification does not
 > authorize implementation.
 >
-> **Authority:** Product Mechanics 020, the Datum substrate doctrine, the
-> owner-approved workspace-architecture research, and the reviewed Publish
-> Space visual study. Product revision and release mechanics remain owned by
-> the separate Product Revision Engine program.
+> **Authority:** Product Mechanics 020, Product Mechanics 034, the Datum
+> substrate doctrine, the owner-approved workspace-architecture research, the
+> reviewed Publish Space visual study, and
+> `specs/PRODUCT_REVISION_ENGINE_SPEC.md`. Product revision and release
+> mechanics remain exclusively owned by the Product Revision Engine.
 
 ## 1. Purpose and product boundary
 
@@ -310,8 +311,12 @@ Controlling evidence chain:
 - `docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md`
 - `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`
 - `research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md`
+- `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`
+- `specs/PRODUCT_REVISION_ENGINE_SPEC.md`
 
 <!-- EVIDENCE:DOC-SYSTEM-SPEC:DOC-C06-GOVERNED-RECONCILIATION -->
 This specification is the DOC-C06 governed reconciliation of the owner-approved
-architecture. It selects Product Revision Engine specification as the next
-planning stage and neither selects nor authorizes Publish implementation.
+architecture. Product Mechanics 034 and the Product Revision Engine
+specification now govern its `ConfigurationRef`, issue, release, and impact
+seam. Publish implementation remains blocked until that engine foundation
+reaches production acceptance.
