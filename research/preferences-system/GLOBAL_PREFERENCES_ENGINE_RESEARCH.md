@@ -134,6 +134,16 @@ parser serving GUI, CLI, and MCP. The prototype supplies the user-facing design
 evidence; the requirement preserves canonical storage and defines the shared
 service seam without authorizing implementation.
 
+### Adopted drafting-standard authority
+
+Product Mechanics 035 records the owner's 2026-08-27 Candidate A disposition:
+the documentation system owns the Project's adopted drafting-standard object.
+Global Preferences may later define an explicit, receipted new-Project seed and
+read-only inspection doorway, but it does not own or live-update the Project
+object. Exact schema and operations remain the bounded follow-up
+`dat-adopted-drafting-standard-object-er9`; this does not resume Q5-Q10 or
+extract clauses from the unsettled prototype.
+
 ## Non-negotiable boundaries
 
 - Global Preferences may seed a new Project; copied Project policy then belongs

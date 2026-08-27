@@ -736,6 +736,12 @@
     "progress_anchor": "PRODUCT-REVISION-SPEC",
     "notes": "Ratifies the standalone Datum Product Revision Engine, two-clock identity model, CI/baseline/change/release/document authority, optional subordinate Git adapter, exact impact/reproducibility rules, approved visual contract, and design-first non-blocking invariant; adds no dependency or implementation authorization."
   },
+  "docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md": {
+    "class": "doctrine",
+    "controlling": true,
+    "progress_anchor": "DRAFTING-STANDARD-AUTHORITY",
+    "notes": "Ratifies documentation-system ownership of the Project adopted drafting-standard object, with StandardsRegistry references, PM-034 projections, and seed-only Global Preferences integration; adds no dependency or implementation authorization."
+  },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",
    "progress_anchor": "TERMINAL-EPIC",

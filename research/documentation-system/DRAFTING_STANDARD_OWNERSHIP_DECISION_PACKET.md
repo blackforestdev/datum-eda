@@ -1,6 +1,7 @@
 # Adopted Drafting-Standard Ownership Decision Packet
 
-> **Status:** Owner decision required; architecture only.
+> **Status:** Candidate A owner-approved on 2026-08-27; ratified by Product
+> Mechanics 035; architecture only.
 >
 > **Tracker:** `dat-drafting-standard-authority-jcz` (related to
 > `dat-documentation-system-spec-y8z` and
@@ -146,3 +147,15 @@ operations, migration, standard profiles, UX, and implementation remain the
 tracked documentation-system follow-up.
 
 <!-- EVIDENCE:DRAFTING-STANDARD-AUTHORITY:OWNER-PACKET -->
+
+## 6. Owner disposition
+
+<!-- EVIDENCE:DRAFTING-STANDARD-AUTHORITY:OWNER-APPROVED -->
+
+**Approved 2026-08-27 — Candidate A.** The documentation system owns the
+Project-authority adopted drafting-standard object; StandardsRegistry supplies
+the cited basis, Product Mechanics 034 supplies revision/status/release
+projections, and Global Preferences may seed but never own the adopted Project
+value. Product Mechanics 035 records the ratified boundary. Exact schema and
+implementation remain separately tracked by
+`dat-adopted-drafting-standard-object-er9`.
