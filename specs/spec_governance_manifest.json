@@ -160,6 +160,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, and common GUI/CLI/MCP parsing; no implementation or dependency authorization."
   },
+  "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Owner packet deciding whether the documentation system owns the Project's adopted drafting-standard object while StandardsRegistry supplies cited bases, PM-034 supplies revision projections, and Global Preferences remains seed-only."
+  },
   "docs/gui/prototypes/preferences-ux-study.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",

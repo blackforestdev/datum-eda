@@ -5173,6 +5173,7 @@
         "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
         "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+        "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md",
         "docs/gui/prototypes/preferences-ux-study.html",
         "docs/gui/prototypes/preferences-window.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
@@ -5611,6 +5612,48 @@
       "dependencies": [
         "dat-product-revision-engine-build-18f"
       ],
+      "unblocks": []
+    },
+    {
+      "key": "DRAFTING-STANDARD-AUTHORITY",
+      "order": 36,
+      "title": "Decide adopted drafting-standard object ownership",
+      "issue_id": "dat-drafting-standard-authority-jcz",
+      "governing_docs": [
+        "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md",
+        "docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md",
+        "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "specs/PUBLISH_SPACE_SPEC.md",
+        "specs/STANDARDS_COMPLIANCE_SPEC.md",
+        "docs/gui/DATUM_RENDERING_BOOK.md",
+        "docs/gui/prototypes/preferences-window.html"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Owner decision packet for the authority that adopts a drafting-standard object for a Project. The packet distinguishes projection angle, dimensioning conventions, and sheet symbology from Product Mechanics 034 revision coding; it authorizes no implementation or dependency.",
+      "dependencies": [],
+      "unblocks": [
+        "dat-global-preferences-engine-qcv"
+      ]
+    },
+    {
+      "key": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
+      "order": 37,
+      "title": "Resolve schematic canvas background authority",
+      "issue_id": "dat-schematic-background-owner-decision-gom",
+      "governing_docs": [
+        "docs/gui/prototypes/preferences-window.html",
+        "docs/gui/DATUM_RENDERING_BOOK.md"
+      ],
+      "state": "planned",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Parked owner decision over the schematic paper-like background candidate and the locked dark-default rendering authority. No research, prototype change, specification clause, or implementation is authorized until the owner explicitly resumes it.",
+      "dependencies": [],
       "unblocks": []
     }
   ]
