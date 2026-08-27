@@ -150,6 +150,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Continuation of the GP-C03 one-question-at-a-time authority packet beginning with PX-V7-backed Project-policy seeding and its durable receipt; specification only."
   },
+  "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Draft 60-v1 plus 59-planned registry seed absorbed from the clay Preferences prototype. It preserves intake labels and later-delta warnings without ratifying descriptors, classifications, defaults, scope, or implementation."
+  },
   "docs/gui/prototypes/preferences-ux-study.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
