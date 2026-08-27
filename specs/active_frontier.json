@@ -5680,8 +5680,8 @@
         "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook.",
@@ -5689,25 +5689,9 @@
       "unblocks": [
         "dat-global-preferences-engine-qcv"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-visual-truth-lane-design-20260827",
-        "claimed_at": "2026-08-27T12:23:04-07:00",
-        "heartbeat_at": "2026-08-27T12:23:04-07:00",
-        "expires_at": "2026-08-27T20:23:04-07:00",
-        "scope": [
-          "AGENTS file-lane doctrine",
-          "visual-truth marker design packet",
-          "hook integration audit",
-          "owner-boundary preparation"
-        ],
-        "worktree": ".",
-        "head": "947ba03f25fb0c3e2f4a86c277e33fff1d3a3ada"
-      },
       "completion": {
         "outcome": "Commits touching docs/gui/prototypes/*.html are refused unless the committing session carries the owner-approved Claude visual-truth marker, with tested rename/delete coverage and explicit gate-integrity doctrine.",
-        "canonical_next_step_id": "LANE-C01",
+        "canonical_next_step_id": "LANE-C02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5724,7 +5708,7 @@
           {
             "id": "LANE-C01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Codify the hard file-lane and gate-integrity rules in AGENTS.md, audit the existing hook path, and prepare an exact environment-marker enforcement packet without implementing the refusal gate.",
             "depends_on": [],
             "requirement_refs": [
@@ -5733,12 +5717,17 @@
                 "marker": "LANE-C01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "46473dc697536a6fcff6b0b72473d0738802a0e5"
+              }
+            ]
           },
           {
             "id": "LANE-C02",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Review and approve or revise the exact staged-path, environment-marker, failure, audit, and bypass design before hook implementation begins.",
             "depends_on": [
               "LANE-C01"
