@@ -22,8 +22,8 @@
         "AGENTS.md",
         "scripts/git-hooks/pre-commit"
       ],
-      "reviewed_digest": "95effbf3dae20e37834a00e28727cf71ca43ea5922e6df8752c28e57ffbc31b3",
-      "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md. The packet proposes exact staged environment-marker enforcement for the existing pre-commit path, but the hook remains unchanged until LANE-C02 owner approval."
+      "reviewed_digest": "338836c8a5ab2e6675a5441f3c9796780921ab59317d6171220fe3be0d6f4e3f",
+      "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md. LANE-C02 owner approval ratifies the exact staged environment-marker contract and authorizes bounded LANE-I01 implementation in the existing pre-commit path; Codex remains forbidden from setting or forwarding the marker, and no prototype file is changed by this governance transition."
     },
     {
       "id": "terminal-focus-incident",

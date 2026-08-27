@@ -1,7 +1,7 @@
 # Visual-Truth File-Lane Enforcement Decision Packet
 
-> **Status:** Exact mechanism proposed; owner review required before hook
-> implementation.
+> **Status:** Owner-approved on 2026-08-27; implementation authorized only
+> through `LANE-I01`.
 >
 > **Tracker:** `dat-visual-truth-file-lane-enforcement-jfl`.
 >
@@ -187,6 +187,12 @@ strict enough to stop the exact “mechanical Codex cleanup” failure mode.
 
 <!-- OWNER:VISUAL-TRUTH-FILE-LANE:LANE-C02:LANE-C02 -->
 <!-- REQ:VISUAL-TRUTH-FILE-LANE:LANE-C02 -->
+
+**Owner disposition (2026-08-27):** `VISUAL-TRUTH-LANE-DESIGN: approve`.
+The marker, staged-path coverage, failure behavior, audit boundary, and sole
+owner-controlled `--no-verify` emergency bypass are ratified exactly as written
+above. This approval does not authorize Codex to set or forward the marker and
+does not alter the permanent Claude-only file lane.
 
 ## 10. Owner response
 

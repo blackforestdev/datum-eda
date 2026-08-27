@@ -5680,8 +5680,8 @@
         "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook.",
@@ -5689,9 +5689,25 @@
       "unblocks": [
         "dat-global-preferences-engine-qcv"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-visual-truth-lane-implementation-20260827",
+        "claimed_at": "2026-08-27T13:35:37-07:00",
+        "heartbeat_at": "2026-08-27T13:35:37-07:00",
+        "expires_at": "2026-08-27T21:35:37-07:00",
+        "scope": [
+          "visual-truth staged-path enforcement script",
+          "pre-commit hook integration",
+          "file-lane enforcement tests",
+          "governance and tracker closure"
+        ],
+        "worktree": ".",
+        "head": "2ae2f59b58ad140309de512ba25c3d749ed83df3"
+      },
       "completion": {
         "outcome": "Commits touching docs/gui/prototypes/*.html are refused unless the committing session carries the owner-approved Claude visual-truth marker, with tested rename/delete coverage and explicit gate-integrity doctrine.",
-        "canonical_next_step_id": "LANE-C02",
+        "canonical_next_step_id": "LANE-I01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5727,7 +5743,7 @@
           {
             "id": "LANE-C02",
             "kind": "owner_decision",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Review and approve or revise the exact staged-path, environment-marker, failure, audit, and bypass design before hook implementation begins.",
             "depends_on": [
               "LANE-C01"
@@ -5738,7 +5754,13 @@
                 "marker": "LANE-C02"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+                "marker": "OWNER:VISUAL-TRUTH-FILE-LANE:LANE-C02:LANE-C02"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the packet, reply exactly `VISUAL-TRUTH-LANE-DESIGN: approve` or `VISUAL-TRUTH-LANE-DESIGN: revise — <specific correction>`.",
               "requests": [
@@ -5757,7 +5779,7 @@
           {
             "id": "LANE-I01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement the approved staged file-lane gate in scripts/git-hooks/pre-commit, add positive and negative proof, and close the enforcement bead without changing any prototype file.",
             "depends_on": [
               "LANE-C02"
