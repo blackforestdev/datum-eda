@@ -57,7 +57,7 @@ section{display:none} section.on{display:block}
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
+    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
     <div class="main"><div class="search">⌕&nbsp; search settings…</div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
@@ -124,6 +124,22 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Auto-via on layer change · Interactive routing defaults · Routing objective profile default · Rotation step and flip direction · Track and arc editing mode · Default board primitive properties · Polygon repour automation · Net name and clearance display · Displayed origin and axis directions</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Zone display mode (filled vs outline/sketch)</div>
+</section>
+<section id="publish-space">
+<div class="ghead">Drawing space vs publish space</div>
+<div class="prov" style="border-bottom:none">the schematic/board canvas is yours to configure; the publish space composes issued documents — so most of what follows is seeded into the Project at genesis or owned by the Project outright, because plotted sheets are the certification surface</div>
+<div class="ghead">Seeds — copied into new Projects</div>
+<div class="row"><div class="lbl"><b>Title-block / sheet template seed</b><span>Which title-block and sheet templates a new Project starts with (Direction B geometry is locked identity; templates carry the fields and firm styling).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt · rendering book: Direction B locked · docs/decisions/PRODUCT_MECHANICS_020</div><div class="row"><div class="lbl"><b>Default sheet size and orientation</b><span>Starting sheet format for new publish sheets in a new Project.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt · publish-space study (DOC-C04)</div><div class="row"><div class="lbl"><b>Title-block scale fraction style</b><span>Per-firm convention for the scale fraction display on sheets.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project · owner-resolved OR series · relocated from Organization per critic</div><div class="ghead">Your workflow defaults</div>
+<div class="row"><div class="lbl"><b>Viewport creation</b><span>How viewports come into a sheet — on demand from a selected model view (the ratified D4b choice) with a remembered default style.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default · decision D4b: on-demand ratified</div><div class="row"><div class="lbl"><b>Publish-set naming pre-fill</b><span>Suggested naming pattern when you create a new publish set; the explicit name ask never disappears.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div><div class="ghead">Owned by the Project — shown here, edited there</div>
+<div class="row"><div class="lbl"><b>Sheet numbering and document conventions</b><span>Numbering scheme, issued-document fields, and drafting standard for this Project’s published documents.</span></div><div class="ctl"><span class="btn">view in Project…</span></div></div>
+<div class="prov">Project policy · publish composition is document authority, not a machine preference</div><div class="row"><div class="lbl"><b>Provisional watermark presentation</b><span>How PROVISIONAL / not-issued sheets are watermarked on screen and in preview.</span></div><div class="ctl"><span class="btn">view in Project…</span></div></div>
+<div class="prov">Project/profile policy · revision-engine carry-forward · planned</div><div class="ghead">Planned — not in v1</div>
+<div class="prov" style="border-bottom:none">default drafting standard seed · publishing destinations (Capability-class — contacts networks) · per-firm sheet style packs</div>
 </section><section id="rules-checks">
 <div class="row"><div class="lbl"><b>Check profile pre-fill</b><span>A remembered CheckProfile pre-fill for run_check; the profile remains a named per-run parameter that is never hidden.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
@@ -185,8 +201,6 @@ section{display:none} section.on{display:block}
 <div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
 <div class="row"><div class="lbl"><b>New-project templates</b><span>Which template each new project or document type starts from, and the template list/folder offered at creation; the created Project then owns its copy</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
-<div class="row"><div class="lbl"><b>Title-block/sheet template seed</b><span>Sheet and title-block templates selected as new-Project seed material (e.g. the PX-V7 receipt's TB-A4).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
-<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
 <div class="row"><div class="lbl"><b>Default unit system for new projects</b><span>The unit system and display precision seeded into newly created Projects; existing Projects keep their own unit policy.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Default drafting standard seed · Multi-instance file locking · Helper applications · Update checks · Cache maintenance · 3D model search paths</div>
@@ -223,7 +237,7 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Reset, export, and import of preferences</b><span>Reset a page, section, or all preferences to factory defaults, and export/import preferences as a portable file — a Preferences-window mechanism rathe</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
 <div class="prov">protected — untrusted projects can never set this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
-<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Organization-managed pins and defaults · Title-block scale fraction (per-firm) · Network access toggles · Telemetry and crash reporting opt-in</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Organization-managed pins and defaults · Network access toggles · Telemetry and crash reporting opt-in</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Network proxy configuration</div>
 </section><section id="project-policy-read-only">
 <div class="row"><div class="lbl"><b>Active Project policy mirror</b><span>The active Project's governing settings — units, net classes, design rules and severity defaults, layer stackup, check rules, waivers, manufacturing p</span></div><div class="ctl"><span class="btn">view in Project…</span></div></div>
