@@ -59,7 +59,7 @@
 
   /* schematic palettes (toggled on the canvas) */
   .sch-dark{--paper:#0E1013;--grid:#141821;--body:#161A24;--bstroke:#AEB4BB;--wire:#4FA75A;--txt:#B2B8C3;--pwr:#B7BEC9;--pill:#151922;--pillbd:#3A414D;--val:#717885;--sel:#CE5A92}
-  .sch-vel{--paper:#E7E1D2;--grid:#D2CAB4;--body:#F1ECDE;--bstroke:#39342A;--wire:#3B6E45;--txt:#514B40;--pwr:#5A5347;--pill:#EFEADC;--pillbd:#C2B9A2;--val:#7A7264;--sel:#B84A80}
+  .sch-light{--paper:#E7E1D2;--grid:#D2CAB4;--body:#F1ECDE;--bstroke:#39342A;--wire:#3B6E45;--txt:#514B40;--pwr:#5A5347;--pill:#EFEADC;--pillbd:#C2B9A2;--val:#7A7264;--sel:#B84A80}
   /* footprint / copper substrate (board-editor language) */
   .fab{--sub:#0B0C0E;--grid:#171A20;--body:#151922;--bodybd:#3A414D;--cu:#C9974A;--cuf:#C83A34;--cub:#4D7FC4;--court:#6E7681;--silk:#E8E6DC;--asm:#525A68;--dim:#7FB0C8;--via:#C77B3C;--hole:#1A1206;--sel:#CE5A92;--txt:#AEB4BB}
 
@@ -92,8 +92,8 @@
   <div class="controls">
     <span class="toglabel">Schematic canvas</span>
     <div class="seg" role="group" aria-label="Schematic canvas mode">
-      <button id="g-dark" class="on" onclick="setGround('dark')">Dark · working</button>
-      <button id="g-vel" onclick="setGround('vel')">Vellum · print / docs</button>
+      <button id="g-dark" class="on" onclick="setGround('dark')">Dark · default</button>
+      <button id="g-light" onclick="setGround('light')">Light · warm paper</button>
     </div>
     <span class="toglabel">Resistor</span>
     <div class="seg" role="group" aria-label="Symbol standard">
@@ -105,7 +105,7 @@
 
 <!-- ============ 01 SCHEMATIC ============ -->
 <section>
-  <div class="sec-hd"><span class="k">01</span><h2>Schematic — dark works, vellum prints</h2><span class="tag">flip anytime</span></div>
+  <div class="sec-hd"><span class="k">01</span><h2>Schematic — governed Dark and Light themes</h2><span class="tag">whole-theme switch</span></div>
   <div class="card">
     <div class="card-hd"><span class="dot" id="gdot" style="background:#0E1013;box-shadow:inset 0 0 0 1px var(--bd-str)"></span><span id="glabel">Dark canvas · working default</span><span class="r" id="ghex">#0E1013</span></div>
     <svg class="stage sch-dark" id="schcanvas" viewBox="0 0 300 236" role="img" aria-label="Schematic — STM32 with pull-up">
@@ -158,7 +158,7 @@
       </g>
       </g>
     </svg>
-    <div class="cap"><b>Dark leads</b> — the working default: modern, low-fatigue over long sessions, in the board-editor idiom. <b>Vellum</b> is one flip away for the times it matters: printing schematics and rendering monochrome documentation to disk, where a warm paper ground translates far better than glaring white. Same drawing, two grounds; the chrome around it stays dark either way.</div>
+    <div class="cap"><b>Dark leads</b> — the factory default: modern, low-fatigue over long sessions, in the board-editor idiom. <b>Light</b> is the warm-paper alternative, deliberately not white. Each is a complete governed contrast system selected as a whole and remembered by the machine Presentation preference; chrome stays dark and Publish/print output is independent.</div>
   </div>
   <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Selection glow, junction dots and net-label pills all match the shipped board-editor styling — the study re-skins geometry, not the chrome.</div>
 </section>
@@ -360,10 +360,10 @@
   function setGround(g){
     var c=document.getElementById('schcanvas');
     var dark=g==='dark';
-    c.classList.toggle('sch-dark', dark); c.classList.toggle('sch-vel', !dark);
+    c.classList.toggle('sch-dark', dark); c.classList.toggle('sch-light', !dark);
     document.getElementById('g-dark').classList.toggle('on', dark);
-    document.getElementById('g-vel').classList.toggle('on', !dark);
-    document.getElementById('glabel').textContent = dark ? 'Dark canvas · working default' : 'Vellum canvas · print / documentation';
+    document.getElementById('g-light').classList.toggle('on', !dark);
+    document.getElementById('glabel').textContent = dark ? 'Dark theme · factory default' : 'Light theme · warm paper';
     document.getElementById('ghex').textContent = dark ? '#0E1013' : '#E7E1D2';
     document.getElementById('gdot').style.background = dark ? '#0E1013' : '#E7E1D2';
   }

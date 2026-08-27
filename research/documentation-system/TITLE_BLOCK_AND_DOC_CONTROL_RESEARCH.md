@@ -57,7 +57,7 @@ become anchor+offset.)
 
 ## Contemporary design pattern language (the "designer-made by default" layer)
 
-Bind to the *locked* Rendering Book tokens (do not add new ones): vellum `#E7E1D2` /
+Bind to the *locked* Rendering Book tokens (do not add new ones): Light warm paper `#E7E1D2` /
 ink `#2C2820` for docs, dark `#0E1013` while editing; IBM Plex Sans Condensed
 (Regular/Medium/SemiBold) + Mono (data). Diagnosis: legacy-CAD = dense equal-weight
 boxed-cell matrix; contemporary/editorial = whitespace-separated groups, two-weight
@@ -195,7 +195,7 @@ revision rows, `DocumentControlProfile`.
 
 ## Next steps
 - **Prototype (HTML, owner-approval gate before spec):** render Skeleton A "Strip" +
-  Skeleton B "Ledger" at A3-landscape on vellum/ink in IBM Plex, exercising P1–P11 with
+  Skeleton B "Ledger" at A3-landscape on Light warm-paper/ink in IBM Plex, exercising P1–P11 with
   realistic resolved values; an A4-portrait + ANSI-B variant to prove the anchor model;
   a borderless + a `status=PRELIMINARY` state.
 - **Spec (after approval, each with governance ritual):** `DrawingSheet`/`Anchor`/

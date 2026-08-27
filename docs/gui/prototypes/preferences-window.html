@@ -57,7 +57,7 @@ section{display:none} section.on{display:block}
 .menu div{padding:6px 14px;cursor:pointer}.menu div:hover{background:var(--s02)}.menu .cur{color:var(--acc)}
 .rst{color:var(--info);cursor:pointer}
 </style></head><body>
-<div class="note">PROTOTYPE — full-depth catalog build: 60 v1 settings + 59 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="chip">CLAY — NOT RATIFIED</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="chip">CLAY — NOT RATIFIED EXCEPT OWNER-DISPOSITIONED ROWS</span></div>
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
@@ -72,6 +72,8 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Layer color scheme</b><span>Board layer color theme with built-in presets (default red/blue, high-contrast monochrome, photonics-friendly); presentation only — colors never alter</span></div><div class="ctl"><div class="sel" data-opts="Datum default|High-contrast mono|Photonics-friendly" data-def="Datum default">Datum default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Schematic drawing theme</b><span>Complete governed schematic contrast system; Dark is the factory default, Light is warm paper (#E7E1D2), and print output is unaffected.</span></div><div class="ctl"><div class="sel" data-opts="Dark|Light" data-def="Dark">Dark</div></div></div>
+<div class="prov">machine Presentation preference · factory default — you haven’t changed this · Product Mechanics 036</div>
 <div class="row"><div class="lbl"><b>Per-object opacity</b><span>Independent opacity sliders for tracks, vias, pads, and zones (zones default 70% and per-class, others 100%).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Inactive-layer dim factor</b><span>Slider controlling how much inactive copper and process layers dim in high-contrast layer mode (default 50%); spec literally names 'a slider in Prefer</span></div><div class="ctl"><div class="sel" data-opts="30%|50%|70%" data-def="50%">50%</div></div></div>
@@ -82,7 +84,7 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Rounded track corners</b><span>Draw track corners rounded instead of mitred 45 degrees (default off).</span></div><div class="ctl"><div class="sel" data-opts="Off|On" data-def="Off">Off</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
-<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Text render-intent backend override · Editor appearance themes · Anti-aliasing and rendering quality · Icon theme, icon scale, and display scaling · Application language · Hardware graphics acceleration · Large-design performance mode</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Text render-intent backend override · Anti-aliasing and rendering quality · Icon theme, icon scale, and display scaling · Application language · Hardware graphics acceleration · Large-design performance mode</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Color-vision deficiency assistance</div>
 </section><section id="workspace">
 <div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
@@ -270,7 +272,7 @@ section{display:none} section.on{display:block}
   </div>
   <div class="sbar">This machine: authority released to ACME — <b style="color:var(--tx2)">backside management</b> · granted by you, Aug 26 · <span style="color:var(--info)">manage…</span></div>
 </div>
-<div class="note">⚠ Open owner decision surfaced by research: “schematic background paper vs dark” conflicts with the locked rendering book (dark working canvas locked; vellum is a session view toggle) — it is deliberately absent above until you rule on it.</div>
+<div class="note">✓ Owner disposition — Product Mechanics 036: Schematic drawing theme is a persisted machine Presentation preference selecting the complete governed Dark or Light contrast system. Dark remains the factory default; Light uses warm paper #E7E1D2; board and print behavior are unchanged.</div>
 <script>
 const nav=document.getElementById('nav');
 function show(id){document.querySelectorAll('#nav div').forEach(d=>d.classList.toggle('on',d.dataset.s===id));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));}

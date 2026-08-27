@@ -37,21 +37,27 @@ Content geometry uses the shipped `board-editor.html` tokens (do not reinvent):
 Semantic (error/warn/ok/info) stays separate from the accent; the accent is
 selection/active only.
 
-## 1. Schematic canvas — dark works, vellum prints  **[LOCKED]**
+## 1. Schematic drawing themes  **[LOCKED]**
 
-- **Dark is the working default** (`#0E1013` paper, line grid `#141821`): modern,
-  low-fatigue over long sessions, in the board-editor idiom.
-- **Vellum is a print/documentation toggle** (`#E7E1D2` warm drafting film, ink
-  `#2C2820`): the user flips to it for printing schematics and rendering
-  **monochrome documentation to disk**, where warm paper translates better than
-  glaring white. Vellum is fatiguing for long editing — hence it is the toggle,
-  not the default.
+- **Dark is the factory default** (`#0E1013` ground, line grid `#141821`):
+  modern and low-fatigue over long sessions, in the board-editor idiom.
+- **Light is the warm-paper alternative** (`#E7E1D2` ground, deliberately not
+  white; ink `#2C2820`). “Vellum” is retired as its name.
+- **A theme is one governed contrast system.** Ground, grid, ink, bodies,
+  strokes, wires, references, selection treatment, and other schematic roles
+  resolve together. The user selects Dark or Light as a whole and cannot edit
+  individual palette members.
+- **The choice persists.** `Schematic drawing theme` is a machine Presentation
+  preference. It is screen-only, never authored design data or a Project
+  standards-control fact.
 - **One chrome.** The application chrome (tool rails, panels, marking menus, status
   bar) stays dark in both modes; only the document *canvas* changes ground.
+- **Print is independent.** Publish templates and render intent govern printed
+  and exported appearance; changing the authoring theme never changes output.
 
 ## 2. Schematic symbols  **[LOCKED except symbol standard]**
 
-- **Filled bodies** (`#161A24` on dark / `#F1ECDE` on vellum) with a small optical
+- **Filled bodies** (`#161A24` on Dark / `#F1ECDE` on Light) with a small optical
   corner radius (~3px view) — solid objects with figure-ground, not hollow 1980s
   line-art.
 - **Pins.** Every component pin renders as a **short stub** from the body edge
@@ -458,7 +464,7 @@ templates. Each extends this book downstream of an owner-approved prototype pass
 ## Open decisions (owner to lock)
 
 - Rounding-ratio validation against measured peel strength; teardrop auto-apply
-  thresholds; dimension-line typography; exact vellum warmth.
+  thresholds; dimension-line typography.
 
 (Fork B — symbol standard — is now **locked to IEC**, see §2. Font engine wiring is
 **done**, see §5.)

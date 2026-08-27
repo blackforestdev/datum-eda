@@ -173,7 +173,12 @@
   "docs/gui/prototypes/preferences-window.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "Claude-owned working Preferences-window prototype and prototype-first design surface. Its clay catalog and unsettled interactions are governed evidence, not ratified specification clauses."
+   "notes": "Claude-owned working Preferences-window prototype and prototype-first design surface. Its clay catalog and unsettled interactions are governed evidence, except the owner-dispositioned schematic drawing-theme row under Product Mechanics 036."
+  },
+  "docs/gui/prototypes/canvas-background-decision.html": {
+   "class": "governed",
+   "progress_anchor": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
+   "notes": "Owner-reviewed visual evidence selecting Candidate B as a persisted whole-theme schematic Presentation preference, with Dark default, Light warm-paper alternative, dark chrome, and print independence."
   },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
@@ -741,6 +746,12 @@
     "controlling": true,
     "progress_anchor": "DRAFTING-STANDARD-AUTHORITY",
     "notes": "Ratifies documentation-system ownership of the Project adopted drafting-standard object, with StandardsRegistry references, PM-034 projections, and seed-only Global Preferences integration; adds no dependency or implementation authorization."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md": {
+    "class": "doctrine",
+    "controlling": true,
+    "progress_anchor": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
+    "notes": "Ratifies schematic drawing-theme selection as a persisted machine Presentation preference over complete governed Dark and Light contrast systems; preserves board and Publish/print boundaries and adds no dependency or implementation authorization."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",

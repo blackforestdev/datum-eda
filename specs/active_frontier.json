@@ -5174,6 +5174,7 @@
         "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
         "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md",
+        "docs/decisions/PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md",
         "docs/gui/prototypes/preferences-ux-study.html",
         "docs/gui/prototypes/preferences-window.html",
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
@@ -5631,16 +5632,34 @@
       "title": "Resolve schematic canvas background authority",
       "issue_id": "dat-schematic-background-owner-decision-gom",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md",
+        "docs/gui/prototypes/canvas-background-decision.html",
         "docs/gui/prototypes/preferences-window.html",
         "docs/gui/DATUM_RENDERING_BOOK.md"
       ],
-      "state": "planned",
-      "authorization": "none",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Parked owner decision over the schematic paper-like background candidate and the locked dark-default rendering authority. No research, prototype change, specification clause, or implementation is authorized until the owner explicitly resumes it.",
+      "summary": "Ratify Candidate B as one persisted machine Presentation preference selecting the complete governed Dark or Light schematic drawing theme, while preserving the Dark factory default, dark chrome, board color-scheme boundary, and Publish/print independence.",
       "dependencies": [],
-      "unblocks": []
+      "unblocks": [],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-schematic-theme-owner-disposition-20260827",
+        "claimed_at": "2026-08-27T12:07:15-07:00",
+        "heartbeat_at": "2026-08-27T12:07:15-07:00",
+        "expires_at": "2026-08-27T20:07:15-07:00",
+        "scope": [
+          "schematic drawing-theme owner disposition",
+          "Rendering Book terminology reconciliation",
+          "Global Preferences presentation carry-forward",
+          "owner-decision closure"
+        ],
+        "worktree": ".",
+        "head": "4519a54d1eb0c3235a4363e2aee75c076a68831a"
+      }
     },
     {
       "key": "ADOPTED-DRAFTING-STANDARD-SPEC",

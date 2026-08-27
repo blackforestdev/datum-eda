@@ -144,6 +144,17 @@ object. Exact schema and operations remain the bounded follow-up
 `dat-adopted-drafting-standard-object-er9`; this does not resume Q5-Q10 or
 extract clauses from the unsettled prototype.
 
+### Schematic drawing-theme authority
+
+Product Mechanics 036 records the owner's 2026-08-27 Candidate B ruling. The
+Global Preferences specification must carry one persisted machine Presentation
+descriptor for **Schematic drawing theme**, selecting the complete governed
+Dark or Light contrast system. Dark is the factory default; Light uses warm
+paper `#E7E1D2`; users cannot edit theme members; dark chrome and Publish/print
+behavior remain unchanged. Board Layer color scheme stays separate, and a Light
+board theme is future governed work. This bounded ruling does not resume the
+paused GP-C03 Q5-Q10 sequence.
+
 ## Non-negotiable boundaries
 
 - Global Preferences may seed a new Project; copied Project policy then belongs

@@ -171,6 +171,14 @@ deliberately not merged into the numbered seed until prototype settlement and a
 reproducible catalog reconciliation establish the resulting count and
 classification.
 
+The 2026-08-27 owner ruling ratified one later delta without settling the rest
+of the catalog: Product Mechanics 036 requires a persisted machine Presentation
+descriptor named **Schematic drawing theme**, selecting the governed Dark or
+Light theme as a whole. It replaces the generic planned “Editor appearance
+themes” candidate for the schematic scope; any Light board theme remains future
+governed work. The working prototype consequently shows 61 v1 rows and 58
+planned rows while retaining 119 total. No other seed classification changes.
+
 ## Later validation required by GP-C05A
 
 For every numbered seed and post-catalog delta, the final descriptor catalog
