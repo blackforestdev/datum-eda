@@ -61,7 +61,7 @@ section{display:none} section.on{display:block}
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
+    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="units">Units</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
     <div class="main"><div class="search">⌕&nbsp; search settings…</div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel" data-opts="4 s|6 s|10 s|Never hide" data-def="6 s">6 s</div></div></div>
@@ -86,8 +86,6 @@ section{display:none} section.on{display:block}
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Color-vision deficiency assistance</div>
 </section><section id="workspace">
 <div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
-<div class="row"><div class="lbl"><b>Display units</b><span>Units used by coordinate readout and status bar (mm, mil, inch); the engine always stores exact nanometers internally.</span></div><div class="ctl"><div class="sel" data-opts="mm|mil|inch" data-def="mm">mm</div></div></div>
-<div class="prov">factory default (mm) · <span style="color:var(--warn)">while sensor-node is focused: pinned mm by adopted standard ACME-DS-1 (Project) — your machine choice resumes elsewhere</span></div>
 <div class="row"><div class="lbl"><b>Grid snap on/off</b><span>Whether clicks and drawing gestures snap to the grid when authoring on a board or schematic (code default enabled, currently hard-coded).</span></div><div class="ctl"><div class="sel" data-opts="On|Off" data-def="On">On</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Grid size presets</b><span>User grid-size set with fine/coarse/user selections cycled during editing; the drawn per-editor grid pitch tier tables and grid colors stay ViewportPr</span></div><div class="ctl"><div class="sel" data-opts="0.1 mm|0.5 mm|1.0 mm|User…" data-def="0.5 mm">0.5 mm</div></div></div>
@@ -108,7 +106,22 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Mouse, wheel, and touchpad mapping · Camera and pointer behavior · Selection modifiers · Cross-probe behavior · Hover, tooltip, and HUD assistance · Numeric input spin increments · Double-click behavior · 3D input device tuning · Resource usage warnings</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Undo history depth / session journal memory bound</div>
-</section><section id="schematic">
+</section>
+<section id="units">
+<div class="ghead">Measurement system</div>
+<div class="row"><div class="lbl"><b>Measurement system</b><span>Drives the default unit for every quantity below.</span></div><div class="ctl"><div class="sel" data-opts="Metric|Imperial" data-def="Metric">Metric</div></div></div>
+<div class="prov">factory default · the engine always stores exact nanometers — display never changes stored truth (CANONICAL_IR)</div><div class="ghead">Display units by quantity — yours</div>
+<div class="row"><div class="lbl"><b>Board and layout lengths</b><span>Track widths, clearances, courtyards. Imperial choices: mil (1/1000 inch) or inch.</span></div><div class="ctl"><div class="sel" data-opts="Follow system (mm)|mm|µm|mil|inch" data-def="Follow system (mm)">Follow system (mm)</div></div></div>
+<div class="prov">factory default · mixed conventions are normal — metric shops often speak mil for track widths; choose per quantity, not per system</div><div class="row"><div class="lbl"><b>Drill and hole sizes</b><span>Drills ship in both metric and imperial catalogs.</span></div><div class="ctl"><div class="sel" data-opts="Follow system (mm)|mm|inch|mil" data-def="Follow system (mm)">Follow system (mm)</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div><div class="row"><div class="lbl"><b>Schematic geometry</b><span>Pin spacing and symbol dimensions.</span></div><div class="ctl"><div class="sel" data-opts="Follow system (mm)|mm|mil" data-def="Follow system (mm)">Follow system (mm)</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div><div class="row"><div class="lbl"><b>Length precision</b><span>Decimal places shown for lengths.</span></div><div class="ctl"><div class="sel" data-opts="0.1|0.01|0.001|0.0001" data-def="0.01">0.01</div></div></div>
+<div class="prov">factory default · display rounding only — never applied to stored values</div><div class="row"><div class="lbl"><b>Angles</b><span></span></div><div class="ctl"><div class="sel" data-opts="Degrees" data-def="Degrees">Degrees</div></div></div>
+<div class="prov">fixed · precision 0.1°</div><div class="ghead">Input parsing — everywhere</div>
+<div class="prov" style="border-bottom:none">type any unit in any field: 5mm · 200mil · 0.1in · 3.5 (bare numbers use the field’s display unit) — parsed exactly, converted losslessly by the shared units engine; one implementation serves GUI, CLI, and MCP</div>
+<div class="ghead">Document units — the Project’s</div>
+<div class="row"><div class="lbl"><b>Dimensioning units on issued sheets</b><span>What units appear in dimensions on published documents.</span></div><div class="ctl"></div></div>
+<div class="prov">Project policy · seeded at genesis · <span class="btn" style="padding:2px 10px">view in Project…</span></div><div class="row"><div class="lbl"><b>Drafting standard (ISO / ANSI)</b><span>First-angle vs third-angle projection, dimension conventions, sheet symbology — the adopted standard, not a units choice.</span></div><div class="ctl"></div></div>
+<div class="prov">Project’s adopted standard · co-owns drawing conventions while this Project is focused · <span class="btn" style="padding:2px 10px">view in Project…</span></div></section><section id="schematic">
 <div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Wire editing defaults · Placement and annotation defaults · Default schematic primitive properties · Editing focus emphasis</div>
 </section><section id="pcb-board">
@@ -291,7 +304,7 @@ if(h.includes('demo')){
   // demonstrate non-default state for screenshots
   document.querySelectorAll('.sel[data-opts]').forEach(sel=>{
     const name=sel.closest('.row')?.querySelector('b')?.textContent||'';
-    if(name==='Display units')setVal(sel,'mil');
+    if(name==='Board and layout lengths')setVal(sel,'mil');
     if(name==='Crosshair style')setVal(sel,'None');
     if(name==='Snap capture radius')setVal(sel,'15 px');
   });
