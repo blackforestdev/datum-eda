@@ -82,24 +82,33 @@ on organization-managed distribution, standards/profile selection as
 configuration, portability, offline behavior, and the consequences for Q3, Q4,
 and GP-C05. Peer conventions remain evidence rather than Datum doctrine.
 
-<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:VISUAL-ANCHOR-LAW -->
-### GP-C03 visual-anchor law
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:PROTOTYPE-FIRST-COURSE-CORRECTION -->
+### Prototype-first course correction
 
-`docs/gui/prototypes/preferences-ux-study.html` drives GP-C03 decisions Q3
-through Q10. Every packet must cite and reconcile its reviewed anchor:
+The owner superseded the abstract-anchor process on 2026-08-26.
+`docs/gui/prototypes/preferences-window.html` is now the working Preferences
+design surface. The window is developed and reviewed as a real, integrated
+product surface before remaining authority and interaction clauses are
+extracted. Its current contents are clay evidence, not a specification.
 
-- Q3 — `PX-V5` / `#px-v5`;
-- Q4 — `PX-V6` / `#px-v6`;
-- Q5 — `PX-V7` / `#px-v7`;
-- Q6 — `PX-V8` / `#px-v8`;
-- Q7 — `PX-V9` / `#px-v9`;
-- Q8 — `PX-V10` / `#px-v10`;
-- Q9 — `PX-V11` / `#px-v11`;
-- Q10 — `PX-V12` / `#px-v12`.
+`docs/gui/prototypes/preferences-ux-study.html` remains archival evidence for
+the approved Q3/PX-V5 and Q4/PX-V6 dispositions and for the history of the
+unselected Q5-Q10 ideas. It no longer drives new decisions.
 
-If a packet proposes materially different presentation or interaction from its
-anchor, Claude must render that candidate in the prototype before the owner
-boundary opens. Prose may not outrun the visual source of truth.
+The process boundary is explicit:
+
+1. GP-C03 Q1-Q4 remain approved and are not reopened.
+2. GP-C03 Q5-Q10 are paused until the owner declares the working prototype
+   settled. Existing Q5 prose is suspended candidate material, not an active
+   owner packet.
+3. No remaining GP-C03 or GP-C05 clause may be authored ahead of the settled
+   prototype. After settlement, Codex extracts bounded clauses from the
+   reviewed window, reconciles them against Q1-Q4 and governing authority, and
+   returns any actual owner choices.
+4. Prototype catalog entries, labels, defaults, classifications, and
+   interactions remain draft until separately governed. Their presence does
+   not create a descriptor, Project object, default, implementation obligation,
+   dependency, or standards-conformance claim.
 
 <!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:V1-DESCRIPTOR-CATALOG -->
 ### V1 Preference Descriptor Catalog
@@ -181,7 +190,9 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Resolve owner questions one at a time against cited evidence.
+Q1-Q4 are approved. Q5-Q10 remain paused under the prototype-first course
+correction; complete them only by extracting and reconciling the owner-settled
+Preferences window, never by drafting ahead of it.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C04 -->
 ### GP-C04 — Storage, migration, exchange, and recovery contract
@@ -194,21 +205,22 @@ seam between preferences and governed Project policy.
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05 -->
 ### GP-C05 — Interaction and visual contract
 
-Define accessible discovery, search, editing, effective-value/provenance
+Extract accessible discovery, search, editing, effective-value/provenance
 inspection, reset/override/refusal behavior, managed-state presentation, and
-the Revision carry-forward surfaces. It must visually resolve Managed Revision
-Visibility and First-Release Onboarding across unmanaged, managed, teaching,
-keyboard-only, narrow, and assistive-technology states. Where visual judgment
-is material, issue a Claude-owned brief and reconcile the resulting
-`docs/gui/prototypes/*.html` source of truth before disposition.
+the Revision carry-forward surfaces from the owner-settled
+`preferences-window.html`. Reconcile the settled window across unmanaged,
+managed, teaching, keyboard-only, narrow, and assistive-technology states.
+GP-C05 does not pre-author interaction clauses for the prototype to satisfy.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05A -->
 ### GP-C05A — V1 Preference Descriptor Catalog
 
-After the authority, persistence, and interaction decisions are stable, publish
-the complete v1 catalog named above. GP-C06 ratification is blocked until every
-planned subsystem is covered and every entry is either selected for v1,
-explicitly deferred, or classified as not a preference.
+Absorb the working prototype's sourced catalog as a clearly marked draft seed
+list now. After the prototype and authority/persistence/interaction decisions
+are stable, validate every candidate and publish the complete v1 catalog named
+above. GP-C06 ratification is blocked until every subsystem is covered and every
+entry is selected for v1, explicitly deferred, or classified as not a
+preference. The draft seed cannot satisfy this deliverable by itself.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->

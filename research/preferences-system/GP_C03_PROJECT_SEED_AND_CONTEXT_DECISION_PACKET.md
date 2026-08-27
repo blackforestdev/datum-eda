@@ -1,6 +1,9 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** Q5 owner-decision packet; Q1–Q4 are approved. Specification only.
+> **Status:** Suspended candidate evidence. Q1–Q4 are approved; Q5–Q10 are
+> paused by the owner-directed prototype-first course correction. This file is
+> not an active owner packet and cannot be used to extract clauses until
+> `preferences-window.html` is declared settled. Specification only.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
