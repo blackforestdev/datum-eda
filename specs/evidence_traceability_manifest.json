@@ -13,6 +13,19 @@
       "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q1 through Q6, REV-C04 standalone/offline and optional-Git integration, REV-C05 impact/reproducibility, and all REV-C06 Q1-Q6 amended/revised approvals. Q1 makes Navigator revision structure permanently visible; Q2 keeps one cohesive Release pane with persistent summaries; Q3 keeps summary and canonical witness tree simultaneously visible; Q4 keeps one complete Change hierarchy while profiles scale obligation and detail; Q5 keeps final atomic issuance in that pane through an exact-consequence arm-then-confirm bar; Q6 keeps verdicts and permanent counted manifest categories visible while opening immutable detail beside the summary. V9-A separates mutable Publish Sets from controlled issued records; V10-C establishes typed standing facts. Git and air-gap exchanges remain mapped, verified, quarantined adapter inputs. The split V1-V12 studies, distributed-collaboration re-entry, and unimplemented Global Preferences follow-ons remain linked; source-strength gates are preserved and no implementation is authorized."
     },
     {
+      "id": "visual-truth-file-lane-governance",
+      "status": "in_progress",
+      "sources": [
+        "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md"
+      ],
+      "consumers": [
+        "AGENTS.md",
+        "scripts/git-hooks/pre-commit"
+      ],
+      "reviewed_digest": "95effbf3dae20e37834a00e28727cf71ca43ea5922e6df8752c28e57ffbc31b3",
+      "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md. The packet proposes exact staged environment-marker enforcement for the existing pre-commit path, but the hook remains unchanged until LANE-C02 owner approval."
+    },
+    {
       "id": "terminal-focus-incident",
       "status": "integrated",
       "sources": ["research/TERMINAL_FOCUS_TAB_BUG_2026-08-16.md"],

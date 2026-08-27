@@ -5180,13 +5180,14 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "blocked",
       "authorization": "planning",
-      "canonical_next": true,
+      "canonical_next": false,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
-        "dat-product-revision-engine-k9f"
+        "dat-product-revision-engine-k9f",
+        "dat-visual-truth-file-lane-enforcement-jfl"
       ],
       "unblocks": [
         "dat-product-revision-engine-build-18f"
@@ -5669,6 +5670,131 @@
         "dat-drafting-standard-authority-jcz"
       ],
       "unblocks": []
+    },
+    {
+      "key": "VISUAL-TRUTH-FILE-LANE",
+      "order": 39,
+      "title": "Enforce Claude ownership of GUI visual-truth files",
+      "issue_id": "dat-visual-truth-file-lane-enforcement-jfl",
+      "governing_docs": [
+        "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+        "docs/PROJECT_STATE_POLICY.md"
+      ],
+      "state": "in_progress",
+      "authorization": "planning",
+      "canonical_next": true,
+      "parallel": false,
+      "summary": "Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook.",
+      "dependencies": [],
+      "unblocks": [
+        "dat-global-preferences-engine-qcv"
+      ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-visual-truth-lane-design-20260827",
+        "claimed_at": "2026-08-27T12:23:04-07:00",
+        "heartbeat_at": "2026-08-27T12:23:04-07:00",
+        "expires_at": "2026-08-27T20:23:04-07:00",
+        "scope": [
+          "AGENTS file-lane doctrine",
+          "visual-truth marker design packet",
+          "hook integration audit",
+          "owner-boundary preparation"
+        ],
+        "worktree": ".",
+        "head": "947ba03f25fb0c3e2f4a86c277e33fff1d3a3ada"
+      },
+      "completion": {
+        "outcome": "Commits touching docs/gui/prototypes/*.html are refused unless the committing session carries the owner-approved Claude visual-truth marker, with tested rename/delete coverage and explicit gate-integrity doctrine.",
+        "canonical_next_step_id": "LANE-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "LANE-C01",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Codify the hard file-lane and gate-integrity rules in AGENTS.md, audit the existing hook path, and prepare an exact environment-marker enforcement packet without implementing the refusal gate.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+                "marker": "LANE-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "LANE-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review and approve or revise the exact staged-path, environment-marker, failure, audit, and bypass design before hook implementation begins.",
+            "depends_on": [
+              "LANE-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+                "marker": "LANE-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the packet, reply exactly `VISUAL-TRUTH-LANE-DESIGN: approve` or `VISUAL-TRUTH-LANE-DESIGN: revise — <specific correction>`.",
+              "requests": [
+                {
+                  "id": "LANE-C02",
+                  "question": "Does the proposed hook correctly enforce Claude-only ownership of docs/gui/prototypes/*.html while remaining fail-closed, testable, auditable, and subordinate to the owner's existing no-bypass policy?",
+                  "recommended_response": "Approve only if the marker cannot be treated as general authorization, Codex is explicitly forbidden from setting or forwarding it, renames and deletions are covered, and gate-refresh laundering is prohibited.",
+                  "source_ref": {
+                    "path": "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+                    "marker": "LANE-C02"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "LANE-I01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the approved staged file-lane gate in scripts/git-hooks/pre-commit, add positive and negative proof, and close the enforcement bead without changing any prototype file.",
+            "depends_on": [
+              "LANE-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
+                "marker": "LANE-I01"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The Claude-owned prototype lane is mechanically enforced for normal commits.",
+            "Global Preferences prototype-first work may resume under the new lane law."
+          ],
+          "unblocks_issue_ids": [
+            "dat-global-preferences-engine-qcv"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }

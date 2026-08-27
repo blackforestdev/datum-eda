@@ -42,6 +42,16 @@
   "docs/DATUM_PRODUCT_MECHANICS.md"
  ],
  "entries": {
+  "AGENTS.md": {
+   "class": "governed",
+   "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
+   "notes": "Repository agent operating guide carrying the hard Claude-only GUI prototype lane, explicit staging discipline, and gate-integrity anti-laundering rule."
+  },
+  "scripts/git-hooks/pre-commit": {
+   "class": "governed",
+   "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
+   "notes": "Repository pre-commit integration point; currently enforces staged rustfmt and will receive visual-truth lane refusal only after LANE-C02 owner approval."
+  },
   "specs/PROGRESS.md": {
    "class": "governed",
    "self_tracker": true
@@ -159,6 +169,11 @@
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, and common GUI/CLI/MCP parsing; no implementation or dependency authorization."
+  },
+  "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
+   "notes": "Owner-review packet for Claude-only prototype-file commit enforcement, exact staged environment-marker semantics, fail-closed rename/delete coverage, and the gate-integrity anti-laundering boundary; implementation remains unauthorized pending LANE-C02."
   },
   "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md": {
    "class": "governed",

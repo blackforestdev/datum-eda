@@ -161,6 +161,24 @@ changes.**
   `.beads/issues.jsonl` if you touched the tracker. **Never** `git add -A`,
   `git add .`, or `git commit -a` — you will clobber another session's uncommitted
   work. Run `git status` first and confirm what you're staging.
+- **Claude owns every GUI visual-truth HTML file.** Every
+  `docs/gui/prototypes/*.html` file is in the Claude file lane. Codex must never
+  edit, format, rename, delete, regenerate, or apply even mechanical annotation,
+  link, terminology, or disposition changes to those files. Codex may inspect
+  and screenshot them. Required changes must be returned to Claude as a bounded
+  reconciliation list naming the exact file, anchor/region, required outcome,
+  preserved decisions, and proof expected. The owner-approved commit gate will
+  require a Claude-session visual-truth marker for any staged change touching
+  this lane; Codex must never set, copy, forward, or recommend bypassing that
+  marker. The marker authorizes only the prototype lane, never other files or
+  product decisions.
+- **A tripped gate stays with the responsible lane.** If an agent's own
+  out-of-lane edit makes evidence traceability, parity, golden, digest, or other
+  governance checks fail, that agent must report the failure and hand the edit
+  back to the owning lane. It must not refresh authority digests, update parity
+  manifests/goldens, bless output, or otherwise absorb the failure to make the
+  gate green. Refresh-authority records only an authorized, fully reviewed
+  owning-lane change; it never launders a lane violation.
 - **Direct to `main`.** No feature branches, no pull requests (single-author
   project; PRs block in-flight work). Sequence large work as multiple small
   commits on `main`.
