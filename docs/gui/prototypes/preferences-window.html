@@ -81,8 +81,9 @@ section{display:none} section.on{display:block}
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Text render-intent backend override · Editor appearance themes · Anti-aliasing and rendering quality · Icon theme, icon scale, and display scaling · Application language · Hardware graphics acceleration · Large-design performance mode</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Color-vision deficiency assistance</div>
 </section><section id="workspace">
+<div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
 <div class="row"><div class="lbl"><b>Display units</b><span>Units used by coordinate readout and status bar (mm, mil, inch); the engine always stores exact nanometers internally.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
+<div class="prov">factory default (mm) · <span style="color:var(--warn)">while sensor-node is focused: pinned mm by adopted standard ACME-DS-1 (Project) — your machine choice resumes elsewhere</span></div>
 <div class="row"><div class="lbl"><b>Grid snap on/off</b><span>Whether clicks and drawing gestures snap to the grid when authoring on a board or schematic (code default enabled, currently hard-coded).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Grid size presets</b><span>User grid-size set with fine/coarse/user selections cycled during editing; the drawn per-editor grid pitch tier tables and grid colors stay ViewportPr</span></div><div class="ctl"><div class="sel">Default</div></div></div>
@@ -104,10 +105,12 @@ section{display:none} section.on{display:block}
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Mouse, wheel, and touchpad mapping · Camera and pointer behavior · Selection modifiers · Cross-probe behavior · Hover, tooltip, and HUD assistance · Numeric input spin increments · Double-click behavior · 3D input device tuning · Resource usage warnings</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Undo history depth / session journal memory bound</div>
 </section><section id="schematic">
+<div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Wire editing defaults · Placement and annotation defaults · Default schematic primitive properties · Editing focus emphasis</div>
 </section><section id="pcb-board">
+<div class="ghead" style="color:var(--warn)">Co-ownership — adopted standards</div><div class="prov" style="border-bottom:none">when the focused Project has adopted a standard (IEC, IPC, firm drafting), that standard may constrain or pin specific rows here <b>while that Project is open</b> — shown on the row, never silently · contextual law is GP-C03-Q6, clay</div>
 <div class="row"><div class="lbl"><b>Default route profile</b><span>Remembered starting route-proposal profile (e.g. conservative) that pre-fills but never conceals the explicit per-run choice.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
+<div class="prov">factory default (conservative) · <span style="color:var(--warn)">adopted standard ACME-DS-1 recommends high-density while sensor-node is focused — yours to override</span></div>
 <div class="row"><div class="lbl"><b>Per-net color application mode</b><span>Where per-net colors apply: on copper (None/Copper/All, default None) and on airwires (None/Ratsnest/All, default Ratsnest); the per-net color overrid</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Global airwire color</b><span>Default color for all airwires, resolved under per-net-class and per-net override tiers.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
@@ -127,7 +130,7 @@ section{display:none} section.on{display:block}
 </section>
 <section id="publish-space">
 <div class="ghead">Drawing space vs publish space</div>
-<div class="prov" style="border-bottom:none">the schematic/board canvas is yours to configure; the publish space composes issued documents — so most of what follows is seeded into the Project at genesis or owned by the Project outright, because plotted sheets are the certification surface</div>
+<div class="prov" style="border-bottom:none">the schematic/board canvas is yours to configure <b>by default — adopted standards co-own specific drawing settings where they speak</b>; the publish space composes issued documents — so most of what follows is seeded into the Project at genesis or owned by the Project outright, because plotted sheets are the certification surface</div>
 <div class="ghead">Seeds — copied into new Projects</div>
 <div class="row"><div class="lbl"><b>Title-block / sheet template seed</b><span>Which title-block and sheet templates a new Project starts with (Direction B geometry is locked identity; templates carry the fields and firm styling).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">copies once at New Project, with a receipt · rendering book: Direction B locked · docs/decisions/PRODUCT_MECHANICS_020</div><div class="row"><div class="lbl"><b>Default sheet size and orientation</b><span>Starting sheet format for new publish sheets in a new Project.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
