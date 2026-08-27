@@ -153,7 +153,12 @@
   "docs/gui/prototypes/preferences-ux-study.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "Claude-owned Preferences UX visual source of truth. Owner direction binds GP-C03 Q3 through Q10 to PX-V5 through PX-V12 respectively; materially different candidate treatments require a rendered amendment before the owner boundary opens."
+   "notes": "Claude-owned abstract Preferences UX study retained as archival evidence. Q1-Q4 dispositions remain governed; owner direction pauses Q5-Q10 and supersedes this file as the active design surface without deleting its evidence value."
+  },
+  "docs/gui/prototypes/preferences-window.html": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Claude-owned working Preferences-window prototype and prototype-first design surface. Its clay catalog and unsettled interactions are governed evidence, not ratified specification clauses."
   },
   "specs/M7_FRONTEND_SPEC.md": {
    "class": "historical",
