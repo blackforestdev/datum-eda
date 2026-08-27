@@ -20,24 +20,23 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans-serif;font-size:13px;padding:40px 0 80px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.note{font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);max-width:1100px}
-.win{width:1100px;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+.note{font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);max-width:1160px}
+.win{width:1160px;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
 .tbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--s01);border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12.5px}
 .tbar .dot{width:10px;height:10px;border-radius:50%;background:var(--bd-str)}
-.body{display:flex;height:600px}
-.nav{width:200px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0}
-.nav div{padding:8px 18px;font-size:12.5px;color:var(--tx2);cursor:pointer}
+.body{display:flex;height:640px}
+.nav{width:210px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0;overflow-y:auto}
+.nav div{padding:7px 18px;font-size:12.5px;color:var(--tx2);cursor:pointer}
 .nav div:hover{background:var(--s02)}
 .nav .on{background:var(--s02);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
-.main{flex:1;overflow-y:scroll;padding-bottom:18px}
+.main{flex:1;overflow-y:scroll;padding-bottom:18px;scrollbar-width:thin;scrollbar-color:var(--bd-str) var(--s01)}
 .main::-webkit-scrollbar{width:11px}
 .main::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:6px;border:2px solid var(--bg)}
 .main::-webkit-scrollbar-track{background:var(--s01)}
-.main{scrollbar-width:thin;scrollbar-color:var(--bd-str) var(--s01)}
 .search{margin:14px 18px 4px;padding:7px 12px;background:var(--s01);border:1px solid var(--bd-sub);border-radius:5px;font-family:"PlexMono",monospace;font-size:12px;color:var(--tx3)}
 .ghead{font-family:"PlexMono",monospace;font-size:10.5px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;margin:18px 18px 4px}
-.row{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--bd-sub)}
-.row .lbl{width:300px}
+.row{display:flex;align-items:center;gap:14px;padding:9px 18px;border-bottom:1px solid var(--bd-sub)}
+.row .lbl{width:340px}
 .row .lbl b{display:block;font-weight:600;font-size:13px}
 .row .lbl span{font-size:11px;color:var(--tx3)}
 .ctl{margin-left:auto;display:flex;align-items:center;gap:10px}
@@ -45,133 +44,184 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .sel:after{content:"▾";position:absolute;right:9px;color:var(--tx3);font-size:10px}
 .tog{width:38px;height:20px;border-radius:10px;background:var(--acc);position:relative}
 .tog:after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:var(--bg)}
-.tog.off{background:var(--bd-str)}.tog.off:after{left:2px;right:auto}
-.stp{display:flex;border:1px solid var(--bd-str);border-radius:5px;overflow:hidden;font-size:12px}
-.stp div{padding:5px 12px;background:var(--s01)}.stp .on{background:var(--s03);color:var(--tx)}
 .prov{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);padding:4px 18px 8px;border-bottom:1px solid var(--bd-sub)}
 .prov b{color:var(--tx2);font-weight:500}
 .lock{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--warn)}
+.shield{font-size:12px;color:var(--warn)}
 .btn{border:1px solid var(--bd-str);border-radius:5px;padding:5px 14px;font-size:12px;background:var(--s02)}
 .sbar{display:flex;gap:8px;align-items:center;border-top:1px solid var(--bd-sub);background:var(--s01);padding:8px 18px;font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3)}
 .chip{border:1px dashed var(--warn);color:var(--warn);border-radius:4px;padding:1px 8px;font-family:"PlexMono",monospace;font-size:10px}
 section{display:none} section.on{display:block}
 </style></head><body>
-<div class="note">PROTOTYPE — the actual Preferences window, moldable. Left menu is clickable; the pane scrolls. <span class="chip">CLAY — NOT RATIFIED</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 60 v1 settings + 59 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="chip">CLAY — NOT RATIFIED</span></div>
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav" id="nav">
-      <div data-s="appearance" class="on">Appearance</div>
-      <div data-s="workspace">Workspace</div>
-      <div data-s="terminal">Terminal</div>
-      <div data-s="revision">Revision</div>
-      <div data-s="agents">Agents</div>
-      <div data-s="organization">Organization</div>
-    </div>
-    <div class="main">
-      <div class="search">⌕&nbsp; search settings…</div>
-
-      <section id="appearance" class="on">
-        <div class="ghead">Schematic</div>
-        <div class="row"><div class="lbl"><b>Sheet background</b><span>on-screen only — plotted sheets follow the document template</span></div>
-          <div class="ctl"><div class="stp"><div class="on">Off-white paper</div><div>Dark</div></div></div></div>
-        <div class="prov">your choice · set Aug 24 · <b>reset to default (Dark)</b></div>
-        <div class="ghead">Motion</div>
-        <div class="row"><div class="lbl"><b>Reduced motion</b><span>minimize animation and transitions</span></div>
-          <div class="ctl"><div class="tog off"></div></div></div>
-        <div class="prov">factory default · accessibility setting — organizations can never control this</div>
-        <div class="ghead">Application</div>
-        <div class="row"><div class="lbl"><b>Interface theme</b><span>Datum chrome</span></div>
-          <div class="ctl"><div class="sel">Datum Dark</div></div></div>
-        <div class="prov">factory default — you haven’t changed this</div>
-      </section>
-
-      <section id="workspace">
-        <div class="ghead">Viewport</div>
-        <div class="row"><div class="lbl"><b>Crosshair</b><span>cursor crosshair in board and schematic panes</span></div>
-          <div class="ctl"><div class="stp"><div class="on">Full viewport</div><div>Local</div><div>None</div></div></div></div>
-        <div class="prov">factory default — you haven’t changed this</div>
-        <div class="ghead">Panes</div>
-        <div class="row"><div class="lbl"><b>New-window layout</b><span>what opens when Datum starts</span></div>
-          <div class="ctl"><div class="sel">Board + Schematic</div></div></div>
-        <div class="prov">factory default · pane sizes and focus are remembered per session, not here</div>
-        <div class="ghead">Console</div>
-        <div class="row"><div class="lbl"><b>Feedback message duration</b><span>how long Console confirmations stay on screen</span></div>
-          <div class="ctl"><div class="stp"><div>4 s</div><div class="on">6 s</div><div>10 s</div><div>Never hide</div></div></div></div>
-        <div class="prov">factory default — you haven’t changed this</div>
-      </section>
-
-      <section id="terminal">
-        <div class="ghead">Text</div>
-        <div class="row"><div class="lbl"><b>Font size</b><span>terminal text zoom</span></div>
-          <div class="ctl"><div class="sel">100%</div></div></div>
-        <div class="prov">your choice · range 60%–200%</div>
-        <div class="ghead">Buffer</div>
-        <div class="row"><div class="lbl"><b>Scrollback</b><span>lines kept per terminal</span></div>
-          <div class="ctl"><div class="sel">50,000 lines</div></div></div>
-        <div class="prov">set by <b>you</b> · allowed range 1,000–100,000 <span>(org limit)</span></div>
-        <div class="ghead">Behavior</div>
-        <div class="row"><div class="lbl"><b>Notifications</b><span>when terminal activity notifies you</span></div>
-          <div class="ctl"><div class="stp"><div>Off</div><div class="on">When unfocused</div><div>Always</div></div></div></div>
-        <div class="prov">factory default — you haven’t changed this</div>
-        <div class="row"><div class="lbl"><b>Launch profile</b><span>shell and environment for new terminals</span></div>
-          <div class="ctl"><div class="sel">Default ($SHELL)</div></div></div>
-        <div class="prov">factory default · profiles: Default · Login · Custom…</div>
-      </section>
-
-      <section id="revision">
-        <div class="ghead">Presentation</div>
-        <div class="row"><div class="lbl"><b>Show revision system</b><span>the Revision group in the Navigator and revision rows everywhere</span></div>
-          <div class="ctl"><span class="lock">🔒 kept ON by ACME · teaching policy — details</span><div class="tog"></div></div></div>
-        <div class="prov">pinned by <b>ACME Quality Systems</b> · “visibility teaches” · your setting (off) is kept and returns if the pin lifts</div>
-        <div class="ghead">This Project’s policy — shown here, owned by the Project</div>
-        <div class="row"><div class="lbl"><b>Revision scheme</b><span>sensor-node</span></div>
-          <div class="ctl"><span style="font-family:var(--mono);font-size:12px">Sequential Alphanumeric (A, B, C…)</span><span class="btn">edit in Project…</span></div></div>
-        <div class="prov">Project policy · copied at genesis from ACME profile v14 · <b>view seed receipt</b> · later org changes arrive as proposals, never silently</div>
-        <div class="row"><div class="lbl"><b>New-Project revision profile</b><span>what your next project starts with</span></div>
-          <div class="ctl"><div class="sel">ACME profile (ISO 19650)</div></div></div>
-        <div class="prov">org profile v14 · copies once at New Project, with a receipt — existing projects never follow later changes</div>
-      </section>
-
-      <section id="agents">
-        <div class="ghead">Authority</div>
-        <div class="row"><div class="lbl"><b>Default agent authority</b><span>what a newly launched agent may do</span></div>
-          <div class="ctl"><div class="stp"><div>Inspect</div><div class="on">Propose</div><div>Apply approved</div><div>Unattended</div></div></div></div>
-        <div class="prov">factory default · agents work through proposals you review</div>
-        <div class="row"><div class="lbl"><b>Unattended agent tools</b><span>what an AI agent may do without asking you</span></div>
-          <div class="ctl"><span class="lock">🔒 locked by ACME · security policy</span><div class="sel">None</div></div></div>
-        <div class="prov">locked by <b>ACME Quality Systems</b> · “agents never hold release authority” · appeal: qms-admin</div>
-      </section>
-
-      <section id="organization">
-        <div class="ghead">Authority released by you</div>
-        <div class="row"><div class="lbl"><b>ACME Quality Systems</b><span>what this org may manage on this machine</span></div>
-          <div class="ctl"><div class="sel">Backside management</div></div></div>
-        <div class="prov">granted by <b>you</b> · Aug 26 · levels: none → recommendations → bounded → <b>backside management</b> → full · revocable</div>
-        <div class="ghead">What ACME currently manages</div>
-        <div class="row"><div class="lbl"><b>Managed settings</b><span>under your current grant</span></div>
-          <div class="ctl"><span style="font-family:var(--mono);font-size:11.5px;color:var(--tx2)">2 pinned · 1 locked · 1 limit — list</span></div></div>
-        <div class="prov">document control · output policy · release ceremony · agent security</div>
-        <div class="ghead">Pending request</div>
-        <div class="row"><div class="lbl"><b>ACME requests: full management</b><span>inert until you release it — nothing changes unless you act</span></div>
-          <div class="ctl"><span class="btn">Review…</span><span class="btn" style="color:var(--tx3)">Ignore</span></div></div>
-        <div class="prov">requested Aug 25 · your call, no deadline · declining changes nothing</div>
-        <div class="ghead">Leaving</div>
-        <div class="row"><div class="lbl"><b>Revoke ACME’s authority</b><span>pins lift, your settings return; ACME may withdraw its resources</span></div>
-          <div class="ctl"><span class="btn" style="color:var(--warn);border-color:var(--warn)">Revoke…</span></div></div>
-        <div class="prov">typed, attributed event — both sides keep a record</div>
-      </section>
+    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
+    <div class="main"><div class="search">⌕&nbsp; search settings…</div>
+<section id="appearance" class="on">
+<div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Reduced motion</b><span>Disable non-essential interface animation (e.g. the dancing-ants selection boundary stops animating but stays dashed); personal accessibility carve-ou</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues across GUI and terminal; accessibility carve-out class.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Layer color scheme</b><span>Board layer color theme with built-in presets (default red/blue, high-contrast monochrome, photonics-friendly); presentation only — colors never alter</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Per-object opacity</b><span>Independent opacity sliders for tracks, vias, pads, and zones (zones default 70% and per-class, others 100%).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Inactive-layer dim factor</b><span>Slider controlling how much inactive copper and process layers dim in high-contrast layer mode (default 50%); spec literally names 'a slider in Prefer</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Pad outline mode</b><span>Render pads as outlines only for high-contrast placement review (default off).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Ghost via through pad</b><span>Show vias ghosted through pads for placement review instead of drawing the pad on top (default off).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Rounded track corners</b><span>Draw track corners rounded instead of mitred 45 degrees (default off).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Text render-intent backend override · Editor appearance themes · Anti-aliasing and rendering quality · Icon theme, icon scale, and display scaling · Application language · Hardware graphics acceleration · Large-design performance mode</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Color-vision deficiency assistance</div>
+</section><section id="workspace">
+<div class="row"><div class="lbl"><b>Display units</b><span>Units used by coordinate readout and status bar (mm, mil, inch); the engine always stores exact nanometers internally.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Grid snap on/off</b><span>Whether clicks and drawing gestures snap to the grid when authoring on a board or schematic (code default enabled, currently hard-coded).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Grid size presets</b><span>User grid-size set with fine/coarse/user selections cycled during editing; the drawn per-editor grid pitch tier tables and grid colors stay ViewportPr</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
+<div class="row"><div class="lbl"><b>Snap capture radius</b><span>How close, in screen pixels, the cursor must be to an object before it snaps (default 10 px); spec-declared consumer-side and user-configurable.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Fine-grid divisor</b><span>How many subdivisions the fine grid uses when the fine-grid modifier is held (default 10).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Object snap types</b><span>Per-snap-type enable for pad center, track endpoint, via center, intersection, midpoint, plus a current-layer-only gate; the UVT per-SnapTargetKind ma</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Grid mark style</b><span>How the alignment grid is drawn (cross, dot, or line marks via one continuous mark-size control), plus minimum on-screen spacing before it hides.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Crosshair style</b><span>Cursor crosshair mode (full viewport, local, or none); today session-only, promotion to a stored preference is the pending GP-C05A decision.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
+<div class="row"><div class="lbl"><b>Keyboard bindings (keymap)</b><span>User-editable editor key bindings including snap-suppressor modifiers, with import/export; the ratified exclusive gestures (Space+drag pan, right-clic</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Dismissed warnings restore</b><span>Review and re-enable warnings and prompts previously dismissed with 'don't show again' (the suppression flags themselves are state; the restore contro</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Mouse, wheel, and touchpad mapping · Camera and pointer behavior · Selection modifiers · Cross-probe behavior · Hover, tooltip, and HUD assistance · Numeric input spin increments · Double-click behavior · 3D input device tuning · Resource usage warnings</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Undo history depth / session journal memory bound</div>
+</section><section id="schematic">
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Wire editing defaults · Placement and annotation defaults · Default schematic primitive properties · Editing focus emphasis</div>
+</section><section id="pcb-board">
+<div class="row"><div class="lbl"><b>Default route profile</b><span>Remembered starting route-proposal profile (e.g. conservative) that pre-fills but never conceals the explicit per-run choice.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Per-net color application mode</b><span>Where per-net colors apply: on copper (None/Copper/All, default None) and on airwires (None/Ratsnest/All, default Ratsnest); the per-net color overrid</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Global airwire color</b><span>Default color for all airwires, resolved under per-net-class and per-net override tiers.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Curved airwires</b><span>Draw airwires as arcs instead of straight lines, useful on BGAs (global on/off, default off, ships opt-in).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Show selected ratsnest only</b><span>When on, selecting a pad, net, or component shows only its airwires and dims the rest (default on).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Airwires on hidden layers</b><span>Draw or suppress airwires whose endpoints sit on hidden layers (All layers vs Visible layers, default Visible layers).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Viewport airwire culling</b><span>Performance mode drawing only airwires with an endpoint inside the viewport (default off), gated behind a perf preference for very large boards.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Default layer visibility</b><span>Which board layers start visible when a design opens (today hard-coded to copper); the per-session visibility map itself is session state.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Auto-via on layer change · Interactive routing defaults · Routing objective profile default · Rotation step and flip direction · Track and arc editing mode · Default board primitive properties · Polygon repour automation · Net name and clearance display · Displayed origin and axis directions</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Zone display mode (filled vs outline/sketch)</div>
+</section><section id="rules-checks">
+<div class="row"><div class="lbl"><b>Check profile pre-fill</b><span>A remembered CheckProfile pre-fill for run_check; the profile remains a named per-run parameter that is never hidden.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Live DRC while editing · DRC violation overlay style</div>
+</section><section id="terminal">
+<div class="row"><div class="lbl"><b>Terminal launch profiles</b><span>Named launch templates (default/login/custom) covering executable, argv, cwd, and environment; Project sources are ineligible for executable choice, a</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="row"><div class="lbl"><b>Terminal theme and palette</b><span>Terminal color theme and palette (factory Datum Dark; cycled per session today).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Terminal font size and ligatures</b><span>Terminal text size (zoom 60%-200% in 10% steps, factory 100%) and ligature rendering; the cell typeface itself is locked to pinned JetBrains Mono by d</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Terminal cursor style</b><span>Terminal cursor shape and blink behavior (factory blinking block).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Terminal bell, activity, and copy feedback</b><span>Visual bell (factory), background-activity indication on tabs, and whether routine copy success shows confirmation or stays silent.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Terminal scrollback limits</b><span>Bounded scrollback history in lines and MiB (constrained to 100,000 lines / 64 MiB); a resource policy with hard engine-enforced memory bounds.</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="row"><div class="lbl"><b>Terminal desktop notifications</b><span>Desktop notification delivery mode: off, unfocused (compatibility default), or always; a Preferences surface would replace today's DATUM_TERMINAL_NOTI</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Terminal key bindings</b><span>User-configurable keyboard bindings inside the embedded terminal (NT-CAP-06 requirement; no binding surface exists yet).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Multiline paste policy</b><span>Whether pasting multiline text into the terminal warns, requires confirmation, or proceeds; security-classed under FT-010, not a cosmetic.</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="row"><div class="lbl"><b>OSC 52 clipboard write gating</b><span>Whether terminal applications may write the system clipboard, disabled or confirmation-gated by default; clipboard reads and background writes stay de</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="row"><div class="lbl"><b>Hyperlink and file-open trust policy</b><span>Untrusted-target confirmation policy before opening OSC 8 hyperlinks, files, or detected paths; opening is always user-initiated.</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Terminal graphics policy</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Terminal process-close/kill confirmation policy · Terminal copy format policy · Terminal font fallback chain</div>
+</section><section id="library">
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Library pools and search order · IPC footprint naming/basis default · Field name templates · Supplier data and currency · Library browser zoom behavior</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Path variables for library/model resolution</div>
+</section><section id="files-projects">
+<div class="row"><div class="lbl"><b>Startup and recent files</b><span>Whether Datum reopens the last project or shows a start page at launch, and how many recent projects are listed with a clear-history control (the reme</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Default file locations</b><span>Default folders for projects, libraries, and output job files, and the default new-project save location.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Auto-save, backup, and recovery</b><span>Auto-save interval and retained versions, crash-recovery snapshots, per-document backup copies with age-based cleanup, and an unsaved-work reminder ca</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>New-Project seed profile selection</b><span>Explicit selection of a factory, user, or organization seed profile/package at Project genesis, resolved to an immutable snapshot with a durable Proje</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row"><div class="lbl"><b>New-project templates</b><span>Which template each new project or document type starts from, and the template list/folder offered at creation; the created Project then owns its copy</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row"><div class="lbl"><b>Title-block/sheet template seed</b><span>Sheet and title-block templates selected as new-Project seed material (e.g. the PX-V7 receipt's TB-A4).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row"><div class="lbl"><b>Default unit system for new projects</b><span>The unit system and display precision seeded into newly created Projects; existing Projects keep their own unit policy.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Default drafting standard seed · Multi-instance file locking · Helper applications · Update checks · Cache maintenance · 3D model search paths</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Update channel selection</div>
+</section><section id="output">
+<div class="row"><div class="lbl"><b>Default output job pre-fill</b><span>The output job the Generate flow preselects; output jobs themselves are authored Project facts shown read-only.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Export destination pre-fill</b><span>A pre-filled export destination; the per-run ask never disappears.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Publishing destinations</div>
+</section><section id="revision">
+<div class="row"><div class="lbl"><b>Show/hide revision system</b><span>Presentation-only visibility of Revision Navigator groups and projections (factory: visible expanded groups); hiding never disables records, policy, j</span></div><div class="ctl"><span class="lock">🔒 kept ON by ACME · teaching policy</span><div class="tog"></div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>New-Project revision profile seed</b><span>The revision profile copied into new Projects at genesis (factory Sequential Alphanumeric (Legacy); ISO 19650 and organization-custom selectable); cop</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row"><div class="lbl"><b>Build hierarchy presentation seed</b><span>Whether new Projects start with the quiet build-and-baseline Inspector (factory V4a) or the enterprise Phase-Build-Baseline Navigator hierarchy (V4b);</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row"><div class="lbl"><b>Prototype-to-production transition seed</b><span>Whether new Projects continue one revision sequence through prototype and production (factory Candidate A) or use a governed namespace transition (Can</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Provisional watermark presentation · Git and offline exchange seed · Local history and session journal retention · Version control integration (machine-side) · User identity for provenance</div>
+</section><section id="agents">
+<div class="row"><div class="lbl"><b>Agent authority level</b><span>Per-profile Datum capability grant for launched agents: inspect, propose (default inspect+propose), apply-approved, or owner-enabled unattended; crede</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="row"><div class="lbl"><b>Unattended agent tool allowlist</b><span>The exact tool list an unattended agent may use, with limits and revocation; lockable by organization policy and rendered in the UX study as the canon</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Persistent agent project configuration · Scripting and agent API access</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Engine daemon / MCP endpoint configuration</div>
+</section><section id="organization">
+<div class="row"><div class="lbl"><b>Organization authority release</b><span>The user-held five-level dial (None, RecommendationsOnly, Bounded, BacksideManagement, FullManagement) releasing organization control over this machin</span></div><div class="ctl"><div class="sel">Backside management</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Pending organization requests</b><span>Organization directives beyond the released level remain visible but inert as pending requests decided in Preferences; Datum never interrupts work wit</span></div><div class="ctl"><span class="btn">review…</span></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Managed policy package status</b><span>Read-only display of managing provider, policy package, generation, settings under management, contact, and effective/stale/expired/revoked state.</span></div><div class="ctl"><span class="btn">review…</span></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Reset, export, and import of preferences</b><span>Reset a page, section, or all preferences to factory defaults, and export/import preferences as a portable file — a Preferences-window mechanism rathe</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel">Default</div></div></div>
+<div class="prov">protected — untrusted projects can never set this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Organization-managed pins and defaults · Title-block scale fraction (per-firm) · Network access toggles · Telemetry and crash reporting opt-in</div>
+<div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Network proxy configuration</div>
+</section><section id="project-policy-read-only">
+<div class="row"><div class="lbl"><b>Active Project policy mirror</b><span>The active Project's governing settings — units, net classes, design rules and severity defaults, layer stackup, check rules, waivers, manufacturing p</span></div><div class="ctl"><span class="btn">view in Project…</span></div></div>
+<div class="prov">Project policy · shown here, owned by the Project</div>
+<div class="row"><div class="lbl"><b>Active Project revision policy</b><span>The Project's copied revision policy (schemes, roles, quorum, retention, display detail) shown for inspection; changed through Project governance, nev</span></div><div class="ctl"><span class="btn">view in Project…</span></div></div>
+<div class="prov">Project policy · shown here, owned by the Project</div>
+<div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">ISO revision/status projection detail · Successor-work / earlier-control adoption · Shipped check profile set · Library placement gate strictness</div>
+</section>
     </div>
   </div>
   <div class="sbar">This machine: authority released to ACME — <b style="color:var(--tx2)">backside management</b> · granted by you, Aug 26 · <span style="color:var(--info)">manage…</span></div>
 </div>
-<div class="note">Every gray line under a control answers “why is it set to this?” — nothing on this screen hides who set what.</div>
+<div class="note">⚠ Open owner decision surfaced by research: “schematic background paper vs dark” conflicts with the locked rendering book (dark working canvas locked; vellum is a session view toggle) — it is deliberately absent above until you rule on it.</div>
 <script>
 const nav=document.getElementById('nav');
-function show(id){
-  document.querySelectorAll('#nav div').forEach(d=>d.classList.toggle('on',d.dataset.s===id));
-  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));
-}
+function show(id){document.querySelectorAll('#nav div').forEach(d=>d.classList.toggle('on',d.dataset.s===id));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));}
 nav.addEventListener('click',e=>{const d=e.target.closest('[data-s]');if(d){show(d.dataset.s);history.replaceState(null,'','#'+d.dataset.s);}});
 if(location.hash){const id=location.hash.slice(1);if(document.getElementById(id))show(id);}
 </script>
