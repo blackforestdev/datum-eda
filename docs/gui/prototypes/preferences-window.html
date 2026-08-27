@@ -57,7 +57,7 @@ section{display:none} section.on{display:block}
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
+    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
     <div class="main"><div class="search">⌕&nbsp; search settings…</div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
@@ -156,6 +156,24 @@ section{display:none} section.on{display:block}
 </section><section id="library">
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Library pools and search order · IPC footprint naming/basis default · Field name templates · Supplier data and currency · Library browser zoom behavior</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Path variables for library/model resolution</div>
+</section>
+<section id="symbol-editor">
+<div class="ghead" style="color:var(--warn)">Planned — the symbol editor is on the authoring frontier, not v1</div>
+<div class="row"><div class="lbl"><b>New-symbol defaults</b><span>Reference prefix, pin number visibility, and unit conventions applied when creating a symbol.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · library tool contract · KiCad Symbol Editor defaults</div><div class="row"><div class="lbl"><b>Default pin length and spacing</b><span>Starting pin length and name/number offsets for new pins (IEC rectangular symbol standard is locked identity — these are geometry defaults inside it).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · rendering book: IEC standard locked · KiCad Symbol Editor</div><div class="row"><div class="lbl"><b>Default graphics line width</b><span>Line width for new symbol body graphics.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · KiCad Symbol Editor defaults</div><div class="ghead">Inherited — not duplicated here</div>
+<div class="prov" style="border-bottom:none">grid · snap · units · zoom behavior come from the shared viewport backbone (decision 023), configured per editor by its ViewportProfile — the tools change, the scene doesn’t</div>
+</section>
+<section id="footprint-editor">
+<div class="ghead" style="color:var(--warn)">Planned — the footprint editor is on the authoring frontier, not v1</div>
+<div class="row"><div class="lbl"><b>Default pad properties</b><span>Shape, size, and drill applied to newly placed pads.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · library tool contract · KiCad Footprint Editor defaults</div><div class="row"><div class="lbl"><b>IPC naming basis and density</b><span>Default IPC-7351B naming basis and density level for generated footprints (two-terminal and SOIC generation already landed engine-side).</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · docs/IPC_FOOTPRINT_SYSTEM.md · engine IPC slices — also listed under Library</div><div class="row"><div class="lbl"><b>Default silk and courtyard widths</b><span>Line widths and clearances for silkscreen and courtyard on new footprints — manufacturing-relevant, so possibly a Project seed rather than a machine default. ⚠ classification clay</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · library tool contract · <span style="color:var(--warn)">ProjectPolicySeed? — clay</span></div><div class="row"><div class="lbl"><b>Default reference/value text</b><span>Text size and thickness for REF** and VALUE on new footprints.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · KiCad Footprint Editor defaults</div><div class="row"><div class="lbl"><b>Footprint preview annotations</b><span>Show pad numbers and pin-pad map bindings in the editor preview.</span></div><div class="ctl"><div class="sel">Default</div></div></div>
+<div class="prov">planned · decision 008 Footprint/PinPadMap types</div><div class="ghead">Inherited — not duplicated here</div>
+<div class="prov" style="border-bottom:none">grid · snap · units · zoom behavior come from the shared viewport backbone (decision 023), configured per editor by its ViewportProfile</div>
 </section><section id="files-projects">
 <div class="row"><div class="lbl"><b>Startup and recent files</b><span>Whether Datum reopens the last project or shows a start page at launch, and how many recent projects are listed with a clear-history control (the reme</span></div><div class="ctl"><div class="sel">Default</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
