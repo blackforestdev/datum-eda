@@ -155,6 +155,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Draft 60-v1 plus 59-planned registry seed absorbed from the clay Preferences prototype. It preserves intake labels and later-delta warnings without ratifying descriptors, classifications, defaults, scope, or implementation."
   },
+  "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "Owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, and common GUI/CLI/MCP parsing; no implementation or dependency authorization."
+  },
   "docs/gui/prototypes/preferences-ux-study.html": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",

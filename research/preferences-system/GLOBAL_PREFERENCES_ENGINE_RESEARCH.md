@@ -123,6 +123,17 @@ actually Project authority, restartable state, transient state, or operation
 input. This is governed specification evidence, never implementation-time
 improvisation.
 
+<!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:SHARED-UNITS-ENGINE-CARRY -->
+### Shared units engine
+
+The Global Preferences specification must include the engine-owned shared units
+contract in `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`: exact signed-integer
+nanometer storage, measurement-system defaults, typed per-quantity overrides,
+display-only precision including exact nanometers, and one unit-suffixed input
+parser serving GUI, CLI, and MCP. The prototype supplies the user-facing design
+evidence; the requirement preserves canonical storage and defines the shared
+service seam without authorizing implementation.
+
 ## Non-negotiable boundaries
 
 - Global Preferences may seed a new Project; copied Project policy then belongs
