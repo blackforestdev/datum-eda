@@ -5637,29 +5637,14 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/gui/DATUM_RENDERING_BOOK.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": false,
       "summary": "Ratify Candidate B as one persisted machine Presentation preference selecting the complete governed Dark or Light schematic drawing theme, while preserving the Dark factory default, dark chrome, board color-scheme boundary, and Publish/print independence.",
       "dependencies": [],
       "unblocks": [],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-schematic-theme-owner-disposition-20260827",
-        "claimed_at": "2026-08-27T12:07:15-07:00",
-        "heartbeat_at": "2026-08-27T12:07:15-07:00",
-        "expires_at": "2026-08-27T20:07:15-07:00",
-        "scope": [
-          "schematic drawing-theme owner disposition",
-          "Rendering Book terminology reconciliation",
-          "Global Preferences presentation carry-forward",
-          "owner-decision closure"
-        ],
-        "worktree": ".",
-        "head": "4519a54d1eb0c3235a4363e2aee75c076a68831a"
-      }
+      "landing_commit": "c2d1caa"
     },
     {
       "key": "ADOPTED-DRAFTING-STANDARD-SPEC",
