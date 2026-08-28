@@ -52,6 +52,19 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .sbar{display:flex;gap:8px;align-items:center;border-top:1px solid var(--bd-sub);background:var(--s01);padding:8px 18px;font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3)}
 .chip{border:1px dashed var(--warn);color:var(--warn);border-radius:4px;padding:1px 8px;font-family:"PlexMono",monospace;font-size:10px}
 section{display:none} section.on{display:block}
+.pane-wrap{display:flex;flex:1;min-width:0}
+.explain{width:340px;flex-shrink:0;border-left:1px solid var(--bd-str);background:var(--s01);display:none;overflow-y:auto}
+.explain.on{display:block}
+.explain .eh{padding:10px 14px;border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12.5px;display:flex;align-items:center}
+.explain .eh .x{margin-left:auto;color:var(--tx3);cursor:pointer;font-family:"PlexMono",monospace}
+.explain .eg{font-family:"PlexMono",monospace;font-size:10px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;padding:12px 14px 5px}
+.explain .er{padding:6px 14px;border-bottom:1px solid var(--bd-sub);font-size:11.5px;line-height:1.5}
+.explain .er b{font-weight:600} .explain .er .m{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);display:block}
+.explain .win-row{background:var(--s02);border-left:2px solid var(--rel)}
+.explain .lost{opacity:.72}
+.explain .note{padding:10px 14px;font-size:11px;color:var(--tx3);line-height:1.6}
+.row .lbl b{cursor:pointer}
+.row.sel{background:var(--s02);box-shadow:inset 2px 0 0 var(--acc)}
 .sel[data-opts]{cursor:pointer}
 .menu{position:absolute;background:var(--s01);border:1px solid var(--bd-str);border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:9;min-width:150px;font-size:12.5px}
 .menu div{padding:6px 14px;cursor:pointer}.menu div:hover{background:var(--s02)}.menu .cur{color:var(--acc)}
@@ -62,7 +75,7 @@ section{display:none} section.on{display:block}
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
     <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="units">Units</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
-    <div class="main"><div class="search">⌕&nbsp; search settings…</div>
+    <div class="pane-wrap"><div class="main"><div class="search">⌕&nbsp; search settings…</div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel" data-opts="4 s|6 s|10 s|Never hide" data-def="6 s">6 s</div></div></div>
 <div class="prov">factory default — you haven’t changed this</div>
@@ -288,6 +301,11 @@ section{display:none} section.on{display:block}
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">ISO revision/status projection detail · Successor-work / earlier-control adoption · Shipped check profile set · Library placement gate strictness</div>
 </section>
     </div>
+    <aside class="explain" id="explain">
+      <div class="eh"><span id="exname">Explain</span><span class="x" id="exclose">✕ Esc</span></div>
+      <div id="exbody"></div>
+    </aside>
+    </div>
   </div>
   <div class="sbar">This machine: authority released to ACME — <b style="color:var(--tx2)">backside management</b> · granted by you, Aug 26 · <span style="color:var(--info)">manage…</span></div>
 </div>
@@ -343,6 +361,60 @@ document.addEventListener('click',e=>{
   const r=sel.getBoundingClientRect();menu.style.left=(r.left+window.scrollX)+'px';menu.style.top=(r.bottom+window.scrollY+4)+'px';
 });
 document.querySelectorAll('.sel.uq').forEach(u=>{u.dataset.def=u.dataset.mdef;});
+const EX={
+ 'Show/hide revision system':{
+  eff:'on · <span style="color:var(--warn)">🔒 pinned by organization</span>',
+  stack:[
+   {s:'Organization',v:'pin on',m:'policy T-EDU-1 “visibility teaches” · admin r.osei · 2026-08-20 · within your released authority (backside management)',w:1},
+   {s:'User',v:'hidden',m:'set by you 2026-08-19 · overridden by the pin — retained, and it returns automatically if the pin lifts',w:0},
+   {s:'Installation',v:'no value',m:'nothing set for this machine',w:0},
+   {s:'Descriptor default',v:'shown',m:'factory fact — inert while any contribution exists',w:0}],
+  why:'Q4 staged resolution: eligibility first (your AuthorityRelease admits ACME directives), then controls (the pin governs the effective value), then ordinary ranking of what remains.',
+  desc:'datum.revision.visibility · enum shown|hidden · class Presentation · sources: Installation · Organization · User',
+  act:'You cannot change this while the pin is active. Appeal: qms-admin. Revoking ACME’s authority in Organization lifts every pin it holds.'},
+ 'Board and layout lengths':{
+  eff:'mil <span style="color:var(--tx3)">· your choice</span>',
+  stack:[
+   {s:'User',v:'mil',m:'set by you · cross-system override — mil is imperial while your system is Metric',w:1},
+   {s:'Context',v:'mm',m:'adopted standard ACME-DS-1 applies while sensor-node is focused — read-only, selects applicability only',w:0},
+   {s:'Descriptor default',v:'Follow system (mm)',m:'factory fact — inert',w:0}],
+  why:'No organization directive exists for this key, so ordinary ranking applies: your explicit value outranks the descriptor default. Context narrows applicability but never creates authority (Q6 clause 7).',
+  desc:'datum.units.board_length · enum · class Presentation · sources: Installation · Organization · User · Context',
+  act:'Reset to default returns it to Follow system. Changing your measurement system re-resolves every “Follow system” row.'}
+};
+function exOpen(name,row){
+  const p=document.getElementById('explain'), b=document.getElementById('exbody');
+  document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));
+  if(row) row.classList.add('sel');
+  document.getElementById('exname').textContent='Explain · '+name;
+  const d=EX[name];
+  if(d){
+    b.innerHTML='<div class="eg">Effective value</div><div class="er"><b>'+d.eff+'</b></div>'
+      +'<div class="eg">Every contribution · engine answer, one query</div>'
+      +d.stack.map(c=>'<div class="er '+(c.w?'win-row':'lost')+'"><b>'+c.s+'</b> — '+c.v+(c.w?' <span style="color:var(--rel)">· EFFECTIVE</span>':'')+'<span class="m">'+c.m+'</span></div>').join('')
+      +'<div class="eg">Why this wins</div><div class="note">'+d.why+'</div>'
+      +'<div class="eg">Descriptor</div><div class="er"><span class="m" style="color:var(--tx2)">'+d.desc+'</span></div>'
+      +'<div class="eg">What you can do</div><div class="note">'+d.act+'</div>'
+      +'<div class="note" style="border-top:1px solid var(--bd-sub)">the same typed answer is returned to the CLI and MCP by one resolver query — this pane renders engine truth, it does not compute it</div>';
+  } else {
+    const prov=row&&row.nextElementSibling&&row.nextElementSibling.classList.contains('prov')?row.nextElementSibling.innerHTML:'';
+    b.innerHTML='<div class="eg">Effective value</div><div class="er">'+(row?row.querySelector('.ctl').innerText.trim():'')+'</div>'
+      +'<div class="eg">Provenance</div><div class="note">'+prov+'</div>'
+      +'<div class="note" style="border-top:1px solid var(--bd-sub)">full contribution stacks are drawn for two representative rows in this prototype; every row resolves through the same query</div>';
+  }
+  p.classList.add('on');
+}
+document.addEventListener('click',e=>{
+  if(e.target.id==='exclose'){document.getElementById('explain').classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));return;}
+  const lb=e.target.closest('.row .lbl b');
+  if(lb){exOpen(lb.textContent.trim(), lb.closest('.row'));}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('explain').classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));}});
+if((location.hash||'').includes('explain')){
+  const target=(location.hash.includes('units'))?'Board and layout lengths':'Show/hide revision system';
+  const b=[...document.querySelectorAll('.row .lbl b')].find(x=>x.textContent.trim()===target);
+  if(b){const sec=b.closest('section'); if(sec) show(sec.id); exOpen(target,b.closest('.row'));}
+}
 const h=(location.hash||'').slice(1).split(',');
 if(h[0]&&document.getElementById(h[0]))show(h[0]);
 if(h.includes('demo2')){
