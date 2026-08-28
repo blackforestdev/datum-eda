@@ -70,11 +70,11 @@ section{display:none} section.on{display:block}
 .menu div{padding:6px 14px;cursor:pointer}.menu div:hover{background:var(--s02)}.menu .cur{color:var(--acc)}
 .rst{color:var(--info);cursor:pointer}
 </style></head><body>
-<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="chip">CLAY — NOT RATIFIED EXCEPT OWNER-DISPOSITIONED ROWS</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="chip">CLAY — NOT RATIFIED EXCEPT OWNER-DISPOSITIONED ROWS · GP-C03 Q1–Q11 dispositioned</span></div>
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
-    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="units">Units</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
+    <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="units">Units</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="manage-preferences">Manage preferences</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
     <div class="pane-wrap"><div class="main"><div class="search">⌕&nbsp; search settings…</div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel" data-opts="4 s|6 s|10 s|Never hide" data-def="6 s">6 s</div></div></div>
@@ -267,13 +267,11 @@ section{display:none} section.on{display:block}
 <div class="prov">protected — untrusted projects can never set this</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Persistent agent project configuration · Scripting and agent API access</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Engine daemon / MCP endpoint configuration</div>
-</section><section id="organization">
-<div class="row"><div class="lbl"><b>Organization authority release</b><span>The user-held five-level dial (None, RecommendationsOnly, Bounded, BacksideManagement, FullManagement) releasing organization control over this machin</span></div><div class="ctl"><div class="sel" data-opts="None|Recommendations only|Bounded|Backside management|Full management" data-def="Backside management">Backside management</div></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
-<div class="row"><div class="lbl"><b>Pending organization requests</b><span>Organization directives beyond the released level remain visible but inert as pending requests decided in Preferences; Datum never interrupts work wit</span></div><div class="ctl"><span class="btn">review…</span></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
-<div class="row"><div class="lbl"><b>Managed policy package status</b><span>Read-only display of managing provider, policy package, generation, settings under management, contact, and effective/stale/expired/revoked state.</span></div><div class="ctl"><span class="btn">review…</span></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
+</section><section id="manage-preferences">
+<div class="ghead">This machine’s preference store</div>
+<div class="row"><div class="lbl"><b>Where preferences are stored</b><span>the location this machine reads and writes</span></div>
+  <div class="ctl"><span style="font-family:'PlexMono',monospace;font-size:11.5px;color:#8b93a5">~/.config/datum/</span><span class="btn">Show…</span></div></div>
+<div class="prov">machine-local · never Project data · exact storage format is a later decision (GP-C04)</div>
 <div class="row"><div class="lbl"><b>Reset, export, and import of preferences</b><span>Reset a page, section, or all preferences to factory defaults, and export/import preferences as a portable file — a Preferences-window mechanism rathe</span></div><div class="ctl"><span class="shield">⛉</span><span class="btn">Export…</span><span class="btn">Import…</span><span class="btn" style="color:#d9a441;border-color:#d9a441">Reset all…</span></div></div>
 <div class="prov">protected — untrusted projects can never set this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
 <div class="ghead">Stored settings this version does not recognize</div>
@@ -290,7 +288,15 @@ section{display:none} section.on{display:block}
 <div class="row" style="opacity:.75"><div class="lbl"><b>Nothing is deleted here</b><span>this page reports what the store holds; removing a key is an explicit act</span></div>
   <div class="ctl"><span class="btn" style="color:var(--warn);border-color:var(--warn)">Remove unknown keys…</span></div></div>
 <div class="prov">a deliberate, confirmable action that names every key it would drop and offers an export first — never automatic, never a side effect of saving</div>
-<div class="prov" style="color:var(--warn);border-bottom:none">⚠ clay: this store-hygiene group sits with import/export/reset under Organization because that is where the catalog placed those controls; it may belong in its own “Preferences file” group or under Files &amp; Projects — placement is undecided</div>
+
+</section>
+<section id="organization">
+<div class="row"><div class="lbl"><b>Organization authority release</b><span>The user-held five-level dial (None, RecommendationsOnly, Bounded, BacksideManagement, FullManagement) releasing organization control over this machin</span></div><div class="ctl"><div class="sel" data-opts="None|Recommendations only|Bounded|Backside management|Full management" data-def="Backside management">Backside management</div></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Pending organization requests</b><span>Organization directives beyond the released level remain visible but inert as pending requests decided in Preferences; Datum never interrupts work wit</span></div><div class="ctl"><span class="btn">review…</span></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
+<div class="row"><div class="lbl"><b>Managed policy package status</b><span>Read-only display of managing provider, policy package, generation, settings under management, contact, and effective/stale/expired/revoked state.</span></div><div class="ctl"><span class="btn">review…</span></div></div>
+<div class="prov">factory default — you haven’t changed this</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Organization-managed pins and defaults · Network access toggles · Telemetry and crash reporting opt-in</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Network proxy configuration</div>
 </section><section id="project-policy-read-only">
