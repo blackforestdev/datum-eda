@@ -87,6 +87,7 @@ directory does not sit in git unloved.
 | S5 selection visual language   | `selection-visual-language/`    | `SELECTION_VISUAL_LANGUAGE_RESEARCH.md`       | integrated | `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`             |
 | Workspace architecture         | `workspace-architecture/`       | `WORKSPACE_ARCHITECTURE_RESEARCH.md`          | integrated | `specs/PUBLISH_SPACE_SPEC.md`; decision 020                          |
 | Product revision engine        | `documentation-system/`         | `PRODUCT_REVISION_ENGINE_RESEARCH.md`; `REV_C01_INTERNAL_AUTHORITY_AUDIT.md`; `PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md`; `PRODUCT_REVISION_ENGINE_AUTHORITY_MODEL.md`; `REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md`; `REV_C03_REVISION_IDENTITY_DECISION_PACKET.md`; `REV_C04_OFFLINE_GIT_INTEGRATION_CONTRACT.md`; `REV_C05_IMPACT_STALENESS_REPRODUCIBILITY_CONTRACT.md`; `REV_C06_UX_VISUAL_STUDY_BRIEF.md` | in-progress | (pending — dat-product-revision-engine-k9f)                       |
+| Global Preferences engine      | `preferences-system/`           | `GLOBAL_PREFERENCES_ENGINE_RESEARCH.md`; `GP_C01_INTERNAL_AUTHORITY_AUDIT.md`; `GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md`; `GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md`; `GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md`; `GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md` | in-progress | (pending — dat-global-preferences-engine-qcv) |
 
 ## Future Research (Backlog)
 

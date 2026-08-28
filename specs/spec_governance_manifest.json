@@ -170,6 +170,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Continuation of the GP-C03 one-question-at-a-time authority packet beginning with PX-V7-backed Project-policy seeding and its durable receipt; specification only."
   },
+  "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "GP-C04 generation-addressed local persistence, atomic recovery, deterministic migration, typed exchange, explicit conflict, audit, and Project-seed seam draft. Visible recovery/import/migration clauses remain render-gated to Claude; no implementation or dependency is authorized."
+  },
   "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
