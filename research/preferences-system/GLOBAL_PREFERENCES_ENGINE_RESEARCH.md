@@ -256,11 +256,12 @@ commit `70bf2a2` now renders Q9's full resolver-owned explanation beside the
 selected row in the real Preferences window, including effective and retained
 contributions, Q4 reasoning, descriptor facts, remaining user actions, and one
 typed GUI/CLI/MCP answer. Q9-A establishes that one authoritative complete,
-read-only typed result across all three surfaces. Q10's managed-visibility half
-is present in the real `#revision` window, but first-Release onboarding has no
-Preferences state/scope/reset/replay control and no guidance state beside the
-approved Release arm bar. Q10 remains render-gated under a bounded Claude
-reconciliation; no candidates, clauses, or owner boundary exist yet. GP-C05 later
+read-only typed result across all three surfaces. Claude commit `7089ee8` closes
+the Q10 visual gap with paired visibility states, S1 per-user-profile, S2
+machine-local, and S3 per-Project onboarding alternatives, a separate
+managed-required-replay choice, and first-use/replayed guidance beside the
+unchanged Release arm bar. The Q10 packet preserves scope and managed replay as
+explicit owner decisions; Q10 remains undispositioned. GP-C05 later
 extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner

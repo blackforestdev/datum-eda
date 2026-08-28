@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,6 +5192,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-q10-packet-20260828",
+        "claimed_at": "2026-08-28T10:32:59-07:00",
+        "heartbeat_at": "2026-08-28T10:32:59-07:00",
+        "expires_at": "2026-08-28T18:32:59-07:00",
+        "scope": [
+          "register and reconcile Claude commit 7089ee8",
+          "draft GP-C03-Q10 candidates and bounded clauses from the rendered carry-forwards",
+          "preserve scope and managed-replay as explicit owner decisions",
+          "no prototype HTML mutation and no implementation or dependency authority"
+        ],
+        "worktree": ".",
+        "head": "7089ee873dd5ccd8ad07c90d94a4499c5ebe8aa9"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5292,8 +5308,8 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "pending",
-            "action": "Have Claude render GP-C03-Q10 across the real Preferences #revision surface and the approved Release #ux-v9 surface: paired unmanaged/managed Revision visibility, genuine per-user/profile versus machine-local user versus per-Project onboarding-state alternatives with completion/reset/replay, and accessible first-use/replayed guidance beside the existing arm-then-confirm bar; then reconcile the evidence route before Codex drafts any Q10 candidate or clause.",
+            "status": "in_progress",
+            "action": "Register and reconcile Claude commit 7089ee8, then draft GP-C03-Q10 common clauses plus explicit S1/S2/S3 onboarding-scope and managed-required-replay owner choices from the rendered carry-forward study.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5385,6 +5401,10 @@
                 "kind": "document",
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-RENDER-GAP"
+              },
+              {
+                "kind": "commit",
+                "revision": "7089ee8"
               }
             ]
           },

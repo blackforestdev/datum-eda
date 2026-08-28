@@ -1,13 +1,12 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
-> Q9 approved. Q9-A establishes one resolver-owned typed complete explanation
-> across GUI, CLI, and MCP. The Q10 audit finds managed Revision visibility
-> rendered in `#revision`, but no first-Release onboarding state/control in the
-> real Preferences window and no guidance state beside the approved Release arm
-> bar; Q10 remains closed pending bounded Claude reconciliation. Q5B is the
-> historical alias for Q11. Specification only; no implementation, dependency,
-> or Q10 disposition is authorized.
+> Q9 approved. Claude commit `7089ee8` closes the Q10 render gap with paired
+> visibility states, three genuine onboarding scopes, and first-use/replayed
+> guidance beside the unchanged Release arm bar. The Q10 packet is prepared with
+> scope and managed-required replay as separate explicit owner choices. Q5B is
+> the historical alias for Q11. Specification only; no implementation,
+> dependency, or Q10 disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -1752,3 +1751,269 @@ Q10 owner marker or packet marker is created.
   source/consumer review.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-RENDER-GAP -->
+
+### 10.2 Reconciliation landed
+
+Claude commit `7089ee8` satisfies the gate in the registered
+`revision-carryforward-study.html`. It renders the real Preferences `#revision`
+row in unmanaged and managed states, all three requested onboarding-state scope
+alternatives with their honest costs, the separate managed-required-replay
+question, and first-use/replayed guidance beside an unchanged Q5-B-amended
+arm-then-confirm bar. Codex did not edit the prototype. Q10 may now open against
+the drawn alternatives.
+
+## 11. GP-C03-Q10 — Revision visibility and first-Release onboarding
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q10 -->
+
+> **Packet state:** owner-ready. Approval must select the common Q10-A behavior,
+> exactly one scope S1/S2/S3, and exactly one managed-replay answer R1/R2.
+
+### 11.1 Exact on-screen decision
+
+**Preferences → Revision shows Revision visibility as the user's ordinary
+Presentation choice when unmanaged and as a provenance-disclosed retained-value
+Pin when eligible management keeps it on; it also shows the selected completion
+scope and Show again/reset controls for first-Release guidance, which appears
+beside the unchanged arm-then-confirm bar on first use or replay and never blocks
+issuance.**
+
+Q10 decides the two Revision carry-forward identities and their scope/reset law:
+common visibility and onboarding behavior, one of S1/S2/S3 for onboarding state,
+and whether managed policy may require replay. It does not reopen Revision
+issuance, Q1–Q9 or Q11, persistence representation (GP-C04), final responsive
+polish (GP-C05), implementation dependencies, or Project Revision mechanism.
+
+### 11.2 Reviewed visual evidence
+
+The primary reviewed visual evidence is the Claude-owned
+`docs/gui/prototypes/revision-carryforward-study.html` at commit `7089ee8`:
+
+- source lines 53–67 render the same **Show/hide revision system** row on an
+  unmanaged machine and under an eligible teaching Pin. The unmanaged user may
+  hide it; the managed pane names ACME, policy, reason, actor, date,
+  `AuthorityRelease`, retained off value, automatic return, and appeal. Both
+  captions state that only projection changes and engine truth is identical;
+- lines 70–89 render three genuine onboarding-state scopes with common
+  completion/reset/replay: S1 follows a user profile across machines but requires
+  identity/sync that Datum does not have; S2 is machine-local beside guided-setup
+  state and repeats on a new or handed-down machine; S3 teaches every Project but
+  makes guidance state Project data or degenerates into a wider S2 key;
+- line 89 separately renders managed-required replay as a directive layered over
+  any scope, not a fourth scope;
+- lines 91–104 render first-use guidance beside the unchanged arm bar, explaining
+  immutable baseline, engineering revisions, document issues/package, cancel,
+  and the no-record-before-confirm rule. It is keyboard reachable/dismissible,
+  focus-preserving, non-color, politely announced, and non-gating;
+- lines 105–114 render the same explanation explicitly labeled as user-requested
+  replay, with **Don't show automatically** and **Keep showing** on the panel and
+  recorded dismissal rather than silent suppression;
+- line 116 leaves S1/S2/S3 and managed-required replay unresolved while fixing
+  the common behavior.
+
+The real `preferences-window.html#revision`, source lines 253–261 at commit
+`70bf2a2`, remains the actual catalog surface; its Q9 explanation at lines
+365–374 already supplies the managed Pin's resolver truth. The carry-forward
+study is a real-window composition that extends that row without replacing it.
+
+The approved issuance surface is
+`docs/gui/prototypes/revision-ux-release-study.html#ux-v9`, source lines 316–353.
+Its Q5-B-amended in-pane arm-then-confirm bar remains unchanged underneath the
+new beside guidance.
+
+The PM-036 presentation precedent is
+`docs/gui/prototypes/canvas-background-decision.html`, source lines 88–119:
+visibility is machine Presentation authority, never Project engineering truth.
+Archival `preferences-ux-study.html#px-v12`, source lines 427–450, corroborates
+both carry-forward identities, completion/reset/replay, and non-modal guidance.
+
+No visual reconciliation remains. Unlike Q8/Q9, Q10 deliberately has owner-live
+alternatives: none of S1/S2/S3 or R1/R2 may be eliminated merely because another
+is recommended.
+
+### 11.3 Written evidence
+
+- Product Mechanics 034 keeps Revision groups visible by default, makes ignoring
+  Revision a supported workflow, preserves engine truth when projections hide,
+  and allows no Design-authoring gate unless Project policy explicitly adopted
+  earlier control (`docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md:156-180`).
+- The Revision ratification carries two explicit requirements into Preferences:
+  unmanaged hiding remains a user right while eligible teaching management may
+  Pin visibility on, and the user's first Release is a specified onboarding
+  moment rather than an accident
+  (`PRODUCT_REVISION_ENGINE_RESEARCH.md:410-423`).
+- Approved Q3 permits Recommend/Constrain/Pin/Lock only within a typed,
+  user-held, revocable `AuthorityRelease`; excess directives remain visible and
+  inert. Approved Q4 retains displaced User values and re-resolves them when a
+  Pin lifts (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:474-522,596-615`).
+- Approved Q5A makes initial setup replayable machine-local state without turning
+  it into Project or organization authority (this packet §3.1.7–§3.1.9). S2 is
+  aligned with that precedent, but the new render intentionally preserves S1 and
+  S3 as genuine alternatives.
+- Approved Q6 distinguishes preference values, read-only Context, restartable
+  state, and Project authority; persistence alone does not merge their authority
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:195-224`; this packet §4.5).
+- Accessibility evidence requires keyboard operation, programmatic name/state,
+  non-color cues, no focus theft, no surprise context change, and provenance
+  that survives reflow (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-399`).
+
+### 11.4 Common behavior Candidate Q10-A
+
+Q10-A adopts the behavior common to every rendered scope: ordinary unmanaged
+visibility, eligible managed Pinning with retained value and provenance,
+recorded onboarding completion/dismissal, explicit reset/replay, and accessible
+guidance beside an unchanged non-gating issuance bar.
+
+The only competing common-behavior model would make guidance a modal or Release
+gate and treat Revision visibility as engine enablement. It does not survive:
+both renders and PM-034 explicitly forbid those effects. This does not resolve
+the genuine scope or managed-replay choices below.
+
+### 11.5 Onboarding-state scope — three genuine alternatives
+
+#### S1 — per-user profile
+
+Completion/dismissal follows the person across machines. A new laptop does not
+repeat guidance for a user who already completed it. This gives the best
+continuity, but requires a durable identity/synchronization authority that Datum
+does not currently have and GP-C04 would have to specify without weakening
+offline-complete operation.
+
+#### S2 — machine-local user state
+
+Completion/dismissal lives beside guided-setup state on the machine. A new or
+handed-down machine shows guidance again; **Show again** and reset affect only
+that machine. This is the simplest offline-complete model and matches approved
+Q5A, but users may repeat onboarding after changing machines.
+
+#### S3 — per-Project state
+
+Every Project tracks its own first-Release guidance, so each assignment or job
+teaches its first Release. This gives the strongest repeated teaching, but makes
+a presentation aid Project data and repeats it for experienced users. A
+machine-local per-Project key would avoid Project mutation but is operationally
+S2 with a wider key rather than true S3.
+
+All three are selectable as rendered. S2 is recommended for its fit with
+offline-complete authority and Q5A, but S1 and S3 remain genuine owner choices.
+
+### 11.6 Managed-required replay — two genuine alternatives
+
+#### R1 — eligible managed profiles may require replay
+
+Within a sufficient active `AuthorityRelease`, a managed teaching profile may
+require the guidance to appear at each declared first-Release boundary even when
+the selected scope records completion. The directive is disclosed and
+appealable, completion remains retained, and the panel remains dismissible and
+non-gating. This is layered over S1/S2/S3, not a fourth scope.
+
+#### R2 — replay remains exclusively user-controlled
+
+Management may Pin Revision visibility but cannot require onboarding replay.
+Only the selected scope's first-use rule, **Show again**, or reset displays the
+guidance. This gives the user the strongest control over repeated teaching but
+prevents a released teaching profile from ensuring that each declared boundary
+receives guidance.
+
+Both are selectable. R1 is recommended only where the owner wants the already
+rendered teaching use case to be exercisable under Q3; R2 remains a complete,
+genuine boundary and is not rejected by existing law.
+
+### 11.7 Exact bounded contract approval would establish
+
+Approval establishes common clauses 1–14, exactly one scope clause
+15S1/15S2/15S3, exactly one replay clause 16R1/16R2, and clause 17:
+
+1. `datum.revision.visibility` is a machine Presentation descriptor with factory
+   value visible/on. On an unmanaged machine, the User may show, hide, and reset
+   it; hiding is a supported ordinary state.
+2. An eligible organization Pin may keep visibility on only within the active
+   typed `AuthorityRelease`. Its Q9 explanation names provider, policy, reason,
+   accountable actor/role, time/generation facts, release basis, appeal, and
+   remaining user freedom.
+3. A managed Pin retains the displaced User value without rewriting it. When the
+   Pin becomes ineligible, expires, is revoked, or lifts, Q4 re-resolves and the
+   retained User value automatically resumes.
+4. Showing, hiding, or Pinning Revision visibility changes Navigator groups and
+   projections only. It never enables/disables the Revision engine, journal,
+   records, Project policy, Release readiness, issuance, or Publish truth.
+5. First-Release onboarding completion is typed state with a stable registered
+   identity, not an ordinary preference value, Project Revision policy, Release
+   authority, or evidence that the Release occurred.
+6. For the selected scope, onboarding state distinguishes never shown,
+   completed, and dismissed, with available actor/time and trigger provenance.
+   Completion or dismissal suppresses only the scope's automatic presentation;
+   it does not remove **Show again** or reset.
+7. The automatic trigger is the first arrival at an otherwise available
+   **Issue Release…** boundary within the selected scope. Merely opening a
+   Project, viewing Revision, creating a Change, or encountering a blocked
+   Release does not record completion.
+8. First-use guidance appears beside the existing Release pane and explains the
+   immutable baseline, affected engineering revisions, document issues/package,
+   cancelability, and that nothing is created until the existing confirmation.
+9. The approved Q5-B-amended arm-then-confirm bar is unchanged. Guidance adds no
+   modal, overlay, disabled period, delay, acknowledgement gate, third action, or
+   alternate issuance path; Design authoring and an otherwise ready Release
+   remain operable while it is present.
+10. **Show again** explicitly requests the same guidance at the Release boundary
+    and labels it replayed at the user's request. Reset clears completion/
+    dismissal for the selected scope so the next eligible trigger is presented
+    as first use; neither action changes Revision or Project facts.
+11. Replayed guidance offers visible **Don't show automatically** and **Keep
+    showing** choices on the panel. Dismissal is explicit recorded state, never a
+    silent suppression inferred from closing some other surface.
+12. Guidance and managed states use text plus non-color cues, expose programmatic
+    names/states, are keyboard reachable and dismissible, preserve user focus,
+    announce politely without theft, and require no motion to understand.
+13. The Q9 resolver query explains visibility control and onboarding state,
+    including selected scope, completion/dismissal, automatic trigger, replay/
+    reset eligibility, any managed replay directive, and remaining user actions.
+14. Visibility control, onboarding completion, reset, replay, and guidance never
+    become Project-policy seeds and never grant organization authority beyond Q3.
+15. The selected onboarding scope establishes exactly one of:
+    - **15S1 — per-user profile:** one user-profile record follows the person
+      across machines; GP-C04 must define identity/synchronization, conflicts,
+      offline cache, and recovery before implementation, without making network
+      availability a Release dependency.
+    - **15S2 — machine-local user:** one machine-local record lives beside guided
+      setup; a different or reset machine is a fresh scope, and no Project or
+      organization data is written.
+    - **15S3 — per-Project:** the Project carries the onboarding record and every
+      Project has its own first-use boundary; the record is presentation state,
+      not Revision policy or evidence, and must not affect reproduction or
+      engineering comparison.
+16. The selected managed-replay law establishes exactly one of:
+    - **16R1 — managed replay permitted:** a sufficient active
+      `AuthorityRelease` may admit a disclosed teaching directive requiring
+      replay at its declared boundary on top of any selected scope. It cannot
+      erase completion, block/delay/disable issuance, prevent dismissal, or add
+      confirmation; ineligible/excess requests remain visible and inert.
+    - **16R2 — user-only replay:** organization directives are ineligible to
+      require onboarding replay. Automatic display follows only the selected
+      scope; thereafter only User **Show again** or reset can replay it.
+17. Q10 does not decide persistence bytes, sync provider/dependency, account
+    system, Project storage partition, migration/recovery, final responsive
+    composition, implementation, or any GP-C04/GP-C05/GP-C05A contract.
+
+### 11.8 Recommendation and owner response
+
+Approve common behavior **Q10-A**, then make both explicit owner choices. The
+bounded default recommendation is **S2/R1** because S2 matches the approved
+machine-local guided-setup precedent and offline-complete operation, while R1
+allows the fully drawn teaching profile only within Q3's released authority and
+retains dismissal/non-gating protections. S1, S3, and R2 remain genuine and
+selectable; neither owner choice is implied by approving Q10-A.
+
+Reply exactly with one scope and one replay law:
+
+```text
+GP-C03-Q10: approve Q10-A/S2/R1
+```
+
+Substitute `S1` or `S3`, and independently substitute `R2`, or reply:
+
+```text
+GP-C03-Q10: revise — <required visibility, scope, completion, reset/replay, managed-replay, guidance, issuance, or accessibility correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-DRAFT -->
