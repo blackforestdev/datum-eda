@@ -1,8 +1,9 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5 approved; active GP-C03-Q5A owner packet. Q1–Q5
-> remain approved and closed. Specification only; no implementation, dependency,
-> Q5A disposition, or later-question disposition is authorized.
+> **Status:** GP-C03-Q5 and amended GP-C03-Q5A approved; GP-C03-Q5B packet
+> preparation active. Q1–Q5A remain approved and closed. Specification only;
+> no implementation, dependency, Q5B disposition, or later-question disposition
+> is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -211,7 +212,8 @@ open until Q5A is dispositioned.
 inside the real Preferences window with a static accent ring, remaining-section
 dots, and an explanatory coach bar that can be dismissed at any point, while an
 optional assistant may only offer typed proposals for the user to accept,
-review, or dismiss.**
+review, or dismiss; Files & Projects exposes the machine-local completion state
+and a Run setup again control that walks the same rows without changing them.**
 
 Q5A decides whether this drawn guided-in-place path governs, whether any choice
 is mandatory before Datum is fully usable, how the static guide remains
@@ -246,13 +248,18 @@ All visual sources are Claude-owned, registered route evidence, rendered at
   measurement choices, while `#files-projects` at lines 215–224 supplies a
   factory-backed Project location and seed selection. The rendered guide does
   not create a second copy of either surface.
+- The owner-requested replay reconciliation landed in the Claude-owned real
+  window at commit `b8f5a7a`: `preferences-window.html#files-projects`, source
+  lines 228–231, draws **completed Aug 27**, **Run setup again**, the
+  completed/dismissed/never-run state set, and the promise that replay walks the
+  same rows and changes no setting by itself.
 
-No visual reconciliation is required for the recommended candidate. The
+No further visual reconciliation is required for the recommended candidate. The
 reduced-motion clause below extracts the already-static CSS outline and the
 drawn “window never jumps” rule. The keyboard clauses make the drawn controls
 operable under ratified accessibility law without adding another visible
-surface. The prototype draws no replay/reset affordance, so this packet does
-not invent one; adding one would first require a bounded Claude reconciliation.
+surface. The replay amendment extracts the control now drawn in the real window;
+it does not invent a second setup surface or setting mutation.
 
 #### 3.1.3 Written evidence
 
@@ -360,12 +367,14 @@ Approval establishes only these clauses:
 7. Completion and dismissal are machine-local restartable onboarding state,
    not a preference contribution, user seed value, Project policy, organization
    directive, or evidence that a factory default was explicitly chosen. The
-   state records only `not_seen`, `active`, `completed`, or `dismissed` plus the
+   state records only `never_run`, `active`, `completed`, or `dismissed` plus the
    last visited checkpoint while active.
-8. `completed` and `dismissed` suppress automatic setup on later launches. The
-   drawn Q5A surface provides no replay/reset affordance; Q5A therefore approves
-   none. Adding replay or reset requires a Claude-rendered control and a later
-   owner disposition before GP-C05 may specify it.
+8. `completed` and `dismissed` suppress automatic setup on later launches.
+   Preferences → Files & Projects exposes the current machine-local state as
+   completed, dismissed, or never run and provides **Run setup again**. Replay
+   walks the same real Preferences rows and applies no setting by itself; Skip
+   and Esc again set the persistent dismissed state. The control reads and
+   changes onboarding state only, never Project or organization authority.
 9. Candidate C is optional and can exist only on top of B. B remains complete
    when no assistant, model, account, network, or provider is present; Q5A adds
    no dependency or availability requirement.
@@ -380,7 +389,8 @@ Approval establishes only these clauses:
 
 #### 3.1.6 Recommendation and owner response
 
-Approve **Q5A-B+C** with **zero mandatory choices**. B is the governing
+Approve **Q5A-B+C** with **zero mandatory choices** and the rendered replay
+amendment. B is the governing
 manual-first surface; C is optional proposal-only assistance. This exactly
 preserves the registered visual states, PM-034, Q1 factory-default semantics,
 Q5's profile-origin independence, accessibility law, and the canonical proposal
@@ -400,18 +410,185 @@ GP-C03-Q5A: revise — <required candidate, minimum-set, skip, accessibility, st
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5A-PACKET -->
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5A-APPROVED -->
+**Owner review — Q5A-B+C approved with amended clause 8, 2026-08-27.** The owner
+approved every Q5A clause as packeted except the original no-replay clause and
+replaced it with the Claude-rendered `b8f5a7a` control: setup is replayable from
+Preferences → Files & Projects; the control exposes completed, dismissed, and
+never-run machine-local state; replay walks the same rows and applies nothing by
+itself; and Skip/Esc remain persistent. B remains the sole shipped setup surface,
+the mandatory choice set remains empty, and C remains optional proposal-only
+assistance. This closes Q5A and advances only to Q5B preparation.
+
 ### 3.2 GP-C03-Q5B — Start page
 
-Q5B asks whether the optional Start page exists, what it may show, and what it
-must exclude. `start-page-study.html:48-82` draws New/Open/Import actions,
-recent Projects with Revision Engine truth and explicit missing paths, a
-pre-creation view of the values New Project will copy, and the explicit absence
-of news, marketing, telemetry, alerts-channel behavior, and network loading.
-It also preserves `Last session` and `Empty` as ways to skip the page.
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q5B -->
 
-None of that clay behavior is approved merely by registration. A later packet
-must compare genuine alternatives and extract only owner-approved clauses before
-GP-C05 reconciles the settled Start-page interaction with Preferences.
+#### 3.2.1 Exact on-screen decision
+
+**When Startup is set to Start page and no Project is open, Datum shows one
+local, non-tabbed surface with New Project, Open, and Import actions, a Recent
+list that states only engine-known Project truth, and a read-only rail previewing
+the exact seed values the next New Project will copy; it contains no news,
+marketing, alerts channel, telemetry, or startup network load.**
+
+Q5B decides whether this page exists, whether it is the factory startup default,
+which local facts it may show, and which content channels are forbidden. It does
+not implement Project opening/genesis, define recent-list persistence format, or
+change Q5's copy transaction.
+
+#### 3.2.2 Reviewed visual evidence
+
+The Claude-owned sources were rendered and reviewed without modification:
+
+- `docs/gui/prototypes/start-page-study.html` at commit `15328f4`, source lines
+  48–82, draws one **Datum** page with no Project open and no work running.
+  Lines 53–65 show New Project, Open, Import a design, four Recent examples,
+  Revision Engine truth, and an explicit missing-path/Locate state. Lines 67–78
+  show machine context, a Preferences doorway, and the values the next Project
+  will copy. Line 82 explicitly excludes news, marketing, telemetry, and network
+  loading; preserves Last session/Empty; and forbids guessed recent state.
+- The primary real-window anchor is
+  `docs/gui/prototypes/preferences-window.html#files-projects`, source lines
+  215–227. Its first row draws exactly **Start page | Last session | Empty** and
+  marks Start page as the factory default. The same section draws the seed
+  profile, templates, and unit-system values whose Q5 copy semantics the rail
+  previews.
+- `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
+  88–119, remains the PM-036 presentation-class precedent: a machine-facing
+  choice may control a local view without changing Project or Publish truth.
+  Q5B likewise cannot promote the Start page or its rail into Project authority.
+- The archival `preferences-ux-study.html#px-v8`, source lines 374–385, keeps
+  session/context/restartable state visibly distinct from persisted preference
+  authority. It supplies boundary structure only; it does not override the new
+  Start-page render.
+
+No visual reconciliation is required for Candidate Q5B-A. A tabbed content hub,
+feed, alert stream, or network-backed card would materially differ from the
+render and cannot become an owner candidate until Claude draws it first.
+
+#### 3.2.3 Written evidence
+
+- The GUI's canonical File surface names New Project, Open Project, and Import
+  as product actions (`docs/gui/DATUM_GUI_PRODUCT_SPEC.md:115-124`). The Start
+  page presents those same actions; it does not create alternative verbs.
+- The approved Q1 descriptor contract distinguishes a factory default from an
+  explicit user value (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:211-229`), so
+  showing Start page by default does not serialize a user choice merely because
+  the page was viewed.
+- Q5-A establishes one immutable selected seed snapshot, atomic Project copy,
+  and durable receipt; existing Projects never follow later values (this packet
+  §2.5 and its recorded Q5 approval). A read-only preview can disclose those
+  inputs but cannot perform genesis early.
+- The Revision Engine consumes one resolved Project policy and forbids later
+  global defaults from silently rewriting it
+  (`specs/PRODUCT_REVISION_ENGINE_SPEC.md:111-121`). Revision chips on Recent
+  rows must therefore be engine queries, never presentation guesses.
+- Datum's Project/Revision authority remains fully functional without Git or a
+  network (`specs/PRODUCT_REVISION_ENGINE_SPEC.md:301-315`). A startup surface
+  cannot make a network content service a precondition for local work.
+- Preferences accessibility requires keyboard operation, programmatic
+  name/role/value, non-color state, and no undisclosed context change
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-393`).
+
+#### 3.2.4 Genuine alternatives
+
+##### Candidate Q5B-A — the drawn local Start page
+
+Datum ships the rendered Start page as the factory startup default while
+retaining Last session and Empty. It prioritizes immediate local actions and
+Recent Projects, exposes honest engine truth, and makes the next Q5 seed visible
+before creation. It performs no work and contacts nothing until the user acts.
+
+This is the only candidate that matches both registered visual sources and is
+recommended.
+
+##### Candidate Q5B-B — no Start page
+
+Datum offers only Last session and Empty. New/Open/Import remain in File and the
+command palette, and recent Projects remain elsewhere or absent. This is simpler
+and eliminates one surface, but contradicts the real Startup preference's named
+Start page, removes the drawn pre-creation seed preview, and discards the
+rendered honest Recent doorway.
+
+B is genuine but cannot be selected without a Claude-rendered removal from the
+real window.
+
+##### Candidate Q5B-C — tabbed welcome/content hub
+
+Datum opens a multi-tab Welcome surface that separates Recents, Learn, News,
+Alerts, and account/network content. This pattern can carry more onboarding and
+commercial material, but it buries the primary Recent list, creates a startup
+content and alert channel, invites telemetry/network work, and conflicts with
+every explicit exclusion in the rendered study.
+
+C is genuine comparative evidence but does not survive the render-first law.
+
+#### 3.2.5 Exact bounded contract established by Q5B-A approval
+
+Approval establishes only these clauses:
+
+1. Datum has one Start page. It is a local idle surface shown only when no
+   Project is open and the machine's Startup preference resolves to Start page;
+   it does no work until the user invokes an action.
+2. `Startup` is one machine-local preference with exactly **Start page**, **Last
+   session**, and **Empty**. Start page is the factory descriptor default;
+   selecting Last session or Empty bypasses the page without deleting Recent
+   history or changing Project authority.
+3. The page exposes the same typed **New Project**, **Open**, and **Import a
+   design** actions as Datum's canonical File surface. It creates no second
+   mutation path and cannot silently open, import, or create anything.
+4. Recent rows may show only locally known Project display name, last-known
+   path, last-opened time, and engine-derived Revision standing. The drawn
+   standing vocabulary includes issued revision, changes since last Release,
+   and no Releases yet; absent or unresolved truth is stated as unknown rather
+   than inferred.
+5. A missing Project path remains visible with **not found at this path** and a
+   Locate action. Selecting the row cannot fail silently, remove it silently,
+   or pretend the Project was opened.
+6. The right rail may show the effective machine seed profile, measurement
+   system, organization context, and theme, plus the effective revision profile,
+   drafting standard, and templates the next New Project would use. Every value
+   is resolver/query output with provenance available through Preferences, not
+   a duplicate editable store.
+7. The rail is a read-only pre-creation preview. It neither freezes a snapshot
+   nor copies Project facts; only the explicit New Project genesis transaction
+   performs Q5's immutable resolution, atomic copy, and durable receipt. A
+   **Preferences…** doorway lets the user change eligible machine values first.
+8. The page contains one immediately visible Recent list; tabs cannot bury or
+   partition Recents. It has no News, Learn/marketing, advertising, release-note,
+   account-engagement, or alerts-channel surface.
+9. The page emits no telemetry and performs no network request, update check,
+   remote-content fetch, account lookup, or background synchronization at
+   startup. Network-capable actions remain explicit operations outside Q5B.
+10. Revision standing and missing-path conditions use text in addition to color.
+    All actions and Recent rows follow a predictable keyboard order, expose
+    programmatic names and states, and do not trap or steal focus.
+11. Clearing Recent history changes only machine-local history. It cannot delete
+    a Project, Revision record, seed profile, receipt, or Project policy.
+12. Q5B does not specify recent-history storage/migration, Project session
+    restoration, import/genesis implementation, external providers,
+    dependencies, or any Q6-Q10 disposition.
+
+#### 3.2.6 Recommendation and owner response
+
+Approve **Q5B-A**. It is the only candidate consistent with the rendered Start
+page, the real Startup preference, Q5's visible-before-copy seam, local engine
+truth, and the explicit rejection of a tabbed network/content channel.
+
+Reply exactly:
+
+```text
+GP-C03-Q5B: approve Q5B-A
+```
+
+or:
+
+```text
+GP-C03-Q5B: revise — <required existence, startup-preference, recent-truth, seed-preview, exclusion, or accessibility correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5B-PACKET -->
 
 ### 3.3 Effect on the current Q5 premise
 
