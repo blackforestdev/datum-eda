@@ -1,7 +1,7 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5 and amended GP-C03-Q5A approved; GP-C03-Q5B packet
-> preparation active. Q1–Q5A remain approved and closed. Specification only;
+> **Status:** GP-C03-Q5 and amended GP-C03-Q5A approved; active GP-C03-Q5B
+> owner packet. Q1–Q5A remain approved and closed. Specification only;
 > no implementation, dependency, Q5B disposition, or later-question disposition
 > is authorized.
 >
