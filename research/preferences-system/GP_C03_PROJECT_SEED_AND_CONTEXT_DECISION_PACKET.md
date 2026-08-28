@@ -1,13 +1,12 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
-> Q9 approved. Claude commit `7089ee8` closes the Q10 render gap with paired
-> visibility states, three genuine onboarding scopes, and first-use/replayed
-> guidance beside the unchanged Release arm bar. The Q10 packet is the active
-> owner boundary with
-> scope and managed-required replay as separate explicit owner choices. Q5B is
-> the historical alias for Q11. Specification only; no implementation,
-> dependency, or Q10 disposition is authorized.
+> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q6 through Q10, and
+> GP-C03-Q11 are approved. Q10-A/S2/R1 establishes machine-local ordinary
+> completion plus an eligible managed per-Project replay directive, preserving
+> dismissible, non-gating guidance. Q5B is the historical alias for Q11. The
+> GP-C03 authority sequence is complete and GP-C04 is next. Specification only;
+> no implementation, dependency, persistence representation, or synchronization
+> mechanism is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -2020,3 +2019,22 @@ GP-C03-Q10: revise — <required visibility, scope, completion, reset/replay, ma
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-DRAFT -->
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-APPROVED -->
+
+**Owner review — Q10-A/S2/R1 approved 2026-08-28.** Common clauses 1–14,
+scope clause 15S2, managed-replay clause 16R1, and exclusions clause 17 stand.
+Ordinary completion is machine-local and one-and-done: it writes no Project
+state and does not follow the user across machines. Separately, an eligible
+organization teaching directive may require the same guidance once per Project
+only within a sufficient, user-granted `AuthorityRelease`; that directive is
+not a fourth completion scope, applies no setting, remains dismissible, and
+never blocks or delays issuance. The pair is deliberate: S2 without R1 would
+show a student the guidance only once across many assignments, while S3 would
+re-teach every veteran in every Project. S2/R1 gives ordinary users the former
+one-and-done behavior and lets a classroom or governed shop opt into the latter
+teaching behavior through authority the user granted. S1, S3, and R2 remain
+reviewed alternatives but are not adopted. This disposition completes GP-C03
+without selecting persistence bytes, identity or synchronization providers,
+Project storage partition, recovery mechanics, implementation, or dependencies;
+those representation questions remain GP-C04.

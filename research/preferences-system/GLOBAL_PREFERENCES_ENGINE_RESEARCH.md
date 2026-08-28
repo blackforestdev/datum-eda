@@ -249,7 +249,7 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q9 and Q11 are approved and remain closed. Q8-A/P2 establishes opaque
+Q1-Q10 and Q11 are approved and remain closed. Q8-A/P2 establishes opaque
 inactive preservation, explicit alias migration, deliberate non-deletion and
 export-first removal, with one dedicated **Manage preferences** home. Claude
 commit `70bf2a2` now renders Q9's full resolver-owned explanation beside the
@@ -260,9 +260,15 @@ read-only typed result across all three surfaces. Claude commit `7089ee8` closes
 the Q10 visual gap with paired visibility states, S1 per-user-profile, S2
 machine-local, and S3 per-Project onboarding alternatives, a separate
 managed-required-replay choice, and first-use/replayed guidance beside the
-unchanged Release arm bar. The Q10 packet preserves scope and managed replay as
-explicit owner decisions; Q10 remains undispositioned. GP-C05 later
-extracts interaction clauses from the settled surfaces. Complete each only by
+unchanged Release arm bar. Q10-A/S2/R1 establishes ordinary machine-local
+one-and-done completion together with an independently eligible organization
+teaching directive that may require dismissible, non-gating replay once per
+Project within a sufficient user-granted AuthorityRelease. The combination
+avoids making all Project users repeat guidance while preserving the deliberate
+classroom/governed-shop teaching case. GP-C03 is complete; GP-C04 is next and
+owns persistence, identity/synchronization, Project partition, migration, and
+recovery representation. GP-C05 later extracts interaction clauses from the
+settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
 boundary opens.
