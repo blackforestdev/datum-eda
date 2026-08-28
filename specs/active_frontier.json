@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,6 +5192,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-q8-boundary-20260828",
+        "claimed_at": "2026-08-28T06:34:00-07:00",
+        "heartbeat_at": "2026-08-28T06:34:00-07:00",
+        "expires_at": "2026-08-28T14:34:00-07:00",
+        "scope": [
+          "register and reconcile Claude commit cd12baa placement evidence",
+          "finalize the GP-C03-Q8 placement-aware packet",
+          "open the one-question Q8 owner boundary",
+          "no prototype HTML mutation"
+        ],
+        "worktree": ".",
+        "head": "cd12baaecd9cdd914aa5cf14057a31f8f32ff9c5"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5292,8 +5308,8 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "pending",
-            "action": "Obtain Claude-owned real Preferences-window placement renders for Q8 P2 (a dedicated Preferences-file group) and P3 (Files & Projects, explicitly separated from Project authority), preserving commit 54f2aba behavior and current Organization P1 as comparative evidence; reconcile the route before opening the Q8 owner boundary.",
+            "status": "in_progress",
+            "action": "Register and reconcile Claude commit cd12baa, finalize the Q8 packet with byte-identical identity behavior and explicit P1 Organization, P2 Manage preferences, and P3 Files & Projects placement candidates, then open the one-question owner boundary without advancing Q9-Q10.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5340,6 +5356,10 @@
               {
                 "kind": "commit",
                 "revision": "54f2aba"
+              },
+              {
+                "kind": "commit",
+                "revision": "cd12baa"
               }
             ]
           },

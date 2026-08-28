@@ -1,9 +1,9 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, GP-C03-Q6, and
-> GP-C03-Q7 approved; Q8 identity-behavior packet prepared from Claude commit
-> `54f2aba`, but its placement sub-question remains render-gated before an owner
-> boundary. Q5B is the historical alias for Q11. Specification only; no
+> GP-C03-Q7 approved; active GP-C03-Q8 owner packet prepared from Claude commits
+> `54f2aba` and `cd12baa`, including the explicit placement sub-question. Q5B is
+> the historical alias for Q11. Specification only; no
 > implementation, dependency, Q8 disposition, or later-question disposition
 > is authorized.
 >
@@ -1119,25 +1119,26 @@ listed sources and consumers and its digest refreshed without changing the
 prototype.
 
 The final source line remains deliberately clay: Organization is only the current
-placement. A dedicated **Preferences file** group and **Files & Projects** are
-named alternatives, but neither alternative is rendered as an actual window
-composition. Identity behavior may now be packeted; placement cannot yet enter an
-owner boundary under the render-first law.
+placement. Claude commit `cd12baa` subsequently rendered P1 Organization, P2
+**Manage preferences**, and P3 **Files & Projects** as actual-window comparison
+states with byte-identical behavior. The remaining render-first gate is satisfied.
 
 ## 7. GP-C03-Q8 — unknown, retired, and aliased identities
 
-> **Packet state:** identity behavior and placement alternatives prepared; not an
-> owner boundary. The recommended placement differs from the current clay layout
-> and must be rendered by Claude before the exact owner response can be exposed.
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q8 -->
+
+> **Packet state:** active owner boundary. P1, P2, and P3 are rendered as actual
+> Preferences-window compositions with byte-identical identity behavior; the
+> owner disposition must select both Q8-A behavior and one placement.
 
 ### 7.1 Exact on-screen decision
 
 **In the Preferences data-management surface, Datum shows unrecognized and
 newer-version keys as preserved, inactive, and inspectable, shows retired names
 redirecting to one live identity with Migrate now, and makes deletion a separate
-confirmable export-first action, while the final home of this group remains an
-explicit choice among Organization, a dedicated Preferences-file group, and
-Files & Projects.**
+confirmable export-first action, while the final home of this group is explicitly
+chosen among Organization, a dedicated Manage preferences section, and Files &
+Projects.**
 
 Q8 decides identity preservation, activation, alias migration, deliberate
 removal, and the visible group placement. It does not choose the persistence
@@ -1162,9 +1163,23 @@ The primary visual authority is the Claude-owned real product surface,
   one live identity afterward, and value carry-forward rather than factory reset;
 - lines 277–279 state **Nothing is deleted here** and make unknown-key removal a
   separate confirmable action that names every key and offers export first;
-- line 280 marks placement clay and names all three placement alternatives. It
-  draws only the Organization composition; the other two are textual alternatives,
-  not rendered owner candidates.
+- line 280 marks the current placement clay and names all three alternatives.
+
+The Claude-owned actual-window placement comparison is
+`docs/gui/prototypes/preferences-store-placement-study.html` at commit `cd12baa`:
+
+- source lines 63–82 render P1 under **Organization** and identify its category
+  error: unknown keys and aliases are unrelated to organization authority and
+  would be hard to discover on an unmanaged machine;
+- lines 82–100 render P2 as a dedicated **Manage preferences** section for the
+  machine-store location, protected reset/import/export, foreign keys, retired
+  names, and explicit removal. Its caption recommends this honest home while
+  avoiding a commitment to GP-C04's exact storage format;
+- lines 100–118 render P3 under **Files & Projects** with an explicit **Your
+  preferences — not Project data** wall. It avoids a new navigation item but
+  combines unrelated subjects and must restate the Project boundary;
+- line 119 confirms that only discoverability/categorization changes:
+  preservation, alias migration, and non-deletion are identical in all three.
 
 `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
 88–119, remains the ratified PM-036 presentation-class precedent. An opaque
@@ -1176,10 +1191,9 @@ The archival structural evidence is
 PX-V10 supplies the same preserved/inactive unknown key, explicit alias, and
 one-live-identity law. It is now corroborative rather than the sole render.
 
-No identity-behavior reconciliation remains for Candidate Q8-A. Candidates that
-delete unknown data or guess it into effect contradict both rendered surfaces and
-ratified Q1. Placement P1 is rendered; P2 and P3 require the bounded Claude
-rendering in §7.6 before any owner boundary may choose among them.
+No visual reconciliation remains. Candidates that delete unknown data or guess
+it into effect contradict both behavior renders and ratified Q1. P1, P2, and P3
+are genuine selectable placement alternatives with identical behavior.
 
 ### 7.3 Written evidence
 
@@ -1249,9 +1263,10 @@ Q8-C is a genuine convenience model, but approved Q1 expressly forbids guessed
 activation and permits only explicit aliases. It contradicts both rendered
 **INACTIVE** states and cannot survive.
 
-### 7.5 Exact bounded identity contract Candidate Q8-A would establish
+### 7.5 Exact bounded contract Candidate Q8-A plus the selected placement would establish
 
-Approval of Q8-A would establish only these placement-neutral clauses:
+Approval establishes clauses 1–14, exactly one placement clause 15P1/15P2/15P3,
+and clause 16:
 
 1. A stored identity with no active `PreferenceDescriptor` is `Unknown`. Datum
    preserves its exact serialized identity, opaque value/payload, provider and
@@ -1301,7 +1316,20 @@ Approval of Q8-A would establish only these placement-neutral clauses:
 14. Store-hygiene placement is a required Q8 sub-disposition. Q8-A does not make
     these records Organization authority, Project files, or Project policy, and
     moving the group cannot change key identity or any clause above.
-15. Q8 does not decide serialization format, byte-canonicalization method,
+15. The selected placement establishes exactly one of these mutually exclusive
+    visible homes; the other two remain comparative evidence and Datum does not
+    duplicate the controls:
+    - **15P1 — Organization:** protected reset/import/export and store hygiene
+      remain in **Organization**, visibly separated from organization releases
+      and managed packages and available on unmanaged machines.
+    - **15P2 — Manage preferences:** one dedicated top-level **Manage preferences**
+      section owns the machine-store location doorway, protected reset/import/export,
+      unknown identities, aliases, and explicit removal. It states machine-local,
+      never Project data; displaying a location does not choose GP-C04 format.
+    - **15P3 — Files & Projects:** the controls live in **Files & Projects** below
+      an explicit **Your preferences — not Project data** boundary, separate from
+      Project locations, genesis seeds, backup/recovery, and guided-setup state.
+16. Q8 does not decide serialization format, byte-canonicalization method,
     migration receipt/storage, crash recovery, multi-writer synchronization,
     complete provenance query, implementation dependency, or Q9-Q10.
 
@@ -1314,42 +1342,46 @@ with managed-package status and protected reset/import/export. This is compact a
 already rendered, but visually suggests that machine preference-file hygiene is
 an organization concern even on unmanaged machines.
 
-#### Placement P2 — dedicated Preferences file group
+#### Placement P2 — dedicated Manage preferences section
 
 Give store-level reset/import/export, unknown preservation, aliases, and explicit
-removal their own **Preferences file** group in the real window. This best matches
-their machine-store authority and avoids conflating them with either organization
-management or Project files. It is recommended, but the clay note names rather
-than renders it; no P2 contract clause may open until Claude draws it.
+removal their own **Manage preferences** section in the real window. This best
+matches their machine-store authority, avoids conflating them with organization
+or Project files, and avoids promising that GP-C04 must use one literal file. It
+is rendered at `cd12baa` and recommended.
 
 #### Placement P3 — Files & Projects
 
 Move the group beside startup, locations, backup/recovery, and guided setup in
 `#files-projects`. This gives file-oriented operations a familiar home, but risks
 implying that unknown preference records belong to Project or document storage.
-It is named in the clay note but not rendered and therefore is not yet selectable.
+It is rendered at `cd12baa` and is selectable.
 
 The placement question is genuine: no ratified authority law determines the
-best information architecture. P1 is the only rendered placement, while P2 is
-the packet recommendation and P3 remains a plausible alternative. The Q8 owner
-boundary stays closed until the actual window renders P2 and P3 or the owner
-narrows the placement boundary to already-rendered P1.
+best information architecture. P1 is compact but miscategorizes machine-store
+hygiene; P2 costs a navigation item but gives it an honest, discoverable home;
+P3 avoids that item but mixes preference and Project file concerns. All three are
+rendered and selectable. P2 is recommended.
 
-### 7.7 Bounded placement reconciliation for Claude
+### 7.7 Recommendation and owner response
 
-- **Exact file:** `docs/gui/prototypes/preferences-window.html`; preserve the
-  existing P1 `#organization` state as comparative evidence.
-- **P2 required outcome:** render the same protected reset/import/export and
-  store-hygiene rows in a deliberately named **Preferences file** group within
-  the real window, without duplicating controls or creating a second store.
-- **P3 required outcome:** render the same rows under `#files-projects`, clearly
-  separated from Project-owned files, seed profiles, and guided-setup state.
-- **Preserved behavior:** every identity, label, status, Show value, Migrate now,
-  value carry-forward, non-deletion, preview/confirmation, and export-first law
-  drawn at `54f2aba`; Q1, Q7, PM-036, and current Organization authority rows.
-- **Proof expected:** Claude-owned commit(s) with actual-window P2/P3 comparison
-  states or an owner-selected placement rendered in the real window, exact
-  anchors/regions for citation, screenshot proof at the established window size,
-  and owning-route digest refresh after full responsible-lane review.
+Approve **Q8-A/P2**: opaque preservation, descriptor-gated activation, explicit
+one-live-identity alias migration, and deliberate export-first removal in the
+dedicated **Manage preferences** section. P2 is the clearest match for machine
+preference-store authority without implying organization or Project ownership.
+
+Reply exactly with one rendered placement:
+
+```text
+GP-C03-Q8: approve Q8-A/P2
+```
+
+or substitute `P1` or `P3`, or reply:
+
+```text
+GP-C03-Q8: revise — <required preservation, activation, alias-migration, non-deletion, removal, placement, or accessibility correction>
+```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-PACKET-DRAFT -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-PACKET -->
