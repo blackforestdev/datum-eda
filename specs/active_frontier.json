@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,6 +5192,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-q5a-20260827",
+        "claimed_at": "2026-08-27T22:41:35-07:00",
+        "heartbeat_at": "2026-08-27T22:41:35-07:00",
+        "expires_at": "2026-08-28T06:41:35-07:00",
+        "scope": [
+          "record GP-C03-Q5 owner approval",
+          "prepare the visual-anchored GP-C03-Q5A initial-setup packet",
+          "preserve GP-C03-Q5B as queued and undispositioned",
+          "no prototype HTML mutation"
+        ],
+        "worktree": ".",
+        "head": "e9ecca2fde76900c271943b312f59b247a7e6f54"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5291,9 +5307,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "owner_decision",
-            "status": "pending",
-            "action": "Preserve approved Q1-Q4 and keep GP-C03-Q5 at the owner boundary; after Q5, review the drawn-but-undispositioned Q5A initial-setup and Q5B Start-page questions one at a time before the existing Q6-Q10 sequence, then hand settled interaction surfaces to GP-C05; never extract clauses ahead of drawn behavior.",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Record the approved GP-C03-Q5 copy-once-with-receipt contract and prepare the GP-C03-Q5A initial-setup owner packet from the registered Claude-owned A/B/C prototypes, including the minimum set, non-blocking skip law, accessible static focus guidance, completion state, and proposal-only assistant boundary; keep Q5B queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5306,22 +5322,13 @@
                 "kind": "review",
                 "path": "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q4-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5-APPROVED"
               }
-            ],
-            "owner_input": {
-              "response_format": "After reviewing the real Preferences-window anchors, PM-036 precedent, archival PX-V7, written evidence, alternatives, and exact bounded clauses, reply exactly `GP-C03-Q5: approve Q5-A` or `GP-C03-Q5: revise — <required on-screen, seeding, receipt, or contract correction>`.",
-              "requests": [
-                {
-                  "id": "GP-C03-Q5",
-                  "question": "Should every eligible new-Project seed use one immutable snapshot copied atomically into Project authority with a durable itemized receipt, after which existing Projects never follow later preference or provider changes?",
-                  "recommended_response": "Approve Q5-A because it exactly matches the reviewed #files-projects, #revision, #publish-space, #units, and PX-V7 behavior; live-linked policy and receipt-free copying contradict the drawn window and ratified Project-ownership law.",
-                  "source_ref": {
-                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
-                    "marker": "GP-C03-Q5"
-                  }
-                }
-              ]
-            }
+            ]
           },
           {
             "id": "GP-C04",

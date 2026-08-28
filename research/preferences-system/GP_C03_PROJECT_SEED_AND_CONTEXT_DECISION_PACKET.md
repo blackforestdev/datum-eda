@@ -1,9 +1,8 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** Active GP-C03-Q5 owner packet. Q1–Q4 remain approved and closed;
-> the owner resumed Q5–Q10 one question at a time on 2026-08-27. Only Q5 is
-> open here. Specification only; no implementation, dependency, or later-question
-> disposition is authorized.
+> **Status:** GP-C03-Q5 approved; GP-C03-Q5A packet preparation active. Q1–Q5
+> remain approved and closed. Specification only; no implementation, dependency,
+> Q5A disposition, or later-question disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -189,31 +188,217 @@ GP-C03-Q5: revise — <required on-screen, seeding, receipt, or contract correct
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5-PACKET -->
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5-APPROVED -->
+**Owner review — Q5-A approved 2026-08-27.** The owner approved the immutable
+snapshot, atomic Project-authority copy, durable itemized receipt, and
+no-live-following contract exactly as bounded in §2.5. This closes Q5 without
+deciding how a user seed profile is established, whether a Start page exists,
+or any Q5A-Q10 behavior. Q5A is the next one-question-at-a-time boundary.
+
 ## 3. Drawn follow-on questions queued behind Q5
 
-These questions are registered for later one-at-a-time owner review. They are
-not part of the current Q5 response, contain no advance contract extraction,
-and cannot open while Q5 remains pending.
+These questions are registered for one-at-a-time owner review. Q5A is now the
+only prepared boundary; Q5B contains no advance contract extraction and cannot
+open until Q5A is dispositioned.
 
 ### 3.1 GP-C03-Q5A — initial baseline and setup surface
 
-Q5A asks how a new user's baseline is established and what the minimum required
-set is. The Claude-owned candidates are:
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q5A -->
 
-- A, the separate skippable wizard in `first-run-study.html:50-87`, which draws
-  measurement system, new-Project drafting standard, look, organization, and
-  Project-files setup before saving a user seed profile;
-- B, guided setup inside the real Preferences window in
-  `guided-setup-study.html:56-74`, where the accent ring and coach bar step
-  through the actual settings surface and setup may be skipped without blocking
-  authoring; and
-- C, the optional assistant-assisted path in
-  `guided-setup-study.html:76-96`, where typed proposals require normal user
-  acceptance or rejection and ride on B rather than replacing its manual path.
+#### 3.1.1 Exact on-screen decision
 
-No candidate or minimum set is approved. A later packet must apply the same
-visual-anchor, written-evidence, alternatives, and bounded-clause requirements
-as Q5 before Q5A can become an owner boundary.
+**On first run, Datum may guide the user through four recommended checkpoints
+inside the real Preferences window with a static accent ring, remaining-section
+dots, and an explanatory coach bar that can be dismissed at any point, while an
+optional assistant may only offer typed proposals for the user to accept,
+review, or dismiss.**
+
+Q5A decides whether this drawn guided-in-place path governs, whether any choice
+is mandatory before Datum is fully usable, how the static guide remains
+accessible, and what local state prevents it from returning. It does not decide
+the Start page (Q5B), preference persistence format (GP-C04), or the complete
+interaction conformance matrix (GP-C05).
+
+#### 3.1.2 Reviewed visual evidence
+
+All visual sources are Claude-owned, registered route evidence, rendered at
+1200 pixels wide, and reviewed without modification:
+
+- Candidate A, `docs/gui/prototypes/first-run-study.html` at commit `849b7f1`,
+  source lines 48–87, draws a separate four-step **Welcome to Datum** wizard.
+  Its first step duplicates measurement-system and drafting-standard controls;
+  Skip uses factory defaults; its summary includes measurement, drafting,
+  theme, no organization, and Project files before saving the seed profile.
+- Candidate B, the upper state of
+  `docs/gui/prototypes/guided-setup-study.html` at commit `b5cac07`, source
+  lines 56–74, draws the actual **Preferences — Datum** window. A static accent
+  outline marks the current measurement control (CSS lines 36–38), dots mark
+  remaining sections, the coach bar names the step and reason, and its controls
+  provide Skip, Back, and Next. The caption states that the ring moves while the
+  window never jumps, Esc or Skip ends setup forever, and nothing is blocked.
+- Candidate C, the lower state of the same prototype, source lines 76–96,
+  draws one sentence of user context followed by three typed preference
+  proposals and **Accept all**, **Review one by one**, and **Dismiss**. The row
+  explicitly says nothing is applied until acceptance; the caption makes C an
+  optional accelerator riding on B and preserves B with no AI present.
+- The real window anchors the fields B teaches:
+  `preferences-window.html#units` at source lines 112–122 supplies factory-backed
+  measurement choices, while `#files-projects` at lines 215–224 supplies a
+  factory-backed Project location and seed selection. The rendered guide does
+  not create a second copy of either surface.
+
+No visual reconciliation is required for the recommended candidate. The
+reduced-motion clause below extracts the already-static CSS outline and the
+drawn “window never jumps” rule. The keyboard clauses make the drawn controls
+operable under ratified accessibility law without adding another visible
+surface. The prototype draws no replay/reset affordance, so this packet does
+not invent one; adding one would first require a bounded Claude reconciliation.
+
+#### 3.1.3 Written evidence
+
+- Datum is manual-first: every core workflow must work without AI, while AI may
+  assist and propose but never becomes hidden authority (`CLAUDE.md:24-31`).
+- AI/tool-generated GUI edits must become proposals, and direct manual edits
+  remain visible typed operations (`docs/gui/DATUM_GUI_PRODUCT_SPEC.md:168-188`).
+  A separate assistant/editor state surface or mutation control that bypasses
+  proposal review is forbidden (`docs/gui/DATUM_GUI_PRODUCT_SPEC.md:228-237`).
+- Every descriptor supplies a factory-default or no-value state, accessible
+  metadata, and apply behavior; merely reading a factory default never writes
+  an explicit user choice
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:211-229`).
+- The approved Q5 contract copies whichever eligible immutable seed snapshot is
+  selected and does not depend on how its user contribution was established
+  (this packet §2.5 and its recorded Q5 owner-approval evidence).
+- Under PM-034, profiles that have not adopted earlier control never block,
+  prompt, or delay Design authoring; ignoring Revision authoring is first-class
+  (`docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md:173-177`).
+  Q5A carries the same non-blocking product law into initial setup.
+- The Preferences accessibility research requires keyboard operation without a
+  trap, programmatic name/role/value, non-color state, announced status without
+  focus theft, and no undisclosed context change
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-396`).
+
+#### 3.1.4 Genuine alternatives
+
+##### Candidate Q5A-A — separate first-run wizard
+
+Datum opens the four-step Welcome wizard drawn in `first-run-study.html`, then
+saves its summary as the user's seed profile. It is short, explicit, and
+skippable, but duplicates settings already owned by Preferences. The duplicate
+surface must track descriptor labels, choices, provenance, accessibility, and
+future window changes or visibly drift.
+
+A is genuine and fully drawn, but it conflicts with the later Claude comparison
+that identifies this duplication as the reason to prefer B. Selecting A would
+require maintaining two settings surfaces and would reject the drawn B premise;
+it is not recommended.
+
+##### Candidate Q5A-B — guided in place, manual path only
+
+Datum opens the real Preferences window and guides the user through the four
+drawn checkpoints. The current real control receives the accent outline, the
+coach bar explains why it matters, and remaining-section dots provide progress.
+The user may change a value, keep its factory default, or end setup at any time.
+
+B eliminates the duplicate surface and is a complete manual-first path. It is
+the governing candidate.
+
+##### Candidate Q5A-B+C — B governs; C is an optional proposal accelerator
+
+B remains the complete setup path. If the user explicitly invokes assistant
+help and an assistant is available, one sentence of context may yield typed
+preference proposals. Nothing changes until the user accepts all or accepts an
+item during individual review; Dismiss applies nothing.
+
+This is not a rival setup authority. It is the drawn optional extension of B
+and the only candidate that preserves both the preferred in-place surface and
+Datum's normal proposal law. It is recommended as the complete Q5A disposition.
+
+##### Mandatory-choice alternatives
+
+- **Zero mandatory choices:** factory descriptor defaults make Datum fully
+  usable immediately; the four guide checkpoints are recommendations only.
+- **Require the two “How you work” choices:** measurement and drafting standard
+  must be explicitly chosen before authoring. This offers stronger intent but
+  contradicts both drawn Skip paths and would serialize defaults as choices.
+- **Require all four checkpoints:** setup must finish before authoring. This
+  provides maximum confirmation but directly contradicts “nothing is blocked”
+  and PM-034's non-blocking law.
+
+Only zero mandatory choices survives the drawn factory-default Skip behavior,
+approved descriptor law, and PM-034. The guide may recommend the four drawn
+checkpoints—measurement system, drafting standard for new Projects, Appearance,
+and Files & Projects—but no field becomes required, and organization remains
+`none` unless the user deliberately changes it.
+
+#### 3.1.5 Exact bounded contract established by Q5A-B+C approval
+
+Approval establishes only these clauses:
+
+1. Candidate B is Datum's initial-setup surface. It guides inside the canonical
+   Preferences window; Datum does not ship Candidate A's separate settings
+   wizard or maintain a duplicate initial-setup value surface.
+2. The minimum required choice set is empty. Datum is fully usable from factory
+   descriptor defaults before, during, and after setup; viewing or skipping the
+   guide does not serialize those defaults as explicit user choices.
+3. The guide recommends exactly the four drawn checkpoints: measurement system,
+   drafting standard for new Projects, Appearance, and Files & Projects. A user
+   may change a value, retain its displayed factory default, move Back/Next, or
+   end setup without completing any checkpoint.
+4. Skip is available at every step, and Esc performs the same persistent
+   dismissal. Setup never blocks, prompts outside the invoked guide, delays, or
+   degrades Design authoring; it creates no Release or Project gate.
+5. The accent treatment is a static outline on the current real control. Step
+   changes relocate it only after an explicit Back/Next action; under reduced
+   motion it appears at the new target without travel, scrolling, pulsing, or
+   animation, and the Preferences window never jumps.
+6. Keyboard-only operation follows the real Preferences tab order. The current
+   control, explanatory coach text, Skip, Back, and Next expose programmatic
+   name/role/state; visible keyboard focus is not replaced by accent color; no
+   focus trap exists; Enter/Space activates the focused control and Esc dismisses
+   setup. Dots are supplementary progress, not the sole state signal.
+7. Completion and dismissal are machine-local restartable onboarding state,
+   not a preference contribution, user seed value, Project policy, organization
+   directive, or evidence that a factory default was explicitly chosen. The
+   state records only `not_seen`, `active`, `completed`, or `dismissed` plus the
+   last visited checkpoint while active.
+8. `completed` and `dismissed` suppress automatic setup on later launches. The
+   drawn Q5A surface provides no replay/reset affordance; Q5A therefore approves
+   none. Adding replay or reset requires a Claude-rendered control and a later
+   owner disposition before GP-C05 may specify it.
+9. Candidate C is optional and can exist only on top of B. B remains complete
+   when no assistant, model, account, network, or provider is present; Q5A adds
+   no dependency or availability requirement.
+10. Assistant output is a typed proposal set with per-key proposed value,
+    reason, and provenance. The user may accept all, review and accept/reject
+    individually, or dismiss; no value applies until the corresponding explicit
+    acceptance enters the normal preference mutation path. The assistant never
+    writes the store, seed profile, or Project directly.
+11. Q5A does not choose Q5B Start-page behavior, persistence representation,
+    migration, synchronization, organization enrollment, provider transport,
+    implementation dependency, or any Q6-Q10 disposition.
+
+#### 3.1.6 Recommendation and owner response
+
+Approve **Q5A-B+C** with **zero mandatory choices**. B is the governing
+manual-first surface; C is optional proposal-only assistance. This exactly
+preserves the registered visual states, PM-034, Q1 factory-default semantics,
+Q5's profile-origin independence, accessibility law, and the canonical proposal
+path without inventing replay/reset UI.
+
+Reply exactly:
+
+```text
+GP-C03-Q5A: approve Q5A-B+C
+```
+
+or:
+
+```text
+GP-C03-Q5A: revise — <required candidate, minimum-set, skip, accessibility, state, replay/reset, or assistant-proposal correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5A-PACKET -->
 
 ### 3.2 GP-C03-Q5B — Start page
 

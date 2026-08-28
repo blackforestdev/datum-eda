@@ -102,7 +102,9 @@ The process boundary is explicit:
    one-question-at-a-time disposition sequence at Q5. On 2026-08-28 the owner
    inserted two drawn-but-undispositioned questions immediately after Q5:
    Q5A establishes a new user's initial baseline, and Q5B governs the optional
-   Start page. Existing archival Q6-Q10 identities remain unchanged. Each
+   Start page. The owner approved Q5-A on 2026-08-27; Q5A is now the sole
+   prepared owner boundary, while Q5B remains queued. Existing archival Q6-Q10
+   identities remain unchanged. Each
    remaining packet
    must use `preferences-window.html` as its primary reviewed visual evidence,
    cite the exact governed section anchors, and use
@@ -241,10 +243,9 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q4 are approved and remain closed. Q5 remains the current owner boundary.
-If Q5 is dispositioned, Q5A and Q5B follow in that order before the existing
-Q6-Q10 sequence; GP-C05 later extracts interaction clauses from the settled
-surfaces. Complete each only by
+Q1-Q5 are approved and remain closed. Q5A is the current owner boundary; Q5B
+follows only after Q5A, before the existing Q6-Q10 sequence. GP-C05 later
+extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
 boundary opens.
