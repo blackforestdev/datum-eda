@@ -34,6 +34,8 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .main::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:6px;border:2px solid var(--bg)}
 .main::-webkit-scrollbar-track{background:var(--s01)}
 .search{position:sticky;top:0;z-index:6;margin:0;padding:12px 18px;background:var(--bg);border-bottom:1px solid var(--bd-str);font-family:"PlexMono",monospace;font-size:12px;color:var(--tx3);display:flex;gap:8px;align-items:center}
+.win.layb .search{border-bottom:1px solid var(--bd-str);padding:12px 18px}
+.win.layb .body{border-top:none}
 .search .field{flex:1;display:flex;gap:8px;align-items:center;background:var(--s01);border:1px solid var(--bd-sub);border-radius:5px;padding:6px 11px}
 .search input{flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-family:"PlexMono",monospace;font-size:12px}
 .search input::placeholder{color:var(--tx3)}
@@ -431,6 +433,11 @@ results.addEventListener('click',e=>{
 });
 qIn.addEventListener('input',runSearch);
 qIn.addEventListener('keydown',e=>{if(e.key==='Escape'){qIn.value='';runSearch();qIn.blur();}});
+if((location.hash||'').includes('layout=b')){
+  const win=document.querySelector('.win'), body=document.querySelector('.body'), bar=document.querySelector('.search');
+  win.classList.add('layb'); win.insertBefore(bar, body);
+  const c=document.getElementById('qcount'); if(c&&!c.textContent) c.textContent='searches every section';
+}
 const qh=(location.hash||'').match(/q=([^,&]+)/);
 if(qh){qIn.value=decodeURIComponent(qh[1]);runSearch();}
 const EX={
