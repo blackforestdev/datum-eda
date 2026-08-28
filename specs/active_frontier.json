@@ -5180,9 +5180,9 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "blocked",
+      "state": "planned",
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
@@ -5680,34 +5680,18 @@
         "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook.",
       "dependencies": [],
       "unblocks": [
         "dat-global-preferences-engine-qcv"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-visual-truth-lane-implementation-20260827",
-        "claimed_at": "2026-08-27T13:35:37-07:00",
-        "heartbeat_at": "2026-08-27T13:35:37-07:00",
-        "expires_at": "2026-08-27T21:35:37-07:00",
-        "scope": [
-          "visual-truth staged-path enforcement script",
-          "pre-commit hook integration",
-          "file-lane enforcement tests",
-          "governance and tracker closure"
-        ],
-        "worktree": ".",
-        "head": "2ae2f59b58ad140309de512ba25c3d749ed83df3"
-      },
       "completion": {
         "outcome": "Commits touching docs/gui/prototypes/*.html are refused unless the committing session carries the owner-approved Claude visual-truth marker, with tested rename/delete coverage and explicit gate-integrity doctrine.",
-        "canonical_next_step_id": "LANE-I01",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5779,7 +5763,7 @@
           {
             "id": "LANE-I01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement the approved staged file-lane gate in scripts/git-hooks/pre-commit, add positive and negative proof, and close the enforcement bead without changing any prototype file.",
             "depends_on": [
               "LANE-C02"
@@ -5790,7 +5774,16 @@
                 "marker": "LANE-I01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "41c654aeb952ff5046349f82dea8c4b9ac85c48a"
+              },
+              {
+                "kind": "commit",
+                "revision": "6ba9b9d"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -5805,7 +5798,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "6ba9b9d"
     }
   ]
 }
