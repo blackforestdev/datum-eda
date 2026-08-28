@@ -5185,8 +5185,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5197,27 +5197,9 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-gp-c10-corrections-20260828",
-        "claimed_at": "2026-08-28T13:50:30-07:00",
-        "heartbeat_at": "2026-08-28T13:50:30-07:00",
-        "expires_at": "2026-08-28T21:50:30-07:00",
-        "scope": [
-          "record the ten-part GP-C06 owner revision and insert canonical integer step GP-C10",
-          "correct ProjectPolicySeed classification, unit-seed precedence, PM-034 law, owner-forced phrases, GP-C04/GP-C05/units clauses, citations, counts, review limits, and provisional-watermark disposition",
-          "write the next numbered Product Mechanics decision without implying owner approval",
-          "reconcile Claude commit d414462 and refresh the complete route digest only in the combined correction",
-          "exclude clay and adopted-standard co-ownership claims and provide a bounded Claude reconciliation list without prototype edits",
-          "no implementation, dependency, owner disposition, prototype HTML mutation, or GP-C07 planning"
-        ],
-        "worktree": ".",
-        "head": "d414462d3d2da7697922a2e03b5c472707cf7db9"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C10",
+        "canonical_next_step_id": "GP-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5536,11 +5518,14 @@
           {
             "id": "GP-C10",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Correct the GP-C06 ratification set as one governed transaction: restore ProjectPolicySeed and owner-forced law, resolve unit-seed and catalog conflicts, repair citations/counts/review limits, reconcile Claude visual evidence, and draft the numbered mechanism decision before reopening owner review.",
             "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08", "GP-C09"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C10"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "commit", "revision": "2045de0"},
+              {"kind": "document", "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET"}
+            ]
           },
           {
             "id": "GP-C06",
