@@ -1,3 +1,5 @@
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I00 -->
+
 # REV-I00 Product Revision Engine Execution-Authorization Packet
 
 > **Status:** owner review required.
@@ -190,6 +192,7 @@ Acceptance requires committed, addressable evidence for:
 ## 5. Owner boundary
 
 <!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I00:REVISION-ENGINE-EXECUTION -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I00:REV-I00-PACKET -->
 
 The exact question is:
 

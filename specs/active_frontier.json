@@ -4878,7 +4878,6 @@
       "summary": "Research and specify Datum-owned configuration, change, baseline, revision, release, approval, effectivity, status-accounting, reproduction, and audit authority before any Revision or Publish implementation is authorized.",
       "dependencies": [],
       "unblocks": [
-        "dat-global-preferences-engine-qcv",
         "dat-product-revision-engine-build-18f"
       ],
       "completion": {
@@ -5151,7 +5150,6 @@
             "GLOBAL-PREFERENCES-SPEC is the ordered architecture follow-on and must specify the policy-resolution authority before integrated system-preference UX is implemented."
           ],
           "unblocks_issue_ids": [
-            "dat-global-preferences-engine-qcv",
             "dat-product-revision-engine-build-18f"
           ],
           "selection": "explicit_frontier_update",
@@ -5186,25 +5184,10 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "gp-c07-rev-i00-20260828",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7ade3ac2c5162099b8f7e7e247d68ab1088997a3",
-        "claimed_at": "2026-08-28T21:47:34Z",
-        "heartbeat_at": "2026-08-28T21:47:34Z",
-        "expires_at": "2026-08-29T05:47:34Z",
-        "scope": [
-          "GLOBAL-PREFERENCES-SPEC / GP-C07 planning",
-          "PRODUCT-REVISION-ENGINE / REV-I00 authorization packet",
-          "project-state and evidence governance ledgers"
-        ]
-      },
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
       "dependencies": [
         "dat-product-revision-engine-k9f",
@@ -5217,7 +5200,7 @@
       ],
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C07",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5569,11 +5552,15 @@
           {
             "id": "GP-C07",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Place bounded implementation, migration, conformance, recovery, accessibility, real-project, and production-acceptance slices on the Frontier without implicit execution or dependency authorization.",
             "depends_on": ["GP-C06"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C07"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "commit", "revision": "b48d979"},
+              {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-IMPLEMENTATION-PLAN"},
+              {"kind": "review", "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-COMPLETED"}
+            ]
           }
         ],
         "post_completion": {
@@ -5590,7 +5577,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "b48d979"
     },
     {
       "key": "SHARED-UNITS-ENGINE",
@@ -5603,7 +5591,7 @@
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "blocked",
+      "state": "specified",
       "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": false,
@@ -5830,9 +5818,9 @@
         "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "blocked",
+      "state": "specified",
       "authorization": "owner_decision",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
       "dependencies": [
@@ -5869,6 +5857,10 @@
               {
                 "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
                 "marker": "REV-I00"
+              },
+              {
+                "path": "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "REV-I00"
               }
             ],
             "completion_evidence": [],
@@ -5880,8 +5872,8 @@
                   "question": "Does the execution baseline preserve Product Mechanics 034, the Global Preferences policy boundary, source-health ownership, no-new-dependency posture, real-project evidence, and all required migration/proof gates closely enough to authorize REV-I01 only?",
                   "recommended_response": "Approve only when the baseline proves REV-I01 can harden technical integrity without implementing a rival authority, adding a dependency, or starting Publish/GUI feature work.",
                   "source_ref": {
-                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
-                    "marker": "REV-I00"
+                    "path": "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
+                    "marker": "REV-I00-PACKET"
                   }
                 }
               ]
@@ -6129,9 +6121,7 @@
       "parallel": false,
       "summary": "Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook.",
       "dependencies": [],
-      "unblocks": [
-        "dat-global-preferences-engine-qcv"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Commits touching docs/gui/prototypes/*.html are refused unless the committing session carries the owner-approved Claude visual-truth marker, with tested rename/delete coverage and explicit gate-integrity doctrine.",
         "canonical_next_step_id": null,
@@ -6234,9 +6224,7 @@
             "The Claude-owned prototype lane is mechanically enforced for normal commits.",
             "Global Preferences prototype-first work may resume under the new lane law."
           ],
-          "unblocks_issue_ids": [
-            "dat-global-preferences-engine-qcv"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false

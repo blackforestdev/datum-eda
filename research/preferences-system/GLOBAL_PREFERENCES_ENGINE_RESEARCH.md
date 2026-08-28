@@ -383,6 +383,13 @@ That packet uses PM-037 only as the now-complete Project-policy seam and asks
 the owner to authorize at most REV-I01 technical integrity. It does not start
 Revision implementation.
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-COMPLETED -->
+
+Commit `b48d979` places both bounded programs and the REV-I00 packet. Every
+execution slice remains behind its own owner decision, PM-029 still gates every
+new dependency, the named exclusions remain blocked, and no implementation has
+begun.
+
 ## Required outcome
 
 Completion yields an owner-ratified Global Preferences authority and a bounded,
