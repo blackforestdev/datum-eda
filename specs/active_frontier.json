@@ -5293,7 +5293,7 @@
             "id": "GP-C03",
             "kind": "owner_decision",
             "status": "pending",
-            "action": "Preserve approved Q1-Q4 and resume the one-question-at-a-time GP-C03-Q5 through Q10 owner-disposition sequence from reviewed Claude-owned Preferences-window anchors, beginning with the bounded Q5 new-Project seeding and receipt packet; never extract clauses ahead of drawn behavior.",
+            "action": "Preserve approved Q1-Q4 and keep GP-C03-Q5 at the owner boundary; after Q5, review the drawn-but-undispositioned Q5A initial-setup and Q5B Start-page questions one at a time before the existing Q6-Q10 sequence, then hand settled interaction surfaces to GP-C05; never extract clauses ahead of drawn behavior.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5336,7 +5336,7 @@
             "id": "GP-C05",
             "kind": "planning",
             "status": "pending",
-            "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and any required Claude-owned visual source of truth.",
+            "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and reconcile the separately settled initial-setup and Start-page surfaces across required accessibility and context states.",
             "depends_on": ["GP-C03", "GP-C04"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
             "completion_evidence": []

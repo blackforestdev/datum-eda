@@ -166,7 +166,8 @@ Approval establishes only these clauses:
    Project-policy engine.
 9. Q5 does not decide package signing or transport, provider unavailability,
    persistence, migration, detailed comparison UX, reset/import behavior,
-   implementation dependencies, or any Q6-Q10 disposition.
+   implementation dependencies, initial-setup or Start-page design, or any
+   Q5A-Q10 disposition.
 
 ### 2.6 Recommendation and owner response
 
@@ -187,3 +188,51 @@ GP-C03-Q5: revise — <required on-screen, seeding, receipt, or contract correct
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5-PACKET -->
+
+## 3. Drawn follow-on questions queued behind Q5
+
+These questions are registered for later one-at-a-time owner review. They are
+not part of the current Q5 response, contain no advance contract extraction,
+and cannot open while Q5 remains pending.
+
+### 3.1 GP-C03-Q5A — initial baseline and setup surface
+
+Q5A asks how a new user's baseline is established and what the minimum required
+set is. The Claude-owned candidates are:
+
+- A, the separate skippable wizard in `first-run-study.html:50-87`, which draws
+  measurement system, new-Project drafting standard, look, organization, and
+  Project-files setup before saving a user seed profile;
+- B, guided setup inside the real Preferences window in
+  `guided-setup-study.html:56-74`, where the accent ring and coach bar step
+  through the actual settings surface and setup may be skipped without blocking
+  authoring; and
+- C, the optional assistant-assisted path in
+  `guided-setup-study.html:76-96`, where typed proposals require normal user
+  acceptance or rejection and ride on B rather than replacing its manual path.
+
+No candidate or minimum set is approved. A later packet must apply the same
+visual-anchor, written-evidence, alternatives, and bounded-clause requirements
+as Q5 before Q5A can become an owner boundary.
+
+### 3.2 GP-C03-Q5B — Start page
+
+Q5B asks whether the optional Start page exists, what it may show, and what it
+must exclude. `start-page-study.html:48-82` draws New/Open/Import actions,
+recent Projects with Revision Engine truth and explicit missing paths, a
+pre-creation view of the values New Project will copy, and the explicit absence
+of news, marketing, telemetry, alerts-channel behavior, and network loading.
+It also preserves `Last session` and `Empty` as ways to skip the page.
+
+None of that clay behavior is approved merely by registration. A later packet
+must compare genuine alternatives and extract only owner-approved clauses before
+GP-C05 reconciles the settled Start-page interaction with Preferences.
+
+### 3.3 Effect on the current Q5 premise
+
+Neither Q5A nor Q5B changes Q5's premise. Q5 governs the invariant copy
+semantics after a factory, user, or organization seed snapshot has been chosen:
+one atomic copy into Project authority, one durable itemized receipt, and no
+later live following. Q5A decides how a user profile may first be established;
+Q5B decides whether and how the selected seed values are shown before creation.
+The profile's origin or preview surface cannot change what genesis does with it.

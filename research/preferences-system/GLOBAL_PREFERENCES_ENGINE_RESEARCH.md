@@ -99,7 +99,11 @@ The process boundary is explicit:
 
 1. GP-C03 Q1-Q4 remain approved and are not reopened.
 2. On 2026-08-27 the owner unpaused GP-C03 Q5-Q10 and resumed the
-   one-question-at-a-time disposition sequence at Q5. Each remaining packet
+   one-question-at-a-time disposition sequence at Q5. On 2026-08-28 the owner
+   inserted two drawn-but-undispositioned questions immediately after Q5:
+   Q5A establishes a new user's initial baseline, and Q5B governs the optional
+   Start page. Existing archival Q6-Q10 identities remain unchanged. Each
+   remaining packet
    must use `preferences-window.html` as its primary reviewed visual evidence,
    cite the exact governed section anchors, and use
    `preferences-ux-study.html` only as archival structural evidence.
@@ -116,6 +120,14 @@ The process boundary is explicit:
    interactions remain draft until separately governed. Their presence does
    not create a descriptor, Project object, default, implementation obligation,
    dependency, or standards-conformance claim.
+6. `first-run-study.html`, `guided-setup-study.html`, and
+   `start-page-study.html` are Claude-owned clay visual truth. Q5A must compare
+   the separate wizard (A), guided-in-place Preferences path (B), and optional
+   assistant proposal path riding on B (C), including the minimum required
+   baseline. Q5B must decide whether the Start page exists, what truthful local
+   state it may show, and its explicit no-news/no-marketing/no-alert-channel/
+   no-network-load exclusions. Neither question is dispositioned by its
+   placement or prototype registration.
 
 <!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:V1-DESCRIPTOR-CATALOG -->
 ### V1 Preference Descriptor Catalog
@@ -229,8 +241,10 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q4 are approved and remain closed. Q5-Q10 resume one question at a time under
-the prototype-first visual-anchor law, beginning with Q5. Complete each only by
+Q1-Q4 are approved and remain closed. Q5 remains the current owner boundary.
+If Q5 is dispositioned, Q5A and Q5B follow in that order before the existing
+Q6-Q10 sequence; GP-C05 later extracts interaction clauses from the settled
+surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
 boundary opens.
@@ -249,8 +263,10 @@ seam between preferences and governed Project policy.
 Extract accessible discovery, search, editing, effective-value/provenance
 inspection, reset/override/refusal behavior, managed-state presentation, and
 the Revision carry-forward surfaces from the owner-settled
-`preferences-window.html`. Reconcile the settled window across unmanaged,
-managed, teaching, keyboard-only, narrow, and assistive-technology states.
+`preferences-window.html`. After Q5A and Q5B are separately dispositioned,
+reconcile their settled initial-setup and Start-page surfaces with that window
+across unmanaged, managed, teaching, keyboard-only, narrow, and
+assistive-technology states.
 GP-C05 does not pre-author interaction clauses for the prototype to satisfy.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05A -->
