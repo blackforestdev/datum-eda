@@ -268,8 +268,11 @@ avoids making all Project users repeat guidance while preserving the deliberate
 classroom/governed-shop teaching case. GP-C03 is complete. GP-C04 now reconciles
 Claude commit `586eb0d` into a complete persistence, identity/synchronization,
 Project-partition, migration, recovery, exchange, audit, typed refusal, and proof
-contract. GP-C05 next extracts interaction clauses from the
-settled surfaces. Complete each only by
+contract. The owner-adopted GP-C05 refined Option A now extracts search-first
+discovery, row-complete editing/provenance, resolver-owned explanation, settled
+setup/Start-page/Revision carry-forwards, and accessible context states from
+Claude commits `a061fca`, `e2127fa`, and `586eb0d`. GP-C05A is next. Complete
+each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
 boundary opens.
@@ -293,6 +296,8 @@ reconcile their settled initial-setup and Start-page surfaces with that window
 across unmanaged, managed, teaching, keyboard-only, narrow, and
 assistive-technology states.
 GP-C05 does not pre-author interaction clauses for the prototype to satisfy.
+The completed contract is
+`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md`.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05A -->
 ### GP-C05A — V1 Preference Descriptor Catalog

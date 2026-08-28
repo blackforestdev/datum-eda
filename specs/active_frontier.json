@@ -5172,6 +5172,7 @@
         "research/preferences-system/GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md",
         "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
         "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md",
+        "research/preferences-system/GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md",
         "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
         "research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md",
@@ -5211,7 +5212,7 @@
       },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C05",
+        "canonical_next_step_id": "GP-C05A",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5471,11 +5472,33 @@
           {
             "id": "GP-C05",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and reconcile the separately settled initial-setup and Start-page surfaces across required accessibility and context states.",
             "depends_on": ["GP-C03", "GP-C04"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C05-CONTRACT"
+              },
+              {
+                "kind": "commit",
+                "revision": "a061fca"
+              },
+              {
+                "kind": "commit",
+                "revision": "e2127fa"
+              },
+              {
+                "kind": "commit",
+                "revision": "e1dd9c6"
+              },
+              {
+                "kind": "commit",
+                "revision": "586eb0d"
+              }
+            ]
           },
           {
             "id": "GP-C05A",
