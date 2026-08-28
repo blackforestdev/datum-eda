@@ -5184,8 +5184,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5196,26 +5196,9 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-gp-c09-ratification-packet-20260828",
-        "claimed_at": "2026-08-28T13:37:59-07:00",
-        "heartbeat_at": "2026-08-28T13:37:59-07:00",
-        "expires_at": "2026-08-28T21:37:59-07:00",
-        "scope": [
-          "record the GP-C06 owner revision and insert canonical integer step GP-C09",
-          "write one findings-first consolidated packet tracing GP-C03 Q1-Q11, GP-C04, GP-C05, GP-C08, shared units, and PM-034/035/036 boundaries",
-          "adversarially check completeness, contradictions, source strength, visual authority, dependency, and implementation exclusions",
-          "reopen GP-C06 only after the packet is committed and recorded as GP-C09 completion evidence",
-          "no prototype HTML mutation, implementation, dependency, owner disposition, or GP-C07 planning"
-        ],
-        "worktree": ".",
-        "head": "57248570b4afb1971f68c2196c5cc9c82a77d6c1"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C09",
+        "canonical_next_step_id": "GP-C06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5522,11 +5505,14 @@
           {
             "id": "GP-C09",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Produce and adversarially review the single consolidated GP-C06 ratification packet, tracing all settled authority, storage, interaction, catalog, units, visual, and PM-034/035/036 boundaries before reopening owner review.",
             "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C09"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "commit", "revision": "0af591e"},
+              {"kind": "document", "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET"}
+            ]
           },
           {
             "id": "GP-C06",
@@ -5540,9 +5526,9 @@
               "response_format": "After the findings-first review, reply exactly `GP-C06-RATIFICATION: approve` or `GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
               "requests": [{
                 "id": "GP-C06",
-                "question": "Does the consolidated packet faithfully define Datum's Global Preferences authority and its Project-policy boundary without authorizing implementation or weakening Product Mechanics 034?",
+                "question": "Does GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md faithfully consolidate Datum's Global Preferences authority and its Project-policy boundary without authorizing implementation, adding dependencies, or weakening Product Mechanics 034, 035, or 036?",
                 "recommended_response": "Approve only after every claim is traceable to the factual audit, external evidence, owner dispositions, and any required visual source of truth.",
-                "source_ref": {"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}
+                "source_ref": {"path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "GP-C06-CONSOLIDATED-PACKET"}
               }]
             }
           },

@@ -280,6 +280,8 @@ explicit owner response below may disposition the boundary.
 
 ## 6. Owner response
 
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06-CONSOLIDATED-PACKET -->
+
 Approve only if this packet faithfully consolidates the cited settled authority,
 states the unresolved limits honestly, and preserves every explicit exclusion.
 
