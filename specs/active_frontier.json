@@ -5309,7 +5309,7 @@
             "id": "GP-C03",
             "kind": "planning",
             "status": "in_progress",
-            "action": "Preserve approved Q1-Q4, pause Q5-Q10, and prepare governed registry, units, and ownership inputs from the owner-directed prototype-first Preferences process without extracting unsettled specification clauses.",
+            "action": "Preserve approved Q1-Q4 and resume the one-question-at-a-time GP-C03-Q5 through Q10 owner-disposition sequence from reviewed Claude-owned Preferences-window anchors, beginning with the bounded Q5 new-Project seeding and receipt packet; never extract clauses ahead of drawn behavior.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [

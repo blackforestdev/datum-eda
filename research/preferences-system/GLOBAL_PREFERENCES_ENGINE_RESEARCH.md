@@ -83,7 +83,7 @@ configuration, portability, offline behavior, and the consequences for Q3, Q4,
 and GP-C05. Peer conventions remain evidence rather than Datum doctrine.
 
 <!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:PROTOTYPE-FIRST-COURSE-CORRECTION -->
-### Prototype-first course correction
+### Prototype-first course correction and resumed disposition sequence
 
 The owner superseded the abstract-anchor process on 2026-08-26.
 `docs/gui/prototypes/preferences-window.html` is now the working Preferences
@@ -98,14 +98,21 @@ unselected Q5-Q10 ideas. It no longer drives new decisions.
 The process boundary is explicit:
 
 1. GP-C03 Q1-Q4 remain approved and are not reopened.
-2. GP-C03 Q5-Q10 are paused until the owner declares the working prototype
-   settled. Existing Q5 prose is suspended candidate material, not an active
-   owner packet.
-3. No remaining GP-C03 or GP-C05 clause may be authored ahead of the settled
-   prototype. After settlement, Codex extracts bounded clauses from the
-   reviewed window, reconciles them against Q1-Q4 and governing authority, and
-   returns any actual owner choices.
-4. Prototype catalog entries, labels, defaults, classifications, and
+2. On 2026-08-27 the owner unpaused GP-C03 Q5-Q10 and resumed the
+   one-question-at-a-time disposition sequence at Q5. Each remaining packet
+   must use `preferences-window.html` as its primary reviewed visual evidence,
+   cite the exact governed section anchors, and use
+   `preferences-ux-study.html` only as archival structural evidence.
+3. No remaining GP-C03 or GP-C05 clause may be authored ahead of what the real
+   window draws. Codex extracts bounded clauses only after reviewing the
+   applicable window anchors against Q1-Q4 and governing authority. A candidate
+   that materially differs from the window cannot open an owner boundary until
+   Claude renders it there first.
+4. Every remaining packet must state the exact on-screen decision in one plain
+   sentence, cite written evidence with exact file and line references, present
+   genuine alternatives (or prove from ratified law why no alternative
+   survives), and enumerate only the bounded clauses that approval establishes.
+5. Prototype catalog entries, labels, defaults, classifications, and
    interactions remain draft until separately governed. Their presence does
    not create a descriptor, Project object, default, implementation obligation,
    dependency, or standards-conformance claim.
@@ -152,8 +159,8 @@ descriptor for **Schematic drawing theme**, selecting the complete governed
 Dark or Light contrast system. Dark is the factory default; Light uses warm
 paper `#E7E1D2`; users cannot edit theme members; dark chrome and Publish/print
 behavior remain unchanged. Board Layer color scheme stays separate, and a Light
-board theme is future governed work. This bounded ruling does not resume the
-paused GP-C03 Q5-Q10 sequence.
+board theme is future governed work. The later owner directive resumes GP-C03
+Q5-Q10 but does not expand or reopen this bounded ruling.
 
 ## Non-negotiable boundaries
 
@@ -222,9 +229,11 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q4 are approved. Q5-Q10 remain paused under the prototype-first course
-correction; complete them only by extracting and reconciling the owner-settled
-Preferences window, never by drafting ahead of it.
+Q1-Q4 are approved and remain closed. Q5-Q10 resume one question at a time under
+the prototype-first visual-anchor law, beginning with Q5. Complete each only by
+extracting and reconciling the reviewed Preferences window, never by drafting
+ahead of it; a material visual difference returns to Claude before the owner
+boundary opens.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C04 -->
 ### GP-C04 — Storage, migration, exchange, and recovery contract
