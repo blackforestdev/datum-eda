@@ -5181,7 +5181,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5193,7 +5193,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-c05-owner-disposition-20260828",
+        "claimed_at": "2026-08-28T13:02:24-07:00",
+        "heartbeat_at": "2026-08-28T13:02:24-07:00",
+        "expires_at": "2026-08-28T21:02:24-07:00",
+        "scope": [
+          "record the owner-adopted refined GP-C05 option A from Claude commit a061fca",
+          "register and review accessibility/context evidence at e2127fa and store states at 586eb0d",
+          "extract the search-first, explanation, responsive, accessibility, editing, refusal, onboarding, Start-page, and Revision carry-forward contract",
+          "no prototype HTML mutation, implementation, dependency, GP-C05A catalog, or GP-C06 ratification"
+        ],
+        "worktree": ".",
+        "head": "a061fca27111019626a045c139c41fc647016a1e"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C05",
@@ -5456,7 +5471,7 @@
           {
             "id": "GP-C05",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and reconcile the separately settled initial-setup and Start-page surfaces across required accessibility and context states.",
             "depends_on": ["GP-C03", "GP-C04"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
