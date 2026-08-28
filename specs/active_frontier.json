@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q6-20260827",
-        "claimed_at": "2026-08-27T23:38:37-07:00",
-        "heartbeat_at": "2026-08-27T23:38:37-07:00",
-        "expires_at": "2026-08-28T07:38:37-07:00",
-        "scope": [
-          "record GP-C03-Q11 owner approval and Q5B historical alias",
-          "enforce integer-only IDs for newly inserted questions",
-          "prepare the visual-anchored GP-C03-Q6 session/context packet",
-          "no prototype HTML mutation"
-        ],
-        "worktree": ".",
-        "head": "b27d3ff0cb46a1ce932a0a00e0660e6eab97a2ab"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5307,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Record approved GP-C03-Q11 Start-page law with Q5B as a historical alias, preserve Q5A as the dispositioned sub-letter exception and prohibit future sub-lettered IDs, then prepare the existing GP-C03-Q6 session/context versus operation-input and restartable-state packet from the real Preferences window and archival PX-V8.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q5A and Q11, then decide GP-C03-Q6 from the real Preferences window and archival PX-V8: approve the typed Session, read-only Context, explicit operation-input, restartable-state, and transient-state lifetime boundary, or provide a bounded revision; preserve Q7-Q10 as queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5338,7 +5322,21 @@
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q11-APPROVED"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing Preferences #workspace, #rules-checks, #output, #files-projects, and #project-policy-read-only; the PM-036 canvas precedent; archival PX-V8; written evidence; rejected alternatives; and the thirteen bounded clauses, reply exactly `GP-C03-Q6: approve Q6-A` or `GP-C03-Q6: revise — <required session, context, operation-input, state-lifetime, precedence, or accessibility correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q6",
+                  "question": "Should Datum keep five typed classes with explicit lifetimes: descriptor-eligible Session overrides that last only this application run, named read-only Context that vanishes when its subject no longer applies, per-invocation operation input whose explicit ask survives any WorkflowDefault pre-fill, restartable workspace state that restores a view without preference authority, and transient interaction state that expires with its interaction?",
+                  "recommended_response": "Approve Q6-A because it is the sole candidate consistent with the real Preferences window, PM-036, archival PX-V8, approved Q2/Q4 source law, Q3 accessibility authority, and GP-C02 configuration/state separation; flattening these classes or removing Session/Context would require reopening ratified law and a different Claude render.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q6"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
