@@ -313,11 +313,23 @@ above. GP-C06 ratification is blocked until every subsystem is covered and every
 entry is selected for v1, explicitly deferred, or classified as not a
 preference. The draft seed cannot satisfy this deliverable by itself.
 
+<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C09 -->
+### GP-C09 — Consolidated ratification packet
+
+Produce the single findings-first, adversarially reviewable GP-C06 packet before
+reopening the owner boundary. It must consolidate and trace every GP-C03 Q1–Q11
+disposition, the GP-C04 storage/migration/recovery/exchange contract, the GP-C05
+refined Option A visual and interaction contract, the GP-C08 descriptor catalog,
+and the shared units-engine requirement. It must state explicitly that approval
+authorizes no implementation or dependency and does not weaken Product Mechanics
+034, 035, or 036. GP-C06 remains pending until this artifact is committed and
+listed as completion evidence for GP-C09.
+
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->
 ### GP-C06 — Consolidated owner ratification
 
-Present one adversarially reviewed packet with exact internal, external,
+Present the committed GP-C09 adversarial packet with exact internal, external,
 standards, authority, storage, migration, recovery, integration, accessibility,
 and visual evidence. Record owner dispositions in governed doctrine and a
 normative specification without authorizing implementation.

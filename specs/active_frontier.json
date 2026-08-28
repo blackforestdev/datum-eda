@@ -5183,8 +5183,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5195,9 +5195,26 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-c09-ratification-packet-20260828",
+        "claimed_at": "2026-08-28T13:37:59-07:00",
+        "heartbeat_at": "2026-08-28T13:37:59-07:00",
+        "expires_at": "2026-08-28T21:37:59-07:00",
+        "scope": [
+          "record the GP-C06 owner revision and insert canonical integer step GP-C09",
+          "write one findings-first consolidated packet tracing GP-C03 Q1-Q11, GP-C04, GP-C05, GP-C08, shared units, and PM-034/035/036 boundaries",
+          "adversarially check completeness, contradictions, source strength, visual authority, dependency, and implementation exclusions",
+          "reopen GP-C06 only after the packet is committed and recorded as GP-C09 completion evidence",
+          "no prototype HTML mutation, implementation, dependency, owner disposition, or GP-C07 planning"
+        ],
+        "worktree": ".",
+        "head": "57248570b4afb1971f68c2196c5cc9c82a77d6c1"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C06",
+        "canonical_next_step_id": "GP-C09",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5502,11 +5519,20 @@
             ]
           },
           {
+            "id": "GP-C09",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Produce and adversarially review the single consolidated GP-C06 ratification packet, tracing all settled authority, storage, interaction, catalog, units, visual, and PM-034/035/036 boundaries before reopening owner review.",
+            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08"],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C09"}],
+            "completion_evidence": []
+          },
+          {
             "id": "GP-C06",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Adversarially review and obtain owner ratification of the complete Preferences authority, integration, standards/source-strength, dependency, migration, accessibility, and visual contract.",
-            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08"],
+            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08", "GP-C09"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}],
             "completion_evidence": [],
             "owner_input": {
