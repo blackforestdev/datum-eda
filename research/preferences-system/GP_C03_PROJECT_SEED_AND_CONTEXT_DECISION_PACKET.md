@@ -3,7 +3,8 @@
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
 > Q9 approved. Claude commit `7089ee8` closes the Q10 render gap with paired
 > visibility states, three genuine onboarding scopes, and first-use/replayed
-> guidance beside the unchanged Release arm bar. The Q10 packet is prepared with
+> guidance beside the unchanged Release arm bar. The Q10 packet is the active
+> owner boundary with
 > scope and managed-required replay as separate explicit owner choices. Q5B is
 > the historical alias for Q11. Specification only; no implementation,
 > dependency, or Q10 disposition is authorized.
@@ -2017,3 +2018,5 @@ GP-C03-Q10: revise — <required visibility, scope, completion, reset/replay, ma
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-DRAFT -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-PACKET -->

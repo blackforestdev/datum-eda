@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q10-packet-20260828",
-        "claimed_at": "2026-08-28T10:32:59-07:00",
-        "heartbeat_at": "2026-08-28T10:32:59-07:00",
-        "expires_at": "2026-08-28T18:32:59-07:00",
-        "scope": [
-          "register and reconcile Claude commit 7089ee8",
-          "draft GP-C03-Q10 candidates and bounded clauses from the rendered carry-forwards",
-          "preserve scope and managed-replay as explicit owner decisions",
-          "no prototype HTML mutation and no implementation or dependency authority"
-        ],
-        "worktree": ".",
-        "head": "7089ee873dd5ccd8ad07c90d94a4499c5ebe8aa9"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5307,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Register and reconcile Claude commit 7089ee8, then draft GP-C03-Q10 common clauses plus explicit S1/S2/S3 onboarding-scope and managed-required-replay owner choices from the rendered carry-forward study.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q9 and Q11, then decide GP-C03-Q10 from Claude render 7089ee8: approve common Q10-A carry-forward behavior, exactly one onboarding scope S1 per-user profile, S2 machine-local, or S3 per-Project, and independently R1 managed-required replay permitted or R2 user-only replay—or provide a bounded revision.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5405,8 +5389,31 @@
               {
                 "kind": "commit",
                 "revision": "7089ee8"
+              },
+              {
+                "kind": "commit",
+                "revision": "299397b"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-PACKET"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing revision-carryforward-study.html at 7089ee8, the real Preferences #revision row, the approved Release #ux-v9 arm bar, PM-034, PM-036, archival PX-V12, all five genuine alternatives, and the bounded clauses, reply exactly `GP-C03-Q10: approve Q10-A/S2/R1` with one selected scope (`S1`, `S2`, or `S3`) and one selected replay law (`R1` or `R2`), or `GP-C03-Q10: revise — <required visibility, scope, completion, reset/replay, managed-replay, guidance, issuance, or accessibility correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q10",
+                  "question": "Should Datum adopt Q10-A common non-gating visibility/onboarding behavior, where does first-Release completion state live (S1 per-user profile, S2 machine-local, or S3 per-Project), and may an eligible managed teaching profile require replay (R1) or is replay user-only (R2)?",
+                  "recommended_response": "Approve Q10-A/S2/R1 as the bounded default because S2 matches offline-complete guided-setup state and R1 permits the drawn teaching case only within released authority; S1, S3, and R2 remain genuine selectable alternatives.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q10"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
