@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q8-approval-20260828",
-        "claimed_at": "2026-08-28T06:46:46-07:00",
-        "heartbeat_at": "2026-08-28T06:46:46-07:00",
-        "expires_at": "2026-08-28T14:46:46-07:00",
-        "scope": [
-          "record the GP-C03-Q8 Q8-A/P2 owner disposition",
-          "audit GP-C03-Q9 against the real Preferences window",
-          "hand any material Q9 visual gap to Claude as a bounded reconciliation",
-          "no prototype HTML mutation and no Q9 clauses before render"
-        ],
-        "worktree": ".",
-        "head": "338a71e0af1c88b6d486598286c947946f33c3bf"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5308,8 +5292,8 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "in_progress",
-            "action": "Record approved GP-C03-Q8 Q8-A/P2, then audit whether the real Preferences window renders Q9's beside-opened resolver provenance explanation; if it does not, issue a bounded Claude reconciliation without drafting Q9 candidates or clauses, while preserving Q1-Q8 and Q11 and leaving Q10 undispositioned.",
+            "status": "pending",
+            "action": "Have Claude render GP-C03-Q9 in the real Preferences window: selecting a representative setting row opens the resolver-owned full provenance explanation beside the retained list, visibly separating the effective winner from overridden/inert contributions and preserving Q1-Q8 and Q11; then reconcile the evidence route before Codex drafts any Q9 candidate or clause, while Q10 remains undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5365,6 +5349,15 @@
                 "kind": "review",
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-APPROVED"
+              },
+              {
+                "kind": "commit",
+                "revision": "2772c85"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-RENDER-GAP"
               }
             ]
           },
