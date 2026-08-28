@@ -263,6 +263,21 @@ section{display:none} section.on{display:block}
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="row"><div class="lbl"><b>Reset, export, and import of preferences</b><span>Reset a page, section, or all preferences to factory defaults, and export/import preferences as a portable file — a Preferences-window mechanism rathe</span></div><div class="ctl"><span class="shield">⛉</span><span class="btn">Export…</span><span class="btn">Import…</span><span class="btn" style="color:#d9a441;border-color:#d9a441">Reset all…</span></div></div>
 <div class="prov">protected — untrusted projects can never set this · <span style="color:var(--warn)">⚠ classification unsure — clay</span></div>
+<div class="ghead">Stored settings this version does not recognize</div>
+<div class="row"><div class="lbl"><b>plugin.viewer3d.msaa</b><span>written by another version or an absent subsystem</span></div>
+  <div class="ctl"><span class="idchip unalloc">◌ UNKNOWN · PRESERVED · INACTIVE</span><span class="btn">Show value…</span></div></div>
+<div class="prov">kept byte-for-byte and never guessed into effect · it activates only if a version registers a descriptor for this key · exports carry it verbatim so round-tripping never destroys it</div>
+<div class="row"><div class="lbl"><b>terminal.legacy_bell_mode</b><span>written by Datum 1.6 · this is 1.5</span></div>
+  <div class="ctl"><span class="idchip unalloc">◌ UNKNOWN · PRESERVED · INACTIVE</span><span class="btn">Show value…</span></div></div>
+<div class="prov">a newer version’s key is not an error — downgrading and upgrading preserve each other’s data</div>
+<div class="ghead">Retired names being migrated</div>
+<div class="row"><div class="lbl"><b>console_duration</b><span>retired name · now <span style="font-family:var(--mono);font-size:11px">datum.console.feedback_duration</span></span></div>
+  <div class="ctl"><span class="idchip prov">→ ALIAS · MIGRATES ON NEXT WRITE</span><span class="btn">Migrate now</span></div></div>
+<div class="prov">an alias redirects the retired name during migration; after it completes exactly one live identity remains (Q1 clause 8) · your value is carried over, never reset to factory</div>
+<div class="row" style="opacity:.75"><div class="lbl"><b>Nothing is deleted here</b><span>this page reports what the store holds; removing a key is an explicit act</span></div>
+  <div class="ctl"><span class="btn" style="color:var(--warn);border-color:var(--warn)">Remove unknown keys…</span></div></div>
+<div class="prov">a deliberate, confirmable action that names every key it would drop and offers an export first — never automatic, never a side effect of saving</div>
+<div class="prov" style="color:var(--warn);border-bottom:none">⚠ clay: this store-hygiene group sits with import/export/reset under Organization because that is where the catalog placed those controls; it may belong in its own “Preferences file” group or under Files &amp; Projects — placement is undecided</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Organization-managed pins and defaults · Network access toggles · Telemetry and crash reporting opt-in</div>
 <div class="ghead" style="color:var(--warn)">Proposed by the completeness critic — clay</div><div class="prov" style="border-bottom:none;color:var(--warn)">Network proxy configuration</div>
 </section><section id="project-policy-read-only">
