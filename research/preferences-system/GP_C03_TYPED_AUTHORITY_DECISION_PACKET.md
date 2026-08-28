@@ -113,7 +113,7 @@ The following names are provisional until their defining question is approved:
 | `GP-C03-Q4` | Effective-value precedence and conflict disposition | Q1-Q3, GP-C02B, `PX-V6` |
 | `GP-C03-Q5` | New-Project policy seeding and receipt | Q1-Q4, `PX-V7` |
 | `GP-C03-Q5A` | Initial baseline: separate wizard, guided in place, or optional assistant-assisted setup; minimum required set | Q5, `first-run-study.html`, `guided-setup-study.html` |
-| `GP-C03-Q5B` | Start-page existence, truthful local content, visible pre-creation seed values, and explicit exclusions | Q5, Q5A, `start-page-study.html` |
+| `GP-C03-Q11` | Start-page existence, truthful local content, visible pre-creation seed values, and explicit exclusions | Q5, Q5A, `start-page-study.html` |
 | `GP-C03-Q6` | Session/context contributions versus operation input and restartable state | Q1-Q4, `PX-V8` |
 | `GP-C03-Q7` | Validation, refusal, protected scopes, and unavailable providers | Q1-Q4, `PX-V9` |
 | `GP-C03-Q8` | Unknown, retired, aliased, and unavailable setting identities | Q1-Q4, `PX-V10` |
@@ -124,9 +124,12 @@ This order is not approval of the question count or candidate answers. A
 question may be split when owner review reveals more than one independent
 choice.
 
-Q5A and Q5B were inserted without renumbering Q6-Q10 because those existing
-identities are already tied to archival PX-V8 through PX-V12. Their placement
-does not approve any candidate or clause. GP-C05 consumes only their later
+Q5A remains the recorded, dispositioned sub-letter exception. The Start-page
+question initially opened as Q5B but is canonically Q11; Q5B remains a historical
+alias so its committed packet and evidence markers continue to resolve. Existing
+Q6-Q10 identities remain tied to archival PX-V8 through PX-V12. Every newly
+inserted future question uses the next free integer (Q12, Q13, and so on); no
+further sub-lettered question ID may be created. GP-C05 consumes only settled
 owner dispositions and reconciles the resulting interaction contract.
 
 ## 5. GP-C03-Q1 — stable identity and descriptor ownership

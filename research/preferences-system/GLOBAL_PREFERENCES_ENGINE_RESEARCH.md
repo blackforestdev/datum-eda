@@ -99,12 +99,13 @@ The process boundary is explicit:
 
 1. GP-C03 Q1-Q4 remain approved and are not reopened.
 2. On 2026-08-27 the owner unpaused GP-C03 Q5-Q10 and resumed the
-   one-question-at-a-time disposition sequence at Q5. On 2026-08-28 the owner
-   inserted two drawn-but-undispositioned questions immediately after Q5:
-   Q5A establishes a new user's initial baseline, and Q5B governs the optional
+   one-question-at-a-time disposition sequence at Q5. Later that day the owner
+   inserted two drawn questions immediately after Q5:
+   Q5A establishes a new user's initial baseline, and Q11 governs the optional
    Start page. The owner approved Q5-A on 2026-08-27 and approved Q5A-B+C with
-   the rendered replay amendment later that day; Q5B is now in packet
-   preparation. Existing archival Q6-Q10
+   the rendered replay amendment later that day. The Start-page boundary first
+   opened as Q5B; after approving it, the owner renamed it Q11 and retained Q5B
+   only as a historical alias. Existing archival Q6-Q10
    identities remain unchanged. Each
    remaining packet
    must use `preferences-window.html` as its primary reviewed visual evidence,
@@ -127,10 +128,14 @@ The process boundary is explicit:
    `start-page-study.html` are Claude-owned clay visual truth. Q5A must compare
    the separate wizard (A), guided-in-place Preferences path (B), and optional
    assistant proposal path riding on B (C), including the minimum required
-   baseline. Q5B must decide whether the Start page exists, what truthful local
+   baseline. Q11 decides whether the Start page exists, what truthful local
    state it may show, and its explicit no-news/no-marketing/no-alert-channel/
-   no-network-load exclusions. Neither question is dispositioned by its
-   placement or prototype registration.
+   no-network-load exclusions. Both are now dispositioned only by their recorded
+   owner approvals; their placement and prototype registration granted nothing.
+7. Q5A remains the single dispositioned sub-letter exception. The historical
+   Q5B packet/evidence identifiers remain resolvable aliases for canonical Q11.
+   Any newly inserted question uses the next free integer, beginning with Q12;
+   no further sub-lettered question IDs may be created.
 
 <!-- OWNER-REQUIREMENT:GLOBAL-PREFERENCES:V1-DESCRIPTOR-CATALOG -->
 ### V1 Preference Descriptor Catalog
@@ -244,8 +249,8 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q5A are approved and remain closed. Q5B is the next boundary before the
-existing Q6-Q10 sequence. GP-C05 later
+Q1-Q5A and Q11 are approved and remain closed. The existing Q6-Q10 sequence
+resumes with the visual-anchored Q6 packet now prepared for owner review. GP-C05 later
 extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
@@ -265,7 +270,7 @@ seam between preferences and governed Project policy.
 Extract accessible discovery, search, editing, effective-value/provenance
 inspection, reset/override/refusal behavior, managed-state presentation, and
 the Revision carry-forward surfaces from the owner-settled
-`preferences-window.html`. After Q5A and Q5B are separately dispositioned,
+`preferences-window.html`. After Q5A and Q11 are separately dispositioned,
 reconcile their settled initial-setup and Start-page surfaces with that window
 across unmanaged, managed, teaching, keyboard-only, narrow, and
 assistive-technology states.

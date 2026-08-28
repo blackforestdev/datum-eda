@@ -1,8 +1,8 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5 and amended GP-C03-Q5A approved; active GP-C03-Q5B
-> owner packet. Q1–Q5A remain approved and closed. Specification only;
-> no implementation, dependency, Q5B disposition, or later-question disposition
+> **Status:** GP-C03-Q5, amended GP-C03-Q5A, and GP-C03-Q11 approved; active
+> GP-C03-Q6 owner packet. Q5B is the historical alias for Q11. Specification only;
+> no implementation, dependency, Q6 disposition, or later-question disposition
 > is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
@@ -198,9 +198,9 @@ or any Q5A-Q10 behavior. Q5A is the next one-question-at-a-time boundary.
 
 ## 3. Drawn follow-on questions queued behind Q5
 
-These questions are registered for one-at-a-time owner review. Q5A is now the
-only prepared boundary; Q5B contains no advance contract extraction and cannot
-open until Q5A is dispositioned.
+These inserted questions completed one-at-a-time owner review. Q5A remains the
+recorded sub-letter exception. The Start-page question is canonical Q11; its
+original Q5B packet identity remains a historical alias.
 
 ### 3.1 GP-C03-Q5A — initial baseline and setup surface
 
@@ -218,7 +218,7 @@ and a Run setup again control that walks the same rows without changing them.**
 Q5A decides whether this drawn guided-in-place path governs, whether any choice
 is mandatory before Datum is fully usable, how the static guide remains
 accessible, and what local state prevents it from returning. It does not decide
-the Start page (Q5B), preference persistence format (GP-C04), or the complete
+the Start page (Q11), preference persistence format (GP-C04), or the complete
 interaction conformance matrix (GP-C05).
 
 #### 3.1.2 Reviewed visual evidence
@@ -383,7 +383,7 @@ Approval establishes only these clauses:
     individually, or dismiss; no value applies until the corresponding explicit
     acceptance enters the normal preference mutation path. The assistant never
     writes the store, seed profile, or Project directly.
-11. Q5A does not choose Q5B Start-page behavior, persistence representation,
+11. Q5A does not choose Q11 Start-page behavior, persistence representation,
     migration, synchronization, organization enrollment, provider transport,
     implementation dependency, or any Q6-Q10 disposition.
 
@@ -418,11 +418,18 @@ Preferences → Files & Projects; the control exposes completed, dismissed, and
 never-run machine-local state; replay walks the same rows and applies nothing by
 itself; and Skip/Esc remain persistent. B remains the sole shipped setup surface,
 the mandatory choice set remains empty, and C remains optional proposal-only
-assistance. This closes Q5A and advances only to Q5B preparation.
+assistance. This closes Q5A and advances only to the Start-page question.
 
-### 3.2 GP-C03-Q5B — Start page
+### 3.2 GP-C03-Q11 — Start page
 
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q11 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q5B -->
+
+**Naming ledger.** `GP-C03-Q11` is the canonical forward identity. The owner
+approved this boundary using its original `GP-C03-Q5B` name; Q5B is retained
+only as a historical alias so committed references and markers continue to
+resolve. Q5A remains unchanged as the dispositioned exception. Future inserted
+questions use Q12, Q13, and so on; no further sub-lettered IDs are permitted.
 
 #### 3.2.1 Exact on-screen decision
 
@@ -432,7 +439,7 @@ list that states only engine-known Project truth, and a read-only rail previewin
 the exact seed values the next New Project will copy; it contains no news,
 marketing, alerts channel, telemetry, or startup network load.**
 
-Q5B decides whether this page exists, whether it is the factory startup default,
+Q11 decides whether this page exists, whether it is the factory startup default,
 which local facts it may show, and which content channels are forbidden. It does
 not implement Project opening/genesis, define recent-list persistence format, or
 change Q5's copy transaction.
@@ -457,13 +464,13 @@ The Claude-owned sources were rendered and reviewed without modification:
 - `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
   88–119, remains the PM-036 presentation-class precedent: a machine-facing
   choice may control a local view without changing Project or Publish truth.
-  Q5B likewise cannot promote the Start page or its rail into Project authority.
+  Q11 likewise cannot promote the Start page or its rail into Project authority.
 - The archival `preferences-ux-study.html#px-v8`, source lines 374–385, keeps
   session/context/restartable state visibly distinct from persisted preference
   authority. It supplies boundary structure only; it does not override the new
   Start-page render.
 
-No visual reconciliation is required for Candidate Q5B-A. A tabbed content hub,
+No visual reconciliation is required for Candidate Q11-A. A tabbed content hub,
 feed, alert stream, or network-backed card would materially differ from the
 render and cannot become an owner candidate until Claude draws it first.
 
@@ -493,7 +500,7 @@ render and cannot become an owner candidate until Claude draws it first.
 
 #### 3.2.4 Genuine alternatives
 
-##### Candidate Q5B-A — the drawn local Start page
+##### Candidate Q11-A — the drawn local Start page
 
 Datum ships the rendered Start page as the factory startup default while
 retaining Last session and Empty. It prioritizes immediate local actions and
@@ -503,7 +510,7 @@ before creation. It performs no work and contacts nothing until the user acts.
 This is the only candidate that matches both registered visual sources and is
 recommended.
 
-##### Candidate Q5B-B — no Start page
+##### Candidate Q11-B — no Start page
 
 Datum offers only Last session and Empty. New/Open/Import remain in File and the
 command palette, and recent Projects remain elsewhere or absent. This is simpler
@@ -514,7 +521,7 @@ rendered honest Recent doorway.
 B is genuine but cannot be selected without a Claude-rendered removal from the
 real window.
 
-##### Candidate Q5B-C — tabbed welcome/content hub
+##### Candidate Q11-C — tabbed welcome/content hub
 
 Datum opens a multi-tab Welcome surface that separates Recents, Learn, News,
 Alerts, and account/network content. This pattern can carry more onboarding and
@@ -524,7 +531,7 @@ every explicit exclusion in the rendered study.
 
 C is genuine comparative evidence but does not survive the render-first law.
 
-#### 3.2.5 Exact bounded contract established by Q5B-A approval
+#### 3.2.5 Exact bounded contract established by Q11-A approval
 
 Approval establishes only these clauses:
 
@@ -560,23 +567,23 @@ Approval establishes only these clauses:
    account-engagement, or alerts-channel surface.
 9. The page emits no telemetry and performs no network request, update check,
    remote-content fetch, account lookup, or background synchronization at
-   startup. Network-capable actions remain explicit operations outside Q5B.
+   startup. Network-capable actions remain explicit operations outside Q11.
 10. Revision standing and missing-path conditions use text in addition to color.
     All actions and Recent rows follow a predictable keyboard order, expose
     programmatic names and states, and do not trap or steal focus.
 11. Clearing Recent history changes only machine-local history. It cannot delete
     a Project, Revision record, seed profile, receipt, or Project policy.
-12. Q5B does not specify recent-history storage/migration, Project session
+12. Q11 does not specify recent-history storage/migration, Project session
     restoration, import/genesis implementation, external providers,
     dependencies, or any Q6-Q10 disposition.
 
 #### 3.2.6 Recommendation and owner response
 
-Approve **Q5B-A**. It is the only candidate consistent with the rendered Start
+Approve **Q11-A**. It is the only candidate consistent with the rendered Start
 page, the real Startup preference, Q5's visible-before-copy seam, local engine
 truth, and the explicit rejection of a tabbed network/content channel.
 
-Reply exactly:
+The boundary originally requested and received this historical response:
 
 ```text
 GP-C03-Q5B: approve Q5B-A
@@ -590,11 +597,230 @@ GP-C03-Q5B: revise — <required existence, startup-preference, recent-truth, se
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5B-PACKET -->
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q11-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q11-APPROVED -->
+**Owner review — Q11-A approved under historical alias Q5B-A, 2026-08-27.** The
+owner approved the complete twelve-clause Start-page contract without revision,
+then made Q11 its canonical forward identity. Q5B remains a historical alias and
+its packet marker above is deliberately preserved. This closes Q11 and resumes
+the pre-existing sequence at Q6 without authorizing implementation or Q6-Q10.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5B-APPROVED -->
+Historical alias of the Q11 approval above; retained for committed references.
+
 ### 3.3 Effect on the current Q5 premise
 
-Neither Q5A nor Q5B changes Q5's premise. Q5 governs the invariant copy
+Neither Q5A nor Q11 changes Q5's premise. Q5 governs the invariant copy
 semantics after a factory, user, or organization seed snapshot has been chosen:
 one atomic copy into Project authority, one durable itemized receipt, and no
 later live following. Q5A decides how a user profile may first be established;
-Q5B decides whether and how the selected seed values are shown before creation.
+Q11 decides whether and how the selected seed values are shown before creation.
 The profile's origin or preview surface cannot change what genesis does with it.
+
+## 4. GP-C03-Q6 — session, context, operation input, and state lifetimes
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q6 -->
+
+### 4.1 Exact on-screen decision
+
+**Whenever Datum shows a session override, active context, or per-run choice, it
+names that class and its lifetime on screen: a Session value says this run only,
+Context is read-only and names what it applies to, and an operation still asks
+for its input even when a remembered preference pre-fills the answer.**
+
+Q6 decides which ephemeral resolution inputs exist, their precedence and exact
+lifetimes, and the boundary separating them from restartable workspace state and
+transient interaction state. It does not choose persistence technology (GP-C04),
+settle individual clay descriptor classifications (GP-C05A), or decide refusal
+and unavailable-provider behavior (Q7).
+
+### 4.2 Reviewed visual evidence
+
+The Claude-owned real Preferences window is the primary visual authority and was
+reviewed without modification:
+
+- `docs/gui/prototypes/preferences-window.html#workspace`, source lines 89–110,
+  draws an active-Project adopted-standard constraint as visible context, labels
+  Crosshair style as session-only today and still clay, and distinguishes
+  dismissed-warning suppression state from the preference-facing restore action.
+- `preferences-window.html#rules-checks`, source lines 165–168, draws a remembered
+  Check profile pre-fill while saying the named `run_check` parameter is never
+  hidden. `#output`, source lines 234–238, applies the same law to output-job and
+  export-destination pre-fills, including **Ask each time**.
+- `preferences-window.html#files-projects`, source lines 215–231, separates the
+  persisted **Startup: Start page | Last session | Empty** preference from the
+  machine-local completed/dismissed/never-run guided-setup state. The same row
+  promises that replay changes no setting by itself.
+- `preferences-window.html#project-policy-read-only`, source lines 268–272, draws
+  the active Project policy and revision policy as read-only mirrors owned by
+  the Project rather than machine-editable preference values.
+- `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
+  88–119, is the ratified PM-036 presentation-class precedent. It proves that a
+  machine presentation value may be remembered without changing Project or
+  Publish truth; Q6 cannot use mere persistence or active context to erase that
+  authority boundary.
+
+The archival structural evidence is
+`docs/gui/prototypes/preferences-ux-study.html#px-v8`, source lines 374–385.
+PX-V8 renders **Reduced motion · SESSION · this run only**, **Active layer set ·
+CONTEXT · applies while reviewing [one Project] · read-only contribution**, and
+**Export destination · asked per run**, with the explicit rule that a
+`WorkflowDefault` may pre-fill the operation but never remove the ask. Its
+lifetime chip is archival support for the behavior already exposed by the real
+window; it does not replace the window.
+
+No visual reconciliation is required for Candidate Q6-A. Persisting a Session
+override, making Context editable, or allowing a remembered pre-fill to remove
+the operation's explicit ask would materially contradict both prototypes and
+cannot become an owner candidate unless Claude first renders that different
+behavior in the real window.
+
+### 4.3 Written evidence
+
+- Approved Q2 reserves `Session` as an explicit ephemeral override and `Context`
+  as a read-only applicable fact, while keeping restartable workspace state,
+  transient interaction state, and operation input outside writable Preferences
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:310-350,398-425`).
+- Approved Q4 applies descriptor/source eligibility and active controls before
+  ordinary value ranking, preserves displaced and refused facts, and explicitly
+  leaves Session/Context precedence to Q6
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:570-615,639-646`).
+- Datum's current in-memory GUI state includes crosshair mode, pane layout and
+  focus, filters, dock geometry, terminal presentation, terminal sessions, and
+  console history, with no current load/save path
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:133-157`). This is evidence for explicit
+  classification, not authority to preserve every current accident.
+- Route profile, import merge, check target/profile, artifact selection, and
+  formatting mode are invocation-local typed choices today; remembering one
+  later requires a separately governed default
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:273-280`).
+- Configuration and restartable state have distinct authority, retention,
+  exchange, privacy, and reset laws even if an implementation later shares a
+  storage mechanism (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:195-212`). The
+  bounded evidence separately requires preference, restartable state, transient
+  state, Project policy, and operation input
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:423-433`).
+- Approved Q3 makes personal accessibility descriptors the only
+  organization-control carve-out class and requires a named descriptor
+  justification (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:548-557`). Q6's
+  reduced-motion example therefore cannot silently create or remove management
+  authority.
+
+### 4.4 Genuine alternatives and the single surviving boundary
+
+#### Candidate Q6-A — typed ephemeral sources and separate state classes
+
+`Session` is an explicit, descriptor-eligible override for the current Datum
+application run. `Context` is a named, read-only applicability fact that exists
+only while its subject is active. Operation input remains an explicit choice for
+one invocation even when a registered `WorkflowDefault` supplies the initial
+answer. Restartable workspace state may restore a working view across launches,
+and transient interaction state dies with its interaction, but neither becomes a
+preference contribution merely because it is retained in memory or on disk.
+
+This is the only candidate drawn by both reviewed prototypes and consistent with
+approved Q2/Q4. It is recommended.
+
+#### Rejected alternative Q6-B — persist every useful value as a preference
+
+Session overrides, active layer/filter context, pane geometry, last focus,
+dismissed-warning state, and export choices all become persistent preference
+contributions in one precedence lattice. This can make restoration mechanically
+uniform, but it turns interaction history and Project applicability into durable
+policy-like inputs and makes “this run only” untrue.
+
+Q6-B is a genuine storage simplification, but approved Q2 clauses 6 and 9 already
+exclude this flattening, GP-C02 requires distinct authority/retention law, and
+both visual sources label the separation. No Q6-B owner boundary survives without
+reopening ratified Q2 and receiving a materially different Claude render.
+
+#### Rejected alternative Q6-C — no Session or Context resolution sources
+
+Datum allows only persisted preference contributions; every temporary need is an
+operation parameter and every Project-dependent fact is read outside preference
+resolution. This minimizes resolver inputs, but it cannot represent the drawn
+this-run accessibility override or the read-only active-Project applicability
+shown in the real window and PX-V8.
+
+Q6-C is a genuine narrower resolver, but it contradicts Q2's approved reserved
+sources and the reviewed visual truth. It cannot open as a selectable owner
+candidate until those authorities are deliberately reconciled. Candidate Q6-A
+is therefore a single-candidate boundary with cited ratified law explaining why
+no alternative survives.
+
+### 4.5 Exact bounded contract Candidate Q6-A would establish
+
+Approval establishes only these clauses:
+
+1. `Session`, `Context`, operation input, restartable workspace state, and
+   transient interaction state are five distinct typed classes. Persistence,
+   screen proximity, and shared implementation storage cannot reclassify one as
+   another.
+2. `Session` is a user-initiated value contribution admitted only where the
+   `PreferenceDescriptor` explicitly allows it. It applies to the current Datum
+   application run, is never written as a User/Installation/Organization
+   preference, and expires when that run ends.
+3. An eligible Session contribution is considered after Q4 eligibility and
+   active control evaluation and, for the current run, outranks ordinary User,
+   Organization Recommendation, Installation, and Descriptor Default values. It
+   cannot bypass a descriptor constraint, eligible Pin or Lock, Project law, or
+   the personal-accessibility carve-out established by Q3.
+4. A Session override is explicit and reversible during the same run. Its UI and
+   effective-value query name the value, `SESSION` source, actor, start, **this
+   run only** lifetime, displaced value, and the value that will resume at exit.
+   Reading or using the override never serializes it as an explicit user choice.
+5. PX-V8's reduced-motion value is a Session-override example, not a decision
+   that reduced motion lacks a persistent or system-derived baseline. Descriptor
+   classification and allowed persistent sources remain GP-C05A catalog work.
+6. `Context` is a read-only, typed fact supplied by the active Project, document,
+   tool, review mode, or other descriptor-declared subject. It names that subject,
+   applicability reason, source authority, and lifetime; neither Preferences nor
+   the user can edit it as a contribution.
+7. Context may select which already-authoritative rule or value is applicable;
+   it does not receive a universal rank and cannot create, widen, or bypass
+   Project policy, organization authority, descriptor eligibility, or Q4
+   controls. When the named context ceases to apply, the contribution disappears
+   and resolution is recomputed without retaining it as preference state.
+8. Operation input is outside preference resolution and is explicitly requested
+   for one invocation. A registered `WorkflowDefault` may pre-fill the control,
+   but the control, current value, and opportunity to change it remain present;
+   the accepted operation input governs only that invocation.
+9. Canceling or completing an operation does not silently promote its input into
+   a preference. Any remembered **last used** behavior requires a separately
+   registered `WorkflowDefault` and the normal typed preference mutation path;
+   Q6 does not authorize that mutation for any catalog row.
+10. Restartable workspace state may survive an application restart solely to
+    restore the user's working view, including eligible layout, open-document,
+    focus, or history facts. It is not a `PreferenceScope`, has no place in Q4's
+    preference precedence, and cannot carry Project or organization authority.
+11. Transient interaction state, including hover, cursor, drag preview, open
+    menu, and live terminal-byte state, expires with its owning interaction or
+    live session and is neither restartable state nor a preference contribution.
+12. Every visible Session or Context value uses text in addition to color, has a
+    programmatic source and lifetime, and exposes its reason without stealing
+    focus. Keyboard-only users can inspect and, where user-editable, end a
+    Session override through the ordinary control order.
+13. Q6 does not choose storage locations/formats, serialization, recovery,
+    migration, synchronization, provider-offline behavior, detailed catalog
+    classification, implementation dependencies, or any Q7-Q10 disposition.
+
+### 4.6 Recommendation and owner response
+
+Approve **Q6-A**. It is the sole candidate consistent with the real Preferences
+window, archival PX-V8, approved Q2/Q4 source law, Q3's accessibility boundary,
+and GP-C02's configuration/state separation.
+
+Reply exactly:
+
+```text
+GP-C03-Q6: approve Q6-A
+```
+
+or:
+
+```text
+GP-C03-Q6: revise — <required session, context, operation-input, state-lifetime, precedence, or accessibility correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q6-PACKET -->
