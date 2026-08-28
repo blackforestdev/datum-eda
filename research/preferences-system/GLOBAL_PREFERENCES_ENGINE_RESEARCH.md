@@ -249,14 +249,18 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q8 and Q11 are approved and remain closed. Q8-A/P2 establishes opaque
+Q1-Q9 and Q11 are approved and remain closed. Q8-A/P2 establishes opaque
 inactive preservation, explicit alias migration, deliberate non-deletion and
 export-first removal, with one dedicated **Manage preferences** home. Claude
 commit `70bf2a2` now renders Q9's full resolver-owned explanation beside the
 selected row in the real Preferences window, including effective and retained
 contributions, Q4 reasoning, descriptor facts, remaining user actions, and one
-typed GUI/CLI/MCP answer. The Q9-A packet is prepared against that render; Q9
-remains undispositioned. GP-C05 later
+typed GUI/CLI/MCP answer. Q9-A establishes that one authoritative complete,
+read-only typed result across all three surfaces. Q10's managed-visibility half
+is present in the real `#revision` window, but first-Release onboarding has no
+Preferences state/scope/reset/replay control and no guidance state beside the
+approved Release arm bar. Q10 remains render-gated under a bounded Claude
+reconciliation; no candidates, clauses, or owner boundary exist yet. GP-C05 later
 extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner

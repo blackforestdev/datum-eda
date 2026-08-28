@@ -1,10 +1,13 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
-> Q8 approved. Claude commit `70bf2a2` closes the Q9 render gap in the real
-> Preferences window, and the Q9 resolver-query packet is the active owner
-> boundary against that surface. Q5B is the historical alias for Q11. Specification only; no
-> implementation, dependency, Q9 disposition, or Q10 disposition is authorized.
+> Q9 approved. Q9-A establishes one resolver-owned typed complete explanation
+> across GUI, CLI, and MCP. The Q10 audit finds managed Revision visibility
+> rendered in `#revision`, but no first-Release onboarding state/control in the
+> real Preferences window and no guidance state beside the approved Release arm
+> bar; Q10 remains closed pending bounded Claude reconciliation. Q5B is the
+> historical alias for Q11. Specification only; no implementation, dependency,
+> or Q10 disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -1672,3 +1675,80 @@ GP-C03-Q9: revise — <required query fields, contribution disposition, resoluti
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-DRAFT -->
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-APPROVED -->
+**Owner review — Q9-A approved 2026-08-28.** The owner approved all seventeen
+clauses in §9.5 exactly as bounded. One authoritative, read-only resolver query
+now governs the semantic explanation contract for GUI, CLI, and MCP: effective
+value; complete contribution/control stack and dispositions; Q4 staged reason;
+descriptor and Context facts; remaining user actions; explicit redaction;
+accessible beside-opened inspection; and no mutation or independently computed
+precedence. GUI reconstruction and winner-only output remain rejected. Q10 is
+not dispositioned by this approval.
+
+## 10. GP-C03-Q10 render-first reconciliation gate
+
+Archival `preferences-ux-study.html#px-v12`, source lines 427–450, identifies two
+Revision carry-forwards. Managed visibility is a Presentation value that may be
+pinned on for teaching while engine truth remains unchanged. First-Release
+onboarding is recorded state with an explicit trigger, completion, reset/replay,
+and guidance beside the existing arm-then-confirm bar rather than a modal or
+gate.
+
+The managed-visibility half is materially represented in the real
+`preferences-window.html#revision`: source lines 253–255 draw **Show/hide
+revision system** pinned on by ACME teaching policy, and the Q9 explanation at
+lines 365–374 exposes the pin, retained User value, reason, descriptor, and
+remaining action. The unmanaged writable/reset state is not shown as a paired
+composition, but its factory/default caption exists.
+
+The first-Release half is not rendered in the primary window. `#revision`, lines
+253–262, has visibility and three Project seed rows but no onboarding identity,
+completion state, scope, reset, or replay control. The approved Release surface,
+`revision-ux-release-study.html#ux-v9`, source lines 316–353, draws the in-pane
+arm-then-confirm states but no first-use guidance beside them. Because Q10 must
+decide scope and reset/replay law from drawn behavior, archival PX-V12 alone
+cannot support candidates or bounded clauses under the primary-window law. No
+Q10 owner marker or packet marker is created.
+
+### 10.1 Bounded reconciliation for Claude
+
+- **Exact Preferences file and region:** Claude-owned
+  `docs/gui/prototypes/preferences-window.html`, `#revision`. Preserve the
+  existing visibility and three copy-once seed rows. Render paired unmanaged and
+  managed visibility states sufficiently to show the user's writable/reset
+  right when unmanaged, the retained value under an eligible teaching Pin, and
+  unchanged Revision-engine truth in both states.
+- **Required onboarding state candidates in Preferences:** in the same real
+  `#revision` surface, render the first-Release onboarding identity as state,
+  never as Project policy or an ordinary preference value. Draw genuine scope
+  alternatives for owner selection—per-user/profile, machine-local user, and
+  per-Project—showing exactly what counts as first use, what completion/dismissal
+  records, whether a later Release retriggers, and the explicit replay/reset
+  doorway and its effect. If Claude finds a different genuine scope candidate
+  necessary, it must be rendered alongside these rather than described only in
+  prose.
+- **Exact Release file and region:** Claude-owned
+  `docs/gui/prototypes/revision-ux-release-study.html`, `#ux-v9`, beside the
+  owner-approved Q5-B-amended arm-then-confirm bar. Render the active first-use
+  guidance state explaining identity, irreversible consequences, what remains
+  editable, the two deliberate actions, and resulting evidence while leaving
+  the underlying pane visible and operable. Show completion/dismissal behavior
+  and the replayed state without introducing a modal or a second issuance path.
+- **Accessibility outcome:** show keyboard order and dismissal/replay access,
+  non-color identification of guidance/completion/managed state, focus-preserving
+  close or Esc behavior, and no motion-dependent instruction. Guidance may help
+  but cannot block Design authoring or add a third confirmation action.
+- **Preserved decisions:** approved Q1–Q9 and Q11; Q3 AuthorityRelease and
+  retained values; Q4 staged resolution; Q5 copy-once Project seeds; Q6 state
+  separation; Q7 provider/refusal truth; Q9 one-query provenance; PM-034's
+  never-blocks law; PM-036's Presentation boundary; and the Revision Q5-B-amended
+  in-pane arm-then-confirm issuance. Onboarding state cannot enable/disable the
+  Revision engine, alter Project facts, or become organization authority.
+- **Proof expected:** Claude-session commits touching only the prototype lane,
+  stable anchors/source regions for every Preferences scope alternative and the
+  active/replayed Release guidance states, rendered screenshots at the governed
+  width, and a refreshed owning-route digest only after complete
+  source/consumer review.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q10-RENDER-GAP -->
