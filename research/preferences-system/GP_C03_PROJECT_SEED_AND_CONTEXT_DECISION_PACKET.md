@@ -1,9 +1,10 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, GP-C03-Q6, and
-> GP-C03-Q7 approved; Q8 is paused for required Claude-owned real-window
-> reconciliation before packet preparation. Q5B is the historical alias for Q11.
-> Specification only; no implementation, dependency, Q8 packet, Q8 disposition, or later-question disposition
+> GP-C03-Q7 approved; Q8 identity-behavior packet prepared from Claude commit
+> `54f2aba`, but its placement sub-question remains render-gated before an owner
+> boundary. Q5B is the historical alias for Q11. Specification only; no
+> implementation, dependency, Q8 disposition, or later-question disposition
 > is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
@@ -1106,3 +1107,249 @@ real window. No Q8 owner marker or packet evidence marker is created here.
   only after full route review by the responsible lane.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-RENDER-GAP -->
+
+### 6.2 Reconciliation landed
+
+Claude commit `54f2aba` satisfies the identity-state portion of the gate in the
+real `preferences-window.html#organization` surface at source lines 257–280. It
+draws an absent-subsystem key and a newer-version key as preserved/inactive, an
+explicit retired alias with **Migrate now**, and a separate confirmable
+export-first removal action. The owning evidence route was reviewed against all
+listed sources and consumers and its digest refreshed without changing the
+prototype.
+
+The final source line remains deliberately clay: Organization is only the current
+placement. A dedicated **Preferences file** group and **Files & Projects** are
+named alternatives, but neither alternative is rendered as an actual window
+composition. Identity behavior may now be packeted; placement cannot yet enter an
+owner boundary under the render-first law.
+
+## 7. GP-C03-Q8 — unknown, retired, and aliased identities
+
+> **Packet state:** identity behavior and placement alternatives prepared; not an
+> owner boundary. The recommended placement differs from the current clay layout
+> and must be rendered by Claude before the exact owner response can be exposed.
+
+### 7.1 Exact on-screen decision
+
+**In the Preferences data-management surface, Datum shows unrecognized and
+newer-version keys as preserved, inactive, and inspectable, shows retired names
+redirecting to one live identity with Migrate now, and makes deletion a separate
+confirmable export-first action, while the final home of this group remains an
+explicit choice among Organization, a dedicated Preferences-file group, and
+Files & Projects.**
+
+Q8 decides identity preservation, activation, alias migration, deliberate
+removal, and the visible group placement. It does not choose the persistence
+format, atomic-write/recovery mechanism, import/export package schema, migration
+receipt representation (GP-C04), or complete provenance query (Q9).
+
+### 7.2 Reviewed visual evidence
+
+The primary visual authority is the Claude-owned real product surface,
+`docs/gui/prototypes/preferences-window.html#organization`, source lines
+257–280 at commit `54f2aba`:
+
+- lines 264–265 draw protected reset/export/import immediately before the new
+  group, preserving Q7's rule that an untrusted Project cannot drive store
+  hygiene;
+- lines 266–272 draw an absent-subsystem key and a key written by Datum 1.6 while
+  1.5 is running. Both are **UNKNOWN · PRESERVED · INACTIVE** with **Show
+  value…**; the captions promise byte-for-byte round-trip, no guessed effect,
+  descriptor-gated activation, and downgrade/upgrade survival;
+- lines 273–276 draw retired `console_duration` explicitly aliased to
+  `datum.console.feedback_duration`, **MIGRATES ON NEXT WRITE**, **Migrate now**,
+  one live identity afterward, and value carry-forward rather than factory reset;
+- lines 277–279 state **Nothing is deleted here** and make unknown-key removal a
+  separate confirmable action that names every key and offers export first;
+- line 280 marks placement clay and names all three placement alternatives. It
+  draws only the Organization composition; the other two are textual alternatives,
+  not rendered owner candidates.
+
+`docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
+88–119, remains the ratified PM-036 presentation-class precedent. An opaque
+machine preference record cannot become Project or Publish authority merely
+because the UI displays or relocates it.
+
+The archival structural evidence is
+`docs/gui/prototypes/preferences-ux-study.html#px-v10`, source lines 400–410.
+PX-V10 supplies the same preserved/inactive unknown key, explicit alias, and
+one-live-identity law. It is now corroborative rather than the sole render.
+
+No identity-behavior reconciliation remains for Candidate Q8-A. Candidates that
+delete unknown data or guess it into effect contradict both rendered surfaces and
+ratified Q1. Placement P1 is rendered; P2 and P3 require the bounded Claude
+rendering in §7.6 before any owner boundary may choose among them.
+
+### 7.3 Written evidence
+
+- GP-C01 proves the current Console writer erases unknown fields on the next
+  write and records that loss as `GP-GAP-04`; it also proves no preference
+  migration, downgrade, import/export, or recovery mechanism exists today
+  (`GP_C01_INTERNAL_AUTHORITY_AUDIT.md:282-296`).
+- Approved Q1 gives every live setting one stable key and one descriptor,
+  permits only explicit retirement aliases, requires exactly one live identity
+  after migration, and forbids guessed activation of an unregistered identity
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:214-241`). GUI location is
+  explicitly not key identity (`ibid.:229-232`).
+- Primary external evidence requires opaque unknown-field/provider preservation
+  rather than known-only reconstruction, and defines migrated, preserved
+  unavailable, and quarantined/refused as distinct outcomes
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:280-311`). Unknown values cannot be
+  semantically merged (`ibid.:356-364`).
+- Approved Q7 requires validation and source eligibility before activation,
+  keeps refused/ineligible facts inactive and queryable, and protects preference
+  import/reset from Project sources (this packet §5.5, clauses 1–7). Descriptor
+  registration therefore permits validation; it does not excuse an invalid or
+  ineligible value.
+- Domain-peer evidence requires one categorized/searchable Preferences surface
+  and explicit import/export with selection, preview, omissions, compatibility,
+  and provenance (`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:390-405`). It does
+  not establish which of the three Q8 groups owns store hygiene.
+- Accessibility evidence requires keyboard paths for reset/import/export and
+  provenance inspection, non-color state/refusal, and focus-preserving status
+  announcements (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-396`).
+
+### 7.4 Identity-behavior candidates
+
+#### Candidate Q8-A — opaque preservation, inactive unknowns, explicit alias migration
+
+Unknown keys and their opaque values remain byte-for-byte preserved and excluded
+from resolution. A newly registered descriptor may activate one only after Q7
+validation and eligibility. A retired key redirects through an explicit
+descriptor-owned alias, migrates on the next owning write or **Migrate now**, and
+leaves exactly one live identity with the user's value carried forward. Saving,
+resetting known values, downgrading, upgrading, importing, or exporting never
+silently deletes unknown data; removal is separate, named, confirmable, and
+export-first.
+
+This exactly matches the real window, archival PX-V10, Q1, and the external
+unknown-preservation evidence. It is the sole surviving behavior candidate and
+is recommended.
+
+#### Rejected alternative Q8-B — known-only rewrite and automatic cleanup
+
+Each write reconstructs the store from registered descriptors, dropping unknown
+and newer-version keys; retirement deletes the old identity once the running
+version no longer recognizes it. This keeps files compact and avoids indefinite
+foreign data, but makes an ordinary save or downgrade destructive.
+
+Q8-B is a genuine simplicity model, but it is the exact GP-GAP-04 failure, breaks
+round-trip compatibility, and contradicts **Nothing is deleted here**. It cannot
+survive without new owner law and a materially different Claude render.
+
+#### Rejected alternative Q8-C — guessed activation and fuzzy rename matching
+
+Datum infers an unknown key's type from its value or name and activates it when a
+similar descriptor appears; retired names migrate by string similarity. This can
+recover settings without explicit registry work, but lets unowned bytes become
+effective behavior and can collapse unrelated identities.
+
+Q8-C is a genuine convenience model, but approved Q1 expressly forbids guessed
+activation and permits only explicit aliases. It contradicts both rendered
+**INACTIVE** states and cannot survive.
+
+### 7.5 Exact bounded identity contract Candidate Q8-A would establish
+
+Approval of Q8-A would establish only these placement-neutral clauses:
+
+1. A stored identity with no active `PreferenceDescriptor` is `Unknown`. Datum
+   preserves its exact serialized identity, opaque value/payload, provider and
+   scope envelope, schema/version facts, and ordering/extension material needed
+   for byte-faithful round-trip; it does not infer a type or meaning.
+2. Unknown data is inactive and excluded from effective-value resolution,
+   constraints, controls, Project seeding, Session/Context resolution, and
+   operation defaults. Presence, specificity, import, or recency grants no
+   authority.
+3. A key written by a newer Datum version is ordinary Unknown data to an older
+   version, not corruption merely because it is newer. Downgrade and subsequent
+   upgrade preserve it under the same inactive law.
+4. Registering the exact key's authoritative descriptor makes the stored value
+   eligible for Q7 validation and source-eligibility evaluation. Registration is
+   necessary but not sufficient for effect: invalid, ineligible, protected, or
+   conflicting data retains the corresponding inactive/refused disposition.
+5. **Show value…** exposes identity, origin/version facts, inactive reason, and a
+   descriptor-security-governed value view. Secret or protected material is
+   redacted rather than leaked merely because opaque data is inspectable.
+6. Every known-value write preserves every unrelated Unknown envelope verbatim.
+   Resetting a known key, section, page, or all known preferences cannot delete,
+   normalize, reorder, or reinterpret Unknown data.
+7. Preference export carries Unknown envelopes verbatim with their inactive
+   status. Import preserves them without activation and cannot bypass Q7's
+   protected-operation or source-eligibility law. Exact package representation
+   remains GP-C04.
+8. A retired identity redirects only through an explicit descriptor-owned alias
+   naming one canonical live key and a deterministic migration. Name similarity,
+   UI location, storage path, or provider mapping never creates an alias.
+9. Before migration, reads through the retired name resolve through that explicit
+   alias without creating a second live preference identity. Migration validates
+   the carried value under the live descriptor and never substitutes its factory
+   default merely because the key name changed.
+10. Alias migration runs on the next owning store write or explicit **Migrate
+    now** action. After successful migration, exactly one live canonical identity
+    remains; failure preserves the source data with a typed Q7 refusal rather
+    than deleting or partially rewriting it.
+11. Ordinary save, Apply, migration of another key, downgrade, upgrade, import,
+    export, and known-value reset never remove Unknown data as a side effect.
+12. **Remove unknown keys…** is the sole Q8 removal doorway. It previews and
+    names every identity and origin/version it would drop, offers export first,
+    requires explicit confirmation, and records success/refusal without claiming
+    that removal was migration or reset.
+13. Unknown, alias, migration-pending, migration-refused, and removal states use
+    text plus non-color cues, expose programmatic name/state, remain keyboard
+    inspectable, and announce completed/refused actions without focus theft.
+14. Store-hygiene placement is a required Q8 sub-disposition. Q8-A does not make
+    these records Organization authority, Project files, or Project policy, and
+    moving the group cannot change key identity or any clause above.
+15. Q8 does not decide serialization format, byte-canonicalization method,
+    migration receipt/storage, crash recovery, multi-writer synchronization,
+    complete provenance query, implementation dependency, or Q9-Q10.
+
+### 7.6 Open placement sub-question
+
+#### Placement P1 — remain under Organization
+
+Keep the exact rendered composition at `#organization`, co-locating store hygiene
+with managed-package status and protected reset/import/export. This is compact and
+already rendered, but visually suggests that machine preference-file hygiene is
+an organization concern even on unmanaged machines.
+
+#### Placement P2 — dedicated Preferences file group
+
+Give store-level reset/import/export, unknown preservation, aliases, and explicit
+removal their own **Preferences file** group in the real window. This best matches
+their machine-store authority and avoids conflating them with either organization
+management or Project files. It is recommended, but the clay note names rather
+than renders it; no P2 contract clause may open until Claude draws it.
+
+#### Placement P3 — Files & Projects
+
+Move the group beside startup, locations, backup/recovery, and guided setup in
+`#files-projects`. This gives file-oriented operations a familiar home, but risks
+implying that unknown preference records belong to Project or document storage.
+It is named in the clay note but not rendered and therefore is not yet selectable.
+
+The placement question is genuine: no ratified authority law determines the
+best information architecture. P1 is the only rendered placement, while P2 is
+the packet recommendation and P3 remains a plausible alternative. The Q8 owner
+boundary stays closed until the actual window renders P2 and P3 or the owner
+narrows the placement boundary to already-rendered P1.
+
+### 7.7 Bounded placement reconciliation for Claude
+
+- **Exact file:** `docs/gui/prototypes/preferences-window.html`; preserve the
+  existing P1 `#organization` state as comparative evidence.
+- **P2 required outcome:** render the same protected reset/import/export and
+  store-hygiene rows in a deliberately named **Preferences file** group within
+  the real window, without duplicating controls or creating a second store.
+- **P3 required outcome:** render the same rows under `#files-projects`, clearly
+  separated from Project-owned files, seed profiles, and guided-setup state.
+- **Preserved behavior:** every identity, label, status, Show value, Migrate now,
+  value carry-forward, non-deletion, preview/confirmation, and export-first law
+  drawn at `54f2aba`; Q1, Q7, PM-036, and current Organization authority rows.
+- **Proof expected:** Claude-owned commit(s) with actual-window P2/P3 comparison
+  states or an owner-selected placement rendered in the real window, exact
+  anchors/regions for citation, screenshot proof at the established window size,
+  and owning-route digest refresh after full responsible-lane review.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-PACKET-DRAFT -->
