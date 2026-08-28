@@ -5181,7 +5181,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5193,22 +5193,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-gp-c04-20260828",
-        "claimed_at": "2026-08-28T10:55:09-07:00",
-        "heartbeat_at": "2026-08-28T10:55:09-07:00",
-        "expires_at": "2026-08-28T18:55:09-07:00",
-        "scope": [
-          "complete GP-C04 storage, migration, exchange, recovery, audit, and Project-policy seam specification",
-          "review the complete owning evidence route before drafting",
-          "return any newly implied visible behavior to Claude for render-first reconciliation",
-          "no prototype HTML mutation, implementation, dependency, or GP-C05 authority"
-        ],
-        "worktree": ".",
-        "head": "3050aa145362db15890f1fbb5220d67c657cdf37"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C04",
@@ -5444,7 +5428,7 @@
           {
             "id": "GP-C04",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Reconcile Claude-rendered corrupt-store recovery, portable-import/synchronization collision, migration-result, and backup/restore states into the drafted canonical local persistence, exchange, audit, and Project-policy-seam contract without authoring visible behavior ahead of the real Preferences window.",
             "depends_on": ["GP-C03"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C04"}],
@@ -5453,6 +5437,10 @@
                 "kind": "document",
                 "path": "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C04-RENDER-GAP"
+              },
+              {
+                "kind": "commit",
+                "revision": "7f8c9b1"
               }
             ]
           },
