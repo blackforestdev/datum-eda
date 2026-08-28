@@ -17,7 +17,7 @@ portable exchange, synchronization conflicts, audit evidence, and the exact
 Project-policy seam consumed by approved GP-C03.
 
 It does not reopen Q1–Q10 or Q11, choose the final native GUI composition,
-publish the GP-C05A descriptor catalog, add a network/account authority, select
+publish the GP-C08 descriptor catalog (historical alias GP-C05A), add a network/account authority, select
 a cryptographic or storage dependency, implement the system, or mutate any
 Claude-owned prototype.
 

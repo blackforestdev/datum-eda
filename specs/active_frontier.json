@@ -5182,7 +5182,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5194,10 +5194,25 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-c08-catalog-20260828",
+        "claimed_at": "2026-08-28T13:16:32-07:00",
+        "heartbeat_at": "2026-08-28T13:16:32-07:00",
+        "expires_at": "2026-08-28T21:16:32-07:00",
+        "scope": [
+          "rename canonical GP-C05A to GP-C08 while retaining GP-C05A as a historical alias",
+          "validate every catalog candidate and negative classification against settled GP-C03 through GP-C05 law",
+          "publish the governed V1 descriptor catalog with exact evidence, scope, policy, accessibility, portability, migration, and implementation disposition",
+          "no prototype HTML mutation, implementation, dependency, GP-C06 disposition, or GP-C07 planning"
+        ],
+        "worktree": ".",
+        "head": "c6483c9c087d119a4b899abc98ff1c00b609e806"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
-        "canonical_next_step_id": "GP-C05A",
+        "canonical_next_step_id": "GP-C08",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5490,12 +5505,12 @@
             ]
           },
           {
-            "id": "GP-C05A",
+            "id": "GP-C08",
             "kind": "planning",
-            "status": "pending",
-            "action": "Publish the governed V1 Preference Descriptor Catalog covering every subsystem key, negative classification, scope and policy eligibility, accessibility, portability, migration, and implementation disposition before ratification.",
+            "status": "in_progress",
+            "action": "Publish the governed V1 Preference Descriptor Catalog covering every subsystem key, negative classification, scope and policy eligibility, accessibility, portability, migration, and implementation disposition before ratification. Historical alias: GP-C05A.",
             "depends_on": ["GP-C03", "GP-C04", "GP-C05"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05A"}],
+            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C08"}],
             "completion_evidence": []
           },
           {
@@ -5503,7 +5518,7 @@
             "kind": "owner_decision",
             "status": "pending",
             "action": "Adversarially review and obtain owner ratification of the complete Preferences authority, integration, standards/source-strength, dependency, migration, accessibility, and visual contract.",
-            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C05A"],
+            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}],
             "completion_evidence": [],
             "owner_input": {

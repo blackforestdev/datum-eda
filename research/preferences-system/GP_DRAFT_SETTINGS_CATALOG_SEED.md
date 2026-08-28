@@ -179,7 +179,7 @@ themes” candidate for the schematic scope; any Light board theme remains futur
 governed work. The working prototype consequently shows 61 v1 rows and 58
 planned rows while retaining 119 total. No other seed classification changes.
 
-## Later validation required by GP-C05A
+## Later validation required by GP-C08 (historical alias GP-C05A)
 
 For every numbered seed and post-catalog delta, the final descriptor catalog
 must determine: stable key or negative classification; subsystem owner; value

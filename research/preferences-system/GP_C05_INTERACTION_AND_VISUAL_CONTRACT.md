@@ -19,7 +19,8 @@ states are one contract.
 
 The `#layout=b` full-window search composition remains comparative evidence and
 is rejected. This disposition does not reopen GP-C03 Q1–Q11, alter GP-C04
-persistence, ratify any clay descriptor in the catalog, publish GP-C05A, choose
+persistence, ratify any clay descriptor in the catalog, publish GP-C08
+(historical alias GP-C05A), choose
 a native toolkit or dependency, authorize implementation, or permit Codex to
 edit any prototype.
 

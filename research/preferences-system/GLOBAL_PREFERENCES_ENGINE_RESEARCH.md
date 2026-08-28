@@ -271,7 +271,7 @@ Project-partition, migration, recovery, exchange, audit, typed refusal, and proo
 contract. The owner-adopted GP-C05 refined Option A now extracts search-first
 discovery, row-complete editing/provenance, resolver-owned explanation, settled
 setup/Start-page/Revision carry-forwards, and accessible context states from
-Claude commits `a061fca`, `e2127fa`, and `586eb0d`. GP-C05A is next. Complete
+Claude commits `a061fca`, `e2127fa`, and `586eb0d`. GP-C08 is next. Complete
 each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
@@ -299,8 +299,12 @@ GP-C05 does not pre-author interaction clauses for the prototype to satisfy.
 The completed contract is
 `GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md`.
 
-<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C05A -->
-### GP-C05A — V1 Preference Descriptor Catalog
+<!-- HISTORICAL-ALIAS:GLOBAL-PREFERENCES-SPEC:GP-C05A:GP-C08 -->
+<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C08 -->
+### GP-C08 — V1 Preference Descriptor Catalog
+
+`GP-C05A` is the historical alias. No further sub-lettered step or question IDs
+may be created; future additions use the next free integer.
 
 Absorb the working prototype's sourced catalog as a clearly marked draft seed
 list now. After the prototype and authority/persistence/interaction decisions
