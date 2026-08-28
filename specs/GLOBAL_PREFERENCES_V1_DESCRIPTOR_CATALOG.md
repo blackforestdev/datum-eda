@@ -1,14 +1,13 @@
 # Datum Global Preferences V1 Descriptor Catalog
 
-> **Status:** GP-C08 governed pre-ratification catalog.
+> **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics 037.
 >
 > **Historical step alias:** GP-C05A.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`.
 >
 > **Boundary:** specification evidence only. This catalog does not authorize
-> implementation, a dependency, a policy provider, or a prototype edit. GP-C06
-> owner ratification remains required.
+> implementation, a dependency, a policy provider, or a prototype edit.
 
 ## 1. Catalog law
 
@@ -266,7 +265,7 @@ by their explicit active, deferred, or negative disposition here.
 7. No migration repairs an unreadable store in place, substitutes a value the
    user did not choose, drops unknown data, or blocks authoring.
 
-## 6. GP-C06 ratification checks
+## 6. Ratified conformance checks
 
 GP-C06 must adversarially verify at least:
 

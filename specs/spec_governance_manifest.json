@@ -188,7 +188,7 @@
   "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "GP-C10-corrected pre-ratification catalog: 58 active V1 descriptors, 15 active ProjectPolicySeed rows plus one deferred seed-bearing schema, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Historical step alias: GP-C05A. No implementation or dependency is authorized."
+   "notes": "Owner-ratified GP-C06 catalog: 58 active V1 descriptors, 15 active ProjectPolicySeed rows plus one deferred seed-bearing schema, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Historical step alias: GP-C05A. No implementation or dependency is authorized."
   },
   "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
    "class": "governed",
@@ -799,10 +799,10 @@
     "notes": "Ratifies schematic drawing-theme selection as a persisted machine Presentation preference over complete governed Dark and Light contrast systems; preserves board and Publish/print boundaries and adds no dependency or implementation authorization."
   },
   "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md": {
-    "class": "pending",
-    "controlling": false,
+    "class": "doctrine",
+    "controlling": true,
     "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-    "notes": "Pending GP-C06 numbered mechanism record for typed Global Preferences authority. It becomes doctrine only after explicit owner ratification and currently authorizes no implementation, dependency, provider, service, execution, or prototype edit."
+    "notes": "Owner-ratified GP-C06 mechanism for typed Global Preferences authority, ProjectPolicySeed, resolution, persistence, search-first interaction, exact units, accessibility, and PM-034/035/036 preservation. It authorizes no implementation, dependency, provider, service, execution, or prototype edit."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",

@@ -351,6 +351,13 @@ standards, authority, storage, migration, recovery, integration, accessibility,
 and visual evidence. Record owner dispositions in governed doctrine and a
 normative specification without authorizing implementation.
 
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C06-APPROVED -->
+**Owner review — GP-C06 approved 2026-08-28.** The owner approved the corrected
+consolidated packet exactly as presented. Product Mechanics 037 is ratified;
+the packet's review exclusions and its no-implementation, no-dependency, and
+PM-034/035/036 preservation clauses remain controlling. This approval advances
+only to GP-C07 planning and grants no execution authority.
+
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C07 -->
 ### GP-C07 — Frontier placement and proof contract
 

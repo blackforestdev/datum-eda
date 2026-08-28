@@ -1,10 +1,9 @@
 # GP-C06 Consolidated Global Preferences Ratification Packet
 
-> **Status:** GP-C10 corrected owner-review packet; Claude reconciliation commits
-> `3edd932`, `ed3df1b`, and `4928f26` are reviewed and the GP-C06 boundary is
-> ready to reopen after the combined correction commit is recorded.
+> **Status:** owner-ratified at GP-C06 on 2026-08-28; Claude reconciliation
+> commits `3edd932`, `ed3df1b`, and `4928f26` remain reviewed visual evidence.
 >
-> **Mechanism record:** pending Product Mechanics 037 in
+> **Mechanism record:** ratified Product Mechanics 037 in
 > `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`.
 >
 > **Boundary:** specification ratification only. Approval authorizes no
@@ -154,12 +153,12 @@ Q6 clause 7 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:779-787`).
 ### Finding 9 — this must ratify through Product Mechanics
 
 Research and packets preserve evidence, but they cannot ratify mechanism.
-Pending Product Mechanics 037 contains the proposed mechanism and explicit
-non-decisions. GP-C06 approval would promote that numbered record to ratified
-doctrine; it would not ratify from `research/` alone. Product Mechanics 029
+Product Mechanics 037 contains the ratified mechanism and explicit
+non-decisions. GP-C06 approval promoted that numbered record to doctrine; the
+mechanism was not ratified from `research/` alone. Product Mechanics 029
 still requires a separate numbered decision for any new third-party dependency.
 
-Evidence: `CLAUDE.md` specification-governance law; pending
+Evidence: `CLAUDE.md` specification-governance law; ratified
 `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`; PM-029
 (`PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md:20-72`).
 
@@ -306,7 +305,7 @@ No prototype was edited or marked by Codex.
 
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06-CONSOLIDATED-PACKET -->
 
-Approve only if this corrected packet and pending Product Mechanics 037
+Approval was valid only because this corrected packet and Product Mechanics 037
 faithfully consolidate the cited settled authority, retain every §5 exclusion,
 and authorize no implementation or dependency.
 
@@ -321,6 +320,13 @@ or:
 ```text
 GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>
 ```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C06-PACKET-APPROVED -->
+
+**Owner disposition — approved 2026-08-28.** The owner replied exactly
+`GP-C06-RATIFICATION: approve`. All clauses and §5 exclusions stand without
+revision; approval authorizes no implementation, dependency, provider, service,
+prototype edit, or GP-C07 execution.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET -->
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET -->

@@ -1,6 +1,6 @@
 # Product Mechanics 037: Global Preferences Engine
 
-Status: pending owner ratification at GP-C06
+Status: ratified doctrine
 
 ## Context
 
@@ -10,10 +10,9 @@ into settings. GP-C03 Q1–Q11 and the recorded Q5A exception settled the typed
 authority boundaries; GP-C04 settled persistence, recovery, migration, exchange,
 and audit; GP-C05 settled the Preferences interaction; GP-C08 catalogued the
 initial descriptor boundary; and the shared Units requirement preserved exact
-engine truth. GP-C06 is the owner boundary that may ratify their consolidated
-mechanism.
+engine truth. GP-C06 ratified their consolidated mechanism on 2026-08-28.
 
-## Proposed decision
+## Decision
 
 Datum shall use subsystem-owned, versioned descriptors with stable
 `PreferenceKey` identities. Typed eligible contributions resolve by Q4's
@@ -94,7 +93,7 @@ replay walks the same rows and applies no setting by itself.
 
 ## Review exclusions
 
-This pending decision does not ratify the unspecified
+This decision does not ratify the unspecified
 `AdoptedDraftingStandard` seed schema, agent-authority/unattended descriptors,
 the four zero-descriptor subsystems, or prototype rows still marked clay. Those
 require their own evidence and, for visible behavior, Claude-owned rendering
@@ -112,8 +111,12 @@ new third-party dependency.
 
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:PM-037 -->
 
-This record becomes ratified doctrine only if the owner approves the corrected
-GP-C06 consolidated packet. Until then its status remains pending.
+On 2026-08-28 the owner approved the corrected GP-C06 consolidated packet with
+the exact response `GP-C06-RATIFICATION: approve`. The mechanism, preservation
+law, review exclusions, non-decisions, and dependency boundary above are
+therefore ratified without revision.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:PM-037-OWNER-APPROVED -->
 
 ## Dependency and licensing impact
 
