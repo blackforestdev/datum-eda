@@ -1,8 +1,9 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6
-> approved; active GP-C03-Q7 owner packet. Q5B is the historical alias for Q11.
-> Specification only; no implementation, dependency, Q7 disposition, or later-question disposition
+> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, GP-C03-Q6, and
+> GP-C03-Q7 approved; Q8 is paused for required Claude-owned real-window
+> reconciliation before packet preparation. Q5B is the historical alias for Q11.
+> Specification only; no implementation, dependency, Q8 packet, Q8 disposition, or later-question disposition
 > is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
@@ -1053,3 +1054,55 @@ GP-C03-Q7: revise — <required validation, refusal, protected-source, offline-v
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q7-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q7-APPROVED -->
+**Owner review — Q7-A approved 2026-08-28.** The owner approved all fifteen
+bounded clauses exactly as packeted: descriptor-owned validation without silent
+coercion; correctable refused drafts with last-valid continuity; ineligible-source
+refusal before precedence; protected Capability/security rows; declared offline
+validity with visible stale/unavailable/expired/revoked state; retained-source
+re-resolution; accessible failure presentation; and unrelated-Design continuity.
+No Q8-Q10, persistence, transport, dependency, or implementation authority is
+created.
+
+## 6. GP-C03-Q8 render-first reconciliation gate
+
+Q8 cannot yet enter packet preparation. The Claude-owned archival
+`preferences-ux-study.html#px-v10`, source lines 400–410, draws an unknown stored
+key preserved verbatim and inactive plus a retired alias migrating to one live
+identity. The primary product surface, `preferences-window.html`, contains no
+corresponding unknown/retired/aliased identity row, review surface, status, or
+section anchor. Its nearest owning region is `#organization`, source lines
+257–265, where protected preference import/export/reset and managed-package
+status are drawn, but that region does not show what happens to foreign or
+retired identities.
+
+Under the binding visual-anchor law, Codex must not turn PX-V10's archival idea
+into Q8 candidates or contract clauses until Claude renders the behavior in the
+real window. No Q8 owner marker or packet evidence marker is created here.
+
+### 6.1 Bounded reconciliation for Claude
+
+- **Exact file and region:** Claude-owned
+  `docs/gui/prototypes/preferences-window.html`, `#organization`, adjacent to the
+  protected **Reset, export, and import of preferences** row and managed-package
+  status. Claude may choose the precise real-window composition, but it must
+  remain part of the actual Preferences surface rather than a second study-only
+  settings UI.
+- **Required visible outcome:** render how a user discovers and inspects (a) an
+  unregistered stored key that is preserved verbatim, inactive, and not guessed
+  into effect, and (b) a retired identifier with an explicit alias to its one
+  live identity and visible migration disposition. The render must make clear
+  what reset, import, export, and the next write do to each state.
+- **Preserved decisions:** Q1's stable identity, single active descriptor,
+  explicit-alias, and no-guessed-activation clauses; Q7's refusal and protected
+  import law; the existing Organization authority/status rows; PM-036's
+  machine-versus-Project/Publish boundary; no second writable store or direct
+  activation path; no Q8 answer preselected merely by this reconciliation request.
+- **Proof expected:** a Claude-session commit touching only the prototype lane,
+  an exact `#organization` (or deliberately named replacement) anchor that Q8 can
+  cite, rendered evidence showing both required identity states and their
+  import/export/reset/next-write relationship, and refreshed owning-route digest
+  only after full route review by the responsible lane.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-RENDER-GAP -->

@@ -249,8 +249,10 @@ the Q3 owner boundary and may not adopt an external server as Datum authority.
 Define identities, value/schema types, scopes, precedence, provenance,
 defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
-Q1-Q6 and Q11 are approved and remain closed. The existing Q7-Q10 sequence
-resumes with the visual-anchored Q7 packet now prepared for owner review. GP-C05 later
+Q1-Q7 and Q11 are approved and remain closed. Q8 packet preparation is paused
+until Claude renders unknown/retired/aliased identity behavior in the real
+Preferences window and the owning evidence route is reconciled; archival PX-V10
+alone cannot open the boundary. GP-C05 later
 extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
