@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,6 +5192,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-q5-20260827",
+        "claimed_at": "2026-08-27T21:47:07-07:00",
+        "heartbeat_at": "2026-08-27T21:47:07-07:00",
+        "expires_at": "2026-08-28T05:47:07-07:00",
+        "scope": [
+          "GP-C03-Q5 decision packet",
+          "owner-directive and Frontier reconciliation",
+          "Global Preferences evidence-route governance",
+          "no prototype HTML mutation"
+        ],
+        "worktree": ".",
+        "head": "7af6419bb06926763e9d1d5489d6302bb3914721"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
