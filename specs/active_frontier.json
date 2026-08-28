@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q8-20260828",
-        "claimed_at": "2026-08-28T06:17:58-07:00",
-        "heartbeat_at": "2026-08-28T06:17:58-07:00",
-        "expires_at": "2026-08-28T14:17:58-07:00",
-        "scope": [
-          "reconcile Claude commit 54f2aba into the owning evidence route",
-          "prepare the visual-anchored GP-C03-Q8 identity-lifecycle packet",
-          "keep store-hygiene group placement as an explicit open sub-question",
-          "no prototype HTML mutation"
-        ],
-        "worktree": ".",
-        "head": "54f2aba9bd49184964ede66172b24485423ba4eb"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5308,8 +5292,8 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "in_progress",
-            "action": "Reconcile Claude commit 54f2aba into the complete evidence route, then prepare GP-C03-Q8 from the rendered unknown preserved/inactive, newer-version, retired-alias migration, and explicit non-deletion states; keep Organization versus a Preferences-file group versus Files & Projects as an explicit placement sub-question.",
+            "status": "pending",
+            "action": "Obtain Claude-owned real Preferences-window placement renders for Q8 P2 (a dedicated Preferences-file group) and P3 (Files & Projects, explicitly separated from Project authority), preserving commit 54f2aba behavior and current Organization P1 as comparative evidence; reconcile the route before opening the Q8 owner boundary.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
