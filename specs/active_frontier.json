@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q8-boundary-20260828",
-        "claimed_at": "2026-08-28T06:34:00-07:00",
-        "heartbeat_at": "2026-08-28T06:34:00-07:00",
-        "expires_at": "2026-08-28T14:34:00-07:00",
-        "scope": [
-          "register and reconcile Claude commit cd12baa placement evidence",
-          "finalize the GP-C03-Q8 placement-aware packet",
-          "open the one-question Q8 owner boundary",
-          "no prototype HTML mutation"
-        ],
-        "worktree": ".",
-        "head": "cd12baaecd9cdd914aa5cf14057a31f8f32ff9c5"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5307,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Register and reconcile Claude commit cd12baa, finalize the Q8 packet with byte-identical identity behavior and explicit P1 Organization, P2 Manage preferences, and P3 Files & Projects placement candidates, then open the one-question owner boundary without advancing Q9-Q10.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q7 and Q11, then decide GP-C03-Q8 behavior and placement from the real window and cd12baa: approve opaque unknown preservation, explicit alias migration, and deliberate non-deletion/removal as Q8-A with exactly one home—P1 Organization, P2 Manage preferences, or P3 Files & Projects—or provide a bounded revision; preserve Q9-Q10 as queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5361,7 +5345,21 @@
                 "kind": "commit",
                 "revision": "cd12baa"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing Preferences #organization at 54f2aba, the P1/P2/P3 actual-window comparison at cd12baa, the PM-036 canvas precedent, archival PX-V10, written evidence, rejected behavior alternatives, and the sixteen bounded clauses, reply exactly `GP-C03-Q8: approve Q8-A/P2`, substitute `P1` or `P3`, or reply `GP-C03-Q8: revise — <required preservation, activation, alias-migration, non-deletion, removal, placement, or accessibility correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q8",
+                  "question": "Should Datum preserve unknown and newer-version identities byte-faithfully but inactive, activate only after exact descriptor registration plus Q7 validation, migrate retired names only through explicit aliases to one live identity, forbid deletion as a save/reset side effect, and place the single store-hygiene surface in P1 Organization, P2 Manage preferences, or P3 Files & Projects?",
+                  "recommended_response": "Approve Q8-A/P2 because Q8-A is the sole behavior consistent with Q1 and both renders, while dedicated Manage preferences gives machine-store hygiene an honest discoverable home without implying Organization or Project authority; P1 and P3 remain fully rendered alternatives.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q8"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
