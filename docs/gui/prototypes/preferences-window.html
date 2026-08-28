@@ -33,7 +33,8 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .main::-webkit-scrollbar{width:11px}
 .main::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:6px;border:2px solid var(--bg)}
 .main::-webkit-scrollbar-track{background:var(--s01)}
-.search{margin:14px 18px 4px;padding:7px 12px;background:var(--s01);border:1px solid var(--bd-sub);border-radius:5px;font-family:"PlexMono",monospace;font-size:12px;color:var(--tx3);display:flex;gap:8px;align-items:center}
+.search{position:sticky;top:0;z-index:6;margin:0;padding:12px 18px;background:var(--bg);border-bottom:1px solid var(--bd-str);font-family:"PlexMono",monospace;font-size:12px;color:var(--tx3);display:flex;gap:8px;align-items:center}
+.search .field{flex:1;display:flex;gap:8px;align-items:center;background:var(--s01);border:1px solid var(--bd-sub);border-radius:5px;padding:6px 11px}
 .search input{flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-family:"PlexMono",monospace;font-size:12px}
 .search input::placeholder{color:var(--tx3)}
 #qcount{font-size:10.5px;color:var(--tx3);white-space:nowrap}
@@ -81,7 +82,7 @@ section{display:none} section.on{display:block}
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
     <div class="nav" id="nav"><div data-s="appearance" class="on">Appearance</div><div data-s="workspace">Workspace</div><div data-s="units">Units</div><div data-s="schematic">Schematic</div><div data-s="pcb-board">PCB/Board</div><div data-s="publish-space">Publish Space</div><div data-s="rules-checks">Rules & Checks</div><div data-s="terminal">Terminal</div><div data-s="library">Library</div><div data-s="symbol-editor">Symbol Editor</div><div data-s="footprint-editor">Footprint Editor</div><div data-s="files-projects">Files & Projects</div><div data-s="output">Output</div><div data-s="revision">Revision</div><div data-s="agents">Agents</div><div data-s="manage-preferences">Manage preferences</div><div data-s="organization">Organization</div><div data-s="project-policy-read-only">Project Policy (Read-Only)</div></div>
-    <div class="pane-wrap"><div class="main"><div class="search"><span style="color:var(--tx3)">⌕</span> <input id="q" placeholder="search settings…" autocomplete="off" spellcheck="false"><span id="qcount"></span></div>
+    <div class="pane-wrap"><div class="main"><div class="search"><div class="field"><span style="color:var(--tx3)">⌕</span><input id="q" placeholder="search settings…" autocomplete="off" spellcheck="false"></div><span id="qcount"></span></div>
 <div id="results" style="display:none"></div>
 <section id="appearance" class="on">
 <div class="row"><div class="lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding (4 s, 6 s, 10 s, or never; factory 6 s) — the one preference implemented today.</span></div><div class="ctl"><div class="sel" data-opts="4 s|6 s|10 s|Never hide" data-def="6 s">6 s</div></div></div>
