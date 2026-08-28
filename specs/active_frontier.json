@@ -5182,7 +5182,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5194,22 +5194,7 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-gp-c05-owner-disposition-20260828",
-        "claimed_at": "2026-08-28T13:02:24-07:00",
-        "heartbeat_at": "2026-08-28T13:02:24-07:00",
-        "expires_at": "2026-08-28T21:02:24-07:00",
-        "scope": [
-          "record the owner-adopted refined GP-C05 option A from Claude commit a061fca",
-          "register and review accessibility/context evidence at e2127fa and store states at 586eb0d",
-          "extract the search-first, explanation, responsive, accessibility, editing, refusal, onboarding, Start-page, and Revision carry-forward contract",
-          "no prototype HTML mutation, implementation, dependency, GP-C05A catalog, or GP-C06 ratification"
-        ],
-        "worktree": ".",
-        "head": "a061fca27111019626a045c139c41fc647016a1e"
-      },
+      "claim": null,
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C05A",
@@ -5497,6 +5482,10 @@
               {
                 "kind": "commit",
                 "revision": "586eb0d"
+              },
+              {
+                "kind": "commit",
+                "revision": "3f322d0"
               }
             ]
           },
