@@ -1,8 +1,8 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5, amended GP-C03-Q5A, and GP-C03-Q11 approved; active
-> GP-C03-Q6 owner packet. Q5B is the historical alias for Q11. Specification only;
-> no implementation, dependency, Q6 disposition, or later-question disposition
+> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6
+> approved; active GP-C03-Q7 owner packet. Q5B is the historical alias for Q11.
+> Specification only; no implementation, dependency, Q7 disposition, or later-question disposition
 > is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
@@ -824,3 +824,232 @@ GP-C03-Q6: revise — <required session, context, operation-input, state-lifetim
 ```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q6-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q6-APPROVED -->
+**Owner review — Q6-A approved 2026-08-28.** The owner approved all thirteen
+bounded clauses exactly as packeted: five distinct typed classes; explicit
+this-run Session contributions after eligibility and control evaluation; named,
+read-only, applicability-bounded Context; explicit per-invocation operation input
+despite any `WorkflowDefault` pre-fill; separate restartable workspace state and
+transient interaction state; visible lifetime/provenance and keyboard-accessible
+inspection; and no persistence, catalog, implementation, or Q7-Q10 disposition.
+This closes Q6 and advances only to Q7 packet preparation.
+
+## 5. GP-C03-Q7 — validation, refusal, protected sources, and unavailable providers
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q7 -->
+
+### 5.1 Exact on-screen decision
+
+**When a value is invalid, a source is ineligible, or a managing provider is
+unreachable, Datum keeps the last valid effective value, leaves correctable input
+visible with the exact refusal law, and shows the provider generation as stale
+but still effective only for its declared offline-validity interval—never as a
+silent policy removal.**
+
+Q7 decides validation/refusal behavior, protected-source enforcement, and the
+effect of provider availability, expiry, and revocation on resolution. It does
+not decide unknown/retired identities (Q8), the complete provenance query (Q9),
+or package transport, persistence, signing, and recovery mechanics (GP-C04).
+
+### 5.2 Reviewed visual evidence
+
+The Claude-owned real Preferences window is the primary visual authority and was
+reviewed without modification:
+
+- `docs/gui/prototypes/preferences-window.html#terminal`, source lines 169–191,
+  draws shielded Terminal launch, scrollback, paste, clipboard, and link-opening
+  rows. It says untrusted Projects can never set these Capability/security values,
+  while the scrollback row exposes the 100,000-line/64-MiB constraint that an
+  invalid draft must not silently evade.
+- `preferences-window.html#agents`, source lines 250–256, applies the same
+  protected-source treatment to agent authority and unattended-tool grants;
+  Project specificity cannot become agent capability authority.
+- `preferences-window.html#organization`, source lines 257–265, keeps excess
+  organization requests visible but inert and draws one read-only managed-policy
+  status covering provider, package, generation, managed settings, contact, and
+  the distinct **effective / stale / expired / revoked** states. Reset/import are
+  separately protected operations, not provider-failure fallbacks.
+- `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and
+  88–119, remains the PM-036 presentation-class precedent: resolver failure or
+  provider loss cannot promote a machine presentation fallback into Project or
+  Publish truth, or conversely grant a Project source Capability authority.
+
+The archival structural evidence is
+`docs/gui/prototypes/preferences-ux-study.html#px-v9`, source lines 387–398.
+PX-V9 renders three exact failure states: **250,000 refused — above constraint
+100,000**, with the draft kept for correction; **Project value ineligible**, with
+the Capability class law named; and **provider unreachable 2h**, with last-known
+generation 14 still in force and visibly stale. Its summary law is “no refusal
+without its reason; no degradation without its banner.”
+
+No visual reconciliation is required for Candidate Q7-A. Silently clamping the
+invalid draft, accepting the Project executable, treating disconnect as policy
+withdrawal, or hiding stale/expired/revoked status would materially contradict
+the reviewed surfaces and cannot open an owner boundary until Claude renders
+that different behavior in the real window.
+
+### 5.3 Written evidence
+
+- Approved Q1 makes validation constraints and canonical form descriptor-owned,
+  refuses duplicate/incompatible registration, and forbids providers from
+  redefining a key's meaning (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:214-241`).
+- Approved Q2 requires every descriptor to declare allowed sources and refuses
+  ineligible contributions rather than silently considering them; Capability
+  settings explicitly require protected-source eligibility
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:310-350,395-425`).
+- Approved Q4 evaluates descriptor/source eligibility before controls and value
+  ranking, forbids last-writer-wins, and keeps every losing, inert, refused, and
+  conflicting contribution queryable with a reason
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:596-615,639-646`).
+- Primary external evidence requires provider trust/availability and validation
+  state to participate in resolution, and requires inspection to expose invalid
+  and unavailable contributions rather than reconstructing them in the UI
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:127-168`). Protected keys cannot
+  accept Project-local executable, agent, provider-endpoint, or trust-root values
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:170-181`).
+- Provider absence must never fabricate policy removal, while complete local and
+  offline resolution uses cached/installed authorities
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:438-446`). The exact duration and
+  representation of last-known managed authority was deliberately left to Q7
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:448-458`).
+- Domain-peer evidence rejects one inferred disconnect rule: each managed package
+  declares offline continuation/expiry, and Datum shows authenticated local
+  generations as effective, stale, expired, revoked, or unavailable
+  (`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:334-344,360-373`). Unrelated
+  Design authoring remains non-blocking while provider status is visible
+  (`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:390-405`).
+- Accessibility evidence requires refusal/state to use more than color, announces
+  status without stealing focus, and keeps managed values inspectable even when
+  unwritable (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-396`).
+
+### 5.4 Genuine alternatives and the single surviving boundary
+
+#### Candidate Q7-A — fail honestly, retain last valid truth, honor declared offline validity
+
+Datum validates before mutation or resolution. Invalid drafts remain in their
+controls for correction while the last valid effective value continues; an
+ineligible source produces a typed refusal before precedence. A disconnected
+provider does not vanish: its last authenticated generation remains visibly
+stale and effective only through the offline-validity law already carried by that
+generation. Explicit expiry or revocation ends its participation and triggers Q4
+re-resolution from retained eligible sources, while the inactive generation and
+reason remain inspectable.
+
+This is the only candidate consistent with the real window, archival PX-V9, and
+approved Q1–Q4. It is recommended.
+
+#### Rejected alternative Q7-B — immediate fail-closed on every disconnect
+
+Any provider connection loss immediately blocks managed settings or all Datum
+work until the provider returns. This can maximize central freshness, but it
+conflates temporary unreachability with revocation, discards the package's
+declared offline law, and makes unrelated local Design depend on a network.
+
+Q7-B is a genuine centrally controlled posture, but it contradicts the rendered
+stale-generation-in-force state, the real window's distinct stale/expired/revoked
+states, Datum's local-complete evidence, and PM-034 non-blocking authoring. It
+cannot survive without a materially different Claude render and new owner law.
+
+#### Rejected alternative Q7-C — silent fallback and forgiving coercion
+
+Invalid values are clamped or replaced automatically, ineligible source values
+are ignored without a refusal record, and provider loss silently removes managed
+authority so lower-ranked values take effect. This maximizes apparent continuity
+and minimizes warnings, but the user's entered value, attempted authority, and
+reason for the effective-value change become unknowable.
+
+Q7-C is a genuine convenience model, but it directly violates PX-V9, the real
+managed-status row, approved Q2/Q4 refusal/provenance law, and the external rule
+that provider absence cannot fabricate policy removal. Candidate Q7-A is
+therefore a single-candidate boundary with cited ratified law explaining why no
+alternative survives.
+
+### 5.5 Exact bounded contract Candidate Q7-A would establish
+
+Approval establishes only these clauses:
+
+1. Every candidate contribution and control directive is validated against the
+   authoritative `PreferenceDescriptor` identity, type/canonical form,
+   constraints, allowed source families, and setting class before storage or
+   resolution. Active Q3 controls are then evaluated before Q4 ranking; only a
+   control that explicitly refuses mutation from that source blocks its storage.
+2. Descriptor-declared canonicalization may normalize equivalent representation
+   without changing meaning. A value outside the declared type, enum, range,
+   structure, constraint, or security law is refused; Datum never silently clamps,
+   truncates, substitutes, or serializes a different meaningful value.
+3. A refused interactive draft remains visible and editable in its field with
+   the attempted value, the violated descriptor/constraint law, and a correction
+   path. It is not a stored contribution and does not replace the last valid
+   effective value merely because the user pressed Apply.
+4. Non-interactive invalid input is returned as a typed refusal to its caller.
+   Any diagnostic retention or redaction follows descriptor security law and
+   cannot overwrite the last-known-good preference generation; exact durable
+   recovery representation remains GP-C04.
+5. Source eligibility is evaluated before precedence. A contribution from an
+   ineligible source is refused with the key, source family/identity, setting
+   class, and descriptor law that refused it; specificity, recency, provider
+   order, and Context cannot make it eligible.
+6. Capability and protected security descriptors reject Project sources for
+   executable/argv/environment choice, agent authority and unattended tools,
+   managed-provider endpoints, trust roots, clipboard/paste/link gates, and every
+   other source family the descriptor excludes. The attempt cannot mutate either
+   Preferences or governed Project facts.
+7. Refused and ineligible contributions never participate in Q4 value ranking,
+   controls, or merge. They remain queryable as inactive facts with their reason,
+   subject to descriptor-declared secret redaction; Q9 defines the complete query
+   shape and UI projection.
+8. A managed package/generation declares its authenticated identity, effective
+   interval, and explicit offline-validity law before provider loss. Q7 selects
+   no universal timeout and connectivity alone cannot invent or extend one.
+9. When a provider becomes unreachable, the last locally validated generation
+   remains effective only while its declared offline-validity law permits. Datum
+   immediately marks it **stale/unreachable**, retains provider/package/generation,
+   last successful contact, elapsed staleness, affected keys, reason, and contact,
+   and does not describe the provider as revoked or removed.
+10. When no validated local generation exists, the provider is **unavailable**
+    and contributes no value or control. Resolution uses retained eligible sources
+    under Q4 and visibly states that no managed generation is active; it does not
+    synthesize an organization default, constraint, Pin, or Lock.
+11. When declared offline validity ends, the generation becomes **expired** and
+    ceases to participate. Once an authenticated revocation event is locally
+    available, the generation becomes **revoked** and ceases participation
+    regardless of later connectivity. Both events trigger Q4 re-resolution from
+    retained eligible sources and remain inspectable; neither deletes displaced
+    user values or rewrites Project policy.
+12. Provider restoration validates the received generation before it can replace
+    stale/expired state. Arrival order or reconnection alone grants no authority;
+    package transport, signing, expected-generation mutation, persistence, and
+    rollback mechanics remain GP-C04.
+13. Validation/refusal and provider-state presentation uses text plus a non-color
+    status cue, exposes programmatic name/state/reason, remains keyboard
+    inspectable, and announces changes without focus theft. A refused field keeps
+    its user's editing context.
+14. Invalid preference input or provider degradation cannot block unrelated
+    Design authoring. Governed Project policy continues under its own authority;
+    Q7 neither weakens Project gates nor turns organization connectivity into
+    engineering or Release authority.
+15. Q7 does not decide unknown/retired/aliased identities, migration, storage
+    format, cryptographic package design, recovery generations, synchronization,
+    complete query schema, implementation dependencies, or any Q8-Q10 disposition.
+
+### 5.6 Recommendation and owner response
+
+Approve **Q7-A**. It is the sole candidate consistent with the protected rows and
+managed-status states in the real Preferences window, archival PX-V9, approved
+Q1–Q4, explicit offline policy, local completeness, and accessible failure
+honesty.
+
+Reply exactly:
+
+```text
+GP-C03-Q7: approve Q7-A
+```
+
+or:
+
+```text
+GP-C03-Q7: revise — <required validation, refusal, protected-source, offline-validity, expiry/revocation, fallback, or accessibility correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q7-PACKET -->

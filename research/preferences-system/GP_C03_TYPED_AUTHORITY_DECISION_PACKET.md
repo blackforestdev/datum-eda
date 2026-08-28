@@ -611,7 +611,7 @@ the pin lifts (350–357). Under Q3, that pin is eligible only within an active
    a typed unresolved conflict unless the descriptor declares a deterministic
    join. Arrival order, provider order, and “last writer wins” cannot decide it.
 6. Every effective, losing, inert, refused, and conflicting contribution remains
-   queryable with provenance and reason. Q8 decides detailed refusal/fallback
+   queryable with provenance and reason. Q7 decides detailed refusal/fallback
    behavior; Q4 does not silently publish a new value from a conflict.
 
 ### 9.4 Recommendation and owner response
@@ -643,4 +643,4 @@ eligibility first, applicable controls second, and ordinary values third. User
 values outrank organization Recommendations, Installation values, and defaults;
 eligible Pins retain rather than destroy displaced values; incompatible
 equal-authority controls become typed conflicts rather than arrival-order wins.
-Project authority remains separate, and Q8 retains detailed fallback/refusal.
+Project authority remains separate, and Q7 retains detailed fallback/refusal.
