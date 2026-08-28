@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Datum pre-commit hook: staged Rust files must be rustfmt-clean so formatting
-# debt cannot accumulate between drift-gate runs. Only STAGED files are
-# checked — another agent's dirty-but-unstaged files never block a commit.
+# Datum pre-commit hook: enforce owned file lanes before checking that staged
+# Rust files are rustfmt-clean. Only STAGED files are checked — another agent's
+# dirty-but-unstaged files never block a commit.
 # Ceiling-bound exemptions live in specs/rustfmt_exemption_manifest.json.
 #
 # Enable once per clone:   git config core.hooksPath scripts/git-hooks
-# Bypass in an emergency:  git commit --no-verify
+# Owner-authorized emergency bypass only:  git commit --no-verify
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
+python3 scripts/check_file_lane_ownership.py --staged
 exec python3 scripts/check_rustfmt.py --staged

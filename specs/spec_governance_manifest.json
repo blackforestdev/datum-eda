@@ -50,7 +50,17 @@
   "scripts/git-hooks/pre-commit": {
    "class": "governed",
    "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
-   "notes": "Repository pre-commit integration point; currently enforces staged rustfmt and will receive visual-truth lane refusal only after LANE-C02 owner approval."
+   "notes": "Repository pre-commit integration point; runs the owner-approved staged visual-truth lane refusal before the existing staged rustfmt gate."
+  },
+  "scripts/check_file_lane_ownership.py": {
+   "class": "governed",
+   "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
+   "notes": "Dependency-free staged-index enforcement for the Claude-owned GUI prototype HTML lane, including fail-closed rename/delete handling and exact marker validation."
+  },
+  "scripts/test_file_lane_ownership.py": {
+   "class": "governed",
+   "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
+   "notes": "Hermetic temporary-repository proof for protected operations, marker rejection, unusual filenames, parser failures, hook ordering, and index/worktree non-mutation."
   },
   "specs/PROGRESS.md": {
    "class": "governed",

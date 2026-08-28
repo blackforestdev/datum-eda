@@ -20,10 +20,12 @@
       ],
       "consumers": [
         "AGENTS.md",
-        "scripts/git-hooks/pre-commit"
+        "scripts/git-hooks/pre-commit",
+        "scripts/check_file_lane_ownership.py",
+        "scripts/test_file_lane_ownership.py"
       ],
-      "reviewed_digest": "338836c8a5ab2e6675a5441f3c9796780921ab59317d6171220fe3be0d6f4e3f",
-      "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md. LANE-C02 owner approval ratifies the exact staged environment-marker contract and authorizes bounded LANE-I01 implementation in the existing pre-commit path; Codex remains forbidden from setting or forwarding the marker, and no prototype file is changed by this governance transition."
+      "reviewed_digest": "7a171112836f8be97a7cd9b9276900e93bc5d679a45449dbf65de7515f81134b",
+      "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md and enforced before rustfmt by the dependency-free staged-index checker. LANE-C02 owner approval governs the exact marker contract; tests cover adds/copies/modifications/mode changes/deletions, renames both directions, malformed markers and records, unusual filenames, hook ordering, fail-closed Git errors, and non-mutation. Codex remains forbidden from setting or forwarding the marker, and LANE-I01 changes no prototype file."
     },
     {
       "id": "terminal-focus-incident",
