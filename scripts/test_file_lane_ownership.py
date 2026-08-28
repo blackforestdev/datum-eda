@@ -77,34 +77,39 @@ class FileLaneOwnershipTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stderr.decode())
         self.assertIn(b"Claude-owned visual-truth lane", result.stderr)
 
+    def prepare_protected_operation(self, operation: str) -> None:
+        protected = "docs/gui/prototypes/study.html"
+        if operation == "add":
+            self.stage(protected)
+        elif operation == "copy":
+            self.repo.write("source.html")
+            self.repo.commit_all()
+            self.stage(protected, self.repo.write("source.html").read_text())
+        else:
+            path = self.repo.write(protected)
+            self.repo.commit_all()
+            if operation == "modify":
+                path.write_text("changed", encoding="utf-8")
+            elif operation == "mode":
+                path.chmod(0o755)
+            elif operation == "delete":
+                path.unlink()
+            else:
+                self.fail(f"unknown protected operation: {operation}")
+            self.repo.git("add", "--all")
+
     def test_unrelated_staged_file_passes_without_marker(self) -> None:
         self.stage("docs/ordinary.md")
         result = self.repo.run_gate()
         self.assertEqual(result.returncode, 0, result.stderr.decode())
 
     def test_protected_add_copy_modify_mode_and_delete_refuse(self) -> None:
-        protected = "docs/gui/prototypes/study.html"
         operations = ("add", "copy", "modify", "mode", "delete")
         for operation in operations:
             with self.subTest(operation=operation):
                 self.repo.close()
                 self.repo = Repository()
-                if operation == "add":
-                    self.stage(protected)
-                elif operation == "copy":
-                    self.repo.write("source.html")
-                    self.repo.commit_all()
-                    self.stage(protected, self.repo.write("source.html").read_text())
-                else:
-                    path = self.repo.write(protected)
-                    self.repo.commit_all()
-                    if operation == "modify":
-                        path.write_text("changed", encoding="utf-8")
-                    elif operation == "mode":
-                        path.chmod(0o755)
-                    else:
-                        path.unlink()
-                    self.repo.git("add", "--all")
+                self.prepare_protected_operation(operation)
                 self.assert_refused()
 
     def test_rename_into_and_out_of_lane_refuse(self) -> None:
@@ -130,6 +135,31 @@ class FileLaneOwnershipTests(unittest.TestCase):
         accepted = self.repo.run_gate("claude")
         self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
         self.assertIn(b"marked Claude session", accepted.stdout)
+
+    def test_exact_marker_permits_every_protected_operation(self) -> None:
+        operations = ("add", "copy", "modify", "mode", "delete")
+        for operation in operations:
+            with self.subTest(operation=operation):
+                self.repo.close()
+                self.repo = Repository()
+                self.prepare_protected_operation(operation)
+                accepted = self.repo.run_gate("claude")
+                self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
+
+        renames = (
+            ("outside.html", "docs/gui/prototypes/inside.html"),
+            ("docs/gui/prototypes/inside.html", "outside.html"),
+        )
+        for source, destination in renames:
+            with self.subTest(source=source, destination=destination):
+                self.repo.close()
+                self.repo = Repository()
+                self.repo.write(source)
+                self.repo.commit_all()
+                (self.repo.root / destination).parent.mkdir(parents=True, exist_ok=True)
+                self.repo.git("mv", source, destination)
+                accepted = self.repo.run_gate("claude")
+                self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
 
     def test_nested_spaces_and_unicode_paths_are_unambiguous(self) -> None:
         first = "docs/gui/prototypes/nested/a study.html"
