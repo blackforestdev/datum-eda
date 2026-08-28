@@ -180,6 +180,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Owner-adopted GP-C05 refined Option A interaction and accessibility contract extracted from Claude commits a061fca, e2127fa, and 586eb0d. Search-first discovery, row grammar, resolver explanation, setup/Start-page/Revision reconciliation, and responsive accessibility are governed without implementation or dependency authorization."
   },
+  "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "GP-C09 findings-first consolidated packet for the GP-C06 owner boundary. It traces all Q1-Q11 plus Q5A dispositions, GP-C04, GP-C05 refined Option A, GP-C08, shared units, visual authority, source-strength limits, and PM-034/035/036 preservation while authorizing no implementation or dependency."
+  },
   "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
