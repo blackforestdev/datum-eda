@@ -125,8 +125,11 @@ manufacturing envelope — not luck, and not user effort.
 
 ## Decisions settled on the prototype (design pass 3)
 
-- **Schematic ground — LOCKED:** dark is the working default; vellum is a
-  print/documentation toggle. See `DATUM_RENDERING_BOOK.md` §1.
+- **Schematic drawing themes — LOCKED:** **Dark** is the machine-Presentation
+  factory default; **Light** is the governed warm-paper authoring theme with
+  ground `#E7E1D2`. “Vellum” is retired, and neither authoring theme controls
+  print/document output. See Product Mechanics 036 and
+  `DATUM_RENDERING_BOOK.md` §1.
 - **Silkscreen typeface — LOCKED:** IBM Plex (`IBMPlexSansCondensed`, the shipped
   asset), filled outline, silk-min-feature-safe. See Rendering Book §5.
 - **Acute-bend treatment — LOCKED:** small inner fillets for etch-loss

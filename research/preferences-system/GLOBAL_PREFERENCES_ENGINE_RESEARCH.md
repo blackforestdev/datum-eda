@@ -336,7 +336,11 @@ PM-034 non-blocking law, GP-C04/GP-C05/units clauses, and a numbered Product
 Mechanics decision record. Exclude unsettled clay and adopted-standard
 co-ownership claims pending bounded Claude reconciliation. Refresh the complete
 workspace-documentation-and-revision digest in the same correction transaction,
-never as a separate blessing. GP-C06 may reopen only after GP-C10 is committed.
+never as a separate blessing. The same reconciliation must align the four
+catalog-to-render stable-key anchors and provide real rendered rows for the seven
+GP-C08 identities named by the owner audit; it must also retire the obsolete
+vellum-as-print-toggle statement and register that documentation consumer on the
+evidence route. GP-C06 may reopen only after GP-C10 is committed.
 
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->

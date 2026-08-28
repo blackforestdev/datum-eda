@@ -183,7 +183,7 @@
   "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "GP-C10-corrected findings-first packet for the GP-C06 owner boundary. It restores ProjectPolicySeed, exact owner-forced and PM-034 law, GP-C04/GP-C05/units clauses, citations, counts, review limits, and a Claude render gate while authorizing no implementation or dependency."
+   "notes": "GP-C10-corrected findings-first packet for the GP-C06 owner boundary. It restores ProjectPolicySeed, exact owner-forced and PM-034 law, GP-C04/GP-C05/units clauses, citations, counts, review limits, and reviewed Claude parity/disposition evidence while authorizing no implementation or dependency."
   },
   "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
    "class": "governed",

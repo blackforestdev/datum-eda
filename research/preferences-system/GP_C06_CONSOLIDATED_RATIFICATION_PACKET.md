@@ -1,7 +1,8 @@
 # GP-C06 Consolidated Global Preferences Ratification Packet
 
-> **Status:** GP-C10 corrected packet; the GP-C06 owner boundary remains closed
-> until the bounded Claude reconciliation in §5 is committed and reviewed.
+> **Status:** GP-C10 corrected owner-review packet; Claude reconciliation commits
+> `3edd932`, `ed3df1b`, and `4928f26` are reviewed and the GP-C06 boundary is
+> ready to reopen after the combined correction commit is recorded.
 >
 > **Mechanism record:** pending Product Mechanics 037 in
 > `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`.
@@ -133,16 +134,21 @@ at `:43-46,62-65`; canonical IR (`docs/CANONICAL_IR.md:59-77`).
 ### Finding 8 — visual evidence is authoritative only where settled
 
 Claude commit `d414462` corrected the airwire-culling control to factory Off;
-there is no remaining airwire mismatch or ratification exception. Claude commit
-`ed3df1b` corrected all three adopted-standard Context banners to Q6 clause 7 and
-made search-result controls operate in place, but the current window still
-carries three clay preference rows, renders excluded state/agent rows with
-registered-looking keys, and lacks searchable keys on eleven active catalog
-rows. Those claims are excluded from this ratification. The bounded
-reconciliation in §5 must land before this packet opens an owner boundary.
+there is no remaining airwire mismatch or ratification exception. Commit
+`ed3df1b` corrected all three adopted-standard Context banners to Q6 clause 7,
+made search-result controls operate in place, and attached catalog keys broadly.
+Commit `4928f26` completes exact 58-of-58 active catalog-key reachability,
+including the rendered `datum.schematic.drawing_theme` identity, its searchable
+retired draft name, and eight terminal descriptors. Commit `3edd932` marks the
+Q5A, Q11, and Q10 studies with their recorded owner dispositions. Clay,
+onboarding-state, and unreviewed-agent rows remain visibly/searchably inspectable
+but are explicitly excluded in §5; a `data-key` search anchor does not register
+a descriptor absent a catalog entry.
 
-Evidence: `preferences-window.html:113-127,150,153,166-169,239-276` after
-`d414462` and `ed3df1b`, and
+Evidence: `preferences-window.html:98,113-127,150,153,166-169,193-213,239-276`
+after `d414462`, `ed3df1b`, and `4928f26`; disposition banners in
+`guided-setup-study.html`, `start-page-study.html`, and
+`revision-carryforward-study.html` at `3edd932`; and
 Q6 clause 7 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:779-787`).
 
 ### Finding 9 — this must ratify through Product Mechanics
@@ -255,7 +261,7 @@ Approval would establish only these clauses:
 | PM-035 | Project documentation owns `AdoptedDraftingStandard` | copy a defined receipted seed; show read-only Context | constrain/pin via machine Preferences; live-follow; reset/import/restore Project standard | `PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md:13-58`; Q5/Q6 |
 | PM-036 | schematic theme is whole-system machine Presentation state; print independent | persist/reset/query the governed Dark/Light choice | free-edit palette; alter board, Publish, Project, or drafting-standard authority | `PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md:13-70` |
 
-## 5. Review limits and Claude reconciliation gate
+## 5. Review limits and completed Claude reconciliation
 
 The following are explicitly **not ratified**:
 
@@ -271,45 +277,50 @@ The following are explicitly **not ratified**:
 - any future provisional-watermark seed schema, provider, implementation,
   dependency, or execution plan.
 
-Before the GP-C06 owner boundary reopens, Claude must reconcile this bounded
-list in `docs/gui/prototypes/preferences-window.html`:
+The completed visual reconciliation establishes these bounded facts:
 
-1. Preserve `ed3df1b`'s Q6 clause 7 Context wording at `#workspace`,
-   `#schematic`, and `#pcb-board`: applicability only, never organization-style
-   constrain/pin, universal rank, or machine authority over Project policy.
-2. At the Grid size presets, Crosshair style, and Default layer visibility rows,
-   render their excluded/deferred status so no clay row appears ratified as an
-   active V1 preference, and remove any registered-key implication while
-   preserving the existing session/runtime facts.
-3. At `#agents`, render Agent authority level and Unattended agent tool allowlist
-   as unratified pending authority/security review rather than registered V1
-   descriptors; preserve their protected-source warning as candidate evidence.
-4. Remove registered-key treatment from Guided setup because its
-   completed/dismissed/never-run value is Q5A machine-local onboarding state,
-   not a descriptor.
-5. Reconcile stable-key search vocabulary for every active catalog row. The
-   currently missing active keys are `datum.files.startup_mode`,
-   `datum.projects.template_seed`, `datum.publish.set_name_prefill`,
-   `datum.terminal.cursor`, `datum.terminal.feedback`, `datum.terminal.keymap`,
-   `datum.terminal.notifications`, `datum.terminal.open_target_policy`,
-   `datum.terminal.osc52_write`, `datum.terminal.text_rendering`, and
-   `datum.terminal.theme`. Retire the conflicting prototype-only identities
-   `datum.projects.startup_view`, `datum.projects.template_set`, and
-   `datum.publish.publish_set_naming` rather than creating duplicate descriptors.
-6. In Manage preferences, preserve reset/import/export as protected store
-   operations rather than descriptor/classification authority.
+1. `ed3df1b` preserves Q6 clause 7 at `#workspace`, `#schematic`, and
+   `#pcb-board`: Context selects applicability and never creates organization-
+   style constrain/pin authority over Project policy.
+2. The three unsettled rows remain explicitly marked **classification unsure —
+   clay**. Their `data-key` attributes make the candidate rows searchable; they
+   do not override this packet/catalog's deferral or register V1 descriptors.
+3. Agent authority and unattended-tool rows remain protected candidate evidence.
+   Their searchable anchors do not overcome the explicit exclusion above or
+   substitute for a dedicated authority/security owner review.
+4. Guided setup's searchable state anchor remains Q5A machine-local onboarding
+   state, not a preference descriptor or Project/organization authority.
+5. `4928f26` proves all 58 active catalog identities occur exactly once in the
+   real window. The rendered identities are
+   `datum.schematic.drawing_theme`, `datum.projects.startup_view`,
+   `datum.projects.template_set`, and `datum.publish.publish_set_naming`; former
+   GP-C08 spellings remain searchable vocabulary only.
+6. Manage preferences retains reset/import/export as protected store operations,
+   not descriptor or classification authority.
+7. `3edd932` reconciles the guided-setup, Start-page, and Revision carry-forward
+   studies to Q5A-B+C, Q11-A, and Q10-A/S2/R1 without changing their behavior.
 
-Expected proof is a Claude-owned commit naming these anchors, with no unrelated
-visual behavior changed. Codex will then review the complete evidence route and
-refresh its digest; Codex will not edit or mark the prototype.
+No prototype was edited or marked by Codex.
 
-## 6. Owner response (closed pending §5)
+## 6. Owner response
 
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06-CONSOLIDATED-PACKET -->
 
-No GP-C06 response is requested while the §5 render gate is open. After the
-Claude reconciliation lands and the route is green, the Frontier may reopen
-this exact one-question owner boundary with the established response format.
+Approve only if this corrected packet and pending Product Mechanics 037
+faithfully consolidate the cited settled authority, retain every §5 exclusion,
+and authorize no implementation or dependency.
+
+Reply exactly:
+
+```text
+GP-C06-RATIFICATION: approve
+```
+
+or:
+
+```text
+GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>
+```
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET -->
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET -->
