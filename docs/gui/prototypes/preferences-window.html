@@ -381,8 +381,10 @@ const qIn=document.getElementById('q'), qCount=document.getElementById('qcount')
 const NAVMAP={};document.querySelectorAll('#nav [data-s]').forEach(d=>NAVMAP[d.dataset.s]=d.textContent.trim());
 function esc(t){return t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function hl(t,q){const i=t.toLowerCase().indexOf(q);if(i<0)return esc(t);return esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+q.length))+'</mark>'+esc(t.slice(i+q.length));}
+function exClose(){const p=document.getElementById('explain');if(p)p.classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));}
 function runSearch(){
   const q=(qIn.value||'').trim().toLowerCase();
+  exClose();
   if(!q){results.style.display='none';results.innerHTML='';qCount.textContent='';
     document.querySelectorAll('section').forEach(sec=>sec.style.display='');
     const cur=document.querySelector('#nav .on');if(cur)show(cur.dataset.s);return;}
@@ -477,11 +479,38 @@ function exOpen(name,row){
       +'<div class="note" style="border-top:1px solid var(--bd-sub)">the same typed answer is returned to the CLI and MCP by one resolver query — this pane renders engine truth, it does not compute it</div>';
   } else {
     const prov=row&&row.nextElementSibling&&row.nextElementSibling.classList.contains('prov')?row.nextElementSibling.innerHTML:'';
-    let v=row?(row.querySelector('.ctl')||{innerText:''}).innerText.trim():'';
-    if(!v||/^(view in Project…|Edit…|Choose…|Show…|Restore…|Preview…)$/i.test(v)) v='<span style="color:var(--tx3)">not a machine value — this row opens its owning authority</span>';
-    b.innerHTML='<div class="eg">Effective value</div><div class="er">'+v+'</div>'
-      +'<div class="eg">Provenance</div><div class="note">'+prov+'</div>'
-      +'<div class="note" style="border-top:1px solid var(--bd-sub)">full contribution stacks are drawn for two representative rows in this prototype; every row resolves through the same query</div>';
+    const sel=row?row.querySelector('.sel[data-def]'):null;
+    const def=sel?sel.dataset.def:'', cur=sel?sel.textContent.trim():'';
+    const provTxt=prov.replace(/<[^>]*>/g,'');
+    const managed=/pinned|locked|kept ON/i.test(row?row.innerText:'');
+    const projectOwned=/Project policy/i.test(provTxt);
+    const changed=cur&&def&&cur!==def;
+    let v=cur||'<span style="color:var(--tx3)">not a machine value — this row opens its owning authority</span>';
+    const line=(src,val,note,win)=>'<div class="er '+(win?'win-row':'lost')+'"><b>'+src+'</b> — '+val+(win?' <span style="color:var(--rel)">· EFFECTIVE</span>':'')+'<span class="m">'+note+'</span></div>';
+    let stack='';
+    if(projectOwned){
+      stack=line('Project policy',cur||'governed value','owned by the Project · shown here, edited through Project authority (Q2 clause 5)',1)
+        +line('User','no value','machine preferences cannot contribute to a Project-owned fact',0)
+        +line('Organization','no directive','',0);
+    } else if(managed){
+      stack=line('Organization',cur,'pinned within your released authority — see the row for policy, author, and date',1)
+        +line('User',changed?cur:'no value','retained and inert while the pin applies; returns if it lifts',0)
+        +line('Descriptor default',def||'—','factory fact — inert',0);
+    } else {
+      stack=changed
+        ? line('User',cur,'set by you · reset returns the factory default',1)
+          +line('Organization','no directive','no organization contributes to this key on this machine',0)
+          +line('Installation','no value','',0)
+          +line('Descriptor default',def,'factory fact — inert while your value stands',0)
+        : line('Descriptor default',def||cur,'factory fact — effective because nothing else contributes',1)
+          +line('User','no value','you have not changed this',0)
+          +line('Organization','no directive','no organization contributes to this key on this machine',0)
+          +line('Installation','no value','',0);
+    }
+    b.innerHTML='<div class="eg">Effective value</div><div class="er"><b>'+v+'</b></div>'
+      +'<div class="eg">Every contribution · including absences</div>'+stack
+      +'<div class="eg">Row provenance</div><div class="note">'+prov+'</div>'
+      +'<div class="note" style="border-top:1px solid var(--bd-sub)">an absent source is shown as absent — it never masquerades as a contribution (Q9 clause 5) · the same typed answer reaches CLI and MCP</div>';
   }
   p.classList.add('on');
 }
