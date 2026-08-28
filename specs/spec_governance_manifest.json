@@ -180,6 +180,11 @@
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
    "notes": "Owner-adopted GP-C05 refined Option A interaction and accessibility contract extracted from Claude commits a061fca, e2127fa, and 586eb0d. Search-first discovery, row grammar, resolver explanation, setup/Start-page/Revision reconciliation, and responsive accessibility are governed without implementation or dependency authorization."
   },
+  "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+   "notes": "GP-C08 governed pre-ratification catalog. It assigns every validated V1 descriptor a stable key and complete authority/portability/migration/implementation disposition, explicitly defers unresolved candidates, and negatively classifies Project authority, operation input, restartable state, provider/query state, and store operations. Historical step alias: GP-C05A. No implementation or dependency is authorized."
+  },
   "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
