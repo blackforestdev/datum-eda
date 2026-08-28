@@ -1,300 +1,315 @@
 # GP-C06 Consolidated Global Preferences Ratification Packet
 
-> **Status:** owner-review packet produced by GP-C09; no GP-C06 disposition is
-> recorded yet.
+> **Status:** GP-C10 corrected packet; the GP-C06 owner boundary remains closed
+> until the bounded Claude reconciliation in §5 is committed and reviewed.
 >
-> **Tracker:** `dat-global-preferences-engine-qcv`.
+> **Mechanism record:** pending Product Mechanics 037 in
+> `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`.
 >
-> **Boundary:** ratification of the consolidated specification only. Approval
-> authorizes no implementation, dependency, migration execution, provider,
-> account/synchronization service, or prototype edit.
+> **Boundary:** specification ratification only. Approval authorizes no
+> implementation, dependency, migration execution, provider, account or
+> synchronization service, Frontier execution, or prototype edit.
 
 ## 1. Findings-first adversarial review
 
-### Finding 1 — the architecture is internally coherent
+### Finding 1 — the settled authority is coherent
 
-No contradiction survives among the settled identity, scope, management,
-precedence, seeding, state, validation, unknown-data, provenance, storage,
-interaction, catalog, and units contracts. They form one direction:
+Q1–Q11 plus the recorded Q5A exception define one stable subsystem-owned
+descriptor identity, typed source eligibility, user-released management,
+staged resolution, copy-once Project seeding, distinct Session/Context/state,
+typed refusal, unknown preservation, one provenance query, Revision carry-
+forwards, guided setup, and the Start page. There is no universal bypass.
+Absence never masquerades as a contribution. Project mutation and operation
+input remain outside the writable preference lattice.
 
-1. a subsystem-owned descriptor defines one stable setting identity;
-2. eligible typed sources contribute without redefining it;
-3. user-released controls and ordinary values resolve in separate stages;
-4. Project authority remains a different mutation system;
-5. the repository preserves all unlike authority and unknown material without
-   flattening it;
-6. GUI, CLI, and MCP inspect the same resolver result; and
-7. the V1 catalog declares every active descriptor or honestly classifies the
-   apparent setting as deferred or not a preference.
+Evidence: Q1–Q4 (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:210-274,385-458,500-648`);
+Q5 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:145-169,195-200`);
+Q5A (ibid. `:347-424`); Q11 (ibid. `:540-613`); Q6–Q10 (ibid.
+`:755-839,973-1068,1264-1402,1584-1686,1918-2030`).
 
-Evidence: Q1–Q4 approved contracts
-(`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:210-274,385-458,500-648`), Q5–Q10
-and Q11 approved contracts
-(`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:139-201,360-424,540-613,748-839,973-1068,1264-1402,1584-1686,1918-2030`), GP-C04
-(`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:81-462`), GP-C05
-(`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md:68-252`), and GP-C08
-(`specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:1-271`).
+### Finding 2 — Project seeding has one registered class
 
-### Finding 2 — Project authority is not weakened or duplicated
+`ProjectPolicySeed` is a registered descriptor class. All fifteen active
+seed-bearing catalog rows use it; the sixteenth seed-bearing row, a future
+`AdoptedDraftingStandard` seed, is also classified `ProjectPolicySeed` but
+deferred because its schema is unspecified. Presentation, Capability,
+WorkflowDefault, and every other class are ineligible to cross into Project
+authority. Genesis resolves an immutable snapshot, the Project mutation path
+copies it atomically, and a durable itemized receipt records every copy,
+omission, refusal, and source generation. Existing Projects never follow later
+profile changes.
 
-Preferences may read applicable Project Context, display read-only Project
-policy, and copy an explicit immutable seed snapshot at Project genesis. It
-cannot directly mutate Project policy, live-follow later profile changes, use a
-machine reset/import/restore to change a Project, or create a rival Revision or
-documentation lifecycle. The Project mutation authority owns the atomic seed
-copy and durable itemized receipt; after commit the Project owns every copied
-fact.
+The explicit optional `datum.projects.unit_policy_seed` aggregate wins a
+`ProjectDisplayUnits` seed transaction when it has an eligible contribution.
+When absent, the snapshot composes the six typed `datum.units.*` seed
+descriptors. Absence never shadows those chosen typed values, and the receipt
+records which path supplied each value.
 
-Evidence: approved Q2 clauses 5 and 9
-(`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:401-438`), Q5 clauses 1–8
-(`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:139-174`), Q6 Context and
-state law (ibid. `:764-817`), GP-C04 repository partitions and Project seam
-(`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:108-143,362-390`),
-and GP-C05 clauses 6, 27, and 32
-(`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md:81-98,151-200`).
+Evidence: Q5 clauses 1–8
+(`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:145-169`); corrected catalog
+(`GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:63-70,109-124,175-183`).
 
-### Finding 3 — management is consent-bounded, not enrollment authority
+### Finding 3 — management remains consent-bounded
 
-Organization Recommend, Constrain, Pin, and Lock directives are inert until the
-user grants a typed, revocable `AuthorityRelease`. Requests above the released
-level remain visible and inert; revocation lifts controls and re-resolves
-retained user values. Personal accessibility descriptors are the only
-organization-control carve-out class. Governed Project law remains independent
-of that machine grant.
+Recommend, Constrain, Pin, and Lock are inert beyond the user's typed,
+revocable `AuthorityRelease`. Revocation re-resolves retained values; requests
+above the release remain visible and inert. There is no universal bypass.
+Personal accessibility carve-outs require a named descriptor and an explicit
+justification; they are not blanket exceptions. Context only selects which
+already-authoritative fact applies and cannot create, widen, constrain, pin, or
+bypass Project or organization authority.
 
-Evidence: Q3 approved clauses 1–11
-(`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:516-567`), Q4 staged resolution
-(ibid. `:591-648`), Q7 provider-state law
-(`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:973-1068`), and the drawn
-Organization surface in `preferences-window.html#organization` at `a061fca`.
+Evidence: Q3/Q4 (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:516-648`); Q6 clause
+7 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:779-787`); real
+`preferences-window.html#organization` and `#workspace`.
 
-### Finding 4 — storage failure and exchange cannot manufacture authority
+### Finding 4 — storage and exchange cannot manufacture authority
 
-The local repository uses immutable generations, expected-generation writes,
-one commit point, current plus two validated predecessors, and exact opaque
-unknown preservation. An unreadable store is preserved rather than repaired in
-place; defaults may keep the session usable but are never written as if chosen.
-Portable import is previewed and per-key, refuses Capability and managed
-authority, and applies nothing until confirmation. Migration never substitutes
-an unchosen value. Restore is previewed, reversible, and distinct from import.
-No store operation touches Project policy or design data, requires a network, or
-blocks authoring.
+GP-C04 defines immutable generations, an expected-generation single-writer
+transaction, one head-promotion commit point, current plus two validated
+predecessors, and byte-faithful unknown preservation. A platform unable to
+provide required locking and atomic replacement refuses persistence rather than
+writing unsafely. Downgrade/newer-version and platform-ineligible material stays
+preserved and inactive. An unreadable store is never repaired in place.
+Capability-class values and managed authority refuse portable sources.
+Migration never substitutes a value the user did not choose. Restore is
+previewed, confirmed, preserves the current store, and is itself reversible.
+No store operation touches Project policy or design data, and none blocks
+authoring.
 
-Evidence: GP-C04 §§3–12
-(`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:81-462`) and Claude
-`preference-store-states-study.html` commit `586eb0d`, states at source lines
-78–103.
+Evidence: GP-C04 (`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:114-207,209-360,362-438`);
+Claude store states commit `586eb0d`.
 
-### Finding 5 — interaction consumes engine truth and remains accessible
+### Finding 5 — interaction consumes resolver truth
 
-The ratified surface is refined Option A at Claude commit `a061fca`: two columns,
-search pinned over the settings pane, row-complete label/description/control/
-provenance, search-first discovery over labels, descriptions, stable keys, and
-retired/alternate names, and one resolver-owned explanation beside the retained
-list. The full-width search variant is rejected. Keyboard order, reduced motion,
-narrow stacking, non-color proof, and announcements are controlled by `e2127fa`.
-Starting/changing search closes stale explanation; Escape restores the specified
-focus/navigation state. GUI, CLI, and MCP expose one typed semantic answer.
+GP-C05 refined Option A at Claude commit `a061fca` governs: two columns, search
+pinned above the settings pane, complete rows, and a resolver-owned explanation
+beside the retained list. Search-first discovery covers every row in every
+section, including planned and read-only Project-policy rows. Current labels,
+descriptions, stable keys, and retired/alternate names are searchable vocabulary;
+the reason for an alias/key match is visible. GUI, CLI, and MCP expose the same
+typed semantic answer. Accessibility/context states are governed by `e2127fa`,
+and store states by `586eb0d`.
 
 Evidence: GP-C05 clauses 1–39
-(`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md:68-226`), conformance exclusions
-(ibid. `:228-252`), `preferences-window.html` commit `a061fca`,
-`preferences-accessibility-study.html` commit `e2127fa`, and comparative
-`search-placement-study.html` commit `e1dd9c6`.
+(`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md:68-226`), especially search clause 7
+at `:102-104`; visual commits `a061fca`, `e2127fa`, and `586eb0d`.
 
-### Finding 6 — the V1 descriptor boundary is complete but pre-implementation
+### Finding 6 — the corrected catalog is bounded, not falsely complete
 
-GP-C08 registers 63 active schema-version-1 descriptors, all using atomic
-`Replace` merge in V1. Each row names stable key, owner, type/default,
-persistent/resolution scopes, Q3/Q4 eligibility, seed destination where any,
-apply behavior, consumers, portability, migration, and implementation
-disposition. The same catalog explicitly defers unresolved candidates and
-negatively classifies Project/document authority, operation input, Session/
-restartable/transient/onboarding/provider/repository state, store operations,
-unknown records, authority release, and read-only mirrors.
+The catalog registers 58 active V1 descriptors using `Replace` merge law. It
+explicitly defers the three clay rows (grid-size presets, persistent crosshair
+opening default, and opening-layer visibility), the two unreviewed agent-
+authority descriptors including unattended authority, the unspecified
+`AdoptedDraftingStandard` seed schema, and every other unproved candidate.
+Library, Symbol Editor, Footprint Editor, and Organization have zero active V1
+descriptors. Organization's authority/query rows are not preferences.
 
-Evidence: `specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:1-271`, marker
-`EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C08-V1-DESCRIPTOR-CATALOG`, commit
-`96579c5`. The earlier 60+59 intake remains historical clay, not authority
-(`GP_DRAFT_SETTINGS_CATALOG_SEED.md:1-174`).
+The historical intake was 60 current plus 59 planned. PM-036 moved Editor
+appearance themes from planned to active, producing the later 61 current plus
+58 planned comparison with the same 119 total. These are prototype intake
+counts, not registry counts. Effective provisional-watermark state remains
+Project/Revision/Publish authority; one future new-Project watermark
+`ProjectPolicySeed` candidate is deferred, so no datum is double-classified.
 
-### Finding 7 — the units seam preserves canonical design truth
+Evidence: catalog active table and deferrals
+(`GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:72-183,217-246`); historical seed
+(`GP_DRAFT_SETTINGS_CATALOG_SEED.md:1-174`); PM-036
+(`PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md:18-57`).
 
-One engine-owned Units service serves GUI, CLI, and MCP edge adapters. Authored
-length stays checked signed `i64` nanometers; system, unit, and precision are
-display/parser projections only. Explicit suffix parsing uses checked integer/
-rational arithmetic and refuses overflow, ambiguity, wrong quantity, and
-non-integral-nanometer results. Bare numbers require explicit resolved field
-context. Existing `_nm` schemas remain compatible until a governed adapter
-migration is authorized.
+### Finding 7 — units preserve exact design truth
 
-Evidence: `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:7-82`, marker
-`OWNER-REQUIREMENT:GLOBAL-PREFERENCES:SHARED-UNITS-ENGINE`; catalog unit
-descriptors `GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:91-104`; canonical IR
-evidence cited by the units requirement at `docs/CANONICAL_IR.md:59-77` and
-`crates/engine/src/ir/geometry.rs:3-15`.
+One engine-owned Units service serves GUI, CLI, and MCP. Authored length remains
+checked signed `i64` nanometers. Per-quantity overrides may deliberately choose
+the other measurement system and must be returned/rendered as explicit
+cross-system overrides, never normalized away. Parse/format results expose the
+cross-system state plus quantity, token, explicit/contextual unit, resolved unit,
+exact canonical value, precision, and refusal provenance.
 
-### Finding 8 — one visual inconsistency remains bounded and non-authoritative
+Evidence: shared Units requirements 1–12
+(`GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:34-74`), especially requirements 4 and 9
+at `:43-46,62-65`; canonical IR (`docs/CANONICAL_IR.md:59-77`).
 
-The Viewport airwire-culling row's prose says factory **Off**, while its current
-control visually displays **On**. GP-C08 deliberately records the descriptor
-default as `false` and requires a bounded Claude reconciliation before
-implementation. This mismatch does not authorize Codex to edit the prototype,
-does not alter any other descriptor, and is excluded from approval as visual
-proof of the current selected value. The row's written default and catalog law
-remain the proposed schema fact for owner ratification.
+### Finding 8 — visual evidence is authoritative only where settled
 
-Evidence: `preferences-window.html:166` at `a061fca` and
-`GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md:114,123-127,264-267`.
+Claude commit `d414462` corrected the airwire-culling control to factory Off;
+there is no remaining airwire mismatch or ratification exception. Claude commit
+`ed3df1b` corrected all three adopted-standard Context banners to Q6 clause 7 and
+made search-result controls operate in place, but the current window still
+carries three clay preference rows, renders excluded state/agent rows with
+registered-looking keys, and lacks searchable keys on eleven active catalog
+rows. Those claims are excluded from this ratification. The bounded
+reconciliation in §5 must land before this packet opens an owner boundary.
 
-### Finding 9 — external evidence is support, not imported authority
+Evidence: `preferences-window.html:113-127,150,153,166-169,239-276` after
+`d414462` and `ed3df1b`, and
+Q6 clause 7 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:779-787`).
 
-GP-C02 uses primary/authoritative XDG, Apple, Microsoft, GNOME, Android,
-Kubernetes, Qt, SQLite, Protocol Buffers, IETF, W3C/WAI, NIST, and regulated
-configuration sources to derive typed requirements for storage separation,
-atomicity, expected generation, unknown preservation, conflicts, accessibility,
-and audit. GP-C02B uses official SOLIDWORKS/PDM, Altium, Revit, and KiCad sources
-as domain-peer evidence for selective management and portability. Peer behavior
-is not Datum doctrine, and citations adopt no library, protocol, provider, or
-dependency.
+### Finding 9 — this must ratify through Product Mechanics
 
-Evidence: `GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:67-105,111-403,408-438`;
-`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:64-170,265-430`; GP-C04's explicit
-source-strength limit
-(`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:69-79`).
+Research and packets preserve evidence, but they cannot ratify mechanism.
+Pending Product Mechanics 037 contains the proposed mechanism and explicit
+non-decisions. GP-C06 approval would promote that numbered record to ratified
+doctrine; it would not ratify from `research/` alone. Product Mechanics 029
+still requires a separate numbered decision for any new third-party dependency.
 
-### Finding 10 — mechanism and dependency authority remain deliberately open
-
-The specification does not select a GUI toolkit, cryptographic package format,
-credential facility, organization transport, identity/account provider,
-synchronization service, network protocol, or third-party persistence library.
-GP-C04 specifies canonical local semantics but adopts no cited implementation.
-Product Mechanics 029 still requires a separate numbered owner decision before
-any new third-party code dependency is added, fetched, vendored, or linked.
-
-Evidence: Q1/Q2 non-decisions
-(`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:244-250,433-438`), GP-C04 boundary
-and synchronization exclusions
-(`GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md:12-22,331-360`),
-GP-C05 boundary (`GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md:12-25`), and
-`PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md:20-72`.
+Evidence: `CLAUDE.md` specification-governance law; pending
+`docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`; PM-029
+(`PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md:20-72`).
 
 ## 2. Complete GP-C03 disposition ledger
 
-Canonical integer questions Q1–Q11 are eleven dispositions. Q5A is the sole
-additional recorded sub-letter exception, so this ledger contains twelve rows.
-No question is reopened by consolidation.
+Q1–Q11 are the eleven canonical integer dispositions. Q5A is the sole historical
+sub-letter exception and remains as recorded; no new sub-letter identity is
+created and no disposition is reopened.
 
-| Boundary | Owner disposition and resulting law | Controlling evidence | Visual authority |
-|---|---|---|---|
-| Q1 | Q1-A: one stable nonlocalized key and one subsystem-owned descriptor; providers contribute but cannot redefine it | `GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:210-274` | identity vocabulary later rendered in `preferences-window.html` `a061fca` |
-| Q2 | Q2-A: typed source families/classes; Project mutation, restartable/transient state, and operation input stay outside writable Preferences | ibid. `:385-458` | `preferences-ux-study.html#px-v4` archival structure |
-| Q3 | revised AuthorityRelease model: Recommend/Constrain/Pin/Lock only within a user-held five-level revocable release; accessibility carve-out | ibid. `:500-567` | `preferences-ux-study.html#px-v5` commit `06f5931`; real `#organization` at `a061fca` |
-| Q4 | Q4-A/PX-V6: eligibility, then controls, then ordinary values; User outranks Recommendation/Installation/default; no arrival-order conflict resolution | ibid. `:591-648` | `preferences-ux-study.html#px-v6` commit `06f5931`; Q9 pane at `70bf2a2` |
-| Q5 | Q5-A: one immutable selected seed snapshot, atomic Project-authority copy, durable itemized receipt, no live following | `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:139-201` | real `#files-projects`, `#revision`, `#publish-space`, `#units`; archival PX-V7 |
-| Q5A | Q5A-B+C: guided-in-place is sole setup surface; zero required choices; replayable machine-local state; optional assistant proposals apply only after acceptance | ibid. `:360-424` | `guided-setup-study.html` commits `b5cac07` and `b8f5a7a`; real `#files-projects` |
-| Q6 | Q6-A: distinct Session, Context, operation input, restartable state, and transient state with bounded lifetimes and accessibility | ibid. `:748-839` | real `#workspace/#rules-checks/#output/#files-projects`; archival PX-V8 |
-| Q7 | Q7-A: descriptor validation, correctable refusal, protected-source exclusion, explicit stale/unavailable/expired/revoked provider states, no unrelated authoring block | ibid. `:973-1068` | real `#terminal/#agents/#organization`; archival PX-V9 |
-| Q8 | Q8-A/P2: byte-faithful inactive unknowns, explicit one-live-identity alias migration, non-deletion, export-first removal, dedicated Manage preferences home | ibid. `:1264-1402` | `preferences-window.html` `54f2aba`; placement study `cd12baa`; adopted real P2 at `a061fca` |
-| Q9 | Q9-A: one read-only resolver query returns effective value, all contributions/dispositions, Q4 reason, descriptor/Context facts, actions, and explicit redaction identically to GUI/CLI/MCP | ibid. `:1584-1686` | real explanation commit `70bf2a2`; archival PX-V11 |
-| Q10 | Q10-A/S2/R1: Revision visibility is Presentation only; ordinary onboarding is machine-local; sufficiently released teaching policy may require dismissible non-gating replay once per Project | ibid. `:1918-2030` | `revision-carryforward-study.html` `7089ee8`; real `#revision`; unchanged Release arm bar |
-| Q11 | Q11-A (historical Q5B-A): one local non-tabbed Start page with canonical actions, engine-truth Recents, read-only seed rail, and no news/marketing/alerts, telemetry, or startup network load | ibid. `:540-613` | `start-page-study.html` `15328f4`; real Startup row at `#files-projects` |
+| Boundary | Owner disposition and resulting law | Evidence |
+|---|---|---|
+| Q1 | Q1-A: stable key and subsystem-owned descriptor | `GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:210-274` |
+| Q2 | Q2-A: typed sources/classes; Project mutation, state, and operation input excluded | ibid. `:385-458` |
+| Q3 | user-held, typed, revocable AuthorityRelease; named accessibility justification | ibid. `:500-567` |
+| Q4 | Q4-A: eligibility → controls → ordinary values; no arrival-order win | ibid. `:591-648` |
+| Q5 | Q5-A: `ProjectPolicySeed`, immutable copy-once snapshot, receipt, no following | `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:145-169,195-200` |
+| Q5A | Q5A-B+C: guided in place, zero required choices, replayable local state, proposal-only assistant | ibid. `:347-424` |
+| Q6 | Q6-A: distinct Session, Context, operation input, restartable, and transient state | ibid. `:755-839` |
+| Q7 | Q7-A: validation/refusal and explicit provider states without unrelated blocking | ibid. `:973-1068` |
+| Q8 | Q8-A/P2: unknown preservation, explicit alias migration, non-deletion, Manage preferences home | ibid. `:1264-1402` |
+| Q9 | Q9-A: one complete resolver-owned provenance query for GUI/CLI/MCP | ibid. `:1584-1686` |
+| Q10 | Q10-A/S2/R1: Presentation-only visibility; machine-local ordinary onboarding; eligible non-gating per-Project teaching replay | ibid. `:1918-2030` |
+| Q11 | Q11-A (historical Q5B-A): local Start page, engine-truth Recents/seed preview, explicit exclusions | ibid. `:540-613` |
 
-## 3. Consolidated normative contract
+## 3. Exact consolidated contract
 
-Approval of GP-C06 ratifies the following bounded clauses as one specification:
+Approval would establish only these clauses:
 
-1. The approved GP-C03 Q1–Q11 dispositions plus Q5A remain controlling exactly
-   as cited in §2; consolidation neither rewrites nor broadens them.
-2. GP-C04 is the controlling persistence, migration, recovery, exchange,
-   synchronization-conflict, audit, and Project-policy-seam contract. Its
-   rendered clauses at `586eb0d` are part of the ratified visible behavior.
-3. GP-C05 refined Option A is the controlling interaction/visual contract at
-   `a061fca`, with accessibility/context states controlled by `e2127fa`, store
-   states by `586eb0d`, and full-width search placement rejected.
-4. GP-C08 is the complete initial V1 descriptor catalog: 63 active descriptors,
-   all other candidates explicitly deferred or negatively classified. A later
-   catalog amendment requires governed evidence and cannot occur as
-   implementation-time improvisation.
-5. The shared Units service requirement is controlling: one exact engine-owned
-   conversion/parser/formatter seam, signed `i64` nanometer authored truth, typed
-   per-quantity display projection, checked parsing, and GUI/CLI/MCP parity.
-6. Descriptor defaults are schema facts, not stored user choices. Reading,
-   setup, recovery, import, migration, or first run cannot manufacture an
-   explicit selection.
-7. Existing Projects own their policy and design data. Preferences may inspect
-   them read-only or seed a new Project once through its mutation authority and
-   receipt; no machine operation may live-update, reset, restore, migrate, or
-   synchronize an existing Project.
-8. Product Mechanics 034 remains the sole Product Revision Engine authority.
-   Preferences may seed revision policy at genesis and control presentation/
-   guidance only; it cannot mint revisions, mutate journals/records, weaken
-   Release gates, or create a competing lifecycle.
-9. Product Mechanics 035 remains the documentation-system authority for the
-   Project's `AdoptedDraftingStandard`. Preferences may provide a receipted seed
-   and read-only doorway only; it never owns or live-updates that object.
-10. Product Mechanics 036 remains the schematic drawing-theme authority. The
-    theme is one persisted machine Presentation selection over complete
-    governed Dark/Light systems, remains outside Project/drafting-standard law,
-    and cannot alter Publish/print output or imply a Light board theme.
-11. Every visible Preferences behavior remains non-blocking to Design authoring;
-    invalid input, unavailable providers, corrupt stores, setup, onboarding,
-    import conflicts, and inspection cannot become an unrelated authoring gate.
-12. Search, explanation, validation, refusal, management, storage states, setup,
-    Start page, and Revision guidance retain the exact accessibility law in
-    GP-C05 and their controlling Claude renders. Material visual change remains
-    render-first and Claude-owned.
-13. The airwire-culling selected-control mismatch in Finding 8 remains a bounded
-    visual reconciliation debt. Approval ratifies factory `false` from the row's
-    written law and catalog, not the prototype's contradictory displayed `On`.
-14. Approval authorizes **no implementation** and does not place or execute any
-    implementation slice. Only GP-C07 may later propose bounded Frontier work,
-    and execution still requires explicit owner authorization.
-15. Approval authorizes **no dependency** or licensing exception. Product
-    Mechanics 029 remains controlling for every new third-party dependency.
-16. Approval selects no provider, account/identity system, network transport,
-    synchronization service, credential facility, GUI toolkit, cryptographic
-    package, or implementation ABI.
-17. Approval does not weaken, amend, supersede, or reopen Product Mechanics 034,
-    035, or 036; where a Preferences projection touches their subject, those
-    doctrine boundaries prevail.
+1. Pending Product Mechanics 037 becomes the numbered controlling mechanism;
+   the cited GP-C03, GP-C04, GP-C05, GP-C08, and Units artifacts remain its
+   evidence and bounded contracts, not independent ratification authority.
+2. There is no universal bypass. Eligibility, released control authority, and
+   ordinary-value resolution remain distinct, and typed conflict never resolves
+   by arrival order.
+3. Absence never masquerades as a contribution. Defaults remain descriptor
+   truth and are not serialized as user choices by reading, setup, recovery,
+   import, migration, or first run.
+4. `ProjectPolicySeed` is registered. Only that class may cross Q5; all fifteen
+   active seed-bearing descriptors use it, while the sixteenth
+   `AdoptedDraftingStandard` seed remains deferred pending schema.
+5. An eligible explicit `datum.projects.unit_policy_seed` aggregate wins the
+   `ProjectDisplayUnits` seed transaction; when absent, the six typed
+   `datum.units.*` seeds compose it. The receipt discloses the path and sources.
+6. Units requirements 4 and 9 are controlling: a valid cross-system
+   per-quantity override remains explicit and parse/format results carry its
+   complete typed provenance.
+7. GP-C04's expected-generation exclusive-writer lease and sole head-promotion
+   commit point are mandatory; no supported network or local multi-writer merge
+   is implied.
+8. A platform lacking required atomic replace/locking refuses persistent
+   mutation. Downgrade/newer-version and platform-ineligible values remain exact,
+   inactive preserved material; they are neither deleted nor guessed active.
+9. No unreadable store is repaired in place; unknown data survives every path;
+   portable Capability/managed sources refuse; migration substitutes no unchosen
+   value; restore is previewed and reversible; Project policy/design data remain
+   untouched; none blocks authoring.
+10. GP-C05 refined Option A remains controlling. Search scope includes every
+    current, planned, and read-only Project-policy row; stable keys and retired
+    names are first-class searchable vocabulary.
+11. Skip is available at every step, with Esc as equivalent persistent
+    dismissal. The minimum setup choice set is zero, and setup never blocks,
+    prompts outside the invoked guide, delays, or degrades Design authoring.
+12. Preferences → Files & Projects exposes the drawn **Run setup again**
+    control and `completed`/`dismissed`/`never run` machine-local state. Replay
+    walks the same real rows and applies no setting by itself.
+13. Guided setup uses a static outline with no window motion, follows the real
+    keyboard tab order, and never substitutes accent color for focus. Optional
+    assistant help proposes typed values and applies nothing until accepted.
+14. Every personal accessibility management carve-out requires a named
+    descriptor and explicit descriptor-level justification; no blanket
+    accessibility class bypass exists.
+15. PM-034's invariant is controlling verbatim: the Revision Engine “never
+    blocks, prompts, or delays Design authoring,” and “ignoring the revision
+    engine entirely is a supported, first-class workflow.” Preferences shall not
+    strengthen Revision control, visibility, setup, or guidance into an
+    authoring gate.
+16. Preferences may seed revision policy once and project Revision truth or
+    non-gating guidance; it cannot mint identities, mutate journals/records,
+    weaken Release gates, or create a competing lifecycle.
+17. PM-035 retains `AdoptedDraftingStandard` Project authority. Context may
+    select an applicable already-authoritative value but cannot constrain, pin,
+    or live-update that Project fact through Preferences.
+18. PM-036 retains whole-system schematic theme as machine Presentation state;
+    it cannot alter Project/drafting-standard authority, board theme, or
+    Publish/print output.
+19. The corrected catalog ratifies 58 active descriptors. The explicit §5
+    limits remain excluded and require later governed amendment.
+20. Approval authorizes no implementation, execution slice, dependency, license
+    exception, provider, account/sync service, transport, credential facility,
+    GUI toolkit, cryptographic package, storage library, or prototype edit.
+21. Approval does not weaken, amend, supersede, or reopen PM-034, PM-035, or
+    PM-036. Their doctrine prevails over any Preferences projection.
 
 ## 4. Product Mechanics preservation matrix
 
-| Doctrine | Authority preserved | Preferences may do | Preferences may not do | Evidence |
+| Doctrine | Preserved invariant | Preferences may do | Preferences may not do | Evidence |
 |---|---|---|---|---|
-| PM-034 | configuration items, Changes, baselines, engineering revisions, Release, document issues, standing, reproducibility, audit | seed explicit new-Project revision policy; show/hide projections; provide non-gating guidance; query resolved policy | mint identity, alter journal/records, bypass gates, turn visibility/onboarding into Revision authority | `PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md:13-97`; Q5/Q10; GP-C04 §10 |
-| PM-035 | Project documentation authority owns `AdoptedDraftingStandard`; standards registry owns cited basis | copy one receipted seed; show read-only doorway/context | live-follow, reset/import/restore Project standard, redefine revision/status law | `PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md:13-58`; Q5; catalog publish seeds |
-| PM-036 | schematic theme is whole-system machine Presentation state; Dark default; Light warm paper; print independent | persist/reset/query theme and provenance | free-edit palette, alter board theme, Publish/print, Project policy, drafting standard | `PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md:13-70`; catalog `datum.schematic.theme` |
+| PM-034 | Under non-earlier-control profiles, Revision “never blocks, prompts, or delays Design authoring”; ignoring it is supported first-class workflow | seed explicit new-Project revision policy; show/hide projection; non-gating guidance/query | strengthen Revision into authoring gate; mint identity; alter records; weaken Release gates | `PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md:173-183`; Q5/Q10 |
+| PM-035 | Project documentation owns `AdoptedDraftingStandard` | copy a defined receipted seed; show read-only Context | constrain/pin via machine Preferences; live-follow; reset/import/restore Project standard | `PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md:13-58`; Q5/Q6 |
+| PM-036 | schematic theme is whole-system machine Presentation state; print independent | persist/reset/query the governed Dark/Light choice | free-edit palette; alter board, Publish, Project, or drafting-standard authority | `PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md:13-70` |
 
-## 5. Review limits and successor boundary
+## 5. Review limits and Claude reconciliation gate
 
-This packet is complete for specification ratification but intentionally not an
-implementation plan. GP-C07 remains pending and may only place bounded future
-work after owner approval. It must retain separate authorization for execution,
-the PM-029 dependency gate, Claude ownership of visual truth, conformance proof
-for every contract above, and the ordinary Frontier selector/claim discipline.
+The following are explicitly **not ratified**:
 
-No completion evidence is recorded for GP-C06 by preparing this packet. Only an
-explicit owner response below may disposition the boundary.
+- agent-authority descriptors, including owner-enabled unattended authority and
+  the unattended-tool allowlist, because no dedicated security/authority owner
+  review has occurred;
+- the `AdoptedDraftingStandard` `ProjectPolicySeed` schema, because its exact
+  typed value and registry identity are unspecified;
+- Library, Symbol Editor, Footprint Editor, and Organization descriptor sets,
+  because each has zero active V1 descriptors;
+- the clay grid-size-preset, persistent-crosshair-opening-default, and
+  opening-layer-visibility rows; and
+- any future provisional-watermark seed schema, provider, implementation,
+  dependency, or execution plan.
 
-## 6. Owner response
+Before the GP-C06 owner boundary reopens, Claude must reconcile this bounded
+list in `docs/gui/prototypes/preferences-window.html`:
+
+1. Preserve `ed3df1b`'s Q6 clause 7 Context wording at `#workspace`,
+   `#schematic`, and `#pcb-board`: applicability only, never organization-style
+   constrain/pin, universal rank, or machine authority over Project policy.
+2. At the Grid size presets, Crosshair style, and Default layer visibility rows,
+   render their excluded/deferred status so no clay row appears ratified as an
+   active V1 preference, and remove any registered-key implication while
+   preserving the existing session/runtime facts.
+3. At `#agents`, render Agent authority level and Unattended agent tool allowlist
+   as unratified pending authority/security review rather than registered V1
+   descriptors; preserve their protected-source warning as candidate evidence.
+4. Remove registered-key treatment from Guided setup because its
+   completed/dismissed/never-run value is Q5A machine-local onboarding state,
+   not a descriptor.
+5. Reconcile stable-key search vocabulary for every active catalog row. The
+   currently missing active keys are `datum.files.startup_mode`,
+   `datum.projects.template_seed`, `datum.publish.set_name_prefill`,
+   `datum.terminal.cursor`, `datum.terminal.feedback`, `datum.terminal.keymap`,
+   `datum.terminal.notifications`, `datum.terminal.open_target_policy`,
+   `datum.terminal.osc52_write`, `datum.terminal.text_rendering`, and
+   `datum.terminal.theme`. Retire the conflicting prototype-only identities
+   `datum.projects.startup_view`, `datum.projects.template_set`, and
+   `datum.publish.publish_set_naming` rather than creating duplicate descriptors.
+6. In Manage preferences, preserve reset/import/export as protected store
+   operations rather than descriptor/classification authority.
+
+Expected proof is a Claude-owned commit naming these anchors, with no unrelated
+visual behavior changed. Codex will then review the complete evidence route and
+refresh its digest; Codex will not edit or mark the prototype.
+
+## 6. Owner response (closed pending §5)
 
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06-CONSOLIDATED-PACKET -->
 
-Approve only if this packet faithfully consolidates the cited settled authority,
-states the unresolved limits honestly, and preserves every explicit exclusion.
+No GP-C06 response is requested while the §5 render gate is open. After the
+Claude reconciliation lands and the route is green, the Frontier may reopen
+this exact one-question owner boundary with the established response format.
 
-Reply exactly:
-
-```text
-GP-C06-RATIFICATION: approve
-```
-
-or:
-
-```text
-GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>
-```
-
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET -->
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET -->

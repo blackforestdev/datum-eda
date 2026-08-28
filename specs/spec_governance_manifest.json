@@ -183,12 +183,12 @@
   "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "GP-C09 findings-first consolidated packet for the GP-C06 owner boundary. It traces all Q1-Q11 plus Q5A dispositions, GP-C04, GP-C05 refined Option A, GP-C08, shared units, visual authority, source-strength limits, and PM-034/035/036 preservation while authorizing no implementation or dependency."
+   "notes": "GP-C10-corrected findings-first packet for the GP-C06 owner boundary. It restores ProjectPolicySeed, exact owner-forced and PM-034 law, GP-C04/GP-C05/units clauses, citations, counts, review limits, and a Claude render gate while authorizing no implementation or dependency."
   },
   "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-   "notes": "GP-C08 governed pre-ratification catalog. It assigns every validated V1 descriptor a stable key and complete authority/portability/migration/implementation disposition, explicitly defers unresolved candidates, and negatively classifies Project authority, operation input, restartable state, provider/query state, and store operations. Historical step alias: GP-C05A. No implementation or dependency is authorized."
+   "notes": "GP-C10-corrected pre-ratification catalog: 58 active V1 descriptors, 15 active ProjectPolicySeed rows plus one deferred seed-bearing schema, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Historical step alias: GP-C05A. No implementation or dependency is authorized."
   },
   "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
    "class": "governed",
@@ -797,6 +797,12 @@
     "controlling": true,
     "progress_anchor": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
     "notes": "Ratifies schematic drawing-theme selection as a persisted machine Presentation preference over complete governed Dark and Light contrast systems; preserves board and Publish/print boundaries and adds no dependency or implementation authorization."
+  },
+  "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md": {
+    "class": "pending",
+    "controlling": false,
+    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
+    "notes": "Pending GP-C06 numbered mechanism record for typed Global Preferences authority. It becomes doctrine only after explicit owner ratification and currently authorizes no implementation, dependency, provider, service, execution, or prototype edit."
   },
   "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
    "class": "governed",

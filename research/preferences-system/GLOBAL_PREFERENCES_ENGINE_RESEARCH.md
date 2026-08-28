@@ -325,6 +325,19 @@ authorizes no implementation or dependency and does not weaken Product Mechanics
 034, 035, or 036. GP-C06 remains pending until this artifact is committed and
 listed as completion evidence for GP-C09.
 
+<!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C10 -->
+### GP-C10 — Ratification correction and doctrine record
+
+Close the revised GP-C06 boundary and correct the catalog, consolidated packet,
+citations, count reconciliation, review limits, and newly reconciled Claude
+visual evidence as one governed change. Restore `ProjectPolicySeed` and every
+owner-forced phrase named by the revision; add explicit unit-seed precedence,
+PM-034 non-blocking law, GP-C04/GP-C05/units clauses, and a numbered Product
+Mechanics decision record. Exclude unsettled clay and adopted-standard
+co-ownership claims pending bounded Claude reconciliation. Refresh the complete
+workspace-documentation-and-revision digest in the same correction transaction,
+never as a separate blessing. GP-C06 may reopen only after GP-C10 is committed.
+
 <!-- REQ:GLOBAL-PREFERENCES-SPEC:GP-C06 -->
 <!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C06:GP-C06 -->
 ### GP-C06 — Consolidated owner ratification
