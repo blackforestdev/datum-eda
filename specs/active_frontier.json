@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,21 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q7-20260827",
-        "claimed_at": "2026-08-27T23:59:23-07:00",
-        "heartbeat_at": "2026-08-27T23:59:23-07:00",
-        "expires_at": "2026-08-28T07:59:23-07:00",
-        "scope": [
-          "record GP-C03-Q6-A owner approval",
-          "prepare the visual-anchored GP-C03-Q7 refusal and provider-degradation packet",
-          "no prototype HTML mutation"
-        ],
-        "worktree": ".",
-        "head": "3dae278e0acc244086838597dce7c9dcefb799d2"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5306,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Record approved GP-C03-Q6-A typed lifetime law, then prepare GP-C03-Q7 validation, refusal, protected-source, and unavailable-provider behavior from the real Preferences window and archival PX-V9; preserve Q8-Q10 as queued and undispositioned.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q6 and Q11, then decide GP-C03-Q7 from the real Preferences window and archival PX-V9: approve honest validation/refusal, protected-source enforcement, declared offline validity, and visible stale/unavailable/expired/revoked re-resolution behavior, or provide a bounded revision; preserve Q8-Q10 as queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5342,7 +5327,21 @@
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q6-APPROVED"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing Preferences #terminal, #agents, and #organization; the PM-036 canvas precedent; archival PX-V9; written evidence; rejected alternatives; and the fifteen bounded clauses, reply exactly `GP-C03-Q7: approve Q7-A` or `GP-C03-Q7: revise — <required validation, refusal, protected-source, offline-validity, expiry/revocation, fallback, or accessibility correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q7",
+                  "question": "Should Datum refuse invalid values without discarding the user's correction context, reject ineligible sources before precedence, keep the last validated provider generation visibly stale only through its declared offline-validity law, distinguish unavailable, expired, and revoked states, and re-resolve retained eligible sources without treating disconnect as policy removal or blocking unrelated Design?",
+                  "recommended_response": "Approve Q7-A because it is the sole candidate consistent with the real protected rows and managed-status states, PM-036, archival PX-V9, approved Q1-Q4, explicit offline policy, local completeness, and accessible failure honesty; immediate network fail-closed or silent coercion/fallback would require new owner law and a different Claude render.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q7"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
