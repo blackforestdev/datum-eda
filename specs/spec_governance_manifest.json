@@ -130,6 +130,11 @@
    "progress_anchor": "PRODUCT-REVISION-ENGINE",
    "notes": "Bounded REV-I00 through REV-I12 implementation, migration, conformance, audit, reproduction, and production-acceptance plan. Planning only: execution remains blocked on the Global Preferences specification and explicit owner authorization."
   },
+  "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
+   "class": "governed",
+   "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
+   "notes": "GP-C07 bounded shared-Units and Global Preferences implementation, migration, recovery, conformance, accessibility, real-project, visual, and production-acceptance plan. Every execution slice has a separate owner gate; no implementation or dependency is authorized by placement."
+  },
   "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "PRODUCT-REVISION-SPEC",
@@ -139,6 +144,11 @@
    "class": "governed",
    "progress_anchor": "PRODUCT-REVISION-SPEC",
    "notes": "Owner-ratified REV-C07 evidence packet promoted into Product Mechanics 034 and the governed Product Revision Engine specification. It remains provenance, not implementation or dependency authorization."
+  },
+  "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-ENGINE",
+   "notes": "Findings-first REV-I00 baseline and exact owner response boundary. Approval may authorize REV-I01 technical integrity only; later Revision slices, Preferences, Publish, GUI work, providers, and dependencies remain unauthorized."
   },
   "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
    "class": "governed",

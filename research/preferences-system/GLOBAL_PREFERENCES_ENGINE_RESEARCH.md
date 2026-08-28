@@ -366,6 +366,23 @@ real-project, and production-acceptance slices on the Frontier. Keep execution
 behind a separate explicit owner authorization and Product Mechanics 029 for
 any new dependency.
 
+The governed decomposition is
+`specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md`. It places the shared
+Units service as its own cross-cutting prerequisite before Global Preferences,
+then alternates a separate owner-decision gate before every execution slice.
+The Preferences program proves typed resolution, exact unknown preservation,
+portable/Project Capability refusal, copy-once receipted seeding, one
+GUI/CLI/MCP explanation result, Claude-render screenshot conformance,
+accessibility, real-project behavior, and production acceptance. GP-C06's
+unreviewed agent authority, three clay rows, unspecified adopted-standard and
+watermark seeds, and four zero-descriptor subsystems remain named blocked work.
+
+The same planning transaction prepares the findings-first
+`research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md`.
+That packet uses PM-037 only as the now-complete Project-policy seam and asks
+the owner to authorize at most REV-I01 technical integrity. It does not start
+Revision implementation.
+
 ## Required outcome
 
 Completion yields an owner-ratified Global Preferences authority and a bounded,
