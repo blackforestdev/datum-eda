@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q9-packet-20260828",
-        "claimed_at": "2026-08-28T06:57:06-07:00",
-        "heartbeat_at": "2026-08-28T06:57:06-07:00",
-        "expires_at": "2026-08-28T14:57:06-07:00",
-        "scope": [
-          "reconcile Claude commit 70bf2a2 into the evidence route",
-          "draft the GP-C03-Q9 candidates and bounded clauses against the real window",
-          "open only the Q9 owner boundary after verification",
-          "no prototype HTML mutation and no Q10 disposition"
-        ],
-        "worktree": ".",
-        "head": "70bf2a2019455f601980d0ce36e2831a6154cf1c"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5307,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Reconcile Claude commit 70bf2a2, then draft GP-C03-Q9 candidates and exact bounded resolver-query/provenance clauses from the real-window selected-row explanation, preserving Q1-Q8 and Q11 and leaving Q10 undispositioned.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q8 and Q11, then decide GP-C03-Q9 from the real-window 70bf2a2 render: approve one resolver-owned typed complete explanation shared by GUI, CLI, and MCP as Q9-A, or provide a bounded revision; preserve Q10 as queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5378,8 +5362,31 @@
               {
                 "kind": "commit",
                 "revision": "70bf2a2"
+              },
+              {
+                "kind": "commit",
+                "revision": "eb19b3e"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-PACKET"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing the real Preferences selected-row explanation at 70bf2a2, PM-036, archival PX-V11, written evidence, rejected alternatives, and the seventeen bounded clauses, reply exactly `GP-C03-Q9: approve Q9-A` or `GP-C03-Q9: revise — <required query fields, contribution disposition, resolution reason, user-action, parity, redaction, or accessibility correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q9",
+                  "question": "Should one resolver-owned typed query provide the effective value, every winning and non-effective contribution/control with its disposition and Q4 reason, descriptor facts, and remaining user actions to GUI, CLI, and MCP, with Preferences opening that answer beside the selected row?",
+                  "recommended_response": "Approve Q9-A because it exactly matches the real-window and archival renders, preserves Q4's complete queryability, and prevents GUI, CLI, or MCP from reconstructing or truncating engine provenance.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q9"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",

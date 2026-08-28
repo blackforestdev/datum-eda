@@ -2,8 +2,8 @@
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
 > Q8 approved. Claude commit `70bf2a2` closes the Q9 render gap in the real
-> Preferences window, and the Q9 resolver-query packet is prepared against that
-> surface. Q5B is the historical alias for Q11. Specification only; no
+> Preferences window, and the Q9 resolver-query packet is the active owner
+> boundary against that surface. Q5B is the historical alias for Q11. Specification only; no
 > implementation, dependency, Q9 disposition, or Q10 disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
@@ -1669,4 +1669,6 @@ or:
 GP-C03-Q9: revise — <required query fields, contribution disposition, resolution reason, user-action, parity, redaction, or accessibility correction>
 ```
 
-<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-PACKET-DRAFT -->
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-DRAFT -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-PACKET -->
