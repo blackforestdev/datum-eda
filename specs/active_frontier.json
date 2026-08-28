@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,6 +5192,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-q9-packet-20260828",
+        "claimed_at": "2026-08-28T06:57:06-07:00",
+        "heartbeat_at": "2026-08-28T06:57:06-07:00",
+        "expires_at": "2026-08-28T14:57:06-07:00",
+        "scope": [
+          "reconcile Claude commit 70bf2a2 into the evidence route",
+          "draft the GP-C03-Q9 candidates and bounded clauses against the real window",
+          "open only the Q9 owner boundary after verification",
+          "no prototype HTML mutation and no Q10 disposition"
+        ],
+        "worktree": ".",
+        "head": "70bf2a2019455f601980d0ce36e2831a6154cf1c"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5292,8 +5308,8 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "pending",
-            "action": "Have Claude render GP-C03-Q9 in the real Preferences window: selecting a representative setting row opens the resolver-owned full provenance explanation beside the retained list, visibly separating the effective winner from overridden/inert contributions and preserving Q1-Q8 and Q11; then reconcile the evidence route before Codex drafts any Q9 candidate or clause, while Q10 remains undispositioned.",
+            "status": "in_progress",
+            "action": "Reconcile Claude commit 70bf2a2, then draft GP-C03-Q9 candidates and exact bounded resolver-query/provenance clauses from the real-window selected-row explanation, preserving Q1-Q8 and Q11 and leaving Q10 undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5358,6 +5374,10 @@
                 "kind": "document",
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-RENDER-GAP"
+              },
+              {
+                "kind": "commit",
+                "revision": "70bf2a2"
               }
             ]
           },

@@ -251,12 +251,12 @@ defaults, organization constraints, Project-policy seeding, contextual
 resolution, validation/refusal, unknown-field behavior, and the query surface.
 Q1-Q8 and Q11 are approved and remain closed. Q8-A/P2 establishes opaque
 inactive preservation, explicit alias migration, deliberate non-deletion and
-export-first removal, with one dedicated **Manage preferences** home. Archival
-PX-V11 draws Q9's full resolver provenance answer opening beside a selected row,
-but the real `preferences-window.html` currently has compact per-row source
-captions only. Q9 therefore remains render-gated pending a bounded Claude-owned
-selected-row/beside-pane composition; no candidates, clauses, or owner boundary
-exist yet. GP-C05 later
+export-first removal, with one dedicated **Manage preferences** home. Claude
+commit `70bf2a2` now renders Q9's full resolver-owned explanation beside the
+selected row in the real Preferences window, including effective and retained
+contributions, Q4 reasoning, descriptor facts, remaining user actions, and one
+typed GUI/CLI/MCP answer. The Q9-A packet is prepared against that render; Q9
+remains undispositioned. GP-C05 later
 extracts interaction clauses from the settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner

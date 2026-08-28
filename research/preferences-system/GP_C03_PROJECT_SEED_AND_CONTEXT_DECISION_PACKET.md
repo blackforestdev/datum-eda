@@ -1,13 +1,10 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
 > **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
-> Q8 approved. Q8-A/P2 makes dedicated **Manage preferences** the sole visible
-> home for the approved store-hygiene behavior. The Q9 render-readiness audit
-> found that archival PX-V11's beside-opened resolver explanation is not yet
-> drawn in the real Preferences window, so Q9 remains closed pending bounded
-> Claude reconciliation. Q5B is the historical alias for Q11. Specification
-> only; no implementation, dependency, Q9 disposition, or later-question
-> disposition is authorized.
+> Q8 approved. Claude commit `70bf2a2` closes the Q9 render gap in the real
+> Preferences window, and the Q9 resolver-query packet is prepared against that
+> surface. Q5B is the historical alias for Q11. Specification only; no
+> implementation, dependency, Q9 disposition, or Q10 disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -1449,3 +1446,227 @@ marker, and owner boundary cannot be created yet.
   route digest refreshed only after complete source/consumer review.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-RENDER-GAP -->
+
+### 8.2 Reconciliation landed
+
+Claude commit `70bf2a2` satisfies the gate in the real
+`preferences-window.html` surface. Source lines 304–307 add the explanation pane
+beside the retained settings list; lines 365–383 draw complete managed and
+ordinary contribution stacks; and lines 385–416 render one selected-row query,
+the effective value, every contribution, the Q4 reason, descriptor facts,
+remaining user actions, GUI/CLI/MCP parity, generic-row fallback, close, Esc, and
+stable-list return. The prototype remains Claude-owned and was not edited by
+Codex. Q9 may now open against the drawn behavior.
+
+## 9. GP-C03-Q9 — resolver query and provenance explanation
+
+<!-- OWNER:GLOBAL-PREFERENCES-SPEC:GP-C03:GP-C03-Q9 -->
+
+> **Packet state:** owner-ready. The real Preferences window now draws the
+> selected-row explanation required by archival PX-V11; Q9 alone is presented.
+
+### 9.1 Exact on-screen decision
+
+**Clicking a setting name selects that row and opens, beside the unmoved
+Preferences list, the resolver-owned explanation of its effective value, every
+winning and retained-but-inert contribution, the Q4 reason it won, descriptor
+facts, and the user's remaining actions; close or Esc returns to the same list
+position, and CLI and MCP receive the same typed answer from the same query.**
+
+Q9 decides the authoritative query result, contribution completeness,
+cross-surface parity, and beside-opened inspection behavior. It does not decide
+persistence or wire format (GP-C04), final responsive polish (GP-C05), catalog
+membership (GP-C05A), implementation dependencies, or Q10 carry-forwards.
+
+### 9.2 Reviewed visual evidence
+
+The primary visual authority is the Claude-owned real product surface,
+`docs/gui/prototypes/preferences-window.html` at commit `70bf2a2`:
+
+- source lines 304–310 place one explanation pane beside the retained list and
+  retain the machine-authority status bar;
+- lines 365–374 draw **Show/hide revision system** with an Organization pin
+  marked effective, the displaced User value retained for automatic return,
+  Installation absence, inert default, the Q4 eligibility/control/ranking
+  explanation, descriptor identity/type/class/sources, and the user's appeal or
+  authority-revocation actions;
+- lines 375–383 draw **Board and layout lengths** with the User value effective,
+  read-only Context selecting applicability without authority, inert default,
+  ordinary ranking reason, descriptor facts, reset behavior, and re-resolution;
+- lines 385–405 make the pane render the effective value, every contribution,
+  **EFFECTIVE** winner, losing states, reason, descriptor, remaining actions, and
+  the same typed GUI/CLI/MCP answer. Generic rows open the same query surface;
+  the two detailed stacks are representative prototype data, not a production
+  exemption;
+- lines 407–416 select from the setting name, preserve the list, and close with
+  the visible control or Esc without navigation or list movement.
+
+The ratified presentation-class precedent remains
+`docs/gui/prototypes/canvas-background-decision.html`, source lines 88–119. It
+shows that the resolver explanation must report the descriptor's actual class
+and authority; GUI location or presentation cannot turn machine state into
+Project or Publish truth.
+
+The archival structural evidence is
+`docs/gui/prototypes/preferences-ux-study.html#px-v11`, source lines 412–425.
+PX-V11 draws the same effective winner and retained contribution stack beside
+the row and requires one engine answer across GUI, CLI, and MCP. It corroborates
+the real window rather than replacing it.
+
+No visual reconciliation remains for Candidate Q9-A. Alternatives that compute
+precedence in the GUI or return only the winner materially contradict both
+rendered anchors and approved Q4, so they cannot open as visually equivalent
+candidates.
+
+### 9.3 Written evidence
+
+- Primary external evidence requires the resolver to consider values,
+  recommendations/defaults, constraints/locks, provider state, Context,
+  validation/migration, the selected value, and why every other value lost or
+  was refused (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:127-150`).
+- That evidence makes provenance a first-class query returning effective value,
+  source/provider identity and kind, managing reason, source revision/generation
+  and time, non-effective contributions, and remaining user freedom; the GUI
+  must consume rather than reconstruct it (`ibid.:152-168`).
+- Approved Q4 resolves eligibility first, controls second, and ordinary values
+  third; every effective, losing, inert, refused, and conflicting contribution
+  remains queryable with its reason
+  (`GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md:596-615,637-646`).
+- Approved Q6 keeps Context read-only and applicability-only, matching the
+  rendered units stack; approved Q7 preserves refused/provider states; approved
+  Q8 requires descriptor-governed redaction for opaque values and forbids
+  inspection from activating or deleting them (this packet §§4.5, 5.5, 7.5).
+- Domain-peer synthesis requires inspect-without-edit, visible word/glyph/value/
+  source/reason/freedom, accountable administration and appeal where available,
+  and queryable losing/inert/refused/conflicting contributions
+  (`GP_C02B_DOMAIN_PEER_PREFERENCES_RESEARCH.md:365-388,390-408`).
+- Accessibility evidence requires keyboard provenance inspection, programmatic
+  name/role/value, non-color state, focus-preserving announcements, and reflow
+  that does not hide provenance
+  (`GP_C02_EXTERNAL_AND_STANDARDS_RESEARCH.md:374-399`).
+
+### 9.4 Genuine alternatives
+
+#### Candidate Q9-A — one resolver-owned typed explanation
+
+One query over an exact setting identity and explicit resolution context returns
+the effective typed value, the complete contribution/control stack with
+dispositions and reasons, descriptor facts, and remaining user actions. GUI,
+CLI, and MCP render that answer without independently resolving it; Preferences
+opens it beside the selected row.
+
+This exactly matches the real window, archival PX-V11, approved Q4, and the
+primary provenance-query evidence.
+
+#### Candidate Q9-B — GUI-assembled explanation
+
+The GUI gathers the current widget value, provider badges, and stored metadata,
+then reconstructs why a value won; CLI and MCP may expose their own equivalent
+views. This could reduce the resolver API's result size and let each surface
+tailor its output.
+
+It is genuine but does not survive: the render explicitly says the pane renders
+engine truth and does not compute it, while the written evidence warns that
+managed authority must not become widget folklore. It would also permit
+cross-surface disagreement about Q4.
+
+#### Candidate Q9-C — effective winner only
+
+The resolver returns only the effective value, winning source, and a short
+reason; losing/refused contributions remain internal diagnostics. This is a
+smaller public contract and resembles many conventional settings pages.
+
+It is genuine but does not survive: both visual anchors show the contribution
+stack, approved Q4 requires every non-effective disposition to remain queryable,
+and the rendered displaced User value must remain inspectable so its future
+automatic return is intelligible. Selecting C would require a new Claude render
+and reopening Q4.
+
+### 9.5 Exact bounded contract Candidate Q9-A approval would establish
+
+Approval establishes only these clauses:
+
+1. Datum provides one authoritative resolver provenance query for an exact
+   `PreferenceKey` evaluated in an explicit resolution context. The result and
+   the effective-value resolver use the same descriptor registry, eligible
+   sources, controls, values, and evaluation snapshot; explanation cannot run a
+   second precedence algorithm.
+2. The typed result identifies the descriptor key, value type/domain, setting
+   class, eligible source families, and the evaluated Context. Unknown identities
+   retain Q8's opaque/redacted descriptor-absent state rather than acquiring a
+   guessed descriptor.
+3. The result contains the effective typed value and disposition, the winning
+   source/contribution identity, and an explicit **EFFECTIVE** state. No-value and
+   unresolved-conflict outcomes are typed results, not fabricated winners.
+4. The result contains every considered contribution and applicable control,
+   including source family/scope/provider, value subject to descriptor redaction,
+   available origin/package/generation/actor/time evidence, and its effective,
+   losing, retained, inert, refused, unavailable, stale, expired, revoked,
+   superseded, conflicting, or absent disposition and reason.
+5. An absent source is distinguishable from a supplied value. Absence does not
+   become a contribution or outrank a descriptor default merely because the
+   explanation lists the source family.
+6. **Why this wins** reports Q4's staged evaluation in order: descriptor and
+   source eligibility/validation, applicable controls and conflicts, then
+   ordinary descriptor-declared ranking or deterministic join. Arrival order and
+   GUI state cannot appear as authority.
+7. Organization control provenance identifies the directive kind, managing
+   provider/policy/package, accountable actor or role, reason, applicable
+   `AuthorityRelease`, and remaining appeal/deviation/revocation path where one
+   exists. Inspection does not itself grant edit or override authority.
+8. Context is reported as read-only applicability under Q6. It can explain why a
+   descriptor/contribution applies but cannot be presented as a writable value
+   source or Project-policy authority.
+9. Retained losing values remain visible with the condition under which they may
+   re-resolve, such as a Pin lifting. Refused and provider-state facts retain Q7's
+   exact reason; the query never silently deletes, coerces, activates, or repairs
+   them.
+10. **What you can do** is derived from the resolved descriptor, controls, and
+    current authority. It may name reset, edit, appeal, release-management, or
+    view-in-Project doorways, but the query and explanation perform no mutation
+    by themselves.
+11. Clicking or keyboard-activating a setting name selects that row and opens
+    its explanation beside the retained list. Selection uses a programmatic
+    selected state and non-color cue; managed/non-writable rows remain focusable
+    and inspectable.
+12. Close and Esc dismiss the explanation, clear its selected state, and return
+    to the unchanged list position without applying, resetting, navigating, or
+    stealing focus. Reflow may adapt the composition in GP-C05 but cannot hide
+    either the selected setting identity or its provenance.
+13. Every registered setting uses the same query and complete result contract.
+    The two fully populated prototype rows are representative examples only;
+    production rows cannot substitute a caption-only or winner-only answer.
+14. GUI, CLI, and MCP receive the same typed semantic result from the same query.
+    Each surface may format it accessibly, but none may compute precedence,
+    discard non-effective contributions from the query contract, or contradict
+    another surface.
+15. Descriptor security and privacy policy governs value disclosure across all
+    surfaces. Redaction is explicit in the typed result and cannot conceal the
+    existence, identity class, disposition, or non-secret reason needed to
+    explain authority.
+16. The provenance query is read-only and side-effect free. Opening, closing,
+    repeating, or serializing it cannot write preferences, acknowledge policy,
+    migrate aliases, activate unknowns, alter Project facts, or change resolution.
+17. Q9 does not decide persistence or wire representation, caching, pagination,
+    API transport, history retention, migration receipts, final responsive
+    layout, implementation dependencies, or Q10 revision carry-forwards.
+
+### 9.6 Recommendation and owner response
+
+Approve **Q9-A**. It is the only candidate consistent with the real-window
+render, archival PX-V11, approved Q4's complete queryability, and the primary law
+that the GUI consumes engine provenance rather than reconstructing it.
+
+Reply exactly:
+
+```text
+GP-C03-Q9: approve Q9-A
+```
+
+or:
+
+```text
+GP-C03-Q9: revise — <required query fields, contribution disposition, resolution reason, user-action, parity, redaction, or accessibility correction>
+```
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-PACKET-DRAFT -->
