@@ -1,11 +1,13 @@
 # GP-C03 Project Seeding and Context Decision Packet
 
-> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, GP-C03-Q6, and
-> GP-C03-Q7 approved; active GP-C03-Q8 owner packet prepared from Claude commits
-> `54f2aba` and `cd12baa`, including the explicit placement sub-question. Q5B is
-> the historical alias for Q11. Specification only; no
-> implementation, dependency, Q8 disposition, or later-question disposition
-> is authorized.
+> **Status:** GP-C03-Q5, amended GP-C03-Q5A, GP-C03-Q11, and GP-C03-Q6 through
+> Q8 approved. Q8-A/P2 makes dedicated **Manage preferences** the sole visible
+> home for the approved store-hygiene behavior. The Q9 render-readiness audit
+> found that archival PX-V11's beside-opened resolver explanation is not yet
+> drawn in the real Preferences window, so Q9 remains closed pending bounded
+> Claude reconciliation. Q5B is the historical alias for Q11. Specification
+> only; no implementation, dependency, Q9 disposition, or later-question
+> disposition is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 >
@@ -1385,3 +1387,65 @@ GP-C03-Q8: revise — <required preservation, activation, alias-migration, non-d
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-PACKET-DRAFT -->
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-PACKET -->
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q8-APPROVED -->
+**Owner review — Q8-A/P2 approved 2026-08-28.** The owner approved all common
+clauses 1–14, placement clause 15P2, and exclusion clause 16 exactly as bounded
+in §7.5. Datum therefore preserves unknown and newer-version identities
+byte-faithfully but inactive; admits them to Q7 validation and eligibility only
+after exact descriptor registration; migrates retired names only through
+explicit descriptor-owned aliases to one live identity; never deletes unknown
+data as a save, reset, import, export, migration, downgrade, or upgrade side
+effect; and exposes deliberate removal as a named, confirmable, export-first
+action. One dedicated top-level **Manage preferences** section is the sole home
+for the machine-store location doorway, protected reset/import/export, unknown
+identities, aliases, and explicit removal. It states that this is machine-local
+and never Project data, and showing a location does not choose GP-C04's storage
+format. P1 Organization and P3 Files & Projects remain comparative evidence
+only; Datum does not duplicate their controls. Q9–Q10 remain undispositioned.
+
+## 8. GP-C03-Q9 render-first reconciliation gate
+
+Archival `preferences-ux-study.html#px-v11`, source lines 412–425, draws one
+resolver-owned provenance query whose full answer opens beside the selected
+setting row. The pane shows the effective value and winning source plus the
+retained contribution stack, including overridden and inert values, and states
+that GUI, CLI, and MCP receive the same typed engine answer.
+
+The reviewed real product surface, `preferences-window.html`, does not yet draw
+that interaction. Source lines 64–68 show the single-column navigation/content
+composition and a representative setting followed only by its compact
+source/provenance caption; lines 300–316 implement changed-row reset text but no
+row selection or explanation pane. No selected-row state opens a persistent
+explanation beside the list and no real-window pane exposes the engine
+contribution stack. This is a material difference from PX-V11. Under the binding
+primary-window and render-first laws, Q9 candidates, bounded clauses, owner
+marker, and owner boundary cannot be created yet.
+
+### 8.1 Bounded reconciliation for Claude
+
+- **Exact file and region:** Claude-owned
+  `docs/gui/prototypes/preferences-window.html`, using a representative selected
+  setting row in the real Preferences window and the adjacent content region.
+  The result must be part of this product surface, not a study-only second
+  settings UI, modal, or replacement page.
+- **Required visible outcome:** render selection of a setting row opening its
+  full explanation **beside** the list while the list remains present. The drawn
+  engine answer must visibly distinguish the effective value and winning source
+  from the ordered contribution stack, and must show at least the retained
+  overridden/inert contribution states already present in PX-V11. The
+  composition must make clear that the answer is resolver truth shared by GUI,
+  CLI, and MCP rather than GUI-authored provenance.
+- **Preserved decisions:** Q1's stable descriptor/key identity; Q2's one typed
+  resolver and Project-authority separation; Q3/Q4 control-versus-value ordering
+  and retained losing contributions; Q6's typed Session/Context/operation/state
+  boundaries; Q7's refused and provider-state truth; Q8's dedicated **Manage
+  preferences** home and non-deletion law; Q11 and PM-036; the existing real
+  window's sections, rows, keyboard paths, and non-blocking authoring. The render
+  must not decide Q9's final field schema, redaction law, persistence, or API.
+- **Proof expected:** a Claude-session prototype commit, an exact stable anchor
+  and source-line region for the selected-row/beside-pane state, rendered visual
+  evidence of the full resolver answer and retained list context, and an owning
+  route digest refreshed only after complete source/consumer review.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q9-RENDER-GAP -->
