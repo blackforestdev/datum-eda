@@ -1,11 +1,10 @@
 # GP-C04 Storage, Migration, Exchange, and Recovery Contract
 
-> **Status:** architecture draft through the render-first boundary. The
-> non-visual authority and persistence model is reconciled below. User-visible
-> recovery, import/synchronization collision, and migration-result clauses are
-> deliberately withheld until Claude renders them in the real Preferences
-> window. No owner boundary, implementation, dependency, or prototype edit is
-> authorized.
+> **Status:** complete planning contract. Claude commit `586eb0d` renders the
+> recovery, portable-import collision, migration-result, and backup/restore
+> states of the ratified **Manage preferences** surface; this contract extracts
+> those states without editing their visual truth. No implementation,
+> dependency, synchronization service, or prototype edit is authorized.
 >
 > **Tracker:** `dat-global-preferences-engine-qcv`
 > **Frontier:** `GLOBAL-PREFERENCES-SPEC / GP-C04`
@@ -60,10 +59,16 @@ evidence controls GP-C04 most directly:
   drawing theme as persisted machine Presentation state and leaves migration to
   this specification (`PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md:18-51`;
   `PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md:18-57`).
-- The reviewed `preferences-window.html#manage-preferences` already draws the
+- The reviewed `preferences-window.html#manage-preferences` draws the
   machine-only store location, protected reset/export/import, unknown envelopes,
-  explicit alias migration, and export-first deletion. It does not draw recovery,
-  import/sync conflicts, or migration refusal/results.
+  explicit alias migration, and export-first deletion.
+- Claude commit `586eb0d` adds the reviewed
+  `preference-store-states-study.html`: corrupt-store refusal and recovery
+  (`:78-83`), portable-import choices and protected-source refusal (`:84-91`),
+  migration results and retained human choice (`:92-97`), backup/restore
+  generations (`:98-102`), and their common non-blocking preservation law
+  (`:103`). These are states of that ratified surface, not a second settings
+  authority.
 
 External products and standards remain evidence, not dependencies: XDG supplies
 config/state/runtime separation; QSaveFile and SQLite supply durability and
@@ -179,23 +184,27 @@ becomes effective. Selection is deterministic:
 
 1. use the declared head only if its complete manifest, parent/reference graph,
    typed values, opaque payloads, and integrity facts validate;
-2. otherwise quarantine the suspect bytes and select the newest complete valid
-   retained predecessor;
+2. otherwise preserve the suspect bytes exactly under a named unreadable
+   identity, start the session from descriptor defaults plus other independently
+   valid sources, and offer the newest complete valid retained predecessor as a
+   previewable recovery candidate rather than silently promoting it;
 3. never merge a partial current generation with a predecessor;
 4. never treat corrupt, truncated, unsupported, or missing bytes as a user reset;
 5. if no valid generation exists, resolve descriptor defaults and other
    independently valid sources in a persistence-disabled diagnostic state; do
    not overwrite the damaged repository or claim that defaults were stored.
 
-Recovery changes which already committed generation is readable; it is not a
-new user preference transaction and cannot promote a pending write. A later
-repair/restore is a separate expected-generation operation with its own receipt.
+Detection writes nothing over the unreadable store. Recovery does not repair,
+truncate, parse-and-rewrite, or delete it. A restore is a separate previewed and
+confirmed expected-generation operation with its own receipt; before promotion,
+Datum makes the session's current values visible and preserves the current store
+as a new recovery generation so the restore is itself reversible.
 The repository exposes exact chosen/rejected generation identities and reasons
 to the Q9 query and audit surface, subject to redaction.
 
-The user-visible presentation and actions for successful fallback and the
-no-valid-generation diagnostic state are intentionally not clause-complete here;
-§11 requires a Claude render first.
+Dismissal changes nothing on disk and the diagnostic returns on later launch
+until the user restores or independently removes the damaged file. The user may
+continue authoring throughout.
 
 ## 6. Schema, value, alias, and downgrade migration
 
@@ -212,14 +221,18 @@ output validation law, and reversibility/downgrade posture. Migrations are pure
 plans before commit: repeated planning over the same bytes produces the same
 result, and merely reading/querying a store never writes or acknowledges them.
 
-A migration transaction is all-or-nothing across its selected plan. It preserves
+A migration transaction atomically commits its complete selected plan. It preserves
 the complete pre-migration generation, stages the successor under §4, validates
 every transformed value and untouched unknown envelope, and records a receipt
 containing source/target generations, migration identities/versions, affected
 keys, before/after digests or explicit redactions, omissions/refusals, actor/
-trigger, and result. A failed transform leaves the source generation effective
-and preserves/quarantines the failed candidate; it never substitutes a factory
-default or partially advances the format version.
+trigger, and result. A plan may deliberately carry an old, now-out-of-domain
+value forward as retained-but-unresolved while compatible schema and alias work
+commits; that retained state is part of the atomic result, not a partial write.
+Datum may show a nearest eligible value but does not make it effective until the
+user chooses. A failed structural transform leaves the source generation
+effective and preserves/quarantines the failed candidate; it never substitutes
+a factory default or partially advances the format version.
 
 Q8 aliases migrate on the next owning write or explicit **Migrate now** exactly
 as drawn. The owning transaction carries the valid user value to the one live
@@ -233,8 +246,10 @@ canonicalization version is not safely writable, the older version is read-only
 for that repository; it cannot perform a known-only downgrade rewrite. Upgrade
 does not turn defaults into explicit values.
 
-The visible pending/success/refusal and migration-receipt presentation is held
-at §11's render gate.
+Migration first writes a complete pre-migration copy. Its result names unchanged
+values, aliases moved to one live identity, values awaiting choice, unknown keys
+preserved untouched, and the way back. An older compatible Datum reads that
+pre-migration copy; newer identities remain ordinary inactive unknown data.
 
 ## 7. Managed generation and unavailable-provider persistence
 
@@ -299,8 +314,19 @@ base generation are checked before a proposed apply/restore plan exists. Apply
 is one expected-generation transaction over the user's accepted plan; closing,
 previewing, or inspecting an import is side-effect free.
 
-The visible preview, collision choices, exact-backup warning, and completion/
-refusal result remain withheld until §11's render is reconciled.
+A portable import displays identical values as skipped, new values as reviewable
+and individually rejectable even under **Take all**, and differing values as
+per-setting **Keep mine**/**Take theirs** choices. Nothing applies until the
+user has chosen and confirms one accepted plan. Capability- and security-class
+keys are refused rather than offered; organization directives arrive only as a
+validated `ManagedPackage`, never through portable import. Unknown envelopes
+remain inactive and byte-faithful through import and later export.
+
+Automatic exact-backup generations are machine-local until explicitly exported.
+Restore preview lists the settings that change and those that remain identical,
+requires confirmation, and first turns the current store into another complete
+backup. A restore therefore remains reversible and is never presented as a
+per-key portable merge.
 
 ## 9. Synchronization and conflicts
 
@@ -328,8 +354,10 @@ Unresolved candidates do not change the effective repository. A later explicit
 resolution commits against the then-current expected generation; if that head
 changed, Datum recomputes/refuses rather than applying a stale choice.
 
-The conflict-review choreography is a visible behavior and remains held at the
-render gate.
+Portable-import collision choreography is the rendered local analogue: retain
+both values, require a per-setting choice, and apply nothing while unresolved.
+A future synchronization adapter shall use the same vocabulary and invariants;
+any materially different sync-specific surface remains render-first under GP-C05.
 
 ## 10. Audit and Project-policy seam
 
@@ -361,66 +389,74 @@ No machine import, reset, restore, synchronization event, provider change, or
 migration mutates an existing Project. Conversely, opening or mutating a Project
 does not write machine Preferences, onboarding state, or AuthorityRelease.
 
-## 11. Render-first reconciliation required before visible clauses
+## 11. Rendered Manage-preferences clauses
 
-The architecture above necessarily creates visible states that the current
-Claude-owned prototypes do not draw. `preferences-window.html#manage-preferences`
-currently shows location, reset/export/import, unknown preservation, alias
-migration, and deliberate deletion, but not the following consequences. Codex
-must not author their interaction clauses ahead of visual evidence.
+The following clauses are extracted from Claude commit `586eb0d`, lines 78–103,
+and govern the four drawn states:
 
-### Bounded Claude reconciliation list
+1. An unreadable store is preserved exactly under a named damaged-file identity;
+   Datum never repairs, truncates, rewrites, or deletes it in place.
+2. The affected session uses factory defaults while independent valid authorities
+   continue normally; the state says what happened and never blocks authoring.
+3. Last-good recovery is offered through Preview and confirmed Restore. Preview
+   shows affected session values; Restore first backs up the current state and is
+   itself reversible. Dismiss writes nothing and the notice returns.
+4. Portable import applies nothing during inspection or choice. Identical values
+   skip, new values remain individually rejectable, and collisions require an
+   explicit per-setting local/incoming choice.
+5. Capability and security keys refuse every portable source. Organization
+   directives enter only through the managed-provider path and an independently
+   sufficient `AuthorityRelease`.
+6. Unknown data remains inactive and byte-faithful through recovery, import,
+   export, migration, backup, and restore.
+7. Migration writes a complete pre-migration copy first, reports unchanged and
+   alias-moved values, and keeps one live identity per alias result.
+8. When an old value has no legal successor, Datum retains and shows it until the
+   user chooses. A suggested nearest value is not applied or substituted.
+9. Backup generations stay machine-local unless explicitly exported. Restore is
+   visibly distinct from portable import, previewed, listed, confirmed, and
+   reversible.
+10. No store operation reads, writes, resets, restores, migrates, synchronizes,
+    or otherwise changes Project policy or design data.
+11. Every destructive store action is previewed, named, and reversible; no path
+    silently repairs, substitutes, discards, or grants authority.
+12. These are states of Q8-A/P2's sole **Manage preferences** surface. They create
+    no second settings surface, network requirement, authoring gate, or reopening
+    of Q1–Q10 or Q11.
 
-**Owning file and primary anchor:**
-`docs/gui/prototypes/preferences-window.html`, `#manage-preferences`. Claude may
-add a dedicated comparison study if genuine alternatives need simultaneous
-rendering, but the selected behavior must ultimately be shown as a real-window
-composition rather than an abstract card alone.
+## 12. Typed operation, query, refusal, and proof contract
 
-1. **Corrupt-current recovery:** render both a successful automatic selection of
-   the newest complete last-known-good generation and the no-valid-generation
-   diagnostic state. Show the chosen and quarantined generation identities,
-   what remains effective, whether persistence is disabled/read-only, and the
-   available review/export/restore actions. Factory reset or silent overwrite
-   must not be implied.
-2. **Portable import and synchronization collision:** render the pre-apply
-   candidate beside retained local truth, including base/local/incoming values
-   or redactions, compatible changes, descriptor conflicts, unknown opaque
-   conflicts, ineligible/protected refusals, explicit omissions, and the atomic
-   apply boundary. No preview action may already apply, grant authority, or use
-   timestamp/arrival-order last-writer-wins.
-3. **Migration result:** render pending alias/value/store migrations, successful
-   receipt access, and a refused migration that leaves the source generation
-   effective and preserved. Distinguish deterministic migration from reset,
-   import, and recovery; preserve the existing **Migrate now** and one-live-key
-   Q8 law.
-4. **Exact backup/restore versus portable import:** make the two operations
-   visibly distinct so a full-generation restore is not mistaken for per-key
-   merge and a portable import is not represented as opaque store replacement.
-5. **Accessibility and stable context:** every state uses text plus non-color
-   cues, programmatic status, keyboard operation, focus-preserving/polite
-   announcements, and open-beside/stable-list behavior consistent with Q9.
+The engine-facing boundary is one typed API family; names below are normative
+operation identities, not a programming-language ABI:
 
-**Preserve unchanged:** Q1–Q10 and Q11; Q8-A/P2's sole **Manage preferences**
-home, byte-faithful inactive unknowns, descriptor-gated activation, one-live-key
-alias migration, non-deletion, and export-first removal; Q9 one-query semantic
-parity; Q7 stale/unavailable/expired/revoked distinctions; Q5 copy-once Project
-receipt and no live following; PM-034/035/036 authority boundaries; manual-first,
-no network startup/load requirement, no new modal gate, no prototype mutation by
-Codex.
+- Mutations: `CommitPreferenceMutation`, `CommitPortableImport`,
+  `CommitManagedGeneration`, `CommitMigration`, `ResolveMigrationValue`,
+  `CreateExactBackup`, `CommitExactRestore`, `ResolveExchangeConflict`, and
+  `RemoveUnknownEnvelope`. Every mutation names an expected generation.
+- Pure plans/queries: `PlanPortableImport`, `PlanMigration`, `PlanExactRestore`,
+  `InspectRepositoryStatus`, `ListRetainedGenerations`,
+  `InspectRecoveryCandidate`, `QueryPreferenceExplanation`,
+  `QueryMutationReceipt`, and `CaptureProjectSeedSnapshot`. Planning, preview,
+  dismissal, and explanation never mutate.
+- Typed refusals include `ExpectedGenerationMismatch`, `WriterLeaseUnavailable`,
+  `AtomicPromotionUnavailable`, `UnreadableStorePreserved`,
+  `UnsupportedRepositoryVersion`, `MigrationTransformUnavailable`,
+  `MigrationValueChoiceRequired`, `PortableCapabilityRefused`,
+  `PortableManagedDirectiveRefused`, `ExchangeConflictUnresolved`,
+  `UnknownOpaqueConflict`, `RestorePreviewStale`, `BackupIncomplete`, and
+  `ProjectAuthorityBoundary`. Each returns stable identity, reason, retained
+  state, and remaining user actions; none is encoded as a substituted value.
 
-**Proof expected:** Claude-owned prototype commit(s), stable file/section anchors,
-source-line review evidence, rendered screenshots at normal and narrow/keyboard
-states, and evidence-route registration/digest reconciliation. If multiple
-genuine candidates survive, label each honestly and leave selection open; do not
-hide a product decision inside polish.
+Conformance must prove, at minimum: crash interruption at every §4 durability
+boundary; truncated/corrupt head preservation without repair-in-place; exact
+unknown-envelope survival across every mutation above; refusal of Capability and
+managed authority through portable sources; migration alias uniqueness and no
+unpicked substitution; downgrade round-trip preservation; per-setting import and
+three-way conflict stability; stale-preview and concurrent-writer refusal;
+previewed restore followed by reverse restore; audit receipt completeness and
+redaction; byte-independent Project-seed snapshots; zero Project/design mutations
+from all store operations; complete offline operation; and uninterrupted Design
+authoring throughout every displayed recovery/refusal state.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C04-RENDER-GAP -->
-
-## 12. Completion conditions after render reconciliation
-
-After the render lands, GP-C04 must extract rather than invent the missing
-visible clauses, adversarially reconcile them with §§3–10, publish exact typed
-operations/queries/refusals and conformance proofs, refresh the route digest,
-and complete the Frontier step without opening an owner boundary unless the
-render leaves a genuine mechanism choice that planning authority cannot resolve.
+<!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C04-CONTRACT -->

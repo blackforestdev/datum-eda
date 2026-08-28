@@ -265,9 +265,10 @@ one-and-done completion together with an independently eligible organization
 teaching directive that may require dismissible, non-gating replay once per
 Project within a sufficient user-granted AuthorityRelease. The combination
 avoids making all Project users repeat guidance while preserving the deliberate
-classroom/governed-shop teaching case. GP-C03 is complete; GP-C04 is next and
-owns persistence, identity/synchronization, Project partition, migration, and
-recovery representation. GP-C05 later extracts interaction clauses from the
+classroom/governed-shop teaching case. GP-C03 is complete. GP-C04 now reconciles
+Claude commit `586eb0d` into a complete persistence, identity/synchronization,
+Project-partition, migration, recovery, exchange, audit, typed refusal, and proof
+contract. GP-C05 next extracts interaction clauses from the
 settled surfaces. Complete each only by
 extracting and reconciling the reviewed Preferences window, never by drafting
 ahead of it; a material visual difference returns to Claude before the owner
