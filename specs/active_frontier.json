@@ -5180,7 +5180,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q8-render-gap-20260828",
-        "claimed_at": "2026-08-28T00:13:06-07:00",
-        "heartbeat_at": "2026-08-28T00:13:06-07:00",
-        "expires_at": "2026-08-28T08:13:06-07:00",
-        "scope": [
-          "record GP-C03-Q7-A owner approval",
-          "audit real-window readiness for GP-C03-Q8",
-          "place bounded Claude reconciliation for the Q8 render gap",
-          "no prototype HTML mutation and no Q8 clause extraction"
-        ],
-        "worktree": ".",
-        "head": "4ac0069f0cedcf2dd85a801580ff2c4c57e32a9b"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5308,7 +5292,7 @@
           {
             "id": "GP-C03",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Record approved GP-C03-Q7-A, then obtain a Claude-owned real Preferences-window render for GP-C03-Q8 showing unknown preserved/inactive identities and explicit retired-alias migration near protected import/export/reset; do not prepare Q8 candidates or clauses until that render lands and the evidence route is reconciled.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
