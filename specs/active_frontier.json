@@ -5180,8 +5180,8 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Research and specify typed system/user, organization, Project, and contextual preference authority, including precedence, provenance, policy seeding, schema migration, persistence/recovery, managed settings, synchronization boundaries, and accessible GUI, without conflating machine-local preferences with governed Project policy.",
@@ -5192,22 +5192,6 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-q5a-20260827",
-        "claimed_at": "2026-08-27T22:41:35-07:00",
-        "heartbeat_at": "2026-08-27T22:41:35-07:00",
-        "expires_at": "2026-08-28T06:41:35-07:00",
-        "scope": [
-          "record GP-C03-Q5 owner approval",
-          "prepare the visual-anchored GP-C03-Q5A initial-setup packet",
-          "preserve GP-C03-Q5B as queued and undispositioned",
-          "no prototype HTML mutation"
-        ],
-        "worktree": ".",
-        "head": "e9ecca2fde76900c271943b312f59b247a7e6f54"
-      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C03",
@@ -5307,9 +5291,9 @@
           },
           {
             "id": "GP-C03",
-            "kind": "planning",
-            "status": "in_progress",
-            "action": "Record the approved GP-C03-Q5 copy-once-with-receipt contract and prepare the GP-C03-Q5A initial-setup owner packet from the registered Claude-owned A/B/C prototypes, including the minimum set, non-blocking skip law, accessible static focus guidance, completion state, and proposal-only assistant boundary; keep Q5B queued and undispositioned.",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Preserve approved Q1-Q5 and decide GP-C03-Q5A from the rendered Claude-owned initial-setup candidates: guided-in-place B as the governing zero-mandatory-choice manual path, optional proposal-only C riding on B, or a bounded revision; keep Q5B queued and undispositioned.",
             "depends_on": ["GP-C02", "GP-C02B"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
             "completion_evidence": [
@@ -5328,7 +5312,21 @@
                 "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
                 "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C03-Q5-APPROVED"
               }
-            ]
+            ],
+            "owner_input": {
+              "response_format": "After reviewing rendered Candidate A at 849b7f1, rendered Candidates B/C at b5cac07, exact written evidence, genuine alternatives, and the eleven bounded clauses, reply exactly `GP-C03-Q5A: approve Q5A-B+C` or `GP-C03-Q5A: revise — <required candidate, minimum-set, skip, accessibility, state, replay/reset, or assistant-proposal correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C03-Q5A",
+                  "question": "Should Datum use guided-in-place Preferences as the complete zero-mandatory-choice initial-setup path, allow permanent Skip/Esc with accessible static keyboard guidance and local completion/dismissal state but no undrawn replay/reset control, and permit assistant help only as optional typed proposals that apply after explicit acceptance?",
+                  "recommended_response": "Approve Q5A-B+C because B removes the duplicate wizard while preserving the rendered four-checkpoint, non-blocking manual path; zero required choices follows factory-default law; C is optional and obeys Datum's proposal-only AI authority; the static no-jump treatment supports the bounded reduced-motion and keyboard contract without inventing a new surface.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md",
+                    "marker": "GP-C03-Q5A"
+                  }
+                }
+              ]
+            }
           },
           {
             "id": "GP-C04",
