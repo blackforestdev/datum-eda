@@ -394,7 +394,7 @@ function runSearch(){
       n++;
       if(secName!==lastSec){html+='<div class="qsec">'+esc(secName)+'</div>';lastSec=secName;}
       const ctl=row.querySelector('.ctl'); 
-      html+='<div class="row"><div class="lbl"><b>'+hl(name,q)+'</b><span>'+hl(desc.slice(0,110),q)+'</span></div><div class="ctl">'+(ctl?ctl.innerHTML:'')+'</div></div>';
+      html+='<div class="row" data-sec="'+sec.id+'" data-name="'+esc(name).replace(/"/g,'&quot;')+'"><div class="lbl"><b>'+hl(name,q)+'</b><span>'+hl(desc.slice(0,110),q)+'</span></div><div class="ctl">'+(ctl?ctl.innerHTML:'')+'</div></div>';
       const prov=row.nextElementSibling;
       if(prov&&prov.classList.contains('prov')) html+='<div class="prov">'+prov.innerHTML+'</div>';
     });
@@ -403,6 +403,20 @@ function runSearch(){
   results.style.display='block';
   qCount.textContent=n+' of '+document.querySelectorAll('section .row .lbl b').length;
 }
+results.addEventListener('click',e=>{
+  const rr=e.target.closest('.row[data-sec]'); if(!rr) return;
+  const sec=rr.dataset.sec, nm=rr.dataset.name, wantExplain=!!e.target.closest('.lbl b');
+  qIn.value=''; runSearch();            // leave results mode
+  show(sec);                            // nav + section follow the result
+  const real=[...document.querySelectorAll('#'+sec+' .row')]
+    .find(r=>{const b=r.querySelector('.lbl b'); return b && b.textContent.trim()===nm;});
+  if(real){
+    document.querySelectorAll('.row.sel').forEach(x=>x.classList.remove('sel'));
+    real.classList.add('sel');                       // persistent selection, not a flash
+    real.scrollIntoView({block:'center'});           // no smooth scrolling (reduced-motion law)
+    if(wantExplain) exOpen(nm, real);
+  }
+});
 qIn.addEventListener('input',runSearch);
 qIn.addEventListener('keydown',e=>{if(e.key==='Escape'){qIn.value='';runSearch();qIn.blur();}});
 const qh=(location.hash||'').match(/q=([^,&]+)/);
@@ -444,7 +458,9 @@ function exOpen(name,row){
       +'<div class="note" style="border-top:1px solid var(--bd-sub)">the same typed answer is returned to the CLI and MCP by one resolver query — this pane renders engine truth, it does not compute it</div>';
   } else {
     const prov=row&&row.nextElementSibling&&row.nextElementSibling.classList.contains('prov')?row.nextElementSibling.innerHTML:'';
-    b.innerHTML='<div class="eg">Effective value</div><div class="er">'+(row?row.querySelector('.ctl').innerText.trim():'')+'</div>'
+    let v=row?(row.querySelector('.ctl')||{innerText:''}).innerText.trim():'';
+    if(!v||/^(view in Project…|Edit…|Choose…|Show…|Restore…|Preview…)$/i.test(v)) v='<span style="color:var(--tx3)">not a machine value — this row opens its owning authority</span>';
+    b.innerHTML='<div class="eg">Effective value</div><div class="er">'+v+'</div>'
       +'<div class="eg">Provenance</div><div class="note">'+prov+'</div>'
       +'<div class="note" style="border-top:1px solid var(--bd-sub)">full contribution stacks are drawn for two representative rows in this prototype; every row resolves through the same query</div>';
   }
@@ -453,7 +469,7 @@ function exOpen(name,row){
 document.addEventListener('click',e=>{
   if(e.target.id==='exclose'){document.getElementById('explain').classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));return;}
   const lb=e.target.closest('.row .lbl b');
-  if(lb){exOpen(lb.textContent.trim(), lb.closest('.row'));}
+  if(lb && !lb.closest('#results')){exOpen(lb.textContent.trim(), lb.closest('.row'));}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('explain').classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));}});
 if((location.hash||'').includes('explain')){
