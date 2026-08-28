@@ -5181,7 +5181,7 @@
         "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
       ],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
@@ -5193,6 +5193,22 @@
       "unblocks": [
         "dat-product-revision-engine-build-18f"
       ],
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-c04-render-reconcile-20260828",
+        "claimed_at": "2026-08-28T12:04:17-07:00",
+        "heartbeat_at": "2026-08-28T12:04:17-07:00",
+        "expires_at": "2026-08-28T20:04:17-07:00",
+        "scope": [
+          "register and review Claude commit 586eb0d and refresh its complete evidence route",
+          "extract rendered GP-C04 recovery, import conflict, migration, backup, and restore clauses",
+          "finish persistence, exchange, audit, Project-policy seam, operation, refusal, and proof contracts",
+          "no prototype HTML mutation, implementation, dependency, or GP-C05 authority"
+        ],
+        "worktree": ".",
+        "head": "586eb0d016a4b70423391b80d71b90f003df568a"
+      },
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
         "canonical_next_step_id": "GP-C04",
@@ -5428,7 +5444,7 @@
           {
             "id": "GP-C04",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Reconcile Claude-rendered corrupt-store recovery, portable-import/synchronization collision, migration-result, and backup/restore states into the drafted canonical local persistence, exchange, audit, and Project-policy-seam contract without authoring visible behavior ahead of the real Preferences window.",
             "depends_on": ["GP-C03"],
             "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C04"}],
