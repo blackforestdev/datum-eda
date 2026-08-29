@@ -5816,10 +5816,11 @@
         "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
         "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
+        "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
-      "authorization": "none",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5833,7 +5834,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I02",
+        "canonical_next_step_id": "REV-I13",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5909,11 +5910,36 @@
             ]
           },
           {
+            "id": "REV-I13",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the bounded REV-I02 typed-authority-core execution packet and decide whether that slice alone may begin.",
+            "depends_on": ["REV-I01"],
+            "requirement_refs": [
+              {"path": "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I13"}
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed REV-I02 packet, reply exactly `REV-I02-EXECUTION: approve` or `REV-I02-EXECUTION: revise — <specific scope, type, invariant, proof, dependency, migration, or visual correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I02-EXECUTION",
+                  "question": "Does the packet preserve Product Mechanics 034's identity distinctions, one-mutation-path law, standalone authority, and exact never-blocks/first-class unmanaged workflow while bounding REV-I02 to typed schema, canonical local persistence, structural validation, and read-only resolution only?",
+                  "recommended_response": "Approve only if REV-I02 remains an inert typed authority substrate with no policy, workflow, issuance, public mutation surface, Design gate, visible behavior, adapter, migration guess, or dependency.",
+                  "source_ref": {
+                    "path": "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
+                    "marker": "REV-I02-PACKET"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-I02",
             "kind": "execution",
             "status": "pending",
             "action": "Implement versioned typed revision-authority identities, records, events, canonical persistence, integrity, and exact local resolution.",
-            "depends_on": ["REV-I01"],
+            "depends_on": ["REV-I13"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I02"}],
             "completion_evidence": []
           },

@@ -150,6 +150,11 @@
    "progress_anchor": "PRODUCT-REVISION-ENGINE",
    "notes": "Findings-first REV-I00 baseline and exact owner response boundary. Approval may authorize REV-I01 technical integrity only; later Revision slices, Preferences, Publish, GUI work, providers, and dependencies remain unauthorized."
   },
+  "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-ENGINE",
+   "notes": "Findings-first REV-I13 owner boundary for REV-I02 execution. Approval may authorize only the typed authority schema, canonical persistence, structural validation, and exact local read-only resolution slice; policy, workflow, surfaces, migration guesses, dependencies, and later slices remain unauthorized."
+  },
   "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
