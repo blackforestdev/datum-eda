@@ -5819,28 +5819,12 @@
         "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "ready",
+      "authorization": "none",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "rev-i02-typed-authority-20260829",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "0a735cb05930ee725f06e031f268367b664125ec",
-        "claimed_at": "2026-08-29T08:09:24Z",
-        "heartbeat_at": "2026-08-29T08:09:24Z",
-        "expires_at": "2026-08-29T16:09:24Z",
-        "scope": [
-          "REV-I02 closed typed authority family inventory",
-          "versioned canonical records and structural events",
-          "REV-I01-integrated persistence and integrity",
-          "exact local read-only resolution",
-          "PM-034 never-blocks and unconfigured-authoring proofs"
-        ]
-      },
+      "claim": null,
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5851,7 +5835,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I02",
+        "canonical_next_step_id": "REV-I03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5960,11 +5944,16 @@
           {
             "id": "REV-I02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement versioned typed revision-authority identities, records, events, canonical persistence, integrity, and exact local resolution.",
             "depends_on": ["REV-I13"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I02"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d274485"
+              }
+            ]
           },
           {
             "id": "REV-I03",
