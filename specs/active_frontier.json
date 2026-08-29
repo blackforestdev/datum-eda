@@ -5817,10 +5817,11 @@
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
         "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
         "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
+        "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
-      "authorization": "none",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5835,7 +5836,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I03",
+        "canonical_next_step_id": "REV-I14",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5956,11 +5957,36 @@
             ]
           },
           {
+            "id": "REV-I14",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the bounded REV-I03 Project-policy and authority-evaluation execution packet and decide whether that slice alone may begin.",
+            "depends_on": ["REV-I02"],
+            "requirement_refs": [
+              {"path": "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I14"}
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed REV-I03 packet, reply exactly `REV-I03-EXECUTION: approve` or `REV-I03-EXECUTION: revise — <specific scope, enumeration, policy, authority, never-blocks, proof, dependency, migration, or visual correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I03-EXECUTION",
+                  "question": "Does the packet preserve Product Mechanics 034's Project-owned policy, capability/scope authorization, exact approval/effectivity distinctions, and never-blocks/first-class unmanaged workflow while bounding REV-I03 to the closed policy, scheme, role, attestation, effectivity, and copy-once seed inventories only?",
+                  "recommended_response": "Approve only if REV-I03 remains a dependency-free offline policy/evaluation slice, no-policy authoring stays prompt-free and ungated, and earlier-control enforcement, lifecycle, issuance, public surfaces, Preferences implementation, adapters, production cryptography, migrations, and later slices remain deferred.",
+                  "source_ref": {
+                    "path": "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md",
+                    "marker": "REV-I03-PACKET"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-I03",
             "kind": "execution",
             "status": "pending",
             "action": "Implement Project revision policy, scheme registry, scoped roles, approval attestations, effectivity, and the specified Global Preferences seeding seam.",
-            "depends_on": ["REV-I02"],
+            "depends_on": ["REV-I14"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I03"}],
             "completion_evidence": []
           },

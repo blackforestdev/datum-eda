@@ -155,6 +155,11 @@
    "progress_anchor": "PRODUCT-REVISION-ENGINE",
    "notes": "Findings-first REV-I13 owner boundary for REV-I02 execution. Approval may authorize only the typed authority schema, canonical persistence, structural validation, and exact local read-only resolution slice; policy, workflow, surfaces, migration guesses, dependencies, and later slices remain unauthorized."
   },
+  "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-ENGINE",
+   "notes": "Findings-first REV-I14 owner boundary for REV-I03 execution. Approval may authorize only the packet's closed Project-policy, scheme, scoped-role, attestation, effectivity, and copy-once revision-seed inventories; Design gating, lifecycle, issuance, surfaces, providers, migrations, dependencies, and later slices remain unauthorized."
+  },
   "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
