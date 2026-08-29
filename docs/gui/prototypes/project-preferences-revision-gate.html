@@ -100,6 +100,21 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .mi:last-child{border-bottom:0}
 .mi.sel-on{background:var(--s03);color:var(--tx)}
 .mi small{display:block;font-size:10.5px;color:var(--tx3);margin-top:2px}
+/* two-column preference pane — structure taken verbatim from the ratified
+   preferences-window.html: left nav of categories, right column everything else. */
+.pwin{width:1160px;max-width:100%;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;
+  overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+.pbody{display:flex;min-height:330px}
+.nav{width:210px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0}
+.nav div{padding:7px 18px;font-size:12.5px;color:var(--tx2)}
+.nav .on{background:var(--s02);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
+.pcont{flex:1;min-width:0}
+.ghead{font-family:"PlexMono",monospace;font-size:10.5px;letter-spacing:.09em;color:var(--tx3);
+  text-transform:uppercase;margin:16px 18px 4px}
+.prov{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);padding:6px 18px 11px;line-height:1.7;
+  border-bottom:1px solid var(--bd-sub)}
+.prov b{color:var(--tx2);font-weight:500}
+.ph{color:var(--tx3);opacity:.55}
 .canvasmock{padding:16px;font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);line-height:1.9}
 </style>
 <h1>Datum <b>·</b> project preferences — the revision gate <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">one question, one second, then never again</span></h1>
@@ -117,18 +132,40 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 
 <div class="sec">2 · ONE QUESTION IN PROJECT PREFERENCES</div>
 <div class="lead">When a project does need control, you adopt it here. This is the approval: read it, pick one, done. It is never asked again and it never interrupts authoring afterwards.</div>
-<div class="two" style="grid-template-columns:1fr 460px">
-<div>
-<div class="win" style="max-width:100%">
-  <div class="wt">Project preferences · Revision<span class="path">this project only</span></div>
-  <div class="row">
-    <div class="lbl"><b>How this project is versioned</b>
-      <span>Not tracked. Author freely — nothing is recorded, nothing is required, and no approval gate exists.</span></div>
-    <div class="ctl"><div class="sel">Don't track revisions</div></div>
+<div class="pwin">
+  <div class="wt">Project preferences — quick-connector-brd<span class="path">this project only</span></div>
+  <div class="pbody">
+    <div class="nav">
+      <div class="ph">Units</div>
+      <div class="ph">Drafting Standard</div>
+      <div class="ph">Schematic</div>
+      <div class="ph">PCB/Board</div>
+      <div class="ph">Rules &amp; Checks</div>
+      <div class="ph">Output</div>
+      <div class="on">Revision</div>
+      <div class="ph">Library Sources</div>
+      <div class="ph">Team &amp; Roles</div>
+    </div>
+    <div class="pcont">
+      <div class="ghead">Versioning</div>
+      <div class="row">
+        <div class="lbl"><b>How this project is versioned</b>
+          <span>Not tracked. Author freely — nothing is recorded, nothing is required, and no approval gate exists.</span></div>
+        <div class="ctl"><div class="sel">Don't track revisions</div></div>
+      </div>
+      <div class="prov"><b>seeded from</b> your global default for new projects · copy-once at creation · this project owns it now</div>
+      <div class="ghead">Guidance</div>
+      <div class="row">
+        <div class="lbl"><b>Suggest revision setup</b>
+          <span>Show a dismissible note if this project starts producing controlled output.</span></div>
+        <div class="ctl"><div class="sel">On</div></div>
+      </div>
+    </div>
   </div>
 </div>
-<div class="cap"><b>One row, one question, one control.</b> The description under the label always describes the option currently selected, so the consequence of the choice is readable without opening anything. Same row pattern as every other Datum preference.</div>
-</div>
+<div class="cap"><b>Two columns, same as Global preferences:</b> left is the category list, right is everything else. Only <b>Revision</b> is proposed here — the greyed categories show where it sits, they are not specified. <b>One row per question</b>, description under the label carrying the consequence of the current selection.</div>
+
+<div class="two" style="grid-template-columns:460px 1fr;margin-top:18px">
 <div>
 <div class="menu">
   <div class="mi sel-on">Don't track revisions
@@ -138,8 +175,8 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   <div class="mi">Require an approved change before authoring
     <small>Edits belong to an approved change — production or contractual control</small></div>
 </div>
-<div class="cap">The dropdown, open. Three options, each with the consequence stated. Choosing the third is the approval — one second, once, and never asked again.</div>
 </div>
+<div><div class="cap" style="margin-top:0">The dropdown, open. Three options, each with its consequence stated. Choosing the third is the approval — one second, once, and never asked again. Global preferences already carries a <b>Project Policy (Read-Only)</b> category that mirrors these values; this pane is the writable counterpart.</div></div>
 </div>
 
 <div class="hero"><b>The gate is the choice, not a recurring interruption.</b> Adopting <span class="k">AuthorizedChangeRequired</span> is the second you spend. After that the project behaves the way you asked it to, and the engine never asks again. <b>Under the other two states the engine has no gate to apply at all</b> — it is not suppressed or overridden, it simply has nothing to enforce.</div>
