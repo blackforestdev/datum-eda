@@ -5821,8 +5821,8 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "ready",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5837,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I15",
+        "canonical_next_step_id": "REV-I04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6005,13 +6005,19 @@
           {
             "id": "REV-I15",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review the bounded REV-I04 EngineeringChange, bounded-departure, reservation, and Design-gate execution packet and decide whether that slice alone may begin.",
             "depends_on": ["REV-I03"],
             "requirement_refs": [
               {"path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I15"}
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I15-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the committed REV-I04 packet, reply exactly `REV-I04-EXECUTION: approve` or `REV-I04-EXECUTION: revise — <specific scope, enumeration, lifecycle, integration, never-blocks, reservation, migration, proof, dependency, or visual correction>`.",
               "requests": [

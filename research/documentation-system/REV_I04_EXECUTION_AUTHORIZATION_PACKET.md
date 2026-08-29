@@ -418,3 +418,26 @@ or
 ```text
 REV-I04-EXECUTION: revise — <specific scope, enumeration, lifecycle, integration, never-blocks, reservation, migration, proof, dependency, or visual correction>
 ```
+
+## 6. Owner disposition
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I15-APPROVED -->
+
+The owner approved REV-I15 on 2026-08-29 with the exact response
+`REV-I04-EXECUTION: approve`. Authorization is limited to REV-I04 as closed by
+sections 2 through 4, including every complete-and-exclusive enumeration and
+its bidirectional completion proof.
+
+The sole Design integration remains the named pre-staging preflight at the
+existing journaled commit coordinator. `Unmanaged` and `NoEarlierControl`
+remain prompt-free and ungated. Identity-free collection may append only the
+Change creation and transaction-link events; it reserves no label and emits no
+reservation or revision-identity authority event until an explicit
+`RevisionReservation` commits. Legacy facts remain append-only assessed
+evidence and are never promoted by resemblance or rewritten.
+
+REV-I05 through REV-I12, impact and baseline computation, issuance, public
+surfaces, Preferences, Publish, GUI, adapters, production cryptography,
+remaining migrations, visible behavior, and every new dependency remain
+unauthorized. REV-I04 begins only after fresh drift and guarded locked/offline
+Cargo baselines; prior packet results are evidence, not an execution lease.
