@@ -160,11 +160,18 @@ REV-I02 may:
 2. define versioned canonical payloads for ConfigurationItem,
    ConfigurationRef, ConfigurationBaseline, EngineeringRevision,
    RevisionReservation, BuildIdentity, EngineeringChange,
-   ApprovalAttestation, Effectivity, ReleaseCandidate, Release, the three typed
-   standing facts, ControlledDocument, DocumentIssue, ReleasePackage,
-   Transmittal, StandardsProfile, RequirementDisposition, AuditEvaluation,
-   retention/hold/disposition, and the dependency/impact/evidence/regeneration/
-   reproduction/adapter/exchange/external-candidate families required later;
+   ApprovalAttestation, Effectivity, ReleaseCandidate, Release,
+   SupersessionEstablished, AuthorizationWithdrawn, ObsolescenceDeclared,
+   ControlledDocument, DocumentIssue, ReleasePackage, Transmittal,
+   StandardsProfile, RequirementDisposition, AuditEvaluation, RetentionPolicy,
+   LegalOrPolicyHold, RecordDisposition, DependencySnapshot, SemanticDelta,
+   ImpactEvaluation, EvidenceInputContext, EvidenceFreshness,
+   LibraryUptakeCandidate, BaselineComparison, RegenerationPlan,
+   ReproductionManifest, ReproductionAttempt, ExternalMappingReceipt,
+   AdapterDivergenceObservation, ReleaseMirrorRequest, ReleaseMirrorResult,
+   AuthorityExchangeEnvelope, AuthorityExchangeReceipt,
+   ExternalChangeCandidate, CredentialOrTrustEvent, and
+   TrustedTimestampEvidence;
 3. define stable record-kind and event-kind tags, immutable record/event
    envelopes, append-only ancestry, and algorithm-qualified canonical digests;
 4. persist those envelopes and deterministic indexes inside the REV-I01 local
@@ -179,6 +186,12 @@ REV-I02 may:
    and unknown-version read-only results; and
 7. add focused constructors and test-only fixtures needed to prove the schema
    and store without exposing a public generic writer or business operation.
+
+**Closure rule.** The families enumerated in item 2 are the complete and
+exclusive set REV-I02 may define. A family not named there is deferred to its
+assigned slice. Adding a family to REV-I02 after approval requires a new owner
+authorization and is not a within-slice implementation detail. REV-I02
+completion is verified against this enumeration.
 
 REV-I02 explicitly may not:
 
@@ -204,6 +217,9 @@ REV-I02 explicitly may not:
 
 Acceptance requires committed, addressable evidence for:
 
+- an exact inventory proof that the implementation defines every family named
+  in section 2 item 2 and defines no additional authority-record family, with
+  REV-I02 completion checked against that closed enumeration;
 - exhaustive unique wire tags and non-interchangeable Rust ID newtypes for the
   complete REV-I02 identity/record/event inventory;
 - compile-fail and runtime type-confusion cases covering representative UUID-
