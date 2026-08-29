@@ -198,33 +198,49 @@ The schematic lattice is inch-derived <b>because every symbol library on earth i
 
 <div class="bug"><h4>Excellon drill header declares a format it does not write</h4>
 <p><code>crates/engine/src/export/excellon.rs:15</code> emits <code>METRIC,TZ</code> and then writes decimal-point coordinates (<code>X140.335000</code>) via <code>format_mm_6</code>. <code>TZ</code> declares zero-suppressed <i>fixed-point</i>; a strict CAM reader honouring it can mis-scale the entire drill map. Ucamco names this exact class Excellon’s “fatal flaw.” KiCad writes the flag only for suppressed modes and omits it for decimal format. Datum also omits the <code>FMAT,2</code> and <code>G90</code> lines KiCad emits. Fix is one line plus two.</p></div>
-<div class="sec">7B · CLAY ROW 1, SCULPTED — THE DEFAULTS</div>
-<div class="lead">This is the answer to the question that started this: what grid presets does Datum ship, and which one is selected on a fresh install. Nothing below needs a new decision record.</div>
+<div class="sec">7B · CLAY ROW 1 — DECIDED BY THE OWNER</div>
+<div class="lead">Three grid sets ship. Metric base-10 is the default and no one has to leave it. The other two exist so nobody is trapped, and neither is ever imposed.</div>
 
-<div class="two">
+<div class="two" style="grid-template-columns:1fr 1fr 1fr">
 <div>
 <div class="win">
-  <div class="wt">Schematic · ships with</div>
+  <div class="wt">Metric &nbsp;· default</div>
+  <div class="gopt"><span class="nm">Coarse</span><span class="ex">2.5 mm</span></div>
+  <div class="gopt"><span class="nm">Place</span><span class="ex">1.0 mm</span></div>
+  <div class="gopt on"><span class="nm">Fine</span><span class="ex">0.5 mm</span></div>
+  <div class="gopt"><span class="nm">Finer</span><span class="ex">0.2 mm</span></div>
+  <div class="gopt"><span class="nm">Detail</span><span class="ex">0.1 mm</span></div>
+  <div class="gopt"><span class="nm">Precision</span><span class="ex">0.05 mm</span></div>
+</div>
+<div class="cap"><b>The 1–2–5 decade series</b> — the same progression as instrument ranges, graph paper and the E-series. Every step divides cleanly, every number is readable, and it is base 10 the whole way down. Board default 0.5 mm; schematic default 2.5 mm.</div>
+</div>
+<div>
+<div class="win">
+  <div class="wt">Mil &nbsp;· preference</div>
+  <div class="gopt"><span class="nm">Coarse</span><span class="ex">100 mil</span></div>
+  <div class="gopt on"><span class="nm">Place</span><span class="ex">50 mil</span></div>
+  <div class="gopt"><span class="nm">Fine</span><span class="ex">20 mil</span></div>
+  <div class="gopt"><span class="nm">Finer</span><span class="ex">10 mil</span></div>
+  <div class="gopt"><span class="nm">Detail</span><span class="ex">5 mil</span></div>
+  <div class="gopt"><span class="nm">Precision</span><span class="ex">1 mil</span></div>
+</div>
+<div class="cap"><b>The same 1–2–5 series, in mil.</b> For a designer who thinks in imperial, this is the whole answer — one preference change and the crisis is over. Exact integers underneath, as always.</div>
+</div>
+<div>
+<div class="win">
+  <div class="wt">Imperial-derived metric</div>
   <div class="gopt"><span class="nm">Pin lattice</span><span class="ex">2.54 mm</span></div>
-  <div class="gopt on"><span class="nm">Half pitch</span><span class="ex">1.27 mm &nbsp;· default</span></div>
+  <div class="gopt on"><span class="nm">Half pitch</span><span class="ex">1.27 mm</span></div>
   <div class="gopt"><span class="nm">Quarter pitch</span><span class="ex">0.635 mm</span></div>
+  <div class="gopt"><span class="nm">Tenth</span><span class="ex">0.254 mm</span></div>
+  <div class="gopt"><span class="nm">Twentieth</span><span class="ex">0.127 mm</span></div>
 </div>
-<div class="cap"><b>Inch-derived because every symbol library on earth is.</b> Half pitch is the working default — it is what KiCad defaults to (50 mil), it lets you route between pins on a 100 mil part, and quarter pitch is the floor below which wires cannot meaningfully meet.</div>
-</div>
-<div>
-<div class="win">
-  <div class="wt">Board · ships with</div>
-  <div class="gopt"><span class="nm">Coarse place</span><span class="ex">1.0 mm</span></div>
-  <div class="gopt on"><span class="nm">Place</span><span class="ex">0.5 mm &nbsp;· default</span></div>
-  <div class="gopt"><span class="nm">Fine place</span><span class="ex">0.25 mm</span></div>
-  <div class="gopt"><span class="nm">Detail</span><span class="ex">0.05 mm</span></div>
-</div>
-<div class="cap"><b>Metric decimal because every modern package is.</b> 0.5 mm place / 0.05 mm detail is what IPC-2221 §8.1.1.3 recommends, and it is where KiCad 8 moved its own PCB default. Clean base-10, no inch anywhere.</div>
+<div class="cap">For work that must land on a legacy inch lattice while reading in millimetres. It exists so the case is covered; it is never the default and never suggested.</div>
 </div>
 </div>
 
-<div class="law" style="margin-top:14px"><b>Display unit is independent and already ratified.</b> The six <code>datum.units.*</code> descriptors seed <code>ProjectDisplayUnits</code> and never rescale stored data. Set display to millimetres and it stays millimetres on both surfaces — including the schematic, whose lattice happens to be inch-derived. <b>You never see a mil unless you ask for one.</b></div>
-<div class="cap"><b>Governance impact: none.</b> Grid pitch tables were already excluded from the descriptor set, active grid selection is already session state, and <code>datum.viewport.fine_grid_divisor</code> already ships. This closes the clay row inside the boundary that already exists.</div>
+<div class="law" style="margin-top:14px"><b>What makes this safe is the pin snap, not the lattice.</b> A base-10 metric schematic grid does not sit on an inch-derived symbol library — and it does not have to. The wire tool writes the pin’s exact coordinate into the endpoint, so connection holds on any grid. That is why the default can simply be the clean one.</div>
+<div class="cap"><b>Governance impact: none.</b> Grid pitch tables were already excluded from the descriptor set, active grid selection is already session state, and <code>datum.viewport.fine_grid_divisor</code> already ships. No new decision record; this is a preset table and a default.</div>
 
 <div class="sec">8 · WHAT IS STILL OPEN — THREE SMALL THINGS, NO ARCHITECTURE</div>
 <div class="lead">None of these blocks the defaults above. They are taste and severity calls that can be made after the presets ship, not before.</div>
