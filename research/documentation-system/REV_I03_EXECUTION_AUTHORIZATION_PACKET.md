@@ -2,7 +2,7 @@
 
 # REV-I03 Project Policy and Authority Evaluation Execution-Authorization Packet
 
-> **Status:** owner review required.
+> **Status:** owner-approved; REV-I03 execution authorized.
 >
 > **Boundary:** approval authorizes REV-I03 only. It does not authorize an
 > EngineeringChange lifecycle, a Design-authoring gate, revision reservation or
@@ -377,3 +377,20 @@ or
 ```text
 REV-I03-EXECUTION: revise — <specific scope, enumeration, policy, authority, never-blocks, proof, dependency, migration, or visual correction>
 ```
+
+## 6. Owner disposition
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I14-APPROVED -->
+
+The owner approved REV-I14 on 2026-08-29 with the exact response
+`REV-I03-EXECUTION: approve`. Authorization is limited to REV-I03 as closed by
+sections 2 through 4, including every complete-and-exclusive enumeration and
+its bidirectional completion proof. Finding 7's no-adopted-policy and
+`NoEarlierControl` code fence and three-real-Project authoring witness remain
+controlling.
+
+REV-I04 through REV-I12, Design-gate integration, public surfaces, Global
+Preferences implementation, adapters, production cryptography, semantic
+migration, visible behavior, and every new dependency remain unauthorized.
+REV-I03 begins only after fresh drift and guarded locked/offline Cargo
+baselines; prior packet results are evidence, not an execution lease.
