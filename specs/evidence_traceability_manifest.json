@@ -8,7 +8,9 @@
         "research/README.md",
         "research/README_AUDIT_2026-08-18.md"
       ],
-      "consumers": ["docs/RESEARCH_TRACEABILITY.md"],
+      "consumers": [
+        "docs/RESEARCH_TRACEABILITY.md"
+      ],
       "reviewed_digest": "fb5b508693062675df1f1b91301ed09b55912ee3f006f71db36a55bbbd403d44",
       "review_note_addendum": "The research index and historical README audit were re-reviewed against the updated traceability matrix. Global Preferences GP-C01 through GP-C05 are registered. The matrix now records both the completed generation-store contract and the owner-adopted refined Option A interaction/accessibility contract extracted from Claude commits a061fca, e2127fa, and 586eb0d. GP-C08 is next; GP-C05A is retained only as its historical alias under the no-sub-lettered-ID rule. No implementation, dependency, catalog ratification, or sync/account service is authorized.",
       "review_note": "The research inventory and human traceability synthesis register all six owner-approved identity decisions, REV-C03-Q1 through Q6, REV-C04 standalone/offline and optional-Git integration, REV-C05 impact/reproducibility, and all REV-C06 Q1-Q6 amended/revised approvals. Q1 makes Navigator revision structure permanently visible; Q2 keeps one cohesive Release pane with persistent summaries; Q3 keeps summary and canonical witness tree simultaneously visible; Q4 keeps one complete Change hierarchy while profiles scale obligation and detail; Q5 keeps final atomic issuance in that pane through an exact-consequence arm-then-confirm bar; Q6 keeps verdicts and permanent counted manifest categories visible while opening immutable detail beside the summary. V9-A separates mutable Publish Sets from controlled issued records; V10-C establishes typed standing facts. Git and air-gap exchanges remain mapped, verified, quarantined adapter inputs. The split V1-V12 studies, distributed-collaboration re-entry, and unimplemented Global Preferences follow-ons remain linked; source-strength gates are preserved and no implementation is authorized."
@@ -31,8 +33,12 @@
     {
       "id": "terminal-focus-incident",
       "status": "integrated",
-      "sources": ["research/TERMINAL_FOCUS_TAB_BUG_2026-08-16.md"],
-      "consumers": ["docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "sources": [
+        "research/TERMINAL_FOCUS_TAB_BUG_2026-08-16.md"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+      ],
       "reviewed_digest": "2be3e2d35e398b15c085387fb29739ad0e07f05f8f48b2b82bd3fc8eb25bed3b",
       "review_note": "The historical focus/tab incident is retained against the native terminal interaction contract."
     },
@@ -84,7 +90,9 @@
     {
       "id": "gui-context-menus",
       "status": "integrated",
-      "sources": ["research/gui-context-menus/CONTEXT_MENU_RESEARCH.md"],
+      "sources": [
+        "research/gui-context-menus/CONTEXT_MENU_RESEARCH.md"
+      ],
       "consumers": [
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
@@ -165,6 +173,8 @@
         "docs/gui/prototypes/agent-authority-study.html",
         "docs/gui/prototypes/agent-authority-scenarios.html",
         "docs/gui/prototypes/agent-authority-threat-model.html",
+        "docs/gui/prototypes/units-and-grid-model.html",
+        "docs/gui/prototypes/grid-basis-candidate-d.html",
         "docs/gui/prototypes/agent-blocked-action-alerts.html",
         "docs/gui/prototypes/clay-rows-decision.html"
       ],
@@ -184,8 +194,8 @@
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
         "docs/RESEARCH_TRACEABILITY.md"
       ],
-      "reviewed_digest": "4cce9df909363c691d7c40e27cdde20c06827bcd7ed041fdcc14a039b428a378",
-      "review_note_addendum": "The 2026-08-27 Q5A owner revision supersedes the earlier no-replay packet sentence: Claude commit b8f5a7a draws completed/dismissed/never-run state and Run setup again in the real Files & Projects window; replay changes nothing by itself and remains machine-local. Q5A-B+C is approved with that amended clause 8. The rendered Q5B packet now recommends the one local non-tabbed Start page with canonical New/Open/Import actions, engine-truth Recents, explicit missing paths, read-only Q5 seed preview, Start page/Last session/Empty preference integration, and hard exclusions for tabs burying Recents, news/marketing/alerts, telemetry, and startup network load. Q5B remains undispositioned; no prototype, implementation, dependency, or Q6-Q10 authority is changed.",
+      "reviewed_digest": "45e0eea3899e5d9ad9cace936b75ab546becff5e31498ef84fb287cbc3bda777",
+      "review_note_addendum": "Clay row 1 (grid size presets) is registered here because it is a Global Preferences row resting on GP_SHARED_UNITS_ENGINE_REQUIREMENT.md. grid-basis-candidate-d.html is retained as superseded clay: its pitch-seeded footprint grid and its placement of grid basis in Preferences were both disproved and are corrected in units-and-grid-model.html. The owner decided three shipped grid sets — metric on the 1-2-5 decade series as the default, the same series in mil as a one-switch preference, and an imperial-derived metric set that is never default and never suggested. Governance impact is none: grid pitch tables were already outside the descriptor catalog and active grid selection is already session state, so no decision record is created and no descriptor changes. An earlier claim on this route's render that coordinate coincidence makes the schematic lattice electrically load-bearing was withdrawn; coincidence is guaranteed by the wire tool snapping to pin endpoints, which is an AUTHORING_TOOLS.md requirement, not governance. No implementation, dependency, or catalog ratification is authorized.",
       "review_note_addendum_2": "The owner approved the Start-page contract using its historical Q5B-A response and assigned GP-C03-Q11 as the canonical forward identity; Q5B remains an evidence alias, Q5A remains the sole dispositioned sub-letter exception, and newly inserted questions begin at Q12 with no further sub-letter IDs. The existing sequence resumes at Q6. The prepared Q6 packet cross-reviews the real Preferences window workspace, rules/checks, output, files/projects, and read-only Project-policy anchors with PM-036 and archival PX-V8. Its sole surviving Candidate A distinguishes explicit this-run Session overrides, named read-only Context, per-invocation operation input, restartable workspace state, and transient interaction state, including visible lifetimes, accessibility, and bounded precedence. No prototype, implementation, dependency, persistence, catalog, or Q6-Q10 disposition is changed.",
       "review_note_addendum_3": "The owner approved Q6-A without revision, establishing the thirteen-clause separation among this-run Session, read-only Context, explicit operation input, restartable workspace state, and transient interaction state. The prepared Q7 packet cross-reviews the real Preferences window Terminal, Agents, and Organization anchors with PM-036 and archival PX-V9. Its sole surviving Candidate A preserves correctable invalid drafts while retaining the last valid effective value, refuses ineligible sources before precedence, keeps a locally validated managed generation visibly stale only through its declared offline-validity law, distinguishes unavailable, expired, and revoked states, and re-resolves retained eligible sources without treating disconnect as removal or blocking unrelated Design. A stale Q4 cross-reference was corrected from Q8 to its existing Q7 refusal owner; no approved Q4 behavior changed. No prototype, implementation, dependency, storage, transport, or Q7-Q10 disposition is changed.",
       "review_note_addendum_4": "The owner approved Q7-A without revision, establishing all fifteen validation, refusal, protected-source, offline-validity, provider-state, accessibility, and non-blocking clauses. The Q8 render-readiness audit found that archival PX-V10 draws unknown preserved/inactive and retired-alias states but the real Preferences window has no corresponding row, inspector, status, or anchor. Under the primary-window law, Q8 packet and clause extraction are paused. A bounded Claude reconciliation requests both identity states and their reset/import/export/next-write relationship in the real #organization region while preserving Q1, Q7, PM-036, and the existing Organization rows. No prototype was edited by Codex, no Q8 candidate is preselected, and no implementation, dependency, persistence, or Q8-Q10 disposition is changed.",
@@ -237,15 +247,21 @@
         "research/pcb-text-rendering/OUTLINE_TEXT_GERBER_COMPACTION_RESEARCH.md",
         "research/pcb-text-rendering/PCB_TEXT_RENDERING_RESEARCH.md"
       ],
-      "consumers": ["docs/gui/DATUM_RENDERING_BOOK.md"],
+      "consumers": [
+        "docs/gui/DATUM_RENDERING_BOOK.md"
+      ],
       "reviewed_digest": "17ee255bec2eb1997353c61a554b0cd194c18fd0ca73879efe510ae8c2a6e302",
       "review_note": "Typography, clearance, text-engine, and manufacturing compaction research are jointly governed by the Rendering Book. Product Mechanics 036 preserves typography and clearance semantics while resolving schematic foreground roles through one selected contrast theme."
     },
     {
       "id": "product-mechanics-research",
       "status": "integrated",
-      "sources": ["research/product-mechanics/DATUM_PRODUCT_MECHANICS_RESEARCH.md"],
-      "consumers": ["docs/DATUM_PRODUCT_MECHANICS.md"],
+      "sources": [
+        "research/product-mechanics/DATUM_PRODUCT_MECHANICS_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/DATUM_PRODUCT_MECHANICS.md"
+      ],
       "reviewed_digest": "96f91a5e5119f19175fd379ed246d4ff2882adbbbb303cc5ad72d64a7f782616",
       "review_note": "The product-mechanics research is retained against the controlling product doctrine."
     },
@@ -284,7 +300,9 @@
     {
       "id": "prototype-command-feedback",
       "status": "integrated",
-      "sources": ["docs/gui/prototypes/command-feedback-study.html"],
+      "sources": [
+        "docs/gui/prototypes/command-feedback-study.html"
+      ],
       "consumers": [
         "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
@@ -332,7 +350,9 @@
     {
       "id": "prototype-selection",
       "status": "integrated",
-      "sources": ["docs/gui/prototypes/selection-study.html"],
+      "sources": [
+        "docs/gui/prototypes/selection-study.html"
+      ],
       "consumers": [
         "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
         "docs/gui/DATUM_RENDERING_BOOK.md"
@@ -343,8 +363,12 @@
     {
       "id": "prototype-terminal",
       "status": "integrated",
-      "sources": ["docs/gui/prototypes/terminal-study.html"],
-      "consumers": ["docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"],
+      "sources": [
+        "docs/gui/prototypes/terminal-study.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+      ],
       "reviewed_digest": "850cc303c167816146465091556c73c476f6c8d3fdf20c3e8958a13484c2f458",
       "review_note": "The terminal visual study remains attached to the native terminal product contract."
     }
