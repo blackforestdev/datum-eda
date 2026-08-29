@@ -298,3 +298,17 @@ or
 ```text
 REV-I02-EXECUTION: revise — <specific scope, type, invariant, proof, dependency, migration, or visual correction>
 ```
+
+## 6. Owner disposition
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I13-APPROVED -->
+
+The owner approved REV-I13 on 2026-08-29 with the exact response
+`REV-I02-EXECUTION: approve`. The authorization is limited to REV-I02 as closed
+by sections 2–4, including the exclusive family enumeration and its completion
+proof. Finding 5's never-blocks enforcement and unconfigured-authoring witness
+remain controlling. REV-I03 through REV-I12, public mutation surfaces,
+Preferences, Publish, GUI, adapters, semantic migration, visible behavior, and
+every new dependency remain unauthorized. Approval does not waive `dat-wg1`:
+REV-I02 may not be claimed or started until a fresh drift suite and guarded
+locked/offline Cargo baseline are green.
