@@ -5819,11 +5819,28 @@
         "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "rev-i02-typed-authority-20260829",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "0a735cb05930ee725f06e031f268367b664125ec",
+        "claimed_at": "2026-08-29T08:09:24Z",
+        "heartbeat_at": "2026-08-29T08:09:24Z",
+        "expires_at": "2026-08-29T16:09:24Z",
+        "scope": [
+          "REV-I02 closed typed authority family inventory",
+          "versioned canonical records and structural events",
+          "REV-I01-integrated persistence and integrity",
+          "exact local read-only resolution",
+          "PM-034 never-blocks and unconfigured-authoring proofs"
+        ]
+      },
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5943,7 +5960,7 @@
           {
             "id": "REV-I02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement versioned typed revision-authority identities, records, events, canonical persistence, integrity, and exact local resolution.",
             "depends_on": ["REV-I13"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I02"}],
