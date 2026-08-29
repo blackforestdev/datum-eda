@@ -13,22 +13,18 @@ table{border-collapse:collapse;width:100%;max-width:1100px;background:var(--s1);
 th{text-align:left;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;padding:9px 12px;border-bottom:1px solid var(--bd)}
 td{padding:8px 12px;border-bottom:1px solid #23272F;font-size:12.5px;color:var(--tx2)}
 td.n{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx);white-space:nowrap}
-.corr{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1100px;margin:14px 0}.corr b{color:var(--err)}
 .ok{border-left:2px solid var(--ok);background:#0f1a12;padding:12px 16px;max-width:1100px;margin:14px 0}.ok b{color:var(--ok)}
 .counts{display:flex;gap:10px;margin:10px 0 18px}
 </style>
-<h1>Datum <b>·</b> prototype status inventory <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">42 prototypes · 2026-08-29</span></h1>
-<div class="lede">Current approval state of every visual artifact in the Claude-owned lane. One marker per file, three states, colour meaning exactly one thing.</div>
+<h1>Datum <b>·</b> prototype status inventory <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">43 prototypes · regenerated 2026-08-29</span></h1>
+<div style="margin:7px 0 4px"><span class="statusmark" data-state="retired">○ REFERENCE · derived inventory, not a decision</span></div>
+<div class="lede">Current approval state of every visual artifact in the Claude-owned lane. One marker per file, three states, colour meaning exactly one thing. Regenerated from the files themselves — this page is derived, never hand-maintained.</div>
 <div class="counts">
 <span class="statusmark" data-state="approved">✓ APPROVED 23</span>
-<span class="statusmark" data-state="open">⚠ OPEN 4</span>
+<span class="statusmark" data-state="open">⚠ OPEN 5</span>
 <span class="statusmark" data-state="retired">○ RETIRED 15</span>
 </div>
-
-<div class="ok"><b>Nothing here gates development.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved. None of the open artifacts below sits on any authorized slice's path.</div>
-
-<div class="corr"><b>Correction to the earlier version of this sheet.</b> It claimed six artifacts carried a stale status because owner decisions were "never written back onto the file." That was wrong and I raised it as a defect in my own work without verifying it. The agent-authority dispositions <i>were</i> recorded at the time, in commit 15ac6b7, and correctly read owner-dispositioned pending separate Codex governance ratification. The grid decision was recorded in 0ac4a46. Only one file — units-and-grid-model — carried a stale banner contradicting its own body. The false alarm came from a substring search matching RATIFIED inside NOT RATIFIED.</div>
-
+<div class="ok"><b>Nothing here gates development.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved.</div>
 <div class="sec">approved — 23</div>
 <div class="note">Owner-approved or ratified. Safe for any slice to build against.</div>
 <table><tr><th>prototype</th><th>marker</th></tr>
@@ -55,15 +51,14 @@ td.n{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx);white-s
 <tr><td class="n">revision-ux-study-index</td><td>✓ RATIFIED · decision scoreboard</td></tr>
 <tr><td class="n">start-page-study</td><td>✓ OWNER-APPROVED</td></tr>
 <tr><td class="n">units-and-grid-model</td><td>✓ VISUALS APPROVED · 2026-08-29 · grid preset sets and defaults decided by the owner</td></tr></table>
-
-<div class="sec">open — 4</div>
-<div class="note">Genuinely awaiting a decision. Two hold questions the owner has not seen (selection-study, rendering-study); clay-rows-decision is partially settled; shell-parity-comparison is a review artifact, not a decision.</div>
+<div class="sec">open — 5</div>
+<div class="note">Genuinely awaiting a decision.</div>
 <table><tr><th>prototype</th><th>marker</th></tr>
 <tr><td class="n">clay-rows-decision</td><td>◐ 1 OF 3 DECIDED · row 1 grid presets settled 2026-08-29; rows 2 and 3 open</td></tr>
+<tr><td class="n">project-preferences-revision-gate</td><td>CLAY — NOT RATIFIED</td></tr>
 <tr><td class="n">rendering-study</td><td>⚠ PENDING OWNER REVIEW · S5-C09</td></tr>
 <tr><td class="n">selection-study</td><td>⚠ PENDING OWNER REVIEW</td></tr>
 <tr><td class="n">shell-parity-comparison</td><td>NOTHING BLESSED</td></tr></table>
-
 <div class="sec">retired — 15</div>
 <div class="note">Superseded by later approved work, or early structural studies that were never live decisions. Kept as evidence, not as authority.</div>
 <table><tr><th>prototype</th><th>marker</th></tr>
@@ -74,7 +69,7 @@ td.n{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx);white-s
 <tr><td class="n">open-decisions</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
 <tr><td class="n">preferences-accessibility-study</td><td>○ SUPERSEDED · absorbed by GP-C05 refined option A</td></tr>
 <tr><td class="n">preferences-store-placement-study</td><td>○ SUPERSEDED · absorbed by GP-C03 Q10</td></tr>
-<tr><td class="n">prototype-disposition-sheet</td><td>○ REFERENCE · inventory, not a decision</td></tr>
+<tr><td class="n">prototype-disposition-sheet</td><td>○ REFERENCE · derived inventory, not a decision</td></tr>
 <tr><td class="n">schematic-editor</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
 <tr><td class="n">search-placement-study</td><td>○ SUPERSEDED · absorbed by GP-C05 pinned search, shipped in preferences-window</td></tr>
 <tr><td class="n">terminal-study</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
