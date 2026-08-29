@@ -35,6 +35,8 @@ header.page h1{font-size:21px;font-weight:600;margin:0 0 6px}
 header.page h1 b{color:var(--acc)}
 header.page .sub{color:var(--tx3);font-size:13px;max-width:1020px}
 header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:var(--acc-h)}
+.dispobar{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:9px 14px;font-size:12.5px;line-height:1.75;color:var(--tx);background:#0f1a12;border:1px solid rgba(79,167,90,.55);border-radius:6px;max-width:1020px}
+.dispobar b{color:var(--ok)}
 .lawbar{display:flex;align-items:center;gap:10px;margin-top:14px;padding:8px 14px;font-size:12.5px;
   color:var(--tx);background:#1e1608;border:1px solid rgba(224,162,58,.5);border-radius:6px;max-width:1020px}
 .lawbar b{color:var(--warn)}
@@ -416,7 +418,8 @@ owner question 6. Laws in every candidate: standing facts <b>never mutate or era
 baselines, packages, transmittals, or audit history; <b>Current/Historical are projections</b>, not
 mutable lifecycle states; <b>delivery never changes standing</b> (ECSS-M-ST-40C). First, the three facts
 as distinct consequences — then three candidates for how their vocabulary and rules are governed.
-<b>No candidate is selected.</b></div>
+<b>Owner disposition 2026-08-25 — V10-C approved.</b> Candidate evidence below is preserved exactly as rendered before the disposition.</div>
+<div class="dispobar">✔<span><b>V10-C approved.</b> Standing is carried by three typed core facts — <span class="mono">SupersessionEstablished</span>, <span class="mono">AuthorizationWithdrawn</span>, and <span class="mono">ObsolescenceDeclared</span> — each a distinct consequence rather than a shared status value. Applicability, authority, rationale, effectivity, sequences, and terminology are <b>profile-governed</b>, so a profile may rename or constrain them without changing the underlying facts. History is <b>immutable</b>: a standing fact never mutates or erases an issued record, baseline, package, transmittal, or audit entry. Standing is <b>delivery-neutral</b> — establishing it neither performs nor implies egress, which stays a separate authorization.</span></div>
 <div class="grid3">
   <div>
     <div class="card" style="height:236px"><div class="chd">SUPERSEDED <span class="m">successor exists</span></div>
@@ -491,11 +494,11 @@ govern applicability, authority, transitions, and display terms. History is immu
 <table class="orindex" style="border-collapse:collapse;width:100%;max-width:1150px">
   <tr><td style="color:var(--info)">AUTH-Q3</td><td><a href="#v8">V8</a> — EngineeringRevision scope ownership: per-CI (+ optional aggregate Product CI) vs per-CI + ReleaseScope vs ReleaseScope-only. Resolved: per revision-bearing CI only.</td></tr>
   <tr><td style="color:var(--info)">AUTH-Q5</td><td><a href="#v9">V9</a> — document authority: ControlledDocument chain vs PublishSet-owned identity; mutation tests rendered. Resolved: V9-A ratified; bound-set deletion refuses (PUBLISH_SPACE_SPEC §6).</td></tr>
-  <tr><td style="color:var(--info)">AUTH-Q6</td><td><a href="#v10">V10</a> — standing facts: Superseded/Withdrawn/Obsolete as distinct consequences; candidates A (fixed words) · B (free-form strings) · C (typed facts + profile-governed applicability/authority/transitions/terminology). Pending.</td></tr>
+  <tr><td style="color:var(--info)">AUTH-Q6</td><td><a href="#v10">V10</a> — standing facts: Superseded/Withdrawn/Obsolete as distinct consequences; candidates A (fixed words) · B (free-form strings) · C (typed facts + profile-governed applicability/authority/transitions/terminology). Resolved: V10-C approved (owner disposition 2026-08-25).</td></tr>
   <tr><td>Q1–Q6</td><td>Identity/scheme questions render in the companion <a href="revision-identity-study.html">Revision Identity Study</a> (V1–V7).</td></tr>
 </table>
 
-<div class="cap" style="margin-top:30px;font-size:11.5px">Laws of this page: no candidate pre-selected ·
+<div class="cap" style="margin-top:30px;font-size:11.5px">Laws of this page: V10-C approved (owner disposition 2026-08-25); no other candidate pre-selected ·
 standing facts never mutate issued records, baselines, packages, transmittals, or audit history ·
 Current/Historical are projections · delivery never changes standing · the ratified V9-A chain and
 referenced-object deletion refusal are preserved.</div>

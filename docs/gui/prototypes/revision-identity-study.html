@@ -392,33 +392,35 @@ Phase ⊃ build ⊃ spin stay typed and distinct.</div>
 </div>
 
 <!-- ================================================================ V5 -->
-<div class="sec-label" id="v5"><span class="n">V5</span><span>Successor work — no identity until allocation</span><span class="q">Q2</span><span class="q">Q3</span><span class="rule"></span></div>
+<div class="sec-label" id="v5"><span class="n">V5</span><span>Successor work — revision identity not yet reserved</span><span class="q">Q2</span><span class="q">Q3</span><span class="rule"></span></div>
 <div class="grid2">
   <div>
     <div class="card">
-      <div class="chd">First post-release divergence <span class="m">automatic collection · zero identity</span></div>
+      <div class="chd">Change / Inspector · first post-release divergence <span class="m">automatic collection · zero identity</span></div>
       <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--tx2);background:var(--s02);border:1px solid var(--bd-sub);border-radius:6px;padding:12px 16px">
         SUCCESSOR WORK<br>
         Based on: BL-2026-08-24-01<br>
         Change: Draft CHG-0031<br>
         Engineering revision: <span class="idchip unalloc">⊘ UNALLOCATED</span><br>
-        <span style="color:var(--tx3)">No revision identity has been reserved or issued.</span></div>
+        <span style="color:var(--tx3)">Successor work — revision identity not yet reserved.</span></div>
       <div style="font-size:11.5px;color:var(--tx3);margin-top:9px">Transactions collect under the Draft
-      change; the released baseline is untouched; no next-in-sequence token exists anywhere in this state.</div>
+      change; the released baseline is untouched; no next-in-sequence token exists anywhere in this state.
+      <b style="color:var(--warn)">This wording is Change/Inspector context only</b> — it is never the primary drawing or
+      title-block annotation, which continues to carry the last released revision.</div>
     </div>
-    <div class="cell-cap"><b>V5a — successor state.</b> exact packet wording; identity-free by construction</div>
+    <div class="cell-cap"><b>V5a — successor state.</b> automatic identity-free Draft <code>EngineeringChange</code> collection; Change/Inspector surface only</div>
   </div>
   <div>
     <div class="card">
-      <div class="chd">Explicit allocation <span class="m">designer declares the boundary</span></div>
+      <div class="chd">Explicit reservation <span class="m">designer declares the boundary</span></div>
       <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Boundary crossed</span><span class="v">Manufacturing release ▾ <span style="color:var(--tx3);font-size:11px">(phase build · share/delivery · review baseline · certification submission · declared baseline)</span></span></div>
       <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Namespace / scope</span><span class="v mono">board:main</span></div>
       <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Scheme in force</span><span class="v mono">alphabetic profile v1</span></div>
       <div class="kv" style="grid-template-columns:150px 1fr"><span class="k">Proposed label</span><span class="v mono">D <span class="idchip prov" style="margin-left:6px">◌ PREVIEW — not authority</span></span></div>
       <div style="font-size:11.5px;color:var(--tx3);margin-top:8px">The preview binds nothing. Identity
-      exists only after the typed allocation or reservation event commits.</div>
+      exists only after the typed V2-P provisional <code>RevisionReservation</code> commits; profile Issue/Release follows it.</div>
     </div>
-    <div class="cell-cap"><b>V5b — allocation surface.</b> boundary + namespace + scheme → previewed label; authority only at the typed event</div>
+    <div class="cell-cap"><b>V5b — reservation surface.</b> boundary + namespace + scheme → previewed label; authority only at the typed <code>RevisionReservation</code></div>
   </div>
 </div>
 
