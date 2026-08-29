@@ -39,13 +39,19 @@
   .vsheet{background:#3a3733;padding:22px;display:flex;justify-content:center}
   footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--bd-sub);color:var(--tx3);font-size:12.5px;font-family:var(--mono)}
   @media (max-width:820px){.row{grid-template-columns:1fr}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap">
 <header>
   <div class="brand">Datum<b>·</b>EDA · Title Block · Direction B</div>
   <h1>Honing B — balanced clear space, tuned type</h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
   <p class="lede">Every cell now carries <b>consistent clear space</b>; the sheet-number group is a <b>centered block with equal margins</b> (divider ↔ text ↔ page edge, top ↔ bottom), text left-justified inside. Type is on a tighter scale — one hero, one title, everything else quiet data on a shared baseline.</p>
 </header>
 

@@ -26,11 +26,18 @@
   .hc svg{background:#000}
   .tag{display:inline-block;font-size:10px;border:1px solid var(--bd);border-radius:3px;
        padding:1px 6px;color:var(--sub);margin-left:8px;vertical-align:2px}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
 <main>
 <h1>Datum Selection Study <span class="tag">S5-C09 evidence · pending owner review</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="open">⚠ PENDING OWNER REVIEW</span></div>
 <p class="sub">Fixed-size reference for the ratified S5 selection visual contract
 (UVT §2.2.13/§2.2.16/§4.4, Rendering Book §2, OPEN-1…14 resolutions).
 Every panel illustrates ratified construction; exact color tokens remain governed by the Rendering Book.</p>

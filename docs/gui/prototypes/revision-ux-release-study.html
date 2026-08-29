@@ -98,6 +98,12 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}
 ::-webkit-scrollbar-track{background:transparent}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -105,6 +111,7 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 
 <header class="page">
 <h1>Datum <b>·</b> Revision UX Release Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C06 · file 3 of 4</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="approved">✓ OWNER-APPROVED · 213b5d6</span></div>
 <div class="sub">Renders UX-V7–V9: the regeneration plan, ReleaseCandidate readiness, and approval through atomic issuance. Q2 is resolved — A-amended owner-approved (213b5d6). Q5 is resolved — B-amended owner-approved (rendered 323e2fb).</div>
 <div class="lawbar">⚖<span><b>Every unresolved choice is marked CANDIDATE — NOT APPROVED.</b> Changed ≠ Affected ≠ Stale ≠ Orphaned ≠ Non-reproducible; ImpactUnknown is never Unaffected; no silent library rebind; issued records never mutate; reproducible means byte-identical specified outputs; Console output-only; Git optional and never authoritative.</span></div>
 <div class="nav"><b>Study set:</b> <a href="revision-ux-shell-study.html">1 · Shell V1–V3</a> · <a href="revision-ux-impact-study.html">2 · Impact V4–V6</a> · <a href="revision-ux-release-study.html">3 · Release V7–V9</a> · <a href="revision-ux-evidence-study.html">4 · Evidence V10–V12</a> — one REV-C06 source of truth in four files.</div>

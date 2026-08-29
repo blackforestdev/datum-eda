@@ -44,8 +44,14 @@ h2{font-family:"PlexCMed";font-size:17px;margin-bottom:5px}
 .sum{font-family:"PlexMono",monospace;font-size:11.5px;line-height:2}
 .sum b{color:var(--tx2);font-weight:500}
 .law{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);border-top:1px solid var(--bd-sub);margin-top:14px;padding-top:10px}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style></head><body>
-<div class="note">PROTOTYPE — the first-run moment, currently undesigned in Datum. Upstream of Q5: this is where a real user's seed profile comes from. <span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ SUPERSEDED · absorbed by start-page-study + guided-setup-study</span></div>
+<div class="note">PROTOTYPE — the first-run moment, currently undesigned in Datum. Upstream of Q5: this is where a real user's seed profile comes from. <span class="statusmark" data-state="retired">○ SUPERSEDED · absorbed by start-page-study + guided-setup-study</span></div>
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Welcome to Datum</div>
   <div class="steps"><span class="on">1 · How you work</span><span>2 · Look</span><span>3 · Organization</span><span>4 · Ready</span></div>

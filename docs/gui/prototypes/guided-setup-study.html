@@ -52,8 +52,14 @@ body{background:var(--canvas);color:var(--tx);font-family:"PlexC",system-ui,sans
 .prop .h{padding:6px 12px;border-bottom:1px solid var(--bd-sub);font-size:10.5px;color:var(--tx3);letter-spacing:.08em}
 .prop .r{padding:5px 12px;border-bottom:1px solid var(--bd-sub);font-size:11.5px}
 .prop .r:last-child{border-bottom:none}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style></head><body>
-<div class="note">PROTOTYPE — guided setup <b>inside</b> the real Preferences window instead of a separate wizard: the accent ring steps through what a new user must choose, and the window teaches itself while doing it. <span class="chip" style="border-style:solid;border-color:#3B6E45;color:#3B6E45">✓ OWNER-APPROVED</span> <b style="color:#3B6E45">✓ OWNER-APPROVED — GP-C03-Q5A: guided-in-place (B) governs as the sole initial-setup surface with optional proposal-only assistance (C); zero mandatory choices; Skip and Esc end it permanently; replay via “Run setup again”. Candidate A (separate wizard) is retained as comparative evidence only.</b></div>
+<div class="note">PROTOTYPE — guided setup <b>inside</b> the real Preferences window instead of a separate wizard: the accent ring steps through what a new user must choose, and the window teaches itself while doing it. <span class="statusmark" data-state="approved">✓ OWNER-APPROVED</span> <b style="color:#3B6E45">✓ OWNER-APPROVED — GP-C03-Q5A: guided-in-place (B) governs as the sole initial-setup surface with optional proposal-only assistance (C); zero mandatory choices; Skip and Esc end it permanently; replay via “Run setup again”. Candidate A (separate wizard) is retained as comparative evidence only.</b></div>
 
 <div class="win"><div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div><div class="body"><div class="nav">
   <div class="todo">Appearance</div><div>Workspace</div><div class="on">Units</div><div>Schematic</div><div>PCB/Board</div>

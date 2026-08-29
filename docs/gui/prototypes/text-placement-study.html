@@ -43,13 +43,19 @@
   footer{margin-top:54px;padding-top:20px;border-top:1px solid var(--bd-sub);color:var(--tx3);font-size:12.5px;font-family:var(--mono);display:flex;gap:8px;flex-wrap:wrap}
   footer .b{color:var(--acc)}
   @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap">
 <header>
   <div class="brand">Datum<b>·</b>EDA · Text &amp; Placement Study</div>
   <h1>Text scales to the part — the tool advises, never dictates</h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
   <p class="lede">A study for the Rendering Book's text chapter. Silk text has <b>no forced minimum height</b>: the only hard limit is what the fab can physically image; legibility is a soft hint you can turn off. Reference text is a movable label tethered to its device. All type is IBM&nbsp;Plex, rendered at true relative scale below.</p>
 </header>
 

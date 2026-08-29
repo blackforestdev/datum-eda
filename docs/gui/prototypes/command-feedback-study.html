@@ -217,6 +217,12 @@ header.page .sub code{font-family:var(--mono);font-size:12px;color:var(--acc-h)}
 .minibox.small-h{height:420px}
 .mini.smallwin{width:900px;transform:none}
 .mini.smallwin .shell{height:418px}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -224,6 +230,7 @@ header.page .sub code{font-family:var(--mono);font-size:12px;color:var(--acc-h)}
 
 <header class="page">
   <h1>Datum <b>·</b> Command Feedback &amp; Console Study</h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="approved">✓ RATIFIED · Datum token set</span></div>
   <div class="sub">
     Comparative visual study for the action-feedback / Command Console owner decision.
     Companion research: <code>research/command-feedback/COMMAND_FEEDBACK_RESEARCH.md</code>.

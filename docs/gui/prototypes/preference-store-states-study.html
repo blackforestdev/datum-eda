@@ -66,6 +66,12 @@ section{display:none} section.on{display:block}
 .menu{position:absolute;background:var(--s01);border:1px solid var(--bd-str);border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:9;min-width:150px;font-size:12.5px}
 .menu div{padding:6px 14px;cursor:pointer}.menu div:hover{background:var(--s02)}.menu .cur{color:var(--acc)}
 .rst{color:var(--info);cursor:pointer}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 <style>body{padding:34px 40px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .win{width:1060px;margin-top:20px} .body{display:flex} .main{padding:0}
@@ -75,7 +81,7 @@ section{display:none} section.on{display:block}
 .chip{border:1px dashed var(--warn);color:var(--warn);border-radius:4px;padding:1px 8px;font-family:"PlexMono",monospace;font-size:10px}
 .row .lbl{width:360px} .mono{font-family:"PlexMono",monospace;font-size:11px}
 section{display:block}</style></head><body>
-<div class="note">PROTOTYPE — GP-C04 states of the ratified Manage preferences surface: what the user sees when the store is damaged, when an import collides, after a migration, and when restoring. <span class="chip">CLAY — NOT RATIFIED</span></div>
+<div class="note">PROTOTYPE — GP-C04 states of the ratified Manage preferences surface: what the user sees when the store is damaged, when an import collides, after a migration, and when restoring. <span class="statusmark" data-state="open">CLAY — NOT RATIFIED</span></div>
 <div class="win"><div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum · Manage preferences <span style="margin-left:auto;font-family:'PlexMono',monospace;font-size:10px;border:1px solid var(--err);color:var(--err);border-radius:4px;padding:1px 8px">CORRUPT STORE</span></div>
 <div class="body" style="height:auto"><div class="main" style="overflow:visible"><div class="prov" style="border-left:2px solid var(--err);background:var(--s02);border-bottom:1px solid var(--bd-sub);padding:10px 14px;color:var(--tx2);font-size:11.5px">⛝ <b>Your preference file could not be read.</b> Datum started this session from factory defaults, wrote nothing over the damaged file, and kept it as <span class="mono">gui-preferences.json.unreadable-2026-08-28</span>. Design authoring is unaffected.</div><div class="ghead">Recover</div><div class="row"><div class="lbl"><b>Last good backup</b><span>written 2026-08-27 14:02 · 41 settings · schema v1</span></div><div class="ctl"><span class="btn">Preview…</span><span class="btn">Restore…</span></div></div>
 <div class="prov">restore is previewed and confirmed · the damaged file is never deleted for you · restoring does not discard today’s session values without showing them first</div><div class="row"><div class="lbl"><b>Damaged file</b><span>kept exactly as found</span></div><div class="ctl"><span class="btn">Show file…</span><span class="btn">Send to support…</span></div></div>

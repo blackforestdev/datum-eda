@@ -21,8 +21,15 @@ td.q{color:var(--tx)}
 .mine{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1150px;margin:14px 0}
 .mine b{color:var(--err)}
 ul{margin:6px 0 0 20px}li{margin-bottom:4px;color:var(--tx2)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 <h1>Datum <b>·</b> prototype disposition sheet <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">41 prototypes · 2026-08-29</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="retired">○ REFERENCE · inventory, not a decision</span></div>
 <div class="lede">Every visual artifact I own, and its real approval state — so an unapproved render of mine never silently gates a slice again.</div>
 
 <div class="banner"><b>Nothing is blocking Codex right now.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved. No unapproved prototype sits on the current path.</div>

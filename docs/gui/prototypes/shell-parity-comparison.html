@@ -16,9 +16,15 @@ img{display:block;max-width:100%;height:auto;image-rendering:pixelated}
 .verdict b{color:var(--err)}
 ul{margin:8px 0 0 20px;color:var(--tx2)} li{margin-bottom:5px}
 .k{color:var(--tx);font-weight:600}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 <h1>Datum <b>·</b> shell visual-parity comparison <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">dat-shell-parity-owner-bless-nct · 1.728%</span></h1>
-<div class="lede">Golden vs the running app at the canonical capture (datum-test board, R1 selected, 1680&times;1050). Crops are nearest-neighbour upscaled so pixel differences are visible. <span class="chip">NOTHING BLESSED</span></div>
+<div class="lede">Golden vs the running app at the canonical capture (datum-test board, R1 selected, 1680&times;1050). Crops are nearest-neighbour upscaled so pixel differences are visible. <span class="statusmark" data-state="open">NOTHING BLESSED</span></div>
 
 <div class="verdict"><b>The tracked decomposition is stale.</b> The bead records the 2026-08-22 diff as denser/brighter viewport grid, a terminal dock tab active state, and scene revision text. That is not what the current 1.728% consists of. The dominant difference is in the <span class="k">schematic pane</span>, and it is structural, not sub-pixel drift.</div>
 

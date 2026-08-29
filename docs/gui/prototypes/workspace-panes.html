@@ -85,7 +85,14 @@
   .status .seg{padding:0 13px;height:100%;display:flex;align-items:center;gap:6px;border-right:1px solid var(--bd-sub)}
   .status .lab{color:var(--tx3)}
   .status .accc{color:var(--acc)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
 <div style="margin:8px 0 12px;font-family:ui-monospace,monospace;font-size:10px"><span style="border:1px solid #717885;color:#717885;border-radius:4px;padding:2px 8px">○ HISTORICAL STUDY · not a live decision</span></div>
 
 <div class="menubar hdr">

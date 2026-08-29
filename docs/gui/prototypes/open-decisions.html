@@ -59,12 +59,18 @@
   .lean{margin-top:12px;font-size:14px;color:var(--tx);background:var(--acc-tint);border:1px solid var(--acc);border-radius:7px;padding:9px 13px}
   .lean b{color:var(--acc-h)}
   code{font-family:var(--mono);font-size:.86em;background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:1px 5px;color:var(--tx)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap">
   <p class="eyebrow">Datum GUI · design decisions</p>
   <h1>Two open decisions, made visible</h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
   <p class="sub">You asked for a picture instead of jargon. Here's what each choice actually looks like on the board — pick one per decision and I'll lock it into the design spec.</p>
 
   <!-- DECISION 1 -->

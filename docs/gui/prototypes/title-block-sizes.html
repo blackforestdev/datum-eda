@@ -30,13 +30,19 @@
   .cap{padding:10px 14px;color:var(--tx2);font-size:12.5px;line-height:1.5;border-top:1px solid var(--bd-sub);background:#15171d}
   footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--bd-sub);color:var(--tx3);font-size:12.5px;font-family:var(--mono)}
   @media (max-width:820px){.grid2{grid-template-columns:1fr}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap">
 <header>
   <div class="brand">Datum<b>·</b>EDA · Title Block · Configurations &amp; Scaling</div>
   <h1>Four configurations — the block scales with the sheet</h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
   <p class="lede">Two positions (<b>bottom band</b>, <b>right strip</b>) × two orientations = <b>four configs</b>. The block is a <b>constant proportion</b> of the sheet — ~12% of the short edge — so a bigger sheet gets a proportionally bigger block. Same ratios, same Grauwert tone, every size.</p>
 </header>
 

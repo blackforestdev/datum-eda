@@ -74,12 +74,19 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
   .iec .ansi-sym{display:none}
   .ansi .iec-sym{display:none}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap iec" id="root">
 <header>
   <div class="brand">Datum<b>·</b>EDA · Rendering Study</div>
   <h1>Modernizing symbols &amp; footprints without breaking the standard</h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="open">⚠ PENDING OWNER REVIEW · S5-C09</span></div>
   <p class="lede">A design study for the <b>Datum Rendering Book</b>, in the shipped board-editor visual language. The look is re-skinned — filled symbol bodies, rounded copper, teardrops, real typography — while every standard-governed invariant (IEEE&nbsp;315 topology, IPC land-pattern metrics) stays exact. Nothing here is decorative: what you see is what the CAM emits.</p>
 
   <div class="laws">

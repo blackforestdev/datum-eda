@@ -109,6 +109,12 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}
 ::-webkit-scrollbar-track{background:transparent}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -116,6 +122,7 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 
 <header class="page">
   <h1>Datum <b>·</b> Revision Authority Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C03 visual source of truth</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="approved">✓ RATIFIED · V9-A chain; V10-C owner-approved 2026-08-25</span></div>
   <div class="sub">
     Authority-model comparisons (V8–V10) of the revision system; identity/scheme studies V1–V7 live in the companion <a href="revision-identity-study.html" style="color:var(--info);text-decoration:none">Revision Identity Study</a>. Decision packet: <code>research/documentation-system/REV_C03_REVISION_IDENTITY_DECISION_PACKET.md</code>
     (lines 184–256) so owner questions 1–6 (lines 258–275) can each be answered against drawn candidates.

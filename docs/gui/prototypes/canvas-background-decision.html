@@ -38,8 +38,15 @@ h1{font-family:"PlexCMed";font-size:20px;margin-bottom:6px} h1 b{color:var(--acc
 .stp div{padding:5px 12px;background:var(--s01)}.stp .on{background:var(--s03)}
 .menu{font-family:"PlexMono",monospace;font-size:12px;background:var(--s01);border:1px solid var(--bd-str);border-radius:6px;width:230px;margin:12px 14px}
 .menu div{padding:6px 14px;border-bottom:1px solid var(--bd-sub)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style></head><body>
 <h1>Datum <b>·</b> Canvas Background — Owner Decision <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">dat-schematic-background-owner-decision-gom</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="approved">✓ OWNER-APPROVED · Product Mechanics 036</span></div>
 <div class="sub">Both palettes below are the locked rendering-book palettes — this decision changes neither. The chrome around each canvas stays dark in both modes (locked). The owner selected Candidate B as a persisted whole-theme choice.</div>
 <div class="law">✓ <b>OWNER-APPROVED — Product Mechanics 036.</b> Dark remains the factory default; Light (#E7E1D2 warm paper, deliberately not white) is the alternate complete contrast system. “Vellum” is retired as its name. Application chrome stays dark and plotted output remains governed by document templates.</div>
 

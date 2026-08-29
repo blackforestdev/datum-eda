@@ -122,6 +122,12 @@
   .foot{margin-top:26px;border-top:1px solid var(--bd-sub);padding-top:16px;
     font-size:12px;color:var(--tx3);line-height:1.6;}
   .foot b{color:var(--tx2);}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -129,7 +135,7 @@
 
   <header class="page">
     <h1>Datum — Native Terminal <span class="accent">Study</span></h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
     <p>What this settles: the terminal's <b style="color:var(--tx2)">ANSI colour theme</b> (derived from the
     Rendering Book tokens, not invented) and the <b style="color:var(--tx2)">keyboard-focus affordances</b> —
     focused vs. visible-but-unfocused vs. detached — that decision&nbsp;024&nbsp;TE-005 requires to be visible.

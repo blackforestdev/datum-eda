@@ -98,6 +98,12 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}
 ::-webkit-scrollbar-track{background:transparent}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -218,7 +224,7 @@ external state enters only through quarantine and semantic re-entry.</div>
   </div>
   <div>
     <div class="card" style="padding:0;overflow:hidden;height:330px">
-      <div class="insp-title"><span class="ref">RLS-0009</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">MIRROR PENDING</span></div>
+      <div class="insp-title"><span class="ref">RLS-0009</span><span class="statusmark" data-state="approved">✓ OWNER-APPROVED · 188276b</span></div>
       <div class="kv"><span class="k">Release</span><span class="v mono">RLS-0009 🔒 issued · unaffected</span></div>
       <div class="kv"><span class="k">Mirror</span><span class="v"><span class="idchip warnc">⚠ ReleaseMirrorFailed — remote unreachable</span></span></div>
       <div class="kv"><span class="k">Retry</span><span class="v mono">idempotent vs Release ID + digest</span></div>

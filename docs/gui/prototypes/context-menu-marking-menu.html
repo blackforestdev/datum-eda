@@ -44,12 +44,18 @@
   .card p{margin:0 0 11px;color:var(--tx2);font-size:14px}.card p:last-child{margin:0}
   .card b{color:var(--tx)}
   code{font-family:var(--mono);font-size:.85em;background:var(--s02);border:1px solid var(--bd-sub);border-radius:4px;padding:1px 5px;color:var(--tx)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="wrap">
   <p class="eyebrow">Datum GUI · context menu design</p>
   <h1>Compound-mark marking menu</h1>
-<div style="margin:6px 0 10px"><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
   <p class="sub">A submenu spawns as its <b>own radial at the wedge you flick toward</b> — so the path through levels is <b>one continuous stroke</b> (flick to Align, then flick a direction = a bent "compound mark"). Draw it blind once it's muscle memory.</p>
 
   <div class="stage">

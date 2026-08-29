@@ -43,6 +43,12 @@ td.n{font-family:"PlexC";color:var(--tx);font-size:12.5px}
 .cap b{font-family:"PlexC";color:var(--tx2)}
 .law{border-left:2px solid var(--acc);background:var(--s01);padding:11px 15px;max-width:1180px;font-size:12.5px;line-height:1.8;margin-top:10px}
 .law b{color:var(--tx)}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style></head><style>
 .kill{border-left:2px solid var(--err)} .keep{border-left:2px solid var(--rel)}
 .finding{background:var(--s01);padding:11px 15px;margin-bottom:7px;max-width:1180px;font-size:12.5px;line-height:1.75}
@@ -96,7 +102,7 @@ td.n{font-family:"PlexC";color:var(--tx);font-size:12.5px}
 </style>
 
 <h1>Datum <b>·</b> units and grid — the model <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">findings first · nothing here is an ask</span></h1>
-<div class="note">Five research streams, all working from primary sources — shipping source (KiCad 10, Horizon, LibrePCB), standards text (JIS adoptions of IEC 60617 / ISO 81714), vendor normative docs (Ucamco, Siemens ODB++), and direct measurement of real files. Then an adversarial pass against the result, then my own in-repo verification of every claim that changes a conclusion. <span class="chip" style="border-style:solid;border-color:#4FA75A;color:#4FA75A">✓ VISUALS APPROVED · 2026-08-29 · grid preset sets and defaults decided by the owner</span></div>
+<div class="note">Five research streams, all working from primary sources — shipping source (KiCad 10, Horizon, LibrePCB), standards text (JIS adoptions of IEC 60617 / ISO 81714), vendor normative docs (Ucamco, Siemens ODB++), and direct measurement of real files. Then an adversarial pass against the result, then my own in-repo verification of every claim that changes a conclusion. <span class="statusmark" data-state="approved">✓ VISUALS APPROVED · 2026-08-29 · grid preset sets and defaults decided by the owner</span></div>
 
 <div class="sec">1 · WHAT THE RESEARCH KILLED — INCLUDING MY OWN LAST PROPOSAL</div>
 <div class="lead">Candidate D had four premises. Two did not survive contact with the evidence.</div>

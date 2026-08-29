@@ -102,6 +102,12 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}
 ::-webkit-scrollbar-track{background:transparent}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 </head>
 <body>
@@ -109,6 +115,7 @@ header.page .sub code,.cap code{font-family:var(--mono);font-size:11.5px;color:v
 
 <header class="page">
   <h1>Datum <b>·</b> Revision UX Shell Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C06 · file 1 of 4</span></h1>
+<div style="margin:7px 0 11px"><span class="statusmark" data-state="approved">✓ OWNER-APPROVED</span></div>
   <div class="sub">Renders UX-V1–V3 of <code>research/documentation-system/REV_C06_UX_VISUAL_STUDY_BRIEF.md</code>
   (lines 105–322): shell placement and doorways, quiet successor work, and the Change record. The coverage
   index for all twelve frames lives at the end of this file.</div>

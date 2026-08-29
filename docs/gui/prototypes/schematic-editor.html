@@ -133,6 +133,12 @@
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:var(--bd-str);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
+letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}
+.statusmark[data-state="open"]{color:#E0A23A}
+.statusmark[data-state="retired"]{color:#717885}
 </style>
 
 <div class="menubar hdr">
@@ -342,7 +348,7 @@
     <div class="panel grow" style="border-bottom:none">
       <div class="panel-hd"><span>Inspector</span><span class="follows">follows <b>pane A</b></span></div>
       <div class="panel-bd" style="padding:0" id="insp">
-        <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Net · 3 pins</span><span class="chip" style="border-style:solid;border-color:#717885;color:#717885">○ HISTORICAL STUDY · not a live decision</span></div>
+        <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Net · 3 pins</span><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
         <div class="xprobe"><svg viewBox="0 0 24 24"><path d="M4 7h6M4 7v10M4 17h6M20 7h-6M20 7v10M20 17h-6M10 12h4"/></svg>Cross‑probed — copper highlighted in Board (pane B)</div>
         <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Net</div>
         <div class="sect">
