@@ -19,7 +19,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from project_task_details import (
-    completion_view, render_completion, selected_completion_step, validate_completion,
+    completion_view, render_completion, resolve_claim_state,
+    selected_completion_step, validate_completion,
 )
 
 
@@ -447,9 +448,10 @@ def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
     view = dict(item)
     view["tracker_status"] = issue.get("status")
     view["assignee"] = issue.get("assignee")
-    view["live_claim"] = item.get("state") == "in_progress" and isinstance(
-        item.get("claim"), dict
-    )
+    claim_state, claim_detail = resolve_claim_state(item)
+    view["live_claim"] = claim_state == "active"
+    view["claim_state"] = claim_state
+    view["claim_detail"] = claim_detail
     selected = selected_completion_step(item)
     view["owner_input_required"] = bool(
         selected and selected.get("kind") == "owner_decision"
@@ -460,7 +462,7 @@ def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
 def render_next(view: dict[str, Any]) -> str:
     """Render the task and its one selected substep without inviting inference."""
     assignee = view["assignee"] or "unassigned"
-    live_claim = "active" if view["live_claim"] else "none"
+    live_claim = view.get("claim_detail", "none")
     completion = view["completion"]
     step_id = completion["canonical_next_step_id"]
     selected = next(step for step in completion["steps"] if step["id"] == step_id)

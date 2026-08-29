@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -449,7 +450,9 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "authorization": item["authorization"],
         "tracker_status": issue.get("status"),
         "assignee": issue.get("assignee"),
-        "live_claim": item.get("state") == "in_progress",
+        "live_claim": resolve_claim_state(item)[0] == "active",
+        "claim_state": resolve_claim_state(item)[0],
+        "claim_detail": resolve_claim_state(item)[1],
         "work_start": claim_instruction(item, issue),
         "outcome": item["completion"]["outcome"],
         "canonical_next_step_id": item["completion"]["canonical_next_step_id"],
@@ -462,10 +465,67 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
     }
 
 
+
+DEFAULT_CLAIM_TTL_HOURS = 8
+
+
+def _claim_moment(value: Any) -> datetime | None:
+    """Parse an ISO-8601 claim timestamp, tolerating a trailing Z."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def resolve_claim_state(
+    item: dict[str, Any],
+    ttl_hours: int | None = None,
+    now: datetime | None = None,
+) -> tuple[str, str]:
+    """Report a claim's real condition as (machine_state, human_text).
+
+    An expired claim, or one hidden because the item left in_progress, must never
+    render as "none": absence and staleness are different facts and collapsing
+    them lets a dead claim read as no claim, or a ghost claim read as live work.
+    """
+    claim = item.get("claim")
+    if not isinstance(claim, dict):
+        return "none", "none"
+    agent = claim.get("agent") or "unknown agent"
+    moment = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    claimed_at = _claim_moment(claim.get("claimed_at"))
+    expires_at = _claim_moment(claim.get("expires_at"))
+    if expires_at is None:
+        heartbeat = _claim_moment(claim.get("heartbeat_at")) or claimed_at
+        ttl = ttl_hours if isinstance(ttl_hours, int) and ttl_hours > 0 else DEFAULT_CLAIM_TTL_HOURS
+        if heartbeat is not None:
+            expires_at = heartbeat + timedelta(hours=ttl)
+    if item.get("state") != "in_progress":
+        return "orphaned", (
+            f"ORPHANED - claim held by {agent} but item state is "
+            f"{item.get('state')!r}, not in_progress"
+        )
+    if expires_at is not None and moment > expires_at:
+        stamp = claimed_at.isoformat().replace("+00:00", "Z") if claimed_at else "unknown"
+        return "expired", (
+            f"EXPIRED - {agent} claimed {stamp}; lease lapsed "
+            f"{expires_at.isoformat().replace('+00:00', 'Z')}"
+        )
+    if expires_at is None:
+        return "active", f"active ({agent}; no lease expiry recorded)"
+    return "active", (
+        f"active ({agent}; expires {expires_at.isoformat().replace('+00:00', 'Z')})"
+    )
+
 def render_completion(view: dict[str, Any]) -> str:
     """Render a completion view without inventing or reordering content."""
     assignee = view["assignee"] or "unassigned"
-    claim = "active" if view["live_claim"] else "none"
+    claim = view.get("claim_detail", "active" if view["live_claim"] else "none")
     lines = [
         "Presentation contract: return this stdout byte-for-byte; do not preface, "
         "summarize, regroup, renumber, or supplement it.",
