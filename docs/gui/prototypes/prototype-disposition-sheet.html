@@ -1,73 +1,84 @@
-<title>Datum · Prototype Disposition Sheet</title>
+<title>Datum · Prototype Status Inventory</title>
 <style>
-:root{--bg:#0B0C0E;--s1:#15171C;--s2:#1C1F26;--bd:#2E343E;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;--acc:#CE5A92;--ok:#4FA75A;--warn:#E0A23A;--err:#E5534B}
+:root{--bg:#0B0C0E;--s1:#15171C;--bd:#2E343E;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;--acc:#CE5A92;--ok:#4FA75A;--warn:#E0A23A;--err:#E5534B}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--tx);font-family:ui-sans-serif,system-ui,sans-serif;font-size:13.5px;padding:30px 38px 70px;line-height:1.7}
 h1{font-size:20px;margin-bottom:6px}h1 b{color:var(--acc)}
-.lede{color:var(--tx2);max-width:1080px;margin-bottom:6px}
-.ok{color:var(--ok)}.warn{color:var(--warn)}
-.sec{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);margin:28px 0 4px;text-transform:uppercase}
-.note{color:var(--tx2);max-width:1080px;margin-bottom:12px}
-table{border-collapse:collapse;width:100%;max-width:1150px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.lede{color:var(--tx2);max-width:1080px;margin-bottom:12px}
+.statusmark{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="approved"]{color:#4FA75A}.statusmark[data-state="open"]{color:#E0A23A}.statusmark[data-state="retired"]{color:#717885}
+.sec{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);margin:26px 0 4px;text-transform:uppercase}
+.note{color:var(--tx2);max-width:1080px;margin-bottom:10px}
+table{border-collapse:collapse;width:100%;max-width:1100px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-bottom:6px}
 th{text-align:left;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;padding:9px 12px;border-bottom:1px solid var(--bd)}
-td{padding:9px 12px;border-bottom:1px solid #23272F;vertical-align:top;font-size:12.5px;color:var(--tx2)}
+td{padding:8px 12px;border-bottom:1px solid #23272F;font-size:12.5px;color:var(--tx2)}
 td.n{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx);white-space:nowrap}
-td.q{color:var(--tx)}
-.badge{font-family:ui-monospace,monospace;font-size:9.5px;border-radius:3px;padding:1px 6px;white-space:nowrap}
-.b-stale{border:1px solid var(--err);color:var(--err)}
-.b-open{border:1px solid var(--warn);color:var(--warn)}
-.banner{border-left:2px solid var(--ok);background:#0f1a12;padding:12px 16px;max-width:1150px;margin:14px 0}
-.banner b{color:var(--ok)}
-.mine{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1150px;margin:14px 0}
-.mine b{color:var(--err)}
-ul{margin:6px 0 0 20px}li{margin-bottom:4px;color:var(--tx2)}
-
-.statusmark{display:inline-block;font-family:ui-monospace,"PlexMono",monospace;font-size:10px;
-letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
-.statusmark[data-state="approved"]{color:#4FA75A}
-.statusmark[data-state="open"]{color:#E0A23A}
-.statusmark[data-state="retired"]{color:#717885}
+.corr{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1100px;margin:14px 0}.corr b{color:var(--err)}
+.ok{border-left:2px solid var(--ok);background:#0f1a12;padding:12px 16px;max-width:1100px;margin:14px 0}.ok b{color:var(--ok)}
+.counts{display:flex;gap:10px;margin:10px 0 18px}
 </style>
-<h1>Datum <b>·</b> prototype disposition sheet <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">41 prototypes · 2026-08-29</span></h1>
-<div style="margin:7px 0 11px"><span class="statusmark" data-state="retired">○ REFERENCE · inventory, not a decision</span></div>
-<div class="lede">Every visual artifact I own, and its real approval state — so an unapproved render of mine never silently gates a slice again.</div>
+<h1>Datum <b>·</b> prototype status inventory <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">42 prototypes · 2026-08-29</span></h1>
+<div class="lede">Current approval state of every visual artifact in the Claude-owned lane. One marker per file, three states, colour meaning exactly one thing.</div>
+<div class="counts">
+<span class="statusmark" data-state="approved">✓ APPROVED 23</span>
+<span class="statusmark" data-state="open">⚠ OPEN 4</span>
+<span class="statusmark" data-state="retired">○ RETIRED 15</span>
+</div>
 
-<div class="banner"><b>Nothing is blocking Codex right now.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved. No unapproved prototype sits on the current path.</div>
+<div class="ok"><b>Nothing here gates development.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved. None of the open artifacts below sits on any authorized slice's path.</div>
 
-<div class="mine"><b>The real defect is mine.</b> Six artifacts carry a stale status because you decided them in conversation and I never wrote the disposition back onto the file. They read as pending or clay when they are not. I can correct all six without any further input from you — they are listed first so you can see exactly what I would stamp.</div>
+<div class="corr"><b>Correction to the earlier version of this sheet.</b> It claimed six artifacts carried a stale status because owner decisions were "never written back onto the file." That was wrong and I raised it as a defect in my own work without verifying it. The agent-authority dispositions <i>were</i> recorded at the time, in commit 15ac6b7, and correctly read owner-dispositioned pending separate Codex governance ratification. The grid decision was recorded in 0ac4a46. Only one file — units-and-grid-model — carried a stale banner contradicting its own body. The false alarm came from a substring search matching RATIFIED inside NOT RATIFIED.</div>
 
-<div class="sec">1 · you already decided these — i update the artifact, no input needed</div>
-<div class="note">If any line misstates your decision, say so and I will not stamp it.</div>
-<table><tr><th>prototype</th><th>holds</th><th>your decision</th><th>currently reads</th></tr>
-<tr><td class="n">units-and-grid-model</td><td>Grid preset sets and defaults</td><td class="q">You decided today: metric 1-2-5 decade series as default, the same series in mil as a one-switch preference, imperial-derived metric available and never suggested.</td><td><span class="badge b-stale">marked CLAY</span></td></tr>
-<tr><td class="n">agent-authority-study</td><td>Four cumulative agent authority profiles</td><td class="q">You approved the model with a security-first default posture.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
-<tr><td class="n">agent-authority-scenarios</td><td>Authority profiles walked through concrete scenarios</td><td class="q">Same disposition as the study it illustrates.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
-<tr><td class="n">agent-authority-threat-model</td><td>Threat model behind the authority defaults</td><td class="q">You directed default-closed ports and expiring tokens, not open-by-default.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
-<tr><td class="n">agent-blocked-action-alerts</td><td>How a blocked action tells the user why</td><td class="q">You required a mechanism alerting the user on blocked action from a closed port or expired token.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
-<tr><td class="n">grid-basis-candidate-d</td><td>Earlier grid basis candidate</td><td class="q">Superseded by units-and-grid-model. Its pitch-seeded footprint grid and Preferences-owned grid basis were both disproved.</td><td><span class="badge b-stale">marked CLAY</span></td></tr>
-</table>
-<div class="sec">2 · genuinely needs your disposition</div>
-<div class="note">Six artifacts. Four of them I believe are simply absorbed by later approved work and should be retired — that is a one-word answer each. Two hold a real question you have not seen.</div>
-<table><tr><th>prototype</th><th>holds</th><th>state</th><th>the question</th></tr>
-<tr><td class="n">selection-study</td><td>Selection model and modifiers</td><td><span class="badge b-open">pending owner review</span></td><td class="q">Does the selection behaviour shown match how you expect to select in a board and schematic?</td></tr>
-<tr><td class="n">rendering-study</td><td>Render fidelity study S5-C09</td><td><span class="badge b-open">pending HUMAN review</span></td><td class="q">One outstanding render question you have not seen.</td></tr>
-<tr><td class="n">first-run-study</td><td>First-run experience</td><td><span class="badge b-open">CLAY</span></td><td class="q">Superseded in practice by start-page-study and guided-setup-study, both APPROVED. Retire, or is there something here you still want?</td></tr>
-<tr><td class="n">preferences-accessibility-study</td><td>Preferences accessibility</td><td><span class="badge b-open">CLAY</span></td><td class="q">The accessibility contract landed in GP-C05 refined option A. Retire as absorbed, or keep as a standing reference?</td></tr>
-<tr><td class="n">preferences-store-placement-study</td><td>Where the preference store lives</td><td><span class="badge b-open">CLAY</span></td><td class="q">Resolved by GP-C03 Q10 (S2 machine-local + R1 managed replay). Retire as absorbed?</td></tr>
-<tr><td class="n">search-placement-study</td><td>Where preferences search sits</td><td><span class="badge b-open">CLAY</span></td><td class="q">Resolved by GP-C05 pinned search over the content column, shipped in preferences-window. Retire as absorbed?</td></tr>
-</table>
-<div class="sec">3 · no status marker at all — my omission</div>
-<div class="note">These nine carry no approval banner in either direction. Most are early structural studies that predate the banner convention. They are not claimed as approved anywhere, so none can gate a slice today — but they should each carry an honest marker rather than silence. I will stamp them as historical study unless you want any treated as a live decision.</div>
-<table><tr><th>prototype</th></tr>
-<tr><td class="n">board-editor</td></tr>
-<tr><td class="n">schematic-editor</td></tr>
-<tr><td class="n">workspace-panes</td></tr>
-<tr><td class="n">context-menu-marking-menu</td></tr>
-<tr><td class="n">terminal-study</td></tr>
-<tr><td class="n">text-placement-study</td></tr>
-<tr><td class="n">title-block-study</td></tr>
-<tr><td class="n">title-block-sizes</td></tr>
-<tr><td class="n">open-decisions</td></tr>
-</table>
-<div class="sec">what changes after this</div>
-<div class="note">Going forward, when I render something that needs your call, I tell you at the time that it is a gate and what it blocks — not after it has stalled a Codex slice. And when you decide something in conversation, the disposition gets stamped onto the artifact in the same turn, so the file and the decision never drift apart again.</div>
+<div class="sec">approved — 23</div>
+<div class="note">Owner-approved or ratified. Safe for any slice to build against.</div>
+<table><tr><th>prototype</th><th>marker</th></tr>
+<tr><td class="n">agent-authority-scenarios</td><td>✓ VISUALS APPROVED · 2026-08-29 · owner-dispositioned; Codex governance ratification separate</td></tr>
+<tr><td class="n">agent-authority-study</td><td>✓ VISUALS APPROVED · 2026-08-29 · owner-dispositioned; Codex governance ratification separate</td></tr>
+<tr><td class="n">agent-authority-threat-model</td><td>✓ VISUALS APPROVED · 2026-08-29 · owner-dispositioned; Codex governance ratification separate</td></tr>
+<tr><td class="n">agent-blocked-action-alerts</td><td>✓ VISUALS APPROVED · 2026-08-29 · owner-dispositioned; Codex governance ratification separate</td></tr>
+<tr><td class="n">canvas-background-decision</td><td>✓ OWNER-APPROVED · Product Mechanics 036</td></tr>
+<tr><td class="n">command-feedback-study</td><td>✓ RATIFIED · Datum token set</td></tr>
+<tr><td class="n">guided-setup-study</td><td>✓ OWNER-APPROVED</td></tr>
+<tr><td class="n">preference-store-states-study</td><td>✓ RATIFIED · GP-C04 settled persistence, recovery, migration, exchange (PM-037)</td></tr>
+<tr><td class="n">preferences-ux-study</td><td>✓ OWNER-APPROVED</td></tr>
+<tr><td class="n">preferences-window</td><td>✓ RATIFIED — PRODUCT MECHANICS 037 · except the exclusions named in GP-C06 §5</td></tr>
+<tr><td class="n">publish-composition-study</td><td>✓ RATIFIED · one-window recursive-pane shell</td></tr>
+<tr><td class="n">publish-lifecycle-study</td><td>✓ RATIFIED · one-window recursive-pane shell</td></tr>
+<tr><td class="n">publish-space-study</td><td>✓ RATIFIED · one-window recursive-pane shell</td></tr>
+<tr><td class="n">revision-authority-study</td><td>✓ RATIFIED · V9-A chain; V10-C owner-approved 2026-08-25</td></tr>
+<tr><td class="n">revision-carryforward-study</td><td>✓ OWNER-APPROVED</td></tr>
+<tr><td class="n">revision-identity-study</td><td>✓ RATIFIED · REV-C03 Q1–Q6</td></tr>
+<tr><td class="n">revision-ux-evidence-study</td><td>✓ OWNER-APPROVED · 188276b</td></tr>
+<tr><td class="n">revision-ux-impact-study</td><td>✓ OWNER-APPROVED · 0ce0760</td></tr>
+<tr><td class="n">revision-ux-release-study</td><td>✓ OWNER-APPROVED · 213b5d6</td></tr>
+<tr><td class="n">revision-ux-shell-study</td><td>✓ OWNER-APPROVED</td></tr>
+<tr><td class="n">revision-ux-study-index</td><td>✓ RATIFIED · decision scoreboard</td></tr>
+<tr><td class="n">start-page-study</td><td>✓ OWNER-APPROVED</td></tr>
+<tr><td class="n">units-and-grid-model</td><td>✓ VISUALS APPROVED · 2026-08-29 · grid preset sets and defaults decided by the owner</td></tr></table>
+
+<div class="sec">open — 4</div>
+<div class="note">Genuinely awaiting a decision. Two hold questions the owner has not seen (selection-study, rendering-study); clay-rows-decision is partially settled; shell-parity-comparison is a review artifact, not a decision.</div>
+<table><tr><th>prototype</th><th>marker</th></tr>
+<tr><td class="n">clay-rows-decision</td><td>◐ 1 OF 3 DECIDED · row 1 grid presets settled 2026-08-29; rows 2 and 3 open</td></tr>
+<tr><td class="n">rendering-study</td><td>⚠ PENDING OWNER REVIEW · S5-C09</td></tr>
+<tr><td class="n">selection-study</td><td>⚠ PENDING OWNER REVIEW</td></tr>
+<tr><td class="n">shell-parity-comparison</td><td>NOTHING BLESSED</td></tr></table>
+
+<div class="sec">retired — 15</div>
+<div class="note">Superseded by later approved work, or early structural studies that were never live decisions. Kept as evidence, not as authority.</div>
+<table><tr><th>prototype</th><th>marker</th></tr>
+<tr><td class="n">board-editor</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">context-menu-marking-menu</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">first-run-study</td><td>○ SUPERSEDED · absorbed by start-page-study + guided-setup-study</td></tr>
+<tr><td class="n">grid-basis-candidate-d</td><td>○ SUPERSEDED · absorbed by units-and-grid-model</td></tr>
+<tr><td class="n">open-decisions</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">preferences-accessibility-study</td><td>○ SUPERSEDED · absorbed by GP-C05 refined option A</td></tr>
+<tr><td class="n">preferences-store-placement-study</td><td>○ SUPERSEDED · absorbed by GP-C03 Q10</td></tr>
+<tr><td class="n">prototype-disposition-sheet</td><td>○ REFERENCE · inventory, not a decision</td></tr>
+<tr><td class="n">schematic-editor</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">search-placement-study</td><td>○ SUPERSEDED · absorbed by GP-C05 pinned search, shipped in preferences-window</td></tr>
+<tr><td class="n">terminal-study</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">text-placement-study</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">title-block-sizes</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">title-block-study</td><td>○ HISTORICAL STUDY · not a live decision</td></tr>
+<tr><td class="n">workspace-panes</td><td>○ HISTORICAL STUDY · not a live decision</td></tr></table>
