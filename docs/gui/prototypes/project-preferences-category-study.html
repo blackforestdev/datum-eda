@@ -1,0 +1,63 @@
+<title>Datum · Project Preferences Category Study</title>
+<style>
+:root{--bg:#0B0C0E;--s1:#15171C;--s2:#1C1F26;--bd:#2E343E;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;--acc:#CE5A92;--ok:#4FA75A;--warn:#E0A23A;--err:#E5534B;--info:#5B8BD0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:ui-sans-serif,system-ui,sans-serif;font-size:13.5px;padding:30px 38px 70px;line-height:1.7}
+h1{font-size:20px;margin-bottom:6px}h1 b{color:var(--acc)}
+.lede{color:var(--tx2);max-width:1150px;margin-bottom:10px}
+.statusmark{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentColor;font-weight:600}
+.statusmark[data-state="open"]{color:#E0A23A}
+.sec{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);margin:26px 0 4px;text-transform:uppercase}
+.note{color:var(--tx2);max-width:1150px;margin-bottom:10px}
+table{border-collapse:collapse;width:100%;max-width:1240px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+th{text-align:left;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;padding:9px 12px;border-bottom:1px solid var(--bd)}
+td{padding:9px 12px;border-bottom:1px solid #23272F;vertical-align:top;font-size:12.5px;color:var(--tx2)}
+td.n{font-family:ui-monospace,monospace;font-size:12px;color:var(--tx);white-space:nowrap}
+td.ev{font-family:ui-monospace,monospace;font-size:11px;color:var(--tx3);line-height:1.65}
+.cf{font-family:ui-monospace,monospace;font-size:9.5px;border:1px solid currentColor;border-radius:3px;padding:1px 7px}
+.cf.high{color:var(--ok)}.cf.medium{color:var(--warn)}.cf.low{color:var(--tx3)}
+.pill{display:inline-block;font-family:ui-monospace,monospace;font-size:10.5px;color:var(--tx3);border:1px solid var(--bd);border-radius:4px;padding:2px 9px;margin:0 6px 6px 0}
+.law{border-left:2px solid var(--acc);background:var(--s1);padding:12px 16px;max-width:1240px;font-size:12.5px;line-height:1.8;margin:14px 0}
+.law b{color:var(--tx)}
+.nav{width:230px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:12px 0}
+.nav div{padding:7px 18px;font-size:12.5px;color:var(--tx2)}
+.nav .on{background:var(--s2);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
+.nav .lo{color:var(--tx3);opacity:.6}
+.two{display:grid;grid-template-columns:250px 1fr;gap:20px;max-width:1240px;align-items:start}
+</style>
+<h1>Datum <b>·</b> project preferences — left column study <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">derived from the codebase, not invented</span></h1>
+<div style="margin:7px 0 10px"><span class="statusmark" data-state="open">CLAY — NOT RATIFIED</span></div>
+<div class="lede">Every candidate category below is justified by something the codebase or a ratified spec already says a Project owns. Nothing here is proposed on taste. Categories will be added as Datum develops; this is the set the project can defend today.</div>
+
+<div class="sec">1 · candidate categories, with the evidence for each</div>
+<table><tr><th>category</th><th>what it holds</th><th>why it is project-scoped</th><th>confidence</th></tr>
+<tr><td class="n">Project</td><td>name, uuid, template set, seed profile, project-genesis receipt</td><td class="ev">project.json keys name/uuid; datum.projects.seed_profile, .template_set, .unit_policy_seed (3 PS descriptors)</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Units</td><td>measurement system, board/drill/schematic length units, precision, angle format</td><td class="ev">6 PS descriptors under datum.units.*; ProjectDisplayUnits (10 spec references); PM-037 copy-once seam</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Drafting Standard</td><td>the adopted standard governing dimensioning, tolerancing, and sheet conventions</td><td class="ev">AdoptedDraftingStandard is a ratified Project authority (PM-035, 8 spec references)</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Revision</td><td>how this project is versioned, scheme, build presentation, prototype transition</td><td class="ev">ProjectRevisionPolicy implemented in revision/policy.rs; 3 PS descriptors under datum.revision.*; PM-034</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Rules &amp; Checks</td><td>design rules, net classes, check profiles this project enforces</td><td class="ev">rules/rules.json is a persisted project shard; RuleSet and NetClass (11 references) are project-scoped</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Library Sources</td><td>which pools this project resolves parts from, and binding policy</td><td class="ev">pools[] is a project.json key; LibraryBinding (7 references) joins placed parts to library authority</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Output</td><td>fabrication and assembly output jobs, formats, and their defaults</td><td class="ev">OutputJob is the single most referenced project-scoped type in the specs (130 references)</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Publish</td><td>title block template, sheet format, scale fraction style</td><td class="ev">3 PS descriptors under datum.publish.*_seed; documentation system owns them per PM-035</td><td><span class="cf high">high</span></td></tr>
+<tr><td class="n">Team &amp; Roles</td><td>actors, scoped role assignments, delegation, approval authority</td><td class="ev">ActorIdentity and RoleAssignment implemented in revision/role.rs as project-scoped authority (REV-I03)</td><td><span class="cf medium">medium</span></td></tr>
+<tr><td class="n">Schematic</td><td>project-scoped schematic conventions: sheet defaults, annotation, forward-annotation review</td><td class="ev">schematic shard plus forward_annotation_review key in project.json; only 1 schematic descriptor exists today</td><td><span class="cf medium">medium</span></td></tr>
+<tr><td class="n">Board</td><td>stackup, layer set, and board-scoped defaults</td><td class="ev">board shard in project.json; 13 pcb descriptors exist but are machine Presentation, not project policy</td><td><span class="cf low">low</span></td></tr>
+</table>
+
+<div class="sec">2 · the resulting left column</div>
+<div class="two">
+<div class="nav">
+  <div>Project</div><div>Units</div><div>Drafting Standard</div><div class="on">Revision</div>
+  <div>Rules &amp; Checks</div><div>Library Sources</div><div>Output</div><div>Publish</div>
+  <div>Team &amp; Roles</div><div class="lo">Schematic</div><div class="lo">Board</div>
+</div>
+<div>
+<div class="law"><b>Ordering rationale.</b> Identity first, then the two things that govern how every number and drawing reads (Units, Drafting Standard), then the policy layer (Revision), then what the project enforces and consumes (Rules, Library), then what it emits (Output, Publish), then who may act (Team). Schematic and Board sit last and dimmed because their project-scoped content is thin today — one schematic descriptor exists, and the 13 pcb descriptors are machine Presentation, not project policy.</div>
+<div class="note"><b>Nine high-confidence, two provisional.</b> The dimmed pair are drawn so their placement is settled now rather than argued later, but neither has enough project-owned content to justify a populated pane yet.</div>
+</div>
+</div>
+
+<div class="sec">3 · what deliberately stays out — these are machine, not project</div>
+<div class="note">Global Preferences already carries these, and they are Presentation or WorkflowDefault class. Putting any of them in a project pane would make one person's machine settings travel with the design.</div>
+<div><span class="pill">Appearance</span><span class="pill">Workspace</span><span class="pill">Terminal</span><span class="pill">Symbol Editor</span><span class="pill">Footprint Editor</span><span class="pill">Agents</span><span class="pill">Manage preferences</span><span class="pill">Organization</span></div>
+<div class="law" style="margin-top:14px"><b>The mirror check.</b> Global Preferences ships a <b>Project Policy (Read-Only)</b> category that displays project-owned values. Every category above should have a counterpart visible there; anything in that read-only view without a home here is a gap, and anything here that never appears there is probably machine state wearing a project label.</div>
