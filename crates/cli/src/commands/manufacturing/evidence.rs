@@ -1,12 +1,26 @@
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use eda_engine::api::native_write::artifacts::build_artifact_evidence;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
-use eda_engine::substrate::{ArtifactMetadata, DesignModel, OutputJobRun};
+use eda_engine::substrate::{ArtifactMetadata, DesignModel, OutputJobRun, ProjectResolver};
 use uuid::Uuid;
 
 use crate::cli_commit_source;
+
+pub(crate) fn refresh_after_nested_evidence(
+    root: &Path,
+    prior: &DesignModel,
+) -> Result<DesignModel> {
+    let refreshed = ProjectResolver::new(root)
+        .resolve()
+        .context("failed to refresh the accepted transaction tip after nested evidence")?;
+    anyhow::ensure!(
+        refreshed.model_revision == prior.model_revision,
+        "Project Design changed while manufacturing artifacts were being exported"
+    );
+    Ok(refreshed)
+}
 
 pub(crate) fn commit_manufacturing_set_evidence(
     root: &Path,

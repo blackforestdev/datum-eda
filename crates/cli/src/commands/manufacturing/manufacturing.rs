@@ -53,7 +53,7 @@ use crate::{
     query_native_project_board_vias, report_native_project_drill_hole_classes,
 };
 use command_project_manufacturing_evidence::{
-    artifact_metadata_path, commit_manufacturing_set_evidence,
+    artifact_metadata_path, commit_manufacturing_set_evidence, refresh_after_nested_evidence,
 };
 use command_project_manufacturing_match::manufacturing_artifact_matches;
 use command_project_manufacturing_panel_projection::{
@@ -293,7 +293,6 @@ fn export_native_project_manufacturing_set_with_output_run(
         ensure_native_project_gerber_set_output_job(root, &scope.prefix, None, None, None, None)?;
     }
     let mut model = ProjectResolver::new(root).resolve()?;
-
     let mut artifacts = Vec::new();
     let mut artifact_files = Vec::new();
     let mut production_projections = Vec::new();
@@ -421,6 +420,7 @@ fn export_native_project_manufacturing_set_with_output_run(
                 &artifact.filename,
             )?;
         }
+        model = refresh_after_nested_evidence(root, &model)?;
     }
     let artifact_metadata = manufacturing_set_artifact_metadata(
         &model,
