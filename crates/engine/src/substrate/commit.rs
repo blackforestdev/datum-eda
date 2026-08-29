@@ -3,8 +3,9 @@ use std::path::Path;
 use uuid::Uuid;
 
 use crate::revision::{
-    IntegrityCommitFaultPoint, ProjectWriteLease, RevisionAuthorityStore, StagedShardPostimage,
-    transaction_tip,
+    IntegrityCommitFaultPoint, ProjectWriteLease, RevisionAuthorityStore,
+    RevisionDesignCommitContext, RevisionDesignCommitInput, StagedShardPostimage,
+    finalize_revision_design_commit_plan, prepare_revision_design_commit, transaction_tip,
 };
 
 use super::{
@@ -136,6 +137,7 @@ impl DesignModel {
             policy_context,
             None,
             None,
+            RevisionDesignCommitInput::default(),
         )
     }
 
@@ -152,6 +154,7 @@ impl DesignModel {
         policy_context: CommitPolicyContext,
         after_model_revision_override: Option<ModelRevision>,
         integrity_fault: Option<IntegrityCommitFaultPoint>,
+        mut revision_input: RevisionDesignCommitInput,
     ) -> Result<CommitReport, EngineError> {
         validate_direct_commit_proposal_policy(&batch, transaction_kind, policy_context)?;
         validate_non_empty_operation_batch(&batch)?;
@@ -178,6 +181,26 @@ impl DesignModel {
 
         let _write_lease = ProjectWriteLease::acquire(project_root)?;
 
+        if revision_input.related_transaction.is_none() {
+            revision_input.related_transaction = undo_of.or(redo_of);
+        }
+        let revision_context = match (transaction_kind, policy_context) {
+            (TransactionKind::Undo, _) => RevisionDesignCommitContext::Undo,
+            (TransactionKind::Redo, _) => RevisionDesignCommitContext::Redo,
+            (TransactionKind::Normal, CommitPolicyContext::AcceptedProposalApply) => {
+                RevisionDesignCommitContext::AcceptedProposalApply
+            }
+            (TransactionKind::Normal, CommitPolicyContext::Direct) => {
+                RevisionDesignCommitContext::Normal
+            }
+        };
+        let revision_plan = prepare_revision_design_commit(
+            &RevisionAuthorityStore::new(project_root),
+            self.project.project_id,
+            revision_context,
+            &revision_input,
+        )?;
+
         let inverse_operations = match inverse_operations_override {
             Some(operations) => operations,
             None => inverse_operations_for_batch(self, &batch)?,
@@ -201,6 +224,11 @@ impl DesignModel {
             &mut committed,
             &mut report,
             after_model_revision_override,
+        )?;
+        let authority_snapshot = finalize_revision_design_commit_plan(
+            revision_plan,
+            committed.project.project_id,
+            report.transaction.transaction_id,
         )?;
         let parent_transaction_id = transaction_tip(&self.journal);
         let postimages = staged_writes
@@ -228,6 +256,7 @@ impl DesignModel {
             &report.transaction,
             parent_transaction_id,
             postimages,
+            authority_snapshot.as_ref(),
         )?;
         inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::AuthorityStage)?;
         append_transaction_journal(project_root, &report.transaction)?;
@@ -265,6 +294,50 @@ impl DesignModel {
             CommitPolicyContext::Direct,
             None,
             Some(fault),
+            RevisionDesignCommitInput::default(),
+        )
+    }
+
+    #[cfg(test)]
+    pub(super) fn commit_journaled_with_revision_input(
+        &mut self,
+        project_root: &Path,
+        batch: OperationBatch,
+        revision_input: RevisionDesignCommitInput,
+    ) -> Result<CommitReport, EngineError> {
+        self.commit_journaled_with_links_and_inverse(
+            project_root,
+            batch,
+            TransactionKind::Normal,
+            None,
+            None,
+            None,
+            CommitPolicyContext::Direct,
+            None,
+            None,
+            revision_input,
+        )
+    }
+
+    #[cfg(test)]
+    pub(super) fn commit_journaled_with_revision_input_and_fault(
+        &mut self,
+        project_root: &Path,
+        batch: OperationBatch,
+        revision_input: RevisionDesignCommitInput,
+        fault: IntegrityCommitFaultPoint,
+    ) -> Result<CommitReport, EngineError> {
+        self.commit_journaled_with_links_and_inverse(
+            project_root,
+            batch,
+            TransactionKind::Normal,
+            None,
+            None,
+            None,
+            CommitPolicyContext::Direct,
+            None,
+            Some(fault),
+            revision_input,
         )
     }
 }

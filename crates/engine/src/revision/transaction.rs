@@ -339,7 +339,12 @@ fn apply_one(
     }
 }
 
-fn append(snapshot: &mut AuthoritySnapshot, record: AuthorityRecord) -> Result<(), EngineError> {
+pub(crate) fn append(
+    snapshot: &mut AuthoritySnapshot,
+    mut record: AuthorityRecord,
+) -> Result<(), EngineError> {
+    record.references_mut().sort();
+    record.references_mut().dedup();
     require(
         record.project_id() == snapshot.project_id,
         "revision authority record belongs to another Project",

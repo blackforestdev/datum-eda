@@ -143,7 +143,7 @@ fn establish_store(name: &str) -> (std::path::PathBuf, Uuid, RevisionAuthoritySt
 
 #[test]
 fn rev_i03_closed_inventory_is_bidirectionally_exact() {
-    let new_families = &AuthorityRecordKind::ALL[43..];
+    let new_families = &AuthorityRecordKind::ALL[43..49];
     assert_eq!(
         new_families
             .iter()

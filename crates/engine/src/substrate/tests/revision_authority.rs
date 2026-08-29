@@ -58,6 +58,9 @@ const EXPECTED_FAMILIES: &[&str] = &[
     "role_assignment",
     "role_delegation",
     "project_seed_receipt",
+    "waiver_departure",
+    "deviation_departure",
+    "legacy_revision_fact_mapping",
 ];
 
 fn snapshot_with_every_family(project_id: Uuid) -> AuthoritySnapshot {
@@ -104,6 +107,20 @@ fn record_fixture(
         "references": []
     });
     let semantics = match kind {
+        AuthorityRecordKind::RevisionReservation => serde_json::json!({
+            "reservation_key": id,
+            "configuration_item": family_id(AuthorityRecordKind::ConfigurationItem),
+            "scheme_id": family_id(AuthorityRecordKind::RevisionScheme),
+            "scheme_version": 1,
+            "proposed_label": "B",
+            "governing_change": family_id(AuthorityRecordKind::EngineeringChange),
+            "expires_at": 100,
+            "standing": "active"
+        }),
+        AuthorityRecordKind::EngineeringChange => serde_json::json!({
+            "change_key": id,
+            "events": [{"kind": "created", "sequence": 0}]
+        }),
         AuthorityRecordKind::ApprovalAttestation => serde_json::json!({
             "intent": "approve",
             "disposition": "active",
@@ -183,6 +200,25 @@ fn record_fixture(
                 {"key": "datum.revision.prototype_transition_seed", "copied_value": "continuous"}
             ]
         }),
+        AuthorityRecordKind::WaiverDeparture | AuthorityRecordKind::DeviationDeparture => {
+            serde_json::json!({
+                "source_fact_id": id,
+                "source_fact_digest": format!("sha256:{}", "2".repeat(64)),
+                "governing_requirement_or_finding": "REQ-1",
+                "exact_scope": {"scope": "project", "id": project_id},
+                "authorizing_authority": {"kind": "configuration_item", "id": family_id(AuthorityRecordKind::ConfigurationItem)},
+                "validity": {"from_inclusive": 0, "until_exclusive": 100},
+                "rationale": "fixture departure",
+                "disposition": "accepted"
+            })
+        }
+        AuthorityRecordKind::LegacyRevisionFactMapping => serde_json::json!({
+            "source_fact_id": id,
+            "source_fact_digest": format!("sha256:{}", "3".repeat(64)),
+            "source_kind": "proposal_acceptance",
+            "disposition": "retained_as_legacy_evidence",
+            "rationale": "not equivalent to approval"
+        }),
         _ => serde_json::json!({}),
     };
     payload
@@ -227,8 +263,11 @@ fn closed_family_inventory_is_exact_unique_and_canonical() {
         .map(|kind| kind.wire_tag())
         .collect();
     assert_eq!(actual, EXPECTED_FAMILIES);
-    assert_eq!(actual.len(), 49);
-    assert_eq!(actual.iter().copied().collect::<BTreeSet<_>>().len(), 49);
+    assert_eq!(actual.len(), EXPECTED_FAMILIES.len());
+    assert_eq!(
+        actual.iter().copied().collect::<BTreeSet<_>>().len(),
+        EXPECTED_FAMILIES.len()
+    );
 
     let project_id = Uuid::from_u128(1);
     let snapshot = snapshot_with_every_family(project_id);
@@ -259,6 +298,22 @@ fn closed_family_inventory_is_exact_unique_and_canonical() {
             "sha256:81cc0599feae633d09deca7946feecd1db9d27a17490765f937d19db2249ce9a",
             "sha256:64fe36d8e3596a161a12039455047748b2ab48b8e1f0e6821770d87b35b56977",
             "sha256:130968995f17e100248ec0dff5f9a56587f8c39460b5d0cc506296e5ca7706c9",
+            "sha256:0f7f7c1e760d96742758747cf4c00a452076c7b756b0c3a51eaeeb4bb7eec8f5",
+            "sha256:245f939d4dc75f1a29c5b88ffe866862639300a7cd97acb760c34fbb22cedbf6",
+            "sha256:e902fc75b2dc8fc76d3adfebb1de9372b9359a232a11b61478b5e90a36e49ed9",
+        ]
+    );
+    let operationalized_digest_goldens = [4_usize, 6].map(|index| {
+        snapshot.records[index]
+            .canonical_digest()
+            .expect("digest")
+            .0
+    });
+    assert_eq!(
+        operationalized_digest_goldens,
+        [
+            "sha256:982682b21f806c722df61d23f64621abcb3b322442ba693117824828f70c5adf",
+            "sha256:0fbde3ffa71fbca25d0a6ed219b8d3ec54c153983e101beff49890079f6c9176",
         ]
     );
 }
@@ -549,7 +604,7 @@ fn ordinary_design_application_has_no_product_authority_resolver_dependency() {
 }
 
 #[test]
-fn authorized_change_required_is_representable_but_has_no_design_effect_in_rev_i03() {
+fn authorized_change_required_refuses_an_unlinked_design_commit_in_rev_i04() {
     let root = temp_project_root("authorized_change_required_inert");
     let project_id = Uuid::new_v4();
     write_minimal_project(&root, project_id, Uuid::new_v4());
@@ -585,10 +640,12 @@ fn authorized_change_required_is_representable_but_has_no_design_effect_in_rev_i
         .expect("install representable policy");
     let authority_before = snapshot.canonical_bytes().expect("authority bytes");
     let mut reopened = ProjectResolver::new(&root).resolve().expect("Project open");
-    reopened
+    let before_model = reopened.clone();
+    let error = reopened
         .commit_journaled(&root, ordinary_rename(&reopened, "after-policy"))
-        .expect("REV-I03 cannot integrate policy into Design mutation");
-    assert_eq!(reopened.project.name, "after-policy");
+        .expect_err("explicit earlier control requires an exact governing Change");
+    assert!(error.to_string().contains("change_not_authorized"));
+    assert_eq!(reopened, before_model);
     assert!(matches!(
         store.resolve_authority(project_id),
         AuthorityResolution::Resolved { snapshot: after }

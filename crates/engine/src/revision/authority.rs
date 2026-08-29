@@ -8,8 +8,11 @@ use crate::error::EngineError;
 use super::{AlgorithmQualifiedDigest, canonical::canonical_bytes, canonical::digest_bytes};
 use super::{
     approval::ApprovalAttestationData,
+    change::EngineeringChangeData,
+    departure::{DeviationDepartureData, LegacyRevisionFactMappingData, WaiverDepartureData},
     effectivity::EffectivityData,
     policy::ProjectRevisionPolicyData,
+    reservation::RevisionReservationData,
     role::{ActorIdentityData, RoleAssignmentData, RoleDelegationData},
     scheme::RevisionSchemeData,
     seed::ProjectSeedReceiptData,
@@ -98,6 +101,10 @@ macro_rules! authority_families {
                 match self { $(Self::$variant(body) => &body.references),+ }
             }
 
+            pub(crate) fn references_mut(&mut self) -> &mut Vec<AuthorityRef> {
+                match self { $(Self::$variant(body) => &mut body.references),+ }
+            }
+
             pub fn canonical_digest(&self) -> Result<AlgorithmQualifiedDigest, EngineError> {
                 Ok(digest_bytes(&canonical_bytes(self)?))
             }
@@ -121,10 +128,16 @@ authority_families!(
     (
         RevisionReservation,
         RevisionReservationId,
-        "revision_reservation"
+        "revision_reservation",
+        RevisionReservationData
     ),
     (BuildIdentity, BuildIdentityId, "build_identity"),
-    (EngineeringChange, EngineeringChangeId, "engineering_change"),
+    (
+        EngineeringChange,
+        EngineeringChangeId,
+        "engineering_change",
+        EngineeringChangeData
+    ),
     (
         ApprovalAttestation,
         ApprovalAttestationId,
@@ -286,6 +299,24 @@ authority_families!(
         "project_seed_receipt",
         ProjectSeedReceiptData
     ),
+    (
+        WaiverDeparture,
+        WaiverDepartureId,
+        "waiver_departure",
+        WaiverDepartureData
+    ),
+    (
+        DeviationDeparture,
+        DeviationDepartureId,
+        "deviation_departure",
+        DeviationDepartureData
+    ),
+    (
+        LegacyRevisionFactMapping,
+        LegacyRevisionFactMappingId,
+        "legacy_revision_fact_mapping",
+        LegacyRevisionFactMappingData
+    ),
 );
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -424,57 +455,7 @@ impl AuthoritySnapshot {
         let mut snapshot = self.clone();
         snapshot.records.sort_by_key(AuthorityRecord::record_ref);
         for record in &mut snapshot.records {
-            match record {
-                AuthorityRecord::ConfigurationItem(body) => body.references.sort(),
-                AuthorityRecord::ConfigurationRef(body) => body.references.sort(),
-                AuthorityRecord::ConfigurationBaseline(body) => body.references.sort(),
-                AuthorityRecord::EngineeringRevision(body) => body.references.sort(),
-                AuthorityRecord::RevisionReservation(body) => body.references.sort(),
-                AuthorityRecord::BuildIdentity(body) => body.references.sort(),
-                AuthorityRecord::EngineeringChange(body) => body.references.sort(),
-                AuthorityRecord::ApprovalAttestation(body) => body.references.sort(),
-                AuthorityRecord::Effectivity(body) => body.references.sort(),
-                AuthorityRecord::ReleaseCandidate(body) => body.references.sort(),
-                AuthorityRecord::Release(body) => body.references.sort(),
-                AuthorityRecord::SupersessionEstablished(body) => body.references.sort(),
-                AuthorityRecord::AuthorizationWithdrawn(body) => body.references.sort(),
-                AuthorityRecord::ObsolescenceDeclared(body) => body.references.sort(),
-                AuthorityRecord::ControlledDocument(body) => body.references.sort(),
-                AuthorityRecord::DocumentIssue(body) => body.references.sort(),
-                AuthorityRecord::ReleasePackage(body) => body.references.sort(),
-                AuthorityRecord::Transmittal(body) => body.references.sort(),
-                AuthorityRecord::StandardsProfile(body) => body.references.sort(),
-                AuthorityRecord::RequirementDisposition(body) => body.references.sort(),
-                AuthorityRecord::AuditEvaluation(body) => body.references.sort(),
-                AuthorityRecord::RetentionPolicy(body) => body.references.sort(),
-                AuthorityRecord::LegalOrPolicyHold(body) => body.references.sort(),
-                AuthorityRecord::RecordDisposition(body) => body.references.sort(),
-                AuthorityRecord::DependencySnapshot(body) => body.references.sort(),
-                AuthorityRecord::SemanticDelta(body) => body.references.sort(),
-                AuthorityRecord::ImpactEvaluation(body) => body.references.sort(),
-                AuthorityRecord::EvidenceInputContext(body) => body.references.sort(),
-                AuthorityRecord::EvidenceFreshness(body) => body.references.sort(),
-                AuthorityRecord::LibraryUptakeCandidate(body) => body.references.sort(),
-                AuthorityRecord::BaselineComparison(body) => body.references.sort(),
-                AuthorityRecord::RegenerationPlan(body) => body.references.sort(),
-                AuthorityRecord::ReproductionManifest(body) => body.references.sort(),
-                AuthorityRecord::ReproductionAttempt(body) => body.references.sort(),
-                AuthorityRecord::ExternalMappingReceipt(body) => body.references.sort(),
-                AuthorityRecord::AdapterDivergenceObservation(body) => body.references.sort(),
-                AuthorityRecord::ReleaseMirrorRequest(body) => body.references.sort(),
-                AuthorityRecord::ReleaseMirrorResult(body) => body.references.sort(),
-                AuthorityRecord::AuthorityExchangeEnvelope(body) => body.references.sort(),
-                AuthorityRecord::AuthorityExchangeReceipt(body) => body.references.sort(),
-                AuthorityRecord::ExternalChangeCandidate(body) => body.references.sort(),
-                AuthorityRecord::CredentialOrTrustEvent(body) => body.references.sort(),
-                AuthorityRecord::TrustedTimestampEvidence(body) => body.references.sort(),
-                AuthorityRecord::ProjectRevisionPolicy(body) => body.references.sort(),
-                AuthorityRecord::RevisionScheme(body) => body.references.sort(),
-                AuthorityRecord::ActorIdentity(body) => body.references.sort(),
-                AuthorityRecord::RoleAssignment(body) => body.references.sort(),
-                AuthorityRecord::RoleDelegation(body) => body.references.sort(),
-                AuthorityRecord::ProjectSeedReceipt(body) => body.references.sort(),
-            }
+            record.references_mut().sort();
         }
         snapshot.events.sort_by_key(|event| event.sequence);
         snapshot.opaque_records.sort_by(|left, right| {
@@ -583,6 +564,29 @@ impl AuthoritySnapshot {
                             "seed receipt must itemize exactly the registered revision keys",
                         ));
                     }
+                }
+                AuthorityRecord::EngineeringChange(body) => {
+                    diagnostics.extend(super::change::validate_engineering_change(&body.semantics));
+                }
+                AuthorityRecord::RevisionReservation(body) => {
+                    diagnostics.extend(super::reservation::validate_revision_reservation(
+                        &body.semantics,
+                    ));
+                }
+                AuthorityRecord::WaiverDeparture(body) => {
+                    diagnostics
+                        .extend(super::departure::validate_waiver_departure(&body.semantics));
+                }
+                AuthorityRecord::DeviationDeparture(body) => {
+                    diagnostics.extend(super::departure::validate_deviation_departure(
+                        &body.semantics,
+                    ));
+                }
+                AuthorityRecord::LegacyRevisionFactMapping(body) => {
+                    diagnostics.extend(super::departure::validate_legacy_mapping(
+                        self,
+                        &body.semantics,
+                    ));
                 }
                 _ => {}
             }

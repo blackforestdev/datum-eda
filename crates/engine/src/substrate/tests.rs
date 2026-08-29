@@ -39,6 +39,8 @@ mod relationship;
 mod relationship_schema;
 mod revision_approval;
 mod revision_authority;
+mod revision_change_authority;
+mod revision_change_inventory;
 mod revision_integrity;
 mod revision_policy;
 mod revision_transaction;

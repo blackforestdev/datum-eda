@@ -9,9 +9,16 @@ mod authority;
 mod authority_store;
 mod backup;
 mod canonical;
+mod change;
+#[allow(dead_code)]
+mod change_transaction;
+mod departure;
+#[allow(dead_code)]
+mod design_commit;
 mod effectivity;
 mod model;
 mod policy;
+mod reservation;
 mod resolver;
 mod role;
 mod scheme;
@@ -24,8 +31,11 @@ mod transaction;
 
 pub use approval::*;
 pub use authority::*;
+pub use change::*;
+pub use departure::*;
 pub use effectivity::*;
 pub use policy::*;
+pub use reservation::*;
 pub use role::*;
 pub use scheme::*;
 pub use seed::*;
@@ -44,6 +54,20 @@ pub use store::{
     ProjectWriteLease, RevisionAuthorityStore, StagedIntegrityGeneration, transaction_tip,
 };
 
+#[cfg(test)]
+pub(crate) use change_transaction::{
+    REV_I04_MUTATIONS, REV_I04_QUERIES, ReservationDispositionUpdate, RevI04MutationKind,
+    RevI04QueryKind, RevI04RefusalCode, apply_rev_i04_mutations,
+};
+pub(crate) use change_transaction::{RevI04Mutation, apply_rev_i04_mutations_to_snapshot};
+#[cfg(test)]
+pub(crate) use design_commit::{
+    REVISION_DESIGN_COMMIT_CONTEXTS, REVISION_DESIGN_COMMIT_OUTCOMES, SuccessorCollectionContext,
+};
+pub(crate) use design_commit::{
+    RevisionDesignCommitContext, RevisionDesignCommitInput, finalize_revision_design_commit_plan,
+    prepare_revision_design_commit,
+};
 pub(crate) use model::StagedShardPostimage;
 pub(crate) use store::IntegrityCommitFaultPoint;
 #[cfg(test)]

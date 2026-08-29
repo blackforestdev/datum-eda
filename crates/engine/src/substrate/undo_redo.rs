@@ -118,6 +118,7 @@ impl DesignModel {
             super::commit::CommitPolicyContext::Direct,
             after_model_revision,
             None,
+            crate::revision::RevisionDesignCommitInput::default(),
         )
     }
 }

@@ -14,6 +14,7 @@ use crate::{
 };
 
 use super::{
+    AuthoritySnapshot,
     canonical::{canonical_bytes, digest_bytes, validate_digest},
     model::{
         AffectedShard, AffectedShardAction, AlgorithmQualifiedDigest, CANONICAL_ENCODING,
@@ -153,6 +154,7 @@ impl RevisionAuthorityStore {
         transaction: &TransactionRecord,
         parent_transaction_id: Option<Uuid>,
         postimages: Vec<StagedShardPostimage>,
+        authority_snapshot: Option<&AuthoritySnapshot>,
     ) -> Result<StagedIntegrityGeneration, EngineError> {
         let current_head = self.read_head().transpose()?;
         if let Some(head) = &current_head
@@ -175,7 +177,14 @@ impl RevisionAuthorityStore {
 
         let transaction_bytes = canonical_bytes(transaction)?;
         let transaction_blob = self.stage_blob(&stage_root, &transaction_bytes)?;
-        let authority_snapshot_blob = if let Some(head) = &current_head {
+        let authority_snapshot_blob = if let Some(snapshot) = authority_snapshot {
+            if snapshot.project_id != project_id || !snapshot.validate().is_empty() {
+                return Err(EngineError::Validation(
+                    "staged revision authority snapshot failed validation".to_string(),
+                ));
+            }
+            Some(self.stage_blob(&stage_root, &snapshot.canonical_bytes()?)?)
+        } else if let Some(head) = &current_head {
             let generation: IntegrityGeneration =
                 read_json(&self.generation_path(&head.integrity_root))?;
             generation.authority_snapshot_blob
