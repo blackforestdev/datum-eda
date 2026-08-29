@@ -304,8 +304,9 @@
         "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "3fd8aca1a6e711865b5901c3dcdffe9db7ea2a98641c5aebd414a40a510aa8fd",
-      "review_note": "Editor-shell and pane prototypes constrain the completed DOC-C04 Publish study alongside the shell, conformance, document/view, and pane-tiling authorities; the study extends rather than redesigns them."
+      "reviewed_digest": "33e4ef5a297c1fbc52cd93264cbd87e65b53a7153a86277d7f639380ec09f0af",
+      "review_note": "Editor-shell and pane prototypes constrain the completed DOC-C04 Publish study alongside the shell, conformance, document/view, and pane-tiling authorities; the study extends rather than redesigns them.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     },
     {
       "id": "prototype-command-feedback",
@@ -317,8 +318,9 @@
         "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
-      "reviewed_digest": "c24f4e750d11c18864c332cb4089e71c1fe6a6a0bda59658cdb99089c1069d0a",
-      "review_note": "The owner-disposed Console visual study remains paired with its decision and shell contract."
+      "reviewed_digest": "3867128ad0e84fd4c1ef503a3d98e576b19ca42600d534f0cbbe6d287bc81213",
+      "review_note": "The owner-disposed Console visual study remains paired with its decision and shell contract.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     },
     {
       "id": "prototype-context-and-open-forks",
@@ -331,8 +333,9 @@
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
         "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
-      "reviewed_digest": "75df301e3f9686661788d536a565b65b5e7c10e36441099793b675bf7a4715a0",
-      "review_note": "Context-menu visual authority and comparative open-fork evidence stay attached to the shell interaction contract."
+      "reviewed_digest": "ce6bbf43ca57ae7ac79236866ce96c3a315aee3dd80eba66687d9c541dc4c395",
+      "review_note": "Context-menu visual authority and comparative open-fork evidence stay attached to the shell interaction contract.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     },
     {
       "id": "prototype-rendering-and-publish",
@@ -354,8 +357,9 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
       ],
-      "reviewed_digest": "829c666e6219b1564390fcabda5c73b0b89013c696fdb91bdebdca06bad99217",
-      "review_note": "The owner-approved DOC-C04 Publish Space visual contract is registered as one cross-linked three-file study: publish-space-study.html owns frames A-B and the complete OR-1..OR-8 index, publish-composition-study.html owns frames C-E, and publish-lifecycle-study.html owns frames F-H. The split preserves every frame anchor and ratified visual while restoring source-health; all cross-file index links resolve to the file owning their target. The contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted. Product Mechanics 036 adds the owner-approved canvas study and makes Dark/Light authoring themes independent of Publish templates, render intent, and output."
+      "reviewed_digest": "b6f75fed03b20d509dbb3b554cd1dda93fe51701c956c4148b3424653b8bf8f9",
+      "review_note": "The owner-approved DOC-C04 Publish Space visual contract is registered as one cross-linked three-file study: publish-space-study.html owns frames A-B and the complete OR-1..OR-8 index, publish-composition-study.html owns frames C-E, and publish-lifecycle-study.html owns frames F-H. The split preserves every frame anchor and ratified visual while restoring source-health; all cross-file index links resolve to the file owning their target. The contract remains integrated into specs/PUBLISH_SPACE_SPEC.md, including navigation, composition, Viewport state, revision-boundary presentation, and both type-first Pane titles. REV-C03-Q5 further clarifies that a Publish Set owns editable ordering and explicit source bindings only; separate ControlledDocuments, DocumentIssues, ReleasePackages, and Transmittals retain governed identity. Referenced-source deletion still refuses until dependencies are removed or retargeted. Product Mechanics 036 adds the owner-approved canvas study and makes Dark/Light authoring themes independent of Publish templates, render intent, and output.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     },
     {
       "id": "prototype-selection",
@@ -367,8 +371,9 @@
         "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
         "docs/gui/DATUM_RENDERING_BOOK.md"
       ],
-      "reviewed_digest": "bc19606eb630770a279f1e7915b86a66b73152a3f74c81525eb7f3c1e6a29c55",
-      "review_note": "The owner-reviewed selection visual study remains paired with functional and rendering authorities. Product Mechanics 036 changes the selected schematic contrast theme as a whole and does not weaken the locked non-color selection treatment or selection semantics."
+      "reviewed_digest": "cf208f77ef12aee380bdb7ce04c433e9352982b31bf712cabdca99d018c9a359",
+      "review_note": "The owner-reviewed selection visual study remains paired with functional and rendering authorities. Product Mechanics 036 changes the selected schematic contrast theme as a whole and does not weaken the locked non-color selection treatment or selection semantics.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     },
     {
       "id": "prototype-terminal",
@@ -379,8 +384,9 @@
       "consumers": [
         "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
       ],
-      "reviewed_digest": "850cc303c167816146465091556c73c476f6c8d3fdf20c3e8958a13484c2f458",
-      "review_note": "The terminal visual study remains attached to the native terminal product contract."
+      "reviewed_digest": "4367993bc0e3a0a0cc56d2fd0dc154bac2d28599aa3574db85f2d49f66677643",
+      "review_note": "The terminal visual study remains attached to the native terminal product contract.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only."
     }
   ]
 }
