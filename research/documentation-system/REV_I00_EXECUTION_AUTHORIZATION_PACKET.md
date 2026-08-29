@@ -231,3 +231,45 @@ enterprise workflow, and every new dependency remain unauthorized. REV-I01
 must return to a fresh Frontier authorization state and requires every section
 3 proof gate, including a clean full guarded locked/offline suite without a
 retry; `dat-terminal-job-control-workspace-flakes-lby` is not waived.
+
+## 7. REV-I01 completion evidence
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I01-COMPLETE -->
+
+REV-I01 completed on 2026-08-29 in implementation commits `b329b9e` and
+`cf16a2f`. The bounded `engine::revision` substrate provides versioned
+canonical JSON, algorithm-qualified SHA-256 digests, immutable transaction and
+affected-shard postimage blobs, parent-linked integrity generations, explicit
+technical validation and cache-invalidation records, atomic head promotion,
+per-Project writer exclusion, last-complete/read-only recovery, and
+independently verified reversible backup/restore. It defines no REV-I02 product
+record kind and introduces no dependency or user-visible recovery surface.
+
+The canonical journaled mutation path stages authority before append and
+promotes it after Design shards, preserving separate `ModelRevision` and
+accepted transaction-tip identities. The resolver emits existing typed
+diagnostics only. A first full closure run correctly exposed stale accepted-tip
+reuse after nested Gerber evidence; `cf16a2f` fixed the caller by refreshing the
+accepted tip while refusing any concurrent authored-Design change. The focused
+manufacturing, output-job, and panel-projection regressions then passed.
+
+Addressable engine proofs cover all five interruption points, corrupt/truncated
+head data, a missing blob, last-complete fallback without repair in place,
+concurrent writer refusal, deterministic algorithm-qualified generations,
+backup tamper refusal, restore byte equivalence and undo, and unchanged
+journaled Design mutation semantics on `native_authored_baseline_v1`,
+`profile-divergence-authored-copper`, and `via-available`. The focused REV-I01
+suite passed 7/7 and the complete engine suite passed 871/871. Strict all-target
+Clippy passed for the engine and the corrected CLI integration; dependency,
+Cargo-resource, source-health, private-writer, daemon write-parity, resolver
+raw-load, and all seven native-Project fixture gates passed.
+
+From exact implementation head `cf16a2f`, one uninterrupted guarded
+`cargo test --workspace --all-targets --locked --offline` run passed without
+retry. Both unwaived terminal witnesses
+`vsusp_bg_fg_and_vintr_follow_native_shell_job_control` and
+`termination_cancels_backpressured_input_and_closes_every_master` passed in that
+same run. REV-I01 therefore closes and releases its claim. REV-I02, Preferences,
+Publish, GUI, enterprise workflow, and every new dependency remain
+unauthorized; the Frontier returns to `ready` with authorization `none` and
+selects no successor execution authority.
