@@ -17,10 +17,12 @@ echo "== clippy: workspace lint gate (-D warnings) =="
 
 python3 scripts/check_progress_coverage.py
 python3 scripts/test_project_status.py
+python3 scripts/test_project_status_claim.py
 python3 scripts/project_status.py check
 python3 scripts/check_spec_parity.py
 python3 scripts/check_alignment.py --run-gates
 python3 scripts/check_spec_governance.py
+python3 scripts/check_project_preferences_tripwire.py
 python3 scripts/check_evidence_traceability.py
 python3 scripts/test_dependency_authority.py
 python3 scripts/check_dependency_authority.py
