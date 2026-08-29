@@ -5818,10 +5818,25 @@
         "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "rev-i01-integrity-20260829",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "e872bedd6f9ff72193828fa1251de0e873be92d6",
+        "claimed_at": "2026-08-29T04:47:12Z",
+        "heartbeat_at": "2026-08-29T04:47:12Z",
+        "expires_at": "2026-08-29T12:47:12Z",
+        "scope": [
+          "PRODUCT-REVISION-ENGINE / REV-I00 authorization disposition",
+          "PRODUCT-REVISION-ENGINE / REV-I01 integrity and store substrate",
+          "engine revision tests and governance ledgers"
+        ]
+      },
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
       "dependencies": [
         "dat-product-revision-engine-k9f",
@@ -5833,7 +5848,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I00",
+        "canonical_next_step_id": "REV-I01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5850,7 +5865,7 @@
           {
             "id": "REV-I00",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review the completed Global Preferences policy seam, current implementation baseline, module ownership, dependency posture, real-project fixtures, and proof plan before authorizing the first Product Revision Engine execution slice.",
             "depends_on": [],
             "requirement_refs": [
@@ -5863,7 +5878,13 @@
                 "marker": "REV-I00"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I00-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the committed REV-I00 baseline packet, reply exactly `REVISION-ENGINE-EXECUTION: approve` or `REVISION-ENGINE-EXECUTION: revise — <specific scope, dependency, migration, ownership, or proof correction>`.",
               "requests": [
@@ -5882,7 +5903,7 @@
           {
             "id": "REV-I01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Harden transaction-tip identity, journal/integrity records, atomic authority writes, crash recovery, backup/restore, and per-Project write safety without conflating technical and engineering revision.",
             "depends_on": ["REV-I00"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I01"}],

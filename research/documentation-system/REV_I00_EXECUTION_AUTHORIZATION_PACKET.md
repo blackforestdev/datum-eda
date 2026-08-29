@@ -219,3 +219,15 @@ REVISION-ENGINE-EXECUTION: revise — <specific scope, dependency, migration, ow
 ```
 
 <!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I00-PACKET -->
+
+## 6. Owner disposition
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I00-APPROVED -->
+
+The owner approved REV-I00 on 2026-08-28 with the exact response
+`REVISION-ENGINE-EXECUTION: approve`. That authorization is limited to REV-I01
+as bounded in sections 2–4. REV-I02 record kinds, Preferences, Publish, GUI,
+enterprise workflow, and every new dependency remain unauthorized. REV-I01
+must return to a fresh Frontier authorization state and requires every section
+3 proof gate, including a clean full guarded locked/offline suite without a
+retry; `dat-terminal-job-control-workspace-flakes-lby` is not waived.
