@@ -85,9 +85,24 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   font-size:14px;line-height:1.85;margin:12px 0}
 .hero b{color:var(--tx)} .hero .k{color:var(--acc)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1180px;align-items:start}
+.row{display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--bd-sub)}
+.row:last-child{border-bottom:0}
+.lbl{width:390px}
+.lbl b{display:block;font-weight:600;font-size:13px;color:var(--tx)}
+.lbl span{font-size:11px;color:var(--tx3);line-height:1.65;display:block;margin-top:2px}
+.ctl{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sel{background:var(--s02);border:1px solid var(--bd-str);border-radius:5px;padding:5px 28px 5px 12px;
+  font-size:12.5px;position:relative;color:var(--tx)}
+.sel:after{content:"▾";position:absolute;right:9px;color:var(--tx3);font-size:10px}
+.menu{background:var(--s02);border:1px solid var(--bd-str);border-radius:6px;overflow:hidden;
+  box-shadow:0 12px 34px rgba(0,0,0,.55);max-width:430px}
+.mi{padding:8px 13px;font-size:12.5px;border-bottom:1px solid var(--bd-sub);color:var(--tx2)}
+.mi:last-child{border-bottom:0}
+.mi.sel-on{background:var(--s03);color:var(--tx)}
+.mi small{display:block;font-size:10.5px;color:var(--tx3);margin-top:2px}
 .canvasmock{padding:16px;font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);line-height:1.9}
 </style>
-<h1>Datum <b>·</b> project preferences — the revision gate <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">one toggle, one second, then never again</span></h1>
+<h1>Datum <b>·</b> project preferences — the revision gate <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">one question, one second, then never again</span></h1>
 <div class="note">Project Preferences has not been specified — Global Preferences was. This draws the project-scoped layer the revision gate lives in, using the three policy states already implemented in <span style="color:var(--tx2)">crates/engine/src/revision/policy.rs</span>: <b>Unmanaged</b>, <b>NoEarlierControl</b>, <b>AuthorizedChangeRequired</b>. <span class="statusmark" data-state="open">CLAY — NOT RATIFIED</span></div>
 
 <div class="sec">1 · THE DEFAULT — A NEW PROJECT ASKS YOU FOR NOTHING</div>
@@ -100,21 +115,32 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 </div>
 <div class="cap"><b>This is the whole point.</b> Ten minutes of authorship costs zero minutes of setup. The revision engine is attached and completely silent. Nothing about this path is degraded, provisional, or second-class — it is a supported way to use Datum forever.</div>
 
-<div class="sec">2 · THE GATE IS ONE TOGGLE IN PROJECT PREFERENCES</div>
+<div class="sec">2 · ONE QUESTION IN PROJECT PREFERENCES</div>
 <div class="lead">When a project does need control, you adopt it here. This is the approval: read it, pick one, done. It is never asked again and it never interrupts authoring afterwards.</div>
-<div class="win">
+<div class="two" style="grid-template-columns:1fr 460px">
+<div>
+<div class="win" style="max-width:100%">
   <div class="wt">Project preferences · Revision<span class="path">this project only</span></div>
-  <div class="opt on"><div class="rad"></div><div><div class="lab">Don't track revisions</div>
-    <div class="sub">Author freely. Nothing is recorded, nothing is required, no gate exists.</div></div>
-    <div class="tag">Unmanaged · default</div></div>
-  <div class="opt"><div class="rad"></div><div><div class="lab">Track revisions, don't gate authoring</div>
-    <div class="sub">Changes and revisions are recorded as you work. You are never stopped or asked for approval.</div></div>
-    <div class="tag">NoEarlierControl</div></div>
-  <div class="opt"><div class="rad"></div><div><div class="lab">Require an approved change before authoring</div>
-    <div class="sub">Edits must belong to an approved change. For work under production or contractual documentation control.</div></div>
-    <div class="tag">AuthorizedChangeRequired</div></div>
+  <div class="row">
+    <div class="lbl"><b>How this project is versioned</b>
+      <span>Not tracked. Author freely — nothing is recorded, nothing is required, and no approval gate exists.</span></div>
+    <div class="ctl"><div class="sel">Don't track revisions</div></div>
+  </div>
 </div>
-<div class="cap"><b>Three states, one click, plain language.</b> The engine names are shown only so this maps to what is implemented — a user never sees them. Moving between states is always allowed in both directions; nothing here is a one-way door.</div>
+<div class="cap"><b>One row, one question, one control.</b> The description under the label always describes the option currently selected, so the consequence of the choice is readable without opening anything. Same row pattern as every other Datum preference.</div>
+</div>
+<div>
+<div class="menu">
+  <div class="mi sel-on">Don't track revisions
+    <small>Nothing recorded, nothing required, no gate — the default</small></div>
+  <div class="mi">Track revisions, don't gate authoring
+    <small>Changes recorded as you work; you are never stopped or asked</small></div>
+  <div class="mi">Require an approved change before authoring
+    <small>Edits belong to an approved change — production or contractual control</small></div>
+</div>
+<div class="cap">The dropdown, open. Three options, each with the consequence stated. Choosing the third is the approval — one second, once, and never asked again.</div>
+</div>
+</div>
 
 <div class="hero"><b>The gate is the choice, not a recurring interruption.</b> Adopting <span class="k">AuthorizedChangeRequired</span> is the second you spend. After that the project behaves the way you asked it to, and the engine never asks again. <b>Under the other two states the engine has no gate to apply at all</b> — it is not suppressed or overridden, it simply has nothing to enforce.</div>
 <div class="sec">3 · THE NAG — VISIBLE, HONEST, IGNORABLE</div>
