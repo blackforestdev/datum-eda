@@ -136,15 +136,17 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   <div class="wt">Project preferences — quick-connector-brd<span class="path">this project only</span></div>
   <div class="pbody">
     <div class="nav">
+      <div class="ph">Project</div>
       <div class="ph">Units</div>
       <div class="ph">Drafting Standard</div>
-      <div class="ph">Schematic</div>
-      <div class="ph">PCB/Board</div>
-      <div class="ph">Rules &amp; Checks</div>
-      <div class="ph">Output</div>
       <div class="on">Revision</div>
+      <div class="ph">Rules &amp; Checks</div>
       <div class="ph">Library Sources</div>
+      <div class="ph">Output</div>
+      <div class="ph">Publish</div>
       <div class="ph">Team &amp; Roles</div>
+      <div class="ph" style="opacity:.32">Schematic</div>
+      <div class="ph" style="opacity:.32">Board</div>
     </div>
     <div class="pcont">
       <div class="ghead">Versioning</div>
@@ -163,7 +165,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     </div>
   </div>
 </div>
-<div class="cap"><b>Two columns, same as Global preferences:</b> left is the category list, right is everything else. Only <b>Revision</b> is proposed here — the greyed categories show where it sits, they are not specified. <b>One row per question</b>, description under the label carrying the consequence of the current selection.</div>
+<div class="cap"><b>Two columns, same as Global preferences:</b> left is the category list, right is everything else. Categories and their order come from <b>project-preferences-category-study.html</b>, derived from what a Project actually owns — <code>project.json</code> keys, the rules and pools shards, the 15 ProjectPolicySeed descriptors, and the ratified Project authorities. Only <b>Revision</b> is populated here; <b>Schematic</b> and <b>Board</b> are dimmed further because their project-scoped content is still thin. <b>One row per question</b>, description under the label carrying the consequence of the current selection.</div>
 
 <div class="two" style="grid-template-columns:460px 1fr;margin-top:18px">
 <div>
