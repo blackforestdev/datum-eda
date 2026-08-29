@@ -5818,10 +5818,11 @@
         "research/documentation-system/REV_I00_EXECUTION_AUTHORIZATION_PACKET.md",
         "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
         "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md",
+        "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
-      "authorization": "none",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5836,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I04",
+        "canonical_next_step_id": "REV-I15",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6002,11 +6003,36 @@
             ]
           },
           {
+            "id": "REV-I15",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the bounded REV-I04 EngineeringChange, bounded-departure, reservation, and Design-gate execution packet and decide whether that slice alone may begin.",
+            "depends_on": ["REV-I03"],
+            "requirement_refs": [
+              {"path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I15"}
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the committed REV-I04 packet, reply exactly `REV-I04-EXECUTION: approve` or `REV-I04-EXECUTION: revise — <specific scope, enumeration, lifecycle, integration, never-blocks, reservation, migration, proof, dependency, or visual correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I04-EXECUTION",
+                  "question": "Does the packet preserve Product Mechanics 034's single append-only Change, identity-free/no-reservation collection, bounded-departure honesty, and first-class unmanaged workflow while authorizing exactly one source-bounded AuthorizedChangeRequired integration and the closed REV-I04 inventories only?",
+                  "recommended_response": "Approve only if REV-I04 remains a dependency-free offline engine slice, no-policy and NoEarlierControl authoring stay prompt-free and ungated, identity-free collection reserves nothing, legacy facts are never promoted by resemblance, and impact, baseline, issuance, public surfaces, adapters, remaining migrations, and later slices remain deferred.",
+                  "source_ref": {
+                    "path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
+                    "marker": "REV-I04-PACKET"
+                  }
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-I04",
             "kind": "execution",
             "status": "pending",
             "action": "Implement the append-only EngineeringChange lifecycle, identity-free successor collection, revision reservation, verification, and explicit mapping of proposals, reviews, waivers, and deviations.",
-            "depends_on": ["REV-I03"],
+            "depends_on": ["REV-I15"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I04"}],
             "completion_evidence": []
           },

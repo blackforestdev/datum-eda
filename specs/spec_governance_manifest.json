@@ -160,6 +160,11 @@
    "progress_anchor": "PRODUCT-REVISION-ENGINE",
    "notes": "Findings-first REV-I14 owner boundary for REV-I03 execution. Approval may authorize only the packet's closed Project-policy, scheme, scoped-role, attestation, effectivity, and copy-once revision-seed inventories; Design gating, lifecycle, issuance, surfaces, providers, migrations, dependencies, and later slices remain unauthorized."
   },
+  "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md": {
+   "class": "governed",
+   "progress_anchor": "PRODUCT-REVISION-ENGINE",
+   "notes": "Findings-first REV-I15 owner boundary for REV-I04 execution. Approval may authorize only the packet's closed EngineeringChange, identity-free collection, reservation, bounded-departure mapping, and single Design-gate integration inventories; impact, baseline, issuance, public surfaces, adapters, dependencies, and later slices remain unauthorized."
+  },
   "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
    "class": "governed",
    "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
