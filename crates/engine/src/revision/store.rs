@@ -175,6 +175,13 @@ impl RevisionAuthorityStore {
 
         let transaction_bytes = canonical_bytes(transaction)?;
         let transaction_blob = self.stage_blob(&stage_root, &transaction_bytes)?;
+        let authority_snapshot_blob = if let Some(head) = &current_head {
+            let generation: IntegrityGeneration =
+                read_json(&self.generation_path(&head.integrity_root))?;
+            generation.authority_snapshot_blob
+        } else {
+            None
+        };
         let mut affected_shards = Vec::with_capacity(postimages.len());
         for postimage in postimages {
             let (action, postimage_blob) = match postimage.bytes {
@@ -206,6 +213,7 @@ impl RevisionAuthorityStore {
             before_model_revision: transaction.before_model_revision.clone(),
             after_model_revision: transaction.after_model_revision.clone(),
             transaction_blob,
+            authority_snapshot_blob,
             affected_shards,
             validation_state: TechnicalValidationState::AcceptedByMutationGuards,
             cache_invalidations,
@@ -222,6 +230,7 @@ impl RevisionAuthorityStore {
             before_model_revision: material.before_model_revision,
             after_model_revision: material.after_model_revision,
             transaction_blob: material.transaction_blob,
+            authority_snapshot_blob: material.authority_snapshot_blob,
             affected_shards: material.affected_shards,
             validation_state: material.validation_state,
             cache_invalidations: material.cache_invalidations,
@@ -431,6 +440,7 @@ impl RevisionAuthorityStore {
             ));
         }
         let mut digests = vec![&generation.transaction_blob];
+        digests.extend(generation.authority_snapshot_blob.iter());
         digests.extend(
             generation
                 .affected_shards
@@ -471,13 +481,21 @@ impl RevisionAuthorityStore {
                 "staged revision integrity root mismatch".to_string(),
             ));
         }
-        for digest in std::iter::once(&generation.transaction_blob).chain(
-            generation
-                .affected_shards
-                .iter()
-                .filter_map(|entry| entry.postimage_blob.as_ref()),
-        ) {
-            let bytes = std::fs::read(stage_root.join("blobs/sha256").join(digest_hex(digest)?))?;
+        for digest in std::iter::once(&generation.transaction_blob)
+            .chain(generation.authority_snapshot_blob.iter())
+            .chain(
+                generation
+                    .affected_shards
+                    .iter()
+                    .filter_map(|entry| entry.postimage_blob.as_ref()),
+            )
+        {
+            let staged_path = stage_root.join("blobs/sha256").join(digest_hex(digest)?);
+            let bytes = std::fs::read(if staged_path.exists() {
+                staged_path
+            } else {
+                self.blob_path(digest)
+            })?;
             if digest_bytes(&bytes) != *digest {
                 return Err(EngineError::Validation(
                     "staged revision blob digest mismatch".to_string(),
@@ -531,17 +549,29 @@ impl StagedIntegrityGeneration {
         }
         std::fs::create_dir_all(self.store.root.join("blobs/sha256"))?;
         std::fs::create_dir_all(self.store.root.join("generations"))?;
-        for digest in std::iter::once(&self.generation.transaction_blob).chain(
-            self.generation
-                .affected_shards
-                .iter()
-                .filter_map(|entry| entry.postimage_blob.as_ref()),
-        ) {
+        for digest in std::iter::once(&self.generation.transaction_blob)
+            .chain(self.generation.authority_snapshot_blob.iter())
+            .chain(
+                self.generation
+                    .affected_shards
+                    .iter()
+                    .filter_map(|entry| entry.postimage_blob.as_ref()),
+            )
+        {
             let source = self
                 .stage_root
                 .join("blobs/sha256")
                 .join(digest_hex(digest)?);
             let destination = self.store.blob_path(digest);
+            if !source.exists() && destination.exists() {
+                if digest_bytes(&std::fs::read(&destination)?) != *digest {
+                    return Err(EngineError::Validation(format!(
+                        "carried revision blob {} is corrupt",
+                        digest.0
+                    )));
+                }
+                continue;
+            }
             promote_immutable(&source, &destination)?;
         }
         let generation_path = self.store.generation_path(&self.generation.integrity_root);

@@ -56,6 +56,8 @@ pub struct IntegrityGeneration {
     pub before_model_revision: ModelRevision,
     pub after_model_revision: ModelRevision,
     pub transaction_blob: AlgorithmQualifiedDigest,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub authority_snapshot_blob: Option<AlgorithmQualifiedDigest>,
     pub affected_shards: Vec<AffectedShard>,
     pub validation_state: TechnicalValidationState,
     pub cache_invalidations: Vec<String>,
@@ -75,6 +77,8 @@ pub(crate) struct IntegrityGenerationMaterial {
     pub before_model_revision: ModelRevision,
     pub after_model_revision: ModelRevision,
     pub transaction_blob: AlgorithmQualifiedDigest,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub authority_snapshot_blob: Option<AlgorithmQualifiedDigest>,
     pub affected_shards: Vec<AffectedShard>,
     pub validation_state: TechnicalValidationState,
     pub cache_invalidations: Vec<String>,
@@ -93,6 +97,7 @@ impl IntegrityGeneration {
             before_model_revision: self.before_model_revision.clone(),
             after_model_revision: self.after_model_revision.clone(),
             transaction_blob: self.transaction_blob.clone(),
+            authority_snapshot_blob: self.authority_snapshot_blob.clone(),
             affected_shards: self.affected_shards.clone(),
             validation_state: self.validation_state,
             cache_invalidations: self.cache_invalidations.clone(),
