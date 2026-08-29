@@ -1,0 +1,66 @@
+<title>Datum · Prototype Disposition Sheet</title>
+<style>
+:root{--bg:#0B0C0E;--s1:#15171C;--s2:#1C1F26;--bd:#2E343E;--tx:#E4E7EB;--tx2:#B2B8C3;--tx3:#717885;--acc:#CE5A92;--ok:#4FA75A;--warn:#E0A23A;--err:#E5534B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:ui-sans-serif,system-ui,sans-serif;font-size:13.5px;padding:30px 38px 70px;line-height:1.7}
+h1{font-size:20px;margin-bottom:6px}h1 b{color:var(--acc)}
+.lede{color:var(--tx2);max-width:1080px;margin-bottom:6px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+.sec{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);margin:28px 0 4px;text-transform:uppercase}
+.note{color:var(--tx2);max-width:1080px;margin-bottom:12px}
+table{border-collapse:collapse;width:100%;max-width:1150px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+th{text-align:left;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;padding:9px 12px;border-bottom:1px solid var(--bd)}
+td{padding:9px 12px;border-bottom:1px solid #23272F;vertical-align:top;font-size:12.5px;color:var(--tx2)}
+td.n{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--tx);white-space:nowrap}
+td.q{color:var(--tx)}
+.badge{font-family:ui-monospace,monospace;font-size:9.5px;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.b-stale{border:1px solid var(--err);color:var(--err)}
+.b-open{border:1px solid var(--warn);color:var(--warn)}
+.banner{border-left:2px solid var(--ok);background:#0f1a12;padding:12px 16px;max-width:1150px;margin:14px 0}
+.banner b{color:var(--ok)}
+.mine{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1150px;margin:14px 0}
+.mine b{color:var(--err)}
+ul{margin:6px 0 0 20px}li{margin-bottom:4px;color:var(--tx2)}
+</style>
+<h1>Datum <b>·</b> prototype disposition sheet <span style="font-family:ui-monospace,monospace;font-size:12px;color:var(--tx3)">41 prototypes · 2026-08-29</span></h1>
+<div class="lede">Every visual artifact I own, and its real approval state — so an unapproved render of mine never silently gates a slice again.</div>
+
+<div class="banner"><b>Nothing is blocking Codex right now.</b> Only REV-I10 requires owner-approved visual design anywhere in the Revision Engine plan, and it requires the REV-C06 set, which is fully approved. No unapproved prototype sits on the current path.</div>
+
+<div class="mine"><b>The real defect is mine.</b> Six artifacts carry a stale status because you decided them in conversation and I never wrote the disposition back onto the file. They read as pending or clay when they are not. I can correct all six without any further input from you — they are listed first so you can see exactly what I would stamp.</div>
+
+<div class="sec">1 · you already decided these — i update the artifact, no input needed</div>
+<div class="note">If any line misstates your decision, say so and I will not stamp it.</div>
+<table><tr><th>prototype</th><th>holds</th><th>your decision</th><th>currently reads</th></tr>
+<tr><td class="n">units-and-grid-model</td><td>Grid preset sets and defaults</td><td class="q">You decided today: metric 1-2-5 decade series as default, the same series in mil as a one-switch preference, imperial-derived metric available and never suggested.</td><td><span class="badge b-stale">marked CLAY</span></td></tr>
+<tr><td class="n">agent-authority-study</td><td>Four cumulative agent authority profiles</td><td class="q">You approved the model with a security-first default posture.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
+<tr><td class="n">agent-authority-scenarios</td><td>Authority profiles walked through concrete scenarios</td><td class="q">Same disposition as the study it illustrates.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
+<tr><td class="n">agent-authority-threat-model</td><td>Threat model behind the authority defaults</td><td class="q">You directed default-closed ports and expiring tokens, not open-by-default.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
+<tr><td class="n">agent-blocked-action-alerts</td><td>How a blocked action tells the user why</td><td class="q">You required a mechanism alerting the user on blocked action from a closed port or expired token.</td><td><span class="badge b-stale">pending Codex ratification</span></td></tr>
+<tr><td class="n">grid-basis-candidate-d</td><td>Earlier grid basis candidate</td><td class="q">Superseded by units-and-grid-model. Its pitch-seeded footprint grid and Preferences-owned grid basis were both disproved.</td><td><span class="badge b-stale">marked CLAY</span></td></tr>
+</table>
+<div class="sec">2 · genuinely needs your disposition</div>
+<div class="note">Six artifacts. Four of them I believe are simply absorbed by later approved work and should be retired — that is a one-word answer each. Two hold a real question you have not seen.</div>
+<table><tr><th>prototype</th><th>holds</th><th>state</th><th>the question</th></tr>
+<tr><td class="n">selection-study</td><td>Selection model and modifiers</td><td><span class="badge b-open">pending owner review</span></td><td class="q">Does the selection behaviour shown match how you expect to select in a board and schematic?</td></tr>
+<tr><td class="n">rendering-study</td><td>Render fidelity study S5-C09</td><td><span class="badge b-open">pending HUMAN review</span></td><td class="q">One outstanding render question you have not seen.</td></tr>
+<tr><td class="n">first-run-study</td><td>First-run experience</td><td><span class="badge b-open">CLAY</span></td><td class="q">Superseded in practice by start-page-study and guided-setup-study, both APPROVED. Retire, or is there something here you still want?</td></tr>
+<tr><td class="n">preferences-accessibility-study</td><td>Preferences accessibility</td><td><span class="badge b-open">CLAY</span></td><td class="q">The accessibility contract landed in GP-C05 refined option A. Retire as absorbed, or keep as a standing reference?</td></tr>
+<tr><td class="n">preferences-store-placement-study</td><td>Where the preference store lives</td><td><span class="badge b-open">CLAY</span></td><td class="q">Resolved by GP-C03 Q10 (S2 machine-local + R1 managed replay). Retire as absorbed?</td></tr>
+<tr><td class="n">search-placement-study</td><td>Where preferences search sits</td><td><span class="badge b-open">CLAY</span></td><td class="q">Resolved by GP-C05 pinned search over the content column, shipped in preferences-window. Retire as absorbed?</td></tr>
+</table>
+<div class="sec">3 · no status marker at all — my omission</div>
+<div class="note">These nine carry no approval banner in either direction. Most are early structural studies that predate the banner convention. They are not claimed as approved anywhere, so none can gate a slice today — but they should each carry an honest marker rather than silence. I will stamp them as historical study unless you want any treated as a live decision.</div>
+<table><tr><th>prototype</th></tr>
+<tr><td class="n">board-editor</td></tr>
+<tr><td class="n">schematic-editor</td></tr>
+<tr><td class="n">workspace-panes</td></tr>
+<tr><td class="n">context-menu-marking-menu</td></tr>
+<tr><td class="n">terminal-study</td></tr>
+<tr><td class="n">text-placement-study</td></tr>
+<tr><td class="n">title-block-study</td></tr>
+<tr><td class="n">title-block-sizes</td></tr>
+<tr><td class="n">open-decisions</td></tr>
+</table>
+<div class="sec">what changes after this</div>
+<div class="note">Going forward, when I render something that needs your call, I tell you at the time that it is a gate and what it blocks — not after it has stalled a Codex slice. And when you decide something in conversation, the disposition gets stamped onto the artifact in the same turn, so the file and the decision never drift apart again.</div>
