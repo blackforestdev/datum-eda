@@ -14,6 +14,7 @@ TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_cont
 TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_spawn.rs"
 TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal_session_render.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
+RUNTIME_PRIMARY_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_primary_pointer.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
 RUNTIME_TERMINAL_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_pointer.rs"
@@ -56,6 +57,16 @@ def check_terminal_grid_writers(failures: list[str]) -> None:
         for marker in ("pty_grid_mut(", "grid_styled_lines(", "TerminalStyledLine"):
             if marker in source:
                 failures.append(f"deleted provisional terminal authority returned in {relative}: {marker}")
+
+
+def check_authoring_handoff_refresh(authoring_source: str, failures: list[str]) -> None:
+    """Require typed authoring handoffs to schedule a workspace refresh."""
+    authoring_marker = "    pub(super) fn queue_authoring_terminal_handoff"
+    if authoring_marker not in authoring_source or (
+        "self.mark_terminal_workspace_refresh_pending();"
+        not in authoring_source.split(authoring_marker, 1)[1].split("\n    pub(super) fn ", 1)[0]
+    ):
+        failures.append("typed authoring handoffs must explicitly schedule workspace refresh")
 
 
 def check_terminal_focus_reporting(
@@ -456,6 +467,7 @@ def main() -> int:
         TERMINAL_SESSION_SPAWN.read_text() + TERMINAL_SESSION_RENDER.read_text()
     )
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
+    runtime_primary_pointer = RUNTIME_PRIMARY_POINTER.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text() + RUNTIME_TERMINAL_POINTER.read_text()
     terminal_drain = (
@@ -554,11 +566,7 @@ def main() -> int:
             failures.append(
                 "raw foreign-shell input must not infer mutation or schedule workspace refresh"
             )
-    authoring_marker = "    fn queue_authoring_terminal_handoff"
-    if authoring_marker not in main or "self.mark_terminal_workspace_refresh_pending();" not in main.split(
-        authoring_marker, 1
-    )[1].split("\n    fn ", 1)[0]:
-        failures.append("typed authoring handoffs must explicitly schedule workspace refresh")
+    check_authoring_handoff_refresh(runtime_primary_pointer, failures)
 
     for path in RETIRED_BRIDGE_FILES:
         if path.exists():

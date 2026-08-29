@@ -17,6 +17,50 @@ SPEC.loader.exec_module(guard)
 
 
 class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_authoring_handoff_refresh_follows_extracted_owner(self) -> None:
+        authoring_source = """
+    pub(super) fn queue_authoring_terminal_handoff(&mut self) {
+        self.set_active_dock(DockTab::Terminal);
+        self.mark_terminal_workspace_refresh_pending();
+        self.write_foreign_shell_bytes(&bytes);
+    }
+
+    pub(super) fn trace_click(&self) {}
+"""
+        failures: list[str] = []
+        guard.check_authoring_handoff_refresh(authoring_source, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_authoring_handoff_refresh(
+            authoring_source.replace(
+                "self.mark_terminal_workspace_refresh_pending();",
+                "self.invalidate_frame();",
+            ),
+            failures,
+        )
+        self.assertEqual(
+            ["typed authoring handoffs must explicitly schedule workspace refresh"],
+            failures,
+        )
+
+        failures = []
+        guard.check_authoring_handoff_refresh(
+            authoring_source.replace(
+                "self.mark_terminal_workspace_refresh_pending();",
+                "self.invalidate_frame();",
+            ).replace(
+                "pub(super) fn trace_click(&self) {}",
+                "pub(super) fn trace_click(&self) { "
+                "self.mark_terminal_workspace_refresh_pending(); }",
+            ),
+            failures,
+        )
+        self.assertEqual(
+            ["typed authoring handoffs must explicitly schedule workspace refresh"],
+            failures,
+        )
+
     def test_terminal_session_tabs_must_append_in_projected_order(self) -> None:
         tab_strip = """
 for tab in tabs {
