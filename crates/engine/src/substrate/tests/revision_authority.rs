@@ -2,8 +2,9 @@ use std::collections::BTreeSet;
 
 use super::*;
 use crate::revision::{
-    AUTHORITY_SCHEMA_VERSION, AuthorityEvent, AuthorityRecordKind, AuthorityResolution,
-    AuthoritySnapshot, ConfigurationItemId, ConfigurationRefId, RevisionAuthorityStore,
+    AUTHORITY_SCHEMA_VERSION, AuthorityEvent, AuthorityRecord, AuthorityRecordKind,
+    AuthorityResolution, AuthoritySnapshot, ConfigurationItemId, ConfigurationRefId,
+    EarlierControlMode, RevisionAuthorityStore, RevisionMutation, apply_revision_mutations,
     export_backup, restore_backup, verify_backup,
 };
 
@@ -51,6 +52,12 @@ const EXPECTED_FAMILIES: &[&str] = &[
     "external_change_candidate",
     "credential_or_trust_event",
     "trusted_timestamp_evidence",
+    "project_revision_policy",
+    "revision_scheme",
+    "actor_identity",
+    "role_assignment",
+    "role_delegation",
+    "project_seed_receipt",
 ];
 
 fn snapshot_with_every_family(project_id: Uuid) -> AuthoritySnapshot {
@@ -89,17 +96,112 @@ fn record_fixture(
     project_id: Uuid,
     id: Uuid,
 ) -> crate::revision::AuthorityRecord {
+    let mut payload = serde_json::json!({
+        "schema_version": AUTHORITY_SCHEMA_VERSION,
+        "id": id,
+        "project_id": project_id,
+        "display_name": kind.wire_tag(),
+        "references": []
+    });
+    let semantics = match kind {
+        AuthorityRecordKind::ApprovalAttestation => serde_json::json!({
+            "intent": "approve",
+            "disposition": "active",
+            "target": {"kind": "configuration_item", "id": family_id(AuthorityRecordKind::ConfigurationItem)},
+            "target_digest": format!("sha256:{}", "0".repeat(64)),
+            "actor_id": family_id(AuthorityRecordKind::ActorIdentity),
+            "role_assignment_id": family_id(AuthorityRecordKind::RoleAssignment),
+            "policy_id": family_id(AuthorityRecordKind::ProjectRevisionPolicy),
+            "policy_version": 1,
+            "method_class": "synthetic-test",
+            "asserted_at": 1,
+            "signature": [1, 2, 3]
+        }),
+        AuthorityRecordKind::Effectivity => serde_json::json!({
+            "expression": {
+                "node": "selector",
+                "value": {"family": "product_or_assembly", "values": ["all"]}
+            }
+        }),
+        AuthorityRecordKind::ProjectRevisionPolicy => serde_json::json!({
+            "policy_version": 1,
+            "scheme_profile_selection": {
+                "profile_name": "SequentialAlphanumericLegacy",
+                "scheme_id": family_id(AuthorityRecordKind::RevisionScheme),
+                "scheme_version": 1
+            },
+            "per_ci_namespace_rules": {
+                "require_one_namespace_per_configuration_item": true,
+                "allow_cross_item_token_reuse": true
+            },
+            "earlier_control": "no_earlier_control",
+            "build_presentation": "quiet",
+            "namespace_transition": "continuous",
+            "approval_policy": {"requirements": [], "separation_of_duty": false},
+            "effectivity_obligations": {
+                "required_for_intents": [],
+                "exact_population_snapshot_when_enumerable": true
+            },
+            "controlled_terminology": {"terms": {}},
+            "required_method_classes": {"by_intent": {}}
+        }),
+        AuthorityRecordKind::RevisionScheme => serde_json::json!({
+            "scheme_version": 1,
+            "kind": "linear_alphabetic",
+            "entries": [{"ordinal": 1, "revision": "A"}],
+            "namespaces": {}
+        }),
+        AuthorityRecordKind::ActorIdentity => serde_json::json!({
+            "kind": "person",
+            "stable_name": "fixture actor"
+        }),
+        AuthorityRecordKind::RoleAssignment => serde_json::json!({
+            "actor_id": family_id(AuthorityRecordKind::ActorIdentity),
+            "capabilities": ["author"],
+            "scope": {"scope": "project", "id": project_id},
+            "effective": {"from_inclusive": 0, "until_exclusive": 10},
+            "source": "fixture",
+            "rationale": "closed inventory"
+        }),
+        AuthorityRecordKind::RoleDelegation => serde_json::json!({
+            "delegator_actor_id": family_id(AuthorityRecordKind::ActorIdentity),
+            "delegate_actor_id": family_id(AuthorityRecordKind::ActorIdentity),
+            "capabilities": ["author"],
+            "scope": {"scope": "project", "id": project_id},
+            "effective": {"from_inclusive": 0, "until_exclusive": 10},
+            "basis_assignment": family_id(AuthorityRecordKind::RoleAssignment),
+            "rationale": "closed inventory"
+        }),
+        AuthorityRecordKind::ProjectSeedReceipt => serde_json::json!({
+            "source_profile": "factory",
+            "source_generation": "fixture",
+            "source_digest": format!("sha256:{}", "1".repeat(64)),
+            "copied_policy_id": family_id(AuthorityRecordKind::ProjectRevisionPolicy),
+            "items": [
+                {"key": "datum.revision.profile_seed", "copied_value": "SequentialAlphanumericLegacy"},
+                {"key": "datum.revision.build_presentation_seed", "copied_value": "quiet"},
+                {"key": "datum.revision.prototype_transition_seed", "copied_value": "continuous"}
+            ]
+        }),
+        _ => serde_json::json!({}),
+    };
+    payload
+        .as_object_mut()
+        .expect("payload object")
+        .extend(semantics.as_object().expect("semantic object").clone());
     serde_json::from_value(serde_json::json!({
         "kind": kind.wire_tag(),
-        "payload": {
-            "schema_version": AUTHORITY_SCHEMA_VERSION,
-            "id": id,
-            "project_id": project_id,
-            "display_name": kind.wire_tag(),
-            "references": []
-        }
+        "payload": payload
     }))
     .expect("closed family fixture decodes to its typed variant")
+}
+
+fn family_id(kind: AuthorityRecordKind) -> Uuid {
+    let index = AuthorityRecordKind::ALL
+        .iter()
+        .position(|candidate| *candidate == kind)
+        .expect("family is registered");
+    Uuid::from_u128(index as u128 + 1)
 }
 
 fn ordinary_rename(model: &DesignModel, name: &str) -> OperationBatch {
@@ -125,8 +227,8 @@ fn closed_family_inventory_is_exact_unique_and_canonical() {
         .map(|kind| kind.wire_tag())
         .collect();
     assert_eq!(actual, EXPECTED_FAMILIES);
-    assert_eq!(actual.len(), 43);
-    assert_eq!(actual.iter().copied().collect::<BTreeSet<_>>().len(), 43);
+    assert_eq!(actual.len(), 49);
+    assert_eq!(actual.iter().copied().collect::<BTreeSet<_>>().len(), 49);
 
     let project_id = Uuid::from_u128(1);
     let snapshot = snapshot_with_every_family(project_id);
@@ -143,6 +245,22 @@ fn closed_family_inventory_is_exact_unique_and_canonical() {
     let mut reordered = snapshot.clone();
     reordered.records.reverse();
     assert_eq!(reordered.canonical_bytes().expect("reordered"), bytes);
+
+    let new_family_digest_goldens: Vec<_> = snapshot.records[43..]
+        .iter()
+        .map(|record| record.canonical_digest().expect("new-family digest").0)
+        .collect();
+    assert_eq!(
+        new_family_digest_goldens,
+        [
+            "sha256:dd24d7e13466e397c8a26a91357c055e724445d89548b258e00040373f58bf02",
+            "sha256:40933f81d214c3b685a004fd60d8ccbe288bbf37448cff2f5db0564e2f9c5524",
+            "sha256:943bab243766fd09da802c84d1d912acb900cac13b76f733945a16e9dd31c187",
+            "sha256:81cc0599feae633d09deca7946feecd1db9d27a17490765f937d19db2249ce9a",
+            "sha256:64fe36d8e3596a161a12039455047748b2ab48b8e1f0e6821770d87b35b56977",
+            "sha256:130968995f17e100248ec0dff5f9a56587f8c39460b5d0cc506296e5ca7706c9",
+        ]
+    );
 }
 
 #[test]
@@ -222,6 +340,26 @@ fn unknown_authority_schema_survives_backup_and_restore_byte_exact() {
         AuthorityResolution::ReadOnlyDiagnostic { preserved_snapshot_bytes, .. }
             if preserved_snapshot_bytes == unknown
     ));
+    let AuthorityRecord::ActorIdentity(actor) = record_fixture(
+        AuthorityRecordKind::ActorIdentity,
+        project_id,
+        Uuid::new_v4(),
+    ) else {
+        unreachable!("fixture kind is exact")
+    };
+    assert!(
+        apply_revision_mutations(
+            &store,
+            project_id,
+            vec![RevisionMutation::RegisterActorIdentity(actor)],
+        )
+        .is_err()
+    );
+    assert!(matches!(
+        store.resolve_authority(project_id),
+        AuthorityResolution::ReadOnlyDiagnostic { preserved_snapshot_bytes, .. }
+            if preserved_snapshot_bytes == unknown
+    ));
 
     let backup = temp_project_root("authority_unknown_backup");
     std::fs::remove_dir(&backup).expect("backup starts absent");
@@ -270,6 +408,18 @@ fn authority_snapshot_is_in_generation_and_design_commit_carries_it_unchanged() 
             snapshot: snapshot.clone()
         }
     );
+    let backup = temp_project_root("authority_all_families_backup");
+    std::fs::remove_dir(&backup).expect("backup starts absent");
+    export_backup(&root, project_id, &backup).expect("backup all families");
+    verify_backup(&backup).expect("verify all-family backup");
+    let restored = temp_project_root("authority_all_families_restore");
+    restore_backup(&restored, &backup).expect("restore all families");
+    assert_eq!(
+        RevisionAuthorityStore::new(&restored).resolve_authority(project_id),
+        AuthorityResolution::Resolved {
+            snapshot: snapshot.clone()
+        }
+    );
     let before = std::fs::read(root.join(".datum/revision/v1/head.json")).expect("authority head");
 
     let mut authored = ProjectResolver::new(&root)
@@ -306,44 +456,144 @@ fn inert_authority_never_blocks_three_real_project_authoring_paths() {
             "../test-harness/testdata/quality/route_strategy_curated_baseline_v1/via-available",
         ),
     ] {
-        let root = temp_project_root(&format!("authority_real_{name}"));
-        copy_fixture(&manifest_dir.join(fixture), &root);
-        let mut model = ProjectResolver::new(&root)
+        let unmanaged_root = temp_project_root(&format!("authority_real_{name}_unmanaged"));
+        let no_earlier_control_root =
+            temp_project_root(&format!("authority_real_{name}_no_earlier_control"));
+        copy_fixture(&manifest_dir.join(fixture), &unmanaged_root);
+        copy_fixture(&manifest_dir.join(fixture), &no_earlier_control_root);
+        let mut unmanaged = ProjectResolver::new(&unmanaged_root)
             .resolve()
             .expect("fixture resolve");
-        model
-            .commit_journaled(&root, ordinary_rename(&model, "before-authority"))
-            .expect("unconfigured authoring");
-        let snapshot = snapshot_with_every_family(model.project.project_id);
-        let store = RevisionAuthorityStore::new(&root);
-        store
-            .install_authority_fixture(model.project.project_id, &snapshot)
-            .expect("inert fixture");
-        let mut reopened = ProjectResolver::new(&root)
+        let mut managed = ProjectResolver::new(&no_earlier_control_root)
             .resolve()
-            .expect("fixture reopen");
-        reopened
-            .commit_journaled(&root, ordinary_rename(&reopened, "after-authority"))
-            .expect("inert authority cannot gate authoring");
+            .expect("paired fixture resolve");
+        let setup = ordinary_rename(&unmanaged, "before-authority");
+        unmanaged
+            .commit_journaled(&unmanaged_root, setup.clone())
+            .expect("unconfigured setup authoring");
+        managed
+            .commit_journaled(&no_earlier_control_root, setup)
+            .expect("paired setup authoring");
+        let snapshot = snapshot_with_every_family(unmanaged.project.project_id);
+        let store = RevisionAuthorityStore::new(&no_earlier_control_root);
+        store
+            .install_authority_fixture(unmanaged.project.project_id, &snapshot)
+            .expect("NoEarlierControl fixture");
+        let authority_before = snapshot
+            .canonical_bytes()
+            .expect("authority before authoring");
+        let mut unmanaged = ProjectResolver::new(&unmanaged_root)
+            .resolve()
+            .expect("unmanaged reopen");
+        let mut managed = ProjectResolver::new(&no_earlier_control_root)
+            .resolve()
+            .expect("NoEarlierControl reopen");
+        assert_eq!(unmanaged.model_revision, managed.model_revision);
+        let ordinary = ordinary_rename(&unmanaged, "after-authority");
+        unmanaged
+            .commit_journaled(&unmanaged_root, ordinary.clone())
+            .expect("unmanaged authoring");
+        managed
+            .commit_journaled(&no_earlier_control_root, ordinary)
+            .expect("NoEarlierControl cannot gate authoring");
+        for model in [&mut unmanaged, &mut managed] {
+            for shard in &mut model.source_shards {
+                shard.path = PathBuf::from(&shard.relative_path);
+            }
+        }
+        assert_eq!(unmanaged, managed);
         assert_eq!(
-            store.resolve_authority(model.project.project_id),
-            AuthorityResolution::Resolved { snapshot }
+            std::fs::read(transaction_journal_path(&unmanaged_root)).expect("unmanaged journal"),
+            std::fs::read(transaction_journal_path(&no_earlier_control_root))
+                .expect("NoEarlierControl journal")
         );
-        assert_eq!(reopened.project.name, "after-authority");
+        assert!(matches!(
+            RevisionAuthorityStore::new(&unmanaged_root)
+                .resolve_authority(unmanaged.project.project_id),
+            AuthorityResolution::Unconfigured
+        ));
+        assert!(matches!(
+            store.resolve_authority(managed.project.project_id),
+            AuthorityResolution::Resolved { snapshot: after }
+                if after.canonical_bytes().expect("authority after authoring") == authority_before
+        ));
     }
 }
 
 #[test]
 fn ordinary_design_application_has_no_product_authority_resolver_dependency() {
     for source in [
+        include_str!("../project_resolver.rs"),
         include_str!("../operation_application.rs"),
         include_str!("../operation_application_objects.rs"),
+        include_str!("../operation_application_batch.rs"),
+        include_str!("../operation_application_dispatch.rs"),
+        include_str!("../operation_application_board_payloads.rs"),
+        include_str!("../operation_application_component_instance.rs"),
+        include_str!("../operation_application_object_revision.rs"),
+        include_str!("../operation_application_production.rs"),
+        include_str!("../operation_application_relationship.rs"),
+        include_str!("../operation_application_schematic.rs"),
+        include_str!("../operation_application_schematic_definition.rs"),
+        include_str!("../operation_application_schematic_instance.rs"),
+        include_str!("../operation_application_schematic_waiver.rs"),
         include_str!("../commit.rs"),
     ] {
+        assert!(!source.contains("resolve_project_revision_policy"));
+        assert!(!source.contains("evaluate_capability"));
+        assert!(!source.contains("evaluate_approval_policy"));
         assert!(!source.contains("resolve_authority"));
         assert!(!source.contains("AuthorityEvent"));
         assert!(!source.contains("AuthorityRecord"));
     }
+}
+
+#[test]
+fn authorized_change_required_is_representable_but_has_no_design_effect_in_rev_i03() {
+    let root = temp_project_root("authorized_change_required_inert");
+    let project_id = Uuid::new_v4();
+    write_minimal_project(&root, project_id, Uuid::new_v4());
+    let mut model = ProjectResolver::new(&root).resolve().expect("resolve");
+    model
+        .commit_journaled(&root, ordinary_rename(&model, "before-policy"))
+        .expect("establish integrity");
+    let mut snapshot = snapshot_with_every_family(project_id);
+    let policy = snapshot
+        .records
+        .iter_mut()
+        .find_map(|record| match record {
+            AuthorityRecord::ProjectRevisionPolicy(body) => Some(body),
+            _ => None,
+        })
+        .expect("policy family");
+    policy.semantics.earlier_control = EarlierControlMode::AuthorizedChangeRequired;
+    snapshot.events.clear();
+    let mut previous = None;
+    for (sequence, record) in snapshot.records.iter().enumerate() {
+        let event = AuthorityEvent::structural_append(
+            project_id,
+            sequence as u64,
+            record,
+            previous.clone(),
+        );
+        previous = Some(event.event_digest.clone());
+        snapshot.events.push(event);
+    }
+    let store = RevisionAuthorityStore::new(&root);
+    store
+        .install_authority_fixture(project_id, &snapshot)
+        .expect("install representable policy");
+    let authority_before = snapshot.canonical_bytes().expect("authority bytes");
+    let mut reopened = ProjectResolver::new(&root).resolve().expect("Project open");
+    reopened
+        .commit_journaled(&root, ordinary_rename(&reopened, "after-policy"))
+        .expect("REV-I03 cannot integrate policy into Design mutation");
+    assert_eq!(reopened.project.name, "after-policy");
+    assert!(matches!(
+        store.resolve_authority(project_id),
+        AuthorityResolution::Resolved { snapshot: after }
+            if after.canonical_bytes().expect("after") == authority_before
+    ));
 }
 
 fn copy_fixture(source: &Path, destination: &Path) {

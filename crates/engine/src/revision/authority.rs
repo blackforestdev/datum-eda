@@ -6,6 +6,14 @@ use uuid::Uuid;
 use crate::error::EngineError;
 
 use super::{AlgorithmQualifiedDigest, canonical::canonical_bytes, canonical::digest_bytes};
+use super::{
+    approval::ApprovalAttestationData,
+    effectivity::EffectivityData,
+    policy::ProjectRevisionPolicyData,
+    role::{ActorIdentityData, RoleAssignmentData, RoleDelegationData},
+    scheme::RevisionSchemeData,
+    seed::ProjectSeedReceiptData,
+};
 
 /// Canonical REV-I02 authority schema version.
 ///
@@ -19,8 +27,17 @@ use super::{AlgorithmQualifiedDigest, canonical::canonical_bytes, canonical::dig
 /// ```
 pub const AUTHORITY_SCHEMA_VERSION: u64 = 1;
 
+macro_rules! authority_payload {
+    () => {
+        EmptyAuthorityPayload
+    };
+    ($payload:ty) => {
+        $payload
+    };
+}
+
 macro_rules! authority_families {
-    ($(($variant:ident, $id:ident, $tag:literal)),+ $(,)?) => {
+    ($(($variant:ident, $id:ident, $tag:literal $(, $payload:ty)?)),+ $(,)?) => {
         $(
             #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
             #[serde(transparent)]
@@ -56,7 +73,9 @@ macro_rules! authority_families {
 
         #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
         #[serde(tag = "kind", content = "payload", rename_all = "snake_case")]
-        pub enum AuthorityRecord { $($variant(AuthorityRecordBody<$id>)),+ }
+        pub enum AuthorityRecord {
+            $($variant(AuthorityRecordBody<$id, authority_payload!($($payload)?)>)),+
+        }
 
         impl AuthorityRecord {
             pub const fn kind(&self) -> AuthorityRecordKind {
@@ -109,9 +128,10 @@ authority_families!(
     (
         ApprovalAttestation,
         ApprovalAttestationId,
-        "approval_attestation"
+        "approval_attestation",
+        ApprovalAttestationData
     ),
-    (Effectivity, EffectivityId, "effectivity"),
+    (Effectivity, EffectivityId, "effectivity", EffectivityData),
     (ReleaseCandidate, ReleaseCandidateId, "release_candidate"),
     (Release, ReleaseId, "release"),
     (
@@ -230,11 +250,51 @@ authority_families!(
         TrustedTimestampEvidenceId,
         "trusted_timestamp_evidence"
     ),
+    (
+        ProjectRevisionPolicy,
+        ProjectRevisionPolicyId,
+        "project_revision_policy",
+        ProjectRevisionPolicyData
+    ),
+    (
+        RevisionScheme,
+        RevisionSchemeId,
+        "revision_scheme",
+        RevisionSchemeData
+    ),
+    (
+        ActorIdentity,
+        ActorIdentityId,
+        "actor_identity",
+        ActorIdentityData
+    ),
+    (
+        RoleAssignment,
+        RoleAssignmentId,
+        "role_assignment",
+        RoleAssignmentData
+    ),
+    (
+        RoleDelegation,
+        RoleDelegationId,
+        "role_delegation",
+        RoleDelegationData
+    ),
+    (
+        ProjectSeedReceipt,
+        ProjectSeedReceiptId,
+        "project_seed_receipt",
+        ProjectSeedReceiptData
+    ),
 );
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EmptyAuthorityPayload {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AuthorityRecordBody<I> {
+pub struct AuthorityRecordBody<I, P = EmptyAuthorityPayload> {
     pub schema_version: u64,
     pub id: I,
     pub project_id: Uuid,
@@ -243,6 +303,8 @@ pub struct AuthorityRecordBody<I> {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub physical_locator: Option<String>,
     pub references: Vec<AuthorityRef>,
+    #[serde(flatten)]
+    pub semantics: P,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -406,6 +468,12 @@ impl AuthoritySnapshot {
                 AuthorityRecord::ExternalChangeCandidate(body) => body.references.sort(),
                 AuthorityRecord::CredentialOrTrustEvent(body) => body.references.sort(),
                 AuthorityRecord::TrustedTimestampEvidence(body) => body.references.sort(),
+                AuthorityRecord::ProjectRevisionPolicy(body) => body.references.sort(),
+                AuthorityRecord::RevisionScheme(body) => body.references.sort(),
+                AuthorityRecord::ActorIdentity(body) => body.references.sort(),
+                AuthorityRecord::RoleAssignment(body) => body.references.sort(),
+                AuthorityRecord::RoleDelegation(body) => body.references.sort(),
+                AuthorityRecord::ProjectSeedReceipt(body) => body.references.sort(),
             }
         }
         snapshot.events.sort_by_key(|event| event.sequence);
@@ -485,7 +553,42 @@ impl AuthoritySnapshot {
                     ));
                 }
             }
+            match record {
+                AuthorityRecord::ProjectRevisionPolicy(body) => {
+                    diagnostics.extend(super::policy::validate_policy_data(&body.semantics));
+                }
+                AuthorityRecord::RevisionScheme(body) => {
+                    diagnostics.extend(super::scheme::validate_scheme_data(&body.semantics));
+                }
+                AuthorityRecord::ActorIdentity(body) if body.semantics.stable_name.is_empty() => {
+                    diagnostics.push(diag(
+                        "revision_actor_identity_empty",
+                        "actor stable name cannot be empty",
+                    ));
+                }
+                AuthorityRecord::Effectivity(body) => {
+                    diagnostics.extend(super::effectivity::validate_effectivity(&body.semantics));
+                }
+                AuthorityRecord::ProjectSeedReceipt(body) => {
+                    let actual: BTreeSet<_> = body
+                        .semantics
+                        .items
+                        .iter()
+                        .map(|item| item.key.as_str())
+                        .collect();
+                    let expected: BTreeSet<_> = super::REVISION_SEED_KEYS.iter().copied().collect();
+                    if actual != expected || body.semantics.items.len() != expected.len() {
+                        diagnostics.push(diag(
+                            "revision_seed_receipt_inventory_mismatch",
+                            "seed receipt must itemize exactly the registered revision keys",
+                        ));
+                    }
+                }
+                _ => {}
+            }
         }
+        diagnostics.extend(super::role::validate_role_records(self));
+        diagnostics.extend(super::approval::validate_attestations(self));
         validate_events(self, &records, &mut diagnostics);
         diagnostics
     }
