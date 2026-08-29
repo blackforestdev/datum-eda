@@ -37,6 +37,7 @@ mod proposal_replay;
 mod proposal_schema;
 mod relationship;
 mod relationship_schema;
+mod revision_integrity;
 mod schematic_definition_replay;
 mod schematic_sheet_writer_migration;
 mod schematic_text_writer_migration;

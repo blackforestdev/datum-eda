@@ -4,6 +4,8 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use uuid::Uuid;
 
+use crate::revision::{RevisionAuthorityStore, RevisionStoreState};
+
 use super::artifact::{
     insert_manufacturing_plan_objects, insert_output_job_objects, insert_panel_projection_objects,
     read_artifact_metadata_shards, read_manufacturing_plan_shards, read_output_job_run_shards,
@@ -248,6 +250,39 @@ impl ProjectResolver {
             &journal_records,
             &mut diagnostics,
         )?;
+        match RevisionAuthorityStore::new(&self.project_root)
+            .inspect_and_recover(manifest.uuid, &journal)
+        {
+            RevisionStoreState::Empty if !journal.is_empty() => {
+                diagnostics.push(ResolveDiagnostic {
+                    code: "revision_integrity_not_initialized".to_string(),
+                    message: "technical journal predates the revision integrity store; the next accepted transaction will establish its first integrity generation".to_string(),
+                    path: Some(self.project_root.join(".datum/revision/v1")),
+                });
+            }
+            RevisionStoreState::Recovered {
+                head,
+                recovered_stages,
+            } => diagnostics.push(ResolveDiagnostic {
+                code: "revision_integrity_recovered".to_string(),
+                message: format!(
+                    "recovered {recovered_stages} complete staged revision generation(s); head is transaction {}",
+                    head.transaction_id
+                ),
+                path: Some(self.project_root.join(".datum/revision/v1/head.json")),
+            }),
+            RevisionStoreState::ReadOnlyDiagnostic {
+                last_complete: _,
+                diagnostics: integrity_diagnostics,
+            } => diagnostics.extend(integrity_diagnostics.into_iter().map(|diagnostic| {
+                ResolveDiagnostic {
+                    code: diagnostic.code,
+                    message: diagnostic.message,
+                    path: diagnostic.path,
+                }
+            })),
+            RevisionStoreState::Empty | RevisionStoreState::Complete { .. } => {}
+        }
         add_missing_journal_schematic_sheet_shards(&self.project_root, &mut shards, &journal)?;
         replay_import_map_shards(&self.project_root, &mut shards, &journal)?;
         replay_proposal_shards(&self.project_root, &mut shards, &journal)?;

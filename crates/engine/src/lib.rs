@@ -17,6 +17,7 @@ pub mod import;
 pub mod ir;
 pub mod ops;
 pub mod pool;
+pub mod revision;
 pub mod rules;
 pub mod schematic;
 pub mod session;

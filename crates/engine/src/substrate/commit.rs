@@ -2,6 +2,11 @@ use std::path::Path;
 
 use uuid::Uuid;
 
+use crate::revision::{
+    IntegrityCommitFaultPoint, ProjectWriteLease, RevisionAuthorityStore, StagedShardPostimage,
+    transaction_tip,
+};
+
 use super::{
     AgentCommitProvenance, CommitDiff, CommitReport, DesignModel, EngineError, JournalCursor,
     ModelRevision, Operation, OperationBatch, TransactionKind, TransactionRecord,
@@ -130,6 +135,7 @@ impl DesignModel {
             None,
             policy_context,
             None,
+            None,
         )
     }
 
@@ -145,6 +151,7 @@ impl DesignModel {
         inverse_operations_override: Option<Vec<super::Operation>>,
         policy_context: CommitPolicyContext,
         after_model_revision_override: Option<ModelRevision>,
+        integrity_fault: Option<IntegrityCommitFaultPoint>,
     ) -> Result<CommitReport, EngineError> {
         validate_direct_commit_proposal_policy(&batch, transaction_kind, policy_context)?;
         validate_non_empty_operation_batch(&batch)?;
@@ -168,6 +175,8 @@ impl DesignModel {
                 expected.0, self.model_revision.0
             )));
         }
+
+        let _write_lease = ProjectWriteLease::acquire(project_root)?;
 
         let inverse_operations = match inverse_operations_override {
             Some(operations) => operations,
@@ -193,15 +202,78 @@ impl DesignModel {
             &mut report,
             after_model_revision_override,
         )?;
+        let parent_transaction_id = transaction_tip(&self.journal);
+        let postimages = staged_writes
+            .iter()
+            .map(|write| {
+                let bytes = match (&write.staged, write.delete) {
+                    (_, true) => None,
+                    (Some(path), false) => Some(std::fs::read(path)?),
+                    (None, false) => {
+                        return Err(EngineError::Operation(format!(
+                            "staged shard `{}` has no postimage",
+                            write.relative_path
+                        )));
+                    }
+                };
+                Ok(StagedShardPostimage {
+                    relative_path: write.relative_path.clone(),
+                    bytes,
+                })
+            })
+            .collect::<Result<Vec<_>, EngineError>>()?;
+        let integrity_store = RevisionAuthorityStore::new(project_root);
+        let staged_integrity = integrity_store.stage_transaction(
+            committed.project.project_id,
+            &report.transaction,
+            parent_transaction_id,
+            postimages,
+        )?;
+        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::AuthorityStage)?;
         append_transaction_journal(project_root, &report.transaction)?;
+        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::JournalAppend)?;
         promote_staged_shard_writes(staged_writes)?;
+        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::ShardPromotion)?;
+        staged_integrity.promote()?;
+        inject_integrity_fault(
+            integrity_fault,
+            IntegrityCommitFaultPoint::AuthorityPromotion,
+        )?;
         committed.journal_cursor = JournalCursor {
             applied_transaction_count: report.journal_len,
         };
         write_journal_cursor(project_root, &committed.journal_cursor)?;
+        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::CursorWrite)?;
         *self = committed;
         Ok(report)
     }
+
+    #[cfg(test)]
+    pub(super) fn commit_journaled_with_integrity_fault(
+        &mut self,
+        project_root: &Path,
+        batch: OperationBatch,
+        fault: IntegrityCommitFaultPoint,
+    ) -> Result<CommitReport, EngineError> {
+        self.commit_journaled_with_links_and_inverse(
+            project_root,
+            batch,
+            TransactionKind::Normal,
+            None,
+            None,
+            None,
+            CommitPolicyContext::Direct,
+            None,
+            Some(fault),
+        )
+    }
+}
+
+fn inject_integrity_fault(
+    configured: Option<IntegrityCommitFaultPoint>,
+    point: IntegrityCommitFaultPoint,
+) -> Result<(), EngineError> {
+    configured.map_or(Ok(()), |fault| fault.inject(point))
 }
 
 fn agent_commit_provenance_from_environment() -> Result<Option<AgentCommitProvenance>, EngineError>

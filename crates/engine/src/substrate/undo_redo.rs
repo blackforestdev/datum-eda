@@ -117,6 +117,7 @@ impl DesignModel {
             Some(target.operations.clone()),
             super::commit::CommitPolicyContext::Direct,
             after_model_revision,
+            None,
         )
     }
 }
