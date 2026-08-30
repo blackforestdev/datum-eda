@@ -5831,14 +5831,14 @@
         "harness": "codex-cli",
         "session": "codex-rev-i07-i10-20260830",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "228399ea8e9bc1cadc09b0247e0e31ffee25775e",
-        "claimed_at": "2026-08-30T15:14:02Z",
-        "heartbeat_at": "2026-08-30T15:14:02Z",
-        "expires_at": "2026-08-30T23:14:02Z",
+        "head": "c6325ff25ccc630b76abaea005debc8ae4587f26",
+        "claimed_at": "2026-08-30T15:43:46Z",
+        "heartbeat_at": "2026-08-30T15:43:46Z",
+        "expires_at": "2026-08-30T23:43:46Z",
         "scope": [
-          "REV-I07",
+          "REV-I08",
           "crates/engine/src/revision",
-          "REV-I07 proof fixtures and gates",
+          "REV-I08 proof fixtures and gates",
           "Product Revision Engine Frontier and evidence closure"
         ]
       },
@@ -5852,7 +5852,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I07",
+        "canonical_next_step_id": "REV-I08",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6125,16 +6125,21 @@
           {
             "id": "REV-I07",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Execute only REV-I07 against its ratified plan section. The complete and exclusive added record-family inventory is ReproductionManifest and ReproductionAttempt; the complete and exclusive reproduction-result inventory is ByteIdentical, OutputMismatch, Unavailable, and ExecutionFailed. Bidirectional inventory proof and every REV-I07 Exit-evidence item gate closure; RegenerationPlan is consumed from REV-I05, not redefined. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I06"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I07"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "c6325ff"
+              }
+            ]
           },
           {
             "id": "REV-I08",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Execute only REV-I08 against its ratified plan section. The complete and exclusive added record-family inventory is ExternalMappingReceipt, AdapterDivergenceObservation, ReleaseMirrorRequest, ReleaseMirrorResult, AuthorityExchangeEnvelope, AuthorityExchangeReceipt, ExternalChangeCandidate, CredentialOrTrustEvent, and TrustedTimestampEvidence; no simultaneous multi-writer family or production trust/signature/time algorithm is authorized. Bidirectional inventory proof and every REV-I08 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new crate, executable, helper, provider, or other dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I07"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I08"}],
