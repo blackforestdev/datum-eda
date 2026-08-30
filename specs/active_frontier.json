@@ -5821,28 +5821,12 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "ready",
+      "authorization": "none",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "rev-i04-change-authority-20260829",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "95a26ac6a8ef17eb324a6cec2d8f99d3dc379125",
-        "claimed_at": "2026-08-29T22:13:13Z",
-        "heartbeat_at": "2026-08-29T22:13:13Z",
-        "expires_at": "2026-08-30T06:13:13Z",
-        "scope": [
-          "REV-I04 closed EngineeringChange lifecycle and affected-item inventory",
-          "identity-free successor collection and explicit RevisionReservation",
-          "bounded departure and legacy-fact assessment inventories",
-          "single pre-staging journaled Design-commit integration",
-          "PM-034 unmanaged and NoEarlierControl source-boundary proofs"
-        ]
-      },
+      "claim": null,
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5853,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I04",
+        "canonical_next_step_id": "REV-I05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6052,11 +6036,20 @@
           {
             "id": "REV-I04",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement the append-only EngineeringChange lifecycle, identity-free successor collection, revision reservation, verification, and explicit mapping of proposals, reviews, waivers, and deviations.",
             "depends_on": ["REV-I15"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I04"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "7e45d38"
+              },
+              {
+                "kind": "commit",
+                "revision": "aa8645e"
+              }
+            ]
           },
           {
             "id": "REV-I05",
