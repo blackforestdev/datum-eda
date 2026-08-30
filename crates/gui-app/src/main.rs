@@ -186,7 +186,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     }
     args.apply_initial_layout(&mut state.ui.layout);
     args.apply_focus_pane(&mut state.ui.layout);
-    args.apply_revision_surface(&mut state.ui.revision);
+    args.apply_revision_surface(&mut state.ui);
     if let Some(menu) = &args.open_menu {
         state.ui.active_menu = Some(menu.clone());
     }
@@ -787,6 +787,7 @@ impl Runtime {
                 .as_ref()
                 .map(|scene| CameraState::fit_to_bounds(&scene.bounds))
                 .unwrap_or(camera),
+            PaneContent::Revision(_) => camera,
         };
         let wgpu_started = std::time::Instant::now();
         append_gui_diagnostic_line("wgpu instance create begin");

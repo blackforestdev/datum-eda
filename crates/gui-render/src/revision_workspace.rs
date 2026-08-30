@@ -1,5 +1,5 @@
 use super::*;
-use datum_gui_protocol::RevisionSurface;
+use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface};
 
 const NAV_ROWS: [(&str, RevisionSurface); 5] = [
     ("Changes", RevisionSurface::Change),
@@ -27,7 +27,10 @@ pub(super) fn render_navigator(
             width: (rect.width - 24.0).max(1.0),
             height: 21.0,
         };
-        if state.ui.revision.active_surface == Some(surface) {
+        if state.ui.layout.leaves().into_iter().any(|id| {
+            state.ui.layout.content_for(id)
+                == Some(PaneContent::Revision(RevisionPane::Surface(surface)))
+        }) {
             quads.push(Quad::from_rect(row, REVIEW_ROW_BADGE));
             quads.push(Quad::from_rect(
                 RectPx {
@@ -57,22 +60,23 @@ pub(super) fn render_navigator(
     }
 }
 
-pub(super) fn render_active(
+pub(super) fn render_pane(
     state: &ReviewWorkspaceState,
+    pane: RevisionPane,
     rect: RectPx,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
-    let Some(surface) = state.ui.revision.active_surface else {
-        return;
-    };
     quads.push(Quad::from_rect(rect, VIEWPORT_BG));
     let pad = if rect.width < 620.0 { 18.0 } else { 28.0 };
     let x = rect.x + pad;
     let mut y = rect.y + 28.0;
     draw_text(
-        surface.label(),
+        match pane {
+            RevisionPane::Surface(surface) => surface.label(),
+            RevisionPane::Witness => "Canonical witness",
+        },
         x,
         y,
         18.0,
@@ -100,11 +104,60 @@ pub(super) fn render_active(
         rect: close,
     });
     y += 42.0;
-    match surface {
-        RevisionSurface::Release => render_release(state, x, y, rect, quads, text, hits),
-        RevisionSurface::Impact => render_impact(x, y, rect, quads, text, hits),
-        RevisionSurface::Change => render_change(x, y, rect, quads, text),
-        RevisionSurface::Evidence => render_evidence(x, y, rect, quads, text, hits),
+    match pane {
+        RevisionPane::Surface(RevisionSurface::Release) => {
+            render_release(state, x, y, rect, quads, text, hits)
+        }
+        RevisionPane::Surface(RevisionSurface::Impact) => {
+            render_impact(x, y, rect, quads, text, hits)
+        }
+        RevisionPane::Surface(RevisionSurface::Change) => render_change(x, y, rect, quads, text),
+        RevisionPane::Surface(RevisionSurface::Evidence) => {
+            render_evidence(x, y, rect, quads, text, hits)
+        }
+        RevisionPane::Witness => render_witness(state, x, y, rect, quads, text),
+    }
+}
+
+fn render_witness(
+    state: &ReviewWorkspaceState,
+    x: f32,
+    mut y: f32,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) {
+    draw_text(
+        state
+            .ui
+            .revision
+            .selected_witness
+            .as_deref()
+            .unwrap_or("No witness selected"),
+        x,
+        y,
+        13.0,
+        TEXT_SECONDARY,
+        TextFace::UiStrong,
+        text,
+    );
+    y += 32.0;
+    for (label, value) in [
+        ("SOURCE", "resolver-owned immutable authority"),
+        ("PATH", "J3 → U7 → regulated output"),
+        ("VERDICT", "IMPACT UNKNOWN"),
+        ("WHY", "required evidence input is absent"),
+    ] {
+        section(
+            label,
+            value,
+            x,
+            y,
+            (rect.width - 2.0 * (x - rect.x)).max(180.0),
+            quads,
+            text,
+        );
+        y += 44.0;
     }
 }
 

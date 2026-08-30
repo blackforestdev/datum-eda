@@ -117,3 +117,5 @@ mod board_text_mesh_tests;
 #[cfg(test)]
 #[path = "render/grid_tests.rs"]
 mod grid_tests;
+#[cfg(test)]
+mod revision_pane_tests;

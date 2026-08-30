@@ -46,6 +46,12 @@ pub(super) fn render_viewport_panes(
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
             datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+            datum_gui_protocol::PaneContent::Revision(
+                datum_gui_protocol::RevisionPane::Surface(surface),
+            ) => surface.label(),
+            datum_gui_protocol::PaneContent::Revision(
+                datum_gui_protocol::RevisionPane::Witness,
+            ) => "Canonical witness",
         };
         // Board scene leaf: the world scene renders into `scene_viewport`, which is
         // inset 16px inside the pane frame (layout.rs). Paint the whole pane canvas
@@ -121,6 +127,7 @@ pub(super) fn render_viewport_panes(
             // Board scene leaf canvas is painted above (before the header/frame);
             // the world PCB renders into it.
             datum_gui_protocol::PaneContent::Board => {}
+            datum_gui_protocol::PaneContent::Revision(_) => {}
         }
     }
     // Divider gutters between split siblings. They never overlap a pane frame

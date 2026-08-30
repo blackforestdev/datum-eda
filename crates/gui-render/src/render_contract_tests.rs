@@ -256,6 +256,7 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
             datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+            datum_gui_protocol::PaneContent::Revision(_) => "Revision",
         };
         assert!(
             labels.contains(&title),

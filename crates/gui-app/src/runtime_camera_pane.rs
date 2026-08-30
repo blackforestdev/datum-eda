@@ -33,6 +33,7 @@ impl Runtime {
         let bounds = match leaf.content {
             datum_gui_protocol::PaneContent::Board => self.workspace().scene.bounds.clone(),
             datum_gui_protocol::PaneContent::Schematic => self.schematic_bounds()?,
+            datum_gui_protocol::PaneContent::Revision(_) => return None,
         };
         Some(CameraViewport {
             pane,
@@ -246,6 +247,7 @@ impl Runtime {
                         .as_ref()
                         .map(CameraState::fit_to_bounds)
                         .unwrap_or(inherited),
+                    datum_gui_protocol::PaneContent::Revision(_) => inherited,
                 };
                 self.pane_cameras.inherit(id, content, initial);
             }

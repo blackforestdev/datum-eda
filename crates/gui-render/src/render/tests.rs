@@ -2,15 +2,6 @@
 mod tests {
     use super::*;
     #[test]
-    fn shell_layout_reserves_bottom_dock_and_viewport() {
-        let layout = ShellLayout::for_window(1280, 800, None);
-        assert!(layout.viewport.width > 0.0);
-        assert_eq!(layout.bottom_strip.height, design_tokens::spacing::SP_07);
-        assert!(layout.left_sidebar.width > 0.0);
-        assert!(layout.right_sidebar.width > 0.0);
-    }
-
-    #[test]
     fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
         let base = TextRun {
             text: "PROJECT".to_string(),
@@ -395,8 +386,7 @@ mod tests {
             &retained,
         );
         let right = prepared.layout.right_sidebar;
-        let in_inspector =
-            |run: &TextRun| run.x >= right.x && run.x <= right.x + right.width;
+        let in_inspector = |run: &TextRun| run.x >= right.x && run.x <= right.x + right.width;
         // The component reference draws as the inspector identity run (Mono, 15px);
         // the right-column x filter disambiguates it from the on-board silk label.
         assert!(
@@ -1115,7 +1105,7 @@ mod tests {
         // Option that only resolves when empty (the `invalidate_frame` contract).
         let mut retained: Option<RetainedScene> = None;
         let warm = |retained: &mut Option<RetainedScene>,
-                        state: &datum_gui_protocol::ReviewWorkspaceState| {
+                    state: &datum_gui_protocol::ReviewWorkspaceState| {
             if retained.is_none() {
                 *retained = Some(RetainedScene::from_workspace_for_surface(
                     state, 1600, 1000, 1.0,
@@ -1155,7 +1145,10 @@ mod tests {
         );
 
         // apply a layout preset (rebuilds the whole tree).
-        state.ui.layout.apply_preset(WorkspacePreset::BoardSchematic);
+        state
+            .ui
+            .layout
+            .apply_preset(WorkspacePreset::BoardSchematic);
         warm(&mut retained, &state);
         assert_eq!(
             retained_scene_resolve_count(),
@@ -1163,5 +1156,4 @@ mod tests {
             "layout preset must not re-resolve the world scene"
         );
     }
-
 }

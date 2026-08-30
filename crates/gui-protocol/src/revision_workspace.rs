@@ -16,26 +16,31 @@ pub enum RevisionSurface {
     Evidence,
 }
 
+/// Content identity for a real recursively tiled Revision pane. Witness is a
+/// separate pane so the summary and canonical tree remain visible together.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RevisionPane {
+    Surface(RevisionSurface),
+    Witness,
+}
+
 /// Session presentation over resolver-owned revision truth. It is deliberately
 /// incapable of carrying an authority record or a Design mutation.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct RevisionWorkspaceUiState {
-    pub active_surface: Option<RevisionSurface>,
     pub selected_witness: Option<String>,
     pub issuance_armed: bool,
     pub screen_reader_announcement: Option<String>,
 }
 
 impl RevisionWorkspaceUiState {
-    pub fn open(&mut self, surface: RevisionSurface) {
-        self.active_surface = Some(surface);
+    pub fn announce_open(&mut self, surface: RevisionSurface) {
         self.issuance_armed = false;
         self.screen_reader_announcement =
             Some(format!("{} opened beside the workspace", surface.label()));
     }
 
-    pub fn close(&mut self) {
-        self.active_surface = None;
+    pub fn announce_close(&mut self) {
         self.issuance_armed = false;
         self.screen_reader_announcement =
             Some("Revision pane closed; focus returned to Navigator".to_owned());
@@ -77,12 +82,10 @@ mod tests {
     #[test]
     fn projection_carries_no_authority_or_design_mutation() {
         let mut state = RevisionWorkspaceUiState::default();
-        state.open(RevisionSurface::Release);
-        assert_eq!(state.active_surface, Some(RevisionSurface::Release));
+        state.announce_open(RevisionSurface::Release);
         assert!(!state.issuance_armed);
         state.issuance_armed = true;
-        state.close();
-        assert_eq!(state.active_surface, None);
+        state.announce_close();
         assert!(!state.issuance_armed);
     }
 }

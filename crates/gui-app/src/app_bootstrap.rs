@@ -180,11 +180,8 @@ impl GuiArgs {
         }
     }
 
-    pub(super) fn apply_revision_surface(
-        &self,
-        revision: &mut datum_gui_protocol::RevisionWorkspaceUiState,
-    ) {
-        use datum_gui_protocol::RevisionSurface;
+    pub(super) fn apply_revision_surface(&self, ui: &mut datum_gui_protocol::WorkspaceUiState) {
+        use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
         let surface = match self.revision_surface.as_deref() {
             Some("release") => RevisionSurface::Release,
             Some("impact") => RevisionSurface::Impact,
@@ -192,7 +189,13 @@ impl GuiArgs {
             Some("evidence") => RevisionSurface::Evidence,
             _ => return,
         };
-        revision.open(surface);
+        let pane = ui.layout.open_beside(
+            PaneContent::Revision(RevisionPane::Surface(surface)),
+            SplitOrientation::Vertical,
+            true,
+        );
+        ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
+        ui.revision.announce_open(surface);
     }
 
     pub(super) fn wants_plain_project_board_view(&self) -> bool {
@@ -331,7 +334,7 @@ impl GuiArgs {
         self.apply_initial_layout(&mut state.ui.layout);
         // Capture/test affordance: focus a named pane (a no-op otherwise).
         self.apply_focus_pane(&mut state.ui.layout);
-        self.apply_revision_surface(&mut state.ui.revision);
+        self.apply_revision_surface(&mut state.ui);
 
         // Capture/test affordance: open a named menu dropdown at boot if
         // --open-menu was set (a no-op otherwise, so parity stays identical).

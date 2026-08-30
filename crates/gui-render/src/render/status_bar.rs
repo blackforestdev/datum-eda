@@ -19,6 +19,7 @@ pub(crate) fn application_focus_label(state: &ReviewWorkspaceState) -> &'static 
         {
             datum_gui_protocol::PaneContent::Board => "Board",
             datum_gui_protocol::PaneContent::Schematic => "Schematic",
+            datum_gui_protocol::PaneContent::Revision(_) => "Revision",
         },
     }
 }
@@ -49,7 +50,8 @@ pub(crate) fn render_status_bar(
     let val_size = design_tokens::typography::DATA_SIZE;
     let gap = design_tokens::spacing::SP_02 + 2.0;
     let seg_pad = design_tokens::spacing::SP_04;
-    let text_w = |text: &str, size: f32| estimated_text_run_width_px(text, size, TextFace::Mono) - 16.0;
+    let text_w =
+        |text: &str, size: f32| estimated_text_run_width_px(text, size, TextFace::Mono) - 16.0;
     let divider = |panel_quads: &mut Vec<Quad>, x: f32| {
         panel_quads.push(Quad::from_rect(
             RectPx {
@@ -84,24 +86,64 @@ pub(crate) fn render_status_bar(
         if i > 0 {
             divider(panel_quads, x - seg_pad * 0.5);
         }
-        draw_text(label, x, text_y, lab_size, TEXT_MUTED, TextFace::Mono, text_runs);
+        draw_text(
+            label,
+            x,
+            text_y,
+            lab_size,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
         let lw = text_w(label, lab_size) + gap;
-        draw_text(value, x + lw, text_y, val_size, *color, TextFace::Mono, text_runs);
+        draw_text(
+            value,
+            x + lw,
+            text_y,
+            val_size,
+            *color,
+            TextFace::Mono,
+            text_runs,
+        );
         x += lw + text_w(value, val_size) + seg_pad;
     }
 
     // Right cluster (right-to-left): version, rev, DRC.
     let version = "Datum EDA \u{2014} design pass";
     let mut rx = sb.x + sb.width - 13.0 - text_w(version, val_size);
-    draw_text(version, rx, text_y, val_size, TEXT_MUTED, TextFace::Mono, text_runs);
+    draw_text(
+        version,
+        rx,
+        text_y,
+        val_size,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
 
     let short_rev: String = state.scene.source_revision.chars().take(6).collect();
     if !short_rev.is_empty() {
         let lw = text_w("rev", lab_size) + gap;
         rx -= seg_pad + lw + text_w(&short_rev, val_size);
         divider(panel_quads, rx - seg_pad * 0.5);
-        draw_text("rev", rx, text_y, lab_size, TEXT_MUTED, TextFace::Mono, text_runs);
-        draw_text(&short_rev, rx + lw, text_y, val_size, TEXT_SECONDARY, TextFace::Mono, text_runs);
+        draw_text(
+            "rev",
+            rx,
+            text_y,
+            lab_size,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+        draw_text(
+            &short_rev,
+            rx + lw,
+            text_y,
+            val_size,
+            TEXT_SECONDARY,
+            TextFace::Mono,
+            text_runs,
+        );
     }
 
     let findings = state.supervision.checks.finding_count;

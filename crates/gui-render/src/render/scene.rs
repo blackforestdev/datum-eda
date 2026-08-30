@@ -42,11 +42,10 @@ impl PreparedScene {
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
         let (board_pane_id, schematic_pane_id) =
             coordinate_hit::surface_pane_ids(&layout, &state.ui.layout);
-        let board_scene_active = state.ui.revision.active_surface.is_none()
-            && layout
-                .viewport_panes(&state.ui.layout)
-                .scene_leaf()
-                .is_some();
+        let board_scene_active = layout
+            .viewport_panes(&state.ui.layout)
+            .scene_leaf()
+            .is_some();
 
         let board_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
             (hover.surface == datum_gui_protocol::PaneContent::Board)
@@ -129,13 +128,18 @@ impl PreparedScene {
                 crosshair_style,
             );
         }
-        revision_workspace::render_active(
-            state,
-            scene_viewport,
-            &mut viewport_overlay_quads,
-            &mut text_runs,
-            &mut hit_regions,
-        );
+        for pane in layout.viewport_panes(&state.ui.layout).panes {
+            if let datum_gui_protocol::PaneContent::Revision(revision_pane) = pane.content {
+                revision_workspace::render_pane(
+                    state,
+                    revision_pane,
+                    pane.rect.scene,
+                    &mut viewport_overlay_quads,
+                    &mut text_runs,
+                    &mut hit_regions,
+                );
+            }
+        }
         let (console_overlay_vertices, console_overlay_layout) =
             scene_console::prepare(state, &layout, scale, &mut text_runs, &mut hit_regions);
         marking_menu::render_marking_menu(

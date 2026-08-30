@@ -7,7 +7,7 @@
 //! enter `commit()`/the design journal and are not typed design Operations. They
 //! project over the resolved model; they never mutate it.
 
-use crate::revision_workspace::RevisionWorkspaceUiState;
+use crate::revision_workspace::{RevisionPane, RevisionWorkspaceUiState};
 use crate::{
     ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
     ConsoleJournalHistoryState, TerminalLaneState,
@@ -227,14 +227,14 @@ pub enum SplitChild {
 
 /// What a pane shows (its `(document, view)` projection over the model).
 ///
-/// Only Board and Schematic exist today. Footprint, Symbol, Datasheet, 3D, and
-/// CheckReport are future variants — they land (greyed/disabled in the "Fill
-/// pane with →" menu until the corresponding surfaces exist) as those editors
-/// come online. Do not add them until their surfaces are real.
+/// Board, Schematic, and the owner-approved Revision workspaces are real pane
+/// contents. Future editor surfaces remain deferred until their own contracts
+/// and renderers exist.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PaneContent {
     Board,
     Schematic,
+    Revision(RevisionPane),
 }
 
 impl PaneContent {
@@ -245,6 +245,7 @@ impl PaneContent {
         match self {
             PaneContent::Board => PaneContent::Schematic,
             PaneContent::Schematic => PaneContent::Board,
+            PaneContent::Revision(_) => PaneContent::Board,
         }
     }
 }
@@ -410,26 +411,49 @@ impl WorkspaceLayout {
         out
     }
 
-    /// Split the focused leaf into a Split whose children are the old leaf
-    /// (first, unchanged content) and a fresh leaf (second) showing the
-    /// COMPLEMENTARY content (Board <-> Schematic). Splitting therefore always
-    /// yields the useful Board|Schematic pairing rather than a duplicate pane, so
-    /// a fresh split never leaves a second same-content pane blank under the
-    /// single-live-scene model. Focus stays on the original leaf.
+    /// Split the focused leaf with complementary Board/Schematic content while
+    /// retaining focus on the original leaf.
     pub fn split_focused(&mut self, orientation: SplitOrientation) {
+        let content = self.focused_content().complement();
+        self.split_focused_with(content, orientation, false);
+    }
+
+    /// Open real content through the recursive split path; focus an existing
+    /// exact match instead of minting a duplicate.
+    pub fn open_beside(
+        &mut self,
+        content: PaneContent,
+        orientation: SplitOrientation,
+        focus_new: bool,
+    ) -> PaneId {
+        if let Some(id) = find_content(&self.root, content) {
+            if focus_new {
+                self.focused = id;
+                self.zoomed = None;
+            }
+            return id;
+        }
+        self.split_focused_with(content, orientation, focus_new)
+    }
+
+    fn split_focused_with(
+        &mut self,
+        content: PaneContent,
+        orientation: SplitOrientation,
+        focus_new: bool,
+    ) -> PaneId {
         let new_id = self.alloc_id();
         let focused = self.focused;
         if let Some(slot) = find_leaf_mut(&mut self.root, focused) {
-            let content = match slot {
+            let old_content = match slot {
                 PaneNode::Leaf { content, .. } => *content,
-                PaneNode::Split { .. } => return,
+                PaneNode::Split { .. } => return focused,
             };
-            let new_content = content.complement();
             let old = std::mem::replace(
                 slot,
                 PaneNode::Leaf {
                     id: focused,
-                    content,
+                    content: old_content,
                 },
             );
             *slot = PaneNode::Split {
@@ -438,11 +462,15 @@ impl WorkspaceLayout {
                 first: Box::new(old),
                 second: Box::new(PaneNode::Leaf {
                     id: new_id,
-                    content: new_content,
+                    content,
                 }),
             };
         }
-        // Focus is unchanged: `focused` still names the old leaf inside `first`.
+        if focus_new {
+            self.focused = new_id;
+            self.zoomed = None;
+        }
+        new_id
     }
 
     /// Remove the focused leaf; its sibling reclaims the space (the parent Split
@@ -592,6 +620,18 @@ fn find_leaf_mut(node: &mut PaneNode, id: PaneId) -> Option<&mut PaneNode> {
     }
 }
 
+fn find_content(node: &PaneNode, content: PaneContent) -> Option<PaneId> {
+    match node {
+        PaneNode::Leaf {
+            id,
+            content: leaf_content,
+        } => (*leaf_content == content).then_some(*id),
+        PaneNode::Split { first, second, .. } => {
+            find_content(first, content).or_else(|| find_content(second, content))
+        }
+    }
+}
+
 /// The in-order first leaf id of a subtree.
 fn first_leaf_id(node: &PaneNode) -> PaneId {
     match node {
@@ -668,6 +708,33 @@ mod tests {
             Some(PaneNode::Leaf { content, .. }) => *content,
             _ => panic!("expected leaf {id:?}"),
         }
+    }
+
+    #[test]
+    fn revision_open_beside_preserves_both_design_surfaces() {
+        let mut layout = WorkspaceLayout::default();
+        let release = PaneContent::Revision(RevisionPane::Surface(
+            crate::revision_workspace::RevisionSurface::Release,
+        ));
+        let release_id = layout.open_beside(release, SplitOrientation::Vertical, true);
+
+        assert_eq!(layout.leaves().len(), 3);
+        assert_eq!(layout.content_for(PaneId(0)), Some(PaneContent::Board));
+        assert_eq!(layout.content_for(PaneId(1)), Some(PaneContent::Schematic));
+        assert_eq!(layout.content_for(release_id), Some(release));
+        assert_eq!(layout.focused, release_id);
+
+        let witness = PaneContent::Revision(RevisionPane::Witness);
+        let witness_id = layout.open_beside(witness, SplitOrientation::Vertical, true);
+        assert_eq!(layout.leaves().len(), 4);
+        assert_eq!(layout.content_for(release_id), Some(release));
+        assert_eq!(layout.content_for(witness_id), Some(witness));
+
+        assert_eq!(
+            layout.open_beside(release, SplitOrientation::Vertical, true),
+            release_id
+        );
+        assert_eq!(layout.leaves().len(), 4);
     }
 
     #[test]

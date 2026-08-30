@@ -1,5 +1,6 @@
 use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
+use datum_gui_protocol::{ApplicationFocus, PaneContent, RevisionPane, SplitOrientation};
 use datum_gui_render::HitTarget;
 
 /// Apply consumer-only revision workspace gestures. `None` leaves the target
@@ -7,11 +8,27 @@ use datum_gui_render::HitTarget;
 /// Design operation.
 impl Runtime {
     pub(super) fn apply_revision_hit(&mut self, target: &HitTarget) -> Option<bool> {
-        let revision = &mut self.session.workspace_mut().ui.revision;
         match target {
-            HitTarget::OpenRevisionSurface(surface) => revision.open(*surface),
-            HitTarget::CloseRevisionSurface => revision.close(),
+            HitTarget::OpenRevisionSurface(surface) => {
+                let ui = &mut self.session.workspace_mut().ui;
+                let pane = ui.layout.open_beside(
+                    PaneContent::Revision(RevisionPane::Surface(*surface)),
+                    SplitOrientation::Vertical,
+                    true,
+                );
+                ui.focus = ApplicationFocus::Editor(pane);
+                ui.revision.announce_open(*surface);
+            }
+            HitTarget::CloseRevisionSurface => {
+                let ui = &mut self.session.workspace_mut().ui;
+                if matches!(ui.layout.focused_content(), PaneContent::Revision(_)) {
+                    ui.layout.close_focused();
+                    ui.focus = ApplicationFocus::Editor(ui.layout.focused);
+                }
+                ui.revision.announce_close();
+            }
             HitTarget::ToggleRevisionIssuanceArm => {
+                let revision = &mut self.session.workspace_mut().ui.revision;
                 revision.issuance_armed = !revision.issuance_armed;
                 revision.screen_reader_announcement = Some(
                     if revision.issuance_armed {
@@ -23,6 +40,14 @@ impl Runtime {
                 );
             }
             HitTarget::OpenRevisionWitness(witness) => {
+                let ui = &mut self.session.workspace_mut().ui;
+                let pane = ui.layout.open_beside(
+                    PaneContent::Revision(RevisionPane::Witness),
+                    SplitOrientation::Vertical,
+                    true,
+                );
+                ui.focus = ApplicationFocus::Editor(pane);
+                let revision = &mut ui.revision;
                 revision.selected_witness = Some(witness.clone());
                 revision.screen_reader_announcement = Some(format!(
                     "Witness {witness} opened beside the retained summary"
@@ -30,7 +55,14 @@ impl Runtime {
             }
             _ => return None,
         }
-        if let Some(text) = revision.screen_reader_announcement.take() {
+        if let Some(text) = self
+            .session
+            .workspace_mut()
+            .ui
+            .revision
+            .screen_reader_announcement
+            .take()
+        {
             self.terminal_accessibility
                 .announce_console(AccessibilityAnnouncement {
                     text,
