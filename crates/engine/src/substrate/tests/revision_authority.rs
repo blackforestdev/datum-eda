@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use super::revision_authority_i05_fixtures::rev_i05_fixture_semantics;
+use super::revision_authority_i06_fixtures::rev_i06_fixture_semantics;
 
 use super::*;
 use crate::revision::{
@@ -221,7 +222,9 @@ fn record_fixture(
             "disposition": "retained_as_legacy_evidence",
             "rationale": "not equivalent to approval"
         }),
-        _ => rev_i05_fixture_semantics(kind).unwrap_or_else(|| serde_json::json!({})),
+        _ => rev_i05_fixture_semantics(kind)
+            .or_else(|| rev_i06_fixture_semantics(kind))
+            .unwrap_or_else(|| serde_json::json!({})),
     };
     payload
         .as_object_mut()

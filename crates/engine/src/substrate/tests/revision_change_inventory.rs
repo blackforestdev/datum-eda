@@ -178,6 +178,9 @@ fn sole_revision_gate_is_the_journaled_commit_coordinator() {
     for rev_i05 in [
         include_str!("../../revision/impact.rs"),
         include_str!("../../revision/impact_analysis.rs"),
+        include_str!("../../revision/release.rs"),
+        include_str!("../../revision/release_projection.rs"),
+        include_str!("../../revision/release_transaction.rs"),
     ] {
         assert!(!rev_i05.contains("prepare_revision_design_commit("));
         assert!(!rev_i05.contains("evaluate_design_mutation_authority("));

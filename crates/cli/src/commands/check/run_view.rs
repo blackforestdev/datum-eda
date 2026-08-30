@@ -340,10 +340,10 @@ fn native_check_profile_descriptors() -> Vec<NativeProjectCheckProfileView> {
         },
         NativeProjectCheckProfileView {
             profile_id: "release",
-            name: "Release",
+            name: "Release Readiness",
             status: "supported",
             domains: vec!["relationships", "erc", "drc", "standards", "manufacturing"],
-            description: "Release-gate profile over all currently deterministic native CheckRun domains.",
+            description: "Readiness-only CheckRun profile over deterministic native domains; it does not issue a Release or create revision authority.",
             selection_supported: true,
         },
     ]

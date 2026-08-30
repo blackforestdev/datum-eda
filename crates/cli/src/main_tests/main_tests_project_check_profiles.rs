@@ -39,6 +39,14 @@ fn check_profiles_reports_current_supported_profile() {
             "release"
         ]
     );
+    let release = &report["profiles"].as_array().unwrap()[5];
+    assert_eq!(release["name"], "Release Readiness");
+    assert!(
+        release["description"]
+            .as_str()
+            .unwrap()
+            .contains("does not issue a Release or create revision authority")
+    );
     assert!(
         report["profiles"]
             .as_array()

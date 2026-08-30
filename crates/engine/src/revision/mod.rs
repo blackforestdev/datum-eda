@@ -6,6 +6,7 @@
 
 mod approval;
 mod authority;
+mod authority_query;
 mod authority_store;
 mod backup;
 mod canonical;
@@ -22,6 +23,13 @@ mod impact_analysis;
 mod impact_tests;
 mod model;
 mod policy;
+mod release;
+mod release_projection;
+#[cfg(test)]
+mod release_test_support;
+#[cfg(test)]
+mod release_tests;
+mod release_transaction;
 mod reservation;
 mod resolver;
 mod role;
@@ -41,6 +49,9 @@ pub use effectivity::*;
 pub use impact::*;
 pub use impact_analysis::*;
 pub use policy::*;
+pub use release::*;
+pub use release_projection::*;
+pub use release_transaction::*;
 pub use reservation::*;
 pub use role::*;
 pub use scheme::*;

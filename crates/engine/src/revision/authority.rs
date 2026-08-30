@@ -14,6 +14,7 @@ use super::{
     effectivity::EffectivityData,
     impact::*,
     policy::ProjectRevisionPolicyData,
+    release::*,
     reservation::RevisionReservationData,
     role::{ActorIdentityData, RoleAssignmentData, RoleDelegationData},
     scheme::RevisionSchemeData,
@@ -76,6 +77,9 @@ macro_rules! authority_families {
             }
         }
 
+        // Authority bodies are serialized as one stable externally tagged record shape.
+        // Boxing only the larger typed families would change that public representation.
+        #[allow(clippy::large_enum_variant)]
         #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
         #[serde(tag = "kind", content = "payload", rename_all = "snake_case")]
         pub enum AuthorityRecord {
@@ -126,7 +130,8 @@ authority_families!(
     (
         EngineeringRevision,
         EngineeringRevisionId,
-        "engineering_revision"
+        "engineering_revision",
+        EngineeringRevisionData
     ),
     (
         RevisionReservation,
@@ -148,31 +153,50 @@ authority_families!(
         ApprovalAttestationData
     ),
     (Effectivity, EffectivityId, "effectivity", EffectivityData),
-    (ReleaseCandidate, ReleaseCandidateId, "release_candidate"),
-    (Release, ReleaseId, "release"),
+    (
+        ReleaseCandidate,
+        ReleaseCandidateId,
+        "release_candidate",
+        ReleaseCandidateData
+    ),
+    (Release, ReleaseId, "release", ReleaseData),
     (
         SupersessionEstablished,
         SupersessionEstablishedId,
-        "supersession_established"
+        "supersession_established",
+        SupersessionEstablishedData
     ),
     (
         AuthorizationWithdrawn,
         AuthorizationWithdrawnId,
-        "authorization_withdrawn"
+        "authorization_withdrawn",
+        AuthorizationWithdrawnData
     ),
     (
         ObsolescenceDeclared,
         ObsolescenceDeclaredId,
-        "obsolescence_declared"
+        "obsolescence_declared",
+        ObsolescenceDeclaredData
     ),
     (
         ControlledDocument,
         ControlledDocumentId,
-        "controlled_document"
+        "controlled_document",
+        ControlledDocumentData
     ),
-    (DocumentIssue, DocumentIssueId, "document_issue"),
-    (ReleasePackage, ReleasePackageId, "release_package"),
-    (Transmittal, TransmittalId, "transmittal"),
+    (
+        DocumentIssue,
+        DocumentIssueId,
+        "document_issue",
+        DocumentIssueData
+    ),
+    (
+        ReleasePackage,
+        ReleasePackageId,
+        "release_package",
+        ReleasePackageData
+    ),
+    (Transmittal, TransmittalId, "transmittal", TransmittalData),
     (StandardsProfile, StandardsProfileId, "standards_profile"),
     (
         RequirementDisposition,
@@ -618,6 +642,9 @@ impl AuthoritySnapshot {
                 record if super::impact::REV_I05_RECORD_FAMILIES.contains(&record.kind()) => {
                     diagnostics.extend(super::impact_analysis::validate_rev_i05_record(record));
                 }
+                record if super::release::REV_I06_RECORD_FAMILIES.contains(&record.kind()) => {
+                    diagnostics.extend(super::release_transaction::validate_rev_i06_record(record));
+                }
                 _ => {}
             }
         }
@@ -625,32 +652,6 @@ impl AuthoritySnapshot {
         diagnostics.extend(super::approval::validate_attestations(self));
         validate_events(self, &records, &mut diagnostics);
         diagnostics
-    }
-
-    pub fn record(&self, reference: AuthorityRef) -> Option<&AuthorityRecord> {
-        self.records
-            .iter()
-            .find(|record| record.record_ref() == reference)
-    }
-
-    pub fn records_of_kind(&self, kind: AuthorityRecordKind) -> Vec<&AuthorityRecord> {
-        self.records
-            .iter()
-            .filter(|record| record.kind() == kind)
-            .collect()
-    }
-
-    pub fn as_of(&self, sequence: u64) -> Vec<&AuthorityRecord> {
-        let refs: BTreeSet<_> = self
-            .events
-            .iter()
-            .filter(|event| event.sequence <= sequence)
-            .map(|event| event.record)
-            .collect();
-        self.records
-            .iter()
-            .filter(|record| refs.contains(&record.record_ref()))
-            .collect()
     }
 }
 
