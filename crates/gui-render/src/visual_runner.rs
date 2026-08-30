@@ -255,7 +255,22 @@ fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspace
     let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
         .with_context(|| format!("load fixture project {}", request.project_root.display()))?;
     inject_console_scenario(&mut state, manifest.console_scenario.as_deref())?;
+    inject_revision_surface(&mut state, manifest.revision_surface.as_deref())?;
     Ok(state)
+}
+
+fn inject_revision_surface(state: &mut ReviewWorkspaceState, surface: Option<&str>) -> Result<()> {
+    use datum_gui_protocol::RevisionSurface;
+    let surface = match surface {
+        None => return Ok(()),
+        Some("release") => RevisionSurface::Release,
+        Some("impact") => RevisionSurface::Impact,
+        Some("change") => RevisionSurface::Change,
+        Some("evidence") => RevisionSurface::Evidence,
+        Some(other) => bail!("unsupported input.revision_surface {other:?}"),
+    };
+    state.ui.revision.open(surface);
+    Ok(())
 }
 
 fn inject_console_scenario(state: &mut ReviewWorkspaceState, scenario: Option<&str>) -> Result<()> {

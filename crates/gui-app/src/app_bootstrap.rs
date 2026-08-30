@@ -79,6 +79,10 @@ pub(super) struct GuiArgs {
     /// journaled.
     #[arg(long = "focus-pane")]
     pub(super) focus_pane: Option<String>,
+    /// Open one approved revision projection at boot for running-app review and
+    /// deterministic visual evidence. Consumer state only; never authority.
+    #[arg(long = "revision-surface", value_parser = ["release", "impact", "change", "evidence"])]
+    pub(super) revision_surface: Option<String>,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
     #[arg(long = "screenshot-out")]
@@ -174,6 +178,21 @@ impl GuiArgs {
                 return;
             }
         }
+    }
+
+    pub(super) fn apply_revision_surface(
+        &self,
+        revision: &mut datum_gui_protocol::RevisionWorkspaceUiState,
+    ) {
+        use datum_gui_protocol::RevisionSurface;
+        let surface = match self.revision_surface.as_deref() {
+            Some("release") => RevisionSurface::Release,
+            Some("impact") => RevisionSurface::Impact,
+            Some("change") => RevisionSurface::Change,
+            Some("evidence") => RevisionSurface::Evidence,
+            _ => return,
+        };
+        revision.open(surface);
     }
 
     pub(super) fn wants_plain_project_board_view(&self) -> bool {
@@ -312,6 +331,7 @@ impl GuiArgs {
         self.apply_initial_layout(&mut state.ui.layout);
         // Capture/test affordance: focus a named pane (a no-op otherwise).
         self.apply_focus_pane(&mut state.ui.layout);
+        self.apply_revision_surface(&mut state.ui.revision);
 
         // Capture/test affordance: open a named menu dropdown at boot if
         // --open-menu was set (a no-op otherwise, so parity stays identical).

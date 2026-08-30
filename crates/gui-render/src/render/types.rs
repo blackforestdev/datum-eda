@@ -1,5 +1,9 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    OpenRevisionSurface(datum_gui_protocol::RevisionSurface),
+    CloseRevisionSurface,
+    ToggleRevisionIssuanceArm,
+    OpenRevisionWitness(String),
     ReviewAction(String),
     AuthoredObject(String),
     FitBoard,

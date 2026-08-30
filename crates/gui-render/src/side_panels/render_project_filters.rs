@@ -26,9 +26,7 @@ fn render_project_and_filters_panel(
     // Suppress the scene-kind prefix when the board name would merely duplicate
     // it (e.g. "Board · board"): show one clean label.
     let board_name = state.scene.board_name.trim();
-    let board_line = if board_name.is_empty()
-        || board_name.eq_ignore_ascii_case(scene_label)
-    {
+    let board_line = if board_name.is_empty() || board_name.eq_ignore_ascii_case(scene_label) {
         scene_label.to_string()
     } else {
         format!("{} · {}", scene_label, truncate_text(board_name, 18))
@@ -70,18 +68,11 @@ fn render_project_and_filters_panel(
         (fit_board_rect, fit_scene_label, HitTarget::FitBoard),
         (fit_review_rect, "FIT REVIEW", HitTarget::FitReviewTarget),
     ] {
-        panel_quads.push(Quad::from_rect(rect, REVIEW_ROW_BADGE));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            label,
-            rect.x + 7.0,
-            rect.y + 5.0,
-            10.0,
-            TEXT_SECONDARY,
-            TextFace::Ui,
-            text_runs,
-        );
-        hit_regions.push(HitRegion { target, rect });
+        // REV-I10 gives this permanent Project-panel region to the expanded
+        // Revision Navigator. Fit remains available from View and keyboard
+        // commands; retaining a second button row here would overlap the
+        // owner-approved taxonomy.
+        let _ = (rect, label, target);
     }
     // (Removed the READ-ONLY BOARD VIEW / "Select objects…" / IMPORT VIEW notices
     // from the Project panel — the read-only state is already conveyed by the empty

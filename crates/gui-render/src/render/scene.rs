@@ -42,17 +42,12 @@ impl PreparedScene {
         let scene_viewport = layout.scene_viewport(&state.ui.layout);
         let (board_pane_id, schematic_pane_id) =
             coordinate_hit::surface_pane_ids(&layout, &state.ui.layout);
-        // The board scene renders only when a Board leaf exists to host it (the
-        // common Board|Schematic layout always has one; an all-Schematic layout does
-        // not). Independent of focus, so the PCB persists in its pane while another
-        // pane is focused.
-        let board_scene_active = layout
-            .viewport_panes(&state.ui.layout)
-            .scene_leaf()
-            .is_some();
+        let board_scene_active = state.ui.revision.active_surface.is_none()
+            && layout
+                .viewport_panes(&state.ui.layout)
+                .scene_leaf()
+                .is_some();
 
-        // Route hover by its typed pane ownership. Object identifiers remain
-        // opaque; adding a new object kind cannot silently move it to Board.
         let board_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
             (hover.surface == datum_gui_protocol::PaneContent::Board)
                 .then(|| interaction_overlay::board_hover_bounds(retained_scene, &hover.object_id))
@@ -67,8 +62,6 @@ impl PreparedScene {
                 })
                 .flatten()
         });
-        // S4 cursor crosshair (decision 023 UVT-005): live cursor in device-pixel
-        // SCREEN space + user-selected style; `None` in capture stays byte-identical.
         let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x, p.y));
         let crosshair_style = state.ui.crosshair_style;
 
@@ -115,10 +108,6 @@ impl PreparedScene {
             &mut menu_overlay_text_runs,
             &mut hit_regions,
         );
-        // Single-live-scene: the board scene (substrate + grid underlay, selection
-        // overlay, and world PCB) renders into the BOARD leaf's rect whenever a
-        // board leaf exists — independent of which pane is focused, so the PCB stays
-        // visible while other panes are focused; non-board panes render placeholders.
         if board_scene_active {
             render_scene(
                 state,
@@ -129,8 +118,6 @@ impl PreparedScene {
                 &mut text_runs,
                 &mut hit_regions,
             );
-            // S4: board hover ring + crosshair, an IMMEDIATE class-A screen-space
-            // overlay projected with the board camera (scissored to rect in gpu.rs).
             let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
             interaction_overlay::push_pane_interaction(
@@ -142,6 +129,13 @@ impl PreparedScene {
                 crosshair_style,
             );
         }
+        revision_workspace::render_active(
+            state,
+            scene_viewport,
+            &mut viewport_overlay_quads,
+            &mut text_runs,
+            &mut hit_regions,
+        );
         let (console_overlay_vertices, console_overlay_layout) =
             scene_console::prepare(state, &layout, scale, &mut text_runs, &mut hit_regions);
         marking_menu::render_marking_menu(

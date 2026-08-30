@@ -27,6 +27,7 @@ mod design_tokens;
 mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
+mod revision_workspace;
 mod side_panels;
 mod terminal_clipboard_menu;
 mod terminal_core_render;

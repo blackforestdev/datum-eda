@@ -22,6 +22,7 @@ const CONSOLE_FIXTURE_NAMES: &[&str] = &[
     "refusal-narrow",
     "history-expanded",
 ];
+const REVISION_FIXTURE_NAMES: &[&str] = &["release", "impact", "change", "evidence"];
 
 #[test]
 #[ignore = "requires local visual rendering authority; run explicitly until visual CI is pinned"]
@@ -73,6 +74,23 @@ fn console_visual_goldens_match() -> Result<()> {
                 outcome.result.differing_pixels, 0,
                 "Console fixture {fixture_name} scale {} should match its owner-reviewed build golden",
                 outcome.scale_factor
+            );
+        }
+        assert_no_generated_artifacts(&manifest)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn revision_visual_goldens_match() -> Result<()> {
+    for fixture_name in REVISION_FIXTURE_NAMES {
+        let manifest = repo_root()
+            .join("crates/gui-render/testdata/golden/revision")
+            .join(format!("{fixture_name}.fixture.toml"));
+        for outcome in run_fixture(&manifest)? {
+            assert_eq!(
+                outcome.result.differing_pixels, 0,
+                "revision fixture {fixture_name} must remain pixel exact"
             );
         }
         assert_no_generated_artifacts(&manifest)?;

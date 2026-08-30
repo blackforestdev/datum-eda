@@ -7,6 +7,7 @@
 //! enter `commit()`/the design journal and are not typed design Operations. They
 //! project over the resolved model; they never mutate it.
 
+use crate::revision_workspace::RevisionWorkspaceUiState;
 use crate::{
     ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
     ConsoleJournalHistoryState, TerminalLaneState,
@@ -130,6 +131,9 @@ pub struct WorkspaceUiState {
     pub console: ConsoleFeedbackState,
     pub console_journal: ConsoleJournalHistoryState,
     pub artifact_preview: ArtifactPreviewViewportState,
+    /// Consumer-only projection of revision authority. This never owns or
+    /// mutates revision records; the engine remains the sole truth source.
+    pub revision: RevisionWorkspaceUiState,
     pub layout: WorkspaceLayout,
 }
 
@@ -156,6 +160,7 @@ impl WorkspaceUiState {
             console: ConsoleFeedbackState::default(),
             console_journal: ConsoleJournalHistoryState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
+            revision: RevisionWorkspaceUiState::default(),
             layout: WorkspaceLayout::default(),
         }
     }

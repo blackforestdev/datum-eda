@@ -53,6 +53,7 @@ mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
 mod runtime_menu_actions;
 mod runtime_primary_pointer;
+mod runtime_revision_workspace;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
@@ -172,9 +173,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     };
     // Preset a component selection when requested, mirroring the on-screen launch
     // path in app_bootstrap. `--select` accepts a reference designator (e.g. R1)
-    // resolved against the loaded scene, or a raw object_id; an unknown selector
-    // leaves the inspector empty rather than crashing, so the parity capture fails
-    // loudly on a bad selector.
+    // Unknown selectors leave the inspector empty so captures fail loudly.
     if let Some(sel) = &args.select {
         let object_id = state
             .scene
@@ -185,14 +184,9 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
             .unwrap_or_else(|| sel.clone());
         state.select_authored_object(&object_id);
     }
-    // Capture/test affordance (decision 021): seed the pane tree if
-    // --initial-layout was set so this offscreen path renders that shape; a no-op
-    // otherwise, so the default parity capture is untouched.
     args.apply_initial_layout(&mut state.ui.layout);
-    // Capture/test affordance: focus a named pane, mirroring the windowed path.
     args.apply_focus_pane(&mut state.ui.layout);
-    // Capture/test affordance: open a named menu dropdown if --open-menu was set,
-    // mirroring the windowed launch path; a no-op otherwise so parity is untouched.
+    args.apply_revision_surface(&mut state.ui.revision);
     if let Some(menu) = &args.open_menu {
         state.ui.active_menu = Some(menu.clone());
     }
@@ -1866,9 +1860,6 @@ impl Runtime {
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
         let started = std::time::Instant::now();
         let handled = self.select_hit_target_inner(target);
-        // T0-C02 deliberate entry (spec §5): clicking the terminal SCREEN cell
-        // rectangle — or a session action that expects terminal typing next —
-        // hands key ownership to the terminal. Programmatic dock opens never do.
         let next_focus =
             keyboard_focus::focus_after_hit_target(self.application_focus(), handled, target);
         if next_focus != self.application_focus() {
@@ -1882,7 +1873,14 @@ impl Runtime {
     }
 
     fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
+        if let Some(handled) = self.apply_revision_hit(target) {
+            return handled;
+        }
         match target {
+            HitTarget::OpenRevisionSurface(_)
+            | HitTarget::CloseRevisionSurface
+            | HitTarget::ToggleRevisionIssuanceArm
+            | HitTarget::OpenRevisionWitness(_) => unreachable!("revision targets return above"),
             HitTarget::ReviewAction(action_id) => {
                 let handled = self.dispatch_session_command(SessionCommand::SelectReviewAction(
                     action_id.clone(),

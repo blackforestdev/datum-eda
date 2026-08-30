@@ -52,6 +52,10 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProductionOutputJobRun(_)
         | HitTarget::ProductionTerminalCommand(_)
         // Everything else belongs to the editor persona.
+        | HitTarget::OpenRevisionSurface(_)
+        | HitTarget::CloseRevisionSurface
+        | HitTarget::ToggleRevisionIssuanceArm
+        | HitTarget::OpenRevisionWitness(_)
         | HitTarget::ReviewAction(_)
         | HitTarget::AuthoredObject(_)
         | HitTarget::FitBoard
@@ -115,6 +119,10 @@ fn sample_handoff() -> datum_gui_protocol::TerminalCommandHandoff {
 fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
     let id = || "t0c04".to_string();
     let samples = vec![
+        HitTarget::OpenRevisionSurface(datum_gui_protocol::RevisionSurface::Release),
+        HitTarget::CloseRevisionSurface,
+        HitTarget::ToggleRevisionIssuanceArm,
+        HitTarget::OpenRevisionWitness(id()),
         HitTarget::ReviewAction(id()),
         HitTarget::AuthoredObject(id()),
         HitTarget::FitBoard,

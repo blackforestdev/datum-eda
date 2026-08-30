@@ -53,12 +53,9 @@ pub use console_feedback::*;
 mod supervision;
 pub use supervision::*;
 mod workspace_layout;
-pub use workspace_layout::{
-    ApplicationFocus, CrosshairStyle, DockTab, HoverTarget, MarkingMenuState, PANE_RATIO_MAX,
-    PANE_RATIO_MIN, PaneContent, PaneId, PaneNode, ScreenPointPx, SplitChild, SplitOrientation,
-    TerminalClipboardMenuState, TerminalTabDragVisualState, ViewportInteraction,
-    WorkspaceFilterState, WorkspaceLayout, WorkspacePreset, WorkspaceUiState,
-};
+pub use workspace_layout::*;
+mod revision_workspace;
+pub use revision_workspace::*;
 mod production_proposals;
 pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,

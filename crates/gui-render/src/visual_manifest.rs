@@ -12,6 +12,7 @@ pub struct FixtureManifest {
     pub board_file: Option<PathBuf>,
     pub project_kind: String,
     pub console_scenario: Option<String>,
+    pub revision_surface: Option<String>,
     pub viewport: VisualViewport,
     pub ui_scale_factors: Vec<f32>,
     pub golden: VisualGolden,
@@ -61,6 +62,7 @@ impl FixtureManifest {
             board_file: optional_string(&doc, &["input", "board_file"])?.map(PathBuf::from),
             project_kind: required_string(&doc, &["input", "project_kind"])?,
             console_scenario: optional_string(&doc, &["input", "console_scenario"])?,
+            revision_surface: optional_string(&doc, &["input", "revision_surface"])?,
             viewport: VisualViewport {
                 width_px: required_i64(&doc, &["viewport", "width_px"])?
                     .try_into()
@@ -138,6 +140,11 @@ impl FixtureManifest {
             )
         {
             bail!("unsupported input.console_scenario {scenario:?}");
+        }
+        if let Some(surface) = self.revision_surface.as_deref()
+            && !matches!(surface, "release" | "impact" | "change" | "evidence")
+        {
+            bail!("unsupported input.revision_surface {surface:?}");
         }
         if self.viewport.width_px == 0 || self.viewport.height_px == 0 {
             bail!("viewport dimensions must be non-zero");
