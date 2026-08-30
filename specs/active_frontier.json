@@ -5821,12 +5821,27 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-rev-i07-i10-20260830",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "228399ea8e9bc1cadc09b0247e0e31ffee25775e",
+        "claimed_at": "2026-08-30T15:14:02Z",
+        "heartbeat_at": "2026-08-30T15:14:02Z",
+        "expires_at": "2026-08-30T23:14:02Z",
+        "scope": [
+          "REV-I07",
+          "crates/engine/src/revision",
+          "REV-I07 proof fixtures and gates",
+          "Product Revision Engine Frontier and evidence closure"
+        ]
+      },
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -6110,7 +6125,7 @@
           {
             "id": "REV-I07",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Execute only REV-I07 against its ratified plan section. The complete and exclusive added record-family inventory is ReproductionManifest and ReproductionAttempt; the complete and exclusive reproduction-result inventory is ByteIdentical, OutputMismatch, Unavailable, and ExecutionFailed. Bidirectional inventory proof and every REV-I07 Exit-evidence item gate closure; RegenerationPlan is consumed from REV-I05, not redefined. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I06"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I07"}],
