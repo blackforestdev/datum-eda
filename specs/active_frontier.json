@@ -5831,14 +5831,15 @@
         "harness": "codex-cli",
         "session": "codex-rev-i07-i10-20260830",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "c6325ff25ccc630b76abaea005debc8ae4587f26",
-        "claimed_at": "2026-08-30T15:43:46Z",
-        "heartbeat_at": "2026-08-30T15:43:46Z",
-        "expires_at": "2026-08-30T23:43:46Z",
+        "head": "19ce7de4dd982235a8dfc3507cb4f2d343d241bd",
+        "claimed_at": "2026-08-30T16:15:20Z",
+        "heartbeat_at": "2026-08-30T16:15:20Z",
+        "expires_at": "2026-08-31T00:15:20Z",
         "scope": [
-          "REV-I08",
-          "crates/engine/src/revision",
-          "REV-I08 proof fixtures and gates",
+          "REV-I09",
+          "crates/engine/src/revision/public_service.rs",
+          "native-write, daemon, CLI, MCP revision parity",
+          "REV-I09 proof fixtures and gates",
           "Product Revision Engine Frontier and evidence closure"
         ]
       },
@@ -5852,7 +5853,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I08",
+        "canonical_next_step_id": "REV-I09",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6139,16 +6140,21 @@
           {
             "id": "REV-I08",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Execute only REV-I08 against its ratified plan section. The complete and exclusive added record-family inventory is ExternalMappingReceipt, AdapterDivergenceObservation, ReleaseMirrorRequest, ReleaseMirrorResult, AuthorityExchangeEnvelope, AuthorityExchangeReceipt, ExternalChangeCandidate, CredentialOrTrustEvent, and TrustedTimestampEvidence; no simultaneous multi-writer family or production trust/signature/time algorithm is authorized. Bidirectional inventory proof and every REV-I08 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new crate, executable, helper, provider, or other dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I07"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I08"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "19ce7de"
+              }
+            ]
           },
           {
             "id": "REV-I09",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Execute only REV-I09 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive public inventory is the ratified, implemented REV-I03-through-REV-I08 operation, query, refusal, proposal, and evidence catalog, with proposal twins for every appropriate authorable operation and no proposal shortcut for approval or release authority. Bidirectional engine/native-write/daemon/CLI/MCP inventory proof and every REV-I09 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I08"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I09"}],
