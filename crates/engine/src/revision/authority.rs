@@ -12,6 +12,7 @@ use super::{
     change::EngineeringChangeData,
     departure::{DeviationDepartureData, LegacyRevisionFactMappingData, WaiverDepartureData},
     effectivity::EffectivityData,
+    exchange::*,
     impact::*,
     policy::ProjectRevisionPolicyData,
     release::*,
@@ -275,47 +276,56 @@ authority_families!(
     (
         ExternalMappingReceipt,
         ExternalMappingReceiptId,
-        "external_mapping_receipt"
+        "external_mapping_receipt",
+        ExternalMappingReceiptData
     ),
     (
         AdapterDivergenceObservation,
         AdapterDivergenceObservationId,
-        "adapter_divergence_observation"
+        "adapter_divergence_observation",
+        AdapterDivergenceObservationData
     ),
     (
         ReleaseMirrorRequest,
         ReleaseMirrorRequestId,
-        "release_mirror_request"
+        "release_mirror_request",
+        ReleaseMirrorRequestData
     ),
     (
         ReleaseMirrorResult,
         ReleaseMirrorResultId,
-        "release_mirror_result"
+        "release_mirror_result",
+        ReleaseMirrorResultData
     ),
     (
         AuthorityExchangeEnvelope,
         AuthorityExchangeEnvelopeId,
-        "authority_exchange_envelope"
+        "authority_exchange_envelope",
+        AuthorityExchangeEnvelopeData
     ),
     (
         AuthorityExchangeReceipt,
         AuthorityExchangeReceiptId,
-        "authority_exchange_receipt"
+        "authority_exchange_receipt",
+        AuthorityExchangeReceiptData
     ),
     (
         ExternalChangeCandidate,
         ExternalChangeCandidateId,
-        "external_change_candidate"
+        "external_change_candidate",
+        ExternalChangeCandidateData
     ),
     (
         CredentialOrTrustEvent,
         CredentialOrTrustEventId,
-        "credential_or_trust_event"
+        "credential_or_trust_event",
+        CredentialOrTrustEventData
     ),
     (
         TrustedTimestampEvidence,
         TrustedTimestampEvidenceId,
-        "trusted_timestamp_evidence"
+        "trusted_timestamp_evidence",
+        TrustedTimestampEvidenceData
     ),
     (
         ProjectRevisionPolicy,

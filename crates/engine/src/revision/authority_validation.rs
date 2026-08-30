@@ -47,6 +47,9 @@ pub(crate) fn validate_record(
         record if super::reproduction::REV_I07_RECORD_FAMILIES.contains(&record.kind()) => {
             super::reproduction::validate_rev_i07_record(record)
         }
+        record if super::exchange::REV_I08_RECORD_FAMILIES.contains(&record.kind()) => {
+            super::exchange::validate_rev_i08_record(record)
+        }
         _ => Vec::new(),
     }
 }
