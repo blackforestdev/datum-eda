@@ -175,4 +175,22 @@ fn sole_revision_gate_is_the_journaled_commit_coordinator() {
         !include_str!("../operation_application_batch.rs")
             .contains("commit_journaled_with_links_and_inverse")
     );
+    for rev_i05 in [
+        include_str!("../../revision/impact.rs"),
+        include_str!("../../revision/impact_analysis.rs"),
+    ] {
+        assert!(!rev_i05.contains("prepare_revision_design_commit("));
+        assert!(!rev_i05.contains("evaluate_design_mutation_authority("));
+        assert!(!rev_i05.contains("commit_journaled_with_links_and_inverse("));
+    }
+    for source in [
+        include_str!("../operation_application.rs"),
+        include_str!("../operation_application_batch.rs"),
+        include_str!("../operation_application_dispatch.rs"),
+        include_str!("../project_resolver.rs"),
+    ] {
+        assert!(!source.contains("DependencySnapshotData"));
+        assert!(!source.contains("ImpactEvaluationData"));
+        assert!(!source.contains("ConfigurationBaselineData"));
+    }
 }

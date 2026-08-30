@@ -5,12 +5,14 @@ use uuid::Uuid;
 
 use crate::error::EngineError;
 
-use super::{AlgorithmQualifiedDigest, canonical::canonical_bytes, canonical::digest_bytes};
 use super::{
+    AlgorithmQualifiedDigest,
     approval::ApprovalAttestationData,
+    canonical::{canonical_bytes, digest_bytes},
     change::EngineeringChangeData,
     departure::{DeviationDepartureData, LegacyRevisionFactMappingData, WaiverDepartureData},
     effectivity::EffectivityData,
+    impact::*,
     policy::ProjectRevisionPolicyData,
     reservation::RevisionReservationData,
     role::{ActorIdentityData, RoleAssignmentData, RoleDelegationData},
@@ -118,7 +120,8 @@ authority_families!(
     (
         ConfigurationBaseline,
         ConfigurationBaselineId,
-        "configuration_baseline"
+        "configuration_baseline",
+        ConfigurationBaselineData
     ),
     (
         EngineeringRevision,
@@ -187,27 +190,51 @@ authority_families!(
     (
         DependencySnapshot,
         DependencySnapshotId,
-        "dependency_snapshot"
+        "dependency_snapshot",
+        DependencySnapshotData
     ),
-    (SemanticDelta, SemanticDeltaId, "semantic_delta"),
-    (ImpactEvaluation, ImpactEvaluationId, "impact_evaluation"),
+    (
+        SemanticDelta,
+        SemanticDeltaId,
+        "semantic_delta",
+        SemanticDeltaData
+    ),
+    (
+        ImpactEvaluation,
+        ImpactEvaluationId,
+        "impact_evaluation",
+        ImpactEvaluationData
+    ),
     (
         EvidenceInputContext,
         EvidenceInputContextId,
-        "evidence_input_context"
+        "evidence_input_context",
+        EvidenceInputContextData
     ),
-    (EvidenceFreshness, EvidenceFreshnessId, "evidence_freshness"),
+    (
+        EvidenceFreshness,
+        EvidenceFreshnessId,
+        "evidence_freshness",
+        EvidenceFreshnessData
+    ),
     (
         LibraryUptakeCandidate,
         LibraryUptakeCandidateId,
-        "library_uptake_candidate"
+        "library_uptake_candidate",
+        LibraryUptakeCandidateData
     ),
     (
         BaselineComparison,
         BaselineComparisonId,
-        "baseline_comparison"
+        "baseline_comparison",
+        BaselineComparisonData
     ),
-    (RegenerationPlan, RegenerationPlanId, "regeneration_plan"),
+    (
+        RegenerationPlan,
+        RegenerationPlanId,
+        "regeneration_plan",
+        RegenerationPlanData
+    ),
     (
         ReproductionManifest,
         ReproductionManifestId,
@@ -587,6 +614,9 @@ impl AuthoritySnapshot {
                         self,
                         &body.semantics,
                     ));
+                }
+                record if super::impact::REV_I05_RECORD_FAMILIES.contains(&record.kind()) => {
+                    diagnostics.extend(super::impact_analysis::validate_rev_i05_record(record));
                 }
                 _ => {}
             }

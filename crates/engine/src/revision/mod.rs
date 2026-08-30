@@ -16,6 +16,10 @@ mod departure;
 #[allow(dead_code)]
 mod design_commit;
 mod effectivity;
+mod impact;
+mod impact_analysis;
+#[cfg(test)]
+mod impact_tests;
 mod model;
 mod policy;
 mod reservation;
@@ -34,6 +38,8 @@ pub use authority::*;
 pub use change::*;
 pub use departure::*;
 pub use effectivity::*;
+pub use impact::*;
+pub use impact_analysis::*;
 pub use policy::*;
 pub use reservation::*;
 pub use role::*;
