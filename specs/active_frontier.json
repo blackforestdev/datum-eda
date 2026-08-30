@@ -5831,15 +5831,16 @@
         "harness": "codex-cli",
         "session": "codex-rev-i07-i10-20260830",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "19ce7de4dd982235a8dfc3507cb4f2d343d241bd",
-        "claimed_at": "2026-08-30T16:15:20Z",
-        "heartbeat_at": "2026-08-30T16:15:20Z",
-        "expires_at": "2026-08-31T00:15:20Z",
+        "head": "dab019d56331ff77b7422ba7c980075391c83d63",
+        "claimed_at": "2026-08-30T17:09:50Z",
+        "heartbeat_at": "2026-08-30T17:09:50Z",
+        "expires_at": "2026-08-31T01:09:50Z",
         "scope": [
-          "REV-I09",
-          "crates/engine/src/revision/public_service.rs",
-          "native-write, daemon, CLI, MCP revision parity",
-          "REV-I09 proof fixtures and gates",
+          "REV-I10",
+          "crates/gui-protocol revision projections",
+          "crates/gui-render revision workspace",
+          "crates/gui-app revision interactions and accessibility",
+          "REV-I10 proof fixtures, screenshots, and gates",
           "Product Revision Engine Frontier and evidence closure"
         ]
       },
@@ -5853,7 +5854,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I09",
+        "canonical_next_step_id": "REV-I10",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6154,16 +6155,21 @@
           {
             "id": "REV-I09",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Execute only REV-I09 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive public inventory is the ratified, implemented REV-I03-through-REV-I08 operation, query, refusal, proposal, and evidence catalog, with proposal twins for every appropriate authorable operation and no proposal shortcut for approval or release authority. Bidirectional engine/native-write/daemon/CLI/MCP inventory proof and every REV-I09 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I08"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I09"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "dab019d"
+              }
+            ]
           },
           {
             "id": "REV-I10",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Execute only REV-I10 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible inventory is the six owner-approved dispositions numbered 1 through 6 in REV-I10. Bidirectional UI-versus-inventory proof and every REV-I10 Exit-evidence item gate closure, except that the required running-app owner visual review is the following REV-I17 boundary. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I09"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10"}],
