@@ -33,13 +33,16 @@ production acceptance.
 
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I16 -->
 <!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I16:REV-I16 -->
-The proposed post-REV-I04 Frontier authorization model is itself an owner
-decision: if ratified, the remaining serial execution slices are authorized
+The post-REV-I04 Frontier authorization model was owner-ratified on 2026-08-29:
+the remaining serial execution slices are authorized
 directly and exclusively by their sections below, each slice closes only on its
 stated Exit evidence, and no per-slice authorization packet is required. This
 does not authorize concurrent execution or allow one slice to start before its
 predecessor closes. The Frontier retains owner stops only where this plan or
 standing doctrine expressly requires owner input.
+
+<!-- EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I16-APPROVED -->
+Owner disposition: `REV-FRONTIER-DIRECT: approve`.
 
 ## 2. Current substrate and required reconciliation
 

@@ -5821,8 +5821,8 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "ready",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5837,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I16",
+        "canonical_next_step_id": "REV-I05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6054,13 +6054,19 @@
           {
             "id": "REV-I16",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Ratify one serial direct-execution authorization model for REV-I05 through REV-I12 against their already-ratified implementation-plan sections and Exit evidence, replacing unreached per-slice authorization packets. Every slice carries three standing constraints: each authorized record-family, capability, state, and event inventory is complete, exclusive, and bidirectionally proven; Design authoring may refuse only through prepare_revision_design_commit and only under explicitly adopted AuthorizedChangeRequired while Unmanaged and NoEarlierControl remain prompt-free and ungated; and every new dependency stops before any code or manifest change for an exact numbered Product Mechanics 029 owner decision. This ratification does not claim or execute REV-I05.",
             "depends_on": ["REV-I04"],
             "requirement_refs": [
               {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I16"}
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:PRODUCT-REVISION-ENGINE:REV-I16-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply exactly `REV-FRONTIER-DIRECT: approve` or `REV-FRONTIER-DIRECT: revise — <specific authorization-model, inventory, acceptance, visual-boundary, production-boundary, never-blocks, or dependency correction>`.",
               "requests": [
