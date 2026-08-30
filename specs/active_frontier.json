@@ -5821,27 +5821,12 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "ready",
+      "authorization": "none",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-rev-i05-20260829",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "a45f119f38c6ff7199daa4f70fda30fa85f5d4be",
-        "claimed_at": "2026-08-30T06:26:35Z",
-        "heartbeat_at": "2026-08-30T06:26:35Z",
-        "expires_at": "2026-08-30T14:26:35Z",
-        "scope": [
-          "REV-I05",
-          "crates/engine/src/revision",
-          "REV-I05 proof fixtures and gates",
-          "Product Revision Engine Frontier and evidence closure"
-        ]
-      },
+      "claim": null,
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5852,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I05",
+        "canonical_next_step_id": "REV-I06",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6097,11 +6082,16 @@
           {
             "id": "REV-I05",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Execute only REV-I05 against its ratified plan section. The complete and exclusive added record-family inventory is ConfigurationBaseline, DependencySnapshot, SemanticDelta, ImpactEvaluation, EvidenceInputContext, EvidenceFreshness, LibraryUptakeCandidate, BaselineComparison, and RegenerationPlan; the complete outcome inventories are Affected, Unaffected, and ImpactUnknown plus Added, Removed, Modified, Retargeted, and Unchanged. Bidirectional inventory proof and every REV-I05 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I16"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I05"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "9d53841"
+              }
+            ]
           },
           {
             "id": "REV-I06",
