@@ -5821,8 +5821,8 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
-      "authorization": "none",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
@@ -5837,7 +5837,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I05",
+        "canonical_next_step_id": "REV-I16",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6052,11 +6052,33 @@
             ]
           },
           {
+            "id": "REV-I16",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Ratify one serial direct-execution authorization model for REV-I05 through REV-I12 against their already-ratified implementation-plan sections and Exit evidence, replacing unreached per-slice authorization packets. Every slice carries three standing constraints: each authorized record-family, capability, state, and event inventory is complete, exclusive, and bidirectionally proven; Design authoring may refuse only through prepare_revision_design_commit and only under explicitly adopted AuthorizedChangeRequired while Unmanaged and NoEarlierControl remain prompt-free and ungated; and every new dependency stops before any code or manifest change for an exact numbered Product Mechanics 029 owner decision. This ratification does not claim or execute REV-I05.",
+            "depends_on": ["REV-I04"],
+            "requirement_refs": [
+              {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I16"}
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `REV-FRONTIER-DIRECT: approve` or `REV-FRONTIER-DIRECT: revise — <specific authorization-model, inventory, acceptance, visual-boundary, production-boundary, never-blocks, or dependency correction>`.",
+              "requests": [
+                {
+                  "id": "REV-FRONTIER-DIRECT",
+                  "question": "May the remaining Product Revision Engine slices execute serially and directly against their ratified plan sections and Exit evidence, with only the plan-mandated visual and production owner reviews plus event-triggered PM-029 or genuine-gap stops?",
+                  "recommended_response": "Approve only if the closed-inventory proof, sole-authorized Design coordinator, prompt-free Unmanaged and NoEarlierControl workflows, and PM-029 dependency stop remain acceptance conditions in every slice.",
+                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I16"}
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-I05",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement frozen dependency snapshots, witness-backed impact, explicit library uptake, evidence freshness, stable-ID comparison, regeneration planning, and immutable baselines.",
-            "depends_on": ["REV-I04"],
+            "action": "Execute only REV-I05 against its ratified plan section. The complete and exclusive added record-family inventory is ConfigurationBaseline, DependencySnapshot, SemanticDelta, ImpactEvaluation, EvidenceInputContext, EvidenceFreshness, LibraryUptakeCandidate, BaselineComparison, and RegenerationPlan; the complete outcome inventories are Affected, Unaffected, and ImpactUnknown plus Added, Removed, Modified, Retargeted, and Unchanged. Bidirectional inventory proof and every REV-I05 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "depends_on": ["REV-I16"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I05"}],
             "completion_evidence": []
           },
@@ -6064,7 +6086,7 @@
             "id": "REV-I06",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement stale-aware ReleaseCandidates and atomic multi-CI Release, EngineeringRevision, ControlledDocument, DocumentIssue, ReleasePackage, Transmittal, and typed standing authority.",
+            "action": "Execute only REV-I06 against its ratified plan section. The complete and exclusive added record-family inventory is EngineeringRevision, ReleaseCandidate, Release, SupersessionEstablished, AuthorizationWithdrawn, ObsolescenceDeclared, ControlledDocument, DocumentIssue, ReleasePackage, and Transmittal; readiness, invalidation, issuance, supersession, withdrawal, obsolescence, and transmittal meanings are limited to those the plan and normative specification assign these named families. Bidirectional inventory proof and every REV-I06 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I05"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I06"}],
             "completion_evidence": []
@@ -6073,7 +6095,7 @@
             "id": "REV-I07",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement immutable regeneration evidence and exact ReproductionManifest/ReproductionAttempt authority with byte-identical success and honest failure states.",
+            "action": "Execute only REV-I07 against its ratified plan section. The complete and exclusive added record-family inventory is ReproductionManifest and ReproductionAttempt; the complete and exclusive reproduction-result inventory is ByteIdentical, OutputMismatch, Unavailable, and ExecutionFailed. Bidirectional inventory proof and every REV-I07 Exit-evidence item gate closure; RegenerationPlan is consumed from REV-I05, not redefined. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I06"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I07"}],
             "completion_evidence": []
@@ -6082,7 +6104,7 @@
             "id": "REV-I08",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement standalone audit exchange, external-change quarantine and semantic re-entry, algorithm-qualified mapping receipts, and the optional failure-isolated Git adapter.",
+            "action": "Execute only REV-I08 against its ratified plan section. The complete and exclusive added record-family inventory is ExternalMappingReceipt, AdapterDivergenceObservation, ReleaseMirrorRequest, ReleaseMirrorResult, AuthorityExchangeEnvelope, AuthorityExchangeReceipt, ExternalChangeCandidate, CredentialOrTrustEvent, and TrustedTimestampEvidence; no simultaneous multi-writer family or production trust/signature/time algorithm is authorized. Bidirectional inventory proof and every REV-I08 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new crate, executable, helper, provider, or other dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I07"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I08"}],
             "completion_evidence": []
@@ -6091,7 +6113,7 @@
             "id": "REV-I09",
             "kind": "execution",
             "status": "pending",
-            "action": "Expose complete typed operations, queries, refusals, proposals, and evidence through engine, native-write, daemon, CLI, and MCP parity with no private writer.",
+            "action": "Execute only REV-I09 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive public inventory is the ratified, implemented REV-I03-through-REV-I08 operation, query, refusal, proposal, and evidence catalog, with proposal twins for every appropriate authorable operation and no proposal shortcut for approval or release authority. Bidirectional engine/native-write/daemon/CLI/MCP inventory proof and every REV-I09 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I08"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I09"}],
             "completion_evidence": []
@@ -6100,26 +6122,86 @@
             "id": "REV-I10",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement and visually verify the six owner-approved Revision Navigator, Change, Impact, Release, and reproduction GUI dispositions over engine truth.",
+            "action": "Execute only REV-I10 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible inventory is the six owner-approved dispositions numbered 1 through 6 in REV-I10. Bidirectional UI-versus-inventory proof and every REV-I10 Exit-evidence item gate closure, except that the required running-app owner visual review is the following REV-I17 boundary. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I09"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10"}],
             "completion_evidence": []
           },
           {
+            "id": "REV-I17",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Perform the running-app owner visual review required by the REV-I10 Exit evidence after implementation and screenshot/accessibility proof; this boundary reviews conformance to the six already-approved dispositions and does not reopen their design or authorize REV-I10A.",
+            "depends_on": ["REV-I10"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I17"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `REV-I10-VISUAL: approve` or `REV-I10-VISUAL: revise — <specific running-app conformance correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I10-VISUAL",
+                  "question": "Does the running REV-I10 GUI conform to the six owner-approved dispositions and their accessibility, layout, and never-blocks evidence?",
+                  "recommended_response": "Approve only after reviewing the running application and committed visual/accessibility proofs against the ratified GUI contract.",
+                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I17"}
+                }
+              ]
+            }
+          },
+          {
+            "id": "REV-I18",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Resolve REV-I10A's currently unapproved enterprise role-workflow visual design through a Claude-owned prototype study and explicit owner disposition before implementation. This boundary exists solely because REV-I10A states that visual design not already owner-approved requires both artifacts; it authorizes no implementation or dependency.",
+            "depends_on": ["REV-I17"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I18"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After the Claude-owned REV-I10A visual study is committed and reviewed, reply exactly `REV-I10A-VISUAL: approve <candidate>` or `REV-I10A-VISUAL: revise — <specific visual-contract correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I10A-VISUAL",
+                  "question": "Which rendered enterprise role-workflow candidate governs REV-I10A implementation while preserving Datum authority, canonical mutation, accessibility, and adapter subordination?",
+                  "recommended_response": "Approve only a rendered candidate that covers every REV-I10A workflow state and exclusion without assigning revision authority to PLM/PDM or adapter state.",
+                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I18"}
+                }
+              ]
+            }
+          },
+          {
             "id": "REV-I10A",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement and owner-review enterprise role assignment, bounded delegation, role-derived queues, authority visibility, and the external configuration-manager signed-attestation exchange workflow without giving PLM/PDM or adapter state revision authority.",
-            "depends_on": ["REV-I10"],
+            "action": "Execute only REV-I10A against its ratified plan section and the owner-approved REV-I18 render. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible workflow inventory is role assignment, bounded delegation, role-derived personal/team queues, authority visibility, and external configuration-manager attestation exchange, with the exact sent, quarantined, verified, signature-valid, authorized, locally-committed, refused, and outward-mirrored projections named by REV-I10A. Bidirectional UI/operation inventory proof and every non-owner REV-I10A Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "depends_on": ["REV-I18"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10A"}],
             "completion_evidence": []
+          },
+          {
+            "id": "REV-I19",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Perform the running-app owner review required by REV-I10A Exit evidence after implementation, accessibility inspection, standing goldens, and workflow proofs; this boundary accepts conformance only and authorizes no dependency or successor execution.",
+            "depends_on": ["REV-I10A"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I19"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `REV-I10A-RUNNING-APP: approve` or `REV-I10A-RUNNING-APP: revise — <specific workflow, authority, accessibility, or visual-conformance correction>`.",
+              "requests": [
+                {
+                  "id": "REV-I10A-RUNNING-APP",
+                  "question": "Does the running REV-I10A workflow conform to its owner-approved render, preserve Datum as sole authority, and satisfy its accessibility and failure-isolation evidence?",
+                  "recommended_response": "Approve only after the running application and committed conformance evidence demonstrate the entire ratified workflow inventory.",
+                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I19"}
+                }
+              ]
+            }
           },
           {
             "id": "REV-I11",
             "kind": "execution",
             "status": "pending",
-            "action": "Implement licensed-source-gated standards audit and retention witnesses and close every REV-GAP migration with machine-readable evidence and safe fallback.",
-            "depends_on": ["REV-I10A"],
+            "action": "Execute only REV-I11 against its ratified plan section. The complete and exclusive added record-family inventory is StandardsProfile, RequirementDisposition, AuditEvaluation, RetentionPolicy, LegalOrPolicyHold, and RecordDisposition; the complete and exclusive requirement-disposition inventory is Applicable, Tailored, EquivalentControl, NotApplicable, Unresolved, and BlockedNormativeText; migration scope is exactly REV-GAP-01 through REV-GAP-12. Bidirectional inventory proof and every REV-I11 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "depends_on": ["REV-I19"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I11"}],
             "completion_evidence": []
           },
@@ -6127,10 +6209,30 @@
             "id": "REV-I12",
             "kind": "execution",
             "status": "pending",
-            "action": "Run bounded production acceptance across real-project offline release/reproduction/audit, negative evidence, migrations, performance/resources, accessibility, independent audit, and explicit owner review.",
+            "action": "Execute only REV-I12 against its ratified plan section. It adds zero product record families, capabilities, states, or events; its complete and exclusive acceptance inventory is the nine requirements listed in REV-I12, with performance/resource measurements prepared for owner disposition and the explicit production-acceptance decision deferred to REV-I20. Bidirectional proof that no product inventory was added and every non-owner REV-I12 requirement gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I11"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I12"}],
             "completion_evidence": []
+          },
+          {
+            "id": "REV-I20",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Disposition the measured performance/resource budgets and perform the explicit owner production acceptance required by REV-I12 after every earlier acceptance artifact and running-app review is committed and addressable. This boundary does not authorize Publish Space, certification claims, dependencies, or distributed multi-writer collaboration.",
+            "depends_on": ["REV-I12"],
+            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I20"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `REVISION-ENGINE-PRODUCTION: approve` or `REVISION-ENGINE-PRODUCTION: revise — <specific evidence, budget, audit, running-app, migration, accessibility, or acceptance correction>`.",
+              "requests": [
+                {
+                  "id": "REVISION-ENGINE-PRODUCTION",
+                  "question": "Do the complete REV-I01-through-REV-I12 evidence set, measured budgets, independent audit, and running application satisfy Product Revision Engine production acceptance?",
+                  "recommended_response": "Approve only when all nine REV-I12 requirements are committed and addressable and the measured budgets have been explicitly dispositioned.",
+                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I20"}
+                }
+              ]
+            }
           }
         ],
         "post_completion": {

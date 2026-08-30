@@ -31,6 +31,16 @@ Product Mechanics 029 decision naming the dependency and license obligations.
 Publish Space implementation remains separately blocked until `REV-I12`
 production acceptance.
 
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I16 -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I16:REV-I16 -->
+The proposed post-REV-I04 Frontier authorization model is itself an owner
+decision: if ratified, the remaining serial execution slices are authorized
+directly and exclusively by their sections below, each slice closes only on its
+stated Exit evidence, and no per-slice authorization packet is required. This
+does not authorize concurrent execution or allow one slice to start before its
+predecessor closes. The Frontier retains owner stops only where this plan or
+standing doctrine expressly requires owner input.
+
 ## 2. Current substrate and required reconciliation
 
 Implementation shall extend the existing one-mutation-path substrate rather
@@ -346,6 +356,12 @@ pixel-exact approved-state goldens wired into standing gates, running-app owner
 visual review, narrow/HiDPI/focus/terminal-open layouts, and proof that Design
 authoring remains unblocked outside explicitly adopted earlier control.
 
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I17 -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I17:REV-I17 -->
+The running-app owner visual review above remains an explicit acceptance
+boundary after REV-I10 implementation; it reviews conformance to the already
+approved six-part design rather than reopening or replacing that design.
+
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I10A -->
 ### REV-I10A — Enterprise role-workflow UX
 
@@ -371,10 +387,21 @@ canonical mutation path. If visual design is not already owner-approved, this
 slice requires a Claude-owned prototype study and explicit owner disposition
 before implementation acceptance.
 
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I18 -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I18:REV-I18 -->
+The enterprise role-workflow visual design is not presently owner-approved;
+the Claude-owned prototype study and explicit owner disposition required above
+therefore precede REV-I10A implementation.
+
 **Exit evidence:** assignment/delegation/refusal tests; queue-to-authority
 traceability; separation/quorum and stale-target proofs; signed external
 attestation quarantine/admission walkthrough; adapter-failure isolation;
 accessibility inspection; standing visual goldens; and running-app owner review.
+
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I19 -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I19:REV-I19 -->
+The running-app owner review above remains an explicit acceptance boundary
+after REV-I10A implementation and its committed conformance evidence.
 
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I11 -->
 ### REV-I11 — Standards witnesses, retention, and migration closure
@@ -425,6 +452,11 @@ requires:
 - independent findings-first audit against Product Mechanics 034 and the full
   normative specification; and
 - explicit owner production acceptance after running-app GUI review.
+
+<!-- REQ:PRODUCT-REVISION-ENGINE:REV-I20 -->
+<!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I20:REV-I20 -->
+The measured performance/resource budget disposition and explicit production
+acceptance above remain the final owner boundary after REV-I12 evidence lands.
 
 Closure lands the engine foundation only. It does not automatically authorize
 Publish Space implementation, external certification claims, a dependency, or
