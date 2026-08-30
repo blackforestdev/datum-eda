@@ -5821,11 +5821,28 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-rev-i10-visual-reconciliation-20260830",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "3330ee8c1ed8b881fbd98895ddc90993081c42e9",
+        "claimed_at": "2026-08-30T18:53:45Z",
+        "heartbeat_at": "2026-08-30T18:53:45Z",
+        "expires_at": "2026-08-31T02:53:45Z",
+        "scope": [
+          "REV-I10 owner visual-review correction",
+          "revision surfaces as recursive sibling panes",
+          "board/schematic simultaneous rendering and interaction proof",
+          "running-app capture and REV-I10 conformance evidence",
+          "Product Revision Engine Frontier and tracker reconciliation"
+        ]
+      },
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
@@ -5836,7 +5853,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I17",
+        "canonical_next_step_id": "REV-I10",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6151,7 +6168,7 @@
           {
             "id": "REV-I10",
             "kind": "execution",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Execute only REV-I10 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible inventory is the six owner-approved dispositions numbered 1 through 6 in REV-I10. Bidirectional UI-versus-inventory proof and every REV-I10 Exit-evidence item gate closure, except that the required running-app owner visual review is the following REV-I17 boundary. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
             "depends_on": ["REV-I09"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10"}],
