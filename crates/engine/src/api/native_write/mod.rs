@@ -38,6 +38,7 @@ pub mod manufacturing;
 pub mod output_jobs;
 pub mod project;
 pub mod registry;
+pub mod revision;
 pub mod schematic_connectivity;
 pub mod schematic_sheets;
 pub mod schematic_symbols;

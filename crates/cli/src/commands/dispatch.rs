@@ -1513,22 +1513,8 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {
         Commands::Agent { action } => execute_agent_command(format, action),
         Commands::Mcp { action } => execute_mcp_command(format, action),
-        Commands::Context { action } => match action {
-            ContextCommands::Get(args) => {
-                Ok((render_output(format, &query_context_envelope(&args)?), 0))
-            }
-            ContextCommands::Refresh(args) => {
-                Ok((render_output(format, &refresh_context_envelope(&args)?), 0))
-            }
-            ContextCommands::SessionEvents(args) => Ok((
-                render_output(format, &query_context_session_events(&args)?),
-                0,
-            )),
-            ContextCommands::SessionActivity(args) => Ok((
-                render_output(format, &query_context_session_activity(&args)?),
-                0,
-            )),
-        },
+        Commands::Context { action } => execute_context_command(format, action),
+        Commands::Revision { action } => execute_revision_command(format, action),
         Commands::Import { path } => {
             let report = import_path(&path)?;
             let view = ImportReportView::from(report);

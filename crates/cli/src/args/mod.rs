@@ -48,6 +48,7 @@ mod project_query_plan;
 mod project_waivers;
 mod proposal_library;
 mod proposals;
+mod revision;
 mod root;
 mod surface;
 
@@ -182,6 +183,8 @@ pub(crate) use self::proposals::{
     ProposalPlaceSymbolArgs, ProposalSetComponentInstanceArgs, ProposalUpdateManufacturingPlanArgs,
     ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
 };
+#[allow(unused_imports)]
+pub(crate) use self::revision::{RevisionCommands, RevisionQueryArgs};
 pub(crate) use self::root::{
     Cli, Commands, ImportedQueryCommandParser, ImportedQueryCommands, QueryCommands, QueryPathArgs,
 };

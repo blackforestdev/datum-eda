@@ -27,6 +27,7 @@ mod impact_analysis;
 mod impact_tests;
 mod model;
 mod policy;
+mod public_service;
 mod release;
 mod release_projection;
 #[cfg(test)]
@@ -57,6 +58,7 @@ pub use exchange::*;
 pub use impact::*;
 pub use impact_analysis::*;
 pub use policy::*;
+pub use public_service::*;
 pub use release::*;
 pub use release_projection::*;
 pub use release_transaction::*;

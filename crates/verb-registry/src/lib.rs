@@ -25,6 +25,7 @@ mod verbs_project;
 mod verbs_proposal;
 mod verbs_query;
 mod verbs_replacement;
+mod verbs_revision;
 mod verbs_route;
 mod verbs_schematic;
 mod verbs_session;
@@ -198,7 +199,7 @@ impl VerbSpec {
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
     static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
-        let families: [&[VerbSpec]; 17] = [
+        let families: [&[VerbSpec]; 18] = [
             verbs_artifact::VERBS,
             verbs_check::VERBS,
             verbs_component_instance::VERBS,
@@ -213,6 +214,7 @@ pub fn verbs() -> &'static [VerbSpec] {
             verbs_proposal::VERBS,
             verbs_query::VERBS,
             verbs_replacement::VERBS,
+            verbs_revision::VERBS,
             verbs_route::VERBS,
             verbs_schematic::VERBS,
             verbs_session::VERBS,

@@ -326,7 +326,35 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             Ok(params) => native_write_response(request.id, params),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
+        "revision.catalog" => serialized_success_response(
+            request.id,
+            eda_engine::api::native_write::revision::revision_public_catalog(),
+        ),
+        "revision.query" => match serde_json::from_value::<RevisionQueryParams>(request.params) {
+            Ok(params) => revision_query_response(request.id, params),
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
         _ => error_response(request.id, -32601, "method not found"),
+    }
+}
+
+fn revision_query_response(request_id: Value, params: RevisionQueryParams) -> JsonRpcResponse {
+    let model = match ProjectResolver::new(&params.project_root).resolve() {
+        Ok(model) => model,
+        Err(err) => return error_response(request_id, -32070, &err.to_string()),
+    };
+    let request = eda_engine::api::native_write::revision::RevisionQueryRequest {
+        project_id: model.project.project_id,
+        query: params.query,
+        as_of_sequence: params.as_of_sequence,
+        expected_model_revision: params.expected_model_revision,
+    };
+    match eda_engine::api::native_write::revision::query_revision_authority(
+        &params.project_root,
+        &request,
+    ) {
+        Ok(response) => serialized_success_response(request_id, response),
+        Err(err) => error_response(request_id, -32070, &err.to_string()),
     }
 }
 

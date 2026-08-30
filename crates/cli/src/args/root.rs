@@ -31,6 +31,11 @@ pub(crate) enum Commands {
         #[command(subcommand)]
         action: ContextCommands,
     },
+    /// Inspect Datum's typed Project revision authority
+    Revision {
+        #[command(subcommand)]
+        action: RevisionCommands,
+    },
     /// Import a KiCad or Eagle design
     Import {
         /// Path to design file (.kicad_pcb, .brd, .lbr)

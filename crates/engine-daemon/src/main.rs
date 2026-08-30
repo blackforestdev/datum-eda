@@ -135,6 +135,14 @@ struct NativeDescribeParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct RevisionQueryParams {
+    project_root: PathBuf,
+    query: String,
+    as_of_sequence: Option<u64>,
+    expected_model_revision: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct NativeWriteParams {
     project_root: PathBuf,
     verb: String,
@@ -323,6 +331,8 @@ mod tests {
     mod query_check;
     #[path = "main_tests_query_check_runs.rs"]
     mod query_check_runs;
+    #[path = "main_tests_revision.rs"]
+    mod revision;
     #[path = "main_tests_session_pool.rs"]
     mod session_pool;
     #[path = "main_tests_session_pool_replacements.rs"]

@@ -19729,6 +19729,72 @@
       "write_surface": null
     },
     {
+      "description": "Return the complete engine-owned revision operation, query, refusal, proposal, and evidence inventory.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "revision.catalog"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.revision.catalog",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Query current or historical typed revision authority through the engine-owned service.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "revision.query"
+      },
+      "dispatch_args": [
+        "project_root",
+        "query",
+        "as_of_sequence",
+        "expected_model_revision"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "as_of_sequence": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "expected_model_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_root": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "datum.revision.query",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Apply one accepted deterministic route candidate through the proposal journal gateway.",
       "dispatch": {
         "argv": [
