@@ -8,6 +8,7 @@ mod approval;
 mod authority;
 mod authority_query;
 mod authority_store;
+mod authority_validation;
 mod backup;
 mod canonical;
 mod change;
@@ -30,6 +31,9 @@ mod release_test_support;
 #[cfg(test)]
 mod release_tests;
 mod release_transaction;
+mod reproduction;
+#[cfg(test)]
+mod reproduction_tests;
 mod reservation;
 mod resolver;
 mod role;
@@ -52,6 +56,7 @@ pub use policy::*;
 pub use release::*;
 pub use release_projection::*;
 pub use release_transaction::*;
+pub use reproduction::*;
 pub use reservation::*;
 pub use role::*;
 pub use scheme::*;

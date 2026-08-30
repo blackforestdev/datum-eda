@@ -41,6 +41,7 @@ mod revision_approval;
 mod revision_authority;
 mod revision_authority_i05_fixtures;
 mod revision_authority_i06_fixtures;
+mod revision_authority_i07_fixtures;
 mod revision_change_authority;
 mod revision_change_inventory;
 mod revision_integrity;

@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -15,6 +15,7 @@ use super::{
     impact::*,
     policy::ProjectRevisionPolicyData,
     release::*,
+    reproduction::*,
     reservation::RevisionReservationData,
     role::{ActorIdentityData, RoleAssignmentData, RoleDelegationData},
     scheme::RevisionSchemeData,
@@ -262,12 +263,14 @@ authority_families!(
     (
         ReproductionManifest,
         ReproductionManifestId,
-        "reproduction_manifest"
+        "reproduction_manifest",
+        ReproductionManifestData
     ),
     (
         ReproductionAttempt,
         ReproductionAttemptId,
-        "reproduction_attempt"
+        "reproduction_attempt",
+        ReproductionAttemptData
     ),
     (
         ExternalMappingReceipt,
@@ -585,68 +588,7 @@ impl AuthoritySnapshot {
                     ));
                 }
             }
-            match record {
-                AuthorityRecord::ProjectRevisionPolicy(body) => {
-                    diagnostics.extend(super::policy::validate_policy_data(&body.semantics));
-                }
-                AuthorityRecord::RevisionScheme(body) => {
-                    diagnostics.extend(super::scheme::validate_scheme_data(&body.semantics));
-                }
-                AuthorityRecord::ActorIdentity(body) if body.semantics.stable_name.is_empty() => {
-                    diagnostics.push(diag(
-                        "revision_actor_identity_empty",
-                        "actor stable name cannot be empty",
-                    ));
-                }
-                AuthorityRecord::Effectivity(body) => {
-                    diagnostics.extend(super::effectivity::validate_effectivity(&body.semantics));
-                }
-                AuthorityRecord::ProjectSeedReceipt(body) => {
-                    let actual: BTreeSet<_> = body
-                        .semantics
-                        .items
-                        .iter()
-                        .map(|item| item.key.as_str())
-                        .collect();
-                    let expected: BTreeSet<_> = super::REVISION_SEED_KEYS.iter().copied().collect();
-                    if actual != expected || body.semantics.items.len() != expected.len() {
-                        diagnostics.push(diag(
-                            "revision_seed_receipt_inventory_mismatch",
-                            "seed receipt must itemize exactly the registered revision keys",
-                        ));
-                    }
-                }
-                AuthorityRecord::EngineeringChange(body) => {
-                    diagnostics.extend(super::change::validate_engineering_change(&body.semantics));
-                }
-                AuthorityRecord::RevisionReservation(body) => {
-                    diagnostics.extend(super::reservation::validate_revision_reservation(
-                        &body.semantics,
-                    ));
-                }
-                AuthorityRecord::WaiverDeparture(body) => {
-                    diagnostics
-                        .extend(super::departure::validate_waiver_departure(&body.semantics));
-                }
-                AuthorityRecord::DeviationDeparture(body) => {
-                    diagnostics.extend(super::departure::validate_deviation_departure(
-                        &body.semantics,
-                    ));
-                }
-                AuthorityRecord::LegacyRevisionFactMapping(body) => {
-                    diagnostics.extend(super::departure::validate_legacy_mapping(
-                        self,
-                        &body.semantics,
-                    ));
-                }
-                record if super::impact::REV_I05_RECORD_FAMILIES.contains(&record.kind()) => {
-                    diagnostics.extend(super::impact_analysis::validate_rev_i05_record(record));
-                }
-                record if super::release::REV_I06_RECORD_FAMILIES.contains(&record.kind()) => {
-                    diagnostics.extend(super::release_transaction::validate_rev_i06_record(record));
-                }
-                _ => {}
-            }
+            diagnostics.extend(super::authority_validation::validate_record(self, record));
         }
         diagnostics.extend(super::role::validate_role_records(self));
         diagnostics.extend(super::approval::validate_attestations(self));
