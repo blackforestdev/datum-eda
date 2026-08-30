@@ -34,6 +34,9 @@ fn drain_until(registry: &mut TerminalSessionRegistry, lane: &mut TerminalLaneSt
 
 #[test]
 fn vintr_byte_interrupts_foreground_pipeline_and_shell_survives() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!("datum-terminal-vintr-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
@@ -54,6 +57,9 @@ fn vintr_byte_interrupts_foreground_pipeline_and_shell_survives() {
 
 #[test]
 fn vsusp_bg_fg_and_vintr_follow_native_shell_job_control() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!("datum-terminal-vsusp-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
@@ -78,6 +84,9 @@ fn vsusp_bg_fg_and_vintr_follow_native_shell_job_control() {
 
 #[test]
 fn tiocswinsz_reaches_the_foreground_shell_without_an_explicit_signal() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!("datum-terminal-winch-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
@@ -96,6 +105,9 @@ fn tiocswinsz_reaches_the_foreground_shell_without_an_explicit_signal() {
 
 #[test]
 fn stubborn_owned_session_escalates_to_kill_and_verifies_empty() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!("datum-terminal-escalate-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
@@ -144,6 +156,9 @@ fn stubborn_owned_session_escalates_to_kill_and_verifies_empty() {
 
 #[test]
 fn terminal_session_terminate_reports_exact_signal_exit() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root =
         std::env::temp_dir().join(format!("datum-terminal-terminate-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
@@ -189,6 +204,9 @@ fn terminal_session_terminate_reports_exact_signal_exit() {
 
 #[test]
 fn new_session_descendant_is_not_signaled_and_cannot_hold_terminal_open() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!(
         "datum-terminal-setsid-boundary-{}",
         std::process::id()
@@ -229,6 +247,9 @@ fn new_session_descendant_is_not_signaled_and_cannot_hold_terminal_open() {
 
 #[test]
 fn escaped_session_holder_cannot_truncate_owned_final_output_tail() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root =
         std::env::temp_dir().join(format!("datum-terminal-setsid-tail-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
@@ -277,6 +298,9 @@ fn escaped_session_holder_cannot_truncate_owned_final_output_tail() {
 
 #[test]
 fn termination_cancels_backpressured_input_and_closes_every_master() {
+    let _serial = super::P06_REAL_PTY_TEST_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
     let root = std::env::temp_dir().join(format!(
         "datum-terminal-writer-cancel-{}",
         std::process::id()
