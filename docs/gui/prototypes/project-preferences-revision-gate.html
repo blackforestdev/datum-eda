@@ -156,11 +156,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <div class="ctl"><div class="sel">Don't track revisions</div></div>
       </div>
       <div class="prov"><b>seeded from</b> your global default for new projects · copy-once at creation · this project owns it now</div>
-      <div class="ghead">Guidance</div>
-      <div class="row">
-        <div class="lbl"><b>Suggest revision setup</b>
-          <span>Show a dismissible note if this project starts producing controlled output.</span></div>
-        <div class="ctl"><div class="sel">On</div></div>
+      </div>
       </div>
     </div>
   </div>
@@ -182,30 +178,9 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 </div>
 
 <div class="hero"><b>The gate is the choice, not a recurring interruption.</b> Adopting <span class="k">AuthorizedChangeRequired</span> is the second you spend. After that the project behaves the way you asked it to, and the engine never asks again. <b>Under the other two states the engine has no gate to apply at all</b> — it is not suppressed or overridden, it simply has nothing to enforce.</div>
-<div class="sec">3 · THE NAG — VISIBLE, HONEST, IGNORABLE</div>
-<div class="lead">Datum may notice a project is heading somewhere that usually wants control. It says so once, where you can see it, and it never blocks the canvas.</div>
-<div class="two">
-<div>
-<div class="nag">
-  <div class="nagbar"><span class="i">◆</span><span class="tx">This project has an assembly drawing and a released BOM. Consider turning on revision tracking.</span>
-    <span class="btn"><span class="b1">Set up</span><span>Dismiss</span></span></div>
-  <div class="canvasmock">board canvas · unaffected · fully interactive<br>no modal · no focus steal · no disabled tools</div>
-</div>
-<div class="cap"><b>Where it lives:</b> a strip in the project surface, not over the canvas. <b>Dismiss</b> means dismissed — it does not return for that project unless the user opens Revision preferences themselves.</div>
-</div>
-<div>
-<div class="win">
-  <div class="wt">what triggers it</div>
-  <div class="opt"><div style="width:13px"></div><div><div class="lab">A fabrication or assembly output was generated</div>
-    <div class="sub">Something left the building; that is usually when people wish they had a revision.</div></div></div>
-  <div class="opt"><div style="width:13px"></div><div><div class="lab">A drafting standard was adopted</div>
-    <div class="sub">Adopting a standard signals documentation control is expected.</div></div></div>
-  <div class="opt"><div style="width:13px"></div><div><div class="lab">A second person opened the project</div>
-    <div class="sub">Shared work is where "which version is this" starts costing money.</div></div></div>
-</div>
-<div class="cap">Deliberately not triggers: component count, board complexity, elapsed time, or number of edits. A big quick-and-dirty board is still quick and dirty.</div>
-</div>
-</div>
+<div class="sec">3 · GUIDANCE STRIP — SUPERSEDED BY PM-038</div>
+<div class="law" style="border-left:2px solid var(--err);background:#1a1113"><b style="color:var(--err)">⊘ Withdrawn (2026-08-30).</b> This section proposed a Project-surface strip suggesting revision setup when a project began producing controlled output. It is superseded. It carried an unresolved conflict with PM-034's "never blocks, <i>prompts</i>, or delays" clause, and more importantly it pushed revision toward the user rather than waiting to be asked. <b>Adopting revision control is a deliberate decision the user makes in Project preferences, and nothing outside that pane advertises it.</b> Opening Preferences does not itself adopt revision control — the row below reads <i>Don't track revisions</i> until the user changes it.</div>
+<div class="cap">The triggers previously listed here — an output was generated, a drafting standard was adopted, a second person opened the project — are retained only as retired reasoning. None of them causes Datum to suggest anything.</div>
 
 <div class="sec">4 · WHERE THE SETTING COMES FROM, AND WHO OWNS IT</div>
 <div class="lead">Global Preferences seeds a new project once. The project then owns its copy, and changing your global default never reaches back into work already underway.</div>
