@@ -6546,31 +6546,16 @@
         "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-revision-recovery-gui-removal-20260831",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ef368cb",
-        "claimed_at": "2026-08-31T07:26:47Z",
-        "heartbeat_at": "2026-08-31T16:12:47Z",
-        "expires_at": "2026-09-01T00:12:47Z",
-        "scope": [
-          "RVR-I01 unmanaged default Revision GUI removal",
-          "GUI regression and running-app proof",
-          "Active Frontier and tracker evidence"
-        ]
-      },
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-I01",
+        "canonical_next_step_id": "RVR-O01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6653,7 +6638,7 @@
           {
             "id": "RVR-I01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Remove fictional runtime Revision records and unmanaged default Revision surfaces, with bounded regression proof that real unmanaged library, schematic, and PCB authoring remains readable and prompt-free.",
             "depends_on": ["RVR-A03"],
             "requirement_refs": [
@@ -6662,7 +6647,12 @@
                 "marker": "RVR-I01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "9ee5a0f"
+              }
+            ]
           },
           {
             "id": "RVR-O01",
