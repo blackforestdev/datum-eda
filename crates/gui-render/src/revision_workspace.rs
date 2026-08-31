@@ -1,12 +1,6 @@
 use super::*;
 use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface};
 
-#[path = "revision_workspace/navigator.rs"]
-mod navigator;
-pub(crate) use navigator::{
-    render_navigator, render_navigator_context_menu, render_navigator_inspector,
-};
-
 pub(super) fn render_evidence_inspector(
     state: &ReviewWorkspaceState,
     rect: RectPx,

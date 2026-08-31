@@ -105,18 +105,6 @@ pub(super) fn render_menu_bar(
             hit_regions,
         );
     }
-    revision_workspace::render_navigator_context_menu(
-        state,
-        RectPx {
-            x: layout.top_menu_bar.x,
-            y: layout.top_menu_bar.y,
-            width: layout.top_menu_bar.width,
-            height: layout.status_bar.y + layout.status_bar.height,
-        },
-        menu_overlay_quads,
-        menu_overlay_text_runs,
-        hit_regions,
-    );
 }
 
 fn render_menu_dropdown(

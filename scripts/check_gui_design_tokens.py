@@ -12,47 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 DESIGN_BOOK = ROOT / "docs/gui/VISUAL_LANGUAGE.md"
 RUST_TOKENS = ROOT / "crates/gui-render/src/design_tokens.rs"
 BOARD_EDITOR_PROTOTYPE = ROOT / "docs/gui/prototypes/board-editor.html"
-REVISION_IMPLEMENTATION_PLAN = ROOT / "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md"
+REVISION_RECOVERY_DECISION = (
+    ROOT / "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md"
+)
 REVISION_RENDERER = ROOT / "crates/gui-render/src/revision_workspace.rs"
-REVISION_RENDERER_MODULES = ROOT / "crates/gui-render/src/revision_workspace"
-
-# Owner-approved REV-C06 semantics that must exist in both the controlling
-# prototype and the production renderer. Pixel goldens catch geometry/raster
-# drift; these pins catch semantic drift that can otherwise remain pixel-clean
-# after a coordinated but unauthorized text/state change.
-REVISION_PROTOTYPE_CONTRACTS = {
-    "docs/gui/prototypes/revision-ux-shell-study.html": (
-        "Design",
-        "Schematic · sensor-node",
-        "Board · main",
-        "All Sheets",
-        "Changes",
-        "1 draft",
-        "BL-…-24-01 🔒",
-    ),
-    "docs/gui/prototypes/revision-ux-impact-study.html": (
-        "Impact · CHG-0031",
-        "Evaluation IMP-0009 · vs BL-2026-08-24-01",
-        "1 · lib footprint SOIC-8 rev 5→6",
-        "2 ⚠ · witness paths recorded",
-        "3 ✓ · proof: outside sensitivity",
-        "? 1 — evaluator missing: 3D-model edge",
-        "Filters — word + glyph, never color alone",
-    ),
-    "docs/gui/prototypes/revision-ux-release-study.html": (
-        "Preparing",
-        "Ready for Review",
-        "In Approval",
-        "Ready to Release",
-        "exits: Stale · Rejected · Cancelled",
-    ),
-    "docs/gui/prototypes/revision-ux-evidence-study.html": (
-        "BL-2026-08-24-01 🔒",
-        "✓ ByteIdentical · 12/12 outputs",
-        "signature valid · signer authorized ✓ (separate fact)",
-        "manifest in Inspector",
-    ),
-}
+REVISION_SIDE_PANELS = ROOT / "crates/gui-render/src/side_panels.rs"
+REVISION_BOOTSTRAP = ROOT / "crates/gui-app/src/app_bootstrap.rs"
+REVISION_NAVIGATOR_MODULE = ROOT / "crates/gui-render/src/revision_workspace/navigator.rs"
 
 REQUIRED_DOC_TOKENS = {
     "color.canvas": "CANVAS",
@@ -247,51 +213,33 @@ def parse_rust_numeric_constants(module: str) -> dict[str, float]:
     return values
 
 
-def check_revision_prototype_conformance() -> None:
-    plan = REVISION_IMPLEMENTATION_PLAN.read_text()
-    production = "\n".join(
-        [REVISION_RENDERER.read_text()]
-        + [
-            path.read_text(encoding="utf-8")
-            for path in sorted(REVISION_RENDERER_MODULES.rglob("*.rs"))
-        ]
-    )
+def check_revision_recovery_boundary() -> None:
+    decision = REVISION_RECOVERY_DECISION.read_text()
+    renderer = REVISION_RENDERER.read_text()
+    side_panels = REVISION_SIDE_PANELS.read_text()
+    bootstrap = REVISION_BOOTSTRAP.read_text()
     failures: list[str] = []
-    for relative_path, required_markers in REVISION_PROTOTYPE_CONTRACTS.items():
-        prototype = ROOT / relative_path
-        if relative_path not in plan:
-            failures.append(f"REV-I10 plan does not cite {relative_path}")
-            continue
-        prototype_text = prototype.read_text()
-        for marker in required_markers:
-            if marker not in prototype_text:
-                failures.append(f"{relative_path} missing approved marker {marker!r}")
-
-    production_markers = (
-        "DESIGN",
-        "Schematic · sensor-node",
-        "Board · main",
-        "All Sheets  5",
-        "Changes  1 draft",
-        "Baselines  BL-…-24-01",
-        "Impact · CHG-0031",
-        "Evaluation IMP-0009 · vs BL-2026-08-24-01",
-        "1 · lib footprint SOIC-8 rev 5→6",
-        "Affected !",
-        "3 ✓ · proof: outside sensitivity",
-        "? 1 — evaluator missing: 3D-model edge",
-        "Graph scope",
-        "Filters — ⚠ affected  ·  ✓ unaffected  ·  ? unknown  ·  → required action",
-        "Preparing → Ready for Review → In Approval → Ready to Release",
-        "exits: Stale · Rejected · Cancelled",
-        "Configuration BL-2026-08-24-01 · LOCKED",
-        "Reproduction ✓ ByteIdentical · 12/12 outputs",
-        "Authenticity signature valid · signer authorized ✓ (separate fact)",
-        "Immutable manifest",
-    )
-    for marker in production_markers:
-        if marker not in production:
-            failures.append(f"production Revision UI missing approved marker {marker!r}")
+    for marker in (
+        "An unmanaged Project has no permanent Revision group",
+        "Hard-coded fictional Change, baseline, Release",
+        "Remove from production presentation",
+    ):
+        if marker not in decision:
+            failures.append(f"PM-038 recovery decision missing boundary {marker!r}")
+    if REVISION_NAVIGATOR_MODULE.exists():
+        failures.append("withdrawn Revision Navigator renderer still exists")
+    if "render_navigator(" in side_panels:
+        failures.append("ordinary side panels still render the Revision Navigator")
+    if 'long = "revision-surface"' in bootstrap:
+        failures.append("product-facing Revision boot surface flag was restored")
+    for marker in (
+        'long = "fixture-revision-surface"',
+        "--fixture-revision-surface requires --visual-test",
+    ):
+        if marker not in bootstrap:
+            failures.append(f"legacy Revision render fixture missing fence {marker!r}")
+    if "render_navigator" in renderer:
+        failures.append("Revision pane renderer re-exports withdrawn Navigator behavior")
     if failures:
         fail("; ".join(failures))
 
@@ -337,7 +285,7 @@ def fail(message: str) -> None:
 
 
 def main() -> None:
-    check_revision_prototype_conformance()
+    check_revision_recovery_boundary()
     doc_tokens = parse_doc_tokens()
     doc_type_tokens = parse_doc_type_tokens()
     doc_spacing_tokens = parse_doc_numeric_tokens("sp")
@@ -460,7 +408,7 @@ def main() -> None:
         f"{len(REQUIRED_TYPE_TOKENS)} type tokens, "
         f"{len(REQUIRED_SPACING_TOKENS) + len(REQUIRED_RADIUS_TOKENS)} spacing/radius tokens, "
         f"{len(PROTOTYPE_ROOT_TOKEN_MAP)} prototype vars, "
-        f"{len(REVISION_PROTOTYPE_CONTRACTS)} Revision prototypes, "
+        "PM-038 Revision recovery boundary, "
         f"{len(TEXT_TOKENS) * len(SURFACE_TOKENS)} contrast checks, copper/chrome "
         "literal consumption verified)."
     )
