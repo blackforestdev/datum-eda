@@ -2,20 +2,24 @@
 
 > **Status:** Governed planning contract; no execution is authorized.
 >
-> **Trackers:** `dat-shared-units-engine-build-915` and
-> `dat-global-preferences-engine-build-vge`.
+> **Trackers:** `dat-shared-units-engine-build-915`,
+> `dat-global-preferences-engine-build-vge`,
+> `dat-shared-units-surface-parity-s9x`, and
+> `dat-global-preferences-completion-f84`.
 >
 > **Authority:** Product Mechanics 037, the ratified V1 descriptor catalog,
-> GP-C04 storage/recovery contract, GP-C05 interaction contract, and the shared
-> Units requirement. This plan decomposes those contracts; it cannot change
-> them.
+> GP-C04 storage/recovery contract, GP-C05 interaction contract, Product
+> Mechanics 039, and the shared Units requirement. This plan decomposes those
+> contracts; it cannot change them.
 
 ## 1. Authorization law
 
-This plan places two programs on the Frontier:
+This plan places four serial boundaries on the Frontier:
 
-1. the cross-cutting shared Units engine; then
-2. the Global Preferences Engine that consumes it.
+1. the cross-cutting shared Units exact core;
+2. the Global Preferences foundation plus first real wgpu vertical slice;
+3. shared Units surface parity through that real Preferences surface; and
+4. complete Global Preferences stabilization and production acceptance.
 
 Every execution slice has its own immediately preceding owner-decision step.
 Completing one slice grants no authority for the next one. Product Mechanics
@@ -52,13 +56,12 @@ Every Preferences-only proof must also demonstrate zero Project/design mutation
 except the explicit Q5 new-Project seed transaction, and uninterrupted Design
 authoring throughout recovery, refusal, setup, and management states.
 
-## 3. Cross-cutting shared Units prerequisite
+## 3. Shared Units exact core
 
 The Units engine is not a Preferences module. It is an engine-owned service used
 by design storage, resolvers, checks, GUI, CLI, MCP, import/export, and later
-revision/publish consumers. `dat-shared-units-engine-build-915` therefore has
-its own Frontier item and must production-accept before the Preferences build
-can begin.
+Revision/Publish consumers. `dat-shared-units-engine-build-915` owns only the
+exact core required before a real Preferences slice.
 
 <!-- REQ:SHARED-UNITS-ENGINE:UNIT-I00 -->
 <!-- OWNER:SHARED-UNITS-ENGINE:UNIT-I00:UNIT-I00 -->
@@ -83,166 +86,119 @@ round trips; precision changes with identical stored bytes; explicit valid
 cross-system overrides; ambiguous/malformed token refusal; deterministic
 locale/path-independent results; and source-health/dependency gates.
 
-<!-- REQ:SHARED-UNITS-ENGINE:UNIT-I02 -->
-<!-- OWNER:SHARED-UNITS-ENGINE:UNIT-I02:UNIT-I02 -->
+## 4. Global Preferences foundation and first real GUI slice
+
+`dat-global-preferences-engine-build-vge` depends on UNIT-I01, not on Units
+surface parity. Its first product result is one functional manual GUI slice,
+not an engine/CLI/MCP-only system.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F00 -->
+<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F00:GP-F00 -->
+### GP-F00 — authorize typed foundation only
+
+Review UNIT-I01 evidence, module boundaries, active catalog digest, no-new-
+dependency posture, and focused proof. Approval may authorize only GP-F01.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F01 -->
+### GP-F01 — descriptors, sources, controls, and resolver
+
+Implement stable `PreferenceKey`, active subsystem descriptors, typed classes
+and sources, validation, AuthorityRelease, Recommend/Constrain/Pin/Lock, Q4
+resolution, conflicts, retained values, and one pure explanation result.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F02 -->
+<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F02:GP-F02 -->
+### GP-F02 — authorize minimal durable repository only
+
+Review GP-F01 evidence before authorizing GP-F03.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F03 -->
+### GP-F03 — durable repository foundation
+
+Implement expected-generation single-writer persistence, immutable generations,
+exact unknown preservation, typed migration, backup, reversible restore, and
+preserved-unreadable recovery sufficient for real visible rows. No provider or
+network service is included.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F04 -->
+<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F04:GP-F04 -->
+### GP-F04 — authorize first real wgpu vertical slice only
+
+Review the resolver/repository evidence and then-current Claude target before
+authorizing GP-F05.
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F05 -->
+### GP-F05 — Global Preferences menu and functional wgpu slice
+
+Implement `Edit > Preferences > Global Preferences…` with real registered and
+persisted rows, search, resolver-owned explanation, explicit Global scope,
+keyboard/accessibility, ordinary/narrow states, and zero Project mutation. No
+hard-coded catalog, empty Revision category, Project Preferences, setup flow,
+or full-production claim is included.
+
+## 5. Shared Units surface parity through real Preferences
+
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I02 -->
+<!-- OWNER:SHARED-UNITS-SURFACE-PARITY:UNIT-I02:UNIT-I02 -->
 ### UNIT-I02 — authorize surface parity only
 
-After UNIT-I01 evidence is committed, owner review may authorize only UNIT-I03.
+After GP-F05 exists, review exact-core and real-surface evidence before
+authorizing UNIT-I03.
 
-<!-- REQ:SHARED-UNITS-ENGINE:UNIT-I03 -->
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03 -->
 ### UNIT-I03 — GUI, CLI, MCP parity and Units production acceptance
 
-Route GUI controls, CLI values, and MCP typed fields through the same service;
-delete or refuse rival conversion paths. Exercise all six ratified
-`datum.units.*` descriptors without placing their ownership inside the Units
-service.
+Route the six ratified `datum.units.*` descriptors, GUI controls, CLI values,
+MCP fields, import/export, and real-Project behavior through the exact service.
+Delete or refuse rival conversion paths without moving descriptor ownership
+into Units.
 
-**Exit proof:** generated surface inventory, byte-identical typed semantic
-answers across GUI/CLI/MCP, real native Project formatting/parsing, import and
-export boundary checks, accessibility for unit controls and refusals, guarded
-workspace tests, independent source-health review, and explicit owner Units
-production acceptance. This does not authorize Preferences execution.
+## 6. Global Preferences completion
 
-## 4. Global Preferences ordered program
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM00 -->
+<!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM00:GP-CM00 -->
+### GP-CM00 — authorize Global completion only
 
-`dat-global-preferences-engine-build-vge` hard-depends on completed shared Units
-production acceptance. Its slices are serial at the acceptance boundary.
+Review GP-F05 and UNIT-I03 before authorizing GP-CM01.
 
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I00 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I00:GP-I00 -->
-### GP-I00 — authorize typed core only
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM01 -->
+### GP-CM01 — complete and stabilize the Global surface
 
-Review the completed Units evidence, intended module boundaries, descriptor
-catalog digest, no-new-dependency posture, and focused proof plan. Approval may
-authorize only GP-I01.
+Expand through the full active catalog, managed/refused states, unknown and
+retired identities, recovery/migration/restore, setup/replay, Start page,
+search/provenance, narrow layouts, and accessibility. Revision descriptors and
+empty categories remain absent.
 
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I01 -->
-### GP-I01 — descriptors, sources, controls, and resolver
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02 -->
+<!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02:GP-CM02 -->
+### GP-CM02 — authorize product-surface and seed parity only
 
-Implement stable `PreferenceKey`, subsystem-owned versioned descriptors, typed
-classes/sources, validation, AuthorityRelease, Recommend/Constrain/Pin/Lock, Q4
-eligibility/control/value stages, typed conflicts, retained displaced values,
-and the pure resolver/explanation result. Defaults and absences are never
-serialized as user contributions.
+Review GP-CM01 before authorizing GP-CM03.
 
-**Exit proof:** all 54 active descriptors register exactly once; class/source
-eligibility matrices; Capability portable/Project refusal; absence and equal-
-authority conflict tests; release/revocation and retained-value tests; complete
-typed explanation goldens; and no Project/store/UI implementation.
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM03 -->
+### GP-CM03 — engine, CLI, MCP, and Project seed parity
 
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I02 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I02:GP-I02 -->
-### GP-I02 — authorize repository and migration only
+Expose one typed operation/query/refusal/proposal family through engine, CLI,
+and MCP with identical explanation semantics and no private writer. Implement
+the existing ratified ProjectPolicySeed snapshot/receipt seam with no live
+following; excluded or undefined seed schemas remain absent.
 
-After GP-I01 evidence is committed, owner review may authorize only GP-I03.
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM04 -->
+<!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM04:GP-CM04 -->
+### GP-CM04 — authorize production acceptance only
 
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I03 -->
-### GP-I03 — persistence, exchange, migration, and recovery
+Approve the exact durable real-Project corpus and resource budgets before
+authorizing GP-CM05.
 
-Implement GP-C04's expected-generation single writer, immutable staged
-generations, sole head promotion, current plus two validated predecessors,
-exact unknown envelopes, downgrade/platform preservation, typed portable
-planning/collision, migration receipts, exact backup, previewed reversible
-restore, and preserved-unreadable recovery. No provider or network service is
-included.
-
-**Exit proof:** interruption at every durability boundary; stale writer and
-stale preview refusal; corrupt/truncated store preserved without repair in
-place; unknown bytes survive every write path; Capability and managed portable
-refusal; no unchosen migration substitution; alias uniqueness; reversible
-restore; audit/redaction completeness; offline operation; zero Project/design
-mutation; and authoring continuity.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I04 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I04:GP-I04 -->
-### GP-I04 — authorize Project genesis seam only
-
-After GP-I03 evidence is committed, owner review may authorize only GP-I05.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I05 -->
-### GP-I05 — copy-once ProjectPolicySeed and durable receipt
-
-Implement `CaptureProjectSeedSnapshot` and the one Project-authority genesis
-operation. Only `ProjectPolicySeed` descriptors may cross. An eligible explicit
-`datum.projects.unit_policy_seed` aggregate wins; otherwise the six typed Units
-seeds compose `ProjectDisplayUnits`. Presentation, Capability, and
-WorkflowDefault never cross.
-
-**Exit proof:** atomic all-or-nothing copy, durable itemized receipt for values,
-sources, omissions, refusals, generations, and aggregate/composed path;
-concurrent preference change independence; failure-after-Project-commit
-independence; existing Project non-following; and refusal of every non-seed
-class. The unspecified adopted-standard and watermark seed schemas remain
-absent.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I06 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I06:GP-I06 -->
-### GP-I06 — authorize product-surface parity only
-
-After GP-I05 evidence is committed, owner review may authorize only GP-I07.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I07 -->
-### GP-I07 — engine, CLI, MCP, and operation/query parity
-
-Expose the approved typed operations, plans, queries, receipts, explanations,
-and refusals through one engine service and the existing canonical verb/native-
-write path. CLI and MCP remain projections and never parse stores or reconstruct
-resolution independently.
-
-**Exit proof:** generated public inventory/parity; identical explanation and
-refusal payload semantics across engine/CLI/MCP; expected-generation fences;
-proposal-only assistant path; search vocabulary for stable/retired identities;
-offline behavior; and no private writer.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I08 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I08:GP-I08 -->
-### GP-I08 — authorize ratified wgpu surface only
-
-After GP-I07 evidence is committed, owner review may authorize only GP-I09 and
-must confirm that the Claude-owned visual commits remain the target.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I09 -->
-### GP-I09 — wgpu Preferences, setup, Start page, and accessibility
-
-Implement the Preferences window exactly against the ratified
-`preferences-window.html` state at `a061fca`, its later catalog-key parity, the
-accessibility/context render at `e2127fa`, the store states at `586eb0d`, and the
-settled guided-setup, Start-page, and Revision carry-forward studies. Search is
-pinned over the settings pane; the real row and one resolver answer remain the
-authority.
-
-**Exit proof:** structured human screenshot parity between the running wgpu app
-and the Claude-owned render at the same viewport/state matrix, followed by
-standing wgpu-to-wgpu goldens. Cross-engine pixel subtraction is not a machine
-oracle. The review covers ordinary/wide/narrow, search/no-match/alias,
-explanation, managed/refused, recovery/migration/restore, setup/replay, Start
-page, revision carry-forward, keyboard-only, reduced motion, color-removed, and
-screen-reader states. Any material target change first requires a Claude-owned
-render and evidence-route reconciliation.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I10 -->
-<!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-I10:GP-I10 -->
-### GP-I10 — authorize real-project production acceptance only
-
-After GP-I09 evidence is committed, owner review may authorize only GP-I11 and
-must approve the exact real-project fixture set and resource budgets.
-
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-I11 -->
-### GP-I11 — migrations, real Projects, and production acceptance
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05 -->
+### GP-CM05 — Global Preferences production acceptance
 
 Run clean-install, upgrade, downgrade, corrupt-store, portable collision,
 backup/restore, Project genesis, existing-Project stability, managed/offline,
-surface-parity, accessibility, and performance/resource proofs on durable real
-native Projects. Independently audit every PM-037 clause and GP-C06 exclusion.
+surface-parity, accessibility, performance/resource, negative, and independent
+PM-037/PM-039 proofs on durable real native Projects.
 
-**Exit proof:** all prior slice evidence addressable; guarded locked/offline
-workspace tests and strict all-target Clippy; all dependency, source-health,
-mutation/resolver, parity, evidence, and project-state gates; deterministic
-restore/migration rollback; screenshot review in the running app; negative and
-fault-injection corpus; zero accidental Project/design writes; owner production
-acceptance; and no implicit successor selection.
-
-## 5. Ratification exclusions remain blocked
+## 7. Ratification exclusions remain blocked
 
 These are not implementation backlog hidden inside a slice:
 
@@ -257,7 +213,7 @@ These are not implementation backlog hidden inside a slice:
 An anchor, searchable row, or implementation convenience cannot satisfy an
 unblock requirement.
 
-## 6. Standing gates and boundaries
+## 8. Standing gates and boundaries
 
 Every closure commit runs the affected focused tests plus dependency authority,
 source health, cargo-resource policy, specification governance/parity, evidence

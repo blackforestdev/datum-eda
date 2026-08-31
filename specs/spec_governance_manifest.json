@@ -130,10 +130,15 @@
       "progress_anchor": "PRODUCT-REVISION-ENGINE",
       "notes": "Bounded REV-I00 through REV-I12 implementation, migration, conformance, audit, reproduction, and production-acceptance plan. Planning only: execution remains blocked on the Global Preferences specification and explicit owner authorization."
     },
+    "specs/PROJECT_PREFERENCES_SPEC.md": {
+      "class": "governed",
+      "progress_anchor": "PROJECT-PREFERENCES-SPEC",
+      "notes": "PM-039 doorway and authority baseline plus PPS-C01 through PPS-C04 work contract. Exact Project setting inventory and protected visual truth remain incomplete; no implementation or Revision integration is authorized."
+    },
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
-      "notes": "GP-C07 bounded shared-Units and Global Preferences implementation, migration, recovery, conformance, accessibility, real-project, visual, and production-acceptance plan. Every execution slice has a separate owner gate; no implementation or dependency is authorized by placement."
+      "notes": "PM-039-reconciled four-boundary plan: exact Units core, Global Preferences foundation plus first real wgpu slice, Units parity through that surface, then full Global completion. Every execution slice has a separate owner gate; no implementation or dependency is authorized by placement."
     },
     "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
       "class": "governed",
@@ -844,6 +849,12 @@
       "controlling": true,
       "progress_anchor": "REVISION-PRODUCT-RECOVERY",
       "notes": "Owner-ratified corrective doctrine rejecting REV-I10, superseding permanent unmanaged Revision presentation, quarantining unvalidated implementation breadth, deferring Revision preference descriptors, and selecting a bounded manual-first recovery without authorizing runtime edits or dependencies."
+    },
+    "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md": {
+      "class": "doctrine",
+      "controlling": true,
+      "progress_anchor": "REVISION-PRODUCT-RECOVERY",
+      "notes": "Owner-ratified conventional settings entry and Preferences-first delivery doctrine: explicit Global/Project menu commands, separate authority, no Navigator configuration, exact Units core before an early real Global GUI slice, and Project Preferences before Revision integration."
     },
     "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
       "class": "governed",

@@ -1,7 +1,8 @@
 # Product Mechanics 037: Global Preferences Engine
 
 Status: ratified doctrine; Revision visibility/default clauses superseded in
-part by Product Mechanics 038
+part by Product Mechanics 038; delivery sequence amended by Product Mechanics
+039
 
 ## Context
 
@@ -42,6 +43,14 @@ semantically by GUI, CLI, and MCP. Search covers current labels/descriptions,
 stable keys, retired or alternate names, planned rows, and read-only Project-
 policy rows. Stable and retired names are searchable vocabulary, not merely
 migration machinery.
+
+Product Mechanics 039 controls delivery and entry. Global Preferences is
+reached through `Edit > Preferences > Global Preferences…`; Project Preferences
+is a separate command and authority. The first functional wgpu Global slice is
+built with the minimum real resolver and repository foundation before full
+surface parity and production acceptance. Exact Units core remains a
+prerequisite, but Units Preferences-GUI parity is proved through the real
+Global window and cannot hard-block creation of that window.
 
 After Product Mechanics 038 defers the four Revision descriptors, the initial
 catalog contains 54 active V1 descriptors. Eleven active seed-bearing rows are
