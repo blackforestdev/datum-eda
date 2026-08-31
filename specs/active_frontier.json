@@ -5591,8 +5591,8 @@
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": false,
       "parallel": false,
       "summary": "Implement one cross-cutting engine-owned exact Units service for integer-nanometer storage truth and shared typed format/parse behavior before Global Preferences execution, with every slice separately authorized.",
@@ -5825,7 +5825,19 @@
       "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-rev-i10-navigator-20260830",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "040e0a22ce81b3b5e9404bae1be4f2e8795a0dd6",
+        "claimed_at": "2026-08-31T04:05:04Z",
+        "heartbeat_at": "2026-08-31T04:05:04Z",
+        "expires_at": "2026-08-31T12:05:04Z",
+        "scope": [
+          "REV-I10 owner-directed Navigator activation, single-selection, latency, usable tiling, clipping, layer scrolling, and running-app proof"
+        ]
+      },
       "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
       "dependencies": [
         "dat-product-revision-engine-k9f",
@@ -5837,7 +5849,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I17",
+        "canonical_next_step_id": "REV-I10",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5854,7 +5866,7 @@
           {
             "id": "REV-I00",
             "kind": "owner_decision",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Review the completed Global Preferences policy seam, current implementation baseline, module ownership, dependency posture, real-project fixtures, and proof plan before authorizing the first Product Revision Engine execution slice.",
             "depends_on": [],
             "requirement_refs": [
