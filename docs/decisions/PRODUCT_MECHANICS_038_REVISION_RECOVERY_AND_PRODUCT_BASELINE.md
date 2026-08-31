@@ -125,6 +125,19 @@ on the owner's behalf.
 The owner then selects the next canonical Frontier item, or directs a further
 bounded audit. Approval of the recovered baseline itself selects no successor.
 
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-A05 -->
+When the owner directs a Preferences-first audit, it must reconcile the exact
+implementation order and authority boundary among the application menu entry,
+Global Preferences authority and GUI, Project Preferences, shared Units, and
+Revision configuration/exposure gates. It must identify conflicts and missing
+specification without implementing runtime behavior or editing protected visual
+truth.
+
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-O03 -->
+<!-- OWNER:REVISION-PRODUCT-RECOVERY:RVR-O03:RVR-O03 -->
+The resulting small packet returns to the owner for approval or revision before
+the audit may create or authorize a successor implementation item.
+
 Global Preferences implementation and the shared Units execution remain
 blocked. Their reusable authority primitives are preserved, but Revision
 visibility, default profile, teaching-pin, and onboarding descriptors are
@@ -191,6 +204,17 @@ Preferences, Publish, enterprise, or other product execution and does not
 select the next roadmap item.
 
 <!-- EVIDENCE:REVISION-RECOVERY:RVR-O01-APPROVED -->
+
+On 2026-08-31 the owner reviewed the RVR-A04 roadmap re-entry packet and
+directed the next work exactly as follows:
+`REVISION-RECOVERY-NEXT: audit — reconcile the Preferences-first implementation
+sequence and specify the Global/Project settings doorway before Revision UI
+resumes`. This completes RVR-O02 and authorizes only the bounded RVR-A05
+planning audit. It selects no implementation successor and does not approve a
+menu hierarchy, Preferences mechanism, Project policy behavior, Revision UI,
+dependency, or prototype change.
+
+<!-- EVIDENCE:REVISION-RECOVERY:RVR-O02-PREFERENCES-FIRST-AUDIT -->
 
 ## Dependency and licensing impact
 
