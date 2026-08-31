@@ -6543,18 +6543,34 @@
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+        "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "planned",
-      "authorization": "planning",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-revision-recovery-inventory-20260831",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "7734d87de7e65d2076b35ca6aafe5c9daf08d2e7",
+        "claimed_at": "2026-08-31T07:08:55Z",
+        "heartbeat_at": "2026-08-31T07:08:55Z",
+        "expires_at": "2026-08-31T15:03:55Z",
+        "scope": [
+          "Revision recovery implementation inventory",
+          "Revision runtime and engine path classification",
+          "Active Frontier and evidence traceability"
+        ]
+      },
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-A02",
+        "canonical_next_step_id": "RVR-I01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6590,7 +6606,7 @@
           {
             "id": "RVR-A02",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Have the Claude-owned visual-truth lane mark the permanent-Q1/default-visibility contract superseded and render contextual opt-in Revision behavior while preserving the manual Design workspace.",
             "depends_on": ["RVR-A01"],
             "requirement_refs": [
@@ -6599,21 +6615,40 @@
                 "marker": "RVR-A02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "5635a13"
+              },
+              {
+                "kind": "commit",
+                "revision": "7734d87"
+              }
+            ]
           },
           {
             "id": "RVR-A03",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Inventory every Revision runtime and engine path as retain, rework, quarantine, or remove, including hard-coded GUI data, journal integration, public catalog/query semantics, Project policy gates, and enterprise adapters.",
             "depends_on": ["RVR-A02"],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
                 "marker": "RVR-A03"
+              },
+              {
+                "path": "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
+                "marker": "RVR-A03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:RVR-A03-INVENTORY"
+              }
+            ]
           },
           {
             "id": "RVR-I01",
