@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datum — Revision UX Shell Study</title>
+<title>Datum — Revision · Contextual Entry</title>
 <!-- EVIDENCE: REV-C06 UX visual source of truth, file 1 of 4
      (REV_C06_UX_VISUAL_STUDY_BRIEF.md UX-V1..V3 + coverage index).
      Claude-owned prototype. LAW: every unresolved choice is marked
@@ -108,343 +108,112 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .statusmark[data-state="approved"]{color:#4FA75A}
 .statusmark[data-state="open"]{color:#E0A23A}
 .statusmark[data-state="retired"]{color:#717885}
+
+.sec{font-family:"PlexMono",monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);
+  margin:26px 0 4px;text-transform:uppercase}
+.lead{color:var(--tx2);font-size:12.5px;max-width:1180px;margin-bottom:11px}
+.note{font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);max-width:1180px;
+  line-height:1.75;margin-bottom:8px}
+.law{border-left:2px solid var(--acc);background:var(--s01);padding:11px 15px;max-width:1180px;
+  font-size:12.5px;line-height:1.8;margin-top:10px}
+.law b{color:var(--tx)}
+/* the context menu must escape the rail, as it does in the product */
+.nav{overflow:visible}
+.body{overflow:visible}
+.win{overflow:visible}
+.ctx{z-index:10}
 </style>
-</head>
-<body>
-<div class="wrap">
+</head><style>
+.win{width:1180px;max-width:100%;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+.tbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--s01);border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12.5px}
+.tbar .r{margin-left:auto;font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3)}
+.body{display:flex;min-height:330px}
+.nav{width:224px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0;position:relative}
+.nav .g{font-family:"PlexMono",monospace;font-size:10px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;margin:14px 18px 4px}
+.nav .i{padding:6px 18px;font-size:12.5px;color:var(--tx2)}
+.nav .i.on{background:var(--s02);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
+.canvas{flex:1;background:var(--canvas);position:relative;padding:16px}
+.mono{font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);line-height:1.9}
+.ctx{position:absolute;background:var(--s02);border:1px solid var(--bd-str);border-radius:6px;box-shadow:0 14px 40px rgba(0,0,0,.6);min-width:250px;overflow:hidden}
+.ctx .h{padding:7px 13px;font-family:"PlexMono",monospace;font-size:10px;color:var(--tx3);border-bottom:1px solid var(--bd-sub);letter-spacing:.06em}
+.ctx .m{padding:7px 13px;font-size:12.5px;color:var(--tx2);border-bottom:1px solid var(--bd-sub)}
+.ctx .m:last-child{border-bottom:0}
+.ctx .m.rev{color:var(--tx)}
+.ctx .sep{height:1px;background:var(--bd-str)}
+.gone{border-left:2px solid var(--err);background:#1a1113;padding:12px 16px;max-width:1180px;margin:14px 0;font-size:12.5px;line-height:1.8}
+.gone b{color:var(--err)}
+.keep{border-left:2px solid var(--ok);background:#0f1a12;padding:12px 16px;max-width:1180px;margin:14px 0;font-size:12.5px;line-height:1.8}
+.keep b{color:var(--ok)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1180px;align-items:start;margin-top:12px}
+</style>
+<h1>Datum <b>·</b> revision — contextual entry <span style="font-family:'PlexMono',monospace;font-size:12px;color:var(--tx3)">the Navigator carries design; revision is asked for</span></h1>
+<div style="margin:7px 0 10px"><span class="statusmark" data-state="open">CLAY — supersedes the Q1 permanent-groups contract</span></div>
+<div class="note">RVR-A02. The permanent, default-visible Revision Navigator groups are withdrawn by owner direction. This renders what replaces them: the Design workspace unchanged, and revision reached only when a designer asks for it.</div>
 
-<header class="page">
-  <h1>Datum <b>·</b> Revision UX Shell Study <span style="font-family:var(--mono);font-size:12px;color:var(--tx3);font-weight:400">REV-C06 · file 1 of 4</span></h1>
-<div style="margin:7px 0 11px"><span class="statusmark" data-state="open">◐ PARTIALLY SUPERSEDED · Q1 permanent groups withdrawn 2026-08-30; local doorway still in force</span></div>
-  <div class="sub">Renders UX-V1–V3 of <code>research/documentation-system/REV_C06_UX_VISUAL_STUDY_BRIEF.md</code>
-  (lines 105–322): shell placement and doorways, quiet successor work, and the Change record. The coverage
-  index for all twelve frames lives at the end of this file.</div>
-  <div class="lawbar">⚖<span><b>Every unresolved choice is marked CANDIDATE — NOT APPROVED.</b> Approved
-  facts render as facts: factory profile Sequential Alphanumeric (Legacy) with ISO 19650 selectable ·
-  V2-P provisional reservations · per-CI EngineeringRevision · V9-A document chain · V10-C standing ·
-  output-only Console · optional non-authoritative Git · Changed ≠ Affected ≠ Stale ≠ Orphaned ≠
-  Non-reproducible. No default is implied by ordering or polish.</span></div>
-  <div class="nav"><b>Study set:</b> <a href="revision-ux-shell-study.html">1 · Shell V1–V3</a> · <a href="revision-ux-impact-study.html">2 · Impact V4–V6</a> · <a href="revision-ux-release-study.html">3 · Release V7–V9</a> · <a href="revision-ux-evidence-study.html">4 · Evidence V10–V12</a> — one REV-C06 source of truth in four files.</div>
-</header>
-
-<!-- ================================================================ UX-V1 -->
-<div class="sec-label" id="ux-v1"><span class="n">UX-V1</span><span>Shell placement and entry doorways</span><span class="q">Q1</span><span class="rule"></span></div>
-<div class="cap"><b>Preserved:</b> the existing Navigator/Inspector/pane shell, right-click local entry,
-double-click/Enter open-beside, recursive tiling, one native window. Three doorway candidates are shown. <b style="color:#E5534B">Q1 permanent-groups contract is SUPERSEDED (2026-08-30, owner-directed).</b> Candidate A-amended was owner-approved (recorded 21a1cc1) and its permanent, default-visible Revision Navigator groups are withdrawn: the Navigator carries Design only, and the Revision Engine has no default Navigator presence for any project. The <b>right-click local doorway below remains in force</b> — it is the contextual, opt-in entry. A and B remain as comparative evidence. Superseding render: <code>revision-contextual-entry.html</code>.</div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:388px">
-      <div class="panel-hd"><span>Navigator · candidate Q1-A</span><span class="count">permanent groups</span></div>
-      <div class="trow grp">Design</div>
-      <div class="trow l2">Schematic · sensor-node</div>
-      <div class="trow l2">Board · main</div>
-      <div class="trow grp">Publish</div>
-      <div class="trow l2">All Sheets <span class="meta">5</span></div>
-      <div class="trow grp">Revision</div>
-      <div class="trow l2">Changes <span class="meta">1 draft</span></div>
-      <div class="trow l2 sel">Baselines <span class="meta">BL-…-24-01 🔒</span></div>
-      <div class="trow l2">Releases <span class="meta">RLS-0007 🔒</span></div>
-      <div class="trow l2">Controlled Documents <span class="meta">1</span></div>
-      <div class="trow l2">Evidence <span class="meta">12 records</span></div>
-      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:6px 11px 10px">groups exist from project creation — always discoverable, always present even when empty; the cost is permanent chrome a never-releasing project never uses</div>
+<div class="sec">1 · THE DEFAULT WORKSPACE — NO REVISION ANYWHERE</div>
+<div class="lead">A designer opens a project, authors a board, exports fabrication output. The revision engine is running and has no surface.</div>
+<div class="win">
+  <div class="tbar">DOA2526 Datum Workspace<span class="r">Unmanaged · no revision policy adopted</span></div>
+  <div class="body">
+    <div class="nav">
+      <div class="g">Design</div>
+      <div class="i">Schematic · sensor-node</div>
+      <div class="i on">Board · main</div>
+      <div class="g">Publish</div>
+      <div class="i">All Sheets &nbsp;5</div>
     </div>
-    <div class="cell-cap"><b>Q1-A — permanent revision groups.</b> <span class="cand" style="color:var(--tx3);border-color:var(--bd-str)">NOT SELECTED — comparative evidence</span></div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:388px">
-      <div class="panel-hd"><span>Navigator · candidate Q1-B</span><span class="count">appears with first record</span></div>
-      <div class="trow grp">Design</div>
-      <div class="trow l2">Schematic · sensor-node</div>
-      <div class="trow l2">Board · main</div>
-      <div class="trow grp">Publish</div>
-      <div class="trow l2">All Sheets <span class="meta">5</span></div>
-      <div class="trow" style="height:34px;color:var(--tx3);font-size:12px;font-style:normal">— no Revision group yet —</div>
-      <div class="trow grp" style="color:var(--acc)">Revision · appeared at first controlled record</div>
-      <div class="trow l2 sel">Releases <span class="meta">RLS-0007 🔒</span></div>
-      <div class="trow l2">Baselines <span class="meta">1</span></div>
-      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:6px 11px 10px">above: a fresh project — Navigator identical to today's Datum; below: the group materializes when the first controlled record exists (a Draft EngineeringChange can precede the first Release); quietest default, but revision authority is undiscoverable before first use (local right-click remains the doorway)</div>
-    </div>
-    <div class="cell-cap"><b>Q1-B — disclosure on first controlled record.</b> <span class="cand" style="color:var(--tx3);border-color:var(--bd-str)">NOT SELECTED — comparative evidence</span></div>
+    <div class="canvas"><div class="mono">board canvas · full width · no revision chrome<br>no Changes · no Baselines · no Releases · no Controlled Documents · no Evidence<br><br>the Navigator carries design and publish only</div></div>
   </div>
 </div>
-<div style="height:14px"></div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:330px">
-      <div class="panel-hd"><span>Navigator · candidate A-amended — fresh project</span><span class="count">nothing hidden</span></div>
-      <div class="trow grp">Design</div>
-      <div class="trow l2">Schematic · sensor-node</div>
-      <div class="trow l2">Board · main</div>
-      <div class="trow grp">Publish</div>
-      <div class="trow l2">All Sheets <span class="meta">0</span></div>
-      <div class="trow grp">Revision</div>
-      <div class="trow l2" style="color:var(--tx3)">Changes <span class="meta">none — starts at first divergence from a release</span></div>
-      <div class="trow l2" style="color:var(--tx3)">Baselines <span class="meta">none — created by your first release</span></div>
-      <div class="trow l2" style="color:var(--tx3)">Releases <span class="meta">none — issue your first release to begin</span></div>
-      <div class="trow l2" style="color:var(--tx3)">Controlled Documents <span class="meta">none — designate a document for control</span></div>
-      <div class="trow l2" style="color:var(--tx3)">Evidence <span class="meta">none — recorded by checks and outputs</span></div>
-      <div class="trow" style="font-size:11px;color:var(--tx3);white-space:normal;height:auto;padding:5px 11px 9px">full taxonomy always visible and expanded; every empty row states what creates its first record — the engine's true structure teaches itself from day one</div>
-    </div>
-    <div class="cell-cap"><b>Q1-A-amended — permanent groups + informative empty states.</b> <span class="cand" style="color:var(--rel);border-color:#3B6E45;border-style:solid">✓ OWNER-APPROVED · Q1 disposition</span></div>
-  </div>
-  <div>
-    <div class="card" style="height:330px">
-      <div class="chd">Why the amendment exists <span class="m">owner rationale, 2026-08-26</span></div>
-      <div style="font-size:12.5px;color:var(--tx2);line-height:1.75">Hiding structure creates technical
-      debt for the unaware designer: revision machinery discovered late is retrofitted onto an unmanaged
-      mess. The Navigator is an honest projection of what the engine actually tracks — the same value
-      that puts <span class="mono" style="font-size:11px">⊘ UNALLOCATED</span> on a title block instead
-      of hiding the field.</div>
-      <div style="font-size:11.5px;color:var(--tx3);line-height:1.7;margin-top:9px">Empty rows are
-      informative, never blank; nothing collapses by default; nothing reveals-on-first-record. A future
-      presentation preference may let an org or user hide or collapse the groups — policy over the same
-      engine truth, deferred to the Global Preferences specification.</div>
-    </div>
-  </div>
-</div>
-<div style="height:14px"></div>
-<div class="grid2">
-  <div>
-    <div class="card" style="height:270px;position:relative">
-      <div class="chd">Local doorway — both candidates <span class="m">right-click a selected subject</span></div>
-      <div class="trow sel" style="border:1px solid var(--bd-sub);border-radius:4px">Board · main <span class="meta mono">ci board:main · successor work</span></div>
-      <div class="lmenu" style="position:absolute;left:150px;top:86px">
-        <div class="mi">Open Beside</div>
-        <div class="mi">Properties</div>
-        <div class="msep"></div>
-        <div class="mi on">Show Impact…</div>
-        <div class="mi">Prepare Revision…</div>
-        <div class="mi">Compare to Baseline…</div>
-        <div class="msep"></div>
-        <div class="mi">View in Change <span class="k">CHG-0031</span></div>
+<div class="gone"><b>Withdrawn:</b> the five permanent Revision rows. They occupied primary navigation for every project, including one that will never issue a revision — which contradicts the ratified invariant that ignoring the revision engine entirely is a first-class workflow, not a degraded one.</div>
+<div class="sec">2 · THE OPT-IN — ASKED FOR ON A SUBJECT</div>
+<div class="lead">Revision is reached by right-clicking the thing you want it about. This doorway is unchanged from the approved Q1 study; it is what remains after the permanent groups are withdrawn.</div>
+<div class="win">
+  <div class="tbar">DOA2526 Datum Workspace<span class="r">right-click on Board · main</span></div>
+  <div class="body">
+    <div class="nav">
+      <div class="g">Design</div>
+      <div class="i">Schematic · sensor-node</div>
+      <div class="i on">Board · main</div>
+      <div class="g">Publish</div>
+      <div class="i">All Sheets &nbsp;5</div>
+      <div class="ctx" style="left:150px;top:96px">
+        <div class="h">ci board:main</div>
+        <div class="m">Open Beside</div>
+        <div class="m">Properties</div>
+        <div class="sep"></div>
+        <div class="m rev">Show Impact…</div>
+        <div class="m rev">Prepare Revision…</div>
+        <div class="m rev">Compare to Baseline…</div>
       </div>
     </div>
-    <div class="cell-cap"><b>V1-entry.</b> contextual verbs on the selected subject; every complex result
-    opens beside the focused pane — never a detached window, never a modal report</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:270px">
-      <div class="panel-hd"><span>Pane field — revision pane tiles like any pane</span></div>
-      <div style="display:flex;gap:1px;background:var(--bd-str);height:214px">
-        <div style="flex:1;background:var(--canvas);display:flex;flex-direction:column">
-          <div style="height:26px;background:var(--bg);border-bottom:1px solid var(--bd-sub);display:flex;align-items:center;padding:0 10px;font-family:var(--mono);font-size:11px;color:var(--tx2)">Board · main</div>
-        </div>
-        <div style="flex:1.2;background:var(--canvas);display:flex;flex-direction:column;box-shadow:inset 0 0 0 1.5px var(--acc)">
-          <div style="height:26px;background:#16181f;border-bottom:1px solid var(--bd-sub);display:flex;align-items:center;gap:7px;padding:0 10px;font-family:var(--mono);font-size:11px;color:var(--tx)">Change · CHG-0031<span style="margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 7px var(--acc)"></span></div>
-          <div style="padding:10px 12px;font-family:var(--mono);font-size:10.5px;color:var(--tx3);line-height:1.9">opened beside · owns focus · participates in<br>tiling, Zoom, and Full-Screen Stage<br>like every Datum pane</div>
-        </div>
-      </div>
-    </div>
-    <div class="cell-cap"><b>V1-pane.</b> the Change pane is an ordinary tiled citizen of the one-window shell</div>
+    <div class="canvas"><div class="mono" style="margin-left:270px">board canvas · unaffected<br>the menu is transient · nothing is added to navigation</div></div>
   </div>
 </div>
+<div class="keep"><b>Retained verbatim from the approved Q1 study:</b> “right-click a selected subject · Open Beside · Properties · Show Impact… · Prepare Revision… · Compare to Baseline…” and “every complex result opens beside.” The doorway was always contextual; only the permanent duplicate in the Navigator is gone.</div>
 
-<div style="height:14px"></div>
-<div class="cap"><b>Design-first: the "hide revision system" preference — owner-directed.</b> Half of all
-users will never release anything, and the engine must serve them by staying out of the way. One
-presentation preference removes the entire revision surface from the shell. It is presentation policy over
-unchanged engine truth: the technical clock (journal, undo, history) keeps recording silently, so the day
-this user wants a baseline or a release, everything is already there — they paid zero ceremony for it.
-Anticipated by the owner-approved Q1 rationale ("policy over the same engine truth, deferred to the Global
-Preferences specification").</div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:330px">
-      <div class="insp-title"><span class="ref">Preferences · Appearance</span><span class="chip">HIDE REVISION SYSTEM — THE TOGGLE</span></div>
-      <div class="sect-hd">Revision system presentation</div>
-      <div class="kv"><span class="k">Show revision system</span><span class="v mono">OFF — hidden by you</span></div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">hides the Revision navigator group and revision rows everywhere; nothing else changes. The engine keeps its journal — undo, history, and on-demand baselines stay available. Restore anytime; nothing is lost either way.</span></div>
-      <div class="sect-hd">What it never does</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px">never blocks or prompts · never disables the journal · never degrades the project · never needs migration to undo</span></div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">also reachable from the shell: right-click the Revision group → Hide revision system</span></div>
-    </div>
-    <div class="cell-cap"><b>the toggle.</b> a deliberate user gesture — hidden by you is not hidden from you</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:330px">
-      <div class="insp-title"><span class="ref">Navigator · design-first session</span><span class="chip">REVISION SYSTEM HIDDEN</span></div>
-      <div class="sect-hd">Design</div>
-      <div class="trow" style="font-size:12px">Schematic · sensor-node</div>
-      <div class="trow" style="font-size:12px">Board · main</div>
-      <div class="sect-hd">Publish</div>
-      <div class="trow" style="font-size:12px">All Sheets <span class="meta">5</span></div>
-      <div class="kv" style="grid-template-columns:1fr;margin-top:8px"><span class="v" style="font-size:11px;color:var(--tx3)">no Revision group, no chips, no prompts — schematic to board to outputs with zero revision ceremony. This is a supported, first-class workflow, not a degraded one.</span></div>
-      <div class="sect-hd">The invariant this render pins</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px;color:var(--rel)">the revision engine never blocks, prompts, or delays authoring — gates exist only where the user asks for certification (issuing a release) or an org opted into a regulated profile</span></div>
-    </div>
-    <div class="cell-cap"><b>the shell with it off.</b> design a board from a schematic; the engine helps silently or not at all</div>
+<div class="sec">3 · WHAT AN OPT-IN COSTS, AND WHAT IT DOESN'T</div>
+<div class="two">
+<div>
+<div class="win" style="width:auto">
+  <div class="tbar">result opens beside<span class="r">transient · closable</span></div>
+  <div class="body" style="min-height:150px">
+    <div class="canvas" style="flex:1"><div class="mono">Board · main &nbsp;|&nbsp; Impact · CHG-0031<br><br>design pane keeps its size and content<br>result pane is a sibling, not an overlay<br>closing it returns the layout</div></div>
   </div>
 </div>
-<div class="cell-cap" style="margin-bottom:14px"><b>Design-first preference.</b> <span class="cand">OWNER-DIRECTED — PENDING RATIFICATION</span> · mechanism belongs to the Global Preferences specification; the never-blocks invariant belongs in the REV-C07 consolidation</div>
-
-<!-- ================================================================ UX-V2 -->
-<div class="sec-label" id="ux-v2"><span class="n">UX-V2</span><span>Quiet successor work</span><span class="rule"></span></div>
-<div class="cap"><b>All five states render approved dispositions — no candidates here.</b> First divergence
-creates identity-free successor work (Q2 disposition); explicit preparation enters the approved V2-P
-provisional reservation; a regulated profile may require authorization before mutation. Announcement
-column shows what assistive technology receives; the Draft Change lifecycle never routes to the Console.</div>
-<div class="grid3">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:250px">
-      <div class="insp-title"><span class="ref">FAB-01 · rev B</span><span class="chip" style="color:var(--rel);border-color:#3B6E45">BASELINE VIEW 🔒</span></div>
-      <div class="kv"><span class="k">Resolving</span><span class="v mono">🔒 BL-2026-08-24-01</span></div>
-      <div class="kv"><span class="k">Issued</span><span class="v mono">rev B · RLS-0007</span></div>
-      <div class="kv"><span class="k">Mutation</span><span class="v mono" style="color:var(--tx3)">refused — immutable baseline</span></div>
-      <div class="sect-hd">Announced</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">polite, on entering the view: "Baseline BL-2026-08-24-01, released, read-only"</span></div>
-    </div>
-    <div class="cell-cap"><b>V2-1 — released baseline view.</b> unmistakably issued, visually immutable</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:250px">
-      <div class="insp-title"><span class="ref">Board · main</span><span class="chip">WORKING</span></div>
-      <div class="kv"><span class="k">Context</span><span class="v mono">successor work · based on BL-…-24-01</span></div>
-      <div class="kv"><span class="k">Revision</span><span class="v"><span class="idchip unalloc">⊘ identity not yet reserved</span></span></div>
-      <div class="kv"><span class="k">Change</span><span class="v mono">Draft CHG-0031 · collecting</span></div>
-      <div class="sect-hd">Announced</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">polite, once at transition: "Successor work started under draft change" — silent on every later edit</span></div>
-    </div>
-    <div class="cell-cap"><b>V2-2/3 — first divergence, then quiet accumulation.</b> no modal, no dashboard,
-    no Console lifecycle; 14 transactions later the Inspector still reads exactly this</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:250px">
-      <div class="insp-title"><span class="ref">Board · main</span><span class="chip" style="color:#8a6b20;border-color:#8a6b20">PREPARING</span></div>
-      <div class="kv"><span class="k">Reservation</span><span class="v"><span class="idchip prov">◌ PROVISIONAL · draft of C — NOT ISSUED</span></span></div>
-      <div class="kv"><span class="k">Scheme</span><span class="v mono">Sequential Alphanumeric (Legacy) · board:main</span></div>
-      <div class="kv"><span class="k">Entered via</span><span class="v mono">Prepare revision… (contextual)</span></div>
-      <div class="sect-hd">Regulated profile variant</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v mono" style="font-size:11px;color:var(--warn)">⚠ MUTATION REFUSED — change CHG-0031 not yet Authorized · required: impact review + authorization</span></div>
-    </div>
-    <div class="cell-cap"><b>V2-4/5 — approved V2-P reservation · regulated refusal.</b> the refusal names
-    subject, expected fact, governing requirement, and next valid action</div>
+<div class="cap">A revision result is a pane you asked for and can close. It never replaces the board, never persists into the next session's navigation, and never accumulates.</div>
+</div>
+<div>
+<div class="win" style="width:auto">
+  <div class="tbar">Project preferences · Revision<span class="r">the other entry</span></div>
+  <div class="body" style="min-height:150px">
+    <div class="canvas" style="flex:1"><div class="mono">How this project is versioned<br>&nbsp;&nbsp;Don't track revisions &nbsp;· default<br><br>adopting a policy does not add Navigator rows<br>it changes what the contextual verbs can do</div></div>
   </div>
 </div>
-
-<!-- ================================================================ UX-V3 -->
-<div class="sec-label" id="ux-v3"><span class="n">UX-V3</span><span>Change record and lifecycle — one record, scaled disclosure</span><span class="q">Q4</span><span class="rule"></span></div>
-<div class="cap">The same <span class="mono" style="font-size:11px">EngineeringChange CHG-0031</span> under
-both profiles. Lifecycle stages are typed events, never editable strings; authorization, verification,
-closure, and release stay visibly distinct. Q4 is resolved: the complete Q4-revised panes below are
-owner-approved (e41a15c); this partial-excerpt pair is retained as comparative evidence.</div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:392px">
-      <div class="insp-title"><span class="ref">CHG-0031 · connector relocate</span><span class="chip">LIGHTWEIGHT PROFILE</span></div>
-      <div style="padding:9px 13px;display:flex;flex-wrap:wrap;gap:5px">
-        <span class="stage on">Draft</span><span class="tarrow">→</span><span class="stage">ImpactReview</span><span class="tarrow">→</span><span class="stage">Authorized</span><span class="tarrow">→</span><span class="stage">Implementing</span><span class="tarrow">→</span><span class="stage">Verification</span><span class="tarrow">→</span><span class="stage">Closed</span>
-      </div>
-      <div class="sect-hd">Summary</div>
-      <div class="kv"><span class="k">Scope</span><span class="v mono">board:main · document:ASM-01</span></div>
-      <div class="kv"><span class="k">Changed</span><span class="v mono">J1 moved · courtyard grown</span></div>
-      <div class="kv"><span class="k">Impact</span><span class="v mono">2 Affected · 1 Unknown → <span style="color:var(--info)">open impact ↗</span></span></div>
-      <div class="kv"><span class="k">Verification</span><span class="v mono" style="color:var(--tx3)">pending</span></div>
-      <div class="kv"><span class="k">Release</span><span class="v mono" style="color:var(--tx3)">not connected</span></div>
-      <div class="sect-hd">Minimal ceremony</div>
-      <div class="kv" style="grid-template-columns:1fr"><span class="v" style="font-size:11px;color:var(--tx3)">a one-person Legacy-profile project sees exactly these six facts — rationale asked at release preparation, not before</span></div>
-    </div>
-    <div class="cell-cap"><b>V3-light.</b> the whole record, quiet · <span class="cand" style="color:var(--tx3);border-color:var(--bd-str)">NOT SELECTED — comparative evidence</span></div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:392px">
-      <div class="insp-title"><span class="ref">CHG-0031 · connector relocate</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">REGULATED PROFILE</span></div>
-      <div style="padding:9px 13px;display:flex;flex-wrap:wrap;gap:5px">
-        <span class="stage done">Draft</span><span class="tarrow">→</span><span class="stage on">ImpactReview</span><span class="tarrow">→</span><span class="stage">Authorized</span><span class="tarrow">→</span><span class="stage">Implementing</span><span class="tarrow">→</span><span class="stage">Verification</span><span class="tarrow">→</span><span class="stage">Closed</span>
-        <span class="stage" style="margin-left:8px;color:var(--tx3)">exits: Rejected · Deferred · Cancelled</span>
-      </div>
-      <div class="sect-hd">Additional required sections (same record)</div>
-      <div class="kv"><span class="k">Rationale</span><span class="v mono">EMI margin — RN-114 rework</span></div>
-      <div class="kv"><span class="k">Roles</span><span class="v mono">initiator R.Osei · CCB pending</span></div>
-      <div class="kv"><span class="k">Effectivity</span><span class="v mono">units from SN-0450</span></div>
-      <div class="kv"><span class="k">Departures</span><span class="v mono">1 accepted deviation · linked</span></div>
-      <div class="kv"><span class="k">Approvals</span><span class="v mono">0 of 2 · quorum policy P-QA-2</span></div>
-      <div class="kv"><span class="k">Audit</span><span class="v mono" style="color:var(--info)">event chain · 9 records ↗</span></div>
-    </div>
-    <div class="cell-cap"><b>V3-regulated.</b> same hierarchy, more disclosed — nothing lightweight users saw
-    has moved or changed meaning · <span class="cand" style="color:var(--tx3);border-color:var(--bd-str)">NOT SELECTED — comparative evidence</span></div>
-  </div>
+<div class="cap">Adopting a revision policy is a preferences decision, not a navigation change. <b>No policy state causes Revision to appear in the Navigator</b> — that is the distinction the withdrawn contract got wrong.</div>
+</div>
 </div>
 
-
-<div style="height:14px"></div>
-<div class="cap"><b>Q4-revised — one stable hierarchy, obligation scales.</b> The pair above shows partial
-excerpts — the regulated card renders only its added sections, so the shared hierarchy is claimed, not
-proven, and lightweight users cannot discover effectivity, departures, approvals, or audit until the
-profile changes (the Q1-B defect). Below: both <b>complete</b> panes. Every section heading exists in both
-profiles, in the same order; a profile changes obligation and detail — never identity, meaning, position,
-or discoverability. <span class="cand" style="color:var(--rel);border-color:#3B6E45;border-style:solid">✓ OWNER-APPROVED · Q4 disposition</span></div>
-<div class="grid2">
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:492px">
-      <div class="insp-title"><span class="ref">CHG-0031 · connector relocate</span><span class="chip">Q4-REVISED · LIGHTWEIGHT — COMPLETE PANE</span></div>
-      <div style="padding:9px 13px;display:flex;flex-wrap:wrap;gap:5px">
-        <span class="stage on">Draft</span><span class="tarrow">→</span><span class="stage">ImpactReview</span><span class="tarrow">→</span><span class="stage">Authorized</span><span class="tarrow">→</span><span class="stage">Implementing</span><span class="tarrow">→</span><span class="stage">Verification</span><span class="tarrow">→</span><span class="stage">Closed</span>
-        <span class="stage" style="margin-left:8px;color:var(--tx3)">exits: Rejected · Deferred · Cancelled</span>
-      </div>
-      <div class="sect-hd">Scope + changed subjects</div>
-      <div class="kv"><span class="k">Scope</span><span class="v mono">board:main · document:ASM-01 · J1 moved · courtyard grown</span></div>
-      <div class="sect-hd">All sections — same order as regulated</div>
-<div class="kv"><span class="k">Rationale</span><span class="v mono" style="font-size:11px;color:var(--tx3)">none — optional · asked at release preparation; record anytime</span></div>
-<div class="kv"><span class="k">Impact</span><span class="v mono" style="font-size:11px">2 Affected · 1 Unknown → open impact ↗</span></div>
-<div class="kv"><span class="k">Verification</span><span class="v mono" style="font-size:11px;color:var(--tx3)">pending</span></div>
-<div class="kv"><span class="k">Roles</span><span class="v mono" style="font-size:11px;color:var(--tx3)">you — initiator · approver · releaser (one person, several capabilities)</span></div>
-<div class="kv"><span class="k">Effectivity</span><span class="v mono" style="font-size:11px;color:var(--tx3)">none — optional · applies to all units unless declared</span></div>
-<div class="kv"><span class="k">Departures</span><span class="v mono" style="font-size:11px;color:var(--tx3)">none — optional · record a deviation to ship off-spec</span></div>
-<div class="kv"><span class="k">Approvals</span><span class="v mono" style="font-size:11px;color:var(--tx3)">self-authorized · profile requires 1 — you</span></div>
-<div class="kv"><span class="k">Release</span><span class="v mono" style="font-size:11px;color:var(--tx3)">not connected</span></div>
-<div class="kv"><span class="k">Audit</span><span class="v mono" style="font-size:11px">event chain · 9 records ↗</span></div>
-    </div>
-    <div class="cell-cap"><b>Q4-revised light.</b> optional sections state what they are and what would fill them — nothing is discoverable only by becoming regulated</div>
-  </div>
-  <div>
-    <div class="card" style="padding:0;overflow:hidden;height:492px">
-      <div class="insp-title"><span class="ref">CHG-0031 · connector relocate</span><span class="chip" style="color:var(--warn);border-color:var(--warn)">Q4-REVISED · REGULATED — COMPLETE PANE</span></div>
-      <div style="padding:9px 13px;display:flex;flex-wrap:wrap;gap:5px">
-        <span class="stage done">Draft</span><span class="tarrow">→</span><span class="stage on">ImpactReview</span><span class="tarrow">→</span><span class="stage">Authorized</span><span class="tarrow">→</span><span class="stage">Implementing</span><span class="tarrow">→</span><span class="stage">Verification</span><span class="tarrow">→</span><span class="stage">Closed</span>
-        <span class="stage" style="margin-left:8px;color:var(--tx3)">exits: Rejected · Deferred · Cancelled</span>
-      </div>
-      <div class="sect-hd">Scope + changed subjects</div>
-      <div class="kv"><span class="k">Scope</span><span class="v mono">board:main · document:ASM-01 · J1 moved · courtyard grown</span></div>
-      <div class="sect-hd">All sections — same order as lightweight</div>
-<div class="kv"><span class="k">Rationale</span><span class="v mono" style="font-size:11px">required ✓ · EMI margin — RN-114 rework</span></div>
-<div class="kv"><span class="k">Impact</span><span class="v mono" style="font-size:11px">2 Affected · 1 Unknown → open impact ↗</span></div>
-<div class="kv"><span class="k">Verification</span><span class="v mono" style="font-size:11px;color:var(--warn)">required · pending — blocks Authorized</span></div>
-<div class="kv"><span class="k">Roles</span><span class="v mono" style="font-size:11px;color:var(--warn)">initiator R.Osei · CCB assignment pending</span></div>
-<div class="kv"><span class="k">Effectivity</span><span class="v mono" style="font-size:11px">required · units from SN-0450</span></div>
-<div class="kv"><span class="k">Departures</span><span class="v mono" style="font-size:11px">1 accepted deviation · linked</span></div>
-<div class="kv"><span class="k">Approvals</span><span class="v mono" style="font-size:11px;color:var(--warn)">required · 0 of 2 — quorum policy P-QA-2</span></div>
-<div class="kv"><span class="k">Release</span><span class="v mono" style="font-size:11px;color:var(--tx3)">not connected</span></div>
-<div class="kv"><span class="k">Audit</span><span class="v mono" style="font-size:11px">event chain · 9 records ↗</span></div>
-    </div>
-    <div class="cell-cap"><b>Q4-revised regulated.</b> the same nine rows — required sections expose their blockers; nothing moved, nothing renamed</div>
-  </div>
-</div>
-<div class="cell-cap" style="margin-bottom:14px"><b>Q4-revised.</b> <span class="cand" style="color:var(--rel);border-color:#3B6E45;border-style:solid">✓ OWNER-APPROVED · Q4 disposition</span> · profiles change obligation and detail — never identity, order, or discoverability; optional sections carry informative empty states (the Q1-A-amended discipline applied to the Change pane)</div>
-
-<!-- ================================================================ Coverage index -->
-<div class="sec-label" id="coverage"><span class="n">IX</span><span>UX-V1..V12 coverage and Q1..Q6 candidate map</span><span class="rule"></span></div>
-<table class="orindex" style="border-collapse:collapse;width:100%;max-width:1200px">
-  <tr><td>UX-V1</td><td><a href="#ux-v1">this file</a> — shell, Navigator groups, local doorway, open-beside pane · Q1 candidates A/B</td></tr>
-  <tr><td>UX-V2</td><td><a href="#ux-v2">this file</a> — baseline view · quiet divergence · accumulation · V2-P reservation · regulated refusal (approved facts)</td></tr>
-  <tr><td>UX-V3</td><td><a href="#ux-v3">this file</a> — Change record, typed lifecycle, lightweight vs regulated disclosure · Q4 candidate</td></tr>
-  <tr><td>UX-V4</td><td><a href="revision-ux-impact-study.html#ux-v4">file 2</a> — impact pane, summary-first + explain-path · Q3 candidates</td></tr>
-  <tr><td>UX-V5</td><td><a href="revision-ux-impact-study.html#ux-v5">file 2</a> — library uptake, compatibility, evidence freshness</td></tr>
-  <tr><td>UX-V6</td><td><a href="revision-ux-impact-study.html#ux-v6">file 2</a> — baseline comparison + change accounting</td></tr>
-  <tr><td>UX-V7</td><td><a href="revision-ux-release-study.html#ux-v7">file 3</a> — regeneration plan, reuse vs regenerate</td></tr>
-  <tr><td>UX-V8</td><td><a href="revision-ux-release-study.html#ux-v8">file 3</a> — ReleaseCandidate readiness · Q2 candidates A/B</td></tr>
-  <tr><td>UX-V9</td><td><a href="revision-ux-release-study.html#ux-v9">file 3</a> — approval + atomic issuance · Q5 candidates</td></tr>
-  <tr><td>UX-V10</td><td><a href="revision-ux-evidence-study.html#ux-v10">file 4</a> — reproduction + audit evidence · Q6 candidates</td></tr>
-  <tr><td>UX-V11</td><td><a href="revision-ux-evidence-study.html#ux-v11">file 4</a> — offline posture, Git adapter evidence, quarantine</td></tr>
-  <tr><td>UX-V12</td><td><a href="revision-ux-evidence-study.html#ux-v12">file 4</a> — responsive + accessibility matrix over V1-V11</td></tr>
-</table>
-<div class="cap" style="margin-top:26px;font-size:11.5px"><b>Preserved dispositions (never reopened):</b>
-two clocks · factory Sequential Alphanumeric (Legacy) + selectable ISO 19650 with separate REVISION/STATUS ·
-identity-free successor work · V2-P reservation · per-CI EngineeringRevision + optional aggregate CI ·
-multi-revision atomic Release with reuse-without-reminting · V9-A ControlledDocument chain + deletion
-refusal · V10-C typed standing · offline-complete authority, Git adapter subordinate · pinned library
-bindings until explicit uptake · byte-identical reproducibility · Console output-only (033) · shell,
-Navigator, tiling, open-beside, one window.</div>
-
-</div>
-</body>
-</html>
+<div class="law" style="margin-top:16px"><b>Unresolved and deliberately not drawn.</b> Where the revision <i>surfaces</i> — Changes, Baselines, Releases, Controlled Documents, Evidence — are browsed once a project is under control is an owner decision that has not been made. Options include a preferences section, a menu, or a contextual result only. This render does not choose one, and implementation must not either.</div>
+<div class="cap"><b>Status.</b> Clay. Supersedes the Q1 permanent-groups contract per owner direction on 2026-08-30. Retains the Q1 local doorway unchanged. No approval is requested and no replacement entry point is proposed.</div>
+</body></html>
