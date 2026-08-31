@@ -5195,8 +5195,7 @@
       ],
       "unblocks": [
         "dat-global-preferences-engine-build-vge",
-        "dat-product-revision-engine-build-18f",
-        "dat-shared-units-engine-build-915"
+        "dat-product-revision-engine-build-18f"
       ],
       "completion": {
         "outcome": "Datum has an owner-ratified typed Global Preferences authority with explicit scope, precedence, provenance, Project-policy seeding, persistence, migration, recovery, exchange, accessibility, visual behavior, and a separately authorized implementation path.",
@@ -5570,8 +5569,7 @@
           ],
           "unblocks_issue_ids": [
             "dat-global-preferences-engine-build-vge",
-            "dat-product-revision-engine-build-18f",
-            "dat-shared-units-engine-build-915"
+            "dat-product-revision-engine-build-18f"
           ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
@@ -5592,28 +5590,10 @@
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-unit-i01-20260831",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "33e42ad32f20beb3873c15bcbb3b190a7f973992",
-        "claimed_at": "2026-08-31T22:19:30Z",
-        "heartbeat_at": "2026-08-31T22:19:30Z",
-        "expires_at": "2026-09-01T06:19:30Z",
-        "scope": [
-          "crates/engine/src/ir/units.rs",
-          "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/evidence_traceability_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "summary": "Implement the engine-owned exact integer-nanometer and typed parse/format core before the first real Global Preferences slice; surface parity and Units production acceptance occur later through that real Preferences surface.",
       "dependencies": [
         "dat-global-preferences-engine-qcv"
@@ -5623,7 +5603,7 @@
       ],
       "completion": {
         "outcome": "Datum has one tested engine-owned exact Units core ready to serve the first functional Global Preferences slice without creating a standalone or temporary settings UI.",
-        "canonical_next_step_id": "UNIT-I01",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5664,11 +5644,21 @@
           {
             "id": "UNIT-I01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement checked integer-nanometer quantity authority plus one typed parse/format service with explicit cross-system overrides and exact refusal provenance.",
             "depends_on": ["UNIT-I00"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I01"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "fe48dec"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-ENGINE:UNIT-I01-EXACT-CORE"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -5682,7 +5672,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "fe48dec"
     },
     {
       "key": "GLOBAL-PREFERENCES-ENGINE",
@@ -5699,9 +5690,9 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "blocked",
+      "state": "specified",
       "authorization": "owner_decision",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Implement the typed resolver and durable repository foundation, then deliver the first functional Global Preferences wgpu slice through the conventional application-menu entry using real registered and persisted values.",
       "dependencies": [
