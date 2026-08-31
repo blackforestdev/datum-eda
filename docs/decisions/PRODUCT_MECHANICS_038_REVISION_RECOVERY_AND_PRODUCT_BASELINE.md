@@ -241,6 +241,16 @@ behavior from another product.
 
 <!-- EVIDENCE:REVISION-RECOVERY:RVR-O03-PREFERENCES-FIRST-APPROVED -->
 
+On 2026-08-31 the owner reviewed the repaired governance and replied exactly
+`PREFERENCES-FIRST-GOVERNANCE: approve`. This completes RVR-O04 and closes the
+Revision recovery item. The approved canonical sequence now proceeds to the
+separate UNIT-I00 owner gate for the exact shared Units core; this approval does
+not authorize UNIT-I01 or any other runtime implementation. Revision
+configuration and operational Revision UI remain deferred behind the completed
+Global and Project Preferences foundations.
+
+<!-- EVIDENCE:REVISION-RECOVERY:RVR-O04-PREFERENCES-GOVERNANCE-APPROVED -->
+
 ## Dependency and licensing impact
 
 None. This decision adds no dependency or license exception under Product

@@ -5594,7 +5594,7 @@
       ],
       "state": "specified",
       "authorization": "owner_decision",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Implement the engine-owned exact integer-nanometer and typed parse/format core before the first real Global Preferences slice; surface parity and Units production acceptance occur later through that real Preferences surface.",
       "dependencies": [
@@ -6744,16 +6744,16 @@
         "specs/PROJECT_PREFERENCES_SPEC.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-O04",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -7022,7 +7022,7 @@
           {
             "id": "RVR-O04",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review the repaired Preferences-first governance, protected-lane handoff, and resulting canonical sequence before any implementation claim.",
             "depends_on": ["RVR-G01"],
             "requirement_refs": [
@@ -7031,7 +7031,13 @@
                 "marker": "RVR-O04"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:RVR-O04-PREFERENCES-GOVERNANCE-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the governance repair, reply exactly `PREFERENCES-FIRST-GOVERNANCE: approve` or `PREFERENCES-FIRST-GOVERNANCE: revise — <specific correction>`.",
               "requests": [
@@ -7058,7 +7064,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "f18d50a"
     }
   ]
 }
