@@ -269,11 +269,18 @@ fn inject_revision_surface(state: &mut ReviewWorkspaceState, surface: Option<&st
         Some("evidence") => RevisionSurface::Evidence,
         Some(other) => bail!("unsupported input.revision_surface {other:?}"),
     };
+    let had_companion = state.ui.layout.leaves().len() > 1;
     let pane = state.ui.layout.open_beside(
         PaneContent::Revision(RevisionPane::Surface(surface)),
         SplitOrientation::Vertical,
         true,
     );
+    if had_companion {
+        state.ui.layout.set_focused_ratio(0.35);
+        state.ui.layout.set_ratio_at_path(&[], 0.72);
+    } else {
+        state.ui.layout.set_focused_ratio(0.45);
+    }
     state.ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
     state.ui.revision.announce_open(surface);
     Ok(())

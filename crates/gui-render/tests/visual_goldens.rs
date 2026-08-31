@@ -22,7 +22,7 @@ const CONSOLE_FIXTURE_NAMES: &[&str] = &[
     "refusal-narrow",
     "history-expanded",
 ];
-const REVISION_FIXTURE_NAMES: &[&str] = &["release", "impact", "change", "evidence"];
+const REVISION_FIXTURE_NAMES: &[&str] = &["shell", "release", "impact", "change", "evidence"];
 
 #[test]
 #[ignore = "requires local visual rendering authority; run explicitly until visual CI is pinned"]

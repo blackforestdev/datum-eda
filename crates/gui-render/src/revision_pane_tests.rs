@@ -74,7 +74,7 @@ fn revision_pane_keeps_design_surfaces_board_hits_and_witness_summary_live() {
         prepared
             .text_runs
             .iter()
-            .any(|run| run.text == "Impact summary")
+            .any(|run| run.text == "Impact · CHG-0031")
     );
     assert!(
         prepared

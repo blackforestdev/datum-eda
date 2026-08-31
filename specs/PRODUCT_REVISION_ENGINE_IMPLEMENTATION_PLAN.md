@@ -338,6 +338,14 @@ historical query completeness; context-fence enforcement; and no private writer.
 
 Implement only the owner-approved REV-C06 visual behavior over engine truth:
 
+The controlling visual references are
+`docs/gui/prototypes/revision-ux-shell-study.html` (Q1),
+`docs/gui/prototypes/revision-ux-impact-study.html` (Q3),
+`docs/gui/prototypes/revision-ux-release-study.html` (Q2), and
+`docs/gui/prototypes/revision-ux-evidence-study.html` (Q6). Production rendering
+shall conform to those owner-approved states; prose in this plan summarizes but
+does not replace them.
+
 1. permanent expanded Revision Navigator groups and informative empty states;
 2. one cohesive Release pane with nine always-visible summaries and
    unresolved-detail collapse refusal;

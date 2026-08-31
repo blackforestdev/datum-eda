@@ -11,11 +11,18 @@ impl Runtime {
         match target {
             HitTarget::OpenRevisionSurface(surface) => {
                 let ui = &mut self.session.workspace_mut().ui;
+                let had_companion = ui.layout.leaves().len() > 1;
                 let pane = ui.layout.open_beside(
                     PaneContent::Revision(RevisionPane::Surface(*surface)),
                     SplitOrientation::Vertical,
                     true,
                 );
+                if had_companion {
+                    ui.layout.set_focused_ratio(0.35);
+                    ui.layout.set_ratio_at_path(&[], 0.72);
+                } else {
+                    ui.layout.set_focused_ratio(0.45);
+                }
                 ui.focus = ApplicationFocus::Editor(pane);
                 ui.revision.announce_open(*surface);
             }
