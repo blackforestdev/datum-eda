@@ -6547,7 +6547,7 @@
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
@@ -6555,7 +6555,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-O02",
+        "canonical_next_step_id": "RVR-A05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6711,7 +6711,7 @@
           {
             "id": "RVR-O02",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review the bounded roadmap re-entry packet and explicitly select the next canonical Frontier item or direct a further audit, without implicitly authorizing product execution.",
             "depends_on": ["RVR-A04"],
             "requirement_refs": [
@@ -6720,7 +6720,13 @@
                 "marker": "RVR-O02"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:RVR-O02-PREFERENCES-FIRST-AUDIT"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the bounded roadmap re-entry packet, reply exactly `REVISION-RECOVERY-NEXT: <Frontier key>` or `REVISION-RECOVERY-NEXT: audit — <specific uncertainty>`.",
               "requests": [
@@ -6731,6 +6737,48 @@
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
                     "marker": "RVR-O02"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "RVR-A05",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Audit and reconcile the exact Preferences-first implementation sequence and the Global/Project settings doorway, including shared Units and Revision exposure gates, without runtime implementation or protected-prototype edits.",
+            "depends_on": ["RVR-O02"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-A05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-O03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review and approve or revise the Preferences-first sequencing and settings-doorway packet before any successor implementation item is created or authorized.",
+            "depends_on": ["RVR-A05"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-O03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the bounded packet, reply exactly `PREFERENCES-FIRST-REENTRY: approve` or `PREFERENCES-FIRST-REENTRY: revise — <specific correction>`.",
+              "requests": [
+                {
+                  "id": "PREFERENCES-FIRST-REENTRY",
+                  "question": "Does the packet correctly sequence the Global and Project Preferences doorway before any Revision UI resumes, with configuration kept out of the Project Navigator?",
+                  "recommended_response": "Approve only if the packet clearly separates machine/user preferences, writable Project policy, operational Revision surfaces, and implementation prerequisites without authorizing runtime work.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                    "marker": "RVR-O03"
                   }
                 }
               ]
