@@ -5592,10 +5592,28 @@
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-unit-i01-20260831",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "33e42ad32f20beb3873c15bcbb3b190a7f973992",
+        "claimed_at": "2026-08-31T22:19:30Z",
+        "heartbeat_at": "2026-08-31T22:19:30Z",
+        "expires_at": "2026-09-01T06:19:30Z",
+        "scope": [
+          "crates/engine/src/ir/units.rs",
+          "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/evidence_traceability_manifest.json",
+          ".beads/issues.jsonl"
+        ]
+      },
       "summary": "Implement the engine-owned exact integer-nanometer and typed parse/format core before the first real Global Preferences slice; surface parity and Units production acceptance occur later through that real Preferences surface.",
       "dependencies": [
         "dat-global-preferences-engine-qcv"
@@ -5605,7 +5623,7 @@
       ],
       "completion": {
         "outcome": "Datum has one tested engine-owned exact Units core ready to serve the first functional Global Preferences slice without creating a standalone or temporary settings UI.",
-        "canonical_next_step_id": "UNIT-I00",
+        "canonical_next_step_id": "UNIT-I01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5622,11 +5640,17 @@
           {
             "id": "UNIT-I00",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review module ownership, exact-value law, refusal cases, no-new-dependency posture, and focused proof scope before authorizing UNIT-I01 only.",
             "depends_on": [],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I00"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-ENGINE:UNIT-I00-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the committed Units baseline packet, reply exactly `UNITS-ENGINE-EXECUTION: approve UNIT-I01` or `UNITS-ENGINE-EXECUTION: revise — <specific scope, ownership, dependency, or proof correction>`.",
               "requests": [{
@@ -5640,7 +5664,7 @@
           {
             "id": "UNIT-I01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement checked integer-nanometer quantity authority plus one typed parse/format service with explicit cross-system overrides and exact refusal provenance.",
             "depends_on": ["UNIT-I00"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I01"}],
