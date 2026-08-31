@@ -5821,23 +5821,20 @@
         "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
-      "canonical_next": true,
+      "state": "deferred",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
       "claim": null,
-      "summary": "Implement the ratified Product Revision Engine through serial engine-first integrity, authority, policy, change, impact, release, evidence, subordinate adapters, surface parity, approved GUI, enterprise role workflow, standards/migration, and production-acceptance slices after the Global Preferences policy seam and explicit owner authorization.",
+      "summary": "Historical Product Revision Engine execution item. Product Mechanics 038 rejects REV-I10, suspends every successor slice, quarantines the broad implementation, and removes this item from production-acceptance and downstream-unblock authority pending bounded recovery.",
       "dependencies": [
         "dat-product-revision-engine-k9f",
         "dat-global-preferences-engine-qcv"
       ],
-      "unblocks": [
-        "dat-publish-space-foundation-z5s",
-        "dat-mcad-interop-l3p"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum has a production-accepted, locally complete Product Revision Engine implementing Product Mechanics 034 with optional subordinate Git integration, approved UX, standards-profile evidence, complete migration, and no implicit Publish authorization.",
-        "canonical_next_step_id": "REV-I17",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6178,11 +6175,17 @@
           {
             "id": "REV-I17",
             "kind": "owner_decision",
-            "status": "pending",
-            "action": "Perform the running-app owner visual review required by the REV-I10 Exit evidence after implementation and screenshot/accessibility proof; this boundary reviews conformance to the six already-approved dispositions and does not reopen their design or authorize REV-I10A.",
+            "status": "complete",
+            "action": "Record the owner's rejection of the running REV-I10 result and replace this acceptance boundary with Product Mechanics 038 recovery authority.",
             "depends_on": ["REV-I10"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I17"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply exactly `REV-I10-VISUAL: approve` or `REV-I10-VISUAL: revise — <specific running-app conformance correction>`.",
               "requests": [
@@ -6198,11 +6201,13 @@
           {
             "id": "REV-I18",
             "kind": "owner_decision",
-            "status": "pending",
-            "action": "Resolve REV-I10A's currently unapproved enterprise role-workflow visual design through a Claude-owned prototype study and explicit owner disposition before implementation. This boundary exists solely because REV-I10A states that visual design not already owner-approved requires both artifacts; it authorizes no implementation or dependency.",
+            "status": "complete",
+            "action": "Suspend the unapproved enterprise role-workflow visual design under Product Mechanics 038; no disposition or implementation is authorized.",
             "depends_on": ["REV-I17"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I18"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ],
             "owner_input": {
               "response_format": "After the Claude-owned REV-I10A visual study is committed and reviewed, reply exactly `REV-I10A-VISUAL: approve <candidate>` or `REV-I10A-VISUAL: revise — <specific visual-contract correction>`.",
               "requests": [
@@ -6218,20 +6223,24 @@
           {
             "id": "REV-I10A",
             "kind": "execution",
-            "status": "pending",
-            "action": "Execute only REV-I10A against its ratified plan section and the owner-approved REV-I18 render. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible workflow inventory is role assignment, bounded delegation, role-derived personal/team queues, authority visibility, and external configuration-manager attestation exchange, with the exact sent, quarantined, verified, signature-valid, authorized, locally-committed, refused, and outward-mirrored projections named by REV-I10A. Bidirectional UI/operation inventory proof and every non-owner REV-I10A Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "status": "complete",
+            "action": "Suspend REV-I10A under Product Mechanics 038 and quarantine enterprise role, queue, delegation, and adapter workflow scope pending fresh justification and authorization.",
             "depends_on": ["REV-I18"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10A"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ]
           },
           {
             "id": "REV-I19",
             "kind": "owner_decision",
-            "status": "pending",
-            "action": "Perform the running-app owner review required by REV-I10A Exit evidence after implementation, accessibility inspection, standing goldens, and workflow proofs; this boundary accepts conformance only and authorizes no dependency or successor execution.",
+            "status": "complete",
+            "action": "Cancel the REV-I10A running-app acceptance boundary because its implementation is suspended under Product Mechanics 038.",
             "depends_on": ["REV-I10A"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I19"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ],
             "owner_input": {
               "response_format": "Reply exactly `REV-I10A-RUNNING-APP: approve` or `REV-I10A-RUNNING-APP: revise — <specific workflow, authority, accessibility, or visual-conformance correction>`.",
               "requests": [
@@ -6247,29 +6256,35 @@
           {
             "id": "REV-I11",
             "kind": "execution",
-            "status": "pending",
-            "action": "Execute only REV-I11 against its ratified plan section. The complete and exclusive added record-family inventory is StandardsProfile, RequirementDisposition, AuditEvaluation, RetentionPolicy, LegalOrPolicyHold, and RecordDisposition; the complete and exclusive requirement-disposition inventory is Applicable, Tailored, EquivalentControl, NotApplicable, Unresolved, and BlockedNormativeText; migration scope is exactly REV-GAP-01 through REV-GAP-12. Bidirectional inventory proof and every REV-I11 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "status": "complete",
+            "action": "Suspend REV-I11 standards, retention, audit, and migration execution under Product Mechanics 038 pending recovery and fresh authorization.",
             "depends_on": ["REV-I19"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I11"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ]
           },
           {
             "id": "REV-I12",
             "kind": "execution",
-            "status": "pending",
-            "action": "Execute only REV-I12 against its ratified plan section. It adds zero product record families, capabilities, states, or events; its complete and exclusive acceptance inventory is the nine requirements listed in REV-I12, with performance/resource measurements prepared for owner disposition and the explicit production-acceptance decision deferred to REV-I20. Bidirectional proof that no product inventory was added and every non-owner REV-I12 requirement gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
+            "status": "complete",
+            "action": "Cancel the old REV-I12 production-acceptance program under Product Mechanics 038; recovery requires a new bounded acceptance plan.",
             "depends_on": ["REV-I11"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I12"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ]
           },
           {
             "id": "REV-I20",
             "kind": "owner_decision",
-            "status": "pending",
-            "action": "Disposition the measured performance/resource budgets and perform the explicit owner production acceptance required by REV-I12 after every earlier acceptance artifact and running-app review is committed and addressable. This boundary does not authorize Publish Space, certification claims, dependencies, or distributed multi-writer collaboration.",
+            "status": "complete",
+            "action": "Cancel the old production-acceptance decision boundary; Product Mechanics 038 explicitly withholds production acceptance.",
             "depends_on": ["REV-I12"],
             "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I20"}],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+            ],
             "owner_input": {
               "response_format": "Reply exactly `REVISION-ENGINE-PRODUCTION: approve` or `REVISION-ENGINE-PRODUCTION: revise — <specific evidence, budget, audit, running-app, migration, accessibility, or acceptance correction>`.",
               "requests": [
@@ -6289,10 +6304,7 @@
             "Publish Space implementation may be considered only through an explicit later Frontier selection.",
             "No certification claim, dependency, or distributed multi-writer implementation is implied."
           ],
-          "unblocks_issue_ids": [
-            "dat-publish-space-foundation-z5s",
-            "dat-mcad-interop-l3p"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -6316,7 +6328,6 @@
       "parallel": false,
       "summary": "Scheduled placeholder for three-rung native ECAD-MCAD interoperability: STEP assembly export, mechanical outline/constraint import, and IDX-class proposal/quarantine/evidence exchange. Datum never embeds a mechanical modeling kernel or permits an external MCAD master. Geometry/STEP-import dependencies require exact Product Mechanics 029 owner approval. Sequence only after Revision Engine production acceptance and Global Preferences, approximately with future 3D-viewer work; no research, specification, dependency, or implementation is authorized.",
       "dependencies": [
-        "dat-product-revision-engine-build-18f"
       ],
       "unblocks": []
     },
@@ -6517,6 +6528,157 @@
         }
       },
       "landing_commit": "6ba9b9d"
+    },
+    {
+      "key": "REVISION-PRODUCT-RECOVERY",
+      "order": 42,
+      "title": "Recover the Revision product baseline and contain rejected REV-I10",
+      "issue_id": "dat-revision-product-recovery-dap",
+      "related_issue_ids": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+        "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+        "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+        "docs/PROJECT_STATE_POLICY.md"
+      ],
+      "state": "in_progress",
+      "authorization": "planning",
+      "canonical_next": true,
+      "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-revision-recovery-20260830",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "8a5307f6493d9f368d69c244421eb75d1f619a70",
+        "claimed_at": "2026-08-31T05:38:30Z",
+        "heartbeat_at": "2026-08-31T05:38:30Z",
+        "expires_at": "2026-08-31T13:33:30Z",
+        "scope": [
+          "Revision recovery governance",
+          "Revision and Preferences governing specifications",
+          "Active Frontier and evidence traceability"
+        ]
+      },
+      "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
+        "canonical_next_step_id": "RVR-A01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "RVR-A01",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Commit the owner-approved governance correction: ratify Product Mechanics 038, record REV-I10 as rejected, suspend successor Revision execution, defer the Revision preference descriptors, and replace REV-I17 as canonical next work without editing runtime code or Claude-owned prototypes.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-A01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-A02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Have the Claude-owned visual-truth lane mark the permanent-Q1/default-visibility contract superseded and render contextual opt-in Revision behavior while preserving the manual Design workspace.",
+            "depends_on": ["RVR-A01"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-A02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-A03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory every Revision runtime and engine path as retain, rework, quarantine, or remove, including hard-coded GUI data, journal integration, public catalog/query semantics, Project policy gates, and enterprise adapters.",
+            "depends_on": ["RVR-A02"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-A03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-I01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Remove fictional runtime Revision records and unmanaged default Revision surfaces, with bounded regression proof that real unmanaged library, schematic, and PCB authoring remains readable and prompt-free.",
+            "depends_on": ["RVR-A03"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-I01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-O01",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review one small running-app packet proving the corrected unmanaged Project baseline before any broader Revision scope or production-acceptance sequence is proposed.",
+            "depends_on": ["RVR-I01"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-O01"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the bounded running-app packet, reply exactly `REVISION-RECOVERY-BASELINE: approve` or `REVISION-RECOVERY-BASELINE: revise — <specific correction>`.",
+              "requests": [
+                {
+                  "id": "REVISION-RECOVERY-BASELINE",
+                  "question": "Does an unmanaged real Project now present the manual-first Datum baseline with no fictional/default Revision UI and no authoring interference?",
+                  "recommended_response": "Approve only if the running application shows ordinary library, schematic, and PCB work first, Revision appears only through explicit intent or real adopted authority, and all evidence uses real Project data.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                    "marker": "RVR-O01"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The rejected REV-I10 presentation is contained and the manual-first unmanaged Project baseline is restored.",
+            "Any broader Revision, Preferences, Publish, or enterprise execution requires a fresh explicit Frontier authorization."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }

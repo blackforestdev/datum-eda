@@ -1,6 +1,7 @@
 # Product Mechanics 037: Global Preferences Engine
 
-Status: ratified doctrine
+Status: ratified doctrine; Revision visibility/default clauses superseded in
+part by Product Mechanics 038
 
 ## Context
 
@@ -42,9 +43,11 @@ stable keys, retired or alternate names, planned rows, and read-only Project-
 policy rows. Stable and retired names are searchable vocabulary, not merely
 migration machinery.
 
-The initial catalog contains 58 active V1 descriptors. Fifteen active
-seed-bearing rows are `ProjectPolicySeed`; the sixteenth seed-bearing candidate,
-for `AdoptedDraftingStandard`, remains deferred until its schema is specified.
+After Product Mechanics 038 defers the four Revision descriptors, the initial
+catalog contains 54 active V1 descriptors. Eleven active seed-bearing rows are
+`ProjectPolicySeed`; the Revision seed family and the additional
+`AdoptedDraftingStandard` candidate remain deferred until separately recovered
+or specified.
 The agent-authority descriptors, including unattended authority, and three
 prototype clay rows remain excluded pending dedicated review and visual
 reconciliation. Library, Symbol Editor, Footprint Editor, and Organization have
@@ -68,6 +71,13 @@ first-class workflow.” Preferences may seed policy at genesis and control
 presentation or non-gating guidance only. It may not strengthen Revision into an
 authoring gate, mint revision identity, alter records, weaken Release gates, or
 create a competing lifecycle.
+
+Product Mechanics 038 further limits this seam: Global Preferences cannot make
+Revision chrome visible in an unmanaged Project, cannot pin teaching UI into an
+unmanaged personal workflow, and cannot treat a factory Revision profile as
+adopted Project policy. Revision visibility, default-profile, teaching, and
+onboarding descriptors are pending recovery and are not implementation
+authority from the current catalog.
 
 Product Mechanics 035 remains the Project documentation authority for
 `AdoptedDraftingStandard`. Preferences may provide a defined receipted seed and

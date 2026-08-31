@@ -1,6 +1,7 @@
 # Product Mechanics 034: Datum Product Revision Engine
 
-Status: ratified doctrine
+Status: ratified doctrine; default presentation and execution sequence
+superseded in part by Product Mechanics 038
 
 ## Context
 
@@ -155,6 +156,10 @@ rewrite Datum authority on its own.
 
 ## Human contract
 
+Product Mechanics 038 supersedes the permanent/default presentation clauses in
+this section. The bullets below remain historical evidence for the rejected
+REV-I10 implementation and may not be used as current implementation authority.
+
 The approved REV-C06 visual contract is normative:
 
 - Revision Navigator groups are visible and expanded from Project creation,
@@ -176,11 +181,12 @@ release certification/issuance and earlier control explicitly adopted by Project
 policy. Ignoring the revision engine entirely is a supported, first-class
 workflow, not a degraded one.
 
-Engine truth remains maintained when its presentation is hidden. A future
-**Hide revision system** preference may hide Navigator groups and projections
-only; it cannot disable the journal, discard records, weaken Project policy,
-bypass gates, or require migration to restore presentation. Visible expanded
-groups remain the factory default.
+Engine truth remains maintained when its presentation is hidden. Under Product
+Mechanics 038, unmanaged Projects show no Revision groups or projections by
+default. Presentation becomes available only through explicit user intent or
+deliberately adopted Project policy/real Project records; hiding presentation
+cannot disable the journal, discard real records, weaken adopted Project
+policy, or bypass release gates.
 
 ## Standards, evidence, and dependency boundary
 

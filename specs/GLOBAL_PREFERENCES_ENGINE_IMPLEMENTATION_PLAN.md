@@ -125,7 +125,7 @@ eligibility/control/value stages, typed conflicts, retained displaced values,
 and the pure resolver/explanation result. Defaults and absences are never
 serialized as user contributions.
 
-**Exit proof:** all 58 active descriptors register exactly once; class/source
+**Exit proof:** all 54 active descriptors register exactly once; class/source
 eligibility matrices; Capability portable/Project refusal; absence and equal-
 authority conflict tests; release/revocation and retained-value tests; complete
 typed explanation goldens; and no Project/store/UI implementation.
