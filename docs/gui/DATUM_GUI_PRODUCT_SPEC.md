@@ -120,12 +120,15 @@ The recovered GUI shell must include:
 Minimum top menu:
 
 - File: New Project, Open Project, Import, Save, Save As, Export, Close.
-- Edit: Undo, Redo, Cut, Copy, Paste, Delete, Preferences.
+- Edit: Undo, Redo, Cut, Copy, Paste, Delete; Preferences submenu with Global
+  Preferences and Project Preferences. Project Preferences is disabled when no
+  Project is open.
 - View: Fit, Zoom, Pan, Layer Visibility, Panels, Reset Workspace.
 - Place: symbol/component/text/label/wire/track/via where enabled by the active
   editor.
 - Route/PCB Tools: track, via, zone, move, align/distribute, measure.
-- Project: validate, resolve/debug, project settings.
+- Project: validate, resolve/debug. Settings use the Edit > Preferences family;
+  they never appear in the Project Navigator.
 - Checks: run ERC/DRC/check profiles, findings, waivers/deviations.
 - Manufacturing: output jobs, artifacts, generate, validate, compare, export.
 - Window: documents, terminal sessions, workspace layout.

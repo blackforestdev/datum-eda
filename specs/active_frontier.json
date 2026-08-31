@@ -5583,9 +5583,10 @@
     {
       "key": "SHARED-UNITS-ENGINE",
       "order": 34,
-      "title": "Build and production-accept the shared Units engine",
+      "title": "Build the shared Units exact core",
       "issue_id": "dat-shared-units-engine-build-915",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
@@ -5595,7 +5596,7 @@
       "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Implement one cross-cutting engine-owned exact Units service for integer-nanometer storage truth and shared typed format/parse behavior before Global Preferences execution, with every slice separately authorized.",
+      "summary": "Implement the engine-owned exact integer-nanometer and typed parse/format core before the first real Global Preferences slice; surface parity and Units production acceptance occur later through that real Preferences surface.",
       "dependencies": [
         "dat-global-preferences-engine-qcv"
       ],
@@ -5603,7 +5604,7 @@
         "dat-global-preferences-engine-build-vge"
       ],
       "completion": {
-        "outcome": "Datum has one production-accepted exact Units service shared by GUI, CLI, MCP, design storage, and every consuming subsystem without Preferences owning conversion semantics.",
+        "outcome": "Datum has one tested engine-owned exact Units core ready to serve the first functional Global Preferences slice without creating a standalone or temporary settings UI.",
         "canonical_next_step_id": "UNIT-I00",
         "execution_policy": {
           "max_in_progress_steps": 1,
@@ -5644,38 +5645,12 @@
             "depends_on": ["UNIT-I00"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I01"}],
             "completion_evidence": []
-          },
-          {
-            "id": "UNIT-I02",
-            "kind": "owner_decision",
-            "status": "pending",
-            "action": "Review committed UNIT-I01 exact-value evidence before separately authorizing GUI, CLI, and MCP parity in UNIT-I03.",
-            "depends_on": ["UNIT-I01"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}],
-            "completion_evidence": [],
-            "owner_input": {
-              "response_format": "After reviewing UNIT-I01 evidence, reply exactly `UNITS-ENGINE-EXECUTION: approve UNIT-I03` or `UNITS-ENGINE-EXECUTION: revise — <specific parity, accessibility, real-project, dependency, or proof correction>`.",
-              "requests": [{
-                "id": "UNIT-I02",
-                "question": "Does UNIT-I01 prove the exact core closely enough to authorize UNIT-I03 surface parity and Units production acceptance only?",
-                "recommended_response": "Approve only after exact stored-value and refusal evidence is committed and the same service is ready to serve every surface.",
-                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}
-              }]
-            }
-          },
-          {
-            "id": "UNIT-I03",
-            "kind": "execution",
-            "status": "pending",
-            "action": "Route GUI, CLI, MCP, import/export, and real-Project unit behavior through one service and production-accept it without moving descriptor ownership into Units.",
-            "depends_on": ["UNIT-I02"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03"}],
-            "completion_evidence": []
           }
         ],
         "post_completion": {
           "effects": [
-            "The Global Preferences implementation item loses its shared-Units blocker but remains behind its own owner execution gate.",
+            "The Global Preferences foundation loses its exact-Units-core blocker but remains behind its own owner execution gate.",
+            "Units surface parity and production acceptance remain blocked until the first real Global Preferences wgpu slice exists.",
             "No Preferences, Revision, Publish, dependency, or successor execution is implied."
           ],
           "unblocks_issue_ids": ["dat-global-preferences-engine-build-vge"],
@@ -5688,9 +5663,10 @@
     {
       "key": "GLOBAL-PREFERENCES-ENGINE",
       "order": 35,
-      "title": "Build and production-accept the Global Preferences Engine",
+      "title": "Build the Global Preferences foundation and first GUI slice",
       "issue_id": "dat-global-preferences-engine-build-vge",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md",
         "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md",
@@ -5703,15 +5679,18 @@
       "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": false,
-      "summary": "Implement PM-037 through separately authorized typed resolver, repository/migration/recovery, copy-once Project seeding, product-surface parity, ratified wgpu visual/accessibility, real-project, and production-acceptance slices.",
+      "summary": "Implement the typed resolver and durable repository foundation, then deliver the first functional Global Preferences wgpu slice through the conventional application-menu entry using real registered and persisted values.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",
         "dat-shared-units-engine-build-915"
       ],
-      "unblocks": [],
+      "unblocks": [
+        "dat-shared-units-surface-parity-s9x",
+        "dat-global-preferences-completion-f84"
+      ],
       "completion": {
-        "outcome": "Datum has a production-accepted Global Preferences Engine proving PM-037 across storage, resolution, seeding, all product surfaces, accessibility, real Projects, and the ratified Claude visual truth.",
-        "canonical_next_step_id": "GP-I00",
+        "outcome": "Datum has a real manual Global Preferences doorway backed end-to-end by typed resolution and durable persisted state, ready for Units parity and full Global stabilization.",
+        "canonical_next_step_id": "GP-F00",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5726,80 +5705,51 @@
         },
         "steps": [
           {
-            "id": "GP-I00", "kind": "owner_decision", "status": "pending",
-            "action": "Review completed Units evidence, module ownership, catalog digest, dependency posture, and focused resolver proof before authorizing GP-I01 only.",
+            "id": "GP-F00", "kind": "owner_decision", "status": "pending",
+            "action": "Review the exact Units core, module ownership, active catalog digest, dependency posture, and focused resolver proof before authorizing GP-F01 only.",
             "depends_on": [],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I00"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I01` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific scope, ownership, dependency, exclusion, or proof correction>`.", "requests": [{"id": "GP-I00", "question": "May Datum execute the bounded typed descriptor/resolver core in GP-I01 only?", "recommended_response": "Approve only after shared Units production acceptance and a no-new-dependency resolver baseline.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I00"}}]}
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F01` or `PREFERENCES-FOUNDATION: revise — <specific scope, ownership, dependency, exclusion, or proof correction>`.", "requests": [{"id": "GP-F00", "question": "May Datum execute the bounded typed Global Preferences foundation in GP-F01 only?", "recommended_response": "Approve only after the exact Units core lands with no new dependency and no UI, Project, or Revision behavior is smuggled into the resolver slice.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}}]}
           },
           {
-            "id": "GP-I01", "kind": "execution", "status": "pending",
-            "action": "Implement the 58 registered descriptors, typed sources/classes, AuthorityRelease and controls, Q4 resolver, conflicts, retained values, and pure complete explanation result.",
-            "depends_on": ["GP-I00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I01"}], "completion_evidence": []
+            "id": "GP-F01", "kind": "execution", "status": "pending",
+            "action": "Implement the active descriptors, typed sources/classes, AuthorityRelease and controls, Q4 resolver, conflicts, retained values, and one pure complete explanation result.",
+            "depends_on": ["GP-F00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F01"}], "completion_evidence": []
           },
           {
-            "id": "GP-I02", "kind": "owner_decision", "status": "pending",
-            "action": "Review GP-I01 evidence before separately authorizing repository, migration, exchange, and recovery in GP-I03.",
-            "depends_on": ["GP-I01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I02"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I03` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific storage, preservation, migration, recovery, dependency, or proof correction>`.", "requests": [{"id": "GP-I02", "question": "Does GP-I01 prove the typed resolver closely enough to authorize GP-I03 only?", "recommended_response": "Approve only with complete class/source refusal and explanation goldens.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I02"}}]}
+            "id": "GP-F02", "kind": "owner_decision", "status": "pending",
+            "action": "Review GP-F01 evidence before separately authorizing the minimal durable repository in GP-F03.",
+            "depends_on": ["GP-F01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F03` or `PREFERENCES-FOUNDATION: revise — <specific storage, preservation, migration, recovery, dependency, or proof correction>`.", "requests": [{"id": "GP-F02", "question": "Does GP-F01 prove the typed resolver closely enough to authorize the minimal durable repository in GP-F03 only?", "recommended_response": "Approve only with complete class/source refusal and explanation goldens and no Project or GUI mutation.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}}]}
           },
           {
-            "id": "GP-I03", "kind": "execution", "status": "pending",
-            "action": "Implement expected-generation immutable storage, exact unknown preservation, portable conflict/refusal, migration, backup, reversible restore, and preserved-unreadable recovery.",
-            "depends_on": ["GP-I02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I03"}], "completion_evidence": []
+            "id": "GP-F03", "kind": "execution", "status": "pending",
+            "action": "Implement expected-generation durable storage, exact unknown preservation, typed migration, backup, reversible restore, and preserved-unreadable recovery sufficient for real visible rows.",
+            "depends_on": ["GP-F02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F03"}], "completion_evidence": []
           },
           {
-            "id": "GP-I04", "kind": "owner_decision", "status": "pending",
-            "action": "Review GP-I03 durability and preservation evidence before separately authorizing the Project genesis seam in GP-I05.",
-            "depends_on": ["GP-I03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I04"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I05` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific seeding, receipt, authority, exclusion, or proof correction>`.", "requests": [{"id": "GP-I04", "question": "May Datum execute only the copy-once ProjectPolicySeed genesis seam in GP-I05?", "recommended_response": "Approve only when repository faults cannot mutate Project truth and excluded seed schemas remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I04"}}]}
+            "id": "GP-F04", "kind": "owner_decision", "status": "pending",
+            "action": "Review GP-F03 durability and the current protected visual target before separately authorizing the first real Global Preferences wgpu slice in GP-F05.",
+            "depends_on": ["GP-F03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, real-row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the first functional Global Preferences wgpu vertical slice in GP-F05 only?", "recommended_response": "Approve only when every visible row is backed by the real resolver/repository and Revision, Project Preferences, empty categories, and fixture values remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
           },
           {
-            "id": "GP-I05", "kind": "execution", "status": "pending",
-            "action": "Implement immutable seed snapshot capture, aggregate/composed unit-seed precedence, atomic Project-authority copy, durable itemized receipt, and no live following.",
-            "depends_on": ["GP-I04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I05"}], "completion_evidence": []
-          },
-          {
-            "id": "GP-I06", "kind": "owner_decision", "status": "pending",
-            "action": "Review GP-I05 copy/receipt evidence before separately authorizing engine, CLI, and MCP product-surface parity in GP-I07.",
-            "depends_on": ["GP-I05"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I06"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I07` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific API, parity, proposal, private-writer, or proof correction>`.", "requests": [{"id": "GP-I06", "question": "May Datum expose the ratified operations and one explanation result through engine, CLI, and MCP in GP-I07 only?", "recommended_response": "Approve only with no private store parsing and no direct assistant application.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I06"}}]}
-          },
-          {
-            "id": "GP-I07", "kind": "execution", "status": "pending",
-            "action": "Expose one typed operation/query/refusal/proposal family through engine, CLI, and MCP with identical resolver explanation semantics and no private writer.",
-            "depends_on": ["GP-I06"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I07"}], "completion_evidence": []
-          },
-          {
-            "id": "GP-I08", "kind": "owner_decision", "status": "pending",
-            "action": "Review GP-I07 parity and the then-current Claude-owned target before separately authorizing the ratified wgpu surface in GP-I09.",
-            "depends_on": ["GP-I07"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I08"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I09` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific visual, accessibility, render, screenshot, or proof correction>`.", "requests": [{"id": "GP-I08", "question": "May Datum implement the ratified Preferences, setup, Start-page, and carry-forward surfaces in wgpu in GP-I09 only?", "recommended_response": "Approve only against reconciled Claude renders and a complete screenshot/accessibility matrix.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I08"}}]}
-          },
-          {
-            "id": "GP-I09", "kind": "execution", "status": "pending",
-            "action": "Implement and screenshot-review the ratified wgpu Preferences window and related settled surfaces with keyboard, reduced-motion, non-color, screen-reader, and narrow-state proof.",
-            "depends_on": ["GP-I08"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I09"}], "completion_evidence": []
-          },
-          {
-            "id": "GP-I10", "kind": "owner_decision", "status": "pending",
-            "action": "Review all prior evidence and approve the exact durable real-project corpus and resource budgets before separately authorizing GP-I11 production acceptance.",
-            "depends_on": ["GP-I09"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I10"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-ENGINE-EXECUTION: approve GP-I11` or `PREFERENCES-ENGINE-EXECUTION: revise — <specific migration, fixture, performance, accessibility, exclusion, or proof correction>`.", "requests": [{"id": "GP-I10", "question": "May Datum run the bounded real-project production-acceptance slice GP-I11 only?", "recommended_response": "Approve only when every earlier slice is committed, the real-project corpus is durable, and the exclusions remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I10"}}]}
-          },
-          {
-            "id": "GP-I11", "kind": "execution", "status": "pending",
-            "action": "Run migration, recovery, managed/offline, real-project, accessibility, visual, performance/resource, negative, and independent PM-037 production acceptance.",
-            "depends_on": ["GP-I10"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-I11"}], "completion_evidence": []
+            "id": "GP-F05", "kind": "execution", "status": "pending",
+            "action": "Implement Edit > Preferences > Global Preferences with real registered and persisted rows, search/explanation, explicit scope, keyboard/accessibility, ordinary/narrow states, and zero Project mutation.",
+            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": []
           }
         ],
         "post_completion": {
           "effects": [
-            "The ratified V1 Global Preferences Engine is production-accepted.",
+            "The first functional manual Global Preferences wgpu slice is backed by real typed resolution and durable persisted state.",
+            "Units surface parity and full Global Preferences completion become eligible for their own later owner gates.",
             "Excluded descriptors and schemas remain blocked until their named evidence and owner gates land.",
             "No Revision, Publish, provider, dependency, or successor execution is implied."
           ],
-          "unblocks_issue_ids": [],
+          "unblocks_issue_ids": [
+            "dat-shared-units-surface-parity-s9x",
+            "dat-global-preferences-completion-f84"
+          ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -5807,11 +5757,256 @@
       }
     },
     {
-      "key": "PRODUCT-REVISION-ENGINE",
+      "key": "SHARED-UNITS-SURFACE-PARITY",
       "order": 36,
+      "title": "Complete shared Units surface parity through Preferences",
+      "issue_id": "dat-shared-units-surface-parity-s9x",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
+        "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+        "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+        "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+        "docs/gui/prototypes/preferences-window.html",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
+      ],
+      "state": "blocked",
+      "authorization": "owner_decision",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "After the first real Global Preferences wgpu slice exists, prove the exact Units core across the six ratified unit descriptors, GUI, CLI, MCP, import/export, and real Projects without inventing a temporary settings surface.",
+      "dependencies": [
+        "dat-global-preferences-engine-build-vge"
+      ],
+      "unblocks": [
+        "dat-global-preferences-completion-f84"
+      ],
+      "completion": {
+        "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
+        "canonical_next_step_id": "UNIT-I02",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "UNIT-I02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the exact Units core and first real Global Preferences slice before authorizing surface parity and production acceptance in UNIT-I03 only.",
+            "depends_on": [],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific parity, accessibility, real-project, dependency, or proof correction>`.",
+              "requests": [{
+                "id": "UNIT-I02",
+                "question": "May Datum prove the exact Units core across the real Preferences GUI, CLI, MCP, import/export, and real Projects in UNIT-I03 only?",
+                "recommended_response": "Approve only when GP-F05 is real, no temporary settings surface exists, and Preferences retains descriptor ownership.",
+                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}
+              }]
+            }
+          },
+          {
+            "id": "UNIT-I03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Route GUI, CLI, MCP, import/export, and real-Project unit behavior through the exact core and production-accept Units without moving descriptor ownership.",
+            "depends_on": ["UNIT-I02"],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03"}],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Global Preferences completion loses its Units-parity blocker but remains behind its own owner gate.",
+            "No Project Preferences, Revision, dependency, or successor execution is implied."
+          ],
+          "unblocks_issue_ids": ["dat-global-preferences-completion-f84"],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "GLOBAL-PREFERENCES-COMPLETION",
+      "order": 37,
+      "title": "Complete and production-accept Global Preferences",
+      "issue_id": "dat-global-preferences-completion-f84",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
+        "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+        "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md",
+        "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md",
+        "research/preferences-system/GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md",
+        "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+        "docs/gui/prototypes/preferences-window.html",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
+      ],
+      "state": "blocked",
+      "authorization": "owner_decision",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Expand the accepted Global Preferences vertical slice through the complete active catalog, managed/recovery behavior, accessibility, API and seed parity, real Projects, and production acceptance while Revision descriptors remain absent.",
+      "dependencies": [
+        "dat-global-preferences-engine-build-vge",
+        "dat-shared-units-surface-parity-s9x"
+      ],
+      "unblocks": [
+        "dat-project-preferences-spec-kiw"
+      ],
+      "completion": {
+        "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
+        "canonical_next_step_id": "GP-CM00",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {
+            "id": "GP-CM00", "kind": "owner_decision", "status": "pending",
+            "action": "Review the real Global vertical slice and Units parity before authorizing Global surface completion in GP-CM01 only.",
+            "depends_on": [], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03 are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
+          },
+          {
+            "id": "GP-CM01", "kind": "execution", "status": "pending",
+            "action": "Complete and stabilize the full active Global Preferences catalog, managed/refused and recovery behavior, search/provenance, setup, responsive layout, and accessibility.",
+            "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": []
+          },
+          {
+            "id": "GP-CM02", "kind": "owner_decision", "status": "pending",
+            "action": "Review GP-CM01 before authorizing engine, CLI, MCP, and ProjectPolicySeed parity in GP-CM03 only.",
+            "depends_on": ["GP-CM01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, or private-writer correction>`.", "requests": [{"id": "GP-CM02", "question": "May Datum implement product-surface and existing ratified ProjectPolicySeed parity in GP-CM03 only?", "recommended_response": "Approve only with one resolver answer, no private store parser, no live Project following, and every excluded seed schema absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}}]}
+          },
+          {
+            "id": "GP-CM03", "kind": "execution", "status": "pending",
+            "action": "Implement engine, CLI, MCP operation/query/refusal/proposal parity and the existing copy-once ProjectPolicySeed snapshot/receipt seam.",
+            "depends_on": ["GP-CM02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"}], "completion_evidence": []
+          },
+          {
+            "id": "GP-CM04", "kind": "owner_decision", "status": "pending",
+            "action": "Review all committed evidence and approve the durable real-Project corpus and resource budgets before GP-CM05 only.",
+            "depends_on": ["GP-CM03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific migration, fixture, performance, accessibility, exclusion, or proof correction>`.", "requests": [{"id": "GP-CM04", "question": "May Datum run the bounded Global Preferences production-acceptance slice GP-CM05 only?", "recommended_response": "Approve only when all earlier evidence is committed, the corpus is durable, and PM-037/PM-039 exclusions remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}}]}
+          },
+          {
+            "id": "GP-CM05", "kind": "execution", "status": "pending",
+            "action": "Complete real-project, migration, recovery, managed/offline, visual, accessibility, performance, resource, and negative production acceptance.",
+            "depends_on": ["GP-CM04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM05"}], "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "The Project Preferences specification loses its Global Preferences blocker but remains planning-only.",
+            "Revision descriptors and runtime surfaces remain deferred."
+          ],
+          "unblocks_issue_ids": ["dat-project-preferences-spec-kiw"],
+          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "PROJECT-PREFERENCES-SPEC",
+      "order": 38,
+      "title": "Specify the Global and Project Preferences doorway",
+      "issue_id": "dat-project-preferences-spec-kiw",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
+        "specs/PROJECT_PREFERENCES_SPEC.md",
+        "research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+        "docs/gui/prototypes/preferences-window.html"
+      ],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Complete the exact Project-owned settings inventory, canonical query/mutation contract, conventional menu doorway, interaction/accessibility specification, and protected visual truth after Global Preferences is stable.",
+      "dependencies": ["dat-global-preferences-completion-f84"],
+      "unblocks": ["dat-project-preferences-build-tlq"],
+      "completion": {
+        "outcome": "Datum has an owner-ratified buildable Project Preferences contract with explicit scope, real Project authority, canonical mutations, accessible visual truth, and Revision excluded from the initial build.",
+        "canonical_next_step_id": "PPS-C01",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {"id": "PPS-C01", "kind": "planning", "status": "pending", "action": "Inventory exact Project-owned settings, authorities, query/mutation paths, seed relationships, and exclusions.", "depends_on": [], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C01"}], "completion_evidence": []},
+          {"id": "PPS-C02", "kind": "planning", "status": "pending", "action": "Reconcile the two-command menu doorway and Project Preferences primary visual truth through the Claude-owned protected lane.", "depends_on": ["PPS-C01"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C02"}], "completion_evidence": []},
+          {"id": "PPS-C03", "kind": "planning", "status": "pending", "action": "Publish the buildable Project Preferences authority, interaction, accessibility, and conformance specification.", "depends_on": ["PPS-C02"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C03"}], "completion_evidence": []},
+          {
+            "id": "PPS-C04", "kind": "owner_decision", "status": "pending", "action": "Review and ratify or revise the complete Project Preferences specification and bounded build placement.",
+            "depends_on": ["PPS-C03"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-SPEC: approve` or `PROJECT-PREFERENCES-SPEC: revise — <specific authority, menu, interaction, accessibility, visual, or proof correction>`.", "requests": [{"id": "PPS-C04", "question": "Does the complete Project Preferences contract faithfully implement PM-039 without exposing Revision or mixing machine and Project authority?", "recommended_response": "Approve only after the exact inventory, protected renders, canonical mutation paths, and accessibility proof are complete.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}}]}
+          }
+        ],
+        "post_completion": {
+          "effects": ["The bounded Project Preferences build becomes eligible for its own owner execution gate; Revision integration remains excluded."],
+          "unblocks_issue_ids": ["dat-project-preferences-build-tlq"],
+          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "PROJECT-PREFERENCES-BUILD",
+      "order": 39,
+      "title": "Build and stabilize Project Preferences",
+      "issue_id": "dat-project-preferences-build-tlq",
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
+        "specs/PROJECT_PREFERENCES_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
+        "docs/gui/prototypes/preferences-window.html"
+      ],
+      "state": "blocked",
+      "authorization": "owner_decision",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Implement Project Preferences through real Project queries and canonical journaled mutations after specification and protected visual ratification; Revision configuration remains a separate later decision.",
+      "dependencies": ["dat-project-preferences-spec-kiw"],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Project Preferences is a stable, accessible, production-accepted settings surface for ratified Project-owned configuration with no machine-store writes, private Project writers, Navigator settings, or Revision integration.",
+        "canonical_next_step_id": "PP-I00",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {
+            "id": "PP-I00", "kind": "owner_decision", "status": "pending", "action": "Review the ratified Project Preferences contract before authorizing one real vertical slice in PP-I01 only.",
+            "depends_on": [], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I00"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I01` or `PROJECT-PREFERENCES-EXECUTION: revise — <specific scope, mutation, visual, accessibility, dependency, or proof correction>`.", "requests": [{"id": "PP-I00", "question": "May Datum implement one real Project Preferences vertical slice in PP-I01 only?", "recommended_response": "Approve only with a ratified real Project row, canonical journaled mutation, and no Revision or machine-store behavior.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I00"}}]}
+          },
+          {"id": "PP-I01", "kind": "execution", "status": "pending", "action": "Implement the menu route, scope-safe read model, and first real journaled Project setting.", "depends_on": ["PP-I00"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I01"}], "completion_evidence": []},
+          {
+            "id": "PP-I02", "kind": "owner_decision", "status": "pending", "action": "Review PP-I01 before authorizing complete ratified Project-settings coverage in PP-I03 only.",
+            "depends_on": ["PP-I01"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I02"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I03` or `PROJECT-PREFERENCES-EXECUTION: revise — <specific category, conflict, accessibility, real-project, or proof correction>`.", "requests": [{"id": "PP-I02", "question": "May Datum complete and production-accept the ratified non-Revision Project Preferences categories in PP-I03 only?", "recommended_response": "Approve only after the vertical slice proves scope, mutation, undo, refusal, and accessibility behavior in a real Project.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I02"}}]}
+          },
+          {"id": "PP-I03", "kind": "execution", "status": "pending", "action": "Complete and stabilize ratified Project categories, conflicts/refusals, accessibility, real Projects, and production acceptance without Revision integration.", "depends_on": ["PP-I02"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I03"}], "completion_evidence": []}
+        ],
+        "post_completion": {
+          "effects": ["Project Preferences is stable; any Revision category or operational Revision surface still requires a fresh owner decision."],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "PRODUCT-REVISION-ENGINE",
+      "order": 40,
       "title": "Build and production-accept the Datum Product Revision Engine",
       "issue_id": "dat-product-revision-engine-build-18f",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
         "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
@@ -6313,7 +6508,7 @@
     },
     {
       "key": "MCAD-INTEROP-PLACEHOLDER",
-      "order": 37,
+      "order": 41,
       "title": "Plan native ECAD-MCAD interoperability",
       "issue_id": "dat-mcad-interop-l3p",
       "governing_docs": [
@@ -6333,7 +6528,7 @@
     },
     {
       "key": "DRAFTING-STANDARD-AUTHORITY",
-      "order": 38,
+      "order": 42,
       "title": "Decide adopted drafting-standard object ownership",
       "issue_id": "dat-drafting-standard-authority-jcz",
       "governing_docs": [
@@ -6361,7 +6556,7 @@
     },
     {
       "key": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
-      "order": 39,
+      "order": 43,
       "title": "Resolve schematic canvas background authority",
       "issue_id": "dat-schematic-background-owner-decision-gom",
       "governing_docs": [
@@ -6381,7 +6576,7 @@
     },
     {
       "key": "ADOPTED-DRAFTING-STANDARD-SPEC",
-      "order": 40,
+      "order": 44,
       "title": "Specify the adopted drafting-standard object",
       "issue_id": "dat-adopted-drafting-standard-object-er9",
       "governing_docs": [
@@ -6405,7 +6600,7 @@
     },
     {
       "key": "VISUAL-TRUTH-FILE-LANE",
-      "order": 41,
+      "order": 45,
       "title": "Enforce Claude ownership of GUI visual-truth files",
       "issue_id": "dat-visual-truth-file-lane-enforcement-jfl",
       "governing_docs": [
@@ -6531,7 +6726,7 @@
     },
     {
       "key": "REVISION-PRODUCT-RECOVERY",
-      "order": 42,
+      "order": 46,
       "title": "Recover the Revision product baseline and contain rejected REV-I10",
       "issue_id": "dat-revision-product-recovery-dap",
       "related_issue_ids": [
@@ -6539,16 +6734,18 @@
       ],
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
         "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
         "research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md",
+        "specs/PROJECT_PREFERENCES_SPEC.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
@@ -6556,7 +6753,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-G01",
+        "canonical_next_step_id": "RVR-O04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6800,7 +6997,7 @@
           {
             "id": "RVR-G01",
             "kind": "governance",
-            "status": "pending",
+            "status": "complete",
             "action": "Apply the approved Preferences-first sequence to numbered doctrine, Global Preferences and shared Units plans, the missing Project Preferences specification and Frontier placement, menu contracts, and a bounded protected visual-truth handoff without runtime or prototype edits.",
             "depends_on": ["RVR-O03"],
             "requirement_refs": [
@@ -6809,7 +7006,18 @@
                 "marker": "RVR-G01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "decision",
+                "path": "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
+                "marker": "EVIDENCE:PREFERENCES-FIRST-SETTINGS:PM-039-OWNER-APPROVED"
+              },
+              {
+                "kind": "document",
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "EVIDENCE:PROJECT-PREFERENCES:PENDING-DOORWAY-SPEC"
+              }
+            ]
           },
           {
             "id": "RVR-O04",

@@ -66,7 +66,8 @@ operations is.
 |---|---|---|
 | Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | ENGINE-READY / GUI-BLOCKED |
 | Cut/Copy/Paste/Delete | per-object delete builders exist (`build_delete_*`); no clipboard model | PARTIAL: delete ENGINE-READY; clipboard NOT-BUILT |
-| Preferences | none | NOT-BUILT |
+| Preferences > Global Preferences… | none — Product Mechanics 039 and the Global Preferences plan govern the future typed resolver/repository/wgpu route | NOT-BUILT |
+| Preferences > Project Preferences… | none — disabled without an open Project; future writes use canonical journaled Project mutations under `PROJECT_PREFERENCES_SPEC.md` | NOT-BUILT |
 
 ### View
 Fit / Zoom / Pan / Layer Visibility / Panels / Reset Workspace — **consumer-side
