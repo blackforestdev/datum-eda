@@ -71,6 +71,14 @@ Owner review may authorize only UNIT-I01. The review must confirm no-new-
 dependency posture, module ownership outside Preferences, exact refusal cases,
 and focused proof scope.
 
+On 2026-08-31 the owner replied exactly
+`UNITS-ENGINE-EXECUTION: approve UNIT-I01`. This authorizes only the exact
+engine-owned quantity, parse, format, refusal-provenance, and focused proof
+scope below. It authorizes no Preferences surface, descriptor, Project
+mutation, Revision work, or new dependency.
+
+<!-- EVIDENCE:SHARED-UNITS-ENGINE:UNIT-I00-OWNER-APPROVED -->
+
 <!-- REQ:SHARED-UNITS-ENGINE:UNIT-I01 -->
 ### UNIT-I01 — exact quantity, parse, and format authority
 
@@ -85,6 +93,15 @@ canonical value, precision, override state, and refusal provenance.
 round trips; precision changes with identical stored bytes; explicit valid
 cross-system overrides; ambiguous/malformed token refusal; deterministic
 locale/path-independent results; and source-health/dependency gates.
+
+UNIT-I01 implements this boundary in `crates/engine/src/ir/units.rs`: typed
+quantity/system/unit/precision/override identities, checked decimal-to-rational
+parsing, exact signed nanometer conversion, typed refusal provenance, and
+deterministic display-only formatting. Existing floating-point adapters remain
+explicitly transitional until UNIT-I03 integration; no caller or persisted
+schema is silently migrated in this slice.
+
+<!-- EVIDENCE:SHARED-UNITS-ENGINE:UNIT-I01-EXACT-CORE -->
 
 ## 4. Global Preferences foundation and first real GUI slice
 
