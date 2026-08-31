@@ -6548,7 +6548,7 @@
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
@@ -6556,7 +6556,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-O03",
+        "canonical_next_step_id": "RVR-G01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6766,7 +6766,7 @@
           {
             "id": "RVR-O03",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review and approve or revise the Preferences-first sequencing and settings-doorway packet before any successor implementation item is created or authorized.",
             "depends_on": ["RVR-A05"],
             "requirement_refs": [
@@ -6775,7 +6775,13 @@
                 "marker": "RVR-O03"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:RVR-O03-PREFERENCES-FIRST-APPROVED"
+              }
+            ],
             "owner_input": {
               "response_format": "After reviewing the bounded packet, reply exactly `PREFERENCES-FIRST-REENTRY: approve` or `PREFERENCES-FIRST-REENTRY: revise — <specific correction>`.",
               "requests": [
@@ -6786,6 +6792,48 @@
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
                     "marker": "RVR-O03"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "RVR-G01",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Apply the approved Preferences-first sequence to numbered doctrine, Global Preferences and shared Units plans, the missing Project Preferences specification and Frontier placement, menu contracts, and a bounded protected visual-truth handoff without runtime or prototype edits.",
+            "depends_on": ["RVR-O03"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-G01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "RVR-O04",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the repaired Preferences-first governance, protected-lane handoff, and resulting canonical sequence before any implementation claim.",
+            "depends_on": ["RVR-G01"],
+            "requirement_refs": [
+              {
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "RVR-O04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "After reviewing the governance repair, reply exactly `PREFERENCES-FIRST-GOVERNANCE: approve` or `PREFERENCES-FIRST-GOVERNANCE: revise — <specific correction>`.",
+              "requests": [
+                {
+                  "id": "PREFERENCES-FIRST-GOVERNANCE",
+                  "question": "Does the repaired roadmap make the conventional Global/Project Preferences doorway and functional vertical-slice sequence controlling before any Revision configuration or operation resumes?",
+                  "recommended_response": "Approve only if the numbered decision, plans, Project Preferences specification, menu contract, Frontier, and protected-lane handoff agree and authorize no runtime work.",
+                  "source_ref": {
+                    "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                    "marker": "RVR-O04"
                   }
                 }
               ]
