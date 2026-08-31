@@ -113,6 +113,18 @@ governance transaction establishes its controlling baseline and then it must:
 5. return to the owner with a small, comprehensible running-app review packet
    before any wider Revision scope is reauthorized.
 
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-A04 -->
+After that bounded review is approved, recovery closure must prepare one short
+roadmap re-entry packet. The packet may report the governed and authorized
+state of already-scheduled work, but it may not invent a product mechanism,
+reactivate suspended Revision or Global Preferences work, or select a successor
+on the owner's behalf.
+
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-O02 -->
+<!-- OWNER:REVISION-PRODUCT-RECOVERY:RVR-O02:RVR-O02 -->
+The owner then selects the next canonical Frontier item, or directs a further
+bounded audit. Approval of the recovered baseline itself selects no successor.
+
 Global Preferences implementation and the shared Units execution remain
 blocked. Their reusable authority primitives are preserved, but Revision
 visibility, default profile, teaching-pin, and onboarding descriptors are
@@ -169,6 +181,16 @@ decision records that correction; it does not infer approval of a replacement
 prototype or authorize corrective runtime implementation.
 
 <!-- EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED -->
+
+On 2026-08-31 the owner reviewed the bounded running-app result and replied
+exactly `REVISION-RECOVERY-BASELINE: approve`. This completes RVR-O01: the
+ordinary unmanaged Project baseline is accepted as restored, with no
+fictional/default Revision UI and no observed interference with real schematic
+or board authoring. The approval does not reauthorize Revision, Global
+Preferences, Publish, enterprise, or other product execution and does not
+select the next roadmap item.
+
+<!-- EVIDENCE:REVISION-RECOVERY:RVR-O01-APPROVED -->
 
 ## Dependency and licensing impact
 
