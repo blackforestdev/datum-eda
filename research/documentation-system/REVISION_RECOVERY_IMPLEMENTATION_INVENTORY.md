@@ -1,7 +1,7 @@
 # Revision Recovery Implementation Inventory
 
-Status: RVR-A03 recovery inventory; implementation authorization limited to the
-RVR-I01 boundary below
+Status: RVR-A03 recovery inventory plus RVR-A04 roadmap re-entry packet;
+no successor selected
 
 Date: 2026-08-31
 
@@ -246,6 +246,102 @@ is clean.
 
 <!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-A03 -->
 <!-- EVIDENCE:REVISION-RECOVERY:RVR-A03-INVENTORY -->
+
+## RVR-A04 roadmap re-entry packet
+
+### Owner direction now controlling the re-entry audit
+
+The owner approved the recovered unmanaged workspace and then clarified the
+intended settings architecture and build order:
+
+- the application menu bar is the entry point for system/user and Project
+  configuration;
+- Global Preferences owns machine/user preference behavior and may provide
+  eligible new-Project defaults, but it cannot adopt or mutate policy in an
+  existing Project;
+- Project Preferences owns deliberate configuration of the current Project,
+  including whether and how that Project adopts Revision behavior;
+- configuration categories never appear in the Project Navigator;
+- an internal Revision service may exist headlessly, but no product-facing
+  Revision configuration or workflow is uncovered before its proper settings
+  surfaces are implemented and stable; and
+- operational results, if later authorized, are distinct from configuration
+  and may use contextual closable work surfaces rather than permanent
+  navigation groups.
+
+This yields the intended dependency direction:
+
+`preference authority -> preference GUI -> Project Revision configuration -> contextual Revision operations`
+
+The exact menu composition remains to be reconciled. The product spec currently
+places `Preferences` under Edit and `project settings` under Project, while the
+owner described one menu-bar settings doorway capable of reaching both Global
+and Project scopes. This packet records the conflict; it does not choose the
+final menu hierarchy.
+
+### Current implementation and authority facts
+
+| Surface or subsystem | Current governed/runtime state | Re-entry consequence |
+| --- | --- | --- |
+| Global Preferences authority | Product Mechanics 037 and the 54-descriptor catalog are ratified, with Revision descriptors explicitly deferred by Product Mechanics 038. | Reusable typed authority exists on paper, but its Revision clauses are not implementation authority. |
+| Global Preferences runtime | `GLOBAL-PREFERENCES-ENGINE` is blocked by the unfinished shared Units engine. Its current plan implements resolver, storage, Project seeding, and engine/CLI/MCP parity before the wgpu Preferences window at GP-I09. | It cannot be selected for execution now, and its late-GUI sequence has not yet been reconciled with the owner's Preferences-first product dependency. |
+| Global Preferences application entry | `DATUM_GUI_MENU_BINDINGS.md` marks `Preferences` as `NOT-BUILT`. Runtime code contains only the isolated Console duration preference file, not a general Preferences engine or window. | The normal settings doorway does not exist in the running application. |
+| Project Preferences | The two Claude-owned Project Preferences studies are clay and explicitly say the surface is not specified. No runtime Project Preferences window exists. | There is no ratified or buildable writable Project-settings surface into which Revision configuration can safely integrate. |
+| Revision engine | Substantial engine and public-surface code exists, but Product Mechanics 038 defers the execution item and quarantines broad authority, commit/open coupling, public catalog/query behavior, policy gates, and enterprise adapters. | Passing code tests or retained internals cannot expose a product workflow. The default fictional GUI has been removed and stays removed. |
+| Revision settings | The four `datum.revision.*` descriptors are deferred; the current Global Preferences render shows them as searchable retired/deferred vocabulary with no control or default. | Neither a global visibility switch nor a new-Project Revision seed may be implemented from the current catalog. |
+
+The sequencing failure is therefore concrete: Revision implementation reached a
+visible product surface while the general Preferences entry was still
+`NOT-BUILT` and Project Preferences was still unratified clay. Recovery fixed
+the visible result, but the dependency must be corrected before either product
+area resumes.
+
+### Queued Frontier state
+
+This is a status inventory, not a ranking or selection.
+
+| Frontier item | Current state | What selection would and would not mean |
+| --- | --- | --- |
+| `GUI-SURFACE-SPECS` | planned; planning-authorized | May specify the manual-first schematic and library surfaces. It does not repair Preferences or authorize Revision. |
+| `UVT-S5A-BUILD` | specified; planning-authorized | Has no current completion contract or execution authorization. It cannot be treated as a ready implementation start. |
+| `GUI-MARKING-MENU` | specified; planning-authorized | Covers an inert marking-menu shell only. It does not create the application settings doorway. |
+| `DISTRIBUTED-COLLAB-SPEC` | planned; planning-authorized | Is independent future collaboration specification work, not settings recovery. |
+| `ADOPTED-DRAFTING-STANDARD-SPEC` | planned; planning-authorized | May specify Project documentation authority, but does not supply Project Preferences itself. |
+| `SHARED-UNITS-ENGINE` | specified; owner-decision boundary | Is the existing hard prerequisite to `GLOBAL-PREFERENCES-ENGINE`; selecting it asks the owner to review UNIT-I00 and does not build Preferences UI. |
+| `GLOBAL-PREFERENCES-ENGINE` | blocked; owner-decision authorization recorded | Cannot start until shared Units closes. Its current completion order still places the wgpu Preferences surface at GP-I09. |
+| GUI P2 cross-probe, full Inspector, GUI write path, and native authoring | blocked | Their blockers remain intact; recovery creates no shortcut around them. |
+| `MCAD-INTEROP-PLACEHOLDER` | planned; no authorization | Is a placeholder, not actionable work. |
+| `PRODUCT-REVISION-ENGINE` | deferred; no authorization | Remains quarantined and cannot be selected through recovery approval. |
+
+### Decision-ready re-entry boundary
+
+No existing executable Frontier item represents “build and stabilize the
+Global and Project Preferences settings doorway before exposing Revision.” The
+Global Preferences engine is blocked and orders its GUI late; Project
+Preferences has no governed specification or implementation item; Revision is
+deferred. Selecting any of those as though the desired sequence already existed
+would repeat the same planning error.
+
+At RVR-O02 the owner can safely do one of two things:
+
+1. select an already-governed unrelated Frontier key from the table, accepting
+   the exact limited meaning stated there; or
+2. direct a bounded audit to reconcile the Preferences-first execution order,
+   specify the Global/Project settings doorway, classify Global versus Project
+   Revision configuration, and return with a small ratification packet before
+   any implementation.
+
+The second response is the route that corresponds to the owner's newly stated
+goal, but this packet does not select it. The required response remains the
+closed RVR-O02 form:
+
+`REVISION-RECOVERY-NEXT: <Frontier key>`
+
+or
+
+`REVISION-RECOVERY-NEXT: audit — <specific uncertainty>`
+
+<!-- EVIDENCE:REVISION-RECOVERY:RVR-A04-ROADMAP-REENTRY -->
 
 ## Dependency and licensing impact
 

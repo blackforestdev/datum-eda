@@ -6547,7 +6547,7 @@
         "docs/PROJECT_STATE_POLICY.md"
       ],
       "state": "specified",
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
@@ -6555,7 +6555,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-A04",
+        "canonical_next_step_id": "RVR-O02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6691,7 +6691,7 @@
           {
             "id": "RVR-A04",
             "kind": "planning",
-            "status": "pending",
+            "status": "complete",
             "action": "Prepare a short post-recovery roadmap re-entry packet that reports the governed and authorized state of queued work without inventing product mechanisms, reactivating suspended scope, or selecting a successor.",
             "depends_on": ["RVR-O01"],
             "requirement_refs": [
@@ -6700,7 +6700,13 @@
                 "marker": "RVR-A04"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:RVR-A04-ROADMAP-REENTRY"
+              }
+            ]
           },
           {
             "id": "RVR-O02",
