@@ -162,7 +162,11 @@ fn solve_project_panel_layout_with_taffy(
         .ok()?;
     taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
     let root_layout = taffy.layout(root).ok()?;
-    let project_height = UI_CARD_CONTENT_TOP + root_layout.size.height + UI_CARD_CONTENT_BOTTOM;
+    // Q1-A-amended makes the complete Design/Publish/Revision taxonomy
+    // permanently visible. Reserve its real height so Revision rows never draw
+    // through the sibling LAYERS panel.
+    let project_height =
+        (UI_CARD_CONTENT_TOP + root_layout.size.height + UI_CARD_CONTENT_BOTTOM).max(330.0);
     let filters_y = card_y + project_height + UI_CARD_MARGIN;
 
     let rect_for = |kind: ProjectPanelNode| -> Option<RectPx> {
@@ -210,7 +214,8 @@ pub(super) fn solve_right_panel_layout_with_taffy(
     let card_y = right.y + UI_CARD_MARGIN;
     let card_width = (right.width - UI_CARD_MARGIN * 2.0).max(1.0);
     let content_height = (right.height - UI_CARD_MARGIN * 2.0).max(1.0);
-    let inspector_height = content_height.max(inspector_height_for_state(state).min(content_height));
+    let inspector_height =
+        content_height.max(inspector_height_for_state(state).min(content_height));
 
     let mut taffy: TaffyTree<()> = TaffyTree::new();
     let inspector = taffy
@@ -261,9 +266,7 @@ fn fallback_right_panel_layout(state: &ReviewWorkspaceState, right: RectPx) -> R
         width: right.width - UI_CARD_MARGIN * 2.0,
         height: inspector_height_for_state(state),
     };
-    RightPanelLayout {
-        inspector_rect,
-    }
+    RightPanelLayout { inspector_rect }
 }
 
 fn fallback_project_panel_layout(state: &ReviewWorkspaceState, left: RectPx) -> ProjectPanelLayout {
@@ -271,11 +274,11 @@ fn fallback_project_panel_layout(state: &ReviewWorkspaceState, left: RectPx) -> 
         x: left.x + UI_CARD_MARGIN,
         y: left.y + UI_CARD_MARGIN,
         width: left.width - UI_CARD_MARGIN * 2.0,
-        height: 300.0,
+        height: 330.0,
     };
     let filters_rect = RectPx {
         x: left.x + UI_CARD_MARGIN,
-        y: left.y + 326.0,
+        y: left.y + 330.0,
         width: left.width - UI_CARD_MARGIN * 2.0,
         height: (left.height - 340.0).max(100.0),
     };

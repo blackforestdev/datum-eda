@@ -89,5 +89,8 @@ pub(super) fn render_side_panels(
         hit_regions,
     );
     revision_workspace::render_navigator(state, project_rect, panel_quads, text_runs, hit_regions);
-    render_inspector_panel(state, inspector_rect, panel_quads, text_runs, hit_regions);
+    if !revision_workspace::render_evidence_inspector(state, inspector_rect, panel_quads, text_runs)
+    {
+        render_inspector_panel(state, inspector_rect, panel_quads, text_runs, hit_regions);
+    }
 }

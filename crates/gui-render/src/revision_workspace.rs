@@ -2,12 +2,87 @@ use super::*;
 use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface};
 
 const NAV_ROWS: [(&str, RevisionSurface); 5] = [
-    ("Changes", RevisionSurface::Change),
-    ("Baselines", RevisionSurface::Impact),
-    ("Releases", RevisionSurface::Release),
-    ("Controlled Documents", RevisionSurface::Release),
-    ("Evidence", RevisionSurface::Evidence),
+    ("Changes  1 draft", RevisionSurface::Change),
+    ("Baselines  BL-…-24-01", RevisionSurface::Impact),
+    ("Releases  RLS-0007", RevisionSurface::Release),
+    ("Controlled Documents  1", RevisionSurface::Release),
+    ("Evidence  12 records", RevisionSurface::Evidence),
 ];
+
+pub(super) fn render_evidence_inspector(
+    state: &ReviewWorkspaceState,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) -> bool {
+    if state.ui.layout.focused_content()
+        != PaneContent::Revision(RevisionPane::Surface(RevisionSurface::Evidence))
+    {
+        return false;
+    }
+    draw_text(
+        "Immutable manifest",
+        rect.x + 12.0,
+        rect.y + 46.0,
+        16.0,
+        TEXT_PRIMARY,
+        TextFace::UiStrong,
+        text,
+    );
+    draw_text(
+        "RLS-0007 evidence",
+        rect.x + 12.0,
+        rect.y + 64.0,
+        10.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text,
+    );
+    let mut y = rect.y + 92.0;
+    for (label, value) in [
+        ("Configuration", "BL-2026-08-24-01 · LOCKED"),
+        ("Sources", "4 subjects · digests recorded"),
+        ("Producer", "datum-eda 1.4.2 · build 9917"),
+        ("Invocation", "policy P-FAB-1"),
+        ("Environment", "digest e77a… · fonts pinned"),
+        ("Outputs", "12 files · per-file sha256"),
+        ("Attempt", "independent executor ci-2"),
+    ] {
+        draw_text(
+            label,
+            rect.x + 12.0,
+            y,
+            10.0,
+            TEXT_MUTED,
+            TextFace::Ui,
+            text,
+        );
+        draw_text_clipped(
+            value,
+            rect.x + 112.0,
+            y,
+            11.0,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            RectPx {
+                x: rect.x + 108.0,
+                y: y - 3.0,
+                width: (rect.width - 120.0).max(1.0),
+                height: 18.0,
+            },
+            text,
+        );
+        y += 27.0;
+    }
+    draw_lock_glyph(
+        rect.x + rect.width - 24.0,
+        rect.y + 84.0,
+        10.0,
+        TEXT_SECONDARY,
+        quads,
+    );
+    true
+}
 
 pub(super) fn render_navigator(
     state: &ReviewWorkspaceState,
@@ -18,8 +93,32 @@ pub(super) fn render_navigator(
 ) {
     let x = rect.x + 12.0;
     let mut y = rect.y + 82.0;
-    draw_text("REVISION", x, y, 10.0, TEXT_MUTED, TextFace::UiStrong, text);
-    y += 21.0;
+    for (label, strong) in [
+        ("DESIGN", true),
+        ("  Schematic · sensor-node", false),
+        ("  Board · main", false),
+        ("PUBLISH", true),
+        ("  All Sheets  5", false),
+        ("REVISION", true),
+    ] {
+        draw_text(
+            label,
+            x,
+            y,
+            if strong { 10.0 } else { 11.0 },
+            if strong { TEXT_MUTED } else { TEXT_SECONDARY },
+            if strong {
+                TextFace::UiStrong
+            } else {
+                TextFace::Ui
+            },
+            text,
+        );
+        if label.starts_with("Baselines") || label.starts_with("Releases") {
+            draw_lock_glyph(x + rect.width - 36.0, y - 3.0, 8.0, TEXT_SECONDARY, quads);
+        }
+        y += if strong { 19.0 } else { 20.0 };
+    }
     for (label, surface) in NAV_ROWS {
         let row = RectPx {
             x,
@@ -42,16 +141,7 @@ pub(super) fn render_navigator(
                 TEXT_ACCENT,
             ));
         }
-        draw_text(label, x + 8.0, y, 11.0, TEXT_SECONDARY, TextFace::Ui, text);
-        let empty = match surface {
-            RevisionSurface::Change => "none — begins at first divergence",
-            RevisionSurface::Impact => "none — created by first release",
-            RevisionSurface::Release => "none — issue your first release",
-            RevisionSurface::Evidence => "none — recorded by checks",
-        };
-        if rect.width > 260.0 {
-            draw_text(empty, x + 112.0, y, 9.0, TEXT_MUTED, TextFace::Ui, text);
-        }
+        draw_text(label, x + 8.0, y, 10.5, TEXT_SECONDARY, TextFace::Ui, text);
         hits.push(HitRegion {
             target: HitTarget::OpenRevisionSurface(surface),
             rect: row,
@@ -72,8 +162,11 @@ pub(super) fn render_pane(
     let pad = if rect.width < 620.0 { 18.0 } else { 28.0 };
     let x = rect.x + pad;
     let mut y = rect.y + 28.0;
-    draw_text(
+    draw_text_clipped(
         match pane {
+            RevisionPane::Surface(RevisionSurface::Impact) => "Impact · CHG-0031",
+            RevisionPane::Surface(RevisionSurface::Release) => "RC-0009 · EVT2 release",
+            RevisionPane::Surface(RevisionSurface::Evidence) => "RLS-0007 evidence",
             RevisionPane::Surface(surface) => surface.label(),
             RevisionPane::Witness => "Canonical witness",
         },
@@ -82,6 +175,12 @@ pub(super) fn render_pane(
         18.0,
         TEXT_PRIMARY,
         TextFace::UiStrong,
+        RectPx {
+            x,
+            y: rect.y,
+            width: (rect.x + rect.width - 44.0 - x).max(1.0),
+            height: 60.0,
+        },
         text,
     );
     let close = RectPx {
@@ -178,24 +277,109 @@ fn section(
     };
     quads.push(Quad::from_rect(row, PANEL_CARD_BG));
     push_rect_border(quads, row, PANEL_CARD_BORDER, 1.0);
-    draw_text(
-        title,
-        x + 10.0,
-        y + 8.0,
-        10.0,
-        TEXT_MUTED,
-        TextFace::UiStrong,
-        text,
-    );
-    draw_text(
-        value,
-        x + 150.0,
-        y + 8.0,
-        11.0,
-        TEXT_PRIMARY,
-        TextFace::Ui,
-        text,
-    );
+    if width < 420.0 {
+        draw_text_clipped(
+            title,
+            x + 10.0,
+            y + 5.0,
+            9.0,
+            TEXT_MUTED,
+            TextFace::UiStrong,
+            RectPx {
+                x,
+                y,
+                width,
+                height: 18.0,
+            },
+            text,
+        );
+        draw_text_clipped(
+            value,
+            x + 10.0,
+            y + 21.0,
+            9.5,
+            TEXT_PRIMARY,
+            TextFace::Ui,
+            RectPx {
+                x,
+                y: y + 17.0,
+                width,
+                height: 21.0,
+            },
+            text,
+        );
+    } else {
+        draw_text_clipped(
+            title,
+            x + 10.0,
+            y + 8.0,
+            10.0,
+            TEXT_MUTED,
+            TextFace::UiStrong,
+            RectPx {
+                x,
+                y,
+                width: 140.0,
+                height: 40.0,
+            },
+            text,
+        );
+        draw_text_clipped(
+            value,
+            x + 150.0,
+            y + 8.0,
+            11.0,
+            TEXT_PRIMARY,
+            TextFace::Ui,
+            RectPx {
+                x: x + 145.0,
+                y,
+                width: (width - 145.0).max(1.0),
+                height: 40.0,
+            },
+            text,
+        );
+    }
+}
+
+fn draw_lock_glyph(x: f32, y: f32, size: f32, color: [f32; 3], quads: &mut Vec<Quad>) {
+    let stroke = (size * 0.16).max(1.0);
+    quads.push(Quad::from_rect(
+        RectPx {
+            x,
+            y: y + size * 0.42,
+            width: size,
+            height: size * 0.58,
+        },
+        color,
+    ));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: x + size * 0.2,
+            y,
+            width: stroke,
+            height: size * 0.52,
+        },
+        color,
+    ));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: x + size * 0.2,
+            y,
+            width: size * 0.6,
+            height: stroke,
+        },
+        color,
+    ));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: x + size * 0.8 - stroke,
+            y,
+            width: stroke,
+            height: size * 0.52,
+        },
+        color,
+    ));
 }
 
 fn render_release(
@@ -207,26 +391,48 @@ fn render_release(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
-    draw_text(
-        "Release candidate · readiness",
+    draw_text_clipped(
+        "Preparing → Ready for Review → In Approval → Ready to Release",
         x,
         y,
         13.0,
         TEXT_SECONDARY,
         TextFace::UiStrong,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 24.0,
+        },
         text,
     );
-    y += 28.0;
+    y += 24.0;
+    draw_text_clipped(
+        "exits: Stale · Rejected · Cancelled",
+        x,
+        y,
+        10.5,
+        TEXT_MUTED,
+        TextFace::Ui,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 22.0,
+        },
+        text,
+    );
+    y += 26.0;
     for (name, value) in [
-        ("SCOPE", "12 affected items"),
-        ("CHANGE", "EC-024 · Authorized"),
-        ("REVISION", "B · reservation pending"),
-        ("BASELINE", "BL-024-01"),
-        ("EVIDENCE", "12 current · 0 stale"),
-        ("DEPARTURES", "0 unresolved"),
-        ("APPROVALS", "2 of 2 valid"),
-        ("DOCUMENTS", "4 controlled issues"),
-        ("PACKAGE", "manifest ready"),
+        ("1 · SCOPE + MEMBERS ✓", "3 proposed"),
+        ("2 · REVISION ALLOCATIONS ◌", "2 reserved + 1 reuse"),
+        ("3 · CHANGES + DEPARTURES ✓", "1 + 1"),
+        ("4 · IMPACT ⚠", "1 Unknown — expanded"),
+        ("5 · EVIDENCE ⚠", "1 blocker — expanded"),
+        ("6 · EFFECTIVITY ✓", "units from SN-0450"),
+        ("7 · ATTESTATIONS ⚠", "1 of 2 · digest-bound"),
+        ("8 · DOCUMENTS ✓", "1 issue proposed"),
+        ("9 · PACKAGE ✓", "manifest ready"),
     ] {
         section(
             name,
@@ -275,20 +481,28 @@ fn render_impact(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
-    draw_text(
-        "Impact summary",
+    draw_text_clipped(
+        "Evaluation IMP-0009 · vs BL-2026-08-24-01",
         x,
         y,
         13.0,
         TEXT_SECONDARY,
         TextFace::UiStrong,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 24.0,
+        },
         text,
     );
     y += 30.0;
     for (label, value) in [
-        ("Affected", "7"),
-        ("Unaffected", "18"),
-        ("Impact unknown", "2 — evidence incomplete"),
+        ("Changed", "1 · lib footprint SOIC-8 rev 5→6"),
+        ("Affected !", "2 · witness paths recorded"),
+        ("Unaffected", "3 ✓ · proof: outside sensitivity"),
+        ("ImpactUnknown", "? 1 — evaluator missing: 3D-model edge"),
+        ("Graph scope", "complete except 3D + harness evaluators"),
     ] {
         section(
             label,
@@ -299,15 +513,21 @@ fn render_impact(
             quads,
             text,
         );
-        y += 48.0;
+        y += 44.0;
     }
-    draw_text(
-        "Select a result to open its canonical witness tree beside this summary.",
+    draw_text_clipped(
+        "Filters — ⚠ affected  ·  ✓ unaffected  ·  ? unknown  ·  → required action",
         x,
         y + 8.0,
         11.0,
         TEXT_MUTED,
         TextFace::Ui,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 22.0,
+        },
         text,
     );
     let witness = RectPx {
@@ -318,7 +538,7 @@ fn render_impact(
     };
     quads.push(Quad::from_rect(witness, REVIEW_ROW_BADGE));
     draw_text(
-        "J3 → U7 → regulated output  · IMPACT UNKNOWN",
+        "J3 → U7 → regulated output  · ? ImpactUnknown",
         x + 10.0,
         y + 44.0,
         10.0,
@@ -374,23 +594,62 @@ fn render_evidence(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
-    draw_text(
-        "REPRODUCIBLE · 12 of 12 outputs byte-identical",
+    draw_text_clipped(
+        "Configuration BL-2026-08-24-01 · LOCKED",
         x,
         y,
         13.0,
         TEXT_ACCENT,
         TextFace::UiStrong,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 24.0,
+        },
         text,
     );
-    y += 32.0;
+    draw_lock_glyph(x + 225.0, y - 4.0, 10.0, TEXT_ACCENT, quads);
+    y += 28.0;
+    draw_text_clipped(
+        "Reproduction ✓ ByteIdentical · 12/12 outputs",
+        x,
+        y,
+        12.0,
+        TEXT_ACCENT,
+        TextFace::UiStrong,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 22.0,
+        },
+        text,
+    );
+    y += 24.0;
+    draw_text_clipped(
+        "Authenticity signature valid · signer authorized ✓ (separate fact)",
+        x,
+        y,
+        10.5,
+        TEXT_SECONDARY,
+        TextFace::Ui,
+        RectPx {
+            x,
+            y,
+            width: (rect.x + rect.width - x - 12.0).max(1.0),
+            height: 22.0,
+        },
+        text,
+    );
+    y += 28.0;
     for (label, value) in [
-        ("Sources", "8 immutable inputs"),
-        ("Producer", "datum-cli 0.1"),
-        ("Invocation", "typed command captured"),
-        ("Environment", "platform + toolchain captured"),
-        ("Outputs", "12 / 12 matched"),
-        ("Attempts", "2 retained"),
+        ("Sources", "✓ complete · 4 subjects · digests recorded"),
+        ("Producer", "✓ recorded · datum-eda 1.4.2 · build 9917"),
+        ("Invocation", "✓ recorded · policy P-FAB-1"),
+        ("Environment", "✓ captured · digest e77a… · fonts pinned"),
+        ("Outputs", "✓ 12 files verified · per-file sha256"),
+        ("Attempts", "✓ 2 · latest independent ci-2"),
     ] {
         section(
             label,
