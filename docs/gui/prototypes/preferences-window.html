@@ -267,14 +267,10 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="prov">factory default — you haven’t changed this</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Publishing destinations</div>
 </section><section id="revision">
-<div class="row" data-key="datum.revision.visibility" data-alt="revision panel, hide revision, revision groups"><div class="lbl"><b>Show/hide revision system</b><span>Presentation-only visibility of Revision Navigator groups and projections (factory: visible expanded groups); hiding never disables records, policy, j</span></div><div class="ctl"><span class="lock">🔒 kept ON by ACME · teaching policy</span><div class="tog"></div></div></div>
-<div class="prov">factory default — you haven’t changed this</div>
-<div class="row" data-key="datum.revision.profile_seed"><div class="lbl"><b>New-Project revision profile seed</b><span>The revision profile copied into new Projects at genesis (factory Sequential Alphanumeric (Legacy); ISO 19650 and organization-custom selectable); cop</span></div><div class="ctl"><div class="sel" data-opts="Sequential Alphanumeric (Legacy)|ACME profile (ISO 19650)" data-def="Sequential Alphanumeric (Legacy)">Sequential Alphanumeric (Legacy)</div></div></div>
-<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
-<div class="row" data-key="datum.revision.build_presentation_seed"><div class="lbl"><b>Build hierarchy presentation seed</b><span>Whether new Projects start with the quiet build-and-baseline Inspector (factory V4a) or the enterprise Phase-Build-Baseline Navigator hierarchy (V4b);</span></div><div class="ctl"><div class="sel" data-opts="Quiet build + baseline (V4a)|Phase / build hierarchy (V4b)" data-def="Quiet build + baseline (V4a)">Quiet build + baseline (V4a)</div></div></div>
-<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
-<div class="row" data-key="datum.revision.prototype_transition_seed"><div class="lbl"><b>Prototype-to-production transition seed</b><span>Whether new Projects continue one revision sequence through prototype and production (factory Candidate A) or use a governed namespace transition (Can</span></div><div class="ctl"><div class="sel" data-opts="One continuing namespace|Explicit prototype→production transition" data-def="One continuing namespace">One continuing namespace</div></div></div>
-<div class="prov">copies once at New Project, with a receipt — existing projects never follow later changes</div>
+<div class="row" data-key="datum.revision.visibility" data-alt="revision panel, hide revision, revision groups"><div class="lbl"><b>Show/hide revision system</b><span>Retired vocabulary. There is no default Revision Navigator presence to show or hide: PM-038 withdrew permanent groups, and revision is reached contextually on a subject.</span></div><div class="ctl"><span class="defer" style="font-family:'PlexMono',monospace;font-size:10px;border:1px dashed #E0A23A;color:#E0A23A;border-radius:3px;padding:1px 8px;white-space:nowrap">⊘ DEFERRED · PM-038 recovery</span></div></div><div class="prov">no control · no default · searchable name only</div>
+<div class="row" data-key="datum.revision.profile_seed"><div class="lbl"><b>New-Project revision profile seed</b><span>Seeds a revision profile into new Projects. Deferred: seeding presumes an adopted revision workflow, which PM-038 makes a deliberate Project decision rather than a genesis default.</span></div><div class="ctl"><span class="defer" style="font-family:'PlexMono',monospace;font-size:10px;border:1px dashed #E0A23A;color:#E0A23A;border-radius:3px;padding:1px 8px;white-space:nowrap">⊘ DEFERRED · PM-038 recovery</span></div></div><div class="prov">no control · no default · searchable name only</div>
+<div class="row" data-key="datum.revision.build_presentation_seed"><div class="lbl"><b>Build hierarchy presentation seed</b><span>Seeds build/baseline presentation into new Projects. Deferred: it presumes Revision presentation exists before a Project adopts revision control.</span></div><div class="ctl"><span class="defer" style="font-family:'PlexMono',monospace;font-size:10px;border:1px dashed #E0A23A;color:#E0A23A;border-radius:3px;padding:1px 8px;white-space:nowrap">⊘ DEFERRED · PM-038 recovery</span></div></div><div class="prov">no control · no default · searchable name only</div>
+<div class="row" data-key="datum.revision.prototype_transition_seed"><div class="lbl"><b>Prototype-to-production transition seed</b><span>Seeds namespace transition behaviour into new Projects. Deferred pending the PM-038 recovery review.</span></div><div class="ctl"><span class="defer" style="font-family:'PlexMono',monospace;font-size:10px;border:1px dashed #E0A23A;color:#E0A23A;border-radius:3px;padding:1px 8px;white-space:nowrap">⊘ DEFERRED · PM-038 recovery</span></div></div><div class="prov">no control · no default · searchable name only</div>
 <div class="ghead">Planned — not in v1</div><div class="prov" style="border-bottom:none">Provisional watermark presentation · Git and offline exchange seed · Local history and session journal retention · Version control integration (machine-side) · User identity for provenance</div>
 </section><section id="agents">
 <div class="row" data-key="datum.agents.authority_level"><div class="lbl"><b>Agent authority level</b><span>Per-profile Datum capability grant for launched agents: inspect, propose (default inspect+propose), apply-approved, or owner-enabled unattended; crede</span></div><div class="ctl"><span class="shield">⛉</span><div class="sel" data-opts="Inspect|Propose|Apply approved|Unattended" data-def="Propose">Propose</div></div></div>
@@ -450,16 +446,6 @@ if((location.hash||'').includes('layout=b')){
 const qh=(location.hash||'').match(/q=([^,&]+)/);
 if(qh){qIn.value=decodeURIComponent(qh[1]);runSearch();}
 const EX={
- 'Show/hide revision system':{
-  eff:'on · <span style="color:var(--warn)">🔒 pinned by organization</span>',
-  stack:[
-   {s:'Organization',v:'pin on',m:'policy T-EDU-1 “visibility teaches” · admin r.osei · 2026-08-20 · within your released authority (backside management)',w:1},
-   {s:'User',v:'hidden',m:'set by you 2026-08-19 · overridden by the pin — retained, and it returns automatically if the pin lifts',w:0},
-   {s:'Installation',v:'no value',m:'nothing set for this machine',w:0},
-   {s:'Descriptor default',v:'shown',m:'factory fact — inert while any contribution exists',w:0}],
-  why:'Q4 staged resolution: eligibility first (your AuthorityRelease admits ACME directives), then controls (the pin governs the effective value), then ordinary ranking of what remains.',
-  desc:'datum.revision.visibility · enum shown|hidden · class Presentation · sources: Installation · Organization · User',
-  act:'You cannot change this while the pin is active. Appeal: qms-admin. Revoking ACME’s authority in Organization lifts every pin it holds.'},
  'Board and layout lengths':{
   eff:'mil <span style="color:var(--tx3)">· your choice</span>',
   stack:[
@@ -528,7 +514,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('explain').classList.remove('on');document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));}});
 if((location.hash||'').includes('explain')){
-  const target=(location.hash.includes('units'))?'Board and layout lengths':'Show/hide revision system';
+  const target='Board and layout lengths';
   const b=[...document.querySelectorAll('.row .lbl b')].find(x=>x.textContent.trim()===target);
   if(b){const sec=b.closest('section'); if(sec) show(sec.id); exOpen(target,b.closest('.row'));}
 }
