@@ -165,6 +165,11 @@
       "progress_anchor": "PRODUCT-REVISION-ENGINE",
       "notes": "Findings-first REV-I15 owner boundary for REV-I04 execution. Approval may authorize only the packet's closed EngineeringChange, identity-free collection, reservation, bounded-departure mapping, and single Design-gate integration inventories; impact, baseline, issuance, public surfaces, adapters, dependencies, and later slices remain unauthorized."
     },
+    "research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md": {
+      "class": "governed",
+      "progress_anchor": "REVISION-PRODUCT-RECOVERY",
+      "notes": "RVR-A03 production-reachability inventory classifying Revision GUI, commit/open integration, authority breadth, policy seeds, enterprise exchange, and public API surfaces as retain, rework, quarantine, or remove. It authorizes only the bounded RVR-I01 removal of fictional/default unmanaged GUI presentation; engine decoupling, public-contract changes, replacement information architecture, dependencies, and later Revision work remain unauthorized."
+    },
     "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
