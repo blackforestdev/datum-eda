@@ -260,28 +260,25 @@ fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspace
 }
 
 fn inject_revision_surface(state: &mut ReviewWorkspaceState, surface: Option<&str>) -> Result<()> {
-    use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
-    let surface = match surface {
+    use datum_gui_protocol::{
+        PaneContent, RevisionNavEntry, RevisionPane, RevisionSurface, SplitOrientation,
+    };
+    let (surface, entry) = match surface {
         None => return Ok(()),
-        Some("release") => RevisionSurface::Release,
-        Some("impact") => RevisionSurface::Impact,
-        Some("change") => RevisionSurface::Change,
-        Some("evidence") => RevisionSurface::Evidence,
+        Some("release") => (RevisionSurface::Release, RevisionNavEntry::Releases),
+        Some("impact") => (RevisionSurface::Impact, RevisionNavEntry::Baselines),
+        Some("change") => (RevisionSurface::Change, RevisionNavEntry::Changes),
+        Some("evidence") => (RevisionSurface::Evidence, RevisionNavEntry::Evidence),
         Some(other) => bail!("unsupported input.revision_surface {other:?}"),
     };
-    let had_companion = state.ui.layout.leaves().len() > 1;
-    let pane = state.ui.layout.open_beside(
+    let pane = state.ui.layout.open_beside_root(
         PaneContent::Revision(RevisionPane::Surface(surface)),
         SplitOrientation::Vertical,
+        0.66,
         true,
     );
-    if had_companion {
-        state.ui.layout.set_focused_ratio(0.35);
-        state.ui.layout.set_ratio_at_path(&[], 0.72);
-    } else {
-        state.ui.layout.set_focused_ratio(0.45);
-    }
     state.ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
+    state.ui.revision.selected_entry = Some(entry);
     state.ui.revision.announce_open(surface);
     Ok(())
 }

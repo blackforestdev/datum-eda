@@ -14,6 +14,7 @@ RUST_TOKENS = ROOT / "crates/gui-render/src/design_tokens.rs"
 BOARD_EDITOR_PROTOTYPE = ROOT / "docs/gui/prototypes/board-editor.html"
 REVISION_IMPLEMENTATION_PLAN = ROOT / "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md"
 REVISION_RENDERER = ROOT / "crates/gui-render/src/revision_workspace.rs"
+REVISION_RENDERER_MODULES = ROOT / "crates/gui-render/src/revision_workspace"
 
 # Owner-approved REV-C06 semantics that must exist in both the controlling
 # prototype and the production renderer. Pixel goldens catch geometry/raster
@@ -248,8 +249,13 @@ def parse_rust_numeric_constants(module: str) -> dict[str, float]:
 
 def check_revision_prototype_conformance() -> None:
     plan = REVISION_IMPLEMENTATION_PLAN.read_text()
-    renderer = REVISION_RENDERER.read_text()
-    production = renderer
+    production = "\n".join(
+        [REVISION_RENDERER.read_text()]
+        + [
+            path.read_text(encoding="utf-8")
+            for path in sorted(REVISION_RENDERER_MODULES.rglob("*.rs"))
+        ]
+    )
     failures: list[str] = []
     for relative_path, required_markers in REVISION_PROTOTYPE_CONTRACTS.items():
         prototype = ROOT / relative_path

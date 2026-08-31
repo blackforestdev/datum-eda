@@ -34,11 +34,12 @@ fn terminal_tab_drag_start(target: Option<&HitTarget>) -> Option<String> {
     }
 }
 
+#[cfg(test)]
 fn owns_dock_resize_cursor(target: Option<&HitTarget>, drag_active: bool) -> bool {
     drag_active || matches!(target, Some(HitTarget::DockResizeHandle))
 }
 
-fn toggle_terminal_maximized(ui: &mut datum_gui_protocol::WorkspaceUiState) -> bool {
+pub(super) fn toggle_terminal_maximized(ui: &mut datum_gui_protocol::WorkspaceUiState) -> bool {
     if ui.active_dock_tab != Some(DockTab::Terminal) {
         return false;
     }
@@ -48,11 +49,12 @@ fn toggle_terminal_maximized(ui: &mut datum_gui_protocol::WorkspaceUiState) -> b
 
 impl Runtime {
     pub(super) fn pointer_cursor_icon(&mut self, pointer: (f32, f32)) -> winit::window::CursorIcon {
-        if let Some(icon) = self
-            .dock_resize_cursor_icon(pointer)
-            .or_else(|| self.terminal_split_cursor_icon(pointer))
-            .or_else(|| self.terminal_tab_cursor_icon(pointer))
-            .or_else(|| self.terminal_link_cursor_icon(pointer))
+        if pointer.1 >= self.current_layout().bottom_strip.y
+            && let Some(icon) = self
+                .dock_resize_cursor_icon(pointer)
+                .or_else(|| self.terminal_split_cursor_icon(pointer))
+                .or_else(|| self.terminal_tab_cursor_icon(pointer))
+                .or_else(|| self.terminal_link_cursor_icon(pointer))
         {
             return icon;
         }
@@ -173,8 +175,13 @@ impl Runtime {
         if self.dock_drag_active {
             return Some(winit::window::CursorIcon::NsResize);
         }
-        let target = self.prepared_scene().hit_test(pointer.0, pointer.1);
-        owns_dock_resize_cursor(target, false).then_some(winit::window::CursorIcon::NsResize)
+        let strip = self.current_layout().bottom_strip;
+        let over_handle = self.workspace().ui.active_dock_tab.is_some()
+            && pointer.0 >= strip.x
+            && pointer.0 <= strip.x + strip.width
+            && pointer.1 >= strip.y
+            && pointer.1 <= strip.y + 6.0;
+        over_handle.then_some(winit::window::CursorIcon::NsResize)
     }
 
     pub(super) fn terminal_tab_cursor_icon(
@@ -268,8 +275,11 @@ impl Runtime {
     }
 
     pub(super) fn update_terminal_tab_hover(&mut self, pointer: (f32, f32)) -> bool {
-        let next =
-            hovered_terminal_close_session(self.prepared_scene().hit_test(pointer.0, pointer.1));
+        let next = if pointer.1 >= self.current_layout().bottom_strip.y {
+            hovered_terminal_close_session(self.prepared_scene().hit_test(pointer.0, pointer.1))
+        } else {
+            None
+        };
         if self.workspace().ui.hovered_terminal_close_session_id == next {
             return false;
         }
@@ -362,270 +372,8 @@ impl Runtime {
         self.invalidate_scene();
         true
     }
-
-    pub(super) fn cursor_in_dock(&self) -> bool {
-        let Some((_, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        let layout = self.current_layout();
-        y >= layout.bottom_strip.y
-    }
-
-    pub(super) fn handle_dock_resize_drag(&mut self, next_cursor_pos: (f32, f32)) -> bool {
-        let window_height = self.config.height as f32;
-        let new_height_physical =
-            (window_height - next_cursor_pos.1).clamp(32.0, window_height * 0.6);
-        let new_height_logical = new_height_physical / self.scale_factor.max(0.01);
-        let new_height_logical = new_height_logical as u32;
-        if self.workspace().ui.dock_height_px == new_height_logical
-            && !self.workspace().ui.terminal_maximized
-        {
-            return false;
-        }
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.terminal_maximized = false;
-        ui.dock_height_px = new_height_logical;
-        // Keep pointer motion lightweight. A PTY resize makes a full-screen
-        // child redraw, and invalidating retained scenes rebuilds unrelated
-        // PCB/schematic geometry. Preview the shell frame while dragging and
-        // commit one PTY resize on release.
-        self.invalidate_frame();
-        true
-    }
-
-    pub(super) fn finish_dock_resize_drag(&mut self) -> Option<winit::window::CursorIcon> {
-        if !std::mem::take(&mut self.dock_drag_active) {
-            return None;
-        }
-        self.resize_terminal_to_dock();
-        self.invalidate_frame();
-        Some(
-            self.last_cursor_pos
-                .and_then(|pointer| self.dock_resize_cursor_icon(pointer))
-                .unwrap_or(winit::window::CursorIcon::Default),
-        )
-    }
-
-    /// The terminal lane geometry for the current surface — the ONE shared
-    /// solver (`datum_gui_viewport::terminal_screen_geometry`) the renderer
-    /// also draws with, so drawn rows/columns always equal PTY rows/columns
-    /// (T0-C02, DATUM_NATIVE_TERMINAL_SPEC.md §2.3). The dock height
-    /// preference is applied even while the dock is closed: the PTY keeps the
-    /// size the terminal will have when shown.
-    pub(super) fn terminal_screen_geometry(&self) -> datum_gui_viewport::TerminalScreenGeometry {
-        let layout = ShellLayout::for_surface(
-            self.config.width,
-            self.config.height,
-            self.scale_factor,
-            Some(self.workspace().ui.effective_dock_height_px()),
-        );
-        datum_gui_viewport::terminal_screen_geometry_with_scale(
-            layout.bottom_strip.into(),
-            self.workspace().ui.terminal.font_scale_millis,
-        )
-    }
-
-    /// The terminal cell under a screen point as `(column, row)`, or `None`
-    /// outside the visible cell rectangle — the coordinate seam the later
-    /// text-selection phase anchors on (T0-C02: the screen hit target carries
-    /// cell coordinates).
-    pub(super) fn terminal_screen_cell_at(&self, x: f32, y: f32) -> Option<(u16, u16)> {
-        self.terminal_screen_geometry().cell_at(x, y)
-    }
-
-    /// A primary click on the terminal SCREEN (the `TerminalScreen` hit
-    /// target). Focus entry itself is applied by `select_hit_target` through
-    /// `hit_target_is_terminal_entry`; here the click resolves its cell
-    /// coordinates through the shared geometry.
-    pub(super) fn click_terminal_screen(&mut self) -> bool {
-        if let Some((column, row)) = self
-            .last_cursor_pos
-            .and_then(|(x, y)| self.terminal_screen_cell_at(x, y))
-        {
-            self.trace_click(format!("terminal screen cell ({column}, {row})"));
-        }
-        true
-    }
-
-    /// T0-C02: PTY rows/columns are derived from the exact visible cell
-    /// rectangle via the shared geometry — never from a separate chrome
-    /// estimate (the retired 76px budget drift).
-    pub(super) fn resize_terminal_to_dock(&mut self) {
-        let root_geometry = self.terminal_screen_geometry();
-        let active_layout = self
-            .workspace()
-            .ui
-            .terminal
-            .active_tab_id
-            .as_deref()
-            .and_then(|tab_id| {
-                self.workspace()
-                    .ui
-                    .terminal
-                    .tab_layouts
-                    .iter()
-                    .find(|tab| tab.tab_id == tab_id)
-            })
-            .cloned();
-        let panes = active_layout
-            .as_ref()
-            .map(|tab| datum_gui_viewport::terminal_split_geometries(root_geometry, tab))
-            .unwrap_or_default();
-        let focused = panes
-            .iter()
-            .find(|pane| pane.focused)
-            .map(|pane| pane.geometry)
-            .unwrap_or(root_geometry);
-        let (cols, rows) = (focused.columns, focused.rows);
-        append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
-        let result = if panes.is_empty() {
-            self.terminal_sessions.resize_active_surface(
-                cols,
-                rows,
-                focused.screen.width.round() as u32,
-                focused.screen.height.round() as u32,
-            )
-        } else {
-            self.terminal_sessions.resize_active_tab_surfaces(&panes)
-        };
-        match result {
-            Ok(()) => {
-                let terminal = &mut self.session.workspace_mut().ui.terminal;
-                terminal.columns = cols;
-                terminal.rows = rows;
-                append_gui_verbose_diagnostic_line("terminal resize end");
-            }
-            Err(err) => {
-                append_gui_diagnostic_line(format!("terminal resize failed: {err}"));
-                self.log_terminal_event(format!("terminal resize failed: {err}"));
-            }
-        }
-    }
-
-    pub(super) fn toggle_terminal_maximized(&mut self) -> bool {
-        if !toggle_terminal_maximized(&mut self.session.workspace_mut().ui) {
-            return false;
-        }
-        self.resize_terminal_to_dock();
-        self.invalidate_scene();
-        true
-    }
 }
 
 #[cfg(test)]
-mod hover_tests {
-    use super::*;
-
-    #[test]
-    fn only_the_per_tab_close_target_owns_close_hover() {
-        let close = HitTarget::TerminalSessionClose("terminal-2".to_string());
-        assert_eq!(
-            hovered_terminal_close_session(Some(&close)).as_deref(),
-            Some("terminal-2")
-        );
-        assert_eq!(
-            hovered_terminal_close_session(Some(&HitTarget::TerminalSessionNew)),
-            None
-        );
-        assert_eq!(hovered_terminal_close_session(None), None);
-    }
-
-    #[test]
-    fn tab_body_starts_reorder_but_close_control_remains_exclusive() {
-        let tab = HitTarget::TerminalSessionTab("terminal-2".to_string());
-        let close = HitTarget::TerminalSessionClose("terminal-2".to_string());
-        assert_eq!(
-            terminal_tab_drag_start(Some(&tab)).as_deref(),
-            Some("terminal-2")
-        );
-        assert_eq!(terminal_tab_drag_start(Some(&close)), None);
-        assert_eq!(terminal_tab_session(Some(&close)), Some("terminal-2"));
-    }
-
-    #[test]
-    fn dock_boundary_and_active_drag_own_north_south_resize_cursor() {
-        assert!(owns_dock_resize_cursor(
-            Some(&HitTarget::DockResizeHandle),
-            false
-        ));
-        assert!(owns_dock_resize_cursor(
-            Some(&HitTarget::TerminalScreen),
-            true
-        ));
-        assert!(!owns_dock_resize_cursor(
-            Some(&HitTarget::TerminalScreen),
-            false
-        ));
-    }
-
-    #[test]
-    fn dock_drag_previews_frames_and_commits_one_pty_resize_on_release() {
-        let source = include_str!("runtime_terminal_dock.rs");
-        let drag = source
-            .split("pub(super) fn handle_dock_resize_drag")
-            .nth(1)
-            .unwrap()
-            .split("pub(super) fn finish_dock_resize_drag")
-            .next()
-            .unwrap();
-        assert!(drag.contains("self.invalidate_frame()"));
-        assert!(!drag.contains("self.invalidate_scene()"));
-        assert!(!drag.contains("self.resize_terminal_to_dock()"));
-
-        let finish = source
-            .split("pub(super) fn finish_dock_resize_drag")
-            .nth(1)
-            .unwrap()
-            .split("/// The terminal lane geometry")
-            .next()
-            .unwrap();
-        assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);
-    }
-
-    #[test]
-    fn terminal_split_drag_previews_layout_and_commits_one_pty_resize_on_release() {
-        let source = include_str!("runtime_terminal_dock.rs");
-        let drag = source
-            .split("pub(super) fn advance_terminal_split_drag")
-            .nth(1)
-            .unwrap()
-            .split("pub(super) fn finish_terminal_split_drag")
-            .next()
-            .unwrap();
-        assert!(drag.contains("set_active_split_ratio"));
-        assert!(drag.contains("self.sync_terminal_tabs()"));
-        assert!(drag.contains("self.invalidate_frame()"));
-        assert!(!drag.contains("self.resize_terminal_to_dock()"));
-
-        let finish = source
-            .split("pub(super) fn finish_terminal_split_drag")
-            .nth(1)
-            .unwrap()
-            .split("pub(super) fn dock_resize_cursor_icon")
-            .next()
-            .unwrap();
-        assert_eq!(finish.matches("self.resize_terminal_to_dock()").count(), 1);
-    }
-
-    #[test]
-    fn terminal_maximize_is_transient_and_preserves_the_normal_dock_height() {
-        let mut state = datum_gui_protocol::load_fixture_workspace_state();
-        state.ui.active_dock_tab = Some(DockTab::Terminal);
-        state.ui.dock_height_px = 287;
-        assert!(toggle_terminal_maximized(&mut state.ui));
-        assert!(state.ui.terminal_maximized);
-        assert_eq!(state.ui.dock_height_px, 287);
-        assert_eq!(state.ui.effective_dock_height_px(), u32::MAX);
-        assert!(toggle_terminal_maximized(&mut state.ui));
-        assert!(!state.ui.terminal_maximized);
-        assert_eq!(state.ui.effective_dock_height_px(), 287);
-    }
-
-    #[test]
-    fn hidden_or_nonterminal_dock_cannot_enter_terminal_maximize() {
-        let mut state = datum_gui_protocol::load_fixture_workspace_state();
-        state.ui.active_dock_tab = None;
-        assert!(!toggle_terminal_maximized(&mut state.ui));
-        assert!(!state.ui.terminal_maximized);
-    }
-}
+#[path = "runtime_terminal_dock_tests.rs"]
+mod hover_tests;

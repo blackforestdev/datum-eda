@@ -304,6 +304,19 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             || terminal.link_escape_release_pending
     });
 
+    if escape_released
+        && app
+            .runtime
+            .as_ref()
+            .is_some_and(Runtime::revision_context_menu_active)
+    {
+        if let Some(runtime) = &mut app.runtime {
+            runtime.dismiss_revision_context_menu();
+            app.request_redraw_if_needed();
+        }
+        return true;
+    }
+
     // TF-02: focus-exit ordering is part of the authority. Raw PTY routing
     // owns the Escape press, but must not consume its release before this arm.
     if !terminal_chrome_owns_escape
@@ -334,6 +347,14 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         {
             app.request_redraw_if_needed();
         }
+        return true;
+    }
+    if matches!(event.logical_key, Key::Named(NamedKey::Enter))
+        && workspace_action_pressed
+        && let Some(runtime) = &mut app.runtime
+        && runtime.open_selected_revision()
+    {
+        app.request_redraw_if_needed();
         return true;
     }
     if escape_released && app.runtime.as_mut().is_some_and(Runtime::cancel_active_pan) {

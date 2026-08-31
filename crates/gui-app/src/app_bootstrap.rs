@@ -83,6 +83,14 @@ pub(super) struct GuiArgs {
     /// deterministic visual evidence. Consumer state only; never authority.
     #[arg(long = "revision-surface", value_parser = ["release", "impact", "change", "evidence"])]
     pub(super) revision_surface: Option<String>,
+    /// Capture/test affordance: position the scrollable Layers viewport at its
+    /// final entry. The default remains the top of the physical stack.
+    #[arg(long = "layers-scroll-end", default_value_t = false)]
+    pub(super) layers_scroll_end: bool,
+    /// Running-app proof affordance: execute the real Navigator single-click
+    /// selection followed by same-row double-click activation before capture.
+    #[arg(long = "revision-nav-smoke", default_value_t = false, hide = true)]
+    pub(super) revision_nav_smoke: bool,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
     #[arg(long = "screenshot-out")]
@@ -181,28 +189,31 @@ impl GuiArgs {
     }
 
     pub(super) fn apply_revision_surface(&self, ui: &mut datum_gui_protocol::WorkspaceUiState) {
-        use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
-        let surface = match self.revision_surface.as_deref() {
-            Some("release") => RevisionSurface::Release,
-            Some("impact") => RevisionSurface::Impact,
-            Some("change") => RevisionSurface::Change,
-            Some("evidence") => RevisionSurface::Evidence,
+        use datum_gui_protocol::{
+            PaneContent, RevisionNavEntry, RevisionPane, RevisionSurface, SplitOrientation,
+        };
+        let (surface, entry) = match self.revision_surface.as_deref() {
+            Some("release") => (RevisionSurface::Release, RevisionNavEntry::Releases),
+            Some("impact") => (RevisionSurface::Impact, RevisionNavEntry::Baselines),
+            Some("change") => (RevisionSurface::Change, RevisionNavEntry::Changes),
+            Some("evidence") => (RevisionSurface::Evidence, RevisionNavEntry::Evidence),
             _ => return,
         };
-        let had_companion = ui.layout.leaves().len() > 1;
-        let pane = ui.layout.open_beside(
+        let pane = ui.layout.open_beside_root(
             PaneContent::Revision(RevisionPane::Surface(surface)),
             SplitOrientation::Vertical,
+            0.66,
             true,
         );
-        if had_companion {
-            ui.layout.set_focused_ratio(0.35);
-            ui.layout.set_ratio_at_path(&[], 0.72);
-        } else {
-            ui.layout.set_focused_ratio(0.45);
-        }
         ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
+        ui.revision.selected_entry = Some(entry);
         ui.revision.announce_open(surface);
+    }
+
+    pub(super) fn apply_layers_scroll(&self, ui: &mut datum_gui_protocol::WorkspaceUiState) {
+        if self.layers_scroll_end {
+            ui.filters.layer_scroll_offset = usize::MAX;
+        }
     }
 
     pub(super) fn wants_plain_project_board_view(&self) -> bool {
@@ -342,6 +353,7 @@ impl GuiArgs {
         // Capture/test affordance: focus a named pane (a no-op otherwise).
         self.apply_focus_pane(&mut state.ui.layout);
         self.apply_revision_surface(&mut state.ui);
+        self.apply_layers_scroll(&mut state.ui);
 
         // Capture/test affordance: open a named menu dropdown at boot if
         // --open-menu was set (a no-op otherwise, so parity stays identical).

@@ -1,13 +1,11 @@
 use super::*;
 use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface};
 
-const NAV_ROWS: [(&str, RevisionSurface); 5] = [
-    ("Changes  1 draft", RevisionSurface::Change),
-    ("Baselines  BL-…-24-01", RevisionSurface::Impact),
-    ("Releases  RLS-0007", RevisionSurface::Release),
-    ("Controlled Documents  1", RevisionSurface::Release),
-    ("Evidence  12 records", RevisionSurface::Evidence),
-];
+#[path = "revision_workspace/navigator.rs"]
+mod navigator;
+pub(crate) use navigator::{
+    render_navigator, render_navigator_context_menu, render_navigator_inspector,
+};
 
 pub(super) fn render_evidence_inspector(
     state: &ReviewWorkspaceState,
@@ -84,72 +82,6 @@ pub(super) fn render_evidence_inspector(
     true
 }
 
-pub(super) fn render_navigator(
-    state: &ReviewWorkspaceState,
-    rect: RectPx,
-    quads: &mut Vec<Quad>,
-    text: &mut Vec<TextRun>,
-    hits: &mut Vec<HitRegion>,
-) {
-    let x = rect.x + 12.0;
-    let mut y = rect.y + 82.0;
-    for (label, strong) in [
-        ("DESIGN", true),
-        ("  Schematic · sensor-node", false),
-        ("  Board · main", false),
-        ("PUBLISH", true),
-        ("  All Sheets  5", false),
-        ("REVISION", true),
-    ] {
-        draw_text(
-            label,
-            x,
-            y,
-            if strong { 10.0 } else { 11.0 },
-            if strong { TEXT_MUTED } else { TEXT_SECONDARY },
-            if strong {
-                TextFace::UiStrong
-            } else {
-                TextFace::Ui
-            },
-            text,
-        );
-        if label.starts_with("Baselines") || label.starts_with("Releases") {
-            draw_lock_glyph(x + rect.width - 36.0, y - 3.0, 8.0, TEXT_SECONDARY, quads);
-        }
-        y += if strong { 19.0 } else { 20.0 };
-    }
-    for (label, surface) in NAV_ROWS {
-        let row = RectPx {
-            x,
-            y: y - 5.0,
-            width: (rect.width - 24.0).max(1.0),
-            height: 21.0,
-        };
-        if state.ui.layout.leaves().into_iter().any(|id| {
-            state.ui.layout.content_for(id)
-                == Some(PaneContent::Revision(RevisionPane::Surface(surface)))
-        }) {
-            quads.push(Quad::from_rect(row, REVIEW_ROW_BADGE));
-            quads.push(Quad::from_rect(
-                RectPx {
-                    x: row.x,
-                    y: row.y,
-                    width: 2.0,
-                    height: row.height,
-                },
-                TEXT_ACCENT,
-            ));
-        }
-        draw_text(label, x + 8.0, y, 10.5, TEXT_SECONDARY, TextFace::Ui, text);
-        hits.push(HitRegion {
-            target: HitTarget::OpenRevisionSurface(surface),
-            rect: row,
-        });
-        y += 24.0;
-    }
-}
-
 pub(super) fn render_pane(
     state: &ReviewWorkspaceState,
     pane: RevisionPane,
@@ -158,6 +90,9 @@ pub(super) fn render_pane(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
+    let quad_start = quads.len();
+    let text_start = text.len();
+    let hit_start = hits.len();
     quads.push(Quad::from_rect(rect, VIEWPORT_BG));
     let pad = if rect.width < 620.0 { 18.0 } else { 28.0 };
     let x = rect.x + pad;
@@ -216,6 +151,71 @@ pub(super) fn render_pane(
         }
         RevisionPane::Witness => render_witness(state, x, y, rect, quads, text),
     }
+    clip_pane_output(rect, quads, quad_start, text, text_start, hits, hit_start);
+}
+
+fn clip_pane_output(
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    quad_start: usize,
+    text: &mut Vec<TextRun>,
+    text_start: usize,
+    hits: &mut Vec<HitRegion>,
+    hit_start: usize,
+) {
+    let clipped_quads = quads
+        .drain(quad_start..)
+        .filter_map(|quad| {
+            let min_x = quad
+                .points
+                .iter()
+                .map(|p| p.0)
+                .fold(f32::INFINITY, f32::min);
+            let max_x = quad
+                .points
+                .iter()
+                .map(|p| p.0)
+                .fold(f32::NEG_INFINITY, f32::max);
+            let min_y = quad
+                .points
+                .iter()
+                .map(|p| p.1)
+                .fold(f32::INFINITY, f32::min);
+            let max_y = quad
+                .points
+                .iter()
+                .map(|p| p.1)
+                .fold(f32::NEG_INFINITY, f32::max);
+            let clipped = RectPx {
+                x: min_x,
+                y: min_y,
+                width: (max_x - min_x).max(0.0),
+                height: (max_y - min_y).max(0.0),
+            }
+            .intersect(rect)?;
+            Some(Quad::from_rect(clipped, quad.color))
+        })
+        .collect::<Vec<_>>();
+    quads.extend(clipped_quads);
+
+    let clipped_text = text
+        .drain(text_start..)
+        .filter_map(|mut run| {
+            let bounds = run.clip_bounds.unwrap_or(rect).intersect(rect)?;
+            run.clip_bounds = Some(bounds);
+            Some(run)
+        })
+        .collect::<Vec<_>>();
+    text.extend(clipped_text);
+
+    let clipped_hits = hits
+        .drain(hit_start..)
+        .filter_map(|mut hit| {
+            hit.rect = hit.rect.intersect(rect)?;
+            Some(hit)
+        })
+        .collect::<Vec<_>>();
+    hits.extend(clipped_hits);
 }
 
 fn render_witness(

@@ -1,10 +1,11 @@
 use super::*;
 
+mod inspector_dispatch;
+mod layer_scroll;
 include!("side_panels/layout.rs");
 include!("side_panels/render_project_filters.rs");
 include!("side_panels/render_inspector.rs");
 include!("side_panels/helpers.rs");
-
 pub(super) fn render_side_panels(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
@@ -27,10 +28,6 @@ pub(super) fn render_side_panels(
         (filters_rect, "LAYERS"),
         (inspector_rect, "INSPECTOR"),
     ] {
-        // Flush stacked panel: body and header strip are the SAME SURFACE_01
-        // material; the 28px header is distinguished only by its uppercase title
-        // and a single BORDER_SUBTLE bottom divider (Design Book panel-hd). No
-        // per-card box border — panels read as a contiguous stack, not widgets.
         panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
         draw_text(
             title,
@@ -49,8 +46,6 @@ pub(super) fn render_side_panels(
             PANEL_CARD_BORDER,
         );
     }
-    // One BORDER_SUBTLE divider separating the stacked PROJECT and LAYERS panels
-    // in the left column (their bodies are contiguous SURFACE_01).
     push_section_divider(
         panel_quads,
         project_rect.x,
@@ -58,8 +53,6 @@ pub(super) fn render_side_panels(
         project_rect.width,
         PANEL_CARD_BORDER,
     );
-    // Single outer edge border per column (left column right edge, right column
-    // left edge) — the column's only chrome outline, matching `.col` borders.
     panel_quads.push(Quad::from_rect(
         RectPx {
             x: left.x + left.width - 1.0,
@@ -89,8 +82,11 @@ pub(super) fn render_side_panels(
         hit_regions,
     );
     revision_workspace::render_navigator(state, project_rect, panel_quads, text_runs, hit_regions);
-    if !revision_workspace::render_evidence_inspector(state, inspector_rect, panel_quads, text_runs)
-    {
-        render_inspector_panel(state, inspector_rect, panel_quads, text_runs, hit_regions);
-    }
+    inspector_dispatch::render_active_inspector(
+        state,
+        inspector_rect,
+        panel_quads,
+        text_runs,
+        hit_regions,
+    );
 }

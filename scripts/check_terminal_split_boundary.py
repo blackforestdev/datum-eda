@@ -9,12 +9,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 PATHS = {
     "main": "crates/gui-app/src/main.rs",
+    "primary_button": "crates/gui-app/src/runtime_primary_button.rs",
     "input": "crates/gui-app/src/terminal_input.rs",
     "controls": "crates/gui-app/src/terminal_session_controls.rs",
     "spawn": "crates/gui-app/src/terminal_session_spawn.rs",
     "state": "crates/gui-app/src/terminal_split_state.rs",
     "drag": "crates/gui-app/src/terminal_split_drag.rs",
     "runtime": "crates/gui-app/src/runtime_terminal_dock.rs",
+    "runtime_tests": "crates/gui-app/src/runtime_terminal_dock_tests.rs",
     "focus_tests": "crates/gui-app/src/terminal_regression_boundary_tests.rs",
     "protocol": "crates/gui-protocol/src/terminal_split.rs",
     "viewport": "crates/gui-viewport/src/terminal_grid_geometry.rs",
@@ -49,9 +51,14 @@ def check_sources(sources: dict[str, str]) -> list[str]:
             "TerminalKeyAction::SplitRight =>",
             "TerminalKeyAction::SplitDown =>",
             "HitTarget::TerminalPaneScreen(session_id)",
-            "begin_terminal_split_drag()",
+            "handle_primary_button_press()",
             "advance_terminal_split_drag(next_pos)",
             "finish_terminal_split_drag()",
+        ),
+        "primary_button": (
+            "pub(super) fn handle_primary_button_press",
+            "begin_terminal_split_drag()",
+            "report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)",
         ),
         "spawn": (
             "split_spawn_stays_in_one_tab_and_focuses_the_completed_leaf",
@@ -76,7 +83,9 @@ def check_sources(sources: dict[str, str]) -> list[str]:
         ),
         "render_tests": ("split_panes_retain_independent_rows_geometry_and_hit_identity",),
         "drag": ("terminal_split_drag_tracks_axis_and_clamps_to_ten_ninety",),
-        "runtime": ("terminal_split_drag_previews_layout_and_commits_one_pty_resize_on_release",),
+        "runtime_tests": (
+            "terminal_split_drag_previews_layout_and_commits_one_pty_resize_on_release",
+        ),
         "focus_tests": ("HitTarget::TerminalSplitDivider(Vec::new())",),
     }
     for owner, markers in required.items():
@@ -103,10 +112,11 @@ def check_sources(sources: dict[str, str]) -> list[str]:
         failures.append("terminal split drag release must commit exactly one PTY resize")
 
     main = sources.get("main", "")
+    primary_button = sources.get("primary_button", "")
     press = function_body(
-        main,
-        "state: ElementState::Pressed,\n                button: MouseButton::Left",
-        "state: ElementState::Released",
+        primary_button,
+        "pub(super) fn handle_primary_button_press",
+        "\n    }",
     )
     if not press:
         failures.append("terminal split primary-press routing boundary is missing")

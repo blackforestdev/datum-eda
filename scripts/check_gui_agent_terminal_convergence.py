@@ -15,6 +15,7 @@ TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session
 TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal_session_render.rs"
 RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
 RUNTIME_PRIMARY_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_primary_pointer.rs"
+RUNTIME_PRIMARY_BUTTON = ROOT / "crates" / "gui-app" / "src" / "runtime_primary_button.rs"
 PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
 RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
 RUNTIME_TERMINAL_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_pointer.rs"
@@ -160,6 +161,7 @@ def check_workspace_hotkey_timing(authority: str, failures: list[str]) -> None:
 
 def check_agent_tui_runtime(
     main: str,
+    primary_button: str,
     runtime_dock: str,
     drain: str,
     render_geometry: str,
@@ -178,17 +180,19 @@ def check_agent_tui_runtime(
         before_match = window_event[1].split("        match event {", 1)[0]
         if "poll_terminal_output" in before_match:
             failures.append("terminal output must not drain before window input dispatch")
-    press = main.split("MouseButton::Left,", 1)
-    if len(press) != 2:
+    if "self.handle_primary_button_press();" not in main:
         failures.append("terminal primary-press routing is missing")
+    press = primary_button.split("pub(super) fn handle_primary_button_press", 1)
+    if len(press) != 2:
+        failures.append("terminal primary-press owner is missing")
     else:
-        press = press[1].split("MouseButton::Left,", 1)[0]
+        press = press[1].split("\n    }", 1)[0]
         focus_at = press.find("focus_terminal_screen_before_mouse_report")
         report_at = press.find("report_terminal_mouse_button")
         if focus_at < 0 or report_at < 0 or focus_at > report_at:
             failures.append("terminal focus must precede child mouse-report forwarding")
     for marker in ("terminal_mouse_report_allowed", "self.terminal_screen_cell_at(x, y)", "begin_terminal_tab_drag", "advance_terminal_tab_drag", "finish_terminal_tab_drag", "cancel_terminal_tab_drag", "begin_terminal_text_selection", "advance_terminal_text_selection", "finish_terminal_text_selection", "cancel_terminal_text_selection_drag", "NamedKey::Escape", "CursorIcon::Grab", "CursorIcon::Grabbing", "open_terminal_clipboard_menu_at_cursor", "!runtime.terminal_clipboard_menu_active()", "TerminalKeyAction::CopyClipboard", "TerminalKeyAction::PasteClipboard"):
-        if marker not in main and marker not in runtime_dock:
+        if marker not in main and marker not in primary_button and marker not in runtime_dock:
             failures.append(f"terminal mouse routing is missing {marker}")
     for marker in ("focus_before_terminal_mouse_press", "terminal_screen_cell_at", "target_session_id", "reorder_session", "active_logical_point_at", "set_active_selection"):
         if marker not in runtime_dock:
@@ -468,6 +472,7 @@ def main() -> int:
     )
     runtime_terminal_context = RUNTIME_TERMINAL_CONTEXT.read_text()
     runtime_primary_pointer = RUNTIME_PRIMARY_POINTER.read_text()
+    runtime_primary_button = RUNTIME_PRIMARY_BUTTON.read_text()
     production_refresh = PRODUCTION_REFRESH.read_text()
     runtime_terminal_dock = RUNTIME_TERMINAL_DOCK.read_text() + RUNTIME_TERMINAL_POINTER.read_text()
     terminal_drain = (
@@ -522,6 +527,7 @@ def main() -> int:
     check_workspace_hotkey_timing(keyboard_focus, failures)
     check_agent_tui_runtime(
         main,
+        runtime_primary_button,
         runtime_terminal_dock,
         terminal_drain,
         render_geometry,

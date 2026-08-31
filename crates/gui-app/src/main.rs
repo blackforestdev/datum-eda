@@ -52,12 +52,14 @@ mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
 mod runtime_menu_actions;
+mod runtime_primary_button;
 mod runtime_primary_pointer;
 mod runtime_revision_workspace;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
 mod runtime_terminal_font;
+mod runtime_terminal_geometry;
 mod runtime_terminal_input;
 mod runtime_terminal_links;
 mod runtime_terminal_notifications;
@@ -187,6 +189,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     args.apply_initial_layout(&mut state.ui.layout);
     args.apply_focus_pane(&mut state.ui.layout);
     args.apply_revision_surface(&mut state.ui);
+    args.apply_layers_scroll(&mut state.ui);
     if let Some(menu) = &args.open_menu {
         state.ui.active_menu = Some(menu.clone());
     }
@@ -441,6 +444,10 @@ impl ApplicationHandler for App {
                         MouseScrollDelta::LineDelta(_, y) => y,
                         MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
                     };
+                    if runtime.handle_layer_scroll(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if runtime.handle_console_history_scroll(scroll_lines) {
                         self.request_redraw_if_needed();
                         return;
@@ -477,6 +484,7 @@ impl ApplicationHandler for App {
                 if let Some(runtime) = &mut self.runtime {
                     if button == MouseButton::Right
                         && state == ElementState::Pressed
+                        && runtime.cursor_in_dock()
                         && runtime.open_terminal_clipboard_menu_at_cursor()
                     {
                         self.request_redraw_if_needed();
@@ -498,59 +506,7 @@ impl ApplicationHandler for App {
                 button: MouseButton::Left,
                 ..
             } => {
-                if let Some(runtime) = &mut self.runtime {
-                    if runtime.terminal_clipboard_menu_active() {
-                        return;
-                    }
-                    if runtime.modifiers.control_key() && runtime.arm_terminal_link_at_cursor() {
-                        self.request_redraw_if_needed();
-                        return;
-                    }
-                    if runtime.begin_terminal_split_drag() {
-                        let icon = runtime
-                            .last_cursor_pos
-                            .and_then(|pointer| runtime.terminal_split_cursor_icon(pointer))
-                            .unwrap_or(winit::window::CursorIcon::Default);
-                        self.apply_cursor_icon(icon);
-                        return;
-                    }
-                    if runtime.begin_terminal_tab_drag() {
-                        self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
-                        return;
-                    }
-                    runtime.focus_terminal_screen_before_mouse_report();
-                    if runtime.begin_terminal_text_selection() {
-                        self.apply_cursor_icon(winit::window::CursorIcon::Text);
-                        self.request_redraw_if_needed();
-                        return;
-                    }
-                    if runtime
-                        .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
-                    {
-                        return;
-                    }
-                    if runtime.begin_primary_pan() {
-                        if runtime.clear_interaction_overlay() {
-                            self.request_redraw_if_needed();
-                        }
-                        return;
-                    }
-                    // Check if clicking dock resize handle
-                    if let Some((x, y)) = runtime.last_cursor_pos {
-                        let prepared = runtime.prepared_scene();
-                        if let Some(HitTarget::DockResizeHandle) = prepared.hit_test(x, y) {
-                            runtime.dock_drag_active = true;
-                            self.request_redraw_if_needed();
-                            return;
-                        }
-                        // Grab a split divider gutter to resize the split (decision
-                        // 021), handled before click-to-focus so grabbing the gutter
-                        // resizes instead of focusing a pane.
-                        if runtime.begin_divider_drag(x, y) {
-                            self.request_redraw_if_needed();
-                        }
-                    }
-                }
+                self.handle_primary_button_press();
             }
             WindowEvent::MouseInput {
                 state: ElementState::Released,
@@ -655,6 +611,11 @@ impl ApplicationHandler for App {
                     {
                         fatal_gui_error(event_loop, "interaction smoke failed", err);
                     }
+                    if self.args.revision_nav_smoke
+                        && let Err(err) = runtime.run_revision_nav_smoke()
+                    {
+                        fatal_gui_error(event_loop, "revision Navigator smoke failed", err);
+                    }
                     if self.args.resize_torture_smoke
                         && let Err(err) = runtime.run_resize_torture_smoke()
                     {
@@ -714,6 +675,7 @@ struct Runtime {
     pane_cameras: PaneCameras,
     pane_grid_lod: pane_grid_lod::PaneGridLod,
     last_cursor_pos: Option<(f32, f32)>,
+    revision_last_click: Option<(datum_gui_protocol::RevisionNavEntry, std::time::Instant)>,
     pan_gesture: PanGestureState,
     dock_drag_active: bool,
     terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
@@ -876,6 +838,7 @@ impl Runtime {
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
             pane_grid_lod: pane_grid_lod::PaneGridLod::default(),
             last_cursor_pos: None,
+            revision_last_click: None,
             pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
             terminal_tab_drag: None,
@@ -1878,7 +1841,8 @@ impl Runtime {
             return handled;
         }
         match target {
-            HitTarget::OpenRevisionSurface(_)
+            HitTarget::SelectRevisionNavEntry(_)
+            | HitTarget::RevisionNavContextAction(_)
             | HitTarget::CloseRevisionSurface
             | HitTarget::ToggleRevisionIssuanceArm
             | HitTarget::OpenRevisionWitness(_) => unreachable!("revision targets return above"),
@@ -2280,7 +2244,9 @@ impl Runtime {
             HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
             // Divider gestures are handled directly by mouse press/release.
-            HitTarget::DockResizeHandle | HitTarget::TerminalSplitDivider(_) => false,
+            HitTarget::DockResizeHandle
+            | HitTarget::TerminalSplitDivider(_)
+            | HitTarget::LayerScrollRegion => false,
         }
     }
 
