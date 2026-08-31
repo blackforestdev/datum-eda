@@ -6545,31 +6545,16 @@
         "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
         "docs/PROJECT_STATE_POLICY.md"
       ],
-      "state": "in_progress",
+      "state": "planned",
       "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-revision-recovery-20260830",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "8a5307f6493d9f368d69c244421eb75d1f619a70",
-        "claimed_at": "2026-08-31T05:38:30Z",
-        "heartbeat_at": "2026-08-31T05:38:30Z",
-        "expires_at": "2026-08-31T13:33:30Z",
-        "scope": [
-          "Revision recovery governance",
-          "Revision and Preferences governing specifications",
-          "Active Frontier and evidence traceability"
-        ]
-      },
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Unmanaged Projects contain no fictional or default Revision UI, reusable substrate is separated from quarantined authority breadth, corrected visual truth is owner-reviewed, and any later Revision scope begins only through a fresh explicit authorization.",
-        "canonical_next_step_id": "RVR-A01",
+        "canonical_next_step_id": "RVR-A02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -6586,7 +6571,7 @@
           {
             "id": "RVR-A01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Commit the owner-approved governance correction: ratify Product Mechanics 038, record REV-I10 as rejected, suspend successor Revision execution, defer the Revision preference descriptors, and replace REV-I17 as canonical next work without editing runtime code or Claude-owned prototypes.",
             "depends_on": [],
             "requirement_refs": [
@@ -6595,7 +6580,12 @@
                 "marker": "RVR-A01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d338779"
+              }
+            ]
           },
           {
             "id": "RVR-A02",
