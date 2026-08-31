@@ -579,6 +579,16 @@ impl Runtime {
     /// identity (impossible pre-S3, when this wrote a single board-only global) and
     /// the renderer projects the hover pre-highlight with the matching camera.
     pub(super) fn update_hover(&mut self, pos: (f32, f32)) -> bool {
+        // Sidebars, pane headers, gutters, and dock chrome have no authored
+        // world hover. Reject them through the cheap solved-layout path before
+        // touching PreparedScene/retained geometry; Navigator pointer latency
+        // must not inherit a cold world-scene build.
+        if !self
+            .pointer_viewport(pos)
+            .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
+        {
+            return self.clear_interaction_overlay();
+        }
         // Ensure the caches exist: the prepared build also builds the board
         // retained scene; the companion schematic retained scene is built here.
         let _ = self.prepared_scene();

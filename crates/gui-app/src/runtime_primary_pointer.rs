@@ -112,6 +112,14 @@ impl Runtime {
             self.dismiss_terminal_clipboard_menu();
             return true;
         }
+        if self.revision_context_menu_active()
+            && !matches!(
+                prepared_target.as_ref(),
+                Some(HitTarget::RevisionNavContextAction(_))
+            )
+        {
+            self.dismiss_revision_context_menu();
+        }
         if let Some(target) = prepared_target {
             self.trace_click(format!(
                 "primary click ({x:.1}, {y:.1}) prepared target {target:?}; prepare {}ms; dock {:?}",

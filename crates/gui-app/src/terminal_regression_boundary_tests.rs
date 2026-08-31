@@ -52,7 +52,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProductionOutputJobRun(_)
         | HitTarget::ProductionTerminalCommand(_)
         // Everything else belongs to the editor persona.
-        | HitTarget::OpenRevisionSurface(_)
+        | HitTarget::SelectRevisionNavEntry(_)
+        | HitTarget::RevisionNavContextAction(_)
         | HitTarget::CloseRevisionSurface
         | HitTarget::ToggleRevisionIssuanceArm
         | HitTarget::OpenRevisionWitness(_)
@@ -68,6 +69,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ToggleShowUnrouted
         | HitTarget::ToggleDimUnrelated
         | HitTarget::ToggleLayer(_)
+        | HitTarget::LayerScrollRegion
         | HitTarget::ToggleSelectedBoardTextMirrored
         | HitTarget::ToggleSelectedBoardTextKeepUpright
         | HitTarget::ToggleSelectedBoardTextBold
@@ -119,7 +121,10 @@ fn sample_handoff() -> datum_gui_protocol::TerminalCommandHandoff {
 fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
     let id = || "t0c04".to_string();
     let samples = vec![
-        HitTarget::OpenRevisionSurface(datum_gui_protocol::RevisionSurface::Release),
+        HitTarget::SelectRevisionNavEntry(datum_gui_protocol::RevisionNavEntry::Releases),
+        HitTarget::RevisionNavContextAction(
+            datum_gui_protocol::RevisionNavContextAction::OpenBeside,
+        ),
         HitTarget::CloseRevisionSurface,
         HitTarget::ToggleRevisionIssuanceArm,
         HitTarget::OpenRevisionWitness(id()),
@@ -135,6 +140,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         HitTarget::ToggleShowUnrouted,
         HitTarget::ToggleDimUnrelated,
         HitTarget::ToggleLayer(id()),
+        HitTarget::LayerScrollRegion,
         HitTarget::ToggleSelectedBoardTextMirrored,
         HitTarget::ToggleSelectedBoardTextKeepUpright,
         HitTarget::ToggleSelectedBoardTextBold,

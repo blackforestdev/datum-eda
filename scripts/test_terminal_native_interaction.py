@@ -145,8 +145,8 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         sources["runtime_view_actions.rs"] = sources[
             "runtime_view_actions.rs"
         ].replace("self.toggle_terminal_maximized()", "self.pane_toggle_zoom()")
-        sources["runtime_terminal_dock.rs"] = sources[
-            "runtime_terminal_dock.rs"
+        sources["runtime_terminal_geometry.rs"] = sources[
+            "runtime_terminal_geometry.rs"
         ].replace("effective_dock_height_px", "dock_height_px")
         failures: list[str] = []
         guard.check(

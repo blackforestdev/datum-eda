@@ -141,9 +141,20 @@ fn render_project_and_filters_panel(
             l.render_order,
         )
     });
+    let visible_capacity = filters_layout.layer_rows.len();
+    let start = layer_scroll::render_layer_scroll_affordance(
+        state,
+        filters_rect,
+        &filters_layout.layer_rows,
+        display_layers.len(),
+        panel_quads,
+        text_runs,
+        hit_regions,
+    );
     for (layer, row) in display_layers
         .iter()
-        .take(filters_layout.layer_rows.len())
+        .skip(start)
+        .take(visible_capacity)
         .zip(filters_layout.layer_rows.iter())
     {
         let visible = state

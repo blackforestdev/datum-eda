@@ -20,7 +20,6 @@ REQUIRED = {
         "encode_active_key",
         "encode_active_focus",
         "encode_active_paste",
-        "arm_terminal_link_at_cursor",
     ),
     "runtime_terminal_input.rs": (
         "handle_terminal_ime",
@@ -34,7 +33,11 @@ REQUIRED = {
     ),
     "runtime_terminal_dock.rs": (
         "toggle_terminal_maximized",
+    ),
+    "runtime_terminal_geometry.rs": (
         "effective_dock_height_px",
+    ),
+    "runtime_terminal_dock_tests.rs": (
         "terminal_maximize_is_transient_and_preserves_the_normal_dock_height",
     ),
     "runtime_view_actions.rs": (
@@ -73,6 +76,7 @@ REQUIRED = {
         "search_navigation_wraps_and_stable_refresh_preserves_current_match",
     ),
     "runtime_terminal_links.rs": (
+        "arm_terminal_link_at_cursor",
         "validate_http_target",
         'Command::new("/usr/bin/xdg-open")',
         "handle_terminal_link_confirmation_key",

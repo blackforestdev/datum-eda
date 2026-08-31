@@ -58,8 +58,8 @@ class TerminalSplitBoundaryTest(unittest.TestCase):
         sources = valid_sources()
         begin = "if runtime.begin_terminal_split_drag()"
         report = ".report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)"
-        sources["main"] = (
-            sources["main"]
+        sources["primary_button"] = (
+            sources["primary_button"]
             .replace(begin, "__BEGIN_SPLIT_DRAG__", 1)
             .replace(report, begin, 1)
             .replace("__BEGIN_SPLIT_DRAG__", report, 1)

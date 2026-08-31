@@ -14,6 +14,9 @@ use crate::{
 };
 use std::collections::BTreeMap;
 
+#[path = "workspace_layout/revision_tiling.rs"]
+mod revision_tiling;
+
 /// The user-selected cursor-crosshair presentation for every drawing surface
 /// (decision 023 UVT-005, spec §2). This is a session UI preference — the same
 /// class as camera or pane layout — and is NEVER journaled. Selectable live from
@@ -94,6 +97,9 @@ pub struct WorkspaceFilterState {
     pub dim_unrelated: bool,
     pub active_layer_id: Option<String>,
     pub layer_visibility: BTreeMap<String, bool>,
+    /// First visible physical-layer row in the scrollable Layers viewport.
+    /// Consumer/session state only; never Project or Design authority.
+    pub layer_scroll_offset: usize,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -639,10 +645,7 @@ fn first_leaf_id(node: &PaneNode) -> PaneId {
         PaneNode::Split { first, .. } => first_leaf_id(first),
     }
 }
-
-/// Collapse the Split that directly parents leaf `target`, replacing it with the
-/// sibling subtree. Returns the new focus id (in-order first leaf of the
-/// reclaimed sibling) if a collapse happened.
+/// Collapse a target leaf by promoting its sibling subtree.
 fn collapse_leaf(node: &mut PaneNode, target: PaneId) -> Option<PaneId> {
     let PaneNode::Split { first, second, .. } = node else {
         return None;
@@ -667,7 +670,6 @@ fn collapse_leaf(node: &mut PaneNode, target: PaneId) -> Option<PaneId> {
     collapse_leaf(second, target)
 }
 
-/// Set the ratio of the Split that directly parents leaf `target`.
 fn set_parent_ratio(node: &mut PaneNode, target: PaneId, ratio: f32) -> bool {
     let PaneNode::Split {
         first,
@@ -690,8 +692,6 @@ fn set_parent_ratio(node: &mut PaneNode, target: PaneId, ratio: f32) -> bool {
     set_parent_ratio(second, target, ratio)
 }
 
-/// A throwaway node used only as the momentary hole in a `mem::replace` during
-/// tree surgery; always immediately overwritten or dropped.
 fn placeholder() -> PaneNode {
     PaneNode::Leaf {
         id: PaneId(u32::MAX),
@@ -735,6 +735,33 @@ mod tests {
             release_id
         );
         assert_eq!(layout.leaves().len(), 4);
+    }
+
+    #[test]
+    fn root_open_preserves_design_pair_and_retargets_one_revision_surface() {
+        let mut layout = WorkspaceLayout::default();
+        let impact = PaneContent::Revision(RevisionPane::Surface(
+            crate::revision_workspace::RevisionSurface::Impact,
+        ));
+        let revision_id = layout.open_beside_root(impact, SplitOrientation::Vertical, 0.66, true);
+        assert_eq!(layout.leaves().len(), 3);
+        assert_eq!(layout.content_for(PaneId(0)), Some(PaneContent::Board));
+        assert_eq!(layout.content_for(PaneId(1)), Some(PaneContent::Schematic));
+        assert_eq!(layout.content_for(revision_id), Some(impact));
+
+        let evidence = PaneContent::Revision(RevisionPane::Surface(
+            crate::revision_workspace::RevisionSurface::Evidence,
+        ));
+        assert_eq!(
+            layout.retarget_first_revision_surface(evidence),
+            Some(revision_id)
+        );
+        assert_eq!(
+            layout.leaves().len(),
+            3,
+            "activation must evict, not subdivide"
+        );
+        assert_eq!(layout.content_for(revision_id), Some(evidence));
     }
 
     #[test]

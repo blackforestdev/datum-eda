@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
-    OpenRevisionSurface(datum_gui_protocol::RevisionSurface),
+    SelectRevisionNavEntry(datum_gui_protocol::RevisionNavEntry),
+    RevisionNavContextAction(datum_gui_protocol::RevisionNavContextAction),
     CloseRevisionSurface,
     ToggleRevisionIssuanceArm,
     OpenRevisionWitness(String),
@@ -16,6 +17,7 @@ pub enum HitTarget {
     ToggleShowUnrouted,
     ToggleDimUnrelated,
     ToggleLayer(String),
+    LayerScrollRegion,
     ToggleSelectedBoardTextMirrored,
     ToggleSelectedBoardTextKeepUpright,
     ToggleSelectedBoardTextBold,

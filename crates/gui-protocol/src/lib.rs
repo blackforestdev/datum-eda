@@ -1578,6 +1578,7 @@ impl ReviewWorkspaceState {
                 dim_unrelated: has_review_actions,
                 active_layer_id,
                 layer_visibility,
+                layer_scroll_offset: 0,
             }),
         }
     }

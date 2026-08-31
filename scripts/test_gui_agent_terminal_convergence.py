@@ -261,13 +261,8 @@ atomic_write_texts(&[]);
         !runtime.terminal_clipboard_menu_active();
         TerminalKeyAction::CopyClipboard;
         TerminalKeyAction::PasteClipboard;
+        self.handle_primary_button_press();
         match event {
-            MouseButton::Left, ElementState::Pressed => {
-                begin_terminal_tab_drag();
-                focus_terminal_screen_before_mouse_report();
-                begin_terminal_text_selection();
-                report_terminal_mouse_button();
-            }
             CursorMoved => { advance_terminal_tab_drag(); advance_terminal_text_selection(); },
             MouseButton::Left, ElementState::Released => { finish_terminal_tab_drag(); finish_terminal_text_selection(); },
         }
@@ -278,6 +273,14 @@ fn terminal_mouse_reporting_active() {
     CursorIcon::Grab;
     CursorIcon::Grabbing;
 }
+"""
+        primary_button = """
+    pub(super) fn handle_primary_button_press() {
+        begin_terminal_tab_drag();
+        focus_terminal_screen_before_mouse_report();
+        begin_terminal_text_selection();
+        report_terminal_mouse_button();
+    }
 """
         runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session(); active_logical_point_at(); set_active_selection();"
         drain = """
@@ -323,6 +326,7 @@ fn render_cursor() {}
         failures: list[str] = []
         guard.check_agent_tui_runtime(
             main,
+            primary_button,
             runtime_dock,
             drain,
             geometry,
@@ -340,14 +344,15 @@ fn render_cursor() {}
             main.replace(
                 "        match event {",
                 "        poll_terminal_output();\n        match event {",
-            ).replace(
-                "focus_terminal_screen_before_mouse_report();\n"
-                "                begin_terminal_text_selection();\n"
-                "                report_terminal_mouse_button();",
-                "report_terminal_mouse_button();\n"
-                "                begin_terminal_text_selection();\n"
-                "                focus_terminal_screen_before_mouse_report();",
             ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("advance_terminal_text_selection()", "removed").replace("cancel_terminal_text_selection_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
+            primary_button.replace(
+                "focus_terminal_screen_before_mouse_report();\n"
+                "        begin_terminal_text_selection();\n"
+                "        report_terminal_mouse_button();",
+                "report_terminal_mouse_button();\n"
+                "        begin_terminal_text_selection();\n"
+                "        focus_terminal_screen_before_mouse_report();",
+            ),
             runtime_dock.replace("target_session_id()", "removed")
             .replace("reorder_session()", "removed")
             .replace("active_logical_point_at()", "removed")
