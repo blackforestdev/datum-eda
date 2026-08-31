@@ -138,6 +138,19 @@ truth.
 The resulting small packet returns to the owner for approval or revision before
 the audit may create or authorize a successor implementation item.
 
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-G01 -->
+After owner approval, one governance-only repair must ratify the conventional
+settings-entry rule in a numbered decision, reconcile the Global Preferences
+and shared Units sequencing, create the missing Project Preferences
+specification and Frontier placement, correct menu contracts, and prepare the
+protected visual-truth handoff. It may not implement runtime behavior or edit
+the protected prototype lane.
+
+<!-- REQ:REVISION-PRODUCT-RECOVERY:RVR-O04 -->
+<!-- OWNER:REVISION-PRODUCT-RECOVERY:RVR-O04:RVR-O04 -->
+The repaired governance and resulting canonical sequence return to the owner
+before any execution claim.
+
 Global Preferences implementation and the shared Units execution remain
 blocked. Their reusable authority primitives are preserved, but Revision
 visibility, default profile, teaching-pin, and onboarding descriptors are
@@ -215,6 +228,18 @@ menu hierarchy, Preferences mechanism, Project policy behavior, Revision UI,
 dependency, or prototype change.
 
 <!-- EVIDENCE:REVISION-RECOVERY:RVR-O02-PREFERENCES-FIRST-AUDIT -->
+
+On 2026-08-31 the owner approved RVR-A05 exactly with
+`PREFERENCES-FIRST-REENTRY: approve` and directed Datum to apply conventional
+software settings-entry and operation behavior. This completes RVR-O03 and
+authorizes only RVR-G01 governance repair. “Conventional” is recorded through
+the bounded approved rules—application-menu discovery, explicit Global and
+Project commands/scopes, Project command disabled without an open Project,
+settings kept out of the Navigator, real typed authority behind visible rows,
+and canonical Project mutations—not as permission to import unspecified
+behavior from another product.
+
+<!-- EVIDENCE:REVISION-RECOVERY:RVR-O03-PREFERENCES-FIRST-APPROVED -->
 
 ## Dependency and licensing impact
 
