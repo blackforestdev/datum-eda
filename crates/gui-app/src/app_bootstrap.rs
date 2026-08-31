@@ -79,18 +79,19 @@ pub(super) struct GuiArgs {
     /// journaled.
     #[arg(long = "focus-pane")]
     pub(super) focus_pane: Option<String>,
-    /// Open one approved revision projection at boot for running-app review and
-    /// deterministic visual evidence. Consumer state only; never authority.
-    #[arg(long = "revision-surface", value_parser = ["release", "impact", "change", "evidence"])]
-    pub(super) revision_surface: Option<String>,
+    /// Fixture-only affordance for deterministic legacy Revision render proof.
+    /// It is accepted only together with `--visual-test` and never represents
+    /// records resolved from the opened Project.
+    #[arg(
+        long = "fixture-revision-surface",
+        value_parser = ["release", "impact", "change", "evidence"],
+        hide = true
+    )]
+    pub(super) fixture_revision_surface: Option<String>,
     /// Capture/test affordance: position the scrollable Layers viewport at its
     /// final entry. The default remains the top of the physical stack.
     #[arg(long = "layers-scroll-end", default_value_t = false)]
     pub(super) layers_scroll_end: bool,
-    /// Running-app proof affordance: execute the real Navigator single-click
-    /// selection followed by same-row double-click activation before capture.
-    #[arg(long = "revision-nav-smoke", default_value_t = false, hide = true)]
-    pub(super) revision_nav_smoke: bool,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
     #[arg(long = "screenshot-out")]
@@ -123,6 +124,9 @@ impl GuiArgs {
     }
 
     pub(super) fn validate_visual_args(&self) -> Result<()> {
+        if self.fixture_revision_surface.is_some() && !self.visual_test {
+            anyhow::bail!("--fixture-revision-surface requires --visual-test");
+        }
         if !self.visual_test {
             return Ok(());
         }
@@ -188,15 +192,16 @@ impl GuiArgs {
         }
     }
 
-    pub(super) fn apply_revision_surface(&self, ui: &mut datum_gui_protocol::WorkspaceUiState) {
-        use datum_gui_protocol::{
-            PaneContent, RevisionNavEntry, RevisionPane, RevisionSurface, SplitOrientation,
-        };
-        let (surface, entry) = match self.revision_surface.as_deref() {
-            Some("release") => (RevisionSurface::Release, RevisionNavEntry::Releases),
-            Some("impact") => (RevisionSurface::Impact, RevisionNavEntry::Baselines),
-            Some("change") => (RevisionSurface::Change, RevisionNavEntry::Changes),
-            Some("evidence") => (RevisionSurface::Evidence, RevisionNavEntry::Evidence),
+    pub(super) fn apply_fixture_revision_surface(
+        &self,
+        ui: &mut datum_gui_protocol::WorkspaceUiState,
+    ) {
+        use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
+        let surface = match self.fixture_revision_surface.as_deref() {
+            Some("release") => RevisionSurface::Release,
+            Some("impact") => RevisionSurface::Impact,
+            Some("change") => RevisionSurface::Change,
+            Some("evidence") => RevisionSurface::Evidence,
             _ => return,
         };
         let pane = ui.layout.open_beside_root(
@@ -206,7 +211,6 @@ impl GuiArgs {
             true,
         );
         ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
-        ui.revision.selected_entry = Some(entry);
         ui.revision.announce_open(surface);
     }
 
@@ -352,7 +356,7 @@ impl GuiArgs {
         self.apply_initial_layout(&mut state.ui.layout);
         // Capture/test affordance: focus a named pane (a no-op otherwise).
         self.apply_focus_pane(&mut state.ui.layout);
-        self.apply_revision_surface(&mut state.ui);
+        self.apply_fixture_revision_surface(&mut state.ui);
         self.apply_layers_scroll(&mut state.ui);
 
         // Capture/test affordance: open a named menu dropdown at boot if
@@ -467,6 +471,20 @@ mod initial_layout_tests {
             "View".to_string(),
         ]);
         assert_eq!(args.open_menu.as_deref(), Some("View"));
+    }
+
+    #[test]
+    fn legacy_revision_boot_surface_is_not_a_product_argument() {
+        assert!(
+            GuiArgs::try_parse_from(["datum-gui", "--revision-surface", "impact"]).is_err(),
+            "the rejected product-facing Revision surface flag must stay removed"
+        );
+
+        let fixture = GuiArgs::parse_from(["datum-gui", "--fixture-revision-surface", "impact"]);
+        assert!(
+            fixture.validate_visual_args().is_err(),
+            "legacy Revision examples must require the explicit visual fixture path"
+        );
     }
 
     #[test]

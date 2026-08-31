@@ -81,7 +81,6 @@ pub(super) fn render_side_panels(
         text_runs,
         hit_regions,
     );
-    revision_workspace::render_navigator(state, project_rect, panel_quads, text_runs, hit_regions);
     inspector_dispatch::render_active_inspector(
         state,
         inspector_rect,

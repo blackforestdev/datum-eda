@@ -1,7 +1,5 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
-    SelectRevisionNavEntry(datum_gui_protocol::RevisionNavEntry),
-    RevisionNavContextAction(datum_gui_protocol::RevisionNavContextAction),
     CloseRevisionSurface,
     ToggleRevisionIssuanceArm,
     OpenRevisionWitness(String),

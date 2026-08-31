@@ -188,7 +188,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     }
     args.apply_initial_layout(&mut state.ui.layout);
     args.apply_focus_pane(&mut state.ui.layout);
-    args.apply_revision_surface(&mut state.ui);
+    args.apply_fixture_revision_surface(&mut state.ui);
     args.apply_layers_scroll(&mut state.ui);
     if let Some(menu) = &args.open_menu {
         state.ui.active_menu = Some(menu.clone());
@@ -611,11 +611,6 @@ impl ApplicationHandler for App {
                     {
                         fatal_gui_error(event_loop, "interaction smoke failed", err);
                     }
-                    if self.args.revision_nav_smoke
-                        && let Err(err) = runtime.run_revision_nav_smoke()
-                    {
-                        fatal_gui_error(event_loop, "revision Navigator smoke failed", err);
-                    }
                     if self.args.resize_torture_smoke
                         && let Err(err) = runtime.run_resize_torture_smoke()
                     {
@@ -675,7 +670,6 @@ struct Runtime {
     pane_cameras: PaneCameras,
     pane_grid_lod: pane_grid_lod::PaneGridLod,
     last_cursor_pos: Option<(f32, f32)>,
-    revision_last_click: Option<(datum_gui_protocol::RevisionNavEntry, std::time::Instant)>,
     pan_gesture: PanGestureState,
     dock_drag_active: bool,
     terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
@@ -838,7 +832,6 @@ impl Runtime {
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
             pane_grid_lod: pane_grid_lod::PaneGridLod::default(),
             last_cursor_pos: None,
-            revision_last_click: None,
             pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
             terminal_tab_drag: None,
@@ -1841,9 +1834,7 @@ impl Runtime {
             return handled;
         }
         match target {
-            HitTarget::SelectRevisionNavEntry(_)
-            | HitTarget::RevisionNavContextAction(_)
-            | HitTarget::CloseRevisionSurface
+            HitTarget::CloseRevisionSurface
             | HitTarget::ToggleRevisionIssuanceArm
             | HitTarget::OpenRevisionWitness(_) => unreachable!("revision targets return above"),
             HitTarget::ReviewAction(action_id) => {

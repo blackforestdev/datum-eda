@@ -1,7 +1,5 @@
 use super::*;
-use datum_gui_protocol::{
-    PaneContent, RevisionNavEntry, RevisionPane, RevisionSurface, SplitOrientation,
-};
+use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
 
 #[test]
 fn shell_layout_reserves_bottom_dock_and_viewport() {
@@ -26,7 +24,6 @@ fn revision_pane_keeps_design_surfaces_board_hits_and_witness_summary_live() {
         0.66,
         true,
     );
-    state.ui.revision.selected_entry = Some(RevisionNavEntry::Baselines);
     let retained = RetainedScene::from_workspace(&state, 1600, 1000);
     let prepared = PreparedScene::from_workspace(
         &state,
@@ -178,56 +175,44 @@ fn every_revision_panel_text_quad_and_hit_is_clipped_to_its_pane() {
 }
 
 #[test]
-fn navigator_is_single_select_and_exposes_the_local_entry_menu() {
-    let mut state = datum_gui_protocol::load_fixture_workspace_state();
-    state.ui.revision.selected_entry = Some(RevisionNavEntry::Evidence);
-    let rect = RectPx {
-        x: 0.0,
-        y: 40.0,
-        width: 250.0,
-        height: 340.0,
-    };
-    let mut quads = Vec::new();
-    let mut text = Vec::new();
-    let mut hits = Vec::new();
-    revision_workspace::render_navigator(&state, rect, &mut quads, &mut text, &mut hits);
-    let entries = hits
-        .iter()
-        .filter_map(|hit| match hit.target {
-            HitTarget::SelectRevisionNavEntry(entry) => Some(entry),
-            _ => None,
-        })
-        .collect::<Vec<_>>();
-    assert_eq!(entries, RevisionNavEntry::ALL);
-    assert_eq!(
-        state.ui.revision.selected_entry,
-        Some(RevisionNavEntry::Evidence)
+fn unmanaged_default_workspace_has_no_revision_presentation_or_hits() {
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
     );
 
-    state.ui.revision.context_menu = Some(datum_gui_protocol::RevisionNavContextMenu {
-        entry: RevisionNavEntry::Evidence,
-        anchor_x_px: 60,
-        anchor_y_px: 120,
-    });
-    revision_workspace::render_navigator_context_menu(
-        &state,
-        RectPx {
-            x: 0.0,
-            y: 0.0,
-            width: 800.0,
-            height: 600.0,
-        },
-        &mut quads,
-        &mut text,
-        &mut hits,
-    );
-    for label in [
-        "Open Beside",
-        "Properties",
-        "Show Impact",
-        "Prepare Revision",
-        "Compare to Baseline",
+    for forbidden in [
+        "Changes  1 draft",
+        "Baselines  BL-…-24-01",
+        "Releases  RLS-0007",
+        "Controlled Documents  1",
+        "Evidence  12 records",
+        "Impact · CHG-0031",
+        "RC-0009 · EVT2 release",
+        "RLS-0007 evidence",
+        "BL-2026-08-24-01 · LOCKED",
     ] {
-        assert!(text.iter().any(|run| run.text == label), "missing {label}");
+        assert!(
+            prepared.text_runs.iter().all(|run| run.text != forbidden),
+            "unmanaged default rendered fictional Revision content: {forbidden}"
+        );
     }
+    assert!(prepared.hit_regions.iter().all(|region| {
+        !matches!(
+            region.target,
+            HitTarget::CloseRevisionSurface
+                | HitTarget::ToggleRevisionIssuanceArm
+                | HitTarget::OpenRevisionWitness(_)
+        )
+    }));
+    assert!(state.ui.layout.leaves().into_iter().all(|leaf| {
+        let mut probe = state.ui.layout.clone();
+        probe.focused = leaf;
+        !matches!(probe.focused_content(), PaneContent::Revision(_))
+    }));
 }

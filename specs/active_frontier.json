@@ -6553,16 +6553,16 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-revision-recovery-inventory-20260831",
+        "session": "codex-revision-recovery-gui-removal-20260831",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7734d87de7e65d2076b35ca6aafe5c9daf08d2e7",
-        "claimed_at": "2026-08-31T07:08:55Z",
-        "heartbeat_at": "2026-08-31T07:08:55Z",
-        "expires_at": "2026-08-31T15:03:55Z",
+        "head": "ef368cb",
+        "claimed_at": "2026-08-31T07:26:47Z",
+        "heartbeat_at": "2026-08-31T16:12:47Z",
+        "expires_at": "2026-09-01T00:12:47Z",
         "scope": [
-          "Revision recovery implementation inventory",
-          "Revision runtime and engine path classification",
-          "Active Frontier and evidence traceability"
+          "RVR-I01 unmanaged default Revision GUI removal",
+          "GUI regression and running-app proof",
+          "Active Frontier and tracker evidence"
         ]
       },
       "summary": "Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes.",
@@ -6653,7 +6653,7 @@
           {
             "id": "RVR-I01",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Remove fictional runtime Revision records and unmanaged default Revision surfaces, with bounded regression proof that real unmanaged library, schematic, and PCB authoring remains readable and prompt-free.",
             "depends_on": ["RVR-A03"],
             "requirement_refs": [

@@ -7,9 +7,7 @@ pub(super) fn render_active_inspector(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    if !revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs)
-        && !revision_workspace::render_navigator_inspector(state, rect, text_runs)
-    {
+    if !revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
         render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions);
     }
 }

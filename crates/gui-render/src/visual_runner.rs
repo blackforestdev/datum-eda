@@ -260,15 +260,13 @@ fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspace
 }
 
 fn inject_revision_surface(state: &mut ReviewWorkspaceState, surface: Option<&str>) -> Result<()> {
-    use datum_gui_protocol::{
-        PaneContent, RevisionNavEntry, RevisionPane, RevisionSurface, SplitOrientation,
-    };
-    let (surface, entry) = match surface {
+    use datum_gui_protocol::{PaneContent, RevisionPane, RevisionSurface, SplitOrientation};
+    let surface = match surface {
         None => return Ok(()),
-        Some("release") => (RevisionSurface::Release, RevisionNavEntry::Releases),
-        Some("impact") => (RevisionSurface::Impact, RevisionNavEntry::Baselines),
-        Some("change") => (RevisionSurface::Change, RevisionNavEntry::Changes),
-        Some("evidence") => (RevisionSurface::Evidence, RevisionNavEntry::Evidence),
+        Some("release") => RevisionSurface::Release,
+        Some("impact") => RevisionSurface::Impact,
+        Some("change") => RevisionSurface::Change,
+        Some("evidence") => RevisionSurface::Evidence,
         Some(other) => bail!("unsupported input.revision_surface {other:?}"),
     };
     let pane = state.ui.layout.open_beside_root(
@@ -278,7 +276,6 @@ fn inject_revision_surface(state: &mut ReviewWorkspaceState, surface: Option<&st
         true,
     );
     state.ui.focus = datum_gui_protocol::ApplicationFocus::Editor(pane);
-    state.ui.revision.selected_entry = Some(entry);
     state.ui.revision.announce_open(surface);
     Ok(())
 }

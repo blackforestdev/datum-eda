@@ -80,11 +80,9 @@ impl Runtime {
                 // Context-menu ownership is exclusive: a simultaneous secondary
                 // press terminates 2D pan and must never let it resume afterward.
                 self.pan_gesture.cancel();
-                self.open_revision_context_menu_at_cursor() || self.open_marking_menu_at_cursor()
+                self.open_marking_menu_at_cursor()
             }
-            ElementState::Released => {
-                self.revision_context_menu_active() || self.dismiss_marking_menu()
-            }
+            ElementState::Released => self.dismiss_marking_menu(),
         }
     }
 }
