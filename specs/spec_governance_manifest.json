@@ -175,6 +175,11 @@
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
       "notes": "Governed GP-C01 through GP-C07 research, owner-decision, specification, visual, and implementation-planning path. No Preferences implementation, synchronization service, dependency, or standards claim is authorized."
     },
+    "research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md": {
+      "class": "governed",
+      "progress_anchor": "REVISION-PRODUCT-RECOVERY",
+      "notes": "RVR-A05 owner-review packet reconciling the Preferences-first menu, authority, Units, Global/Project GUI, and Revision exposure sequence. No implementation, dependency, prototype edit, descriptor, or successor authorization."
+    },
     "research/preferences-system/GP_C01_INTERNAL_AUTHORITY_AUDIT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
