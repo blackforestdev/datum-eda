@@ -334,7 +334,11 @@ round trips over the same real Project; identical refusal codes/payloads;
 historical query completeness; context-fence enforcement; and no private writer.
 
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I10 -->
-### REV-I10 — Approved GUI contract
+### REV-I10 — Rejected GUI result; historical contract
+
+Product Mechanics 038 rejects the running REV-I10 result and supersedes the
+permanent/default presentation requirements below. They remain historical
+evidence only and authorize no corrective implementation.
 
 Implement only the owner-approved REV-C06 visual behavior over engine truth:
 
@@ -369,9 +373,9 @@ authoring remains unblocked outside explicitly adopted earlier control.
 
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I17 -->
 <!-- OWNER:PRODUCT-REVISION-ENGINE:REV-I17:REV-I17 -->
-The running-app owner visual review above remains an explicit acceptance
-boundary after REV-I10 implementation; it reviews conformance to the already
-approved six-part design rather than reopening or replacing that design.
+The owner refused this boundary on 2026-08-30. Product Mechanics 038 replaces it
+with the bounded Revision recovery item; REV-I10A and every later Revision slice
+remain suspended.
 
 <!-- REQ:PRODUCT-REVISION-ENGINE:REV-I10A -->
 ### REV-I10A — Enterprise role-workflow UX

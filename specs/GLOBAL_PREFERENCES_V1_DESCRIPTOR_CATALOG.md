@@ -175,15 +175,6 @@ portable exchange omits executable, environment, credentials, and expanded cwd.
 | `datum.projects.unit_policy_seed` | Project genesis/units | optional aggregate struct `{system,display_units_by_quantity,precision,angle}`; absent | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; explicit aggregate wins, otherwise compose typed unit seeds | P0; no legacy; I | `preferences-window.html:249`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169` |
 | `datum.output.job_prefill` | output orchestration | enum `{ask,last_used}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; Generate; operation still asks | P0; output job stays Project fact; I | `preferences-window.html:258` |
 | `datum.output.destination_prefill` | output orchestration | enum `{ask,project_outputs}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; export; operation still asks | P0; no legacy; I | `preferences-window.html:260` |
-| `datum.revision.visibility` | revision presentation | bool; `true` | P; U+S+C; R,C,Pn,L including approved teaching pin | live; Navigator/projections only | P0; no legacy; I | `preferences-window.html:264`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:1918-2030` |
-| `datum.revision.profile_seed` | revision engine | resolvable revision-profile identity; Sequential Alphanumeric (Legacy) | PS; U; R,C,Pn,L | seed:`ProjectRevisionPolicy`; New Project only | P0; no legacy; I | `preferences-window.html:266`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169` |
-| `datum.revision.build_presentation_seed` | revision engine | enum `{quiet_v4a,phase_build_v4b}`; `quiet_v4a` | PS; U; R,C,Pn,L | seed:`ProjectRevisionPolicy.build_presentation`; New Project only | P0; no legacy; I | `preferences-window.html:268` |
-| `datum.revision.prototype_transition_seed` | revision engine | enum `{continuous,governed_transition}`; `continuous` | PS; U; R,C,Pn,L | seed:`ProjectRevisionPolicy.namespace_transition`; New Project only | P0; no legacy; I | `preferences-window.html:270` |
-
-`datum.revision.visibility` is the approved exception where sufficient released
-organization authority may Pin visible for non-gating teaching. Hiding never
-changes revision records, policy, journal, release gates, or Project truth.
-
 ## 3. Negative classifications
 
 These setting-like surfaces have no `PreferenceKey` and cannot enter the
@@ -209,9 +200,10 @@ preference resolver or portable preference exchange.
 
 ## 4. Explicitly deferred candidates
 
-Every item in this section is **not in V1**, has no stable key allocated, no
-schema/default ratified, no persistence or management eligibility, no migration
-identity, and implementation disposition `defer`. A later governed step must
+Every item in this section is **not active in V1**. Unless a row explicitly
+names a reserved former key, it has no stable key allocated, schema/default
+ratified, persistence or management eligibility, or migration identity. Every
+item has implementation disposition `defer`. A later governed step must
 prove the owning behavior, classify it, render any visible behavior through the
 Claude lane, and amend this catalog before registration. Grouping here does not
 authorize one aggregate descriptor.
@@ -229,7 +221,7 @@ authorize one aggregate descriptor.
 | Symbol editor | New-symbol defaults; pin length/spacing; graphics line width | `preferences-window.html:221-226` |
 | Footprint editor | Pad defaults; IPC naming basis/density; silk/courtyard widths; reference/value text; preview annotations | `preferences-window.html:229-236` |
 | Files/projects | `ProjectPolicySeed` candidate for `AdoptedDraftingStandard` (sixteenth seed-bearing row; schema unspecified); multi-instance locking; helper applications; update checks; cache maintenance; 3D model search paths; update channel | `preferences-window.html:255-256` |
-| Revision | One `ProjectPolicySeed` candidate for new-Project provisional-watermark presentation (effective watermark remains Project authority); Git/offline-exchange seed; local-history/session-journal retention; machine VCS integration; user identity for provenance | `preferences-window.html:272` |
+| Revision | PM-038 recovery of reserved keys `datum.revision.visibility`, `datum.revision.profile_seed`, `datum.revision.build_presentation_seed`, and `datum.revision.prototype_transition_seed`; one ProjectPolicySeed candidate for new-Project provisional-watermark presentation; Git/offline-exchange seed; local-history/session-journal retention; machine VCS integration; user identity for provenance. The reserved keys have no active descriptor/default/management authority and unmanaged Projects show no Revision chrome. | `PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`; `preferences-window.html:264-272` |
 | Agents | Agent authority level including unattended, unattended-tool allowlist, persistent agent Project configuration, scripting/agent API access, engine-daemon/MCP endpoint configuration; all await dedicated authority/security review | `preferences-window.html:274-279` |
 | Organization/network | Organization-managed pins/default packaging; network-access toggles; telemetry/crash-reporting opt-in; proxy configuration | `preferences-window.html:310-311` |
 

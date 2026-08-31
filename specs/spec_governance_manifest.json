@@ -829,6 +829,12 @@
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
       "notes": "Owner-ratified GP-C06 mechanism for typed Global Preferences authority, ProjectPolicySeed, resolution, persistence, search-first interaction, exact units, accessibility, and PM-034/035/036 preservation. It authorizes no implementation, dependency, provider, service, execution, or prototype edit."
     },
+    "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md": {
+      "class": "doctrine",
+      "controlling": true,
+      "progress_anchor": "REVISION-PRODUCT-RECOVERY",
+      "notes": "Owner-ratified corrective doctrine rejecting REV-I10, superseding permanent unmanaged Revision presentation, quarantining unvalidated implementation breadth, deferring Revision preference descriptors, and selecting a bounded manual-first recovery without authorizing runtime edits or dependencies."
+    },
     "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
       "class": "governed",
       "progress_anchor": "TERMINAL-EPIC",

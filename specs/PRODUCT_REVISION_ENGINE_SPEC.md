@@ -447,6 +447,10 @@ queries shall return an explicit `AdapterAbsent` result when appropriate.
 
 ## 12. Human and accessibility contract
 
+Product Mechanics 038 supersedes this section's permanent/default Revision
+presentation. The Q1-Q6 list below is retained as historical evidence for the
+rejected REV-I10 result and is not current implementation authority.
+
 The visual source of truth is:
 
 - `docs/gui/prototypes/revision-ux-shell-study.html`;
@@ -481,10 +485,11 @@ must never be presented as authorization.
 Existing one-window, recursive tiling, open-beside, focused-pane, output-only
 Console, accessibility, responsive, and no-rival-authority laws remain in force.
 
-Visible expanded revision groups are the factory default. Future Global
-Preferences shall provide a presentation-only **Hide revision system** option.
-Hiding cannot disable records, the journal, policy, findings, release gates, or
-recovery of the presentation and cannot require data migration.
+Unmanaged Projects have no Revision chrome by default. A Revision surface may
+appear only after explicit user intent or deliberately adopted Project
+policy/real Project records. Presentation controls cannot disable real records,
+the journal, adopted policy, findings, or release gates and cannot require data
+migration.
 
 ## 13. Standards, licensing, and claim boundary
 
