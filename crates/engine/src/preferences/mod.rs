@@ -9,12 +9,17 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::Value;
 
+mod catalog;
 pub mod resolver;
+mod schema;
 
+pub use catalog::active_v1_registry;
 pub use resolver::{
-    AuthorityRelease, AuthorityReleaseLevel, ConsideredFact, Contribution, ContributionDisposition,
-    OrganizationDirective, OrganizationFact, PreferenceExplanation, ResolutionOutcome,
-    ResolutionRequest, ValueConstraint, ValueFact, resolve_preference,
+    AuthorityRelease, AuthorityReleaseLevel, AuthorityReleaseState, AvailableAction,
+    ConsideredFact, ContextApplicability, Contribution, ContributionDisposition, FactProvenance,
+    OrganizationDirective, OrganizationFact, PreferenceExplanation, ProviderGenerationState,
+    ResolutionOutcome, ResolutionRequest, RuntimeDefaultFact, ValueConstraint, ValueDisclosure,
+    ValueFact, resolve_preference,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -76,7 +81,12 @@ pub enum MergeCategory {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ApplyBehavior {
     Live,
-    NextLaunch,
+    LiveAfterWholeValueValidation,
+    LiveWithBoundedTrim,
+    LiveAndNewProjectSeed,
+    PrefillOnly,
+    NextApplicationLaunch,
+    NextTerminalLaunch,
     NewProjectOnly,
 }
 
@@ -86,37 +96,94 @@ pub enum ExportClass {
     Protected,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SemanticSchema {
+    ObjectOpacity,
+    ObjectSnapTypes,
+    GridMarkStyle,
+    VersionedKeymap,
+    AngleFormat,
+    RgbaColor,
+    SheetFormat,
+    PublishSetNaming,
+    TerminalLaunchProfiles,
+    TerminalTextRendering,
+    TerminalCursor,
+    TerminalFeedback,
+    TerminalScrollback,
+    DefaultLocations,
+    AutosavePolicy,
+    ProjectDisplayUnits,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ValueSchema {
     Boolean,
-    IntegerRange { min: i64, max: i64 },
+    IntegerRange { min: i64, max: i64, step: u64 },
     Enum(BTreeSet<String>),
-    AllowedValues(Vec<Value>),
-    String,
-    Object,
-    Array,
-    OptionalObject,
-    CanonicalJson,
+    Identity { nullable: bool },
+    Semantic(SemanticSchema),
 }
 
 impl ValueSchema {
     pub fn validate(&self, value: &Value) -> bool {
         match self {
             Self::Boolean => value.is_boolean(),
-            Self::IntegerRange { min, max } => value
-                .as_i64()
-                .is_some_and(|candidate| candidate >= *min && candidate <= *max),
+            Self::IntegerRange { min, max, step } => value.as_i64().is_some_and(|candidate| {
+                candidate >= *min
+                    && candidate <= *max
+                    && (candidate - *min).unsigned_abs().is_multiple_of(*step)
+            }),
             Self::Enum(allowed) => value
                 .as_str()
                 .is_some_and(|candidate| allowed.contains(candidate)),
-            Self::AllowedValues(allowed) => allowed.contains(value),
-            Self::String => value.is_string(),
-            Self::Object => value.is_object(),
-            Self::Array => value.is_array(),
-            Self::OptionalObject => value.is_null() || value.is_object(),
-            Self::CanonicalJson => !value.is_null(),
+            Self::Identity { nullable } => {
+                (*nullable && value.is_null())
+                    || value
+                        .as_str()
+                        .is_some_and(|identity| !identity.trim().is_empty())
+            }
+            Self::Semantic(schema) => schema.validate(value),
         }
     }
+
+    pub fn finite_domain(&self) -> Option<Vec<Value>> {
+        match self {
+            Self::Boolean => Some(vec![Value::Bool(false), Value::Bool(true)]),
+            Self::Enum(values) => Some(values.iter().cloned().map(Value::String).collect()),
+            Self::IntegerRange { min, max, step } => {
+                let count = (*max - *min).unsigned_abs() / *step + 1;
+                (count <= 1024).then(|| {
+                    (0..count)
+                        .map(|index| Value::from(*min + (index * *step) as i64))
+                        .collect()
+                })
+            }
+            Self::Identity { .. } | Self::Semantic(_) => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DescriptorDefault {
+    Literal(Value),
+    Runtime { recipe: String },
+    Absent,
+}
+
+impl DescriptorDefault {
+    pub fn literal(&self) -> Option<&Value> {
+        match self {
+            Self::Literal(value) => Some(value),
+            Self::Runtime { .. } | Self::Absent => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DirectivePolicy {
+    pub kind: DirectiveKind,
+    pub minimum_release: resolver::AuthorityReleaseLevel,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -132,10 +199,11 @@ pub struct PreferenceDescriptor {
     pub schema_version: u32,
     pub value_schema_name: String,
     pub value_schema: ValueSchema,
-    pub default_value: Option<Value>,
+    pub default_value: DescriptorDefault,
     pub class: SettingClass,
     pub allowed_sources: BTreeSet<ResolutionSource>,
     pub allowed_directives: BTreeSet<DirectiveKind>,
+    pub directive_policy: Vec<DirectivePolicy>,
     pub merge_category: MergeCategory,
     pub apply_behavior: ApplyBehavior,
     pub consumers: Vec<String>,
@@ -147,6 +215,12 @@ pub struct PreferenceDescriptor {
 impl PreferenceDescriptor {
     pub fn validates(&self, value: &Value) -> bool {
         self.value_schema.validate(value)
+    }
+
+    pub fn directive_policy(&self, kind: DirectiveKind) -> Option<&DirectivePolicy> {
+        self.directive_policy
+            .iter()
+            .find(|policy| policy.kind == kind)
     }
 }
 
@@ -181,7 +255,7 @@ impl DescriptorRegistry {
         }
         if descriptor
             .default_value
-            .as_ref()
+            .literal()
             .is_some_and(|value| !descriptor.validates(value))
         {
             return Err(RegistrationRefusal::InvalidDefault(key.as_str().to_owned()));
@@ -226,366 +300,6 @@ impl DescriptorRegistry {
     }
 }
 
-const ACTIVE_V1_KEYS: [&str; 54] = [
-    "datum.console.feedback_duration",
-    "datum.accessibility.reduced_motion",
-    "datum.accessibility.high_contrast_noncolor",
-    "datum.pcb.layer_color_scheme",
-    "datum.schematic.drawing_theme",
-    "datum.pcb.object_opacity",
-    "datum.pcb.inactive_layer_dim_percent",
-    "datum.pcb.pad_outline_mode",
-    "datum.pcb.ghost_via_through_pad",
-    "datum.pcb.rounded_track_corners",
-    "datum.viewport.snap_enabled",
-    "datum.viewport.snap_capture_px",
-    "datum.viewport.fine_grid_divisor",
-    "datum.viewport.object_snap_types",
-    "datum.viewport.grid_mark_style",
-    "datum.input.editor_keymap",
-    "datum.units.system",
-    "datum.units.board_length",
-    "datum.units.drill_hole",
-    "datum.units.schematic_geometry",
-    "datum.units.length_precision",
-    "datum.units.angle_format",
-    "datum.pcb.route_profile",
-    "datum.pcb.net_color_application",
-    "datum.pcb.global_airwire_color",
-    "datum.pcb.curved_airwires",
-    "datum.pcb.selected_ratsnest_only",
-    "datum.pcb.airwires_hidden_layers",
-    "datum.pcb.viewport_airwire_culling",
-    "datum.checks.profile_prefill",
-    "datum.publish.title_block_template_seed",
-    "datum.publish.sheet_format_seed",
-    "datum.publish.scale_fraction_style_seed",
-    "datum.publish.viewport_creation_prefill",
-    "datum.publish.publish_set_naming",
-    "datum.terminal.launch_profiles",
-    "datum.terminal.theme",
-    "datum.terminal.text_rendering",
-    "datum.terminal.cursor",
-    "datum.terminal.feedback",
-    "datum.terminal.scrollback",
-    "datum.terminal.notifications",
-    "datum.terminal.keymap",
-    "datum.terminal.multiline_paste",
-    "datum.terminal.osc52_write",
-    "datum.terminal.open_target_policy",
-    "datum.projects.startup_view",
-    "datum.files.default_locations",
-    "datum.files.autosave",
-    "datum.projects.seed_profile",
-    "datum.projects.template_set",
-    "datum.projects.unit_policy_seed",
-    "datum.output.job_prefill",
-    "datum.output.destination_prefill",
-];
-
-pub fn active_v1_registry() -> DescriptorRegistry {
-    let mut registry = DescriptorRegistry::default();
-    for key in ACTIVE_V1_KEYS {
-        registry
-            .register(active_descriptor(key))
-            .expect("the ratified V1 descriptor inventory must register exactly once");
-    }
-    registry
-}
-
-fn active_descriptor(key: &str) -> PreferenceDescriptor {
-    let class = descriptor_class(key);
-    let mut allowed_sources = BTreeSet::from([
-        ResolutionSource::DescriptorDefault,
-        ResolutionSource::Installation,
-        ResolutionSource::User,
-    ]);
-    let personal_accessibility = key.starts_with("datum.accessibility.");
-    if !personal_accessibility {
-        allowed_sources.insert(ResolutionSource::Organization);
-    }
-    if class != SettingClass::ProjectPolicySeed {
-        allowed_sources.insert(ResolutionSource::Session);
-    }
-    if context_eligible(key) {
-        allowed_sources.insert(ResolutionSource::Context);
-    }
-
-    let allowed_directives = if personal_accessibility {
-        BTreeSet::new()
-    } else if class == SettingClass::Presentation {
-        BTreeSet::from([DirectiveKind::Recommend, DirectiveKind::Constrain])
-    } else {
-        BTreeSet::from([
-            DirectiveKind::Recommend,
-            DirectiveKind::Constrain,
-            DirectiveKind::Pin,
-            DirectiveKind::Lock,
-        ])
-    };
-    let (value_schema_name, value_schema, default_value) = schema_and_default(key);
-    let owner = key.split('.').nth(1).unwrap_or("engine").to_owned();
-    let apply_behavior = if class == SettingClass::ProjectPolicySeed {
-        ApplyBehavior::NewProjectOnly
-    } else if key == "datum.projects.startup_view" {
-        ApplyBehavior::NextLaunch
-    } else {
-        ApplyBehavior::Live
-    };
-    let export_class =
-        if key.starts_with("datum.terminal.") && matches!(class, SettingClass::Capability) {
-            ExportClass::Protected
-        } else {
-            ExportClass::Portable
-        };
-    PreferenceDescriptor {
-        key: PreferenceKey::parse(key).expect("catalog keys are stable Datum identities"),
-        owner,
-        schema_version: 1,
-        value_schema_name: value_schema_name.to_owned(),
-        value_schema,
-        default_value,
-        class,
-        allowed_sources,
-        allowed_directives,
-        merge_category: MergeCategory::Replace,
-        apply_behavior,
-        consumers: vec![key.split('.').nth(1).unwrap_or("engine").to_owned()],
-        export_class,
-        presentation: AccessiblePresentation {
-            label: key.rsplit('.').next().unwrap_or(key).replace('_', " "),
-            description: format!(
-                "Controls {} behavior.",
-                key.rsplit('.').next().unwrap_or(key)
-            ),
-        },
-        retired_aliases: retired_aliases(key),
-    }
-}
-
-fn descriptor_class(key: &str) -> SettingClass {
-    if key.starts_with("datum.units.")
-        || matches!(
-            key,
-            "datum.publish.title_block_template_seed"
-                | "datum.publish.sheet_format_seed"
-                | "datum.publish.scale_fraction_style_seed"
-                | "datum.projects.seed_profile"
-                | "datum.projects.template_set"
-                | "datum.projects.unit_policy_seed"
-        )
-    {
-        SettingClass::ProjectPolicySeed
-    } else if matches!(
-        key,
-        "datum.terminal.launch_profiles"
-            | "datum.terminal.scrollback"
-            | "datum.terminal.notifications"
-            | "datum.terminal.multiline_paste"
-            | "datum.terminal.osc52_write"
-            | "datum.terminal.open_target_policy"
-    ) {
-        SettingClass::Capability
-    } else if key.starts_with("datum.viewport.")
-        || key == "datum.input.editor_keymap"
-        || key == "datum.pcb.route_profile"
-        || key == "datum.checks.profile_prefill"
-        || key == "datum.publish.viewport_creation_prefill"
-        || key == "datum.publish.publish_set_naming"
-        || key == "datum.terminal.keymap"
-        || key == "datum.projects.startup_view"
-        || key.starts_with("datum.files.")
-        || key.starts_with("datum.output.")
-    {
-        SettingClass::WorkflowDefault
-    } else {
-        SettingClass::Presentation
-    }
-}
-
-fn context_eligible(key: &str) -> bool {
-    key.starts_with("datum.viewport.")
-        || key == "datum.input.editor_keymap"
-        || key == "datum.pcb.route_profile"
-        || key == "datum.checks.profile_prefill"
-        || key == "datum.publish.viewport_creation_prefill"
-        || key == "datum.publish.publish_set_naming"
-        || key == "datum.files.autosave"
-        || key.starts_with("datum.output.")
-        || matches!(
-            key,
-            "datum.pcb.layer_color_scheme"
-                | "datum.pcb.object_opacity"
-                | "datum.pcb.inactive_layer_dim_percent"
-                | "datum.pcb.pad_outline_mode"
-                | "datum.pcb.ghost_via_through_pad"
-                | "datum.pcb.rounded_track_corners"
-                | "datum.pcb.net_color_application"
-                | "datum.pcb.global_airwire_color"
-                | "datum.pcb.curved_airwires"
-                | "datum.pcb.selected_ratsnest_only"
-                | "datum.pcb.airwires_hidden_layers"
-                | "datum.pcb.viewport_airwire_culling"
-        )
-}
-
-fn schema_and_default(key: &str) -> (&'static str, ValueSchema, Option<Value>) {
-    if let Some((allowed, default)) = enum_values_and_default(key) {
-        return (
-            "closed catalog enum",
-            ValueSchema::AllowedValues(allowed),
-            Some(default),
-        );
-    }
-    let boolean_keys = [
-        "datum.accessibility.reduced_motion",
-        "datum.accessibility.high_contrast_noncolor",
-        "datum.pcb.pad_outline_mode",
-        "datum.pcb.ghost_via_through_pad",
-        "datum.pcb.rounded_track_corners",
-        "datum.viewport.snap_enabled",
-        "datum.pcb.curved_airwires",
-        "datum.pcb.selected_ratsnest_only",
-        "datum.pcb.viewport_airwire_culling",
-    ];
-    if boolean_keys.contains(&key) {
-        let default = matches!(
-            key,
-            "datum.viewport.snap_enabled" | "datum.pcb.selected_ratsnest_only"
-        );
-        return ("bool", ValueSchema::Boolean, Some(Value::Bool(default)));
-    }
-    match key {
-        "datum.pcb.inactive_layer_dim_percent" => (
-            "integer 0..100",
-            ValueSchema::IntegerRange { min: 0, max: 100 },
-            Some(Value::from(50)),
-        ),
-        "datum.viewport.snap_capture_px" => (
-            "integer 1..64",
-            ValueSchema::IntegerRange { min: 1, max: 64 },
-            Some(Value::from(10)),
-        ),
-        "datum.projects.unit_policy_seed" => (
-            "optional ProjectDisplayUnits aggregate",
-            ValueSchema::OptionalObject,
-            None,
-        ),
-        "datum.publish.title_block_template_seed"
-        | "datum.projects.seed_profile"
-        | "datum.projects.template_set" => (
-            "resolvable identity",
-            ValueSchema::String,
-            Some(Value::String("datum_factory".to_owned())),
-        ),
-        key if key.contains("keymap") || key.contains("locations") => (
-            "versioned map",
-            ValueSchema::Object,
-            Some(Value::Object(Default::default())),
-        ),
-        key if key.contains("profiles") => (
-            "versioned named profile list",
-            ValueSchema::Array,
-            Some(Value::Array(Vec::new())),
-        ),
-        key if key.contains("opacity")
-            || key.contains("style")
-            || key.contains("format")
-            || key.contains("rendering")
-            || key.contains("cursor")
-            || key.contains("feedback")
-            || key.contains("scrollback")
-            || key.contains("autosave")
-            || key.contains("naming")
-            || key.contains("seed") =>
-        {
-            (
-                "typed object",
-                ValueSchema::Object,
-                Some(Value::Object(Default::default())),
-            )
-        }
-        _ => (
-            "catalog enum or canonical scalar",
-            ValueSchema::CanonicalJson,
-            Some(Value::String(default_scalar(key).to_owned())),
-        ),
-    }
-}
-
-fn enum_values_and_default(key: &str) -> Option<(Vec<Value>, Value)> {
-    let (values, default): (&[&str], &str) = match key {
-        "datum.console.feedback_duration" => (&["4s", "6s", "10s", "never"], "6s"),
-        "datum.pcb.layer_color_scheme" => (&["datum", "high_contrast_mono", "photonics"], "datum"),
-        "datum.schematic.drawing_theme" => (&["dark", "light"], "dark"),
-        "datum.units.system" => (&["metric", "imperial"], "metric"),
-        "datum.units.board_length" => (
-            &["follow_system", "mm", "um", "mil", "inch"],
-            "follow_system",
-        ),
-        "datum.units.drill_hole" => (&["follow_system", "mm", "mil", "inch"], "follow_system"),
-        "datum.units.schematic_geometry" => (&["follow_system", "mm", "mil"], "follow_system"),
-        "datum.units.length_precision" => (&["0.1", "0.01", "0.001", "0.0001", "exact_nm"], "0.01"),
-        "datum.pcb.route_profile" => (
-            &["conservative", "balanced", "high_density"],
-            "conservative",
-        ),
-        "datum.pcb.net_color_application" => {
-            (&["none", "ratsnest", "copper_ratsnest", "all"], "ratsnest")
-        }
-        "datum.pcb.airwires_hidden_layers" => (&["visible_layers", "all_layers"], "visible_layers"),
-        "datum.checks.profile_prefill" => (&["full", "fast", "last_used"], "last_used"),
-        "datum.publish.scale_fraction_style_seed" => {
-            (&["one_to_n", "n_over_one", "custom_pattern"], "one_to_n")
-        }
-        "datum.publish.viewport_creation_prefill" => {
-            (&["on_demand", "on_demand_remember_style"], "on_demand")
-        }
-        "datum.terminal.theme" => (&["datum_dark", "high_contrast"], "datum_dark"),
-        "datum.terminal.notifications" => (&["off", "unfocused", "always"], "unfocused"),
-        "datum.terminal.multiline_paste" | "datum.terminal.osc52_write" => {
-            (&["ask", "allow", "block"], "ask")
-        }
-        "datum.terminal.open_target_policy" => (&["ask", "trusted_only", "never"], "ask"),
-        "datum.projects.startup_view" => (&["start_page", "last_session", "empty"], "start_page"),
-        "datum.output.job_prefill" => (&["ask", "last_used"], "ask"),
-        "datum.output.destination_prefill" => (&["ask", "project_outputs"], "ask"),
-        _ => return None,
-    };
-    Some((
-        values
-            .iter()
-            .map(|value| Value::String((*value).to_owned()))
-            .collect(),
-        Value::String(default.to_owned()),
-    ))
-}
-
-fn default_scalar(key: &str) -> &'static str {
-    match key {
-        "datum.console.feedback_duration" => "6s",
-        "datum.schematic.drawing_theme" => "dark",
-        "datum.units.system" => "metric",
-        "datum.pcb.route_profile" => "conservative",
-        "datum.checks.profile_prefill" => "last_used",
-        "datum.projects.startup_view" => "start_page",
-        "datum.output.job_prefill" | "datum.output.destination_prefill" => "ask",
-        _ => "datum_default",
-    }
-}
-
-fn retired_aliases(key: &str) -> BTreeSet<String> {
-    let aliases: &[&str] = match key {
-        "datum.console.feedback_duration" => &["console_duration"],
-        "datum.schematic.drawing_theme" => &["datum.schematic.theme"],
-        "datum.publish.publish_set_naming" => &["datum.publish.set_name_prefill"],
-        "datum.projects.startup_view" => &["datum.files.startup_mode"],
-        "datum.projects.template_set" => &["datum.projects.template_seed"],
-        _ => &[],
-    };
-    aliases.iter().map(|alias| (*alias).to_owned()).collect()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -609,7 +323,10 @@ mod tests {
 
     #[test]
     fn duplicate_live_identity_and_alias_collision_are_refused() {
-        let descriptor = active_descriptor("datum.viewport.snap_enabled");
+        let descriptor = active_v1_registry()
+            .get(&PreferenceKey::parse("datum.viewport.snap_enabled").unwrap())
+            .unwrap()
+            .clone();
         let mut registry = DescriptorRegistry::default();
         registry.register(descriptor.clone()).unwrap();
         assert!(matches!(

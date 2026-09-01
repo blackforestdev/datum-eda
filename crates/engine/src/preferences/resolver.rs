@@ -13,16 +13,66 @@ pub enum AuthorityReleaseLevel {
     FullManagement,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum AuthorityReleaseState {
+    Active,
+    Expired,
+    Revoked,
+    Superseded,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthorityRelease {
+    pub id: String,
     pub releasing_user: String,
     pub organization: String,
     pub machine_scope: String,
     pub level: AuthorityReleaseLevel,
     pub effective_at: String,
+    pub effective_until: Option<String>,
     pub attribution: String,
     pub revocable: bool,
-    pub active: bool,
+    pub state: AuthorityReleaseState,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ProviderGenerationState {
+    Active,
+    StaleEffective,
+    Unavailable,
+    Expired,
+    Revoked,
+    Superseded,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ValueDisclosure {
+    Disclosed,
+    Redacted,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FactProvenance {
+    pub origin: String,
+    pub provider: Option<String>,
+    pub package: Option<String>,
+    pub generation: Option<String>,
+    pub actor: String,
+    pub role: Option<String>,
+    pub observed_at: String,
+    pub effective_from: Option<String>,
+    pub effective_until: Option<String>,
+    pub offline_valid_until: Option<String>,
+    pub last_successful_contact: Option<String>,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ContextApplicability {
+    pub subject: String,
+    pub authority: String,
+    pub lifetime: String,
+    pub reason: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -76,12 +126,11 @@ pub struct ValueFact {
     pub key: PreferenceKey,
     pub source: ResolutionSource,
     pub value: Value,
-    pub provider: Option<String>,
-    pub actor: String,
-    pub reason: String,
-    /// A Context value participates only after its owning subsystem explicitly
-    /// identifies it as the applicable already-authoritative value.
-    pub context_is_applicable_authority: bool,
+    pub provenance: FactProvenance,
+    pub disclosure: ValueDisclosure,
+    pub provider_state: Option<ProviderGenerationState>,
+    /// Context is applicability metadata, never an ordinary ranked value.
+    pub context: Option<ContextApplicability>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -89,16 +138,30 @@ pub struct OrganizationFact {
     pub id: String,
     pub key: PreferenceKey,
     pub organization: String,
-    pub package: String,
-    pub actor: String,
-    pub reason: String,
+    pub provenance: FactProvenance,
+    pub authenticated: bool,
+    pub disclosure: ValueDisclosure,
+    pub generation_state: ProviderGenerationState,
+    pub remaining_freedom: String,
+    pub appeal_path: Option<String>,
     pub directive: OrganizationDirective,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RuntimeDefaultFact {
+    pub id: String,
+    pub key: PreferenceKey,
+    pub recipe: String,
+    pub value: Value,
+    pub provenance: FactProvenance,
+    pub disclosure: ValueDisclosure,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Contribution {
     Value(ValueFact),
     Organization(OrganizationFact),
+    RuntimeDefault(RuntimeDefaultFact),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -109,6 +172,12 @@ pub enum ContributionDisposition {
     Inert,
     Refused,
     Conflicting,
+    Applicable,
+    Unavailable,
+    Stale,
+    Expired,
+    Revoked,
+    Superseded,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -117,10 +186,28 @@ pub struct ConsideredFact {
     pub source: ResolutionSource,
     pub value: Option<Value>,
     pub directive: Option<DirectiveKind>,
+    pub control: Option<OrganizationDirective>,
     pub disposition: ContributionDisposition,
     pub reason: String,
-    pub provider: Option<String>,
-    pub actor: String,
+    pub provenance: FactProvenance,
+    pub disclosure: ValueDisclosure,
+    pub provider_state: Option<ProviderGenerationState>,
+    pub authority_release: Option<AuthorityRelease>,
+    pub remaining_freedom: Option<String>,
+    pub appeal_path: Option<String>,
+    pub reactivation_condition: Option<String>,
+    pub context: Option<ContextApplicability>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum AvailableAction {
+    PreserveOpaqueRecord,
+    ProvideRuntimeDefault,
+    ResetUserContribution,
+    EndSessionOverride,
+    ReviewAuthorityRequest,
+    ManageAuthorityRelease,
+    AppealOrRevokeManagedPin,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -140,6 +227,7 @@ pub enum ResolutionOutcome {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PreferenceExplanation {
     pub key: PreferenceKey,
+    pub machine_scope: String,
     pub value_schema_name: Option<String>,
     pub setting_class: Option<SettingClass>,
     pub eligible_sources: BTreeSet<ResolutionSource>,
@@ -147,7 +235,7 @@ pub struct PreferenceExplanation {
     pub considered: Vec<ConsideredFact>,
     pub absent_sources: BTreeSet<ResolutionSource>,
     pub evaluation_stages: Vec<String>,
-    pub available_actions: BTreeSet<String>,
+    pub available_actions: BTreeSet<AvailableAction>,
 }
 
 pub struct ResolutionRequest<'a> {
@@ -155,6 +243,7 @@ pub struct ResolutionRequest<'a> {
     pub key: PreferenceKey,
     pub contributions: &'a [Contribution],
     pub authority_releases: &'a [AuthorityRelease],
+    pub machine_scope: &'a str,
 }
 
 #[derive(Debug, Clone)]
@@ -177,6 +266,7 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
     let Some(descriptor) = request.registry.get(&request.key) else {
         return PreferenceExplanation {
             key: request.key,
+            machine_scope: request.machine_scope.to_owned(),
             value_schema_name: None,
             setting_class: None,
             eligible_sources: BTreeSet::new(),
@@ -184,7 +274,7 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
             considered: Vec::new(),
             absent_sources: BTreeSet::new(),
             evaluation_stages: vec!["descriptor identity: unknown; no type guessed".to_owned()],
-            available_actions: BTreeSet::from(["preserve opaque record".to_owned()]),
+            available_actions: BTreeSet::from([AvailableAction::PreserveOpaqueRecord]),
         };
     };
 
@@ -194,26 +284,64 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
     let mut present_sources = BTreeSet::new();
     let mut actions = BTreeSet::new();
 
-    if let Some(default) = &descriptor.default_value {
-        present_sources.insert(ResolutionSource::DescriptorDefault);
-        let index = considered.len();
-        considered.push(ConsideredFact {
-            id: "descriptor-default".to_owned(),
-            source: ResolutionSource::DescriptorDefault,
-            value: Some(default.clone()),
-            directive: None,
-            disposition: ContributionDisposition::Losing,
-            reason: "immutable descriptor fact admitted before ranking".to_owned(),
-            provider: Some(descriptor.owner.clone()),
-            actor: "descriptor".to_owned(),
-        });
-        candidates.push(Candidate {
-            id: "descriptor-default".to_owned(),
-            source: ResolutionSource::DescriptorDefault,
-            value: default.clone(),
-            considered_index: index,
-            rank: 0,
-        });
+    match &descriptor.default_value {
+        super::DescriptorDefault::Literal(default) => {
+            present_sources.insert(ResolutionSource::DescriptorDefault);
+            let index = considered.len();
+            considered.push(ConsideredFact {
+                id: "descriptor-default".to_owned(),
+                source: ResolutionSource::DescriptorDefault,
+                value: Some(default.clone()),
+                directive: None,
+                control: None,
+                disposition: ContributionDisposition::Losing,
+                reason: "immutable literal descriptor fact admitted before ranking".to_owned(),
+                provenance: descriptor_provenance(descriptor, "literal descriptor default"),
+                disclosure: ValueDisclosure::Disclosed,
+                provider_state: None,
+                authority_release: None,
+                remaining_freedom: None,
+                appeal_path: None,
+                reactivation_condition: None,
+                context: None,
+            });
+            candidates.push(Candidate {
+                id: "descriptor-default".to_owned(),
+                source: ResolutionSource::DescriptorDefault,
+                value: default.clone(),
+                considered_index: index,
+                rank: 0,
+            });
+        }
+        super::DescriptorDefault::Runtime { recipe }
+            if !request.contributions.iter().any(|contribution| {
+                matches!(contribution, Contribution::RuntimeDefault(fact) if fact.key == request.key && fact.recipe == *recipe)
+            }) =>
+        {
+            considered.push(ConsideredFact {
+                id: "descriptor-default".to_owned(),
+                source: ResolutionSource::DescriptorDefault,
+                value: None,
+                directive: None,
+                control: None,
+                disposition: ContributionDisposition::Unavailable,
+                reason: format!(
+                    "runtime descriptor-default recipe {recipe} has no evaluated value"
+                ),
+                provenance: descriptor_provenance(descriptor, "runtime descriptor default"),
+                disclosure: ValueDisclosure::Disclosed,
+                provider_state: None,
+                authority_release: None,
+                remaining_freedom: None,
+                appeal_path: None,
+                reactivation_condition: Some(
+                    "evaluate the registered runtime-default recipe".to_owned(),
+                ),
+                context: None,
+            });
+            actions.insert(AvailableAction::ProvideRuntimeDefault);
+        }
+        super::DescriptorDefault::Runtime { .. } | super::DescriptorDefault::Absent => {}
     }
 
     for contribution in request.contributions {
@@ -232,16 +360,25 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
                 fact,
                 &request.key,
                 request.authority_releases,
+                request.machine_scope,
                 &mut present_sources,
                 &mut considered,
                 &mut candidates,
                 &mut controls,
                 &mut actions,
             ),
+            Contribution::RuntimeDefault(fact) => consider_runtime_default(
+                descriptor,
+                fact,
+                &request.key,
+                &mut present_sources,
+                &mut considered,
+                &mut candidates,
+            ),
         }
     }
 
-    let conflict = control_conflict(&controls);
+    let conflict = control_conflict(&controls, descriptor);
     let outcome = if let Some((ids, reason)) = conflict {
         mark_conflicting(&mut considered, &ids);
         ResolutionOutcome::UnresolvedConflict {
@@ -260,6 +397,7 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
 
     PreferenceExplanation {
         key: request.key,
+        machine_scope: request.machine_scope.to_owned(),
         value_schema_name: Some(descriptor.value_schema_name.clone()),
         setting_class: Some(descriptor.class),
         eligible_sources: descriptor.allowed_sources.clone(),
@@ -269,7 +407,7 @@ pub fn resolve_preference(request: ResolutionRequest<'_>) -> PreferenceExplanati
         evaluation_stages: vec![
             "1 descriptor identity, source eligibility, and value validation".to_owned(),
             "2 active AuthorityRelease, constraints, locks, pins, and conflicts".to_owned(),
-            "3 Context applicability then Session > User > Recommendation > Installation > default"
+            "3 report Context applicability, then rank Session > User > Recommendation > Installation > default"
                 .to_owned(),
         ],
         available_actions: actions,
@@ -284,13 +422,12 @@ fn consider_value(
     present_sources: &mut BTreeSet<ResolutionSource>,
     considered: &mut Vec<ConsideredFact>,
     candidates: &mut Vec<Candidate>,
-    actions: &mut BTreeSet<String>,
+    actions: &mut BTreeSet<AvailableAction>,
 ) {
     present_sources.insert(fact.source);
     let index = considered.len();
     let mut disposition = ContributionDisposition::Losing;
     let reason;
-    let rank = source_rank(fact.source);
     let eligible = fact.key == *key
         && fact.source != ResolutionSource::DescriptorDefault
         && descriptor.allowed_sources.contains(&fact.source);
@@ -303,12 +440,25 @@ fn consider_value(
     } else if fact.source == ResolutionSource::Organization {
         disposition = ContributionDisposition::Refused;
         reason = "organization values require a typed Recommend or Pin directive".to_owned();
-    } else if fact.source == ResolutionSource::Context && !fact.context_is_applicable_authority {
-        disposition = ContributionDisposition::Inert;
-        reason = "Context has no universal rank; owning subsystem did not select applicability"
-            .to_owned();
+    } else if fact.source == ResolutionSource::Context {
+        if fact.context.is_some() {
+            disposition = ContributionDisposition::Applicable;
+            reason =
+                "descriptor-approved Context reports read-only applicability and receives no rank"
+                    .to_owned();
+        } else {
+            disposition = ContributionDisposition::Refused;
+            reason =
+                "Context requires a named subject, authority, lifetime, and applicability reason"
+                    .to_owned();
+        }
+    } else if fact.source == ResolutionSource::ProjectPolicy {
+        disposition = ContributionDisposition::Refused;
+        reason = "ProjectPolicy resolves on the separate Project-authority path".to_owned();
     } else {
         reason = "eligible validated value admitted to ordinary ranking".to_owned();
+        let rank = source_rank(fact.source)
+            .expect("eligible ordinary preference sources have descriptor-declared rank");
         candidates.push(Candidate {
             id: fact.id.clone(),
             source: fact.source,
@@ -317,21 +467,28 @@ fn consider_value(
             rank,
         });
         if fact.source == ResolutionSource::User {
-            actions.insert("reset user contribution".to_owned());
+            actions.insert(AvailableAction::ResetUserContribution);
         }
         if fact.source == ResolutionSource::Session {
-            actions.insert("end Session override".to_owned());
+            actions.insert(AvailableAction::EndSessionOverride);
         }
     }
     considered.push(ConsideredFact {
         id: fact.id.clone(),
         source: fact.source,
-        value: Some(fact.value.clone()),
+        value: (fact.disclosure == ValueDisclosure::Disclosed).then(|| fact.value.clone()),
         directive: None,
+        control: None,
         disposition,
         reason,
-        provider: fact.provider.clone(),
-        actor: fact.actor.clone(),
+        provenance: fact.provenance.clone(),
+        disclosure: fact.disclosure,
+        provider_state: fact.provider_state,
+        authority_release: None,
+        remaining_freedom: None,
+        appeal_path: None,
+        reactivation_condition: None,
+        context: fact.context.clone(),
     });
 }
 
@@ -341,20 +498,28 @@ fn consider_organization(
     fact: &OrganizationFact,
     key: &PreferenceKey,
     releases: &[AuthorityRelease],
+    machine_scope: &str,
     present_sources: &mut BTreeSet<ResolutionSource>,
     considered: &mut Vec<ConsideredFact>,
     candidates: &mut Vec<Candidate>,
     controls: &mut Vec<ActiveControl>,
-    actions: &mut BTreeSet<String>,
+    actions: &mut BTreeSet<AvailableAction>,
 ) {
     present_sources.insert(ResolutionSource::Organization);
     let index = considered.len();
     let kind = fact.directive.kind();
     let active_release = releases
         .iter()
-        .filter(|release| release.active && release.organization == fact.organization)
+        .filter(|release| {
+            release.state == AuthorityReleaseState::Active
+                && release.organization == fact.organization
+                && release.machine_scope == machine_scope
+                && release.revocable
+        })
         .max_by_key(|release| release.level);
-    let required = required_release(kind, descriptor.class);
+    let required = descriptor
+        .directive_policy(kind)
+        .map(|policy| policy.minimum_release);
     let mut disposition = ContributionDisposition::Losing;
     let reason;
     if fact.key != *key
@@ -364,7 +529,7 @@ fn consider_organization(
     {
         disposition = ContributionDisposition::Refused;
         reason = "organization source is ineligible for this descriptor".to_owned();
-    } else if !descriptor.allowed_directives.contains(&kind) {
+    } else if required.is_none() {
         disposition = ContributionDisposition::Refused;
         reason = "descriptor does not admit this organization directive".to_owned();
     } else if fact
@@ -374,6 +539,9 @@ fn consider_organization(
     {
         disposition = ContributionDisposition::Refused;
         reason = "directive value violates the authoritative descriptor schema".to_owned();
+    } else if !fact.authenticated {
+        disposition = ContributionDisposition::Refused;
+        reason = "managed generation lacks authenticated provider identity".to_owned();
     } else if matches!(
         &fact.directive,
         OrganizationDirective::Constrain(constraint)
@@ -381,10 +549,46 @@ fn consider_organization(
     ) {
         disposition = ContributionDisposition::Refused;
         reason = "constraint domain is incompatible with the descriptor schema".to_owned();
-    } else if active_release.is_none_or(|release| release.level < required) {
+    } else if matches!(
+        &fact.directive,
+        OrganizationDirective::Lock(scopes)
+            if scopes.is_empty()
+                || scopes.iter().any(|source| {
+                    !descriptor.allowed_sources.contains(source)
+                        || !matches!(
+                            source,
+                            ResolutionSource::Installation
+                                | ResolutionSource::User
+                                | ResolutionSource::Session
+                        )
+                })
+    ) {
+        disposition = ContributionDisposition::Refused;
+        reason = "Lock must name at least one descriptor-eligible writable scope".to_owned();
+    } else if matches!(
+        fact.generation_state,
+        ProviderGenerationState::Unavailable
+            | ProviderGenerationState::Expired
+            | ProviderGenerationState::Revoked
+            | ProviderGenerationState::Superseded
+    ) {
+        disposition = match fact.generation_state {
+            ProviderGenerationState::Unavailable => ContributionDisposition::Unavailable,
+            ProviderGenerationState::Expired => ContributionDisposition::Expired,
+            ProviderGenerationState::Revoked => ContributionDisposition::Revoked,
+            ProviderGenerationState::Superseded => ContributionDisposition::Superseded,
+            ProviderGenerationState::Active | ProviderGenerationState::StaleEffective => {
+                unreachable!()
+            }
+        };
+        reason = "managed generation is inactive under its authenticated provider state".to_owned();
+    } else if active_release.is_none_or(|release| release.level < required.unwrap()) {
         disposition = ContributionDisposition::Inert;
-        reason = format!("pending request exceeds active AuthorityRelease {required:?}");
-        actions.insert("review organization authority request".to_owned());
+        reason = format!(
+            "pending request exceeds active AuthorityRelease {:?}",
+            required.unwrap()
+        );
+        actions.insert(AvailableAction::ReviewAuthorityRequest);
     } else {
         reason = "directive admitted by descriptor and active AuthorityRelease".to_owned();
         match &fact.directive {
@@ -403,560 +607,53 @@ fn consider_organization(
                 considered_index: index,
             }),
         }
-        actions.insert("manage AuthorityRelease".to_owned());
+        actions.insert(AvailableAction::ManageAuthorityRelease);
     }
+    let release = active_release.cloned();
     considered.push(ConsideredFact {
         id: fact.id.clone(),
         source: ResolutionSource::Organization,
-        value: fact.directive.value().cloned(),
+        value: (fact.disclosure == ValueDisclosure::Disclosed)
+            .then(|| fact.directive.value().cloned())
+            .flatten(),
         directive: Some(kind),
+        control: Some(fact.directive.clone()),
         disposition,
         reason,
-        provider: Some(format!("{}:{}", fact.organization, fact.package)),
-        actor: fact.actor.clone(),
+        provenance: fact.provenance.clone(),
+        disclosure: fact.disclosure,
+        provider_state: Some(fact.generation_state),
+        authority_release: release,
+        remaining_freedom: Some(fact.remaining_freedom.clone()),
+        appeal_path: fact.appeal_path.clone(),
+        reactivation_condition: match fact.generation_state {
+            ProviderGenerationState::Unavailable => {
+                Some("obtain and validate an authenticated generation".to_owned())
+            }
+            ProviderGenerationState::Expired => {
+                Some("obtain a generation with a valid effective interval".to_owned())
+            }
+            ProviderGenerationState::Revoked => None,
+            ProviderGenerationState::Superseded => {
+                Some("evaluate the authenticated successor generation".to_owned())
+            }
+            ProviderGenerationState::Active | ProviderGenerationState::StaleEffective => None,
+        },
+        context: None,
     });
 }
 
-fn constraint_matches_descriptor(
-    constraint: &ValueConstraint,
-    descriptor: &super::PreferenceDescriptor,
-) -> bool {
-    match constraint {
-        ValueConstraint::IntegerRange { .. } => {
-            matches!(
-                &descriptor.value_schema,
-                super::ValueSchema::IntegerRange { .. }
-            )
-        }
-        ValueConstraint::AllowedValues(values) | ValueConstraint::DeniedValues(values) => {
-            !values.is_empty() && values.iter().all(|value| descriptor.validates(value))
-        }
-    }
-}
+#[path = "resolver_controls.rs"]
+mod resolver_controls;
 
-fn required_release(kind: DirectiveKind, class: SettingClass) -> AuthorityReleaseLevel {
-    match kind {
-        DirectiveKind::Recommend => AuthorityReleaseLevel::RecommendationsOnly,
-        DirectiveKind::Constrain => AuthorityReleaseLevel::Bounded,
-        DirectiveKind::Pin | DirectiveKind::Lock
-            if matches!(
-                class,
-                SettingClass::Capability | SettingClass::ProjectPolicySeed
-            ) =>
-        {
-            AuthorityReleaseLevel::BacksideManagement
-        }
-        DirectiveKind::Pin | DirectiveKind::Lock => AuthorityReleaseLevel::FullManagement,
-    }
-}
-
-fn source_rank(source: ResolutionSource) -> u8 {
-    match source {
-        ResolutionSource::Context => 5,
-        ResolutionSource::Session => 4,
-        ResolutionSource::User => 3,
-        ResolutionSource::Organization => 2,
-        ResolutionSource::Installation => 1,
-        ResolutionSource::DescriptorDefault => 0,
-        ResolutionSource::ProjectPolicy => 5,
-    }
-}
-
-fn control_conflict(controls: &[ActiveControl]) -> Option<(Vec<String>, String)> {
-    let pins: Vec<_> = controls
-        .iter()
-        .filter_map(|control| match &control.directive {
-            OrganizationDirective::Pin(value) => Some((control.id.clone(), value)),
-            _ => None,
-        })
-        .collect();
-    let pins_conflict = pins
-        .first()
-        .is_some_and(|(_, first)| pins.iter().any(|(_, value)| *value != *first));
-    if pins_conflict {
-        let mut ids: Vec<_> = pins.into_iter().map(|(id, _)| id).collect();
-        ids.sort();
-        return Some((
-            ids,
-            "equal-authority Pins specify incompatible values".to_owned(),
-        ));
-    }
-    let ranges: Vec<_> = controls
-        .iter()
-        .filter_map(|control| match control.directive {
-            OrganizationDirective::Constrain(ValueConstraint::IntegerRange { min, max }) => {
-                Some((control.id.clone(), min, max))
-            }
-            _ => None,
-        })
-        .collect();
-    if !ranges.is_empty() {
-        let lower = ranges.iter().map(|(_, min, _)| *min).max().unwrap();
-        let upper = ranges.iter().map(|(_, _, max)| *max).min().unwrap();
-        if lower > upper {
-            let mut ids: Vec<_> = ranges.into_iter().map(|(id, _, _)| id).collect();
-            ids.sort();
-            return Some((
-                ids,
-                "equal-authority constraints have an empty intersection".to_owned(),
-            ));
-        }
-    }
-    let allowed_sets: Vec<_> = controls
-        .iter()
-        .filter_map(|control| match &control.directive {
-            OrganizationDirective::Constrain(ValueConstraint::AllowedValues(values)) => {
-                Some((control.id.clone(), values))
-            }
-            _ => None,
-        })
-        .collect();
-    if let Some((_, first)) = allowed_sets.first() {
-        let has_common_value = first.iter().any(|value| {
-            allowed_sets
-                .iter()
-                .all(|(_, allowed)| allowed.contains(value))
-        });
-        if !has_common_value {
-            let mut ids: Vec<_> = allowed_sets.into_iter().map(|(id, _)| id).collect();
-            ids.sort();
-            return Some((
-                ids,
-                "equal-authority constraints have an empty allowed-value intersection".to_owned(),
-            ));
-        }
-    }
-    None
-}
-
-fn mark_conflicting(considered: &mut [ConsideredFact], ids: &[String]) {
-    for fact in considered {
-        if ids.contains(&fact.id) {
-            fact.disposition = ContributionDisposition::Conflicting;
-        }
-    }
-}
-
-fn resolve_with_controls(
-    considered: &mut [ConsideredFact],
-    candidates: &mut Vec<Candidate>,
-    controls: &[ActiveControl],
-    actions: &mut BTreeSet<String>,
-) -> ResolutionOutcome {
-    for control in controls {
-        if matches!(
-            control.directive,
-            OrganizationDirective::Constrain(_) | OrganizationDirective::Lock(_)
-        ) {
-            considered[control.considered_index].disposition = ContributionDisposition::Effective;
-            considered[control.considered_index].reason =
-                "active control applies before ordinary value ranking".to_owned();
-        }
-    }
-    let constraints: Vec<_> = controls
-        .iter()
-        .filter_map(|control| match &control.directive {
-            OrganizationDirective::Constrain(constraint) => Some(constraint),
-            _ => None,
-        })
-        .collect();
-    for candidate in candidates.iter() {
-        if constraints
-            .iter()
-            .any(|constraint| !constraint.allows(&candidate.value))
-        {
-            considered[candidate.considered_index].disposition = ContributionDisposition::Inert;
-            considered[candidate.considered_index].reason =
-                "retained value is outside an active organization constraint".to_owned();
-        }
-    }
-    candidates.retain(|candidate| {
-        constraints
-            .iter()
-            .all(|constraint| constraint.allows(&candidate.value))
-    });
-
-    let pins: Vec<_> = controls
-        .iter()
-        .filter_map(|control| match &control.directive {
-            OrganizationDirective::Pin(value) => Some((control, value)),
-            _ => None,
-        })
-        .collect();
-    if let Some((_, value)) = pins.first() {
-        let pinned_value = (*value).clone();
-        if constraints
-            .iter()
-            .any(|constraint| !constraint.allows(value))
-        {
-            let mut ids: Vec<_> = pins.iter().map(|(control, _)| control.id.clone()).collect();
-            ids.extend(
-                controls
-                    .iter()
-                    .filter(|control| {
-                        matches!(control.directive, OrganizationDirective::Constrain(_))
-                    })
-                    .map(|control| control.id.clone()),
-            );
-            ids.sort();
-            mark_conflicting(considered, &ids);
-            return ResolutionOutcome::UnresolvedConflict {
-                fact_ids: ids,
-                reason: "Pin violates an applicable constraint".to_owned(),
-            };
-        }
-        for candidate in candidates.iter() {
-            considered[candidate.considered_index].disposition = ContributionDisposition::Retained;
-            considered[candidate.considered_index].reason =
-                "retained value resumes when the active Pin lifts".to_owned();
-        }
-        let mut ids = Vec::new();
-        for (control, _) in &pins {
-            considered[control.considered_index].disposition = ContributionDisposition::Effective;
-            ids.push(control.id.clone());
-        }
-        ids.sort();
-        actions.insert("appeal or revoke managed Pin".to_owned());
-        return ResolutionOutcome::Effective {
-            value: pinned_value,
-            winning_fact_ids: ids,
-        };
-    }
-
-    let Some(highest_rank) = candidates.iter().map(|candidate| candidate.rank).max() else {
-        return ResolutionOutcome::NoValue;
-    };
-    let winners: Vec<_> = candidates
-        .iter()
-        .filter(|candidate| candidate.rank == highest_rank)
-        .collect();
-    let first_value = &winners[0].value;
-    if winners
-        .iter()
-        .any(|candidate| candidate.value != *first_value)
-    {
-        let mut ids: Vec<_> = winners
-            .iter()
-            .map(|candidate| candidate.id.clone())
-            .collect();
-        ids.sort();
-        mark_conflicting(considered, &ids);
-        return ResolutionOutcome::UnresolvedConflict {
-            fact_ids: ids,
-            reason: "equal-rank values differ; arrival order cannot choose".to_owned(),
-        };
-    }
-    let winner_ids: BTreeSet<_> = winners
-        .iter()
-        .map(|candidate| candidate.id.clone())
-        .collect();
-    let winner_source = winners[0].source;
-    for candidate in candidates.iter() {
-        if winner_ids.contains(&candidate.id) {
-            considered[candidate.considered_index].disposition = ContributionDisposition::Effective;
-            considered[candidate.considered_index].reason =
-                "wins the descriptor-declared ordinary ranking".to_owned();
-        } else {
-            considered[candidate.considered_index].disposition = ContributionDisposition::Losing;
-            considered[candidate.considered_index].reason =
-                format!("loses to higher-ranked {:?} contribution", winner_source);
-        }
-    }
-    ResolutionOutcome::Effective {
-        value: first_value.clone(),
-        winning_fact_ids: winner_ids.into_iter().collect(),
-    }
-}
+use resolver_controls::{
+    consider_runtime_default, constraint_matches_descriptor, control_conflict,
+    descriptor_provenance, mark_conflicting, resolve_with_controls, source_rank,
+};
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::preferences::{PreferenceKey, active_v1_registry};
-
-    fn key(value: &str) -> PreferenceKey {
-        PreferenceKey::parse(value).unwrap()
-    }
-
-    fn value_fact(id: &str, source: ResolutionSource, value: Value) -> Contribution {
-        Contribution::Value(ValueFact {
-            id: id.to_owned(),
-            key: key("datum.viewport.snap_enabled"),
-            source,
-            value,
-            provider: None,
-            actor: "owner".to_owned(),
-            reason: "test".to_owned(),
-            context_is_applicable_authority: false,
-        })
-    }
-
-    fn release(level: AuthorityReleaseLevel, active: bool) -> AuthorityRelease {
-        AuthorityRelease {
-            releasing_user: "owner".to_owned(),
-            organization: "acme".to_owned(),
-            machine_scope: "machine".to_owned(),
-            level,
-            effective_at: "2026-08-31".to_owned(),
-            attribution: "owner approval".to_owned(),
-            revocable: true,
-            active,
-        }
-    }
-
-    fn organization(id: &str, directive: OrganizationDirective) -> Contribution {
-        Contribution::Organization(OrganizationFact {
-            id: id.to_owned(),
-            key: key("datum.viewport.snap_enabled"),
-            organization: "acme".to_owned(),
-            package: "policy-1".to_owned(),
-            actor: "admin".to_owned(),
-            reason: "shop policy".to_owned(),
-            directive,
-        })
-    }
-
-    fn resolve(facts: &[Contribution], releases: &[AuthorityRelease]) -> PreferenceExplanation {
-        let registry = active_v1_registry();
-        resolve_preference(ResolutionRequest {
-            registry: &registry,
-            key: key("datum.viewport.snap_enabled"),
-            contributions: facts,
-            authority_releases: releases,
-        })
-    }
-
-    #[test]
-    fn user_outranks_recommendation_installation_and_default() {
-        let facts = vec![
-            value_fact(
-                "install",
-                ResolutionSource::Installation,
-                Value::Bool(false),
-            ),
-            organization(
-                "recommend",
-                OrganizationDirective::Recommend(Value::Bool(false)),
-            ),
-            value_fact("user", ResolutionSource::User, Value::Bool(true)),
-        ];
-        let explanation = resolve(
-            &facts,
-            &[release(AuthorityReleaseLevel::RecommendationsOnly, true)],
-        );
-        assert_eq!(
-            explanation.outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(true),
-                winning_fact_ids: vec!["user".to_owned()]
-            }
-        );
-        assert_eq!(explanation.considered.len(), 4);
-        assert!(
-            explanation
-                .absent_sources
-                .contains(&ResolutionSource::Session)
-        );
-    }
-
-    #[test]
-    fn pin_retains_user_and_revocation_restores_it() {
-        let facts = vec![
-            value_fact("user", ResolutionSource::User, Value::Bool(true)),
-            organization("pin", OrganizationDirective::Pin(Value::Bool(false))),
-        ];
-        let pinned = resolve(
-            &facts,
-            &[release(AuthorityReleaseLevel::FullManagement, true)],
-        );
-        assert!(matches!(
-            pinned.outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(false),
-                ..
-            }
-        ));
-        assert_eq!(
-            pinned
-                .considered
-                .iter()
-                .find(|fact| fact.id == "user")
-                .unwrap()
-                .disposition,
-            ContributionDisposition::Retained
-        );
-
-        let revoked = resolve(
-            &facts,
-            &[release(AuthorityReleaseLevel::FullManagement, false)],
-        );
-        assert!(matches!(
-            revoked.outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(true),
-                ..
-            }
-        ));
-    }
-
-    #[test]
-    fn insufficient_release_keeps_request_visible_and_inert() {
-        let facts = vec![organization(
-            "pin",
-            OrganizationDirective::Pin(Value::Bool(false)),
-        )];
-        let explanation = resolve(
-            &facts,
-            &[release(AuthorityReleaseLevel::RecommendationsOnly, true)],
-        );
-        assert_eq!(
-            explanation
-                .considered
-                .iter()
-                .find(|fact| fact.id == "pin")
-                .unwrap()
-                .disposition,
-            ContributionDisposition::Inert
-        );
-        assert!(matches!(
-            explanation.outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(true),
-                ..
-            }
-        ));
-    }
-
-    #[test]
-    fn incompatible_equal_authority_pins_are_typed_conflict() {
-        let facts = vec![
-            organization("pin-a", OrganizationDirective::Pin(Value::Bool(false))),
-            organization("pin-b", OrganizationDirective::Pin(Value::Bool(true))),
-        ];
-        let explanation = resolve(
-            &facts,
-            &[release(AuthorityReleaseLevel::FullManagement, true)],
-        );
-        assert!(matches!(
-            explanation.outcome,
-            ResolutionOutcome::UnresolvedConflict { .. }
-        ));
-    }
-
-    #[test]
-    fn incompatible_equal_authority_constraints_are_typed_conflict() {
-        let facts = vec![
-            organization(
-                "constraint-a",
-                OrganizationDirective::Constrain(ValueConstraint::AllowedValues(vec![
-                    Value::Bool(true),
-                ])),
-            ),
-            organization(
-                "constraint-b",
-                OrganizationDirective::Constrain(ValueConstraint::AllowedValues(vec![
-                    Value::Bool(false),
-                ])),
-            ),
-        ];
-        let explanation = resolve(&facts, &[release(AuthorityReleaseLevel::Bounded, true)]);
-        assert!(matches!(
-            explanation.outcome,
-            ResolutionOutcome::UnresolvedConflict { .. }
-        ));
-    }
-
-    #[test]
-    fn validation_and_source_eligibility_precede_ranking() {
-        let facts = vec![
-            value_fact(
-                "invalid",
-                ResolutionSource::User,
-                Value::String("yes".to_owned()),
-            ),
-            value_fact(
-                "project",
-                ResolutionSource::ProjectPolicy,
-                Value::Bool(false),
-            ),
-        ];
-        let explanation = resolve(&facts, &[]);
-        for id in ["invalid", "project"] {
-            assert_eq!(
-                explanation
-                    .considered
-                    .iter()
-                    .find(|fact| fact.id == id)
-                    .unwrap()
-                    .disposition,
-                ContributionDisposition::Refused
-            );
-        }
-        assert!(matches!(
-            explanation.outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(true),
-                ..
-            }
-        ));
-    }
-
-    #[test]
-    fn session_outranks_user_but_not_an_active_pin() {
-        let facts = vec![
-            value_fact("user", ResolutionSource::User, Value::Bool(false)),
-            value_fact("session", ResolutionSource::Session, Value::Bool(true)),
-        ];
-        assert!(matches!(
-            resolve(&facts, &[]).outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(true),
-                ..
-            }
-        ));
-        let mut pinned_facts = facts;
-        pinned_facts.push(organization(
-            "pin",
-            OrganizationDirective::Pin(Value::Bool(false)),
-        ));
-        assert!(matches!(
-            resolve(
-                &pinned_facts,
-                &[release(AuthorityReleaseLevel::FullManagement, true)]
-            )
-            .outcome,
-            ResolutionOutcome::Effective {
-                value: Value::Bool(false),
-                ..
-            }
-        ));
-    }
-
-    #[test]
-    fn explanation_is_input_order_independent() {
-        let mut facts = vec![
-            value_fact("z-user", ResolutionSource::User, Value::Bool(true)),
-            value_fact(
-                "a-install",
-                ResolutionSource::Installation,
-                Value::Bool(false),
-            ),
-        ];
-        let first = resolve(&facts, &[]);
-        facts.reverse();
-        let second = resolve(&facts, &[]);
-        assert_eq!(first, second);
-    }
-
-    #[test]
-    fn unknown_key_never_guesses_a_descriptor() {
-        let registry = active_v1_registry();
-        let explanation = resolve_preference(ResolutionRequest {
-            registry: &registry,
-            key: key("datum.unknown.future_key"),
-            contributions: &[],
-            authority_releases: &[],
-        });
-        assert_eq!(explanation.outcome, ResolutionOutcome::UnknownKey);
-        assert_eq!(explanation.value_schema_name, None);
-    }
-}
+#[path = "resolver_golden_tests.rs"]
+mod resolver_golden_tests;
+#[cfg(test)]
+#[path = "resolver_tests.rs"]
+mod resolver_tests;
