@@ -116,12 +116,33 @@ not an engine/CLI/MCP-only system.
 Review UNIT-I01 evidence, module boundaries, active catalog digest, no-new-
 dependency posture, and focused proof. Approval may authorize only GP-F01.
 
+On 2026-08-31 the owner replied exactly
+`PREFERENCES-FOUNDATION: approve GP-F01`. This authorizes only the pure
+engine-owned typed descriptor and resolution foundation below. It authorizes no
+repository persistence, GUI, Project mutation, Revision behavior, provider,
+service, or dependency.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F00-OWNER-APPROVED -->
+
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F01 -->
 ### GP-F01 — descriptors, sources, controls, and resolver
 
 Implement stable `PreferenceKey`, active subsystem descriptors, typed classes
 and sources, validation, AuthorityRelease, Recommend/Constrain/Pin/Lock, Q4
 resolution, conflicts, retained values, and one pure explanation result.
+
+GP-F01 implements this boundary in `crates/engine/src/preferences/`. The pure
+engine module registers the 54 active non-Revision V1 identities, refuses
+duplicate/unknown identities and ineligible or invalid facts, gates typed
+organization directives through explicit `AuthorityRelease`, preserves
+displaced values, refuses arrival-order conflict resolution, and returns the
+same complete side-effect-free explanation used by every future surface. It
+owns no storage, GUI, Project mutation, provider transport, or Revision path.
+The pre-existing `ProjectPolicySeed` count discrepancy is tracked as `dat-vuh`;
+the implementation preserves each ratified table row's explicit class rather
+than silently choosing a documentation correction.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION -->
 
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F02 -->
 <!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F02:GP-F02 -->
