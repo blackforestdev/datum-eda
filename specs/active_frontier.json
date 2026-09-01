@@ -5690,29 +5690,10 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-gp-f01-20260831",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "6457bcd24513a42e9ad56c3f281baa2dc20015f5",
-        "claimed_at": "2026-09-01T00:22:45Z",
-        "heartbeat_at": "2026-09-01T00:22:45Z",
-        "expires_at": "2026-09-01T08:22:45Z",
-        "scope": [
-          "crates/engine/src/preferences/",
-          "crates/engine/src/lib.rs",
-          "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/evidence_traceability_manifest.json",
-          ".beads/issues.jsonl"
-        ]
-      },
       "summary": "Implement the typed resolver and durable repository foundation, then deliver the first functional Global Preferences wgpu slice through the conventional application-menu entry using real registered and persisted values.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",
@@ -5724,7 +5705,7 @@
       ],
       "completion": {
         "outcome": "Datum has a real manual Global Preferences doorway backed end-to-end by typed resolution and durable persisted state, ready for Units parity and full Global stabilization.",
-        "canonical_next_step_id": "GP-F01",
+        "canonical_next_step_id": "GP-F02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5746,9 +5727,9 @@
             "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F01` or `PREFERENCES-FOUNDATION: revise — <specific scope, ownership, dependency, exclusion, or proof correction>`.", "requests": [{"id": "GP-F00", "question": "May Datum execute the bounded typed Global Preferences foundation in GP-F01 only?", "recommended_response": "Approve only after the exact Units core lands with no new dependency and no UI, Project, or Revision behavior is smuggled into the resolver slice.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}}]}
           },
           {
-            "id": "GP-F01", "kind": "execution", "status": "in_progress",
+            "id": "GP-F01", "kind": "execution", "status": "complete",
             "action": "Implement the active descriptors, typed sources/classes, AuthorityRelease and controls, Q4 resolver, conflicts, retained values, and one pure complete explanation result.",
-            "depends_on": ["GP-F00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F01"}], "completion_evidence": []
+            "depends_on": ["GP-F00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F01"}], "completion_evidence": [{"kind": "commit", "revision": "22b8613"}, {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION"}]
           },
           {
             "id": "GP-F02", "kind": "owner_decision", "status": "pending",
