@@ -186,6 +186,14 @@ Review the corrected GP-F01 evidence before authorizing GP-F03. The owner's
 2026-08-31 revision disposition returned GP-F01 to execution and did not
 authorize storage.
 
+On 2026-08-31 the owner replied exactly
+`PREFERENCES-FOUNDATION: approve GP-F03` after reviewing the corrected GP-F01
+evidence. This authorizes GP-F03 only. It does not authorize GP-F05, GUI or
+prototype work, Project mutation, Revision behavior, provider/network services,
+or a new dependency.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-APPROVED -->
+
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F03 -->
 ### GP-F03 — durable repository foundation
 
