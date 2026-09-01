@@ -142,13 +142,27 @@ The pre-existing `ProjectPolicySeed` count discrepancy is tracked as `dat-vuh`;
 the implementation preserves each ratified table row's explicit class rather
 than silently choosing a documentation correction.
 
+On 2026-08-31 the owner rejected advancement to GP-F03 and directed a bounded
+GP-F01 correction before storage work. The correction replaces inferred
+descriptor metadata with the exact catalog contract, resolves `dat-vuh`, makes
+Context authority descriptor-specific, completes source/directive refusal and
+control-conflict behavior, expands explanation provenance and authority state,
+and adds catalog-wide semantic goldens. Existing GP-F01 evidence remains
+historical evidence for the initial scaffold; it is not sufficient completion
+evidence for this corrective pass. Persistence, GUI, Project mutation, Revision
+behavior, providers/services, and new dependencies remain unauthorized.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-REVISION -->
+
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION -->
 
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F02 -->
 <!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F02:GP-F02 -->
 ### GP-F02 — authorize minimal durable repository only
 
-Review GP-F01 evidence before authorizing GP-F03.
+Review the corrected GP-F01 evidence before authorizing GP-F03. The owner's
+2026-08-31 revision disposition returned GP-F01 to execution and did not
+authorize storage.
 
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F03 -->
 ### GP-F03 — durable repository foundation

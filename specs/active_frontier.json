@@ -5690,10 +5690,29 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-gp-f01-correction-20260831",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "3c76b7a7adc74bbeccf6c5686ae9529ac5a99625",
+        "claimed_at": "2026-09-01T03:55:08Z",
+        "heartbeat_at": "2026-09-01T03:55:08Z",
+        "expires_at": "2026-09-01T11:55:08Z",
+        "scope": [
+          "crates/engine/src/preferences/",
+          "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+          "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/evidence_traceability_manifest.json",
+          ".beads/issues.jsonl"
+        ]
+      },
       "summary": "Implement the typed resolver and durable repository foundation, then deliver the first functional Global Preferences wgpu slice through the conventional application-menu entry using real registered and persisted values.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",
@@ -5705,7 +5724,7 @@
       ],
       "completion": {
         "outcome": "Datum has a real manual Global Preferences doorway backed end-to-end by typed resolution and durable persisted state, ready for Units parity and full Global stabilization.",
-        "canonical_next_step_id": "GP-F02",
+        "canonical_next_step_id": "GP-F01",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5727,14 +5746,14 @@
             "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F01` or `PREFERENCES-FOUNDATION: revise — <specific scope, ownership, dependency, exclusion, or proof correction>`.", "requests": [{"id": "GP-F00", "question": "May Datum execute the bounded typed Global Preferences foundation in GP-F01 only?", "recommended_response": "Approve only after the exact Units core lands with no new dependency and no UI, Project, or Revision behavior is smuggled into the resolver slice.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}}]}
           },
           {
-            "id": "GP-F01", "kind": "execution", "status": "complete",
-            "action": "Implement the active descriptors, typed sources/classes, AuthorityRelease and controls, Q4 resolver, conflicts, retained values, and one pure complete explanation result.",
+            "id": "GP-F01", "kind": "execution", "status": "in_progress",
+            "action": "Correct the active descriptors to the exact catalog contract, resolve dat-vuh, make Context authority descriptor-specific, complete source/directive refusals and conflicts, expand explanation provenance/state, and prove catalog-wide semantic goldens without persistence, GUI, Project, or Revision mutation.",
             "depends_on": ["GP-F00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F01"}], "completion_evidence": [{"kind": "commit", "revision": "22b8613"}, {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION"}]
           },
           {
             "id": "GP-F02", "kind": "owner_decision", "status": "pending",
             "action": "Review GP-F01 evidence before separately authorizing the minimal durable repository in GP-F03.",
-            "depends_on": ["GP-F01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}], "completion_evidence": [],
+            "depends_on": ["GP-F01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-REVISION"}],
             "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F03` or `PREFERENCES-FOUNDATION: revise — <specific storage, preservation, migration, recovery, dependency, or proof correction>`.", "requests": [{"id": "GP-F02", "question": "Does GP-F01 prove the typed resolver closely enough to authorize the minimal durable repository in GP-F03 only?", "recommended_response": "Approve only with complete class/source refusal and explanation goldens and no Project or GUI mutation.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}}]}
           },
           {
