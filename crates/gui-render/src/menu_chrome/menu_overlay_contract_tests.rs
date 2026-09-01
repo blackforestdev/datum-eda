@@ -160,3 +160,42 @@ fn menu_dropdown_fits_its_content_no_spill() {
         );
     }
 }
+
+#[test]
+fn nested_preferences_submenu_is_pointer_targeted_and_edge_safe() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_menu = Some("Edit".to_owned());
+    state.ui.active_submenu = Some("edit.preferences".to_owned());
+    state.ui.menu_focus_index = 0;
+    let retained = RetainedScene::from_workspace(&state, 480, 720);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        480,
+        720,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let global = prepared
+        .hit_regions
+        .iter()
+        .find(|region| {
+            matches!(
+                &region.target,
+                HitTarget::MenuItem { menu, label }
+                    if menu == "edit.preferences" && label == "Global Preferences…"
+            )
+        })
+        .expect("nested Global Preferences command must have a pointer target");
+    assert!(global.rect.x >= 0.0);
+    assert!(global.rect.x + global.rect.width <= 480.0);
+    assert_eq!(
+        prepared.hit_test(
+            global.rect.x + global.rect.width * 0.5,
+            global.rect.y + global.rect.height * 0.5,
+        ),
+        Some(&HitTarget::MenuItem {
+            menu: "edit.preferences".to_owned(),
+            label: "Global Preferences…".to_owned(),
+        })
+    );
+}

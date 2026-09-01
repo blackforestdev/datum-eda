@@ -1,0 +1,534 @@
+//! Application coordinator for the one engine-owned Global Preferences service.
+use std::path::PathBuf;
+
+use anyhow::{Context, Result};
+use datum_gui_protocol::{
+    ApplicationFocus, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
+    GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
+    GlobalPreferencesNoticeUi, WorkspaceUiState,
+};
+use eda_engine::preferences::{
+    GlobalPreferencesService, PreferenceKey, PreferenceLiveConsumer, PreferenceServiceRefusal,
+};
+use serde_json::Value;
+
+use crate::Runtime;
+use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
+use crate::global_preferences_projection::{
+    apply_live_consumers, bool_consumer_value, control_projection, explanation_lines,
+    provenance_label, repository_notice,
+};
+use winit::event::{ElementState, KeyEvent};
+use winit::keyboard::{Key, NamedKey};
+
+pub(super) const SCOPE: &str = "Global · this device";
+pub(super) struct GlobalPreferencesCoordinator {
+    service: GlobalPreferencesService,
+    return_focus: ApplicationFocus,
+    terminal_theme_before_high_contrast: Option<datum_gui_protocol::TerminalTheme>,
+}
+
+impl GlobalPreferencesCoordinator {
+    pub(super) fn from_platform() -> Result<Self> {
+        let config_root =
+            platform_config_root().context("user configuration directory is unavailable")?;
+        let repository_root = config_root.join("preferences");
+        let legacy_path = std::env::var_os("DATUM_GUI_PREFERENCES_PATH")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| config_root.join("gui-preferences.json"));
+        let writer_instance = format!("datum-gui-{}", std::process::id());
+        let service =
+            GlobalPreferencesService::open(repository_root, &legacy_path, writer_instance, SCOPE)
+                .context("open Global Preferences service")?;
+        Ok(Self {
+            service,
+            return_focus: ApplicationFocus::default(),
+            terminal_theme_before_high_contrast: None,
+        })
+    }
+
+    pub(super) fn publish_projection(&mut self, ui: &mut WorkspaceUiState) {
+        let was_open = ui.global_preferences.open;
+        let query = ui.global_preferences.search_query.clone();
+        let explanation_key = ui.global_preferences.explanation_key.clone();
+        let open_choice_key = ui.global_preferences.open_choice_key.clone();
+        let focus = ui.global_preferences.focus.clone();
+        let rows = self.service.rows();
+        let mut projected = Vec::with_capacity(rows.len());
+        for (surface, row) in self.service.surface().entries().iter().zip(&rows) {
+            let descriptor = self
+                .service
+                .registry()
+                .get(&row.key)
+                .expect("surface construction proves descriptor existence");
+            projected.push(GlobalPreferenceRowUi {
+                key: row.key.as_str().to_owned(),
+                label: descriptor.presentation.label.clone(),
+                description: descriptor.presentation.description.clone(),
+                aliases: descriptor.retired_aliases.iter().cloned().collect(),
+                scope: SCOPE.to_owned(),
+                provenance: provenance_label(row, self.service.status()),
+                explanation_lines: explanation_lines(row),
+                control: control_projection(&surface.control, row),
+                changed: row.user_value.is_some(),
+                writable: row.writable,
+            });
+        }
+        let reduced_motion = bool_consumer_value(
+            self.service.surface().entries(),
+            &rows,
+            PreferenceLiveConsumer::ReducedMotion,
+        );
+        let high_contrast_noncolor = bool_consumer_value(
+            self.service.surface().entries(),
+            &rows,
+            PreferenceLiveConsumer::HighContrastNonColor,
+        );
+        ui.global_preferences = GlobalPreferencesDialogState {
+            open: was_open,
+            section_id: self.service.surface().sections()[0].id.as_str().to_owned(),
+            section_label: self.service.surface().sections()[0].label.clone(),
+            search_query: query,
+            rows: projected,
+            explanation_key,
+            open_choice_key,
+            focus,
+            notice: repository_notice(self.service.status(), self.service.legacy_migration()),
+            reduced_motion,
+            high_contrast_noncolor,
+        };
+        apply_live_consumers(
+            ui,
+            self.service.surface().entries(),
+            &rows,
+            &mut self.terminal_theme_before_high_contrast,
+        );
+    }
+
+    fn open_dialog(&mut self, ui: &mut WorkspaceUiState, invoker: ApplicationFocus) -> bool {
+        if ui.global_preferences.open {
+            return false;
+        }
+        self.return_focus = invoker;
+        ui.active_menu = None;
+        ui.active_submenu = None;
+        ui.global_preferences.open = true;
+        ui.global_preferences.focus = GlobalPreferencesFocus::SectionNavigation;
+        ui.focus = ApplicationFocus::Overlay;
+        true
+    }
+
+    fn close_dialog(&mut self, ui: &mut WorkspaceUiState) -> Option<ApplicationFocus> {
+        if !ui.global_preferences.open {
+            return None;
+        }
+        ui.global_preferences.open = false;
+        ui.global_preferences.explanation_key = None;
+        ui.global_preferences.open_choice_key = None;
+        Some(self.return_focus)
+    }
+
+    fn set_value(
+        &mut self,
+        key: &str,
+        value: Value,
+        ui: &mut WorkspaceUiState,
+    ) -> Result<(), PreferenceServiceRefusal> {
+        let key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
+        let expected = self.service.status().generation().cloned();
+        match self.service.set_user(key.clone(), value, expected.as_ref()) {
+            Ok(_) => {
+                self.publish_projection(ui);
+                ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Polite(format!(
+                    "{} changed for this device.",
+                    self.service
+                        .registry()
+                        .get(&key)
+                        .unwrap()
+                        .presentation
+                        .label
+                )));
+                Ok(())
+            }
+            Err(refusal) => {
+                self.publish_projection(ui);
+                ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Assertive(
+                    refusal.message.clone(),
+                ));
+                Err(refusal)
+            }
+        }
+    }
+
+    fn reset(
+        &mut self,
+        key: &str,
+        ui: &mut WorkspaceUiState,
+    ) -> Result<(), PreferenceServiceRefusal> {
+        let key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
+        let expected = self.service.status().generation().cloned();
+        match self.service.reset_user(key.clone(), expected.as_ref()) {
+            Ok(_) => {
+                self.publish_projection(ui);
+                ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Polite(format!(
+                    "{} reset to its effective default.",
+                    self.service
+                        .registry()
+                        .get(&key)
+                        .unwrap()
+                        .presentation
+                        .label
+                )));
+                Ok(())
+            }
+            Err(refusal) => {
+                self.publish_projection(ui);
+                ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Assertive(
+                    refusal.message.clone(),
+                ));
+                Err(refusal)
+            }
+        }
+    }
+}
+
+fn platform_config_root() -> Option<PathBuf> {
+    std::env::var_os("XDG_CONFIG_HOME")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config")))
+        .map(|base| base.join("datum"))
+}
+
+impl Runtime {
+    pub(super) fn open_global_preferences(&mut self) -> bool {
+        let invoker = self.application_focus();
+        let opened = self
+            .global_preferences
+            .open_dialog(&mut self.session.workspace_mut().ui, invoker);
+        self.set_application_focus(ApplicationFocus::Overlay);
+        if opened {
+            self.announce_global_preferences(
+                "Global Preferences opened. Appearance, three settings.",
+                AnnouncementPriority::Medium,
+            );
+            self.announce_current_global_preferences_notice();
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn close_global_preferences(&mut self) -> bool {
+        let Some(return_focus) = self
+            .global_preferences
+            .close_dialog(&mut self.session.workspace_mut().ui)
+        else {
+            return false;
+        };
+        self.set_application_focus(return_focus);
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn activate_global_preference_control(&mut self, key: &str) -> bool {
+        let control = self
+            .workspace()
+            .ui
+            .global_preferences
+            .rows
+            .iter()
+            .find(|row| row.key == key)
+            .map(|row| row.control.clone());
+        let Some(control) = control else {
+            return false;
+        };
+        match control {
+            GlobalPreferenceControlUi::Boolean { value, .. } => {
+                let _ = self.global_preferences.set_value(
+                    key,
+                    Value::Bool(!value),
+                    &mut self.session.workspace_mut().ui,
+                );
+                self.announce_current_global_preferences_notice();
+            }
+            GlobalPreferenceControlUi::SingleChoice { .. } => {
+                let ui = &mut self.session.workspace_mut().ui.global_preferences;
+                ui.explanation_key = None;
+                ui.open_choice_key = if ui.open_choice_key.as_deref() == Some(key) {
+                    None
+                } else {
+                    Some(key.to_owned())
+                };
+            }
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn choose_global_preference_value(&mut self, key: &str, value: &str) -> bool {
+        let _ = self.global_preferences.set_value(
+            key,
+            Value::String(value.to_owned()),
+            &mut self.session.workspace_mut().ui,
+        );
+        self.session
+            .workspace_mut()
+            .ui
+            .global_preferences
+            .open_choice_key = None;
+        self.announce_current_global_preferences_notice();
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn reset_global_preference(&mut self, key: &str) -> bool {
+        let _ = self
+            .global_preferences
+            .reset(key, &mut self.session.workspace_mut().ui);
+        self.announce_current_global_preferences_notice();
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn explain_global_preference(&mut self, key: &str) -> bool {
+        let ui = &mut self.session.workspace_mut().ui.global_preferences;
+        ui.open_choice_key = None;
+        ui.explanation_key = Some(key.to_owned());
+        ui.focus = GlobalPreferencesFocus::ExplanationClose;
+        ui.notice = Some(GlobalPreferencesNoticeUi::Polite(
+            "Preference explanation opened.".to_owned(),
+        ));
+        self.announce_global_preferences(
+            "Preference explanation opened.",
+            AnnouncementPriority::Medium,
+        );
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn handle_global_preferences_key(&mut self, event: &KeyEvent) -> bool {
+        if !self.workspace().ui.global_preferences.open {
+            return false;
+        }
+        if event.state != ElementState::Pressed {
+            return true;
+        }
+        if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
+            let dismissal = self
+                .session
+                .workspace_mut()
+                .ui
+                .global_preferences
+                .dismiss_innermost();
+            if dismissal == GlobalPreferencesDismissal::DialogClosed {
+                self.set_application_focus(self.global_preferences.return_focus);
+            }
+            self.invalidate_frame();
+            return true;
+        }
+        if matches!(event.logical_key, Key::Named(NamedKey::Tab)) {
+            self.session
+                .workspace_mut()
+                .ui
+                .global_preferences
+                .advance_focus(self.modifiers.shift_key());
+            self.invalidate_frame();
+            return true;
+        }
+
+        let focus = self.workspace().ui.global_preferences.focus.clone();
+        if focus == GlobalPreferencesFocus::Search {
+            match &event.logical_key {
+                Key::Named(NamedKey::Backspace) => {
+                    self.session
+                        .workspace_mut()
+                        .ui
+                        .global_preferences
+                        .search_query
+                        .pop();
+                    self.invalidate_frame();
+                    self.announce_global_preferences_search_count();
+                    return true;
+                }
+                Key::Named(NamedKey::Enter) => {
+                    let key = {
+                        self.workspace()
+                            .ui
+                            .global_preferences
+                            .visible_rows()
+                            .next()
+                            .map(|row| row.key.clone())
+                    };
+                    if let Some(key) = key {
+                        self.explain_global_preference(&key);
+                    }
+                    return true;
+                }
+                Key::Character(value)
+                    if !self.modifiers.control_key()
+                        && !self.modifiers.alt_key()
+                        && !value.chars().any(char::is_control) =>
+                {
+                    self.session
+                        .workspace_mut()
+                        .ui
+                        .global_preferences
+                        .search_query
+                        .push_str(value);
+                    self.invalidate_frame();
+                    self.announce_global_preferences_search_count();
+                    return true;
+                }
+                _ => {}
+            }
+        }
+
+        let activate = matches!(
+            event.logical_key,
+            Key::Named(NamedKey::Enter | NamedKey::Space)
+        );
+        match focus {
+            GlobalPreferencesFocus::SettingName(key) if activate => {
+                self.explain_global_preference(&key)
+            }
+            GlobalPreferencesFocus::Control(key) if activate => {
+                self.activate_global_preference_control(&key)
+            }
+            GlobalPreferencesFocus::Control(key)
+                if matches!(
+                    event.logical_key,
+                    Key::Named(NamedKey::ArrowLeft | NamedKey::ArrowUp)
+                ) =>
+            {
+                self.cycle_global_preference_control(&key, -1)
+            }
+            GlobalPreferencesFocus::Control(key)
+                if matches!(
+                    event.logical_key,
+                    Key::Named(NamedKey::ArrowRight | NamedKey::ArrowDown)
+                ) =>
+            {
+                self.cycle_global_preference_control(&key, 1)
+            }
+            GlobalPreferencesFocus::Control(key)
+                if matches!(event.logical_key, Key::Named(NamedKey::Home)) =>
+            {
+                self.choose_global_preference_endpoint(&key, false)
+            }
+            GlobalPreferencesFocus::Control(key)
+                if matches!(event.logical_key, Key::Named(NamedKey::End)) =>
+            {
+                self.choose_global_preference_endpoint(&key, true)
+            }
+            GlobalPreferencesFocus::Reset(key) if activate => self.reset_global_preference(&key),
+            GlobalPreferencesFocus::ExplanationClose if activate => {
+                let ui = &mut self.session.workspace_mut().ui.global_preferences;
+                ui.explanation_key = None;
+                ui.focus = GlobalPreferencesFocus::DialogClose;
+                self.invalidate_frame();
+                true
+            }
+            GlobalPreferencesFocus::DialogClose if activate => self.close_global_preferences(),
+            _ => true,
+        }
+    }
+
+    fn cycle_global_preference_control(&mut self, key: &str, delta: isize) -> bool {
+        let next = self
+            .workspace()
+            .ui
+            .global_preferences
+            .rows
+            .iter()
+            .find(|row| row.key == key)
+            .and_then(|row| match &row.control {
+                GlobalPreferenceControlUi::Boolean { value, .. } => Some(Value::Bool(!value)),
+                GlobalPreferenceControlUi::SingleChoice { value, choices } => {
+                    let index = choices
+                        .iter()
+                        .position(|(candidate, _)| candidate == value)?
+                        as isize;
+                    let next = (index + delta).rem_euclid(choices.len() as isize) as usize;
+                    Some(Value::String(choices[next].0.clone()))
+                }
+            });
+        self.commit_projected_value(key, next)
+    }
+
+    fn choose_global_preference_endpoint(&mut self, key: &str, last: bool) -> bool {
+        let next = self
+            .workspace()
+            .ui
+            .global_preferences
+            .rows
+            .iter()
+            .find(|row| row.key == key)
+            .and_then(|row| match &row.control {
+                GlobalPreferenceControlUi::Boolean { .. } => Some(Value::Bool(last)),
+                GlobalPreferenceControlUi::SingleChoice { choices, .. } => choices
+                    .get(if last {
+                        choices.len().saturating_sub(1)
+                    } else {
+                        0
+                    })
+                    .map(|(value, _)| Value::String(value.clone())),
+            });
+        self.commit_projected_value(key, next)
+    }
+
+    fn commit_projected_value(&mut self, key: &str, next: Option<Value>) -> bool {
+        let Some(next) = next else {
+            return false;
+        };
+        let _ = self
+            .global_preferences
+            .set_value(key, next, &mut self.session.workspace_mut().ui);
+        self.announce_current_global_preferences_notice();
+        self.invalidate_frame();
+        true
+    }
+
+    fn announce_global_preferences_search_count(&mut self) {
+        let count = self
+            .workspace()
+            .ui
+            .global_preferences
+            .visible_rows()
+            .count();
+        self.announce_global_preferences(
+            &format!("{count} preference search results."),
+            AnnouncementPriority::Medium,
+        );
+    }
+
+    fn announce_current_global_preferences_notice(&mut self) {
+        let notice = self.workspace().ui.global_preferences.notice.clone();
+        if let Some(notice) = notice {
+            let (message, priority) = global_preferences_notice_announcement(notice);
+            self.announce_global_preferences(&message, priority);
+        }
+    }
+
+    fn announce_global_preferences(&mut self, message: &str, priority: AnnouncementPriority) {
+        self.terminal_accessibility
+            .announce_console(AccessibilityAnnouncement {
+                text: message.to_owned(),
+                priority,
+            });
+    }
+}
+
+fn global_preferences_notice_announcement(
+    notice: GlobalPreferencesNoticeUi,
+) -> (String, AnnouncementPriority) {
+    match notice {
+        GlobalPreferencesNoticeUi::Polite(message) => (message, AnnouncementPriority::Medium),
+        GlobalPreferencesNoticeUi::Assertive(message)
+        | GlobalPreferencesNoticeUi::PreservedUnreadable(message) => {
+            (message, AnnouncementPriority::High)
+        }
+    }
+}
+
+#[cfg(test)]
+#[path = "global_preferences_runtime_tests.rs"]
+mod tests;

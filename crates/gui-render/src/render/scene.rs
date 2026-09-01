@@ -1,3 +1,5 @@
+#[path = "prepared_scene_access.rs"]
+mod prepared_scene_access;
 #[path = "scene_console.rs"]
 mod scene_console;
 
@@ -149,6 +151,15 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        // Application-modal preferences must be appended after every workspace
+        // hit region so reverse-order hit testing cannot reach the obscured UI.
+        global_preferences_dialog::render_global_preferences_dialog(
+            state,
+            &layout,
+            &mut menu_overlay_quads,
+            &mut menu_overlay_text_runs,
+            &mut hit_regions,
+        );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text_runs, scale);
             scale_text_run_sizes(&mut menu_overlay_text_runs, scale);
@@ -239,66 +250,6 @@ impl PreparedScene {
             schematic_underlay_vertices,
             schematic_overlay_vertices,
         }
-    }
-
-    /// The immediate pre-world schematic grid underlay. S4 interaction chrome
-    /// uses a separate post-world buffer with the same pane scissor.
-    fn schematic_underlay_vertices(&self) -> &[Vertex] {
-        &self.schematic_underlay_vertices
-    }
-
-    fn schematic_overlay_vertices(&self) -> &[Vertex] {
-        &self.schematic_overlay_vertices
-    }
-
-    pub fn hit_test(&self, x: f32, y: f32) -> Option<&HitTarget> {
-        self.hit_regions
-            .iter()
-            .rev()
-            .find(|region| region.rect.contains(x, y))
-            .map(|region| &region.target)
-    }
-
-    // `world_point_at_screen` (per-pane screen->world resolve, UVT-004) lives in
-    // the `coordinate_hit` include-module alongside the world hit-test.
-
-    fn panel_vertices(&self) -> &[Vertex] {
-        &self.panel_vertices
-    }
-
-    /// Top-overlay quads for the open menu dropdown, composited AFTER the
-    /// scissored viewport passes (see gpu.rs) so work-pane content cannot
-    /// overpaint them. Empty when no menu is open. Menu-bar TITLES are NOT here —
-    /// they live in `panel_vertices`; only the dropdown body/rows land in this
-    /// sink.
-    fn menu_overlay_vertices(&self) -> &[Vertex] {
-        &self.menu_overlay_vertices
-    }
-
-    /// The open dropdown's OWN text (item labels, shortcuts, fallback-icon
-    /// glyphs), rendered in a dedicated pass AFTER the dropdown card so it sits
-    /// crisply on top of it while the main text pass (drawn before the card) is
-    /// fully occluded by the card. Empty when no menu is open. Menu-bar TITLE text
-    /// is NOT here — titles live in the bar and are never occluded, so they stay
-    /// in the main `text_runs`.
-    fn menu_overlay_text_runs(&self) -> &[TextRun] {
-        &self.menu_overlay_text_runs
-    }
-
-    fn viewport_underlay_vertices(&self) -> &[Vertex] {
-        &self.viewport_underlay_vertices
-    }
-
-    fn viewport_overlay_vertices(&self) -> &[Vertex] {
-        &self.viewport_overlay_vertices
-    }
-
-    fn board_interaction_vertices(&self) -> &[Vertex] {
-        &self.board_interaction_vertices
-    }
-
-    fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {
-        &self.visible_draw_commands
     }
 }
 
@@ -498,8 +449,34 @@ fn render_phase1_shell_chrome(
             width: layout.top_menu_bar.width,
             height: 1.0,
         },
-        PANEL_CARD_BORDER,
+        if state.ui.global_preferences.high_contrast_noncolor {
+            TEXT_PRIMARY
+        } else {
+            PANEL_CARD_BORDER
+        },
     ));
+    if state.ui.global_preferences.high_contrast_noncolor {
+        push_rect_border(
+            panel_quads,
+            RectPx {
+                x: layout.top_menu_bar.x,
+                y: layout.top_menu_bar.y,
+                width: layout.top_menu_bar.width,
+                height: layout.status_bar.y + layout.status_bar.height,
+            },
+            TEXT_PRIMARY,
+            2.0,
+        );
+        draw_text(
+            "[HC] HIGH CONTRAST + NON-COLOR CUES",
+            layout.top_menu_bar.x + layout.top_menu_bar.width - 430.0,
+            layout.status_bar.y + design_tokens::spacing::SP_02,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
     // Brand wordmark: three runs on one baseline — "Datum" / accent middot /
     // "EDA" — advancing x by each measured run width so the middot is truly
     // colored and kerned, not a full "Datum EDA" string.

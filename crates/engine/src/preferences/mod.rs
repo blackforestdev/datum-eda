@@ -13,6 +13,8 @@ mod catalog;
 pub mod repository;
 pub mod resolver;
 mod schema;
+mod service;
+mod surface;
 
 pub use catalog::active_v1_registry;
 pub use resolver::{
@@ -21,6 +23,15 @@ pub use resolver::{
     OrganizationDirective, OrganizationFact, PreferenceExplanation, ProviderGenerationState,
     ResolutionOutcome, ResolutionRequest, RuntimeDefaultFact, ValueConstraint, ValueDisclosure,
     ValueFact, resolve_preference,
+};
+pub use service::{
+    GlobalPreferenceRow, GlobalPreferencesService, LegacyConsoleMigrationState,
+    PreferenceServiceRefusal, PreferenceServiceRefusalKind, PreferenceServiceStatus,
+};
+pub use surface::{
+    EnumChoicePresentation, PreferenceControlPresentation, PreferenceLiveConsumer,
+    PreferenceSection, PreferenceSectionId, PreferenceSurfaceCatalog, PreferenceSurfaceEntry,
+    SurfaceCatalogRefusal, gp_f05_surface_catalog,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

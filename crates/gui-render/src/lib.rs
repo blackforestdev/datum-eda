@@ -21,9 +21,8 @@ pub use datum_gui_viewport::CameraState;
 
 mod bottom_dock;
 mod datum_console;
-#[cfg(feature = "visual")]
-pub mod design_artboards;
 mod design_tokens;
+mod global_preferences_dialog;
 mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
@@ -44,13 +43,9 @@ mod terminal_tab_strip;
 #[cfg(test)]
 mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]
-pub mod visual_capture;
+mod visual;
 #[cfg(feature = "visual")]
-pub mod visual_diff;
-#[cfg(feature = "visual")]
-pub mod visual_manifest;
-#[cfg(feature = "visual")]
-pub mod visual_runner;
+pub use visual::{design_artboards, visual_capture, visual_diff, visual_manifest, visual_runner};
 
 include!("render/layout.rs");
 include!("render/types.rs");
@@ -99,6 +94,8 @@ pub(crate) use render_helpers::{
     text_row_height_for_size, trace_graphic_timing, trace_render_timing,
 };
 include!("render/test_support.rs");
+#[cfg(test)]
+mod global_preferences_dialog_tests;
 #[cfg(test)]
 mod layout_invariant_tests;
 #[cfg(test)]

@@ -89,11 +89,20 @@
           "shortcut": "Delete"
         },
         {
-          "label": "Preferences\u2026",
+          "label": "Preferences",
           "icon": "settings",
-          "not_built": "preferences store"
+          "submenu": "edit.preferences"
         }
-      ]
+      ],
+      "submenus": {
+        "edit.preferences": [
+          {
+            "label": "Global Preferences\u2026",
+            "icon": "settings",
+            "gui_local": "preferences.global.open"
+          }
+        ]
+      }
     },
     {
       "menu": "View",
@@ -215,26 +224,6 @@
           "label": "Console History",
           "icon": "commands",
           "gui_local": "view.console_history"
-        },
-        {
-          "label": "Console Duration: 4 Seconds",
-          "icon": "commands",
-          "gui_local": "view.console_duration.4s"
-        },
-        {
-          "label": "Console Duration: 6 Seconds",
-          "icon": "commands",
-          "gui_local": "view.console_duration.6s"
-        },
-        {
-          "label": "Console Duration: 10 Seconds",
-          "icon": "commands",
-          "gui_local": "view.console_duration.10s"
-        },
-        {
-          "label": "Console Duration: Never Hide",
-          "icon": "commands",
-          "gui_local": "view.console_duration.never"
         }
       ]
     },

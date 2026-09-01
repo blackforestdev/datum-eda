@@ -52,6 +52,7 @@ impl Runtime {
         // Schematic authored geometry is camera-independent retained world data,
         // just like the board retained scene, and must stay warm here.
         self.scene_dirty = true;
+        self.refresh_global_preferences_accessibility();
     }
 
     /// Refresh only screen-space interaction chrome. Cursor and hover motion

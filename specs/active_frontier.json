@@ -5690,10 +5690,23 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "ready",
+      "state": "in_progress",
       "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-gp-f05-20260901",
+        "claimed_at": "2026-09-01T08:23:32Z",
+        "heartbeat_at": "2026-09-01T08:23:32Z",
+        "expires_at": "2026-09-01T16:23:32Z",
+        "scope": [
+          "GP-F05 Global Preferences runtime implementation, focused tests, and completion evidence"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "f042405a6eef0a8c31fe71f9f5bb73f07454690c"
+      },
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",

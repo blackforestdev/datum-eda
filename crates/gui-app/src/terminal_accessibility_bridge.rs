@@ -8,6 +8,7 @@ use crate::console_accessibility::AccessibilityAnnouncement;
 use crate::terminal_accessibility::{TerminalAccessibilityBounds, TerminalAccessibilitySnapshot};
 use crate::terminal_accessibility_platform::PlatformBridge;
 use datum_gui_protocol::ApplicationFocus;
+use datum_gui_protocol::GlobalPreferencesAccessibleNode;
 use std::collections::VecDeque;
 
 const ANNOUNCEMENT_LOG_CAPACITY: usize = 64;
@@ -25,6 +26,7 @@ pub(crate) enum TerminalAccessibilityEvent {
 
 pub(crate) struct LinuxTerminalAccessibilityBridge {
     current: Option<TerminalAccessibilitySnapshot>,
+    preferences: Vec<GlobalPreferencesAccessibleNode>,
     platform: Option<PlatformBridge>,
     publish_platform: bool,
     announcement_log: VecDeque<AccessibilityAnnouncement>,
@@ -34,6 +36,7 @@ impl Default for LinuxTerminalAccessibilityBridge {
     fn default() -> Self {
         Self {
             current: None,
+            preferences: Vec::new(),
             platform: None,
             publish_platform: true,
             announcement_log: VecDeque::new(),
@@ -54,6 +57,22 @@ impl LinuxTerminalAccessibilityBridge {
             Some(platform) => platform.publish_announcement(announcement),
             None => {
                 self.platform = PlatformBridge::start_announcement(announcement).ok();
+            }
+        }
+    }
+
+    pub(crate) fn update_preferences(&mut self, nodes: Vec<GlobalPreferencesAccessibleNode>) {
+        if self.preferences == nodes {
+            return;
+        }
+        self.preferences = nodes.clone();
+        if !self.publish_platform {
+            return;
+        }
+        match &mut self.platform {
+            Some(platform) => platform.publish_preferences(nodes),
+            None => {
+                self.platform = PlatformBridge::start_preferences(nodes).ok();
             }
         }
     }
@@ -114,6 +133,7 @@ impl LinuxTerminalAccessibilityBridge {
     fn without_platform() -> Self {
         Self {
             current: None,
+            preferences: Vec::new(),
             platform: None,
             publish_platform: false,
             announcement_log: VecDeque::new(),
@@ -122,6 +142,11 @@ impl LinuxTerminalAccessibilityBridge {
 }
 
 impl Runtime {
+    pub(super) fn refresh_global_preferences_accessibility(&mut self) {
+        let nodes = self.workspace().ui.global_preferences.accessibility_nodes();
+        self.terminal_accessibility.update_preferences(nodes);
+    }
+
     pub(super) fn refresh_terminal_accessibility(&mut self) {
         if !self.terminal_sessions.active_attached() {
             return;
@@ -193,5 +218,25 @@ mod tests {
         });
         assert_eq!(bridge.announcement_log.len(), 1);
         assert!(bridge.current().is_none());
+    }
+
+    #[test]
+    fn unchanged_or_initially_empty_preferences_do_not_start_platform_publication() {
+        let mut bridge = LinuxTerminalAccessibilityBridge::without_platform();
+        bridge.update_preferences(Vec::new());
+        assert!(bridge.preferences.is_empty());
+
+        let nodes = vec![GlobalPreferencesAccessibleNode {
+            id: "global-preferences".to_owned(),
+            name: "Global Preferences".to_owned(),
+            role: datum_gui_protocol::GlobalPreferencesAccessibleRole::Dialog,
+            value: None,
+            description: "Global settings".to_owned(),
+            available: true,
+            focused: true,
+        }];
+        bridge.update_preferences(nodes.clone());
+        bridge.update_preferences(nodes.clone());
+        assert_eq!(bridge.preferences, nodes);
     }
 }

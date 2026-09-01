@@ -1,9 +1,10 @@
-use super::atspi::{ROOT_PATH, ServiceState, TERMINAL_PATH};
+use super::atspi::{PREFERENCES_PATH, ROOT_PATH, ServiceState, TERMINAL_PATH};
 use super::body::BodyWriter;
 use super::dbus::Message;
 use crate::terminal_accessibility::{
     TerminalAccessibilityBounds, TerminalAccessibilityLink, TerminalAccessibilitySnapshot,
 };
+use datum_gui_protocol::{GlobalPreferencesAccessibleNode, GlobalPreferencesAccessibleRole};
 
 const ACCESSIBLE: &str = "org.a11y.atspi.Accessible";
 const COMPONENT: &str = "org.a11y.atspi.Component";
@@ -51,7 +52,7 @@ fn call(interface: &str, member: &str, signature: &str, body: Vec<u8>) -> Messag
 
 #[test]
 fn text_offsets_are_unicode_scalars_not_utf8_bytes() {
-    let mut service = ServiceState::new(snapshot(), true);
+    let mut service = ServiceState::new(snapshot(), true, Vec::new());
     let mut body = BodyWriter::new();
     body.i32(6);
     body.i32(10);
@@ -70,7 +71,7 @@ fn text_offsets_are_unicode_scalars_not_utf8_bytes() {
 
 #[test]
 fn terminal_semantics_expose_role_selection_and_links() {
-    let mut service = ServiceState::new(snapshot(), true);
+    let mut service = ServiceState::new(snapshot(), true, Vec::new());
     let role = service.dispatch(1, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
     assert_eq!(role.body_reader().u32().unwrap(), 60);
     let count = service.dispatch(2, &call(HYPERTEXT, "GetNLinks", "", Vec::new()));
@@ -94,7 +95,7 @@ fn terminal_semantics_expose_role_selection_and_links() {
 
 #[test]
 fn properties_focus_and_geometry_match_the_immutable_snapshot() {
-    let mut service = ServiceState::new(snapshot(), true);
+    let mut service = ServiceState::new(snapshot(), true, Vec::new());
     let name = service.dispatch(
         1,
         &call(PROPERTIES, "Get", "ss", two_strings(ACCESSIBLE, "Name")),
@@ -130,7 +131,7 @@ fn properties_focus_and_geometry_match_the_immutable_snapshot() {
 
 #[test]
 fn malformed_object_calls_fail_closed_without_mutating_service_state() {
-    let mut service = ServiceState::new(snapshot(), true);
+    let mut service = ServiceState::new(snapshot(), true, Vec::new());
     let invalid = service.dispatch(1, &call(HYPERTEXT, "GetLink", "i", i32_arg(9)));
     assert_eq!(invalid.kind, super::dbus::MessageType::Error);
     assert_eq!(service.application_id, 0);
@@ -155,7 +156,7 @@ fn malformed_object_calls_fail_closed_without_mutating_service_state() {
 
 #[test]
 fn application_service_has_no_terminal_child_when_started_by_console() {
-    let mut service = ServiceState::new(snapshot(), false);
+    let mut service = ServiceState::new(snapshot(), false, Vec::new());
     let children = service.dispatch(
         1,
         &call_at(ROOT_PATH, ACCESSIBLE, "GetChildren", "", Vec::new()),
@@ -165,6 +166,87 @@ fn application_service_has_no_terminal_child_when_started_by_console() {
     assert_eq!(children_body.u32().unwrap(), 0);
     let terminal = service.dispatch(2, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
     assert_eq!(terminal.kind, super::dbus::MessageType::Error);
+}
+
+#[test]
+fn global_preferences_nodes_are_live_atspi_children_with_value_and_availability() {
+    let nodes = vec![
+        GlobalPreferencesAccessibleNode {
+            id: "global-preferences".into(),
+            name: "Global Preferences".into(),
+            role: GlobalPreferencesAccessibleRole::Dialog,
+            value: Some("Global · this device".into()),
+            description: "Application preferences for this device.".into(),
+            available: true,
+            focused: false,
+        },
+        GlobalPreferencesAccessibleNode {
+            id: "datum.accessibility.reduced_motion-control".into(),
+            name: "Reduced motion".into(),
+            role: GlobalPreferencesAccessibleRole::Switch,
+            value: Some("Off".into()),
+            description: "Global · this device. Factory default.".into(),
+            available: false,
+            focused: true,
+        },
+    ];
+    let mut service = ServiceState::new(snapshot(), false, nodes);
+    let count = service.dispatch(
+        1,
+        &call_at(
+            ROOT_PATH,
+            PROPERTIES,
+            "Get",
+            "ss",
+            two_strings(ACCESSIBLE, "ChildCount"),
+        ),
+    );
+    assert_eq!(count.body_reader().variant_i32().unwrap(), 1);
+
+    let control_path = format!("{PREFERENCES_PATH}/1");
+    let name = service.dispatch(
+        2,
+        &call_at(
+            &control_path,
+            PROPERTIES,
+            "Get",
+            "ss",
+            two_strings(ACCESSIBLE, "Name"),
+        ),
+    );
+    assert_eq!(
+        name.body_reader().variant_string().unwrap(),
+        "Reduced motion"
+    );
+    let description = service.dispatch(
+        3,
+        &call_at(
+            &control_path,
+            PROPERTIES,
+            "Get",
+            "ss",
+            two_strings(ACCESSIBLE, "Description"),
+        ),
+    );
+    assert!(
+        description
+            .body_reader()
+            .variant_string()
+            .unwrap()
+            .contains("Current value: Off")
+    );
+    let role = service.dispatch(
+        4,
+        &call_at(&control_path, ACCESSIBLE, "GetRoleName", "", Vec::new()),
+    );
+    assert_eq!(role.body_reader().string().unwrap(), "toggle button");
+    let state = service.dispatch(
+        5,
+        &call_at(&control_path, ACCESSIBLE, "GetState", "", Vec::new()),
+    );
+    let words = state.body_reader().u32_array().unwrap();
+    assert_eq!(words[0] & (1 << 8), 0, "unavailable is not enabled");
+    assert_ne!(words[0] & (1 << 12), 0, "focused state is exposed");
 }
 
 fn call_at(path: &str, interface: &str, member: &str, signature: &str, body: Vec<u8>) -> Message {
