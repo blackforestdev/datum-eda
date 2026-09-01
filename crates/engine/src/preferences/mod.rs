@@ -10,6 +10,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde_json::Value;
 
 mod catalog;
+pub mod repository;
 pub mod resolver;
 mod schema;
 
