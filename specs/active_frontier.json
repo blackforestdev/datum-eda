@@ -5690,8 +5690,8 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "ready",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
@@ -5705,7 +5705,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-grade manual Global Preferences doorway and exact three-row Appearance slice backed end-to-end by typed presentation, resolution, durable persisted state, live consumers, accessibility, and recovery honesty, ready for Units parity and later full-catalog stabilization.",
-        "canonical_next_step_id": "GP-F04",
+        "canonical_next_step_id": "GP-F05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5743,9 +5743,9 @@
             "depends_on": ["GP-F02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F03"}], "completion_evidence": [{"kind": "commit", "revision": "fab5100"}, {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F03-DURABLE-REPOSITORY"}]
           },
           {
-            "id": "GP-F04", "kind": "owner_decision", "status": "pending",
+            "id": "GP-F04", "kind": "owner_decision", "status": "complete",
             "action": "Review GP-F03 durability, the corrected production-grade GP-F05 contract, and the reconciled Claude-owned exact three-row protected target before separately authorizing GP-F05.",
-            "depends_on": ["GP-F03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}], "completion_evidence": [],
+            "depends_on": ["GP-F03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-APPROVED"}, {"kind": "commit", "revision": "62e263b"}],
             "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, lifecycle, row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the corrected production-grade three-row Global Preferences wgpu slice in GP-F05 only?", "recommended_response": "Approve only after the Claude-owned target shows exactly Appearance with Console feedback duration, Reduced motion, and High contrast/non-color cues; the typed presentation/menu/lifecycle/accessibility/recovery contract is complete; and every forbidden or unimplemented surface remains absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
           },
           {
