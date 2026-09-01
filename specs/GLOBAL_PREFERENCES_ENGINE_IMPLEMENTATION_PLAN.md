@@ -202,6 +202,34 @@ exact unknown preservation, typed migration, backup, reversible restore, and
 preserved-unreadable recovery sufficient for real visible rows. No provider or
 network service is included.
 
+GP-F03 landed in `fab5100`. The engine-owned `PreferenceRepository` uses one
+exclusive local writer lease, exact expected-head comparison, complete immutable
+canonical-JSON generations, and atomic head promotion. Installation and User
+partitions remain distinct; defaults are never serialized merely by reading
+them. Registered descriptors validate every ordinary write. Opaque unknown
+envelopes retain exact bytes in content-addressed payloads through successor
+generations, migration, backup, restore, and recovery.
+
+Repository inspection and migration/restore planning are side-effect free.
+Schema and alias migration requires a registered deterministic transform,
+refuses collisions and unchosen substitutions, and creates a complete
+pre-migration backup. Exact restore is previewed against an expected head,
+backs up the displaced current generation first, preserves accumulated audit
+receipts, and can itself be reversed. Missing, malformed, truncated, or
+integrity-invalid head/generation/payload state is never repaired or reset in
+place: exact suspect bytes and complete valid predecessor identities are exposed
+for an explicit recovery operation.
+
+Eight focused repository tests and all 970 engine library tests pass. Strict
+all-target/all-feature workspace Clippy passes with warnings denied, as do
+source-health, rustfmt, dependency-authority, Cargo-resource, evidence,
+governance, parity, and Frontier gates. Full production fault-injection and
+real-surface acceptance remain assigned to the later Global Preferences
+completion boundary. GP-F03 adds no GUI/prototype work, Project mutation,
+Revision behavior, provider/network service, synchronization, or dependency.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F03-DURABLE-REPOSITORY -->
+
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F04 -->
 <!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F04:GP-F04 -->
 ### GP-F04 — authorize first real wgpu vertical slice only
