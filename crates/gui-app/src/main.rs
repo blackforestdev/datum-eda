@@ -40,6 +40,7 @@ mod console_accessibility;
 mod console_feedback;
 mod global_preferences_projection;
 mod global_preferences_runtime;
+mod global_preferences_window;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
@@ -52,6 +53,7 @@ mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
+mod runtime_geometry_helpers;
 mod runtime_menu_actions;
 mod runtime_primary_button;
 mod runtime_primary_pointer;
@@ -108,6 +110,7 @@ use pan_gesture::PanGestureState;
 use pane_cameras::PaneCameras;
 use pane_resize::DividerDrag;
 use retained_scene_cache_key::retained_selection_cache_key;
+use runtime_geometry_helpers::*;
 #[cfg(feature = "visual")]
 use std::fs;
 use terminal_input::{TerminalKeyAction, terminal_key_action};
@@ -290,6 +293,9 @@ impl ApplicationHandler for App {
         window_ref.set_visible(true);
         append_gui_diagnostic_line("window visible");
         self.request_redraw_if_needed();
+        if let Err(err) = self.sync_global_preferences_window(event_loop) {
+            fatal_gui_error(event_loop, "open Global Preferences window", err);
+        }
     }
 
     fn window_event(
@@ -298,8 +304,31 @@ impl ApplicationHandler for App {
         window_id: WindowId,
         event: WindowEvent,
     ) {
+        if self
+            .global_preferences_window
+            .as_ref()
+            .is_some_and(|window| window.id() == window_id)
+        {
+            self.global_preferences_window_event(event_loop, event);
+            return;
+        }
         if let Some(window) = self.window
             && window.id() != window_id
+        {
+            return;
+        }
+        if self
+            .runtime
+            .as_ref()
+            .is_some_and(|runtime| runtime.workspace().ui.global_preferences.open)
+            && !matches!(
+                &event,
+                WindowEvent::CloseRequested
+                    | WindowEvent::Resized(_)
+                    | WindowEvent::ScaleFactorChanged { .. }
+                    | WindowEvent::Focused(_)
+                    | WindowEvent::RedrawRequested
+            )
         {
             return;
         }
@@ -649,6 +678,9 @@ impl ApplicationHandler for App {
 
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         self.poll_background_work(event_loop);
+        if let Err(err) = self.sync_global_preferences_window(event_loop) {
+            fatal_gui_error(event_loop, "synchronize Global Preferences window", err);
+        }
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
@@ -663,6 +695,8 @@ impl ApplicationHandler for App {
 }
 
 struct Runtime {
+    instance: wgpu::Instance,
+    adapter: wgpu::Adapter,
     surface: wgpu::Surface<'static>,
     device: wgpu::Device,
     queue: wgpu::Queue,
@@ -718,6 +752,7 @@ struct Runtime {
     window_focused: bool,
     application_shutdown_started: Option<std::time::Instant>,
     application_shutdown_blocked: bool,
+    global_preferences_raise_requested: bool,
     global_preferences: global_preferences_runtime::GlobalPreferencesCoordinator,
 }
 
@@ -835,6 +870,8 @@ impl Runtime {
             renderer_started.elapsed().as_millis()
         ));
         let mut runtime = Self {
+            instance,
+            adapter,
             surface,
             device,
             queue,
@@ -879,6 +916,7 @@ impl Runtime {
             window_focused: true,
             application_shutdown_started: None,
             application_shutdown_blocked: false,
+            global_preferences_raise_requested: open_global_preferences,
             global_preferences,
         };
         runtime.sync_terminal_tabs();
@@ -2275,79 +2313,6 @@ impl Runtime {
             eprintln!("[datum-timing] {message}");
         }
     }
-}
-
-fn padded_rect_bounds(rect: RectNm, padding_nm: i64) -> SceneBounds {
-    SceneBounds {
-        min_x: rect.min_x.saturating_sub(padding_nm),
-        min_y: rect.min_y.saturating_sub(padding_nm),
-        max_x: rect.max_x.saturating_add(padding_nm),
-        max_y: rect.max_y.saturating_add(padding_nm),
-    }
-}
-
-fn bounds_from_points(
-    points: impl IntoIterator<Item = PointNm>,
-    padding_nm: i64,
-) -> Option<SceneBounds> {
-    let mut iter = points.into_iter();
-    let first = iter.next()?;
-    let mut min_x = first.x;
-    let mut max_x = first.x;
-    let mut min_y = first.y;
-    let mut max_y = first.y;
-    for point in iter {
-        min_x = min_x.min(point.x);
-        max_x = max_x.max(point.x);
-        min_y = min_y.min(point.y);
-        max_y = max_y.max(point.y);
-    }
-    Some(SceneBounds {
-        min_x: min_x.saturating_sub(padding_nm),
-        min_y: min_y.saturating_sub(padding_nm),
-        max_x: max_x.saturating_add(padding_nm),
-        max_y: max_y.saturating_add(padding_nm),
-    })
-}
-
-fn marking_menu_key_for_target(target_object_id: Option<&str>) -> String {
-    let key = match target_object_id {
-        Some(id) if id.starts_with("component:") => "pcb.component",
-        Some(id) if id.starts_with("pad:") => "pcb.pad",
-        Some(id) if id.starts_with("track:") => "pcb.track",
-        Some(id) if id.starts_with("via:") => "pcb.via",
-        Some(id) if id.starts_with("zone:") => "pcb.zone",
-        Some(id) if id.starts_with("net:") => "pcb.net",
-        _ => "pcb.empty",
-    };
-    key.to_string()
-}
-
-fn marking_slot_for_delta(dx: i32, dy: i32) -> Option<String> {
-    let dx = dx as f32;
-    let dy = dy as f32;
-    if (dx * dx + dy * dy).sqrt() < 18.0 {
-        return None;
-    }
-    let angle = dy.atan2(dx).to_degrees();
-    let slot = if (-22.5..22.5).contains(&angle) {
-        "E"
-    } else if (22.5..67.5).contains(&angle) {
-        "SE"
-    } else if (67.5..112.5).contains(&angle) {
-        "S"
-    } else if (112.5..157.5).contains(&angle) {
-        "SW"
-    } else if !(-157.5..157.5).contains(&angle) {
-        "W"
-    } else if (-157.5..-112.5).contains(&angle) {
-        "NW"
-    } else if (-112.5..-67.5).contains(&angle) {
-        "N"
-    } else {
-        "NE"
-    };
-    Some(slot.to_string())
 }
 
 #[cfg(test)]

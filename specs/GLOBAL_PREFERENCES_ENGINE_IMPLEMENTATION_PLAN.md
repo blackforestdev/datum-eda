@@ -353,14 +353,19 @@ not implemented; PP-I01 later adds the second ratified PM-039 command and its
 disabled-without-Project behavior. This staged visibility does not alter the
 ratified two-command family.
 
-The command opens one application-level **Global Preferences — Datum** dialog
-inside the existing native shell. It is not a document, tiled pane, Navigator
-item, Inspector mode, or terminal surface. The dialog is input-modal while
-open, resizable, and unique: repeated activation raises the existing instance
-rather than duplicating it. Opening performs no write. Successful row changes
-commit immediately; there is no generic Apply transaction and closing does not
-roll back committed values. Close, title-bar close, and Escape return focus to
-the menu invoker (or the previously focused editor if the menu invoker no
+The command opens one dedicated application-level native window titled
+**Global Preferences — Datum**, owned by the main Datum window. The native
+window frame fits directly around the Preferences interface; Datum must not
+draw the interface as a centered card inside the Design workspace, retain a
+full-workspace modal backdrop, or place an otherwise empty canvas outside the
+Preferences boundary. It is not a document, tiled pane, Navigator item,
+Inspector mode, or terminal surface. The window is input-modal to its owning
+Datum window while open, resizable from a content-fitting default size, and
+unique: repeated activation raises the existing instance rather than
+duplicating it. Opening performs no write. Successful row changes commit
+immediately; there is no generic Apply transaction and closing does not roll
+back committed values. Close, native title-bar close, and Escape return focus
+to the menu invoker (or the previously focused editor if the menu invoker no
 longer exists).
 
 At ordinary width the dialog follows the ratified two-column grammar: section
@@ -439,7 +444,8 @@ following:
   ordering, schema/control compatibility, enum mapping, alias search, and
   rejection of GUI hard-coding or key-prefix inference;
 - menu-model, pointer, and keyboard tests for the real nested submenu, single
-  dialog instance, Escape hierarchy, and focus restoration;
+  native Preferences-window instance, content-fitting default frame, absence
+  of a workspace backdrop, Escape hierarchy, and focus restoration;
 - focused service tests for clean start, first write, successful legacy Console
   migration, invalid/unreadable legacy preservation, restart persistence,
   Reset, stale generation, writer conflict, invalid draft, and corrupt-head
@@ -485,6 +491,16 @@ Project-policy, Project Preferences, Organization, setup, Manage preferences,
 fixture, or empty-category content may appear in those GP-F05 states.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-REVISED-CONTRACT -->
+
+On 2026-09-01 the owner inspected the running GP-F05 build and rejected the
+in-shell modal backdrop: the native GUI window boundary must sit directly
+against the Preferences interface. The owner directed Datum to reopen GP-F05
+and correct the defect before UNIT-I02. This correction preserves the approved
+three-row inventory, two-column grammar, input modality, engine ownership,
+repository/resolver lifecycle, accessibility, recovery, and zero-Project-
+mutation boundaries; it changes only native window hosting and its proof.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-NATIVE-WINDOW-CORRECTION -->
 
 ## 5. Shared Units surface parity through real Preferences
 

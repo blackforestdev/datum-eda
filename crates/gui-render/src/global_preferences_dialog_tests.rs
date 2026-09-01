@@ -76,13 +76,42 @@ fn prepared(
     height: u32,
 ) -> PreparedScene {
     let retained = RetainedScene::from_workspace(state, width, height);
-    PreparedScene::from_workspace(
+    PreparedScene::from_workspace_with_terminal_renderer(
         state,
         width,
         height,
+        1.0,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
+        &[],
+        None,
+        true,
     )
+}
+
+#[test]
+fn main_workspace_never_draws_the_native_preferences_window_or_backdrop() {
+    let state = state_with_preferences_open();
+    let retained = RetainedScene::from_workspace(&state, 1300, 760);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1300,
+        760,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    assert!(!prepared.hit_regions.iter().any(|region| matches!(
+        region.target,
+        HitTarget::GlobalPreferencesModal
+            | HitTarget::GlobalPreferencesSection
+            | HitTarget::GlobalPreferencesSearch
+            | HitTarget::GlobalPreferencesSettingName(_)
+            | HitTarget::GlobalPreferencesControl(_)
+            | HitTarget::GlobalPreferencesChoice { .. }
+            | HitTarget::GlobalPreferencesReset(_)
+            | HitTarget::GlobalPreferencesExplanationClose
+            | HitTarget::GlobalPreferencesClose
+    )));
 }
 
 #[test]

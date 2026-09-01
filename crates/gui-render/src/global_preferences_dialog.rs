@@ -8,20 +8,21 @@ use datum_gui_protocol::{
 pub(super) fn render_global_preferences_dialog(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
+    native_window: bool,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
     let dialog = &state.ui.global_preferences;
-    if !dialog.open {
+    if !dialog.open || !native_window {
         return;
     }
 
     let window = RectPx {
-        x: layout.top_menu_bar.x,
-        y: layout.top_menu_bar.y,
+        x: 0.0,
+        y: 0.0,
         width: layout.top_menu_bar.width,
-        height: layout.status_bar.y + layout.status_bar.height - layout.top_menu_bar.y,
+        height: layout.status_bar.y + layout.status_bar.height,
     };
     quads.push(Quad::from_rect(window, design_tokens::chrome::BG_BASE));
     hits.push(HitRegion {
@@ -30,18 +31,7 @@ pub(super) fn render_global_preferences_dialog(
     });
 
     let narrow = window.width < 800.0;
-    let width = if narrow {
-        (window.width - 24.0).max(360.0)
-    } else {
-        window.width.min(1040.0) - 80.0
-    };
-    let height = (window.height - 48.0).clamp(540.0, 720.0);
-    let card = RectPx {
-        x: window.x + (window.width - width) * 0.5,
-        y: window.y + (window.height - height) * 0.5,
-        width,
-        height,
-    };
+    let card = window;
     quads.push(Quad::from_rect(card, PANEL_CARD_BG));
     push_rect_border(
         quads,

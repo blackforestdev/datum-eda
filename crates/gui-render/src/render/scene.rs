@@ -3,15 +3,12 @@ mod prepared_scene_access;
 #[path = "scene_console.rs"]
 mod scene_console;
 
-// Per-pane coordinate + hit resolution (UVT-004) stays a real child module so
-// it can reach private prepared/retained scene types without growing lib.rs.
+// Per-pane coordinate + hit resolution stays a child module with private scene access.
 #[path = "coordinate_hit.rs"]
 mod coordinate_hit;
 pub use coordinate_hit::resolve_pane_hover;
 
-// S4 interaction overlays and the segmented status bar remain real child modules
-// of the included crate-root scope, retaining private geometry access without
-// shifting their ownership into lib.rs.
+// S4 interaction overlays and status stay child modules with private geometry access.
 mod hit_clipping;
 #[path = "interaction_overlay.rs"]
 mod interaction_overlay;
@@ -29,6 +26,7 @@ impl PreparedScene {
         retained_scene: &RetainedScene,
         terminal_panes: &[crate::TerminalPaneRenderState],
         terminal_cache: Option<&mut crate::TerminalRenderCache>,
+        global_preferences_native_window: bool,
     ) -> Self {
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, dock_height_for_state(state));
@@ -156,6 +154,7 @@ impl PreparedScene {
         global_preferences_dialog::render_global_preferences_dialog(
             state,
             &layout,
+            global_preferences_native_window,
             &mut menu_overlay_quads,
             &mut menu_overlay_text_runs,
             &mut hit_regions,

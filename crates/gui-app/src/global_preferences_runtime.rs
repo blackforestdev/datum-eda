@@ -206,6 +206,7 @@ impl Runtime {
             .global_preferences
             .open_dialog(&mut self.session.workspace_mut().ui, invoker);
         self.set_application_focus(ApplicationFocus::Overlay);
+        self.global_preferences_raise_requested = true;
         if opened {
             self.announce_global_preferences(
                 "Global Preferences opened. Appearance, three settings.",
@@ -215,6 +216,10 @@ impl Runtime {
         }
         self.invalidate_frame();
         true
+    }
+
+    pub(super) fn take_global_preferences_raise_request(&mut self) -> bool {
+        std::mem::take(&mut self.global_preferences_raise_requested)
     }
 
     pub(super) fn close_global_preferences(&mut self) -> bool {

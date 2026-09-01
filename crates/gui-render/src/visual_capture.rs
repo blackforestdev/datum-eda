@@ -141,15 +141,29 @@ impl OffscreenRenderer {
             scale_factor,
         );
         let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
-        let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
-            state,
-            self.width,
-            self.height,
-            scale_factor,
-            camera,
-            &retained,
-            terminal_snapshot,
-        );
+        let prepared = if state.ui.global_preferences.open {
+            PreparedScene::from_workspace_with_terminal_renderer(
+                state,
+                self.width,
+                self.height,
+                scale_factor,
+                camera,
+                &retained,
+                &[],
+                None,
+                true,
+            )
+        } else {
+            PreparedScene::from_workspace_with_terminal_snapshot(
+                state,
+                self.width,
+                self.height,
+                scale_factor,
+                camera,
+                &retained,
+                terminal_snapshot,
+            )
+        };
 
         self.renderer.render(
             &self.device,
