@@ -4,6 +4,9 @@ pub(super) struct App {
     pub(super) args: GuiArgs,
     pub(super) window: Option<&'static Window>,
     pub(super) runtime: Option<Runtime>,
+    pub(super) global_preferences_window: Option<std::sync::Arc<Window>>,
+    pub(super) global_preferences_surface:
+        Option<crate::global_preferences_window::GlobalPreferencesWindowSurface>,
     /// Last cursor icon set on the window, so hover-driven cursor changes only call
     /// `set_cursor` on a transition (no per-move spam).
     current_cursor: winit::window::CursorIcon,
@@ -30,6 +33,8 @@ impl App {
             args,
             window: None,
             runtime: None,
+            global_preferences_window: None,
+            global_preferences_surface: None,
             current_cursor: winit::window::CursorIcon::Default,
             kwin_lifecycle_smoke_step: 0,
             terminal_event_proxy,
@@ -68,6 +73,13 @@ impl App {
             && !runtime.redraw_pending
         {
             runtime.redraw_pending = true;
+            window.request_redraw();
+        }
+        if let (Some(surface), Some(window)) = (
+            &mut self.global_preferences_surface,
+            &self.global_preferences_window,
+        ) {
+            surface.invalidate();
             window.request_redraw();
         }
     }

@@ -23,6 +23,7 @@ impl Runtime {
             retained,
             &terminal_panes,
             Some(&mut self.terminal_render_cache),
+            false,
         );
         if let Some(camera) = schematic_camera {
             prepared.set_schematic_camera(camera);

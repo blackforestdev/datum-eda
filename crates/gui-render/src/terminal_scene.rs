@@ -65,6 +65,7 @@ impl PreparedScene {
             retained_scene,
             &terminal_panes,
             None,
+            false,
         )
     }
 }
