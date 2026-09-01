@@ -60,11 +60,12 @@ equal-authority controls therefore remain Q4 unresolved conflicts rather than
 being combined field-by-field or by arrival order.
 
 `ProjectPolicySeed` is a registered descriptor class, not an eligibility flag
-on another class. Exactly the fifteen active rows whose Apply column says
-`seed:<authority>` below are `PS`; the deferred AdoptedDraftingStandard seed is
-the sixteenth seed-bearing catalog row and is also classified `PS` while its
-schema remains unavailable. Presentation, Capability, WorkflowDefault, and
-other non-`PS` keys cannot cross Q5 into Project authority. A `PS` descriptor
+on another class. Exactly the twelve active rows whose Apply column says
+`seed:<authority>` below are `PS`; three formerly active Revision seed rows were
+withdrawn by Product Mechanics 038, and the deferred AdoptedDraftingStandard
+seed remains classified `PS` while its schema is unavailable. Presentation,
+Capability, WorkflowDefault, and other non-`PS` keys cannot cross Q5 into
+Project authority. A `PS` descriptor
 accepts only DescriptorDefault, Installation, Organization, and User seed-profile
 contributions; Session and Context never enter a Project seed snapshot.
 

@@ -53,7 +53,7 @@ prerequisite, but Units Preferences-GUI parity is proved through the real
 Global window and cannot hard-block creation of that window.
 
 After Product Mechanics 038 defers the four Revision descriptors, the initial
-catalog contains 54 active V1 descriptors. Eleven active seed-bearing rows are
+catalog contains 54 active V1 descriptors. Twelve active seed-bearing rows are
 `ProjectPolicySeed`; the Revision seed family and the additional
 `AdoptedDraftingStandard` candidate remain deferred until separately recovered
 or specified.

@@ -138,9 +138,10 @@ organization directives through explicit `AuthorityRelease`, preserves
 displaced values, refuses arrival-order conflict resolution, and returns the
 same complete side-effect-free explanation used by every future surface. It
 owns no storage, GUI, Project mutation, provider transport, or Revision path.
-The pre-existing `ProjectPolicySeed` count discrepancy is tracked as `dat-vuh`;
-the implementation preserves each ratified table row's explicit class rather
-than silently choosing a documentation correction.
+The `ProjectPolicySeed` count discrepancy tracked as `dat-vuh` is resolved as a
+count-only doctrine/catalog defect: the active post-PM-038 catalog contains
+twelve seed rows. The implementation preserves every ratified row's explicit
+class and does not restore a withdrawn Revision descriptor.
 
 On 2026-08-31 the owner rejected advancement to GP-F03 and directed a bounded
 GP-F01 correction before storage work. The correction replaces inferred
@@ -151,6 +152,25 @@ and adds catalog-wide semantic goldens. Existing GP-F01 evidence remains
 historical evidence for the initial scaffold; it is not sufficient completion
 evidence for this corrective pass. Persistence, GUI, Project mutation, Revision
 behavior, providers/services, and new dependencies remain unauthorized.
+
+The corrective implementation declares all 54 active descriptors literally,
+including exact schemas, defaults, classes, eligible sources, directive-release
+minimums, apply behavior, consumers, export class, accessible copy, and aliases.
+Platform- or runtime-derived defaults use registered recipes instead of invented
+literals. Context is applicability metadata only and never a universal ranking
+source. Organization facts require authenticated, active release authority and
+carry disclosure, provider generation state, complete provenance, remaining
+freedom, appeal, and reactivation information into the one explanation model.
+Typed control validation covers narrowing constraints, pins, locks, incompatible
+directives, stale-effective providers, redaction, and deterministic refusal.
+Catalog and explanation semantic goldens make meaning changes review-visible.
+
+Proof for the corrected boundary is green: 28 focused preferences tests and 962
+engine library tests pass; strict all-target/all-feature workspace Clippy passes
+with warnings denied; source-health, rustfmt, dependency-authority, Cargo-resource,
+evidence-traceability, spec-governance, spec-parity, and Frontier projection gates
+all pass. No persistence code, GUI/prototype file, Project mutation, Revision
+behavior, provider service or transport, or third-party dependency was added.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-REVISION -->
 
