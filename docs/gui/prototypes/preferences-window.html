@@ -109,7 +109,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   body{padding-left:14px;padding-right:14px}
 }
 </style></head><body>
-<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="approved">✓ GP-F05 TARGET — Appearance only: three implemented settings</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="approved">✓ GP-F05 APPROVED IMPLEMENTATION TARGET — no runtime exists yet</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
 <style>
 .f5{max-width:1180px}
 .f5win{width:1160px;max-width:100%;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
@@ -155,25 +155,41 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .divider{border-top:2px dashed var(--bd-str);margin:40px 0 0;padding-top:18px}
 </style>
 
-<div class="sec" style="margin-top:26px">GP-F05 TARGET STATE — THE ONLY SHIPPABLE PREFERENCES SURFACE</div>
-<div class="lead">Three implemented settings in one section, reached through a nested doorway. Everything below the divider is future comparative evidence and is not part of this target.</div>
+<style>
+.f5tog{display:inline-flex;align-items:center;gap:8px;font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx2)}
+.f5tog .sw{width:38px;height:20px;border-radius:10px;background:var(--s03);border:1px solid var(--bd-str);position:relative}
+.f5tog .sw:after{content:"";position:absolute;left:3px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--tx3)}
+.f5tog.on .sw{background:var(--acc);border-color:var(--acc)}
+.f5tog.on .sw:after{left:auto;right:3px;background:var(--bg)}
+.f5tog.dis{opacity:.5}
+.f5tog.dis .sw{background:var(--s02);border-style:dashed}
+.f5btn{border:1px solid var(--bd-str);background:var(--s02);color:var(--tx2);border-radius:5px;padding:4px 10px;font-size:11.5px}
+.f5btn.dis{opacity:.45;border-style:dashed}
+.f5sel.dis{opacity:.45;border-style:dashed;color:var(--tx3)}
+.f5scope{font-family:"PlexMono",monospace;font-size:10px;border:1px solid var(--bd-str);color:var(--tx3);border-radius:3px;padding:1px 7px}
+.f5chg{color:var(--acc)}
+</style>
+
+<div class="sec" style="margin-top:26px">GP-F05 — APPROVED IMPLEMENTATION TARGET</div>
+<div class="lead">The approved GP-F05 implementation target for Global Preferences: one section, three settings. <b>No runtime exists yet</b> — this is the contract an implementation must meet, not a description of shipped behaviour. Everything below the divider is future comparative evidence and is not part of this target.</div>
 
 <div class="f5"><div class="f5ghead">A · the doorway — Edit &gt; Preferences &gt; Global Preferences…</div>
 <div class="two" style="grid-template-columns:270px 270px 1fr">
   <div class="f5menu">
-    <div class="mi">Undo <span class="sub">Ctrl+Z</span></div>
-    <div class="mi">Redo <span class="sub">Ctrl+Shift+Z</span></div>
+    <div class="mi">Undo</div>
+    <div class="mi">Redo</div>
     <div class="mi on">Preferences <span class="sub">▸</span></div>
   </div>
   <div class="f5menu">
-    <div class="mi on">Global Preferences… <span class="sub">Ctrl+,</span></div>
+    <div class="mi on">Global Preferences…</div>
   </div>
-  <div class="cap" style="margin:0">One nested doorway. <b>Edit &gt; Preferences &gt; Global Preferences…</b> opens the window below. The submenu carries exactly one item in this target — nothing else is implemented, so nothing else is offered.</div>
+  <div class="cap" style="margin:0">One nested doorway. <b>Edit &gt; Preferences &gt; Global Preferences…</b> opens the window. The submenu carries exactly one item in this target. <b>No keyboard shortcut is specified</b> — none is proposed here, because a shortcut would need separate governance.</div>
 </div>
 </div>
+
 <div class="f5ghead" style="margin-top:26px">B · ordinary state</div>
 <div class="f5win">
-  <div class="f5tbar">Preferences — Datum<span class="r">Edit &gt; Preferences &gt; Global Preferences…</span></div>
+  <div class="f5tbar">Global Preferences — Datum<span class="f5scope" style="margin-left:10px">Global · this device</span><span class="r">input-modal</span></div>
   <div class="f5body">
     <div class="f5nav"><div class="on">Appearance</div></div>
     <div class="f5pane">
@@ -185,89 +201,118 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <div class="f5prov">factory default — you haven’t changed this</div>
       <div class="f5row">
         <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation; the selection boundary stops animating but stays dashed.</span></div>
-        <div class="f5ctl"><div class="f5sel">Off</div></div>
+        <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
       <div class="f5prov">factory default — you haven’t changed this</div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues across GUI and terminal.</span></div>
-        <div class="f5ctl"><div class="f5sel">Off</div></div>
+        <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
       <div class="f5prov">factory default — you haven’t changed this</div>
     </div>
   </div>
 </div>
-<div class="cap"><b>One category, three rows.</b> The two-column shell, pinned search over the content column, row grammar, and the provenance line under every row are unchanged from the ratified window. The rail carries one entry because one section exists — no empty categories are drawn to imply future ones.</div>
+<div class="cap"><b>Two booleans and one choice.</b> Reduced motion and High contrast are switches, not lists — each carries the word ON or OFF beside it so its state survives with color removed. Console feedback duration is a choice of four values and stays a combobox. The window is <b>input-modal</b> and scoped <b>Global · this device</b>, stated in the title bar rather than left implicit.</div>
+<div class="f5ghead" style="margin-top:26px">C · changed-value state</div>
+<div class="f5win">
+  <div class="f5tbar">Global Preferences — Datum<span class="f5scope" style="margin-left:10px">Global · this device</span><span class="r">one value changed</span></div>
+  <div class="f5body" style="min-height:230px">
+    <div class="f5nav"><div class="on">Appearance</div></div>
+    <div class="f5pane">
+      <div class="f5srch"><div class="box">⌕ &nbsp;search settings…</div></div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
+        <div class="f5ctl"><div class="f5sel">10 s</div><span class="f5btn">Reset</span></div>
+      </div>
+      <div class="f5prov"><span class="f5chg">◆ set by you</span> · changed from the factory default of 6 s · Reset returns it to 6 s</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation.</span></div>
+        <div class="f5ctl"><span class="f5tog on"><span class="sw"></span>ON</span><span class="f5btn">Reset</span></div>
+      </div>
+      <div class="f5prov"><span class="f5chg">◆ set by you</span> · changed from the factory default of OFF · Reset returns it to OFF</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues.</span></div>
+        <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
+      </div>
+      <div class="f5prov">factory default — you haven’t changed this</div>
+    </div>
+  </div>
+</div>
+<div class="cap"><b>A changed value says so and offers exactly one remedy.</b> The provenance line changes from "factory default" to "set by you", names the value it departed from, and a <b>Reset</b> control appears on that row only. Reset is absent where nothing was changed, so its presence is itself the signal. <b>Non-color cue:</b> the ◆ glyph and the words "set by you" carry the changed state.</div>
 
-<div class="f5ghead" style="margin-top:26px">C · search results and explanation</div>
+<div class="f5ghead" style="margin-top:26px">D · search results and explanation</div>
 <div class="two">
 <div>
 <div class="f5win" style="width:auto">
-  <div class="f5tbar">Preferences — Datum<span class="r">search active</span></div>
+  <div class="f5tbar">Global Preferences — Datum<span class="r">search active</span></div>
   <div class="f5body" style="min-height:210px">
     <div class="f5nav"><div class="on">Appearance</div></div>
     <div class="f5pane">
       <div class="f5srch"><div class="box" style="color:var(--tx)">⌕ &nbsp;contrast</div></div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>matched on name — Appearance</span></div>
-        <div class="f5ctl"><div class="f5sel">Off</div></div>
+        <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov">1 result · selecting it returns to Appearance with the row focused</div>
+      <div class="f5prov">1 result · activating it returns to Appearance with the <b>setting name</b> focused, not the switch</div>
     </div>
   </div>
 </div>
-<div class="cap">Search stays pinned above the content column and filters within the single section. A result names why it matched and where it lives.</div>
+<div class="cap">Search filters within the single section. Activating a result returns focus to the canonical <b>setting-name action</b> — the same target the focus order uses — and activating that name opens the explanation beside it.</div>
 </div>
 <div>
 <div class="f5ex">
-  <div class="hd">High contrast and non-color cues — where this value comes from</div>
-  <div class="r"><span class="s">Effective</span><span class="v eff">Off</span><span class="m">factory fact, nothing overrides it</span></div>
+  <div class="hd">High contrast and non-color cues — where this value comes from <span style="float:right;font-family:'PlexMono',monospace;font-size:10px;color:var(--tx3)">Close ✕</span></div>
+  <div class="r"><span class="s">Descriptor</span><span class="v">datum.accessibility.high_contrast</span><span class="m">boolean · factory OFF</span></div>
+  <div class="r"><span class="s">Scope</span><span class="v">Global · this device</span><span class="m">applies to every Project opened here</span></div>
+  <div class="r"><span class="s">Effective</span><span class="v eff">OFF</span><span class="m">reason: no source contributes, so the descriptor default stands</span></div>
+  <div class="r"><span class="s">Session</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">nothing set for this run</span></div>
   <div class="r"><span class="s">User</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">you haven’t changed this</span></div>
   <div class="r"><span class="s">Installation</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">nothing set for this machine</span></div>
-  <div class="r"><span class="s">Descriptor default</span><span class="v">Off</span><span class="m">the factory fact — effective because nothing contributes above it</span></div>
+  <div class="r"><span class="s">Descriptor default</span><span class="v">OFF</span><span class="m">the factory fact — effective because nothing contributes above it</span></div>
 </div>
-<div class="cap">The resolver explanation keeps its ratified shape: every source is listed including the ones with no value, so <b>absence never masquerades as a contribution</b>. Only sources that exist in this target appear.</div>
+<div class="cap">The explanation names the descriptor, its scope, the effective value <b>and the reason it is effective</b>, then lists every eligible source in precedence order — including <b>Session</b> — with its value or an explicit "no value". <b>Absence never masquerades as a contribution.</b> Close returns focus to the setting name that opened it.</div>
 </div>
 </div>
-<div class="f5ghead" style="margin-top:26px">D · preserved-unreadable, non-management state</div>
+<div class="f5ghead" style="margin-top:26px">E · preserved-unreadable, non-management state</div>
 <div class="f5win">
-  <div class="f5tbar">Preferences — Datum<span class="r">store unreadable · values preserved</span></div>
-  <div class="f5banner"><span class="g">⛝</span><span><b>Your preference file could not be read.</b> Datum started this session from factory defaults, wrote nothing over the damaged file, and kept it exactly as found at <code>gui-preferences.json.unreadable-2026-08-31</code>. <b>Design authoring is unaffected.</b><br>Datum does not repair, truncate, or rewrite an unreadable store — a partial parse could silently drop settings, so it refuses instead.</span></div>
-  <div class="f5body" style="min-height:300px">
+  <div class="f5tbar">Global Preferences — Datum<span class="f5scope" style="margin-left:10px">Global · this device</span><span class="r">store unreadable · values preserved</span></div>
+  <div class="f5banner"><span class="g">⛝</span><span><b>Your preference file could not be read.</b> Datum started this session from factory defaults, wrote nothing over the damaged file, and kept it exactly as found. <b>Design authoring is unaffected.</b><br>Datum does not repair, truncate, or rewrite an unreadable store — a partial parse could silently drop settings, so it refuses instead.</span></div>
+  <div class="f5body" style="min-height:280px">
     <div class="f5nav"><div class="on">Appearance</div></div>
     <div class="f5pane">
       <div class="f5srch"><div class="box">⌕ &nbsp;search settings…</div></div>
       <div class="f5row">
         <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
-        <div class="f5ctl"><div class="f5sel">6 s</div></div>
+        <div class="f5ctl"><div class="f5sel dis">6 s</div></div>
       </div>
-      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
       <div class="f5row">
         <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation.</span></div>
-        <div class="f5ctl"><div class="f5sel">Off</div></div>
+        <div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div>
       </div>
-      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues.</span></div>
-        <div class="f5ctl"><div class="f5sel">Off</div></div>
+        <div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div>
       </div>
-      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
     </div>
   </div>
 </div>
-<div class="cap"><b>Non-management by construction.</b> The state reports what happened and stops. There is no recover, restore, discard, repair, show-file, or send-to-support control anywhere in this target — those belong to a management surface that is not part of GP-F05. Changing a row here still works and writes a fresh store; the damaged file is never touched.<br><b>Non-color cue:</b> the ⛝ glyph and the word "preserved" carry the state on every affected row, so it survives with color removed entirely — see render F.</div>
+<div class="cap"><b>Non-writable while the store is unreadable.</b> Every control is disabled — dashed outline, dimmed, and the word "unavailable" beside it. Datum will not write a new store while an unreadable one is preserved, because doing so would silently replace values it has not read. <b>Non-management by construction:</b> there is no recover, restore, discard, repair, show-file, or send-to-support control anywhere in this target; those belong to a management surface outside GP-F05.<br><b>Non-color cue:</b> the ⛝ glyph and the words "unavailable" and "preserved unread" carry the state on every affected row — see render G.</div>
 
-<div class="f5ghead" style="margin-top:26px">E · keyboard focus order and return target</div>
+<div class="f5ghead" style="margin-top:26px">F · keyboard focus order and return target</div>
 <div class="two" style="grid-template-columns:1fr 1fr">
 <div>
 <div class="f5win" style="width:auto">
-  <div class="f5tbar">Preferences — Datum<span class="r">Tab order</span></div>
-  <div class="f5body" style="min-height:230px">
+  <div class="f5tbar">Global Preferences — Datum<span class="r">Tab order</span></div>
+  <div class="f5body" style="min-height:250px">
     <div class="f5nav"><div class="on f5focus">Appearance<span class="f5kn">1</span></div></div>
     <div class="f5pane">
       <div class="f5srch"><div class="box">⌕ &nbsp;search settings…<span class="f5kn">2</span></div></div>
-      <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel">6 s<span class="f5kn">3</span></div></div></div>
-      <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><div class="f5sel">Off<span class="f5kn">4</span></div></div></div>
-      <div class="f5row"><div class="f5lbl"><b>High contrast and non-color cues</b></div><div class="f5ctl"><div class="f5sel">Off<span class="f5kn">5</span></div></div></div>
+      <div class="f5row"><div class="f5lbl"><b>Console feedback duration<span class="f5kn">3</span></b></div><div class="f5ctl"><div class="f5sel">10 s<span class="f5kn">4</span></div><span class="f5btn">Reset<span class="f5kn">5</span></span></div></div>
+      <div class="f5row"><div class="f5lbl"><b>Reduced motion<span class="f5kn">6</span></b></div><div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF<span class="f5kn">7</span></span></div></div>
+      <div class="f5row"><div class="f5lbl"><b>High contrast<span class="f5kn">8</span></b></div><div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF<span class="f5kn">9</span></span></div></div>
     </div>
   </div>
 </div>
@@ -275,49 +320,53 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div>
 <div class="f5ex">
   <div class="hd">Focus contract</div>
-  <div class="r"><span class="s">Tab / Shift+Tab</span><span class="v">1 rail → 2 search → 3, 4, 5 controls</span></div>
-  <div class="r"><span class="s">Initial focus</span><span class="v">the rail entry (1), not the search box</span></div>
-  <div class="r"><span class="s">Arrows</span><span class="v">move within a control; they never leave it</span></div>
-  <div class="r"><span class="s">Enter / Space</span><span class="v">opens a control; Esc closes it and keeps focus on the control</span></div>
-  <div class="r"><span class="s">Search escape</span><span class="v">Esc clears the query and returns focus to the search box</span></div>
-  <div class="r"><span class="s">Result activate</span><span class="v">returns to Appearance and focuses the matched row's control</span></div>
-  <div class="r"><span class="s">Window close</span><span class="v">Esc from the rail closes Preferences</span></div>
-  <div class="r"><span class="s">Return target</span><span class="v eff">focus returns to Edit &gt; Preferences &gt; Global Preferences…</span></div>
+  <div class="r"><span class="s">Tab order</span><span class="v">1 rail → 2 search → then per row: <b>setting name</b> → control → Reset when present</span></div>
+  <div class="r"><span class="s">Setting name</span><span class="v">is itself an action; activating it opens the explanation beside the row</span></div>
+  <div class="r"><span class="s">Reset</span><span class="v">in tab order only on a changed row; absent rows skip it</span></div>
+  <div class="r"><span class="s">Explanation</span><span class="v">Close is the last stop inside it; closing returns focus to the setting name</span></div>
+  <div class="r"><span class="s">Dialog Close</span><span class="v">last stop in the window; Esc from anywhere is equivalent</span></div>
+  <div class="r"><span class="s">Modality</span><span class="v">input-modal — Tab does not leave the window while it is open</span></div>
+  <div class="r"><span class="s">Return target</span><span class="v eff">the invoking menu item, Edit &gt; Preferences &gt; Global Preferences…</span></div>
+  <div class="r"><span class="s">Fallback</span><span class="v">if that menu item no longer exists, the previously focused editor</span></div>
 </div>
-<div class="cap">Closing the window returns focus to the menu item that opened it, never to the canvas — so a keyboard user is where they left off.</div>
+<div class="cap">The setting name is the canonical action for a row — it is the search-result target and the explanation opener. Reset appears in the order only where a value was changed, so tab distance reflects what is actually actionable.</div>
 </div>
 </div>
-<div class="f5ghead" style="margin-top:26px">F · non-color preserved-unreadable render</div>
+<div class="f5ghead" style="margin-top:26px">G · non-color preserved-unreadable render</div>
 <div class="f5win" style="filter:grayscale(1)">
-  <div class="f5tbar">Preferences — Datum<span class="r">store unreadable · values preserved · color removed</span></div>
+  <div class="f5tbar">Global Preferences — Datum<span class="r">store unreadable · color removed</span></div>
   <div class="f5banner"><span class="g">⛝</span><span><b>Your preference file could not be read.</b> Running from factory defaults this session; the damaged file is kept unmodified. Design authoring is unaffected.</span></div>
   <div class="f5body" style="min-height:150px">
     <div class="f5nav"><div class="on">Appearance</div></div>
     <div class="f5pane">
-      <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel">6 s</div></div></div>
-      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread</div>
-      <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><div class="f5sel">Off</div></div></div>
-      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread</div>
+      <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel dis">6 s</div></div></div>
+      <div class="f5prov">⛝ unavailable — your stored value is preserved unread</div>
+      <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div></div>
+      <div class="f5prov">⛝ unavailable — your stored value is preserved unread</div>
     </div>
   </div>
 </div>
-<div class="cap"><b>Rendered with color removed entirely.</b> The state is still fully legible: the ⛝ glyph marks every affected row and the words "preserved unread" state the fact. Nothing about this state is carried by hue alone.</div>
+<div class="cap"><b>Color removed entirely.</b> Still legible: the ⛝ glyph marks each affected row, "unavailable" states the control is non-writable, "preserved unread" states the value survives, and the switches read OFF in words. Disabled controls are additionally dashed, so their state is carried by shape as well as text. Nothing here depends on hue.</div>
 
-<div class="f5ghead" style="margin-top:26px">G · screen-reader name and state inventory</div>
-<table style="max-width:1180px">
+<div class="f5ghead" style="margin-top:26px">H · screen-reader name and state inventory</div>
+<table style="max-width:1160px">
 <tr><th>element</th><th>accessible name</th><th>role</th><th>state announced</th></tr>
-<tr><td class="n">window</td><td>Preferences</td><td>dialog</td><td>modal false · labelled by its title</td></tr>
+<tr><td class="n">window</td><td>Global Preferences</td><td>dialog</td><td><b>input-modal</b> · labelled by its title · scope Global, this device</td></tr>
 <tr><td class="n">rail entry</td><td>Appearance</td><td>tab</td><td>selected true · 1 of 1</td></tr>
 <tr><td class="n">search</td><td>Search settings</td><td>searchbox</td><td>empty · or "1 result" after a query</td></tr>
-<tr><td class="n">row 1 control</td><td>Console feedback duration</td><td>combobox</td><td>value 6 seconds · collapsed · factory default, not changed</td></tr>
-<tr><td class="n">row 2 control</td><td>Reduced motion</td><td>combobox</td><td>value Off · collapsed · factory default, not changed</td></tr>
-<tr><td class="n">row 3 control</td><td>High contrast and non-color cues</td><td>combobox</td><td>value Off · collapsed · factory default, not changed</td></tr>
-<tr><td class="n">provenance line</td><td>—</td><td>description</td><td>referenced by its row's control, not separately focusable</td></tr>
-<tr><td class="n">unreadable banner</td><td>Preference file could not be read</td><td>status</td><td>polite live region · announced once on open</td></tr>
-<tr><td class="n">affected row state</td><td>—</td><td>description</td><td>appended: "running from factory default this session, your stored value is preserved unread"</td></tr>
-<tr><td class="n">explanation</td><td>Where this value comes from</td><td>group</td><td>each source announced with its value or "no value"</td></tr>
+<tr><td class="n">setting name</td><td>Console feedback duration, where this value comes from</td><td>button</td><td>expanded false · expanded true while the explanation is open</td></tr>
+<tr><td class="n">duration control</td><td>Console feedback duration</td><td>combobox</td><td>value 6 seconds · collapsed · factory default, not changed</td></tr>
+<tr><td class="n">reduced-motion control</td><td>Reduced motion</td><td>switch</td><td>checked false · factory default, not changed</td></tr>
+<tr><td class="n">high-contrast control</td><td>High contrast and non-color cues</td><td>switch</td><td>checked false · factory default, not changed</td></tr>
+<tr><td class="n">changed row control</td><td>as above</td><td>as above</td><td>value · <b>set by you, changed from the factory default</b></td></tr>
+<tr><td class="n">Reset</td><td>Reset Console feedback duration to 6 seconds</td><td>button</td><td>present only on a changed row</td></tr>
+<tr><td class="n">unreadable banner</td><td>Your preference file could not be read</td><td>alert</td><td><b>assertive · announced once on open</b>, not repeated</td></tr>
+<tr><td class="n">control while unreadable</td><td>as above</td><td>as above</td><td><b>disabled true</b> · "unavailable, your stored value is preserved unread"</td></tr>
+<tr><td class="n">explanation</td><td>Where this value comes from</td><td>dialog</td><td>each source announced with its value or "no value" · descriptor, scope and reason announced first</td></tr>
+<tr><td class="n">explanation Close</td><td>Close explanation</td><td>button</td><td>returns focus to the setting name</td></tr>
+<tr><td class="n">dialog Close</td><td>Close Global Preferences</td><td>button</td><td>returns focus to the invoking menu item, or the previously focused editor</td></tr>
 </table>
-<div class="cap">Every control announces name, role, value and provenance. The unreadable banner is a polite status region so it never interrupts a screen reader mid-utterance, and its consequence is repeated per row so a user tabbing straight to a control still hears it.</div>
+<div class="cap">The unreadable banner is an <b>assertive alert announced once</b> — the condition is consequential and a user must not act on stale assumptions — while each control separately reports <b>disabled</b> with its reason, so a user tabbing straight to a control still learns why it cannot be changed.</div>
 
 <div class="divider"></div>
 <div class="sec" style="color:var(--tx3)">FUTURE COMPARATIVE EVIDENCE — NOT PART OF GP-F05</div>
