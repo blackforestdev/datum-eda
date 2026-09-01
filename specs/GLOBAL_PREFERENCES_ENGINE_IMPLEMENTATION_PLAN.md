@@ -171,6 +171,8 @@ with warnings denied; source-health, rustfmt, dependency-authority, Cargo-resour
 evidence-traceability, spec-governance, spec-parity, and Frontier projection gates
 all pass. No persistence code, GUI/prototype file, Project mutation, Revision
 behavior, provider service or transport, or third-party dependency was added.
+The corrected foundation landed in `12ff4c4`; GP-F02 is therefore a fresh owner
+review boundary, not a continuation of the superseded initial review.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-REVISION -->
 
