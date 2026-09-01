@@ -312,16 +312,18 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
     ui.global_preferences.open = true;
     let first = ui.global_preferences.focus.clone();
     let mut visited = std::collections::BTreeSet::new();
-    for _ in 0..9 {
+    for _ in 0..8 {
         visited.insert(format!("{:?}", ui.global_preferences.focus));
         ui.global_preferences.advance_focus(false);
     }
     assert_eq!(ui.global_preferences.focus, first);
-    assert_eq!(visited.len(), 9);
+    assert_eq!(visited.len(), 8);
     ui.global_preferences.advance_focus(true);
     assert_eq!(
         ui.global_preferences.focus,
-        datum_gui_protocol::GlobalPreferencesFocus::DialogClose
+        datum_gui_protocol::GlobalPreferencesFocus::Control(
+            "datum.accessibility.high_contrast_noncolor".to_owned()
+        )
     );
 
     let key = "datum.console.feedback_duration".to_owned();
@@ -364,6 +366,19 @@ fn explanation_accessibility_is_complete_and_in_reading_order() {
             .iter()
             .any(|node| node.id == format!("{key}-explanation-close"))
     );
+}
+
+#[test]
+fn dialog_accessibility_states_that_changes_save_immediately() {
+    let mut ui = projected_default_ui("accessibility-immediate-save");
+    ui.global_preferences.open = true;
+    let dialog = ui
+        .global_preferences
+        .accessibility_nodes()
+        .into_iter()
+        .find(|node| node.id == "global-preferences")
+        .unwrap();
+    assert!(dialog.description.contains("Changes save immediately"));
 }
 
 fn projected_default_ui(name: &str) -> WorkspaceUiState {

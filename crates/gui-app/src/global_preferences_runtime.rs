@@ -427,12 +427,12 @@ impl Runtime {
             GlobalPreferencesFocus::Reset(key) if activate => self.reset_global_preference(&key),
             GlobalPreferencesFocus::ExplanationClose if activate => {
                 let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                ui.explanation_key = None;
-                ui.focus = GlobalPreferencesFocus::DialogClose;
+                if let Some(key) = ui.explanation_key.take() {
+                    ui.focus = GlobalPreferencesFocus::SettingName(key);
+                }
                 self.invalidate_frame();
                 true
             }
-            GlobalPreferencesFocus::DialogClose if activate => self.close_global_preferences(),
             _ => true,
         }
     }

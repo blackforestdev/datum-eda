@@ -103,12 +103,12 @@ impl Runtime {
             HitTarget::GlobalPreferencesReset(key) => self.reset_global_preference(key),
             HitTarget::GlobalPreferencesExplanationClose => {
                 let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                ui.explanation_key = None;
-                ui.focus = datum_gui_protocol::GlobalPreferencesFocus::DialogClose;
+                if let Some(key) = ui.explanation_key.take() {
+                    ui.focus = datum_gui_protocol::GlobalPreferencesFocus::SettingName(key);
+                }
                 self.invalidate_frame();
                 true
             }
-            HitTarget::GlobalPreferencesClose => self.close_global_preferences(),
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
             _ => return None,
         };

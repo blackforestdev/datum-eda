@@ -59,7 +59,7 @@ pub(super) fn render_global_preferences_dialog(
         text,
     );
     draw_text(
-        "Global · this device",
+        "Global · this device · Changes save immediately",
         card.x + pad,
         card.y + pad + 24.0,
         design_tokens::typography::CAPTION_SIZE,
@@ -67,25 +67,6 @@ pub(super) fn render_global_preferences_dialog(
         TextFace::Mono,
         text,
     );
-    let close = RectPx {
-        x: card.x + card.width - 78.0,
-        y: card.y + 12.0,
-        width: 62.0,
-        height: 30.0,
-    };
-    button(
-        "Close",
-        close,
-        focus_is(dialog, &GlobalPreferencesFocus::DialogClose),
-        true,
-        quads,
-        text,
-    );
-    hits.push(HitRegion {
-        target: HitTarget::GlobalPreferencesClose,
-        rect: close,
-    });
-
     let content_top = card.y + 68.0;
     let rail_width = if narrow { 0.0 } else { 184.0 };
     let rail = RectPx {

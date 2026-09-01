@@ -11,7 +11,6 @@ pub enum HitTarget {
     },
     GlobalPreferencesReset(String),
     GlobalPreferencesExplanationClose,
-    GlobalPreferencesClose,
     CloseRevisionSurface,
     ToggleRevisionIssuanceArm,
     OpenRevisionWitness(String),

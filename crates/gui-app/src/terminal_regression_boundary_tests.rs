@@ -109,7 +109,6 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::GlobalPreferencesChoice { .. }
         | HitTarget::GlobalPreferencesReset(_)
         | HitTarget::GlobalPreferencesExplanationClose
-        | HitTarget::GlobalPreferencesClose
         | HitTarget::MarkingMenuItem { .. }
         | HitTarget::DockResizeHandle
         | HitTarget::TerminalSplitDivider(_) => false,
@@ -211,7 +210,6 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
         },
         HitTarget::GlobalPreferencesReset(id()),
         HitTarget::GlobalPreferencesExplanationClose,
-        HitTarget::GlobalPreferencesClose,
         HitTarget::MarkingMenuItem {
             menu_key: id(),
             slot: id(),

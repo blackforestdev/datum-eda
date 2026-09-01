@@ -42,7 +42,6 @@ pub enum GlobalPreferencesFocus {
     Control(String),
     Reset(String),
     ExplanationClose,
-    DialogClose,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -132,7 +131,8 @@ impl GlobalPreferencesDialogState {
                 name: "Global Preferences".to_owned(),
                 role: GlobalPreferencesAccessibleRole::Dialog,
                 value: Some("Global · this device".to_owned()),
-                description: "Application preferences for this device.".to_owned(),
+                description: "Application preferences for this device. Changes save immediately."
+                    .to_owned(),
                 available: true,
                 focused: false,
             },
@@ -272,7 +272,6 @@ impl GlobalPreferencesDialogState {
         if self.explanation_key.is_some() {
             order.push(GlobalPreferencesFocus::ExplanationClose);
         }
-        order.push(GlobalPreferencesFocus::DialogClose);
         let current = order
             .iter()
             .position(|candidate| candidate == &self.focus)
@@ -288,8 +287,8 @@ impl GlobalPreferencesDialogState {
     pub fn dismiss_innermost(&mut self) -> GlobalPreferencesDismissal {
         if self.open_choice_key.take().is_some() {
             GlobalPreferencesDismissal::ChoiceClosed
-        } else if self.explanation_key.take().is_some() {
-            self.focus = GlobalPreferencesFocus::DialogClose;
+        } else if let Some(key) = self.explanation_key.take() {
+            self.focus = GlobalPreferencesFocus::SettingName(key);
             GlobalPreferencesDismissal::ExplanationClosed
         } else {
             self.open = false;
