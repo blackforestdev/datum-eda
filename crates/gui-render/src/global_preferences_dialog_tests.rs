@@ -110,7 +110,6 @@ fn main_workspace_never_draws_the_native_preferences_window_or_backdrop() {
             | HitTarget::GlobalPreferencesChoice { .. }
             | HitTarget::GlobalPreferencesReset(_)
             | HitTarget::GlobalPreferencesExplanationClose
-            | HitTarget::GlobalPreferencesClose
     )));
 }
 
@@ -138,6 +137,14 @@ fn dialog_renders_exact_three_canonical_controls_and_blocks_workspace_hits() {
         prepared.hit_test(2.0, 300.0),
         Some(&HitTarget::GlobalPreferencesModal)
     );
+    let labels: Vec<_> = prepared
+        .menu_overlay_text_runs
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect();
+    assert!(labels.contains(&"Global · this device · Changes save immediately"));
+    assert!(!labels.contains(&"Close"));
+    assert!(!labels.contains(&"Apply"));
 }
 
 #[test]
@@ -155,7 +162,6 @@ fn narrow_dialog_keeps_every_preference_hit_inside_the_window() {
                 | HitTarget::GlobalPreferencesChoice { .. }
                 | HitTarget::GlobalPreferencesReset(_)
                 | HitTarget::GlobalPreferencesExplanationClose
-                | HitTarget::GlobalPreferencesClose
         ) {
             assert!(region.rect.x >= 0.0 && region.rect.y >= 0.0);
             assert!(region.rect.x + region.rect.width <= 720.0);

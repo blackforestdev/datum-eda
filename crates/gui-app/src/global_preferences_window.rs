@@ -200,6 +200,12 @@ impl App {
                         .with_visible(false),
                 )?,
             );
+            owned_window_policy::establish_native_owner(
+                self.window
+                    .context("main window must exist before Preferences")?,
+                &window,
+            )
+            .context("establish native Preferences owner")?;
             window.set_ime_allowed(false);
             let surface = GlobalPreferencesWindowSurface::new(
                 self.runtime

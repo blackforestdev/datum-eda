@@ -2304,7 +2304,6 @@ impl Runtime {
             | HitTarget::GlobalPreferencesChoice { .. }
             | HitTarget::GlobalPreferencesReset(_)
             | HitTarget::GlobalPreferencesExplanationClose
-            | HitTarget::GlobalPreferencesClose
             | HitTarget::MarkingMenuItem { .. } => {
                 unreachable!("application overlay targets return above")
             }

@@ -364,9 +364,10 @@ Datum window while open, resizable from a content-fitting default size, and
 unique: repeated activation raises the existing instance rather than
 duplicating it. Opening performs no write. Successful row changes commit
 immediately; there is no generic Apply transaction and closing does not roll
-back committed values. Close, native title-bar close, and Escape return focus
-to the menu invoker (or the previously focused editor if the menu invoker no
-longer exists).
+back committed values. The interface states that changes save immediately and
+does not draw Apply, OK, Cancel, or an in-content dialog Close action. Native
+title-bar close and Escape return focus to the menu invoker (or the previously
+focused editor if the menu invoker no longer exists).
 
 This is the first consumer of Datum's shared application-owned settings-window
 policy, not a Global Preferences exception. Global Preferences, future Project
@@ -374,8 +375,10 @@ Preferences, and every later input-modal settings window use the same class:
 activating an owning Datum window raises and focuses its existing owned window;
 the owner cannot remain stacked above it; switching to an unrelated application
 does not raise it; and the owned window is never globally always-on-top. Backends
-without portable native transient-parent metadata enforce the same observable
-contract through Datum's application focus authority.
+that expose native transient-parent metadata must use that compositor/window-
+manager relationship; focus or attention requests alone are not acceptance
+proof. A backend without native metadata may use application focus authority
+only if direct platform proof demonstrates the same stacking contract.
 
 At ordinary width the dialog follows the ratified two-column grammar: section
 navigation on the left and pinned content-column search over the rows on the
@@ -429,10 +432,10 @@ directly.
 The dialog exposes a programmatic dialog name and explicit Global scope. Tab
 and Shift+Tab traverse, in visual order, section navigation, pinned search,
 each setting-name explanation action, each real control, row Reset when
-available, explanation Close, and dialog Close, with exactly one visible focus
-indicator and no trap. Enter/Space operate actions and switches; enum choices
-support arrows plus Home/End; Escape closes the innermost open choice or
-explanation before it closes the dialog.
+available, and explanation Close, with exactly one visible focus indicator and
+no trap. Enter/Space operate actions and switches; enum choices support arrows
+plus Home/End; Escape closes the innermost open choice or explanation before it
+closes the window.
 
 Every control exposes programmatic name, role, current value, availability,
 scope, and concise provenance. Explanation content exposes the resolver's
@@ -519,6 +522,19 @@ here is also the default for future Project Preferences and comparable Datum
 settings windows.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-OWNED-WINDOW-STACKING -->
+
+A fresh Wayland/KWin owner QA run disproved the focus-request correction: the
+main Datum window still covered Preferences. GP-F05 therefore requires the
+native `xdg_toplevel` parent relationship on Wayland and direct compositor proof
+that the child remains above its owner while unrelated applications remain
+unaffected. The same owner review found that the in-content Close action became
+redundant once Preferences gained a native title bar. Datum removes that action,
+keeps immediate durable saving, adds a visible and programmatic “Changes save
+immediately” statement, and does not add Apply, OK, or Cancel. This immediate-
+save posture is the default for future Datum Preferences windows unless a later
+owner decision deliberately introduces staged transactions.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-WAYLAND-NATIVE-OWNER-AND-IMMEDIATE-SAVE -->
 
 ## 5. Shared Units surface parity through real Preferences
 
