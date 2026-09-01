@@ -44,6 +44,7 @@ mod global_preferences_window;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
+mod owned_window_policy;
 mod pan_gesture;
 mod pane_cameras;
 mod pane_grid_lod;
@@ -377,6 +378,12 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Focused(focused) => {
+                if owned_window_policy::redirect_owner_activation(
+                    focused,
+                    self.global_preferences_window.as_ref(),
+                ) {
+                    return;
+                }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.window_focused = focused;
                     let terminal_split_finished =

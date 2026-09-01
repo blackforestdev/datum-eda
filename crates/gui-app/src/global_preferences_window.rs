@@ -5,8 +5,6 @@
 //! projection. The Design workspace never becomes a backdrop for Preferences.
 
 use super::*;
-use winit::window::UserAttentionType;
-
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
@@ -212,9 +210,7 @@ impl App {
             )?;
             self.global_preferences_surface = Some(surface);
             self.global_preferences_window = Some(window.clone());
-            window.set_visible(true);
-            window.focus_window();
-            window.request_redraw();
+            owned_window_policy::show_owned_window(&window);
         }
 
         let raise = self
@@ -222,10 +218,7 @@ impl App {
             .as_mut()
             .is_some_and(Runtime::take_global_preferences_raise_request);
         if raise && let Some(window) = &self.global_preferences_window {
-            window.set_visible(true);
-            window.focus_window();
-            window.request_user_attention(Some(UserAttentionType::Informational));
-            window.request_redraw();
+            owned_window_policy::raise_owned_window(window);
         }
         Ok(())
     }

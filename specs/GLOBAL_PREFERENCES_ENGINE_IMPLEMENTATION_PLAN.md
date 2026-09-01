@@ -368,6 +368,15 @@ back committed values. Close, native title-bar close, and Escape return focus
 to the menu invoker (or the previously focused editor if the menu invoker no
 longer exists).
 
+This is the first consumer of Datum's shared application-owned settings-window
+policy, not a Global Preferences exception. Global Preferences, future Project
+Preferences, and every later input-modal settings window use the same class:
+activating an owning Datum window raises and focuses its existing owned window;
+the owner cannot remain stacked above it; switching to an unrelated application
+does not raise it; and the owned window is never globally always-on-top. Backends
+without portable native transient-parent metadata enforce the same observable
+contract through Datum's application focus authority.
+
 At ordinary width the dialog follows the ratified two-column grammar: section
 navigation on the left and pinned content-column search over the rows on the
 right. At narrow width the section list becomes a labeled chooser, search stays
@@ -501,6 +510,15 @@ repository/resolver lifecycle, accessibility, recovery, and zero-Project-
 mutation boundaries; it changes only native window hosting and its proof.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-NATIVE-WINDOW-CORRECTION -->
+
+Owner QA then found that the main Datum window could be raised above the
+input-modal Preferences window. The correction is incomplete until owner
+activation redirects to the existing Preferences instance without imposing a
+global always-on-top level. The reusable owned-settings-window policy established
+here is also the default for future Project Preferences and comparable Datum
+settings windows.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-OWNED-WINDOW-STACKING -->
 
 ## 5. Shared Units surface parity through real Preferences
 
