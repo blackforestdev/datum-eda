@@ -70,6 +70,10 @@ pub(super) struct GuiArgs {
     /// `File`, `View`); an unknown name simply renders no open dropdown.
     #[arg(long = "open-menu")]
     pub(super) open_menu: Option<String>,
+    /// Capture/test affordance for the real Global Preferences dialog. The
+    /// dialog still projects the production service; this only seeds it open.
+    #[arg(long = "open-global-preferences", default_value_t = false)]
+    pub(super) open_global_preferences: bool,
     /// Capture/test affordance: focus the first leaf showing the named content
     /// (`board` | `schematic`) at boot, so the "view one pane while another is
     /// focused" states can be screenshotted for owner validation. Applied in both
@@ -117,6 +121,7 @@ pub(super) struct LaunchState {
     pub(super) terminal_profiles: crate::terminal_profile::TerminalProfileCatalog,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) workspace_include_review: bool,
+    pub(super) open_global_preferences: bool,
 }
 impl GuiArgs {
     pub(super) fn visual_window_size(&self) -> Result<(u32, u32)> {
@@ -406,6 +411,7 @@ impl GuiArgs {
             terminal_profiles,
             terminal_sessions,
             workspace_include_review,
+            open_global_preferences: self.open_global_preferences,
         })
     }
 }
@@ -471,6 +477,14 @@ mod initial_layout_tests {
             "View".to_string(),
         ]);
         assert_eq!(args.open_menu.as_deref(), Some("View"));
+    }
+
+    #[test]
+    fn global_preferences_capture_flag_is_explicit() {
+        let absent = GuiArgs::parse_from(["datum-gui"]);
+        assert!(!absent.open_global_preferences);
+        let present = GuiArgs::parse_from(["datum-gui", "--open-global-preferences"]);
+        assert!(present.open_global_preferences);
     }
 
     #[test]

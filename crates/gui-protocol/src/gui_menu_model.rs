@@ -18,6 +18,8 @@ pub struct GuiMenu {
     pub active_editor: Option<String>,
     #[serde(default)]
     pub items: Vec<GuiMenuItem>,
+    #[serde(default)]
+    pub submenus: BTreeMap<String, Vec<GuiMenuItem>>,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -55,7 +57,10 @@ impl GuiMenuItem {
     }
 
     pub fn is_phase_one_enabled(&self) -> bool {
-        matches!(self.binding(), GuiMenuBinding::GuiLocal(_))
+        matches!(
+            self.binding(),
+            GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_)
+        )
     }
 }
 
@@ -147,6 +152,32 @@ mod tests {
     }
 
     #[test]
+    fn edit_preferences_is_a_real_nested_global_doorway() {
+        let model = load_default_gui_menu_model().expect("menu model should parse");
+        let edit = model
+            .menubar
+            .iter()
+            .find(|menu| menu.menu == "Edit")
+            .unwrap();
+        let parent = edit
+            .items
+            .iter()
+            .find(|item| item.label == "Preferences")
+            .unwrap();
+        assert_eq!(
+            parent.binding(),
+            GuiMenuBinding::Submenu("edit.preferences")
+        );
+        let children = &edit.submenus["edit.preferences"];
+        assert_eq!(children.len(), 1);
+        assert_eq!(children[0].label, "Global Preferences…");
+        assert_eq!(
+            children[0].gui_local.as_deref(),
+            Some("preferences.global.open")
+        );
+    }
+
+    #[test]
     fn every_menu_entry_has_declared_fallback_icon() {
         let menu = load_default_gui_menu_model().expect("menu model should parse");
         let icons = load_default_gui_icon_set().expect("icon set should parse");
@@ -199,10 +230,6 @@ mod tests {
             "view.preset_single",
             "view.preset_board_schematic",
             "view.console_history",
-            "view.console_duration.4s",
-            "view.console_duration.6s",
-            "view.console_duration.10s",
-            "view.console_duration.never",
         ] {
             let item = by_action
                 .get(action)

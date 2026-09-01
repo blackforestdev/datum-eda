@@ -3,6 +3,7 @@
 use std::env;
 
 use crate::terminal_accessibility::{TerminalAccessibilityBounds, TerminalAccessibilitySnapshot};
+use datum_gui_protocol::{GlobalPreferencesAccessibleNode, GlobalPreferencesAccessibleRole};
 
 use super::body::BodyWriter;
 use super::connection::object_reference_body;
@@ -10,13 +11,16 @@ use super::dbus::{Message, MessageType};
 
 mod dispatch_error;
 mod introspection;
+mod properties;
 mod text_ranges;
 use dispatch_error::{error, invalid_args, unknown_object};
 use introspection::introspection_body;
+use properties::{properties_body, property_value, variant_body};
 use text_ranges::{char_range, text_at_offset};
 
 pub(super) const ROOT_PATH: &str = "/org/a11y/atspi/accessible/root";
 pub(super) const TERMINAL_PATH: &str = "/org/a11y/atspi/accessible/terminal";
+pub(super) const PREFERENCES_PATH: &str = "/org/a11y/atspi/accessible/preferences";
 pub(super) const NULL_PATH: &str = "/org/a11y/atspi/null";
 pub(super) const REGISTRY_NAME: &str = "org.a11y.atspi.Registry";
 pub(super) const REGISTRY_PATH: &str = "/org/a11y/atspi/accessible/root";
@@ -33,6 +37,13 @@ const INTROSPECTABLE: &str = "org.freedesktop.DBus.Introspectable";
 const ROLE_TERMINAL: u32 = 60;
 const ROLE_APPLICATION: u32 = 75;
 const ROLE_LINK: u32 = 88;
+const ROLE_DIALOG: u32 = 16;
+const ROLE_COMBO_BOX: u32 = 11;
+const ROLE_PANEL: u32 = 38;
+const ROLE_PUSH_BUTTON: u32 = 43;
+const ROLE_STATUS_BAR: u32 = 53;
+const ROLE_TOGGLE_BUTTON: u32 = 62;
+const ROLE_TEXT: u32 = 79;
 const STATE_EDITABLE: u32 = 7;
 const STATE_ENABLED: u32 = 8;
 const STATE_FOCUSABLE: u32 = 11;
@@ -50,16 +61,22 @@ pub(super) struct ServiceState {
     pub(super) registry_parent: (String, String),
     pub(super) bus_name: String,
     pub(super) terminal_available: bool,
+    pub(super) preferences: Vec<GlobalPreferencesAccessibleNode>,
 }
 
 impl ServiceState {
-    pub(super) fn new(snapshot: TerminalAccessibilitySnapshot, terminal_available: bool) -> Self {
+    pub(super) fn new(
+        snapshot: TerminalAccessibilitySnapshot,
+        terminal_available: bool,
+        preferences: Vec<GlobalPreferencesAccessibleNode>,
+    ) -> Self {
         Self {
             snapshot,
             application_id: 0,
             registry_parent: (String::new(), NULL_PATH.into()),
             bus_name: String::new(),
             terminal_available,
+            preferences,
         }
     }
 
@@ -140,34 +157,54 @@ impl ServiceState {
     fn accessible(&self, path: &str, member: &str, call: &Message) -> DispatchResult {
         let terminal = path == TERMINAL_PATH && self.terminal_available;
         let link = link_index(path).and_then(|index| self.snapshot.links.get(index));
-        if !terminal && path != ROOT_PATH && link.is_none() {
+        let preference = preference_index(path).and_then(|index| self.preferences.get(index));
+        if !terminal && path != ROOT_PATH && link.is_none() && preference.is_none() {
             return Err(unknown_object());
         }
         match member {
             "GetChildAtIndex" if path == ROOT_PATH => {
-                if !self.terminal_available {
-                    return Err((
-                        "org.freedesktop.DBus.Error.InvalidArgs",
-                        "child index out of range",
-                    ));
-                }
                 let mut reader = call.body_reader();
-                if reader.i32().map_err(|_| invalid_args())? != 0 {
-                    return Err((
-                        "org.freedesktop.DBus.Error.InvalidArgs",
-                        "child index out of range",
-                    ));
-                }
-                Ok(("(so)", object_reference_body(&self.bus_name, TERMINAL_PATH)))
+                let index = usize::try_from(reader.i32().map_err(|_| invalid_args())?)
+                    .map_err(|_| invalid_args())?;
+                let paths = self.root_child_paths();
+                let path = paths.get(index).ok_or_else(invalid_args)?;
+                Ok(("(so)", object_reference_body(&self.bus_name, path)))
             }
-            "GetChildren" => Ok((
-                "a(so)",
-                object_array_body(
-                    (path == ROOT_PATH && self.terminal_available)
-                        .then_some((self.bus_name.as_str(), TERMINAL_PATH)),
-                ),
+            "GetChildAtIndex" if preference_index(path) == Some(0) => {
+                let mut reader = call.body_reader();
+                let index = usize::try_from(reader.i32().map_err(|_| invalid_args())?)
+                    .map_err(|_| invalid_args())?;
+                if index + 1 >= self.preferences.len() {
+                    return Err(invalid_args());
+                }
+                Ok((
+                    "(so)",
+                    object_reference_body(&self.bus_name, &preference_path(index + 1)),
+                ))
+            }
+            "GetChildren" if path == ROOT_PATH => {
+                let paths = self.root_child_paths();
+                Ok(("a(so)", object_array_body(&self.bus_name, &paths)))
+            }
+            "GetChildren" if preference_index(path) == Some(0) => {
+                let paths: Vec<_> = (1..self.preferences.len()).map(preference_path).collect();
+                Ok(("a(so)", object_array_body(&self.bus_name, &paths)))
+            }
+            "GetChildren" => Ok(("a(so)", object_array_body(&self.bus_name, &[]))),
+            "GetIndexInParent" => Ok((
+                "i",
+                i32_body(if terminal {
+                    0
+                } else if let Some(index) = preference_index(path) {
+                    if index == 0 {
+                        i32::from(self.terminal_available)
+                    } else {
+                        clamp_i32(index - 1)
+                    }
+                } else {
+                    -1
+                }),
             )),
-            "GetIndexInParent" => Ok(("i", i32_body(if terminal { 0 } else { -1 }))),
             "GetRelationSet" => Ok(("a(ua(so))", empty_array_body(8))),
             "GetRole" => Ok((
                 "u",
@@ -175,6 +212,8 @@ impl ServiceState {
                     ROLE_TERMINAL
                 } else if link.is_some() {
                     ROLE_LINK
+                } else if let Some(node) = preference {
+                    preference_role(node.role)
                 } else {
                     ROLE_APPLICATION
                 }),
@@ -185,15 +224,25 @@ impl ServiceState {
                     "terminal"
                 } else if link.is_some() {
                     "link"
+                } else if let Some(node) = preference {
+                    preference_role_name(node.role)
                 } else {
                     "application"
                 }),
             )),
             "GetState" => Ok((
                 "au",
-                state_body(terminal, terminal && self.snapshot.focused),
+                state_body(
+                    terminal,
+                    terminal && self.snapshot.focused,
+                    preference.map(|node| (node.available, node.focused)),
+                ),
             )),
             "GetApplication" => Ok(("(so)", object_reference_body(&self.bus_name, ROOT_PATH))),
+            "GetAttributes" if preference.is_some() => {
+                let node = preference.expect("guarded above");
+                Ok(("a{ss}", preference_attributes_body(node)))
+            }
             "GetAttributes" => Ok(("a{ss}", empty_array_body(8))),
             "GetInterfaces" => Ok((
                 "as",
@@ -201,6 +250,8 @@ impl ServiceState {
                     &[ACCESSIBLE, COMPONENT, TEXT, HYPERTEXT]
                 } else if link.is_some() {
                     &[ACCESSIBLE, HYPERLINK]
+                } else if preference.is_some() {
+                    &[ACCESSIBLE]
                 } else {
                     &[ACCESSIBLE, APPLICATION]
                 }),
@@ -210,6 +261,17 @@ impl ServiceState {
                 "unsupported accessible method",
             )),
         }
+    }
+
+    fn root_child_paths(&self) -> Vec<String> {
+        let mut paths = Vec::new();
+        if self.terminal_available {
+            paths.push(TERMINAL_PATH.to_owned());
+        }
+        if !self.preferences.is_empty() {
+            paths.push(preference_path(0));
+        }
+        paths
     }
 
     fn application(&self, path: &str, member: &str, _call: &Message) -> DispatchResult {
@@ -397,159 +459,7 @@ impl ServiceState {
 
 type DispatchResult = Result<(&'static str, Vec<u8>), (&'static str, &'static str)>;
 
-fn property_value(
-    state: &ServiceState,
-    path: &str,
-    interface: &str,
-    property: &str,
-) -> DispatchResult {
-    let terminal = path == TERMINAL_PATH;
-    match (path, interface, property) {
-        (ROOT_PATH, APPLICATION, "ToolkitName") => Ok(("s", string_body("Datum EDA"))),
-        (ROOT_PATH, APPLICATION, "Version" | "ToolkitVersion") => {
-            Ok(("s", string_body(env!("CARGO_PKG_VERSION"))))
-        }
-        (ROOT_PATH, APPLICATION, "AtspiVersion") => Ok(("s", string_body("2.1"))),
-        (ROOT_PATH, APPLICATION, "InterfaceVersion") => Ok(("u", u32_body(1))),
-        (ROOT_PATH, APPLICATION, "Id") => Ok(("i", i32_body(state.application_id))),
-        (_, ACCESSIBLE, "Name") if terminal || path == ROOT_PATH => Ok((
-            "s",
-            string_body(if terminal {
-                &state.snapshot.title
-            } else {
-                "Datum EDA"
-            }),
-        )),
-        (_, ACCESSIBLE, "Description") if terminal || path == ROOT_PATH => Ok((
-            "s",
-            string_body(if terminal {
-                "Native terminal session"
-            } else {
-                "Datum EDA application"
-            }),
-        )),
-        (ROOT_PATH, ACCESSIBLE, "Parent") => Ok((
-            "(so)",
-            object_reference_body(&state.registry_parent.0, &state.registry_parent.1),
-        )),
-        (TERMINAL_PATH, ACCESSIBLE, "Parent") => {
-            Ok(("(so)", object_reference_body(&state.bus_name, ROOT_PATH)))
-        }
-        (ROOT_PATH, ACCESSIBLE, "ChildCount") => Ok(("i", i32_body(1))),
-        (TERMINAL_PATH, ACCESSIBLE, "ChildCount") => Ok(("i", i32_body(0))),
-        (_, ACCESSIBLE, "Locale") if terminal || path == ROOT_PATH => {
-            Ok(("s", string_body(&locale())))
-        }
-        (ROOT_PATH, ACCESSIBLE, "AccessibleId") => Ok(("s", string_body("datum-eda"))),
-        (TERMINAL_PATH, ACCESSIBLE, "AccessibleId") => {
-            Ok(("s", string_body(&state.snapshot.session_id)))
-        }
-        (_, ACCESSIBLE, "Name") if link_index(path).is_some() => {
-            let index = link_index(path).ok_or_else(unknown_object)?;
-            let link = state.snapshot.links.get(index).ok_or_else(unknown_object)?;
-            Ok(("s", string_body(&link.uri)))
-        }
-        (_, ACCESSIBLE, "Description" | "HelpText") if link_index(path).is_some() => {
-            Ok(("s", string_body("Terminal hyperlink")))
-        }
-        (_, ACCESSIBLE, "Parent") if link_index(path).is_some() => Ok((
-            "(so)",
-            object_reference_body(&state.bus_name, TERMINAL_PATH),
-        )),
-        (_, ACCESSIBLE, "ChildCount") if link_index(path).is_some() => Ok(("i", i32_body(0))),
-        (_, ACCESSIBLE, "Locale") if link_index(path).is_some() => {
-            Ok(("s", string_body(&locale())))
-        }
-        (_, ACCESSIBLE, "AccessibleId") if link_index(path).is_some() => {
-            Ok(("s", string_body(path)))
-        }
-        (_, ACCESSIBLE, "HelpText") if terminal || path == ROOT_PATH => Ok(("s", string_body(""))),
-        (TERMINAL_PATH, TEXT, "CharacterCount") => Ok((
-            "i",
-            i32_body(clamp_i32(state.snapshot.text.chars().count())),
-        )),
-        (TERMINAL_PATH, TEXT, "CaretOffset") => {
-            Ok(("i", i32_body(clamp_i32(state.snapshot.caret))))
-        }
-        (_, HYPERLINK, "NAnchors") if link_index(path).is_some() => Ok(("n", i16_body(1))),
-        (_, HYPERLINK, "StartIndex") if link_index(path).is_some() => {
-            let link = &state.snapshot.links[link_index(path).ok_or_else(unknown_object)?];
-            Ok(("i", i32_body(clamp_i32(link.start))))
-        }
-        (_, HYPERLINK, "EndIndex") if link_index(path).is_some() => {
-            let link = &state.snapshot.links[link_index(path).ok_or_else(unknown_object)?];
-            Ok(("i", i32_body(clamp_i32(link.end))))
-        }
-        (_, ACCESSIBLE | COMPONENT | TEXT | HYPERTEXT | HYPERLINK, "version") => {
-            Ok(("u", u32_body(1)))
-        }
-        _ => Err((
-            "org.freedesktop.DBus.Error.UnknownProperty",
-            "unsupported property",
-        )),
-    }
-}
-
-fn properties_body(
-    state: &ServiceState,
-    path: &str,
-    interface: &str,
-) -> Result<Vec<u8>, (&'static str, &'static str)> {
-    let names: &[&str] = match (path, interface) {
-        (ROOT_PATH, APPLICATION) => &[
-            "ToolkitName",
-            "Version",
-            "ToolkitVersion",
-            "AtspiVersion",
-            "InterfaceVersion",
-            "Id",
-        ],
-        (ROOT_PATH | TERMINAL_PATH, ACCESSIBLE) => &[
-            "Name",
-            "Description",
-            "Parent",
-            "ChildCount",
-            "Locale",
-            "AccessibleId",
-            "HelpText",
-        ],
-        (TERMINAL_PATH, TEXT) => &["CharacterCount", "CaretOffset"],
-        _ => {
-            return Err((
-                "org.freedesktop.DBus.Error.UnknownInterface",
-                "unsupported interface",
-            ));
-        }
-    };
-    let mut body = BodyWriter::new();
-    body.array(8, |body| {
-        for name in names {
-            if let Ok((signature, value)) = property_value(state, path, interface, name) {
-                body.structure(|body| {
-                    body.string(name);
-                    body.variant(signature, |body| append_encoded(body, &value));
-                });
-            }
-        }
-    });
-    Ok(body.finish())
-}
-
-fn append_encoded(writer: &mut BodyWriter, encoded: &[u8]) {
-    // Values passed here already begin at their natural alignment. The
-    // variant writer has aligned its destination to that same boundary.
-    for byte in encoded {
-        writer.byte(*byte);
-    }
-}
-
-fn variant_body(signature: &str, value: Vec<u8>) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.variant(signature, |body| append_encoded(body, &value));
-    body.finish()
-}
-
-fn state_body(terminal: bool, focused: bool) -> Vec<u8> {
+fn state_body(terminal: bool, focused: bool, preference: Option<(bool, bool)>) -> Vec<u8> {
     let mut words = [0_u32; 2];
     let states = if terminal {
         &[
@@ -562,12 +472,18 @@ fn state_body(terminal: bool, focused: bool) -> Vec<u8> {
             STATE_VISIBLE,
             STATE_SELECTABLE_TEXT,
         ][..]
+    } else if preference.is_some() {
+        &[STATE_FOCUSABLE, STATE_SHOWING, STATE_VISIBLE][..]
     } else {
         &[STATE_ENABLED, STATE_SENSITIVE, STATE_SHOWING, STATE_VISIBLE][..]
     };
+    let available = preference.map(|(available, _)| available).unwrap_or(true);
+    let focused = focused || preference.map(|(_, focused)| focused).unwrap_or(false);
     for state in states
         .iter()
         .copied()
+        .chain(available.then_some(STATE_ENABLED))
+        .chain(available.then_some(STATE_SENSITIVE))
         .chain(focused.then_some(STATE_FOCUSED))
     {
         words[(state / 32) as usize] |= 1 << (state % 32);
@@ -602,17 +518,64 @@ fn link_index(path: &str) -> Option<usize> {
         .parse()
         .ok()
 }
+fn preference_path(index: usize) -> String {
+    format!("{PREFERENCES_PATH}/{index}")
+}
+fn preference_index(path: &str) -> Option<usize> {
+    path.strip_prefix(&format!("{PREFERENCES_PATH}/"))?
+        .parse()
+        .ok()
+}
+fn preference_role(role: GlobalPreferencesAccessibleRole) -> u32 {
+    match role {
+        GlobalPreferencesAccessibleRole::Dialog => ROLE_DIALOG,
+        GlobalPreferencesAccessibleRole::Navigation => ROLE_PANEL,
+        GlobalPreferencesAccessibleRole::SearchBox => ROLE_TEXT,
+        GlobalPreferencesAccessibleRole::Button => ROLE_PUSH_BUTTON,
+        GlobalPreferencesAccessibleRole::Switch => ROLE_TOGGLE_BUTTON,
+        GlobalPreferencesAccessibleRole::ComboBox => ROLE_COMBO_BOX,
+        GlobalPreferencesAccessibleRole::Status => ROLE_STATUS_BAR,
+    }
+}
+fn preference_role_name(role: GlobalPreferencesAccessibleRole) -> &'static str {
+    match role {
+        GlobalPreferencesAccessibleRole::Dialog => "dialog",
+        GlobalPreferencesAccessibleRole::Navigation => "panel",
+        GlobalPreferencesAccessibleRole::SearchBox => "text",
+        GlobalPreferencesAccessibleRole::Button => "push button",
+        GlobalPreferencesAccessibleRole::Switch => "toggle button",
+        GlobalPreferencesAccessibleRole::ComboBox => "combo box",
+        GlobalPreferencesAccessibleRole::Status => "status bar",
+    }
+}
 fn clamp_i32(value: usize) -> i32 {
     i32::try_from(value).unwrap_or(i32::MAX)
 }
 
-fn object_array_body(reference: Option<(&str, &str)>) -> Vec<u8> {
+fn object_array_body(bus_name: &str, paths: &[String]) -> Vec<u8> {
     let mut body = BodyWriter::new();
     body.array(8, |body| {
-        if let Some((name, path)) = reference {
+        for path in paths {
             body.structure(|body| {
-                body.string(name);
+                body.string(bus_name);
                 body.object_path(path);
+            });
+        }
+    });
+    body.finish()
+}
+
+fn preference_attributes_body(node: &GlobalPreferencesAccessibleNode) -> Vec<u8> {
+    let mut body = BodyWriter::new();
+    body.array(8, |body| {
+        for (key, value) in [
+            ("value", node.value.as_deref().unwrap_or("")),
+            ("available", if node.available { "true" } else { "false" }),
+            ("description", node.description.as_str()),
+        ] {
+            body.structure(|body| {
+                body.string(key);
+                body.string(value);
             });
         }
     });

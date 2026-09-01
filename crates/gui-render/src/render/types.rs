@@ -1,5 +1,17 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    GlobalPreferencesModal,
+    GlobalPreferencesSection,
+    GlobalPreferencesSearch,
+    GlobalPreferencesSettingName(String),
+    GlobalPreferencesControl(String),
+    GlobalPreferencesChoice {
+        key: String,
+        value: String,
+    },
+    GlobalPreferencesReset(String),
+    GlobalPreferencesExplanationClose,
+    GlobalPreferencesClose,
     CloseRevisionSurface,
     ToggleRevisionIssuanceArm,
     OpenRevisionWitness(String),

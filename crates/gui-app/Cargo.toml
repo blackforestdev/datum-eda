@@ -11,6 +11,7 @@ name = "datum-gui"
 path = "src/main.rs"
 
 [dependencies]
+eda-engine = { path = "../engine" }
 datum-gui-protocol = { path = "../gui-protocol" }
 datum-gui-render = { path = "../gui-render" }
 datum-gui-viewport = { path = "../gui-viewport" }
@@ -27,5 +28,4 @@ winit.workspace = true
 wgpu.workspace = true
 
 [dev-dependencies]
-eda-engine = { path = "../engine" }
 uuid.workspace = true

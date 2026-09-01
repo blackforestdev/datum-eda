@@ -95,8 +95,13 @@ pub(super) fn render_menu_bar(
         // not from a fixed far-left offset. Falls back to the menu-bar left edge
         // only if the active title somehow was not laid out this frame.
         let menu_x = active_menu_x.unwrap_or(layout.top_menu_bar.x);
-        render_menu_dropdown(
+        let parent_rect = render_menu_dropdown(
             menu,
+            state
+                .ui
+                .active_submenu
+                .is_none()
+                .then_some(state.ui.menu_focus_index),
             icon_set,
             layout,
             menu_x,
@@ -104,11 +109,34 @@ pub(super) fn render_menu_bar(
             menu_overlay_text_runs,
             hit_regions,
         );
+        if let Some(submenu_id) = state.ui.active_submenu.as_deref()
+            && let Some(items) = menu.submenus.get(submenu_id)
+            && let Some(parent_index) = menu
+                .items
+                .iter()
+                .position(|item| item.submenu.as_deref() == Some(submenu_id))
+        {
+            let item_height = design_tokens::spacing::SP_07;
+            render_menu_items(
+                submenu_id,
+                items,
+                Some(state.ui.menu_focus_index),
+                icon_set,
+                layout,
+                parent_rect.x + parent_rect.width - design_tokens::spacing::SP_01,
+                parent_rect.y + design_tokens::spacing::SP_02 + parent_index as f32 * item_height,
+                menu_overlay_quads,
+                menu_overlay_text_runs,
+                hit_regions,
+            );
+        }
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn render_menu_dropdown(
     menu: &datum_gui_protocol::GuiMenu,
+    focused_index: Option<usize>,
     icon_set: Option<&GuiIconSet>,
     layout: &ShellLayout,
     menu_x: f32,
@@ -122,7 +150,34 @@ fn render_menu_dropdown(
     // is NOT here (titles live in the bar and are never occluded).
     menu_overlay_text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) {
+) -> RectPx {
+    render_menu_items(
+        &menu.menu,
+        &menu.items,
+        focused_index,
+        icon_set,
+        layout,
+        menu_x,
+        layout.top_menu_bar.y + layout.top_menu_bar.height,
+        menu_overlay_quads,
+        menu_overlay_text_runs,
+        hit_regions,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn render_menu_items(
+    menu_name: &str,
+    items: &[GuiMenuItem],
+    focused_index: Option<usize>,
+    icon_set: Option<&GuiIconSet>,
+    layout: &ShellLayout,
+    menu_x: f32,
+    menu_y: f32,
+    menu_overlay_quads: &mut Vec<Quad>,
+    menu_overlay_text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) -> RectPx {
     let item_height = design_tokens::spacing::SP_07;
     // Content-driven card width: the widest item's [icon indent + shaped label +
     // gap + shaped shortcut + right pad] sets the width, so labels and shortcuts
@@ -134,8 +189,7 @@ fn render_menu_dropdown(
     const RIGHT_PAD: f32 = design_tokens::spacing::SP_04;
     const LABEL_SHORTCUT_GAP: f32 = design_tokens::spacing::SP_06;
     const MIN_WIDTH: f32 = 200.0;
-    let content_width = menu
-        .items
+    let content_width = items
         .iter()
         .map(|item| {
             let label_w = measured_text_run_width_px(
@@ -161,20 +215,20 @@ fn render_menu_dropdown(
     let width = (content_width + design_tokens::spacing::SP_02 * 2.0)
         .max(MIN_WIDTH)
         .min(max_card_width);
-    let height = item_height * menu.items.len() as f32 + design_tokens::spacing::SP_02 * 2.0;
+    let height = item_height * items.len() as f32 + design_tokens::spacing::SP_02 * 2.0;
     // Clamp so the dropdown stays inside the window right edge under its title.
     let max_x =
         (layout.top_menu_bar.x + layout.top_menu_bar.width - width).max(layout.top_menu_bar.x);
     let rect = RectPx {
         x: menu_x.min(max_x),
-        y: layout.top_menu_bar.y + layout.top_menu_bar.height,
+        y: menu_y,
         width,
         height,
     };
     menu_overlay_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
     push_rect_border(menu_overlay_quads, rect, PANEL_CARD_BORDER, 1.0);
 
-    for (index, item) in menu.items.iter().enumerate() {
+    for (index, item) in items.iter().enumerate() {
         let row = RectPx {
             x: rect.x + design_tokens::spacing::SP_02,
             y: rect.y + design_tokens::spacing::SP_02 + index as f32 * item_height,
@@ -182,8 +236,17 @@ fn render_menu_dropdown(
             height: item_height,
         };
         let enabled = item.is_phase_one_enabled();
-        let row_color = if enabled { PANEL_CARD_BG } else { PANEL_BG };
+        let row_color = if focused_index == Some(index) {
+            REVIEW_ROW_ACTIVE_BG
+        } else if enabled {
+            PANEL_CARD_BG
+        } else {
+            PANEL_BG
+        };
         menu_overlay_quads.push(Quad::from_rect(row, row_color));
+        if focused_index == Some(index) {
+            push_rect_border(menu_overlay_quads, row, TEXT_ACCENT, 1.0);
+        }
         render_fallback_icon(item, icon_set, row, menu_overlay_text_runs);
         draw_text(
             &item.label,
@@ -211,15 +274,26 @@ fn render_menu_dropdown(
                 TextFace::Mono,
                 menu_overlay_text_runs,
             );
+        } else if item.submenu.is_some() {
+            draw_text(
+                ">",
+                row.x + row.width - RIGHT_PAD - 8.0,
+                row.y + design_tokens::spacing::SP_03,
+                design_tokens::typography::CAPTION_SIZE,
+                if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
+                TextFace::Mono,
+                menu_overlay_text_runs,
+            );
         }
         hit_regions.push(HitRegion {
             target: HitTarget::MenuItem {
-                menu: menu.menu.clone(),
+                menu: menu_name.to_owned(),
                 label: item.label.clone(),
             },
             rect: row,
         });
     }
+    rect
 }
 
 fn render_fallback_icon(

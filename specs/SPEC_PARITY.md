@@ -34,4 +34,4 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `8d10f280ffc6abcaf7990ce3120a4253a2ea54b474b0a0d56428b2e30bdd2dfa` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 94 | `8053e92adfa9c98f09fad9a5b82eb281dd0b11a37352d97a778c14c1c2278a15` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 94 | `ae44a7481fdd7c152c7ef09bbe4271ea15532132d67e375b217fb2cb9ddcf5ac` |

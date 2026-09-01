@@ -101,6 +101,15 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ConsoleHistoryFilter(_)
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
+        | HitTarget::GlobalPreferencesModal
+        | HitTarget::GlobalPreferencesSection
+        | HitTarget::GlobalPreferencesSearch
+        | HitTarget::GlobalPreferencesSettingName(_)
+        | HitTarget::GlobalPreferencesControl(_)
+        | HitTarget::GlobalPreferencesChoice { .. }
+        | HitTarget::GlobalPreferencesReset(_)
+        | HitTarget::GlobalPreferencesExplanationClose
+        | HitTarget::GlobalPreferencesClose
         | HitTarget::MarkingMenuItem { .. }
         | HitTarget::DockResizeHandle
         | HitTarget::TerminalSplitDivider(_) => false,
@@ -191,6 +200,18 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
             menu: id(),
             label: id(),
         },
+        HitTarget::GlobalPreferencesModal,
+        HitTarget::GlobalPreferencesSection,
+        HitTarget::GlobalPreferencesSearch,
+        HitTarget::GlobalPreferencesSettingName(id()),
+        HitTarget::GlobalPreferencesControl(id()),
+        HitTarget::GlobalPreferencesChoice {
+            key: id(),
+            value: id(),
+        },
+        HitTarget::GlobalPreferencesReset(id()),
+        HitTarget::GlobalPreferencesExplanationClose,
+        HitTarget::GlobalPreferencesClose,
         HitTarget::MarkingMenuItem {
             menu_key: id(),
             slot: id(),

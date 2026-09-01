@@ -678,7 +678,7 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2366
+        "pre_test_lines": 2351
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -700,7 +700,7 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4802,
+        "pre_test_lines": 4749,
         "inline_test_lines": 1855
       },
       "owner": "project-owner",
@@ -712,7 +712,7 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 8949
+        "expanded_lines": 8932
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -778,7 +778,7 @@
     "crates/gui-render/src/render/scene.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 800
+        "pre_test_lines": 775
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

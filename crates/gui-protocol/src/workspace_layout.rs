@@ -10,57 +10,13 @@
 use crate::revision_workspace::{RevisionPane, RevisionWorkspaceUiState};
 use crate::{
     ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
-    ConsoleJournalHistoryState, TerminalLaneState,
+    ConsoleJournalHistoryState, CrosshairStyle, GlobalPreferencesDialogState, HoverTarget,
+    ScreenPointPx, TerminalLaneState,
 };
 use std::collections::BTreeMap;
 
 #[path = "workspace_layout/revision_tiling.rs"]
 mod revision_tiling;
-
-/// The user-selected cursor-crosshair presentation for every drawing surface
-/// (decision 023 UVT-005, spec §2). This is a session UI preference — the same
-/// class as camera or pane layout — and is NEVER journaled. Selectable live from
-/// the View menu; `FullViewport` is the default.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum CrosshairStyle {
-    /// Horizontal + vertical hairlines spanning the focused pane's viewport
-    /// through the cursor (class-A ScreenConstant 1px).
-    #[default]
-    FullViewport,
-    /// A small cross at the cursor (class-A ScreenConstant 1px).
-    Local,
-    /// No cursor crosshair.
-    None,
-}
-
-/// A position in window device-pixel coordinates.
-///
-/// This deliberately cannot be substituted for [`crate::PointNm`]: pointer
-/// input and immediate overlays are screen-space consumer state, while
-/// `PointNm` represents authored world geometry.
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
-pub struct ScreenPointPx {
-    pub x: f32,
-    pub y: f32,
-}
-
-/// Typed ownership of the object currently under the pointer.
-///
-/// Keeping the surface beside the opaque object identifier prevents renderers
-/// from inferring ownership from identifier prefixes.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct HoverTarget {
-    pub object_id: String,
-    pub surface: PaneContent,
-}
-
-/// Complete transient pointer state produced by the shared viewport
-/// interaction mechanism for one surface.
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct ViewportInteraction {
-    pub cursor: Option<ScreenPointPx>,
-    pub hover: Option<HoverTarget>,
-}
 
 /// Transient visual contract for a terminal tab that has crossed the pointer
 /// drag threshold. Session order is still unchanged; the renderer uses this to
@@ -111,6 +67,9 @@ pub struct WorkspaceUiState {
     pub focus: ApplicationFocus,
     pub active_dock_tab: Option<DockTab>,
     pub active_menu: Option<String>,
+    /// The open child of a menubar submenu, if any. Consumer-only menu state.
+    pub active_submenu: Option<String>,
+    pub menu_focus_index: usize,
     pub marking_menu: Option<MarkingMenuState>,
     pub dock_height_px: u32,
     /// Transient terminal-only maximize state. The ordinary dock height stays
@@ -137,6 +96,9 @@ pub struct WorkspaceUiState {
     pub console: ConsoleFeedbackState,
     pub console_journal: ConsoleJournalHistoryState,
     pub artifact_preview: ArtifactPreviewViewportState,
+    /// Application-modal Global Preferences projection. Values and provenance
+    /// originate in the engine service; this bag owns interaction only.
+    pub global_preferences: GlobalPreferencesDialogState,
     /// Consumer-only projection of revision authority. This never owns or
     /// mutates revision records; the engine remains the sole truth source.
     pub revision: RevisionWorkspaceUiState,
@@ -152,6 +114,8 @@ impl WorkspaceUiState {
             focus: ApplicationFocus::default(),
             active_dock_tab: None,
             active_menu: None,
+            active_submenu: None,
+            menu_focus_index: 0,
             marking_menu: None,
             dock_height_px: 220,
             terminal_maximized: false,
@@ -166,6 +130,7 @@ impl WorkspaceUiState {
             console: ConsoleFeedbackState::default(),
             console_journal: ConsoleJournalHistoryState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
+            global_preferences: GlobalPreferencesDialogState::default(),
             revision: RevisionWorkspaceUiState::default(),
             layout: WorkspaceLayout::default(),
         }
