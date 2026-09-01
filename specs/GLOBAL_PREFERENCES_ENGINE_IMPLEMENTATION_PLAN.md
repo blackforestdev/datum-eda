@@ -263,6 +263,17 @@ approval.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-REVISION -->
 
+On 2026-09-01, after the corrected contract and Claude-owned protected target
+at `62e263b` were reviewed together, the owner replied exactly
+`PREFERENCES-FOUNDATION: approve GP-F05`. This authorizes GP-F05 only, under the
+complete GP-F05.1 through GP-F05.7 inventory, lifecycle, accessibility,
+recovery, proof, exclusion, and no-new-dependency boundary below. It does not
+authorize UNIT-I03, GP-CM01 or later completion work, Project Preferences,
+Project mutation, Revision behavior, a provider/service, synchronization, or a
+new dependency.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-APPROVED -->
+
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F05 -->
 ### GP-F05 — production-grade Global Preferences doorway and wgpu slice
 
