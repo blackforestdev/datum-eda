@@ -339,11 +339,30 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
         datum_gui_protocol::GlobalPreferencesDismissal::ExplanationClosed
     );
     assert!(ui.global_preferences.open);
+    ui.global_preferences.focus = datum_gui_protocol::GlobalPreferencesFocus::Search;
+    ui.global_preferences.search_query = "units".to_owned();
+    assert_eq!(
+        ui.global_preferences.dismiss_innermost(),
+        datum_gui_protocol::GlobalPreferencesDismissal::SearchCleared
+    );
+    assert!(ui.global_preferences.open);
+    assert!(ui.global_preferences.search_query.is_empty());
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::Search
+    );
     assert_eq!(
         ui.global_preferences.dismiss_innermost(),
         datum_gui_protocol::GlobalPreferencesDismissal::DialogClosed
     );
     assert!(!ui.global_preferences.open);
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::SectionNavigation
+    );
+    assert!(ui.global_preferences.explanation_key.is_none());
+    assert!(ui.global_preferences.open_choice_key.is_none());
+    assert!(ui.global_preferences.notice.is_none());
     let _ = std::fs::remove_dir_all(base);
 }
 
@@ -433,6 +452,31 @@ fn dialog_is_unique_and_restores_the_original_invoker_focus() {
     assert!(ui.global_preferences.open);
     assert_eq!(ui.focus, ApplicationFocus::Overlay);
     assert!(!coordinator.open_dialog(&mut ui, ApplicationFocus::Terminal));
+    ui.global_preferences.search_query = "units".to_owned();
+    ui.global_preferences.explanation_key = Some("datum.accessibility.reduced_motion".to_owned());
+    ui.global_preferences.open_choice_key = Some("datum.console.feedback_duration".to_owned());
+    ui.global_preferences.focus = datum_gui_protocol::GlobalPreferencesFocus::ExplanationClose;
+    ui.global_preferences.notice = Some(datum_gui_protocol::GlobalPreferencesNoticeUi::Polite(
+        "transient notice".to_owned(),
+    ));
+    assert_eq!(coordinator.close_dialog(&mut ui), Some(invoker));
+    assert!(ui.global_preferences.search_query.is_empty());
+    assert!(ui.global_preferences.explanation_key.is_none());
+    assert!(ui.global_preferences.open_choice_key.is_none());
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::SectionNavigation
+    );
+    assert!(ui.global_preferences.notice.is_none());
+    assert!(coordinator.open_dialog(&mut ui, invoker));
+    assert!(ui.global_preferences.search_query.is_empty());
+    assert_eq!(ui.global_preferences.visible_rows().count(), 3);
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::SectionNavigation
+    );
+    assert!(ui.global_preferences.explanation_key.is_none());
+    assert!(ui.global_preferences.open_choice_key.is_none());
     assert_eq!(coordinator.close_dialog(&mut ui), Some(invoker));
     assert_eq!(coordinator.close_dialog(&mut ui), None);
     let _ = std::fs::remove_dir_all(base);

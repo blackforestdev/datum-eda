@@ -48,6 +48,7 @@ pub enum GlobalPreferencesFocus {
 pub enum GlobalPreferencesDismissal {
     ChoiceClosed,
     ExplanationClosed,
+    SearchCleared,
     DialogClosed,
 }
 
@@ -150,7 +151,7 @@ impl GlobalPreferencesDialogState {
                 name: "Search Appearance settings".to_owned(),
                 role: GlobalPreferencesAccessibleRole::SearchBox,
                 value: Some(self.search_query.clone()),
-                description: "Searches labels, descriptions, stable keys, and registered aliases."
+                description: "Searches labels, descriptions, stable keys, and registered aliases. Escape clears a nonempty search before a second Escape closes the window."
                     .to_owned(),
                 available: true,
                 focused: self.focus == GlobalPreferencesFocus::Search,
@@ -284,14 +285,26 @@ impl GlobalPreferencesDialogState {
         self.focus = order[next].clone();
     }
 
+    pub fn reset_transient_view(&mut self) {
+        self.search_query.clear();
+        self.explanation_key = None;
+        self.open_choice_key = None;
+        self.focus = GlobalPreferencesFocus::SectionNavigation;
+        self.notice = None;
+    }
+
     pub fn dismiss_innermost(&mut self) -> GlobalPreferencesDismissal {
         if self.open_choice_key.take().is_some() {
             GlobalPreferencesDismissal::ChoiceClosed
         } else if let Some(key) = self.explanation_key.take() {
             self.focus = GlobalPreferencesFocus::SettingName(key);
             GlobalPreferencesDismissal::ExplanationClosed
+        } else if self.focus == GlobalPreferencesFocus::Search && !self.search_query.is_empty() {
+            self.search_query.clear();
+            GlobalPreferencesDismissal::SearchCleared
         } else {
             self.open = false;
+            self.reset_transient_view();
             GlobalPreferencesDismissal::DialogClosed
         }
     }

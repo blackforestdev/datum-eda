@@ -148,6 +148,78 @@ fn dialog_renders_exact_three_canonical_controls_and_blocks_workspace_hits() {
 }
 
 #[test]
+fn focused_search_draws_one_text_caret_for_empty_and_nonempty_queries() {
+    let mut unfocused_state = state_with_preferences_open();
+    unfocused_state.ui.global_preferences.focus = GlobalPreferencesFocus::SectionNavigation;
+    let unfocused = prepared(&unfocused_state, 1300, 760);
+
+    let mut focused_empty_state = unfocused_state.clone();
+    focused_empty_state.ui.global_preferences.focus = GlobalPreferencesFocus::Search;
+    let focused_empty = prepared(&focused_empty_state, 1300, 760);
+    assert_eq!(
+        focused_empty.menu_overlay_vertices().len(),
+        unfocused.menu_overlay_vertices().len() + 6,
+        "focused empty search must add exactly one caret quad"
+    );
+
+    focused_empty_state.ui.global_preferences.search_query = "units".to_owned();
+    let mut unfocused_nonempty_state = focused_empty_state.clone();
+    unfocused_nonempty_state.ui.global_preferences.focus =
+        GlobalPreferencesFocus::SectionNavigation;
+    let unfocused_nonempty = prepared(&unfocused_nonempty_state, 1300, 760);
+    let focused_nonempty = prepared(&focused_empty_state, 1300, 760);
+    assert_eq!(
+        focused_nonempty.menu_overlay_vertices().len(),
+        unfocused_nonempty.menu_overlay_vertices().len() + 6,
+        "focused nonempty search must retain exactly one caret quad"
+    );
+}
+
+#[test]
+fn search_field_uses_the_protected_six_pixel_rounded_outline() {
+    let rect = RectPx {
+        x: 10.0,
+        y: 20.0,
+        width: 100.0,
+        height: 38.0,
+    };
+    let points = global_preferences_dialog::rounded_rect_points(rect, design_tokens::radius::MD);
+
+    for square_corner in [
+        (rect.x, rect.y),
+        (rect.x + rect.width, rect.y),
+        (rect.x + rect.width, rect.y + rect.height),
+        (rect.x, rect.y + rect.height),
+    ] {
+        assert!(
+            !points.iter().any(|point| {
+                (point.0 - square_corner.0).abs() < 0.001
+                    && (point.1 - square_corner.1).abs() < 0.001
+            }),
+            "rounded search geometry must not fill square corner {square_corner:?}"
+        );
+    }
+    let radius = design_tokens::radius::MD;
+    for edge_tangent in [
+        (rect.x + radius, rect.y),
+        (rect.x + rect.width - radius, rect.y),
+        (rect.x + rect.width, rect.y + radius),
+        (rect.x + rect.width, rect.y + rect.height - radius),
+        (rect.x + rect.width - radius, rect.y + rect.height),
+        (rect.x + radius, rect.y + rect.height),
+        (rect.x, rect.y + rect.height - radius),
+        (rect.x, rect.y + radius),
+    ] {
+        assert!(
+            points.iter().any(|point| {
+                (point.0 - edge_tangent.0).abs() < 0.001 && (point.1 - edge_tangent.1).abs() < 0.001
+            }),
+            "rounded search geometry must contain edge tangent {edge_tangent:?}"
+        );
+    }
+}
+
+#[test]
 fn narrow_dialog_keeps_every_preference_hit_inside_the_window() {
     let state = state_with_preferences_open();
     let prepared = prepared(&state, 720, 760);

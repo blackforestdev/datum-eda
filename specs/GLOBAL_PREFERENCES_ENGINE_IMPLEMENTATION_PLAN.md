@@ -385,6 +385,11 @@ navigation on the left and pinned content-column search over the rows on the
 right. At narrow width the section list becomes a labeled chooser, search stays
 visible, and an open explanation stacks immediately below its row. No content
 may clip, overlap, draw outside the dialog, or become reachable only by pointer.
+The focused search field renders a visible text caret at the insertion point;
+the accent focus boundary alone is not an editable-text cursor. In ordinary,
+focused, empty, populated, and narrow states, the search fill and its focus
+boundary use the protected target's six-pixel rounded corners; a square runtime
+field is a visual-parity failure.
 
 #### GP-F05.4 — repository, resolver, and consumer lifecycle
 
@@ -435,7 +440,17 @@ each setting-name explanation action, each real control, row Reset when
 available, and explanation Close, with exactly one visible focus indicator and
 no trap. Enter/Space operate actions and switches; enum choices support arrows
 plus Home/End; Escape closes the innermost open choice or explanation before it
-closes the window.
+acts on the window. When the search field owns focus and contains a query,
+Escape first clears the query, leaves focus and its caret in search, refreshes
+the full result set, and announces the clear; a subsequent Escape closes the
+window. An empty focused search closes on the first Escape.
+
+Closing the native window discards its transient view state: search text and
+filtering, open choice, open explanation, transient notice, and internal focus.
+Reopening always returns to the ordinary Appearance state with the full three-
+row result set and section navigation focused. Durable preference values and
+their changed/reset provenance remain intact; window-view state is never stored
+as a preference.
 
 Every control exposes programmatic name, role, current value, availability,
 scope, and concise provenance. Explanation content exposes the resolver's
@@ -535,6 +550,29 @@ save posture is the default for future Datum Preferences windows unless a later
 owner decision deliberately introduces staged transactions.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-WAYLAND-NATIVE-OWNER-AND-IMMEDIATE-SAVE -->
+
+Owner QA then found that the focused search showed only an accent boundary, not
+an editable-text caret, and that Escape closed the entire native window while a
+nonempty query remained. GP-F05 remains open until the runtime and protected
+target both show a visible insertion caret and the standard two-stage Escape
+sequence: clear focused search first, close the window second.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-SEARCH-CARET-AND-ESCAPE-UNWIND -->
+
+The same owner QA comparison found that the protected search field's rounded
+outline had been flattened into square runtime corners. GP-F05 therefore uses
+the shared medium six-pixel radius for both the search fill and its boundary,
+with geometry proof that the rendered shape excludes all four square corner
+points while reaching each edge midpoint.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-SEARCH-CORNER-PARITY -->
+
+Owner QA also found that closing and reopening Preferences retained the prior
+search query and filtered result posture. GP-F05 treats all search, disclosure,
+notice, and internal-focus state as window-local and resets it on close, while
+leaving immediately saved preference values unchanged.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-REOPEN-ORDINARY-STATE -->
 
 ## 5. Shared Units surface parity through real Preferences
 

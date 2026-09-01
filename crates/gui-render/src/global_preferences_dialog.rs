@@ -5,6 +5,82 @@ use datum_gui_protocol::{
     GlobalPreferenceControlUi, GlobalPreferencesFocus, GlobalPreferencesNoticeUi,
 };
 
+const ROUNDED_RECT_CORNER_SEGMENTS: usize = 4;
+
+pub(super) fn push_rounded_rect_with_border(
+    quads: &mut Vec<Quad>,
+    rect: RectPx,
+    fill: [f32; 3],
+    border: [f32; 3],
+    thickness: f32,
+    radius: f32,
+) {
+    push_rounded_rect_fill(quads, rect, border, radius);
+    let inset = thickness
+        .max(0.0)
+        .min(rect.width * 0.5)
+        .min(rect.height * 0.5);
+    if inset <= 0.0 {
+        return;
+    }
+    let inner = RectPx {
+        x: rect.x + inset,
+        y: rect.y + inset,
+        width: rect.width - inset * 2.0,
+        height: rect.height - inset * 2.0,
+    };
+    if inner.width > 0.0 && inner.height > 0.0 {
+        push_rounded_rect_fill(quads, inner, fill, (radius - inset).max(0.0));
+    }
+}
+
+fn push_rounded_rect_fill(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], radius: f32) {
+    push_projected_polygon_fill(quads, &rounded_rect_points(rect, radius), color);
+}
+
+pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> {
+    let radius = radius.max(0.0).min(rect.width * 0.5).min(rect.height * 0.5);
+    if radius == 0.0 {
+        return vec![
+            (rect.x, rect.y),
+            (rect.x + rect.width, rect.y),
+            (rect.x + rect.width, rect.y + rect.height),
+            (rect.x, rect.y + rect.height),
+        ];
+    }
+
+    let mut points = Vec::with_capacity((ROUNDED_RECT_CORNER_SEGMENTS + 1) * 4);
+    let corners = [
+        (
+            rect.x + rect.width - radius,
+            rect.y + radius,
+            -std::f32::consts::FRAC_PI_2,
+        ),
+        (
+            rect.x + rect.width - radius,
+            rect.y + rect.height - radius,
+            0.0,
+        ),
+        (
+            rect.x + radius,
+            rect.y + rect.height - radius,
+            std::f32::consts::FRAC_PI_2,
+        ),
+        (rect.x + radius, rect.y + radius, std::f32::consts::PI),
+    ];
+    for (center_x, center_y, start_angle) in corners {
+        for step in 0..=ROUNDED_RECT_CORNER_SEGMENTS {
+            let angle = start_angle
+                + std::f32::consts::FRAC_PI_2 * step as f32 / ROUNDED_RECT_CORNER_SEGMENTS as f32;
+            points.push((
+                center_x + radius * angle.cos(),
+                center_y + radius * angle.sin(),
+            ));
+        }
+    }
+    points
+}
+
 pub(super) fn render_global_preferences_dialog(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
@@ -125,16 +201,23 @@ pub(super) fn render_global_preferences_dialog(
         width: content_width,
         height: 38.0,
     };
-    quads.push(Quad::from_rect(search, design_tokens::chrome::SURFACE_02));
-    push_rect_border(
+    let search_text_x = search.x
+        + if dialog.search_query.is_empty() && focus_is(dialog, &GlobalPreferencesFocus::Search) {
+            18.0
+        } else {
+            12.0
+        };
+    push_rounded_rect_with_border(
         quads,
         search,
+        design_tokens::chrome::SURFACE_02,
         if focus_is(dialog, &GlobalPreferencesFocus::Search) {
             TEXT_ACCENT
         } else {
             PANEL_CARD_BORDER
         },
         1.0,
+        design_tokens::radius::MD,
     );
     draw_text(
         if dialog.search_query.is_empty() {
@@ -142,7 +225,7 @@ pub(super) fn render_global_preferences_dialog(
         } else {
             &dialog.search_query
         },
-        search.x + 12.0,
+        search_text_x,
         search.y + 11.0,
         design_tokens::typography::BODY_SIZE,
         if dialog.search_query.is_empty() {
@@ -153,6 +236,30 @@ pub(super) fn render_global_preferences_dialog(
         TextFace::Ui,
         text,
     );
+    if focus_is(dialog, &GlobalPreferencesFocus::Search) {
+        let caret_x = if dialog.search_query.is_empty() {
+            search.x + 12.0
+        } else {
+            (search.x
+                + 12.0
+                + measured_text_run_width_px(
+                    &dialog.search_query,
+                    design_tokens::typography::BODY_SIZE,
+                    TextFace::Ui,
+                )
+                + 1.0)
+                .min(search.x + search.width - 13.0)
+        };
+        quads.push(Quad::from_rect(
+            RectPx {
+                x: caret_x,
+                y: search.y + 9.0,
+                width: 1.5,
+                height: 20.0,
+            },
+            TEXT_PRIMARY,
+        ));
+    }
     hits.push(HitRegion {
         target: HitTarget::GlobalPreferencesSearch,
         rect: search,
