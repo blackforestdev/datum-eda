@@ -84,8 +84,245 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .statusmark[data-state="approved"]{color:#4FA75A}
 .statusmark[data-state="open"]{color:#E0A23A}
 .statusmark[data-state="retired"]{color:#717885}
+
+.sec{font-family:"PlexMono",monospace;font-size:11.5px;letter-spacing:.08em;color:var(--acc);
+  text-transform:uppercase;width:1160px;max-width:100%;margin:26px 0 4px;text-align:left}
+.lead{color:var(--tx2);font-size:12.5px;width:1160px;max-width:100%;margin-bottom:11px;text-align:left}
+.cap{font-family:"PlexMono",monospace;font-size:11px;color:var(--tx3);width:1160px;max-width:100%;
+  line-height:1.7;margin:7px 0 0;text-align:left}
+.cap b{font-family:"PlexC";color:var(--tx2)}
+.two .cap,.two .f5win,.two .f5ex{width:auto;max-width:100%}
+.two>*{min-width:0}
+.f5ex .m{overflow-wrap:anywhere}
+.f5,.f5win,.f5ghead,.two,.divider,table{width:1160px;max-width:100%;text-align:left}
+.f5ghead{margin-left:0}
+.divider{width:1160px;max-width:100%}
+
+@media (max-width: 980px){
+  .sec,.lead,.cap,.f5,.f5win,.f5ghead,.two,.divider,table{width:100%!important;max-width:100%!important}
+  .two{grid-template-columns:1fr!important}
+  .f5body{flex-direction:column}
+  .f5nav{width:100%;border-right:0;border-bottom:1px solid var(--bd-sub);padding:8px 0}
+  .f5lbl{width:auto;flex:1;min-width:0}
+  .f5row{gap:10px}
+  .f5menu{min-width:0}
+  body{padding-left:14px;padding-right:14px}
+}
 </style></head><body>
-<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="approved">✓ RATIFIED — PRODUCT MECHANICS 037 · except the exclusions named in GP-C06 §5</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="approved">✓ GP-F05 TARGET — Appearance only: three implemented settings</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
+<style>
+.f5{max-width:1180px}
+.f5win{width:1160px;max-width:100%;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+.f5tbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--s01);border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12.5px}
+.f5tbar .r{margin-left:auto;font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3)}
+.f5body{display:flex;min-height:392px}
+.f5nav{width:210px;background:var(--s01);border-right:1px solid var(--bd-sub);padding:12px 0;flex-shrink:0}
+.f5nav div{padding:7px 18px;font-size:12.5px;color:var(--tx2)}
+.f5nav .on{background:var(--s02);color:var(--tx);border-left:2px solid var(--acc);padding-left:16px}
+.f5pane{flex:1;min-width:0;display:flex;flex-direction:column}
+.f5srch{position:sticky;top:0;z-index:3;background:var(--bg);padding:12px 18px 10px;border-bottom:1px solid var(--bd-sub)}
+.f5srch .box{background:var(--s02);border:1px solid var(--bd-str);border-radius:6px;padding:7px 12px;font-size:12.5px;color:var(--tx3)}
+.f5row{display:flex;align-items:center;gap:14px;padding:9px 18px;border-bottom:1px solid var(--bd-sub)}
+.f5lbl{width:340px}
+.f5lbl b{display:block;font-weight:600;font-size:13px;color:var(--tx)}
+.f5lbl span{font-size:11px;color:var(--tx3)}
+.f5ctl{margin-left:auto;display:flex;align-items:center;gap:10px}
+.f5sel{background:var(--s02);border:1px solid var(--bd-str);border-radius:5px;padding:5px 26px 5px 12px;font-size:12.5px;position:relative;color:var(--tx)}
+.f5sel:after{content:"▾";position:absolute;right:9px;color:var(--tx3);font-size:10px}
+.f5sel{white-space:nowrap}
+.f5prov{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);padding:4px 18px 8px;border-bottom:1px solid var(--bd-sub)}
+.f5ghead{font-family:"PlexMono",monospace;font-size:10.5px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;margin:16px 18px 4px}
+.f5focus{outline:2px solid var(--info);outline-offset:2px}
+.f5kn{font-family:"PlexMono",monospace;font-size:9.5px;border:1px solid var(--info);color:var(--info);border-radius:3px;padding:0 5px;margin-left:7px}
+.f5banner{display:flex;gap:11px;align-items:flex-start;padding:11px 18px;background:#1e1608;border-bottom:1px solid rgba(224,162,58,.5);font-size:12.5px;line-height:1.7}
+.f5banner b{color:var(--warn)}
+.f5banner .g{color:var(--warn);font-size:14px;line-height:1.2}
+.f5menu{background:var(--s02);border:1px solid var(--bd-str);border-radius:6px;box-shadow:0 14px 40px rgba(0,0,0,.6);min-width:230px;overflow:hidden}
+.f5menu .mi{padding:6px 13px;font-size:12.5px;color:var(--tx2);border-bottom:1px solid var(--bd-sub)}
+.f5menu .mi:last-child{border-bottom:0}
+.f5menu .mi.on{background:var(--s03);color:var(--tx)}
+.f5menu .mi .sub{float:right;color:var(--tx3)}
+.f5ex{background:var(--s01);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;max-width:520px}
+.f5ex .hd{padding:8px 13px;background:var(--s02);border-bottom:1px solid var(--bd-sub);font-family:"PlexCMed";font-size:12px}
+.f5ex .r{display:flex;gap:10px;padding:7px 13px;border-bottom:1px solid var(--bd-sub);font-size:12px;align-items:baseline}
+.f5ex .r:last-child{border-bottom:0}
+.f5ex .s{font-family:"PlexMono",monospace;font-size:10.5px;color:var(--tx3);width:118px;flex:none}
+.f5ex .v{flex:1;min-width:0}
+.f5ex .m{flex:none}
+.f5ex .v{color:var(--tx)} .f5ex .m{color:var(--tx3);font-size:11px;margin-left:auto;text-align:right;max-width:230px}
+.f5ex .eff{color:var(--ok)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1180px;align-items:start}
+.divider{border-top:2px dashed var(--bd-str);margin:40px 0 0;padding-top:18px}
+</style>
+
+<div class="sec" style="margin-top:26px">GP-F05 TARGET STATE — THE ONLY SHIPPABLE PREFERENCES SURFACE</div>
+<div class="lead">Three implemented settings in one section, reached through a nested doorway. Everything below the divider is future comparative evidence and is not part of this target.</div>
+
+<div class="f5"><div class="f5ghead">A · the doorway — Edit &gt; Preferences &gt; Global Preferences…</div>
+<div class="two" style="grid-template-columns:270px 270px 1fr">
+  <div class="f5menu">
+    <div class="mi">Undo <span class="sub">Ctrl+Z</span></div>
+    <div class="mi">Redo <span class="sub">Ctrl+Shift+Z</span></div>
+    <div class="mi on">Preferences <span class="sub">▸</span></div>
+  </div>
+  <div class="f5menu">
+    <div class="mi on">Global Preferences… <span class="sub">Ctrl+,</span></div>
+  </div>
+  <div class="cap" style="margin:0">One nested doorway. <b>Edit &gt; Preferences &gt; Global Preferences…</b> opens the window below. The submenu carries exactly one item in this target — nothing else is implemented, so nothing else is offered.</div>
+</div>
+</div>
+<div class="f5ghead" style="margin-top:26px">B · ordinary state</div>
+<div class="f5win">
+  <div class="f5tbar">Preferences — Datum<span class="r">Edit &gt; Preferences &gt; Global Preferences…</span></div>
+  <div class="f5body">
+    <div class="f5nav"><div class="on">Appearance</div></div>
+    <div class="f5pane">
+      <div class="f5srch"><div class="box">⌕ &nbsp;search settings…</div></div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
+        <div class="f5ctl"><div class="f5sel">6 s</div></div>
+      </div>
+      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation; the selection boundary stops animating but stays dashed.</span></div>
+        <div class="f5ctl"><div class="f5sel">Off</div></div>
+      </div>
+      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues across GUI and terminal.</span></div>
+        <div class="f5ctl"><div class="f5sel">Off</div></div>
+      </div>
+      <div class="f5prov">factory default — you haven’t changed this</div>
+    </div>
+  </div>
+</div>
+<div class="cap"><b>One category, three rows.</b> The two-column shell, pinned search over the content column, row grammar, and the provenance line under every row are unchanged from the ratified window. The rail carries one entry because one section exists — no empty categories are drawn to imply future ones.</div>
+
+<div class="f5ghead" style="margin-top:26px">C · search results and explanation</div>
+<div class="two">
+<div>
+<div class="f5win" style="width:auto">
+  <div class="f5tbar">Preferences — Datum<span class="r">search active</span></div>
+  <div class="f5body" style="min-height:210px">
+    <div class="f5nav"><div class="on">Appearance</div></div>
+    <div class="f5pane">
+      <div class="f5srch"><div class="box" style="color:var(--tx)">⌕ &nbsp;contrast</div></div>
+      <div class="f5row">
+        <div class="f5lbl"><b>High contrast and non-color cues</b><span>matched on name — Appearance</span></div>
+        <div class="f5ctl"><div class="f5sel">Off</div></div>
+      </div>
+      <div class="f5prov">1 result · selecting it returns to Appearance with the row focused</div>
+    </div>
+  </div>
+</div>
+<div class="cap">Search stays pinned above the content column and filters within the single section. A result names why it matched and where it lives.</div>
+</div>
+<div>
+<div class="f5ex">
+  <div class="hd">High contrast and non-color cues — where this value comes from</div>
+  <div class="r"><span class="s">Effective</span><span class="v eff">Off</span><span class="m">factory fact, nothing overrides it</span></div>
+  <div class="r"><span class="s">User</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">you haven’t changed this</span></div>
+  <div class="r"><span class="s">Installation</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">nothing set for this machine</span></div>
+  <div class="r"><span class="s">Descriptor default</span><span class="v">Off</span><span class="m">the factory fact — effective because nothing contributes above it</span></div>
+</div>
+<div class="cap">The resolver explanation keeps its ratified shape: every source is listed including the ones with no value, so <b>absence never masquerades as a contribution</b>. Only sources that exist in this target appear.</div>
+</div>
+</div>
+<div class="f5ghead" style="margin-top:26px">D · preserved-unreadable, non-management state</div>
+<div class="f5win">
+  <div class="f5tbar">Preferences — Datum<span class="r">store unreadable · values preserved</span></div>
+  <div class="f5banner"><span class="g">⛝</span><span><b>Your preference file could not be read.</b> Datum started this session from factory defaults, wrote nothing over the damaged file, and kept it exactly as found at <code>gui-preferences.json.unreadable-2026-08-31</code>. <b>Design authoring is unaffected.</b><br>Datum does not repair, truncate, or rewrite an unreadable store — a partial parse could silently drop settings, so it refuses instead.</span></div>
+  <div class="f5body" style="min-height:300px">
+    <div class="f5nav"><div class="on">Appearance</div></div>
+    <div class="f5pane">
+      <div class="f5srch"><div class="box">⌕ &nbsp;search settings…</div></div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
+        <div class="f5ctl"><div class="f5sel">6 s</div></div>
+      </div>
+      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation.</span></div>
+        <div class="f5ctl"><div class="f5sel">Off</div></div>
+      </div>
+      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+      <div class="f5row">
+        <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues.</span></div>
+        <div class="f5ctl"><div class="f5sel">Off</div></div>
+      </div>
+      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread in the kept file</div>
+    </div>
+  </div>
+</div>
+<div class="cap"><b>Non-management by construction.</b> The state reports what happened and stops. There is no recover, restore, discard, repair, show-file, or send-to-support control anywhere in this target — those belong to a management surface that is not part of GP-F05. Changing a row here still works and writes a fresh store; the damaged file is never touched.<br><b>Non-color cue:</b> the ⛝ glyph and the word "preserved" carry the state on every affected row, so it survives with color removed entirely — see render F.</div>
+
+<div class="f5ghead" style="margin-top:26px">E · keyboard focus order and return target</div>
+<div class="two" style="grid-template-columns:1fr 1fr">
+<div>
+<div class="f5win" style="width:auto">
+  <div class="f5tbar">Preferences — Datum<span class="r">Tab order</span></div>
+  <div class="f5body" style="min-height:230px">
+    <div class="f5nav"><div class="on f5focus">Appearance<span class="f5kn">1</span></div></div>
+    <div class="f5pane">
+      <div class="f5srch"><div class="box">⌕ &nbsp;search settings…<span class="f5kn">2</span></div></div>
+      <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel">6 s<span class="f5kn">3</span></div></div></div>
+      <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><div class="f5sel">Off<span class="f5kn">4</span></div></div></div>
+      <div class="f5row"><div class="f5lbl"><b>High contrast and non-color cues</b></div><div class="f5ctl"><div class="f5sel">Off<span class="f5kn">5</span></div></div></div>
+    </div>
+  </div>
+</div>
+</div>
+<div>
+<div class="f5ex">
+  <div class="hd">Focus contract</div>
+  <div class="r"><span class="s">Tab / Shift+Tab</span><span class="v">1 rail → 2 search → 3, 4, 5 controls</span></div>
+  <div class="r"><span class="s">Initial focus</span><span class="v">the rail entry (1), not the search box</span></div>
+  <div class="r"><span class="s">Arrows</span><span class="v">move within a control; they never leave it</span></div>
+  <div class="r"><span class="s">Enter / Space</span><span class="v">opens a control; Esc closes it and keeps focus on the control</span></div>
+  <div class="r"><span class="s">Search escape</span><span class="v">Esc clears the query and returns focus to the search box</span></div>
+  <div class="r"><span class="s">Result activate</span><span class="v">returns to Appearance and focuses the matched row's control</span></div>
+  <div class="r"><span class="s">Window close</span><span class="v">Esc from the rail closes Preferences</span></div>
+  <div class="r"><span class="s">Return target</span><span class="v eff">focus returns to Edit &gt; Preferences &gt; Global Preferences…</span></div>
+</div>
+<div class="cap">Closing the window returns focus to the menu item that opened it, never to the canvas — so a keyboard user is where they left off.</div>
+</div>
+</div>
+<div class="f5ghead" style="margin-top:26px">F · non-color preserved-unreadable render</div>
+<div class="f5win" style="filter:grayscale(1)">
+  <div class="f5tbar">Preferences — Datum<span class="r">store unreadable · values preserved · color removed</span></div>
+  <div class="f5banner"><span class="g">⛝</span><span><b>Your preference file could not be read.</b> Running from factory defaults this session; the damaged file is kept unmodified. Design authoring is unaffected.</span></div>
+  <div class="f5body" style="min-height:150px">
+    <div class="f5nav"><div class="on">Appearance</div></div>
+    <div class="f5pane">
+      <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel">6 s</div></div></div>
+      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread</div>
+      <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><div class="f5sel">Off</div></div></div>
+      <div class="f5prov">⛝ running from factory default this session · your stored value is preserved unread</div>
+    </div>
+  </div>
+</div>
+<div class="cap"><b>Rendered with color removed entirely.</b> The state is still fully legible: the ⛝ glyph marks every affected row and the words "preserved unread" state the fact. Nothing about this state is carried by hue alone.</div>
+
+<div class="f5ghead" style="margin-top:26px">G · screen-reader name and state inventory</div>
+<table style="max-width:1180px">
+<tr><th>element</th><th>accessible name</th><th>role</th><th>state announced</th></tr>
+<tr><td class="n">window</td><td>Preferences</td><td>dialog</td><td>modal false · labelled by its title</td></tr>
+<tr><td class="n">rail entry</td><td>Appearance</td><td>tab</td><td>selected true · 1 of 1</td></tr>
+<tr><td class="n">search</td><td>Search settings</td><td>searchbox</td><td>empty · or "1 result" after a query</td></tr>
+<tr><td class="n">row 1 control</td><td>Console feedback duration</td><td>combobox</td><td>value 6 seconds · collapsed · factory default, not changed</td></tr>
+<tr><td class="n">row 2 control</td><td>Reduced motion</td><td>combobox</td><td>value Off · collapsed · factory default, not changed</td></tr>
+<tr><td class="n">row 3 control</td><td>High contrast and non-color cues</td><td>combobox</td><td>value Off · collapsed · factory default, not changed</td></tr>
+<tr><td class="n">provenance line</td><td>—</td><td>description</td><td>referenced by its row's control, not separately focusable</td></tr>
+<tr><td class="n">unreadable banner</td><td>Preference file could not be read</td><td>status</td><td>polite live region · announced once on open</td></tr>
+<tr><td class="n">affected row state</td><td>—</td><td>description</td><td>appended: "running from factory default this session, your stored value is preserved unread"</td></tr>
+<tr><td class="n">explanation</td><td>Where this value comes from</td><td>group</td><td>each source announced with its value or "no value"</td></tr>
+</table>
+<div class="cap">Every control announces name, role, value and provenance. The unreadable banner is a polite status region so it never interrupts a screen reader mid-utterance, and its consequence is repeated per row so a user tabbing straight to a control still hears it.</div>
+
+<div class="divider"></div>
+<div class="sec" style="color:var(--tx3)">FUTURE COMPARATIVE EVIDENCE — NOT PART OF GP-F05</div>
+<div class="note">Everything below is the full descriptor catalog retained for comparison only. It is <b>not</b> the target state, nothing in it is implemented, and no part of it may be built from this file. It is kept because it records the researched breadth the target was cut down from.</div>
+
 <div class="win">
   <div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div>
   <div class="body">
