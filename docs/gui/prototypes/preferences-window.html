@@ -109,7 +109,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   body{padding-left:14px;padding-right:14px}
 }
 </style></head><body>
-<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="approved">✓ GP-F05 APPROVED IMPLEMENTATION TARGET — no runtime exists yet</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
+<div class="note">PROTOTYPE — full-depth catalog build: 61 v1 settings + 58 planned, derived from specs, code, research db, and SolidWorks/Altium/Revit/CATIA/KiCad. Every entry has a source. <span class="statusmark" data-state="open">◐ GP-F05 OWNER-REVIEW TARGET — awaiting owner approval; no runtime exists yet</span> <span style="color:var(--tx3)">still unratified: agent-authority descriptors · the three clay rows · AdoptedDraftingStandard seed schema · Library/Symbol/Footprint/Organization descriptor sets · any watermark seed schema</span></div>
 <style>
 .f5{max-width:1180px}
 .f5win{width:1160px;max-width:100%;background:var(--bg);border:1px solid var(--bd-str);border-radius:8px;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.5)}
@@ -170,8 +170,8 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .f5chg{color:var(--acc)}
 </style>
 
-<div class="sec" style="margin-top:26px">GP-F05 — APPROVED IMPLEMENTATION TARGET</div>
-<div class="lead">The approved GP-F05 implementation target for Global Preferences: one section, three settings. <b>No runtime exists yet</b> — this is the contract an implementation must meet, not a description of shipped behaviour. Everything below the divider is future comparative evidence and is not part of this target.</div>
+<div class="sec" style="margin-top:26px">GP-F05 — OWNER-REVIEW TARGET</div>
+<div class="lead">The GP-F05 owner-review target for Global Preferences: one section, three settings. <b>No runtime exists yet</b> — this is the contract an implementation must meet, not a description of shipped behaviour. Everything below the divider is future comparative evidence and is not part of this target.</div>
 
 <div class="f5"><div class="f5ghead">A · the doorway — Edit &gt; Preferences &gt; Global Preferences…</div>
 <div class="two" style="grid-template-columns:270px 270px 1fr">
@@ -198,17 +198,17 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
         <div class="f5ctl"><div class="f5sel">6 s</div></div>
       </div>
-      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5prov">factory default — you haven’t changed this · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation; the selection boundary stops animating but stays dashed.</span></div>
         <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5prov">factory default — you haven’t changed this · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues across GUI and terminal.</span></div>
         <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5prov">factory default — you haven’t changed this · Global · this device</div>
     </div>
   </div>
 </div>
@@ -224,17 +224,17 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
         <div class="f5ctl"><div class="f5sel">10 s</div><span class="f5btn">Reset</span></div>
       </div>
-      <div class="f5prov"><span class="f5chg">◆ set by you</span> · changed from the factory default of 6 s · Reset returns it to 6 s</div>
+      <div class="f5prov"><span class="f5chg">◆ set by you</span> · changed from the factory default of 6 s · Reset returns it to 6 s · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation.</span></div>
-        <div class="f5ctl"><span class="f5tog on"><span class="sw"></span>ON</span><span class="f5btn">Reset</span></div>
+        <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov"><span class="f5chg">◆ set by you</span> · changed from the factory default of OFF · Reset returns it to OFF</div>
+      <div class="f5prov">factory default — you haven’t changed this · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues.</span></div>
         <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov">factory default — you haven’t changed this</div>
+      <div class="f5prov">factory default — you haven’t changed this · Global · this device</div>
     </div>
   </div>
 </div>
@@ -253,7 +253,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>matched on name — Appearance</span></div>
         <div class="f5ctl"><span class="f5tog"><span class="sw"></span>OFF</span></div>
       </div>
-      <div class="f5prov">1 result · activating it returns to Appearance with the <b>setting name</b> focused, not the switch</div>
+      <div class="f5prov">1 result · activating it returns to Appearance with the <b>setting name</b> focused, not the switch · Global · this device</div>
     </div>
   </div>
 </div>
@@ -262,7 +262,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div>
 <div class="f5ex">
   <div class="hd">High contrast and non-color cues — where this value comes from <span style="float:right;font-family:'PlexMono',monospace;font-size:10px;color:var(--tx3)">Close ✕</span></div>
-  <div class="r"><span class="s">Descriptor</span><span class="v">datum.accessibility.high_contrast</span><span class="m">boolean · factory OFF</span></div>
+  <div class="r"><span class="s">Descriptor</span><span class="v">datum.accessibility.high_contrast_noncolor</span><span class="m">boolean · factory OFF</span></div>
   <div class="r"><span class="s">Scope</span><span class="v">Global · this device</span><span class="m">applies to every Project opened here</span></div>
   <div class="r"><span class="s">Effective</span><span class="v eff">OFF</span><span class="m">reason: no source contributes, so the descriptor default stands</span></div>
   <div class="r"><span class="s">Session</span><span class="v" style="color:var(--tx3)">no value</span><span class="m">nothing set for this run</span></div>
@@ -285,17 +285,17 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <div class="f5lbl"><b>Console feedback duration</b><span>How long Console feedback stays visible before auto-hiding.</span></div>
         <div class="f5ctl"><div class="f5sel dis">6 s</div></div>
       </div>
-      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>Reduced motion</b><span>Disable non-essential interface animation.</span></div>
         <div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div>
       </div>
-      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread · Global · this device</div>
       <div class="f5row">
         <div class="f5lbl"><b>High contrast and non-color cues</b><span>High-contrast rendering with non-color state cues.</span></div>
         <div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div>
       </div>
-      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread</div>
+      <div class="f5prov">⛝ unavailable — running from factory default this session; your stored value is preserved unread · Global · this device</div>
     </div>
   </div>
 </div>
@@ -340,9 +340,9 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     <div class="f5nav"><div class="on">Appearance</div></div>
     <div class="f5pane">
       <div class="f5row"><div class="f5lbl"><b>Console feedback duration</b></div><div class="f5ctl"><div class="f5sel dis">6 s</div></div></div>
-      <div class="f5prov">⛝ unavailable — your stored value is preserved unread</div>
+      <div class="f5prov">⛝ unavailable — your stored value is preserved unread · Global · this device</div>
       <div class="f5row"><div class="f5lbl"><b>Reduced motion</b></div><div class="f5ctl"><span class="f5tog dis"><span class="sw"></span>OFF · unavailable</span></div></div>
-      <div class="f5prov">⛝ unavailable — your stored value is preserved unread</div>
+      <div class="f5prov">⛝ unavailable — your stored value is preserved unread · Global · this device</div>
     </div>
   </div>
 </div>
@@ -355,13 +355,13 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <tr><td class="n">rail entry</td><td>Appearance</td><td>tab</td><td>selected true · 1 of 1</td></tr>
 <tr><td class="n">search</td><td>Search settings</td><td>searchbox</td><td>empty · or "1 result" after a query</td></tr>
 <tr><td class="n">setting name</td><td>Console feedback duration, where this value comes from</td><td>button</td><td>expanded false · expanded true while the explanation is open</td></tr>
-<tr><td class="n">duration control</td><td>Console feedback duration</td><td>combobox</td><td>value 6 seconds · collapsed · factory default, not changed</td></tr>
-<tr><td class="n">reduced-motion control</td><td>Reduced motion</td><td>switch</td><td>checked false · factory default, not changed</td></tr>
-<tr><td class="n">high-contrast control</td><td>High contrast and non-color cues</td><td>switch</td><td>checked false · factory default, not changed</td></tr>
-<tr><td class="n">changed row control</td><td>as above</td><td>as above</td><td>value · <b>set by you, changed from the factory default</b></td></tr>
+<tr><td class="n">duration control</td><td>Console feedback duration</td><td>combobox</td><td>value 6 seconds · collapsed · factory default, not changed · Global, this device</td></tr>
+<tr><td class="n">reduced-motion control</td><td>Reduced motion</td><td>switch</td><td>checked false · factory default, not changed · Global, this device</td></tr>
+<tr><td class="n">high-contrast control</td><td>High contrast and non-color cues</td><td>switch</td><td>checked false · factory default, not changed · Global, this device</td></tr>
+<tr><td class="n">changed row control</td><td>as above</td><td>as above</td><td>value · <b>set by you, changed from the factory default</b> · Global, this device</td></tr>
 <tr><td class="n">Reset</td><td>Reset Console feedback duration to 6 seconds</td><td>button</td><td>present only on a changed row</td></tr>
 <tr><td class="n">unreadable banner</td><td>Your preference file could not be read</td><td>alert</td><td><b>assertive · announced once on open</b>, not repeated</td></tr>
-<tr><td class="n">control while unreadable</td><td>as above</td><td>as above</td><td><b>disabled true</b> · "unavailable, your stored value is preserved unread"</td></tr>
+<tr><td class="n">control while unreadable</td><td>as above</td><td>as above</td><td><b>disabled true</b> · "unavailable, your stored value is preserved unread, Global, this device"</td></tr>
 <tr><td class="n">explanation</td><td>Where this value comes from</td><td>dialog</td><td>each source announced with its value or "no value" · descriptor, scope and reason announced first</td></tr>
 <tr><td class="n">explanation Close</td><td>Close explanation</td><td>button</td><td>returns focus to the setting name</td></tr>
 <tr><td class="n">dialog Close</td><td>Close Global Preferences</td><td>button</td><td>returns focus to the invoking menu item, or the previously focused editor</td></tr>
