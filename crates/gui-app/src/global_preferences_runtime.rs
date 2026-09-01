@@ -112,8 +112,10 @@ impl GlobalPreferencesCoordinator {
         self.return_focus = invoker;
         ui.active_menu = None;
         ui.active_submenu = None;
+        ui.global_preferences.reset_transient_view();
+        ui.global_preferences.notice =
+            repository_notice(self.service.status(), self.service.legacy_migration());
         ui.global_preferences.open = true;
-        ui.global_preferences.focus = GlobalPreferencesFocus::SectionNavigation;
         ui.focus = ApplicationFocus::Overlay;
         true
     }
@@ -123,8 +125,7 @@ impl GlobalPreferencesCoordinator {
             return None;
         }
         ui.global_preferences.open = false;
-        ui.global_preferences.explanation_key = None;
-        ui.global_preferences.open_choice_key = None;
+        ui.global_preferences.reset_transient_view();
         Some(self.return_focus)
     }
 
@@ -324,8 +325,18 @@ impl Runtime {
                 .ui
                 .global_preferences
                 .dismiss_innermost();
-            if dismissal == GlobalPreferencesDismissal::DialogClosed {
-                self.set_application_focus(self.global_preferences.return_focus);
+            match dismissal {
+                GlobalPreferencesDismissal::SearchCleared => {
+                    self.announce_global_preferences(
+                        "Preference search cleared.",
+                        AnnouncementPriority::Medium,
+                    );
+                }
+                GlobalPreferencesDismissal::DialogClosed => {
+                    self.set_application_focus(self.global_preferences.return_focus);
+                }
+                GlobalPreferencesDismissal::ChoiceClosed
+                | GlobalPreferencesDismissal::ExplanationClosed => {}
             }
             self.invalidate_frame();
             return true;
