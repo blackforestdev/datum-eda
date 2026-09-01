@@ -5694,7 +5694,7 @@
       "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "summary": "Implement the typed resolver and durable repository foundation, then deliver the first functional Global Preferences wgpu slice through the conventional application-menu entry using real registered and persisted values.",
+      "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",
         "dat-shared-units-engine-build-915"
@@ -5704,7 +5704,7 @@
         "dat-global-preferences-completion-f84"
       ],
       "completion": {
-        "outcome": "Datum has a real manual Global Preferences doorway backed end-to-end by typed resolution and durable persisted state, ready for Units parity and full Global stabilization.",
+        "outcome": "Datum has a production-grade manual Global Preferences doorway and exact three-row Appearance slice backed end-to-end by typed presentation, resolution, durable persisted state, live consumers, accessibility, and recovery honesty, ready for Units parity and later full-catalog stabilization.",
         "canonical_next_step_id": "GP-F04",
         "execution_policy": {
           "max_in_progress_steps": 1,
@@ -5744,19 +5744,19 @@
           },
           {
             "id": "GP-F04", "kind": "owner_decision", "status": "pending",
-            "action": "Review GP-F03 durability and the current protected visual target before separately authorizing the first real Global Preferences wgpu slice in GP-F05.",
+            "action": "Review GP-F03 durability, the corrected production-grade GP-F05 contract, and the reconciled Claude-owned exact three-row protected target before separately authorizing GP-F05.",
             "depends_on": ["GP-F03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, real-row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the first functional Global Preferences wgpu vertical slice in GP-F05 only?", "recommended_response": "Approve only when every visible row is backed by the real resolver/repository and Revision, Project Preferences, empty categories, and fixture values remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
+            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, lifecycle, row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the corrected production-grade three-row Global Preferences wgpu slice in GP-F05 only?", "recommended_response": "Approve only after the Claude-owned target shows exactly Appearance with Console feedback duration, Reduced motion, and High contrast/non-color cues; the typed presentation/menu/lifecycle/accessibility/recovery contract is complete; and every forbidden or unimplemented surface remains absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
           },
           {
             "id": "GP-F05", "kind": "execution", "status": "pending",
-            "action": "Implement Edit > Preferences > Global Preferences with real registered and persisted rows, search/explanation, explicit scope, keyboard/accessibility, ordinary/narrow states, and zero Project mutation.",
+            "action": "Implement the real nested Edit > Preferences > Global Preferences doorway and production-grade Appearance slice with exactly three typed rows, descriptor-driven section/order/control metadata, one repository/resolver/consumer lifecycle, legacy Console migration, search/explanation, ordinary/narrow keyboard and accessibility behavior, preserved-unreadable honesty, and zero Project mutation.",
             "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": []
           }
         ],
         "post_completion": {
           "effects": [
-            "The first functional manual Global Preferences wgpu slice is backed by real typed resolution and durable persisted state.",
+            "The first production-grade manual Global Preferences wgpu slice is backed by typed presentation metadata, real resolution, durable persisted state, and live consumers for exactly three Appearance rows.",
             "Units surface parity and full Global Preferences completion become eligible for their own later owner gates.",
             "Excluded descriptors and schemas remain blocked until their named evidence and owner gates land.",
             "No Revision, Publish, provider, dependency, or successor execution is implied."

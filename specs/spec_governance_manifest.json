@@ -138,7 +138,7 @@
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
-      "notes": "PM-039-reconciled four-boundary plan: exact Units core, Global Preferences foundation plus first real wgpu slice, Units parity through that surface, then full Global completion. Every execution slice has a separate owner gate; no implementation or dependency is authorized by placement."
+      "notes": "PM-039-reconciled four-boundary plan: exact Units core, Global Preferences foundation plus a production-grade three-row Appearance wgpu slice, Units parity through that surface, then full Global completion. GP-F05 now fixes typed presentation metadata, menu/window behavior, repository lifecycle, accessibility, recovery, zero-Project-mutation proof, and a protected-lane reconciliation before its fresh owner gate; no implementation or dependency is authorized by placement."
     },
     "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
       "class": "governed",

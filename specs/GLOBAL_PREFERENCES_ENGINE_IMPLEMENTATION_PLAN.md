@@ -17,7 +17,8 @@
 This plan places four serial boundaries on the Frontier:
 
 1. the cross-cutting shared Units exact core;
-2. the Global Preferences foundation plus first real wgpu vertical slice;
+2. the Global Preferences foundation plus a production-grade first real wgpu
+   vertical slice;
 3. shared Units surface parity through that real Preferences surface; and
 4. complete Global Preferences stabilization and production acceptance.
 
@@ -103,11 +104,15 @@ schema is silently migrated in this slice.
 
 <!-- EVIDENCE:SHARED-UNITS-ENGINE:UNIT-I01-EXACT-CORE -->
 
-## 4. Global Preferences foundation and first real GUI slice
+## 4. Global Preferences foundation and production-grade first GUI slice
 
 `dat-global-preferences-engine-build-vge` depends on UNIT-I01, not on Units
 surface parity. Its first product result is one functional manual GUI slice,
-not an engine/CLI/MCP-only system.
+not an engine/CLI/MCP-only system. GP-F05 must be shippable for its exact row
+inventory and application doorway; “vertical slice” limits breadth, never
+quality, durability, accessibility, or honesty. It does not claim that the
+remaining active catalog or the complete Global Preferences product is
+production-accepted.
 
 <!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F00 -->
 <!-- OWNER:GLOBAL-PREFERENCES-ENGINE:GP-F00:GP-F00 -->
@@ -237,14 +242,238 @@ Revision behavior, provider/network service, synchronization, or dependency.
 Review the resolver/repository evidence and then-current Claude target before
 authorizing GP-F05.
 
-<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F05 -->
-### GP-F05 — Global Preferences menu and functional wgpu slice
+On 2026-08-31 the owner rejected the underspecified GP-F05 boundary and replied
+exactly:
 
-Implement `Edit > Preferences > Global Preferences…` with real registered and
-persisted rows, search, resolver-owned explanation, explicit Global scope,
-keyboard/accessibility, ordinary/narrow states, and zero Project mutation. No
-hard-coded catalog, empty Revision category, Project Preferences, setup flow,
-or full-production claim is included.
+> PREFERENCES-FOUNDATION: revise — before GP-F05 implementation, define the
+> exact active descriptor inventory for the first functional slice and add
+> typed presentation metadata for section placement, stable ordering, and
+> control selection without key-prefix inference or GUI hard-coding; reconcile
+> the protected visual target so deferred Revision, planned, Project-policy,
+> Organization, setup, and unavailable management surfaces are excluded;
+> specify the nested Edit > Preferences > Global Preferences doorway, the
+> repository/resolver GUI lifecycle, and the keyboard, focus, accessibility,
+> persistence, recovery, and zero-Project-mutation proof required for
+> acceptance.
+
+That disposition authorizes this contract correction only. GP-F04 remains the
+owner boundary: GP-F05 implementation is not authorized until the corrected
+contract and Claude-owned protected target are returned for a fresh exact
+approval.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-REVISION -->
+
+<!-- REQ:GLOBAL-PREFERENCES-ENGINE:GP-F05 -->
+### GP-F05 — production-grade Global Preferences doorway and wgpu slice
+
+GP-F05 implements the conventional application-level Global Preferences
+doorway and one complete, shippable Appearance slice. The slice uses only the
+real descriptor, resolver, repository, and consumer paths. It must not render a
+fixture catalog, infer presentation from a key prefix, or leave a visible
+control disconnected from its declared consumer.
+
+#### GP-F05.1 — exact visible inventory
+
+The GP-F05 surface contains exactly one section, stable section identity
+`appearance`, labeled **Appearance**, and exactly these three active V1 rows in
+this order:
+
+| Order | Stable key | Control | Required live result |
+|---:|---|---|---|
+| 10 | `datum.console.feedback_duration` | single-choice enum: 4 s, 6 s, 10 s, Never hide | The Console feedback timer immediately uses the resolved duration. The legacy `console_duration` value is migrated once through the registered alias path; the old GUI JSON writer is then removed as a rival persistent authority. |
+| 20 | `datum.accessibility.reduced_motion` | boolean switch with explicit Off/On text | Non-essential GUI and terminal animation immediately follows the resolved value; state, focus, and non-color cues remain unchanged. |
+| 30 | `datum.accessibility.high_contrast_noncolor` | boolean switch with explicit Off/On text | The application and terminal renderers immediately use the resolved high-contrast/non-color presentation; no state is communicated by color alone in either mode. |
+
+No other descriptor, section, category, teaching row, placeholder, or read-only
+policy projection is visible or searchable in GP-F05. In particular, the
+surface contains no Revision, Units, Project Policy, Project Preferences,
+Organization, Manage preferences, setup/replay, Start-page, planned, clay,
+deferred, or empty category. Later work expands the same architecture; it does
+not reserve empty navigation now.
+
+Every row shows its registered accessible label and description, real control,
+resolved effective value, explicit **Global · this device** scope, concise
+provenance, and a setting-name action that opens the complete resolver-owned
+explanation. Search covers the three current labels, descriptions, stable keys,
+and the registered `console_duration` alias. Search results invoke the same
+control and mutation path as the canonical row and cannot form a shadow store.
+
+#### GP-F05.2 — typed presentation authority
+
+The engine owns a typed `PreferenceSurfaceCatalog`; the GUI owns layout and
+rendering only. Each exposed entry binds an existing `PreferenceKey` to:
+
+- a stable `PreferenceSectionId`, localized section label, and unique section
+  order;
+- a unique row order within that section;
+- a closed `PreferenceControlPresentation` variant compatible with the
+  descriptor's `ValueSchema` (the GP-F05 variants are boolean switch and
+  enumerated single choice);
+- stable enum values mapped to visible labels without changing stored values;
+  and
+- the descriptor-owned accessible label, description, aliases, and provenance
+  query identity.
+
+Registry construction refuses a missing/duplicate key, duplicate order,
+unknown section, schema/control mismatch, incomplete or duplicate enum mapping,
+empty accessible copy, or a presentation entry for an inactive descriptor.
+The GUI iterates this typed catalog. It may not switch on key strings, infer a
+section from dot-separated names, duplicate defaults or enum choices, or carry
+a second list of rows. A catalog-wide test proves every GP-F05 key resolves to
+exactly one active descriptor and every visible value round-trips through that
+descriptor's validator.
+
+#### GP-F05.3 — application-menu and window contract
+
+The menubar represents an actual nested submenu, not a flat label containing a
+path and not a `not_built` refusal:
+
+```text
+Edit
+└── Preferences
+    └── Global Preferences…
+```
+
+Pointer click, keyboard menu traversal, and activation dispatch one stable
+GUI-local command identity to the same open action. The submenu has correct
+hover, focus, Escape/Left closure, Right/Enter opening, and edge-safe placement.
+`Project Preferences…` is not advertised by this slice because its surface is
+not implemented; PP-I01 later adds the second ratified PM-039 command and its
+disabled-without-Project behavior. This staged visibility does not alter the
+ratified two-command family.
+
+The command opens one application-level **Global Preferences — Datum** dialog
+inside the existing native shell. It is not a document, tiled pane, Navigator
+item, Inspector mode, or terminal surface. The dialog is input-modal while
+open, resizable, and unique: repeated activation raises the existing instance
+rather than duplicating it. Opening performs no write. Successful row changes
+commit immediately; there is no generic Apply transaction and closing does not
+roll back committed values. Close, title-bar close, and Escape return focus to
+the menu invoker (or the previously focused editor if the menu invoker no
+longer exists).
+
+At ordinary width the dialog follows the ratified two-column grammar: section
+navigation on the left and pinned content-column search over the rows on the
+right. At narrow width the section list becomes a labeled chooser, search stays
+visible, and an open explanation stacks immediately below its row. No content
+may clip, overlap, draw outside the dialog, or become reachable only by pointer.
+
+#### GP-F05.4 — repository, resolver, and consumer lifecycle
+
+The application creates one preferences service from the platform-resolved
+Datum configuration root, `active_v1_registry()`, the GP-F05 surface catalog,
+and `PreferenceRepository`. GUI code never reads or writes preference files
+directly.
+
+1. On clean start, absence of a repository resolves compiled descriptor
+   defaults without creating a file or serializing defaults.
+2. Before the first ordinary load, the service inspects the legacy Console-only
+   file. A valid `console_duration` contribution is previewed and migrated
+   through the registered alias into a new immutable repository generation;
+   legacy unknown bytes and an invalid/unreadable legacy file are preserved and
+   reported, never silently discarded. The legacy file is retained as migration
+   evidence until the new head is verified and backed up.
+3. Opening the dialog reads one repository snapshot and resolves all three rows
+   through the existing resolver. Render frames and input hit testing perform
+   no filesystem access and never re-run migration.
+4. Edit and Reset submit typed User-source mutations through one application
+   coordinator with the displayed expected generation. Reset removes the User
+   contribution and re-resolves; it never writes a guessed default.
+5. A successful commit publishes the new snapshot, re-resolves all affected
+   rows, applies the declared live consumers, updates provenance, and announces
+   the result. For these three descriptors, consumer adapters must be total
+   after descriptor validation; a visible row cannot report success while its
+   live consumer retains an older value.
+6. A stale expected generation, writer lease conflict, invalid value, or
+   ineligible source is not retried or overwritten silently. The service
+   preserves the user's draft, refreshes repository truth, leaves the last
+   valid effective value active, and returns a typed refusal with the available
+   retry/reset action.
+7. Missing, malformed, truncated, or integrity-invalid repository state opens
+   a non-blocking preserved-unreadable status. The three rows remain
+   inspectable but not writable; the exact suspect data and valid predecessor
+   identities remain preserved. GP-F05 provides no improvised repair, import,
+   backup, restore, migration-management, or deletion UI. Design authoring and
+   Project opening continue normally.
+8. Restart must reproduce the same effective User values and provenance from
+   the durable head. No row state is sourced from GUI-local cache, Project
+   data, the Navigator, or the retired Console preference writer.
+
+#### GP-F05.5 — keyboard and accessibility contract
+
+The dialog exposes a programmatic dialog name and explicit Global scope. Tab
+and Shift+Tab traverse, in visual order, section navigation, pinned search,
+each setting-name explanation action, each real control, row Reset when
+available, explanation Close, and dialog Close, with exactly one visible focus
+indicator and no trap. Enter/Space operate actions and switches; enum choices
+support arrows plus Home/End; Escape closes the innermost open choice or
+explanation before it closes the dialog.
+
+Every control exposes programmatic name, role, current value, availability,
+scope, and concise provenance. Explanation content exposes the resolver's
+effective contribution, absences, reason, descriptor facts, and available
+actions in reading order. Search result count, successful value change, Reset,
+and explanation opening use polite non-focus-stealing announcements; refusal
+and repository-unreadable state are assertive once. Focus moves only after a
+user action. Reduced-motion mode removes transitions and smooth scrolling but
+no cue or information. Wide, narrow, default, changed, refused, and unreadable
+states remain understandable with color removed.
+
+#### GP-F05.6 — acceptance evidence
+
+GP-F05 closes only when one reproducible proof packet contains all of the
+following:
+
+- unit/golden tests for the typed surface catalog, exact three-row inventory,
+  ordering, schema/control compatibility, enum mapping, alias search, and
+  rejection of GUI hard-coding or key-prefix inference;
+- menu-model, pointer, and keyboard tests for the real nested submenu, single
+  dialog instance, Escape hierarchy, and focus restoration;
+- focused service tests for clean start, first write, successful legacy Console
+  migration, invalid/unreadable legacy preservation, restart persistence,
+  Reset, stale generation, writer conflict, invalid draft, and corrupt-head
+  preserved-unreadable behavior;
+- consumer tests proving each of the three effective values changes its live
+  declared behavior and that the retired Console writer cannot mutate
+  persistent truth;
+- semantic assertions that every visible provenance and explanation field is
+  taken from the resolver result and that search controls use the canonical row
+  mutation path;
+- accessibility-tree assertions for dialog/section/search/name/control/value/
+  state/provenance, keyboard-only completion, announcement priority, no focus
+  trap, reduced-motion equivalence, and non-color state cues;
+- Claude-owned ordinary and narrow running-target renders showing the exact
+  three rows, an open explanation, changed provenance, and the preserved-
+  unreadable banner, followed by running-app captures of the same states; and
+- before/after hashes of every open Project shard and journal plus mutation-
+  observer assertions proving that opening, searching, explaining, editing,
+  resetting, refusing, closing, restarting, and corrupt-store handling perform
+  zero Project/design mutation and add no Navigator settings presence.
+
+Focused Rust tests, strict Clippy, source health, dependency authority, Cargo
+resource policy, evidence traceability, spec governance/parity, menu-model,
+project-state/render, private-writer, daemon-write-parity, and resolver-raw-load
+gates must all pass. The implementation adds no third-party dependency.
+
+#### GP-F05.7 — protected visual reconciliation required before authorization
+
+Codex does not edit `docs/gui/prototypes/*.html`. Before GP-F04 may be approved,
+the Claude-owned lane must reconcile
+`docs/gui/prototypes/preferences-window.html` at the status banner, navigation,
+`#appearance`, search-results, explanation, narrow-layout, and accessibility
+regions so the protected GP-F05 target shows exactly the section and three rows
+in GP-F05.1. It must also show the nested application-menu doorway and the
+preserved-unreadable non-management state. It must preserve the ratified
+two-column/pinned-search/row/explanation grammar and retain the full catalog as
+future comparative evidence without letting it authorize GP-F05 content.
+
+Expected proof is one explicitly labeled GP-F05 ordinary render, one narrow
+render, a keyboard-focus map with return target, a screen-reader name/state
+inventory, and a text/non-color unreadable-state render. No Revision, planned,
+Project-policy, Project Preferences, Organization, setup, Manage preferences,
+fixture, or empty-category content may appear in those GP-F05 states.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-REVISED-CONTRACT -->
 
 ## 5. Shared Units surface parity through real Preferences
 
@@ -274,10 +503,13 @@ Review GP-F05 and UNIT-I03 before authorizing GP-CM01.
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM01 -->
 ### GP-CM01 — complete and stabilize the Global surface
 
-Expand through the full active catalog, managed/refused states, unknown and
-retired identities, recovery/migration/restore, setup/replay, Start page,
-search/provenance, narrow layouts, and accessibility. Revision descriptors and
-empty categories remain absent.
+Expand the accepted GP-F05 architecture through the full active catalog and
+the remaining managed/refused, unknown/retired-identity,
+recovery/migration/restore, setup/replay, Start-page, search/provenance,
+responsive, and accessibility states. Do not replace GP-F05's repository,
+resolver, presentation-catalog, menu, mutation, focus, or accessibility paths
+with a second implementation. Revision descriptors and empty categories remain
+absent.
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02 -->
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02:GP-CM02 -->
