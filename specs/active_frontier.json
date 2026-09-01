@@ -5699,13 +5699,13 @@
         "harness": "codex-cli",
         "session": "codex-gp-f05-wayland-stacking-20260901",
         "claimed_at": "2026-09-01T18:22:48Z",
-        "heartbeat_at": "2026-09-01T18:22:48Z",
-        "expires_at": "2026-09-02T02:22:48Z",
+        "heartbeat_at": "2026-09-01T20:16:29Z",
+        "expires_at": "2026-09-02T04:16:29Z",
         "scope": [
           "Reopen GP-F05 after owner QA and require direct Wayland/KWin proof that the owning Datum window cannot cover its input-modal Preferences window"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "cb05696b7f39d5b0ea6f694f1169903199b42631"
+        "head": "0a18739e059574c1e3c3ac836930bd657e59c190"
       },
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "dependencies": [
@@ -5764,7 +5764,7 @@
           {
             "id": "GP-F05", "kind": "execution", "status": "in_progress",
             "action": "Implement the real nested Edit > Preferences > Global Preferences doorway and production-grade Appearance slice with exactly three typed rows, descriptor-driven section/order/control metadata, one repository/resolver/consumer lifecycle, legacy Console migration, search/explanation, ordinary/narrow keyboard and accessibility behavior, preserved-unreadable honesty, and zero Project mutation.",
-            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": [{"kind": "commit", "revision": "6b2d58b"}, {"kind": "commit", "revision": "f0d058d"}, {"kind": "commit", "revision": "2df4b6a"}]
+            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": [{"kind": "commit", "revision": "6b2d58b"}, {"kind": "commit", "revision": "f0d058d"}, {"kind": "commit", "revision": "2df4b6a"}, {"kind": "commit", "revision": "33f23f6"}, {"kind": "commit", "revision": "0a18739"}]
           }
         ],
         "post_completion": {
