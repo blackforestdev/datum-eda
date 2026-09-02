@@ -5194,7 +5194,6 @@
         "dat-visual-truth-file-lane-enforcement-jfl"
       ],
       "unblocks": [
-        "dat-global-preferences-engine-build-vge",
         "dat-product-revision-engine-build-18f"
       ],
       "completion": {
@@ -5568,7 +5567,6 @@
             "The Product Revision Engine REV-I00 policy-resolution baseline may be prepared only after this specification lands."
           ],
           "unblocks_issue_ids": [
-            "dat-global-preferences-engine-build-vge",
             "dat-product-revision-engine-build-18f"
           ],
           "selection": "explicit_frontier_update",
@@ -5598,9 +5596,7 @@
       "dependencies": [
         "dat-global-preferences-engine-qcv"
       ],
-      "unblocks": [
-        "dat-global-preferences-engine-build-vge"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum has one tested engine-owned exact Units core ready to serve the first functional Global Preferences slice without creating a standalone or temporary settings UI.",
         "canonical_next_step_id": null,
@@ -5667,7 +5663,7 @@
             "Units surface parity and production acceptance remain blocked until the first real Global Preferences wgpu slice exists.",
             "No Preferences, Revision, Publish, dependency, or successor execution is implied."
           ],
-          "unblocks_issue_ids": ["dat-global-preferences-engine-build-vge"],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -5690,23 +5686,11 @@
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md",
         "docs/gui/prototypes/preferences-window.html"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-gp-f05-owner-qa-20260902",
-        "claimed_at": "2026-09-02T15:18:57Z",
-        "heartbeat_at": "2026-09-02T15:18:57Z",
-        "expires_at": "2026-09-02T23:18:57Z",
-        "scope": [
-          "Continue the execution-authorized GP-F05 owner-QA correction cycle, preserving the exact three-row scope while reconciling the native wgpu interface to the protected HTML component grammar and verifying the fresh running build"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "17eda3660c8e5b86746b3f7f7dca554b966d5c9d"
-      },
+      "claim": null,
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "dependencies": [
         "dat-global-preferences-engine-qcv",
@@ -5718,7 +5702,7 @@
       ],
       "completion": {
         "outcome": "Datum has a production-grade manual Global Preferences doorway and exact three-row Appearance slice backed end-to-end by typed presentation, resolution, durable persisted state, live consumers, accessibility, and recovery honesty, ready for Units parity and later full-catalog stabilization.",
-        "canonical_next_step_id": "GP-F05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5762,9 +5746,9 @@
             "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, lifecycle, row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the corrected production-grade three-row Global Preferences wgpu slice in GP-F05 only?", "recommended_response": "Approve only after the Claude-owned target shows exactly Appearance with Console feedback duration, Reduced motion, and High contrast/non-color cues; the typed presentation/menu/lifecycle/accessibility/recovery contract is complete; and every forbidden or unimplemented surface remains absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
           },
           {
-            "id": "GP-F05", "kind": "execution", "status": "in_progress",
+            "id": "GP-F05", "kind": "execution", "status": "complete",
             "action": "Implement the real nested Edit > Preferences > Global Preferences doorway and production-grade Appearance slice with exactly three typed rows, descriptor-driven section/order/control metadata, one repository/resolver/consumer lifecycle, legacy Console migration, search/explanation, ordinary/narrow keyboard and accessibility behavior, preserved-unreadable honesty, and zero Project mutation.",
-            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": [{"kind": "commit", "revision": "6b2d58b"}, {"kind": "commit", "revision": "f0d058d"}, {"kind": "commit", "revision": "2df4b6a"}, {"kind": "commit", "revision": "33f23f6"}, {"kind": "commit", "revision": "0a18739"}]
+            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": [{"kind": "commit", "revision": "6b2d58b"}, {"kind": "commit", "revision": "f0d058d"}, {"kind": "commit", "revision": "2df4b6a"}, {"kind": "commit", "revision": "33f23f6"}, {"kind": "commit", "revision": "0a18739"}, {"kind": "commit", "revision": "3ff9d2c"}, {"kind": "commit", "revision": "3a0fc92"}, {"kind": "commit", "revision": "d489f53"}]
           }
         ],
         "post_completion": {
@@ -5782,7 +5766,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "d489f53"
     },
     {
       "key": "SHARED-UNITS-SURFACE-PARITY",
@@ -5797,9 +5782,9 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "blocked",
+      "state": "specified",
       "authorization": "owner_decision",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "After the first real Global Preferences wgpu slice exists, prove the exact Units core across the six ratified unit descriptors, GUI, CLI, MCP, import/export, and real Projects without inventing a temporary settings surface.",
       "dependencies": [
