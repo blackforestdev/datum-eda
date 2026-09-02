@@ -328,6 +328,19 @@ domain builds toward on the landed substrate.
   own `--visual-test --screenshot-out --exit-after-screenshot` flags (see
   `scripts/check_gui_visual_parity.py`). Always capture and eyeball the render
   before showing the owner; you can Read the PNG to inspect it.
+- **HTML prototypes are construction references, not merely pictures.** When a
+  controlling visual prototype is HTML, inspect its actual DOM and CSS before
+  implementing the corresponding native GUI. Map the prototype's component
+  hierarchy, dimensions, spacing, borders, radii, colors, typography, state
+  ownership, focus treatment, and responsive rules into Datum's tokens and
+  wgpu primitives. Do not reconstruct the interface from a screenshot alone:
+  screenshots verify the rendered result and expose cross-renderer differences,
+  but the HTML defines how the protected design is composed. Compare matching
+  HTML and native states after implementation, including interaction, focus,
+  narrow-layout, accessibility, and non-color states where the prototype
+  specifies them. This is a translation into native Datum primitives, not
+  authorization to embed a browser runtime or to modify a Claude-owned
+  `docs/gui/prototypes/*.html` file.
 
 ## Architecture: Engine-First
 
