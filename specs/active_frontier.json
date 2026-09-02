@@ -5697,15 +5697,15 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-gp-f05-wayland-stacking-20260901",
-        "claimed_at": "2026-09-01T18:22:48Z",
-        "heartbeat_at": "2026-09-01T20:16:29Z",
-        "expires_at": "2026-09-02T04:16:29Z",
+        "session": "codex-gp-f05-owner-qa-20260902",
+        "claimed_at": "2026-09-02T06:04:43Z",
+        "heartbeat_at": "2026-09-02T06:04:43Z",
+        "expires_at": "2026-09-02T14:04:43Z",
         "scope": [
-          "Reopen GP-F05 after owner QA and require direct Wayland/KWin proof that the owning Datum window cannot cover its input-modal Preferences window"
+          "Continue the execution-authorized GP-F05 owner-QA correction cycle, preserving the exact three-row scope while reconciling the native wgpu interface to the protected HTML component grammar and verifying the fresh running build"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "0a18739e059574c1e3c3ac836930bd657e59c190"
+        "head": "f3528b6686e15a04039f41b0dd0e272d565b647c"
       },
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "dependencies": [
