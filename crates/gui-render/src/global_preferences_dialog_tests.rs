@@ -137,12 +137,24 @@ fn dialog_renders_exact_three_canonical_controls_and_blocks_workspace_hits() {
         prepared.hit_test(2.0, 300.0),
         Some(&HitTarget::GlobalPreferencesModal)
     );
+    let section = prepared
+        .hit_regions
+        .iter()
+        .find(|region| region.target == HitTarget::GlobalPreferencesSection)
+        .expect("Appearance must have one row-sized navigation target");
+    assert_eq!(section.rect.height, 32.0);
+    assert!(section.rect.width < 210.0);
+    assert_eq!(
+        prepared.hit_test(section.rect.x + 20.0, section.rect.y + 16.0),
+        Some(&HitTarget::GlobalPreferencesSection)
+    );
     let labels: Vec<_> = prepared
         .menu_overlay_text_runs
         .iter()
         .map(|run| run.text.as_str())
         .collect();
-    assert!(labels.contains(&"Global · this device · Changes save immediately"));
+    assert!(labels.contains(&"Global · this device"));
+    assert!(labels.contains(&"saves immediately"));
     assert!(!labels.contains(&"Close"));
     assert!(!labels.contains(&"Apply"));
 }
@@ -156,11 +168,27 @@ fn focused_search_draws_one_text_caret_for_empty_and_nonempty_queries() {
     let mut focused_empty_state = unfocused_state.clone();
     focused_empty_state.ui.global_preferences.focus = GlobalPreferencesFocus::Search;
     let focused_empty = prepared(&focused_empty_state, 1300, 760);
-    assert_eq!(
-        focused_empty.menu_overlay_vertices().len(),
-        unfocused.menu_overlay_vertices().len() + 6,
-        "focused empty search must add exactly one caret quad"
-    );
+    let caret_vertices = |scene: &PreparedScene| {
+        let search = scene
+            .hit_regions
+            .iter()
+            .find(|region| region.target == HitTarget::GlobalPreferencesSearch)
+            .unwrap()
+            .rect;
+        scene
+            .menu_overlay_vertices()
+            .iter()
+            .filter(|vertex| {
+                vertex.color == TEXT_PRIMARY
+                    && vertex.pos[0] > search.x
+                    && vertex.pos[0] < search.x + search.width
+                    && vertex.pos[1] > search.y
+                    && vertex.pos[1] < search.y + search.height
+            })
+            .count()
+    };
+    assert_eq!(caret_vertices(&unfocused), 0);
+    assert_eq!(caret_vertices(&focused_empty), 6);
 
     focused_empty_state.ui.global_preferences.search_query = "units".to_owned();
     let mut unfocused_nonempty_state = focused_empty_state.clone();
@@ -168,11 +196,8 @@ fn focused_search_draws_one_text_caret_for_empty_and_nonempty_queries() {
         GlobalPreferencesFocus::SectionNavigation;
     let unfocused_nonempty = prepared(&unfocused_nonempty_state, 1300, 760);
     let focused_nonempty = prepared(&focused_empty_state, 1300, 760);
-    assert_eq!(
-        focused_nonempty.menu_overlay_vertices().len(),
-        unfocused_nonempty.menu_overlay_vertices().len() + 6,
-        "focused nonempty search must retain exactly one caret quad"
-    );
+    assert_eq!(caret_vertices(&unfocused_nonempty), 0);
+    assert_eq!(caret_vertices(&focused_nonempty), 6);
 }
 
 #[test]
@@ -183,7 +208,8 @@ fn search_field_uses_the_protected_six_pixel_rounded_outline() {
         width: 100.0,
         height: 38.0,
     };
-    let points = global_preferences_dialog::rounded_rect_points(rect, design_tokens::radius::MD);
+    let points =
+        global_preferences_primitives::rounded_rect_points(rect, design_tokens::radius::MD);
 
     for square_corner in [
         (rect.x, rect.y),
@@ -287,11 +313,11 @@ fn preserved_unreadable_rows_keep_values_but_have_no_control_targets() {
         .iter()
         .map(|run| run.text.as_str())
         .collect();
-    assert!(labels.contains(&"6 s  v -- unavailable"));
+    assert!(labels.contains(&"6 s · unavailable"));
     assert_eq!(
         labels
             .iter()
-            .filter(|label| **label == "[ ]  Off -- unavailable")
+            .filter(|label| **label == "Off · unavailable")
             .count(),
         2
     );
@@ -332,7 +358,7 @@ fn high_contrast_mode_keeps_word_and_shape_state_cues() {
         .iter()
         .map(|run| run.text.as_str())
         .collect();
-    assert!(labels.contains(&"[x]  On"));
+    assert!(labels.contains(&"On"));
     assert!(
         prepared
             .text_runs

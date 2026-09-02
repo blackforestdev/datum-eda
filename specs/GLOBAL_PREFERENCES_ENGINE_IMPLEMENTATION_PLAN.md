@@ -385,6 +385,15 @@ navigation on the left and pinned content-column search over the rows on the
 right. At narrow width the section list becomes a labeled chooser, search stays
 visible, and an open explanation stacks immediately below its row. No content
 may clip, overlap, draw outside the dialog, or become reachable only by pointer.
+Runtime chrome implements the protected target's component grammar directly:
+the `.f5tbar` header and scope chips; neutral `.f5nav` column with one structural
+divider; `.f5nav .on` row-only selection fill and two-pixel accent strip;
+`.f5focus` information-blue keyboard outline on the actual focused control;
+padded `.f5srch` band; divider-based `.f5row` and `.f5prov` sequence; compact
+rounded `.f5sel`; and pill-and-knob `.f5tog` with a separate ON/OFF word cue.
+Tinting or bounding the entire navigation column, replacing row dividers with
+detached cards, or substituting generic text boxes for switches is a parity
+failure even when the same settings remain reachable.
 The focused search field renders a visible text caret at the insertion point;
 the accent focus boundary alone is not an editable-text cursor. In ordinary,
 focused, empty, populated, and narrow states, the search fill and its focus
@@ -573,6 +582,16 @@ notice, and internal-focus state as window-local and resets it on close, while
 leaving immediately saved preference values unchanged.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-REOPEN-ORDINARY-STATE -->
+
+Fresh owner comparison against the protected HTML then found that the runtime
+had reproduced the information hierarchy but not its component construction:
+the whole navigation rail was tinted and focus-bounded, its structural divider
+was absent, and generic card/button primitives replaced the target's row,
+selector, and switch grammar. GP-F05 remains open until the runtime translates
+the named `.f5*` rules above directly and a running-app capture confirms row-only
+navigation selection and focus.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F05-HTML-COMPONENT-PARITY -->
 
 ## 5. Shared Units surface parity through real Preferences
 

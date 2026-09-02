@@ -1,85 +1,13 @@
 //! Production Global Preferences dialog chrome for the engine-owned GP-F05 rows.
 
 use super::*;
+use crate::global_preferences_primitives::{
+    button, draw_boolean_control, draw_choice_control, draw_header_chip, draw_search_icon,
+    push_rounded_rect_with_border,
+};
 use datum_gui_protocol::{
     GlobalPreferenceControlUi, GlobalPreferencesFocus, GlobalPreferencesNoticeUi,
 };
-
-const ROUNDED_RECT_CORNER_SEGMENTS: usize = 4;
-
-pub(super) fn push_rounded_rect_with_border(
-    quads: &mut Vec<Quad>,
-    rect: RectPx,
-    fill: [f32; 3],
-    border: [f32; 3],
-    thickness: f32,
-    radius: f32,
-) {
-    push_rounded_rect_fill(quads, rect, border, radius);
-    let inset = thickness
-        .max(0.0)
-        .min(rect.width * 0.5)
-        .min(rect.height * 0.5);
-    if inset <= 0.0 {
-        return;
-    }
-    let inner = RectPx {
-        x: rect.x + inset,
-        y: rect.y + inset,
-        width: rect.width - inset * 2.0,
-        height: rect.height - inset * 2.0,
-    };
-    if inner.width > 0.0 && inner.height > 0.0 {
-        push_rounded_rect_fill(quads, inner, fill, (radius - inset).max(0.0));
-    }
-}
-
-fn push_rounded_rect_fill(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], radius: f32) {
-    push_projected_polygon_fill(quads, &rounded_rect_points(rect, radius), color);
-}
-
-pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> {
-    let radius = radius.max(0.0).min(rect.width * 0.5).min(rect.height * 0.5);
-    if radius == 0.0 {
-        return vec![
-            (rect.x, rect.y),
-            (rect.x + rect.width, rect.y),
-            (rect.x + rect.width, rect.y + rect.height),
-            (rect.x, rect.y + rect.height),
-        ];
-    }
-
-    let mut points = Vec::with_capacity((ROUNDED_RECT_CORNER_SEGMENTS + 1) * 4);
-    let corners = [
-        (
-            rect.x + rect.width - radius,
-            rect.y + radius,
-            -std::f32::consts::FRAC_PI_2,
-        ),
-        (
-            rect.x + rect.width - radius,
-            rect.y + rect.height - radius,
-            0.0,
-        ),
-        (
-            rect.x + radius,
-            rect.y + rect.height - radius,
-            std::f32::consts::FRAC_PI_2,
-        ),
-        (rect.x + radius, rect.y + radius, std::f32::consts::PI),
-    ];
-    for (center_x, center_y, start_angle) in corners {
-        for step in 0..=ROUNDED_RECT_CORNER_SEGMENTS {
-            let angle = start_angle
-                + std::f32::consts::FRAC_PI_2 * step as f32 / ROUNDED_RECT_CORNER_SEGMENTS as f32;
-            points.push((
-                center_x + radius * angle.cos(),
-                center_y + radius * angle.sin(),
-            ));
-        }
-    }
-    points
-}
 
 pub(super) fn render_global_preferences_dialog(
     state: &ReviewWorkspaceState,
@@ -108,7 +36,6 @@ pub(super) fn render_global_preferences_dialog(
 
     let narrow = window.width < 800.0;
     let card = window;
-    quads.push(Quad::from_rect(card, PANEL_CARD_BG));
     push_rect_border(
         quads,
         card,
@@ -124,109 +51,197 @@ pub(super) fn render_global_preferences_dialog(
         },
     );
 
-    let pad = design_tokens::spacing::SP_05;
+    let header = RectPx {
+        x: card.x,
+        y: card.y,
+        width: card.width,
+        height: 42.0,
+    };
+    quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_01));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: header.x,
+            y: header.y + header.height - 1.0,
+            width: header.width,
+            height: 1.0,
+        },
+        design_tokens::chrome::BORDER_SUBTLE,
+    ));
+    let title_x = header.x + 14.0;
     draw_text(
         "Global Preferences — Datum",
-        card.x + pad,
-        card.y + pad,
-        design_tokens::typography::DISPLAY_SIZE,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text,
-    );
-    draw_text(
-        "Global · this device · Changes save immediately",
-        card.x + pad,
-        card.y + pad + 24.0,
-        design_tokens::typography::CAPTION_SIZE,
-        TEXT_SECONDARY,
-        TextFace::Mono,
-        text,
-    );
-    let content_top = card.y + 68.0;
-    let rail_width = if narrow { 0.0 } else { 184.0 };
-    let rail = RectPx {
-        x: card.x + pad,
-        y: content_top,
-        width: if narrow {
-            card.width - pad * 2.0
-        } else {
-            rail_width
-        },
-        height: if narrow { 42.0 } else { card.height - 88.0 },
-    };
-    quads.push(Quad::from_rect(rail, REVIEW_ROW_ACTIVE_BG));
-    push_rect_border(
-        quads,
-        rail,
-        if focus_is(dialog, &GlobalPreferencesFocus::SectionNavigation) {
-            TEXT_ACCENT
-        } else {
-            PANEL_CARD_BORDER
-        },
-        1.0,
-    );
-    draw_text(
-        if narrow {
-            "Section: Appearance  v"
-        } else {
-            "Appearance"
-        },
-        rail.x + 12.0,
-        rail.y + 13.0,
+        title_x,
+        header.y + 13.0,
         design_tokens::typography::BODY_SIZE,
         TEXT_PRIMARY,
         TextFace::UiStrong,
         text,
     );
+    let title_width = measured_text_run_width_px(
+        "Global Preferences — Datum",
+        design_tokens::typography::BODY_SIZE,
+        TextFace::UiStrong,
+    );
+    let scope = draw_header_chip(
+        "Global · this device",
+        title_x + title_width + 18.0,
+        header.y + 11.0,
+        quads,
+        text,
+    );
+    draw_header_chip(
+        "saves immediately",
+        scope.x + scope.width + 8.0,
+        header.y + 11.0,
+        quads,
+        text,
+    );
+    let modality = "input-modal";
+    let modality_width = measured_text_run_width_px(
+        modality,
+        design_tokens::typography::MICRO_SIZE,
+        TextFace::Mono,
+    );
+    draw_text(
+        modality,
+        header.x + header.width - modality_width - 14.0,
+        header.y + 15.0,
+        design_tokens::typography::MICRO_SIZE,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text,
+    );
+
+    let content_top = header.y + header.height;
+    let rail_width = if narrow { card.width } else { 210.0 };
+    let rail = RectPx {
+        x: card.x,
+        y: content_top,
+        width: rail_width,
+        height: if narrow {
+            48.0
+        } else {
+            card.height - header.height
+        },
+    };
+    quads.push(Quad::from_rect(rail, design_tokens::chrome::SURFACE_01));
+    let separator = if narrow {
+        RectPx {
+            x: rail.x,
+            y: rail.y + rail.height - 1.0,
+            width: rail.width,
+            height: 1.0,
+        }
+    } else {
+        RectPx {
+            x: rail.x + rail.width - 1.0,
+            y: rail.y,
+            width: 1.0,
+            height: rail.height,
+        }
+    };
+    quads.push(Quad::from_rect(
+        separator,
+        design_tokens::chrome::BORDER_SUBTLE,
+    ));
+    let section = RectPx {
+        x: rail.x,
+        y: rail.y + if narrow { 8.0 } else { 12.0 },
+        width: rail.width - if narrow { 0.0 } else { 1.0 },
+        height: 32.0,
+    };
+    quads.push(Quad::from_rect(section, design_tokens::chrome::SURFACE_02));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: section.x,
+            y: section.y,
+            width: 2.0,
+            height: section.height,
+        },
+        TEXT_ACCENT,
+    ));
+    if focus_is(dialog, &GlobalPreferencesFocus::SectionNavigation) {
+        push_rect_border(quads, section, design_tokens::chrome::STATUS_INFO, 2.0);
+    }
+    draw_text(
+        if narrow {
+            "Appearance  v"
+        } else {
+            "Appearance"
+        },
+        section.x + 18.0,
+        section.y + 8.0,
+        design_tokens::typography::BODY_SIZE,
+        TEXT_PRIMARY,
+        TextFace::Ui,
+        text,
+    );
     hits.push(HitRegion {
         target: HitTarget::GlobalPreferencesSection,
-        rect: rail,
+        rect: section,
     });
 
-    let content_x = if narrow {
-        card.x + pad
-    } else {
-        rail.x + rail.width + pad
-    };
+    let content_x = if narrow { card.x } else { rail.x + rail.width };
     let content_y = if narrow {
-        rail.y + rail.height + 12.0
+        rail.y + rail.height
     } else {
         content_top
     };
-    let content_width = card.x + card.width - pad - content_x;
-    let search = RectPx {
+    let content_width = card.x + card.width - content_x;
+    let search_band = RectPx {
         x: content_x,
         y: content_y,
         width: content_width,
-        height: 38.0,
+        height: 58.0,
     };
-    let search_text_x = search.x
+    quads.push(Quad::from_rect(search_band, design_tokens::chrome::BG_BASE));
+    quads.push(Quad::from_rect(
+        RectPx {
+            x: search_band.x,
+            y: search_band.y + search_band.height - 1.0,
+            width: search_band.width,
+            height: 1.0,
+        },
+        design_tokens::chrome::BORDER_SUBTLE,
+    ));
+    let search = RectPx {
+        x: search_band.x + 18.0,
+        y: search_band.y + 12.0,
+        width: search_band.width - 36.0,
+        height: 35.0,
+    };
+    let search_input_x = search.x + 30.0;
+    let search_text_x = search_input_x
         + if dialog.search_query.is_empty() && focus_is(dialog, &GlobalPreferencesFocus::Search) {
-            18.0
+            6.0
         } else {
-            12.0
+            0.0
         };
     push_rounded_rect_with_border(
         quads,
         search,
         design_tokens::chrome::SURFACE_02,
         if focus_is(dialog, &GlobalPreferencesFocus::Search) {
-            TEXT_ACCENT
+            design_tokens::chrome::STATUS_INFO
         } else {
-            PANEL_CARD_BORDER
+            design_tokens::chrome::BORDER_STRONG
         },
-        1.0,
+        if focus_is(dialog, &GlobalPreferencesFocus::Search) {
+            2.0
+        } else {
+            1.0
+        },
         design_tokens::radius::MD,
     );
+    draw_search_icon(search.x + 12.0, search.y + 12.0, quads);
     draw_text(
         if dialog.search_query.is_empty() {
-            "Search Appearance settings"
+            "search settings…"
         } else {
             &dialog.search_query
         },
         search_text_x,
-        search.y + 11.0,
+        search.y + 10.0,
         design_tokens::typography::BODY_SIZE,
         if dialog.search_query.is_empty() {
             TEXT_MUTED
@@ -238,10 +253,9 @@ pub(super) fn render_global_preferences_dialog(
     );
     if focus_is(dialog, &GlobalPreferencesFocus::Search) {
         let caret_x = if dialog.search_query.is_empty() {
-            search.x + 12.0
+            search_input_x
         } else {
-            (search.x
-                + 12.0
+            (search_input_x
                 + measured_text_run_width_px(
                     &dialog.search_query,
                     design_tokens::typography::BODY_SIZE,
@@ -253,9 +267,9 @@ pub(super) fn render_global_preferences_dialog(
         quads.push(Quad::from_rect(
             RectPx {
                 x: caret_x,
-                y: search.y + 9.0,
+                y: search.y + 8.0,
                 width: 1.5,
-                height: 20.0,
+                height: 19.0,
             },
             TEXT_PRIMARY,
         ));
@@ -265,7 +279,7 @@ pub(super) fn render_global_preferences_dialog(
         rect: search,
     });
 
-    let mut y = search.y + search.height + 12.0;
+    let mut y = search_band.y + search_band.height;
     if let Some(notice) = &dialog.notice {
         let (lines, color) = match notice {
             GlobalPreferencesNoticeUi::Polite(message) => {
@@ -306,7 +320,7 @@ pub(super) fn render_global_preferences_dialog(
                 text,
             );
         }
-        y += notice_rect.height + 8.0;
+        y += notice_rect.height;
     }
 
     let visible: Vec<_> = dialog.visible_rows().collect();
@@ -336,26 +350,32 @@ pub(super) fn render_global_preferences_dialog(
             }
             _ => 0,
         };
-        let row_height = if explained {
-            184.0
-        } else if choice_count > 0 {
-            66.0 + choice_count as f32 * 28.0
-        } else {
-            94.0
-        };
+        let setting_height = 58.0;
+        let provenance_height = 28.0;
+        let choice_height = choice_count as f32 * 28.0;
+        let explanation_height = if explained { 96.0 } else { 0.0 };
+        let row_height = setting_height + provenance_height + choice_height + explanation_height;
         let row_rect = RectPx {
             x: content_x,
             y,
             width: content_width,
             height: row_height,
         };
-        quads.push(Quad::from_rect(row_rect, design_tokens::chrome::SURFACE_01));
-        push_rect_border(quads, row_rect, PANEL_CARD_BORDER, 1.0);
+        let setting_rect = RectPx {
+            x: row_rect.x,
+            y: row_rect.y,
+            width: row_rect.width,
+            height: setting_height,
+        };
+        quads.push(Quad::from_rect(
+            setting_rect,
+            design_tokens::chrome::BG_BASE,
+        ));
 
         let name_rect = RectPx {
-            x: row_rect.x + 10.0,
-            y: row_rect.y + 8.0,
-            width: (row_rect.width - 190.0).max(130.0),
+            x: setting_rect.x + 18.0,
+            y: setting_rect.y + 7.0,
+            width: (setting_rect.width - 250.0).max(130.0),
             height: 24.0,
         };
         draw_text(
@@ -371,7 +391,7 @@ pub(super) fn render_global_preferences_dialog(
             dialog,
             &GlobalPreferencesFocus::SettingName(row.key.clone()),
         ) {
-            push_rect_border(quads, name_rect, TEXT_ACCENT, 1.0);
+            push_rect_border(quads, name_rect, design_tokens::chrome::STATUS_INFO, 2.0);
         }
         hits.push(HitRegion {
             target: HitTarget::GlobalPreferencesSettingName(row.key.clone()),
@@ -379,17 +399,117 @@ pub(super) fn render_global_preferences_dialog(
         });
         draw_text(
             &truncate_text(&row.description, 86),
-            row_rect.x + 10.0,
-            row_rect.y + 37.0,
+            setting_rect.x + 18.0,
+            setting_rect.y + 32.0,
             design_tokens::typography::CAPTION_SIZE,
-            TEXT_SECONDARY,
+            TEXT_MUTED,
             TextFace::Ui,
             text,
         );
+
+        let reset = row.changed.then_some(RectPx {
+            x: setting_rect.x + setting_rect.width - 80.0,
+            y: setting_rect.y + 14.0,
+            width: 62.0,
+            height: 28.0,
+        });
+        let control_right = reset.map_or(setting_rect.x + setting_rect.width - 18.0, |rect| {
+            rect.x - 10.0
+        });
+        let focused_control = focus_is(dialog, &GlobalPreferencesFocus::Control(row.key.clone()));
+        let control = match &row.control {
+            GlobalPreferenceControlUi::Boolean {
+                value,
+                off_label,
+                on_label,
+            } => {
+                let rect = RectPx {
+                    x: control_right - if row.writable { 78.0 } else { 138.0 },
+                    y: setting_rect.y + 14.0,
+                    width: if row.writable { 78.0 } else { 138.0 },
+                    height: 28.0,
+                };
+                draw_boolean_control(
+                    *value,
+                    if *value { on_label } else { off_label },
+                    rect,
+                    focused_control,
+                    row.writable,
+                    quads,
+                    text,
+                );
+                rect
+            }
+            GlobalPreferenceControlUi::SingleChoice { value, choices } => {
+                let label = choices
+                    .iter()
+                    .find(|(candidate, _)| candidate == value)
+                    .map(|(_, label)| label.as_str())
+                    .unwrap_or(value);
+                let width = if row.writable {
+                    (measured_text_run_width_px(
+                        label,
+                        design_tokens::typography::CAPTION_SIZE,
+                        TextFace::Ui,
+                    ) + 34.0)
+                        .max(58.0)
+                } else {
+                    138.0
+                };
+                let rect = RectPx {
+                    x: control_right - width,
+                    y: setting_rect.y + 14.0,
+                    width,
+                    height: 30.0,
+                };
+                draw_choice_control(label, rect, focused_control, row.writable, quads, text);
+                rect
+            }
+        };
+        if row.writable {
+            hits.push(HitRegion {
+                target: HitTarget::GlobalPreferencesControl(row.key.clone()),
+                rect: control,
+            });
+        }
+        if let Some(reset) = reset {
+            button(
+                "Reset",
+                reset,
+                focus_is(dialog, &GlobalPreferencesFocus::Reset(row.key.clone())),
+                true,
+                quads,
+                text,
+            );
+            hits.push(HitRegion {
+                target: HitTarget::GlobalPreferencesReset(row.key.clone()),
+                rect: reset,
+            });
+        }
+
+        let provenance = RectPx {
+            x: row_rect.x,
+            y: row_rect.y + setting_height + choice_height,
+            width: row_rect.width,
+            height: provenance_height,
+        };
+        if row.changed {
+            let center_x = provenance.x + 22.0;
+            let center_y = provenance.y + 11.0;
+            quads.push(Quad {
+                points: [
+                    (center_x, center_y - 3.0),
+                    (center_x + 3.0, center_y),
+                    (center_x, center_y + 3.0),
+                    (center_x - 3.0, center_y),
+                ],
+                color: TEXT_ACCENT,
+            });
+        }
         draw_text(
             &row.provenance,
-            row_rect.x + 10.0,
-            row_rect.y + 63.0,
+            provenance.x + if row.changed { 32.0 } else { 18.0 },
+            provenance.y + 5.0,
             design_tokens::typography::CAPTION_SIZE,
             if row.writable {
                 TEXT_MUTED
@@ -399,63 +519,24 @@ pub(super) fn render_global_preferences_dialog(
             TextFace::Mono,
             text,
         );
+        quads.push(Quad::from_rect(
+            RectPx {
+                x: provenance.x,
+                y: provenance.y + provenance.height - 1.0,
+                width: provenance.width,
+                height: 1.0,
+            },
+            design_tokens::chrome::BORDER_SUBTLE,
+        ));
 
-        let control = RectPx {
-            x: row_rect.x + row_rect.width - 166.0,
-            y: row_rect.y + 18.0,
-            width: 148.0,
-            height: 34.0,
-        };
-        let value_label = match &row.control {
-            GlobalPreferenceControlUi::Boolean {
-                value,
-                off_label,
-                on_label,
-            } => {
-                format!(
-                    "{}  {}",
-                    if *value { "[x]" } else { "[ ]" },
-                    if *value { on_label } else { off_label }
-                )
-            }
-            GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-                format!(
-                    "{}  v",
-                    choices
-                        .iter()
-                        .find(|(candidate, _)| candidate == value)
-                        .map(|(_, label)| label.as_str())
-                        .unwrap_or(value)
-                )
-            }
-        };
-        let visible_value_label = if row.writable {
-            value_label
-        } else {
-            format!("{value_label} -- unavailable")
-        };
-        button(
-            &visible_value_label,
-            control,
-            focus_is(dialog, &GlobalPreferencesFocus::Control(row.key.clone())),
-            row.writable,
-            quads,
-            text,
-        );
-        if row.writable {
-            hits.push(HitRegion {
-                target: HitTarget::GlobalPreferencesControl(row.key.clone()),
-                rect: control,
-            });
-        }
         if choice_count > 0
             && let GlobalPreferenceControlUi::SingleChoice { value, choices } = &row.control
         {
             for (index, (choice_value, choice_label)) in choices.iter().enumerate() {
                 let choice = RectPx {
-                    x: control.x,
-                    y: control.y + control.height + index as f32 * 28.0,
-                    width: control.width,
+                    x: control_right - 148.0,
+                    y: setting_rect.y + setting_height + index as f32 * 28.0,
+                    width: 148.0,
                     height: 28.0,
                 };
                 quads.push(Quad::from_rect(
@@ -498,32 +579,12 @@ pub(super) fn render_global_preferences_dialog(
                 });
             }
         }
-        if row.changed && choice_count == 0 {
-            let reset = RectPx {
-                x: control.x + 70.0,
-                y: control.y + 40.0,
-                width: 78.0,
-                height: 26.0,
-            };
-            button(
-                "Reset",
-                reset,
-                focus_is(dialog, &GlobalPreferencesFocus::Reset(row.key.clone())),
-                true,
-                quads,
-                text,
-            );
-            hits.push(HitRegion {
-                target: HitTarget::GlobalPreferencesReset(row.key.clone()),
-                rect: reset,
-            });
-        }
         if explained {
             let explanation = RectPx {
-                x: row_rect.x + 10.0,
-                y: row_rect.y + 91.0,
-                width: row_rect.width - 20.0,
-                height: 82.0,
+                x: row_rect.x + 18.0,
+                y: provenance.y + provenance.height + 8.0,
+                width: row_rect.width - 36.0,
+                height: explanation_height - 16.0,
             };
             quads.push(Quad::from_rect(
                 explanation,
@@ -559,7 +620,7 @@ pub(super) fn render_global_preferences_dialog(
                 rect: close_explanation,
             });
         }
-        y += row_height + 8.0;
+        y += row_height;
     }
 }
 
@@ -568,72 +629,4 @@ fn focus_is(
     candidate: &GlobalPreferencesFocus,
 ) -> bool {
     &dialog.focus == candidate
-}
-
-fn button(
-    label: &str,
-    rect: RectPx,
-    focused: bool,
-    available: bool,
-    quads: &mut Vec<Quad>,
-    text: &mut Vec<TextRun>,
-) {
-    quads.push(Quad::from_rect(rect, design_tokens::chrome::SURFACE_03));
-    let border = if focused {
-        TEXT_ACCENT
-    } else {
-        PANEL_CARD_BORDER
-    };
-    if available {
-        push_rect_border(quads, rect, border, if focused { 2.0 } else { 1.0 });
-    } else {
-        push_dashed_rect_border(quads, rect, border);
-    }
-    draw_text(
-        label,
-        rect.x + 9.0,
-        rect.y + (rect.height - design_tokens::typography::CAPTION_SIZE) * 0.5 - 1.0,
-        design_tokens::typography::CAPTION_SIZE,
-        if available { TEXT_PRIMARY } else { TEXT_MUTED },
-        TextFace::Ui,
-        text,
-    );
-}
-
-fn push_dashed_rect_border(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3]) {
-    let dash: f32 = 6.0;
-    let gap: f32 = 4.0;
-    let mut horizontal = |y: f32| {
-        let mut x = rect.x;
-        while x < rect.x + rect.width {
-            quads.push(Quad::from_rect(
-                RectPx {
-                    x,
-                    y,
-                    width: dash.min(rect.x + rect.width - x),
-                    height: 1.0,
-                },
-                color,
-            ));
-            x += dash + gap;
-        }
-    };
-    horizontal(rect.y);
-    horizontal(rect.y + rect.height - 1.0);
-    let mut y = rect.y;
-    while y < rect.y + rect.height {
-        let height = dash.min(rect.y + rect.height - y);
-        for x in [rect.x, rect.x + rect.width - 1.0] {
-            quads.push(Quad::from_rect(
-                RectPx {
-                    x,
-                    y,
-                    width: 1.0,
-                    height,
-                },
-                color,
-            ));
-        }
-        y += dash + gap;
-    }
 }

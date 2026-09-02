@@ -202,6 +202,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
         global_preferences_runtime::GlobalPreferencesCoordinator::from_platform()?;
     global_preferences.publish_projection(&mut state.ui);
     if args.open_global_preferences {
+        state.ui.global_preferences.reset_transient_view();
         state.ui.global_preferences.open = true;
         state.ui.focus = ApplicationFocus::Overlay;
     }
@@ -788,6 +789,7 @@ impl Runtime {
             global_preferences_runtime::GlobalPreferencesCoordinator::from_platform()?;
         global_preferences.publish_projection(&mut state.ui);
         if open_global_preferences {
+            state.ui.global_preferences.reset_transient_view();
             state.ui.global_preferences.open = true;
             state.ui.focus = ApplicationFocus::Overlay;
         }

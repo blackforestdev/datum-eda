@@ -23,6 +23,7 @@ mod bottom_dock;
 mod datum_console;
 mod design_tokens;
 mod global_preferences_dialog;
+mod global_preferences_primitives;
 mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
