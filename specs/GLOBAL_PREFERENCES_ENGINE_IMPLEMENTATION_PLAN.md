@@ -613,36 +613,58 @@ exact system without gaps or conflicting ownership.
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R -->
 ### UNIT-I02R — reconcile the implementation and visual contract
 
-The controlling requirement's **UNIT-I03 reconciliation contract** defines the
-typed unresolved/resolved profiles, full follow-system table, precision-token
-mapping, bounded angle-format service, Global GUI behavior, additive CLI/MCP
-compatibility, preference-independent interchange, legacy conversion
-disposition, Project snapshot/receipt seam, and clause-by-clause acceptance
-matrix. UNIT-I02R is documentation and protected-target reconciliation only.
+The controlling requirement's **UNIT-I03 reconciliation contract**, as amended
+by Product Mechanics 040, defines the typed unresolved/resolved profiles, full
+follow-system table, precision-token mapping, bounded angle-format service,
+Global-default GUI behavior, Project-owned Working Units, separate
+Publish/document units, additive CLI/MCP compatibility,
+preference-independent interchange, legacy conversion disposition, Project
+snapshot/receipt seam, and clause-by-clause acceptance matrix. UNIT-I02R is
+documentation and protected-target reconciliation only.
 
 The Claude-owned `docs/gui/prototypes/preferences-window.html` must be revised
 in its GP-F05 owner-review target before this step completes. The bounded brief
 is:
 
-1. Add an owner-review **Units** state to the real native Global Preferences
-   window using the accepted GP-F05 component grammar, not the non-buildable
-   future catalog as implementation authority.
+1. Retitle the owner-review **Units** state in the real native Global
+   Preferences window as **Defaults for new Projects**, using the accepted
+   GP-F05 component grammar, not the non-buildable future catalog as
+   implementation authority. Preserve exactly one Units rail entry; the
+   category heading/consequence text carries the future-Project scope.
 2. Render exactly the six catalog controls, their specified options/defaults,
    per-row `Global · this device` scope, immediate-save/reset/provenance, and the
-   copy-once-at-New-Project receipt explanation. Do not render Project-policy
-   editing, document units, Revision, setup, Organization, or empty categories.
+   copy-once-at-New-Project receipt explanation. Every state must say that open
+   and existing Projects are unaffected. Do not render or mirror Project Working
+   Units, Project-policy editing, Publish/document units, Revision, setup,
+   Organization, or empty categories.
 3. Show every follow-system resolved unit, explicit cross-system override cue,
    five length-precision choices, and the notation-dependent angle precision
-   choices. Radians must be described as rounded display; no general angle-input
-   promise may appear.
+   choices. Attach each actual option inventory structurally to its owning
+   control in the HTML, rather than leaving the options only in explanatory
+   tables. Invalid angle notation/precision pairs are never offered. Radians
+   must be described as rounded display; no general angle-input promise may
+   appear.
 4. Preserve the accepted owned-window, close/reopen, Escape/search/caret,
-   keyboard/focus, explanation, unreadable-store, immediate-save, responsive,
-   and non-color behavior. Add ordinary, changed/reset, search, cross-system,
-   refusal/explanation, narrow, greyscale, and screen-reader evidence.
+   explanation, immediate-save, responsive, and non-color behavior. Add a Units
+   unreadable-store state with all six controls disabled/preserved, plus
+   ordinary, changed/reset, search, cross-system, refusal/explanation, narrow,
+   greyscale, and screen-reader evidence.
 5. Prove from the HTML structure and renders that only the selected **Units**
    row is highlighted, category/content separation uses the accepted rules, all
    controls are reachable and named, no excluded category is implied, and the
    file remains within its source-health limit.
+6. Specify the exact Units focus order: Appearance rail entry, Units rail entry,
+   search, then each visible setting-name action and its control in stable row
+   order, each conditional Reset immediately after its control, and explanation
+   Close only while open. A dependent Angle format control exposes notation
+   before its valid precision choices. Tab wraps inside the input-modal window;
+   Escape, close/reopen reset, return focus, caret, and search-clearing behavior
+   remain exactly GP-F05.
+7. For the window and every Units control, provide accessible name, role, value,
+   resolved unit where relevant, factory-or-changed provenance, `Global · this
+   device`, `changes save immediately`, `default for new Projects`, and `open
+   Projects unaffected`. Screen-reader evidence must not imply that Global
+   values operate the current Project.
 
 Codex must not edit that file or supply its protected-lane marker. The target
 remains owner-review evidence until the owner explicitly approves it.
@@ -654,8 +676,9 @@ remains owner-review evidence until the owner explicitly approves it.
 Owner review must compare the controlling requirement, all six catalog rows,
 the Claude-owned target and its HTML construction, this plan, and the Frontier.
 Approval authorizes only UNIT-I03. A gap in profile semantics, angle behavior,
-adapter compatibility, interchange independence, Project ownership, visual
-behavior, accessibility, or proof returns the work to UNIT-I02R.
+adapter compatibility, interchange independence, Global-default/Project-working/
+Publish-document ownership, visual behavior, accessibility, or proof returns
+the work to UNIT-I02R.
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03 -->
 ### UNIT-I03 — GUI, CLI, MCP parity and Units production acceptance
@@ -664,7 +687,10 @@ Only after UNIT-I02V approval, implement the reconciliation contract and route
 the six ratified `datum.units.*` descriptors, GUI controls, compatible CLI/MCP
 edges, deterministic interchange adapters, and real New-Project Units seed
 through the one exact service. The Project mutation authority remains the sole
-writer of `ProjectDisplayUnits` and its receipt. Delete, deprecate, or refuse
+writer of `ProjectDisplayUnits` and its receipt. Existing Projects resolve
+working display and contextual bare input from that Project-owned value, never
+from Global Preferences; Publish/document units remain separate. Delete,
+deprecate, or refuse
 every inventoried rival conversion path according to the contract without
 moving descriptor ownership into Units. Production acceptance requires every
 matrix row and protected-target proof; partial parity cannot close UNIT-I03.

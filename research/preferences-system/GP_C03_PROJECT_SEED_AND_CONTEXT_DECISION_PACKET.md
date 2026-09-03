@@ -12,6 +12,12 @@
 >
 > **Continuation of:** `GP_C03_TYPED_AUTHORITY_DECISION_PACKET.md`
 
+> **Units amendment:** Product Mechanics 040 supersedes this packet's former
+> treatment of the six `datum.units.*` rows as live personal display controls.
+> They are now Global defaults for future Projects; Project Working Units owns
+> existing-Project display and contextual bare input. The Q5 copy-once receipt
+> law remains unchanged.
+
 ## 1. Preserved authority
 
 This packet continues the one-question-at-a-time GP-C03 process without
@@ -56,9 +62,11 @@ The primary visual authority is the Claude-owned real product surface,
 - `#publish-space`, source lines 150–163: title-block/template and sheet-format
   seeds copy into new Projects while Project-owned document conventions remain
   explicitly “shown here, edited there.”
-- `#units`, source lines 112–126: personal display-unit controls remain machine
-  preferences while issued-sheet units and the adopted drafting standard are
-  Project policy that Preferences may seed but does not own.
+- `#units`, source lines 112–126: superseded visual evidence once treated the
+  unit rows as live machine presentation. Product Mechanics 040 now makes them
+  future-Project defaults; issued-sheet units and the adopted drafting standard
+  remain separate Project policy that Global Preferences may seed but does not
+  own.
 
 The ratified presentation-class precedent is
 `docs/gui/prototypes/canvas-background-decision.html`, source lines 42–44 and

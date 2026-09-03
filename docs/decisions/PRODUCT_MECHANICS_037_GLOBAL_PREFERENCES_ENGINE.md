@@ -2,7 +2,7 @@
 
 Status: ratified doctrine; Revision visibility/default clauses superseded in
 part by Product Mechanics 038; delivery sequence amended by Product Mechanics
-039
+039 and Units authority amended by Product Mechanics 040
 
 ## Context
 
@@ -70,6 +70,11 @@ wins the seed transaction; its absence cannot shadow the typed contributions.
 The receipt records which path supplied every copied value. The shared Units
 engine continues to store authored lengths as checked signed integer nanometers;
 display and parser preferences never rescale stored design truth.
+
+Product Mechanics 040 narrows their Global role: these six values are defaults
+for future Projects, not live display/parser authority for an open Project.
+After the receipted copy, Project-owned `ProjectDisplayUnits` supplies Project
+Working Units; Publish/document units remain separate authority.
 
 ## Product Mechanics preservation
 
