@@ -228,7 +228,7 @@
     "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Owner-ratified GP-C06 catalog: 58 active V1 descriptors, 15 active ProjectPolicySeed rows plus one deferred seed-bearing schema, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Historical step alias: GP-C05A. No implementation or dependency is authorized."
+      "notes": "Owner-ratified GP-C06 catalog amended by reopened UNIT-I02R: 60 active V1 descriptors, 14 active ProjectPolicySeed rows plus one deferred seed-bearing schema, eight quantity-safe Global Units defaults, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Fresh UNIT-I02V review is required; no implementation or dependency is authorized."
     },
     "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
       "class": "governed",
@@ -238,7 +238,7 @@
     "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, common GUI/CLI/MCP length parsing, preference-independent interchange, and PM-040's Global-default to Project Working Units copy-once model with separate Publish/document authority. UNIT-I02R remains pending protected-target correction and UNIT-I02V owner review; no implementation, production acceptance, or dependency authorization."
+      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, eight-field quantity-specific display policy, lossless edit behavior, exact decimal/scientific parsing, decimal-degree V1 input/display, deterministic legacy and pre-feature-Project migration, preference-independent interchange, and PM-040's Global-default to Project Working Units copy-once model with separate Publish/document authority. UNIT-I02R remains open for protected Global/Project target correction and UNIT-I02V review; no implementation, production acceptance, or dependency authorization."
     },
     "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md": {
       "class": "governed",

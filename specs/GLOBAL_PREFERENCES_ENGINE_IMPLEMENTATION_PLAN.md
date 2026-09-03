@@ -600,11 +600,11 @@ navigation selection and focus.
 ### UNIT-I02 — authorize surface parity only
 
 After GP-F05 exists, review exact-core and real-surface evidence before
-authorizing UNIT-I03.
+authorizing the first execution slice.
 
 The owner instead revised this boundary on 2026-09-02: preserve the twelve
 clauses and seven proof requirements in
-`GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`, but do not authorize UNIT-I03 until the
+`GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`, but do not authorize execution until the
 requirement, catalog, protected target, this plan, and Frontier describe one
 exact system without gaps or conflicting ownership.
 
@@ -613,89 +613,84 @@ exact system without gaps or conflicting ownership.
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R -->
 ### UNIT-I02R — reconcile the implementation and visual contract
 
-The controlling requirement's **UNIT-I03 reconciliation contract**, as amended
-by Product Mechanics 040, defines the typed unresolved/resolved profiles, full
-follow-system table, precision-token mapping, bounded angle-format service,
-Global-default GUI behavior, Project-owned Working Units, separate
-Publish/document units, additive CLI/MCP compatibility,
-preference-independent interchange, legacy conversion disposition, Project
-snapshot/receipt seam, and clause-by-clause acceptance matrix. UNIT-I02R is
-documentation and protected-target reconciliation only.
+The controlling requirement's revised reconciliation contract defines the typed
+eight-descriptor profile, quantity-specific precision, lossless editing,
+decimal-degree V1 input/display, exact scientific-notation grammar, future
+expression seam, Global-default GUI, writable Project Working Units GUI,
+separate Publish/document units, compatible adapters, deterministic legacy and
+pre-feature-Project migration, rival-conversion removal, and clause-by-clause
+proof. UNIT-I02R is documentation and protected-target reconciliation only.
 
-The Claude-owned `docs/gui/prototypes/preferences-window.html` must be revised
-in its GP-F05 owner-review target before this step completes. The bounded brief
-is:
+The Claude-owned visual targets must be revised before this step completes. The
+bounded brief is:
 
-1. Retitle the owner-review **Units** state in the real native Global
-   Preferences window as **Defaults for new Projects**, using the accepted
-   GP-F05 component grammar, not the non-buildable future catalog as
-   implementation authority. Preserve exactly one Units rail entry; the
-   category heading/consequence text carries the future-Project scope.
-2. Render exactly the six catalog descriptor rows and seven focusable value
-   selectors, their specified options/defaults,
-   per-row `Global · this device` scope, immediate-save/reset/provenance, and the
-   copy-once-at-New-Project receipt explanation. Every state must say that open
-   and existing Projects are unaffected. Do not render or mirror Project Working
-   Units, Project-policy editing, Publish/document units, Revision, setup,
-   Organization, or empty categories.
-3. Show every follow-system resolved unit, explicit cross-system override cue,
-   five length-precision choices, and the notation-dependent angle precision
-   choices. Attach each actual option inventory structurally to its owning
-   selector in the HTML, rather than leaving the options only in explanatory
-   tables. Invalid angle notation/precision pairs are never offered. Radians
-   must be described as rounded display; no general angle-input promise may
-   appear. The tagged Angle value is edited through notation and precision
-   selectors. Selecting a notation atomically writes that notation with its
-   defined default precision—`decimal_degrees`/`0.1`, `dms`/`1s`, or
-   `radians`/`0.001`—and never persists an intermediate pair, carries forward a
-   prior precision, or reinterprets the shared `0.001` token.
-4. Preserve the accepted owned-window, close/reopen, Escape/search/caret,
-   explanation, immediate-save, responsive, and non-color behavior. Add a Units
-   unreadable-store state with all seven value selectors disabled/preserved, plus
-   ordinary, changed/reset, search, cross-system, refusal/explanation, narrow,
-   greyscale, and screen-reader evidence.
-5. Prove from the HTML structure and renders that only the selected **Units**
-   row is highlighted, category/content separation uses the accepted rules, all
-   controls are reachable and named, no excluded category is implied, and the
-   file remains within its source-health limit.
-6. Specify the exact Units focus order: Appearance rail entry, Units rail entry,
-   search, then each visible setting-name action and its control in stable row
-   order, each conditional Reset immediately after its control, and explanation
-   Close only while open. A dependent Angle format control exposes notation
-   before its valid precision choices. A notation change keeps focus on the
-   notation selector while replacing the precision inventory and atomically
-   committing the complete tagged value. Tab wraps inside the input-modal window;
-   Escape, close/reopen reset, return focus, caret, and search-clearing behavior
-   remain exactly GP-F05.
-7. For the window and every Units value selector, provide accessible name, role, value,
-   resolved unit where relevant, factory-or-changed provenance, `Global · this
-   device`, `changes save immediately`, `default for new Projects`, and `open
-   Projects unaffected`. Screen-reader evidence must not imply that Global
-   values operate the current Project.
+1. In `preferences-window.html`, preserve the native GP-F05 window and title the
+   Global Units pane **Defaults for new Projects**. Render exactly eight active
+   rows/selectors: Measurement system; Board Unit and Precision; Drill Unit and
+   Precision; Schematic Unit and Precision; Angle precision. Pair each length
+   quantity's controls visually without merging their stable identities, focus,
+   provenance, or Reset. Every row states `Global · this device`, saves
+   immediately, copies only at New Project, and leaves open/existing Projects
+   unaffected. Do not show Project editing, Publish/document units, Revision,
+   Organization, setup, DMS, radians, retired keys, or empty categories.
+2. Attach the exact option inventories and defaults from the catalog to their
+   controls. Every Unit selector shows its actual Follow-system resolution.
+   Every Precision selector shows Automatic with its actual quantity/unit
+   resolution, decimal places 0 through 6, and Exact nanometres. Cross-system
+   overrides remain visible in row, provenance, resolver, non-color, and
+   accessibility states. Angle exposes decimal-degree precision only.
+3. In `project-preferences-category-study.html`, add a clearly separated
+   Units-only owner-review target while retaining all non-Units content as clay.
+   The doorway is `Edit > Preferences > Project Preferences… > Units`, disabled
+   without an open Project. Draw one Units category, scope
+   `Project · <project name>`, the same eight values under Project Working Units
+   authority, read-only seed/migration receipt provenance, immediate journaled
+   and undoable commits, stale/refusal behavior, and no Navigator entry. No
+   Global, Publish/document, Revision, planned, or empty category is editable.
+4. Both targets preserve the owned-window, close/reopen, Escape/search/caret,
+   explanation, immediate-save, responsive, and non-color grammar. Provide
+   ordinary, changed/reset, search, cross-system, refusal, unreadable, narrow,
+   greyscale, keyboard, and screen-reader states. The Project target makes the
+   lossless edit rule explicit: rounded view text is replaced on focus by an
+   exact suffixed value; focus/blur and unchanged commit are no-ops; Escape
+   cancels; actual edits parse and compare canonical values once.
+5. Prove from HTML structure and renders that only the selected **Units** row is
+   highlighted, category/content separation uses accepted rules, all controls
+   are reachable/named, no excluded category is implied, and each file remains
+   within its source-health limit.
+6. Specify focus order as category rail, search, then each visible setting-name
+   action and control in stable row order, with Unit before Precision inside each
+   pair, each conditional Reset immediately after its control, and explanation
+   Close only while open. Tab wraps in the modal window; GP-F05 Escape,
+   close/reopen, return-focus, caret, and search-clearing behavior remains exact.
+7. For each window and every Units selector, provide accessible name, role,
+   stored and resolved value, provenance, scope, immediate-save consequence, and
+   override/refusal state. Global must announce future-Project default/open-
+   Project isolation. Project must announce Project scope, journal/Undo, and
+   seed-or-migration provenance without implying live Global inheritance.
 
 Two supporting Claude-owned studies must be reconciled in the same protected
 lane so they cannot teach the superseded model:
 
-- `project-preferences-category-study.html`, Units row and category rationale:
-  identify `ProjectDisplayUnits` as **Project Working Units**, cite PM-040, state
-  that it owns existing-Project editor display/readout/bare input, and keep
-  Publish/document units under the separate Drafting Standard/Publish authority.
-  Preserve the artifact's clay status; do not draw or authorize a Project
-  Preferences implementation.
+- `project-preferences-category-study.html`: preserve its non-Units content as
+  clay and keep Publish/document authority separate and Revision absent/deferred;
+  the new Units-only target remains open until owner approval.
 - `units-and-grid-model.html`, status and Rules 2/4 interpretation: mark authored
   expression persistence as unratified and the per-person live-display model as
   superseded by PM-040. Preserve explicit-suffix input, exact integer nanometer
   authority, display/grid separation, and all historical comparison, but state
   that an existing Project reads from Project Working Units. Identify Onshape as
   the primary modern professional-CAD authority reference and KiCad as
-  low-weight comparison evidence only.
+  low-weight comparison evidence only. Add the per-quantity precision and
+  lossless-edit rules, scientific-notation seam, decimal-degree-only V1, and
+  explicit deferral of DMS/radians and authored-expression persistence.
 
 For both supporting files, prefer an explicit scoped amendment over silently
 rewriting historical study content. Status wording must make clear what remains
 clay, what PM-040 supersedes, and what survives.
 
-Codex must not edit that file or supply its protected-lane marker. The target
-remains owner-review evidence until the owner explicitly approves it.
+Codex must not edit those files or supply a protected-lane marker. Both targets
+remain owner-review evidence until the owner explicitly approves them.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-RECONCILED-FOR-OWNER-REVIEW -->
 
@@ -703,9 +698,10 @@ remains owner-review evidence until the owner explicitly approves it.
 <!-- OWNER:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V:UNIT-I02V -->
 ### UNIT-I02V — owner review of reconciled contract and protected target
 
-Owner review must compare the controlling requirement, all six catalog rows,
-the Claude-owned target and its HTML construction, this plan, and the Frontier.
-Approval authorizes only UNIT-I03. A gap in profile semantics, angle behavior,
+Owner review must compare the controlling requirement, all eight catalog rows,
+both Claude-owned targets and their HTML construction, this plan, and the
+Frontier. Approval authorizes only UNIT-I03A. A gap in profile semantics, Project
+doorway/mutation behavior, lossless editing, angle behavior,
 adapter compatibility, interchange independence, Global-default/Project-working/
 Publish-document ownership, visual behavior, accessibility, or proof returns
 the work to UNIT-I02R.
@@ -721,20 +717,47 @@ can be presented again.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
 
-<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03 -->
-### UNIT-I03 — GUI, CLI, MCP parity and Units production acceptance
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A -->
+### UNIT-I03A — exact engine, schema, and migration execution
 
-Only after UNIT-I02V approval, implement the reconciliation contract and route
-the six ratified `datum.units.*` descriptors, GUI controls, compatible CLI/MCP
-edges, deterministic interchange adapters, and real New-Project Units seed
-through the one exact service. The Project mutation authority remains the sole
-writer of `ProjectDisplayUnits` and its receipt. Existing Projects resolve
-working display and contextual bare input from that Project-owned value, never
-from Global Preferences; Publish/document units remain separate. Delete,
-deprecate, or refuse
-every inventoried rival conversion path according to the contract without
-moving descriptor ownership into Units. Production acceptance requires every
-matrix row and protected-target proof; partial parity cannot close UNIT-I03.
+Only after UNIT-I02V approval, implement the eight-field profile and resolver,
+per-quantity precision, lossless edit primitives, decimal-degree V1 service,
+exact scientific notation, typed provenance/refusals, descriptor migrations,
+Project profile/schema and pre-feature migration, compatible CLI/MCP seams, and
+the complete rival-conversion inventory/removal. Correct catalog/runtime
+lifecycles so Global Units are future-Project seeds only. No GUI production
+acceptance is claimed, and UNIT-I03B does not start until these exact-core and
+migration gates are green.
+
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03B -->
+### UNIT-I03B — Global and Project Units surface integration
+
+Route the eight Global default controls and the Units-only Project Preferences
+window through UNIT-I03A. Integrate real New-Project seed/receipt, Project-owned
+journal/Undo/stale/refusal behavior, GUI numeric fields, compatible CLI/MCP
+edges, and preference-independent interchange. Existing Projects read only
+`ProjectDisplayUnits`; Publish/document units remain separate. Produce all
+protected-target, accessibility, narrow/non-color, real-Project, lossless-edit,
+zero-geometry-mutation, and cross-surface matrix evidence. This creates a
+production candidate; it does not self-accept the feature.
+
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V -->
+<!-- OWNER:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V:UNIT-I03V -->
+### UNIT-I03V — owner running-app acceptance
+
+The owner reviews both native windows and real-Project behavior, including
+Global isolation, Project changes/Undo, precision resolution, cross-system
+overrides, exact focus/edit behavior, explicit and bare input, migration,
+accessibility, and failure states. Rejection returns to the responsible
+execution slice; approval authorizes final proof closure only.
+
+<!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03C -->
+### UNIT-I03C — governed production-acceptance closure
+
+Re-run every acceptance-matrix row, governance gate, guarded Rust proof, runtime
+capture, compatibility fixture, and source-health/dependency check against the
+owner-approved candidate. Only this step may record Units production acceptance
+and close the tracker. Partial parity or planning/prototype evidence cannot.
 
 ## 6. Global Preferences completion
 
@@ -742,7 +765,7 @@ matrix row and protected-target proof; partial parity cannot close UNIT-I03.
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM00:GP-CM00 -->
 ### GP-CM00 — authorize Global completion only
 
-Review GP-F05 and UNIT-I03 before authorizing GP-CM01.
+Review GP-F05 and completed UNIT-I03C before authorizing GP-CM01.
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM01 -->
 ### GP-CM01 — complete and stabilize the Global surface

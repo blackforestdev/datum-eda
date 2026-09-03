@@ -1,9 +1,10 @@
 # Datum Global Preferences V1 Descriptor Catalog
 
 > **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics
-> 037 and Product Mechanics 040; the exact angle schema and cross-surface
-> mapping below completed UNIT-I02R reconciliation and await UNIT-I02V owner
-> review. No UNIT-I03 implementation or production acceptance is authorized.
+> 037 and Product Mechanics 040; UNIT-I02R is reopened for industrial-readiness
+> correction of precision, editing, angle, expression, Project-surface, and
+> runtime boundaries. Fresh UNIT-I02V owner review is required. No runtime
+> implementation or production acceptance is authorized.
 >
 > **Historical step alias:** GP-C05A.
 >
@@ -63,7 +64,7 @@ equal-authority controls therefore remain Q4 unresolved conflicts rather than
 being combined field-by-field or by arrival order.
 
 `ProjectPolicySeed` is a registered descriptor class, not an eligibility flag
-on another class. Exactly the twelve active rows whose Apply column says
+on another class. Exactly the fourteen active rows whose Apply column says
 `seed:<authority>` below are `PS`; three formerly active Revision seed rows were
 withdrawn by Product Mechanics 038, and the deferred AdoptedDraftingStandard
 seed remains classified `PS` while its schema is unavailable. Presentation,
@@ -102,7 +103,7 @@ silently promoted into V1.
 
 ### 2.2 Units
 
-These six descriptors are **Global defaults for new Projects**, not live unit
+These eight descriptors are **Global defaults for new Projects**, not live unit
 controls for an open Project. Canonical design truth remains exact signed
 integer nanometers. One shared service accepts explicit unit suffixes for GUI,
 CLI, and MCP; a bare number uses explicit request context or the owning
@@ -112,30 +113,30 @@ design data and never alter an existing Project.
 | Stable key | Owner | Value schema; factory/no-value | Class; scopes; management | Seed/apply; consumers | Portability; migration; disposition | Evidence |
 |---|---|---|---|---|---|---|
 | `datum.units.system` | units engine | enum `{metric,imperial}`; `metric` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; splits legacy aggregate Display units; I | `preferences-window.html:137`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:34-82`; PM-040 |
-| `datum.units.board_length` | units engine | enum `{follow_system,mm,um,mil,inch}` with system compatibility; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:139-140`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
-| `datum.units.drill_hole` | units engine | enum `{follow_system,mm,mil,inch}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:140-141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
-| `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
-| `datum.units.length_precision` | units engine | enum `{0.1,0.01,0.001,0.0001,exact_nm}`; `0.01` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:142-143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:61-82`; PM-040 |
-| `datum.units.angle_format` | units engine | tagged struct: `decimal_degrees` precision `{1,0.1,0.01,0.001}`, `dms` precision `{1s,0.1s}`, or `radians` precision `{0.001,0.000001}`; `decimal_degrees`/`0.1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only; no general angle parser in UNIT-I03 | P0; splits legacy aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#angle-format-service`; PM-040 |
+| `datum.units.board_length` | units engine | enum `{follow_system,mm,um,mil,inch}` with quantity validation; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html` Units target; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.board_length_precision` | units engine | enum `{automatic,decimal_0,decimal_1,decimal_2,decimal_3,decimal_4,decimal_5,decimal_6,exact_nm}`; `automatic` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; Board display only | P0; migrate/fan out retired `datum.units.length_precision`; I | `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.drill_hole` | units engine | enum `{follow_system,mm,mil,inch}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html` Units target; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.drill_hole_precision` | units engine | enum `{automatic,decimal_0,decimal_1,decimal_2,decimal_3,decimal_4,decimal_5,decimal_6,exact_nm}`; `automatic` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; Drill display only | P0; migrate/fan out retired `datum.units.length_precision`; I | `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html` Units target; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.schematic_geometry_precision` | units engine | enum `{automatic,decimal_0,decimal_1,decimal_2,decimal_3,decimal_4,decimal_5,decimal_6,exact_nm}`; `automatic` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; Schematic display only | P0; migrate/fan out retired `datum.units.length_precision`; I | `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution`; PM-040 |
+| `datum.units.angle_precision` | units engine | enum `{decimal_0,decimal_1,decimal_2,decimal_3}`; `decimal_1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; decimal-degree display/input only | P0; migrate supported decimal-degree draft values; preserve/refuse DMS or radians; I | `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#v1-angle-service`; PM-040 |
 
-`datum.units.angle_format` is one atomic tagged descriptor even though its GUI
-presentation has two selectors. Selecting a notation replaces the complete
-value with that notation and its defined transition default:
-`decimal_degrees`/`0.1`, `dms`/`1s`, or `radians`/`0.001`. The prior precision
-is never carried forward or reinterpreted, including when two notation-scoped
-inventories share the literal token `0.001`. Thus the six Units descriptors
-render as six setting rows and seven focusable value selectors.
+The retired `datum.units.length_precision` and `datum.units.angle_format` names
+are migration inputs, not active descriptors. The former fans a valid value out
+atomically to the three precision descriptors; the latter migrates only supported
+decimal-degree values. Unsupported draft angle notations remain preserved
+evidence and cannot silently become a different V1 preference.
 
-The six typed `datum.units.*` seed descriptors compose the default
+The eight typed `datum.units.*` seed descriptors compose the default
 `ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is the
 explicit aggregate override: an eligible non-absent contribution to it wins for
 the seed transaction; when it has no contribution, the snapshot is composed
-from the six typed unit-seed descriptors. Absence never masquerades as a
+from the eight typed unit-seed descriptors. Absence never masquerades as a
 contribution, so the aggregate factory/no-value does not shadow more specific
 chosen unit seeds. The receipt records either the aggregate source or every
 composed source and effective value.
 
-The six rows have one Global role: define defaults for future Projects. At New
+The eight rows have one Global role: define defaults for future Projects. At New
 Project they are eligible inputs to one immutable `ProjectDisplayUnits`
 snapshot copied by Project mutation authority with a receipt. Thereafter that
 Project-owned schema is exposed as **Project Working Units** and governs editor
@@ -143,8 +144,9 @@ display and contextual bare input. Existing Projects never follow a later
 Global change. Publish/document units remain separate Project/document
 authority. CLI/MCP bare expressions require explicit context or a Project and
 field; interchange never reads these preferences. Exact resolution, token
-mapping, angle-format limits, aggregate composition, and cross-surface proof are
-governed by Product Mechanics 040 and the UNIT-I03 reconciliation contract in
+mapping, decimal-degree angle limits, lossless editing, scalar-expression
+grammar, aggregate composition, and cross-surface proof are
+governed by Product Mechanics 040 and the industrial execution contract in
 `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`.
 
 ### 2.3 PCB, checks, and publish-space defaults
@@ -198,7 +200,7 @@ portable exchange omits executable, environment, credentials, and expanded cwd.
 | `datum.files.autosave` | document persistence | struct `{interval:off-or-5m-or-10m-or-30m,retained_versions,backup_age,recovery,reminder}`; `10m` plus bounded engine defaults | W; U+S+C; R,C,Pn,L | live schedule; document persistence | P0 excluding recovery payloads; no legacy; I | `preferences-window.html:243`; `GP_C01_INTERNAL_AUTHORITY_AUDIT.md:282-296` |
 | `datum.projects.seed_profile` | Project genesis | resolvable profile identity; Datum factory | PS; U; R,C,Pn,L | seed:`ProjectSeedSnapshot`; New Project only | P0, missing identity refuses selection; no legacy; I | `preferences-window.html:245`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169` |
 | `datum.projects.template_set` | Project genesis | resolvable template identity or none; Datum starter | PS; U; R,C,Pn,L | seed:`ProjectTemplateCopy`; New Project only | P0; draft name `datum.projects.template_seed` remains searchable only; I | `preferences-window.html:247` |
-| `datum.projects.unit_policy_seed` | Project genesis/units | optional aggregate struct `{system,display_units_by_quantity,precision,angle}`; absent | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; explicit aggregate wins, otherwise compose typed unit seeds | P0; no legacy; I | `preferences-window.html:249`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169` |
+| `datum.projects.unit_policy_seed` | Project genesis/units | optional aggregate `UnitsProfile` with system, three quantity-specific unit/precision pairs, and decimal-degree precision; absent | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; explicit aggregate wins, otherwise compose typed unit seeds | P0; migrate only through the controlling Units contract; I | `preferences-window.html:249`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution` |
 | `datum.output.job_prefill` | output orchestration | enum `{ask,last_used}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; Generate; operation still asks | P0; output job stays Project fact; I | `preferences-window.html:258` |
 | `datum.output.destination_prefill` | output orchestration | enum `{ask,project_outputs}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; export; operation still asks | P0; no legacy; I | `preferences-window.html:260` |
 ## 3. Negative classifications

@@ -1,12 +1,13 @@
 # Shared Units Engine Requirement
 
-> **Status:** Controlling owner-directed requirement; UNIT-I02R reconciliation
-> is complete and awaits UNIT-I02V owner review of the protected target and
-> complete contract. UNIT-I03 implementation, production acceptance, and
-> dependencies are not authorized.
+> **Status:** Controlling owner-directed requirement; UNIT-I02R was reopened by
+> the owner on 2026-09-03 for six industrial-readiness corrections. The revised
+> contract and its protected visual targets require fresh UNIT-I02V review.
+> Runtime implementation, production acceptance, and dependencies are not
+> authorized.
 >
 > **Trackers:** `dat-global-preferences-engine-qcv` (ratified Preferences
-> authority) and `dat-shared-units-surface-parity-s9x` (UNIT-I02R/UNIT-I03).
+> authority) and `dat-shared-units-surface-parity-s9x` (UNIT-I02R/UNIT-I03A–C).
 
 ## Authority and current gap
 
@@ -47,13 +48,14 @@ engine seam only; it does not ratify every current control label or default.
    display-unit choice. Per-quantity overrides may select a unit from either
    measurement system. A cross-system choice is valid but returned and rendered
    as an explicit override rather than silently normalized away.
-5. `DisplayPrecision` controls formatting only and includes an exact-nanometer
-   mode. Rounded display text cannot be written back as if it were the exact
-   stored value.
-6. The shared parser accepts locale-independent decimal length expressions with
-   explicit supported suffixes, initially including `nm`, `µm`/`um`, `mm`,
-   `mil`, and `in`. Inputs such as `5mm`, `200mil`, and `0.1in` use identical
-   semantics in GUI, CLI, and MCP.
+5. Every independently selectable length quantity owns an independent typed
+   display-precision choice. Precision controls formatting only and includes
+   automatic quantity/unit defaults and an exact-nanometer mode. Rounded display
+   text cannot be written back as if it were the exact stored value.
+6. The shared parser accepts locale-independent decimal and scientific-notation
+   length expressions with explicit supported suffixes, initially including
+   `nm`, `µm`/`um`, `mm`, `mil`, and `in`. Inputs such as `5mm`, `2e2mil`, and
+   `0.1in` use identical semantics in GUI, CLI, and MCP.
 7. Conversion uses checked integer/rational arithmetic. Overflow, malformed or
    ambiguous suffixes, wrong quantity kinds, and non-integral-nanometer results
    are typed refusals. Any future explicit rounding mode requires a separate
@@ -72,6 +74,9 @@ engine seam only; it does not ratify every current control label or default.
     integer fields.
 11. Length, angle, ratio, percentage, frequency, and other quantities remain
     distinct types. The length suffix set cannot leak into unrelated fields.
+    V1 exposes only decimal-degree angle display and exact decimal-degree input;
+    DMS and radians remain deferred until they have a complete governed input,
+    edit, rounding, and canonical-scale contract.
 12. The final Preferences descriptor catalog must separately classify the
     measurement-system default, each quantity display override, and each
     precision policy while pointing them to this one engine service.
@@ -81,23 +86,26 @@ engine seam only; it does not ratify every current control label or default.
 Implementation planning must include:
 
 - exact equivalence such as `5.08mm == 200mil == 0.2in == 5_080_000nm`;
-- negative values, signed limits, overflow, whitespace/case policy, Unicode
-  `µm` and ASCII `um`, malformed input, and sub-nanometer refusal;
+- negative values, signed limits, bounded scientific exponents, overflow at
+  every rational stage, whitespace/case policy, Unicode `µm` and ASCII `um`,
+  malformed input, and sub-nanometer refusal;
 - format/parse round trips wherever the selected representation is exact;
+- focus/edit/no-op/cancel proof that rounded view text never becomes input;
 - proof that display precision and system changes leave stored bytes unchanged;
 - identical explicit-suffix results through GUI, CLI, and MCP adapters;
 - contextual bare-number proof naming the resolved field/unit;
-- migration compatibility for existing integer `_nm` callers.
+- migration compatibility for existing integer `_nm` callers, retired Units
+  descriptor values, and Projects predating `ProjectDisplayUnits`.
 
 The intentionally different examples `5mm`, `200mil`, and `0.1in` demonstrate
 suffix acceptance; they are not asserted to be equivalent values.
 
-## UNIT-I03 reconciliation contract
+## Industrial Units execution contract
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R -->
 
 This section translates the twelve owner requirements and seven proof families
-above into the exact boundary that must be reviewed before UNIT-I03 may start.
+above into the exact boundary that must be reviewed before UNIT-I03A may start.
 It does not replace or weaken those requirements. Planning evidence, an HTML
 render, or a passing isolated core test is not implementation authorization or
 production acceptance.
@@ -128,31 +136,34 @@ reviewed primary sources and owner decision.
 ### Typed profile and resolution
 
 The preference-facing value is one typed `UnitsProfile`, composed from exactly
-the six registered `datum.units.*` descriptors:
+eight registered `datum.units.*` descriptors. Unit and precision ownership are
+paired per quantity; one shared length precision is forbidden because the three
+quantities permit different units and require different useful defaults.
 
 ```text
 UnitsProfile {
   system: MeasurementSystem,
   board_length: LengthUnitChoice<BoardLayout>,
+  board_length_precision: LengthPrecisionChoice,
   drill_hole: LengthUnitChoice<DrillHole>,
+  drill_hole_precision: LengthPrecisionChoice,
   schematic_geometry: LengthUnitChoice<SchematicGeometry>,
-  length_precision: LengthPrecision,
-  angle_format: AngleFormat,
+  schematic_geometry_precision: LengthPrecisionChoice,
+  angle_precision: DecimalDegreePrecision,
 }
 
 LengthUnitChoice<Q> = FollowSystem | Explicit(Q::AllowedUnit)
-LengthPrecision = DecimalPlaces(1 | 2 | 3 | 4) | ExactNanometer
-AngleFormat = DecimalDegrees(DegreePlaces) |
-              DegreesMinutesSeconds(SecondPlaces) |
-              Radians(RadianPlaces)
+LengthPrecisionChoice = Automatic | DecimalPlaces(0..6) | ExactNanometer
+DecimalDegreePrecision = DecimalPlaces(0 | 1 | 2 | 3)
 ```
 
 The generic notation above is a type relationship, not a requirement for Rust
 generics. Invalid quantity/unit pairs must be unrepresentable after descriptor
 validation. The service returns a `ResolvedUnitsProfile` containing concrete
-units, the unchanged precision and angle policies, and an `OverrideState` for
-each quantity. It must not consult ambient preferences internally; callers pass
-the six already-resolved descriptor values as one snapshot.
+units, resolved per-quantity display precisions, decimal-degree precision, and
+an `OverrideState` for each quantity. It must not consult ambient preferences
+internally; callers pass the eight already-resolved descriptor values as one
+immutable-at-read snapshot.
 
 `FollowSystem` resolves by this complete V1 table:
 
@@ -168,74 +179,132 @@ provenance, CLI, and MCP query output must preserve that fact. `nm` remains an
 explicit expression suffix and exact-display unit, but is not a selectable V1
 per-quantity override.
 
-The descriptor tokens map to the formatter without inference:
+Each of the three precision descriptors has the same structural token inventory:
 
-| `datum.units.length_precision` | Engine value | Meaning |
+| Stored token | Engine value | Meaning |
 |---|---|---|
-| `0.1` | `DecimalPlaces(1)` | one place in the resolved display unit |
-| `0.01` | `DecimalPlaces(2)` | two places in the resolved display unit |
-| `0.001` | `DecimalPlaces(3)` | three places in the resolved display unit |
-| `0.0001` | `DecimalPlaces(4)` | four places in the resolved display unit |
+| `automatic` | quantity/unit default below | recompute when the resolved unit changes |
+| `decimal_0` … `decimal_6` | `DecimalPlaces(0..6)` | explicit places in the resolved display unit |
 | `exact_nm` | `ExactNanometer` | signed canonical integer plus `nm` |
 
-Decimal display may round half away from zero and must return `rounded=true`
-when information was hidden. Display text is never a mutation input unless the
-user explicitly edits and reparses it.
+`Automatic` is resolved by the complete V1 table; the stored token stays
+`automatic` and the resolved precision is returned in provenance:
 
-### Angle-format service
+| Quantity | `mm` | `um` | `mil` | `inch` |
+|---|---:|---:|---:|---:|
+| Board/layout | 3 places | 1 place | 1 place | 5 places |
+| Drill/hole | 3 places | — | 1 place | 4 places |
+| Schematic geometry | 2 places | — | 0 places | — |
 
-V1 angle formatting consumes the owning field's canonical integer angle and
-does not establish a new canonical angle representation. The adapter names its
-source resolution (for example tenths of a degree or millidegrees), converts it
-to an exact rational degree value, and requests one of these descriptor tokens:
+An explicit precision never changes when the measurement system or unit changes;
+only `Automatic` re-resolves. Decimal display rounds half away from zero and
+returns `rounded=true` whenever information is hidden.
 
-| Notation | Allowed precision tokens | Output |
-|---|---|---|
-| `decimal_degrees` | `1`, `0.1`, `0.01`, `0.001` | signed decimal plus `deg` |
-| `dms` | `1s`, `0.1s` | signed degrees, minutes, seconds |
-| `radians` | `0.001`, `0.000001` | signed decimal plus `rad` |
+The retired `datum.units.length_precision` value is migration input only. A
+valid legacy token maps once and atomically into all three new precision keys:
+`0.1`→`decimal_1`, `0.01`→`decimal_2`, `0.001`→`decimal_3`,
+`0.0001`→`decimal_4`, and `exact_nm`→`exact_nm`. Explicit contributions already
+present on any new key win for that key; an invalid legacy value is preserved
+as unreadable evidence and cannot partially seed the new profile. The retired
+key is never written again and is not a ninth active descriptor.
 
-The descriptor schema stores `precision` as one of those strings; its factory
-value is `{"notation":"decimal_degrees","precision":"0.1"}`. Validation
-rejects a precision not valid for the selected notation. The Global Preferences
-surface renders this one tagged descriptor as two selectors, notation followed
-by precision. Because writes save immediately, a notation change is one atomic
-replacement of the complete tagged value; no intermediate notation/precision
-pair may be persisted. The replacement uses these notation defaults:
+### Lossless display and edit contract
 
-| Selected notation | Precision written in the same atomic value |
-|---|---|
-| `decimal_degrees` | `0.1` |
-| `dms` | `1s` |
-| `radians` | `0.001` |
+Formatted view text is never an edit buffer and never becomes geometry merely
+because focus enters or leaves a control. A numeric field must obey all of the
+following:
 
-The target notation's default replaces the prior precision even when the old
-and new inventories contain the same token. In particular, changing from
-`decimal_degrees` at `0.001` to `radians` writes `radians`/`0.001` as a new
-tagged value; Datum never reinterprets or carries forward the old precision.
-Decimal-degree and DMS formatting use checked rational arithmetic. Radians are
-necessarily a rounded presentation of most exact degree values, must report
-`rounded=true`, and may not be parsed back or written to geometry as exact
-truth. UNIT-I03 does not add a general angle-expression parser: existing
-canonical integer angle fields and their compatibility names remain
-authoritative until a separately governed input and rounding contract exists.
-This removes the catalog's unsupported `angle parser` consumer claim.
+1. Unfocused display may use the selected precision and may be rounded.
+2. On edit focus, the buffer is regenerated from the exact canonical value, not
+   from the rounded label. If the value has a finite exact representation in the
+   resolved unit, Datum shows it with its suffix; otherwise it shows the exact
+   signed nanometer value with `nm`.
+3. Focus then blur, Enter, or navigation without a semantic edit is a no-op: no
+   journal entry, dirty-state change, normalization write, or geometry rewrite.
+4. Escape restores the pre-edit canonical value and leaves geometry unchanged.
+5. An edited commit parses once through the shared service, compares canonical
+   values, and journals only an actual canonical change. Caret increments and
+   steppers operate on the canonical value using a declared exact step, never by
+   reparsing the rounded display string.
+
+Thus additional exact digits can appear on focus without implying that display
+precision controls accuracy.
+
+### V1 angle service
+
+V1 deliberately exposes one honest angle model: decimal degrees. The active
+descriptor `datum.units.angle_precision` stores `decimal_0`, `decimal_1`,
+`decimal_2`, or `decimal_3`, with factory `decimal_1`. Formatting consumes the
+owning field's declared canonical integer angle scale, converts through checked
+rational arithmetic, appends `deg`, and reports whether display rounding hid
+information.
+
+Angle input accepts signed locale-independent decimal or scientific notation
+with explicit `deg` or `°`; a bare number is accepted only in a declared angle
+field context. Conversion to the field's declared canonical integer scale must
+be exact. A non-integral result, overflow, wrong suffix, absent scale, or absent
+bare-number context is a typed refusal; V1 never silently rounds angle input.
+
+DMS and radians are useful future presentation modes but are not active V1
+preferences. The retired draft `datum.units.angle_format` value may migrate only
+when its notation is `decimal_degrees` and its precision maps exactly to the new
+descriptor. A stored `dms` or `radians` draft is preserved as unsupported legacy
+evidence and the factory decimal-degree precision is used for the session; it is
+not silently reinterpreted. Activating DMS or radians requires a later governed
+contract covering entry grammar, exact canonical conversion, editing, rounding,
+clipboard/automation behavior, and migration. No V1 surface may advertise them.
+
+### Exact expression grammar and future expression boundary
+
+The V1 numeric grammar is
+`[+-]?(digits(\.digits?)?|\.digits)([eE][+-]?digits)?`, followed by optional
+ASCII whitespace and an allowed suffix. Internal whitespace, grouping marks,
+locale commas, hexadecimal forms, `NaN`, and infinities are refused. Exponents
+are parsed as bounded powers of ten through checked `i128` rational arithmetic;
+exponent construction, numerator/denominator reduction, unit scaling, and final
+integer conversion each check overflow. A mathematically non-integral canonical
+length or angle result is refused, not rounded.
+
+This grammar is a scalar-with-unit seam, not a general formula language. A later
+expression engine may own arithmetic, references, functions, and dimensional
+analysis, but it must consume this service's quantity types, unit-token registry,
+and checked rational conversion. It may return an exact typed scalar to this
+service; it may not introduce a second suffix table or rival conversion policy.
 
 ### Surface and adapter boundaries
 
 The owner-review Global Preferences Units surface must use the GP-F05 native owned
 window, immediate-save repository, resolver, typed presentation catalog,
 search, focus, reset, provenance, accessibility, responsive, and non-color
-patterns. It adds one **Units** category and exactly six registered descriptor
-rows. The tagged angle descriptor is rendered as separate notation and
-precision selectors, producing seven focusable value selectors in total. It
-does not expose document-unit or Project-policy editing in Global Preferences.
+patterns. It adds one **Units** category and exactly eight registered descriptor
+rows and value selectors: system; unit and precision for Board, Drill, and
+Schematic; and decimal-degree precision. A quantity's Unit and Precision may be
+visually paired, but remain separately named, focused, stored, and resettable.
+It does not expose document-unit or Project-policy editing in Global Preferences.
 Each descriptor row states `Global · this device`, while seed-capable provenance
 also states that the effective value is a default copied only at New Project
 with a receipt. The category and each descriptor row must say **Defaults for
 new Projects** and **Open Projects are unaffected**. Changing a Global Units value changes the
 future seed only. It never changes interactive display, contextual bare-number
 defaults, or any other state in an open or existing Project.
+
+Production acceptance also requires a real Project Preferences **Units** slice.
+Its doorway is `Edit > Preferences > Project Preferences… > Units`; the command
+is disabled without an open Project, the native window is owned/input-modal to
+Datum, and no setting appears in the Navigator. The visible scope is
+`Project · <project name>`. The slice contains the same eight typed values under
+Project Working Units authority, not Global provenance, plus the durable seed
+receipt as read-only provenance. Immediate control commits use the canonical
+journaled Project mutation, are undoable, and never touch geometry. The initial
+window contains only the real Units category—no empty, planned, Revision,
+Publish, or document-unit category.
+
+Projects created before `ProjectDisplayUnits` exists migrate deterministically
+from the versioned Datum factory profile embedded in the migration, never from
+the current machine's Global values. Migration atomically writes the Project
+profile and a migration receipt through Project authority, leaves geometry
+byte-identical, and is idempotent. An unreadable or invalid legacy profile is
+preserved and refused rather than partially guessed.
 
 GUI numeric fields in a Project pass a typed `QuantityContext` and that
 Project's immutable-at-read `ResolvedUnitsProfile` snapshot to the service.
@@ -263,17 +332,40 @@ Machine Preferences are therefore not an automation input. GUI, CLI, and MCP
 share semantics without making headless results depend on who last opened the
 desktop window.
 
-Interchange readers and writers also do not read Global defaults, Project Working
-preferences. A file-format adapter owns only that format's documented grammar,
+Interchange readers and writers also do not read Global defaults or Project
+Working Units. A file-format adapter owns only that format's documented grammar,
 unit declarations, coordinate scale, and deterministic serialization. Its
 numeric conversion must delegate to the shared checked rational primitives,
 but import/export output is a function of file bytes, format version, explicit
 operation options, and canonical model state—not a local profile. Display
 precision never truncates or rounds an imported or exported canonical value.
 
+### Known runtime contradictions to remove
+
+The reopened audit found implemented code that cannot be treated as authority or
+accepted in place:
+
+- `preferences/catalog_part_one.rs` classifies Units as live-and-seed and names
+  live display/input consumers. It must classify all eight active keys as
+  future-Project seeds only and remove the unsupported angle-parser claim.
+- `preferences/schema.rs` accepts a permissive numeric angle structure. It must
+  validate the exact decimal-degree precision enum and retired-key migration
+  rules; arbitrary positive floating precision is forbidden.
+- `ir/units.rs` and call sites still expose floating `mm_to_nm`, `mil_to_nm`, and
+  `inch_to_nm` paths. Production callers must move to checked rational
+  conversion; no saturating, truncating, or independently rounded rival path may
+  remain.
+- the runtime registry, catalog, persisted `UnitsProfile`, Project schema, GUI
+  presentation metadata, CLI/MCP schemas, and migration fixtures must carry the
+  same eight keys and token inventories. Key-prefix inference and GUI hard-coding
+  remain forbidden.
+
+UNIT-I03A must begin with assertions that fail against these contradictions and
+finish with an inventory proving no production caller retains them.
+
 ### Legacy conversion disposition
 
-UNIT-I03 must inventory every length conversion call site before changing one
+UNIT-I03A must inventory every length and angle conversion call site before changing one
 and classify it under this table. Unclassified conversions block acceptance.
 
 | Existing path | Required disposition |
@@ -291,11 +383,11 @@ locale-sensitive decimal parsing, or create a second suffix table.
 
 ### Project seed, working-unit, and receipt ownership
 
-The six descriptors are Global defaults and eligible `ProjectPolicySeed`
+The eight descriptors are Global defaults and eligible `ProjectPolicySeed`
 inputs; they are not live display/parser preferences for existing Projects.
 At New Project, the Preferences resolver produces one immutable, validated
 `UnitsProfile` seed snapshot. An eligible explicit
-`datum.projects.unit_policy_seed` aggregate wins; otherwise the six resolved
+`datum.projects.unit_policy_seed` aggregate wins; otherwise the eight resolved
 typed descriptors compose the snapshot. The Project mutation authority—not the
 Preferences repository and not the Units service—atomically writes
 `ProjectDisplayUnits` and the durable itemized `ProjectSeedReceipt`. Existing
@@ -309,18 +401,19 @@ must remain byte-identical. Publish/document units remain separately owned by
 `AdoptedDraftingStandard` and Publish/document authority; neither direction
 silently follows the other.
 
-UNIT-I03 owns the typed Units snapshot schema, aggregate validation/composition,
+UNIT-I03A owns the typed Units snapshot schema, aggregate validation/composition,
 and the Units side of a real New-Project integration proof. It may call the one
 canonical Project mutation transaction; it may not write Project files itself.
 The later GP-CM03 step retains ownership of the general seed pipeline and all
 non-Units seed descriptors, and must reuse this Units integration rather than
 create a second path. A Global preference edit must produce byte-identical open
-Project files. UNIT-I03 must implement the Project-owned schema/service seam
-needed for seed and cross-surface proof, but the Project Preferences window and
-its mutation UX remain separately specified and unauthorized.
+Project files. UNIT-I03B owns the Project Preferences Units-only slice and its
+mutation UX under this contract and the corresponding Units-specific completion
+of PPS-C01 through PPS-C03. Broader Project Preferences categories remain
+separately specified and unauthorized.
 
 Authored expression text is request provenance, not persisted design authority.
-UNIT-I03 stores canonical integers and the already-ratified seed/receipt facts;
+UNIT-I03A stores canonical integers and the already-ratified seed/receipt facts;
 it does not add an authored-unit-intent field to geometry. The comparative
 `units-and-grid-model.html` statement that every number remembers how it was
 written is not ratified for this step and requires its own schema/ownership
@@ -337,27 +430,28 @@ P1–P7 in their listed order above.
 | 2. Exact nm truth | Global changes leave every existing Project byte-identical; Project Working Units changes alter only settings/journal authority while geometry shards remain byte-identical; P4 |
 | 3. Measurement system | typed profile tests cover Metric and Imperial plus every follow-system cell |
 | 4. Typed quantities/overrides | compile/runtime refusal of invalid quantity-unit pairs; every explicit cross-system choice remains visible in GUI and query provenance |
-| 5. Display precision | all five length tokens and every notation-scoped angle token map exactly as specified; notation changes atomically write the selected notation with its defined default precision, including the shared `0.001` case, with no invalid intermediate pair or token reinterpretation; rounded flag and no-write-back proof; exact round trips where representable; P3 |
-| 6. Length suffixes | common vectors including P1 pass identically through direct engine, GUI, CLI, and MCP; P2 and P5 |
-| 7. Checked arithmetic | signed limits, overflow, malformed input, sub-nm, case/whitespace, Unicode `µm` and ASCII `um` refusals/results are identical; P2 |
+| 5. Display precision | each quantity owns `automatic`, `decimal_0..6`, or `exact_nm`; every automatic table cell resolves exactly; explicit precision survives unit/system changes; focus/edit/no-op/cancel/commit never feeds rounded text back to canonical truth; decimal-degree precision maps exactly; P3 |
+| 6. Length suffixes | decimal and scientific-notation vectors, including P1, pass identically through direct engine, GUI, CLI, and MCP; P2 and P5 |
+| 7. Checked arithmetic | signed limits, bounded exponents, overflow at every rational stage, malformed input, sub-nm, case/whitespace, Unicode `µm` and ASCII `um` refusals/results are identical; P2 |
 | 8. Explicit context | GUI bare values name Project/field/quantity/unit; CLI/MCP bare values either name equivalent explicit context or a Project+field, otherwise refuse; no path consults Global defaults for an existing Project; P6 |
 | 9. Provenance | success and refusal snapshots assert every required provenance field, rounded state, and cross-system state across GUI/CLI/MCP |
 | 10. `_nm` compatibility | old MCP/CLI vectors remain byte-for-byte compatible; dual-field requests refuse; expression results include canonical `_nm`; P7 |
-| 11. Quantity separation | length suffixes refuse for angle/ratio/percentage/frequency; radians remain display-only and cannot write geometry |
-| 12. Descriptor classification | registry/catalog/profile schema agree on six Global-default keys, types, defaults, notation-transition defaults, presentation metadata, six descriptor rows/seven value selectors, copy-once seed role, Project Working Units owner, and separate Publish/document owner |
+| 11. Quantity separation | length suffixes refuse for angle/ratio/percentage/frequency; decimal-degree angle input requires angle context and exact canonical-scale conversion; DMS/radians remain absent and deferred |
+| 12. Descriptor classification | registry/catalog/profile schema agree on eight Global-default keys, types, defaults, presentation metadata, eight rows/selectors, legacy fan-out/refusal rules, copy-once seed role, Project Working Units owner, and separate Publish/document owner |
 | P1. Equivalence | `5.08mm`, `200mil`, `0.2in`, and `5080000nm` resolve to the same canonical value in every adapter |
 | P2. Negative/boundary corpus | one shared conformance corpus runs against engine and all edge adapters |
-| P3. Round trip | exact representations round trip; rounded length/angle output is marked and never used as canonical write-back |
+| P3. Round trip | exact representations round trip; rounded length/angle output is marked; focus reveals exact canonical text; focus/blur and unchanged commit are byte-identical no-ops |
 | P4. Authority isolation | Global edits leave existing Project bytes, journal, dirty state, and views unchanged; Project Working Units edits journal exactly one settings mutation and leave geometry bytes unchanged |
 | P5. Suffix parity | GUI, CLI, and MCP return the same canonical value and provenance for every explicit-suffix vector |
 | P6. Bare context | accepted GUI and CLI/MCP contexts name the same Project/field/resolved quantity/unit; explicit request context remains supported; absent context refuses |
-| P7. Migration | all established `_nm` callers and deterministic interchange fixtures remain compatible; legacy conversion inventory has no unreviewed path |
+| P7. Migration | established `_nm` callers and deterministic interchange fixtures remain compatible; old shared precision fans out atomically; old decimal-degree angle values map; unsupported angle drafts preserve evidence and refuse reinterpretation; pre-feature Projects receive the versioned factory profile, never current Global values; legacy conversion inventory has no unreviewed path |
 
 Production acceptance additionally requires the owner-approved protected Units
-target, running-app captures for ordinary/changed/search/refusal/cross-system/
-narrow/non-color states, keyboard and screen-reader evidence, real New-Project
-seed/receipt proof, a zero-existing-Project-mutation proof, and the full governed
-test suite. No single screenshot or isolated module test can satisfy this matrix.
+Global and Project targets, running-app captures for ordinary/changed/search/
+refusal/cross-system/narrow/non-color states, keyboard and screen-reader
+evidence, real New-Project seed/receipt proof, legacy-Project migration proof,
+lossless edit proof, a zero-geometry-mutation proof, and the full governed test
+suite. No single screenshot or isolated module test can satisfy this matrix.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-CONTRACT-RECONCILED -->
 
