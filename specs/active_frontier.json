@@ -5782,11 +5782,24 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
-      "summary": "After the first real Global Preferences wgpu slice exists, prove the exact Units core across the six ratified unit descriptors, GUI, CLI, MCP, import/export, and real Projects without inventing a temporary settings surface.",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-unit-i02r-reconciliation-20260902",
+        "claimed_at": "2026-09-03T04:40:01Z",
+        "heartbeat_at": "2026-09-03T04:50:38Z",
+        "expires_at": "2026-09-03T12:50:38Z",
+        "scope": [
+          "Record the owner's UNIT-I02 revision disposition and reconcile the controlling shared Units requirement, descriptor catalog, implementation plan, Frontier contract, and bounded Claude-owned Units visual-target request without implementing runtime behavior"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "bed873371d053e3c1acd2cc8895ba243966809f6"
+      },
+      "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families into one exact cross-surface implementation contract and approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
       ],
@@ -5795,7 +5808,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I02",
+        "canonical_next_step_id": "UNIT-I02R",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5812,11 +5825,15 @@
           {
             "id": "UNIT-I02",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review the exact Units core and first real Global Preferences slice before authorizing surface parity and production acceptance in UNIT-I03 only.",
             "depends_on": [],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}],
-            "completion_evidence": [],
+            "completion_evidence": [{
+              "kind": "review",
+              "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+              "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02-OWNER-REVISION"
+            }],
             "owner_input": {
               "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific parity, accessibility, real-project, dependency, or proof correction>`.",
               "requests": [{
@@ -5828,11 +5845,41 @@
             }
           },
           {
+            "id": "UNIT-I02R",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families into an exact typed Units profile, per-quantity resolution, precision, angle, GUI, CLI/MCP, interchange, legacy-adapter, Project-seed, and acceptance contract; prepare the bounded Claude-owned Units target request.",
+            "depends_on": ["UNIT-I02"],
+            "requirement_refs": [
+              {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
+              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02R"}
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "UNIT-I02V",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the reconciled Units contract, descriptor mapping, acceptance matrix, and Claude-owned protected Global Preferences Units target before authorizing UNIT-I03 only.",
+            "depends_on": ["UNIT-I02R"],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific profile, resolution, precision, angle, GUI, adapter, interchange, seed, accessibility, or proof correction>`.",
+              "requests": [{
+                "id": "UNIT-I02V",
+                "question": "Do the controlling requirement, descriptor catalog, protected Units target, implementation contract, and clause-by-clause proof matrix now describe one production-ready Units system closely enough to authorize UNIT-I03 only?",
+                "recommended_response": "Approve only when every unresolved semantic and ownership gap is closed, the protected Units target is owner-approved, and no runtime implementation or production acceptance is claimed by planning evidence.",
+                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}
+              }]
+            }
+          },
+          {
             "id": "UNIT-I03",
             "kind": "execution",
             "status": "pending",
             "action": "Route GUI, CLI, MCP, import/export, and real-Project unit behavior through the exact core and production-accept Units without moving descriptor ownership.",
-            "depends_on": ["UNIT-I02"],
+            "depends_on": ["UNIT-I02V"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03"}],
             "completion_evidence": []
           }
