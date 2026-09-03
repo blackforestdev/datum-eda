@@ -1,6 +1,8 @@
 # Datum Global Preferences V1 Descriptor Catalog
 
-> **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics 037.
+> **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics
+> 037; the exact angle schema and cross-surface mapping below are a UNIT-I02R
+> correction pending protected-target reconciliation and UNIT-I02V owner review.
 >
 > **Historical step alias:** GP-C05A.
 >
@@ -111,7 +113,7 @@ unit. These descriptors never rescale stored design data.
 | `datum.units.drill_hole` | units engine | enum `{follow_system,mm,mil,inch}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:140-141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82` |
 | `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82` |
 | `datum.units.length_precision` | units engine | enum `{0.1,0.01,0.001,0.0001,exact_nm}`; `0.01` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:142-143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:61-82` |
-| `datum.units.angle_format` | units engine | struct `{notation:decimal_degrees-or-dms-or-radians,precision}`; decimal degrees/0.1° | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:84-92` |
+| `datum.units.angle_format` | units engine | tagged struct: `decimal_degrees` precision `{1,0.1,0.01,0.001}`, `dms` precision `{1s,0.1s}`, or `radians` precision `{0.001,0.000001}`; `decimal_degrees`/`0.1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live angle-format projection; no general angle parser in UNIT-I03 | P0; splits legacy aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#angle-format-service` |
 
 The six typed `datum.units.*` seed descriptors compose the default
 `ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is the
@@ -121,6 +123,16 @@ from the six typed unit-seed descriptors. Absence never masquerades as a
 contribution, so the aggregate factory/no-value does not shadow more specific
 chosen unit seeds. The receipt records either the aggregate source or every
 composed source and effective value.
+
+The six rows have two non-competing roles. Their Global effective values are
+live personal display and GUI-input projections. At New Project they are also
+eligible inputs to one immutable `ProjectDisplayUnits` snapshot copied by
+Project mutation authority with a receipt; existing Projects never follow a
+later Global change. CLI/MCP bare expressions require request-carried context
+and interchange never reads these preferences. Exact resolution, token mapping,
+angle-format limits, aggregate composition, and cross-surface proof are governed
+by the UNIT-I03 reconciliation contract in
+`GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`.
 
 ### 2.3 PCB, checks, and publish-space defaults
 

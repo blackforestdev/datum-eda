@@ -238,7 +238,7 @@
     "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, and common GUI/CLI/MCP parsing; no implementation or dependency authorization."
+      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, common GUI/CLI/MCP length parsing, preference-independent interchange, and copy-once Project seeding. Its UNIT-I02R reconciliation contract remains pending protected-target and UNIT-I02V owner review; no implementation, production acceptance, or dependency authorization."
     },
     "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md": {
       "class": "governed",
