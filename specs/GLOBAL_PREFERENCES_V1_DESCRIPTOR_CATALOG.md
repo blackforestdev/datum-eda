@@ -1,7 +1,8 @@
 # Datum Global Preferences V1 Descriptor Catalog
 
 > **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics
-> 037; the exact angle schema and cross-surface mapping below are a UNIT-I02R
+> 037 and Product Mechanics 040; the exact angle schema and cross-surface
+> mapping below are a UNIT-I02R
 > correction pending protected-target reconciliation and UNIT-I02V owner review.
 >
 > **Historical step alias:** GP-C05A.
@@ -101,19 +102,21 @@ silently promoted into V1.
 
 ### 2.2 Units
 
-All length choices are display/parser preferences only. Canonical design truth
-remains exact signed integer nanometers. One shared parser accepts explicit unit
-suffixes for GUI, CLI, and MCP; a bare number uses the field's effective display
-unit. These descriptors never rescale stored design data.
+These six descriptors are **Global defaults for new Projects**, not live unit
+controls for an open Project. Canonical design truth remains exact signed
+integer nanometers. One shared service accepts explicit unit suffixes for GUI,
+CLI, and MCP; a bare number uses explicit request context or the owning
+Project's effective Working Units. These descriptors never rescale stored
+design data and never alter an existing Project.
 
 | Stable key | Owner | Value schema; factory/no-value | Class; scopes; management | Seed/apply; consumers | Portability; migration; disposition | Evidence |
 |---|---|---|---|---|---|---|
-| `datum.units.system` | units engine | enum `{metric,imperial}`; `metric` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; splits legacy aggregate Display units; I | `preferences-window.html:137`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:34-82` |
-| `datum.units.board_length` | units engine | enum `{follow_system,mm,um,mil,inch}` with system compatibility; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:139-140`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82` |
-| `datum.units.drill_hole` | units engine | enum `{follow_system,mm,mil,inch}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:140-141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82` |
-| `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82` |
-| `datum.units.length_precision` | units engine | enum `{0.1,0.01,0.001,0.0001,exact_nm}`; `0.01` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live display/parser projection | P0; split aggregate; I | `preferences-window.html:142-143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:61-82` |
-| `datum.units.angle_format` | units engine | tagged struct: `decimal_degrees` precision `{1,0.1,0.01,0.001}`, `dms` precision `{1s,0.1s}`, or `radians` precision `{0.001,0.000001}`; `decimal_degrees`/`0.1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; live angle-format projection; no general angle parser in UNIT-I03 | P0; splits legacy aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#angle-format-service` |
+| `datum.units.system` | units engine | enum `{metric,imperial}`; `metric` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; splits legacy aggregate Display units; I | `preferences-window.html:137`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:34-82`; PM-040 |
+| `datum.units.board_length` | units engine | enum `{follow_system,mm,um,mil,inch}` with system compatibility; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:139-140`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
+| `datum.units.drill_hole` | units engine | enum `{follow_system,mm,mil,inch}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:140-141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
+| `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
+| `datum.units.length_precision` | units engine | enum `{0.1,0.01,0.001,0.0001,exact_nm}`; `0.01` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:142-143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:61-82`; PM-040 |
+| `datum.units.angle_format` | units engine | tagged struct: `decimal_degrees` precision `{1,0.1,0.01,0.001}`, `dms` precision `{1s,0.1s}`, or `radians` precision `{0.001,0.000001}`; `decimal_degrees`/`0.1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only; no general angle parser in UNIT-I03 | P0; splits legacy aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#angle-format-service`; PM-040 |
 
 The six typed `datum.units.*` seed descriptors compose the default
 `ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is the
@@ -124,14 +127,16 @@ contribution, so the aggregate factory/no-value does not shadow more specific
 chosen unit seeds. The receipt records either the aggregate source or every
 composed source and effective value.
 
-The six rows have two non-competing roles. Their Global effective values are
-live personal display and GUI-input projections. At New Project they are also
-eligible inputs to one immutable `ProjectDisplayUnits` snapshot copied by
-Project mutation authority with a receipt; existing Projects never follow a
-later Global change. CLI/MCP bare expressions require request-carried context
-and interchange never reads these preferences. Exact resolution, token mapping,
-angle-format limits, aggregate composition, and cross-surface proof are governed
-by the UNIT-I03 reconciliation contract in
+The six rows have one Global role: define defaults for future Projects. At New
+Project they are eligible inputs to one immutable `ProjectDisplayUnits`
+snapshot copied by Project mutation authority with a receipt. Thereafter that
+Project-owned schema is exposed as **Project Working Units** and governs editor
+display and contextual bare input. Existing Projects never follow a later
+Global change. Publish/document units remain separate Project/document
+authority. CLI/MCP bare expressions require explicit context or a Project and
+field; interchange never reads these preferences. Exact resolution, token
+mapping, angle-format limits, aggregate composition, and cross-surface proof are
+governed by Product Mechanics 040 and the UNIT-I03 reconciliation contract in
 `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`.
 
 ### 2.3 PCB, checks, and publish-space defaults

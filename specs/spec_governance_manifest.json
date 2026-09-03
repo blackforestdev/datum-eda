@@ -133,7 +133,7 @@
     "specs/PROJECT_PREFERENCES_SPEC.md": {
       "class": "governed",
       "progress_anchor": "PROJECT-PREFERENCES-SPEC",
-      "notes": "PM-039 doorway and authority baseline plus PPS-C01 through PPS-C04 work contract. Exact Project setting inventory and protected visual truth remain incomplete; no implementation or Revision integration is authorized."
+      "notes": "PM-039 doorway and authority baseline plus PPS-C01 through PPS-C04 work contract. PM-040 requires Project Working Units as Project-owned editor display/input context while Publish/document units remain separate. Exact Project setting inventory and protected visual truth remain incomplete; no implementation or Revision integration is authorized."
     },
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
@@ -238,7 +238,7 @@
     "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, common GUI/CLI/MCP length parsing, preference-independent interchange, and copy-once Project seeding. Its UNIT-I02R reconciliation contract remains pending protected-target and UNIT-I02V owner review; no implementation, production acceptance, or dependency authorization."
+      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, typed measurement/display policy, common GUI/CLI/MCP length parsing, preference-independent interchange, and PM-040's Global-default to Project Working Units copy-once model with separate Publish/document authority. UNIT-I02R remains pending protected-target correction and UNIT-I02V owner review; no implementation, production acceptance, or dependency authorization."
     },
     "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md": {
       "class": "governed",
@@ -842,7 +842,7 @@
       "class": "doctrine",
       "controlling": true,
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Owner-ratified GP-C06 mechanism for typed Global Preferences authority, ProjectPolicySeed, resolution, persistence, search-first interaction, exact units, accessibility, and PM-034/035/036 preservation. It authorizes no implementation, dependency, provider, service, execution, or prototype edit."
+      "notes": "Owner-ratified GP-C06 mechanism for typed Global Preferences authority, ProjectPolicySeed, resolution, persistence, search-first interaction, exact units, accessibility, and PM-034/035/036 preservation, with the Units live-role ambiguity superseded by PM-040. It authorizes no implementation, dependency, provider, service, execution, or prototype edit."
     },
     "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md": {
       "class": "doctrine",
@@ -855,6 +855,12 @@
       "controlling": true,
       "progress_anchor": "REVISION-PRODUCT-RECOVERY",
       "notes": "Owner-ratified conventional settings entry and Preferences-first delivery doctrine: explicit Global/Project menu commands, separate authority, no Navigator configuration, exact Units core before an early real Global GUI slice, and Project Preferences before Revision integration."
+    },
+    "docs/decisions/PRODUCT_MECHANICS_040_PROJECT_WORKING_UNITS_AUTHORITY.md": {
+      "class": "doctrine",
+      "controlling": true,
+      "progress_anchor": "SHARED-UNITS-SURFACE-PARITY",
+      "notes": "Owner-ratified Units ownership: Global Preferences supplies future-Project defaults; ProjectDisplayUnits is the Project-owned Working Units authority for editor display and contextual bare input; Publish/document units remain separate; explicit suffix and interchange independence are preserved. No runtime, protected-prototype, Project Preferences, Publish, dependency, or production authorization."
     },
     "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
       "class": "governed",

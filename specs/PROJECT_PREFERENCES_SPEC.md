@@ -24,6 +24,13 @@ mutation paths never merge.
   change Project policy.
 - Global seeds copy once at Project creation with a receipt and never
   live-follow later Global changes.
+- `ProjectDisplayUnits`, presented as **Project Working Units**, is the
+  Project-owned source for editor display, measurement readouts, and contextual
+  bare numeric input. Its eventual Units row writes through the same journaled
+  path and never rescales canonical geometry.
+- Publish/document units remain separately owned by `AdoptedDraftingStandard`
+  and Publish/document authority; neither silently follows Project Working
+  Units.
 - Invalid, stale, conflicted, or unauthorized drafts cannot replace the last
   valid effective Project state.
 - Opening, searching, inspecting, canceling, or closing the window makes no
@@ -49,6 +56,8 @@ Inventory every Project-owned setting, governing authority, current persistence
 shard, read query, typed mutation, refusal, undo behavior, seed relationship,
 and explicit exclusion. Machine presentation, session state, operation input,
 restartable UI state, and deferred Revision behavior must remain outside.
+Product Mechanics 040 requires the inventory to include Project Working Units
+and to keep Publish/document units visibly separate.
 
 <!-- REQ:PROJECT-PREFERENCES-SPEC:PPS-C02 -->
 ### PPS-C02 — protected visual reconciliation

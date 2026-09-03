@@ -101,6 +101,29 @@ It does not replace or weaken those requirements. Planning evidence, an HTML
 render, or a passing isolated core test is not implementation authorization or
 production acceptance.
 
+### Ratified authority model
+
+Product Mechanics 040 makes the authority split exact. `UnitsProfile` is one
+shared value schema, not one shared owner:
+
+| Layer | Owner | Effect |
+|---|---|---|
+| Global Units defaults | Global Preferences repository/resolver | defaults for future Projects only; no open or existing Project follows |
+| Project Working Units | Project `ProjectDisplayUnits` authority | editor display, measurement readouts, and contextual bare numeric input for that Project |
+| Publish/document units | `AdoptedDraftingStandard` and Publish/document authority | dimension and issued-document presentation; independent of working units |
+
+The Project-facing product name is **Project Working Units**; the persisted
+schema identity remains `ProjectDisplayUnits`. A Project Working Units change
+is a canonical journaled Project mutation. It changes Project settings and the
+journal, but never rescales or rewrites canonical geometry. Global edits leave
+all existing Project bytes, journals, dirty state, and views unchanged.
+
+This mapping follows Onshape's modern account-default → workspace-owned →
+drawing-owned separation. SOLIDWORKS, Inventor, and Fusion corroborate the
+document/template ownership boundary. KiCad is low-weight comparison evidence
+only and cannot establish this architecture. Product Mechanics 040 records the
+reviewed primary sources and owner decision.
+
 ### Typed profile and resolution
 
 The preference-facing value is one typed `UnitsProfile`, composed from exactly
@@ -184,22 +207,26 @@ input and rounding contract exists. This removes the catalog's unsupported
 
 ### Surface and adapter boundaries
 
-The approved Global Preferences Units surface must use the GP-F05 native owned
+The owner-review Global Preferences Units surface must use the GP-F05 native owned
 window, immediate-save repository, resolver, typed presentation catalog,
 search, focus, reset, provenance, accessibility, responsive, and non-color
 patterns. It adds one **Units** category and exactly the six controls above; it
 does not expose document-unit or Project-policy editing in Global Preferences.
 Each control states `Global · this device`, while seed-capable provenance also
-states that the effective value is copied only at New Project with a receipt.
-Changing a Global Units value immediately changes that user's interactive
-display and contextual bare-number defaults. It never mutates an open or
-existing Project.
+states that the effective value is a default copied only at New Project with a
+receipt. The category and each control must say **Defaults for new Projects**
+and **Open Projects are unaffected**. Changing a Global Units value changes the
+future seed only. It never changes interactive display, contextual bare-number
+defaults, or any other state in an open or existing Project.
 
-GUI numeric fields pass a typed `QuantityContext` and the current immutable
-`ResolvedUnitsProfile` snapshot to the service. Explicit suffixes are independent
-of that snapshot. A bare value is refused when the field has no declared
-quantity/profile mapping. Search terms include labels, stable keys, supported
-unit names, and suffixes without making the search index a semantic authority.
+GUI numeric fields in a Project pass a typed `QuantityContext` and that
+Project's immutable-at-read `ResolvedUnitsProfile` snapshot to the service.
+Explicit suffixes are independent of that snapshot. A bare value is refused
+when the field has no declared quantity/Project-profile mapping. A no-Project
+preview may explicitly use `GlobalUnitsDefaults`, but it must identify itself as
+a preview and cannot become editor or mutation context. Search terms include
+labels, stable keys, supported unit names, and suffixes without making the
+search index a semantic authority.
 
 CLI and MCP compatibility follows one additive rule:
 
@@ -207,7 +234,8 @@ CLI and MCP compatibility follows one additive rule:
 - a new expression sibling is optional and mutually exclusive with its `_nm`
   sibling; a request supplying both is refused;
 - an explicit suffix needs no profile; a bare expression must carry an explicit
-  quantity/unit context in the request, never the machine's Global preference;
+  quantity/unit context or identify a Project and field whose Project Working
+  Units can be resolved, never the machine's Global preference;
 - normalized results and refusals expose canonical `_nm` plus typed provenance;
 - legacy commands that already use an explicitly named unit may retain their
   spelling as adapters, but their conversion delegates to the shared exact
@@ -217,7 +245,7 @@ Machine Preferences are therefore not an automation input. GUI, CLI, and MCP
 share semantics without making headless results depend on who last opened the
 desktop window.
 
-Interchange readers and writers also do not read Global or Project display
+Interchange readers and writers also do not read Global defaults, Project Working
 preferences. A file-format adapter owns only that format's documented grammar,
 unit declarations, coordinate scale, and deterministic serialization. Its
 numeric conversion must delegate to the shared checked rational primitives,
@@ -232,7 +260,7 @@ and classify it under this table. Unclassified conversions block acceptance.
 
 | Existing path | Required disposition |
 |---|---|
-| GUI numeric entry/readout | use quantity context plus resolved profile |
+| GUI numeric entry/readout | use quantity context plus the owning Project's resolved working profile; no Global fallback |
 | CLI fixed-unit/floating input | preserve syntax through a compatibility adapter; replace conversion with checked parsing and typed refusal |
 | MCP `_nm` fields | preserve as canonical compatibility path; add only mutually exclusive expression siblings where authorized |
 | KiCad and other import readers | keep format grammar local; replace floating conversion with checked rational primitives |
@@ -243,10 +271,10 @@ and classify it under this table. Unclassified conversions block acceptance.
 No adapter may silently round a non-integral nanometer, saturate overflow, use
 locale-sensitive decimal parsing, or create a second suffix table.
 
-### Project seed and receipt ownership
+### Project seed, working-unit, and receipt ownership
 
-The six descriptors are simultaneously Global live display/parser preferences
-and eligible `ProjectPolicySeed` inputs. Those roles do not create live linkage.
+The six descriptors are Global defaults and eligible `ProjectPolicySeed`
+inputs; they are not live display/parser preferences for existing Projects.
 At New Project, the Preferences resolver produces one immutable, validated
 `UnitsProfile` seed snapshot. An eligible explicit
 `datum.projects.unit_policy_seed` aggregate wins; otherwise the six resolved
@@ -255,14 +283,23 @@ Preferences repository and not the Units service—atomically writes
 `ProjectDisplayUnits` and the durable itemized `ProjectSeedReceipt`. Existing
 Projects never follow later Global changes.
 
+After creation, `ProjectDisplayUnits` is the sole Project Working Units
+authority. Its typed Project Preferences mutation changes the settings shard
+and journal with provenance, diff, undo, and refusal semantics. It can change
+subsequent display and bare-input interpretation, but canonical geometry shards
+must remain byte-identical. Publish/document units remain separately owned by
+`AdoptedDraftingStandard` and Publish/document authority; neither direction
+silently follows the other.
+
 UNIT-I03 owns the typed Units snapshot schema, aggregate validation/composition,
 and the Units side of a real New-Project integration proof. It may call the one
 canonical Project mutation transaction; it may not write Project files itself.
 The later GP-CM03 step retains ownership of the general seed pipeline and all
 non-Units seed descriptors, and must reuse this Units integration rather than
 create a second path. A Global preference edit must produce byte-identical open
-Project files. Project Preferences remains separately specified and is not
-authorized by UNIT-I03.
+Project files. UNIT-I03 must implement the Project-owned schema/service seam
+needed for seed and cross-surface proof, but the Project Preferences window and
+its mutation UX remain separately specified and unauthorized.
 
 Authored expression text is request provenance, not persisted design authority.
 UNIT-I03 stores canonical integers and the already-ratified seed/receipt facts;
@@ -279,23 +316,23 @@ P1–P7 in their listed order above.
 | Requirement | Required cross-surface proof |
 |---|---|
 | 1. One service | call-site inventory shows GUI, CLI, MCP, preview, and interchange adapters delegate to the engine service; no rival suffix/conversion semantics remain |
-| 2. Exact nm truth | before/after Project-byte comparison for every system, unit, precision, and angle-format preference change; P4 |
+| 2. Exact nm truth | Global changes leave every existing Project byte-identical; Project Working Units changes alter only settings/journal authority while geometry shards remain byte-identical; P4 |
 | 3. Measurement system | typed profile tests cover Metric and Imperial plus every follow-system cell |
 | 4. Typed quantities/overrides | compile/runtime refusal of invalid quantity-unit pairs; every explicit cross-system choice remains visible in GUI and query provenance |
 | 5. Display precision | all five descriptor tokens map exactly as specified; rounded flag and no-write-back proof; exact round trips where representable; P3 |
 | 6. Length suffixes | common vectors including P1 pass identically through direct engine, GUI, CLI, and MCP; P2 and P5 |
 | 7. Checked arithmetic | signed limits, overflow, malformed input, sub-nm, case/whitespace, Unicode `µm` and ASCII `um` refusals/results are identical; P2 |
-| 8. Explicit context | GUI bare values name field/quantity/unit; CLI/MCP bare values without request context refuse; P6 |
+| 8. Explicit context | GUI bare values name Project/field/quantity/unit; CLI/MCP bare values either name equivalent explicit context or a Project+field, otherwise refuse; no path consults Global defaults for an existing Project; P6 |
 | 9. Provenance | success and refusal snapshots assert every required provenance field, rounded state, and cross-system state across GUI/CLI/MCP |
 | 10. `_nm` compatibility | old MCP/CLI vectors remain byte-for-byte compatible; dual-field requests refuse; expression results include canonical `_nm`; P7 |
 | 11. Quantity separation | length suffixes refuse for angle/ratio/percentage/frequency; radians remain display-only and cannot write geometry |
-| 12. Descriptor classification | registry/catalog/profile schema agree on six keys, types, defaults, presentation metadata, consumers, live role, and copy-once seed role |
+| 12. Descriptor classification | registry/catalog/profile schema agree on six Global-default keys, types, defaults, presentation metadata, copy-once seed role, Project Working Units owner, and separate Publish/document owner |
 | P1. Equivalence | `5.08mm`, `200mil`, `0.2in`, and `5080000nm` resolve to the same canonical value in every adapter |
 | P2. Negative/boundary corpus | one shared conformance corpus runs against engine and all edge adapters |
 | P3. Round trip | exact representations round trip; rounded length/angle output is marked and never used as canonical write-back |
-| P4. No mutation | Global edits and readout-format changes leave existing Project bytes, journal, and dirty state unchanged |
+| P4. Authority isolation | Global edits leave existing Project bytes, journal, dirty state, and views unchanged; Project Working Units edits journal exactly one settings mutation and leave geometry bytes unchanged |
 | P5. Suffix parity | GUI, CLI, and MCP return the same canonical value and provenance for every explicit-suffix vector |
-| P6. Bare context | accepted GUI and explicit CLI/MCP contexts name the same resolved quantity/unit; absent automation context refuses |
+| P6. Bare context | accepted GUI and CLI/MCP contexts name the same Project/field/resolved quantity/unit; explicit request context remains supported; absent context refuses |
 | P7. Migration | all established `_nm` callers and deterministic interchange fixtures remain compatible; legacy conversion inventory has no unreviewed path |
 
 Production acceptance additionally requires the owner-approved protected Units
@@ -303,5 +340,7 @@ target, running-app captures for ordinary/changed/search/refusal/cross-system/
 narrow/non-color states, keyboard and screen-reader evidence, real New-Project
 seed/receipt proof, a zero-existing-Project-mutation proof, and the full governed
 test suite. No single screenshot or isolated module test can satisfy this matrix.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-AUTHORITY-MODEL-APPROVED -->
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:SHARED-UNITS-ENGINE -->

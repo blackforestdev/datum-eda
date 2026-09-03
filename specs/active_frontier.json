@@ -5775,6 +5775,7 @@
       "title": "Complete shared Units surface parity through Preferences",
       "issue_id": "dat-shared-units-surface-parity-s9x",
       "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_040_PROJECT_WORKING_UNITS_AUTHORITY.md",
         "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
@@ -5791,15 +5792,15 @@
         "harness": "codex-cli",
         "session": "codex-unit-i02r-reconciliation-20260902",
         "claimed_at": "2026-09-03T04:40:01Z",
-        "heartbeat_at": "2026-09-03T04:50:38Z",
-        "expires_at": "2026-09-03T12:50:38Z",
+        "heartbeat_at": "2026-09-03T05:39:23Z",
+        "expires_at": "2026-09-03T13:39:23Z",
         "scope": [
-          "Record the owner's UNIT-I02 revision disposition and reconcile the controlling shared Units requirement, descriptor catalog, implementation plan, Frontier contract, and bounded Claude-owned Units visual-target request without implementing runtime behavior"
+          "Record the owner's Product Mechanics 040 authority disposition and reconcile the controlling shared Units requirement, descriptor catalog, Project Preferences boundary, implementation plan, Frontier contract, and bounded Claude-owned Units visual-target correction without implementing runtime behavior"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "bed873371d053e3c1acd2cc8895ba243966809f6"
+        "head": "fa4d65336ea13dd3d8281d9f197244b834a69ecf"
       },
-      "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families into one exact cross-surface implementation contract and approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
+      "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families around the ratified Global-default, Project Working Units, and separate Publish/document authority model, then obtain an approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
       ],
@@ -5848,7 +5849,7 @@
             "id": "UNIT-I02R",
             "kind": "planning",
             "status": "in_progress",
-            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families into an exact typed Units profile, per-quantity resolution, precision, angle, GUI, CLI/MCP, interchange, legacy-adapter, Project-seed, and acceptance contract; prepare the bounded Claude-owned Units target request.",
+            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, and no authority live-follows another; prepare the bounded Claude-owned Units target correction request.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
@@ -5860,7 +5861,7 @@
             "id": "UNIT-I02V",
             "kind": "owner_decision",
             "status": "pending",
-            "action": "Review the reconciled Units contract, descriptor mapping, acceptance matrix, and Claude-owned protected Global Preferences Units target before authorizing UNIT-I03 only.",
+            "action": "Review the reconciled Units contract, Global-default descriptor mapping, Project Working Units ownership, separate Publish/document authority, acceptance matrix, and corrected Claude-owned Global Preferences target before authorizing UNIT-I03 only.",
             "depends_on": ["UNIT-I02R"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}],
             "completion_evidence": [],
@@ -5868,7 +5869,7 @@
               "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific profile, resolution, precision, angle, GUI, adapter, interchange, seed, accessibility, or proof correction>`.",
               "requests": [{
                 "id": "UNIT-I02V",
-                "question": "Do the controlling requirement, descriptor catalog, protected Units target, implementation contract, and clause-by-clause proof matrix now describe one production-ready Units system closely enough to authorize UNIT-I03 only?",
+                "question": "Do the controlling requirement, descriptor catalog, protected Units target, implementation contract, and clause-by-clause proof matrix now consistently implement the Global-default to Project Working Units seed model while keeping Publish/document units separate, closely enough to authorize UNIT-I03 only?",
                 "recommended_response": "Approve only when every unresolved semantic and ownership gap is closed, the protected Units target is owner-approved, and no runtime implementation or production acceptance is claimed by planning evidence.",
                 "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}
               }]
@@ -5878,7 +5879,7 @@
             "id": "UNIT-I03",
             "kind": "execution",
             "status": "pending",
-            "action": "Route GUI, CLI, MCP, import/export, and real-Project unit behavior through the exact core and production-accept Units without moving descriptor ownership.",
+            "action": "Route Global future-Project defaults, Project-owned Working Units, GUI, CLI, MCP, import/export, and real-Project behavior through the exact core; production-accept Units without merging authority or coupling Publish/document units.",
             "depends_on": ["UNIT-I02V"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03"}],
             "completion_evidence": []
