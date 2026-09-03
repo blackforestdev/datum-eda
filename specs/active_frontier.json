@@ -5783,10 +5783,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-unit-i02r-industrial-revision-20260903",
+        "claimed_at": "2026-09-03T13:49:51Z",
+        "heartbeat_at": "2026-09-03T13:49:51Z",
+        "expires_at": "2026-09-03T21:49:51Z",
+        "scope": [
+          "Reconcile all six owner-returned industrial Units gaps across the controlling requirement, descriptor catalog, Project Preferences contract, implementation plan, Frontier, and bounded Claude-owned handoff without implementing runtime behavior"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "c0564d0"
+      },
       "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families around the ratified Global-default, Project Working Units, and separate Publish/document authority model, then obtain an approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5796,7 +5809,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I02V",
+        "canonical_next_step_id": "UNIT-I02R",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5835,30 +5848,14 @@
           {
             "id": "UNIT-I02R",
             "kind": "planning",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, no authority live-follows another, and Angle notation changes atomically replace the tagged value with the selected notation's defined precision default; prepare bounded Claude-owned corrections for the Units target and conflicting supporting studies.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
               {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02R"}
             ],
-            "completion_evidence": [
-              {
-                "kind": "document",
-                "path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
-                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-CONTRACT-RECONCILED"
-              },
-              {
-                "kind": "document",
-                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-RECONCILED-FOR-OWNER-REVIEW"
-              },
-              {
-                "kind": "review",
-                "path": "docs/gui/prototypes/preferences-window.html",
-                "marker": "UNIT-I02R — OWNER-REVIEW TARGET"
-              }
-            ]
+            "completion_evidence": []
           },
           {
             "id": "UNIT-I02V",
