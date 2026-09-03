@@ -1,8 +1,9 @@
 # Datum Project Preferences Specification
 
-> **Status:** Pending specification under Product Mechanics 039. The doorway
-> and authority laws below are ratified; category payloads, interaction details,
-> and visual truth must complete PPS-C01 through PPS-C04 before implementation.
+> **Status:** Pending specification under Product Mechanics 039. UNIT-I02R now
+> defines a buildable Units-only vertical slice, subject to corrected Claude-owned
+> visual truth and UNIT-I02V owner approval. Every other category still requires
+> PPS-C01 through PPS-C04 before implementation.
 
 ## 1. Product boundary
 
@@ -26,8 +27,8 @@ mutation paths never merge.
   live-follow later Global changes.
 - `ProjectDisplayUnits`, presented as **Project Working Units**, is the
   Project-owned source for editor display, measurement readouts, and contextual
-  bare numeric input. Its eventual Units row writes through the same journaled
-  path and never rescales canonical geometry.
+  bare numeric input. Its Units slice writes through the same journaled path and
+  never rescales canonical geometry.
 - Publish/document units remain separately owned by `AdoptedDraftingStandard`
   and Publish/document authority; neither silently follows Project Working
   Units.
@@ -59,6 +60,14 @@ restartable UI state, and deferred Revision behavior must remain outside.
 Product Mechanics 040 requires the inventory to include Project Working Units
 and to keep Publish/document units visibly separate.
 
+For the Units-only first slice, the exact inventory is the eight-field
+`UnitsProfile` defined by `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`: measurement
+system; Board unit and precision; Drill unit and precision; Schematic unit and
+precision; and decimal-degree precision. Each field reads and writes
+`ProjectDisplayUnits` through one typed aggregate mutation. The durable Project
+seed or migration receipt is read-only provenance. No document, Publish,
+Revision, machine, session, or operation-owned value is included.
+
 <!-- REQ:PROJECT-PREFERENCES-SPEC:PPS-C02 -->
 ### PPS-C02 — protected visual reconciliation
 
@@ -74,35 +83,58 @@ The Claude-owned lane must reconcile the actual menu and windows for:
   states; and
 - Revision absent from the initial Project surface.
 
+The Units target must show only one **Units** category, scope
+`Project · <project name>`, all eight values, per-quantity Unit/Precision pairing,
+Automatic precision resolution, cross-system overrides, seed/migration
+provenance, ordinary/changed/search/refusal/unreadable/narrow/non-color states,
+and the lossless edit contract. It must not draw future categories merely to
+reserve space.
+
 Codex must provide a bounded handoff and must not edit prototype HTML.
 
 <!-- REQ:PROJECT-PREFERENCES-SPEC:PPS-C03 -->
 ### PPS-C03 — buildable interaction and conformance contract
 
-Specify draft/apply/cancel behavior, cross-row validation, external-change
-handling, stale generations, conflict/refusal presentation, focus restoration,
-search, provenance, undo, accessibility, real-Project fixtures, and exact menu
-bindings. No behavior may be copied from another application without owner
-review.
+The Units-only slice uses immediate per-control commits, not staged Apply/OK/
+Cancel. Each selection validates a complete `UnitsProfile` and submits one
+canonical journaled Project mutation; on success it updates the read model and
+offers ordinary Project Undo, while refusal leaves the last valid state intact.
+An external generation change triggers re-read and explicit stale-edit refusal,
+never last-writer-wins. Window close discards search, open choices, transient
+notices, and focus but not committed Project values. Reopen selects Units with
+an empty search and current Project values. Escape closes the innermost choice,
+then clears a nonempty focused search, then closes the native window. Focus
+returns to the invoking menu item with the previous editor as fallback.
+
+Controls announce name, role, stored and resolved value, Project scope,
+immediate-save behavior, changed/default provenance, seed or migration receipt,
+and any cross-system/rounded/refusal state. Global defaults are read-only
+provenance only and are never a fallback for an existing Project. Real-Project
+fixtures must prove undo, stale refusal, reopen state, zero geometry mutation,
+and deterministic migration of a pre-feature Project from a versioned Datum
+factory profile—not from the current machine's Global settings.
 
 <!-- REQ:PROJECT-PREFERENCES-SPEC:PPS-C04 -->
 <!-- OWNER:PROJECT-PREFERENCES-SPEC:PPS-C04:PPS-C04 -->
 ### PPS-C04 — owner ratification and build placement
 
 Return the complete inventory, protected renders, specification, and proposed
-bounded implementation sequence to the owner. Approval may place but does not
-execute the build.
+bounded implementation sequence to the owner. UNIT-I02V may ratify only the
+Units slice and place UNIT-I03A/UNIT-I03B; it does not ratify or execute any
+other Project Preferences category.
 
 ## 5. Initial build boundary
 
 <!-- REQ:PROJECT-PREFERENCES-BUILD:PP-I00 -->
 <!-- OWNER:PROJECT-PREFERENCES-BUILD:PP-I00:PP-I00 -->
-PP-I00 may authorize only one real Project Preferences vertical slice after
-PPS-C04 approval.
+PP-I00 ordinarily authorizes one real Project Preferences vertical slice after
+PPS-C04 approval. The Project Working Units slice is instead co-owned by the
+shared Units program and may execute only through UNIT-I03B after UNIT-I02V.
 
 <!-- REQ:PROJECT-PREFERENCES-BUILD:PP-I01 -->
 PP-I01 implements the menu route, scope-safe read model, and one ratified real
-Project setting through the canonical journaled mutation path.
+Project setting through the canonical journaled mutation path. UNIT-I03B must
+reuse this architecture and evidence rather than create a second settings path.
 
 <!-- REQ:PROJECT-PREFERENCES-BUILD:PP-I02 -->
 <!-- OWNER:PROJECT-PREFERENCES-BUILD:PP-I02:PP-I02 -->
@@ -118,15 +150,15 @@ Exact files and outcomes for Claude:
 
 - `preferences-window.html`, application-menu/Project-policy doorway region:
   show the approved two-command Preferences family and preserve Global scope;
-- `project-preferences-category-study.html`, status/category region: retain clay
-  until PPS-C01 proves each payload; remove any implication that code existence
-  alone ratifies a category;
+- `project-preferences-category-study.html`, status/category region: retain all
+  non-Units categories as clay, but add the bounded UNIT-I02R Units-only target
+  defined above without implying that code existence ratifies any other row;
 - `project-preferences-revision-gate.html`, whole artifact: preserve it as
   Revision-specific clay, state that Revision is absent from the initial
   Project Preferences build, and preserve the unmanaged/no-advertising law;
-- any new Project Preferences primary window: draw only after PPS-C01, using
-  real Project-owned rows and the Global window's established chrome without
-  merging authority.
+- the Units-only Project Preferences target: use only the eight real
+  Project-owned Working Units values and the Global window's established chrome
+  without merging authority.
 
 Proof expected: wide/narrow renders, disabled-without-Project menu state,
 keyboard focus order and restoration, non-color scope cues, screen-reader names,

@@ -5800,7 +5800,7 @@
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "c0564d0"
       },
-      "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families around the ratified Global-default, Project Working Units, and separate Publish/document authority model, then obtain an approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
+    "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
       ],
@@ -5849,7 +5849,7 @@
             "id": "UNIT-I02R",
             "kind": "planning",
             "status": "in_progress",
-            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, no authority live-follows another, and Angle notation changes atomically replace the tagged value with the selected notation's defined precision default; prepare bounded Claude-owned corrections for the Units target and conflicting supporting studies.",
+        "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile all six industrial-readiness gaps: a writable Units-only Project Preferences doorway, per-quantity precision, lossless editing, honest decimal-degree V1 input/display, exact scientific notation with a future expression seam, deterministic legacy/Project migration, and removal of conflicting runtime semantics; prepare bounded Claude-owned Global and Project target corrections.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
@@ -5861,34 +5861,70 @@
             "id": "UNIT-I02V",
             "kind": "owner_decision",
             "status": "pending",
-            "action": "Review the reconciled Units contract, Global-default descriptor mapping, Project Working Units ownership, separate Publish/document authority, acceptance matrix, and corrected Claude-owned Global Preferences target before authorizing UNIT-I03 only.",
+        "action": "Review the reconciled eight-descriptor Units contract, per-quantity precision, lossless editing, decimal-degree V1, exact expression grammar, Global-default and Project Working Units ownership, migration rules, acceptance matrix, and both corrected Claude-owned targets before authorizing UNIT-I03A only.",
             "depends_on": ["UNIT-I02R"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific profile, resolution, precision, angle, GUI, adapter, interchange, seed, accessibility, or proof correction>`.",
+          "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03A` or `UNITS-SURFACE-PARITY: revise — <specific profile, precision, editing, angle, expression, Project doorway, migration, adapter, accessibility, or proof correction>`.",
               "requests": [{
                 "id": "UNIT-I02V",
-                "question": "Do the controlling requirement, descriptor catalog, protected Units target, implementation contract, and clause-by-clause proof matrix now consistently implement the Global-default to Project Working Units seed model while keeping Publish/document units separate, closely enough to authorize UNIT-I03 only?",
-                "recommended_response": "Approve only when every unresolved semantic and ownership gap is closed, the protected Units target is owner-approved, and no runtime implementation or production acceptance is claimed by planning evidence.",
+              "question": "Do the controlling requirement, descriptor catalog, protected Global and Project Units targets, implementation contract, and proof matrix now close all six industrial-readiness gaps closely enough to authorize UNIT-I03A only?",
+              "recommended_response": "Approve only when the eight-field model, per-quantity precision, lossless editing, decimal-degree input, scientific notation, Project doorway/migration, and runtime correction boundary agree and both protected targets are owner-approved.",
                 "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}
               }]
             }
           },
           {
-            "id": "UNIT-I03",
+            "id": "UNIT-I03A",
             "kind": "execution",
             "status": "pending",
-            "action": "Route Global future-Project defaults, Project-owned Working Units, GUI, CLI, MCP, import/export, and real-Project behavior through the exact core; production-accept Units without merging authority or coupling Publish/document units.",
+            "action": "Implement the exact eight-field engine/profile, per-quantity precision, lossless edit primitives, decimal-degree input/display, scientific notation, migrations, adapter seams, and rival-conversion removal without claiming GUI production acceptance.",
             "depends_on": ["UNIT-I02V"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03"}],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03A"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "UNIT-I03B",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Integrate the Global-default and Units-only Project Preferences windows, New-Project seed/receipt, legacy-Project migration, GUI/CLI/MCP/interchange adapters, accessibility, and real-Project proofs as a production candidate.",
+            "depends_on": ["UNIT-I03A"],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03B"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "UNIT-I03V",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review both native Units windows and real-Project exactness, migration, editing, authority-isolation, accessibility, and failure behavior before authorizing final proof closure.",
+            "depends_on": ["UNIT-I03B"],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03V"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `UNITS-PRODUCTION-CANDIDATE: approve UNIT-I03C` or `UNITS-PRODUCTION-CANDIDATE: revise — <specific runtime, Project, precision, editing, input, migration, accessibility, or proof correction>`.",
+              "requests": [{
+                "id": "UNIT-I03V",
+                "question": "Does the running Units candidate behave accurately and intuitively across Global defaults, Project Working Units, numeric editing, automation, migration, and failure states?",
+                "recommended_response": "Approve only after direct running-app QA of both native windows and real Project files confirms the complete contract.",
+                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03V"}
+              }]
+            }
+          },
+          {
+            "id": "UNIT-I03C",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Re-run the complete governed proof matrix against the owner-approved candidate and only then record Units production acceptance and close the tracker.",
+            "depends_on": ["UNIT-I03V"],
+            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03C"}],
             "completion_evidence": []
           }
         ],
         "post_completion": {
           "effects": [
             "Global Preferences completion loses its Units-parity blocker but remains behind its own owner gate.",
-            "No Project Preferences, Revision, dependency, or successor execution is implied."
+            "No non-Units Project Preferences category, Revision, dependency, or successor execution is implied."
           ],
           "unblocks_issue_ids": ["dat-global-preferences-completion-f84"],
           "selection": "explicit_frontier_update",
@@ -5934,7 +5970,7 @@
             "id": "GP-CM00", "kind": "owner_decision", "status": "pending",
             "action": "Review the real Global vertical slice and Units parity before authorizing Global surface completion in GP-CM01 only.",
             "depends_on": [], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03 are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
+            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03C are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
           },
           {
             "id": "GP-CM01", "kind": "execution", "status": "pending",
