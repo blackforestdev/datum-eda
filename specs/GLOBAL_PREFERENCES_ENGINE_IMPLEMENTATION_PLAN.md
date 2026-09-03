@@ -710,6 +710,17 @@ adapter compatibility, interchange independence, Global-default/Project-working/
 Publish-document ownership, visual behavior, accessibility, or proof returns
 the work to UNIT-I02R.
 
+On 2026-09-03 the owner returned the work to UNIT-I02R before approval. The
+industrial-readiness audit found six blocking gaps: no complete writable
+Project Working Units doorway, one length-precision value shared across three
+independently selectable unit families, no lossless focus/edit/commit contract,
+ambiguous display-only angle behavior, no exact scientific-notation grammar or
+future expression boundary, and runtime schema/catalog semantics that still
+contradict the proposed contract. All six must be reconciled before UNIT-I02V
+can be presented again.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
+
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03 -->
 ### UNIT-I03 — GUI, CLI, MCP parity and Units production acceptance
 
