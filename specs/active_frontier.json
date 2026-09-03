@@ -5849,7 +5849,7 @@
             "id": "UNIT-I02R",
             "kind": "planning",
             "status": "in_progress",
-            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, and no authority live-follows another; prepare the bounded Claude-owned Units target correction request.",
+            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, and no authority live-follows another; prepare bounded Claude-owned corrections for the Units target and conflicting supporting studies.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},

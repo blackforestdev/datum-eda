@@ -666,6 +666,27 @@ is:
    Projects unaffected`. Screen-reader evidence must not imply that Global
    values operate the current Project.
 
+Two supporting Claude-owned studies must be reconciled in the same protected
+lane so they cannot teach the superseded model:
+
+- `project-preferences-category-study.html`, Units row and category rationale:
+  identify `ProjectDisplayUnits` as **Project Working Units**, cite PM-040, state
+  that it owns existing-Project editor display/readout/bare input, and keep
+  Publish/document units under the separate Drafting Standard/Publish authority.
+  Preserve the artifact's clay status; do not draw or authorize a Project
+  Preferences implementation.
+- `units-and-grid-model.html`, status and Rules 2/4 interpretation: mark authored
+  expression persistence as unratified and the per-person live-display model as
+  superseded by PM-040. Preserve explicit-suffix input, exact integer nanometer
+  authority, display/grid separation, and all historical comparison, but state
+  that an existing Project reads from Project Working Units. Identify Onshape as
+  the primary modern professional-CAD authority reference and KiCad as
+  low-weight comparison evidence only.
+
+For both supporting files, prefer an explicit scoped amendment over silently
+rewriting historical study content. Status wording must make clear what remains
+clay, what PM-040 supersedes, and what survives.
+
 Codex must not edit that file or supply its protected-lane marker. The target
 remains owner-review evidence until the owner explicitly approves it.
 
