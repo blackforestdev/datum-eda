@@ -5783,23 +5783,10 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-unit-i02r-reconciliation-20260902",
-        "claimed_at": "2026-09-03T04:40:01Z",
-        "heartbeat_at": "2026-09-03T05:39:23Z",
-        "expires_at": "2026-09-03T13:39:23Z",
-        "scope": [
-          "Record the owner's Product Mechanics 040 authority disposition and reconcile the controlling shared Units requirement, descriptor catalog, Project Preferences boundary, implementation plan, Frontier contract, and bounded Claude-owned Units visual-target correction without implementing runtime behavior"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "fa4d65336ea13dd3d8281d9f197244b834a69ecf"
-      },
       "summary": "Reconcile the twelve-clause shared Units requirement and seven proof families around the ratified Global-default, Project Working Units, and separate Publish/document authority model, then obtain an approved Preferences target before any UNIT-I03 runtime work or production acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5809,7 +5796,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I02R",
+        "canonical_next_step_id": "UNIT-I02V",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5848,14 +5835,30 @@
           {
             "id": "UNIT-I02R",
             "kind": "planning",
-            "status": "in_progress",
-            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, and no authority live-follows another; prepare bounded Claude-owned corrections for the Units target and conflicting supporting studies.",
+            "status": "complete",
+            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile its twelve clauses and seven proof families around Product Mechanics 040: Global defaults seed future Projects, Project Working Units govern existing-Project display and contextual bare input, Publish/document units remain separate, no authority live-follows another, and Angle notation changes atomically replace the tagged value with the selected notation's defined precision default; prepare bounded Claude-owned corrections for the Units target and conflicting supporting studies.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
               {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02R"}
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-CONTRACT-RECONCILED"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-RECONCILED-FOR-OWNER-REVIEW"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/prototypes/preferences-window.html",
+                "marker": "UNIT-I02R — OWNER-REVIEW TARGET"
+              }
+            ]
           },
           {
             "id": "UNIT-I02V",

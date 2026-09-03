@@ -631,7 +631,8 @@ is:
    GP-F05 component grammar, not the non-buildable future catalog as
    implementation authority. Preserve exactly one Units rail entry; the
    category heading/consequence text carries the future-Project scope.
-2. Render exactly the six catalog controls, their specified options/defaults,
+2. Render exactly the six catalog descriptor rows and seven focusable value
+   selectors, their specified options/defaults,
    per-row `Global · this device` scope, immediate-save/reset/provenance, and the
    copy-once-at-New-Project receipt explanation. Every state must say that open
    and existing Projects are unaffected. Do not render or mirror Project Working
@@ -640,13 +641,17 @@ is:
 3. Show every follow-system resolved unit, explicit cross-system override cue,
    five length-precision choices, and the notation-dependent angle precision
    choices. Attach each actual option inventory structurally to its owning
-   control in the HTML, rather than leaving the options only in explanatory
+   selector in the HTML, rather than leaving the options only in explanatory
    tables. Invalid angle notation/precision pairs are never offered. Radians
    must be described as rounded display; no general angle-input promise may
-   appear.
+   appear. The tagged Angle value is edited through notation and precision
+   selectors. Selecting a notation atomically writes that notation with its
+   defined default precision—`decimal_degrees`/`0.1`, `dms`/`1s`, or
+   `radians`/`0.001`—and never persists an intermediate pair, carries forward a
+   prior precision, or reinterprets the shared `0.001` token.
 4. Preserve the accepted owned-window, close/reopen, Escape/search/caret,
    explanation, immediate-save, responsive, and non-color behavior. Add a Units
-   unreadable-store state with all six controls disabled/preserved, plus
+   unreadable-store state with all seven value selectors disabled/preserved, plus
    ordinary, changed/reset, search, cross-system, refusal/explanation, narrow,
    greyscale, and screen-reader evidence.
 5. Prove from the HTML structure and renders that only the selected **Units**
@@ -657,10 +662,12 @@ is:
    search, then each visible setting-name action and its control in stable row
    order, each conditional Reset immediately after its control, and explanation
    Close only while open. A dependent Angle format control exposes notation
-   before its valid precision choices. Tab wraps inside the input-modal window;
+   before its valid precision choices. A notation change keeps focus on the
+   notation selector while replacing the precision inventory and atomically
+   committing the complete tagged value. Tab wraps inside the input-modal window;
    Escape, close/reopen reset, return focus, caret, and search-clearing behavior
    remain exactly GP-F05.
-7. For the window and every Units control, provide accessible name, role, value,
+7. For the window and every Units value selector, provide accessible name, role, value,
    resolved unit where relevant, factory-or-changed provenance, `Global · this
    device`, `changes save immediately`, `default for new Projects`, and `open
    Projects unaffected`. Screen-reader evidence must not imply that Global
@@ -689,6 +696,8 @@ clay, what PM-040 supersedes, and what survives.
 
 Codex must not edit that file or supply its protected-lane marker. The target
 remains owner-review evidence until the owner explicitly approves it.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-RECONCILED-FOR-OWNER-REVIEW -->
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V -->
 <!-- OWNER:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V:UNIT-I02V -->

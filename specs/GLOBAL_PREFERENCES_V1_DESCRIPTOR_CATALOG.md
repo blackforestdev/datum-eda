@@ -2,8 +2,8 @@
 
 > **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics
 > 037 and Product Mechanics 040; the exact angle schema and cross-surface
-> mapping below are a UNIT-I02R
-> correction pending protected-target reconciliation and UNIT-I02V owner review.
+> mapping below completed UNIT-I02R reconciliation and await UNIT-I02V owner
+> review. No UNIT-I03 implementation or production acceptance is authorized.
 >
 > **Historical step alias:** GP-C05A.
 >
@@ -117,6 +117,14 @@ design data and never alter an existing Project.
 | `datum.units.schematic_geometry` | units engine | enum `{follow_system,mm,mil}`; `follow_system` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:141`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:51-82`; PM-040 |
 | `datum.units.length_precision` | units engine | enum `{0.1,0.01,0.001,0.0001,exact_nm}`; `0.01` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only | P0; split aggregate; I | `preferences-window.html:142-143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md:61-82`; PM-040 |
 | `datum.units.angle_format` | units engine | tagged struct: `decimal_degrees` precision `{1,0.1,0.01,0.001}`, `dms` precision `{1s,0.1s}`, or `radians` precision `{0.001,0.000001}`; `decimal_degrees`/`0.1` | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; future-Project default only; no general angle parser in UNIT-I03 | P0; splits legacy aggregate; I | `preferences-window.html:143`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#angle-format-service`; PM-040 |
+
+`datum.units.angle_format` is one atomic tagged descriptor even though its GUI
+presentation has two selectors. Selecting a notation replaces the complete
+value with that notation and its defined transition default:
+`decimal_degrees`/`0.1`, `dms`/`1s`, or `radians`/`0.001`. The prior precision
+is never carried forward or reinterpreted, including when two notation-scoped
+inventories share the literal token `0.001`. Thus the six Units descriptors
+render as six setting rows and seven focusable value selectors.
 
 The six typed `datum.units.*` seed descriptors compose the default
 `ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is the
