@@ -299,9 +299,10 @@ pub(super) fn render_global_preferences_dialog(
                 vec![truncate_text(message, 108)],
                 design_tokens::chrome::STATUS_ERROR,
             ),
-            GlobalPreferencesNoticeUi::PreservedUnreadable(message) => (
+            GlobalPreferencesNoticeUi::PreservedUnreadable(_) => (
                 vec![
-                    truncate_text(message, 108),
+                    "Preferences could not be read. Factory defaults are active for this session."
+                        .to_owned(),
                     "Damaged data remains preserved; controls are unavailable.".to_owned(),
                 ],
                 design_tokens::chrome::STATUS_WARN,
@@ -423,7 +424,7 @@ pub(super) fn render_global_preferences_dialog(
             text,
         );
 
-        let reset = row.changed.then_some(RectPx {
+        let reset = (row.changed && row.writable).then_some(RectPx {
             x: setting_rect.x + setting_rect.width - 80.0,
             y: setting_rect.y + 14.0,
             width: 62.0,
@@ -447,13 +448,7 @@ pub(super) fn render_global_preferences_dialog(
                 };
                 draw_boolean_control(
                     *value,
-                    if !row.writable {
-                        "⛝ Unavailable"
-                    } else if *value {
-                        on_label
-                    } else {
-                        off_label
-                    },
+                    if *value { on_label } else { off_label },
                     rect,
                     focused_control,
                     row.writable,
@@ -463,25 +458,22 @@ pub(super) fn render_global_preferences_dialog(
                 rect
             }
             GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-                let label = if row.writable {
-                    choices
-                        .iter()
-                        .find(|(candidate, _)| candidate == value)
-                        .map(|(_, label)| label.as_str())
-                        .unwrap_or(value)
+                let label = choices
+                    .iter()
+                    .find(|(candidate, _)| candidate == value)
+                    .map(|(_, label)| label.as_str())
+                    .unwrap_or(value);
+                let visible_label = if row.writable {
+                    label.to_owned()
                 } else {
-                    "⛝ Unavailable"
+                    format!("{label} · unavailable")
                 };
-                let width = if row.writable {
-                    (measured_text_run_width_px(
-                        label,
-                        design_tokens::typography::CAPTION_SIZE,
-                        TextFace::Ui,
-                    ) + 34.0)
-                        .max(58.0)
-                } else {
-                    138.0
-                };
+                let width = (measured_text_run_width_px(
+                    &visible_label,
+                    design_tokens::typography::CAPTION_SIZE,
+                    TextFace::Ui,
+                ) + 34.0)
+                    .max(58.0);
                 let rect = RectPx {
                     x: control_right - width,
                     y: setting_rect.y + 14.0,
