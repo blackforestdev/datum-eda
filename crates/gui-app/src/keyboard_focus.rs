@@ -15,7 +15,7 @@
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, KeyCode, NamedKey, PhysicalKey};
 
-use datum_gui_protocol::{ApplicationFocus, PaneId, SessionCommand};
+use datum_gui_protocol::{ApplicationFocus, PaneId, ReviewWorkspaceState, SessionCommand};
 use datum_gui_render::HitTarget;
 
 use crate::app_shell::App;
@@ -211,6 +211,13 @@ pub(crate) fn editor_new_terminal_shortcut(
     focus != ApplicationFocus::Terminal
         && focus != ApplicationFocus::Overlay
         && terminal_new_session_shortcut(state, repeat, physical_key, modifiers)
+}
+
+pub(crate) fn initialize_application_focus(
+    workspace: &mut ReviewWorkspaceState,
+    focus: ApplicationFocus,
+) {
+    workspace.ui.focus = focus;
 }
 
 impl Runtime {

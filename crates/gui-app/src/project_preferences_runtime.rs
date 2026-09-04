@@ -79,7 +79,6 @@ impl ProjectPreferencesCoordinator {
         workspace.ui.active_menu = None;
         workspace.ui.active_submenu = None;
         workspace.ui.project_preferences.open = true;
-        workspace.ui.focus = ApplicationFocus::Overlay;
         Ok(true)
     }
 

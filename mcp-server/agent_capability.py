@@ -21,6 +21,7 @@ _CAPABILITY_LEVEL = {name: index for index, name in enumerate(_CAPABILITY_ORDER)
 _WRITE_CLASS_CAPABILITY = {
     "proposal_metadata_write": PROPOSE,
     "proposal_review_state_write": UNATTENDED,
+    "journaled_project_settings": UNATTENDED,
     "journaled_route_apply": UNATTENDED,
     "proposal_artifact_apply": UNATTENDED,
 }
