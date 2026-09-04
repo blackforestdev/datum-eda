@@ -126,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    fn registry_covers_the_two_pilot_families() {
+    fn registry_covers_the_authorized_native_write_families() {
         let ids: Vec<&str> = native_write_verbs().iter().map(|verb| verb.id).collect();
         assert_eq!(
             ids,
@@ -135,6 +135,7 @@ mod tests {
                 "datum.check.waive",
                 "datum.project.create_rule",
                 "datum.project.delete_rule",
+                "datum.project.set_display_units",
                 "datum.project.set_name",
                 "datum.project.set_rule",
                 "datum.project.set_rules",
