@@ -5779,27 +5779,16 @@
         "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
         "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+        "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md",
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+        "specs/PROJECT_PREFERENCES_SPEC.md",
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-unit-i02r-visual-audit-20260903",
-        "claimed_at": "2026-09-04T02:14:59Z",
-        "heartbeat_at": "2026-09-04T02:14:59Z",
-        "expires_at": "2026-09-04T10:14:59Z",
-        "scope": [
-          "Reconcile all six owner-returned industrial Units gaps across the controlling requirement, descriptor catalog, Project Preferences contract, implementation plan, Frontier, and bounded Claude-owned handoff without implementing runtime behavior"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-      "head": "b89bb91"
-      },
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5809,7 +5798,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I02R",
+        "canonical_next_step_id": "UNIT-I02V",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5848,14 +5837,34 @@
           {
             "id": "UNIT-I02R",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
         "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile all six industrial-readiness gaps: a writable Units-only Project Preferences doorway, per-quantity precision, lossless editing, honest decimal-degree V1 input/display, exact scientific notation with a future expression seam, deterministic legacy/Project migration, and removal of conflicting runtime semantics; prepare bounded Claude-owned Global and Project target corrections.",
             "depends_on": ["UNIT-I02"],
             "requirement_refs": [
               {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
               {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02R"}
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-CONTRACT-RECONCILED"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-FINAL-AUDIT"
+              },
+              {
+                "kind": "review",
+                "path": "docs/gui/prototypes/preferences-window.html",
+                "marker": "UNIT-I02R — OWNER-REVIEW TARGET"
+              },
+              {
+                "kind": "commit",
+                "revision": "098c6da"
+              }
+            ]
           },
           {
             "id": "UNIT-I02V",
