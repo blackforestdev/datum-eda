@@ -786,8 +786,8 @@ fn block_at_rotation_anywhere(block: &str) -> Option<i32> {
             let mut parts = rest[..end].split_whitespace();
             parts.next()?; // x
             parts.next()?; // y
-            if let Some(rot) = parts.next().and_then(|s| s.parse::<f64>().ok()) {
-                return Some(rot.round() as i32);
+            if let Some(rotation) = parts.next().and_then(parse_kicad_rotation) {
+                return Some(rotation);
             }
             return None; // (at x y) with no rotation
         }
@@ -809,7 +809,10 @@ fn parse_xy_like_anywhere(trimmed: &str, form: &str) -> Option<Point> {
     let mut parts = rest[..end].split_whitespace();
     let x = parts.next()?.parse::<f64>().ok()?;
     let y = parts.next()?.parse::<f64>().ok()?;
-    Some(Point::new(mm_to_nm(x), mm_to_nm(y)))
+    Some(Point::new(
+        checked_mm_to_nm(x).ok()?,
+        checked_mm_to_nm(y).ok()?,
+    ))
 }
 
 pub(super) fn parse_pad_shape_anywhere(block: &str) -> Option<crate::board::PadShape> {
@@ -953,7 +956,7 @@ pub(super) fn parse_pad_drill_anywhere(block: &str, pad_kind: KiCadPadKind) -> O
                 .next()
                 .and_then(|s| s.parse::<f64>().ok())
             {
-                return Some(mm_to_nm(val));
+                return checked_mm_to_nm(val).ok();
             }
         }
     }

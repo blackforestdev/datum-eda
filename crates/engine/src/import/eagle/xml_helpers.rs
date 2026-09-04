@@ -111,10 +111,14 @@ fn parse_pin_direction(direction: Option<&str>) -> PinDirection {
 }
 
 fn parse_eagle_coord(value: &str) -> Result<i64, EngineError> {
-    let parsed = value.parse::<f64>().map_err(|_| {
-        EngineError::Import(format!("invalid Eagle coordinate or width value: {value}"))
-    })?;
-    Ok((parsed * 25_400_000.0).round() as i64)
+    crate::ir::units::parse_fixed_length(value, crate::ir::units::LengthUnit::Inch)
+        .map(|value| value.get())
+        .map_err(|refusal| {
+            EngineError::Import(format!(
+                "invalid exact Eagle coordinate or width value {value:?}: {:?}",
+                refusal.reason
+            ))
+        })
 }
 
 fn parse_i32_attr(start: &BytesStart<'_>, key: &[u8]) -> Result<Option<i32>, EngineError> {

@@ -222,58 +222,8 @@ fn project_display_units(value: &Value) -> bool {
     if value.is_null() {
         return true;
     }
-    exact_object(
-        value,
-        &[
-            "system",
-            "board_length",
-            "board_length_precision",
-            "drill_hole",
-            "drill_hole_precision",
-            "schematic_geometry",
-            "schematic_geometry_precision",
-            "angle_precision",
-        ],
-    )
-    .is_some_and(|object| {
-        one_of(object.get("system"), &["metric", "imperial"])
-            && one_of(
-                object.get("board_length"),
-                &["follow_system", "mm", "um", "mil", "inch"],
-            )
-            && precision(object.get("board_length_precision"))
-            && one_of(
-                object.get("drill_hole"),
-                &["follow_system", "mm", "mil", "inch"],
-            )
-            && precision(object.get("drill_hole_precision"))
-            && one_of(
-                object.get("schematic_geometry"),
-                &["follow_system", "mm", "mil"],
-            )
-            && precision(object.get("schematic_geometry_precision"))
-            && one_of(
-                object.get("angle_precision"),
-                &["decimal_0", "decimal_1", "decimal_2", "decimal_3"],
-            )
-    })
-}
-
-fn precision(value: Option<&Value>) -> bool {
-    one_of(
-        value,
-        &[
-            "automatic",
-            "decimal_0",
-            "decimal_1",
-            "decimal_2",
-            "decimal_3",
-            "decimal_4",
-            "decimal_5",
-            "decimal_6",
-            "exact_nm",
-        ],
-    )
+    crate::ir::units::project_profile_from_value(value)
+        .is_ok_and(|profile| profile.resolve().is_ok())
 }
 
 #[cfg(test)]

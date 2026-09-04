@@ -96,7 +96,7 @@ pub(super) fn parse_block_mm_value_anywhere(block: &str, key: &str) -> Option<i6
         rest.split_whitespace()
             .next()
             .and_then(|s| s.parse::<f64>().ok())
-            .map(mm_to_nm)
+            .and_then(|value| checked_mm_to_nm(value).ok())
     })
 }
 
@@ -130,7 +130,7 @@ pub(super) fn parse_footprint_mm_value_before_pads(block: &str, key: &str) -> Op
             .split_whitespace()
             .next()
             .and_then(|s| s.parse::<f64>().ok())
-            .map(mm_to_nm);
+            .and_then(|value| checked_mm_to_nm(value).ok());
     }
     None
 }
@@ -170,7 +170,7 @@ fn parse_setup_mm_value(contents: &str, key: &str) -> Option<i64> {
         rest.split_whitespace()
             .next()
             .and_then(|s| s.parse::<f64>().ok())
-            .map(mm_to_nm)
+            .and_then(|value| checked_mm_to_nm(value).ok())
     })
 }
 
