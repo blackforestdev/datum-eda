@@ -5996,10 +5996,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-cm01-20260904",
+        "claimed_at": "2026-09-04T13:27:43Z",
+        "heartbeat_at": "2026-09-04T13:27:43Z",
+        "expires_at": "2026-09-04T21:27:43Z",
+        "scope": [
+          "Implement and prove only GP-CM01 completion and stabilization of the active Global Preferences GUI and repository behavior, preserving GP-F05 paths and excluding Revision descriptors, empty categories, GP-CM03 product-surface parity, and GP-CM05 production acceptance"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "7cfb797c51c8"
+      },
       "summary": "Expand the accepted Global Preferences vertical slice through the complete active catalog, managed/recovery behavior, accessibility, API and seed parity, real Projects, and production acceptance while Revision descriptors remain absent.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
@@ -6010,18 +6023,18 @@
       ],
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
-        "canonical_next_step_id": "GP-CM00",
+        "canonical_next_step_id": "GP-CM01",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
           {
-            "id": "GP-CM00", "kind": "owner_decision", "status": "pending",
+            "id": "GP-CM00", "kind": "owner_decision", "status": "complete",
             "action": "Review the real Global vertical slice and Units parity before authorizing Global surface completion in GP-CM01 only.",
-            "depends_on": [], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}], "completion_evidence": [],
+            "depends_on": [], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM00-OWNER-APPROVED-20260904"}],
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03C are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
           },
           {
-            "id": "GP-CM01", "kind": "execution", "status": "pending",
+            "id": "GP-CM01", "kind": "execution", "status": "in_progress",
             "action": "Complete and stabilize the full active Global Preferences catalog, managed/refused and recovery behavior, search/provenance, setup, responsive layout, and accessibility.",
             "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": []
           },

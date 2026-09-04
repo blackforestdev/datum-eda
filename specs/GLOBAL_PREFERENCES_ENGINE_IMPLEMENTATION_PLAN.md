@@ -952,6 +952,15 @@ its own owner boundary.
 
 Review GP-F05 and completed UNIT-I03C before authorizing GP-CM01.
 
+On 2026-09-04 the owner replied exactly
+`GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01`. This completes GP-CM00 and
+authorizes only the bounded Global Preferences surface and repository
+stabilization in GP-CM01. Revision descriptors, empty categories, product-
+surface API parity, ProjectPolicySeed expansion, and production acceptance
+remain outside this authorization.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM00-OWNER-APPROVED-20260904 -->
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM01 -->
 ### GP-CM01 — complete and stabilize the Global surface
 
