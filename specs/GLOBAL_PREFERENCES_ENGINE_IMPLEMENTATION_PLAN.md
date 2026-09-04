@@ -761,6 +761,13 @@ UNIT-I03A execution, dependency, or production acceptance is authorized.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-FINAL-AUDIT -->
 
+On 2026-09-03, after the corrected contract and protected targets passed the
+final source, render, and governance audit, the owner replied exactly
+`UNITS-SURFACE-PARITY: approve UNIT-I03A`. This completes UNIT-I02V and
+authorizes only the exact engine, schema, migration, adapter-seam, and rival-
+conversion-removal work in UNIT-I03A. It does not authorize UNIT-I03B GUI
+integration, a dependency, running-app acceptance, or production acceptance.
+
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A -->
