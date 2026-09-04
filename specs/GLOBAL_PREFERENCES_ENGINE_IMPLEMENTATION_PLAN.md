@@ -748,6 +748,19 @@ claiming approval, and reconcile the historical Units row to eight settings
 with decimal-degree angle precision. Preserve every accepted `f8521cd`
 control, value, behavior, layout, exclusion, and non-approval boundary.
 
+Final Codex source and 1300px/700px rendered review of Claude correction
+`098c6da` accepts the protected visual reconciliation. P-A through P-J are now
+unambiguously the open owner-review target; the original category study is
+separately badged and divided as clay; the PM-040 note authorizes no runtime or
+production acceptance; and its historical Units row now teaches the same eight
+settings, decimal-degree-only V1 angle precision, Project-owned working values,
+copy-once Global seed, and separate Publish/document authority as the
+controlling contract. The full governance suite passes. UNIT-I02R is complete
+as planning evidence and UNIT-I02V is now the required owner boundary. No
+UNIT-I03A execution, dependency, or production acceptance is authorized.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02R-FINAL-AUDIT -->
+
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A -->
