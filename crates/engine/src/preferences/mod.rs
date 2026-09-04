@@ -14,7 +14,9 @@ pub mod repository;
 pub mod resolver;
 mod schema;
 mod service;
+mod service_runtime_defaults;
 mod surface;
+mod surface_full;
 mod units_seed;
 
 pub use catalog::active_v1_registry;
@@ -34,6 +36,7 @@ pub use surface::{
     PreferenceSection, PreferenceSectionId, PreferenceSurfaceCatalog, PreferenceSurfaceEntry,
     SurfaceCatalogRefusal, gp_f05_surface_catalog,
 };
+pub use surface_full::global_preferences_surface_catalog;
 pub use units_seed::{ResolvedUnitsSeed, UnitsSeedRefusal, factory_units_seed};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

@@ -50,6 +50,19 @@ pub enum PreferenceControlPresentation {
     EnumeratedSingleChoice {
         choices: Vec<EnumChoicePresentation>,
     },
+    IntegerStepper {
+        min: i64,
+        max: i64,
+        step: u64,
+        suffix: String,
+    },
+    IdentityEntry {
+        nullable: bool,
+        placeholder: String,
+    },
+    StructuredEditor {
+        action_label: String,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -58,6 +71,7 @@ pub enum PreferenceLiveConsumer {
     ReducedMotion,
     HighContrastNonColor,
     FutureProjectUnits,
+    DescriptorOwner,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -157,6 +171,7 @@ impl PreferenceSurfaceCatalog {
                     &["GUI renderer", "terminal renderer"]
                 }
                 PreferenceLiveConsumer::FutureProjectUnits => &["ProjectDisplayUnits"],
+                PreferenceLiveConsumer::DescriptorOwner => &[],
             };
             if expected_consumers
                 .iter()
@@ -258,6 +273,33 @@ fn validate_control(
             }
             if &mapped != allowed {
                 return Err(SurfaceCatalogRefusal::IncompleteEnumMapping(key));
+            }
+        }
+        (
+            PreferenceControlPresentation::IntegerStepper {
+                min,
+                max,
+                step,
+                suffix: _,
+            },
+            ValueSchema::IntegerRange {
+                min: schema_min,
+                max: schema_max,
+                step: schema_step,
+            },
+        ) if min == schema_min && max == schema_max && step == schema_step => {}
+        (
+            PreferenceControlPresentation::IdentityEntry { nullable, .. },
+            ValueSchema::Identity {
+                nullable: schema_nullable,
+            },
+        ) if nullable == schema_nullable => {}
+        (
+            PreferenceControlPresentation::StructuredEditor { action_label },
+            ValueSchema::Semantic(_),
+        ) => {
+            if action_label.trim().is_empty() {
+                return Err(SurfaceCatalogRefusal::EmptyControlLabel(key));
             }
         }
         _ => return Err(SurfaceCatalogRefusal::SchemaControlMismatch(key)),
@@ -495,6 +537,21 @@ mod tests {
                             descriptor.validates(&serde_json::Value::String(choice.value.clone()))
                         );
                     }
+                }
+                PreferenceControlPresentation::IntegerStepper { min, max, .. } => {
+                    assert!(descriptor.validates(&serde_json::Value::from(*min)));
+                    assert!(descriptor.validates(&serde_json::Value::from(*max)));
+                }
+                PreferenceControlPresentation::IdentityEntry { nullable, .. } => {
+                    assert!(
+                        descriptor.validates(&serde_json::Value::String(
+                            "datum-test-identity".to_owned()
+                        ))
+                    );
+                    assert_eq!(descriptor.validates(&serde_json::Value::Null), *nullable);
+                }
+                PreferenceControlPresentation::StructuredEditor { .. } => {
+                    assert!(matches!(descriptor.value_schema, ValueSchema::Semantic(_)));
                 }
             }
         }

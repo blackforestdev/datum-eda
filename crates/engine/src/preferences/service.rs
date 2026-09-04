@@ -11,7 +11,8 @@ use super::repository::{
 use super::{
     Contribution, DescriptorRegistry, FactProvenance, PreferenceExplanation, PreferenceKey,
     PreferenceSurfaceCatalog, ResolutionRequest, ResolutionSource, ValueDisclosure, ValueFact,
-    active_v1_registry, gp_f05_surface_catalog, resolve_preference,
+    active_v1_registry, global_preferences_surface_catalog, resolve_preference,
+    service_runtime_defaults::runtime_default_contribution,
 };
 
 const LEGACY_CONSOLE_IDENTITY: &str = "legacy-console-preferences-v1";
@@ -104,8 +105,10 @@ impl GlobalPreferencesService {
         machine_scope: impl Into<String>,
     ) -> Result<Self, RepositoryError> {
         let registry = active_v1_registry();
-        let surface = gp_f05_surface_catalog(&registry).map_err(|refusal| {
-            RepositoryError::Invariant(format!("GP-F05 surface catalog refused: {refusal:?}"))
+        let surface = global_preferences_surface_catalog(&registry).map_err(|refusal| {
+            RepositoryError::Invariant(format!(
+                "Global Preferences surface catalog refused: {refusal:?}"
+            ))
         })?;
         let repository = PreferenceRepository::new(repository_root, registry.clone());
         let mut service = Self {
@@ -336,6 +339,9 @@ impl GlobalPreferencesService {
 
     fn resolve_row(&self, key: &PreferenceKey) -> GlobalPreferenceRow {
         let mut contributions = Vec::new();
+        if let Some(runtime_default) = runtime_default_contribution(&self.registry, key) {
+            contributions.push(runtime_default);
+        }
         if let Some(snapshot) = &self.snapshot {
             for (partition, source, id) in [
                 (
@@ -498,25 +504,19 @@ mod tests {
         let service = open(&directory);
         assert_eq!(service.status(), &PreferenceServiceStatus::DefaultsOnly);
         assert!(!directory.0.join("repository").exists());
+        let row_keys = service
+            .rows()
+            .iter()
+            .map(|row| row.key.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(row_keys.len(), 56);
         assert_eq!(
+            row_keys,
             service
-                .rows()
-                .iter()
-                .map(|row| row.key.as_str())
-                .collect::<Vec<_>>(),
-            vec![
-                "datum.console.feedback_duration",
-                "datum.accessibility.reduced_motion",
-                "datum.accessibility.high_contrast_noncolor",
-                "datum.units.system",
-                "datum.units.board_length",
-                "datum.units.board_length_precision",
-                "datum.units.drill_hole",
-                "datum.units.drill_hole_precision",
-                "datum.units.schematic_geometry",
-                "datum.units.schematic_geometry_precision",
-                "datum.units.angle_precision",
-            ]
+                .registry()
+                .keys()
+                .cloned()
+                .collect::<std::collections::BTreeSet<_>>()
         );
         assert_eq!(
             service.rows()[0].effective_value,

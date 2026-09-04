@@ -96,7 +96,9 @@ impl Runtime {
                 self.invalidate_frame();
                 true
             }
-            HitTarget::GlobalPreferencesSettingName(key) => self.explain_global_preference(key),
+            HitTarget::GlobalPreferencesSettingName(key) => {
+                self.open_global_preference_search_result(key)
+            }
             HitTarget::GlobalPreferencesControl(key) => {
                 self.activate_global_preference_control(key)
             }
