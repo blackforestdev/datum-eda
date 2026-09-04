@@ -31,6 +31,12 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
+Current debt inventory: 93 legacy source entries remain after UNIT-I03B moved
+Project-root operation application into its cohesive dispatch owner and returned
+`operation_application.rs` to the normal production budget. Its stale ledger
+entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
+same change.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,
