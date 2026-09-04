@@ -880,6 +880,14 @@ overrides, exact focus/edit behavior, explicit and bare input, migration,
 accessibility, and failure states. Rejection returns to the responsible
 execution slice; approval authorizes final proof closure only.
 
+On 2026-09-04 the owner replied exactly
+`UNITS-PRODUCTION-CANDIDATE: approve UNIT-I03C` after direct running-app review.
+This completes UNIT-I03V and authorizes only the final governed proof closure
+defined by UNIT-I03C. It does not itself record production acceptance, authorize
+a dependency, expand Project Preferences, or change Publish or Revision.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V-OWNER-APPROVAL-20260904 -->
+
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03C -->
 ### UNIT-I03C — governed production-acceptance closure
 

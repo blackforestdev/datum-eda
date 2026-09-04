@@ -5785,11 +5785,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-unit-i03c-closure-20260904",
+        "claimed_at": "2026-09-04T11:33:25Z",
+        "heartbeat_at": "2026-09-04T11:33:25Z",
+        "expires_at": "2026-09-04T19:33:25Z",
+        "scope": [
+          "Run and reconcile only the UNIT-I03C governed production-acceptance proof matrix after owner approval; do not add dependencies, expand Project Preferences, or change Publish or Revision behavior"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "44200d3123f6"
+      },
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5799,7 +5811,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I03V",
+        "canonical_next_step_id": "UNIT-I03C",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5932,11 +5944,15 @@
           {
             "id": "UNIT-I03V",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Review both native Units windows and real-Project exactness, migration, editing, authority-isolation, accessibility, and failure behavior before authorizing final proof closure.",
             "depends_on": ["UNIT-I03B"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03V"}],
-            "completion_evidence": [],
+            "completion_evidence": [{
+              "kind": "review",
+              "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+              "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V-OWNER-APPROVAL-20260904"
+            }],
             "owner_input": {
               "response_format": "Reply exactly `UNITS-PRODUCTION-CANDIDATE: approve UNIT-I03C` or `UNITS-PRODUCTION-CANDIDATE: revise — <specific runtime, Project, precision, editing, input, migration, accessibility, or proof correction>`.",
               "requests": [{
@@ -5950,7 +5966,7 @@
           {
             "id": "UNIT-I03C",
             "kind": "governance",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Re-run the complete governed proof matrix against the owner-approved candidate and only then record Units production acceptance and close the tracker.",
             "depends_on": ["UNIT-I03V"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03C"}],
