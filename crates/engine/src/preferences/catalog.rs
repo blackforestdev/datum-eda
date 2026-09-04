@@ -173,9 +173,9 @@ mod tests {
     #[test]
     fn literal_inventory_is_complete_unique_and_default_valid() {
         let descriptors = active_descriptors();
-        assert_eq!(descriptors.len(), 54);
+        assert_eq!(descriptors.len(), 56);
         let keys: BTreeSet<_> = descriptors.iter().map(|item| item.key.as_str()).collect();
-        assert_eq!(keys.len(), 54);
+        assert_eq!(keys.len(), 56);
         assert!(keys.iter().all(|key| !key.starts_with("datum.revision.")));
         for descriptor in descriptors {
             if let Some(value) = descriptor.default_value.literal() {
@@ -204,7 +204,7 @@ mod tests {
             .filter(|key| registry.get(key).unwrap().class == SettingClass::ProjectPolicySeed)
             .map(PreferenceKey::as_str)
             .collect();
-        assert_eq!(seeds.len(), 12);
+        assert_eq!(seeds.len(), 14);
         assert_eq!(
             seeds,
             BTreeSet::from([
@@ -214,11 +214,13 @@ mod tests {
                 "datum.publish.scale_fraction_style_seed",
                 "datum.publish.sheet_format_seed",
                 "datum.publish.title_block_template_seed",
-                "datum.units.angle_format",
+                "datum.units.angle_precision",
                 "datum.units.board_length",
+                "datum.units.board_length_precision",
                 "datum.units.drill_hole",
-                "datum.units.length_precision",
+                "datum.units.drill_hole_precision",
                 "datum.units.schematic_geometry",
+                "datum.units.schematic_geometry_precision",
                 "datum.units.system",
             ])
         );
@@ -233,7 +235,7 @@ mod tests {
                 (digest ^ u64::from(byte)).wrapping_mul(0x100000001b3)
             });
         assert_eq!(
-            digest, 12_674_737_625_449_732_688,
+            digest, 18_401_852_061_362_712_385,
             "update only after catalog-to-authority review"
         );
     }

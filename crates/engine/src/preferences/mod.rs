@@ -114,7 +114,6 @@ pub enum SemanticSchema {
     ObjectSnapTypes,
     GridMarkStyle,
     VersionedKeymap,
-    AngleFormat,
     RgbaColor,
     SheetFormat,
     PublishSetNaming,
@@ -319,7 +318,7 @@ mod tests {
     #[test]
     fn active_registry_matches_ratified_identity_inventory() {
         let registry = active_v1_registry();
-        assert_eq!(registry.len(), 54);
+        assert_eq!(registry.len(), 56);
         assert!(
             registry
                 .keys()

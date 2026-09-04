@@ -5,6 +5,31 @@
 //! floating-point adapters at the end of this module remain temporarily for
 //! existing callers; UNIT-I03 owns their migration to this checked service.
 
+mod angle;
+mod edit;
+mod migration;
+mod profile;
+mod tokens;
+
+pub use angle::{
+    AngleRefusal, CanonicalAngleScale, FormattedAngle, ParsedAngle, format_decimal_degrees,
+    parse_decimal_degrees,
+};
+pub use edit::{EditCommit, LengthEditSession};
+pub use migration::{
+    LegacyAngleFormat, LegacyMigrationEvidence, LegacyUnitsMigration, migrate_legacy_units,
+};
+pub use profile::{
+    DecimalDegreePrecision, LengthPrecisionChoice, LengthQuantity, LengthUnitChoice, QuantityUnits,
+    ResolvedQuantityUnits, ResolvedUnitsProfile, UnitsProfile, automatic_precision,
+    follow_system_unit, unit_allowed,
+};
+pub use tokens::{
+    ANGLE_PRECISION_KEY, BOARD_LENGTH_KEY, BOARD_PRECISION_KEY, DRILL_HOLE_KEY,
+    DRILL_PRECISION_KEY, SCHEMATIC_GEOMETRY_KEY, SCHEMATIC_PRECISION_KEY, SYSTEM_KEY,
+    UnitsProfileTokenRefusal, profile_from_descriptor_values, profile_to_descriptor_values,
+};
+
 /// Canonical authored length in nanometers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Nanometers(i64);
@@ -107,13 +132,14 @@ pub enum UnitSource {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OverrideState {
     FollowsMeasurementSystem,
+    ExplicitSameSystem,
     CrossSystemOverride,
 }
 
 impl OverrideState {
-    fn resolve(unit: LengthUnit, system: MeasurementSystem) -> Self {
+    pub(crate) fn resolve(unit: LengthUnit, system: MeasurementSystem) -> Self {
         if unit.measurement_system() == system {
-            Self::FollowsMeasurementSystem
+            Self::ExplicitSameSystem
         } else {
             Self::CrossSystemOverride
         }
@@ -129,8 +155,14 @@ pub enum RefusalReason {
     AmbiguousSuffix(String),
     UnsupportedSuffix(String),
     NonIntegralNanometer,
+    NonIntegralCanonicalValue,
     Overflow,
     UnsupportedPrecision(u8),
+    MissingCanonicalAngleScale,
+    UnitNotAllowedForQuantity {
+        quantity: LengthQuantity,
+        unit: LengthUnit,
+    },
 }
 
 /// Typed provenance retained when a units request is refused.
@@ -239,20 +271,16 @@ pub fn parse_length(request: ParseLengthRequest<'_>) -> Result<ParsedLength, Uni
 
     let (numerator, denominator) = parse_decimal(number)
         .map_err(|reason| refusal(reason, explicit_unit, Some(resolved_unit)))?;
-    let scaled = numerator
-        .checked_mul(resolved_unit.nanometers_per_unit())
-        .ok_or_else(|| refusal(RefusalReason::Overflow, explicit_unit, Some(resolved_unit)))?;
-    if scaled % denominator != 0 {
-        return Err(refusal(
-            RefusalReason::NonIntegralNanometer,
-            explicit_unit,
-            Some(resolved_unit),
-        ));
-    }
-    let exact = scaled / denominator;
-    let canonical = i64::try_from(exact)
-        .map(Nanometers::new)
-        .map_err(|_| refusal(RefusalReason::Overflow, explicit_unit, Some(resolved_unit)))?;
+    let exact = rational_to_i64(numerator, denominator, resolved_unit.nanometers_per_unit())
+        .map_err(|reason| {
+            let reason = if reason == RefusalReason::NonIntegralCanonicalValue {
+                RefusalReason::NonIntegralNanometer
+            } else {
+                reason
+            };
+            refusal(reason, explicit_unit, Some(resolved_unit))
+        })?;
+    let canonical = Nanometers::new(exact);
 
     Ok(ParsedLength {
         quantity: request.quantity,
@@ -263,7 +291,14 @@ pub fn parse_length(request: ParseLengthRequest<'_>) -> Result<ParsedLength, Uni
         resolved_unit,
         canonical_value: canonical,
         precision: request.precision,
-        override_state: OverrideState::resolve(resolved_unit, request.measurement_system),
+        override_state: match unit_source {
+            UnitSource::Context
+                if resolved_unit.measurement_system() == request.measurement_system =>
+            {
+                OverrideState::FollowsMeasurementSystem
+            }
+            _ => OverrideState::resolve(resolved_unit, request.measurement_system),
+        },
     })
 }
 
@@ -326,7 +361,7 @@ pub fn format_length(request: FormatLengthRequest) -> Result<FormattedLength, Un
 fn split_number_and_suffix(token: &str) -> (&str, &str) {
     let mut end = 0;
     for (index, character) in token.char_indices() {
-        if character.is_ascii_digit() || matches!(character, '+' | '-' | '.') {
+        if character.is_ascii_digit() || matches!(character, '+' | '-' | '.' | 'e' | 'E') {
             end = index + character.len_utf8();
         } else {
             break;
@@ -348,14 +383,24 @@ fn parse_length_suffix(suffix: &str) -> Result<LengthUnit, RefusalReason> {
     }
 }
 
-fn parse_decimal(number: &str) -> Result<(i128, i128), RefusalReason> {
+pub(super) fn parse_decimal(number: &str) -> Result<(i128, i128), RefusalReason> {
     if number.is_empty() {
         return Err(RefusalReason::MalformedNumber);
     }
-    let (negative, unsigned) = match number.as_bytes()[0] {
-        b'-' => (true, &number[1..]),
-        b'+' => (false, &number[1..]),
-        _ => (false, number),
+    let (mantissa, exponent) = match number.find(['e', 'E']) {
+        Some(index) if !number[index + 1..].contains(['e', 'E']) => {
+            let exponent = number[index + 1..]
+                .parse::<i32>()
+                .map_err(|_| RefusalReason::MalformedNumber)?;
+            (&number[..index], exponent)
+        }
+        Some(_) => return Err(RefusalReason::MalformedNumber),
+        None => (number, 0),
+    };
+    let (negative, unsigned) = match mantissa.as_bytes().first().copied() {
+        Some(b'-') => (true, &mantissa[1..]),
+        Some(b'+') => (false, &mantissa[1..]),
+        _ => (false, mantissa),
     };
     if unsigned.is_empty() {
         return Err(RefusalReason::MalformedNumber);
@@ -387,7 +432,49 @@ fn parse_decimal(number: &str) -> Result<(i128, i128), RefusalReason> {
     if negative {
         numerator = numerator.checked_neg().ok_or(RefusalReason::Overflow)?;
     }
+    let exponent_magnitude = exponent.unsigned_abs();
+    let power = 10_i128
+        .checked_pow(exponent_magnitude)
+        .ok_or(RefusalReason::Overflow)?;
+    if exponent >= 0 {
+        numerator = numerator
+            .checked_mul(power)
+            .ok_or(RefusalReason::Overflow)?;
+    } else {
+        denominator = denominator
+            .checked_mul(power)
+            .ok_or(RefusalReason::Overflow)?;
+    }
+    let divisor = gcd(numerator.unsigned_abs(), denominator as u128) as i128;
+    numerator /= divisor;
+    denominator /= divisor;
     Ok((numerator, denominator))
+}
+
+pub(super) fn rational_to_i64(
+    numerator: i128,
+    denominator: i128,
+    scale: i128,
+) -> Result<i64, RefusalReason> {
+    let divisor = gcd(scale.unsigned_abs(), denominator as u128) as i128;
+    let reduced_scale = scale / divisor;
+    let reduced_denominator = denominator / divisor;
+    let scaled = numerator
+        .checked_mul(reduced_scale)
+        .ok_or(RefusalReason::Overflow)?;
+    if scaled % reduced_denominator != 0 {
+        return Err(RefusalReason::NonIntegralCanonicalValue);
+    }
+    i64::try_from(scaled / reduced_denominator).map_err(|_| RefusalReason::Overflow)
+}
+
+const fn gcd(mut left: u128, mut right: u128) -> u128 {
+    while right != 0 {
+        let remainder = left % right;
+        left = right;
+        right = remainder;
+    }
+    if left == 0 { 1 } else { left }
 }
 
 fn format_decimal(value: Nanometers, unit_nm: i128, places: u8) -> Option<(String, bool)> {
@@ -555,7 +642,7 @@ mod tests {
             parse("5m").unwrap_err().reason,
             RefusalReason::AmbiguousSuffix("m".to_owned())
         );
-        for token in ["1,5mm", "1e3mm", "--1mm", "mm", "1..0mm"] {
+        for token in ["1,5mm", "1emm", "1e+mm", "1e2e3mm", "--1mm", "mm", "1..0mm"] {
             assert_eq!(
                 parse(token).unwrap_err().reason,
                 RefusalReason::MalformedNumber,
@@ -566,6 +653,7 @@ mod tests {
             parse("1px").unwrap_err().reason,
             RefusalReason::UnsupportedSuffix("px".to_owned())
         );
+        assert_eq!(parse("1e3mm").unwrap().canonical_value.get(), 1_000_000_000);
     }
 
     #[test]

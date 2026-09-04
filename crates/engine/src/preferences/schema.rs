@@ -11,7 +11,6 @@ impl SemanticSchema {
             Self::ObjectSnapTypes => object_snap_types(value),
             Self::GridMarkStyle => grid_mark_style(value),
             Self::VersionedKeymap => versioned_keymap(value),
-            Self::AngleFormat => angle_format(value),
             Self::RgbaColor => rgba_color(value),
             Self::SheetFormat => sheet_format(value),
             Self::PublishSetNaming => publish_set_naming(value),
@@ -94,18 +93,6 @@ fn versioned_keymap(value: &Value) -> bool {
     exact_object(value, &["version", "bindings"]).is_some_and(|object| {
         integer_between(object.get("version"), 1, u32::MAX.into())
             && object.get("bindings").is_some_and(Value::is_object)
-    })
-}
-
-fn angle_format(value: &Value) -> bool {
-    exact_object(value, &["notation", "precision"]).is_some_and(|object| {
-        one_of(
-            object.get("notation"),
-            &["decimal_degrees", "dms", "radians"],
-        ) && object
-            .get("precision")
-            .and_then(Value::as_f64)
-            .is_some_and(|precision| precision.is_finite() && precision > 0.0)
     })
 }
 
@@ -237,16 +224,56 @@ fn project_display_units(value: &Value) -> bool {
     }
     exact_object(
         value,
-        &["system", "display_units_by_quantity", "precision", "angle"],
+        &[
+            "system",
+            "board_length",
+            "board_length_precision",
+            "drill_hole",
+            "drill_hole_precision",
+            "schematic_geometry",
+            "schematic_geometry_precision",
+            "angle_precision",
+        ],
     )
     .is_some_and(|object| {
         one_of(object.get("system"), &["metric", "imperial"])
-            && object
-                .get("display_units_by_quantity")
-                .is_some_and(Value::is_object)
-            && object.get("precision").is_some_and(Value::is_string)
-            && angle_format(object.get("angle").unwrap_or(&Value::Null))
+            && one_of(
+                object.get("board_length"),
+                &["follow_system", "mm", "um", "mil", "inch"],
+            )
+            && precision(object.get("board_length_precision"))
+            && one_of(
+                object.get("drill_hole"),
+                &["follow_system", "mm", "mil", "inch"],
+            )
+            && precision(object.get("drill_hole_precision"))
+            && one_of(
+                object.get("schematic_geometry"),
+                &["follow_system", "mm", "mil"],
+            )
+            && precision(object.get("schematic_geometry_precision"))
+            && one_of(
+                object.get("angle_precision"),
+                &["decimal_0", "decimal_1", "decimal_2", "decimal_3"],
+            )
     })
+}
+
+fn precision(value: Option<&Value>) -> bool {
+    one_of(
+        value,
+        &[
+            "automatic",
+            "decimal_0",
+            "decimal_1",
+            "decimal_2",
+            "decimal_3",
+            "decimal_4",
+            "decimal_5",
+            "decimal_6",
+            "exact_nm",
+        ],
+    )
 }
 
 #[cfg(test)]
@@ -273,10 +300,6 @@ mod tests {
             (
                 SemanticSchema::VersionedKeymap,
                 json!({"version":1,"bindings":{}}),
-            ),
-            (
-                SemanticSchema::AngleFormat,
-                json!({"notation":"decimal_degrees","precision":0.1}),
             ),
             (
                 SemanticSchema::RgbaColor,
@@ -320,7 +343,7 @@ mod tests {
             ),
             (
                 SemanticSchema::ProjectDisplayUnits,
-                json!({"system":"metric","display_units_by_quantity":{},"precision":"0.01","angle":{"notation":"decimal_degrees","precision":0.1}}),
+                json!({"system":"metric","board_length":"follow_system","board_length_precision":"automatic","drill_hole":"follow_system","drill_hole_precision":"automatic","schematic_geometry":"follow_system","schematic_geometry_precision":"automatic","angle_precision":"decimal_1"}),
             ),
         ];
         for (schema, valid) in cases {
