@@ -1,6 +1,6 @@
 use super::{
     DisplayPrecision, LengthQuantity, LengthUnit, MeasurementSystem, ParseLengthRequest,
-    QuantityKind, UnitSource, UnitsRefusal, parse_length,
+    QuantityKind, ResolvedUnitsProfile, UnitSource, UnitsRefusal, parse_length,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -33,6 +33,42 @@ pub enum AutomationLengthRefusal {
     ConflictingCanonicalAndExpression,
     MissingBareExpressionContext,
     Units(UnitsRefusal),
+}
+
+#[derive(Debug, Clone)]
+pub struct GuiProjectLengthInput<'a> {
+    pub token: &'a str,
+    pub project_id: &'a str,
+    pub field_id: &'a str,
+    pub quantity: LengthQuantity,
+    /// Immutable snapshot captured when editing begins. A later preference
+    /// mutation cannot reinterpret text already being edited.
+    pub units: ResolvedUnitsProfile,
+}
+
+/// GUI numeric-entry seam for Project-owned length fields. It creates the
+/// same explicit context consumed by CLI/MCP adapters and never consults
+/// machine Global defaults.
+pub fn resolve_gui_project_length(
+    request: GuiProjectLengthInput<'_>,
+) -> Result<AutomationLengthResult, AutomationLengthRefusal> {
+    let quantity_units = match request.quantity {
+        LengthQuantity::BoardLayout => request.units.board,
+        LengthQuantity::DrillHole => request.units.drill,
+        LengthQuantity::SchematicGeometry => request.units.schematic,
+    };
+    let context = ExplicitLengthContext {
+        project_id: Some(request.project_id.to_owned()),
+        field_id: request.field_id.to_owned(),
+        quantity: request.quantity,
+        resolved_unit: quantity_units.unit,
+        measurement_system: request.units.system,
+    };
+    resolve_automation_length(AutomationLengthInput {
+        canonical_nm: None,
+        expression: Some(request.token),
+        context: Some(&context),
+    })
 }
 
 /// Shared CLI/MCP compatibility seam. Existing `_nm` values remain exact; an
@@ -139,5 +175,46 @@ mod tests {
         .unwrap();
         assert_eq!(result.canonical_nm, 5_080_000);
         assert_eq!(result.context, Some(context));
+    }
+
+    #[test]
+    fn gui_project_field_uses_its_immutable_project_quantity_snapshot() {
+        use super::super::{
+            DecimalDegreePrecision, DisplayPrecision, OverrideState, ResolvedQuantityUnits,
+        };
+
+        let units = ResolvedUnitsProfile {
+            system: MeasurementSystem::Metric,
+            board: ResolvedQuantityUnits {
+                unit: LengthUnit::Mil,
+                precision: DisplayPrecision::DecimalPlaces(1),
+                override_state: OverrideState::CrossSystemOverride,
+            },
+            drill: ResolvedQuantityUnits {
+                unit: LengthUnit::Millimeter,
+                precision: DisplayPrecision::DecimalPlaces(3),
+                override_state: OverrideState::FollowsMeasurementSystem,
+            },
+            schematic: ResolvedQuantityUnits {
+                unit: LengthUnit::Millimeter,
+                precision: DisplayPrecision::DecimalPlaces(3),
+                override_state: OverrideState::FollowsMeasurementSystem,
+            },
+            angle_precision: DecimalDegreePrecision::Decimal1,
+        };
+        let result = resolve_gui_project_length(GuiProjectLengthInput {
+            token: "200",
+            project_id: "sensor-node",
+            field_id: "board.track.width",
+            quantity: LengthQuantity::BoardLayout,
+            units,
+        })
+        .unwrap();
+        assert_eq!(result.canonical_nm, 5_080_000);
+        assert_eq!(result.resolved_unit, LengthUnit::Mil);
+        assert_eq!(
+            result.context.unwrap().project_id.as_deref(),
+            Some("sensor-node")
+        );
     }
 }

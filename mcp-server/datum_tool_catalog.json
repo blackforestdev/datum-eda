@@ -12606,6 +12606,86 @@
       "write_surface": null
     },
     {
+      "description": "Replace the complete Project Working Units profile through one guarded journal mutation without changing geometry.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "set_project_display_units"
+      },
+      "dispatch_args": [
+        "path",
+        "profile",
+        "expected_model_revision"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "expected_model_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "additionalProperties": false,
+            "properties": {
+              "angle_precision": {
+                "type": "string"
+              },
+              "board_length": {
+                "type": "string"
+              },
+              "board_length_precision": {
+                "type": "string"
+              },
+              "drill_hole": {
+                "type": "string"
+              },
+              "drill_hole_precision": {
+                "type": "string"
+              },
+              "schematic_geometry": {
+                "type": "string"
+              },
+              "schematic_geometry_precision": {
+                "type": "string"
+              },
+              "system": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "system",
+              "board_length",
+              "board_length_precision",
+              "drill_hole",
+              "drill_hole_precision",
+              "schematic_geometry",
+              "schematic_geometry_precision",
+              "angle_precision"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "path",
+          "profile"
+        ],
+        "type": "object"
+      },
+      "name": "datum.project.set_display_units",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "journaled_project_settings",
+        "evidence": "dispatches to engine native.write with datum.project.set_display_units; the engine facade inserts the Project revision guard and commits one journal transaction"
+      }
+    },
+    {
       "description": "Update first-class native pool PinPadMap mappings through the journaled project commit path.",
       "dispatch": {
         "argv": [
@@ -25422,6 +25502,120 @@
         "type": "object"
       },
       "name": "datum.session.validate",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Resolve an integer nanometer value or exact scalar-with-unit expression with explicit, machine-independent context.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "units"
+          },
+          {
+            "lit": "resolve-length"
+          },
+          {
+            "flag": "--canonical-nm",
+            "param": "canonical_nm"
+          },
+          {
+            "flag": "--expression",
+            "param": "expression"
+          },
+          {
+            "flag": "--quantity",
+            "param": "quantity"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--system",
+            "param": "system"
+          },
+          {
+            "flag": "--field",
+            "param": "field"
+          },
+          {
+            "flag": "--project-id",
+            "param": "project_id"
+          }
+        ],
+        "kind": "cli",
+        "method": "resolve_length"
+      },
+      "dispatch_args": [
+        "canonical_nm",
+        "expression",
+        "quantity",
+        "unit",
+        "system",
+        "field",
+        "project_id"
+      ],
+      "dispatch_defaults": {
+        "canonical_nm": null,
+        "expression": null,
+        "field": null,
+        "project_id": null,
+        "quantity": null,
+        "system": null,
+        "unit": null
+      },
+      "inputSchema": {
+        "properties": {
+          "canonical_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "expression": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "field": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "system": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.units.resolve_length",
       "public_metadata": null,
       "replacements": [],
       "retirement": null,

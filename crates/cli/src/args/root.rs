@@ -36,6 +36,11 @@ pub(crate) enum Commands {
         #[command(subcommand)]
         action: RevisionCommands,
     },
+    /// Resolve exact measurement-unit inputs without machine preference state
+    Units {
+        #[command(subcommand)]
+        action: UnitsCommands,
+    },
     /// Import a KiCad or Eagle design
     Import {
         /// Path to design file (.kicad_pcb, .brd, .lbr)

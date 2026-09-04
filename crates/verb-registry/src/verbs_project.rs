@@ -1,4 +1,4 @@
-//! The `datum.project` terminal verb family (3 verbs), transcribed from the
+//! The registered `datum.project` verb family, transcribed from the
 //! hand-written MCP catalog (`tools_catalog_datum.py` /
 //! `tools_catalog_library.py` schemas), the Python bridge argv builders
 //! (`server_runtime.py` / `server_runtime_library.py`), and cross-checked
@@ -10,7 +10,7 @@
 //!
 //! Entries MUST stay sorted by id (asserted by lib tests).
 
-use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus};
+use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus, WriteSurface};
 
 const PATH: ParamSpec = ParamSpec {
     name: "path",
@@ -49,6 +49,8 @@ const ENTRIES: ParamSpec = ParamSpec {
 const CREATE_PIN_PAD_MAP_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":"string"},"map":{"type":"string"},"part":{"type":"string"},"footprint":{"type":["string","null"]},"entries":{"type":"array","items":{"type":"object","properties":{"pad":{"type":"string"},"gate":{"type":"string"},"pin":{"type":"string"}},"required":["pad","pin"]}},"set_default":{"type":"boolean"}},"required":["path","map","part","entries"]}"#;
 
 const SET_PIN_PAD_MAP_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":"string"},"map":{"type":"string"},"mode":{"type":"string"},"entries":{"type":"array","items":{"type":"object","properties":{"pad":{"type":"string"},"gate":{"type":"string"},"pin":{"type":"string"}},"required":["pad","pin"]}}},"required":["path","map","entries"]}"#;
+
+const SET_DISPLAY_UNITS_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"profile":{"type":"object","properties":{"system":{"type":"string"},"board_length":{"type":"string"},"board_length_precision":{"type":"string"},"drill_hole":{"type":"string"},"drill_hole_precision":{"type":"string"},"schematic_geometry":{"type":"string"},"schematic_geometry_precision":{"type":"string"},"angle_precision":{"type":"string"}},"required":["system","board_length","board_length_precision","drill_hole","drill_hole_precision","schematic_geometry","schematic_geometry_precision","angle_precision"],"additionalProperties":false},"expected_model_revision":{"type":["string","null"]}},"required":["path","profile"]}"#;
 
 pub(crate) static VERBS: &[VerbSpec] = &[
     VerbSpec {
@@ -120,6 +122,41 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         write_surface: None,
         terminal: true,
         terminal_optional_params: &["pool"],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
+        id: "datum.project.set_display_units",
+        summary: "Replace the complete Project Working Units profile through one guarded journal mutation without changing geometry.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::DaemonRpc {
+            method: "set_project_display_units",
+        },
+        params: &[
+            PATH,
+            ParamSpec {
+                name: "profile",
+                ty: ParamType::Json,
+                required: true,
+                doc: "Complete eight-field Project Working Units profile",
+                default_json: None,
+            },
+            ParamSpec {
+                name: "expected_model_revision",
+                ty: ParamType::Str,
+                required: false,
+                doc: "Refuse unless the Project still has this exact model revision",
+                default_json: None,
+            },
+        ],
+        schema_json_override: Some(SET_DISPLAY_UNITS_SCHEMA),
+        write_surface: Some(WriteSurface {
+            class: "journaled_project_settings",
+            evidence: "dispatches to engine native.write with datum.project.set_display_units; the engine facade inserts the Project revision guard and commits one journal transaction",
+        }),
+        terminal: false,
+        terminal_optional_params: &[],
         terminal_argv_override: None,
     },
     VerbSpec {

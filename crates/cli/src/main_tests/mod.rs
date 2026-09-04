@@ -326,3 +326,4 @@ mod main_tests_project_validate_rules;
 mod main_tests_project_wire;
 mod main_tests_query_goldens;
 mod main_tests_query_surface;
+mod main_tests_units;
