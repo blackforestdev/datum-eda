@@ -137,20 +137,6 @@ pub(crate) fn parse_apply_replacement_plan_arg(
     })
 }
 
-#[cfg(test)]
-mod units_tests {
-    use super::*;
-
-    #[test]
-    fn move_component_fixed_mm_adapter_is_exact_and_refuses_sub_nm() {
-        let id = Uuid::nil();
-        let input = parse_move_component_arg(&format!("{id}:5.08:1e-3")).unwrap();
-        assert_eq!(input.position.x, 5_080_000);
-        assert_eq!(input.position.y, 1_000);
-        assert!(parse_move_component_arg(&format!("{id}:0.0000001:0")).is_err());
-    }
-}
-
 pub(crate) fn parse_apply_replacement_policy_arg(
     value: &str,
 ) -> Result<PolicyDrivenComponentReplacementInput> {
@@ -229,4 +215,18 @@ pub(crate) fn parse_set_net_class_arg(value: &str) -> Result<SetNetClassInput> {
             0
         },
     })
+}
+
+#[cfg(test)]
+mod units_tests {
+    use super::*;
+
+    #[test]
+    fn move_component_fixed_mm_adapter_is_exact_and_refuses_sub_nm() {
+        let id = Uuid::nil();
+        let input = parse_move_component_arg(&format!("{id}:5.08:1e-3")).unwrap();
+        assert_eq!(input.position.x, 5_080_000);
+        assert_eq!(input.position.y, 1_000);
+        assert!(parse_move_component_arg(&format!("{id}:0.0000001:0")).is_err());
+    }
 }
