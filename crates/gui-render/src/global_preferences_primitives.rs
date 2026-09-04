@@ -345,3 +345,111 @@ pub(super) fn button(
         text,
     );
 }
+
+pub(super) fn draw_preference_control(
+    control: &datum_gui_protocol::GlobalPreferenceControlUi,
+    right: f32,
+    y: f32,
+    focused: bool,
+    available: bool,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) -> RectPx {
+    use datum_gui_protocol::GlobalPreferenceControlUi;
+
+    match control {
+        GlobalPreferenceControlUi::Boolean {
+            value,
+            off_label,
+            on_label,
+        } => {
+            let width = if available { 78.0 } else { 138.0 };
+            let rect = RectPx {
+                x: right - width,
+                y,
+                width,
+                height: 28.0,
+            };
+            draw_boolean_control(
+                *value,
+                if *value { on_label } else { off_label },
+                rect,
+                focused,
+                available,
+                quads,
+                text,
+            );
+            rect
+        }
+        GlobalPreferenceControlUi::SingleChoice { value, choices } => {
+            let label = choices
+                .iter()
+                .find(|(candidate, _)| candidate == value)
+                .map(|(_, label)| label.as_str())
+                .unwrap_or(value);
+            let unavailable = format!("{label} · unavailable");
+            let width = (measured_text_run_width_px(
+                if available { label } else { &unavailable },
+                design_tokens::typography::CAPTION_SIZE,
+                TextFace::Ui,
+            ) + 34.0)
+                .max(58.0);
+            let rect = RectPx {
+                x: right - width,
+                y,
+                width,
+                height: 30.0,
+            };
+            draw_choice_control(label, rect, focused, available, quads, text);
+            rect
+        }
+        GlobalPreferenceControlUi::Integer { value, suffix, .. } => {
+            let rect = control_rect(right, y, 112.0);
+            draw_choice_control(
+                &format!("{value}{suffix}"),
+                rect,
+                focused,
+                available,
+                quads,
+                text,
+            );
+            rect
+        }
+        GlobalPreferenceControlUi::Identity { value, placeholder } => {
+            let rect = control_rect(right, y, 178.0);
+            draw_choice_control(
+                value.as_deref().unwrap_or(placeholder),
+                rect,
+                focused,
+                available,
+                quads,
+                text,
+            );
+            rect
+        }
+        GlobalPreferenceControlUi::Structured {
+            value_summary,
+            action_label,
+        } => {
+            let rect = control_rect(right, y, 178.0);
+            button(
+                &format!("{value_summary} · {action_label}"),
+                rect,
+                focused,
+                available,
+                quads,
+                text,
+            );
+            rect
+        }
+    }
+}
+
+fn control_rect(right: f32, y: f32, width: f32) -> RectPx {
+    RectPx {
+        x: right - width,
+        y,
+        width,
+        height: 30.0,
+    }
+}

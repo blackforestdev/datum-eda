@@ -309,6 +309,26 @@ impl Runtime {
                     ui.scroll_to_row(key);
                 }
             }
+            GlobalPreferenceControlUi::Integer {
+                value,
+                min,
+                max,
+                step,
+                ..
+            } => {
+                let next = value.saturating_add(step as i64).min(max).max(min);
+                let _ = self.global_preferences.set_value(
+                    key,
+                    Value::from(next),
+                    &mut self.session.workspace_mut().ui,
+                );
+                self.announce_current_global_preferences_notice();
+            }
+            GlobalPreferenceControlUi::Identity { .. }
+            | GlobalPreferenceControlUi::Structured { .. } => {
+                self.explain_global_preference(key);
+                return true;
+            }
         }
         self.invalidate_frame();
         true
@@ -353,6 +373,33 @@ impl Runtime {
         );
         self.invalidate_frame();
         true
+    }
+
+    pub(super) fn open_global_preference_search_result(&mut self, key: &str) -> bool {
+        let section = self
+            .workspace()
+            .ui
+            .global_preferences
+            .rows
+            .iter()
+            .find(|row| row.key == key)
+            .map(|row| row.section_id.clone());
+        if self
+            .workspace()
+            .ui
+            .global_preferences
+            .search_query
+            .is_empty()
+        {
+            return self.explain_global_preference(key);
+        }
+        let Some(section) = section else {
+            return false;
+        };
+        let dialog = &mut self.session.workspace_mut().ui.global_preferences;
+        dialog.select_section(&section);
+        dialog.scroll_to_row(key);
+        self.explain_global_preference(key)
     }
 
     pub(super) fn handle_global_preferences_key(&mut self, event: &KeyEvent) -> bool {
@@ -416,7 +463,7 @@ impl Runtime {
                             .map(|row| row.key.clone())
                     };
                     if let Some(key) = key {
-                        self.explain_global_preference(&key);
+                        self.open_global_preference_search_result(&key);
                     }
                     return true;
                 }
@@ -534,6 +581,20 @@ impl Runtime {
                     let next = (index + delta).rem_euclid(choices.len() as isize) as usize;
                     Some(Value::String(choices[next].0.clone()))
                 }
+                GlobalPreferenceControlUi::Integer {
+                    value,
+                    min,
+                    max,
+                    step,
+                    ..
+                } => {
+                    let step = *step as i64;
+                    Some(Value::from(
+                        (*value + delta.signum() as i64 * step).clamp(*min, *max),
+                    ))
+                }
+                GlobalPreferenceControlUi::Identity { .. }
+                | GlobalPreferenceControlUi::Structured { .. } => None,
             });
         self.commit_projected_value(key, next)
     }
@@ -555,6 +616,11 @@ impl Runtime {
                         0
                     })
                     .map(|(value, _)| Value::String(value.clone())),
+                GlobalPreferenceControlUi::Integer { min, max, .. } => {
+                    Some(Value::from(if last { *max } else { *min }))
+                }
+                GlobalPreferenceControlUi::Identity { .. }
+                | GlobalPreferenceControlUi::Structured { .. } => None,
             });
         self.commit_projected_value(key, next)
     }

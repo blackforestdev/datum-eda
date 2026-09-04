@@ -157,6 +157,49 @@ pub(super) fn control_value_projection(
                     .collect(),
             }
         }
+        PreferenceControlPresentation::IntegerStepper {
+            min,
+            max,
+            step,
+            suffix,
+        } => GlobalPreferenceControlUi::Integer {
+            value: effective_value.and_then(Value::as_i64).unwrap_or(*min),
+            min: *min,
+            max: *max,
+            step: *step,
+            suffix: suffix.clone(),
+        },
+        PreferenceControlPresentation::IdentityEntry {
+            nullable: _,
+            placeholder,
+        } => GlobalPreferenceControlUi::Identity {
+            value: effective_value.and_then(Value::as_str).map(str::to_owned),
+            placeholder: placeholder.clone(),
+        },
+        PreferenceControlPresentation::StructuredEditor { action_label } => {
+            GlobalPreferenceControlUi::Structured {
+                value_summary: effective_value
+                    .map(compact_value_summary)
+                    .unwrap_or_else(|| "No value".to_owned()),
+                action_label: action_label.clone(),
+            }
+        }
+    }
+}
+
+fn compact_value_summary(value: &Value) -> String {
+    match value {
+        Value::Array(values) => format!(
+            "{} item{}",
+            values.len(),
+            if values.len() == 1 { "" } else { "s" }
+        ),
+        Value::Object(values) => format!(
+            "{} field{}",
+            values.len(),
+            if values.len() == 1 { "" } else { "s" }
+        ),
+        _ => value.to_string(),
     }
 }
 

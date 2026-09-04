@@ -11,6 +11,21 @@ pub enum GlobalPreferenceControlUi {
         value: String,
         choices: Vec<(String, String)>,
     },
+    Integer {
+        value: i64,
+        min: i64,
+        max: i64,
+        step: u64,
+        suffix: String,
+    },
+    Identity {
+        value: Option<String>,
+        placeholder: String,
+    },
+    Structured {
+        value_summary: String,
+        action_label: String,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -82,6 +97,8 @@ pub enum GlobalPreferencesAccessibleRole {
     Button,
     Switch,
     ComboBox,
+    SpinButton,
+    TextBox,
     Status,
 }
 
@@ -133,30 +150,41 @@ impl GlobalPreferencesDialogState {
     pub fn visible_rows(&self) -> impl Iterator<Item = &GlobalPreferenceRowUi> {
         let query = self.search_query.trim().to_ascii_lowercase();
         self.rows.iter().filter(move |row| {
-            row.section_id == self.section_id
-                && (query.is_empty()
-                    || row.label.to_ascii_lowercase().contains(&query)
-                    || row.description.to_ascii_lowercase().contains(&query)
-                    || row.key.to_ascii_lowercase().contains(&query)
-                    || row
-                        .aliases
-                        .iter()
-                        .any(|alias| alias.to_ascii_lowercase().contains(&query))
-                    || match &row.control {
-                        GlobalPreferenceControlUi::Boolean {
-                            off_label,
-                            on_label,
-                            ..
-                        } => [off_label, on_label]
+            (query.is_empty() && row.section_id == self.section_id)
+                || (!query.is_empty()
+                    && (row.label.to_ascii_lowercase().contains(&query)
+                        || row.description.to_ascii_lowercase().contains(&query)
+                        || row.key.to_ascii_lowercase().contains(&query)
+                        || row
+                            .aliases
                             .iter()
-                            .any(|label| label.to_ascii_lowercase().contains(&query)),
-                        GlobalPreferenceControlUi::SingleChoice { choices, .. } => {
-                            choices.iter().any(|(value, label)| {
-                                value.to_ascii_lowercase().contains(&query)
-                                    || label.to_ascii_lowercase().contains(&query)
-                            })
-                        }
-                    })
+                            .any(|alias| alias.to_ascii_lowercase().contains(&query))
+                        || match &row.control {
+                            GlobalPreferenceControlUi::Boolean {
+                                off_label,
+                                on_label,
+                                ..
+                            } => [off_label, on_label]
+                                .iter()
+                                .any(|label| label.to_ascii_lowercase().contains(&query)),
+                            GlobalPreferenceControlUi::SingleChoice { choices, .. } => {
+                                choices.iter().any(|(value, label)| {
+                                    value.to_ascii_lowercase().contains(&query)
+                                        || label.to_ascii_lowercase().contains(&query)
+                                })
+                            }
+                            GlobalPreferenceControlUi::Integer { value, suffix, .. } => {
+                                format!("{value}{suffix}")
+                                    .to_ascii_lowercase()
+                                    .contains(&query)
+                            }
+                            GlobalPreferenceControlUi::Identity { value, .. } => value
+                                .as_deref()
+                                .is_some_and(|value| value.to_ascii_lowercase().contains(&query)),
+                            GlobalPreferenceControlUi::Structured { value_summary, .. } => {
+                                value_summary.to_ascii_lowercase().contains(&query)
+                            }
+                        }))
         })
     }
 
@@ -227,6 +255,21 @@ impl GlobalPreferencesDialogState {
                         .find(|(candidate, _)| candidate == value)
                         .map(|(_, label)| label.clone())
                         .unwrap_or_else(|| value.clone()),
+                ),
+                GlobalPreferenceControlUi::Integer { value, suffix, .. } => (
+                    GlobalPreferencesAccessibleRole::SpinButton,
+                    format!("{value}{suffix}"),
+                ),
+                GlobalPreferenceControlUi::Identity { value, placeholder } => (
+                    GlobalPreferencesAccessibleRole::TextBox,
+                    value.clone().unwrap_or_else(|| placeholder.clone()),
+                ),
+                GlobalPreferenceControlUi::Structured {
+                    value_summary,
+                    action_label: _,
+                } => (
+                    GlobalPreferencesAccessibleRole::Button,
+                    value_summary.clone(),
                 ),
             };
             if !row.writable {

@@ -2,7 +2,7 @@
 
 use super::*;
 use crate::global_preferences_primitives::{
-    button, draw_boolean_control, draw_choice_control, draw_header_chip, draw_search_icon,
+    button, draw_header_chip, draw_preference_control, draw_search_icon,
     push_rounded_rect_with_border,
 };
 use datum_gui_protocol::{
@@ -354,7 +354,15 @@ pub(super) fn render_global_preferences_dialog(
     let first_visible = dialog.scroll_row.min(total_visible.saturating_sub(1));
     let body_bottom = card.y + card.height;
     let mut rendered_rows = 0usize;
+    let mut last_search_section: Option<&str> = None;
     for row in visible.into_iter().skip(first_visible) {
+        let search_group_height = if !dialog.search_query.is_empty()
+            && last_search_section != Some(row.section_id.as_str())
+        {
+            22.0
+        } else {
+            0.0
+        };
         let explained = dialog.explanation_key.as_deref() == Some(row.key.as_str());
         let choice_count = match &row.control {
             GlobalPreferenceControlUi::SingleChoice { choices, .. }
@@ -369,8 +377,27 @@ pub(super) fn render_global_preferences_dialog(
         let choice_height = choice_count as f32 * 28.0;
         let explanation_height = if explained { 96.0 } else { 0.0 };
         let row_height = setting_height + provenance_height + choice_height + explanation_height;
-        if rendered_rows > 0 && y + row_height > body_bottom {
+        if rendered_rows > 0 && y + search_group_height + row_height > body_bottom {
             break;
+        }
+        if search_group_height > 0.0 {
+            let section_label = dialog
+                .sections
+                .iter()
+                .find(|(id, _)| id == &row.section_id)
+                .map(|(_, label)| label.as_str())
+                .unwrap_or(row.section_id.as_str());
+            draw_text(
+                section_label,
+                content_x + 4.0,
+                y + 4.0,
+                design_tokens::typography::CAPTION_SIZE,
+                TEXT_ACCENT,
+                TextFace::UiStrong,
+                text,
+            );
+            y += search_group_height;
+            last_search_section = Some(row.section_id.as_str());
         }
         let row_rect = RectPx {
             x: content_x,
@@ -434,56 +461,15 @@ pub(super) fn render_global_preferences_dialog(
             rect.x - 10.0
         });
         let focused_control = focus_is(dialog, &GlobalPreferencesFocus::Control(row.key.clone()));
-        let control = match &row.control {
-            GlobalPreferenceControlUi::Boolean {
-                value,
-                off_label,
-                on_label,
-            } => {
-                let rect = RectPx {
-                    x: control_right - if row.writable { 78.0 } else { 138.0 },
-                    y: setting_rect.y + 14.0,
-                    width: if row.writable { 78.0 } else { 138.0 },
-                    height: 28.0,
-                };
-                draw_boolean_control(
-                    *value,
-                    if *value { on_label } else { off_label },
-                    rect,
-                    focused_control,
-                    row.writable,
-                    quads,
-                    text,
-                );
-                rect
-            }
-            GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-                let label = choices
-                    .iter()
-                    .find(|(candidate, _)| candidate == value)
-                    .map(|(_, label)| label.as_str())
-                    .unwrap_or(value);
-                let visible_label = if row.writable {
-                    label.to_owned()
-                } else {
-                    format!("{label} · unavailable")
-                };
-                let width = (measured_text_run_width_px(
-                    &visible_label,
-                    design_tokens::typography::CAPTION_SIZE,
-                    TextFace::Ui,
-                ) + 34.0)
-                    .max(58.0);
-                let rect = RectPx {
-                    x: control_right - width,
-                    y: setting_rect.y + 14.0,
-                    width,
-                    height: 30.0,
-                };
-                draw_choice_control(label, rect, focused_control, row.writable, quads, text);
-                rect
-            }
-        };
+        let control = draw_preference_control(
+            &row.control,
+            control_right,
+            setting_rect.y + 14.0,
+            focused_control,
+            row.writable,
+            quads,
+            text,
+        );
         if row.writable {
             hits.push(HitRegion {
                 target: HitTarget::GlobalPreferencesControl(row.key.clone()),

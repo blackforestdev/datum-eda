@@ -17,7 +17,7 @@ fn preference_notice_priority_distinguishes_status_from_refusal_and_recovery() {
 }
 
 #[test]
-fn projection_preserves_three_appearance_rows_and_adds_exact_units_surface() {
+fn projection_exposes_the_complete_active_catalog_and_exact_units_surface() {
     let base = std::env::temp_dir().join(format!("datum-gp-ui-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
@@ -56,9 +56,10 @@ fn projection_preserves_three_appearance_rows_and_adds_exact_units_surface() {
         .iter()
         .filter(|row| row.section_id == "units")
         .collect();
-    assert_eq!(appearance_rows.len(), 3);
+    assert_eq!(appearance_rows.len(), 10);
     assert_eq!(units_rows.len(), 8);
-    assert_eq!(ui.global_preferences.rows.len(), 11);
+    assert_eq!(ui.global_preferences.rows.len(), 56);
+    assert_eq!(ui.global_preferences.sections.len(), 9);
     assert_eq!(
         ui.global_preferences.rows[0].key,
         "datum.console.feedback_duration"
@@ -71,33 +72,21 @@ fn projection_preserves_three_appearance_rows_and_adds_exact_units_surface() {
     assert_eq!(
         nodes
             .iter()
-            .filter(|node| matches!(
-                node.role,
-                datum_gui_protocol::GlobalPreferencesAccessibleRole::Switch
-                    | datum_gui_protocol::GlobalPreferencesAccessibleRole::ComboBox
-            ))
+            .filter(|node| node.id.ends_with("-control"))
             .count(),
-        3
+        10
     );
     assert!(ui.global_preferences.select_section("units"));
     let units_nodes = ui.global_preferences.accessibility_nodes();
     assert_eq!(
         units_nodes
             .iter()
-            .filter(|node| matches!(
-                node.role,
-                datum_gui_protocol::GlobalPreferencesAccessibleRole::Switch
-                    | datum_gui_protocol::GlobalPreferencesAccessibleRole::ComboBox
-            ))
+            .filter(|node| node.id.ends_with("-control"))
             .count(),
         8
     );
     assert!(nodes.iter().all(|node| {
-        !matches!(
-            node.role,
-            datum_gui_protocol::GlobalPreferencesAccessibleRole::Switch
-                | datum_gui_protocol::GlobalPreferencesAccessibleRole::ComboBox
-        ) || node.description.contains("Global · this device")
+        !node.id.ends_with("-control") || node.description.contains("Global · this device")
     }));
     for (projected, resolved) in ui.global_preferences.rows.iter().zip(&resolved_rows) {
         assert_eq!(projected.key, resolved.key.as_str());
@@ -339,17 +328,20 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
     ui.global_preferences.open = true;
     let first = ui.global_preferences.focus.clone();
     let mut visited = std::collections::BTreeSet::new();
-    for _ in 0..8 {
+    for _ in 0..100 {
+        if !visited.is_empty() && ui.global_preferences.focus == first {
+            break;
+        }
         visited.insert(format!("{:?}", ui.global_preferences.focus));
         ui.global_preferences.advance_focus(false);
     }
     assert_eq!(ui.global_preferences.focus, first);
-    assert_eq!(visited.len(), 8);
+    assert_eq!(visited.len(), 22);
     ui.global_preferences.advance_focus(true);
     assert_eq!(
         ui.global_preferences.focus,
         datum_gui_protocol::GlobalPreferencesFocus::Control(
-            "datum.accessibility.high_contrast_noncolor".to_owned()
+            "datum.pcb.rounded_track_corners".to_owned()
         )
     );
 
@@ -510,7 +502,7 @@ fn dialog_is_unique_and_restores_the_original_invoker_focus() {
     assert!(ui.global_preferences.notice.is_none());
     assert!(coordinator.open_dialog(&mut ui, invoker));
     assert!(ui.global_preferences.search_query.is_empty());
-    assert_eq!(ui.global_preferences.visible_rows().count(), 3);
+    assert_eq!(ui.global_preferences.visible_rows().count(), 10);
     assert_eq!(
         ui.global_preferences.focus,
         datum_gui_protocol::GlobalPreferencesFocus::SectionNavigation
