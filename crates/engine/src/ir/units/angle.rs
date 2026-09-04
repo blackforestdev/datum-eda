@@ -96,14 +96,14 @@ pub fn format_decimal_degrees(
     }
     let factor = 10_i128
         .checked_pow(u32::from(decimal_places))
-        .ok_or_else(|| AngleRefusal {
+        .ok_or(AngleRefusal {
             quantity: QuantityKind::Angle,
             original_token: None,
             scale: Some(scale),
             reason: RefusalReason::Overflow,
         })?;
     let magnitude = i128::from(canonical_value).abs();
-    let scaled = magnitude.checked_mul(factor).ok_or_else(|| AngleRefusal {
+    let scaled = magnitude.checked_mul(factor).ok_or(AngleRefusal {
         quantity: QuantityKind::Angle,
         original_token: None,
         scale: Some(scale),
