@@ -299,6 +299,7 @@ fn canonical_descriptions_render_without_ellipsis() {
 #[test]
 fn preserved_unreadable_rows_keep_values_but_have_no_control_targets() {
     let mut state = state_with_preferences_open();
+    state.ui.global_preferences.rows[0].changed = true;
     for row in &mut state.ui.global_preferences.rows {
         row.writable = false;
         row.provenance = "Preserved · Global · this device".to_owned();
@@ -309,12 +310,10 @@ fn preserved_unreadable_rows_keep_values_but_have_no_control_targets() {
         ),
     );
     let prepared = prepared(&state, 1300, 760);
-    assert!(
-        !prepared
-            .hit_regions
-            .iter()
-            .any(|region| matches!(region.target, HitTarget::GlobalPreferencesControl(_)))
-    );
+    assert!(!prepared.hit_regions.iter().any(|region| matches!(
+        region.target,
+        HitTarget::GlobalPreferencesControl(_) | HitTarget::GlobalPreferencesReset(_)
+    )));
     let labels: Vec<_> = prepared
         .menu_overlay_text_runs
         .iter()
