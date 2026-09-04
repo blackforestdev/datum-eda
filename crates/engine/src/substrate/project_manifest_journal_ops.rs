@@ -13,6 +13,33 @@ pub(super) fn apply_project_manifest_operation(
             )?;
             Ok(Some(true))
         }
+        Operation::InitializeProjectDisplayUnits {
+            profile, receipt, ..
+        } => {
+            if manifest_value.get("project_display_units").is_some()
+                || manifest_value.get("project_units_seed_receipt").is_some()
+            {
+                return Err(EngineError::Validation(
+                    "Project Working Units are already initialized".to_string(),
+                ));
+            }
+            set_project_manifest_field(manifest_value, "project_display_units", profile.clone())?;
+            set_project_manifest_field(
+                manifest_value,
+                "project_units_seed_receipt",
+                receipt.clone(),
+            )?;
+            Ok(Some(true))
+        }
+        Operation::SetProjectDisplayUnits { profile, .. } => {
+            require_project_units_receipt(manifest_value)?;
+            set_project_manifest_field(manifest_value, "project_display_units", profile.clone())?;
+            Ok(Some(true))
+        }
+        Operation::RemoveProjectDisplayUnits { .. } => {
+            remove_project_units_fields(manifest_value)?;
+            Ok(Some(true))
+        }
         Operation::AddProjectPoolRef { path, priority } => {
             add_project_pool_ref(manifest_value, path, *priority)?;
             Ok(Some(true))
@@ -49,6 +76,54 @@ pub(super) fn inverse_project_manifest_operation(
                 "name",
                 serde_json::Value::String(name.clone()),
             )?;
+            Ok(true)
+        }
+        Operation::InitializeProjectDisplayUnits {
+            project_id,
+            profile,
+            receipt,
+        } => {
+            if manifest_value.get("project_display_units").is_some()
+                || manifest_value.get("project_units_seed_receipt").is_some()
+            {
+                return Err(EngineError::Validation(
+                    "Project Working Units are already initialized".to_string(),
+                ));
+            }
+            inverse_operations.push(Operation::RemoveProjectDisplayUnits {
+                project_id: *project_id,
+            });
+            set_project_manifest_field(manifest_value, "project_display_units", profile.clone())?;
+            set_project_manifest_field(
+                manifest_value,
+                "project_units_seed_receipt",
+                receipt.clone(),
+            )?;
+            Ok(true)
+        }
+        Operation::SetProjectDisplayUnits {
+            project_id,
+            profile,
+        } => {
+            require_project_units_receipt(manifest_value)?;
+            let previous = project_manifest_field(manifest_value, "project_display_units")?.clone();
+            inverse_operations.push(Operation::SetProjectDisplayUnits {
+                project_id: *project_id,
+                profile: previous,
+            });
+            set_project_manifest_field(manifest_value, "project_display_units", profile.clone())?;
+            Ok(true)
+        }
+        Operation::RemoveProjectDisplayUnits { project_id } => {
+            let profile = project_manifest_field(manifest_value, "project_display_units")?.clone();
+            let receipt =
+                project_manifest_field(manifest_value, "project_units_seed_receipt")?.clone();
+            inverse_operations.push(Operation::InitializeProjectDisplayUnits {
+                project_id: *project_id,
+                profile,
+                receipt,
+            });
+            remove_project_units_fields(manifest_value)?;
             Ok(true)
         }
         Operation::AddProjectPoolRef { path, priority } => {
@@ -89,6 +164,22 @@ fn set_project_manifest_field(
         .as_object_mut()
         .ok_or_else(|| EngineError::Validation("project manifest is not an object".to_string()))?;
     object.insert(field.to_string(), value);
+    Ok(())
+}
+
+fn require_project_units_receipt(manifest_value: &serde_json::Value) -> Result<(), EngineError> {
+    project_manifest_field(manifest_value, "project_display_units")?;
+    project_manifest_field(manifest_value, "project_units_seed_receipt")?;
+    Ok(())
+}
+
+fn remove_project_units_fields(manifest_value: &mut serde_json::Value) -> Result<(), EngineError> {
+    require_project_units_receipt(manifest_value)?;
+    let object = manifest_value
+        .as_object_mut()
+        .ok_or_else(|| EngineError::Validation("project manifest is not an object".to_string()))?;
+    object.remove("project_display_units");
+    object.remove("project_units_seed_receipt");
     Ok(())
 }
 

@@ -158,7 +158,10 @@ fn existing_object_guard_target(operation: &Operation) -> Option<ObjectId> {
             component_instance_id,
             ..
         } => Some(*component_instance_id),
-        Operation::SetProjectName { project_id, .. } => Some(*project_id),
+        Operation::SetProjectName { project_id, .. }
+        | Operation::InitializeProjectDisplayUnits { project_id, .. }
+        | Operation::SetProjectDisplayUnits { project_id, .. }
+        | Operation::RemoveProjectDisplayUnits { project_id } => Some(*project_id),
         Operation::SetProjectRules { rules_root_id, .. } => Some(*rules_root_id),
         Operation::SetProjectRule { rules_root_id, .. }
         | Operation::DeleteProjectRule { rules_root_id, .. } => Some(*rules_root_id),

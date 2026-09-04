@@ -16,6 +16,18 @@ pub enum Operation {
         project_id: ObjectId,
         name: String,
     },
+    InitializeProjectDisplayUnits {
+        project_id: ObjectId,
+        profile: serde_json::Value,
+        receipt: serde_json::Value,
+    },
+    SetProjectDisplayUnits {
+        project_id: ObjectId,
+        profile: serde_json::Value,
+    },
+    RemoveProjectDisplayUnits {
+        project_id: ObjectId,
+    },
     AddProjectPoolRef {
         path: String,
         priority: u32,

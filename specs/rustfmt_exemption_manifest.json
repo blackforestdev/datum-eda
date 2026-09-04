@@ -13,9 +13,6 @@
     },
     "crates/engine/src/substrate/journal.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 803 (formatted: 804)"
-    },
-    "crates/engine/src/substrate/replay.rs": {
-      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 809 (formatted: 810)"
     }
   }
 }

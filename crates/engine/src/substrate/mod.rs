@@ -392,6 +392,20 @@ pub struct ProjectManifestSummary {
     pub project_id: Uuid,
     pub name: String,
     pub schema_version: Option<u64>,
+    pub project_display_units: Option<serde_json::Value>,
+    pub project_units_seed_receipt: Option<serde_json::Value>,
+}
+
+impl ProjectManifestSummary {
+    fn replay_placeholder(project_id: Uuid) -> Self {
+        Self {
+            project_id,
+            name: String::new(),
+            schema_version: None,
+            project_display_units: None,
+            project_units_seed_receipt: None,
+        }
+    }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DesignModel {

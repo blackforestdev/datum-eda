@@ -16,6 +16,10 @@
 use uuid::Uuid;
 
 use crate::error::EngineError;
+use crate::ir::units::{
+    ProjectUnitsSeedReceipt, UnitsProfile, profile_from_descriptor_values,
+    project_profile_from_value, project_profile_to_value,
+};
 use crate::substrate::{DesignModel, Operation, SourceShardKind};
 
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
@@ -38,6 +42,95 @@ pub fn build_set_project_name(
         .push_op(Operation::SetProjectName { project_id, name })
         .primary_object(project_id)
         .finish()
+}
+
+/// Build the sole journaled mutation for Project Working Units.
+pub fn build_set_project_display_units(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    profile: UnitsProfile,
+) -> Result<PreparedWrite, EngineError> {
+    profile.resolve().map_err(units_validation_error)?;
+    if model.project.project_units_seed_receipt.is_none() {
+        return Err(EngineError::Validation(
+            "Project Working Units cannot change without a readable seed or migration receipt"
+                .to_string(),
+        ));
+    }
+    let project_id = model.project.project_id;
+    BatchComposer::compose(model, provenance)
+        .push_op(Operation::SetProjectDisplayUnits {
+            project_id,
+            profile: project_profile_to_value(profile),
+        })
+        .primary_object(project_id)
+        .finish()
+}
+
+/// Build the atomic one-time initialization used by New Project and the
+/// deterministic pre-feature migration. The receipt must describe exactly the
+/// profile being written and is immutable after this operation.
+pub fn build_initialize_project_display_units(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    profile: UnitsProfile,
+    receipt: &ProjectUnitsSeedReceipt,
+) -> Result<PreparedWrite, EngineError> {
+    profile.resolve().map_err(units_validation_error)?;
+    if model.project.project_display_units.is_some()
+        || model.project.project_units_seed_receipt.is_some()
+    {
+        return Err(EngineError::Validation(
+            "Project Working Units are already initialized".to_string(),
+        ));
+    }
+    let receipt_profile = profile_from_descriptor_values(&receipt.copied_values)
+        .map_err(|reason| EngineError::Validation(format!("invalid Units receipt: {reason:?}")))?;
+    if receipt_profile != profile {
+        return Err(EngineError::Validation(
+            "Project Units receipt does not match the initialized profile".to_string(),
+        ));
+    }
+    let receipt = serde_json::to_value(receipt)
+        .map_err(|error| EngineError::Validation(format!("invalid Units receipt: {error}")))?;
+    let project_id = model.project.project_id;
+    BatchComposer::compose(model, provenance)
+        .push_op(Operation::InitializeProjectDisplayUnits {
+            project_id,
+            profile: project_profile_to_value(profile),
+            receipt,
+        })
+        .primary_object(project_id)
+        .finish()
+}
+
+pub fn project_display_units(model: &DesignModel) -> Result<UnitsProfile, EngineError> {
+    let value = model
+        .project
+        .project_display_units
+        .as_ref()
+        .ok_or_else(|| {
+            EngineError::Validation("Project Working Units are not initialized".to_string())
+        })?;
+    project_profile_from_value(value).map_err(|reason| {
+        EngineError::Validation(format!("invalid Project Working Units: {reason:?}"))
+    })
+}
+
+pub fn project_units_seed_receipt(
+    model: &DesignModel,
+) -> Result<ProjectUnitsSeedReceipt, EngineError> {
+    let value = model
+        .project
+        .project_units_seed_receipt
+        .as_ref()
+        .ok_or_else(|| EngineError::Validation("Project Units receipt is missing".to_string()))?;
+    serde_json::from_value(value.clone())
+        .map_err(|error| EngineError::Validation(format!("invalid Project Units receipt: {error}")))
+}
+
+fn units_validation_error(reason: crate::ir::units::RefusalReason) -> EngineError {
+    EngineError::Validation(format!("invalid Project Working Units: {reason:?}"))
 }
 
 /// Build the batch that replaces the entire project rules list (guards the
@@ -194,6 +287,10 @@ pub(super) const VERBS: &[NativeWriteVerb] = &[
         build: verb_delete_rule,
     },
     NativeWriteVerb {
+        id: "datum.project.set_display_units",
+        build: verb_set_display_units,
+    },
+    NativeWriteVerb {
         id: "datum.project.set_name",
         build: verb_set_name,
     },
@@ -206,6 +303,22 @@ pub(super) const VERBS: &[NativeWriteVerb] = &[
         build: verb_set_rules,
     },
 ];
+
+fn verb_set_display_units(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        profile: serde_json::Value,
+    }
+    let params: Params = parse_verb_params("datum.project.set_display_units", params)?;
+    let profile = project_profile_from_value(&params.profile).map_err(|reason| {
+        EngineError::Validation(format!("invalid Project Working Units: {reason:?}"))
+    })?;
+    build_set_project_display_units(context.model, provenance, profile)
+}
 
 fn verb_set_name(
     context: &NativeWriteContext<'_>,
@@ -283,14 +396,13 @@ mod tests {
     use super::super::genesis::{GenesisSpec, bootstrap_native_project};
     use super::super::test_support::temp_project_root;
     use super::*;
+    use crate::ir::units::*;
     use crate::substrate::{CommitSource, ObjectRevision, ProjectResolver};
 
     fn test_provenance() -> WriteProvenance {
         WriteProvenance::new("unit-test", CommitSource::Test, "project facade test")
     }
 
-    /// Bootstrap a real genesis project and resolve it — the same scaffold
-    /// every CLI project mutation starts from.
     fn resolved_genesis_project(label: &str) -> (PathBuf, DesignModel, Uuid) {
         let root = temp_project_root(label);
         let report = bootstrap_native_project(
@@ -307,8 +419,6 @@ mod tests {
         (root, model, report.rules_uuid)
     }
 
-    /// Mirrors the CLI regression fixture in
-    /// `crates/cli/src/main_tests_project_rules.rs`.
     fn clearance_rule(rule_id: Uuid, name: &str, min_nm: i64) -> serde_json::Value {
         serde_json::json!({
             "uuid": rule_id,
@@ -361,6 +471,112 @@ mod tests {
     }
 
     #[test]
+    fn project_working_units_are_guarded_undoable_and_geometry_independent() {
+        let (root, mut model, _rules_id) = resolved_genesis_project("project_working_units");
+        let board_before = std::fs::read(root.join("board/board.json")).unwrap();
+        let schematic_before = std::fs::read(root.join("schematic/schematic.json")).unwrap();
+        let assert_geometry_unchanged = || {
+            assert_eq!(
+                std::fs::read(root.join("board/board.json")).unwrap(),
+                board_before
+            );
+            assert_eq!(
+                std::fs::read(root.join("schematic/schematic.json")).unwrap(),
+                schematic_before
+            );
+        };
+        let PreFeatureProjectUnitsMigration::Create { profile, receipt } =
+            migrate_pre_feature_project_units(None).unwrap()
+        else {
+            panic!("a pre-feature Project must receive the versioned factory profile")
+        };
+
+        let initialize =
+            build_initialize_project_display_units(&model, test_provenance(), profile, &receipt)
+                .expect("migration should build");
+        assert!(matches!(
+            initialize.batch.operations.as_slice(),
+            [
+                Operation::GuardObjectRevision { .. },
+                Operation::InitializeProjectDisplayUnits { .. }
+            ]
+        ));
+        commit_prepared(&mut model, &root, initialize).expect("migration should commit");
+
+        let mut model = ProjectResolver::new(&root).resolve().unwrap();
+        let immutable_receipt = model.project.project_units_seed_receipt.clone();
+        let mut changed = project_display_units(&model).unwrap();
+        changed.board.unit = LengthUnitChoice::Explicit(LengthUnit::Mil);
+        let set = build_set_project_display_units(&model, test_provenance(), changed)
+            .expect("Project Units edit should build");
+        assert!(matches!(
+            set.batch.operations.as_slice(),
+            [
+                Operation::GuardObjectRevision { .. },
+                Operation::SetProjectDisplayUnits { .. }
+            ]
+        ));
+        let stale = set.clone();
+        commit_prepared(&mut model, &root, set).expect("Project Units edit should commit");
+
+        let changed_model = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(
+            project_display_units(&changed_model).unwrap().board.unit,
+            LengthUnitChoice::Explicit(LengthUnit::Mil)
+        );
+        assert_eq!(
+            changed_model.project.project_units_seed_receipt,
+            immutable_receipt
+        );
+        assert_geometry_unchanged();
+
+        let stale_error = commit_prepared(&mut model, &root, stale)
+            .expect_err("the stale edit must not append or overwrite");
+        assert!(stale_error.to_string().contains("revision"));
+        let after_stale = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(after_stale.journal.len(), 2);
+
+        let mut undo_model = after_stale;
+        undo_model
+            .commit_journal_undo(&root, test_provenance().into())
+            .expect("Project Units edit should undo through the journal");
+        let undone = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(project_display_units(&undone).unwrap(), profile);
+        assert_eq!(undone.project.project_units_seed_receipt, immutable_receipt);
+        assert_geometry_unchanged();
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn project_units_initialization_rejects_a_receipt_from_another_profile() {
+        let (root, model, _rules_id) = resolved_genesis_project("project_units_bad_receipt");
+        let PreFeatureProjectUnitsMigration::Create {
+            profile,
+            mut receipt,
+        } = migrate_pre_feature_project_units(None).unwrap()
+        else {
+            unreachable!()
+        };
+        receipt.copied_values.insert(
+            crate::ir::units::BOARD_LENGTH_KEY.to_owned(),
+            serde_json::Value::String("mil".to_owned()),
+        );
+        let error =
+            build_initialize_project_display_units(&model, test_provenance(), profile, &receipt)
+                .expect_err("receipt/profile mismatch must fail before a write is prepared");
+        assert!(error.to_string().contains("receipt does not match"));
+        assert!(
+            ProjectResolver::new(&root)
+                .resolve()
+                .unwrap()
+                .project
+                .project_display_units
+                .is_none()
+        );
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
     fn create_project_rule_commits_without_guard_and_returns_rule_id() {
         let (root, mut model, rules_root_id) = resolved_genesis_project("project_create_rule");
         let rule_id = Uuid::new_v4();
@@ -373,7 +589,6 @@ mod tests {
         .expect("create rule should build");
         assert_eq!(extracted_id, rule_id);
         assert_eq!(prepared.primary_object_id, Some(rules_root_id));
-        // Creation matches the historical CLI batch shape: no revision guard.
         assert_eq!(prepared.batch.operations.len(), 1);
         assert!(matches!(
             &prepared.batch.operations[0],
