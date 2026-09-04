@@ -641,11 +641,14 @@ bounded brief is:
    accessibility states. Angle exposes decimal-degree precision only.
 3. In `project-preferences-category-study.html`, add a clearly separated
    Units-only owner-review target while retaining all non-Units content as clay.
-   The doorway is `Edit > Preferences > Project Preferences… > Units`, disabled
-   without an open Project. Draw one Units category, scope
+   The terminal menu command is `Edit > Preferences > Project Preferences…`,
+   disabled without an open Project; it opens the window directly, with no Units
+   submenu. Show available and unavailable doorway examples separately—never two
+   duplicate Project Preferences commands in one menu. Draw one Units category, scope
    `Project · <project name>`, the same eight values under Project Working Units
    authority, read-only seed/migration receipt provenance, immediate journaled
-   and undoable commits, stale/refusal behavior, and no Navigator entry. No
+   and undoable commits, stale/refusal behavior, Reset-to-recorded-seed/migration
+   behavior that never re-reads Global, and no Navigator entry. No
    Global, Publish/document, Revision, planned, or empty category is editable.
 4. Both targets preserve the owned-window, close/reopen, Escape/search/caret,
    explanation, immediate-save, responsive, and non-color grammar. Provide
@@ -714,6 +717,20 @@ ambiguous display-only angle behavior, no exact scientific-notation grammar or
 future expression boundary, and runtime schema/catalog semantics that still
 contradict the proposed contract. All six must be reconciled before UNIT-I02V
 can be presented again.
+
+Codex review of Claude commit `b89bb91` found that its own twenty-three
+assertions did not test the controlling values or complete state inventory. It
+remains a correction candidate, not completed visual evidence: Board and Drill
+show `Automatic (0.01 mm)` instead of `0.001 mm`; the changed Board/mil example
+shows `0.001 in` instead of `0.1 mil`; U-B retains the retired shared-precision
+table; U-G and U-H retain the old length-precision/angle-notation order and
+incomplete accessibility inventory; the scope caption still says six; the
+Project doorway draws enabled and disabled commands simultaneously and implies
+another submenu; its 700px layout is unusable; and it lacks actual changed,
+search, cross-system, unreadable, greyscale, keyboard, and screen-reader states.
+The next protected correction must assert exact resolved labels for every
+automatic table cell and absence of every retired passage, not merely key and
+option counts.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
 

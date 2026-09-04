@@ -192,9 +192,9 @@ Each of the three precision descriptors has the same structural token inventory:
 
 | Quantity | `mm` | `um` | `mil` | `inch` |
 |---|---:|---:|---:|---:|
-| Board/layout | 3 places | 1 place | 1 place | 5 places |
-| Drill/hole | 3 places | — | 1 place | 4 places |
-| Schematic geometry | 2 places | — | 0 places | — |
+| Board/layout | 3 places (`0.001 mm`) | 1 place (`0.1 um`) | 1 place (`0.1 mil`) | 5 places (`0.00001 in`) |
+| Drill/hole | 3 places (`0.001 mm`) | — | 1 place (`0.1 mil`) | 4 places (`0.0001 in`) |
+| Schematic geometry | 2 places (`0.01 mm`) | — | 0 places (`1 mil`) | — |
 
 An explicit precision never changes when the measurement system or unit changes;
 only `Automatic` re-resolves. Decimal display rounds half away from zero and
@@ -289,10 +289,13 @@ future seed only. It never changes interactive display, contextual bare-number
 defaults, or any other state in an open or existing Project.
 
 Production acceptance also requires a real Project Preferences **Units** slice.
-Its doorway is `Edit > Preferences > Project Preferences… > Units`; the command
-is disabled without an open Project, the native window is owned/input-modal to
-Datum, and no setting appears in the Navigator. The visible scope is
-`Project · <project name>`. The slice contains the same eight typed values under
+Its terminal menu command is `Edit > Preferences > Project Preferences…`; it is
+disabled without an open Project and opens the window directly. **Units** is the
+selected category inside the window, never a third menu/submenu level. The native
+window is owned/input-modal to Datum, and no setting appears in the Navigator.
+The available and disabled doorway states are separate examples; the same menu
+must never show duplicate enabled and disabled Project Preferences commands.
+The visible scope is `Project · <project name>`. The slice contains the same eight typed values under
 Project Working Units authority, not Global provenance, plus the durable seed
 receipt as read-only provenance. Immediate control commits use the canonical
 journaled Project mutation, are undoable, and never touch geometry. The initial
@@ -305,6 +308,13 @@ the current machine's Global values. Migration atomically writes the Project
 profile and a migration receipt through Project authority, leaves geometry
 byte-identical, and is idempotent. An unreadable or invalid legacy profile is
 preserved and refused rather than partially guessed.
+
+A Project row's Reset action means **Reset to this Project's recorded seed or
+migration value**. It reads the durable receipt, submits that value through the
+same journaled mutation, and is undoable. It never re-resolves the current Global
+default and never changes the receipt. Reset is unavailable with a visible typed
+reason when the applicable receipt/value cannot be read; it never guesses or
+falls back to a machine preference.
 
 GUI numeric fields in a Project pass a typed `QuantityContext` and that
 Project's immutable-at-read `ResolvedUnitsProfile` snapshot to the service.

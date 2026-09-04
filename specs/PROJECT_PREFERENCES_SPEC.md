@@ -10,7 +10,11 @@
 Project Preferences is Datum's writable settings surface for the currently
 open Project. It is reached through
 `Edit > Preferences > Project Preferences…`, which is disabled without an open
-Project. It is not a Navigator node and opening it performs no mutation.
+Project. That is a terminal menu command which opens the window directly;
+**Units** is selected in the window's category rail, not exposed as another
+submenu. Available and disabled states are separate menu examples and never
+appear as duplicate commands in one menu. It is not a Navigator node and opening
+it performs no mutation.
 
 Global Preferences remains a separate command and authority. A read-only Global
 row may link to the corresponding Project setting, but the two stores and
@@ -99,6 +103,10 @@ The Units-only slice uses immediate per-control commits, not staged Apply/OK/
 Cancel. Each selection validates a complete `UnitsProfile` and submits one
 canonical journaled Project mutation; on success it updates the read model and
 offers ordinary Project Undo, while refusal leaves the last valid state intact.
+Reset restores that row to the value recorded in this Project's immutable seed
+or migration receipt through the same journaled, undoable mutation. It never
+reads today's Global default, never changes the receipt, and is unavailable with
+a typed reason if the receipt/value cannot be read.
 An external generation change triggers re-read and explicit stale-edit refusal,
 never last-writer-wins. Window close discards search, open choices, transient
 notices, and focus but not committed Project values. Reopen selects Units with
