@@ -102,7 +102,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
         | HitTarget::GlobalPreferencesModal
-        | HitTarget::GlobalPreferencesSection
+        | HitTarget::GlobalPreferencesSection(_)
         | HitTarget::GlobalPreferencesSearch
         | HitTarget::GlobalPreferencesSettingName(_)
         | HitTarget::GlobalPreferencesControl(_)
@@ -200,7 +200,7 @@ fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
             label: id(),
         },
         HitTarget::GlobalPreferencesModal,
-        HitTarget::GlobalPreferencesSection,
+        HitTarget::GlobalPreferencesSection("appearance".to_owned()),
         HitTarget::GlobalPreferencesSearch,
         HitTarget::GlobalPreferencesSettingName(id()),
         HitTarget::GlobalPreferencesControl(id()),

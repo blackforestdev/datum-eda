@@ -74,6 +74,11 @@ pub(super) struct GuiArgs {
     /// dialog still projects the production service; this only seeds it open.
     #[arg(long = "open-global-preferences", default_value_t = false)]
     pub(super) open_global_preferences: bool,
+    /// Capture/test affordance for the real Units-only Project Preferences
+    /// window. Opening still resolves and, when required, migrates the real
+    /// Project through the production journal path.
+    #[arg(long = "open-project-preferences", default_value_t = false)]
+    pub(super) open_project_preferences: bool,
     /// Capture/test affordance: focus the first leaf showing the named content
     /// (`board` | `schematic`) at boot, so the "view one pane while another is
     /// focused" states can be screenshotted for owner validation. Applied in both
@@ -122,6 +127,7 @@ pub(super) struct LaunchState {
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) workspace_include_review: bool,
     pub(super) open_global_preferences: bool,
+    pub(super) open_project_preferences: bool,
 }
 impl GuiArgs {
     pub(super) fn visual_window_size(&self) -> Result<(u32, u32)> {
@@ -412,6 +418,7 @@ impl GuiArgs {
             terminal_sessions,
             workspace_include_review,
             open_global_preferences: self.open_global_preferences,
+            open_project_preferences: self.open_project_preferences,
         })
     }
 }
@@ -485,6 +492,14 @@ mod initial_layout_tests {
         assert!(!absent.open_global_preferences);
         let present = GuiArgs::parse_from(["datum-gui", "--open-global-preferences"]);
         assert!(present.open_global_preferences);
+    }
+
+    #[test]
+    fn project_preferences_capture_flag_is_explicit() {
+        let absent = GuiArgs::parse_from(["datum-gui"]);
+        assert!(!absent.open_project_preferences);
+        let present = GuiArgs::parse_from(["datum-gui", "--open-project-preferences"]);
+        assert!(present.open_project_preferences);
     }
 
     #[test]

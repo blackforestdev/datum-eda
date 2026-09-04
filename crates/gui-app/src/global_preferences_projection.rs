@@ -4,6 +4,10 @@ use datum_gui_protocol::{
     ConsoleFeedbackDuration, GlobalPreferenceControlUi, GlobalPreferencesNoticeUi, TerminalTheme,
     WorkspaceUiState,
 };
+use eda_engine::ir::units::{
+    BOARD_LENGTH_KEY, BOARD_PRECISION_KEY, DRILL_HOLE_KEY, DRILL_PRECISION_KEY,
+    ResolvedUnitsProfile, SCHEMATIC_GEOMETRY_KEY, SCHEMATIC_PRECISION_KEY,
+};
 use eda_engine::preferences::{
     GlobalPreferenceRow, LegacyConsoleMigrationState, PreferenceControlPresentation,
     PreferenceLiveConsumer, PreferenceServiceStatus, PreferenceSurfaceEntry,
@@ -20,7 +24,13 @@ pub(super) fn provenance_label(
         return format!("Preserved · {SCOPE}");
     }
     if row.user_value.is_some() {
-        format!("Set by you · {SCOPE}")
+        if row.key.as_str().starts_with("datum.units.") {
+            format!("Set by you · {SCOPE} · Default for new Projects · Open Projects unaffected")
+        } else {
+            format!("Set by you · {SCOPE}")
+        }
+    } else if row.key.as_str().starts_with("datum.units.") {
+        format!("Factory default · {SCOPE} · Default for new Projects · Open Projects unaffected")
     } else {
         format!("Factory default · {SCOPE}")
     }
@@ -105,35 +115,82 @@ pub(super) fn repository_notice(
 pub(super) fn control_projection(
     control: &PreferenceControlPresentation,
     row: &GlobalPreferenceRow,
+    units: Option<&ResolvedUnitsProfile>,
+) -> GlobalPreferenceControlUi {
+    control_value_projection(
+        control,
+        row.effective_value.as_ref(),
+        row.key.as_str(),
+        units,
+    )
+}
+
+pub(super) fn control_value_projection(
+    control: &PreferenceControlPresentation,
+    effective_value: Option<&Value>,
+    key: &str,
+    units: Option<&ResolvedUnitsProfile>,
 ) -> GlobalPreferenceControlUi {
     match control {
         PreferenceControlPresentation::BooleanSwitch {
             off_label,
             on_label,
         } => GlobalPreferenceControlUi::Boolean {
-            value: row
-                .effective_value
-                .as_ref()
-                .and_then(Value::as_bool)
-                .unwrap_or(false),
+            value: effective_value.and_then(Value::as_bool).unwrap_or(false),
             off_label: off_label.clone(),
             on_label: on_label.clone(),
         },
         PreferenceControlPresentation::EnumeratedSingleChoice { choices } => {
             GlobalPreferenceControlUi::SingleChoice {
-                value: row
-                    .effective_value
-                    .as_ref()
+                value: effective_value
                     .and_then(Value::as_str)
                     .unwrap_or("unavailable")
                     .to_owned(),
                 choices: choices
                     .iter()
-                    .map(|choice| (choice.value.clone(), choice.label.clone()))
+                    .map(|choice| {
+                        (
+                            choice.value.clone(),
+                            resolved_units_choice_label(key, &choice.value, &choice.label, units),
+                        )
+                    })
                     .collect(),
             }
         }
     }
+}
+
+fn resolved_units_choice_label(
+    key: &str,
+    value: &str,
+    fallback: &str,
+    units: Option<&ResolvedUnitsProfile>,
+) -> String {
+    let Some(units) = units else {
+        return fallback.to_owned();
+    };
+    let resolved = match key {
+        BOARD_LENGTH_KEY | BOARD_PRECISION_KEY => units.board,
+        DRILL_HOLE_KEY | DRILL_PRECISION_KEY => units.drill,
+        SCHEMATIC_GEOMETRY_KEY | SCHEMATIC_PRECISION_KEY => units.schematic,
+        _ => return fallback.to_owned(),
+    };
+    if value == "follow_system" {
+        return format!("Follow system ({})", resolved.unit.suffix());
+    }
+    if value == "automatic" {
+        let decimals = match resolved.precision {
+            eda_engine::ir::units::DisplayPrecision::DecimalPlaces(places) => places,
+            eda_engine::ir::units::DisplayPrecision::ExactNanometer => return fallback.to_owned(),
+        };
+        let resolution = if decimals == 0 {
+            "1".to_owned()
+        } else {
+            format!("0.{}1", "0".repeat(decimals.saturating_sub(1) as usize))
+        };
+        return format!("Automatic ({resolution} {})", resolved.unit.suffix());
+    }
+    fallback.to_owned()
 }
 
 pub(super) fn bool_consumer_value(

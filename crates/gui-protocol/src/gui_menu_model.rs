@@ -39,6 +39,8 @@ pub struct GuiMenuItem {
     pub not_built: Option<String>,
     #[serde(default)]
     pub submenu: Option<String>,
+    #[serde(default)]
+    pub requires_project: bool,
 }
 
 impl GuiMenuItem {
@@ -61,6 +63,10 @@ impl GuiMenuItem {
             self.binding(),
             GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_)
         )
+    }
+
+    pub fn is_enabled(&self, project_open: bool) -> bool {
+        self.is_phase_one_enabled() && (!self.requires_project || project_open)
     }
 }
 
@@ -169,12 +175,20 @@ mod tests {
             GuiMenuBinding::Submenu("edit.preferences")
         );
         let children = &edit.submenus["edit.preferences"];
-        assert_eq!(children.len(), 1);
+        assert_eq!(children.len(), 2);
         assert_eq!(children[0].label, "Global Preferences…");
         assert_eq!(
             children[0].gui_local.as_deref(),
             Some("preferences.global.open")
         );
+        assert_eq!(children[1].label, "Project Preferences…");
+        assert_eq!(
+            children[1].gui_local.as_deref(),
+            Some("preferences.project.open")
+        );
+        assert!(children[1].requires_project);
+        assert!(!children[1].is_enabled(false));
+        assert!(children[1].is_enabled(true));
     }
 
     #[test]

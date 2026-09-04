@@ -81,9 +81,12 @@ impl Runtime {
             HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
             HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
             HitTarget::GlobalPreferencesModal => true,
-            HitTarget::GlobalPreferencesSection => {
-                self.session.workspace_mut().ui.global_preferences.focus =
-                    datum_gui_protocol::GlobalPreferencesFocus::SectionNavigation;
+            HitTarget::GlobalPreferencesSection(section_id) => {
+                self.session
+                    .workspace_mut()
+                    .ui
+                    .global_preferences
+                    .select_section(section_id);
                 self.invalidate_frame();
                 true
             }
@@ -244,6 +247,16 @@ impl Runtime {
             self.session.workspace_mut().ui.active_submenu = Some(submenu.to_owned());
             self.session.workspace_mut().ui.menu_focus_index = 0;
             self.set_application_focus(ApplicationFocus::Overlay);
+            self.invalidate_frame();
+            return true;
+        }
+        if !item.is_enabled(self.workspace().backing.is_some()) {
+            self.session.workspace_mut().ui.active_menu = None;
+            self.session.workspace_mut().ui.active_submenu = None;
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Menu,
+                format!("{menu_name} / {label} requires an open Project"),
+            );
             self.invalidate_frame();
             return true;
         }

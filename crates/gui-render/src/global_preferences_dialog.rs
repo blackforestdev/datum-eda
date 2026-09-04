@@ -69,7 +69,7 @@ pub(super) fn render_global_preferences_dialog(
     ));
     let title_x = header.x + 14.0;
     draw_text(
-        "Global Preferences — Datum",
+        &dialog.title,
         title_x,
         header.y + 13.0,
         design_tokens::typography::BODY_SIZE,
@@ -78,12 +78,12 @@ pub(super) fn render_global_preferences_dialog(
         text,
     );
     let title_width = measured_text_run_width_px(
-        "Global Preferences — Datum",
+        &dialog.title,
         design_tokens::typography::BODY_SIZE,
         TextFace::UiStrong,
     );
     let scope = draw_header_chip(
-        "Global · this device",
+        &dialog.scope,
         title_x + title_width + 18.0,
         header.y + 11.0,
         quads,
@@ -144,42 +144,48 @@ pub(super) fn render_global_preferences_dialog(
         separator,
         design_tokens::chrome::BORDER_SUBTLE,
     ));
-    let section = RectPx {
-        x: rail.x,
-        y: rail.y + if narrow { 8.0 } else { 12.0 },
-        width: rail.width - if narrow { 0.0 } else { 1.0 },
-        height: 32.0,
-    };
-    quads.push(Quad::from_rect(section, design_tokens::chrome::SURFACE_02));
-    quads.push(Quad::from_rect(
-        RectPx {
-            x: section.x,
-            y: section.y,
-            width: 2.0,
-            height: section.height,
-        },
-        TEXT_ACCENT,
-    ));
-    if focus_is(dialog, &GlobalPreferencesFocus::SectionNavigation) {
-        push_rect_border(quads, section, design_tokens::chrome::STATUS_INFO, 2.0);
+    for (index, (section_id, section_label)) in dialog.sections.iter().enumerate() {
+        let active = section_id == &dialog.section_id;
+        let section = RectPx {
+            x: rail.x + if narrow { index as f32 * 150.0 } else { 0.0 },
+            y: rail.y
+                + if narrow {
+                    8.0
+                } else {
+                    12.0 + index as f32 * 36.0
+                },
+            width: if narrow { 150.0 } else { rail.width - 1.0 },
+            height: 32.0,
+        };
+        if active {
+            quads.push(Quad::from_rect(section, design_tokens::chrome::SURFACE_02));
+            quads.push(Quad::from_rect(
+                RectPx {
+                    x: section.x,
+                    y: section.y,
+                    width: 2.0,
+                    height: section.height,
+                },
+                TEXT_ACCENT,
+            ));
+        }
+        if active && focus_is(dialog, &GlobalPreferencesFocus::SectionNavigation) {
+            push_rect_border(quads, section, design_tokens::chrome::STATUS_INFO, 2.0);
+        }
+        draw_text(
+            section_label,
+            section.x + 18.0,
+            section.y + 8.0,
+            design_tokens::typography::BODY_SIZE,
+            if active { TEXT_PRIMARY } else { TEXT_SECONDARY },
+            TextFace::Ui,
+            text,
+        );
+        hits.push(HitRegion {
+            target: HitTarget::GlobalPreferencesSection(section_id.clone()),
+            rect: section,
+        });
     }
-    draw_text(
-        if narrow {
-            "Appearance  v"
-        } else {
-            "Appearance"
-        },
-        section.x + 18.0,
-        section.y + 8.0,
-        design_tokens::typography::BODY_SIZE,
-        TEXT_PRIMARY,
-        TextFace::Ui,
-        text,
-    );
-    hits.push(HitRegion {
-        target: HitTarget::GlobalPreferencesSection,
-        rect: section,
-    });
 
     let content_x = if narrow { card.x } else { rail.x + rail.width };
     let content_y = if narrow {
@@ -236,7 +242,11 @@ pub(super) fn render_global_preferences_dialog(
     draw_search_icon(search.x + 12.0, search.y + 12.0, quads);
     draw_text(
         if dialog.search_query.is_empty() {
-            "search settings…"
+            if dialog.section_id == "units" {
+                "search Units settings…"
+            } else {
+                "search Appearance settings…"
+            }
         } else {
             &dialog.search_query
         },
@@ -289,10 +299,9 @@ pub(super) fn render_global_preferences_dialog(
                 vec![truncate_text(message, 108)],
                 design_tokens::chrome::STATUS_ERROR,
             ),
-            GlobalPreferencesNoticeUi::PreservedUnreadable(_) => (
+            GlobalPreferencesNoticeUi::PreservedUnreadable(message) => (
                 vec![
-                    "Preferences could not be read. Factory defaults are active for this session."
-                        .to_owned(),
+                    truncate_text(message, 108),
                     "Damaged data remains preserved; controls are unavailable.".to_owned(),
                 ],
                 design_tokens::chrome::STATUS_WARN,
@@ -324,6 +333,7 @@ pub(super) fn render_global_preferences_dialog(
     }
 
     let visible: Vec<_> = dialog.visible_rows().collect();
+    let total_visible = visible.len();
     if !dialog.search_query.is_empty() {
         draw_text(
             &format!(
@@ -340,7 +350,10 @@ pub(super) fn render_global_preferences_dialog(
         );
         y += 22.0;
     }
-    for row in visible {
+    let first_visible = dialog.scroll_row.min(total_visible.saturating_sub(1));
+    let body_bottom = card.y + card.height;
+    let mut rendered_rows = 0usize;
+    for row in visible.into_iter().skip(first_visible) {
         let explained = dialog.explanation_key.as_deref() == Some(row.key.as_str());
         let choice_count = match &row.control {
             GlobalPreferenceControlUi::SingleChoice { choices, .. }
@@ -355,6 +368,9 @@ pub(super) fn render_global_preferences_dialog(
         let choice_height = choice_count as f32 * 28.0;
         let explanation_height = if explained { 96.0 } else { 0.0 };
         let row_height = setting_height + provenance_height + choice_height + explanation_height;
+        if rendered_rows > 0 && y + row_height > body_bottom {
+            break;
+        }
         let row_rect = RectPx {
             x: content_x,
             y,
@@ -431,7 +447,13 @@ pub(super) fn render_global_preferences_dialog(
                 };
                 draw_boolean_control(
                     *value,
-                    if *value { on_label } else { off_label },
+                    if !row.writable {
+                        "⛝ Unavailable"
+                    } else if *value {
+                        on_label
+                    } else {
+                        off_label
+                    },
                     rect,
                     focused_control,
                     row.writable,
@@ -441,11 +463,15 @@ pub(super) fn render_global_preferences_dialog(
                 rect
             }
             GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-                let label = choices
-                    .iter()
-                    .find(|(candidate, _)| candidate == value)
-                    .map(|(_, label)| label.as_str())
-                    .unwrap_or(value);
+                let label = if row.writable {
+                    choices
+                        .iter()
+                        .find(|(candidate, _)| candidate == value)
+                        .map(|(_, label)| label.as_str())
+                        .unwrap_or(value)
+                } else {
+                    "⛝ Unavailable"
+                };
                 let width = if row.writable {
                     (measured_text_run_width_px(
                         label,
@@ -621,6 +647,30 @@ pub(super) fn render_global_preferences_dialog(
             });
         }
         y += row_height;
+        rendered_rows += 1;
+    }
+    if total_visible > rendered_rows {
+        let track = RectPx {
+            x: card.x + card.width - 6.0,
+            y: search_band.y + search_band.height + 4.0,
+            width: 3.0,
+            height: (body_bottom - search_band.y - search_band.height - 8.0).max(24.0),
+        };
+        quads.push(Quad::from_rect(track, design_tokens::chrome::BORDER_SUBTLE));
+        let fraction = (rendered_rows as f32 / total_visible as f32).clamp(0.08, 1.0);
+        let thumb_height = (track.height * fraction).max(24.0);
+        let maximum_first = total_visible.saturating_sub(rendered_rows).max(1);
+        let progress =
+            (first_visible.min(maximum_first) as f32 / maximum_first as f32).clamp(0.0, 1.0);
+        quads.push(Quad::from_rect(
+            RectPx {
+                x: track.x,
+                y: track.y + (track.height - thumb_height) * progress,
+                width: track.width,
+                height: thumb_height,
+            },
+            TEXT_SECONDARY,
+        ));
     }
 }
 

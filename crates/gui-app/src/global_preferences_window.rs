@@ -110,7 +110,7 @@ impl GlobalPreferencesWindowSurface {
         self.prepared.as_ref()?.hit_test(x, y).cloned()
     }
 
-    pub(super) fn render(&mut self, runtime: &Runtime) -> Result<()> {
+    pub(super) fn render(&mut self, runtime: &Runtime, project_preferences: bool) -> Result<()> {
         let frame = match self.surface.get_current_texture() {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
@@ -124,9 +124,18 @@ impl GlobalPreferencesWindowSurface {
             }
             Err(error) => anyhow::bail!("acquire Global Preferences surface texture: {error}"),
         };
+        let mut project_workspace;
+        let workspace = if project_preferences {
+            project_workspace = runtime.workspace().clone();
+            project_workspace.ui.global_preferences =
+                project_workspace.ui.project_preferences.clone();
+            &project_workspace
+        } else {
+            runtime.workspace()
+        };
         if self.retained.is_none() {
             self.retained = Some(RetainedScene::from_workspace_for_surface(
-                runtime.workspace(),
+                workspace,
                 self.config.width,
                 self.config.height,
                 self.scale_factor,
@@ -134,7 +143,7 @@ impl GlobalPreferencesWindowSurface {
         }
         if self.prepared.is_none() {
             self.prepared = Some(PreparedScene::from_workspace_with_terminal_renderer(
-                runtime.workspace(),
+                workspace,
                 self.config.width,
                 self.config.height,
                 self.scale_factor,
@@ -291,6 +300,24 @@ impl App {
                 }
                 self.request_redraw_if_needed();
             }
+            WindowEvent::MouseWheel { delta, .. } => {
+                let rows = match delta {
+                    MouseScrollDelta::LineDelta(_, y) => y.round() as i32,
+                    MouseScrollDelta::PixelDelta(position) => (position.y / 40.0).round() as i32,
+                };
+                if rows != 0
+                    && let Some(runtime) = &mut self.runtime
+                    && runtime
+                        .session
+                        .workspace_mut()
+                        .ui
+                        .global_preferences
+                        .scroll_rows(rows)
+                {
+                    runtime.invalidate_frame();
+                }
+                self.request_redraw_if_needed();
+            }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.modifiers = modifiers.state();
@@ -302,7 +329,7 @@ impl App {
             WindowEvent::RedrawRequested => {
                 if let (Some(runtime), Some(surface)) =
                     (&self.runtime, &mut self.global_preferences_surface)
-                    && let Err(error) = surface.render(runtime)
+                    && let Err(error) = surface.render(runtime, false)
                 {
                     fatal_gui_error(event_loop, "render Global Preferences window", error);
                 }
