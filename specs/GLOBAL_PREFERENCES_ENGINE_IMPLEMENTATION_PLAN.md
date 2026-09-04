@@ -732,6 +732,22 @@ The next protected correction must assert exact resolved labels for every
 automatic table cell and absence of every retired passage, not merely key and
 option counts.
 
+Codex source and rendered review of Claude correction `f8521cd` accepts the
+eight-control construction, exact Automatic-resolution mappings, Project Reset
+contract, lossless-editing contract, complete interaction/accessibility states,
+and usable 1300px/700px layouts. It still rejects the Project prototype as
+completed UNIT-I02R evidence because its authority boundaries contradict the
+new target. The page-level PM-040 amendment still says that no Project
+Preferences implementation is drawn; the target introduction says everything
+below it remains unchanged clay; and the visible historical Units row after
+the target still advertises six descriptors and an angle-format control. The
+final protected correction is boundary-only: distinguish the open P-A through
+P-J owner-review target from the original clay category study with explicit
+status text and a divider, retract the obsolete no-drawing sentence without
+claiming approval, and reconcile the historical Units row to eight settings
+with decimal-degree angle precision. Preserve every accepted `f8521cd`
+control, value, behavior, layout, exclusion, and non-approval boundary.
+
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903 -->
 
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A -->
