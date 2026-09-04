@@ -60,6 +60,28 @@ journal shard, artifact metadata shard, or import-map shard can own source
 bytes, but none can make facts authoritative without resolution into the
 `DesignModel`.
 
+### 0.2.1 Project Working Units And Exact Input
+
+Status: **Current implementation** for UNIT-I03B production-candidate scope.
+
+Canonical geometry remains signed integer nanometers. The engine-owned Units
+service parses checked decimal/scientific scalar-with-unit input, formats typed
+quantity projections, resolves per-quantity units and precision, and returns
+typed provenance or refusal without consulting GUI state. `UnitsProfile` is an
+eight-descriptor value schema. Global Preferences owns defaults copied once at
+Project creation; `ProjectDisplayUnits` and its immutable itemized seed receipt
+are the only Working Units authority for an existing Project. Project changes
+use the guarded journal operation path, are undoable, and do not rewrite board
+or schematic geometry.
+
+GUI Project fields bind an immutable-at-edit `ResolvedUnitsProfile` snapshot
+and named quantity/field context. CLI and MCP retain exact integer `_nm`
+compatibility and expose the same additive resolver for either a canonical
+integer or a mutually exclusive expression. An explicit suffix is
+profile-independent; a bare scalar requires complete explicit context.
+Interchange adapters retain their format-owned grammar and delegate only exact
+checked conversion, never display Preferences.
+
 ### 0.3 Source Shards As Persistence Partitions
 
 Target shard classes:
