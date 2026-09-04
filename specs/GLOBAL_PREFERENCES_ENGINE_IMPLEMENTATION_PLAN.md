@@ -809,6 +809,16 @@ unauthorized.
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03B -->
 ### UNIT-I03B — Global and Project Units surface integration
 
+On 2026-09-04, after UNIT-I03A completed with all exact-core and governance
+proofs green, the owner directed Datum to “please proceed” with the canonical
+next step. This authorizes UNIT-I03B only: construction and proof of the Global
+default and Units-only Project Preferences production candidate described
+below. It does not authorize a new dependency, UNIT-I03V owner acceptance,
+UNIT-I03C production closure, Publish behavior, Revision behavior, or any
+non-Units Project Preferences category.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03B-OWNER-AUTHORIZATION-20260904 -->
+
 Route the eight Global default controls and the Units-only Project Preferences
 window through UNIT-I03A. Integrate real New-Project seed/receipt, Project-owned
 journal/Undo/stale/refusal behavior, GUI numeric fields, compatible CLI/MCP

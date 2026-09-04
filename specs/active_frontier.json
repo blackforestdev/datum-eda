@@ -5785,10 +5785,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "ready",
-      "authorization": "none",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-unit-i03b-execution-20260904",
+        "claimed_at": "2026-09-04T04:43:31Z",
+        "heartbeat_at": "2026-09-04T04:43:31Z",
+        "expires_at": "2026-09-04T12:43:31Z",
+        "scope": [
+          "Implement and prove only UNIT-I03B Global-default and Units-only Project Preferences integration, seed and migration receipts, cross-surface adapters, accessibility, and real-Project production-candidate behavior without owner acceptance or production closure"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "7abd2b6afe46"
+      },
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5910,7 +5923,7 @@
           {
             "id": "UNIT-I03B",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Integrate the Global-default and Units-only Project Preferences windows, New-Project seed/receipt, legacy-Project migration, GUI/CLI/MCP/interchange adapters, accessibility, and real-Project proofs as a production candidate.",
             "depends_on": ["UNIT-I03A"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03B"}],
