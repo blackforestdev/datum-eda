@@ -498,7 +498,26 @@ mod tests {
         let service = open(&directory);
         assert_eq!(service.status(), &PreferenceServiceStatus::DefaultsOnly);
         assert!(!directory.0.join("repository").exists());
-        assert_eq!(service.rows().len(), 3);
+        assert_eq!(
+            service
+                .rows()
+                .iter()
+                .map(|row| row.key.as_str())
+                .collect::<Vec<_>>(),
+            vec![
+                "datum.console.feedback_duration",
+                "datum.accessibility.reduced_motion",
+                "datum.accessibility.high_contrast_noncolor",
+                "datum.units.system",
+                "datum.units.board_length",
+                "datum.units.board_length_precision",
+                "datum.units.drill_hole",
+                "datum.units.drill_hole_precision",
+                "datum.units.schematic_geometry",
+                "datum.units.schematic_geometry_precision",
+                "datum.units.angle_precision",
+            ]
+        );
         assert_eq!(
             service.rows()[0].effective_value,
             Some(Value::String("6s".to_owned()))
