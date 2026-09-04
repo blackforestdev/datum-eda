@@ -5790,15 +5790,15 @@
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-unit-i02r-industrial-revision-20260903",
-        "claimed_at": "2026-09-03T13:49:51Z",
-        "heartbeat_at": "2026-09-03T13:49:51Z",
-        "expires_at": "2026-09-03T21:49:51Z",
+        "session": "codex-unit-i02r-visual-audit-20260903",
+        "claimed_at": "2026-09-04T02:14:59Z",
+        "heartbeat_at": "2026-09-04T02:14:59Z",
+        "expires_at": "2026-09-04T10:14:59Z",
         "scope": [
           "Reconcile all six owner-returned industrial Units gaps across the controlling requirement, descriptor catalog, Project Preferences contract, implementation plan, Frontier, and bounded Claude-owned handoff without implementing runtime behavior"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "c0564d0"
+      "head": "b89bb91"
       },
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
