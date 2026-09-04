@@ -58,6 +58,7 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "datum.proposal.update_panel_projection",
             "datum.proposal.validate",
             "datum.query.source_shards",
+            "datum.units.resolve_length",
         ]
     );
 
@@ -144,6 +145,30 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "query",
             "{project_root}",
             "resolve-debug",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.units.resolve_length")
+            .expect("exact Units resolver handoff command"),
+        &[
+            "datum-eda",
+            "units",
+            "resolve-length",
+            "--canonical-nm",
+            "{canonical_nm}",
+            "--expression",
+            "{expression}",
+            "--quantity",
+            "{quantity}",
+            "--unit",
+            "{unit}",
+            "--system",
+            "{system}",
+            "--field",
+            "{field}",
+            "--project-id",
+            "{project_id}",
         ],
     );
     assert_catalog_entry(
