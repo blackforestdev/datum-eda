@@ -5697,7 +5697,6 @@
         "dat-shared-units-engine-build-915"
       ],
       "unblocks": [
-        "dat-shared-units-surface-parity-s9x",
         "dat-global-preferences-completion-f84"
       ],
       "completion": {
@@ -5759,7 +5758,6 @@
             "No Revision, Publish, provider, dependency, or successor execution is implied."
           ],
           "unblocks_issue_ids": [
-            "dat-shared-units-surface-parity-s9x",
             "dat-global-preferences-completion-f84"
           ],
           "selection": "explicit_frontier_update",
@@ -5785,23 +5783,11 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "canonical_next": true,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-unit-i03c-closure-20260904",
-        "claimed_at": "2026-09-04T11:33:25Z",
-        "heartbeat_at": "2026-09-04T11:33:25Z",
-        "expires_at": "2026-09-04T19:33:25Z",
-        "scope": [
-          "Run and reconcile only the UNIT-I03C governed production-acceptance proof matrix after owner approval; do not add dependencies, expand Project Preferences, or change Publish or Revision behavior"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "44200d3123f6"
-      },
+      "claim": null,
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5811,7 +5797,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I03C",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5966,11 +5952,20 @@
           {
             "id": "UNIT-I03C",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Re-run the complete governed proof matrix against the owner-approved candidate and only then record Units production acceptance and close the tracker.",
             "depends_on": ["UNIT-I03V"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03C"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "commit", "revision": "662dcdb"},
+              {"kind": "commit", "revision": "57baf17"},
+              {"kind": "commit", "revision": "7331467"},
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03C-PRODUCTION-ACCEPTED"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -5983,7 +5978,8 @@
           "authorizes_successor": false,
           "selects_successor": false
         }
-      }
+      },
+      "landing_commit": "7331467"
     },
     {
       "key": "GLOBAL-PREFERENCES-COMPLETION",
@@ -6000,9 +5996,9 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "blocked",
+      "state": "planned",
       "authorization": "owner_decision",
-      "canonical_next": false,
+      "canonical_next": true,
       "parallel": false,
       "summary": "Expand the accepted Global Preferences vertical slice through the complete active catalog, managed/recovery behavior, accessibility, API and seed parity, real Projects, and production acceptance while Revision descriptors remain absent.",
       "dependencies": [

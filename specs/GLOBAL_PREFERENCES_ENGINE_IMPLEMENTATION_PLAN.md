@@ -896,6 +896,54 @@ capture, compatibility fixture, and source-health/dependency check against the
 owner-approved candidate. Only this step may record Units production acceptance
 and close the tracker. Partial parity or planning/prototype evidence cannot.
 
+UNIT-I03C completed the governed production-acceptance closure on 2026-09-04.
+The final proof run found and corrected three previously unreachable inventory
+and recovery defects: commit `662dcdb` adds the exact Units resolver terminal
+handoff to its production catalog proof; commit `57baf17` preserves displayed
+values while disabling both controls and Reset in the unreadable Preferences
+state; and commit `7331467` reconciles the complete native-write and eleven-row
+default-service inventories. Each correction passed its focused proof before the
+complete matrix was restarted.
+
+The guarded `cargo test --workspace --all-targets` run is green from the final
+committed state, including 893 CLI tests, 300 GUI-app tests with eight intentional
+environment-bound skips, 151 GUI-render tests, 1,009 engine tests, daemon and
+test-harness suites, and the long M3 acceptance gate. Strict guarded workspace
+Clippy passes with warnings denied. The MCP self-test passes 411 tests with 45
+intentional skips, alignment passes, and the source-health, dependency,
+conversion-inventory, spec-parity, spec-governance, evidence-traceability,
+progress, project-state, MCP-taxonomy, daemon-write, menu-model, and Cargo-
+resource gates all pass.
+
+Fresh compositor captures from a disposable native Project were rendered and
+inspected at `/tmp/unit-i03c-global-preferences-native.png` and
+`/tmp/unit-i03c-project-preferences-native.png`. They prove the independent
+owned Global window with only Appearance and Units, immediate-save scope and no
+duplicate transaction buttons, plus the Units-only Project window with exact
+resolved Follow-system/Automatic labels, immutable seed-or-migration provenance,
+scrolling, and no Navigator presence. The disposable process was stopped after
+capture and no user Project was opened or changed.
+
+The umbrella drift route passes every preceding gate and then stops only at the
+separately tracked Console visual golden mismatch: 3,778 pixels (0.384318%) in
+`routine-focused.golden.png`. That stored image still depicts the permanent
+Revision Navigator groups withdrawn by PM-038 while current runtime correctly
+omits them. This is unrelated visual-authority debt tracked by
+`dat-console-golden-revision-recovery-mtv`; it is a related, non-blocking issue,
+was not refreshed or blessed from the Units lane, and does not weaken any Units
+matrix row.
+
+The eight-descriptor exact Units service, Global defaults for future Projects,
+Project Working Units authority for existing Projects, lossless editing,
+deterministic seed/migration receipts, exact CLI/MCP compatibility, accessibility,
+and preference-independent interchange boundary are therefore production-
+accepted. This closes UNIT-I03C and `dat-shared-units-surface-parity-s9x`. It
+does not authorize a dependency, Publish or Revision behavior, any non-Units
+Project Preferences category, or Global Preferences completion; GP-CM00 remains
+its own owner boundary.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03C-PRODUCTION-ACCEPTED -->
+
 ## 6. Global Preferences completion
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM00 -->
