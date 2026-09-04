@@ -11,9 +11,6 @@
     "crates/cli/src/commands/project/validate.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 1035 (formatted: 1041)"
     },
-    "crates/engine/src/import/kicad/parser_helpers.rs": {
-      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 974 (formatted: 976)"
-    },
     "crates/engine/src/substrate/journal.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 803 (formatted: 804)"
     },

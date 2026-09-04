@@ -231,11 +231,14 @@ pub(super) fn extract_sheet_pins(sheet_instance_uuid: Uuid, block: &str) -> Vec<
     ports
 }
 
-pub(super) fn mm_point_to_nm(x_mm: f64, y_mm: f64) -> Point {
-    Point::new(
-        (x_mm * 1_000_000.0).round() as i64,
-        (y_mm * 1_000_000.0).round() as i64,
-    )
+pub(super) fn mm_point_to_nm(x_mm: f64, y_mm: f64) -> Option<Point> {
+    let x = crate::ir::units::checked_f64_length(x_mm, crate::ir::units::LengthUnit::Millimeter)
+        .ok()?
+        .get();
+    let y = crate::ir::units::checked_f64_length(y_mm, crate::ir::units::LengthUnit::Millimeter)
+        .ok()?
+        .get();
+    Some(Point::new(x, y))
 }
 
 pub(super) fn pin_at_position(

@@ -179,7 +179,7 @@ fn parse_xy_like(trimmed: &str, form: &str) -> Option<Point> {
     let mut parts = rest[..end].split_whitespace();
     let x = parts.next()?.parse::<f64>().ok()?;
     let y = parts.next()?.parse::<f64>().ok()?;
-    Some(mm_point_to_nm(x, y))
+    mm_point_to_nm(x, y)
 }
 
 fn distance_nm(a: Point, b: Point) -> i64 {

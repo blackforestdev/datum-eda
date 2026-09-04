@@ -29,10 +29,11 @@ pub(super) fn kicad_parse_layer_table(contents: &str) -> std::collections::HashM
             let mut parts = inner.split_whitespace();
             if let Some(id_str) = parts.next()
                 && let Ok(id) = id_str.parse::<i32>()
-                    && let Some(name) = parts.next() {
-                        let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
-                        map.insert(name.to_string(), id);
-                    }
+                && let Some(name) = parts.next()
+            {
+                let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
+                map.insert(name.to_string(), id);
+            }
         }
     }
     map
@@ -180,9 +181,10 @@ pub(super) fn kicad_block_hidden(block: &str) -> bool {
     block.contains("(hide yes)")
 }
 
-/// Convert mm to nm.
-pub(super) fn kicad_mm_to_nm(mm: f64) -> i64 {
-    (mm * 1_000_000.0).round() as i64
+pub(super) fn parse_kicad_mm(token: &str) -> Option<i64> {
+    eda_engine::ir::units::parse_fixed_length(token, eda_engine::ir::units::LengthUnit::Millimeter)
+        .ok()
+        .map(|value| value.get())
 }
 
 /// Parse a `(form x y ...)` anywhere in a line and return the (x, y) in nm.
@@ -192,12 +194,9 @@ pub(super) fn kicad_parse_xy_anywhere(line: &str, form: &str) -> Option<PointNm>
     let rest = &line[start..];
     let end = rest.find(')').unwrap_or(rest.len());
     let mut parts = rest[..end].split_whitespace();
-    let x = parts.next()?.parse::<f64>().ok()?;
-    let y = parts.next()?.parse::<f64>().ok()?;
-    Some(PointNm {
-        x: kicad_mm_to_nm(x),
-        y: kicad_mm_to_nm(y),
-    })
+    let x = parse_kicad_mm(parts.next()?)?;
+    let y = parse_kicad_mm(parts.next()?)?;
+    Some(PointNm { x, y })
 }
 
 /// Parse the stroke/line width from a KiCad block.
@@ -211,8 +210,8 @@ pub(super) fn kicad_parse_width_nm(block: &str) -> i64 {
             if let Some(w_pos) = rest.find("(width ") {
                 let after = &rest[w_pos + "(width ".len()..];
                 let end = after.find(')').unwrap_or(after.len());
-                if let Ok(mm) = after[..end].trim().parse::<f64>() {
-                    return kicad_mm_to_nm(mm);
+                if let Some(value) = parse_kicad_mm(after[..end].trim()) {
+                    return value;
                 }
             }
         }
@@ -222,8 +221,8 @@ pub(super) fn kicad_parse_width_nm(block: &str) -> i64 {
         let trimmed = line.trim();
         if trimmed.starts_with("(width ") {
             let rest = trimmed.trim_start_matches("(width ").trim_end_matches(')');
-            if let Ok(mm) = rest.split_whitespace().next().unwrap_or("").parse::<f64>() {
-                return kicad_mm_to_nm(mm);
+            if let Some(value) = parse_kicad_mm(rest.split_whitespace().next().unwrap_or("")) {
+                return value;
             }
         }
     }
@@ -271,20 +270,19 @@ pub(super) fn kicad_parse_at(block: &str) -> Option<(PointNm, i32)> {
     let rest = &trimmed[start..];
     let end = rest.find(')').unwrap_or(rest.len());
     let mut parts = rest[..end].split_whitespace();
-    let x = parts.next()?.parse::<f64>().ok()?;
-    let y = parts.next()?.parse::<f64>().ok()?;
-    let rotation = parts
-        .next()
-        .and_then(|s| s.parse::<f64>().ok())
-        .map(|r| r.round() as i32)
-        .unwrap_or(0);
-    Some((
-        PointNm {
-            x: kicad_mm_to_nm(x),
-            y: kicad_mm_to_nm(y),
-        },
-        rotation,
-    ))
+    let x = parse_kicad_mm(parts.next()?)?;
+    let y = parse_kicad_mm(parts.next()?)?;
+    let rotation = match parts.next() {
+        Some(token) => eda_engine::ir::units::parse_decimal_degrees(
+            token,
+            eda_engine::ir::units::CanonicalAngleScale::new(1),
+            true,
+        )
+        .ok()
+        .and_then(|parsed| i32::try_from(parsed.canonical_value).ok())?,
+        None => 0,
+    };
+    Some((PointNm { x, y }, rotation))
 }
 
 /// Parse `(xy x y)` points from a block (used for polygons).
@@ -297,13 +295,10 @@ pub(super) fn kicad_parse_xy_points(block: &str) -> Vec<PointNm> {
         let Some(end) = after.find(')') else { break };
         let mut parts = after[..end].split_whitespace();
         if let (Some(x), Some(y)) = (
-            parts.next().and_then(|v| v.parse::<f64>().ok()),
-            parts.next().and_then(|v| v.parse::<f64>().ok()),
+            parts.next().and_then(parse_kicad_mm),
+            parts.next().and_then(parse_kicad_mm),
         ) {
-            points.push(PointNm {
-                x: kicad_mm_to_nm(x),
-                y: kicad_mm_to_nm(y),
-            });
+            points.push(PointNm { x, y });
         }
         rest = &after[end + 1..];
     }
@@ -375,11 +370,12 @@ pub(super) fn kicad_nested_blocks_by_form(
                         trimmed.as_bytes().get(prefix.len()),
                         Some(b' ') | Some(b'\t') | Some(b')') | None
                     )
-            }) {
-                capturing_form = Some(form.clone());
-                current.clear();
-                depth = 0;
-            }
+            })
+        {
+            capturing_form = Some(form.clone());
+            current.clear();
+            depth = 0;
+        }
 
         if let Some(form) = capturing_form.as_ref() {
             current.push(line.to_string());
@@ -442,8 +438,8 @@ pub(super) fn kicad_parse_font_height_nm(block: &str) -> i64 {
             let rest = &trimmed[pos + "(size ".len()..];
             let end = rest.find(')').unwrap_or(rest.len());
             let mut parts = rest[..end].split_whitespace();
-            if let Some(h) = parts.next().and_then(|v| v.parse::<f64>().ok()) {
-                return kicad_mm_to_nm(h);
+            if let Some(value) = parts.next().and_then(parse_kicad_mm) {
+                return value;
             }
         }
     }
@@ -459,9 +455,7 @@ pub(super) fn kicad_parse_font_thickness_nm(block: &str) -> Option<i64> {
         let inner = trimmed
             .trim_start_matches("(thickness ")
             .trim_end_matches(')');
-        if let Ok(mm) = inner.trim().parse::<f64>() {
-            return Some(kicad_mm_to_nm(mm));
-        }
+        return parse_kicad_mm(inner.trim());
     }
     None
 }

@@ -6,8 +6,21 @@ pub(crate) fn parse_move_component_arg(value: &str) -> Result<MoveComponentInput
         bail!("--move-component expects <uuid>:<x_mm>:<y_mm>[:<rotation_deg>]");
     }
     let uuid = Uuid::parse_str(parts[0])?;
-    let x_mm = parts[1].parse::<f64>()?;
-    let y_mm = parts[2].parse::<f64>()?;
+    let parse_mm = |token: &str| {
+        eda_engine::ir::units::parse_fixed_length(
+            token,
+            eda_engine::ir::units::LengthUnit::Millimeter,
+        )
+        .map(|value| value.get())
+        .map_err(|refusal| {
+            anyhow::anyhow!(
+                "invalid exact millimeter coordinate {token:?}: {:?}",
+                refusal.reason
+            )
+        })
+    };
+    let x_nm = parse_mm(parts[1])?;
+    let y_nm = parse_mm(parts[2])?;
     let rotation = if parts.len() == 4 {
         Some(parts[3].parse::<i32>()?)
     } else {
@@ -15,10 +28,7 @@ pub(crate) fn parse_move_component_arg(value: &str) -> Result<MoveComponentInput
     };
     Ok(MoveComponentInput {
         uuid,
-        position: eda_engine::ir::geometry::Point::new(
-            eda_engine::ir::units::mm_to_nm(x_mm),
-            eda_engine::ir::units::mm_to_nm(y_mm),
-        ),
+        position: eda_engine::ir::geometry::Point::new(x_nm, y_nm),
         rotation,
     })
 }
@@ -125,6 +135,20 @@ pub(crate) fn parse_apply_replacement_plan_arg(
         package_uuid,
         part_uuid,
     })
+}
+
+#[cfg(test)]
+mod units_tests {
+    use super::*;
+
+    #[test]
+    fn move_component_fixed_mm_adapter_is_exact_and_refuses_sub_nm() {
+        let id = Uuid::nil();
+        let input = parse_move_component_arg(&format!("{id}:5.08:1e-3")).unwrap();
+        assert_eq!(input.position.x, 5_080_000);
+        assert_eq!(input.position.y, 1_000);
+        assert!(parse_move_component_arg(&format!("{id}:0.0000001:0")).is_err());
+    }
 }
 
 pub(crate) fn parse_apply_replacement_policy_arg(

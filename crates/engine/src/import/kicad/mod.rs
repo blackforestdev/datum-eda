@@ -10,6 +10,7 @@ use crate::substrate::{ImportKey, ImportMapEntry};
 mod board_objects;
 mod footprint;
 mod net_refs;
+mod numeric;
 mod pad_expansion;
 mod parser_helpers;
 mod schematic_bus;
@@ -514,7 +515,7 @@ fn parse_pad_size(block: &str) -> Option<(i64, i64)> {
         let mut parts = rest.split_whitespace();
         let x = parts.next()?.parse::<f64>().ok()?;
         let y = parts.next()?.parse::<f64>().ok()?;
-        Some((mm_to_nm_import(x), mm_to_nm_import(y)))
+        Some((checked_mm_to_nm_import(x)?, checked_mm_to_nm_import(y)?))
     })
 }
 
@@ -526,7 +527,7 @@ fn parse_pad_drill(block: &str) -> Option<i64> {
         let end = rest.find(')').unwrap_or(rest.len());
         let rest = &rest[..end];
         let first = rest.split_whitespace().next()?.parse::<f64>().ok()?;
-        Some(mm_to_nm_import(first))
+        checked_mm_to_nm_import(first)
     })
 }
 
@@ -613,12 +614,14 @@ fn arc_from_three_points(start: Point, mid: Point, end: Point) -> Option<(Point,
     Some((center, radius, start_angle, end_angle))
 }
 
-fn mm_to_nm_import(mm: f64) -> i64 {
-    (mm * 1_000_000.0).round() as i64
+fn checked_mm_to_nm_import(mm: f64) -> Option<i64> {
+    crate::ir::units::checked_f64_length(mm, crate::ir::units::LengthUnit::Millimeter)
+        .ok()
+        .map(|value| value.get())
 }
 
 fn block_width_nm_import(block: &str) -> Option<i64> {
-    block_width_mm(block).map(mm_to_nm_import)
+    block_width_mm(block).and_then(checked_mm_to_nm_import)
 }
 
 fn block_layer_name_anywhere(block: &str) -> Option<String> {
@@ -637,7 +640,10 @@ fn parse_xy_like_anywhere(trimmed: &str, form: &str) -> Option<Point> {
     let mut parts = rest[..end].split_whitespace();
     let x = parts.next()?.parse::<f64>().ok()?;
     let y = parts.next()?.parse::<f64>().ok()?;
-    Some(Point::new(mm_to_nm_import(x), mm_to_nm_import(y)))
+    Some(Point::new(
+        checked_mm_to_nm_import(x)?,
+        checked_mm_to_nm_import(y)?,
+    ))
 }
 
 fn block_start_end_points_anywhere(block: &str) -> Option<(Point, Point)> {

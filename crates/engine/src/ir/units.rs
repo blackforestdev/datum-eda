@@ -5,12 +5,18 @@
 //! floating-point adapters at the end of this module remain temporarily for
 //! existing callers; UNIT-I03 owns their migration to this checked service.
 
+mod adapter;
 mod angle;
 mod edit;
 mod migration;
 mod profile;
+mod project;
 mod tokens;
 
+pub use adapter::{
+    AutomationLengthInput, AutomationLengthRefusal, AutomationLengthResult, ExplicitLengthContext,
+    resolve_automation_length,
+};
 pub use angle::{
     AngleRefusal, CanonicalAngleScale, FormattedAngle, ParsedAngle, format_decimal_degrees,
     parse_decimal_degrees,
@@ -23,6 +29,11 @@ pub use profile::{
     DecimalDegreePrecision, LengthPrecisionChoice, LengthQuantity, LengthUnitChoice, QuantityUnits,
     ResolvedQuantityUnits, ResolvedUnitsProfile, UnitsProfile, automatic_precision,
     follow_system_unit, unit_allowed,
+};
+pub use project::{
+    FACTORY_UNITS_PROFILE_V1, PROJECT_UNITS_SCHEMA_VERSION, PreFeatureProjectUnitsMigration,
+    ProjectUnitsMigrationRefusal, ProjectUnitsSeedReceipt, ProjectUnitsSeedSource,
+    migrate_pre_feature_project_units, project_profile_from_value, project_profile_to_value,
 };
 pub use tokens::{
     ANGLE_PRECISION_KEY, BOARD_LENGTH_KEY, BOARD_PRECISION_KEY, DRILL_HOLE_KEY,
@@ -504,11 +515,24 @@ fn format_decimal(value: Nanometers, unit_nm: i128, places: u8) -> Option<(Strin
     ))
 }
 
-/// Legacy conversion adapter. New authored-input paths must use
-/// [`parse_length`] so overflow and non-integral nanometers are refused.
-/// Convert millimeters to nanometers.
-pub fn mm_to_nm(mm: f64) -> i64 {
-    (mm * 1_000_000.0).round() as i64
+/// Parse one locale-independent scalar in a caller-declared fixed unit.
+/// This is the adapter seam for legacy fixed-unit CLI and interchange grammar.
+pub fn parse_fixed_length(token: &str, unit: LengthUnit) -> Result<Nanometers, UnitsRefusal> {
+    parse_length(ParseLengthRequest {
+        quantity: QuantityKind::Length,
+        token,
+        contextual_unit: Some(unit),
+        measurement_system: unit.measurement_system(),
+        precision: DisplayPrecision::ExactNanometer,
+    })
+    .map(|parsed| parsed.canonical_value)
+}
+
+/// Checked compatibility boundary for parsers that have not yet retained the
+/// original numeric token. It delegates to the exact scalar service and can
+/// refuse; it never rounds, truncates, or saturates.
+pub fn checked_f64_length(value: f64, unit: LengthUnit) -> Result<Nanometers, UnitsRefusal> {
+    parse_fixed_length(&value.to_string(), unit)
 }
 
 /// Convert nanometers to millimeters.
@@ -516,19 +540,9 @@ pub fn nm_to_mm(nm: i64) -> f64 {
     nm as f64 / 1_000_000.0
 }
 
-/// Convert mils (thousandths of inch) to nanometers.
-pub fn mil_to_nm(mil: f64) -> i64 {
-    (mil * 25_400.0).round() as i64
-}
-
 /// Convert nanometers to mils.
 pub fn nm_to_mil(nm: i64) -> f64 {
     nm as f64 / 25_400.0
-}
-
-/// Convert inches to nanometers.
-pub fn inch_to_nm(inch: f64) -> i64 {
-    (inch * 25_400_000.0).round() as i64
 }
 
 /// Angle: tenths of degree. 0 = right, 900 = up, 1800 = left, 2700 = down.
@@ -766,18 +780,44 @@ mod tests {
     }
 
     #[test]
-    fn mm_round_trip() {
-        assert_eq!(mm_to_nm(1.0), 1_000_000);
-        assert_eq!(mm_to_nm(0.1), 100_000);
-        assert_eq!(mm_to_nm(0.001), 1_000);
-        assert!((nm_to_mm(mm_to_nm(2.54)) - 2.54).abs() < 1e-10);
+    fn fixed_unit_compatibility_adapter_is_checked() {
+        assert_eq!(
+            parse_fixed_length("1", LengthUnit::Millimeter)
+                .unwrap()
+                .get(),
+            1_000_000
+        );
+        assert_eq!(
+            parse_fixed_length("0.001", LengthUnit::Millimeter)
+                .unwrap()
+                .get(),
+            1_000
+        );
+        assert_eq!(
+            checked_f64_length(2.54, LengthUnit::Millimeter)
+                .unwrap()
+                .get(),
+            2_540_000
+        );
+        assert_eq!(
+            checked_f64_length(0.000_000_1, LengthUnit::Millimeter)
+                .unwrap_err()
+                .reason,
+            RefusalReason::NonIntegralNanometer
+        );
     }
 
     #[test]
     fn mil_round_trip() {
-        assert_eq!(mil_to_nm(1.0), 25_400);
-        assert_eq!(mil_to_nm(10.0), 254_000);
-        assert!((nm_to_mil(mil_to_nm(100.0)) - 100.0).abs() < 1e-10);
+        assert_eq!(
+            parse_fixed_length("1", LengthUnit::Mil).unwrap().get(),
+            25_400
+        );
+        assert_eq!(
+            parse_fixed_length("10", LengthUnit::Mil).unwrap().get(),
+            254_000
+        );
+        assert!((nm_to_mil(2_540_000) - 100.0).abs() < 1e-10);
     }
 
     #[test]

@@ -4,6 +4,7 @@ use crate::board::{Stackup, StackupLayer, StackupLayerType};
 use crate::error::EngineError;
 use crate::ir::geometry::{Point, Polygon};
 
+pub(super) use super::numeric::{checked_mm_to_nm, parse_kicad_rotation};
 use super::symbol_helpers::mm_point_to_nm;
 
 pub(super) fn count_top_level_form_lines(contents: &str, form: &str) -> usize {
@@ -141,11 +142,12 @@ fn nested_blocks_by_form_with_max_indent(
                         trimmed.as_bytes().get(prefix.len()),
                         Some(b' ') | Some(b'\t') | Some(b')') | None
                     )
-            }) {
-                capturing_form = Some(form.clone());
-                current.clear();
-                depth = 0;
-            }
+            })
+        {
+            capturing_form = Some(form.clone());
+            current.clear();
+            depth = 0;
+        }
 
         if let Some(form) = capturing_form.as_ref() {
             current.push(line.to_string());
@@ -222,7 +224,7 @@ pub(super) fn parse_at_point(trimmed: &str) -> Option<Point> {
     let mut parts = rest.split_whitespace();
     let x = parts.next()?.parse::<f64>().ok()?;
     let y = parts.next()?.parse::<f64>().ok()?;
-    Some(mm_point_to_nm(x, y))
+    mm_point_to_nm(x, y)
 }
 
 pub(super) fn block_xy_points(block: &str) -> Vec<Point> {
@@ -253,7 +255,9 @@ pub(super) fn parse_xy_points_from_line(line: &str) -> Vec<Point> {
             rest = &after[end + 1..];
             continue;
         };
-        points.push(mm_point_to_nm(x, y));
+        if let Some(point) = mm_point_to_nm(x, y) {
+            points.push(point);
+        }
         rest = &after[end + 1..];
     }
 
@@ -314,8 +318,7 @@ pub(super) fn parse_at_rotation(trimmed: &str) -> Option<i32> {
     let mut parts = rest.split_whitespace();
     parts.next()?;
     parts.next()?;
-    let rotation = parts.next()?.parse::<f64>().ok()?;
-    Some(rotation.round() as i32)
+    parse_kicad_rotation(parts.next()?)
 }
 
 pub(super) fn extract_footprint_property(block: &str, key: &str) -> Option<String> {
@@ -433,7 +436,7 @@ pub(super) fn parse_xy_like(trimmed: &str, form: &str) -> Option<Point> {
     let mut parts = rest.split_whitespace();
     let x = parts.next()?.parse::<f64>().ok()?;
     let y = parts.next()?.parse::<f64>().ok()?;
-    Some(mm_point_to_nm(x, y))
+    mm_point_to_nm(x, y)
 }
 
 pub(super) fn block_polygon(block: &str) -> Option<Polygon> {
@@ -939,10 +942,11 @@ pub(super) fn parse_kicad_layer_table(contents: &str) -> std::collections::HashM
                     let mut parts = inner.split_whitespace();
                     if let Some(id_str) = parts.next()
                         && let Ok(id) = id_str.parse::<i32>()
-                            && let Some(name) = parts.next() {
-                                let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
-                                map.insert(name.to_string(), id);
-                            }
+                        && let Some(name) = parts.next()
+                    {
+                        let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
+                        map.insert(name.to_string(), id);
+                    }
                 }
             }
         }
@@ -967,8 +971,4 @@ pub(super) fn resolve_layer_id(
             "unknown KiCad layer name: {name:?} (not present in PCB layer table and not in fallback set)"
         ))
     })
-}
-
-pub(super) fn mm_to_nm(mm: f64) -> i64 {
-    (mm * 1_000_000.0).round() as i64
 }
