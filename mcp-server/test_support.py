@@ -11,6 +11,7 @@ from fake_daemon_support_proposals import FakeDaemonClientProposalsMixin
 from fake_daemon_support_queries import FakeDaemonClientQueriesMixin
 from fake_daemon_support_relationships import FakeDaemonClientRelationshipsMixin
 from fake_daemon_support_replacements import FakeDaemonClientReplacementsMixin
+from fake_daemon_support_units import FakeDaemonClientUnitsMixin
 
 
 class FakeDaemonClient(
@@ -24,5 +25,6 @@ class FakeDaemonClient(
     FakeDaemonClientRelationshipsMixin,
     FakeDaemonClientReplacementsMixin,
     FakeDaemonClientQueriesMixin,
+    FakeDaemonClientUnitsMixin,
 ):
     pass

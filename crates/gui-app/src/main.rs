@@ -206,7 +206,7 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     if args.open_global_preferences {
         state.ui.global_preferences.reset_transient_view();
         state.ui.global_preferences.open = true;
-        state.ui.focus = ApplicationFocus::Overlay;
+        keyboard_focus::initialize_application_focus(&mut state, ApplicationFocus::Overlay);
     }
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let (width, height) = args.visual_window_size()?;
@@ -800,17 +800,20 @@ impl Runtime {
             open_global_preferences,
             open_project_preferences,
         } = launch_state;
-        // The initially-focused leaf seeds the warm per-leaf camera store; its
-        // camera is the fit camera the launch path already computed.
+        // The initially-focused leaf seeds its warm camera from the launch fit.
         let initial_focus = state.ui.layout.focused;
-        state.ui.focus = ApplicationFocus::Editor(initial_focus);
+        let initial_application_focus = if open_global_preferences {
+            ApplicationFocus::Overlay
+        } else {
+            ApplicationFocus::Editor(initial_focus)
+        };
+        keyboard_focus::initialize_application_focus(&mut state, initial_application_focus);
         let mut global_preferences =
             global_preferences_runtime::GlobalPreferencesCoordinator::from_platform()?;
         global_preferences.publish_projection(&mut state.ui);
         if open_global_preferences {
             state.ui.global_preferences.reset_transient_view();
             state.ui.global_preferences.open = true;
-            state.ui.focus = ApplicationFocus::Overlay;
         }
         let initial_content = state.ui.layout.focused_content();
         let initial_pane_camera = match initial_content {
