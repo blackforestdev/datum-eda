@@ -782,6 +782,30 @@ lifecycles so Global Units are future-Project seeds only. No GUI production
 acceptance is claimed, and UNIT-I03B does not start until these exact-core and
 migration gates are green.
 
+UNIT-I03A completed on 2026-09-04 in commits `7972fbd`, `add4e98`, `4403dae`,
+and `4665c8c`. The engine now owns one exact eight-field Units profile, the
+complete per-quantity Automatic precision tables, explicit same-system and
+cross-system override state, lossless edit-session primitives, exact checked
+decimal/scientific length parsing, and exact decimal-degree V1 angle
+parse/format behavior. CLI, MCP, Eagle, KiCad, preference-schema, and Project
+aggregate seams delegate to that service or refuse unsupported input; the
+public rival conversion helpers are removed. Legacy descriptor migration is
+planned before mutation, preserves/refuses invalid angle state, fans the retired
+shared precision into only missing quantity fields, and records both retired
+and live identities in its receipt. Pre-feature Project migration is sourced
+from the versioned Datum factory profile rather than current machine defaults.
+
+Proof passed without a new dependency: 1,004 engine tests, 894 CLI tests, 126
+GUI-protocol tests, all doctests, strict guarded Clippy with warnings denied,
+the Units conversion inventory, and the evidence, source-health, governance,
+parity, progress, dependency, Cargo-resource, and alignment gates. This closes
+the exact-core execution slice only. No Global or Project Units window, live
+Project mutation, running-app acceptance, Publish behavior, Revision behavior,
+or Units production acceptance is claimed, and UNIT-I03B remains separately
+unauthorized.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A-EXACT-CORE -->
+
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03B -->
 ### UNIT-I03B — Global and Project Units surface integration
 

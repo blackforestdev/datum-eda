@@ -5785,23 +5785,10 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "ready",
+      "authorization": "none",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-unit-i03a-execution-20260903",
-        "claimed_at": "2026-09-04T03:12:33Z",
-        "heartbeat_at": "2026-09-04T03:12:33Z",
-        "expires_at": "2026-09-04T11:12:33Z",
-        "scope": [
-          "Implement and prove only the UNIT-I03A exact eight-field Units engine, schema, migrations, adapter seams, lossless edit primitives, decimal-degree and scientific parsing, and rival-conversion removal without GUI integration or production acceptance"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "83dc5ac53a54"
-      },
     "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
@@ -5811,7 +5798,7 @@
       ],
       "completion": {
         "outcome": "The exact Units service is production-accepted across every surface, with Preferences retaining descriptor ownership and the real wgpu window providing GUI proof.",
-        "canonical_next_step_id": "UNIT-I03A",
+        "canonical_next_step_id": "UNIT-I03B",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -5904,11 +5891,21 @@
           {
             "id": "UNIT-I03A",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement the exact eight-field engine/profile, per-quantity precision, lossless edit primitives, decimal-degree input/display, scientific notation, migrations, adapter seams, and rival-conversion removal without claiming GUI production acceptance.",
             "depends_on": ["UNIT-I02V"],
             "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03A"}],
-            "completion_evidence": []
+            "completion_evidence": [
+              {"kind": "commit", "revision": "7972fbd"},
+              {"kind": "commit", "revision": "add4e98"},
+              {"kind": "commit", "revision": "4403dae"},
+              {"kind": "commit", "revision": "4665c8c"},
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03A-EXACT-CORE"
+              }
+            ]
           },
           {
             "id": "UNIT-I03B",
