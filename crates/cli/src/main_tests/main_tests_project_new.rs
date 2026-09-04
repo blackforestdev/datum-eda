@@ -58,6 +58,26 @@ fn project_new_creates_native_scaffold() {
     assert_eq!(project_value["schematic"], "schematic/schematic.json");
     assert_eq!(project_value["board"], "board/board.json");
     assert_eq!(project_value["rules"], "rules/rules.json");
+    assert_eq!(project_value["project_display_units"]["system"], "metric");
+    assert_eq!(
+        project_value["project_display_units"]["board_length"],
+        "follow_system"
+    );
+    assert_eq!(
+        project_value["project_units_seed_receipt"]["source"]["kind"],
+        "global_defaults"
+    );
+    assert_eq!(
+        project_value["project_units_seed_receipt"]["source"]["repository_generation"],
+        "factory-defaults"
+    );
+    assert_eq!(
+        project_value["project_units_seed_receipt"]["copied_values"]
+            .as_object()
+            .unwrap()
+            .len(),
+        8
+    );
     let rules_value: serde_json::Value = serde_json::from_str(
         &std::fs::read_to_string(&rules_json).expect("rules.json should read"),
     )

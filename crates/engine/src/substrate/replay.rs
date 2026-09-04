@@ -37,16 +37,17 @@ pub(super) fn validate_and_replay_journal(
     let mut valid = Vec::new();
     let mut current_revision = compute_model_revision(project_id, shards, objects);
     if let Some(first) = journal.first()
-        && first.before_model_revision != current_revision {
-            return validate_promoted_journal_tip(
-                project_root,
-                project_id,
-                shards,
-                objects,
-                journal,
-                diagnostics,
-            );
-        }
+        && first.before_model_revision != current_revision
+    {
+        return validate_promoted_journal_tip(
+            project_root,
+            project_id,
+            shards,
+            objects,
+            journal,
+            diagnostics,
+        );
+    }
 
     for (index, transaction) in journal.iter().enumerate() {
         if let Err(message) = validate_transaction_links(transaction, &valid) {
@@ -523,11 +524,7 @@ fn apply_transaction_operations_to_objects(
     journal_prefix: &[TransactionRecord],
 ) -> Result<(), EngineError> {
     let mut model = DesignModel {
-        project: ProjectManifestSummary {
-            project_id: *project_id,
-            name: String::new(),
-            schema_version: None,
-        },
+        project: ProjectManifestSummary::replay_placeholder(*project_id),
         model_revision: compute_model_revision(project_id, shards, objects),
         source_shards: shards.to_vec(),
         objects: objects.clone(),

@@ -36,19 +36,10 @@ pub(super) fn apply_operation(
         return Ok(());
     }
     match operation {
-        Operation::SetProjectName { project_id, name } => {
-            model.project.name = name.clone();
-            let object = model
-                .objects
-                .get_mut(project_id)
-                .ok_or(EngineError::NotFound {
-                    object_type: "domain_object",
-                    uuid: *project_id,
-                })?;
-            object.object_revision = ObjectRevision(object.object_revision.0 + 1);
-            diff.modified.push(*project_id);
-            Ok(())
-        }
+        Operation::SetProjectName { .. }
+        | Operation::InitializeProjectDisplayUnits { .. }
+        | Operation::SetProjectDisplayUnits { .. }
+        | Operation::RemoveProjectDisplayUnits { .. } => unreachable!("handled before match"),
         Operation::SetProjectRules { rules_root_id, .. } => {
             bump_existing_object(&mut model.objects, *rules_root_id, Some(diff))
         }

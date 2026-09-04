@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use super::{
@@ -31,7 +32,8 @@ pub const FACTORY_UNITS_PROFILE_V1: UnitsProfile = UnitsProfile {
     angle_precision: DecimalDegreePrecision::Decimal1,
 };
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
 pub enum ProjectUnitsSeedSource {
     GlobalDefaults {
         repository_generation: String,
@@ -40,7 +42,7 @@ pub enum ProjectUnitsSeedSource {
     FactoryMigrationV1,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ProjectUnitsSeedReceipt {
     pub source: ProjectUnitsSeedSource,
     pub copied_values: BTreeMap<String, Value>,

@@ -57,6 +57,7 @@ pub enum PreferenceLiveConsumer {
     ConsoleFeedbackTimer,
     ReducedMotion,
     HighContrastNonColor,
+    FutureProjectUnits,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -155,6 +156,7 @@ impl PreferenceSurfaceCatalog {
                 PreferenceLiveConsumer::HighContrastNonColor => {
                     &["GUI renderer", "terminal renderer"]
                 }
+                PreferenceLiveConsumer::FutureProjectUnits => &["ProjectDisplayUnits"],
             };
             if expected_consumers
                 .iter()
@@ -267,14 +269,22 @@ pub fn gp_f05_surface_catalog(
     registry: &DescriptorRegistry,
 ) -> Result<PreferenceSurfaceCatalog, SurfaceCatalogRefusal> {
     let appearance = PreferenceSectionId::parse("appearance")?;
+    let units = PreferenceSectionId::parse("units")?;
     PreferenceSurfaceCatalog::new(
         registry,
-        vec![PreferenceSection {
-            id: appearance.clone(),
-            label: "Appearance".to_owned(),
-            order: 10,
-        }],
         vec![
+            PreferenceSection {
+                id: appearance.clone(),
+                label: "Appearance".to_owned(),
+                order: 10,
+            },
+            PreferenceSection {
+                id: units.clone(),
+                label: "Units".to_owned(),
+                order: 20,
+            },
+        ],
+        [
             PreferenceSurfaceEntry {
                 key: PreferenceKey::parse("datum.console.feedback_duration")
                     .expect("registered GP-F05 key"),
@@ -318,8 +328,117 @@ pub fn gp_f05_surface_catalog(
                 },
                 live_consumer: PreferenceLiveConsumer::HighContrastNonColor,
             },
-        ],
+        ]
+        .into_iter()
+        .chain(units_surface_entries(units))
+        .collect(),
     )
+}
+
+fn choice_control(choices: &[(&str, &str)]) -> PreferenceControlPresentation {
+    PreferenceControlPresentation::EnumeratedSingleChoice {
+        choices: choices
+            .iter()
+            .map(|(value, label)| EnumChoicePresentation {
+                value: (*value).to_owned(),
+                label: (*label).to_owned(),
+            })
+            .collect(),
+    }
+}
+
+fn units_entry(
+    key: &str,
+    section: &PreferenceSectionId,
+    row_order: u32,
+    choices: &[(&str, &str)],
+) -> PreferenceSurfaceEntry {
+    PreferenceSurfaceEntry {
+        key: PreferenceKey::parse(key).expect("registered Units key"),
+        section: section.clone(),
+        row_order,
+        control: choice_control(choices),
+        live_consumer: PreferenceLiveConsumer::FutureProjectUnits,
+    }
+}
+
+fn units_surface_entries(section: PreferenceSectionId) -> Vec<PreferenceSurfaceEntry> {
+    let precision = &[
+        ("automatic", "Automatic"),
+        ("decimal_0", "Whole units"),
+        ("decimal_1", "One place"),
+        ("decimal_2", "Two places"),
+        ("decimal_3", "Three places"),
+        ("decimal_4", "Four places"),
+        ("decimal_5", "Five places"),
+        ("decimal_6", "Six places"),
+        ("exact_nm", "Exact nanometres"),
+    ];
+    vec![
+        units_entry(
+            "datum.units.system",
+            &section,
+            10,
+            &[("metric", "Metric"), ("imperial", "Imperial")],
+        ),
+        units_entry(
+            "datum.units.board_length",
+            &section,
+            20,
+            &[
+                ("follow_system", "Follow system"),
+                ("mm", "Millimetres"),
+                ("um", "Micrometres"),
+                ("mil", "Mils"),
+                ("inch", "Inches"),
+            ],
+        ),
+        units_entry(
+            "datum.units.board_length_precision",
+            &section,
+            30,
+            precision,
+        ),
+        units_entry(
+            "datum.units.drill_hole",
+            &section,
+            40,
+            &[
+                ("follow_system", "Follow system"),
+                ("mm", "Millimetres"),
+                ("mil", "Mils"),
+                ("inch", "Inches"),
+            ],
+        ),
+        units_entry("datum.units.drill_hole_precision", &section, 50, precision),
+        units_entry(
+            "datum.units.schematic_geometry",
+            &section,
+            60,
+            &[
+                ("follow_system", "Follow system"),
+                ("mm", "Millimetres"),
+                ("mil", "Mils"),
+            ],
+        ),
+        units_entry(
+            "datum.units.schematic_geometry_precision",
+            &section,
+            70,
+            precision,
+        ),
+        units_entry(
+            "datum.units.angle_precision",
+            &section,
+            80,
+            &[
+                ("decimal_0", "1°"),
+                ("decimal_1", "0.1°"),
+                ("decimal_2", "0.01°"),
+                ("decimal_3", "0.001°"),
+            ],
+        ),
+    ]
 }
 
 #[cfg(test)]
@@ -331,8 +450,9 @@ mod tests {
     fn gp_f05_inventory_is_exact_ordered_and_searchable_by_alias() {
         let registry = active_v1_registry();
         let catalog = gp_f05_surface_catalog(&registry).unwrap();
-        assert_eq!(catalog.sections().len(), 1);
+        assert_eq!(catalog.sections().len(), 2);
         assert_eq!(catalog.sections()[0].id.as_str(), "appearance");
+        assert_eq!(catalog.sections()[1].id.as_str(), "units");
         assert_eq!(
             catalog
                 .entries()
@@ -343,6 +463,14 @@ mod tests {
                 "datum.console.feedback_duration",
                 "datum.accessibility.reduced_motion",
                 "datum.accessibility.high_contrast_noncolor",
+                "datum.units.system",
+                "datum.units.board_length",
+                "datum.units.board_length_precision",
+                "datum.units.drill_hole",
+                "datum.units.drill_hole_precision",
+                "datum.units.schematic_geometry",
+                "datum.units.schematic_geometry_precision",
+                "datum.units.angle_precision",
             ]
         );
         assert_eq!(catalog.search(&registry, "console_duration").len(), 1);

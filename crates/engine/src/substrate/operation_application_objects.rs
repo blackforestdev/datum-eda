@@ -38,7 +38,10 @@ pub(super) fn apply_operation_to_objects(
             }
             Ok(())
         }
-        Operation::SetProjectName { project_id, .. } => {
+        Operation::SetProjectName { project_id, .. }
+        | Operation::InitializeProjectDisplayUnits { project_id, .. }
+        | Operation::SetProjectDisplayUnits { project_id, .. }
+        | Operation::RemoveProjectDisplayUnits { project_id } => {
             bump_existing_object(objects, *project_id, diff)
         }
         Operation::SetProjectRules { rules_root_id, .. } => {

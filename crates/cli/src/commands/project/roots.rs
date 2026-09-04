@@ -4,7 +4,8 @@ use std::path::Path;
 use crate::default_native_project_stackup_layers;
 use anyhow::{Context, Result};
 use eda_engine::api::native_write::genesis::{
-    GenesisRootIds, GenesisSpec, bootstrap_native_project, default_genesis_stackup_layers,
+    GenesisRootIds, GenesisSpec, bootstrap_native_project_with_units,
+    default_genesis_stackup_layers,
 };
 use eda_engine::api::native_write::project::{
     build_create_project_rule, build_delete_project_rule, build_set_project_name,
@@ -177,12 +178,15 @@ pub(crate) fn create_native_project(
         "CLI default stackup drifted from engine genesis stackup"
     );
 
-    let report = bootstrap_native_project(
+    let units_seed = eda_engine::preferences::factory_units_seed();
+    let report = bootstrap_native_project_with_units(
         &root,
         GenesisSpec {
             project_name,
             existing_ids,
         },
+        units_seed.profile,
+        units_seed.receipt,
     )?;
 
     Ok(NativeProjectCreateReportView {

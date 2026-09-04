@@ -37,6 +37,7 @@ use uuid::Uuid;
 use crate::board::{PadExpansionSetup, StackupLayer, StackupLayerType};
 use crate::error::EngineError;
 use crate::ir::serialization::to_json_deterministic;
+use crate::ir::units::{ProjectUnitsSeedReceipt, UnitsProfile, project_profile_to_value};
 use crate::substrate::ProjectResolver;
 
 /// Root object ids to reuse when re-running genesis over an existing
@@ -84,6 +85,10 @@ pub struct GenesisProjectManifest {
     pub schematic: String,
     pub board: String,
     pub rules: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub project_display_units: Option<serde_json::Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub project_units_seed_receipt: Option<ProjectUnitsSeedReceipt>,
     #[serde(default)]
     pub forward_annotation_review: BTreeMap<String, serde_json::Value>,
 }
@@ -221,6 +226,34 @@ pub fn bootstrap_native_project(
     root: &Path,
     spec: GenesisSpec,
 ) -> Result<GenesisReport, EngineError> {
+    bootstrap_native_project_inner(root, spec, None)
+}
+
+/// Bootstrap a new native Project with one validated, copy-once Units seed
+/// and its immutable itemized receipt. The caller supplies a resolver-produced
+/// snapshot; this function never reads machine preferences.
+pub fn bootstrap_native_project_with_units(
+    root: &Path,
+    spec: GenesisSpec,
+    profile: UnitsProfile,
+    receipt: ProjectUnitsSeedReceipt,
+) -> Result<GenesisReport, EngineError> {
+    profile
+        .resolve()
+        .map_err(|reason| EngineError::Validation(format!("invalid Units seed: {reason:?}")))?;
+    if receipt.copied_values != crate::ir::units::profile_to_descriptor_values(profile) {
+        return Err(EngineError::Validation(
+            "Project Units seed receipt does not match the copied profile".to_string(),
+        ));
+    }
+    bootstrap_native_project_inner(root, spec, Some((profile, receipt)))
+}
+
+fn bootstrap_native_project_inner(
+    root: &Path,
+    spec: GenesisSpec,
+    units: Option<(UnitsProfile, ProjectUnitsSeedReceipt)>,
+) -> Result<GenesisReport, EngineError> {
     let ids = spec.existing_ids.unwrap_or_else(|| GenesisRootIds {
         project: Uuid::new_v4(),
         schematic: Uuid::new_v4(),
@@ -230,6 +263,9 @@ pub fn bootstrap_native_project(
     let rules_uuid = ids.rules.unwrap_or_else(Uuid::new_v4);
     let project_name = spec.project_name;
 
+    let (project_display_units, project_units_seed_receipt) = units
+        .map(|(profile, receipt)| (Some(project_profile_to_value(profile)), Some(receipt)))
+        .unwrap_or((None, None));
     let manifest = GenesisProjectManifest {
         schema_version: 1,
         uuid: ids.project,
@@ -238,6 +274,8 @@ pub fn bootstrap_native_project(
         schematic: "schematic/schematic.json".to_string(),
         board: "board/board.json".to_string(),
         rules: "rules/rules.json".to_string(),
+        project_display_units,
+        project_units_seed_receipt,
         forward_annotation_review: BTreeMap::new(),
     };
     let schematic = GenesisSchematicRoot {
@@ -373,6 +411,8 @@ mod tests {
 
     use super::super::test_support::temp_project_root;
     use super::*;
+    use crate::api::native_write::project::{project_display_units, project_units_seed_receipt};
+    use crate::ir::units::{PreFeatureProjectUnitsMigration, migrate_pre_feature_project_units};
     use crate::substrate::SourceShardKind;
 
     fn fixture_dir() -> PathBuf {
@@ -519,6 +559,38 @@ mod tests {
             "genesis does not append journal records (see module docs)"
         );
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn new_project_copies_one_validated_units_snapshot_and_receipt() {
+        let root = temp_project_root("genesis_units_seed");
+        let PreFeatureProjectUnitsMigration::Create {
+            profile,
+            mut receipt,
+        } = migrate_pre_feature_project_units(None).unwrap()
+        else {
+            unreachable!()
+        };
+        receipt.source = crate::ir::units::ProjectUnitsSeedSource::GlobalDefaults {
+            repository_generation: "g00000000000000000007".to_owned(),
+            profile_digest: "test-resolved-profile-digest".to_owned(),
+        };
+        bootstrap_native_project_with_units(
+            &root,
+            GenesisSpec {
+                project_name: "Seeded Project".to_owned(),
+                existing_ids: None,
+            },
+            profile,
+            receipt.clone(),
+        )
+        .unwrap();
+        let model = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(project_display_units(&model).unwrap(), profile);
+        assert_eq!(project_units_seed_receipt(&model).unwrap(), receipt);
+        assert!(model.journal.is_empty());
+        assert!(model.diagnostics.is_empty());
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[test]

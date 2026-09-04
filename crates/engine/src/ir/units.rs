@@ -1,9 +1,8 @@
 //! Exact authored-length authority.
 //!
 //! Canonical design truth remains signed `i64` nanometers. Parsing and
-//! formatting are edge projections and never mutate stored geometry. Legacy
-//! floating-point adapters at the end of this module remain temporarily for
-//! existing callers; UNIT-I03 owns their migration to this checked service.
+//! formatting are edge projections and never mutate stored geometry. All
+//! production adapters delegate to this checked service.
 
 mod adapter;
 mod angle;
@@ -15,7 +14,7 @@ mod tokens;
 
 pub use adapter::{
     AutomationLengthInput, AutomationLengthRefusal, AutomationLengthResult, ExplicitLengthContext,
-    resolve_automation_length,
+    GuiProjectLengthInput, resolve_automation_length, resolve_gui_project_length,
 };
 pub use angle::{
     AngleRefusal, CanonicalAngleScale, FormattedAngle, ParsedAngle, format_decimal_degrees,
@@ -36,7 +35,7 @@ pub use project::{
     migrate_pre_feature_project_units, project_profile_from_value, project_profile_to_value,
 };
 pub use tokens::{
-    ANGLE_PRECISION_KEY, BOARD_LENGTH_KEY, BOARD_PRECISION_KEY, DRILL_HOLE_KEY,
+    ACTIVE_UNITS_KEYS, ANGLE_PRECISION_KEY, BOARD_LENGTH_KEY, BOARD_PRECISION_KEY, DRILL_HOLE_KEY,
     DRILL_PRECISION_KEY, SCHEMATIC_GEOMETRY_KEY, SCHEMATIC_PRECISION_KEY, SYSTEM_KEY,
     UnitsProfileTokenRefusal, profile_from_descriptor_values, profile_to_descriptor_values,
 };

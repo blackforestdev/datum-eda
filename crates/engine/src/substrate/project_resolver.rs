@@ -54,6 +54,10 @@ struct NativeProjectManifestShape {
     schematic: String,
     board: String,
     rules: String,
+    #[serde(default)]
+    project_display_units: Option<serde_json::Value>,
+    #[serde(default)]
+    project_units_seed_receipt: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -349,6 +353,8 @@ impl ProjectResolver {
                 project_id: manifest.uuid,
                 name: manifest.name,
                 schema_version: manifest.schema_version,
+                project_display_units: manifest.project_display_units,
+                project_units_seed_receipt: manifest.project_units_seed_receipt,
             },
             model_revision,
             source_shards: shards,
