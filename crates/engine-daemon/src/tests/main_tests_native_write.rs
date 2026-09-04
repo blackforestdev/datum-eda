@@ -124,6 +124,89 @@ fn native_write_set_name_commits_through_journal() {
 }
 
 #[test]
+fn native_write_set_display_units_commits_one_guarded_settings_transaction() {
+    use eda_engine::api::native_write::genesis::bootstrap_native_project_with_units;
+    use eda_engine::api::native_write::project::project_display_units;
+    use eda_engine::ir::units::{
+        LengthPrecisionChoice, LengthUnit, LengthUnitChoice, MeasurementSystem,
+    };
+    use eda_engine::substrate::ProjectResolver;
+
+    let mut engine = Engine::new().expect("engine should initialize");
+    let root = std::env::temp_dir().join(format!(
+        "datum_daemon_native_write_display_units_{}",
+        uuid::Uuid::new_v4()
+    ));
+    let seed = eda_engine::preferences::factory_units_seed();
+    bootstrap_native_project_with_units(
+        &root,
+        GenesisSpec {
+            project_name: "Daemon Units Fixture".to_owned(),
+            existing_ids: None,
+        },
+        seed.profile,
+        seed.receipt,
+    )
+    .unwrap();
+    let board_before = std::fs::read(root.join("board/board.json")).unwrap();
+    let schematic_before = std::fs::read(root.join("schematic/schematic.json")).unwrap();
+    let before = describe(&mut engine, 1, &root);
+    let before_revision = before["model_revision"].as_str().unwrap().to_owned();
+
+    let response = dispatch_request(
+        &mut engine,
+        native_request(
+            2,
+            "native.write",
+            json!({
+                "project_root": root.display().to_string(),
+                "verb": "datum.project.set_display_units",
+                "params": {"profile": {
+                    "system": "metric",
+                    "board_length": "mil",
+                    "board_length_precision": "automatic",
+                    "drill_hole": "follow_system",
+                    "drill_hole_precision": "decimal_3",
+                    "schematic_geometry": "follow_system",
+                    "schematic_geometry_precision": "exact_nm",
+                    "angle_precision": "decimal_2"
+                }},
+                "reason": "set Project Working Units through MCP",
+                "source": "tool",
+                "actor": "datum-mcp",
+                "expected_model_revision": before_revision,
+            }),
+        ),
+    );
+    assert!(response.error.is_none(), "{response:?}");
+    let result = response.result.unwrap();
+    assert_eq!(result["verb"], "datum.project.set_display_units");
+    assert_eq!(result["status"], "applied");
+    assert_eq!(result["journal_len"], 1);
+
+    let model = ProjectResolver::new(&root).resolve().unwrap();
+    let profile = project_display_units(&model).unwrap();
+    assert_eq!(profile.system, MeasurementSystem::Metric);
+    assert_eq!(
+        profile.board.unit,
+        LengthUnitChoice::Explicit(LengthUnit::Mil)
+    );
+    assert_eq!(
+        profile.drill.precision,
+        LengthPrecisionChoice::DecimalPlaces(3)
+    );
+    assert_eq!(
+        std::fs::read(root.join("board/board.json")).unwrap(),
+        board_before
+    );
+    assert_eq!(
+        std::fs::read(root.join("schematic/schematic.json")).unwrap(),
+        schematic_before
+    );
+    let _ = std::fs::remove_dir_all(root);
+}
+
+#[test]
 fn native_write_waive_verb_commits_disposition() {
     let mut engine = Engine::new().expect("engine should initialize");
     let root = temp_native_project("write_waive");

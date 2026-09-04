@@ -51,6 +51,7 @@ mod proposals;
 mod revision;
 mod root;
 mod surface;
+mod units;
 
 pub(crate) use self::prelude::*;
 
@@ -189,3 +190,4 @@ pub(crate) use self::root::{
     Cli, Commands, ImportedQueryCommandParser, ImportedQueryCommands, QueryCommands, QueryPathArgs,
 };
 pub(crate) use self::surface::*;
+pub(crate) use self::units::{ResolveLengthArgs, UnitsCommands};

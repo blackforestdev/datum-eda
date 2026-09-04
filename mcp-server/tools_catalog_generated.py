@@ -42,6 +42,7 @@ MIGRATED_PREFIXES: frozenset[str] = frozenset({
     "datum.route",
     "datum.schematic",
     "datum.session",
+    "datum.units",
 })
 
 _CATALOG_PATH = Path(__file__).resolve().parent / "datum_tool_catalog.json"

@@ -53,6 +53,7 @@ mod route;
 mod schematic;
 mod standards;
 mod support;
+mod units;
 // Cross-family CLI view helpers (project create, rules) whose owning
 // families have not yet moved into commands/.
 mod views;
@@ -83,6 +84,7 @@ pub(crate) use self::route::*;
 pub(crate) use self::schematic::*;
 pub(crate) use self::standards::*;
 pub(crate) use self::support::*;
+pub(crate) use self::units::*;
 pub(crate) use self::views::*;
 
 pub(crate) use crate::command_plan::*;
