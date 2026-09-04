@@ -828,6 +828,48 @@ protected-target, accessibility, narrow/non-color, real-Project, lossless-edit,
 zero-geometry-mutation, and cross-surface matrix evidence. This creates a
 production candidate; it does not self-accept the feature.
 
+UNIT-I03B completed its production-candidate construction on 2026-09-04 in
+commits `e87932c`, `24541d2`, `bc7bd17`, `e149e8d`, `92caa68`, and `2ae0eb8`.
+Global Preferences now exposes the eight exact future-Project defaults beside
+the accepted Appearance slice. Edit > Preferences > Project Preferences opens
+one native owned, input-modal Units-only window when a Project exists and is
+disabled without one; it adds no Navigator category. Both windows reuse the
+descriptor catalog, immediate-save behavior, search/focus/Escape contract,
+accessible value/provenance projection, narrow scrolling, and preserved-
+unreadable refusal state.
+
+The native Project aggregate owns `ProjectDisplayUnits` and one immutable,
+itemized seed or migration receipt. New Projects copy the resolved Global
+defaults once; pre-feature Projects deterministically receive the versioned
+factory profile; existing Projects never live-follow Global. Project changes
+use guarded journal operations with inverse/Undo and stale-write refusal, while
+board and schematic geometry remain byte-identical. Reset restores the receipt
+value without consulting the machine. The GUI exact-edit adapter consumes an
+immutable Project-resolved profile and typed quantity/field context; no broad
+geometry numeric editor exists yet to expose a second interpretation path.
+CLI and MCP provide the same exact resolver while retaining `_nm`
+compatibility, and interchange remains preference-independent.
+
+Focused proof passes 41 engine Units tests, 2 CLI adapter tests, 22 MCP Units
+and protocol tests, the real daemon Project mutation proof, 292 GUI tests with
+8 intentional skips, 411 MCP self-tests with 45 intentional skips, strict
+workspace Clippy, source health, parity, governance, evidence, dependency,
+alignment, accessibility, and cross-surface boundary checks. The broad
+workspace test run passed its Units coverage and reproduced one pre-existing
+terminal signal-normalization timing failure that passed in isolation. The
+full drift route reaches an unrelated stale Console visual golden: its stored
+image still contains the permanent Revision Navigator groups withdrawn by
+PM-038, while current runtime correctly omits them. That visual-authority debt
+is tracked separately as `dat-console-golden-revision-recovery-mtv` and was not
+laundered through the Units lane.
+
+This evidence completes UNIT-I03B as an owner-QA candidate only. It does not
+claim running-app approval, Units production acceptance, Publish behavior,
+Revision behavior, a new dependency, or any non-Units Project Preferences
+category.
+
+<!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03B-PRODUCTION-CANDIDATE -->
+
 <!-- REQ:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V -->
 <!-- OWNER:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V:UNIT-I03V -->
 ### UNIT-I03V — owner running-app acceptance
