@@ -105,6 +105,13 @@ impl GlobalPreferencesCoordinator {
             &rows,
             PreferenceLiveConsumer::HighContrastNonColor,
         );
+        let selected_section = self
+            .service
+            .surface()
+            .sections()
+            .iter()
+            .find(|section| section.id.as_str() == ui.global_preferences.section_id)
+            .unwrap_or(&self.service.surface().sections()[0]);
         ui.global_preferences = GlobalPreferencesDialogState {
             open: was_open,
             title: "Global Preferences — Datum".to_owned(),
@@ -116,14 +123,8 @@ impl GlobalPreferencesCoordinator {
                 .iter()
                 .map(|section| (section.id.as_str().to_owned(), section.label.clone()))
                 .collect(),
-            section_id: ui
-                .global_preferences
-                .sections
-                .iter()
-                .any(|(id, _)| id == &ui.global_preferences.section_id)
-                .then(|| ui.global_preferences.section_id.clone())
-                .unwrap_or_else(|| self.service.surface().sections()[0].id.as_str().to_owned()),
-            section_label: ui.global_preferences.section_label.clone(),
+            section_id: selected_section.id.as_str().to_owned(),
+            section_label: selected_section.label.clone(),
             search_query: query,
             scroll_row: ui.global_preferences.scroll_row,
             rows: projected,
