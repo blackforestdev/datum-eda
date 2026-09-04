@@ -143,7 +143,14 @@ impl LinuxTerminalAccessibilityBridge {
 
 impl Runtime {
     pub(super) fn refresh_global_preferences_accessibility(&mut self) {
-        let nodes = self.workspace().ui.global_preferences.accessibility_nodes();
+        let nodes = if self.workspace().ui.project_preferences.open {
+            self.workspace()
+                .ui
+                .project_preferences
+                .accessibility_nodes()
+        } else {
+            self.workspace().ui.global_preferences.accessibility_nodes()
+        };
         self.terminal_accessibility.update_preferences(nodes);
     }
 

@@ -99,6 +99,9 @@ pub struct WorkspaceUiState {
     /// Application-modal Global Preferences projection. Values and provenance
     /// originate in the engine service; this bag owns interaction only.
     pub global_preferences: GlobalPreferencesDialogState,
+    /// Input-modal Project Preferences projection. The initial surface contains
+    /// only Project Working Units and commits through Project authority.
+    pub project_preferences: GlobalPreferencesDialogState,
     /// Consumer-only projection of revision authority. This never owns or
     /// mutates revision records; the engine remains the sole truth source.
     pub revision: RevisionWorkspaceUiState,
@@ -131,6 +134,7 @@ impl WorkspaceUiState {
             console_journal: ConsoleJournalHistoryState::default(),
             artifact_preview: ArtifactPreviewViewportState::default(),
             global_preferences: GlobalPreferencesDialogState::default(),
+            project_preferences: GlobalPreferencesDialogState::project_units_default(),
             revision: RevisionWorkspaceUiState::default(),
             layout: WorkspaceLayout::default(),
         }

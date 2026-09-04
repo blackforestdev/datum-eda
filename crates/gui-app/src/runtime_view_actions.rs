@@ -26,6 +26,7 @@ impl Runtime {
     pub(super) fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
         match action {
             "preferences.global.open" => self.open_global_preferences(),
+            "preferences.project.open" => self.open_project_preferences(),
             "view.fit" => {
                 self.fit_camera();
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");

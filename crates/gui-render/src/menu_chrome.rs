@@ -97,6 +97,7 @@ pub(super) fn render_menu_bar(
         let menu_x = active_menu_x.unwrap_or(layout.top_menu_bar.x);
         let parent_rect = render_menu_dropdown(
             menu,
+            state.backing.is_some(),
             state
                 .ui
                 .active_submenu
@@ -120,6 +121,7 @@ pub(super) fn render_menu_bar(
             render_menu_items(
                 submenu_id,
                 items,
+                state.backing.is_some(),
                 Some(state.ui.menu_focus_index),
                 icon_set,
                 layout,
@@ -136,6 +138,7 @@ pub(super) fn render_menu_bar(
 #[allow(clippy::too_many_arguments)]
 fn render_menu_dropdown(
     menu: &datum_gui_protocol::GuiMenu,
+    project_open: bool,
     focused_index: Option<usize>,
     icon_set: Option<&GuiIconSet>,
     layout: &ShellLayout,
@@ -154,6 +157,7 @@ fn render_menu_dropdown(
     render_menu_items(
         &menu.menu,
         &menu.items,
+        project_open,
         focused_index,
         icon_set,
         layout,
@@ -169,6 +173,7 @@ fn render_menu_dropdown(
 fn render_menu_items(
     menu_name: &str,
     items: &[GuiMenuItem],
+    project_open: bool,
     focused_index: Option<usize>,
     icon_set: Option<&GuiIconSet>,
     layout: &ShellLayout,
@@ -235,7 +240,7 @@ fn render_menu_items(
             width: rect.width - design_tokens::spacing::SP_02 * 2.0,
             height: item_height,
         };
-        let enabled = item.is_phase_one_enabled();
+        let enabled = item.is_enabled(project_open);
         let row_color = if focused_index == Some(index) {
             REVIEW_ROW_ACTIVE_BG
         } else if enabled {

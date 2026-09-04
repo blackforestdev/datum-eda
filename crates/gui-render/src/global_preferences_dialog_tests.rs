@@ -58,6 +58,7 @@ fn row(key: &str, label: &str, control: GlobalPreferenceControlUi) -> GlobalPref
     };
     GlobalPreferenceRowUi {
         key: key.to_owned(),
+        section_id: "appearance".to_owned(),
         label: label.to_owned(),
         description: description.to_owned(),
         aliases: Vec::new(),
@@ -67,6 +68,8 @@ fn row(key: &str, label: &str, control: GlobalPreferenceControlUi) -> GlobalPref
         control,
         changed: false,
         writable: true,
+        unavailable_reason: None,
+        reset_description: "Removes the User contribution and resolves again.".to_owned(),
     }
 }
 
@@ -103,7 +106,7 @@ fn main_workspace_never_draws_the_native_preferences_window_or_backdrop() {
     assert!(!prepared.hit_regions.iter().any(|region| matches!(
         region.target,
         HitTarget::GlobalPreferencesModal
-            | HitTarget::GlobalPreferencesSection
+            | HitTarget::GlobalPreferencesSection(_)
             | HitTarget::GlobalPreferencesSearch
             | HitTarget::GlobalPreferencesSettingName(_)
             | HitTarget::GlobalPreferencesControl(_)
@@ -140,13 +143,17 @@ fn dialog_renders_exact_three_canonical_controls_and_blocks_workspace_hits() {
     let section = prepared
         .hit_regions
         .iter()
-        .find(|region| region.target == HitTarget::GlobalPreferencesSection)
+        .find(|region| {
+            region.target == HitTarget::GlobalPreferencesSection("appearance".to_owned())
+        })
         .expect("Appearance must have one row-sized navigation target");
     assert_eq!(section.rect.height, 32.0);
     assert!(section.rect.width < 210.0);
     assert_eq!(
         prepared.hit_test(section.rect.x + 20.0, section.rect.y + 16.0),
-        Some(&HitTarget::GlobalPreferencesSection)
+        Some(&HitTarget::GlobalPreferencesSection(
+            "appearance".to_owned()
+        ))
     );
     let labels: Vec<_> = prepared
         .menu_overlay_text_runs
@@ -253,7 +260,7 @@ fn narrow_dialog_keeps_every_preference_hit_inside_the_window() {
         if matches!(
             region.target,
             HitTarget::GlobalPreferencesModal
-                | HitTarget::GlobalPreferencesSection
+                | HitTarget::GlobalPreferencesSection(_)
                 | HitTarget::GlobalPreferencesSearch
                 | HitTarget::GlobalPreferencesSettingName(_)
                 | HitTarget::GlobalPreferencesControl(_)

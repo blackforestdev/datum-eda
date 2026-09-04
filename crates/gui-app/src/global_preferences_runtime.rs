@@ -1,4 +1,5 @@
 //! Application coordinator for the one engine-owned Global Preferences service.
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
@@ -7,6 +8,7 @@ use datum_gui_protocol::{
     GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
     GlobalPreferencesNoticeUi, WorkspaceUiState,
 };
+use eda_engine::ir::units::{ACTIVE_UNITS_KEYS, profile_from_descriptor_values};
 use eda_engine::preferences::{
     GlobalPreferencesService, PreferenceKey, PreferenceLiveConsumer, PreferenceServiceRefusal,
 };
@@ -54,6 +56,18 @@ impl GlobalPreferencesCoordinator {
         let open_choice_key = ui.global_preferences.open_choice_key.clone();
         let focus = ui.global_preferences.focus.clone();
         let rows = self.service.rows();
+        let unit_values: BTreeMap<_, _> = rows
+            .iter()
+            .filter(|row| ACTIVE_UNITS_KEYS.contains(&row.key.as_str()))
+            .filter_map(|row| {
+                row.effective_value
+                    .clone()
+                    .map(|value| (row.key.as_str().to_owned(), value))
+            })
+            .collect();
+        let resolved_units = profile_from_descriptor_values(&unit_values)
+            .ok()
+            .and_then(|profile| profile.resolve().ok());
         let mut projected = Vec::with_capacity(rows.len());
         for (surface, row) in self.service.surface().entries().iter().zip(&rows) {
             let descriptor = self
@@ -63,15 +77,22 @@ impl GlobalPreferencesCoordinator {
                 .expect("surface construction proves descriptor existence");
             projected.push(GlobalPreferenceRowUi {
                 key: row.key.as_str().to_owned(),
+                section_id: surface.section.as_str().to_owned(),
                 label: descriptor.presentation.label.clone(),
                 description: descriptor.presentation.description.clone(),
                 aliases: descriptor.retired_aliases.iter().cloned().collect(),
                 scope: SCOPE.to_owned(),
                 provenance: provenance_label(row, self.service.status()),
                 explanation_lines: explanation_lines(row),
-                control: control_projection(&surface.control, row),
+                control: control_projection(&surface.control, row, resolved_units.as_ref()),
                 changed: row.user_value.is_some(),
                 writable: row.writable,
+                unavailable_reason: (!row.writable).then(|| {
+                    "The preserved Preferences repository could not be read; this control cannot write"
+                        .to_owned()
+                }),
+                reset_description: "Removes the User contribution and resolves again."
+                    .to_owned(),
             });
         }
         let reduced_motion = bool_consumer_value(
@@ -86,9 +107,25 @@ impl GlobalPreferencesCoordinator {
         );
         ui.global_preferences = GlobalPreferencesDialogState {
             open: was_open,
-            section_id: self.service.surface().sections()[0].id.as_str().to_owned(),
-            section_label: self.service.surface().sections()[0].label.clone(),
+            title: "Global Preferences — Datum".to_owned(),
+            scope: SCOPE.to_owned(),
+            sections: self
+                .service
+                .surface()
+                .sections()
+                .iter()
+                .map(|section| (section.id.as_str().to_owned(), section.label.clone()))
+                .collect(),
+            section_id: ui
+                .global_preferences
+                .sections
+                .iter()
+                .any(|(id, _)| id == &ui.global_preferences.section_id)
+                .then(|| ui.global_preferences.section_id.clone())
+                .unwrap_or_else(|| self.service.surface().sections()[0].id.as_str().to_owned()),
+            section_label: ui.global_preferences.section_label.clone(),
             search_query: query,
+            scroll_row: ui.global_preferences.scroll_row,
             rows: projected,
             explanation_key,
             open_choice_key,
@@ -202,6 +239,9 @@ fn platform_config_root() -> Option<PathBuf> {
 
 impl Runtime {
     pub(super) fn open_global_preferences(&mut self) -> bool {
+        if self.workspace().ui.project_preferences.open {
+            self.close_project_preferences();
+        }
         let invoker = self.application_focus();
         let opened = self
             .global_preferences
@@ -210,7 +250,7 @@ impl Runtime {
         self.global_preferences_raise_requested = true;
         if opened {
             self.announce_global_preferences(
-                "Global Preferences opened. Appearance, three settings.",
+                "Global Preferences opened. Appearance and Units, eleven settings. Units are defaults for new Projects; open Projects are unaffected.",
                 AnnouncementPriority::Medium,
             );
             self.announce_current_global_preferences_notice();
@@ -264,6 +304,9 @@ impl Runtime {
                 } else {
                     Some(key.to_owned())
                 };
+                if ui.open_choice_key.is_some() {
+                    ui.scroll_to_row(key);
+                }
             }
         }
         self.invalidate_frame();
@@ -355,12 +398,9 @@ impl Runtime {
         if focus == GlobalPreferencesFocus::Search {
             match &event.logical_key {
                 Key::Named(NamedKey::Backspace) => {
-                    self.session
-                        .workspace_mut()
-                        .ui
-                        .global_preferences
-                        .search_query
-                        .pop();
+                    let dialog = &mut self.session.workspace_mut().ui.global_preferences;
+                    dialog.search_query.pop();
+                    dialog.scroll_row = 0;
                     self.invalidate_frame();
                     self.announce_global_preferences_search_count();
                     return true;
@@ -384,12 +424,9 @@ impl Runtime {
                         && !self.modifiers.alt_key()
                         && !value.chars().any(char::is_control) =>
                 {
-                    self.session
-                        .workspace_mut()
-                        .ui
-                        .global_preferences
-                        .search_query
-                        .push_str(value);
+                    let dialog = &mut self.session.workspace_mut().ui.global_preferences;
+                    dialog.search_query.push_str(value);
+                    dialog.scroll_row = 0;
                     self.invalidate_frame();
                     self.announce_global_preferences_search_count();
                     return true;
@@ -403,6 +440,22 @@ impl Runtime {
             Key::Named(NamedKey::Enter | NamedKey::Space)
         );
         match focus {
+            GlobalPreferencesFocus::SectionNavigation
+                if matches!(
+                    event.logical_key,
+                    Key::Named(NamedKey::ArrowUp | NamedKey::ArrowLeft)
+                ) =>
+            {
+                self.cycle_global_preferences_section(-1)
+            }
+            GlobalPreferencesFocus::SectionNavigation
+                if matches!(
+                    event.logical_key,
+                    Key::Named(NamedKey::ArrowDown | NamedKey::ArrowRight)
+                ) =>
+            {
+                self.cycle_global_preferences_section(1)
+            }
             GlobalPreferencesFocus::SettingName(key) if activate => {
                 self.explain_global_preference(&key)
             }
@@ -446,6 +499,20 @@ impl Runtime {
             }
             _ => true,
         }
+    }
+
+    fn cycle_global_preferences_section(&mut self, delta: isize) -> bool {
+        let dialog = &mut self.session.workspace_mut().ui.global_preferences;
+        let current = dialog
+            .sections
+            .iter()
+            .position(|(id, _)| id == &dialog.section_id)
+            .unwrap_or(0) as isize;
+        let next = (current + delta).rem_euclid(dialog.sections.len() as isize) as usize;
+        let section_id = dialog.sections[next].0.clone();
+        dialog.select_section(&section_id);
+        self.invalidate_frame();
+        true
     }
 
     fn cycle_global_preference_control(&mut self, key: &str, delta: isize) -> bool {

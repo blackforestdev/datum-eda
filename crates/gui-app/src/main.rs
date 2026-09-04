@@ -50,6 +50,8 @@ mod pane_cameras;
 mod pane_grid_lod;
 mod pane_resize;
 mod production_status_refresh;
+mod project_preferences_runtime;
+mod project_preferences_window;
 mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
@@ -298,6 +300,9 @@ impl ApplicationHandler for App {
         if let Err(err) = self.sync_global_preferences_window(event_loop) {
             fatal_gui_error(event_loop, "open Global Preferences window", err);
         }
+        if let Err(err) = self.sync_project_preferences_window(event_loop) {
+            fatal_gui_error(event_loop, "open Project Preferences window", err);
+        }
     }
 
     fn window_event(
@@ -314,24 +319,30 @@ impl ApplicationHandler for App {
             self.global_preferences_window_event(event_loop, event);
             return;
         }
+        if self
+            .project_preferences_window
+            .as_ref()
+            .is_some_and(|window| window.id() == window_id)
+        {
+            self.project_preferences_window_event(event_loop, event);
+            return;
+        }
         if let Some(window) = self.window
             && window.id() != window_id
         {
             return;
         }
-        if self
-            .runtime
-            .as_ref()
-            .is_some_and(|runtime| runtime.workspace().ui.global_preferences.open)
-            && !matches!(
-                &event,
-                WindowEvent::CloseRequested
-                    | WindowEvent::Resized(_)
-                    | WindowEvent::ScaleFactorChanged { .. }
-                    | WindowEvent::Focused(_)
-                    | WindowEvent::RedrawRequested
-            )
-        {
+        if self.runtime.as_ref().is_some_and(|runtime| {
+            runtime.workspace().ui.global_preferences.open
+                || runtime.workspace().ui.project_preferences.open
+        }) && !matches!(
+            &event,
+            WindowEvent::CloseRequested
+                | WindowEvent::Resized(_)
+                | WindowEvent::ScaleFactorChanged { .. }
+                | WindowEvent::Focused(_)
+                | WindowEvent::RedrawRequested
+        ) {
             return;
         }
         if let Some(label) = window_event_diagnostic_label(&event) {
@@ -381,7 +392,9 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(focused) => {
                 if owned_window_policy::redirect_owner_activation(
                     focused,
-                    self.global_preferences_window.as_ref(),
+                    self.project_preferences_window
+                        .as_ref()
+                        .or(self.global_preferences_window.as_ref()),
                 ) {
                     return;
                 }
@@ -689,6 +702,9 @@ impl ApplicationHandler for App {
         if let Err(err) = self.sync_global_preferences_window(event_loop) {
             fatal_gui_error(event_loop, "synchronize Global Preferences window", err);
         }
+        if let Err(err) = self.sync_project_preferences_window(event_loop) {
+            fatal_gui_error(event_loop, "synchronize Project Preferences window", err);
+        }
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
@@ -762,6 +778,8 @@ struct Runtime {
     application_shutdown_blocked: bool,
     global_preferences_raise_requested: bool,
     global_preferences: global_preferences_runtime::GlobalPreferencesCoordinator,
+    project_preferences_raise_requested: bool,
+    project_preferences: project_preferences_runtime::ProjectPreferencesCoordinator,
 }
 
 impl Runtime {
@@ -780,6 +798,7 @@ impl Runtime {
             terminal_sessions,
             workspace_include_review,
             open_global_preferences,
+            open_project_preferences,
         } = launch_state;
         // The initially-focused leaf seeds the warm per-leaf camera store; its
         // camera is the fit camera the launch path already computed.
@@ -927,9 +946,14 @@ impl Runtime {
             application_shutdown_blocked: false,
             global_preferences_raise_requested: open_global_preferences,
             global_preferences,
+            project_preferences_raise_requested: false,
+            project_preferences: project_preferences_runtime::ProjectPreferencesCoordinator::new(),
         };
         runtime.sync_terminal_tabs();
         runtime.resize_terminal_to_dock();
+        if open_project_preferences {
+            runtime.open_project_preferences();
+        }
         trace_startup_timing(format!(
             "runtime total {}ms",
             runtime_started.elapsed().as_millis()
@@ -2299,7 +2323,7 @@ impl Runtime {
             HitTarget::MenuTitle(_)
             | HitTarget::MenuItem { .. }
             | HitTarget::GlobalPreferencesModal
-            | HitTarget::GlobalPreferencesSection
+            | HitTarget::GlobalPreferencesSection(_)
             | HitTarget::GlobalPreferencesSearch
             | HitTarget::GlobalPreferencesSettingName(_)
             | HitTarget::GlobalPreferencesControl(_)

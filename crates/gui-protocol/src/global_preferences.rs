@@ -16,6 +16,7 @@ pub enum GlobalPreferenceControlUi {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlobalPreferenceRowUi {
     pub key: String,
+    pub section_id: String,
     pub label: String,
     pub description: String,
     pub aliases: Vec<String>,
@@ -25,6 +26,8 @@ pub struct GlobalPreferenceRowUi {
     pub control: GlobalPreferenceControlUi,
     pub changed: bool,
     pub writable: bool,
+    pub unavailable_reason: Option<String>,
+    pub reset_description: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -55,9 +58,13 @@ pub enum GlobalPreferencesDismissal {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlobalPreferencesDialogState {
     pub open: bool,
+    pub title: String,
+    pub scope: String,
+    pub sections: Vec<(String, String)>,
     pub section_id: String,
     pub section_label: String,
     pub search_query: String,
+    pub scroll_row: usize,
     pub rows: Vec<GlobalPreferenceRowUi>,
     pub explanation_key: Option<String>,
     pub open_choice_key: Option<String>,
@@ -93,9 +100,13 @@ impl Default for GlobalPreferencesDialogState {
     fn default() -> Self {
         Self {
             open: false,
+            title: "Global Preferences — Datum".to_owned(),
+            scope: "Global · this device".to_owned(),
+            sections: vec![("appearance".to_owned(), "Appearance".to_owned())],
             section_id: "appearance".to_owned(),
             section_label: "Appearance".to_owned(),
             search_query: String::new(),
+            scroll_row: 0,
             rows: Vec::new(),
             explanation_key: None,
             open_choice_key: None,
@@ -108,17 +119,44 @@ impl Default for GlobalPreferencesDialogState {
 }
 
 impl GlobalPreferencesDialogState {
+    pub fn project_units_default() -> Self {
+        Self {
+            title: "Project Preferences — Datum".to_owned(),
+            scope: "Project".to_owned(),
+            sections: vec![("units".to_owned(), "Units".to_owned())],
+            section_id: "units".to_owned(),
+            section_label: "Units".to_owned(),
+            ..Self::default()
+        }
+    }
+
     pub fn visible_rows(&self) -> impl Iterator<Item = &GlobalPreferenceRowUi> {
         let query = self.search_query.trim().to_ascii_lowercase();
         self.rows.iter().filter(move |row| {
-            query.is_empty()
-                || row.label.to_ascii_lowercase().contains(&query)
-                || row.description.to_ascii_lowercase().contains(&query)
-                || row.key.to_ascii_lowercase().contains(&query)
-                || row
-                    .aliases
-                    .iter()
-                    .any(|alias| alias.to_ascii_lowercase().contains(&query))
+            row.section_id == self.section_id
+                && (query.is_empty()
+                    || row.label.to_ascii_lowercase().contains(&query)
+                    || row.description.to_ascii_lowercase().contains(&query)
+                    || row.key.to_ascii_lowercase().contains(&query)
+                    || row
+                        .aliases
+                        .iter()
+                        .any(|alias| alias.to_ascii_lowercase().contains(&query))
+                    || match &row.control {
+                        GlobalPreferenceControlUi::Boolean {
+                            off_label,
+                            on_label,
+                            ..
+                        } => [off_label, on_label]
+                            .iter()
+                            .any(|label| label.to_ascii_lowercase().contains(&query)),
+                        GlobalPreferenceControlUi::SingleChoice { choices, .. } => {
+                            choices.iter().any(|(value, label)| {
+                                value.to_ascii_lowercase().contains(&query)
+                                    || label.to_ascii_lowercase().contains(&query)
+                            })
+                        }
+                    })
         })
     }
 
@@ -128,27 +166,26 @@ impl GlobalPreferencesDialogState {
         }
         let mut nodes = vec![
             GlobalPreferencesAccessibleNode {
-                id: "global-preferences".to_owned(),
-                name: "Global Preferences".to_owned(),
+                id: format!("{}-dialog", self.section_id),
+                name: self.title.trim_end_matches(" — Datum").to_owned(),
                 role: GlobalPreferencesAccessibleRole::Dialog,
-                value: Some("Global · this device".to_owned()),
-                description: "Application preferences for this device. Changes save immediately."
-                    .to_owned(),
+                value: Some(self.scope.clone()),
+                description: format!("{}. Changes save immediately.", self.scope),
                 available: true,
                 focused: false,
             },
             GlobalPreferencesAccessibleNode {
-                id: "appearance-navigation".to_owned(),
+                id: format!("{}-navigation", self.section_id),
                 name: self.section_label.clone(),
                 role: GlobalPreferencesAccessibleRole::Navigation,
                 value: None,
-                description: "Global Preferences section navigation.".to_owned(),
+                description: format!("{} section navigation.", self.title),
                 available: true,
                 focused: self.focus == GlobalPreferencesFocus::SectionNavigation,
             },
             GlobalPreferencesAccessibleNode {
-                id: "appearance-search".to_owned(),
-                name: "Search Appearance settings".to_owned(),
+                id: format!("{}-search", self.section_id),
+                name: format!("Search {} settings", self.section_label),
                 role: GlobalPreferencesAccessibleRole::SearchBox,
                 value: Some(self.search_query.clone()),
                 description: "Searches labels, descriptions, stable keys, and registered aliases. Escape clears a nonempty search before a second Escape closes the window."
@@ -170,7 +207,7 @@ impl GlobalPreferencesDialogState {
                 available: true,
                 focused: self.focus == GlobalPreferencesFocus::SettingName(row.key.clone()),
             });
-            let (role, value) = match &row.control {
+            let (role, mut value) = match &row.control {
                 GlobalPreferenceControlUi::Boolean {
                     value,
                     off_label,
@@ -192,12 +229,23 @@ impl GlobalPreferencesDialogState {
                         .unwrap_or_else(|| value.clone()),
                 ),
             };
+            if !row.writable {
+                value = "Unavailable".to_owned();
+            }
             nodes.push(GlobalPreferencesAccessibleNode {
                 id: format!("{}-control", row.key),
                 name: row.label.clone(),
                 role,
                 value: Some(value),
-                description: format!("{}. {}.", row.scope, row.provenance),
+                description: format!(
+                    "{}. {}.{}",
+                    row.scope,
+                    row.provenance,
+                    row.unavailable_reason
+                        .as_deref()
+                        .map(|reason| format!(" {reason}."))
+                        .unwrap_or_default()
+                ),
                 available: row.writable,
                 focused: self.focus == GlobalPreferencesFocus::Control(row.key.clone()),
             });
@@ -207,7 +255,7 @@ impl GlobalPreferencesDialogState {
                     name: format!("Reset {}", row.label),
                     role: GlobalPreferencesAccessibleRole::Button,
                     value: None,
-                    description: "Removes the User contribution and resolves again.".to_owned(),
+                    description: row.reset_description.clone(),
                     available: row.writable,
                     focused: self.focus == GlobalPreferencesFocus::Reset(row.key.clone()),
                 });
@@ -241,8 +289,8 @@ impl GlobalPreferencesDialogState {
                 | GlobalPreferencesNoticeUi::PreservedUnreadable(message) => message.clone(),
             };
             nodes.push(GlobalPreferencesAccessibleNode {
-                id: "global-preferences-status".to_owned(),
-                name: "Global Preferences status".to_owned(),
+                id: format!("{}-preferences-status", self.section_id),
+                name: format!("{} status", self.title.trim_end_matches(" — Datum")),
                 role: GlobalPreferencesAccessibleRole::Status,
                 value: Some(message),
                 description: "Preference status announcement.".to_owned(),
@@ -283,14 +331,64 @@ impl GlobalPreferencesDialogState {
             (current + 1) % order.len()
         };
         self.focus = order[next].clone();
+        let focused_key = match &self.focus {
+            GlobalPreferencesFocus::SettingName(key)
+            | GlobalPreferencesFocus::Control(key)
+            | GlobalPreferencesFocus::Reset(key) => Some(key.clone()),
+            _ => None,
+        };
+        if let Some(key) = focused_key {
+            self.scroll_to_row(&key);
+        }
     }
 
     pub fn reset_transient_view(&mut self) {
         self.search_query.clear();
+        self.scroll_row = 0;
         self.explanation_key = None;
         self.open_choice_key = None;
         self.focus = GlobalPreferencesFocus::SectionNavigation;
         self.notice = None;
+    }
+
+    pub fn select_section(&mut self, section_id: &str) -> bool {
+        let Some((id, label)) = self.sections.iter().find(|(id, _)| id == section_id) else {
+            return false;
+        };
+        self.section_id.clone_from(id);
+        self.section_label.clone_from(label);
+        self.search_query.clear();
+        self.scroll_row = 0;
+        self.explanation_key = None;
+        self.open_choice_key = None;
+        self.focus = GlobalPreferencesFocus::SectionNavigation;
+        true
+    }
+
+    pub fn scroll_rows(&mut self, delta: i32) -> bool {
+        let maximum = self.visible_rows().count().saturating_sub(1);
+        let next = if delta < 0 {
+            self.scroll_row
+                .saturating_add(delta.unsigned_abs() as usize)
+                .min(maximum)
+        } else {
+            self.scroll_row.saturating_sub(delta as usize)
+        };
+        let changed = next != self.scroll_row;
+        self.scroll_row = next;
+        changed
+    }
+
+    /// Places a row at the top of the scrolling content viewport. This keeps
+    /// keyboard-focused controls and expanded choices fully visible without
+    /// coupling protocol state to renderer pixel dimensions.
+    pub fn scroll_to_row(&mut self, key: &str) -> bool {
+        let Some(index) = self.visible_rows().position(|row| row.key == key) else {
+            return false;
+        };
+        let changed = self.scroll_row != index;
+        self.scroll_row = index;
+        changed
     }
 
     pub fn dismiss_innermost(&mut self) -> GlobalPreferencesDismissal {

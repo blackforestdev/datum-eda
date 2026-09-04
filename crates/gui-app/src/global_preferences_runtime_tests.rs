@@ -17,7 +17,7 @@ fn preference_notice_priority_distinguishes_status_from_refusal_and_recovery() {
 }
 
 #[test]
-fn projection_has_exact_three_rows_and_all_consumers_are_total() {
+fn projection_preserves_three_appearance_rows_and_adds_exact_units_surface() {
     let base = std::env::temp_dir().join(format!("datum-gp-ui-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
@@ -44,7 +44,21 @@ fn projection_has_exact_three_rows_and_all_consumers_are_total() {
     let mut ui = WorkspaceUiState::new(filters);
     let resolved_rows = coordinator.service.rows();
     coordinator.publish_projection(&mut ui);
-    assert_eq!(ui.global_preferences.rows.len(), 3);
+    let appearance_rows: Vec<_> = ui
+        .global_preferences
+        .rows
+        .iter()
+        .filter(|row| row.section_id == "appearance")
+        .collect();
+    let units_rows: Vec<_> = ui
+        .global_preferences
+        .rows
+        .iter()
+        .filter(|row| row.section_id == "units")
+        .collect();
+    assert_eq!(appearance_rows.len(), 3);
+    assert_eq!(units_rows.len(), 8);
+    assert_eq!(ui.global_preferences.rows.len(), 11);
     assert_eq!(
         ui.global_preferences.rows[0].key,
         "datum.console.feedback_duration"
@@ -64,6 +78,19 @@ fn projection_has_exact_three_rows_and_all_consumers_are_total() {
             ))
             .count(),
         3
+    );
+    assert!(ui.global_preferences.select_section("units"));
+    let units_nodes = ui.global_preferences.accessibility_nodes();
+    assert_eq!(
+        units_nodes
+            .iter()
+            .filter(|node| matches!(
+                node.role,
+                datum_gui_protocol::GlobalPreferencesAccessibleRole::Switch
+                    | datum_gui_protocol::GlobalPreferencesAccessibleRole::ComboBox
+            ))
+            .count(),
+        8
     );
     assert!(nodes.iter().all(|node| {
         !matches!(
@@ -326,6 +353,19 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
         )
     );
 
+    assert!(ui.global_preferences.select_section("units"));
+    ui.global_preferences.advance_focus(false);
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::Search
+    );
+    ui.global_preferences.advance_focus(false);
+    ui.global_preferences.advance_focus(false);
+    assert_eq!(ui.global_preferences.scroll_row, 0);
+    ui.global_preferences.advance_focus(false);
+    assert_eq!(ui.global_preferences.scroll_row, 1);
+    assert!(ui.global_preferences.select_section("appearance"));
+
     let key = "datum.console.feedback_duration".to_owned();
     ui.global_preferences.explanation_key = Some(key.clone());
     ui.global_preferences.open_choice_key = Some(key);
@@ -395,7 +435,7 @@ fn dialog_accessibility_states_that_changes_save_immediately() {
         .global_preferences
         .accessibility_nodes()
         .into_iter()
-        .find(|node| node.id == "global-preferences")
+        .find(|node| node.id == "appearance-dialog")
         .unwrap();
     assert!(dialog.description.contains("Changes save immediately"));
 }

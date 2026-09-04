@@ -100,6 +100,12 @@
             "label": "Global Preferences\u2026",
             "icon": "settings",
             "gui_local": "preferences.global.open"
+          },
+          {
+            "label": "Project Preferences\u2026",
+            "icon": "settings",
+            "gui_local": "preferences.project.open",
+            "requires_project": true
           }
         ]
       }
