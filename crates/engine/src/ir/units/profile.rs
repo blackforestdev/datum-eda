@@ -243,4 +243,23 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn explicit_precision_survives_unit_and_system_changes() {
+        let explicit = LengthPrecisionChoice::DecimalPlaces(6);
+        let mut profile = UnitsProfile::default();
+        profile.board.precision = explicit;
+        profile.board.unit = LengthUnitChoice::Explicit(LengthUnit::Inch);
+        assert_eq!(
+            profile.resolve().unwrap().board.precision,
+            DisplayPrecision::DecimalPlaces(6)
+        );
+        profile.system = MeasurementSystem::Imperial;
+        profile.board.unit = LengthUnitChoice::Explicit(LengthUnit::Millimeter);
+        assert_eq!(profile.board.precision, explicit);
+        assert_eq!(
+            profile.resolve().unwrap().board.precision,
+            DisplayPrecision::DecimalPlaces(6)
+        );
+    }
 }

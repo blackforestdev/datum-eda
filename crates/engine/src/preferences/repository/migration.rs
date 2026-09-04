@@ -82,6 +82,10 @@ pub enum MigrationChange {
         from_schema_version: u32,
         to_schema_version: u32,
     },
+    LegacyUnitsMigrated {
+        retired_keys: Vec<String>,
+        live_keys: Vec<String>,
+    },
     Unchanged {
         key: String,
         schema_version: u32,
@@ -147,9 +151,16 @@ impl PreferenceRepository {
             .iter()
             .filter_map(|change| match change {
                 MigrationChange::AliasMoved { live_key, .. }
-                | MigrationChange::ValueMigrated { key: live_key, .. } => Some(live_key.clone()),
+                | MigrationChange::ValueMigrated { key: live_key, .. } => {
+                    Some(vec![live_key.clone()])
+                }
+                MigrationChange::LegacyUnitsMigrated {
+                    retired_keys,
+                    live_keys,
+                } => Some(retired_keys.iter().chain(live_keys).cloned().collect()),
                 MigrationChange::Unchanged { .. } => None,
             })
+            .flatten()
             .collect();
         let next = next_generation_number(&self.root);
         state.receipts.push(receipt(
@@ -175,6 +186,7 @@ fn migrate_partition(
     changes: &mut Vec<MigrationChange>,
     reversible: &mut bool,
 ) -> Result<(), RepositoryError> {
+    migrate_legacy_units_partition(values, changes, reversible)?;
     let original_keys: Vec<_> = values.keys().cloned().collect();
     for stored_key in original_keys {
         let parsed = PreferenceKey::parse(stored_key.clone()).map_err(|refusal| match refusal {
@@ -259,6 +271,9 @@ fn migrate_partition(
             MigrationChange::AliasMoved { live_key: key, .. }
             | MigrationChange::ValueMigrated { key, .. }
             | MigrationChange::Unchanged { key, .. } => key == live_key.as_str(),
+            MigrationChange::LegacyUnitsMigrated { live_keys, .. } => {
+                live_keys.iter().any(|key| key == live_key.as_str())
+            }
         }) {
             changes.push(MigrationChange::Unchanged {
                 key: live_key.as_str().to_owned(),
@@ -267,4 +282,116 @@ fn migrate_partition(
         }
     }
     Ok(())
+}
+
+fn migrate_legacy_units_partition(
+    values: &mut BTreeMap<String, StoredPreferenceValue>,
+    changes: &mut Vec<MigrationChange>,
+    reversible: &mut bool,
+) -> Result<(), RepositoryError> {
+    const RETIRED: [&str; 2] = ["datum.units.length_precision", "datum.units.angle_format"];
+    let retired_keys: Vec<_> = RETIRED
+        .into_iter()
+        .filter(|key| values.contains_key(*key))
+        .map(str::to_owned)
+        .collect();
+    if retired_keys.is_empty() {
+        return Ok(());
+    }
+    let raw_values = values
+        .iter()
+        .map(|(key, stored)| (key.clone(), stored.value.clone()))
+        .collect();
+    let migration = crate::ir::units::migrate_legacy_units(&raw_values);
+    if !migration.evidence.is_empty() {
+        return Err(RepositoryError::MigrationValueChoiceRequired(format!(
+            "legacy Units values preserved without reinterpretation: {:?}",
+            migration.evidence
+        )));
+    }
+    let live_keys: Vec<_> = migration.contributions.keys().cloned().collect();
+    for (key, value) in migration.contributions {
+        values.insert(
+            key,
+            StoredPreferenceValue {
+                schema_version: 1,
+                value,
+            },
+        );
+    }
+    for key in &retired_keys {
+        values.remove(key);
+    }
+    *reversible = false;
+    changes.push(MigrationChange::LegacyUnitsMigrated {
+        retired_keys,
+        live_keys,
+    });
+    Ok(())
+}
+
+#[cfg(test)]
+mod units_tests {
+    use serde_json::json;
+
+    use super::*;
+
+    fn stored(value: Value) -> StoredPreferenceValue {
+        StoredPreferenceValue {
+            schema_version: 1,
+            value,
+        }
+    }
+
+    #[test]
+    fn repository_units_fanout_is_atomic_and_removes_retired_key() {
+        let mut values = BTreeMap::from([
+            (
+                "datum.units.length_precision".to_owned(),
+                stored(json!("0.001")),
+            ),
+            (
+                "datum.units.board_length_precision".to_owned(),
+                stored(json!("exact_nm")),
+            ),
+        ]);
+        let mut changes = Vec::new();
+        let mut reversible = true;
+        migrate_legacy_units_partition(&mut values, &mut changes, &mut reversible).unwrap();
+        assert!(!values.contains_key("datum.units.length_precision"));
+        assert_eq!(
+            values["datum.units.board_length_precision"].value,
+            json!("exact_nm")
+        );
+        assert_eq!(
+            values["datum.units.drill_hole_precision"].value,
+            json!("decimal_3")
+        );
+        assert_eq!(
+            values["datum.units.schematic_geometry_precision"].value,
+            json!("decimal_3")
+        );
+        assert!(!reversible);
+        assert!(matches!(
+            changes[0],
+            MigrationChange::LegacyUnitsMigrated { .. }
+        ));
+    }
+
+    #[test]
+    fn unsupported_angle_draft_preserves_partition_byte_semantics() {
+        let original = BTreeMap::from([(
+            "datum.units.angle_format".to_owned(),
+            stored(json!({"notation":"radians","precision":0.001})),
+        )]);
+        let mut values = original.clone();
+        let mut changes = Vec::new();
+        let mut reversible = true;
+        assert!(
+            migrate_legacy_units_partition(&mut values, &mut changes, &mut reversible).is_err()
+        );
+        assert_eq!(values, original);
+        assert!(changes.is_empty());
+        assert!(reversible);
+    }
 }
