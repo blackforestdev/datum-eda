@@ -6005,8 +6005,8 @@
         "harness": "codex-cli",
         "session": "codex-global-preferences-gp-cm01-20260904",
         "claimed_at": "2026-09-04T13:27:43Z",
-        "heartbeat_at": "2026-09-04T13:27:43Z",
-        "expires_at": "2026-09-04T21:27:43Z",
+        "heartbeat_at": "2026-09-05T04:35:00Z",
+        "expires_at": "2026-09-05T12:35:00Z",
         "scope": [
           "Implement and prove only GP-CM01 completion and stabilization of the active Global Preferences GUI and repository behavior, preserving GP-F05 paths and excluding Revision descriptors, empty categories, GP-CM03 product-surface parity, and GP-CM05 production acceptance"
         ],
