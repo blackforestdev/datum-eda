@@ -71,7 +71,16 @@ pub enum PreferenceLiveConsumer {
     ReducedMotion,
     HighContrastNonColor,
     FutureProjectUnits,
-    DescriptorOwner,
+    /// Registered descriptor whose declared subsystem effect is not connected
+    /// to the preferences service. Catalog metadata may retain it for planning,
+    /// but a product surface must not activate the entry in this state.
+    Unwired,
+}
+
+impl PreferenceLiveConsumer {
+    pub fn is_runtime_wired(self) -> bool {
+        !matches!(self, Self::Unwired)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -171,7 +180,7 @@ impl PreferenceSurfaceCatalog {
                     &["GUI renderer", "terminal renderer"]
                 }
                 PreferenceLiveConsumer::FutureProjectUnits => &["ProjectDisplayUnits"],
-                PreferenceLiveConsumer::DescriptorOwner => &[],
+                PreferenceLiveConsumer::Unwired => &[],
             };
             if expected_consumers
                 .iter()
@@ -198,6 +207,12 @@ impl PreferenceSurfaceCatalog {
 
     pub fn entries(&self) -> &[PreferenceSurfaceEntry] {
         &self.entries
+    }
+
+    pub fn unwired_entries(&self) -> impl Iterator<Item = &PreferenceSurfaceEntry> {
+        self.entries
+            .iter()
+            .filter(|entry| !entry.live_consumer.is_runtime_wired())
     }
 
     pub fn search<'a>(
@@ -518,6 +533,7 @@ mod tests {
         assert_eq!(catalog.search(&registry, "console_duration").len(), 1);
         assert_eq!(catalog.search(&registry, "motion").len(), 1);
         assert!(catalog.search(&registry, "revision").is_empty());
+        assert_eq!(catalog.unwired_entries().count(), 0);
     }
 
     #[test]
