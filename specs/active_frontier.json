@@ -7224,6 +7224,92 @@
         }
       },
       "landing_commit": "f18d50a"
+    },
+    {
+      "key": "WORKFLOW-DELIVERY-QUALITY",
+      "order": 47,
+      "title": "Establish workflow delivery readiness and acceptance governance",
+      "issue_id": "dat-workflow-delivery-quality-xgj",
+      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
+        "canonical_next_step_id": "WDQ-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "WDQ-C01", "kind": "planning", "status": "pending",
+            "action": "Establish the reproducible manual-workflow capability baseline and map gaps to existing owners without inferring acceptance from code or test presence.",
+            "depends_on": [],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C01"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-C02", "kind": "planning", "status": "pending",
+            "action": "Resolve scoped foundational requirements through full evidence-route review and bounded primary-source research; integrate resulting specification work with existing Frontier owners.",
+            "depends_on": ["WDQ-C01"],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C02"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-C03", "kind": "planning", "status": "pending",
+            "action": "Specify readiness, connected-consumer activation, workflow proof, evidence freshness, independent review and fail-closed acceptance transitions with negative tests and exact integration points.",
+            "depends_on": ["WDQ-C02"],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C03"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-C04", "kind": "planning", "status": "pending",
+            "action": "Prepare a bounded native pilot, migration scope, gate implementation completion contract, numbered decision draft and coordinated activation/resume transaction.",
+            "depends_on": ["WDQ-C03"],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C04"}],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-C05", "kind": "owner_decision", "status": "pending",
+            "action": "Obtain explicit owner disposition of the concrete adoption packet before numbered ratification and separately authorized implementation; do not infer pilot acceptance or successor selection.",
+            "depends_on": ["WDQ-C04"],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C05"}],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `WORKFLOW-DELIVERY-QUALITY: approve adoption packet`, `WORKFLOW-DELIVERY-QUALITY: revise — <specific correction>`, or `WORKFLOW-DELIVERY-QUALITY: defer — <reason>`.",
+              "requests": [{
+                "id": "WDQ-ADOPTION",
+                "question": "Does the completed adoption packet define an adequate capability baseline, resolved research scope, enforceable and tested acceptance mechanism, bounded pilot, and safe activation/resume boundary?",
+                "recommended_response": "Approve only the concrete reviewed packet and its bounded implementation proposal; require separate recorded production proof before accepting the pilot.",
+                "source_ref": {"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C05"}
+              }]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record owner disposition and ratify approved mechanism through the numbered decision process with complete governance/evidence registration.",
+            "Promote bounded gate implementation and scoped research follow-ons through explicit Frontier transactions; preserve existing work and its resume disposition."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }

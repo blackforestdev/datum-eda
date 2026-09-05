@@ -2,6 +2,14 @@
   "description": "Machine-checked routes from every tracked research report and GUI prototype to the governed specifications and decisions that consume it. reviewed_digest covers both sources and consumers so modifying either side requires an explicit cross-review.",
   "routes": [
     {
+      "id": "workflow-delivery-quality",
+      "status": "in_progress",
+      "sources": ["research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md"],
+      "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
+      "reviewed_digest": "44a2b2179bed33ff78a96864678119f2a88e7101c97fdecf39e9c1cc7ed9f6ee",
+      "review_note": "The first-party owner request and limited repository observations were reviewed against all five planning requirements. The plan preserves active Preferences ownership, current selection, existing acceptance and prototype lanes; it schedules a capability audit, bounded research, a proposed evidence/readiness mechanism and a concrete adoption decision. Neither source nor consumer claims a completed audit, external research, ratified gate schema, active enforcement or runtime acceptance."
+    },
+    {
       "id": "research-governance-index",
       "status": "active",
       "sources": [
