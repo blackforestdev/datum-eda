@@ -6004,16 +6004,16 @@
         "agent": "codex",
         "harness": "codex-cli",
         "session": "codex-global-preferences-gp-cm01-20260904",
-        "claimed_at": "2026-09-04T13:27:43Z",
-        "heartbeat_at": "2026-09-05T04:35:00Z",
-        "expires_at": "2026-09-05T12:35:00Z",
+        "claimed_at": "2026-09-05T15:21:44Z",
+        "heartbeat_at": "2026-09-05T15:21:44Z",
+        "expires_at": "2026-09-05T23:21:44Z",
         "scope": [
-          "Implement and prove only GP-CM01 completion and stabilization of the active Global Preferences GUI and repository behavior, preserving GP-F05 paths and excluding Revision descriptors, empty categories, GP-CM03 product-surface parity, and GP-CM05 production acceptance"
+          "Correct and prove only GP-CM01 consumer-ready activation: expose the exact 11 descriptors with complete typed controls and real consumers, preserve the other 45 identities as reserved candidates outside the production repository and GUI, keep empty sections and the aggregate Units seed absent, and exclude GP-CM03 product-surface parity and GP-CM05 production acceptance"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7cfb797c51c8"
+      "head": "5f3add1bcb90"
       },
-      "summary": "Expand the accepted Global Preferences vertical slice through the complete active catalog, managed/recovery behavior, accessibility, API and seed parity, real Projects, and production acceptance while Revision descriptors remain absent.",
+      "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
         "dat-shared-units-surface-parity-s9x"
@@ -6035,7 +6035,7 @@
           },
           {
             "id": "GP-CM01", "kind": "execution", "status": "in_progress",
-            "action": "Complete and stabilize the full active Global Preferences catalog, managed/refused and recovery behavior, search/provenance, setup, responsive layout, and accessibility.",
+            "action": "Stabilize the exact 11-descriptor consumer-ready Global surface and repository; keep 45 reserved candidates, empty sections, and the aggregate Units seed absent; add management only with implemented operations; and reconcile setup and Start-page evidence before resuming expansion.",
             "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": []
           },
           {
