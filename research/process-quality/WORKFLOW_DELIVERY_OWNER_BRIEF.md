@@ -60,6 +60,12 @@ audit lane may proceed alongside GP-CM01, whose selected work, scope and claim
 remain intact. This interpretation permits read-only diagnostics and owned audit
 evidence, not concurrent edits to Preferences or new blocking enforcement.
 
+The owner subsequently named WDQ-C01 explicitly and then expanded the goal to
+complete the entire WORKFLOW-DELIVERY-QUALITY item. That authorizes continuing
+through the dependent planning steps and preparing the full adoption packet.
+WDQ-C05 still requires disposition of the concrete packet; this instruction does
+not assert that an unspecified mechanism or unperformed pilot already passed.
+
 ## Consumer
 
 `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` defines the bounded planning contract.

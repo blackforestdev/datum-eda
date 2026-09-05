@@ -1,0 +1,361 @@
+datum-gui diagnostic log pid=3216584 start=SystemTime { tv_sec: 1788651107, tv_nsec: 831179048 }
+[SystemTime { tv_sec: 1788651107, tv_nsec: 833909225 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: "default", custom_name: "custom", program: None, args: [], environment: [], environment_remove: [], cwd: "active", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: "propose", unattended_tools: [] }, demo_known_good: false, board_file: None, schematic_file: None, artifact_path: None, project_root: Some("/tmp/datum-wdq-isolated-ZslIOi/project"), select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: "1280x768", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }
+[SystemTime { tv_sec: 1788651107, tv_nsec: 859846528 }] resumed event
+[SystemTime { tv_sec: 1788651107, tv_nsec: 859871442 }] launch state load begin
+[SystemTime { tv_sec: 1788651107, tv_nsec: 859887673 }] request resolve begin
+[SystemTime { tv_sec: 1788651107, tv_nsec: 859925362 }] request resolve end project_root=/tmp/datum-wdq-isolated-ZslIOi/project board_file=None
+[SystemTime { tv_sec: 1788651107, tv_nsec: 859943068 }] workspace load begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 224302390 }] workspace load end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 224332247 }] camera fit begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 224354542 }] camera fit end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 224558067 }] terminal spawn begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 245154723 }] terminal spawn end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 245231474 }] launch state load end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 246875879 }] window created
+[SystemTime { tv_sec: 1788651110, tv_nsec: 246922845 }] runtime creation begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 248439330 }] wgpu instance create begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 350150922 }] wgpu request adapter begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 361345332 }] wgpu request device begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 408544967 }] wgpu request device end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 409085771 }] initial surface configure begin 1280x768 format=Bgra8UnormSrgb present=Fifo msaa=8
+[SystemTime { tv_sec: 1788651110, tv_nsec: 421995516 }] initial surface configure end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 422024044 }] renderer init begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 653639428 }] renderer init end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 655980287 }] terminal resize begin 155x9
+[SystemTime { tv_sec: 1788651110, tv_nsec: 656854100 }] terminal resize end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 656925085 }] runtime creation end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 657005533 }] window visible
+[SystemTime { tv_sec: 1788651110, tv_nsec: 657341275 }] window event ime Disabled
+[SystemTime { tv_sec: 1788651110, tv_nsec: 657393370 }] window event focused false
+[SystemTime { tv_sec: 1788651110, tv_nsec: 657471013 }] window event cursor moved 800.00,500.00
+[SystemTime { tv_sec: 1788651110, tv_nsec: 658619327 }] window event resized 1280x768
+[SystemTime { tv_sec: 1788651110, tv_nsec: 659790236 }] window event redraw requested
+[SystemTime { tv_sec: 1788651110, tv_nsec: 659809856 }] redraw handler begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 659826529 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651110, tv_nsec: 659842054 }] render acquire begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 659987796 }] render acquire end
+[SystemTime { tv_sec: 1788651110, tv_nsec: 660055573 }] render scene prepare begin retained_cached=false
+[SystemTime { tv_sec: 1788651110, tv_nsec: 660086520 }] retained scene build begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 668179857 }] retained scene build end 8ms
+[SystemTime { tv_sec: 1788651110, tv_nsec: 668201761 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 868943090 }] prepared scene build end 200ms
+[SystemTime { tv_sec: 1788651110, tv_nsec: 868973632 }] renderer render begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 945761513 }] renderer render end 76ms
+[SystemTime { tv_sec: 1788651110, tv_nsec: 945785640 }] frame present begin
+[SystemTime { tv_sec: 1788651110, tv_nsec: 967931990 }] frame present end 22ms total=308ms
+[SystemTime { tv_sec: 1788651110, tv_nsec: 967993126 }] redraw handler end
+[SystemTime { tv_sec: 1788651123, tv_nsec: 686800423 }] window event focused true
+[SystemTime { tv_sec: 1788651123, tv_nsec: 687278072 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 687357192 }] window event cursor moved 800.00,500.00
+[SystemTime { tv_sec: 1788651123, tv_nsec: 691188542 }] window event cursor moved 110.00,17.00
+[SystemTime { tv_sec: 1788651123, tv_nsec: 693568386 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 693638128 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 694670399 }] pan primary pressed cursor=Some((110.0, 17.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651123, tv_nsec: 695299083 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 695367993 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 695454913 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651123, tv_nsec: 696044194 }] pan primary released cursor=Some((110.0, 17.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651123, tv_nsec: 696802118 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651123, tv_nsec: 696928968 }] window event redraw requested
+[SystemTime { tv_sec: 1788651123, tv_nsec: 696996333 }] redraw handler begin
+[SystemTime { tv_sec: 1788651123, tv_nsec: 697062304 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651123, tv_nsec: 697151895 }] render acquire begin
+[SystemTime { tv_sec: 1788651123, tv_nsec: 697436409 }] render acquire end
+[SystemTime { tv_sec: 1788651123, tv_nsec: 697600780 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651123, tv_nsec: 697669510 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651123, tv_nsec: 712595939 }] prepared scene build end 14ms
+[SystemTime { tv_sec: 1788651123, tv_nsec: 712643288 }] renderer render begin
+[SystemTime { tv_sec: 1788651123, tv_nsec: 737041123 }] renderer render end 24ms
+[SystemTime { tv_sec: 1788651123, tv_nsec: 737065101 }] frame present begin
+[SystemTime { tv_sec: 1788651123, tv_nsec: 774750010 }] frame present end 37ms total=77ms
+[SystemTime { tv_sec: 1788651123, tv_nsec: 774802907 }] redraw handler end
+[SystemTime { tv_sec: 1788651148, tv_nsec: 29220067 }] window event cursor moved 160.00,52.00
+[SystemTime { tv_sec: 1788651148, tv_nsec: 33982696 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 34037024 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 34746244 }] pan primary pressed cursor=Some((160.0, 52.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651148, tv_nsec: 35154518 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 35205819 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 35247558 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651148, tv_nsec: 35629602 }] pan primary released cursor=Some((160.0, 52.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38562059 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38623322 }] window event redraw requested
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38653168 }] redraw handler begin
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38683395 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38711605 }] render acquire begin
+[SystemTime { tv_sec: 1788651148, tv_nsec: 38913873 }] render acquire end
+[SystemTime { tv_sec: 1788651148, tv_nsec: 39030199 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651148, tv_nsec: 39074197 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651148, tv_nsec: 43053807 }] prepared scene build end 3ms
+[SystemTime { tv_sec: 1788651148, tv_nsec: 43088213 }] renderer render begin
+[SystemTime { tv_sec: 1788651148, tv_nsec: 50082453 }] renderer render end 6ms
+[SystemTime { tv_sec: 1788651148, tv_nsec: 50112624 }] frame present begin
+[SystemTime { tv_sec: 1788651148, tv_nsec: 86140991 }] frame present end 36ms total=47ms
+[SystemTime { tv_sec: 1788651148, tv_nsec: 86206359 }] redraw handler end
+[SystemTime { tv_sec: 1788651148, tv_nsec: 573020055 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 573079058 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651148, tv_nsec: 579349105 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651148, tv_nsec: 585814739 }] window event cursor moved 425.00,49.00
+[SystemTime { tv_sec: 1788651148, tv_nsec: 586912409 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 586948916 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587407078 }] pan primary pressed cursor=Some((425.0, 49.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587582148 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587604791 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587623340 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587791576 }] pan primary released cursor=Some((425.0, 49.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651148, tv_nsec: 587974210 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 129565601 }] window event cursor moved 365.00,425.00
+[SystemTime { tv_sec: 1788651149, tv_nsec: 130635933 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 130658995 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131117436 }] pan primary pressed cursor=Some((365.0, 425.0)) pointer_in_scene=true held=false active=false
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131292196 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131314833 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131333524 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131501981 }] pan primary released cursor=Some((365.0, 425.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131861456 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131924965 }] window event redraw requested
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131953848 }] redraw handler begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131977377 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651149, tv_nsec: 131996056 }] render acquire begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 132148739 }] render acquire end
+[SystemTime { tv_sec: 1788651149, tv_nsec: 132219617 }] render scene prepare begin retained_cached=false
+[SystemTime { tv_sec: 1788651149, tv_nsec: 132237881 }] retained scene build begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 139385390 }] retained scene build end 7ms
+[SystemTime { tv_sec: 1788651149, tv_nsec: 139405652 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 141552342 }] prepared scene build end 2ms
+[SystemTime { tv_sec: 1788651149, tv_nsec: 141572797 }] renderer render begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 152874680 }] renderer render end 11ms
+[SystemTime { tv_sec: 1788651149, tv_nsec: 152902933 }] frame present begin
+[SystemTime { tv_sec: 1788651149, tv_nsec: 185567042 }] frame present end 32ms total=53ms
+[SystemTime { tv_sec: 1788651149, tv_nsec: 185636446 }] redraw handler end
+[SystemTime { tv_sec: 1788651155, tv_nsec: 132604911 }] window event redraw requested
+[SystemTime { tv_sec: 1788651155, tv_nsec: 132687574 }] redraw handler begin
+[SystemTime { tv_sec: 1788651155, tv_nsec: 132749557 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651155, tv_nsec: 132806178 }] render acquire begin
+[SystemTime { tv_sec: 1788651155, tv_nsec: 133091089 }] render acquire end
+[SystemTime { tv_sec: 1788651155, tv_nsec: 133309838 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651155, tv_nsec: 133369597 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651155, tv_nsec: 140237894 }] prepared scene build end 6ms
+[SystemTime { tv_sec: 1788651155, tv_nsec: 140313895 }] renderer render begin
+[SystemTime { tv_sec: 1788651155, tv_nsec: 145971384 }] renderer render end 5ms
+[SystemTime { tv_sec: 1788651155, tv_nsec: 146035365 }] frame present begin
+[SystemTime { tv_sec: 1788651155, tv_nsec: 181375096 }] frame present end 35ms total=48ms
+[SystemTime { tv_sec: 1788651155, tv_nsec: 181471330 }] redraw handler end
+[SystemTime { tv_sec: 1788651177, tv_nsec: 877451378 }] window event cursor moved 595.00,17.00
+[SystemTime { tv_sec: 1788651177, tv_nsec: 880232229 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651177, tv_nsec: 880283355 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651177, tv_nsec: 881251654 }] pan primary pressed cursor=Some((595.0, 17.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651177, tv_nsec: 881516641 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651177, tv_nsec: 881568349 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651177, tv_nsec: 881597768 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651177, tv_nsec: 881843381 }] pan primary released cursor=Some((595.0, 17.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882143586 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882191415 }] window event redraw requested
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882214608 }] redraw handler begin
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882238638 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882260501 }] render acquire begin
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882415460 }] render acquire end
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882504974 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651177, tv_nsec: 882529120 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651177, tv_nsec: 885716701 }] prepared scene build end 3ms
+[SystemTime { tv_sec: 1788651177, tv_nsec: 885766371 }] renderer render begin
+[SystemTime { tv_sec: 1788651177, tv_nsec: 891962689 }] renderer render end 6ms
+[SystemTime { tv_sec: 1788651177, tv_nsec: 891988657 }] frame present begin
+[SystemTime { tv_sec: 1788651177, tv_nsec: 931082902 }] frame present end 39ms total=48ms
+[SystemTime { tv_sec: 1788651177, tv_nsec: 931175734 }] redraw handler end
+[SystemTime { tv_sec: 1788651178, tv_nsec: 334125023 }] window event cursor moved 655.00,53.00
+[SystemTime { tv_sec: 1788651178, tv_nsec: 336294925 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 336319616 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 336789985 }] pan primary pressed cursor=Some((655.0, 53.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651178, tv_nsec: 336969241 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 336992574 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 337011752 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651178, tv_nsec: 337245476 }] pan primary released cursor=Some((655.0, 53.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341293845 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341334608 }] window event redraw requested
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341351683 }] redraw handler begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341368631 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341384516 }] render acquire begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341494778 }] render acquire end
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341547444 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651178, tv_nsec: 341564779 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 343694507 }] prepared scene build end 2ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 343716164 }] renderer render begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 432592356 }] renderer render end 88ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 432618042 }] frame present begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 470877311 }] frame present end 38ms total=129ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 470949617 }] redraw handler end
+[SystemTime { tv_sec: 1788651178, tv_nsec: 784168889 }] window event cursor moved 235.00,17.00
+[SystemTime { tv_sec: 1788651178, tv_nsec: 786265401 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 786299975 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 787005137 }] pan primary pressed cursor=Some((235.0, 17.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651178, tv_nsec: 787375325 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 787419276 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 787441774 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651178, tv_nsec: 787807713 }] pan primary released cursor=Some((235.0, 17.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788231999 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788266191 }] window event redraw requested
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788284203 }] redraw handler begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788302458 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788319602 }] render acquire begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788428426 }] render acquire end
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788482423 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651178, tv_nsec: 788500855 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 793301359 }] prepared scene build end 4ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 793323144 }] renderer render begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 802396701 }] renderer render end 9ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 802423963 }] frame present begin
+[SystemTime { tv_sec: 1788651178, tv_nsec: 840543698 }] frame present end 38ms total=52ms
+[SystemTime { tv_sec: 1788651178, tv_nsec: 840602739 }] redraw handler end
+[SystemTime { tv_sec: 1788651179, tv_nsec: 234529914 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236764445 }] window event redraw requested
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236784625 }] redraw handler begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236803685 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236820814 }] render acquire begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236923653 }] render acquire end
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236978815 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651179, tv_nsec: 236997387 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 241463855 }] prepared scene build end 4ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 241486961 }] renderer render begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 243458737 }] renderer render end 1ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 243478495 }] frame present begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 276572976 }] frame present end 33ms total=39ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 276635875 }] redraw handler end
+[SystemTime { tv_sec: 1788651179, tv_nsec: 277091491 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651179, tv_nsec: 277380873 }] pan key physical=Code(Escape) logical=Named(Escape) state=Released repeat=false pointer_in_scene=false held=false consumed=false
+[SystemTime { tv_sec: 1788651179, tv_nsec: 277525760 }] window event cursor moved 460.00,17.00
+[SystemTime { tv_sec: 1788651179, tv_nsec: 278483562 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651179, tv_nsec: 278509556 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651179, tv_nsec: 278878332 }] pan primary pressed cursor=Some((460.0, 17.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651179, tv_nsec: 279190970 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651179, tv_nsec: 279215156 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651179, tv_nsec: 279234971 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651179, tv_nsec: 279511044 }] pan primary released cursor=Some((460.0, 17.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651179, tv_nsec: 281998448 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282063597 }] window event redraw requested
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282081023 }] redraw handler begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282098964 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282115341 }] render acquire begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282254137 }] render acquire end
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282309828 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651179, tv_nsec: 282326938 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 285215569 }] prepared scene build end 2ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 285277712 }] renderer render begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 292985928 }] renderer render end 7ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 293009385 }] frame present begin
+[SystemTime { tv_sec: 1788651179, tv_nsec: 333728478 }] frame present end 40ms total=51ms
+[SystemTime { tv_sec: 1788651179, tv_nsec: 333812221 }] redraw handler end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 196066622 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651221, tv_nsec: 198591864 }] window event redraw requested
+[SystemTime { tv_sec: 1788651221, tv_nsec: 198648126 }] redraw handler begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 198690775 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651221, tv_nsec: 198730339 }] render acquire begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 198941178 }] render acquire end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 199061198 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651221, tv_nsec: 199104418 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 203748163 }] prepared scene build end 4ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 203793236 }] renderer render begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 207648555 }] renderer render end 3ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 207699357 }] frame present begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 239583837 }] frame present end 31ms total=40ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 239639188 }] redraw handler end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 245478367 }] window event keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some("\u{1b}")
+[SystemTime { tv_sec: 1788651221, tv_nsec: 245795705 }] pan key physical=Code(Escape) logical=Named(Escape) state=Released repeat=false pointer_in_scene=false held=false consumed=false
+[SystemTime { tv_sec: 1788651221, tv_nsec: 245877808 }] window event cursor moved 365.00,425.00
+[SystemTime { tv_sec: 1788651221, tv_nsec: 247091605 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 247120524 }] window event mouse wheel
+[SystemTime { tv_sec: 1788651221, tv_nsec: 248077834 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 248106553 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 248128029 }] window event mouse wheel
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251016630 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251067396 }] window event redraw requested
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251086488 }] redraw handler begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251105800 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251123671 }] render acquire begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251243868 }] render acquire end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251324984 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651221, tv_nsec: 251347223 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 253619504 }] prepared scene build end 2ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 253644651 }] renderer render begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 261279127 }] renderer render end 7ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 261310881 }] frame present begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 300638030 }] frame present end 39ms total=49ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 300691814 }] redraw handler end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 309322385 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 309361648 }] window event mouse wheel
+[SystemTime { tv_sec: 1788651221, tv_nsec: 310228815 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 310252298 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 310270746 }] window event mouse wheel
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313343070 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313391220 }] window event redraw requested
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313408691 }] redraw handler begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313426475 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313442859 }] render acquire begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313560477 }] render acquire end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313629458 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651221, tv_nsec: 313646438 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 315422894 }] prepared scene build end 1ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 315443700 }] renderer render begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 321192333 }] renderer render end 5ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 321235709 }] frame present begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 355177099 }] frame present end 33ms total=41ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 355273578 }] redraw handler end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 871274389 }] window event cursor moved 189.00,17.00
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872210722 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872234891 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872559402 }] pan primary pressed cursor=Some((189.0, 17.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872739082 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872762165 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872781151 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651221, tv_nsec: 872954536 }] pan primary released cursor=Some((189.0, 17.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873210512 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873246459 }] window event redraw requested
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873263396 }] redraw handler begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873280479 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873296426 }] render acquire begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873407812 }] render acquire end
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873461275 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651221, tv_nsec: 873478927 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 878737354 }] prepared scene build end 5ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 878765231 }] renderer render begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 890853525 }] renderer render end 12ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 890906381 }] frame present begin
+[SystemTime { tv_sec: 1788651221, tv_nsec: 932334579 }] frame present end 41ms total=59ms
+[SystemTime { tv_sec: 1788651221, tv_nsec: 932394823 }] redraw handler end
+[SystemTime { tv_sec: 1788651222, tv_nsec: 72775656 }] window event cursor moved 245.00,53.00
+[SystemTime { tv_sec: 1788651222, tv_nsec: 80520328 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651222, tv_nsec: 80611427 }] window event mouse input Left Pressed
+[SystemTime { tv_sec: 1788651222, tv_nsec: 82318481 }] pan primary pressed cursor=Some((245.0, 53.0)) pointer_in_scene=false held=false active=false
+[SystemTime { tv_sec: 1788651222, tv_nsec: 82954434 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651222, tv_nsec: 83036099 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651222, tv_nsec: 83102069 }] window event mouse input Left Released
+[SystemTime { tv_sec: 1788651222, tv_nsec: 83703376 }] pan primary released cursor=Some((245.0, 53.0)) suppress_click=false
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110074341 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110153838 }] window event redraw requested
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110217983 }] redraw handler begin
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110252655 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110284185 }] render acquire begin
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110495508 }] render acquire end
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110580709 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651222, tv_nsec: 110608988 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651222, tv_nsec: 113889455 }] prepared scene build end 3ms
+[SystemTime { tv_sec: 1788651222, tv_nsec: 113928645 }] renderer render begin
+[SystemTime { tv_sec: 1788651222, tv_nsec: 120248746 }] renderer render end 6ms
+[SystemTime { tv_sec: 1788651222, tv_nsec: 120282972 }] frame present begin
+[SystemTime { tv_sec: 1788651222, tv_nsec: 152229326 }] frame present end 31ms total=41ms
+[SystemTime { tv_sec: 1788651222, tv_nsec: 152280137 }] redraw handler end
+[SystemTime { tv_sec: 1788651228, tv_nsec: 110859955 }] window event redraw requested
+[SystemTime { tv_sec: 1788651228, tv_nsec: 110939084 }] redraw handler begin
+[SystemTime { tv_sec: 1788651228, tv_nsec: 110997538 }] render begin 1280x768
+[SystemTime { tv_sec: 1788651228, tv_nsec: 111051628 }] render acquire begin
+[SystemTime { tv_sec: 1788651228, tv_nsec: 111349776 }] render acquire end
+[SystemTime { tv_sec: 1788651228, tv_nsec: 111510521 }] render scene prepare begin retained_cached=true
+[SystemTime { tv_sec: 1788651228, tv_nsec: 111569778 }] prepared scene build begin
+[SystemTime { tv_sec: 1788651228, tv_nsec: 118937511 }] prepared scene build end 7ms
+[SystemTime { tv_sec: 1788651228, tv_nsec: 119016388 }] renderer render begin
+[SystemTime { tv_sec: 1788651228, tv_nsec: 124922412 }] renderer render end 5ms
+[SystemTime { tv_sec: 1788651228, tv_nsec: 125002836 }] frame present begin
+[SystemTime { tv_sec: 1788651228, tv_nsec: 158050527 }] frame present end 33ms total=47ms
+[SystemTime { tv_sec: 1788651228, tv_nsec: 158112146 }] redraw handler end
+[SystemTime { tv_sec: 1788651231, tv_nsec: 900125896 }] window event modifiers changed
+[SystemTime { tv_sec: 1788651231, tv_nsec: 905348080 }] window event focused false
+[SystemTime { tv_sec: 1788651231, tv_nsec: 905400695 }] window event destroyed

@@ -9,8 +9,8 @@
         "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md"
       ],
       "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "reviewed_digest": "a09e9e3c94baad474ffef803471c9da2a42c0c5e679173d75cab74258fadf01b",
-      "review_note": "Both first-party sources were reviewed completely against the planning consumer. The owner's proceed instruction enables only the separate WDQ-C01 audit scope alongside GP-CM01. The new baseline separates current-source observations from an existing binary with unverified build identity, records fixture and image hashes, and explicitly leaves native input and full acceptance unverified. It records the owner-closed obstructing X11 window and requires isolated future interaction testing. No unrelated route, prototype, acceptance record, gate schema or product authority is refreshed or ratified."
+      "reviewed_digest": "5e6a2aa9da3a9a469310963d36b570be74359a642cfe031e91f2a929d7dbb6d0",
+      "review_note": "Both first-party sources and the complete planning consumer were re-reviewed for WDQ-C01 closure. The fresh-build continuation records matching real-board import provenance, archived fixture, isolated actual input, artifact hashes and preservation/reopen limits. It supersedes only the specified original audit limitations; it does not accept native authoring, manufacturing, all platform variants or Preferences. The owner's entire-item goal permits dependent planning through a concrete adoption packet, not unreviewed mechanism ratification. C01 closes as an audit and C02 begins; no unrelated route or protected prototype is changed."
     },
     {
       "id": "research-governance-index",
