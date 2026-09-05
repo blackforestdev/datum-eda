@@ -5996,23 +5996,11 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "planned",
+      "authorization": "owner_decision",
       "canonical_next": true,
       "parallel": false,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-global-preferences-gp-cm01-20260904",
-        "claimed_at": "2026-09-05T15:21:44Z",
-        "heartbeat_at": "2026-09-05T15:21:44Z",
-        "expires_at": "2026-09-05T23:21:44Z",
-        "scope": [
-          "Correct and prove only GP-CM01 consumer-ready activation: expose the exact 11 descriptors with complete typed controls and real consumers, preserve the other 45 identities as reserved candidates outside the production repository and GUI, keep empty sections and the aggregate Units seed absent, and exclude GP-CM03 product-surface parity and GP-CM05 production acceptance"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-      "head": "5f3add1bcb90"
-      },
+      "claim": null,
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
@@ -6023,7 +6011,7 @@
       ],
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
-        "canonical_next_step_id": "GP-CM01",
+        "canonical_next_step_id": "GP-CM02",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
@@ -6034,9 +6022,14 @@
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03C are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
           },
           {
-            "id": "GP-CM01", "kind": "execution", "status": "in_progress",
+            "id": "GP-CM01", "kind": "execution", "status": "complete",
             "action": "Stabilize the exact 11-descriptor consumer-ready Global surface and repository; keep 45 reserved candidates, empty sections, and the aggregate Units seed absent; add management only with implemented operations; and reconcile setup and Start-page evidence before resuming expansion.",
-            "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": []
+            "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": [
+              {"kind": "commit", "revision": "5f3add1"},
+              {"kind": "commit", "revision": "71c8d7e"},
+              {"kind": "commit", "revision": "349c505"},
+              {"kind": "document", "path": "specs/evidence_traceability_manifest.json", "marker": "review_note_addendum_73"}
+            ]
           },
           {
             "id": "GP-CM02", "kind": "owner_decision", "status": "pending",
