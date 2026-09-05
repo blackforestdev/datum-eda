@@ -52,6 +52,14 @@ inventing development paths. Preserve that benefit.
 6. Introduce blocking policy at an explicit coordinated handoff. Preparing this
    package does not itself activate a new gate or authorize expanded GUI work.
 
+## Follow-up authorization
+
+On 2026-09-05 the owner replied `please proceed` after the planning-registration
+handoff. This authorizes beginning the proposed capability audit. Its bounded
+audit lane may proceed alongside GP-CM01, whose selected work, scope and claim
+remain intact. This interpretation permits read-only diagnostics and owned audit
+evidence, not concurrent edits to Preferences or new blocking enforcement.
+
 ## Consumer
 
 `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` defines the bounded planning contract.
