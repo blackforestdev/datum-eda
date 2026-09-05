@@ -42,6 +42,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
+      "notes": "Owner-requested planning contract for workflow evidence, bounded foundational research and a reviewed gate adoption packet. No live enforcement or runtime authorization."
+    },
     "AGENTS.md": {
       "class": "governed",
       "progress_anchor": "VISUAL-TRUTH-FILE-LANE",
