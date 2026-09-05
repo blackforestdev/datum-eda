@@ -5996,11 +5996,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "planning",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-global-preferences-gp-cm02r-20260905",
+        "claimed_at": "2026-09-05T23:34:59Z",
+        "heartbeat_at": "2026-09-05T23:34:59Z",
+        "expires_at": "2026-09-06T07:34:59Z",
+        "scope": [
+          "Specify and cross-prove only the nine owner-required GP-CM03 build-readiness corrections across doctrine, implementation plan, public API/CLI/MCP/daemon contracts, Project genesis, security, concurrency, failure semantics, and acceptance evidence; no runtime or prototype implementation"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "6fa5aa3"
+      },
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
@@ -6011,7 +6023,7 @@
       ],
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
-        "canonical_next_step_id": "GP-CM02",
+        "canonical_next_step_id": "GP-CM02R",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
@@ -6032,15 +6044,28 @@
             ]
           },
           {
-            "id": "GP-CM02", "kind": "owner_decision", "status": "pending",
+            "id": "GP-CM02", "kind": "owner_decision", "status": "complete",
             "action": "Review GP-CM01 before authorizing engine, CLI, MCP, and ProjectPolicySeed parity in GP-CM03 only.",
-            "depends_on": ["GP-CM01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}], "completion_evidence": [],
+            "depends_on": ["GP-CM01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}], "completion_evidence": [
+              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02-OWNER-REVISION-20260905"}
+            ],
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, or private-writer correction>`.", "requests": [{"id": "GP-CM02", "question": "May Datum implement product-surface and existing ratified ProjectPolicySeed parity in GP-CM03 only?", "recommended_response": "Approve only with one resolver answer, no private store parser, no live Project following, and every excluded seed schema absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}}]}
+          },
+          {
+            "id": "GP-CM02R", "kind": "planning", "status": "in_progress",
+            "action": "Reconcile all nine owner-required GP-CM03 build-readiness gaps across exact typed operations, CLI/MCP contracts, proposal security, active seed scope, Project-creation modes, genesis atomicity, typed failures, PM-037 search authority, and the cross-surface acceptance matrix without implementation.",
+            "depends_on": ["GP-CM02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02R"}], "completion_evidence": []
+          },
+          {
+            "id": "GP-CM02V", "kind": "owner_decision", "status": "pending",
+            "action": "Review the committed GP-CM02R contract and evidence before authorizing GP-CM03 implementation.",
+            "depends_on": ["GP-CM02R"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}], "completion_evidence": [],
+            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, concurrency, security, or proof correction>`.", "requests": [{"id": "GP-CM02V", "question": "Does the reconciled GP-CM03 contract fully specify an enterprise-worthy engine, CLI, MCP, daemon, and Project-genesis implementation without leaving product or authority decisions to the implementer?", "recommended_response": "Approve only when all nine findings have exact typed inventories, ownership, failure, concurrency, security, and clause-by-clause proof with the 11-active/45-reserved and eight-seed boundaries intact.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}}]}
           },
           {
             "id": "GP-CM03", "kind": "execution", "status": "pending",
             "action": "Implement engine, CLI, MCP operation/query/refusal/proposal parity and the existing copy-once ProjectPolicySeed snapshot/receipt seam.",
-            "depends_on": ["GP-CM02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"}], "completion_evidence": []
+            "depends_on": ["GP-CM02V"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"}], "completion_evidence": []
           },
           {
             "id": "GP-CM04", "kind": "owner_decision", "status": "pending",

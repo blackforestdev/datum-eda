@@ -1007,6 +1007,51 @@ Revision descriptors and empty categories remain absent.
 
 Review GP-CM01 before authorizing GP-CM03.
 
+On 2026-09-05 the owner declined direct GP-CM03 authorization and directed
+exactly:
+
+> GLOBAL-PREFERENCES-COMPLETION: revise — before GP-CM03 implementation,
+> replace the placeholder product-surface paragraph with an exact build
+> contract. Define the complete typed operation, query, refusal, Reset,
+> explanation, and proposal inventories; stable request/response schemas;
+> actor, provenance, authorization, expected-generation, idempotency, and audit
+> semantics; exact CLI and MCP commands/tools and error mappings; one
+> engine-owned service path with no private parser or writer; and the
+> configuration-root, daemon, and multi-process ownership model. Limit Project
+> genesis to the eight production-active Units seeds, keep the other six
+> reserved ProjectPolicySeed identities and datum.projects.unit_policy_seed
+> aggregate inactive, and specify identical GUI/CLI/MCP Project-creation modes.
+> Define pinned-snapshot atomicity, concurrent-write and crash behavior,
+> immutable receipt contents, retry/replay rules,
+> unreadable/migration/stale/refusal outcomes, and explicit factory-mode
+> behavior. Supersede PM-037’s stale planned/read-only search clause and add a
+> clause-by-clause cross-surface acceptance matrix proving no live Project
+> following, no reserved activation, no private mutation path, and deterministic
+> real-Project behavior. Do not authorize GP-CM03 until these contracts agree
+> across doctrine, implementation plan, public registries, CLI, MCP, daemon, and
+> Project genesis.
+
+This disposition completes GP-CM02 as a revision decision and authorizes only
+GP-CM02R specification reconciliation. It does not authorize runtime, CLI, MCP,
+daemon, GUI, Project, prototype, dependency, Publish, Revision, or GP-CM03
+implementation work.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02-OWNER-REVISION-20260905 -->
+
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02R -->
+### GP-CM02R — reconcile the GP-CM03 production-build contract
+
+Specify and cross-prove all nine owner-required readiness corrections across
+the controlling doctrine, engine/API boundary, CLI, MCP, daemon, Project
+genesis, security, concurrency, failure, and acceptance contracts. Preserve the
+11-active/45-reserved boundary and make no implementation change.
+
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V -->
+<!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V:GP-CM02V -->
+### GP-CM02V — fresh owner authorization after reconciliation
+
+Review the committed GP-CM02R contract and evidence before authorizing GP-CM03.
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM03 -->
 ### GP-CM03 — engine, CLI, MCP, and Project seed parity
 
