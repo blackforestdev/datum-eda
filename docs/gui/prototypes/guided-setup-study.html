@@ -58,12 +58,29 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .statusmark[data-state="approved"]{color:#4FA75A}
 .statusmark[data-state="open"]{color:#E0A23A}
 .statusmark[data-state="retired"]{color:#717885}
-</style></head><body>
-<div class="note">PROTOTYPE — guided setup <b>inside</b> the real Preferences window instead of a separate wizard: the accent ring steps through what a new user must choose, and the window teaches itself while doing it. <span class="statusmark" data-state="approved">✓ OWNER-APPROVED</span> <b style="color:#3B6E45">✓ OWNER-APPROVED — GP-C03-Q5A: guided-in-place (B) governs as the sole initial-setup surface with optional proposal-only assistance (C); zero mandatory choices; Skip and Esc end it permanently; replay via “Run setup again”. Candidate A (separate wizard) is retained as comparative evidence only.</b></div>
+</style>
+<style>
+/* responsive reconciliation: the study must not clip or scroll sideways at any width */
+body{padding-left:16px;padding-right:16px}
+.note,.cap{max-width:100%}
+.win{max-width:100%}
+@media (max-width:1120px){
+  .win{width:100%}
+  .row .lbl{width:auto;flex:1;min-width:0}
+}
+@media (max-width:760px){
+  .nav{width:100%;border-right:0;border-bottom:1px solid var(--bd-sub);display:flex;flex-wrap:wrap}
+  .win > div{flex-direction:column}
+  .row{flex-direction:column;align-items:flex-start;gap:6px}
+  .row .ctl{margin-left:0}
+}
+</style>
+</head><body>
+<div class="note">PROTOTYPE — guided setup <b>inside</b> the real Preferences window instead of a separate wizard: the accent ring steps through what a new user must choose, and the window teaches itself while doing it. <span class="statusmark" data-state="approved">✓ OWNER-APPROVED — the guided-in-place approach</span> <span class="statusmark" data-state="open">◐ DEFERRED — the surface itself is not shippable; not implemented, not production accepted</span> <b style="color:#3B6E45">✓ OWNER-APPROVED DESIGN DIRECTION (historical) — GP-C03-Q5A: guided-in-place (B) is the approved direction for the initial-setup surface, with optional proposal-only assistance (C) and zero mandatory choices. Skip or Escape dismisses the current setup and persists that dismissal; setup appears again only through an explicit future “Run setup again” action. Candidate A (separate wizard) is retained as comparative evidence only.</b> <b style="color:#E0A23A">This is a future design direction, not a currently shipping initial-setup surface.</b></div>
 
 <div class="win"><div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div><div class="body"><div class="nav">
   <div class="todo">Appearance</div><div>Workspace</div><div class="on">Units</div><div>Schematic</div><div>PCB/Board</div>
-  <div>Publish Space</div><div>Terminal</div><div class="todo">Files &amp; Projects</div><div>Revision</div><div>Agents</div><div>Organization</div></div>
+  <div>Publish Space</div><div>Terminal</div><div class="todo">Files &amp; Projects</div><div>Agents</div><div>Organization</div></div>
   <div class="main">
     <div class="row"><div class="lbl"><b>Measurement system</b><span>drives the default unit for every quantity below</span></div>
       <div class="ctl"><div class="sel focus">Metric</div></div></div>
@@ -75,13 +92,13 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <div class="ctl"><div class="sel">Follow system (mm)</div></div></div>
   </div></div>
 <div class="coach"><span class="n">SETUP 1 OF 4</span>
-  <span class="txt"><b>Pick your measurement system.</b> everything else follows from it — and you can change any of this later, right here</span>
+  <span class="txt"><b>Pick your measurement system.</b> <span style="color:#E0A23A">These Measurement system and Units choices are defaults copied only into future Projects — open and existing Projects are unaffected and keep their own Project Working Units.</span> everything else follows from it — and you can change any of this later, right here</span>
   <span class="right"><span class="skip">Skip setup</span><span class="btn">Back</span><span class="btn pri">Next · Drafting standard</span></span></div></div>
 <div class="cap"><b>B — guided in place.</b> no second surface to build or drift · dots mark sections still to visit · the ring moves, the window doesn’t jump · Esc or Skip ends it forever, nothing is blocked meanwhile</div>
 
 <div class="win"><div class="tbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp; Preferences — Datum</div><div class="body" style="height:300px"><div class="nav">
   <div>Appearance</div><div>Workspace</div><div class="on">Units</div><div>Schematic</div><div>PCB/Board</div>
-  <div>Publish Space</div><div>Terminal</div><div>Files &amp; Projects</div><div>Revision</div><div>Agents</div><div>Organization</div></div>
+  <div>Publish Space</div><div>Terminal</div><div>Files &amp; Projects</div><div>Agents</div><div>Organization</div></div>
   <div class="main">
     <div class="row"><div class="lbl"><b>Measurement system</b><span>drives the default unit for every quantity below</span></div>
       <div class="ctl"><div class="sel">Metric</div></div></div>
@@ -101,3 +118,4 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 
 <div class="note">Compare with <b>A — separate first-run wizard</b> (first-run-study.html): A duplicates the settings surface in a second UI that must be maintained and can drift; B reuses the real window and teaches its layout as a side effect; C rides on B as an optional accelerator. All three are skippable and none block authoring.</div>
 </body></html>
+<div class="note" style="margin-top:26px;border-left:3px solid #E0A23A"><b style="color:#E0A23A">◐ GUIDED SETUP IS DEFERRED — reconciled to consumer-ready truth.</b> The four approved checkpoints stand exactly as ratified: <b>1 Measurement system · 2 Drafting standard · 3 Appearance · 4 Files &amp; Projects</b>. No checkpoint may be substituted — Startup view is not a checkpoint. <b>Guided setup cannot ship until all four checkpoints have production-ready controls, real runtime consumers, truthful effect timing, accessibility, and proof.</b> Today only Appearance and Units are consumer-ready; <b>that does not authorize an incomplete two-checkpoint setup</b>, and setup is not shortened to fit what happens to be wired. Drafting standard has no published schema and Files &amp; Projects has no runtime consumer, so neither checkpoint can yet be driven. The section rail above is illustrative: apart from Appearance and Units, the categories it lists are reserved candidates and are not active settings. The ratified interaction contract is preserved as future contract, unchanged: <b>zero mandatory choices</b>, Skip or Escape dismisses the current setup and persists that dismissal; setup appears again only through an explicit future “Run setup again” action, authoring is never blocked, replay via “Run setup again”, and assistant participation stays proposal-only — nothing is applied until you accept. No Revision category or Revision guidance appears in setup. Open under owner review; this claims no implementation and no production acceptance.</div>
