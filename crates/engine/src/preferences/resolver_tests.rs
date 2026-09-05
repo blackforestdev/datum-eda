@@ -1,5 +1,5 @@
 use super::*;
-use crate::preferences::{PreferenceKey, active_v1_registry};
+use crate::preferences::{PreferenceKey, reserved_v1_registry};
 
 pub(super) fn key(value: &str) -> PreferenceKey {
     PreferenceKey::parse(value).unwrap()
@@ -90,7 +90,7 @@ pub(super) fn resolve(
     facts: &[Contribution],
     releases: &[AuthorityRelease],
 ) -> PreferenceExplanation {
-    let registry = active_v1_registry();
+    let registry = reserved_v1_registry();
     resolve_preference(ResolutionRequest {
         registry: &registry,
         key: key("datum.viewport.snap_enabled"),
@@ -366,7 +366,7 @@ fn explanation_is_input_order_independent() {
 
 #[test]
 fn unknown_key_never_guesses_a_descriptor() {
-    let registry = active_v1_registry();
+    let registry = reserved_v1_registry();
     let explanation = resolve_preference(ResolutionRequest {
         registry: &registry,
         key: key("datum.unknown.future_key"),
@@ -509,7 +509,7 @@ fn explicit_redaction_hides_value_without_hiding_authority() {
 
 #[test]
 fn registered_runtime_default_requires_exact_recipe_and_schema() {
-    let registry = active_v1_registry();
+    let registry = reserved_v1_registry();
     let preference_key = key("datum.viewport.grid_mark_style");
     let provenance = FactProvenance {
         origin: "shared viewport profile".to_owned(),

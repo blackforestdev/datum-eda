@@ -1,8 +1,10 @@
-//! Complete active Global Preferences presentation catalog for GP-CM01.
+//! Reserved candidate Global Preferences presentation inventory for GP-CM01.
 //!
 //! Placement and controls are explicit typed metadata. Consumers never infer a
 //! section or widget from a key prefix, and excluded/deferred identities never
-//! enter this catalog.
+//! enter this catalog. This inventory is design input, not the production
+//! activation list: only descriptors in `active_v1_registry` may enter the
+//! repository or product surface.
 
 use super::{
     DescriptorRegistry, EnumChoicePresentation, PreferenceControlPresentation,
@@ -114,7 +116,6 @@ const SECTIONS: &[SectionSpec] = &[
             "datum.files.autosave",
             "datum.projects.seed_profile",
             "datum.projects.template_set",
-            "datum.projects.unit_policy_seed",
         ],
     },
     SectionSpec {
@@ -127,7 +128,7 @@ const SECTIONS: &[SectionSpec] = &[
     },
 ];
 
-pub fn global_preferences_surface_catalog(
+pub fn candidate_global_preferences_surface_catalog(
     registry: &DescriptorRegistry,
 ) -> Result<PreferenceSurfaceCatalog, SurfaceCatalogRefusal> {
     let sections = SECTIONS
@@ -326,14 +327,14 @@ fn sentence_case(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::preferences::active_v1_registry;
+    use crate::preferences::reserved_v1_registry;
     use std::collections::BTreeSet;
 
     #[test]
-    fn complete_surface_is_a_bijection_over_the_active_non_revision_registry() {
-        let registry = active_v1_registry();
-        let catalog = global_preferences_surface_catalog(&registry).unwrap();
-        assert_eq!(catalog.entries().len(), registry.len());
+    fn candidate_surface_covers_every_reserved_product_row_except_internal_aggregate() {
+        let registry = reserved_v1_registry();
+        let catalog = candidate_global_preferences_surface_catalog(&registry).unwrap();
+        assert_eq!(catalog.entries().len(), 55);
         assert_eq!(catalog.sections().len(), 9);
         assert_eq!(
             catalog
@@ -343,6 +344,7 @@ mod tests {
                 .collect::<BTreeSet<_>>(),
             registry
                 .keys()
+                .filter(|key| key.as_str() != "datum.projects.unit_policy_seed")
                 .map(|key| key.as_str())
                 .collect::<BTreeSet<_>>()
         );
@@ -354,8 +356,8 @@ mod tests {
 
     #[test]
     fn generated_enum_labels_never_expose_storage_snake_case() {
-        let registry = active_v1_registry();
-        let catalog = global_preferences_surface_catalog(&registry).unwrap();
+        let registry = reserved_v1_registry();
+        let catalog = candidate_global_preferences_surface_catalog(&registry).unwrap();
         for entry in catalog.entries() {
             if let PreferenceControlPresentation::EnumeratedSingleChoice { choices } =
                 &entry.control
@@ -367,14 +369,14 @@ mod tests {
 
     #[test]
     fn incomplete_subsystem_adapters_are_explicit_and_block_surface_activation() {
-        let registry = active_v1_registry();
-        let catalog = global_preferences_surface_catalog(&registry).unwrap();
+        let registry = reserved_v1_registry();
+        let catalog = candidate_global_preferences_surface_catalog(&registry).unwrap();
         let unwired = catalog
             .unwired_entries()
             .map(|entry| entry.key.as_str())
             .collect::<BTreeSet<_>>();
 
-        assert_eq!(unwired.len(), 45);
+        assert_eq!(unwired.len(), 44);
         assert!(unwired.contains("datum.pcb.layer_color_scheme"));
         assert!(unwired.contains("datum.viewport.snap_enabled"));
         assert!(unwired.contains("datum.terminal.theme"));

@@ -11,7 +11,9 @@ use super::io::{
 use super::migration::MigrationTransformResult;
 use super::model::{RepositoryState, StoredPreferenceValue};
 use super::*;
-use crate::preferences::{DescriptorRegistry, PreferenceKey, active_v1_registry};
+use crate::preferences::{
+    DescriptorRegistry, PreferenceKey, active_v1_registry, reserved_v1_registry,
+};
 
 struct TestDirectory(PathBuf);
 
@@ -224,7 +226,7 @@ fn theme_v1_to_v2(value: &serde_json::Value) -> MigrationTransformResult {
 #[test]
 fn migration_plan_is_pure_moves_one_alias_and_writes_a_pre_migration_backup() {
     let directory = TestDirectory::new();
-    let source_registry = active_v1_registry();
+    let source_registry = reserved_v1_registry();
     let live_key = PreferenceKey::parse("datum.schematic.drawing_theme").unwrap();
     let mut descriptor = source_registry.get(&live_key).unwrap().clone();
     descriptor.schema_version = 2;
@@ -473,7 +475,7 @@ fn corrupt_opaque_payload_and_incomplete_backup_are_refused_without_writes() {
 #[test]
 fn alias_collision_is_retained_and_refused_without_migration_side_effects() {
     let directory = TestDirectory::new();
-    let source_registry = active_v1_registry();
+    let source_registry = reserved_v1_registry();
     let live_key = PreferenceKey::parse("datum.schematic.drawing_theme").unwrap();
     let descriptor = source_registry.get(&live_key).unwrap().clone();
     let mut registry = DescriptorRegistry::default();

@@ -151,16 +151,45 @@ fn descriptor(
 }
 
 pub fn active_v1_registry() -> DescriptorRegistry {
+    const ACTIVE_KEYS: &[&str] = &[
+        "datum.console.feedback_duration",
+        "datum.accessibility.reduced_motion",
+        "datum.accessibility.high_contrast_noncolor",
+        "datum.units.system",
+        "datum.units.board_length",
+        "datum.units.board_length_precision",
+        "datum.units.drill_hole",
+        "datum.units.drill_hole_precision",
+        "datum.units.schematic_geometry",
+        "datum.units.schematic_geometry_precision",
+        "datum.units.angle_precision",
+    ];
+    let candidates = reserved_v1_registry();
     let mut registry = DescriptorRegistry::default();
-    for descriptor in active_descriptors() {
+    for key in ACTIVE_KEYS {
+        let key = PreferenceKey::parse(*key).expect("production-active key syntax");
+        let descriptor = candidates
+            .get(&key)
+            .expect("production-active key must be reserved")
+            .clone();
         registry
             .register(descriptor)
-            .expect("the ratified V1 descriptor inventory must register exactly once");
+            .expect("the production-active descriptor inventory must register exactly once");
     }
     registry
 }
 
-fn active_descriptors() -> Vec<PreferenceDescriptor> {
+pub fn reserved_v1_registry() -> DescriptorRegistry {
+    let mut registry = DescriptorRegistry::default();
+    for descriptor in reserved_descriptors() {
+        registry
+            .register(descriptor)
+            .expect("the reserved V1 descriptor inventory must register exactly once");
+    }
+    registry
+}
+
+fn reserved_descriptors() -> Vec<PreferenceDescriptor> {
     let mut descriptors = catalog_part_one::descriptors();
     descriptors.extend(catalog_part_two::descriptors());
     descriptors
@@ -172,7 +201,7 @@ mod tests {
 
     #[test]
     fn literal_inventory_is_complete_unique_and_default_valid() {
-        let descriptors = active_descriptors();
+        let descriptors = reserved_descriptors();
         assert_eq!(descriptors.len(), 56);
         let keys: BTreeSet<_> = descriptors.iter().map(|item| item.key.as_str()).collect();
         assert_eq!(keys.len(), 56);
@@ -197,8 +226,8 @@ mod tests {
     }
 
     #[test]
-    fn project_policy_seed_inventory_is_the_twelve_ratified_rows() {
-        let registry = active_v1_registry();
+    fn reserved_project_policy_seed_inventory_has_fourteen_rows() {
+        let registry = reserved_v1_registry();
         let seeds: BTreeSet<_> = registry
             .keys()
             .filter(|key| registry.get(key).unwrap().class == SettingClass::ProjectPolicySeed)
@@ -228,7 +257,7 @@ mod tests {
 
     #[test]
     fn catalog_semantic_golden_covers_every_descriptor_field() {
-        let snapshot = format!("{:#?}", active_descriptors());
+        let snapshot = format!("{:#?}", reserved_descriptors());
         let digest = snapshot
             .bytes()
             .fold(0xcbf29ce484222325_u64, |digest, byte| {
@@ -269,7 +298,7 @@ mod tests {
             "datum.viewport.snap_capture_px",
             "datum.viewport.snap_enabled",
         ]);
-        for descriptor in active_descriptors() {
+        for descriptor in reserved_descriptors() {
             let key = descriptor.key.as_str();
             let personal_accessibility = key.starts_with("datum.accessibility.");
             let mut expected_sources = BTreeSet::from([

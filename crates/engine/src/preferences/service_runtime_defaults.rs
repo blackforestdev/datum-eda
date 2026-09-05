@@ -83,11 +83,11 @@ fn evaluate(recipe: &str) -> Option<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::preferences::{ResolutionOutcome, active_v1_registry, resolve_preference};
+    use crate::preferences::{ResolutionOutcome, reserved_v1_registry, resolve_preference};
 
     #[test]
     fn every_registered_runtime_recipe_produces_a_valid_effective_value() {
-        let registry = active_v1_registry();
+        let registry = reserved_v1_registry();
         for key in registry.keys() {
             let descriptor = registry.get(key).unwrap();
             if !matches!(descriptor.default_value, DescriptorDefault::Runtime { .. }) {
