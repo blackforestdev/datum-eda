@@ -7266,10 +7266,10 @@
       },
       "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
       "dependencies": [],
-      "unblocks": [],
+      "unblocks": ["dat-manual-foundation-contracts-fsw"],
       "completion": {
         "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
-        "canonical_next_step_id": "WDQ-C02",
+        "canonical_next_step_id": "WDQ-C03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -7291,14 +7291,14 @@
             "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C01-COMPLETE"}]
           },
           {
-            "id": "WDQ-C02", "kind": "planning", "status": "in_progress",
+            "id": "WDQ-C02", "kind": "planning", "status": "complete",
             "action": "Resolve scoped foundational requirements through full evidence-route review and bounded primary-source research; integrate resulting specification work with existing Frontier owners.",
             "depends_on": ["WDQ-C01"],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C02"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C02-COMPLETE"}]
           },
           {
-            "id": "WDQ-C03", "kind": "planning", "status": "pending",
+            "id": "WDQ-C03", "kind": "planning", "status": "in_progress",
             "action": "Specify readiness, connected-consumer activation, workflow proof, evidence freshness, independent review and fail-closed acceptance transitions with negative tests and exact integration points.",
             "depends_on": ["WDQ-C02"],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C03"}],
@@ -7333,11 +7333,37 @@
             "Record owner disposition and ratify approved mechanism through the numbered decision process with complete governance/evidence registration.",
             "Promote bounded gate implementation and scoped research follow-ons through explicit Frontier transactions; preserve existing work and its resume disposition."
           ],
-          "unblocks_issue_ids": [],
+          "unblocks_issue_ids": ["dat-manual-foundation-contracts-fsw"],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
         }
+      }
+    },
+    {
+      "key": "FOUNDATION-WORKFLOW-SPEC",
+      "order": 48,
+      "title": "Specify the first manual workflow foundation contracts",
+      "issue_id": "dat-manual-foundation-contracts-fsw",
+      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
+      "state": "blocked",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": false,
+      "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
+      "dependencies": ["dat-workflow-delivery-quality-xgj"],
+      "unblocks": ["dat-native-project-startup-vrf"],
+      "completion": {
+        "outcome": "A reviewed clause-level foundation contract covers one ordinary native project doorway and exact board-edit/reopen workflow, with explicit consuming-owner handoffs and unresolved decisions left blocking.",
+        "canonical_next_step_id": "WDQ-F01",
+        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
+        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "steps": [
+          {"id": "WDQ-F01", "kind": "planning", "status": "pending", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": []},
+          {"id": "WDQ-F02", "kind": "planning", "status": "pending", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": []},
+          {"id": "WDQ-F03", "kind": "owner_decision", "status": "pending", "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.", "depends_on": ["WDQ-F02"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}], "completion_evidence": [], "owner_input": {"response_format": "Reply `FOUNDATION-WORKFLOW-SPEC: approve contract`, `FOUNDATION-WORKFLOW-SPEC: revise — <specific correction>`, or `FOUNDATION-WORKFLOW-SPEC: defer — <reason>`.", "requests": [{"id": "FOUNDATION-ADOPTION", "question": "Do the concrete F1-F8 contract and consuming-owner handoff resolve the requirements needed for the bounded manual workflow?", "recommended_response": "Approve only the reviewed contract and explicit prerequisite changes; separately authorize product implementation.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}}]}}
+        ],
+        "post_completion": {"effects": ["Record owner disposition and reconcile approved clauses in their owning evidence routes.", "Propose explicit native-doorway and existing-authoring handoffs without automatically authorizing or selecting implementation."], "unblocks_issue_ids": ["dat-native-project-startup-vrf"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}
       }
     }
   ]

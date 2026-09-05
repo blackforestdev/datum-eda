@@ -162,14 +162,23 @@
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`, `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`, `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`, `research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md`, `research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md`, `specs/PROJECT_PREFERENCES_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`.
 - **Establish workflow delivery readiness and acceptance governance** (`WORKFLOW-DELIVERY-QUALITY`; `dat-workflow-delivery-quality-xgj`).
    Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `in_progress`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
+   *Dependencies:* none. *Unblocks:* dat-manual-foundation-contracts-fsw. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
+- **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
+   Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `blocked`; authorization `planning`.*
+   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | WDQ-C01 bounded audit complete: verified build, source/import-map provenance, archived fixture, isolated native input, preservation/reopen evidence and gap mapping. No product acceptance claimed | Bounded foundational research, proposed refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | WDQ-C01 native baseline and WDQ-C02 bounded research complete; unresolved CAD questions F1–F8 have named owners and a scheduled specification contract. No product acceptance claimed | Concrete refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
+
+## FOUNDATION-WORKFLOW-SPEC — bounded pre-implementation foundation contract
+
+| Governed document | Current evidence | Completion boundary | Tracking |
+| --- | --- | --- | --- |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03 | F1–F8 research/consumer map in `research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md`; clauses not yet adjudicated | Complete route review, concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; blocked on reviewed WDQ adoption, noncanonical planning |
 
 ## Spec Governance Coverage
 

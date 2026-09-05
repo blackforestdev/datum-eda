@@ -6,11 +6,12 @@
       "status": "in_progress",
       "sources": [
         "research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md",
-        "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md"
+        "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md",
+        "research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md"
       ],
       "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "reviewed_digest": "5e6a2aa9da3a9a469310963d36b570be74359a642cfe031e91f2a929d7dbb6d0",
-      "review_note": "Both first-party sources and the complete planning consumer were re-reviewed for WDQ-C01 closure. The fresh-build continuation records matching real-board import provenance, archived fixture, isolated actual input, artifact hashes and preservation/reopen limits. It supersedes only the specified original audit limitations; it does not accept native authoring, manufacturing, all platform variants or Preferences. The owner's entire-item goal permits dependent planning through a concrete adoption packet, not unreviewed mechanism ratification. C01 closes as an audit and C02 begins; no unrelated route or protected prototype is changed."
+      "reviewed_digest": "67c8d2bfb73dc3d31079ddd808a790169a30379370f53eebbaee4441f64caec5",
+      "review_note": "All three sources and the complete planning consumer reviewed for WDQ-C02. Primary-source process research supports distinct implementation, native verification and owner acceptance; F1-F8 remain explicit domain questions assigned to existing owners through the bounded FOUNDATION-WORKFLOW-SPEC follow-on. Other routes are routing metadata only, not semantic re-review or approval. C01 limitations, current Preferences authority, prototype ownership and canonical selection remain unchanged; no blocking mechanism is ratified or implemented."
     },
     {
       "id": "research-governance-index",
