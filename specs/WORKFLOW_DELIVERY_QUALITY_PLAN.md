@@ -189,6 +189,17 @@ selects or authorizes its successor.
 
 ## Present delivery status
 
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C02-COMPLETE -->
+
+WDQ-C02 is complete as bounded process research and specification scheduling.
+`research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md` distinguishes
+verified local observations, external conventions and unresolved CAD questions.
+F1–F8 map affected consumers to existing owners; none ratifies units, selection,
+storage or library semantics in this lane. FOUNDATION-WORKFLOW-SPEC is the
+noncanonical planning follow-on below; existing implementation claims and
+dependencies are preserved. The startup intake waits for this contract, while
+the enabled-but-unhandled action defect is linked to the proposed gate pilot.
+
 <!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C01-COMPLETE -->
 
 WDQ-C01 is complete as a bounded audit, documented in
@@ -205,3 +216,40 @@ research, mechanism ratification, gate implementation and native pilot acceptanc
 remain outstanding. No new
 runtime inventory or executable gate schema is introduced; parity registration
 belongs to the mechanism transaction once that inventory is specified.
+
+## Bounded foundational specification follow-on
+
+Frontier key: FOUNDATION-WORKFLOW-SPEC; issue:
+`dat-manual-foundation-contracts-fsw`. Blocked on reviewed WDQ adoption, planning
+only. This is an explicit future contract, not alternate next work or permission
+to rewrite another owner's route. Scope is an ordinary native project doorway,
+one exact board-edit/reopen path and its library/connectivity handoff; broad
+enterprise capability and new dependencies are excluded.
+
+<!-- REQ:FOUNDATION-WORKFLOW-SPEC:WDQ-F01 -->
+### Review foundation authority and consuming owners
+
+Read every source/consumer of the routes identified for F1–F8 in the foundation
+research. Map each applicable clause to ratified, proposed, contradictory or
+unanswered authority. Reconcile the PM012 draft-header/doctrine-class mismatch
+through its owning governance lane, preserving explicit ratifications. Confirm
+current owners and output a clause-level decision list, not a general audit.
+
+<!-- REQ:FOUNDATION-WORKFLOW-SPEC:WDQ-F02 -->
+### Specify one connected manual-workflow contract
+
+Resolve F1–F8 for the bounded scenario with concrete values, boundary/invalid
+cases, direct/proposal and persistence timelines and consumer bindings. Reuse
+current authority; conduct primary research for genuine unanswered questions.
+Return necessary visual changes to Claude with exact file/region, preserved
+decisions and expected proof. No product or prototype implementation here.
+
+<!-- REQ:FOUNDATION-WORKFLOW-SPEC:WDQ-F03 -->
+<!-- OWNER:FOUNDATION-WORKFLOW-SPEC:WDQ-F03:WDQ-F03 -->
+### Review foundational contract and dependent-owner handoff
+
+Present answers or explicit unresolved decisions for F1–F8, complete route
+reconciliation, consuming-owner handoff, test expectations and proposed exact
+changes to existing GUI-SURFACE-SPECS, GUI-WRITE-PATH and NATIVE-AUTHORING
+prerequisites. Owner approval is required before amending those dependencies
+or authorizing implementation. Incomplete required behavior remains blocked.
