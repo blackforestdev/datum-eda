@@ -1,7 +1,9 @@
 # GP-C06 Consolidated Global Preferences Ratification Packet
 
 > **Status:** owner-ratified at GP-C06 on 2026-08-28; Claude reconciliation
-> commits `3edd932`, `ed3df1b`, and `4928f26` remain reviewed visual evidence.
+> commits `3edd932`, `ed3df1b`, and `4928f26` remain reviewed visual evidence;
+> descriptor activation and Units counts amended by the owner GP-CM01
+> correction of 2026-09-05.
 >
 > **Mechanism record:** ratified Product Mechanics 037 in
 > `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`.
@@ -29,10 +31,10 @@ Q5A (ibid. `:347-424`); Q11 (ibid. `:540-613`); Q6–Q10 (ibid.
 
 ### Finding 2 — Project seeding has one registered class
 
-`ProjectPolicySeed` is a registered descriptor class. All fifteen active
-seed-bearing catalog rows use it; the sixteenth seed-bearing row, a future
-`AdoptedDraftingStandard` seed, is also classified `ProjectPolicySeed` but
-deferred because its schema is unspecified. Presentation, Capability,
+`ProjectPolicySeed` is a registered descriptor class. Fourteen reserved
+seed-bearing catalog rows use it, including the deferred
+`AdoptedDraftingStandard` seed whose schema is unspecified. The eight typed
+Units rows are the only initially production-active seeds. Presentation, Capability,
 WorkflowDefault, and every other class are ineligible to cross into Project
 authority. Genesis resolves an immutable snapshot, the Project mutation path
 copies it atomically, and a durable itemized receipt records every copy,
@@ -41,9 +43,13 @@ profile changes.
 
 The explicit optional `datum.projects.unit_policy_seed` aggregate wins a
 `ProjectDisplayUnits` seed transaction when it has an eligible contribution.
-When absent, the snapshot composes the six typed `datum.units.*` seed
+When absent, the snapshot composes the eight typed `datum.units.*` seed
 descriptors. Absence never shadows those chosen typed values, and the receipt
 records which path supplied each value.
+
+The aggregate identity is reserved for interchange, migration, or a later
+separately justified profile mechanism. It is not an ordinary Global
+Preferences control and reservation alone does not activate it.
 
 Evidence: Q5 clauses 1–8
 (`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:145-169`); corrected catalog
@@ -84,9 +90,11 @@ Claude store states commit `586eb0d`.
 
 GP-C05 refined Option A at Claude commit `a061fca` governs: two columns, search
 pinned above the settings pane, complete rows, and a resolver-owned explanation
-beside the retained list. Search-first discovery covers every row in every
-section, including planned and read-only Project-policy rows. Current labels,
-descriptions, stable keys, and retired/alternate names are searchable vocabulary;
+beside the retained list. Under the 2026-09-05 activation amendment,
+search-first discovery covers every production-active row in every visible
+Global section; reserved, planned, Unwired, and Project-owned rows remain
+absent. Current labels, descriptions, active stable keys, and active
+retired/alternate names are searchable vocabulary;
 the reason for an alias/key match is visible. GUI, CLI, and MCP expose the same
 typed semantic answer. Accessibility/context states are governed by `e2127fa`,
 and store states by `586eb0d`.
@@ -196,12 +204,15 @@ Approval would establish only these clauses:
 3. Absence never masquerades as a contribution. Defaults remain descriptor
    truth and are not serialized as user choices by reading, setup, recovery,
    import, migration, or first run.
-4. `ProjectPolicySeed` is registered. Only that class may cross Q5; all fifteen
-   active seed-bearing descriptors use it, while the sixteenth
-   `AdoptedDraftingStandard` seed remains deferred pending schema.
+4. `ProjectPolicySeed` is registered. Only that class may cross Q5; fourteen
+   reserved descriptors use it, the eight typed Units rows are initially
+   production-active, and `AdoptedDraftingStandard` remains deferred pending
+   schema.
 5. An eligible explicit `datum.projects.unit_policy_seed` aggregate wins the
-   `ProjectDisplayUnits` seed transaction; when absent, the six typed
+   `ProjectDisplayUnits` seed transaction; when absent, the eight typed
    `datum.units.*` seeds compose it. The receipt discloses the path and sources.
+   The aggregate remains reserved and absent from the ordinary GUI pending
+   separate justification.
 6. Units requirements 4 and 9 are controlling: a valid cross-system
    per-quantity override remains explicit and parse/format results carry its
    complete typed provenance.

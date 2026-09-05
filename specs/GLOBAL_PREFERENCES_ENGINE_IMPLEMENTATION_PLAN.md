@@ -1,6 +1,8 @@
 # Datum Global Preferences Engine Implementation and Production-Acceptance Plan
 
-> **Status:** Governed planning contract; no execution is authorized.
+> **Status:** Governed serial implementation contract. Execution authority is
+> determined only by the synchronized Active Frontier; GP-CM01 is currently the
+> bounded authorized step.
 >
 > **Trackers:** `dat-shared-units-engine-build-915`,
 > `dat-global-preferences-engine-build-vge`,
@@ -136,8 +138,9 @@ Implement stable `PreferenceKey`, active subsystem descriptors, typed classes
 and sources, validation, AuthorityRelease, Recommend/Constrain/Pin/Lock, Q4
 resolution, conflicts, retained values, and one pure explanation result.
 
-GP-F01 implements this boundary in `crates/engine/src/preferences/`. The pure
-engine module registers the 54 active non-Revision V1 identities, refuses
+GP-F01 implemented this historical boundary in `crates/engine/src/preferences/`.
+At that stage the pure engine module registered the 54 then-classified active
+non-Revision V1 identities, refused
 duplicate/unknown identities and ineligible or invalid facts, gates typed
 organization directives through explicit `AuthorityRelease`, preserves
 displaced values, refuses arrival-order conflict resolution, and returns the
@@ -158,7 +161,7 @@ historical evidence for the initial scaffold; it is not sufficient completion
 evidence for this corrective pass. Persistence, GUI, Project mutation, Revision
 behavior, providers/services, and new dependencies remain unauthorized.
 
-The corrective implementation declares all 54 active descriptors literally,
+The corrective implementation declared all 54 then-classified active descriptors literally,
 including exact schemas, defaults, classes, eligible sources, directive-release
 minimums, apply behavior, consumers, export class, accessible copy, and aliases.
 Platform- or runtime-derived defaults use registered recipes instead of invented
@@ -961,16 +964,42 @@ remain outside this authorization.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM00-OWNER-APPROVED-20260904 -->
 
+On 2026-09-05 the owner corrected GP-CM01 after the full-catalog readiness
+audit found 45 registered descriptors without real consumers and several
+incomplete presentation contracts. The owner directed consumer-ready
+activation: reserved keys do not enter the product surface until control,
+consumer, effect timing, accessibility, and proof are complete; Unwired rows
+and empty sections remain absent. Manage Preferences appears only as an
+implemented operations section. The aggregate Units seed is not an ordinary
+GUI control pending separate justification. Guided setup remains deferred until
+all four approved checkpoints exist, and the Start page and PM-040 must agree
+with the real eight-descriptor Units authority before GP-CM01 resumes surface
+expansion.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM01-OWNER-REVISION-20260905 -->
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM01 -->
 ### GP-CM01 — complete and stabilize the Global surface
 
-Expand the accepted GP-F05 architecture through the full active catalog and
-the remaining managed/refused, unknown/retired-identity,
-recovery/migration/restore, setup/replay, Start-page, search/provenance,
-responsive, and accessibility states. Do not replace GP-F05's repository,
-resolver, presentation-catalog, menu, mutation, focus, or accessibility paths
-with a second implementation. Revision descriptors and empty categories remain
-absent.
+Preserve the accepted 11-row Appearance-and-Units surface as the exact initial
+production-active inventory. The remaining 45 registered identities are
+reserved candidates, not active settings. Activate a candidate only after its
+typed control and defaults, declared subsystem consumer, effect timing,
+repository behavior, accessibility, and focused proof are complete. Until then
+it is unknown-and-preserved to the production repository and absent from GUI,
+search, setup, APIs, and Project seeding. Sections appear only when they contain
+an active row.
+
+Complete managed/refused, unknown/retired-identity, recovery/migration/restore,
+search/provenance, responsive, and accessibility behavior through the existing
+GP-F05 repository, resolver, presentation-catalog, menu, mutation, focus, and
+accessibility paths. Add Manage Preferences only when its previewed operations
+are implemented; it is a nonempty operations section, not a descriptor or an
+empty placeholder. Keep guided setup deferred until all four approved
+checkpoints are available. Reconcile the separate Start-page truth before it is
+enabled. `datum.projects.unit_policy_seed` remains a reserved internal
+aggregate and is absent from the ordinary GUI pending separate justification.
+Revision descriptors and empty categories remain absent.
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02 -->
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02:GP-CM02 -->

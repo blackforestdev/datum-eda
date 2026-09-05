@@ -1,6 +1,7 @@
 # GP-C05 Interaction and Visual Contract
 
-> **Status:** owner-adopted refined Option A. The controlling visual surface is
+> **Status:** owner-adopted refined Option A; activation and onboarding clauses
+> amended by the owner GP-CM01 correction of 2026-09-05. The controlling visual surface is
 > Claude-owned `docs/gui/prototypes/preferences-window.html` at commit
 > `a061fca`. Accessibility and responsive states are controlled by Claude
 > commit `e2127fa`; store-operation states remain controlled by `586eb0d`.
@@ -48,10 +49,9 @@ is:
   recovery (`:78-83`), collision/refusal/unknown preservation (`:84-91`),
   migration without silent substitution (`:92-97`), reversible restore
   (`:98-102`), and common preservation law (`:103`).
-- The settled setup, Start-page, and Revision carry-forward renders remain
-  controlling: `guided-setup-study.html:78-96`,
-  `start-page-study.html:78-82`, and
-  `revision-carryforward-study.html:78-116`.
+- Guided setup and the Start page remain separate evidence requiring
+  reconciliation under the 2026-09-05 activation amendment before either may
+  ship. Revision carry-forward remains subordinate to Product Mechanics 038.
 - Approved GP-C03 clauses remain the authority for setup/Q5/Q6/Q7/Q8/Q9/Q10
   and Q11; GP-C04 remains authority for transactions, migration, exchange,
   restore, audit, and the Project-policy seam. GP-C02 accessibility evidence
@@ -73,8 +73,10 @@ accessibility so a user can find a setting without already knowing its section.
 The section list teaches the available domains and supports browsing; pinned
 search is the primary way in.
 
-A stable `PreferenceKey` and every registered retired or alternate name are
-searchable vocabulary. They are not merely storage or migration machinery.
+A production-active stable `PreferenceKey` and its registered retired or
+alternate names are searchable vocabulary. Reserved candidates do not enter
+the product search index. They remain storage and migration authority only
+until separately activated.
 Renaming a visible label or reorganizing sections shall not strand documentation,
 tutorials, scripts, support guidance, or a user searching an older term.
 
@@ -85,23 +87,25 @@ tutorials, scripts, support guidance, or a user searching an older term.
    right.
 2. Search remains pinned above the settings pane while its rows scroll. It does
    not span above the section list. Full-width placement B is rejected.
-3. The section list exposes every current section, including **Manage
-   preferences** and **Project Policy (Read-Only)**, and visibly marks the
-   selected section.
+3. The section list exposes only sections containing production-active settings
+   and visibly marks the selected section. **Manage Preferences** appears only
+   after its GP-C04 operations are implemented. Project-owned policy is reached
+   through the separate Project Preferences doorway and is never a Global
+   section.
 4. Every setting row presents its current label, plain-language consequence,
    real control or read-only action, and a provenance/status line directly
    beneath it. A tooltip is not the only carrier of any required fact.
-5. Writable, managed, refused, planned, unavailable, and Project-owned rows use
-   the same row grammar. State changes the available action and provenance, not
-   whether the row remains discoverable or explainable.
-6. A Project-policy row remains inspection plus **view in Project** navigation;
-   no machine-preference control may write the Project-owned fact.
+5. Writable, managed, and refused states of an active descriptor use the same
+   row grammar. Reserved, Unwired, planned, unavailable, and Project-owned rows
+   remain absent rather than masquerading as Global settings.
+6. Global Preferences never renders a Project-policy row. Project authority is
+   inspected or edited only through the separate Project Preferences surface.
 
 ## 5. Search clauses
 
 7. Search is always visible and focusable in ordinary navigation and searches
-   every row in every section, including planned rows and read-only Project
-   policy rows.
+   every active row in every visible section. It never indexes reserved,
+   planned, Unwired, or Project-owned candidates.
 8. Matching covers the current label, plain description, stable
    `PreferenceKey`, and registered retired or alternate names. Matching is
    case-insensitive and never activates a retired identity.
@@ -110,8 +114,8 @@ tutorials, scripts, support guidance, or a user searching an older term.
    expose a live `matched of total` count.
 10. When a match comes only through a stable key or former/alternate name, the
     result states that reason and names the vocabulary that matched.
-11. Zero results say plainly that no setting matches and state that search
-    includes every section, including planned and read-only rows.
+11. Zero results say plainly that no active setting matches and state that
+    search includes every visible Global section.
 12. Starting or changing a search closes any explanation and clears its row
     selection before displaying new results; an explanation can never remain
     visibly associated with a different query.
@@ -165,36 +169,32 @@ tutorials, scripts, support guidance, or a user searching an older term.
     offline state, retained user value, remaining freedom, and appeal or
     AuthorityRelease action. Managed values remain focusable and inspectable
     when not writable.
-26. **Manage preferences** uses the GP-C04 rendered states unchanged: unreadable
-    data is preserved rather than repaired in place; import applies nothing
-    before explicit collision choices; Capability/security authority refuses
-    portable sources; unknown bytes survive; migration never applies an
-    unchosen replacement; and restore is previewed, confirmed, and reversible.
+26. **Manage Preferences** is a non-descriptor operations section and remains
+    absent until its GP-C04 preview, confirmation, import, backup, restore, and
+    recovery paths are implemented and proved. Once active, unreadable data is
+    preserved rather than repaired in place; import applies nothing before
+    explicit collision choices; Capability/security authority refuses portable
+    sources; unknown bytes survive; migration never applies an unchosen
+    replacement; and restore is previewed, confirmed, and reversible.
 27. No import, reset, migration, backup, restore, sync, explanation, or search
     action touches Project policy or design data, requires a network, or blocks
     Design authoring.
 
 ## 8. Revision, setup, Start-page, and Context reconciliation
 
-28. Unmanaged Revision visibility remains the user's Presentation choice.
-    Eligible organization Pin state may keep it on only within the approved
-    `AuthorityRelease`; the row and explanation disclose the Pin and retained
-    user value. Either state changes projection only, never Revision truth,
-    journal, Project policy, or Release gates.
-29. First-Release guidance uses the approved Q10-A/S2/R1 state: ordinary
-    completion/dismissal is machine-local and replayable; an eligible managed
-    teaching directive may require dismissible, non-gating replay once per
-    Project. Guidance remains beside the unchanged arm-then-confirm surface,
-    labels first use versus replay, and never applies a setting or gates issue.
-30. Initial setup remains Q5A-B+C: the real Preferences rows are the sole manual
-    setup surface, zero choices are mandatory, Skip/Escape remain available,
-    **Run setup again** exposes machine-local completion/dismissal/never-run
-    state, and optional assistant help creates typed proposals that apply only
-    after acceptance.
-31. The Q11 Start page remains local, non-tabbed, and bypassable by **Last
-    session** or **Empty**. It shows canonical New/Open/Import, engine-truth
-    Recents, honest missing paths, and a read-only pre-creation Q5 seed rail; it
-    has no news/marketing/alerts, telemetry, or startup network load.
+28. Product Mechanics 038 withdraws Revision visibility, teaching, and policy
+    rows from Global Preferences. No Revision descriptor or guidance surface is
+    restored by this interaction contract.
+29. First-Release guidance remains deferred Revision work. It is not a Global
+    setting, active row, or GP-CM01 deliverable.
+30. Guided setup remains deferred until all four approved checkpoints—
+    Measurement system, Drafting standard, Appearance, and Files & Projects—
+    have production-ready controls and consumers. No checkpoint may be skipped,
+    renamed, or replaced merely to make setup appear complete.
+31. The Q11 Start page remains local, non-tabbed, network-independent, and
+    bypassable in principle, but its protected target must first be reconciled
+    to the exact active seed authority. It may not advertise reserved settings,
+    Revision state, or an unavailable drafting-standard seed.
 32. Session, Context, operation input, restartable workspace state, and transient
     state retain approved Q6 separation. Context may explain applicability but
     cannot become a writable preference or authority contribution.
@@ -205,9 +205,9 @@ tutorials, scripts, support guidance, or a user searching an older term.
     setting name/action, and each row control in visual order with exactly one
     visible focus indicator and no trap. Enter/Space operates controls; arrow
     keys choose menu values; Escape cancels or returns as specified above.
-34. Every action—including setup coach actions, explanation, reset, refusal
-    inspection, import/restore review, and Start-page actions—is available
-    without a pointer.
+34. Every implemented action—including explanation, reset, refusal inspection,
+    and any later import/restore review—is available without a pointer. Deferred
+    setup and Start-page actions cannot be used as conformance evidence.
 35. Reduced motion removes tweening, sliding, smooth autoscroll, and menu/panel
     transitions only. It removes no state, cue, affordance, or information;
     focus never moves automatically, the list never reorders while read, and no
@@ -235,9 +235,14 @@ modal setup/onboarding, color-only managed/refusal state, automatic focus or
 scroll motion, Project-policy editing from Preferences, startup network content,
 and any assistant direct-apply path.
 
-Conformance must prove at minimum: every registered row is reachable by current
-label, description, stable key, and each registered alias; planned and read-only
-coverage; correct grouping/highlighting/count/no-match output; real-control
+It also rejects treating reservation as activation: an Unwired descriptor,
+empty section, ordinary aggregate Units seed control, or incomplete management,
+setup, or Start-page surface cannot appear merely because its identity or clay
+render exists.
+
+Conformance must prove at minimum: every production-active row is reachable by current
+label, description, stable key, and each active registered alias; reserved and
+Project-owned exclusion; correct grouping/highlighting/count/no-match output; real-control
 parity between results and canonical rows; deterministic result-to-row selection;
 stale explanation closure; complete Q4 answers including absences across
 unmanaged/managed/Context/Project states; GUI/CLI/MCP semantic parity; edit,
@@ -250,3 +255,4 @@ Any material visual change requires a Claude-owned render and complete evidence
 route reconciliation before its clauses can change.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C05-CONTRACT -->
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-C05-CONSUMER-READY-AMENDMENT-20260905 -->
