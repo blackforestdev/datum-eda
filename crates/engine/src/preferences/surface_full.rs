@@ -176,7 +176,7 @@ fn live_consumer(key: &str) -> PreferenceLiveConsumer {
         | "datum.units.schematic_geometry"
         | "datum.units.schematic_geometry_precision"
         | "datum.units.angle_precision" => PreferenceLiveConsumer::FutureProjectUnits,
-        _ => PreferenceLiveConsumer::DescriptorOwner,
+        _ => PreferenceLiveConsumer::Unwired,
     }
 }
 
@@ -363,5 +363,23 @@ mod tests {
                 assert!(choices.iter().all(|choice| !choice.label.contains('_')));
             }
         }
+    }
+
+    #[test]
+    fn incomplete_subsystem_adapters_are_explicit_and_block_surface_activation() {
+        let registry = active_v1_registry();
+        let catalog = global_preferences_surface_catalog(&registry).unwrap();
+        let unwired = catalog
+            .unwired_entries()
+            .map(|entry| entry.key.as_str())
+            .collect::<BTreeSet<_>>();
+
+        assert_eq!(unwired.len(), 45);
+        assert!(unwired.contains("datum.pcb.layer_color_scheme"));
+        assert!(unwired.contains("datum.viewport.snap_enabled"));
+        assert!(unwired.contains("datum.terminal.theme"));
+        assert!(unwired.contains("datum.output.job_prefill"));
+        assert!(!unwired.contains("datum.console.feedback_duration"));
+        assert!(!unwired.contains("datum.units.system"));
     }
 }
