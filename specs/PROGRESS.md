@@ -161,7 +161,7 @@
    Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`, `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`, `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`, `research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md`, `research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md`, `specs/PROJECT_PREFERENCES_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`.
 - **Establish workflow delivery readiness and acceptance governance** (`WORKFLOW-DELIVERY-QUALITY`; `dat-workflow-delivery-quality-xgj`).
-   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `planned`; authorization `planning`.*
+   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `in_progress`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 <!-- ACTIVE FRONTIER:END -->
 
@@ -169,7 +169,7 @@
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | Owner brief and five-step planning contract registered; no audit, gate implementation or product acceptance claimed | Reproducible manual capability baseline, bounded foundational research, proposed refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | WDQ-C01 partial source/runtime baseline and an inspected existing-binary capture recorded; build identity, fixture provenance and native interaction verification remain open. No gate or product acceptance claimed | Reproducible manual capability baseline, bounded foundational research, proposed refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
 
 ## Spec Governance Coverage
 

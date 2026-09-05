@@ -4,10 +4,13 @@
     {
       "id": "workflow-delivery-quality",
       "status": "in_progress",
-      "sources": ["research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md"],
+      "sources": [
+        "research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md",
+        "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md"
+      ],
       "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "reviewed_digest": "44a2b2179bed33ff78a96864678119f2a88e7101c97fdecf39e9c1cc7ed9f6ee",
-      "review_note": "The first-party owner request and limited repository observations were reviewed against all five planning requirements. The plan preserves active Preferences ownership, current selection, existing acceptance and prototype lanes; it schedules a capability audit, bounded research, a proposed evidence/readiness mechanism and a concrete adoption decision. Neither source nor consumer claims a completed audit, external research, ratified gate schema, active enforcement or runtime acceptance."
+      "reviewed_digest": "a09e9e3c94baad474ffef803471c9da2a42c0c5e679173d75cab74258fadf01b",
+      "review_note": "Both first-party sources were reviewed completely against the planning consumer. The owner's proceed instruction enables only the separate WDQ-C01 audit scope alongside GP-CM01. The new baseline separates current-source observations from an existing binary with unverified build identity, records fixture and image hashes, and explicitly leaves native input and full acceptance unverified. It records the owner-closed obstructing X11 window and requires isolated future interaction testing. No unrelated route, prototype, acceptance record, gate schema or product authority is refreshed or ratified."
     },
     {
       "id": "research-governance-index",

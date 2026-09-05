@@ -23,6 +23,11 @@ Frontier authorization. Existing checks are not weakened to accommodate rollout.
 ## Concurrent-work protocol
 
 Preparing and registering this plan can coexist with the existing GP-CM01 claim.
+The owner's subsequent `please proceed` authorizes the separate WDQ-C01 audit
+lane: read-only runtime/source diagnostics and owned audit evidence. Record its
+own scoped Frontier/beads lease; GP-CM01 remains canonical. This is owner-directed
+audit work, not concurrency inferred from dependency readiness. Gate activation
+still requires the coordinated adoption checkpoint below.
 Do not edit its runtime, governing evidence, prototype lane, lease, acceptance
 criteria or selected step. Shared governance transactions must preserve all
 other entries, check fresh state, regenerate the projection, and stage only owned
@@ -185,7 +190,10 @@ selects or authorizes its successor.
 ## Present delivery status
 
 This package supplies the owner brief, planning requirements and synchronized
-roadmap/tracker placement. The capability audit, external research, mechanism
+roadmap/tracker placement. WDQ-C01 has a partial observation record in
+`research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md`; it is not
+completion evidence. Current-build and native-interaction verification remain.
+The complete capability audit, external research, mechanism
 ratification, gate implementation and native pilot are outstanding. No new
 runtime inventory or executable gate schema is introduced; parity registration
 belongs to the mechanism transaction once that inventory is specified.

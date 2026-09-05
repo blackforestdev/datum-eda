@@ -7231,10 +7231,21 @@
       "title": "Establish workflow delivery readiness and acceptance governance",
       "issue_id": "dat-workflow-delivery-quality-xgj",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": false,
-      "parallel": false,
+      "parallel": true,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-workflow-delivery-audit-20260905",
+        "claimed_at": "2026-09-05T21:24:02Z",
+        "heartbeat_at": "2026-09-05T21:24:02Z",
+        "expires_at": "2026-09-06T05:24:02Z",
+        "scope": ["WDQ-C01 read-only capability audit; research/process-quality/WORKFLOW_DELIVERY*; specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md; own WORKFLOW-DELIVERY-QUALITY governance entries only"],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "ad7b08461fa45aa80fca3543116639fa8682933e"
+      },
       "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
       "dependencies": [],
       "unblocks": [],
@@ -7255,7 +7266,7 @@
         },
         "steps": [
           {
-            "id": "WDQ-C01", "kind": "planning", "status": "pending",
+            "id": "WDQ-C01", "kind": "planning", "status": "in_progress",
             "action": "Establish the reproducible manual-workflow capability baseline and map gaps to existing owners without inferring acceptance from code or test presence.",
             "depends_on": [],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C01"}],
