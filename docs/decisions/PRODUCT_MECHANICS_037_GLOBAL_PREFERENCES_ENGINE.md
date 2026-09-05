@@ -2,7 +2,8 @@
 
 Status: ratified doctrine; Revision visibility/default clauses superseded in
 part by Product Mechanics 038; delivery sequence amended by Product Mechanics
-039 and Units authority amended by Product Mechanics 040
+039 and Units authority amended by Product Mechanics 040; descriptor activation
+amended by the owner GP-CM01 correction of 2026-09-05
 
 ## Context
 
@@ -52,26 +53,37 @@ surface parity and production acceptance. Exact Units core remains a
 prerequisite, but Units Preferences-GUI parity is proved through the real
 Global window and cannot hard-block creation of that window.
 
-After Product Mechanics 038 defers the four Revision descriptors, the initial
-catalog contains 54 active V1 descriptors. Twelve active seed-bearing rows are
-`ProjectPolicySeed`; the Revision seed family and the additional
-`AdoptedDraftingStandard` candidate remain deferred until separately recovered
-or specified.
+The V1 inventory reserves 56 stable descriptor identities after Product
+Mechanics 038 defers the four Revision identities. Reservation protects schema,
+migration, and naming work; it is not product activation. A descriptor becomes
+production-active only when its typed control, real declared consumer, truthful
+effect timing, accessibility behavior, and proof are complete. Unwired entries
+remain reserved, are treated as unknown-and-preserved by the production
+repository, and cannot be visible, searchable, writable, or used as a default.
+Empty sections remain absent. The initial production-active set is the three
+accepted Appearance rows plus the eight accepted Units rows.
+
+The reserved inventory contains fourteen `ProjectPolicySeed` candidates; the
+production-active set contains the eight typed Units seeds. The Revision family
+remains deferred, and the scale-fraction seed remains unavailable until its
+destination authority is specified and separately activated.
 The agent-authority descriptors, including unattended authority, and three
 prototype clay rows remain excluded pending dedicated review and visual
 reconciliation. Library, Symbol Editor, Footprint Editor, and Organization have
 zero active V1 descriptors; their visible queries or planned rows do not imply
 registrations.
 
-The six typed `datum.units.*` seed descriptors compose
+The eight typed `datum.units.*` seed descriptors compose
 `ProjectDisplayUnits` when `datum.projects.unit_policy_seed` is absent. An
 eligible explicit aggregate contribution to `datum.projects.unit_policy_seed`
 wins the seed transaction; its absence cannot shadow the typed contributions.
-The receipt records which path supplied every copied value. The shared Units
-engine continues to store authored lengths as checked signed integer nanometers;
+The aggregate identity remains reserved for interchange, migration, or a later
+separately justified profile mechanism and is not an ordinary GUI control. The
+receipt records which path supplied every copied value. The shared Units engine
+continues to store authored lengths as checked signed integer nanometers;
 display and parser preferences never rescale stored design truth.
 
-Product Mechanics 040 narrows their Global role: these six values are defaults
+Product Mechanics 040 narrows their Global role: these eight values are defaults
 for future Projects, not live display/parser authority for an open Project.
 After the receipted copy, Project-owned `ProjectDisplayUnits` supplies Project
 Working Units; Publish/document units remain separate authority.
@@ -105,9 +117,11 @@ does not alter Publish output.
 ## Accessibility and onboarding
 
 Personal accessibility carve-outs require justification by a named descriptor;
-they are not a blanket escape from management law. Guided setup is the real
-Preferences window with zero required choices. Skip is available at every step,
-with Esc as equivalent dismissal, and setup never blocks authoring. The static
+they are not a blanket escape from management law. Guided setup, when all four
+approved checkpoints are available, uses the real Preferences window with zero
+required choices. Until then it remains deferred rather than skipping,
+substituting, or inventing a checkpoint. Skip is available at every step, with
+Esc as equivalent dismissal, and setup never blocks authoring. The static
 outline follows the real tab order without window motion. Optional assistant
 help only proposes typed values and applies nothing until accepted.
 
@@ -141,6 +155,14 @@ law, review exclusions, non-decisions, and dependency boundary above are
 therefore ratified without revision.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-SPEC:PM-037-OWNER-APPROVED -->
+
+On 2026-09-05 the owner revised GP-CM01 to require consumer-ready activation,
+reserved-but-absent Unwired identities, implemented-only operation sections,
+no ordinary aggregate Units control, deferred four-checkpoint setup, and
+Start-page reconciliation. This amendment changes activation and delivery
+status only; it preserves every typed authority and repository law above.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-037-CONSUMER-READY-ACTIVATION-OWNER-APPROVED -->
 
 ## Dependency and licensing impact
 

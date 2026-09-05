@@ -1,10 +1,10 @@
 # Datum Global Preferences V1 Descriptor Catalog
 
-> **Status:** owner-ratified V1 catalog through GP-C06 and Product Mechanics
-> 037 and Product Mechanics 040; UNIT-I02R is reopened for industrial-readiness
-> correction of precision, editing, angle, expression, Project-surface, and
-> runtime boundaries. Fresh UNIT-I02V owner review is required. No runtime
-> implementation or production acceptance is authorized.
+> **Status:** owner-ratified reserved V1 inventory through GP-C06, Product
+> Mechanics 037, and Product Mechanics 040; production activation amended by
+> the owner GP-CM01 correction of 2026-09-05. Eleven descriptors are
+> production-active and 45 remain reserved candidates. Reservation is not
+> implementation or product-surface authority.
 >
 > **Historical step alias:** GP-C05A.
 >
@@ -17,12 +17,12 @@
 
 This catalog is the complete initial disposition of the 119-item prototype seed,
 the later Units/Publish/editor deltas, and every setting-like row now drawn in the
-Preferences window. An entry is either an active V1 descriptor, explicitly
-deferred with no key allocated, or negatively classified. A label, control, or
-stored byte sequence does not become a preference merely because it appears in
-Preferences.
+Preferences window. An entry is production-active, a reserved V1 candidate,
+explicitly deferred with no key allocated, or negatively classified. A label,
+control, registration, or stored byte sequence does not become an active
+preference merely because it appears in Preferences or this inventory.
 
-Every active row below is descriptor schema version `1`. Its stable key has one
+Every reserved row below is descriptor schema version `1`. Its stable key has one
 subsystem owner and one meaning. `DescriptorDefault` is compiled truth and is
 not serialized as a user choice. Unless a row says otherwise, its persistent
 scope is the machine-local user profile; its eligible resolution sources are
@@ -64,8 +64,9 @@ equal-authority controls therefore remain Q4 unresolved conflicts rather than
 being combined field-by-field or by arrival order.
 
 `ProjectPolicySeed` is a registered descriptor class, not an eligibility flag
-on another class. Exactly the fourteen active rows whose Apply column says
-`seed:<authority>` below are `PS`; three formerly active Revision seed rows were
+on another class. Exactly fourteen reserved rows whose Apply column says
+`seed:<authority>` below are `PS`; the eight `datum.units.*` rows are initially
+production-active. Three formerly active Revision seed rows were
 withdrawn by Product Mechanics 038, and the deferred AdoptedDraftingStandard
 seed remains classified `PS` while its schema is unavailable. Presentation,
 Capability, WorkflowDefault, and other non-`PS` keys cannot cross Q5 into
@@ -73,7 +74,18 @@ Project authority. A `PS` descriptor
 accepts only DescriptorDefault, Installation, Organization, and User seed-profile
 contributions; Session and Context never enter a Project seed snapshot.
 
-## 2. Active V1 descriptors
+## 2. Reserved V1 inventory and production-active subset
+
+Production activation is consumer-ready, not registration-ready. The exact
+initial active inventory is `datum.console.feedback_duration`,
+`datum.accessibility.reduced_motion`,
+`datum.accessibility.high_contrast_noncolor`, and the eight `datum.units.*`
+rows in section 2.2. The other 45 rows below retain their stable identities and
+schemas as reserved candidates but do not enter the production resolver,
+repository, search index, or GUI until their control, consumer, effect timing,
+accessibility, and proof are complete. `datum.projects.unit_policy_seed` is a
+reserved internal aggregate and is excluded from the ordinary GUI pending
+separate justification.
 
 ### 2.1 Appearance and shared viewport
 
@@ -134,7 +146,8 @@ the seed transaction; when it has no contribution, the snapshot is composed
 from the eight typed unit-seed descriptors. Absence never masquerades as a
 contribution, so the aggregate factory/no-value does not shadow more specific
 chosen unit seeds. The receipt records either the aggregate source or every
-composed source and effective value.
+composed source and effective value. The aggregate is not an ordinary GUI row;
+the eight typed controls are the complete user-facing Global Units surface.
 
 The eight rows have one Global role: define defaults for future Projects. At New
 Project they are eligible inputs to one immutable `ProjectDisplayUnits`
@@ -248,7 +261,7 @@ authorize one aggregate descriptor.
 | Library | Pools/search order; IPC footprint naming/basis default; field-name templates; supplier data/currency; browser zoom; library/model path variables | `preferences-window.html:218-219` |
 | Symbol editor | New-symbol defaults; pin length/spacing; graphics line width | `preferences-window.html:221-226` |
 | Footprint editor | Pad defaults; IPC naming basis/density; silk/courtyard widths; reference/value text; preview annotations | `preferences-window.html:229-236` |
-| Files/projects | `ProjectPolicySeed` candidate for `AdoptedDraftingStandard` (sixteenth seed-bearing row; schema unspecified); multi-instance locking; helper applications; update checks; cache maintenance; 3D model search paths; update channel | `preferences-window.html:255-256` |
+| Files/projects | `ProjectPolicySeed` candidate for `AdoptedDraftingStandard` (one of fourteen reserved seed-bearing rows; schema unspecified); multi-instance locking; helper applications; update checks; cache maintenance; 3D model search paths; update channel | `preferences-window.html:255-256` |
 | Revision | PM-038 recovery of reserved keys `datum.revision.visibility`, `datum.revision.profile_seed`, `datum.revision.build_presentation_seed`, and `datum.revision.prototype_transition_seed`; one ProjectPolicySeed candidate for new-Project provisional-watermark presentation; Git/offline-exchange seed; local-history/session-journal retention; machine VCS integration; user identity for provenance. The reserved keys have no active descriptor/default/management authority and unmanaged Projects show no Revision chrome. | `PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`; `preferences-window.html:264-272` |
 | Agents | Agent authority level including unattended, unattended-tool allowlist, persistent agent Project configuration, scripting/agent API access, engine-daemon/MCP endpoint configuration; all await dedicated authority/security review | `preferences-window.html:274-279` |
 | Organization/network | Organization-managed pins/default packaging; network-access toggles; telemetry/crash-reporting opt-in; proxy configuration | `preferences-window.html:310-311` |

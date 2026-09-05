@@ -4,7 +4,7 @@ Status: ratified doctrine
 
 ## Context
 
-The UNIT-I02R review exposed a contradictory model. The six Global Units
+The UNIT-I02R review exposed a contradictory model. The eight Global Units
 descriptors were described both as live display/input preferences and as
 copy-once Project seeds, even though Product Mechanics 039 already forbids a
 Global preference from mutating or live-controlling an existing Project. That
@@ -36,7 +36,7 @@ low-weight behavioral comparison and cannot establish Datum's architecture.
 Datum has one exact engine-owned Units service and three separate authorities:
 
 1. **Global Units defaults** are machine/user preferences for future Projects.
-   They use the six registered `datum.units.*` descriptors and save immediately,
+   They use the eight registered `datum.units.*` descriptors and save immediately,
    but never change an open or existing Project.
 2. **Project Working Units** are Project-owned settings copied at Project
    creation and thereafter changed only through Project Preferences. They govern
@@ -48,7 +48,7 @@ Datum has one exact engine-owned Units service and three separate authorities:
    issued-document presentation and do not silently follow Project Working
    Units or Global defaults.
 
-The six Global descriptors and `ProjectDisplayUnits` share one `UnitsProfile`
+The eight Global descriptors and `ProjectDisplayUnits` share one `UnitsProfile`
 value shape so the exact parser, formatter, validation, and resolution semantics
 are built once. Sharing a schema and service does not merge ownership.
 
@@ -56,7 +56,10 @@ At New Project, the resolver supplies one immutable Global-default snapshot.
 The canonical Project mutation transaction copies it into
 `ProjectDisplayUnits` and writes an itemized `ProjectSeedReceipt`. An eligible
 explicit `datum.projects.unit_policy_seed` aggregate may replace the composed
-six-descriptor snapshot under the existing seed precedence law. After creation,
+eight-descriptor snapshot under the existing seed precedence law. The aggregate
+identity is reserved for typed interchange, migration, or a later separately
+justified profile mechanism; it is not an ordinary Global Preferences control
+and cannot silently outrank the eight visible controls. After creation,
 there is no live link back to Global Preferences.
 
 A Project Working Units change is a journaled Project settings mutation. It may
@@ -92,6 +95,13 @@ with: `approved lets move forward with this model`, then directed Datum to
 reshape the specification and visual prototypes to accommodate it.
 
 <!-- EVIDENCE:SHARED-UNITS-SURFACE-PARITY:PM-040-OWNER-APPROVED -->
+
+On 2026-09-05 the owner corrected the stale six-descriptor wording to the real
+eight-descriptor Units authority and directed the aggregate seed identity to
+remain outside the ordinary GUI pending separate justification. This does not
+remove the reserved aggregate identity or change copy-once Project ownership.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-040-EIGHT-DESCRIPTOR-CORRECTION-OWNER-APPROVED -->
 
 ## Non-decisions
 
