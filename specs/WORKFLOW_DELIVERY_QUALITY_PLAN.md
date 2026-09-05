@@ -189,11 +189,19 @@ selects or authorizes its successor.
 
 ## Present delivery status
 
-This package supplies the owner brief, planning requirements and synchronized
-roadmap/tracker placement. WDQ-C01 has a partial observation record in
-`research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md`; it is not
-completion evidence. Current-build and native-interaction verification remain.
-The complete capability audit, external research, mechanism
-ratification, gate implementation and native pilot are outstanding. No new
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C01-COMPLETE -->
+
+WDQ-C01 is complete as a bounded audit, documented in
+`research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md` with a fresh
+6fa5aa3 build, matching source/import-map provenance, an archived native fixture,
+isolated actual input, explicit unavailable paths and preservation/reopen limits.
+The associated captures and input logs are committed under
+`research/process-quality/evidence/wdq-c01-current/`. This accepts no product
+workflow. Selection, zoom, Fit, dismissal and argument-based reopen are observed;
+native authoring and manufacturing completion remain unavailable/unverified.
+
+The owner has authorized completion of this entire planning item. Dependent
+research, mechanism ratification, gate implementation and native pilot acceptance
+remain outstanding. No new
 runtime inventory or executable gate schema is introduced; parity registration
 belongs to the mechanism transaction once that inventory is specified.

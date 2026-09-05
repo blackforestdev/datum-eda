@@ -169,7 +169,7 @@
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | WDQ-C01 partial source/runtime baseline and an inspected existing-binary capture recorded; build identity, fixture provenance and native interaction verification remain open. No gate or product acceptance claimed | Reproducible manual capability baseline, bounded foundational research, proposed refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` | WDQ-C01 bounded audit complete: verified build, source/import-map provenance, archived fixture, isolated native input, preservation/reopen evidence and gap mapping. No product acceptance claimed | Bounded foundational research, proposed refusal mechanism and owner-reviewed pilot/adoption packet | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
 
 ## Spec Governance Coverage
 

@@ -1,0 +1,26 @@
+datum-gui diagnostic log pid=3217983 start=SystemTime { tv_sec: 1788651253, tv_nsec: 570865955 }
+[SystemTime { tv_sec: 1788651253, tv_nsec: 571960160 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: "default", custom_name: "custom", program: None, args: [], environment: [], environment_remove: [], cwd: "active", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: "propose", unattended_tools: [] }, demo_known_good: false, board_file: None, schematic_file: None, artifact_path: None, project_root: Some("/tmp/datum-wdq-isolated-ZslIOi/project"), select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: "1280x768", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }
+[SystemTime { tv_sec: 1788651253, tv_nsec: 588757073 }] resumed event
+[SystemTime { tv_sec: 1788651253, tv_nsec: 588781896 }] launch state load begin
+[SystemTime { tv_sec: 1788651253, tv_nsec: 588797669 }] request resolve begin
+[SystemTime { tv_sec: 1788651253, tv_nsec: 588830284 }] request resolve end project_root=/tmp/datum-wdq-isolated-ZslIOi/project board_file=None
+[SystemTime { tv_sec: 1788651253, tv_nsec: 588847025 }] workspace load begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 148920158 }] workspace load end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 148949516 }] camera fit begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 148971121 }] camera fit end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 149184283 }] terminal spawn begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 170408530 }] terminal spawn end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 170449018 }] launch state load end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 171739348 }] window created
+[SystemTime { tv_sec: 1788651256, tv_nsec: 171772441 }] runtime creation begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 173680408 }] wgpu instance create begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 263569462 }] wgpu request adapter begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 272500439 }] wgpu request device begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 350974780 }] wgpu request device end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 351583086 }] initial surface configure begin 1280x768 format=Bgra8UnormSrgb present=Fifo msaa=8
+[SystemTime { tv_sec: 1788651256, tv_nsec: 361759322 }] initial surface configure end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 361805680 }] renderer init begin
+[SystemTime { tv_sec: 1788651256, tv_nsec: 649174734 }] renderer init end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 652296024 }] runtime creation end
+[SystemTime { tv_sec: 1788651256, tv_nsec: 652368098 }] window visible
+[SystemTime { tv_sec: 1788651296, tv_nsec: 218724140 }] close requested

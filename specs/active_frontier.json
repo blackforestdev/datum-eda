@@ -7258,9 +7258,9 @@
         "harness": "codex-cli",
         "session": "codex-workflow-delivery-audit-20260905",
         "claimed_at": "2026-09-05T21:24:02Z",
-        "heartbeat_at": "2026-09-05T21:24:02Z",
-        "expires_at": "2026-09-06T05:24:02Z",
-        "scope": ["WDQ-C01 read-only capability audit; research/process-quality/WORKFLOW_DELIVERY*; specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md; own WORKFLOW-DELIVERY-QUALITY governance entries only"],
+        "heartbeat_at": "2026-09-05T23:37:00Z",
+        "expires_at": "2026-09-06T07:37:00Z",
+        "scope": ["WORKFLOW-DELIVERY-QUALITY owner-authorized planning C01-C04; research/process-quality/WORKFLOW_DELIVERY* and owned evidence; own plan/decision proposal and governance entries only; no Preferences/prototype/runtime edits"],
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "ad7b08461fa45aa80fca3543116639fa8682933e"
       },
@@ -7269,7 +7269,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
-        "canonical_next_step_id": "WDQ-C01",
+        "canonical_next_step_id": "WDQ-C02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -7284,14 +7284,14 @@
         },
         "steps": [
           {
-            "id": "WDQ-C01", "kind": "planning", "status": "in_progress",
+            "id": "WDQ-C01", "kind": "planning", "status": "complete",
             "action": "Establish the reproducible manual-workflow capability baseline and map gaps to existing owners without inferring acceptance from code or test presence.",
             "depends_on": [],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C01"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C01-COMPLETE"}]
           },
           {
-            "id": "WDQ-C02", "kind": "planning", "status": "pending",
+            "id": "WDQ-C02", "kind": "planning", "status": "in_progress",
             "action": "Resolve scoped foundational requirements through full evidence-route review and bounded primary-source research; integrate resulting specification work with existing Frontier owners.",
             "depends_on": ["WDQ-C01"],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C02"}],
