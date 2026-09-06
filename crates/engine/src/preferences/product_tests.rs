@@ -185,3 +185,74 @@ fn wire_schemas_refuse_unknown_fields_and_round_trip_symbolic_errors() {
         .is_err()
     );
 }
+
+#[test]
+fn proposal_prepare_validate_and_reject_are_portable_and_side_effect_free() {
+    let (locations, service) = service("proposal-pure");
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "agent proposes an accessibility preference".to_owned(),
+            &actor(PreferenceActorKindV1::McpAgent),
+        )
+        .unwrap();
+    assert!(prepared.proposal.proposal_digest.starts_with("sha256:"));
+    assert_eq!(prepared.current_value.user_value, None);
+    assert!(!locations.0.join("datum/preferences").exists());
+
+    let validated = service
+        .validate_proposal(prepared.proposal.clone())
+        .unwrap();
+    assert!(validated.valid);
+    assert_eq!(validated.current_generation, None);
+    let rejected = service.reject_proposal(prepared.proposal).unwrap();
+    assert!(rejected.rejected);
+    assert!(!locations.0.join("datum/preferences").exists());
+}
+
+#[test]
+fn proposal_digest_tampering_and_stale_authority_are_typed_refusals() {
+    let (_locations, mut service) = service("proposal-refusal");
+    let requesting_actor = actor(PreferenceActorKindV1::ScriptAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "automation requests review".to_owned(),
+            &requesting_actor,
+        )
+        .unwrap();
+
+    let mut tampered = prepared.proposal.clone();
+    tampered.rationale = "different rationale".to_owned();
+    let refusal = service.validate_proposal(tampered).unwrap_err();
+    assert_eq!(refusal.code, PreferenceErrorCodeV1::ProposalInvalid);
+    assert!(refusal.preserved_proposal.is_some());
+
+    service
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.high_contrast_noncolor".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "contrast choice".to_owned(),
+            },
+            &actor(PreferenceActorKindV1::HumanGui),
+        )
+        .unwrap();
+    let refusal = service.validate_proposal(prepared.proposal).unwrap_err();
+    assert_eq!(refusal.code, PreferenceErrorCodeV1::ProposalStale);
+    assert!(refusal.preserved_proposal.is_some());
+}

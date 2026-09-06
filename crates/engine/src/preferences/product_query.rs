@@ -173,12 +173,15 @@ impl GlobalPreferencesProductService {
         })
     }
 
-    fn value_for_key(&self, key: &str) -> Result<PreferenceValueViewV1, PreferenceErrorV1> {
+    pub(super) fn value_for_key(
+        &self,
+        key: &str,
+    ) -> Result<PreferenceValueViewV1, PreferenceErrorV1> {
         let row = self.row_for_key(key)?;
         self.value_view(&row)
     }
 
-    fn row_for_key(&self, key: &str) -> Result<GlobalPreferenceRow, PreferenceErrorV1> {
+    pub(super) fn row_for_key(&self, key: &str) -> Result<GlobalPreferenceRow, PreferenceErrorV1> {
         let parsed = self.active_key(key, None)?;
         self.service
             .rows()

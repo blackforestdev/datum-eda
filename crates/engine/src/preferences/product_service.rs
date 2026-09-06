@@ -238,7 +238,7 @@ impl GlobalPreferencesProductService {
         )
     }
 
-    fn validate_expectation(
+    pub(super) fn validate_expectation(
         &self,
         expected: &HeadExpectationV1,
         draft: Option<Value>,
@@ -495,7 +495,7 @@ fn validate_locations(locations: &PreferenceLocations) -> Result<(), String> {
     Ok(())
 }
 
-fn validate_actor(
+pub(super) fn validate_actor(
     actor: &PreferenceActorV1,
     context: &PreferenceContextV1,
 ) -> Result<(), PreferenceErrorV1> {

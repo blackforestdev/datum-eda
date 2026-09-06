@@ -261,6 +261,79 @@ pub struct PreferenceMutationResultV1 {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PreferenceProposalV1 {
+    pub schema: PreferenceSchemaRefV1,
+    pub proposal_id: Uuid,
+    pub proposal_digest: String,
+    pub prepared_against: HeadExpectationV1,
+    pub active_catalog_digest: String,
+    pub mutation: PreferenceMutationRequestV1,
+    pub requesting_actor: PreferenceActorV1,
+    pub rationale: String,
+    pub creation_session: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+pub enum PreferenceProposalActionV1 {
+    Prepare {
+        mutation: PreferenceMutationRequestV1,
+        rationale: String,
+    },
+    Validate {
+        proposal: PreferenceProposalV1,
+    },
+    AcceptAndApply {
+        proposal: PreferenceProposalV1,
+    },
+    Reject {
+        proposal: PreferenceProposalV1,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PreparedProposalResultV1 {
+    pub proposal: PreferenceProposalV1,
+    pub current_value: PreferenceValueViewV1,
+    pub explanation: PreferenceExplanationV1,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProposalValidationResultV1 {
+    pub valid: bool,
+    pub proposal: PreferenceProposalV1,
+    pub current_generation: Option<GenerationRef>,
+    pub explanation: PreferenceExplanationV1,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceptedProposalResultV1 {
+    pub proposal_id: Uuid,
+    pub mutation_result: PreferenceMutationResultV1,
+    pub acceptance_id: Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RejectedProposalResultV1 {
+    pub proposal_id: Uuid,
+    pub rejected: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", content = "result", rename_all = "snake_case")]
+pub enum PreferenceProposalResultV1 {
+    Prepared(PreparedProposalResultV1),
+    Validated(ProposalValidationResultV1),
+    Accepted(AcceptedProposalResultV1),
+    Rejected(RejectedProposalResultV1),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PreferenceErrorCodeV1 {
     InvalidRequest,
@@ -331,6 +404,7 @@ pub enum PreferenceQueryResultV1 {
 pub enum PreferenceProductPayloadV1 {
     Query(PreferenceQueryV1),
     Mutation(PreferenceMutationRequestV1),
+    Proposal(PreferenceProposalActionV1),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -345,6 +419,7 @@ pub struct PreferenceProductRequestV1 {
 pub enum PreferenceProductResultV1 {
     Query(PreferenceQueryResultV1),
     Mutation(PreferenceMutationResultV1),
+    Proposal(PreferenceProposalResultV1),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
