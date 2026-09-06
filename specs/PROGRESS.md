@@ -167,7 +167,7 @@
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `planned`; authorization `planning`.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
-   Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `in_progress`; authorization `planning`; parallel lane.*
+   Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
@@ -194,8 +194,8 @@ authoring acceptance or canonical successor selection is implied by scheduling.
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `specs/workflow_delivery/pilot.contract.json` | WDQ-G01 candidate: four action keys, five native scenarios, reviewed shell authority and source-level menu accessibility gap; review in `research/process-quality/WORKFLOW_DELIVERY_PILOT_REVIEW.md` | Exact ownership/session/trusted-runner handoff remains; no native proof, executable validation or G01 closure | `dat-workflow-gate-pilot-b3s`, planning in progress; G02/G06 owner boundaries unchanged |
-| `docs/reviews/workflow-delivery-pilot/handoff.md` | Current/proposed file lanes, complete hook-route review and ratified report-only bootstrap fallback recorded | Independent reviewer assignment and current-owner handoff unconfirmed; no execution lease or trust configuration installed | WDQ-G01 remains in progress; no issue closure |
+| `specs/workflow_delivery/pilot.contract.json` | Four action keys, five native scenarios, reviewed shell authority and source-level menu accessibility gap; planning handoff completed below | G02 must authorize bounded implementation; no native proof or executable validation | `dat-workflow-gate-pilot-b3s`; G06 activation remains separate |
+| `docs/reviews/workflow-delivery-pilot/handoff.md` | WDQ-G01 complete: owner-approved independent review lane, Preferences continuation on nonoverlapping files, shared accessibility hold and report-only fallback | G02 selected for explicit implementation permission; shared-file release remains a prerequisite to touching those files | Planning claim released; issue remains open; no execution or activation |
 
 Every specification that steers development is classified in
 `specs/spec_governance_manifest.json` and enforced by
