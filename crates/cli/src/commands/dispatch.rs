@@ -16,14 +16,7 @@ pub(crate) fn execute_project_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
-        ProjectCommands::New(ProjectNewArgs { path, name }) => {
-            let report = create_native_project(&path, name)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_create_report_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        ProjectCommands::New(args) => args.run(format),
         ProjectCommands::Inspect(ProjectInspectArgs { path }) => {
             let report = inspect_native_project(&path)?;
             let output = match format {

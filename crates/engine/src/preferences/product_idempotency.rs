@@ -69,6 +69,7 @@ impl GlobalPreferencesProductService {
         let historical = Self {
             service: historical_service,
             active_catalog_digest: self.active_catalog_digest.clone(),
+            factory_only: self.factory_only,
         };
         let row = historical
             .service

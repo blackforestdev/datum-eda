@@ -1,15 +1,6 @@
 use crate::*;
 
 #[derive(clap::Args)]
-pub(crate) struct ProjectNewArgs {
-    /// Project root directory
-    pub(crate) path: PathBuf,
-    /// Project display name; defaults to the directory basename
-    #[arg(long)]
-    pub(crate) name: Option<String>,
-}
-
-#[derive(clap::Args)]
 pub(crate) struct ProjectInspectArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

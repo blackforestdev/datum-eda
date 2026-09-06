@@ -34,11 +34,15 @@ fn project_new_creates_native_scaffold() {
         root.to_str().unwrap(),
         "--name",
         "Native Demo",
+        "--units-source",
+        "factory",
     ])
     .expect("CLI should parse");
 
     let output = execute(cli).expect("project new should succeed");
-    assert!(output.contains("project_name: Native Demo"));
+    assert!(output.contains("project_id:"));
+    assert!(output.contains("units_source: Factory"));
+    assert!(output.contains("units_seed_items: 8"));
 
     let project_json = root.join("project.json");
     let schematic_json = root.join("schematic/schematic.json");
@@ -64,16 +68,20 @@ fn project_new_creates_native_scaffold() {
         "follow_system"
     );
     assert_eq!(
+        project_value["project_units_seed_receipt"]["schema_name"],
+        "datum.project.units_seed_receipt"
+    );
+    assert_eq!(
         project_value["project_units_seed_receipt"]["source"]["kind"],
-        "global_defaults"
+        "factory"
     );
     assert_eq!(
-        project_value["project_units_seed_receipt"]["source"]["repository_generation"],
-        "factory-defaults"
+        project_value["project_units_seed_receipt"]["source"]["profile_id"],
+        "datum.units.factory.v1"
     );
     assert_eq!(
-        project_value["project_units_seed_receipt"]["copied_values"]
-            .as_object()
+        project_value["project_units_seed_receipt"]["items"]
+            .as_array()
             .unwrap()
             .len(),
         8
@@ -106,6 +114,20 @@ fn project_new_creates_native_scaffold() {
     assert_eq!(stackup[4].layer_type, StackupLayerType::Mechanical);
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_new_defaults_visibly_to_global_units_mode() {
+    let cli = Cli::try_parse_from(["eda", "project", "new", "/tmp/datum-default-mode"])
+        .expect("CLI should parse");
+    let Commands::Project { action } = cli.command else {
+        panic!("expected project command")
+    };
+    let ProjectCommands::New(args) = *action else {
+        panic!("expected project new")
+    };
+    assert!(matches!(args.units_source, ProjectUnitsSourceArg::Global));
+    assert!(args.expected_preferences.is_none());
 }
 
 #[test]
@@ -161,23 +183,118 @@ fn project_new_json_output_reports_created_ids() {
         "project",
         "new",
         root.to_str().unwrap(),
+        "--units-source",
+        "factory",
     ])
     .expect("CLI should parse");
 
     let output = execute(cli).expect("project new should succeed");
     let report: serde_json::Value =
         serde_json::from_str(&output).expect("project new JSON should parse");
-    assert_eq!(report["project_root"], root.display().to_string());
-    assert_eq!(
-        report["project_name"],
-        root.file_name().unwrap().to_string_lossy().to_string()
+    assert_eq!(report["project_root_identity"], root.display().to_string());
+    assert!(report["project_id"].as_str().is_some());
+    assert!(report["request_id"].as_str().is_some());
+    assert!(
+        report["genesis_request_digest"]
+            .as_str()
+            .unwrap()
+            .starts_with("sha256:")
     );
-    assert!(report["project_uuid"].as_str().is_some());
-    assert!(report["schematic_uuid"].as_str().is_some());
-    assert!(report["board_uuid"].as_str().is_some());
-    assert_eq!(report["files_written"].as_array().unwrap().len(), 4);
+    assert_eq!(
+        report["units_receipt"]["items"].as_array().unwrap().len(),
+        8
+    );
+    assert_eq!(
+        report["published_manifest_digests"]
+            .as_object()
+            .unwrap()
+            .len(),
+        4
+    );
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_new_exact_request_replays_and_conflicting_retry_exits_two() {
+    let root = unique_project_root("datum-eda-cli-project-new-retry");
+    let request_id = Uuid::new_v4().to_string();
+    let project_id = Uuid::new_v4().to_string();
+    let args = || {
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "new",
+            root.to_str().unwrap(),
+            "--name",
+            "Replay Project",
+            "--request-id",
+            &request_id,
+            "--project-id",
+            &project_id,
+            "--units-source",
+            "factory",
+            "--json",
+        ])
+        .unwrap()
+    };
+    let (first, first_code) = execute_with_exit_code(args()).unwrap();
+    let (replay, replay_code) = execute_with_exit_code(args()).unwrap();
+    assert_eq!(first_code, 0);
+    assert_eq!(replay_code, 0);
+    assert_eq!(first, replay);
+
+    let (refusal, code) = execute_with_exit_code(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "new",
+            root.to_str().unwrap(),
+            "--name",
+            "Changed Project",
+            "--request-id",
+            &request_id,
+            "--project-id",
+            &project_id,
+            "--units-source",
+            "factory",
+            "--json",
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(code, 2);
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["code"],
+        "idempotency_conflict"
+    );
+    let _ = std::fs::remove_dir_all(root);
+}
+
+#[test]
+fn project_new_refuses_global_expectation_in_factory_mode_without_publication() {
+    let root = unique_project_root("datum-eda-cli-project-new-invalid-source");
+    let (refusal, code) = execute_with_exit_code(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "new",
+            root.to_str().unwrap(),
+            "--units-source",
+            "factory",
+            "--expected-preferences",
+            "{}",
+            "--json",
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(code, 2);
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["code"],
+        "invalid_request"
+    );
+    assert!(!root.exists());
 }
 
 #[test]
