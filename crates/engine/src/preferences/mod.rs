@@ -11,6 +11,7 @@ use serde_json::Value;
 
 mod catalog;
 mod product_model;
+mod product_proposal;
 mod product_query;
 mod product_service;
 #[cfg(test)]
