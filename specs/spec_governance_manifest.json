@@ -46,11 +46,11 @@
   "entries": {
     "docs/reviews/workflow-delivery-pilot/handoff.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
-      "notes": "Completed WDQ-G01/G02 operational handoff under PM041, outside the pilot authority route to avoid receipt cycles. Records explicit owner bounded implementation authorization, actual reserved independent lane, held shared accessibility files and report-only bootstrap. G03 is in progress; G06 activation remains unapproved."
+      "notes": "Completed WDQ-G01-G03 operational handoff under PM041, outside the pilot authority route to avoid receipt cycles. Records bounded implementation authorization, report-only validator and 82 hermetic tests, independent code-inspection limits, held accessibility files and separate global drift failures. G04 is selected; G06 activation remains unapproved."
     },
     "specs/workflow_delivery/pilot.contract.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
-      "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. G02 authorization recorded in the separate operational handoff; G03 implementation in progress. Not complete executable validation, enrollment, independent replay or product acceptance."
+      "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. G03 executable validation and hermetic refusal mechanics landed in 9cb42473; candidate structure/readiness references pass report-only inspection. No production registry, enrollment, native proof, independent replay or product acceptance is claimed by this candidate."
     },
     "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
@@ -62,7 +62,7 @@
     },
     "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
-      "notes": "WDQ-C05 owner-adopted exact schema-6 proposal, delivery shapes, consumer activation, freshness, independent replay and trusted receipt boundaries. Current runtime remains schema 5; implementation separately authorized."
+      "notes": "WDQ-C05 owner-adopted schema-6 contract, delivery shapes, consumer activation, freshness, independent replay and trusted receipt boundaries. G02 authorized G03 implementation, landed in 9cb42473; live Frontier migrated to schema 6 with no enrollment or historical acceptance claims. Enforcement activation remains G06 owner-controlled."
     },
     "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md": {
       "class": "governed",

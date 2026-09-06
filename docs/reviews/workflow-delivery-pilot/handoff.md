@@ -1,7 +1,7 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01/G02 complete; bounded G03 execution authorized; activation remains off.
+Status: G01–G03 complete; G04 selected and unclaimed; activation remains off.
 
 This is an operational record under the ratified PM041 gate contract and
 WORKFLOW_DELIVERY_ADOPTION_PACKET, not a new product specification. It is outside
@@ -270,3 +270,19 @@ findings about completion regression, disappearing enrollment, fixture/binary
 identity, defect disposition and full Frontier validation were corrected with
 regressions. Its bounded final recheck found no remaining blocker in those fixes;
 it did not run tests, produce original proof or perform G05 replay/acceptance.
+
+### G03 landing and synchronized continuation
+
+Implementation landed in `9cb42473`. The completion transaction records its
+committed validation evidence, migrates the live Frontier to supported schema 6
+without adding any delivery enrollment, releases the finished G03 lease and
+selects G04 pending. Existing task history, canonical Preferences selection and
+other claims are unchanged. The pilot issue remains open under the already
+recorded G02 build/proof authorization; no new approval is inferred.
+
+Before claiming G04, refresh the production file map and declare its exact scope.
+Editing any held shared accessibility file still requires the explicit bounded
+consumer-owner handoff; a nonoverlapping scope does not release that hold.
+The separate reviewer remains reserved for G05 native replay. G06 still requires
+owner acceptance and external trusted-runner promotion; report-only operation
+must not be described as activated enforcement.
