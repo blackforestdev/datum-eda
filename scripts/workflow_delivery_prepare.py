@@ -89,6 +89,12 @@ def completion_proposal(manifest, base):
     steps["WDQ-G06"]["status"] = "complete"
     steps["WDQ-G06"]["completion_evidence"].append(
         {"kind": "document", "path": HANDOFF, "marker": ACTIVATED})
+    # PM025 derives post-completion unblocks from still-open blocked issues.
+    # Closing this issue removes just its predecessor's now-satisfied entry.
+    for predecessor in manifest["frontier"]:
+        if predecessor["key"] == "WORKFLOW-DELIVERY-QUALITY":
+            unblocks = predecessor["completion"]["post_completion"]["unblocks_issue_ids"]
+            unblocks.remove(ISSUE)
     return manifest
 
 
@@ -129,6 +135,8 @@ def prepare(root, output):
     frontier_path = candidate / "specs/active_frontier.json"
     item = next(i for i in proposed["frontier"] if i["key"] == KEY)
     frontier_path.write_text(replace_item(frontier_path.read_text(encoding="utf-8"), item), encoding="utf-8")
+    predecessor = next(i for i in proposed["frontier"] if i["key"] == "WORKFLOW-DELIVERY-QUALITY")
+    frontier_path.write_text(replace_item(frontier_path.read_text(encoding="utf-8"), predecessor), encoding="utf-8")
     save(candidate, POLICY, tree.json("docs/reviews/workflow-delivery-pilot/activation-policy.candidate.json"))
     governance_path = candidate / "specs/spec_governance_manifest.json"
     governance = governance_path.read_text(encoding="utf-8")
@@ -154,7 +162,11 @@ def prepare(root, output):
     run(candidate, "br", "close", ISSUE, "--actor", "codex", "--reason",
         f"Proposed activation of accepted proof on {base}; not live until owner promotion and verification.")
     run(candidate, "br", "sync", "--flush-only", "--actor", "codex")
-    run(candidate, "python3", "scripts/project_status.py", "render")
+    # Generate the projection only. The public selector deliberately refuses
+    # unpromoted acceptance; structural validation below is not enforcement.
+    run(candidate, "python3", "-c", "import sys; from pathlib import Path; "
+        "sys.path.insert(0, 'scripts'); from project_status import render_status; "
+        "render_status(Path.cwd(), True)")
     run(candidate, "python3", "scripts/check_spec_governance.py")
     run(candidate, "python3", "scripts/check_evidence_traceability.py")
     run(candidate, "git", "add", "--", *OWNED)

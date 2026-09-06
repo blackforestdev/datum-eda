@@ -64,6 +64,14 @@ class ProposalTests(unittest.TestCase):
         self.assertEqual(value["frontier"][1]["completion"]["steps"][0]["status"], "in_progress")
         self.assertEqual(proposed["frontier"][1]["completion"]["steps"][0]["status"], "complete")
 
+    def test_predecessor_only_loses_the_closed_pilot_unblock(self):
+        value = self.manifest()
+        value["frontier"].append({"key": "WORKFLOW-DELIVERY-QUALITY", "completion": {
+            "post_completion": {"unblocks_issue_ids": ["keep-other", "dat-workflow-gate-pilot-b3s"]}}})
+        proposed = completion_proposal(value, "a" * 40)
+        self.assertEqual(proposed["frontier"][-1]["completion"]["post_completion"]["unblocks_issue_ids"],
+                         ["keep-other"])
+
     def test_existing_or_in_repository_output_refuses_without_writes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
