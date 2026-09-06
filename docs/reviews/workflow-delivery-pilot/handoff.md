@@ -6,6 +6,44 @@ G06 remains incomplete pending the prepared transaction's external promotion
 and passing scoped enforcement. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
 
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-AUTHORIZED -->
+## Owner-authorized preparation sequencing correction
+
+The coordinating lane identified that G06 was demanding external promotion
+before the candidate and runner were prepared. The owner was asked:
+`May I correct the roadmap to authorize bounded preparation now, while preserving
+your acceptance and keeping external promotion as a separate owner checkpoint?`
+The owner replied exactly `I accept please proceed` in this conversation on
+2026-09-06. This authorizes the operational preparation step below, not external
+promotion, a new product acceptance, or a change to the ratified gate semantics.
+
+<!-- REQ:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P -->
+### Prepare the isolated activation transaction and owner-local runner
+
+Insert WDQ-G06P as the sole execution step before the existing WDQ-G06 owner
+checkpoint. Preserve G01–G05 evidence and the exact accepted contract, original
+proof, independent review hash, owner receipt and deferrals. No bound authority
+source is amended: this is the owner-authorized sequencing of already required
+preparation, not a new acceptance mechanism or weakened trust check.
+
+Prepare and test first-party local tooling and an isolated, reviewable proposed
+activation commit containing only the approved enrollment, delivery mapping,
+receipt references and final completion proposal. Keep the live main Frontier
+and tracker incomplete until owner promotion and successful trusted verification.
+The isolated proposal is not a second operating roadmap or a live completion
+claim. Its local candidate reference, if needed to retain the object, must never
+be used as an implicit authority reference. No feature branch or remote push.
+
+Provide a pinned, external-to-the-development-worktree copy of the candidate's
+validator and a local hook preserving the existing file-lane/staged-format gates.
+Test missing-trust and candidate-drift refusal in disposable fixtures. Preparation
+must not configure trust, install hooks, publish the proposal to main, or execute
+an enforcement invocation using agent-selected authority. The owner must receive
+the exact candidate/base IDs, runner path, review instructions and explicit
+promotion/verification commands. Preserve Preferences at GP-CM04 and every
+existing route/input digest. G06P may finish only with those preparation artifacts
+and checks; G06 still owns actual promotion, activation and final closure.
+
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-OWNER-ACCEPTED -->
 ## G06 recorded owner acceptance
 
