@@ -54,6 +54,7 @@ impl Runtime {
         self.scene_dirty = true;
         self.refresh_global_preferences_accessibility();
         self.refresh_menu_accessibility();
+        self.trace_action_state();
     }
 
     /// Refresh only screen-space interaction chrome. Cursor and hover motion

@@ -3,6 +3,7 @@
 //! continues through the established verb or GUI-local action boundaries.
 
 use super::*;
+use crate::runtime_view_actions::action_evidence::EntrySurface;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MenuKeyIntent {
@@ -79,7 +80,9 @@ impl Runtime {
     ) -> Option<bool> {
         let handled = match target {
             HitTarget::MenuTitle(menu) => self.toggle_menu(menu),
-            HitTarget::MenuItem { menu, label } => self.activate_menu_item(menu, label),
+            HitTarget::MenuItem { menu, label } => {
+                self.activate_menu_item(menu, label, EntrySurface::MenuPointer)
+            }
             HitTarget::GlobalPreferencesModal => true,
             HitTarget::GlobalPreferencesSection(section_id) => {
                 self.session
@@ -162,7 +165,7 @@ impl Runtime {
                 self.invalidate_frame();
             }
             MenuKeyIntent::Activate { menu, label } => {
-                self.activate_menu_item(&menu, &label);
+                self.activate_menu_item(&menu, &label, EntrySurface::MenuKeyboard);
             }
             MenuKeyIntent::Consume => {}
         }
@@ -223,7 +226,12 @@ impl Runtime {
         true
     }
 
-    pub(super) fn activate_menu_item(&mut self, menu_name: &str, label: &str) -> bool {
+    pub(super) fn activate_menu_item(
+        &mut self,
+        menu_name: &str,
+        label: &str,
+        surface: EntrySurface,
+    ) -> bool {
         let item = datum_gui_protocol::load_default_gui_menu_model()
             .ok()
             .and_then(|model| {
@@ -253,6 +261,9 @@ impl Runtime {
             return true;
         }
         if let Some(reason) = item.unavailable_reason(self.workspace()) {
+            if let Some(action) = item.gui_local.as_deref() {
+                self.trace_action_attempt(action, surface, false);
+            }
             self.session.workspace_mut().ui.active_menu = None;
             self.session.workspace_mut().ui.active_submenu = None;
             let pane = self.workspace().ui.layout.focused;
@@ -269,7 +280,7 @@ impl Runtime {
         let pane = self.workspace().ui.layout.focused;
         self.set_application_focus(ApplicationFocus::Editor(pane));
         if let Some(action) = item.gui_local.as_deref() {
-            return self.activate_gui_local_menu_action(action);
+            return self.activate_gui_local_menu_action(action, surface);
         }
         let reason = item
             .not_built

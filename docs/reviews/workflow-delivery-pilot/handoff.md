@@ -22,6 +22,34 @@ dependency addition or G06 activation is implied. At handback, record commits,
 validation, remaining defects and whether any shared files are still dirty;
 Preferences may resume only under its own owner authorization and file handoff.
 
+### G04 production observation and capture tooling checkpoint
+
+The next bounded implementation adds `DATUM_ACTION_EVIDENCE=1` observations to
+the real menu pointer, menu keyboard and editor-shortcut call sites. The stream
+exports the actual production registry for observed contexts, records invocation
+only at dispatch, and records focus, selection, layout, pane cameras, scene
+bounds, layer filters and Console feedback. It writes diagnostic stderr only;
+there is no injected action, new project writer, readiness override or acceptance
+flag. Disabled diagnostics do not build snapshots. A broken diagnostic pipe
+cannot panic the application.
+
+`scripts/workflow_delivery_pilot_capture.py` runs explicit physical inputs on a
+private Weston/Xwayland display and accessibility bus, using installed system
+tools. It pins the CLI executable, copies the archived native fixture, records
+binary hashes and raw observations, sends normal WM_DELETE_WINDOW close requests,
+and enumerates changed/removed and newly created project paths. It neither
+installs dependencies nor produces an acceptance verdict. The sibling scenario
+module records the inspected scale-one input coordinates; the X11 helper follows
+the installed Xlib ABI. No prototype changes or Preferences approval are included.
+
+Proof before collecting final scenario evidence: GUI app tests 305 passed with
+eight existing tests ignored; strict all-target app Clippy passed; workflow
+delivery/tooling tests 86 passed. The isolated harness smoke opened View,
+collected actual native menu and Terminal accessibility nodes, captured the
+native window and closed with exit zero. Archived files were unchanged; runtime
+sidecars were enumerated. The smoke was on development bytes and is not a final
+PILOT-S01–S05 result. G04 remains in progress pending identified scenario evidence.
+
 ### G04 additive menu accessibility implementation checkpoint
 
 The bounded shared-file change projects currently open production menu rows
