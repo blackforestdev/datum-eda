@@ -2,6 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use serde::Serialize;
 use uuid::Uuid;
 
 use super::{
@@ -10,6 +11,16 @@ use super::{
 };
 
 const ACCEPTANCE_LIFETIME_MS: u64 = 5 * 60 * 1_000;
+
+#[derive(Debug, Serialize)]
+pub(super) struct AcceptedMutationAudit {
+    pub proposal_id: Uuid,
+    pub proposal_digest: String,
+    pub acceptance_id: Uuid,
+    pub requesting_actor: String,
+    pub accepting_actor: String,
+    pub originating_mcp_session: String,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PreferenceAcceptanceRefusal {
@@ -56,6 +67,44 @@ impl PreferenceAcceptanceHandleV1 {
     pub(crate) fn accepting_actor(&self) -> &PreferenceActorV1 {
         &self.accepting_actor
     }
+
+    pub(super) fn accepted_audit(
+        &self,
+        proposal: &PreferenceProposalV1,
+        repository_identity: &str,
+        apply_invocation_id: Uuid,
+    ) -> Result<AcceptedMutationAudit, PreferenceAcceptanceRefusal> {
+        if self.repository_identity != repository_identity {
+            return Err(PreferenceAcceptanceRefusal::RepositoryMismatch);
+        }
+        if self.proposal_id != proposal.proposal_id
+            || self.proposal_digest != proposal.proposal_digest
+            || self.prepared_against != proposal.prepared_against
+        {
+            return Err(PreferenceAcceptanceRefusal::ProposalMismatch);
+        }
+        if self.originating_mcp_session != proposal.requesting_actor.session_id {
+            return Err(PreferenceAcceptanceRefusal::SessionMismatch);
+        }
+        if self.invocation_id != apply_invocation_id {
+            return Err(PreferenceAcceptanceRefusal::InvocationMismatch);
+        }
+        Ok(AcceptedMutationAudit {
+            proposal_id: proposal.proposal_id,
+            proposal_digest: proposal.proposal_digest.clone(),
+            acceptance_id: self.acceptance_id,
+            requesting_actor: actor_audit(&proposal.requesting_actor),
+            accepting_actor: actor_audit(&self.accepting_actor),
+            originating_mcp_session: self.originating_mcp_session.clone(),
+        })
+    }
+}
+
+fn actor_audit(actor: &PreferenceActorV1) -> String {
+    format!(
+        "{:?}:{}:{}:{}",
+        actor.kind, actor.local_actor_id, actor.session_id, actor.invocation_id
+    )
 }
 
 #[derive(Debug)]

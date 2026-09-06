@@ -3,6 +3,7 @@
 use std::collections::BTreeMap;
 
 use serde_json::json;
+use sha2::{Digest, Sha256};
 
 use super::product_service::{control_view, effect_timing, field_details};
 use super::{
@@ -32,6 +33,16 @@ impl GlobalPreferencesProductService {
 
     pub fn legacy_migration(&self) -> &super::LegacyConsoleMigrationState {
         self.service.legacy_migration()
+    }
+
+    pub fn repository_identity(&self) -> String {
+        self.service.status().generation().map_or_else(
+            || {
+                let material = self.service.repository.root().to_string_lossy();
+                format!("pending:sha256:{:x}", Sha256::digest(material.as_bytes()))
+            },
+            |generation| generation.repository_id.clone(),
+        )
     }
 
     pub fn query(

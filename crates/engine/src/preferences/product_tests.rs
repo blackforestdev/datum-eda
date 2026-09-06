@@ -465,3 +465,91 @@ fn mcp_acceptance_broker_expires_and_closes_without_portable_authority() {
         Err(PreferenceAcceptanceRefusal::Expired)
     );
 }
+
+#[test]
+fn accepted_mcp_proposal_commits_one_dual_actor_audit_receipt() {
+    let (_locations, mut service) = service("accepted-proposal");
+    let mcp_actor = actor(PreferenceActorKindV1::McpAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "request local human review".to_owned(),
+            &mcp_actor,
+        )
+        .unwrap();
+    let repository_identity = service.repository_identity();
+    let mut broker = PreferenceAcceptanceBroker::new(Uuid::new_v4());
+    broker
+        .register_prepared(&prepared.proposal, &repository_identity)
+        .unwrap();
+    let apply_invocation = Uuid::new_v4();
+    let human = actor(PreferenceActorKindV1::HumanGui);
+    broker
+        .authorize_mcp_apply(
+            &AuthorizeMcpPreferenceApplyV1 {
+                proposal_id: prepared.proposal.proposal_id,
+                proposal_digest: prepared.proposal.proposal_digest.clone(),
+                originating_mcp_session: mcp_actor.session_id.clone(),
+            },
+            &human,
+            &repository_identity,
+            apply_invocation,
+            1_000,
+        )
+        .unwrap();
+    let handle = broker
+        .authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            &repository_identity,
+            apply_invocation,
+            1_001,
+        )
+        .unwrap();
+    let accepted = service
+        .accept_proposal_with_handle(prepared.proposal.clone(), &handle, apply_invocation)
+        .unwrap();
+    broker.consume(&handle).unwrap();
+
+    assert!(accepted.mutation_result.changed);
+    assert_eq!(
+        accepted
+            .mutation_result
+            .generation
+            .as_ref()
+            .unwrap()
+            .generation,
+        0
+    );
+    let receipt = accepted.mutation_result.receipt.as_ref().unwrap();
+    assert_eq!(receipt.proposal_id, Some(prepared.proposal.proposal_id));
+    assert_eq!(receipt.acceptance_id, Some(accepted.acceptance_id));
+    assert_eq!(
+        receipt.proposal_digest.as_deref(),
+        Some(prepared.proposal.proposal_digest.as_str())
+    );
+    assert_eq!(
+        receipt.originating_mcp_session.as_deref(),
+        Some(mcp_actor.session_id.as_str())
+    );
+    assert!(
+        receipt
+            .requesting_actor
+            .as_deref()
+            .unwrap()
+            .contains("McpAgent")
+    );
+    assert!(
+        receipt
+            .accepting_actor
+            .as_deref()
+            .unwrap()
+            .contains("HumanGui")
+    );
+}

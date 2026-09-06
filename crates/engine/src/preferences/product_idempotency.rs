@@ -7,6 +7,7 @@ use serde_json::json;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
+use super::product_acceptance::AcceptedMutationAudit;
 use super::repository::MutationReceipt;
 use super::{
     GlobalPreferencesProductService, PreferenceActorV1, PreferenceErrorCodeV1, PreferenceErrorV1,
@@ -19,17 +20,20 @@ struct CanonicalMutationRequest<'a> {
     schema_version: u32,
     request: &'a PreferenceMutationRequestV1,
     trusted_actor: &'a PreferenceActorV1,
+    accepted_proposal: Option<&'a AcceptedMutationAudit>,
 }
 
 pub(super) fn canonical_mutation_request_digest(
     request: &PreferenceMutationRequestV1,
     actor: &PreferenceActorV1,
+    accepted: Option<&AcceptedMutationAudit>,
 ) -> Result<String, String> {
     let bytes = crate::ir::serialization::to_json_bytes(&CanonicalMutationRequest {
         schema_name: "datum.preferences.mutation",
         schema_version: 1,
         request,
         trusted_actor: actor,
+        accepted_proposal: accepted,
     })
     .map_err(|error| error.to_string())?;
     Ok(format!("sha256:{:x}", Sha256::digest(bytes)))

@@ -483,6 +483,27 @@ fn receipt(
             .audit
             .as_ref()
             .and_then(|audit| audit.expected_generation_ref.clone()),
+        proposal_id: metadata.audit.as_ref().and_then(|audit| audit.proposal_id),
+        proposal_digest: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.proposal_digest.clone()),
+        acceptance_id: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.acceptance_id),
+        requesting_actor: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.requesting_actor.clone()),
+        accepting_actor: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.accepting_actor.clone()),
+        originating_mcp_session: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.originating_mcp_session.clone()),
     })
 }
 

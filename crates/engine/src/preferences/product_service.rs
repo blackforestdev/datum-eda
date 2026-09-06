@@ -7,6 +7,8 @@ use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
+use super::product_acceptance::AcceptedMutationAudit;
+use super::product_actor::{actor_kind, validate_actor};
 use super::product_idempotency::{canonical_mutation_request_digest, mutation_request_id};
 use super::repository::{GenerationRef, MutationAuditMetadata, MutationMetadata};
 use super::{
@@ -135,6 +137,15 @@ impl GlobalPreferencesProductService {
                 None,
             ));
         }
+        self.commit_mutation(request, actor, None)
+    }
+
+    pub(super) fn commit_mutation(
+        &mut self,
+        request: PreferenceMutationRequestV1,
+        actor: &PreferenceActorV1,
+        accepted: Option<&AcceptedMutationAudit>,
+    ) -> Result<PreferenceMutationResultV1, PreferenceErrorV1> {
         let (key_text, expected, reason, draft, reset) = match &request {
             PreferenceMutationRequestV1::SetUser {
                 key,
@@ -180,7 +191,7 @@ impl GlobalPreferencesProductService {
             }
         }
         let request_id = mutation_request_id(&request);
-        let request_digest = canonical_mutation_request_digest(&request, actor)
+        let request_digest = canonical_mutation_request_digest(&request, actor, accepted)
             .map_err(|message| bootstrap_error(message))?;
         if let Some(receipt) = self.service.receipt_for_request(request_id).cloned() {
             if receipt.canonical_request_digest.as_deref() != Some(&request_digest) {
@@ -220,6 +231,13 @@ impl GlobalPreferencesProductService {
                 actor_session_id: actor.session_id.clone(),
                 invocation_id: actor.invocation_id,
                 expected_generation_ref: expected_ref.clone(),
+                proposal_id: accepted.map(|audit| audit.proposal_id),
+                proposal_digest: accepted.map(|audit| audit.proposal_digest.clone()),
+                acceptance_id: accepted.map(|audit| audit.acceptance_id),
+                requesting_actor: accepted.map(|audit| audit.requesting_actor.clone()),
+                accepting_actor: accepted.map(|audit| audit.accepting_actor.clone()),
+                originating_mcp_session: accepted
+                    .map(|audit| audit.originating_mcp_session.clone()),
             }),
         };
         let rows = if reset {
@@ -538,35 +556,6 @@ fn validate_locations(locations: &PreferenceLocations) -> Result<(), String> {
         }
     }
     Ok(())
-}
-
-pub(super) fn validate_actor(
-    actor: &PreferenceActorV1,
-    context: &PreferenceContextV1,
-) -> Result<(), PreferenceErrorV1> {
-    if actor.session_id.trim().is_empty() || actor.local_actor_id.trim().is_empty() {
-        return Err(PreferenceErrorV1 {
-            code: PreferenceErrorCodeV1::UnauthorizedActor,
-            message: "Trusted actor identity is incomplete".to_owned(),
-            details: BTreeMap::from([(
-                "required_authority".to_owned(),
-                json!("trusted transport actor"),
-            )]),
-            current_context: context.clone(),
-            preserved_draft: None,
-            preserved_proposal: None,
-        });
-    }
-    Ok(())
-}
-
-fn actor_kind(actor: &PreferenceActorV1) -> &'static str {
-    match actor.kind {
-        PreferenceActorKindV1::HumanGui => "human_gui",
-        PreferenceActorKindV1::HumanCli => "human_cli",
-        PreferenceActorKindV1::McpAgent => "mcp_agent",
-        PreferenceActorKindV1::ScriptAgent => "script_agent",
-    }
 }
 
 pub(super) fn control_view(control: &PreferenceControlPresentation) -> PreferenceControlViewV1 {
