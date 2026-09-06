@@ -6,7 +6,7 @@
       "kind": "file_glob",
       "glob": "specs/workflow_delivery/*.contract.json",
       "owner_spec": "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md",
-      "notes": "PM041 ratification registration: zero instantiated contracts, no executable delivery validation. This existing file-glob gate tracks instance names only; WDQ-G03 must implement closed-shape/refusal validation before any enforcement or acceptance claim.",
+      "notes": "WDQ-G01 registers one candidate pilot contract. This existing file-glob gate tracks instance names only, not closed-shape or behavior correctness; WDQ-G03 must implement refusal validation before any enforcement or acceptance claim.",
       "planned_shapes": ["completion.delivery", "Ref", "Blob", "Answer", "Contract", "Consumer", "Scenario", "Proof", "build", "results", "assertions", "Review", "workflow_delivery_policy"]
     },
     {

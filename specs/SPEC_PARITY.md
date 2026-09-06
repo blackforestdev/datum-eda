@@ -21,7 +21,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 
 | Inventory | Owner Spec | Count | SHA256 |
 |-----------|------------|-------|--------|
-| `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 0 | `01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b` |
+| `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 1 | `3ba33320de1c33923eff7a226a533ce1d7aa0c9cf35d4c36cffef3015a01ac17` |
 | `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 190 | `f9cd8102aff153cd4c9f3a86ecc501fc99aac66d41010eb8d33309740e5b48f5` |
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 289 | `e6113b1c79f114e70e745ec2fd3bc73afc3cb4302d429ad67dfb2fff76ddbce1` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
@@ -37,7 +37,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
 | `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 93 | `000670202f0563006293482338368dd1ab9a39e691cce8ced12ca42a1a458c3e` |
 
-The PM041 delivery inventory currently tracks zero contract-instance filenames.
+The PM041 delivery inventory tracks one candidate pilot contract-instance filename.
 Its registered planned shapes are not validated by this file-glob inventory;
-closed-shape and behavioral refusal proof belong to WDQ-G03. Zero instances
+closed-shape and behavioral refusal proof belong to WDQ-G03. This inventory
 does not mean delivery checks are installed, passing or activated.
