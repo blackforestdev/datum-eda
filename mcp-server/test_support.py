@@ -8,6 +8,7 @@ from fake_daemon_support_journal import FakeDaemonClientJournalMixin
 from fake_daemon_support_library import FakeDaemonClientLibraryMixin
 from fake_daemon_support_mutations import FakeDaemonClientMutationsMixin
 from fake_daemon_support_proposals import FakeDaemonClientProposalsMixin
+from fake_daemon_support_preferences import FakeDaemonClientPreferencesMixin
 from fake_daemon_support_queries import FakeDaemonClientQueriesMixin
 from fake_daemon_support_relationships import FakeDaemonClientRelationshipsMixin
 from fake_daemon_support_replacements import FakeDaemonClientReplacementsMixin
@@ -22,6 +23,7 @@ class FakeDaemonClient(
     FakeDaemonClientLibraryMixin,
     FakeDaemonClientMutationsMixin,
     FakeDaemonClientProposalsMixin,
+    FakeDaemonClientPreferencesMixin,
     FakeDaemonClientRelationshipsMixin,
     FakeDaemonClientReplacementsMixin,
     FakeDaemonClientQueriesMixin,

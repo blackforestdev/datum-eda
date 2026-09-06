@@ -6,6 +6,7 @@ from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS
 from tools_catalog_library import LIBRARY_TOOL_SCHEMAS
 from tools_catalog_output_jobs import OUTPUT_JOB_TOOL_SCHEMAS
 from tools_catalog_proposals import PROPOSAL_TOOL_SCHEMAS
+from tools_catalog_preferences import PREFERENCE_TOOL_SPECS
 from tools_catalog_relationships import RELATIONSHIP_TOOL_SCHEMAS
 
 DATUM_EMPTY_QUERY_SCHEMA = {
@@ -551,6 +552,7 @@ DATUM_TOOL_SPECS = [
     *_GENERATED_PCB_TOOL_SPECS,
     *_GENERATED_LIBRARY_TOOL_SPECS,
     *_GENERATED_SCHEMATIC_TOOL_SPECS,
+    *PREFERENCE_TOOL_SPECS,
     *_GENERATED_TOOL_SPECS,
 ]
 

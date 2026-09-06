@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import sys
+import uuid
 from typing import Any, TextIO
 
 from agent_capability import (
@@ -257,6 +258,18 @@ class StdioToolHost:
             fenced_arguments = validate_context_fence(
                 self._discovery, name, arguments, TOOL_BY_NAME
             )
+            if isinstance(name, str) and name.startswith("datum.preferences."):
+                fenced_arguments = dict(fenced_arguments)
+                fenced_arguments["_transport_actor"] = {
+                    "kind": "mcp_agent",
+                    "session_id": self._discovery.terminal_session_id
+                    if self._discovery is not None
+                    else "unscoped-test-session",
+                    "local_actor_id": self._session_authority.agent_identity
+                    if self._session_authority is not None
+                    else "direct-agent",
+                    "invocation_id": str(uuid.uuid4()),
+                }
             if invocation is None:
                 response = dispatch_tool_call(self._daemon, name, fenced_arguments)
             else:
@@ -323,6 +336,13 @@ def _valid_request(message: Any) -> bool:
 
 
 def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:
+    if (
+        isinstance(result, dict)
+        and isinstance(result.get("schema"), dict)
+        and result["schema"].get("name") == name
+        and isinstance(result.get("ok"), bool)
+    ):
+        return result
     normalized = normalize_datum_result(name, result)
     envelope: dict[str, Any] = {
         "ok": True,

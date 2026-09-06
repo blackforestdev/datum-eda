@@ -136,4 +136,36 @@ mod tests {
         );
         assert!(!base.exists());
     }
+
+    #[test]
+    fn json_rpc_preferences_route_returns_the_engine_product_envelope() {
+        let (base, mut preferences) = state("json-rpc");
+        let mut engine = eda_engine::api::Engine::new().unwrap();
+        let response = crate::dispatch::dispatch_request_with_preferences(
+            &mut engine,
+            &mut preferences,
+            crate::JsonRpcRequest {
+                jsonrpc: "2.0".to_owned(),
+                id: json!(31),
+                method: "preferences.mcp_product".to_owned(),
+                params: serde_json::to_value(McpPreferenceProductParams {
+                    request: PreferenceProductRequestV1 {
+                        schema: PreferenceSchemaRefV1 {
+                            name: "datum.preferences.describe".to_owned(),
+                            version: 1,
+                        },
+                        payload: PreferenceProductPayloadV1::Query(PreferenceQueryV1::Describe),
+                    },
+                    actor: actor(PreferenceActorKindV1::McpAgent),
+                })
+                .unwrap(),
+            },
+        );
+        assert!(response.error.is_none());
+        let result = response.result.expect("product envelope");
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["schema"]["name"], "datum.preferences.describe");
+        assert_eq!(result["context"]["active_descriptor_count"], 11);
+        assert!(!base.exists());
+    }
 }
