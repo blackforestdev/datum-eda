@@ -66,6 +66,15 @@ impl Runtime {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
+        // A dropdown is application chrome, not the canvas beneath it. Resolve
+        // its hit against the displayed context before a canvas focus gesture
+        // can change the focused pane (and therefore the action's readiness).
+        if self.workspace().ui.active_menu.is_some() {
+            let target = self.prepared_scene().hit_test(x, y).cloned();
+            if let Some(target @ (HitTarget::MenuTitle(_) | HitTarget::MenuItem { .. })) = target {
+                return self.select_hit_target(&target);
+            }
+        }
         // Focus and dispatch are one gesture: after activating a different pane,
         // continue resolving this same click in that pane's camera/content.
         let mut focus_changed = false;

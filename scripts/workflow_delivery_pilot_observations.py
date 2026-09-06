@@ -112,6 +112,10 @@ def evaluate(root, receipts):
             before = state(regression, "schematic-fit-disabled")
             after = state(regression, "after-disabled-pointer-attempt")
             attempts = [row["value"] for row in records(regression) if row["event"] == "dispatch"]
+            regression_identity = read(regression / "run-identity.json")
+            check("pointer regression uses the same identified binaries",
+                  all(regression_identity[k + "_sha256"] == receipts[k]["binary_sha256"]
+                      for k in ("gui", "cli")), regression_identity)
             check("disabled pointer Fit preserves context and does not invoke",
                   before["focused_pane"] == after["focused_pane"]
                   and before["board_camera"] == after["board_camera"]
@@ -119,6 +123,12 @@ def evaluate(root, receipts):
                   {"before_pane": before["focused_pane"], "after_pane": after["focused_pane"],
                    "before_camera": before["board_camera"], "after_camera": after["board_camera"],
                    "dispatches": attempts})
+            restored_path = regression / "canvas-focus-restored-state.json"
+            if restored_path.exists():
+                restored = state(regression, "canvas-focus-restored")
+                check("real canvas click still acquires underlying pane",
+                      restored["focused_pane"] == 0 and restored["focus"].startswith("Editor"),
+                      {"focused_pane": restored["focused_pane"], "focus": restored["focus"]})
         else:
             check("disabled pointer Fit preserves context and does not invoke", False,
                   "native pointer regression capture is required")
@@ -162,12 +172,18 @@ def evaluate(root, receipts):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--native-root", type=Path,
+                        help="new capture directory; retain earlier failing evidence")
+    parser.add_argument("--build-root", type=Path,
+                        help="receipts for the exact candidate being evaluated")
     parser.add_argument("--compact-state-snapshots", action="store_true",
                         help="drop redundant cumulative snapshot copies; retain full raw GUI logs")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1] / "docs/reviews/workflow-delivery-pilot"
+    native_root = args.native_root or root / "native"
+    build_root = args.build_root or root / "native-build-verified"
     if args.compact_state_snapshots:
-        for snapshot in sorted((root / "native").glob("PILOT-S*/*-state.json")):
+        for snapshot in sorted(native_root.glob("PILOT-S*/*-state.json")):
             rows = read(snapshot)
             latest = [row for row in rows if row["event"] == "state"][-1:]
             if len(latest) != 1:
@@ -179,8 +195,8 @@ if __name__ == "__main__":
             snapshot.write_text(json.dumps(latest, indent=2) + "\n")
         print("Compacted derived snapshots; full production logs retained.")
         raise SystemExit(0)
-    receipts = {key: read(root / "native-build-verified" / (key + "-receipt.json")) for key in ("gui", "cli")}
-    results = [evaluate(root / "native" / f"PILOT-S0{i}", receipts) for i in range(1, 6)]
+    receipts = {key: read(build_root / (key + "-receipt.json")) for key in ("gui", "cli")}
+    results = [evaluate(native_root / f"PILOT-S0{i}", receipts) for i in range(1, 6)]
     if args.output:
         with args.output.open("x") as stream:
             stream.write(json.dumps(results, indent=2) + "\n")

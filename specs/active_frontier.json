@@ -7375,8 +7375,8 @@
       "claim": {
         "agent": "codex", "harness": "codex-cli",
         "session": "codex-wdq-g01-planning-20260906",
-        "claimed_at": "2026-09-06T15:32:03Z", "heartbeat_at": "2026-09-06T20:08:32Z",
-        "expires_at": "2026-09-07T04:08:32Z",
+        "claimed_at": "2026-09-06T15:32:03Z", "heartbeat_at": "2026-09-06T20:54:27Z",
+        "expires_at": "2026-09-07T04:54:27Z",
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "6755474e057329588313f06ba6276251cd0fa933",
         "scope": [
@@ -7388,7 +7388,8 @@
           "Additive native menu accessibility: crates/gui-protocol/src/gui_menu_model/accessibility.rs; crates/gui-app/src/terminal_accessibility_bridge.rs, interaction_refresh.rs and terminal_accessibility_platform/worker.rs, atspi.rs, events.rs, atspi/properties.rs, atspi/introspection.rs and new focused menu modules/tests; preserve Terminal and Preferences behavior",
           "Diagnostic native-render captures docs/reviews/workflow-delivery-pilot/g04-help-preview.png and g04-schematic-preview.png; not native-input proof or acceptance",
           "WDQ-G04 observational trace module crates/gui-app/src/runtime_view_actions/action_evidence.rs and focused tests; call-site provenance in existing owned dispatch/frame files; no injected actions or design writer",
-          "Native pilot runner and packaging scripts/workflow_delivery_pilot*.py with focused tests; docs/reviews/workflow-delivery-pilot native captures, receipts, input manifest and proof.json; isolated display/bus only, no G05 replay or G06 acceptance"
+          "Native pilot runner and packaging scripts/workflow_delivery_pilot*.py with focused tests; docs/reviews/workflow-delivery-pilot native captures, receipts, input manifest and proof.json; isolated display/bus only, no G05 replay or G06 acceptance",
+          "Owner-authorized native blocker corrections: crates/gui-app/src/runtime_primary_pointer.rs and crates/gui-render/src/datum_console.rs plus focused tests/modules; preserve canvas focus, Terminal/Preferences ownership, Console history controls and visual authority; no prototype, golden or authority digest changes"
         ]
       },
       "summary": "Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance.",

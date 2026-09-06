@@ -79,8 +79,8 @@ class CaptureTests(unittest.TestCase):
 
     def test_scripts_have_native_inputs_and_unique_observation_names(self):
         allowed = {"click", "move", "key", "wheel", "capture", "close", "reopen", "focus-window"}
-        for number in range(1, 6):
-            steps = actions(f"PILOT-S0{number}")
+        for scenario in [f"PILOT-S0{number}" for number in range(1, 6)] + ["PILOT-S03-pointer-regression"]:
+            steps = actions(scenario)
             self.assertTrue(all(step[0] in allowed for step in steps))
             captures = [step[1] for step in steps if step[0] == "capture"]
             self.assertTrue(captures)

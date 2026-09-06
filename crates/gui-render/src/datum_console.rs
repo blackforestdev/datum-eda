@@ -6,6 +6,8 @@ use super::{
 };
 use datum_gui_protocol::{ConsoleFeedbackCategory, ConsoleFeedbackSeverity, ConsoleHistoryFilter};
 
+mod history_layout;
+
 const MAX_PANE_WIDTH_FRACTION: f32 = 0.72;
 const TEXT_SIZE: f32 = 12.0;
 
@@ -220,24 +222,20 @@ fn render_history(
         height: panel.height - header_h - 1.0 * scale,
     };
     let rows = history_rows(state);
-    let row_h = 19.0 * scale;
-    let visible_count = (rows_clip.height / row_h).floor().max(0.0) as usize;
     let scroll = state.ui.console.history_scroll_offset();
     let end = rows.len().saturating_sub(scroll.min(rows.len()));
-    let start = end.saturating_sub(visible_count);
-    let mut y = rows_clip.y + 3.0 * scale;
-    for row in &rows[start..end] {
+    for (index, clip) in history_layout::visible_rows(&rows[..end], rows_clip, scale) {
+        let row = &rows[index];
         draw_text_clipped(
             &row.text,
-            rows_clip.x + 10.0 * scale,
-            y,
+            clip.x,
+            clip.y,
             11.5,
             row.color,
             TextFace::Mono,
-            rows_clip,
+            clip,
             text_runs,
         );
-        y += row_h;
     }
     panel
 }
