@@ -44,15 +44,15 @@
   "entries": {
     "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
-      "notes": "WDQ-C04 concrete pilot, G01-G06 completion contract, file budgets, independent review and exact owner activation/resume boundary. Scheduling only, not implementation or enforcement authorization."
+      "notes": "WDQ-C05 owner-approved adoption packet: concrete pilot, G01-G06 completion contract, budgets and independent activation/resume boundary. No implementation, enforcement or product acceptance authorization."
     },
     "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
-      "notes": "WDQ-C03 numbered proposal only, not doctrine or ratification. Four delivery boundaries, scoped enrollment and owner-controlled approval trust; no live enforcement."
+      "class": "doctrine", "controlling": true, "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
+      "notes": "WDQ-C05 explicit owner adoption ratifies the unchanged delivery mechanism and reviewed contract. Four boundaries, scoped enrollment, independent replay and owner-controlled trust. Implementation and activation still require G02/G06 authorization."
     },
     "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
-      "notes": "Exact proposed schema-6 completion extension, delivery data shapes, consumer activation, input freshness, independent replay and trusted receipt boundaries; implementation separately authorized."
+      "notes": "WDQ-C05 owner-adopted exact schema-6 proposal, delivery shapes, consumer activation, freshness, independent replay and trusted receipt boundaries. Current runtime remains schema 5; implementation separately authorized."
     },
     "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md": {
       "class": "governed",

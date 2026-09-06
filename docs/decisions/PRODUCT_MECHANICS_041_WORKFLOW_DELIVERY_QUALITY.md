@@ -1,10 +1,10 @@
 # Product Mechanics 041: workflow delivery quality
 
-Status: **proposal — not ratified; no active enforcement**
+Status: **owner-ratified mechanism; implementation and enforcement not active**
 Prepared: 2026-09-05; WDQ-C03/C04
-Owner disposition: pending WDQ-C05 concrete-packet review
+Owner disposition: WDQ-C05 adoption approved; recorded 2026-09-06 UTC
 
-## Problem and decision proposed
+## Problem and adopted decision
 
 The bounded WDQ-C01 native audit separates partial viewing from unavailable
 manual authoring and demonstrates an enabled action with no working consumer.
@@ -18,11 +18,12 @@ consumer behavior before activation, native workflow proof before verification,
 and separate owner acceptance of the reviewed revision. Machines refuse missing,
 inconsistent and stale evidence; they do not infer usability or approve work.
 
-The exact proposed schema, validation algorithm, identity limits and integration
+The exact adopted schema, validation algorithm, identity limits and integration
 points are in `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`. Its refusal matrix is
 `research/process-quality/WORKFLOW_DELIVERY_REFUSAL_CASES.md`. The bounded pilot
 and activation handoff are specified in the WDQ adoption packet. These are
-governed proposals until owner approval and a numbered ratification transaction.
+ratified requirements for separately authorized implementation, not installed
+schema, running checks or production acceptance.
 
 ## Preserved authority
 
@@ -84,5 +85,27 @@ gate implementation through its own Frontier handoff. Enforcement remains off
 until the specified pilot, negative tests, independent review and owner activation
 decision pass. Revision of this proposal after approval requires fresh review.
 
-The proposed 041 number was free when drafted; confirm availability at
-ratification. Do not overwrite another session's independently ratified decision.
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C05-APPROVED -->
+### Recorded owner disposition
+
+The project owner replied in this thread:
+
+> WORKFLOW-DELIVERY-QUALITY: approve adoption packet
+
+Recorded 2026-09-06 UTC (2026-09-05 owner-local date). The approved packet is the
+proposal committed in `6ba8ea37`, handed off for review in `6549794e`. Its
+pre-ratification adoption-packet SHA-256 is
+`eff21f0b77c86f74435a859faa0be0e78fa0d995b2b9878c54a49d614b77106e`;
+gate-contract SHA-256 is
+`01f5eda06a3c5969c4f3684a868e431a2f6ad5ae893c3cbe39be158ddb6f064f`.
+The full reviewed route digest at that handoff was
+`ec53e58e4def380ae28d333d6d0af224eba16234becfe57589f796cf12a108de`.
+Number 041 remains this proposal's number; no competing record was replaced.
+
+This records explicit adoption and ratifies the reviewed mechanism without
+changing its behavioral content. WDQ-G02 still requires the exact implementation
+handoff; WDQ-G06 still requires independent native proof and owner activation.
+F1–F8 remain scheduled domain research. No successor is selected, no new
+dependency approved, and no Preferences, prototype or EDA workflow acceptance
+is inferred. The future delivery-contract inventory is registered at zero
+instances; schema/refusal validation remains WDQ-G03 work.

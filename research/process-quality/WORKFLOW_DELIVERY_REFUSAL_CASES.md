@@ -1,8 +1,8 @@
 # Workflow delivery: refusal matrix and worked transitions
 
-Status: WDQ-C03 proposed test oracle, not executed gate-test results
+Status: WDQ-C03 test oracle adopted at WDQ-C05, not executed gate-test results
 Owning route: `workflow-delivery-quality`
-Consumer: `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`; proposed PM041
+Consumer: `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`; ratified PM041
 
 Each test starts from a complete valid, tiny fixture and mutates exactly the
 stated input. The future dependency-free tests assert exit code, diagnostic code,

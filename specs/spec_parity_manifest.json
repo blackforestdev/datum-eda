@@ -2,6 +2,14 @@
   "version": 1,
   "inventories": [
     {
+      "id": "workflow_delivery_contract_instances",
+      "kind": "file_glob",
+      "glob": "specs/workflow_delivery/*.contract.json",
+      "owner_spec": "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md",
+      "notes": "PM041 ratification registration: zero instantiated contracts, no executable delivery validation. This existing file-glob gate tracks instance names only; WDQ-G03 must implement closed-shape/refusal validation before any enforcement or acceptance claim.",
+      "planned_shapes": ["completion.delivery", "Ref", "Blob", "Answer", "Contract", "Consumer", "Scenario", "Proof", "build", "results", "assertions", "Review", "workflow_delivery_policy"]
+    },
+    {
       "id": "mcp_runtime_methods",
       "kind": "mcp_runtime_methods",
       "source": "crates/engine-daemon/src/dispatch.rs + mcp-server/server_runtime.py + mcp-server/tools_catalog_data.py",

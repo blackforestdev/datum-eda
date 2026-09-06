@@ -1,7 +1,7 @@
-# Workflow delivery gate: proposed implementation contract
+# Workflow delivery gate: ratified implementation contract
 
-Status: governed WDQ-C03 proposal; no executable policy installed
-Proposed authority: Product Mechanics 041; pending WDQ-C05
+Status: WDQ-C05 owner-adopted contract; no executable policy installed
+Authority: owner-ratified Product Mechanics 041
 Refusal fixtures: `research/process-quality/WORKFLOW_DELIVERY_REFUSAL_CASES.md`
 
 ## 1. Single roadmap, four checks
