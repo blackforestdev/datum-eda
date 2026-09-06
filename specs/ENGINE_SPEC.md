@@ -1581,7 +1581,7 @@ refer to the current implementation contract.
 
 The total `pub fn` surface across `crates/engine/src/api/` (excluding
 tests) is **locked via** `specs/SPEC_PARITY.md` → `engine_api_pub_fns`.
-At the time of last refresh the inventory contains 64 methods. Any
+At the GP-CM03 Project-genesis refresh the inventory contains 203 methods. Any
 add/rename/remove must refresh that inventory in the same change
 (`python3 scripts/check_spec_parity.py --update`).
 
