@@ -27,6 +27,7 @@ mod global_preferences_primitives;
 mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
+mod new_project_dialog;
 mod revision_workspace;
 mod side_panels;
 mod terminal_clipboard_menu;

@@ -1,5 +1,13 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    NewProjectModal,
+    NewProjectName,
+    NewProjectDestination,
+    NewProjectUnitsChoice(datum_gui_protocol::NewProjectUnitsChoice),
+    NewProjectUnitsSummary,
+    NewProjectRetryGlobal,
+    NewProjectCancel,
+    NewProjectCreate,
     GlobalPreferencesModal,
     GlobalPreferencesSection(String),
     GlobalPreferencesSearch,
@@ -99,13 +107,11 @@ pub enum HitTarget {
     },
     DockResizeHandle,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct HitRegion {
     pub target: HitTarget,
     pub rect: RectPx,
 }
-
 /// Which pane's scene a resolved screen point / world hit belongs to (UVT-004,
 /// the CoordinateHit keystone). `world_point_at_screen` resolves the FOCUSED-vs-
 /// containing pane and reports the surface so callers route the follow-up world
@@ -177,7 +183,6 @@ pub struct PreparedScene {
     schematic_underlay_vertices: Vec<Vertex>,
     schematic_overlay_vertices: Vec<Vertex>,
 }
-
 /// Inspectable placement proof for the one visible focused-pane Console strip.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ConsoleOverlayLayout {
@@ -187,14 +192,12 @@ pub struct ConsoleOverlayLayout {
     pub text_clip: RectPx,
     pub history_panel: Option<RectPx>,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 struct PreparedTerminalGraphic {
     graphic: datum_terminal_core::RenderGraphic,
     rect: RectPx,
     clip: RectPx,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
     world_vertices: Vec<Vertex>,
@@ -202,7 +205,6 @@ pub struct RetainedScene {
     draw_commands: Vec<RetainedDrawCommand>,
     world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum RetainedDrawCommand {
     Quads {
@@ -214,10 +216,8 @@ enum RetainedDrawCommand {
         range: Range<u32>,
     },
 }
-
 type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;
 type WorldHitShape = datum_gui_viewport::HitShape;
-
 #[derive(Debug, Clone, PartialEq)]
 struct Projection {
     viewport: RectPx,

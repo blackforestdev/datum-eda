@@ -8,7 +8,7 @@
         {
           "label": "New Project",
           "icon": "file-new",
-          "not_built": "engine-owned genesis; no public verb",
+          "gui_local": "project.new.open",
           "shortcut": "Ctrl+N"
         },
         {

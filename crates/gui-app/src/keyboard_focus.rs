@@ -244,6 +244,14 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     if app
         .runtime
         .as_mut()
+        .is_some_and(|runtime| runtime.handle_new_project_key(event))
+    {
+        app.request_redraw_if_needed();
+        return true;
+    }
+    if app
+        .runtime
+        .as_mut()
         .is_some_and(|runtime| runtime.handle_global_preferences_key(event))
     {
         app.request_redraw_if_needed();

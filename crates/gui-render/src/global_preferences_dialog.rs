@@ -19,6 +19,14 @@ pub(super) fn render_global_preferences_dialog(
 ) {
     let dialog = &state.ui.global_preferences;
     if !dialog.open || !native_window {
+        new_project_dialog::render_new_project_dialog(
+            state,
+            layout,
+            native_window,
+            quads,
+            text,
+            hits,
+        );
         return;
     }
 

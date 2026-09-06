@@ -15,11 +15,12 @@ impl App {
             .as_ref()
             .is_some_and(|runtime| runtime.workspace().ui.project_preferences.open);
         if !open {
+            let had_window = self.project_preferences_window.is_some();
             if let Some(window) = self.project_preferences_window.take() {
                 window.set_visible(false);
             }
             self.project_preferences_surface = None;
-            if let Some(window) = self.window {
+            if had_window && let Some(window) = self.window {
                 window.focus_window();
             }
             return Ok(());
@@ -159,7 +160,7 @@ impl App {
             WindowEvent::RedrawRequested => {
                 if let (Some(runtime), Some(surface)) =
                     (&self.runtime, &mut self.project_preferences_surface)
-                    && let Err(error) = surface.render(runtime, true)
+                    && let Err(error) = surface.render(runtime, true, false)
                 {
                     fatal_gui_error(event_loop, "render Project Preferences window", error);
                 }
