@@ -17,6 +17,7 @@
 use super::*;
 
 mod component_instances;
+mod genesis_product;
 mod journal_mutation;
 mod proposals;
 // Phase 5: `project query` (ProjectQueryArgs::run) — absorbed from the

@@ -36,6 +36,7 @@ mod project_command_args_board_handoff;
 mod project_command_args_schematic_connectivity;
 mod project_command_args_schematic_symbols;
 mod project_component_instances;
+mod project_genesis;
 mod project_import;
 mod project_journal;
 mod project_library;
@@ -114,6 +115,7 @@ pub(crate) use self::project_component_instances::{
     ProjectBindComponentInstanceArgs, ProjectDeleteComponentInstanceArgs,
     ProjectSetComponentInstanceArgs,
 };
+pub(crate) use self::project_genesis::{ProjectNewArgs, ProjectUnitsSourceArg};
 pub(crate) use self::project_import::{
     ProjectImportEagleLibraryArgs, ProjectImportKiCadBoardArgs, ProjectImportKiCadFootprintArgs,
     ProjectImportKiCadSchematicArgs,

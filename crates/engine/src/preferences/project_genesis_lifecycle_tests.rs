@@ -57,6 +57,19 @@ impl Drop for Fixture {
 }
 
 #[test]
+fn factory_only_service_cannot_be_reused_as_a_global_preferences_reader() {
+    let service = GlobalPreferencesProductService::factory_only("factory-only-test").unwrap();
+    let refusal = service
+        .query(PreferenceQueryV1::PreviewProjectUnitsSeed {
+            source: ProjectUnitsSourceV1::Global {
+                expected_generation: None,
+            },
+        })
+        .unwrap_err();
+    assert_eq!(refusal.code, PreferenceErrorCodeV1::SeedSourceUnavailable);
+}
+
+#[test]
 fn every_prepublication_checkpoint_leaves_destination_absent_and_owned_stage_clean() {
     for failure in [
         GenesisCheckpoint::StagingPrepared,

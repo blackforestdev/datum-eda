@@ -74,6 +74,7 @@ impl PreferenceLocationProvider for FixedPreferenceLocationProvider {
 pub struct GlobalPreferencesProductService {
     pub(super) service: GlobalPreferencesService,
     pub(super) active_catalog_digest: String,
+    pub(super) factory_only: bool,
 }
 
 impl GlobalPreferencesProductService {
@@ -96,6 +97,7 @@ impl GlobalPreferencesProductService {
         Ok(Self {
             service,
             active_catalog_digest,
+            factory_only: false,
         })
     }
 
@@ -428,6 +430,14 @@ impl GlobalPreferencesProductService {
             ProjectUnitsSourceV1::Global {
                 expected_generation,
             } => {
+                if self.factory_only {
+                    return Err(self.error(
+                        PreferenceErrorCodeV1::SeedSourceUnavailable,
+                        "Factory-only genesis cannot resolve Global Preferences",
+                        BTreeMap::from([("units_source".to_owned(), json!("global"))]),
+                        None,
+                    ));
+                }
                 if let Some(expected) = expected_generation
                     && self.service.status().generation() != Some(expected)
                 {
@@ -629,7 +639,9 @@ fn debug_token(value: impl std::fmt::Debug) -> String {
     format!("{value:?}").to_ascii_lowercase()
 }
 
-fn catalog_digest(service: &GlobalPreferencesService) -> Result<String, PreferenceErrorV1> {
+pub(super) fn catalog_digest(
+    service: &GlobalPreferencesService,
+) -> Result<String, PreferenceErrorV1> {
     let registry = active_v1_registry();
     let material: Vec<_> = service
         .surface()
@@ -659,7 +671,7 @@ fn digest(value: &impl Serialize) -> Result<String, String> {
     Ok(format!("sha256:{hash:x}"))
 }
 
-fn bootstrap_error(message: String) -> PreferenceErrorV1 {
+pub(super) fn bootstrap_error(message: String) -> PreferenceErrorV1 {
     PreferenceErrorV1 {
         code: PreferenceErrorCodeV1::RepositoryIo,
         message,

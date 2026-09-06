@@ -98,6 +98,26 @@ pub struct GlobalPreferencesService {
 }
 
 impl GlobalPreferencesService {
+    pub(super) fn factory_only(
+        writer_instance: impl Into<String>,
+        machine_scope: impl Into<String>,
+    ) -> Result<Self, RepositoryError> {
+        let registry = active_v1_registry();
+        let surface = gp_f05_surface_catalog(&registry).map_err(|refusal| {
+            RepositoryError::Invariant(format!("GP-F05 surface catalog refused: {refusal:?}"))
+        })?;
+        Ok(Self {
+            registry: registry.clone(),
+            surface,
+            repository: PreferenceRepository::new(PathBuf::new(), registry),
+            writer_instance: writer_instance.into(),
+            machine_scope: machine_scope.into(),
+            status: PreferenceServiceStatus::DefaultsOnly,
+            snapshot: None,
+            legacy_migration: LegacyConsoleMigrationState::NotNeeded,
+        })
+    }
+
     pub fn open(
         repository_root: impl Into<PathBuf>,
         legacy_console_path: &Path,
