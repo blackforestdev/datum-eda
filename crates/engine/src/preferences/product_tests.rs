@@ -158,16 +158,16 @@ fn wire_schemas_refuse_unknown_fields_and_round_trip_symbolic_errors() {
     let error = PreferenceErrorV1 {
         code: PreferenceErrorCodeV1::StaleGeneration,
         message: "changed".to_owned(),
-        details: Default::default(),
-        current_context: PreferenceContextV1 {
+        details: Box::default(),
+        current_context: Box::new(PreferenceContextV1 {
             scope: "global_this_device".to_owned(),
             repository_status: PreferenceRepositoryStatusV1::DefaultsOnly,
             generation: None,
             active_catalog_digest: "sha256:test".to_owned(),
             active_descriptor_count: 11,
             reserved_descriptor_count: 45,
-        },
-        preserved_draft: Some(json!(true)),
+        }),
+        preserved_draft: Some(Box::new(json!(true))),
         preserved_proposal: None,
     };
     let encoded = serde_json::to_value(&error).unwrap();
@@ -247,11 +247,11 @@ fn generic_product_envelope_does_not_bypass_mcp_acceptance() {
                 name: "datum.preferences.proposal.accept_apply".to_owned(),
                 version: 1,
             },
-            payload: PreferenceProductPayloadV1::Proposal(
+            payload: PreferenceProductPayloadV1::Proposal(Box::new(
                 PreferenceProposalActionV1::AcceptAndApply {
                     proposal: prepared.proposal,
                 },
-            ),
+            )),
         },
         &actor,
     );
@@ -285,11 +285,11 @@ fn trusted_human_product_envelope_can_accept_a_valid_proposal() {
                 name: "datum.preferences.proposal.accept_apply".to_owned(),
                 version: 1,
             },
-            payload: PreferenceProductPayloadV1::Proposal(
+            payload: PreferenceProductPayloadV1::Proposal(Box::new(
                 PreferenceProposalActionV1::AcceptAndApply {
                     proposal: prepared.proposal,
                 },
-            ),
+            )),
         },
         &actor(PreferenceActorKindV1::HumanCli),
     );

@@ -169,6 +169,7 @@ impl WriterLease {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(true)
             .mode(0o600)
             .open(&path)?;
         file.try_lock().map_err(|error| match error {

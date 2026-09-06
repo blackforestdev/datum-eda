@@ -197,7 +197,7 @@ impl GlobalPreferencesProductService {
         }
         let request_id = mutation_request_id(&request);
         let request_digest = canonical_mutation_request_digest(&request, actor, accepted)
-            .map_err(|message| bootstrap_error(message))?;
+            .map_err(bootstrap_error)?;
         if let Some(receipt) = self.service.receipt_for_request(request_id).cloned() {
             if receipt.canonical_request_digest.as_deref() != Some(&request_digest) {
                 return Err(self.error(
@@ -510,9 +510,9 @@ impl GlobalPreferencesProductService {
         PreferenceErrorV1 {
             code,
             message: message.to_owned(),
-            details,
-            current_context: self.context(),
-            preserved_draft,
+            details: Box::new(details),
+            current_context: Box::new(self.context()),
+            preserved_draft: preserved_draft.map(Box::new),
             preserved_proposal: None,
         }
     }
@@ -678,15 +678,15 @@ pub(super) fn bootstrap_error(message: String) -> PreferenceErrorV1 {
     PreferenceErrorV1 {
         code: PreferenceErrorCodeV1::RepositoryIo,
         message,
-        details: BTreeMap::new(),
-        current_context: PreferenceContextV1 {
+        details: Box::default(),
+        current_context: Box::new(PreferenceContextV1 {
             scope: SCOPE.to_owned(),
             repository_status: PreferenceRepositoryStatusV1::DefaultsOnly,
             generation: None,
             active_catalog_digest: "sha256:unavailable".to_owned(),
             active_descriptor_count: 11,
             reserved_descriptor_count: 45,
-        },
+        }),
         preserved_draft: None,
         preserved_proposal: None,
     }

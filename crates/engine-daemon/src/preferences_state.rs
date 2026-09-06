@@ -65,7 +65,7 @@ impl PreferencesDaemonState {
             return Err("preferences MCP actor kind must be mcp_agent".to_owned());
         }
         let proposal_action = match &request.payload {
-            PreferenceProductPayloadV1::Proposal(action) => Some(action.clone()),
+            PreferenceProductPayloadV1::Proposal(action) => Some(action.as_ref().clone()),
             _ => None,
         };
         if let Some(PreferenceProposalActionV1::AcceptAndApply { proposal }) = proposal_action {
@@ -371,16 +371,18 @@ mod tests {
                 name: "datum.preferences.proposal.prepare".to_owned(),
                 version: 1,
             },
-            payload: PreferenceProductPayloadV1::Proposal(PreferenceProposalActionV1::Prepare {
-                mutation: PreferenceMutationRequestV1::SetUser {
-                    key: "datum.accessibility.reduced_motion".to_owned(),
-                    value: json!(true),
-                    expected: HeadExpectationV1::Missing,
-                    request_id,
-                    reason: "reduce animation".to_owned(),
+            payload: PreferenceProductPayloadV1::Proposal(Box::new(
+                PreferenceProposalActionV1::Prepare {
+                    mutation: PreferenceMutationRequestV1::SetUser {
+                        key: "datum.accessibility.reduced_motion".to_owned(),
+                        value: json!(true),
+                        expected: HeadExpectationV1::Missing,
+                        request_id,
+                        reason: "reduce animation".to_owned(),
+                    },
+                    rationale: "request local review".to_owned(),
                 },
-                rationale: "request local review".to_owned(),
-            }),
+            )),
         };
         let prepared = state.execute_mcp(prepare, mcp.clone()).unwrap();
         let proposal = match prepared.result.unwrap() {
@@ -394,11 +396,11 @@ mod tests {
                 name: "datum.preferences.proposal.accept_apply".to_owned(),
                 version: 1,
             },
-            payload: PreferenceProductPayloadV1::Proposal(
+            payload: PreferenceProductPayloadV1::Proposal(Box::new(
                 PreferenceProposalActionV1::AcceptAndApply {
                     proposal: proposal.clone(),
                 },
-            ),
+            )),
         };
         let refused = state.execute_mcp(apply_request(), mcp.clone()).unwrap();
         assert_eq!(

@@ -464,10 +464,10 @@ pub enum PreferenceErrorCodeV1 {
 pub struct PreferenceErrorV1 {
     pub code: PreferenceErrorCodeV1,
     pub message: String,
-    pub details: BTreeMap<String, Value>,
-    pub current_context: PreferenceContextV1,
-    pub preserved_draft: Option<Value>,
-    pub preserved_proposal: Option<Value>,
+    pub details: Box<BTreeMap<String, Value>>,
+    pub current_context: Box<PreferenceContextV1>,
+    pub preserved_draft: Option<Box<Value>>,
+    pub preserved_proposal: Option<Box<Value>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -497,7 +497,7 @@ pub enum PreferenceQueryResultV1 {
 pub enum PreferenceProductPayloadV1 {
     Query(PreferenceQueryV1),
     Mutation(PreferenceMutationRequestV1),
-    Proposal(PreferenceProposalActionV1),
+    Proposal(Box<PreferenceProposalActionV1>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

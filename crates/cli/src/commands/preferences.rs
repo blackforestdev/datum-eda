@@ -269,7 +269,7 @@ fn execute_proposal(
     Ok(service.execute(
         product_request(
             schema,
-            PreferenceProductPayloadV1::Proposal(proposal_action),
+            PreferenceProductPayloadV1::Proposal(Box::new(proposal_action)),
         ),
         &actor,
     ))
@@ -389,10 +389,10 @@ fn human_presence_refusal(
         eda_engine::preferences::PreferenceErrorV1 {
             code: eda_engine::preferences::PreferenceErrorCodeV1::HumanPresenceRequired,
             message: "Foreground /dev/tty confirmation is required".to_owned(),
-            details: Default::default(),
-            current_context: service.context(),
-            preserved_draft,
-            preserved_proposal,
+            details: Box::default(),
+            current_context: Box::new(service.context()),
+            preserved_draft: preserved_draft.map(Box::new),
+            preserved_proposal: preserved_proposal.map(Box::new),
         },
     )
 }
@@ -407,7 +407,7 @@ fn product_error_response(
             name: schema.to_owned(),
             version: 1,
         },
-        context: error.current_context.clone(),
+        context: error.current_context.as_ref().clone(),
         result: None,
         error: Some(error),
     }
@@ -422,8 +422,8 @@ fn invalid_product_response(
         eda_engine::preferences::PreferenceErrorV1 {
             code: eda_engine::preferences::PreferenceErrorCodeV1::InvalidRequest,
             message: "Preference inspection returned an unexpected result".to_owned(),
-            details: Default::default(),
-            current_context: service.context(),
+            details: Box::default(),
+            current_context: Box::new(service.context()),
             preserved_draft: None,
             preserved_proposal: None,
         },
