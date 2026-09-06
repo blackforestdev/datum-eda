@@ -85,7 +85,7 @@ impl GlobalPreferencesProductService {
                     name: "datum.project.new".to_owned(),
                     version: 1,
                 },
-                context: error.current_context.clone(),
+                context: error.current_context.as_ref().clone(),
                 result: None,
                 error: Some(error),
             },

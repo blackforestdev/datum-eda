@@ -314,7 +314,7 @@ impl GlobalPreferencesProductService {
             ]),
             mutation_draft(&proposal.mutation),
         );
-        error.preserved_proposal = serde_json::to_value(proposal).ok();
+        error.preserved_proposal = serde_json::to_value(proposal).ok().map(Box::new);
         error
     }
 
@@ -354,7 +354,7 @@ impl GlobalPreferencesProductService {
             ]),
             mutation_draft(&proposal.mutation),
         );
-        error.preserved_proposal = serde_json::to_value(proposal).ok();
+        error.preserved_proposal = serde_json::to_value(proposal).ok().map(Box::new);
         error
     }
 }

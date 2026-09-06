@@ -17,11 +17,11 @@ pub(super) fn validate_actor(
         return Err(PreferenceErrorV1 {
             code: PreferenceErrorCodeV1::UnauthorizedActor,
             message: "Trusted actor identity is incomplete".to_owned(),
-            details: BTreeMap::from([(
+            details: Box::new(BTreeMap::from([(
                 "required_authority".to_owned(),
                 json!("trusted transport actor"),
-            )]),
-            current_context: context.clone(),
+            )])),
+            current_context: Box::new(context.clone()),
             preserved_draft: None,
             preserved_proposal: None,
         });

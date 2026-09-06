@@ -54,7 +54,7 @@ impl GlobalPreferencesProductService {
             PreferenceProductPayloadV1::Mutation(mutation) => self
                 .mutate(mutation, actor)
                 .map(PreferenceProductResultV1::Mutation),
-            PreferenceProductPayloadV1::Proposal(action) => match action {
+            PreferenceProductPayloadV1::Proposal(action) => match *action {
                 PreferenceProposalActionV1::Prepare {
                     mutation,
                     rationale,
@@ -146,7 +146,7 @@ fn schema_for_payload(payload: &PreferenceProductPayloadV1) -> &'static str {
             super::PreferenceMutationRequestV1::SetUser { .. } => "datum.preferences.set",
             super::PreferenceMutationRequestV1::ResetUser { .. } => "datum.preferences.reset",
         },
-        PreferenceProductPayloadV1::Proposal(action) => match action {
+        PreferenceProductPayloadV1::Proposal(action) => match action.as_ref() {
             PreferenceProposalActionV1::Prepare { .. } => "datum.preferences.proposal.prepare",
             PreferenceProposalActionV1::Validate { .. } => "datum.preferences.proposal.validate",
             PreferenceProposalActionV1::AcceptAndApply { .. } => {

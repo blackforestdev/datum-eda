@@ -98,7 +98,7 @@ fn failure_response(error: PreferenceErrorV1) -> ProjectGenesisResponseV1 {
             name: "datum.project.new".to_owned(),
             version: 1,
         },
-        context: error.current_context.clone(),
+        context: error.current_context.as_ref().clone(),
         result: None,
         error: Some(error),
     }
@@ -108,8 +108,11 @@ fn invalid_request(service: &GlobalPreferencesProductService, reason: String) ->
     PreferenceErrorV1 {
         code: PreferenceErrorCodeV1::InvalidRequest,
         message: "Project genesis request is invalid".to_owned(),
-        details: BTreeMap::from([("reason".to_owned(), serde_json::json!(reason))]),
-        current_context: service.context(),
+        details: Box::new(BTreeMap::from([(
+            "reason".to_owned(),
+            serde_json::json!(reason),
+        )])),
+        current_context: Box::new(service.context()),
         preserved_draft: None,
         preserved_proposal: None,
     }
