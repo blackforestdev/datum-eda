@@ -54,7 +54,7 @@ operations is.
 ### File
 | Menu item | Backing mechanism | Status |
 |---|---|---|
-| New Project | `bootstrap_native_project` (genesis) / CLI `project new` | ENGINE-READY / GUI-BLOCKED |
+| New Project | `GlobalPreferencesProductService::create_project` / CLI `project new` | WIRED — native input-modal form; exact eight-key Units genesis |
 | Open Project | none — project root is an implicit arg to every command; `project inspect` is nearest | NOT-BUILT (needs GUI open + session model) |
 | Import | `build_kicad_board_import` / `build_kicad_schematic_import` / `build_kicad_footprint_import` / `build_eagle_library_import`; CLI `project import-kicad-*` / `import-eagle-library` | ENGINE-READY / GUI-BLOCKED |
 | Save / Save As | none — native projects auto-persist per journaled mutation; no native save/save-as verb | NOT-BUILT (needs product decision — see "File-menu semantics") |

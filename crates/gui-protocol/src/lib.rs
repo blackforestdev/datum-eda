@@ -21,6 +21,8 @@ pub use gui_menu_model::{
 };
 mod global_preferences;
 pub use global_preferences::*;
+mod new_project;
+pub use new_project::*;
 mod kicad_scene_import;
 use kicad_scene_import::{
     load_scene_from_kicad_import, outline_board_graphics_from_outline,
@@ -80,7 +82,6 @@ pub use check_runs::{
 mod board_review_scene;
 mod known_good_demo;
 pub use board_review_scene::{BoardReviewSceneV1, ScenePadExpansionSetup};
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BoardGraphicPrimitive {
     pub object_id: String,
@@ -96,7 +97,6 @@ pub struct BoardGraphicPrimitive {
     #[serde(default)]
     pub width_nm: Option<i64>,
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UnroutedPrimitive {
     pub object_id: String,

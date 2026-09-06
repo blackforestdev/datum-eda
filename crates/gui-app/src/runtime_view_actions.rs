@@ -43,6 +43,7 @@ impl Runtime {
             return true;
         }
         match action {
+            "project.new.open" => self.open_new_project(),
             "preferences.global.open" => self.open_global_preferences(),
             "preferences.project.open" => self.open_project_preferences(),
             "view.zoom_in" => {

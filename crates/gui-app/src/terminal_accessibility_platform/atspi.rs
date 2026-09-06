@@ -534,6 +534,8 @@ fn preference_role(role: GlobalPreferencesAccessibleRole) -> u32 {
         GlobalPreferencesAccessibleRole::Button => ROLE_PUSH_BUTTON,
         GlobalPreferencesAccessibleRole::Switch => ROLE_TOGGLE_BUTTON,
         GlobalPreferencesAccessibleRole::ComboBox => ROLE_COMBO_BOX,
+        GlobalPreferencesAccessibleRole::RadioGroup => ROLE_PANEL,
+        GlobalPreferencesAccessibleRole::RadioButton => ROLE_TOGGLE_BUTTON,
         GlobalPreferencesAccessibleRole::SpinButton | GlobalPreferencesAccessibleRole::TextBox => {
             ROLE_TEXT
         }
@@ -548,6 +550,8 @@ fn preference_role_name(role: GlobalPreferencesAccessibleRole) -> &'static str {
         GlobalPreferencesAccessibleRole::Button => "push button",
         GlobalPreferencesAccessibleRole::Switch => "toggle button",
         GlobalPreferencesAccessibleRole::ComboBox => "combo box",
+        GlobalPreferencesAccessibleRole::RadioGroup => "radio group",
+        GlobalPreferencesAccessibleRole::RadioButton => "radio button",
         GlobalPreferencesAccessibleRole::SpinButton => "spin button",
         GlobalPreferencesAccessibleRole::TextBox => "text box",
         GlobalPreferencesAccessibleRole::Status => "status bar",

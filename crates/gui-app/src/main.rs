@@ -30,7 +30,6 @@ use winit::{
     keyboard::{Key, KeyCode, ModifiersState, NamedKey, PhysicalKey},
     window::{Window, WindowAttributes, WindowId},
 };
-
 mod app_bootstrap;
 mod app_shell;
 mod application_terminal_shutdown;
@@ -44,6 +43,7 @@ mod global_preferences_window;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
+mod new_project_window;
 mod owned_window_policy;
 mod pan_gesture;
 mod pane_cameras;
@@ -124,16 +124,13 @@ use terminal_session_events::{
     prepare_terminal_command_execution, record_manual_terminal_command_handoff,
 };
 use terminal_split_drag::TerminalSplitDividerDrag;
-
 #[cfg(feature = "visual")]
 const COPY_BYTES_PER_PIXEL: u32 = 4;
 #[cfg(feature = "visual")]
 const WGPU_COPY_BYTES_PER_ROW_ALIGNMENT: u32 = 256;
 const ASSISTANT_ACTIVITY_COMMAND: &str =
     "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20";
-
 const RETAINED_SCENE_CACHE_LIMIT: usize = 6;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RetainedSceneCacheKey {
     scene_id: String,
@@ -149,7 +146,6 @@ struct RetainedSceneCacheKey {
     layer_visibility: BTreeMap<String, bool>,
     selection: String,
 }
-
 fn main() -> Result<()> {
     install_gui_panic_hook();
     reset_gui_diagnostic_log();
@@ -162,7 +158,6 @@ fn main() -> Result<()> {
     let mut app = App::new(args, event_loop.create_proxy());
     event_loop.run_app(&mut app).context("failed to run app")
 }
-
 #[cfg(feature = "visual")]
 fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     args.validate_visual_args()?;
@@ -239,12 +234,10 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
     ));
     Ok(())
 }
-
 #[cfg(not(feature = "visual"))]
 fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
     anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
 }
-
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         append_gui_diagnostic_line("resumed event");
@@ -297,36 +290,20 @@ impl ApplicationHandler for App {
         window_ref.set_visible(true);
         append_gui_diagnostic_line("window visible");
         self.request_redraw_if_needed();
-        if let Err(err) = self.sync_global_preferences_window(event_loop) {
-            fatal_gui_error(event_loop, "open Global Preferences window", err);
-        }
-        if let Err(err) = self.sync_project_preferences_window(event_loop) {
-            fatal_gui_error(event_loop, "open Project Preferences window", err);
+        if let Err(err) = self.sync_owned_product_windows(event_loop) {
+            fatal_gui_error(event_loop, "open owned product window", err);
         }
     }
-
     fn window_event(
         &mut self,
         event_loop: &ActiveEventLoop,
         window_id: WindowId,
         event: WindowEvent,
     ) {
-        if self
-            .global_preferences_window
-            .as_ref()
-            .is_some_and(|window| window.id() == window_id)
-        {
-            self.global_preferences_window_event(event_loop, event);
+        let Some(event) = self.dispatch_owned_product_window_event(event_loop, window_id, event)
+        else {
             return;
-        }
-        if self
-            .project_preferences_window
-            .as_ref()
-            .is_some_and(|window| window.id() == window_id)
-        {
-            self.project_preferences_window_event(event_loop, event);
-            return;
-        }
+        };
         if let Some(window) = self.window
             && window.id() != window_id
         {
@@ -335,6 +312,7 @@ impl ApplicationHandler for App {
         if self.runtime.as_ref().is_some_and(|runtime| {
             runtime.workspace().ui.global_preferences.open
                 || runtime.workspace().ui.project_preferences.open
+                || runtime.workspace().ui.new_project.open
         }) && !matches!(
             &event,
             WindowEvent::CloseRequested
@@ -699,11 +677,8 @@ impl ApplicationHandler for App {
 
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         self.poll_background_work(event_loop);
-        if let Err(err) = self.sync_global_preferences_window(event_loop) {
-            fatal_gui_error(event_loop, "synchronize Global Preferences window", err);
-        }
-        if let Err(err) = self.sync_project_preferences_window(event_loop) {
-            fatal_gui_error(event_loop, "synchronize Project Preferences window", err);
+        if let Err(err) = self.sync_owned_product_windows(event_loop) {
+            fatal_gui_error(event_loop, "synchronize owned product window", err);
         }
     }
 
@@ -798,11 +773,12 @@ impl Runtime {
             terminal_sessions,
             workspace_include_review,
             open_global_preferences,
+            open_new_project,
             open_project_preferences,
         } = launch_state;
         // The initially-focused leaf seeds its warm camera from the launch fit.
         let initial_focus = state.ui.layout.focused;
-        let initial_application_focus = if open_global_preferences {
+        let initial_application_focus = if open_global_preferences || open_new_project {
             ApplicationFocus::Overlay
         } else {
             ApplicationFocus::Editor(initial_focus)
@@ -956,6 +932,9 @@ impl Runtime {
         runtime.resize_terminal_to_dock();
         if open_project_preferences {
             runtime.open_project_preferences();
+        }
+        if open_new_project {
+            runtime.open_new_project();
         }
         trace_startup_timing(format!(
             "runtime total {}ms",
@@ -1919,6 +1898,19 @@ impl Runtime {
     }
 
     fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
+        if matches!(
+            target,
+            HitTarget::NewProjectModal
+                | HitTarget::NewProjectName
+                | HitTarget::NewProjectDestination
+                | HitTarget::NewProjectUnitsChoice(_)
+                | HitTarget::NewProjectUnitsSummary
+                | HitTarget::NewProjectRetryGlobal
+                | HitTarget::NewProjectCancel
+                | HitTarget::NewProjectCreate
+        ) {
+            return self.activate_new_project_hit(target);
+        }
         if let Some(handled) = self.apply_revision_hit(target) {
             return handled;
         }
@@ -1926,6 +1918,14 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::NewProjectModal
+            | HitTarget::NewProjectName
+            | HitTarget::NewProjectDestination
+            | HitTarget::NewProjectUnitsChoice(_)
+            | HitTarget::NewProjectUnitsSummary
+            | HitTarget::NewProjectRetryGlobal
+            | HitTarget::NewProjectCancel
+            | HitTarget::NewProjectCreate => unreachable!("New Project targets return above"),
             HitTarget::CloseRevisionSurface
             | HitTarget::ToggleRevisionIssuanceArm
             | HitTarget::OpenRevisionWitness(_) => unreachable!("revision targets return above"),

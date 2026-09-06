@@ -11,7 +11,7 @@ use crate::revision_workspace::{RevisionPane, RevisionWorkspaceUiState};
 use crate::{
     ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
     ConsoleJournalHistoryState, CrosshairStyle, GlobalPreferencesDialogState, HoverTarget,
-    ScreenPointPx, TerminalLaneState,
+    NewProjectDialogState, ScreenPointPx, TerminalLaneState,
 };
 use std::collections::BTreeMap;
 
@@ -102,6 +102,9 @@ pub struct WorkspaceUiState {
     /// Input-modal Project Preferences projection. The initial surface contains
     /// only Project Working Units and commits through Project authority.
     pub project_preferences: GlobalPreferencesDialogState,
+    /// Native input-modal Project genesis form. It carries transient form and
+    /// preview state only; the engine service owns all creation authority.
+    pub new_project: NewProjectDialogState,
     /// Consumer-only projection of revision authority. This never owns or
     /// mutates revision records; the engine remains the sole truth source.
     pub revision: RevisionWorkspaceUiState,
@@ -135,6 +138,7 @@ impl WorkspaceUiState {
             artifact_preview: ArtifactPreviewViewportState::default(),
             global_preferences: GlobalPreferencesDialogState::default(),
             project_preferences: GlobalPreferencesDialogState::project_units_default(),
+            new_project: NewProjectDialogState::default(),
             revision: RevisionWorkspaceUiState::default(),
             layout: WorkspaceLayout::default(),
         }

@@ -101,6 +101,14 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ConsoleHistoryFilter(_)
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
+        | HitTarget::NewProjectModal
+        | HitTarget::NewProjectName
+        | HitTarget::NewProjectDestination
+        | HitTarget::NewProjectUnitsChoice(_)
+        | HitTarget::NewProjectUnitsSummary
+        | HitTarget::NewProjectRetryGlobal
+        | HitTarget::NewProjectCancel
+        | HitTarget::NewProjectCreate
         | HitTarget::GlobalPreferencesModal
         | HitTarget::GlobalPreferencesSection(_)
         | HitTarget::GlobalPreferencesSearch

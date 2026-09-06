@@ -99,6 +99,8 @@ pub enum GlobalPreferencesAccessibleRole {
     ComboBox,
     SpinButton,
     TextBox,
+    RadioGroup,
+    RadioButton,
     Status,
 }
 

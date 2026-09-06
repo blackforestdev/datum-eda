@@ -74,6 +74,9 @@ pub(super) struct GuiArgs {
     /// dialog still projects the production service; this only seeds it open.
     #[arg(long = "open-global-preferences", default_value_t = false)]
     pub(super) open_global_preferences: bool,
+    /// Capture/test affordance for the real engine-owned New Project form.
+    #[arg(long = "open-new-project", default_value_t = false)]
+    pub(super) open_new_project: bool,
     /// Capture/test affordance for the real Units-only Project Preferences
     /// window. Opening still resolves and, when required, migrates the real
     /// Project through the production journal path.
@@ -127,6 +130,7 @@ pub(super) struct LaunchState {
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) workspace_include_review: bool,
     pub(super) open_global_preferences: bool,
+    pub(super) open_new_project: bool,
     pub(super) open_project_preferences: bool,
 }
 impl GuiArgs {
@@ -418,6 +422,7 @@ impl GuiArgs {
             terminal_sessions,
             workspace_include_review,
             open_global_preferences: self.open_global_preferences,
+            open_new_project: self.open_new_project,
             open_project_preferences: self.open_project_preferences,
         })
     }

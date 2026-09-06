@@ -53,6 +53,7 @@ fn projection_preserves_the_accepted_slice_while_full_catalog_work_remains_stage
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
@@ -161,6 +162,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
@@ -213,6 +215,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     restarted.publish_projection(&mut ui);
@@ -227,6 +230,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     corrupt.publish_projection(&mut ui);
@@ -268,6 +272,7 @@ fn every_visible_value_updates_its_declared_live_consumer() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
@@ -339,6 +344,7 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
@@ -473,6 +479,7 @@ fn projected_default_ui(name: &str) -> WorkspaceUiState {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let mut ui = WorkspaceUiState::new(datum_gui_protocol::WorkspaceFilterState {
@@ -503,6 +510,7 @@ fn dialog_is_unique_and_restores_the_original_invoker_focus() {
         )
         .unwrap(),
         return_focus: ApplicationFocus::default(),
+        new_project_source: None,
         terminal_theme_before_high_contrast: None,
     };
     let mut ui = projected_default_ui("unique-dialog-state");

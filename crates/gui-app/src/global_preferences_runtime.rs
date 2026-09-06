@@ -1,4 +1,6 @@
 //! Application coordinator for the one engine-owned Global Preferences service.
+#[path = "global_preferences_runtime/new_project.rs"]
+mod new_project;
 #[path = "global_preferences_product_adapter.rs"]
 mod product_adapter;
 
@@ -6,22 +8,27 @@ use std::collections::BTreeMap;
 
 use anyhow::Result;
 use datum_gui_protocol::{
-    ApplicationFocus, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
+    ApplicationFocus, ConsoleFeedbackSource, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
     GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
-    GlobalPreferencesNoticeUi, WorkspaceUiState,
+    GlobalPreferencesNoticeUi, NewProjectDialogState, NewProjectFocus, NewProjectUnitsChoice,
+    NewProjectUnitsSummaryRow, WorkspaceUiState,
 };
-use eda_engine::ir::units::{ACTIVE_UNITS_KEYS, profile_from_descriptor_values};
+use eda_engine::ir::units::{
+    ACTIVE_UNITS_KEYS, profile_from_descriptor_values, profile_to_descriptor_values,
+    project_profile_from_value,
+};
 use eda_engine::preferences::{
     GlobalPreferencesProductService, InstalledPreferenceLocationProvider, PreferenceErrorV1,
-    PreferenceKey, PreferenceLiveConsumer, PreferenceMutationRequestV1, new_product_id,
+    PreferenceKey, PreferenceLiveConsumer, PreferenceMutationRequestV1, PreferenceQueryResultV1,
+    PreferenceQueryV1, ProjectGenesisRequestV1, ProjectUnitsSourceV1, new_product_id,
 };
 use serde_json::Value;
 
 use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
 use crate::global_preferences_projection::{
-    apply_live_consumers, bool_consumer_value, control_projection, explanation_lines,
-    provenance_label, repository_notice,
+    apply_live_consumers, bool_consumer_value, control_projection, control_value_projection,
+    explanation_lines, provenance_label, repository_notice,
 };
 use product_adapter::{head_expectation, human_gui_actor};
 use winit::event::{ElementState, KeyEvent};
@@ -31,6 +38,7 @@ pub(super) const SCOPE: &str = "Global · this device";
 pub(super) struct GlobalPreferencesCoordinator {
     service: GlobalPreferencesProductService,
     return_focus: ApplicationFocus,
+    new_project_source: Option<ProjectUnitsSourceV1>,
     terminal_theme_before_high_contrast: Option<datum_gui_protocol::TerminalTheme>,
 }
 
@@ -45,6 +53,7 @@ impl GlobalPreferencesCoordinator {
         Ok(Self {
             service,
             return_focus: ApplicationFocus::default(),
+            new_project_source: None,
             terminal_theme_before_high_contrast: None,
         })
     }

@@ -110,7 +110,12 @@ impl GlobalPreferencesWindowSurface {
         self.prepared.as_ref()?.hit_test(x, y).cloned()
     }
 
-    pub(super) fn render(&mut self, runtime: &Runtime, project_preferences: bool) -> Result<()> {
+    pub(super) fn render(
+        &mut self,
+        runtime: &Runtime,
+        project_preferences: bool,
+        new_project: bool,
+    ) -> Result<()> {
         let frame = match self.surface.get_current_texture() {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
@@ -124,12 +129,16 @@ impl GlobalPreferencesWindowSurface {
             }
             Err(error) => anyhow::bail!("acquire Global Preferences surface texture: {error}"),
         };
-        let mut project_workspace;
+        let mut child_workspace;
         let workspace = if project_preferences {
-            project_workspace = runtime.workspace().clone();
-            project_workspace.ui.global_preferences =
-                project_workspace.ui.project_preferences.clone();
-            &project_workspace
+            child_workspace = runtime.workspace().clone();
+            child_workspace.ui.global_preferences = child_workspace.ui.project_preferences.clone();
+            child_workspace.ui.new_project.open = false;
+            &child_workspace
+        } else if new_project {
+            child_workspace = runtime.workspace().clone();
+            child_workspace.ui.global_preferences.open = false;
+            &child_workspace
         } else {
             runtime.workspace()
         };
@@ -188,11 +197,12 @@ impl App {
             .as_ref()
             .is_some_and(|runtime| runtime.workspace().ui.global_preferences.open);
         if !open {
+            let had_window = self.global_preferences_window.is_some();
             if let Some(window) = self.global_preferences_window.take() {
                 window.set_visible(false);
             }
             self.global_preferences_surface = None;
-            if let Some(window) = self.window {
+            if had_window && let Some(window) = self.window {
                 window.focus_window();
             }
             return Ok(());
@@ -329,7 +339,7 @@ impl App {
             WindowEvent::RedrawRequested => {
                 if let (Some(runtime), Some(surface)) =
                     (&self.runtime, &mut self.global_preferences_surface)
-                    && let Err(error) = surface.render(runtime, false)
+                    && let Err(error) = surface.render(runtime, false, false)
                 {
                     fatal_gui_error(event_loop, "render Global Preferences window", error);
                 }
