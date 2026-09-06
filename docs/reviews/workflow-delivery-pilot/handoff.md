@@ -1,9 +1,56 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G05 complete; G06 is the selected owner-decision boundary.
-Activation remains off. G04 producer proof landed in `8d96e3a1` after the
+Status: G01–G05 complete; G06 owner acceptance and both deferrals are recorded.
+G06 remains incomplete pending the prepared transaction's external promotion
+and passing scoped enforcement. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-OWNER-ACCEPTED -->
+## G06 recorded owner acceptance
+
+Source: project owner's explicit response in this conversation following the 84cfdd5f handoff.
+Date: 2026-09-06 22:03:36 UTC (recording time).
+
+The owner supplied the following response. The two deferral lines retain their
+original display indentation here; the separately referenced disposition section
+below normalizes that whitespace only, without changing either decision.
+
+```text
+ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba
+  DEFER dat-console-oversized-history-9uz
+  DEFER dat-console-scroll-range-4y3
+```
+
+Both supplied digests were revalidated against the committed contract, original
+proof, authority closure and independent review. Both Proofs, their identical
+requested environments, disjoint correlated event records and the live
+1,778-file source closure still validate. Adding only the owner-receipt pointer
+does not change the accepted review hash or the independent verdict.
+
+This accepts the finite native pilot and authorizes the previously proposed
+owner-local activation preparation. It does not itself promote a Git revision,
+install policy or configure approval authority. No authority/base/environment
+configuration exists in this clone. G06 stays pending and the parent stays open
+until the exact prepared transaction is externally promoted and scoped blocking
+verification succeeds. Do not request this same ACCEPT response again unless
+the packet or review changes. Preferences remains at GP-CM04; GP-CM05 is not
+authorized or resumed, and canonical selection is unchanged.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-DEFECT-DISPOSITIONS -->
+## Explicit owner deferrals for this packet only
+
+Source: the project owner's same explicit G06 acceptance response in this conversation.
+Date: 2026-09-06 22:03:36 UTC (recording time).
+
+DEFER dat-console-oversized-history-9uz
+DEFER dat-console-scroll-range-4y3
+
+These are owner-approved nonblocking deferrals for the exact finite pilot and
+independent review above, not resolutions or general Console acceptance. Both
+issues remain open for their owning lane. The oversized-record tail and blank
+overscroll limitations remain real. This recorded disposition still needs
+external authority promotion before the enforcement gate may trust it.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-INDEPENDENT-REPLAY -->
 ## G05 completed handoff
@@ -168,9 +215,10 @@ trust promotion. Both development lanes remain in their original workspace;
 Preferences resumption and G06 activation are still unauthorized.
 
 <!-- OWNER:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06:G06-ACTIVATION-PACKET -->
-## G06 unsigned activation candidate
+## G06 activation candidate reviewed by the owner
 
-This is a proposal for the separate G06 owner decision, not a recorded response.
+The owner's exact acceptance is recorded above. The following transaction was
+reviewed with that response but remains uninstalled and externally unpromoted.
 The native scope remains four action keys, nine existing entry surfaces and
 five scenarios at Linux/X11 1280x768/scale 1.0. No Preferences, general Console,
 new feature, other platform or native-authoring acceptance follows.
@@ -232,15 +280,16 @@ or schedule a successor. Shared production files remain available only through
 the established coordination/ownership rules. This is the proposed resume
 disposition, not a request for Preferences approval.
 
-Two explicit nonblocking owner deferrals are requested with acceptance. Neither
-is currently approved: oversized Console records can still hide their tails,
+The two explicit nonblocking owner deferrals are now recorded above:
+oversized Console records can still hide their tails,
 and scrolling beyond available records can show blank history. The reviewer
 approved only the finite pilot's complete refusal records. Both beads stay open
 for future owning-lane correction; no general Console compliance is claimed.
 
 The exact proposed response below binds the original packet and independently
 authored review, whose hash excludes only the future owner-receipt pointer.
-These lines are an **unsigned request**, not a receipt or owner disposition:
+The following is the historical request; the uniquely marked receipt and
+disposition sections above contain the actual owner response:
 
 ```text
 ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba
