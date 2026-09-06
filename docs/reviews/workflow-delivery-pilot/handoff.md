@@ -1,7 +1,7 @@
-# WDQ-G01 operational handoff candidate
+# Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01 planning handoff complete; G02 execution decision pending.
+Status: G01/G02 complete; bounded G03 execution authorized; activation remains off.
 
 This is an operational record under the ratified PM041 gate contract and
 WORKFLOW_DELIVERY_ADOPTION_PACKET, not a new product specification. It is outside
@@ -135,3 +135,47 @@ readiness, completed implementation or acceptance. The sole selected successor
 is G02 for the exact bounded implementation authorization, including review of
 the candidate's keyboard-access scope limit. G06 remains the separate activation
 decision. The parent issue remains open.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02-AUTHORIZED -->
+## Bounded implementation authorization
+
+The owner replied exactly `WORKFLOW-DELIVERY-GATE-PILOT: authorize bounded implementation`
+in this conversation on 2026-09-06 UTC, after G01 closure commit 9e04a702 and
+presentation of the G02 decision packet. This completes G02 and authorizes the
+reviewed G03–G05 build/proof scope with G03 as the sole selected execution step.
+G06 remains the separate blocking activation/acceptance decision.
+
+The current implementation window begins from 46764e7cb042cd65e4c0eafcfb6aec9e3901015d,
+with a clean worktree observed before claiming. Preferences retains its own
+canonical claim and continues on nonoverlapping files; there is no pause to resume.
+Shared accessibility files remain held exactly as approved above. Any overlapping
+change requires an explicit bounded handoff before editing; authorization does
+not erase that condition or allow S05 to be waived.
+
+Implementation/original-proof session: codex-wdq-g01-planning-20260906.
+Independent replay lane: /root/wdq_independent_review, review only, as mapped above.
+The execution lease starts with focused dependency-free JSON/path/hash input
+handling in scripts/workflow_delivery_io.py and scripts/test_workflow_delivery_io.py,
+then the already reviewed schema/evidence/trust modules and selector integration.
+Neither schema migration nor validator completion is asserted by this authorization.
+
+### G03 first implementation unit (not completion evidence)
+
+`scripts/workflow_delivery_io.py` now provides read-only strict UTF-8 JSON parsing,
+canonical JSON and raw-byte hashing, normalized repository paths, and contained
+regular-file reads. Duplicate keys, nonfinite numbers, lone surrogates, path
+escapes, missing files and broken/cyclic symlinks are refused. The companion
+test module passes 13 hermetic tests; these are input primitive tests, not a
+claim that N01–N20/P01–P07 have passed.
+
+Verification for this unit: 45 project-status regression tests and 13 source-health
+governance regression tests pass; project-status (50 items), evidence traceability
+(20 routes / 114 artifacts), spec governance and progress coverage checks pass.
+Source-health checks pass. No Rust build or native GUI proof was run for this
+dependency-free Python unit.
+
+G03 remains in progress. Closed-shape contract validation, evidence and freshness
+validation, independent-review/owner-receipt validation, trusted revision and Git
+index handling, report-only CLI, selector integration and the full refusal/positive
+matrix remain outstanding. No hook, policy enrollment, Frontier schema, GUI
+behavior or acceptance authority changed in this unit.
