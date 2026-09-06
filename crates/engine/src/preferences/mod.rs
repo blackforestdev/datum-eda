@@ -20,6 +20,9 @@ mod product_query;
 mod product_service;
 #[cfg(test)]
 mod product_tests;
+mod project_genesis;
+#[cfg(test)]
+mod project_genesis_lifecycle_tests;
 pub mod repository;
 pub mod resolver;
 mod schema;

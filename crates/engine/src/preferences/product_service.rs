@@ -464,7 +464,7 @@ impl GlobalPreferencesProductService {
         let receipt_preview = serde_json::to_value(&seed.receipt)
             .map_err(|error| bootstrap_error(error.to_string()))?;
         let units_seed_catalog_digest =
-            digest(&seed.receipt.copied_values).map_err(bootstrap_error)?;
+            super::units_seed::units_seed_catalog_digest(&self.service).map_err(bootstrap_error)?;
         let seed_application_digest =
             digest(&(source.clone(), &profile, &units_seed_catalog_digest))
                 .map_err(bootstrap_error)?;

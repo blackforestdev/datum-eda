@@ -2,6 +2,11 @@ use super::*;
 
 use eda_engine::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
 use eda_engine::ir::units::{BOARD_LENGTH_KEY, DRILL_HOLE_KEY, LengthUnit, LengthUnitChoice};
+use eda_engine::preferences::{
+    FixedPreferenceLocationProvider, GlobalPreferencesProductService, PreferenceActorKindV1,
+    PreferenceActorV1, PreferenceLocations, ProjectGenesisRequestV1, ProjectUnitsSourceV1,
+};
+use uuid::Uuid;
 
 fn project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!(
@@ -22,6 +27,54 @@ fn bootstrap(label: &str) -> PathBuf {
     )
     .unwrap();
     root
+}
+
+#[test]
+fn project_surface_reads_v2_product_genesis_receipt_without_migration() {
+    let root = project_root("v2-genesis");
+    let config = project_root("v2-genesis-config");
+    let _ = std::fs::remove_dir_all(&root);
+    let _ = std::fs::remove_dir_all(&config);
+    std::fs::create_dir(&config).unwrap();
+    let provider = FixedPreferenceLocationProvider(PreferenceLocations {
+        configuration_base: config.clone(),
+        repository_root: config.join("preferences"),
+        legacy_console_path: config.join("gui-preferences.json"),
+    });
+    let service = GlobalPreferencesProductService::open(&provider, "gui-v2-test").unwrap();
+    let actor = PreferenceActorV1 {
+        kind: PreferenceActorKindV1::HumanGui,
+        session_id: "gui-v2-test".to_owned(),
+        local_actor_id: "test-user".to_owned(),
+        invocation_id: Uuid::new_v4(),
+    };
+    service
+        .create_project(
+            ProjectGenesisRequestV1 {
+                request_id: Uuid::new_v4(),
+                destination: root.clone(),
+                project_name: "V2 Units Project".to_owned(),
+                project_id: Some(Uuid::new_v4()),
+                units_source: ProjectUnitsSourceV1::Factory {
+                    profile_id: "datum.units.factory.v1".to_owned(),
+                },
+            },
+            &actor,
+        )
+        .unwrap();
+
+    let mut coordinator = ProjectPreferencesCoordinator::new();
+    let mut dialog = GlobalPreferencesDialogState::project_units_default();
+    coordinator.load_or_migrate(&root, &mut dialog).unwrap();
+    assert_eq!(dialog.rows.len(), 8);
+    assert!(dialog.rows.iter().all(|row| row.writable && !row.changed));
+    assert_eq!(
+        ProjectResolver::new(&root).resolve().unwrap().journal.len(),
+        0
+    );
+
+    let _ = std::fs::remove_dir_all(root);
+    let _ = std::fs::remove_dir_all(config);
 }
 
 #[test]

@@ -49,6 +49,40 @@ fn digest_values(values: &BTreeMap<String, Value>) -> Result<String, serde_json:
         .collect())
 }
 
+pub(super) fn units_seed_catalog_digest(
+    service: &GlobalPreferencesService,
+) -> Result<String, String> {
+    let material: Vec<_> = ACTIVE_UNITS_KEYS
+        .iter()
+        .map(|key| {
+            let parsed =
+                super::PreferenceKey::parse(*key).expect("active Units keys are registered");
+            let descriptor = service
+                .registry()
+                .get(&parsed)
+                .expect("active Units descriptor exists");
+            (
+                descriptor.key.as_str(),
+                descriptor.schema_version,
+                descriptor.value_schema_name.as_str(),
+                format!("{:?}", descriptor.value_schema),
+                format!("{:?}", descriptor.default_value),
+                format!("{:?}", descriptor.allowed_sources),
+                format!("{:?}", descriptor.allowed_directives),
+                format!("{:?}", descriptor.directive_policy),
+                format!("{:?}", descriptor.merge_category),
+            )
+        })
+        .collect();
+    let encoded = crate::ir::serialization::to_json_deterministic(&(
+        "datum.units.seed_catalog",
+        1_u32,
+        material,
+    ))
+    .map_err(|error| error.to_string())?;
+    Ok(format!("sha256:{:x}", Sha256::digest(encoded.as_bytes())))
+}
+
 impl GlobalPreferencesService {
     /// Resolve all eight Global Units descriptors as one immutable New-Project
     /// seed. Existing Projects never call this operation.

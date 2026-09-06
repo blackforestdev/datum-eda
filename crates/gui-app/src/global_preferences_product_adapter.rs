@@ -4,15 +4,15 @@ use std::path::PathBuf;
 
 use eda_engine::preferences::{
     HeadExpectationV1, PreferenceActorKindV1, PreferenceActorV1, PreferenceServiceStatus,
+    new_product_id,
 };
-use uuid::Uuid;
 
 pub(super) fn human_gui_actor() -> PreferenceActorV1 {
     PreferenceActorV1 {
         kind: PreferenceActorKindV1::HumanGui,
         session_id: format!("datum-gui-{}", std::process::id()),
         local_actor_id: std::env::var("USER").unwrap_or_else(|_| "unavailable".to_owned()),
-        invocation_id: Uuid::new_v4(),
+        invocation_id: new_product_id(),
     }
 }
 

@@ -14,13 +14,13 @@ use datum_gui_protocol::{
 };
 use datum_gui_render::HitTarget;
 use eda_engine::api::native_write::project::{
-    build_initialize_project_display_units, build_set_project_display_units, project_display_units,
-    project_units_seed_receipt,
+    ProjectUnitsSeedEvidence, build_initialize_project_display_units,
+    build_set_project_display_units, project_display_units, project_units_seed_evidence,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::ir::units::{
-    ACTIVE_UNITS_KEYS, PreFeatureProjectUnitsMigration, ProjectUnitsSeedReceipt,
-    migrate_pre_feature_project_units, profile_to_descriptor_values,
+    ACTIVE_UNITS_KEYS, PreFeatureProjectUnitsMigration, migrate_pre_feature_project_units,
+    profile_to_descriptor_values,
 };
 use eda_engine::preferences::{
     DescriptorRegistry, PreferenceSurfaceCatalog, active_v1_registry, gp_f05_surface_catalog,
@@ -39,7 +39,7 @@ pub(super) struct ProjectPreferencesCoordinator {
     surface: PreferenceSurfaceCatalog,
     project_root: Option<PathBuf>,
     expected_revision: Option<ModelRevision>,
-    receipt: Option<ProjectUnitsSeedReceipt>,
+    receipt: Option<ProjectUnitsSeedEvidence>,
     return_focus: ApplicationFocus,
 }
 
@@ -200,7 +200,7 @@ impl ProjectPreferencesCoordinator {
         let resolved = profile
             .resolve()
             .map_err(|reason| anyhow::anyhow!("Project Working Units refused: {reason:?}"))?;
-        let receipt = project_units_seed_receipt(model)?;
+        let receipt = project_units_seed_evidence(model)?;
         let values = profile_to_descriptor_values(profile);
         let seed_values = &receipt.copied_values;
         let rows = self
@@ -241,7 +241,7 @@ impl ProjectPreferencesCoordinator {
                         format!("Descriptor  {key}"),
                         "Authority   Project Working Units".to_owned(),
                         format!("Stored      {value}"),
-                        format!("Receipt     {:?}", receipt.source),
+                        format!("Receipt     {}", receipt.source_summary),
                     ],
                     control: control_value_projection(
                         &entry.control,
