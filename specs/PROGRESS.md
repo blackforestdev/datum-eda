@@ -161,13 +161,13 @@
    Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`, `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`, `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`, `research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md`, `research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md`, `specs/PROJECT_PREFERENCES_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`.
 - **Establish workflow delivery readiness and acceptance governance** (`WORKFLOW-DELIVERY-QUALITY`; `dat-workflow-delivery-quality-xgj`).
-   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `specified`; authorization `planning`; parallel lane.*
+   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-manual-foundation-contracts-fsw, dat-workflow-gate-pilot-b3s. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
-   Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `blocked`; authorization `planning`.*
+   Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `planned`; authorization `planning`.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
-   Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `blocked`; authorization `planning`.*
+   Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `planned`; authorization `planning`.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
@@ -175,21 +175,21 @@
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, ratified PM041, `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` | WDQ-C01–C05 complete as audit/research/adoption; owner explicitly approved the `6ba8ea37` packet. PM041 ratified and future inventory registered at zero instances | Separate foundation research and gate-pilot planning; no executable gate or native pilot acceptance | `dat-workflow-delivery-quality-xgj`; no successor selection or execution authorization |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, ratified PM041, `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` | WDQ-C01–C05 landed in `29fead0a`: explicit owner adoption, numbered ratification and zero-instance inventory registration | Separate foundation research and gate-pilot planning; no executable gate or native pilot acceptance | `dat-workflow-delivery-quality-xgj` closed; no successor selection or execution authorization |
 
 ## FOUNDATION-WORKFLOW-SPEC — bounded pre-implementation foundation contract
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03 | F1–F8 research/consumer map in `research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md`; clauses not yet adjudicated | Complete route review, concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; blocked on reviewed WDQ adoption, noncanonical planning |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03 | F1–F8 research/consumer map in `research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md`; clauses not yet adjudicated | Complete route review, concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; WDQ adoption prerequisite landed, noncanonical planning |
 
 ## Spec Governance Coverage
 
 <!-- WORKFLOW-DELIVERY-GATE-PILOT:TRACKING -->
 The bounded implementation successor `WORKFLOW-DELIVERY-GATE-PILOT` /
 `dat-workflow-gate-pilot-b3s` is governed by G01–G06 in
-`specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`. It waits for WDQ adoption and fresh
-owner execution authorization. No blocking rollout, prototype change, native
+`specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`. WDQ adoption has landed; fresh
+owner execution authorization is still required. No blocking rollout, prototype change, native
 authoring acceptance or canonical successor selection is implied by scheduling.
 
 Every specification that steers development is classified in
