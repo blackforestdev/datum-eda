@@ -41,12 +41,9 @@ pub(super) fn property_value(
         (TERMINAL_PATH, ACCESSIBLE, "Parent") => {
             Ok(("(so)", object_reference_body(&state.bus_name, ROOT_PATH)))
         }
-        (ROOT_PATH, ACCESSIBLE, "ChildCount") => Ok((
-            "i",
-            i32_body(
-                i32::from(state.terminal_available) + i32::from(!state.preferences.is_empty()),
-            ),
-        )),
+        (ROOT_PATH, ACCESSIBLE, "ChildCount") => {
+            Ok(("i", i32_body(clamp_i32(state.root_child_paths().len()))))
+        }
         (TERMINAL_PATH, ACCESSIBLE, "ChildCount") => Ok(("i", i32_body(0))),
         (_, ACCESSIBLE, "Locale") if terminal || path == ROOT_PATH => {
             Ok(("s", string_body(&locale())))

@@ -4,6 +4,70 @@ Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
 Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
 activation remains off.
 
+## G04 shared accessibility handoff authorized
+
+Recorded 2026-09-06 19:42 UTC at clean HEAD
+`3f377a7a61a3691e9ede564d8fe4ea3b83ce8ba5`. Preferences completed GP-CM03 and
+released its claim; GP-CM04 remains an owner decision before GP-CM05. The owner
+reported the other session paused, then answered `the working tree is clean.
+please proceed.` to the explicit request for temporary WDQ-G04 ownership of the
+held shared accessibility files, preservation of Terminal/Preferences behavior,
+and the other session leaving those files untouched until handback.
+
+This releases only the previously held native accessibility group for additive
+menu publication, plus its focused modules/tests and frame-refresh connection.
+It supersedes the historical hold statements below. The live WDQ lease records
+the exact scope. No GP-CM05 approval, Preferences task transfer, prototype edit,
+dependency addition or G06 activation is implied. At handback, record commits,
+validation, remaining defects and whether any shared files are still dirty;
+Preferences may resume only under its own owner authorization and file handoff.
+
+### G04 additive menu accessibility implementation checkpoint
+
+The bounded shared-file change projects currently open production menu rows
+through the existing Linux accessibility service. Stable menu identities,
+labels, focus, enabled/sensitive state and unavailable descriptions derive from
+the actual menu inventory and contextual action admission. Dismissed menu paths
+fail closed. Menu publication retains independently cached Terminal snapshots,
+Preferences/New Project nodes and Console announcements; no settings or design
+writer was added. Menu accessibility is read-only, not a new Action invocation
+surface or a whole-application keyboard-only access claim.
+
+Read-only implementation review identified one blocking event-index defect:
+coalescing menu dismissal with Preferences publication used the new root sibling
+offset for the removed menu. The worker now retains previous and next offsets;
+removals use the previous index and additions use the next. A focused regression
+covers both directions. This review is not WDQ-G05 independent native replay.
+
+Verification at this checkpoint:
+
+- Guarded offline/locked GUI app, protocol and render library/binary tests:
+  571 passed (303 app, 114 protocol, 154 render), eight existing app tests ignored.
+- Strengthened the publication regression to retain nonempty Preferences nodes,
+  then reran all accessibility tests inside a private `dbus-run-session` with
+  desktop display variables unset and `--include-ignored`: 30 passed, zero
+  ignored, including real accessibility-bus registration. No desktop GUI opened.
+- Guarded offline/locked Clippy for the three GUI packages, all targets with
+  `-D warnings`: passed.
+- Workflow delivery validator tests: 82 passed. Selector/claim tests: 50 passed.
+  Source-health regression tests: 13 passed.
+- Source health: 1785 files passed; evidence traceability: 20 routes/114 artifacts
+  passed; dependency authority, specification governance (203 specs), project
+  state (50 Frontier items), generated Frontier and whitespace checks passed.
+
+The initial Cargo resource preflight refused insufficient `/tmp` reserve. With
+explicit owner authorization, inactive `/tmp/datum-ai-disc-target` compiler
+artifacts were moved intact to
+`/home/bfadmin/Documents/datum-build-archive-NZ8vkV/datum-ai-disc-target`, freeing
+4.2 GiB; nothing was deleted and no resource policy was bypassed.
+
+This is an implementation checkpoint only. Native PILOT-S01–S05, production
+registry/dispatch evidence export, identified binary/input receipts and complete
+`proof.json` remain outstanding. G04 stays in progress, G05/G06 are not advanced,
+and enforcement stays off. The bounded shared accessibility lease remains with
+WDQ pending native verification and explicit handback; committing this checkpoint
+does not approve GP-CM05 or release overlapping files to concurrent edits.
+
 This is an operational record under the ratified PM041 gate contract and
 WORKFLOW_DELIVERY_ADOPTION_PACKET, not a new product specification. It is outside
 the pilot authority route: future session/receipt updates must not create a
