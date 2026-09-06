@@ -176,7 +176,7 @@ def git_commit_exists(root: Path, revision: str) -> bool:
     return result.returncode == 0
 
 
-def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[str, Any]]:
+def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool = True) -> tuple[list[str], dict[str, Any]]:
     """Return all consistency failures and the loaded state."""
     manifest_path = root / "specs/active_frontier.json"
     try:
@@ -192,8 +192,8 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
         failures.append(f"unknown active-frontier keys: {', '.join(sorted(unknown_root))}")
     if missing_root:
         failures.append(f"missing active-frontier keys: {', '.join(sorted(missing_root))}")
-    if manifest.get("schema_version") != 5:
-        failures.append("schema_version must be 5")
+    if type(manifest.get("schema_version")) is not int or manifest.get("schema_version") not in (5, 6):
+        failures.append("schema_version must be 5 or 6")
     if not nonempty(manifest.get("policy_decision")):
         failures.append("policy_decision must be non-empty")
     ttl = manifest.get("claim_ttl_hours")
@@ -354,6 +354,9 @@ def validate(root: Path, now: datetime | None = None) -> tuple[list[str], dict[s
                 failures.append(f"{label}: claimed head does not resolve: {claim['head']}")
         if state == "in_progress" and isinstance(claim, dict):
             active_claims.append((str(label), claim))
+    if delivery_checks:
+        from workflow_delivery_selector import selector_failures
+        failures.extend(selector_failures(root, manifest))
     if len(next_items) != 1:
         failures.append(f"exactly one canonical_next is required, found {len(next_items)}")
     if orders and orders != set(range(len(orders))):
