@@ -14,6 +14,7 @@ pub mod repository;
 pub mod resolver;
 mod schema;
 mod service;
+mod service_mutation;
 mod service_runtime_defaults;
 mod surface;
 mod surface_full;

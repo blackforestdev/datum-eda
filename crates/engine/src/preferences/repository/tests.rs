@@ -533,7 +533,7 @@ fn unpublished_generation_and_writer_contention_never_replace_the_head() {
     assert_eq!(ready(&repository).generation, initial);
     assert_eq!(next_generation_number(&directory.0), 2);
 
-    std::fs::write(directory.0.join("writer.lock"), b"other-process").unwrap();
+    let held_lease = super::io::WriterLease::acquire(&directory.0, "other-process").unwrap();
     assert!(matches!(
         repository.commit_mutations(
             &initial,
@@ -546,7 +546,7 @@ fn unpublished_generation_and_writer_contention_never_replace_the_head() {
         ),
         Err(RepositoryError::WriterLeaseUnavailable)
     ));
-    std::fs::remove_file(directory.0.join("writer.lock")).unwrap();
+    drop(held_lease);
     let committed = repository
         .commit_mutations(
             &initial,
@@ -560,6 +560,34 @@ fn unpublished_generation_and_writer_contention_never_replace_the_head() {
         .unwrap();
     assert_eq!(committed.generation, 2);
     assert!(generation_dir(&directory.0, orphan.generation).is_dir());
+    assert!(directory.0.join("writer.lock").is_file());
+}
+
+#[test]
+fn initial_mutation_is_the_only_content_of_generation_zero() {
+    let directory = TestDirectory::new();
+    let repository = repository(&directory);
+    let generation = repository
+        .initialize_with_mutations(
+            &[PreferenceMutation::Set {
+                partition: PreferencePartition::User,
+                key: reduced_motion(),
+                value: json!(true),
+            }],
+            &metadata("first write"),
+        )
+        .unwrap();
+    assert_eq!(generation.generation, 0);
+    let snapshot = ready(&repository);
+    assert_eq!(snapshot.generation, generation);
+    assert_eq!(
+        snapshot
+            .value(PreferencePartition::User, &reduced_motion())
+            .map(|stored| &stored.value),
+        Some(&json!(true))
+    );
+    assert_eq!(snapshot.receipts.len(), 1);
+    assert_eq!(snapshot.receipts[0].operation, "CommitPreferenceMutation");
 }
 
 fn file_tree(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {

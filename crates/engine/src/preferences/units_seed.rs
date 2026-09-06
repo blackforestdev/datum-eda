@@ -148,7 +148,7 @@ mod tests {
         else {
             panic!("New Project must identify the Global generation")
         };
-        assert!(repository_generation.contains(":g00000000000000000001:"));
+        assert!(repository_generation.contains(":g00000000000000000000:"));
         assert_eq!(profile_digest.len(), 64);
         let _ = std::fs::remove_dir_all(root);
     }
