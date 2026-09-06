@@ -87,13 +87,13 @@ pub struct PreferenceServiceRefusal {
 
 #[derive(Debug, Clone)]
 pub struct GlobalPreferencesService {
-    registry: DescriptorRegistry,
+    pub(super) registry: DescriptorRegistry,
     surface: PreferenceSurfaceCatalog,
-    repository: PreferenceRepository,
+    pub(super) repository: PreferenceRepository,
     writer_instance: String,
     machine_scope: String,
-    status: PreferenceServiceStatus,
-    snapshot: Option<RepositorySnapshot>,
+    pub(super) status: PreferenceServiceStatus,
+    pub(super) snapshot: Option<RepositorySnapshot>,
     legacy_migration: LegacyConsoleMigrationState,
 }
 
@@ -151,94 +151,7 @@ impl GlobalPreferencesService {
             .collect()
     }
 
-    pub fn set_user(
-        &mut self,
-        key: PreferenceKey,
-        value: Value,
-        expected: Option<&GenerationRef>,
-    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
-        self.commit_user_mutation(
-            PreferenceMutation::Set {
-                partition: PreferencePartition::User,
-                key,
-                value: value.clone(),
-            },
-            expected,
-            Some(value),
-            "SetGlobalPreference",
-        )
-    }
-
-    pub fn reset_user(
-        &mut self,
-        key: PreferenceKey,
-        expected: Option<&GenerationRef>,
-    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
-        self.commit_user_mutation(
-            PreferenceMutation::Remove {
-                partition: PreferencePartition::User,
-                key,
-            },
-            expected,
-            None,
-            "ResetGlobalPreference",
-        )
-    }
-
-    fn commit_user_mutation(
-        &mut self,
-        mutation: PreferenceMutation,
-        expected: Option<&GenerationRef>,
-        draft: Option<Value>,
-        reason: &str,
-    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
-        if !self.status.writable() {
-            return Err(self.refusal_for_status(draft));
-        }
-        let metadata = self.metadata(reason);
-        let actual_expected = match (&self.status, expected) {
-            (PreferenceServiceStatus::DefaultsOnly, None) => {
-                let generation = self
-                    .repository
-                    .initialize(&metadata)
-                    .map_err(|error| self.map_error(error, draft.clone()))?;
-                self.refresh();
-                generation
-            }
-            (PreferenceServiceStatus::Ready { generation }, Some(expected))
-                if generation == expected =>
-            {
-                expected.clone()
-            }
-            (PreferenceServiceStatus::Ready { .. }, _) => {
-                self.refresh();
-                return Err(PreferenceServiceRefusal {
-                    kind: PreferenceServiceRefusalKind::StaleGeneration,
-                    message:
-                        "Preferences changed since this row was displayed; the draft was preserved."
-                            .to_owned(),
-                    preserved_draft: draft,
-                    current_generation: self.status.generation().cloned().map(Box::new),
-                });
-            }
-            _ => return Err(self.refusal_for_status(draft)),
-        };
-        match self
-            .repository
-            .commit_mutations(&actual_expected, &[mutation], &metadata)
-        {
-            Ok(_) => {
-                self.refresh();
-                Ok(self.rows())
-            }
-            Err(error) => {
-                self.refresh();
-                Err(self.map_error(error, draft))
-            }
-        }
-    }
-
-    fn refresh(&mut self) {
+    pub(super) fn refresh(&mut self) {
         match self.repository.inspect() {
             RepositoryStatus::Missing => {
                 self.snapshot = None;
@@ -401,7 +314,7 @@ impl GlobalPreferencesService {
         }
     }
 
-    fn metadata(&self, reason: &str) -> MutationMetadata {
+    pub(super) fn metadata(&self, reason: &str) -> MutationMetadata {
         MutationMetadata {
             actor: "local-user".to_owned(),
             reason: reason.to_owned(),
@@ -409,7 +322,7 @@ impl GlobalPreferencesService {
         }
     }
 
-    fn refusal_for_status(&self, draft: Option<Value>) -> PreferenceServiceRefusal {
+    pub(super) fn refusal_for_status(&self, draft: Option<Value>) -> PreferenceServiceRefusal {
         let (kind, message) = match &self.status {
             PreferenceServiceStatus::PreservedUnreadable { .. } => (
                 PreferenceServiceRefusalKind::UnreadableRepository,
@@ -432,7 +345,11 @@ impl GlobalPreferencesService {
         }
     }
 
-    fn map_error(&self, error: RepositoryError, draft: Option<Value>) -> PreferenceServiceRefusal {
+    pub(super) fn map_error(
+        &self,
+        error: RepositoryError,
+        draft: Option<Value>,
+    ) -> PreferenceServiceRefusal {
         let kind = match error {
             RepositoryError::ExpectedGenerationMismatch => {
                 PreferenceServiceRefusalKind::StaleGeneration
@@ -461,6 +378,7 @@ impl GlobalPreferencesService {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs::OpenOptions;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     static NEXT: AtomicU64 = AtomicU64::new(1);
@@ -629,13 +547,65 @@ mod tests {
             .set_user(key.clone(), Value::Bool(true), None)
             .unwrap();
         let expected = service.status().generation().cloned().unwrap();
-        std::fs::write(directory.0.join("repository/writer.lock"), b"other-writer").unwrap();
+        let lock_file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(directory.0.join("repository/writer.lock"))
+            .unwrap();
+        lock_file.try_lock().unwrap();
         let refusal = service
             .set_user(key, Value::Bool(false), Some(&expected))
             .unwrap_err();
         assert_eq!(refusal.kind, PreferenceServiceRefusalKind::WriterConflict);
         assert_eq!(refusal.preserved_draft, Some(Value::Bool(false)));
         assert_eq!(service.rows()[1].effective_value, Some(Value::Bool(true)));
+    }
+
+    #[test]
+    fn first_set_is_generation_zero_and_validated_noops_do_not_write() {
+        let directory = TestDirectory::new("first-set-and-noops");
+        let mut service = open(&directory);
+        let key = PreferenceKey::parse("datum.accessibility.reduced_motion").unwrap();
+
+        service
+            .set_user(key.clone(), Value::Bool(true), None)
+            .unwrap();
+        let generation = service.status().generation().cloned().unwrap();
+        assert_eq!(generation.generation, 0);
+        let files_after_set = std::fs::read_dir(directory.0.join("repository/generations"))
+            .unwrap()
+            .count();
+
+        service
+            .set_user(key.clone(), Value::Bool(true), Some(&generation))
+            .unwrap();
+        assert_eq!(service.status().generation(), Some(&generation));
+        assert_eq!(
+            std::fs::read_dir(directory.0.join("repository/generations"))
+                .unwrap()
+                .count(),
+            files_after_set
+        );
+
+        service.reset_user(key.clone(), Some(&generation)).unwrap();
+        let reset_generation = service.status().generation().cloned().unwrap();
+        service.reset_user(key, Some(&reset_generation)).unwrap();
+        assert_eq!(service.status().generation(), Some(&reset_generation));
+    }
+
+    #[test]
+    fn reset_against_missing_repository_is_a_side_effect_free_noop() {
+        let directory = TestDirectory::new("missing-reset");
+        let mut service = open(&directory);
+        let repository_root = directory.0.join("repository");
+        service
+            .reset_user(
+                PreferenceKey::parse("datum.accessibility.reduced_motion").unwrap(),
+                None,
+            )
+            .unwrap();
+        assert_eq!(service.status(), &PreferenceServiceStatus::DefaultsOnly);
+        assert!(!repository_root.exists());
     }
 
     #[test]

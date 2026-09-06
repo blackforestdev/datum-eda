@@ -120,17 +120,38 @@ impl PreferenceRepository {
         &self,
         metadata: &MutationMetadata,
     ) -> Result<GenerationRef, RepositoryError> {
+        self.initialize_with_mutations(&[], metadata)
+    }
+
+    /// Atomically publish generation zero with its initial values. This is the
+    /// only valid first-write path: callers must not create an empty generation
+    /// and follow it with a second commit.
+    pub fn initialize_with_mutations(
+        &self,
+        mutations: &[PreferenceMutation],
+        metadata: &MutationMetadata,
+    ) -> Result<GenerationRef, RepositoryError> {
         let _lease = WriterLease::acquire(&self.root, &metadata.writer_instance)?;
         self.verify_expectation(&HeadExpectation::Missing)?;
         let repository_id = Uuid::new_v4().to_string();
+        let before = RepositoryState::empty();
         let mut state = RepositoryState::empty();
+        let mut unknown_bytes = BTreeMap::new();
+        let mut affected = BTreeSet::new();
+        for mutation in mutations {
+            self.apply_mutation(&mut state, &mut unknown_bytes, mutation, &mut affected)?;
+        }
         state.receipts.push(receipt(
-            "InitializePreferenceRepository",
+            if mutations.is_empty() {
+                "InitializePreferenceRepository"
+            } else {
+                "CommitPreferenceMutation"
+            },
             metadata,
             None,
             0,
-            Vec::new(),
-            &RepositoryState::empty(),
+            affected.into_iter().collect(),
+            &before,
             &state,
         )?);
         let generation = write_generation(
@@ -140,7 +161,7 @@ impl PreferenceRepository {
             None,
             &metadata.writer_instance,
             &state,
-            &BTreeMap::new(),
+            &unknown_bytes,
         )?;
         promote_head(&self.root, &generation)?;
         Ok(generation)
@@ -231,6 +252,18 @@ impl PreferenceRepository {
                 affected.insert(key.as_str().to_owned());
             }
             PreferenceMutation::Remove { partition, key } => {
+                let descriptor = self.registry.get(key).ok_or_else(|| {
+                    RepositoryError::UnknownPreferenceKey(key.as_str().to_owned())
+                })?;
+                let source = match partition {
+                    PreferencePartition::Installation => ResolutionSource::Installation,
+                    PreferencePartition::User => ResolutionSource::User,
+                };
+                if !descriptor.allowed_sources.contains(&source) {
+                    return Err(RepositoryError::IneligiblePreferenceSource(
+                        key.as_str().to_owned(),
+                    ));
+                }
                 values_mut(state, partition).remove(key.as_str());
                 affected.insert(key.as_str().to_owned());
             }

@@ -1,5 +1,6 @@
-use std::fs::{File, OpenOptions};
+use std::fs::{DirBuilder, File, OpenOptions};
 use std::io::Write;
+use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt};
 use std::path::{Path, PathBuf};
 
 use serde::Serialize;
@@ -155,35 +156,30 @@ pub(crate) fn opaque_path(directory: &Path, envelope: &UnknownEnvelopeRef) -> Pa
 }
 
 pub(crate) struct WriterLease {
-    path: PathBuf,
+    _file: File,
 }
 
 impl WriterLease {
     pub(crate) fn acquire(root: &Path, writer: &str) -> Result<Self, RepositoryError> {
-        std::fs::create_dir_all(root)?;
+        let mut builder = DirBuilder::new();
+        builder.recursive(true).mode(0o700);
+        builder.create(root)?;
         let path = root.join(LEASE_FILE);
         let mut file = OpenOptions::new()
+            .read(true)
             .write(true)
-            .create_new(true)
-            .open(&path)
-            .map_err(|error| {
-                if error.kind() == std::io::ErrorKind::AlreadyExists {
-                    RepositoryError::WriterLeaseUnavailable
-                } else {
-                    RepositoryError::Io(error)
-                }
-            })?;
+            .create(true)
+            .mode(0o600)
+            .open(&path)?;
+        file.try_lock().map_err(|error| match error {
+            std::fs::TryLockError::WouldBlock => RepositoryError::WriterLeaseUnavailable,
+            std::fs::TryLockError::Error(error) => RepositoryError::Io(error),
+        })?;
+        file.set_len(0)?;
         file.write_all(writer.as_bytes())?;
         file.sync_all()?;
         sync_parent(&path)?;
-        Ok(Self { path })
-    }
-}
-
-impl Drop for WriterLease {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_file(&self.path);
-        let _ = sync_parent(&self.path);
+        Ok(Self { _file: file })
     }
 }
 
