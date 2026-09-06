@@ -50,7 +50,10 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
 pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> bool {
     match action {
         WorkspaceCharacterAction::SetTool(tool) => runtime.set_workspace_tool(tool),
-        WorkspaceCharacterAction::FitCamera => runtime.activate_gui_local_menu_action("view.fit"),
+        WorkspaceCharacterAction::FitCamera => runtime.activate_gui_local_menu_action(
+            "view.fit",
+            crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
+        ),
         WorkspaceCharacterAction::FitReviewTarget => runtime.fit_review_target(),
         WorkspaceCharacterAction::TogglePaneZoom => {
             runtime.pane_toggle_zoom();

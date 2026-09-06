@@ -9,6 +9,8 @@
 //! super::*`, exactly as the sibling runtime action modules do.
 
 use super::*;
+pub(crate) mod action_evidence;
+use action_evidence::EntrySurface;
 
 fn terminal_owns_maximize(focus: ApplicationFocus, active_dock: Option<DockTab>) -> bool {
     focus == ApplicationFocus::Terminal && active_dock == Some(DockTab::Terminal)
@@ -23,15 +25,21 @@ fn style_label(style: datum_gui_protocol::CrosshairStyle) -> &'static str {
 }
 
 impl Runtime {
-    pub(super) fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
+    pub(super) fn activate_gui_local_menu_action(
+        &mut self,
+        action: &str,
+        surface: EntrySurface,
+    ) -> bool {
         use datum_gui_protocol::gui_menu_model::action_registry::{self, ActionHandler};
         if action_registry::consumer(action).is_some() {
             match action_registry::admit(action, self.workspace()) {
                 Ok(ActionHandler::FitCamera) => {
                     self.fit_camera();
+                    self.trace_action_attempt(action, surface, true);
                     self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
                 }
                 Err(reason) => {
+                    self.trace_action_attempt(action, surface, false);
                     self.log_console_refusal_for_action(
                         ConsoleFeedbackSource::Viewport,
                         action,
