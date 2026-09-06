@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "scenario_id": "PILOT-S05",
+  "producer_session": "wdq-independent-review-20260906",
+  "method": "native_input",
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "authority_sha256": "b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562",
+  "inputs": [
+    "Click View; collect the live accessible menu/row identities, labels, focus, enabled/sensitive states and unavailable reasons alongside the rendered menu.",
+    "Use Down/Up to visit Fit and Layer Visibility; record accessible focus/state after each key, then press Enter on the unavailable row.",
+    "Repeat row navigation/refusal for pointer-opened Help / About Datum and Window / Documents; press Escape and verify editor focus and F operability.",
+    "Change focused content Board to unresolved schematic and back through the existing pane controls; repeat View accessibility observations and confirm Fit availability changes with the rendered row.",
+    "Inspect that existing Terminal and Preferences accessibility objects are not replaced by menu objects; no setting change is made."
+  ],
+  "dispatches": [
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.layers",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-layers-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Layer Visibility menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "help.about",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "help-about-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "About Datum is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "window.documents",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "window-documents-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Documents menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-shortcut",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    }
+  ],
+  "actual_visible": "I inspected all sixteen S05 PNGs, including the separate native Preferences window. Up/Down visibly moves the row outline. Fit is bright on Board and gray on unresolved Schematic; the three missing consumers remain gray, focusable for inspection and non-executing. Dismissal removes menus; Escape then F restores fitted viewing. Global Preferences opens as a separate input-modal window and its dismissal restores the working View menu. The main-window capture during that modal is black above the terminal strip; this is not a claim of full Preferences visual conformance.",
+  "actual_state": "Live native AT-SPI nodes expose menu identity/label and matching focused/enabled/sensitive/reason states; owned-bus ChildrenChanged and menu StateChanged signals are recorded. Menus disappear from queried accessible children after dismissal while Terminal remains. Preferences and Terminal coexist in the live tree, and preferences_open is false after physical Escape. Production state, source and configuration comparisons establish the scoped no-write claim."
+}

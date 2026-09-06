@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "scenario_id": "PILOT-S02",
+  "producer_session": "wdq-independent-review-20260906",
+  "method": "native_input",
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "authority_sha256": "b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562",
+  "inputs": [
+    "Click Help; inspect About Datum availability and attempt pointer activation.",
+    "Reopen Help; use Up/Down to focus About Datum and press Enter.",
+    "Repeat pointer and keyboard-row attempts for Window / Documents and View / Layer Visibility.",
+    "Return to Board after each refusal; verify existing layer toggles and pane navigation are still available without treating them as the missing menu handlers."
+  ],
+  "dispatches": [
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "help.about",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "help-about-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "About Datum is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "help.about",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "help-about-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "About Datum is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "window.documents",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "window-documents-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Documents menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "window.documents",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "window-documents-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Documents menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.layers",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-layers-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Layer Visibility menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.layers",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-layers-menu-keyboard",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Layer Visibility menu action is unavailable in this build.",
+      "mutation_count": 0
+    }
+  ],
+  "actual_visible": "I inspected all eighteen independent S02 PNGs. About Datum, Documents and Layer Visibility paint gray with visible row focus. Pointer and Enter attempts dismiss without a feature panel or success. The compact Console clips long text, while refusal-history and refusal-history-earlier together show the complete six finite reasons, wrapped legibly without overlap. F.Cu is visibly hidden/restored; Tab changes the focused pane and Shift+Tab returns it.",
+  "actual_state": "Six actual production dispatch records are disabled and not invoked. Existing layer filters change and restore independently of the missing Layer Visibility consumer; focused pane changes and restores. Archive and preferences comparisons are unchanged; enumerated new files are runtime sidecars only. Broader Console limitations remain separate open findings, not owner-deferred defects."
+}

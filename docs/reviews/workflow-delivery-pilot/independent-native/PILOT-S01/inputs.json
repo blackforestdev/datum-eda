@@ -1,0 +1,192 @@
+[
+  {
+    "action": [
+      "click",
+      369,
+      351
+    ],
+    "time_ns": 1788730444288959232,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "selected"
+    ],
+    "time_ns": 1788730446079344343,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788730446382789176,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788730446926484419,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "pointer-zoomed"
+    ],
+    "time_ns": 1788730448717201090,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788730449120658935,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      230,
+      53
+    ],
+    "time_ns": 1788730449524123004,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "pointer-fitted"
+    ],
+    "time_ns": 1788730451305640298,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788730451608947112,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788730452153020815,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "shortcut-zoomed"
+    ],
+    "time_ns": 1788730453922302404,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "f"
+    ],
+    "time_ns": 1788730454238967010,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "shortcut-fitted"
+    ],
+    "time_ns": 1788730456004767005,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788730456308188116,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788730456852309322,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "keyboard-zoomed"
+    ],
+    "time_ns": 1788730458620033975,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788730459024014692,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788730459340213491,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Up"
+    ],
+    "time_ns": 1788730459657593981,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "fit-keyboard-focused"
+    ],
+    "time_ns": 1788730462324430613,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788730462645386447,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "keyboard-fitted"
+    ],
+    "time_ns": 1788730464442668229,
+    "launch": 1
+  },
+  {
+    "action": [
+      "close"
+    ],
+    "time_ns": 1788730464908316207,
+    "launch": 1
+  }
+]

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "scenario_id": "PILOT-S01",
+  "producer_session": "wdq-independent-review-20260906",
+  "method": "native_input",
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "authority_sha256": "b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562",
+  "inputs": [
+    "Wheel up twice over the focused Board to establish visibly non-fitted geometry; click View then Fit to Board.",
+    "Wheel up twice again over Board; with editor focus restored after menu activation, press unmodified F without clicking canvas geometry.",
+    "Wheel up twice again; click View, use Up/Down to focus Fit to Board, then press Enter."
+  ],
+  "dispatches": [
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-menu-pointer",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-shortcut",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-menu-keyboard",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    }
+  ],
+  "actual_visible": "I inspected all eight independent S01 PNGs. A pink selected pad and PAD inspector remain present through three visibly enlarged Board views and three restored fitted views; the schematic placeholder and split layout stay in place. The keyboard Fit row has a visible focus outline.",
+  "actual_state": "The independently captured production states retain the selected pad identity and layout. Pointer, editor F and keyboard-row Enter each invoke the same Fit handler; each fitted camera equals the initial selected camera and recorded scene-bounds center, zoom 1.0. Other-pane cameras and archived source/journal bytes are unchanged."
+}
