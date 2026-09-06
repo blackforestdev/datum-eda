@@ -13,13 +13,15 @@
 //! journal records and shards must not drift. Project genesis (the initial
 //! shard bootstrap) lives in [`super::genesis`].
 
+use std::collections::BTreeMap;
 use uuid::Uuid;
 
 use crate::error::EngineError;
 use crate::ir::units::{
-    ProjectUnitsSeedReceipt, UnitsProfile, profile_from_descriptor_values,
+    ACTIVE_UNITS_KEYS, ProjectUnitsSeedReceipt, UnitsProfile, profile_from_descriptor_values,
     project_profile_from_value, project_profile_to_value,
 };
+use crate::preferences::ProjectUnitsSeedReceiptV2;
 use crate::substrate::{DesignModel, Operation, SourceShardKind};
 
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
@@ -127,6 +129,59 @@ pub fn project_units_seed_receipt(
         .ok_or_else(|| EngineError::Validation("Project Units receipt is missing".to_string()))?;
     serde_json::from_value(value.clone())
         .map_err(|error| EngineError::Validation(format!("invalid Project Units receipt: {error}")))
+}
+
+/// Version-neutral read view for immutable Project Units seed evidence.
+///
+/// V1 is preserved byte-for-byte in the Project. V2 is validated as an exact
+/// ordered eight-item receipt and projected into the same copied-value shape
+/// used by Project Working Units without rewriting either receipt version.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProjectUnitsSeedEvidence {
+    pub copied_values: BTreeMap<String, serde_json::Value>,
+    pub source_summary: String,
+}
+
+pub fn project_units_seed_evidence(
+    model: &DesignModel,
+) -> Result<ProjectUnitsSeedEvidence, EngineError> {
+    let value = model
+        .project
+        .project_units_seed_receipt
+        .as_ref()
+        .ok_or_else(|| EngineError::Validation("Project Units receipt is missing".to_string()))?;
+    if let Ok(receipt) = serde_json::from_value::<ProjectUnitsSeedReceipt>(value.clone()) {
+        return Ok(ProjectUnitsSeedEvidence {
+            copied_values: receipt.copied_values,
+            source_summary: format!("{:?}", receipt.source),
+        });
+    }
+    let receipt: ProjectUnitsSeedReceiptV2 =
+        serde_json::from_value(value.clone()).map_err(|error| {
+            EngineError::Validation(format!("invalid Project Units receipt: {error}"))
+        })?;
+    if receipt.schema_name != "datum.project.units_seed_receipt" || receipt.schema_version != 2 {
+        return Err(EngineError::Validation(
+            "unsupported Project Units receipt schema".to_owned(),
+        ));
+    }
+    let keys: Vec<_> = receipt.items.iter().map(|item| item.key.as_str()).collect();
+    if keys != ACTIVE_UNITS_KEYS {
+        return Err(EngineError::Validation(
+            "Project Units V2 receipt must contain the exact ordered eight-key profile".to_owned(),
+        ));
+    }
+    let copied_values = receipt
+        .items
+        .into_iter()
+        .map(|item| (item.key, item.copied_value))
+        .collect::<BTreeMap<_, _>>();
+    profile_from_descriptor_values(&copied_values)
+        .map_err(|reason| EngineError::Validation(format!("invalid Units receipt: {reason:?}")))?;
+    Ok(ProjectUnitsSeedEvidence {
+        copied_values,
+        source_summary: format!("{:?}", receipt.source),
+    })
 }
 
 fn units_validation_error(reason: crate::ir::units::RefusalReason) -> EngineError {

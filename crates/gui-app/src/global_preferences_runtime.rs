@@ -15,9 +15,9 @@ use eda_engine::ir::units::{ACTIVE_UNITS_KEYS, profile_from_descriptor_values};
 use eda_engine::preferences::{
     FixedPreferenceLocationProvider, GlobalPreferencesProductService, PreferenceErrorV1,
     PreferenceKey, PreferenceLiveConsumer, PreferenceLocations, PreferenceMutationRequestV1,
+    new_product_id,
 };
 use serde_json::Value;
-use uuid::Uuid;
 
 use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
@@ -188,7 +188,7 @@ impl GlobalPreferencesCoordinator {
             key: key.to_owned(),
             value,
             expected: head_expectation(self.service.status()),
-            request_id: Uuid::new_v4(),
+            request_id: new_product_id(),
             reason: "Global Preferences control activation".to_owned(),
         };
         match self.service.mutate(request, &human_gui_actor()) {
@@ -220,7 +220,7 @@ impl GlobalPreferencesCoordinator {
         let request = PreferenceMutationRequestV1::ResetUser {
             key: key.to_owned(),
             expected: head_expectation(self.service.status()),
-            request_id: Uuid::new_v4(),
+            request_id: new_product_id(),
             reason: "Global Preferences Reset activation".to_owned(),
         };
         match self.service.mutate(request, &human_gui_actor()) {

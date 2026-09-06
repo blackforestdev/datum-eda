@@ -1,12 +1,19 @@
 //! Versioned Global Preferences product request, response, and refusal schemas.
 
 use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use uuid::Uuid;
 
 use super::repository::{GenerationRef, MutationReceipt};
+
+/// Create an opaque product request/invocation identity in the engine-owned
+/// schema layer so adapters do not need their own UUID dependency or parser.
+pub fn new_product_id() -> Uuid {
+    Uuid::new_v4()
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -205,6 +212,66 @@ pub struct ProjectUnitsSeedPreviewV1 {
     pub receipt_preview: Value,
     pub units_seed_catalog_digest: String,
     pub seed_application_digest: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectGenesisRequestV1 {
+    pub request_id: Uuid,
+    pub destination: PathBuf,
+    pub project_name: String,
+    pub project_id: Option<Uuid>,
+    pub units_source: ProjectUnitsSourceV1,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ProjectUnitsReceiptSourceV2 {
+    Global {
+        generation: Option<GenerationRef>,
+        defaults_profile_id: Option<String>,
+    },
+    Factory {
+        profile_id: String,
+        profile_version: u32,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectUnitsSeedItemV2 {
+    pub key: String,
+    pub descriptor_schema_version: u32,
+    pub copied_value: Value,
+    pub effective_source: String,
+    pub provenance: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectUnitsSeedReceiptV2 {
+    pub schema_name: String,
+    pub schema_version: u32,
+    pub project_id: Uuid,
+    pub genesis_request_id: Uuid,
+    pub source: ProjectUnitsReceiptSourceV2,
+    pub units_seed_catalog_digest: String,
+    pub items: Vec<ProjectUnitsSeedItemV2>,
+    pub profile_digest: String,
+    pub genesis_request_digest: String,
+    pub seed_application_digest: String,
+    pub creation_actor: PreferenceActorV1,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectGenesisResultV1 {
+    pub project_id: Uuid,
+    pub request_id: Uuid,
+    pub genesis_request_digest: String,
+    pub project_root_identity: String,
+    pub units_receipt: ProjectUnitsSeedReceiptV2,
+    pub published_manifest_digests: BTreeMap<String, String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

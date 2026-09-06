@@ -88,7 +88,7 @@ pub struct GenesisProjectManifest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub project_display_units: Option<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub project_units_seed_receipt: Option<ProjectUnitsSeedReceipt>,
+    pub project_units_seed_receipt: Option<serde_json::Value>,
     #[serde(default)]
     pub forward_annotation_review: BTreeMap<String, serde_json::Value>,
 }
@@ -246,13 +246,30 @@ pub fn bootstrap_native_project_with_units(
             "Project Units seed receipt does not match the copied profile".to_string(),
         ));
     }
+    let receipt = serde_json::to_value(receipt).map_err(EngineError::Serialization)?;
+    bootstrap_native_project_inner(root, spec, Some((profile, receipt)))
+}
+
+/// Bootstrap with a caller-owned, versioned Units receipt. The receipt is
+/// embedded opaquely so V1 remains readable while product genesis can write
+/// the richer immutable V2 evidence without teaching this shard writer its
+/// authority semantics.
+pub fn bootstrap_native_project_with_units_receipt_value(
+    root: &Path,
+    spec: GenesisSpec,
+    profile: UnitsProfile,
+    receipt: serde_json::Value,
+) -> Result<GenesisReport, EngineError> {
+    profile
+        .resolve()
+        .map_err(|reason| EngineError::Validation(format!("invalid Units seed: {reason:?}")))?;
     bootstrap_native_project_inner(root, spec, Some((profile, receipt)))
 }
 
 fn bootstrap_native_project_inner(
     root: &Path,
     spec: GenesisSpec,
-    units: Option<(UnitsProfile, ProjectUnitsSeedReceipt)>,
+    units: Option<(UnitsProfile, serde_json::Value)>,
 ) -> Result<GenesisReport, EngineError> {
     let ids = spec.existing_ids.unwrap_or_else(|| GenesisRootIds {
         project: Uuid::new_v4(),
