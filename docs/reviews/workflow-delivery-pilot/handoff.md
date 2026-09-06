@@ -4,6 +4,34 @@ Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
 Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
 activation remains off.
 
+## G04 corrective implementation checkpoint
+
+The owner-authorized menu-pointer correction resolves open-menu hits before
+canvas focus acquisition, then uses the existing selection/menu dispatcher.
+Actual canvas clicks retain their existing focus-and-dispatch path. The history
+correction measures wrapped text with the renderer's own fonts and shaping,
+allocates per-record height and independent clipping, and selects the newest
+complete records that fit. Existing record-based wheel scrolling is preserved.
+The compact strip remains intentionally single-line under PM033; opened history
+must make the pilot's full refusal explanations readable.
+
+Before implementing Console layout, both complete `gui-feedback-and-status` and
+`prototype-command-feedback` routes were reviewed, including Candidate A and B3
+DOM/CSS and the owner's PM033 disposition. The protected prototype was rendered
+read-only to `/tmp/datum-wdq-correction-5H2qwp/console-reference.png` and inspected.
+No authority digest, prototype, golden, setting schema, Terminal path or design
+writer changed. Arbitrarily oversized history records remain bounded/clipped;
+this is not a general Console history redesign or acceptance of that limitation.
+
+Verification before fresh native capture: protocol 114 unit tests, renderer 156
+unit tests, application 305 tests (eight existing ignores), and their enabled
+integration/doc tests passed. All-target Clippy for all three crates passed with
+warnings denied. Eight focused Console tests include measured wrapping,
+independent row clips, record-scroll reachability, narrow widths and scales
+1.0/1.25/1.5/2.0. The native runner now names the pointer regression, captures
+earlier history after real wheel input, and supports explicit-size diagnostic
+captures. These are tooling capabilities, not passing native evidence yet.
+
 ## G04 native evidence: blocking defects, not completion
 
 ### EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G04-NATIVE-BLOCKERS
@@ -57,7 +85,14 @@ quality or acceptance. The pointer regression must remain red until corrected.
 Producer visual inspection of `native/PILOT-S02/refusal-history.png` is the
 readability failure evidence; a machine-check pass cannot override it.
 
-### Bounded corrective handoff requested, not yet authorized
+### Bounded corrective handoff authorized after blocker capture
+
+On 2026-09-06 the owner answered `please continue` to the explicit request to
+extend this lane to `runtime_primary_pointer.rs` and `datum_console.rs` and rerun
+native evidence. This authorizes only the two corrections and focused proof
+below. The synchronized WDQ lease records that scope; GP-CM04/GP-CM05 and G06
+remain separate owner boundaries. The following request describes the boundary
+presented before this approval, not a continuing hold.
 
 Two newly implicated shared production files are outside the current declared
 WDQ file scope. Before edits, obtain the owner/consumer handoff, review each full

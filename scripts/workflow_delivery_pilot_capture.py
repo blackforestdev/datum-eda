@@ -166,7 +166,7 @@ class Capture:
         wayland = self.env.pop("WAYLAND_DISPLAY")
         try:
             self.gui = self.start([str(self.args.gui.resolve()), "--project-root", str(self.project),
-                                   "--window-size", "1280x768"], f"gui-{self.launch_count}.log")
+                                   "--window-size", self.args.window_size], f"gui-{self.launch_count}.log")
         finally:
             self.env["WAYLAND_DISPLAY"] = wayland
         def window():
@@ -299,10 +299,17 @@ def main():
     parser.add_argument("--gui", type=Path, required=True)
     parser.add_argument("--cli", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--window-size", default="1280x768",
+                        help="native size; named pilot scenarios require 1280x768")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--actions-json")
-    group.add_argument("--scenario", choices=[f"PILOT-S0{i}" for i in range(1, 6)])
+    group.add_argument("--scenario", choices=[f"PILOT-S0{i}" for i in range(1, 6)]
+                       + ["PILOT-S03-pointer-regression"])
     args = parser.parse_args()
+    if not re.fullmatch(r"[1-9][0-9]{2,3}x[1-9][0-9]{2,3}", args.window_size):
+        parser.error("window size must be WIDTHxHEIGHT")
+    if args.scenario and args.window_size != "1280x768":
+        parser.error("named scenarios use reviewed 1280x768 coordinates")
     capture = Capture(args)
     try:
         capture.setup()

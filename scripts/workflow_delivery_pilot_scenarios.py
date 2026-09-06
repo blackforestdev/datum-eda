@@ -39,6 +39,12 @@ def missing(keyboard=True):
 
 
 def actions(scenario):
+    if scenario == "PILOT-S03-pointer-regression":
+        steps = zoom() + capture("board-zoomed") + [["key", "Tab"]] + menu(VIEW)
+        steps += capture("schematic-fit-disabled") + [["click", 230, 53]]
+        steps += capture("after-disabled-pointer-attempt")
+        # A real canvas click must still acquire Board and select in one gesture.
+        return steps + [["click", 369, 351]] + capture("canvas-focus-restored")
     if scenario == "PILOT-S01":
         # Existing square pad in the inspected native fixture; no --select seed.
         steps = [["click", 369, 351]] + capture("selected")
@@ -50,6 +56,8 @@ def actions(scenario):
         return steps + [["key", "Return"]] + capture("keyboard-fitted")
     if scenario == "PILOT-S02":
         steps = missing()
+        steps += view_action(21) + [["move", 350, 630], ["wheel", 3]]
+        steps += capture("refusal-history-earlier") + view_action(21)
         # Existing F.Cu layer visibility swatch toggled twice, no missing handler.
         steps += [["click", 18, 531]] + capture("existing-layer-toggle-off")
         steps += [["click", 18, 531]] + capture("existing-layer-toggle-restored")
