@@ -36,6 +36,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `8d10f280ffc6abcaf7990ce3120a4253a2ea54b474b0a0d56428b2e30bdd2dfa` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
 | `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 93 | `000670202f0563006293482338368dd1ab9a39e691cce8ced12ca42a1a458c3e` |
+| `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 
 The PM041 delivery inventory tracks one candidate pilot contract-instance filename.
 Its registered planned shapes are not validated by this file-glob inventory;

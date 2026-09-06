@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import hashlib
 import json
 from pathlib import Path
@@ -69,6 +70,69 @@ def rust_enum_variants(path: Path, enum_name: str) -> list[str]:
     body = enum_body(read_text(path), enum_name)
     variants = re.findall(r"^\s{4}([A-Z][A-Za-z0-9]+)(?:\s*\(|\s*\{|\s*,|\s*$)", body, flags=re.M)
     return sorted(set(variants))
+
+
+def rust_struct_fields(path: Path, struct_name: str) -> list[str]:
+    text = read_text(path)
+    match = re.search(rf"\bstruct\s+{re.escape(struct_name)}\s*\{{", text)
+    if not match:
+        raise ValueError(f"unable to find struct {struct_name}")
+    start = match.end()
+    depth = 1
+    for index in range(start, len(text)):
+        char = text[index]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                body = text[start:index]
+                return sorted(
+                    set(
+                        re.findall(
+                            r"^\s*(?:pub(?:\([^)]*\))?\s+)?([a-z_][a-z0-9_]*)\s*:",
+                            body,
+                            flags=re.M,
+                        )
+                    )
+                )
+    raise ValueError(f"unterminated struct {struct_name}")
+
+
+def rust_enum_variant_fields(path: Path, enum_name: str) -> list[str]:
+    """Return enum variants and the names of their immediate struct fields."""
+    body = enum_body(read_text(path), enum_name)
+    items: set[str] = set()
+    index = 0
+    while index < len(body):
+        match = re.search(r"^\s{4}([A-Z][A-Za-z0-9]+)", body[index:], flags=re.M)
+        if match is None:
+            break
+        variant = match.group(1)
+        variant_start = index + match.end()
+        items.add(f"variant:{variant}")
+        cursor = variant_start
+        while cursor < len(body) and body[cursor].isspace():
+            cursor += 1
+        if cursor >= len(body) or body[cursor] != "{":
+            index = variant_start
+            continue
+        field_start = cursor + 1
+        depth = 1
+        cursor += 1
+        while cursor < len(body) and depth:
+            if body[cursor] == "{":
+                depth += 1
+            elif body[cursor] == "}":
+                depth -= 1
+            cursor += 1
+        if depth:
+            raise ValueError(f"unterminated variant {enum_name}::{variant}")
+        fields = re.sub(r"#\[[^\]]*\]\s*", "", body[field_start : cursor - 1])
+        for field in re.findall(r"(?:^|,)\s*([a-z_][a-z0-9_]*)\s*:", fields):
+            items.add(f"field:{variant}.{field}")
+        index = cursor
+    return sorted(items)
 
 
 def file_glob(pattern: str) -> list[str]:
@@ -380,6 +444,108 @@ def source_health_debt_surface() -> list[str]:
     return items
 
 
+def global_preferences_product_surface() -> list[str]:
+    """Exact GP-CM03 product, adapter, key, and receipt inventories.
+
+    Every item is derived from an implementation declaration.  The owning
+    contract remains the authority for changing the resulting inventory; this
+    collector makes an implementation drift visible in the parity gate.
+    """
+    items: set[str] = set()
+    model = ROOT / "crates/engine/src/preferences/product_model.rs"
+
+    for enum_name, prefix in (
+        ("PreferenceQueryV1", "query"),
+        ("PreferenceMutationRequestV1", "mutation"),
+        ("PreferenceProposalActionV1", "proposal_action"),
+        ("PreferenceErrorCodeV1", "error"),
+    ):
+        for shape in rust_enum_variant_fields(model, enum_name):
+            items.add(f"{prefix}:{shape}")
+
+    for struct_name in (
+        "PreferenceProductRequestV1",
+        "PreferenceProductResponseV1",
+        "PreferenceContextV1",
+        "PreferenceErrorV1",
+        "ProjectGenesisRequestV1",
+        "ProjectGenesisResponseV1",
+        "ProjectGenesisResultV1",
+        "ProjectUnitsSeedReceiptV2",
+        "ProjectUnitsSeedItemV2",
+    ):
+        for field in rust_struct_fields(model, struct_name):
+            items.add(f"schema_field:{struct_name}.{field}")
+
+    tokens = read_text(ROOT / "crates/engine/src/ir/units/tokens.rs")
+    constant_values = dict(
+        re.findall(r'^pub const ([A-Z_]+): &str = "([^"]+)";', tokens, flags=re.M)
+    )
+    active_units_match = re.search(
+        r"pub const ACTIVE_UNITS_KEYS: \[&str;\s*\d+\] = \[(.*?)\];",
+        tokens,
+        flags=re.S,
+    )
+    if active_units_match is None:
+        raise ValueError("unable to find ACTIVE_UNITS_KEYS")
+    active_unit_constants = re.findall(r"^\s*([A-Z_]+),", active_units_match.group(1), flags=re.M)
+    for name in active_unit_constants:
+        try:
+            items.add(f"seed_key:{constant_values[name]}")
+        except KeyError as error:
+            raise ValueError(f"ACTIVE_UNITS_KEYS contains unknown constant {name}") from error
+
+    surface = read_text(ROOT / "crates/engine/src/preferences/surface.rs")
+    surface_start = surface.index("pub fn gp_f05_surface_catalog(")
+    surface_end = surface.index("\n#[cfg(test)]", surface_start)
+    appearance_keys = re.findall(
+        r'PreferenceKey::parse\("([^"]+)"\)', surface[surface_start:surface_end]
+    )
+    for key in appearance_keys:
+        items.add(f"active_key:{key}")
+    for name in active_unit_constants:
+        items.add(f"active_key:{constant_values[name]}")
+
+    cli_preferences = ROOT / "crates/cli/src/args/preferences.rs"
+    preference_variants = rust_enum_variants(cli_preferences, "PreferencesCommands")
+    for variant in preference_variants:
+        command = re.sub(r"(?<!^)(?=[A-Z])", "-", variant).lower()
+        items.add(f"cli_command:preferences.{command}")
+    for shape in rust_enum_variant_fields(cli_preferences, "PreferencesCommands"):
+        items.add(f"cli_preferences:{shape}")
+    proposal_variants = rust_enum_variants(cli_preferences, "PreferencesProposalCommands")
+    for variant in proposal_variants:
+        command = re.sub(r"(?<!^)(?=[A-Z])", "-", variant).lower()
+        items.add(f"cli_command:preferences.proposal.{command}")
+    for shape in rust_enum_variant_fields(cli_preferences, "PreferencesProposalCommands"):
+        items.add(f"cli_proposal:{shape}")
+    items.add("cli_command:project.new")
+    for field in rust_struct_fields(
+        ROOT / "crates/cli/src/args/project_genesis.rs", "ProjectNewArgs"
+    ):
+        items.add(f"cli_project_new:field:{field}")
+
+    mcp_path = str(ROOT / "mcp-server")
+    if mcp_path not in sys.path:
+        sys.path.insert(0, mcp_path)
+    preferences_module = importlib.import_module("tools_catalog_preferences")
+    genesis_module = importlib.import_module("tools_catalog_project_genesis")
+    tool_specs = [
+        *preferences_module.PREFERENCE_TOOL_SPECS,
+        genesis_module.PROJECT_GENESIS_TOOL_SPEC,
+    ]
+    for tool in tool_specs:
+        name = tool["name"]
+        items.add(f"mcp_tool:{name}")
+        schema = tool["inputSchema"]
+        for field in sorted(schema["properties"]):
+            items.add(f"mcp_field:{name}.{field}")
+        for field in sorted(schema["required"]):
+            items.add(f"mcp_required:{name}.{field}")
+
+    return sorted(items)
+
+
 def inventory_items(spec: dict[str, str]) -> list[str]:
     kind = spec["kind"]
     if kind == "mcp_runtime_methods":
@@ -408,6 +574,8 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return gui_supervision_surface()
     if kind == "source_health_debt_surface":
         return source_health_debt_surface()
+    if kind == "global_preferences_product_surface":
+        return global_preferences_product_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 

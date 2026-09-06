@@ -93,6 +93,12 @@
       "kind": "source_health_debt_surface",
       "source": "specs/source_module_size_manifest.json entries + exact metric ceilings",
       "owner_spec": "docs/SOURCE_HEALTH_POLICY.md"
+    },
+    {
+      "id": "global_preferences_product_surface",
+      "kind": "global_preferences_product_surface",
+      "source": "GP-CM03 engine request/response/error schemas + active and seed keys + CLI commands/arguments + MCP tools/arguments",
+      "owner_spec": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md"
     }
   ]
 }
