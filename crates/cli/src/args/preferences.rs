@@ -29,4 +29,58 @@ pub(crate) enum PreferencesCommands {
         #[arg(long)]
         expected: Option<String>,
     },
+    /// Set one active Global Preference after foreground-TTY confirmation
+    Set {
+        key: String,
+        #[arg(long)]
+        value_json: String,
+        #[arg(long)]
+        expected: String,
+        #[arg(long)]
+        reason: String,
+        #[arg(long)]
+        request_id: Uuid,
+    },
+    /// Reset one active Global Preference after foreground-TTY confirmation
+    Reset {
+        key: String,
+        #[arg(long)]
+        expected: String,
+        #[arg(long)]
+        reason: String,
+        #[arg(long)]
+        request_id: Uuid,
+    },
+    /// Prepare, validate, accept, or reject portable preference proposals
+    Proposal {
+        #[command(subcommand)]
+        action: PreferencesProposalCommands,
+    },
+}
+
+#[derive(Subcommand)]
+pub(crate) enum PreferencesProposalCommands {
+    /// Prepare one proposal from a mutation request JSON file or stdin (`-`)
+    Prepare {
+        #[arg(long)]
+        request_json: PathBuf,
+        #[arg(long)]
+        rationale: String,
+    },
+    /// Validate one proposal JSON file or stdin (`-`)
+    Validate {
+        #[arg(long)]
+        proposal_json: PathBuf,
+    },
+    /// Apply one proposal after foreground-TTY confirmation
+    #[command(name = "accept-apply")]
+    AcceptApply {
+        #[arg(long)]
+        proposal_json: PathBuf,
+    },
+    /// Reject one proposal without persistent state
+    Reject {
+        #[arg(long)]
+        proposal_json: PathBuf,
+    },
 }

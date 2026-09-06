@@ -145,6 +145,31 @@ impl GlobalPreferencesProductService {
         })
     }
 
+    pub fn accept_proposal_human(
+        &mut self,
+        proposal: PreferenceProposalV1,
+        actor: &PreferenceActorV1,
+    ) -> Result<AcceptedProposalResultV1, PreferenceErrorV1> {
+        super::product_actor::validate_actor(actor, &self.context())?;
+        if !matches!(
+            actor.kind,
+            super::PreferenceActorKindV1::HumanGui | super::PreferenceActorKindV1::HumanCli
+        ) {
+            return Err(self.proposal_error(
+                PreferenceErrorCodeV1::HumanPresenceRequired,
+                "Proposal acceptance requires trusted human presence",
+                &proposal,
+            ));
+        }
+        self.validate_proposal(proposal.clone())?;
+        let mutation_result = self.commit_mutation(proposal.mutation.clone(), actor, None)?;
+        Ok(AcceptedProposalResultV1 {
+            proposal_id: proposal.proposal_id,
+            mutation_result,
+            acceptance_id: Uuid::new_v4(),
+        })
+    }
+
     fn validate_proposed_mutation(
         &self,
         mutation: &PreferenceMutationRequestV1,
