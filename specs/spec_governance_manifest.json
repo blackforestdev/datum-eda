@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "specs/workflow_delivery/pilot.contract.json",
     "docs/DATUM_SHARED_TOOLING_TAXONOMY.md",
     "docs/IPC_FOOTPRINT_SYSTEM.md",
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md",
@@ -42,6 +43,10 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/workflow_delivery/pilot.contract.json": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. Not executable validation, enrollment, independent review or owner acceptance; G01 handoff remains incomplete and G02 authorization is required."
+    },
     "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
       "notes": "WDQ-C05 owner-approved adoption packet: concrete pilot, G01-G06 completion contract, budgets and independent activation/resume boundary. No implementation, enforcement or product acceptance authorization."

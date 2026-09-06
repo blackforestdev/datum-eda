@@ -93,6 +93,16 @@ complete routes of every proposed GUI/menu/governance consumer edit first.
 If reviewed authority contradicts the proposed unavailable-state treatment,
 return that exact choice to the owner rather than changing the prototype.
 
+G01 planning artifacts: `specs/workflow_delivery/pilot.contract.json` and
+`research/process-quality/WORKFLOW_DELIVERY_PILOT_REVIEW.md`. The review identifies
+the absent native menu accessibility projection, real F shortcut bypass, and
+inactive legacy Fit button (not a live entry). The candidate tests menu-row
+keyboard operation after pointer opening, not whole-application keyboard-only
+access. G02 must review that explicit limit. These artifacts are not native proof,
+enrollment, a production registry export or G01 handoff completion. Exact shared
+accessibility-file ownership, independent session and trusted-runner handoffs
+remain outstanding.
+
 <!-- REQ:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02 -->
 <!-- OWNER:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02:WDQ-G02 -->
 ### Authorize the exact implementation window

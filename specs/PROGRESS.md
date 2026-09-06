@@ -192,6 +192,10 @@ The bounded implementation successor `WORKFLOW-DELIVERY-GATE-PILOT` /
 owner execution authorization is still required. No blocking rollout, prototype change, native
 authoring acceptance or canonical successor selection is implied by scheduling.
 
+| Governed document | Current evidence | Completion boundary | Tracking |
+| --- | --- | --- | --- |
+| `specs/workflow_delivery/pilot.contract.json` | WDQ-G01 candidate: four action keys, five native scenarios, reviewed shell authority and source-level menu accessibility gap; review in `research/process-quality/WORKFLOW_DELIVERY_PILOT_REVIEW.md` | Exact ownership/session/trusted-runner handoff remains; no native proof, executable validation or G01 closure | `dat-workflow-gate-pilot-b3s`, planning in progress; G02/G06 owner boundaries unchanged |
+
 Every specification that steers development is classified in
 `specs/spec_governance_manifest.json` and enforced by
 `scripts/check_spec_governance.py` (wired into `scripts/run_drift_gates.sh`).

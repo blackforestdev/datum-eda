@@ -1,0 +1,815 @@
+{
+  "schema_version": 1,
+  "id": "datum-action-readiness-pilot",
+  "frontier_key": "WORKFLOW-DELIVERY-GATE-PILOT",
+  "issue_id": "dat-workflow-gate-pilot-b3s",
+  "category": "product",
+  "consuming_workflow": "Manual read-only inspection of an existing native Project through View/Fit and truthful availability of three currently unimplemented menu actions.",
+  "intent": "Expose supported actions only through context-eligible production consumers and prove actual native behavior separately from implementation, review and owner acceptance.",
+  "scope": "Linux/X11, 1280x768 at scale 1.0, isolated native input and accessibility bus; verified GUI and CLI binaries from the recorded inputs with EDA_CLI_BIN pinned to the verified CLI (no implicit Cargo fallback); view.fit, view.layers, window.documents and help.about on their existing menu pointer/row-keyboard paths and the editor F/f shortcut. Missing handlers stay unavailable. This is a candidate G01 contract, not enrollment or runtime proof.",
+  "exclusions": "No Preferences/Units redesign or acceptance, authored geometry, new panel/About functionality, new dependency, prototype edit, gate activation or broader platform acceptance. No restoration of the removed side-panel Fit button. No full-application keyboard-only accessibility claim: existing menu-row keys are tested after pointer opening; an additional menu-entry shortcut requires reviewed scope. Existing layer toggles, document navigation and other supported actions must not be disabled to pass this pilot.",
+  "authority_refs": [
+    {
+      "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+      "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md",
+      "marker": "## Scope and tradeoffs"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+      "marker": "## How it rides the substrate (why this is Datum-shaped)"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "marker": "## Application Shell"
+    },
+    {
+      "path": "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md",
+      "marker": "## 4. Consumer activation checks"
+    }
+  ],
+  "route_ids": [
+    "prototype-editor-shell-and-panes",
+    "workflow-delivery-quality"
+  ],
+  "foundation_answers": {
+    "units_precision": {
+      "disposition": "not_applicable",
+      "reason": "No stored geometry or units setting is changed; compare source bytes, and test camera framing separately.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "numeric_entry": {
+      "disposition": "not_applicable",
+      "reason": "No numeric field is entered or parsed; this cannot accept any numeric-entry engine.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "selection_identity": {
+      "disposition": "required",
+      "reason": "Fit retains the selected stable subject and targets only the focused resolved pane; record both identities.",
+      "authority_refs": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "marker": "## How it rides the substrate (why this is Datum-shaped)"
+        }
+      ]
+    },
+    "grid_snap": {
+      "disposition": "not_applicable",
+      "reason": "No authored point is placed or snapped, and no grid setting is changed.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "undo_cancel": {
+      "disposition": "required",
+      "reason": "Menu Escape cancels navigation without action invocation; read-only actions add no design undo record.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "persistence_recovery": {
+      "disposition": "required",
+      "reason": "Clean close/reopen preserves every archived source/journal byte and recovers usable viewing after refusal; no pending-edit recovery claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "library_connectivity": {
+      "disposition": "not_applicable",
+      "reason": "No library binding, symbol, pin/pad or connectivity state is authored or repaired.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "## Pilot scope: honest action availability, not a new EDA feature"
+        }
+      ]
+    },
+    "settings_scope": {
+      "disposition": "required",
+      "reason": "Eligibility follows focused document/view and keyboard ownership; no application or Project preference writes.",
+      "authority_refs": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "marker": "## How it rides the substrate (why this is Datum-shaped)"
+        }
+      ]
+    }
+  },
+  "open_decisions": [],
+  "input_roots": [
+    ".cargo",
+    "Cargo.lock",
+    "Cargo.toml",
+    "crates",
+    "docs/gui/icon_set.json",
+    "docs/gui/menu_model.csv",
+    "docs/gui/menu_model.json",
+    "research/process-quality/evidence/wdq-c01-current/native-fixture.tar.gz",
+    "scripts/cargo_resource_policy.json",
+    "scripts/run_cargo_guarded.py"
+  ],
+  "consumers": [
+    {
+      "id": "about",
+      "entry_surfaces": [
+        "help-about-menu-keyboard",
+        "help-about-menu-pointer"
+      ],
+      "dispatch_key": "help.about",
+      "handler_ref": null,
+      "scope": "About Datum only, in all exposed menu contexts; no claim that other existing controls in this family are missing.",
+      "timing": "Unavailable before activation, with readable reason; native pointer/Enter attempts must explain and must not invoke a missing handler.",
+      "persistence": "No source, journal, preference or document mutation; explanation/focus are transient UI state.",
+      "unavailable_reason": "About Datum is unavailable in this build.",
+      "scenario_ids": [
+        "PILOT-S02",
+        "PILOT-S03",
+        "PILOT-S04",
+        "PILOT-S05"
+      ]
+    },
+    {
+      "id": "documents",
+      "entry_surfaces": [
+        "window-documents-menu-keyboard",
+        "window-documents-menu-pointer"
+      ],
+      "dispatch_key": "window.documents",
+      "handler_ref": null,
+      "scope": "Documents menu action only, in all exposed menu contexts; no claim that other existing controls in this family are missing.",
+      "timing": "Unavailable before activation, with readable reason; native pointer/Enter attempts must explain and must not invoke a missing handler.",
+      "persistence": "No source, journal, preference or document mutation; explanation/focus are transient UI state.",
+      "unavailable_reason": "Documents menu action is unavailable in this build.",
+      "scenario_ids": [
+        "PILOT-S02",
+        "PILOT-S03",
+        "PILOT-S04",
+        "PILOT-S05"
+      ]
+    },
+    {
+      "id": "fit",
+      "entry_surfaces": [
+        "view-fit-menu-keyboard",
+        "view-fit-menu-pointer",
+        "view-fit-shortcut"
+      ],
+      "dispatch_key": "view.fit",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "scope": "Focused resolved camera viewport; F/f only while the editor owns workspace keys. Opening a menu does not retarget the pane.",
+      "timing": "Evaluate readiness for display and again at invocation; apply fitted camera immediately and repaint.",
+      "persistence": "Session/view camera only; selection, layout, other cameras, source and design journal unchanged. Reopen promises source preservation, not camera restoration.",
+      "unavailable_reason": "Fit is unavailable because the focused pane has no resolved camera view.",
+      "scenario_ids": [
+        "PILOT-S01",
+        "PILOT-S03",
+        "PILOT-S04",
+        "PILOT-S05"
+      ]
+    },
+    {
+      "id": "layers",
+      "entry_surfaces": [
+        "view-layers-menu-keyboard",
+        "view-layers-menu-pointer"
+      ],
+      "dispatch_key": "view.layers",
+      "handler_ref": null,
+      "scope": "Layer Visibility menu action only, in all exposed menu contexts; no claim that other existing controls in this family are missing.",
+      "timing": "Unavailable before activation, with readable reason; native pointer/Enter attempts must explain and must not invoke a missing handler.",
+      "persistence": "No source, journal, preference or document mutation; explanation/focus are transient UI state.",
+      "unavailable_reason": "Layer Visibility menu action is unavailable in this build.",
+      "scenario_ids": [
+        "PILOT-S02",
+        "PILOT-S03",
+        "PILOT-S04",
+        "PILOT-S05"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "PILOT-S01",
+      "consumer_ids": [
+        "fit"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "| PILOT-S01 supported Fit |"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "marker": "## How it rides the substrate (why this is Datum-shaped)"
+        }
+      ],
+      "preconditions": "Fresh identified candidate binary, normal launch with the archived native Project copied to scratch, private X11/accessibility session, 1280x768 scale 1.0. Focus Board and select one existing pad; record stable selection and pane identities. Record initial source/journal hashes and camera.",
+      "inputs": [
+        "Wheel up twice over the focused Board to establish visibly non-fitted geometry; click View then Fit to Board.",
+        "Wheel up twice again over Board; with editor focus restored after menu activation, press unmodified F without clicking canvas geometry.",
+        "Wheel up twice again; click View, use Up/Down to focus Fit to Board, then press Enter."
+      ],
+      "expected_visible": "All three paths restore the same fitted Board view from a visibly zoomed view; no false success or unrelated dialog.",
+      "expected_state": "Each path reaches the same registry-backed datum_gui::Runtime::fit_camera identity. Zoom becomes 1.0 and camera center equals CameraState::fit_to_bounds for the recorded scene bounds. Selection, other-pane cameras, layout, source and journal remain identical.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the declared native input and visible result.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S02 and PILOT-S03 cover refusals.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S03 and PILOT-S05 cover cancellation.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Only the focused eligible pane may be affected; availability follows the current context.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "This scenario authors no numeric value or geometry; camera framing is view state, not numeric-entry or unit-conversion acceptance.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No design operation is authored; no new journal record is allowed and no edit undo/redo capability is claimed.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers unchanged-source reopen.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S05 covers live native accessibility.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers recovery after refusal.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S01 supported Fit |"
+            }
+          ]
+        }
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "PILOT-S02",
+      "consumer_ids": [
+        "about",
+        "documents",
+        "layers"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "| PILOT-S02 missing consumer |"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md",
+          "marker": "## Scope and tradeoffs"
+        }
+      ],
+      "preconditions": "Same identified candidate and scratch Project; Board focused, menus initially closed; source/journal baseline recorded. All three contract consumers have null production handlers.",
+      "inputs": [
+        "Click Help; inspect About Datum availability and attempt pointer activation.",
+        "Reopen Help; use Up/Down to focus About Datum and press Enter.",
+        "Repeat pointer and keyboard-row attempts for Window / Documents and View / Layer Visibility.",
+        "Return to Board after each refusal; verify existing layer toggles and pane navigation are still available without treating them as the missing menu handlers."
+      ],
+      "expected_visible": "All three rows are visibly unavailable with their contract unavailable_reason. Inspection remains possible, but click/Enter cannot show false success or claim an open Project is missing. No absent feature panel is fabricated.",
+      "expected_state": "No consumer invocation for these null handlers and no source/journal/preferences writes. No collateral disabling of existing layer or document/pane controls.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the declared native input and visible result.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Refuse the unsupported consumer or ineligible context without false success.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S03 and PILOT-S05 cover cancellation.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Only the focused eligible pane may be affected; availability follows the current context.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "This scenario authors no numeric value or geometry; camera framing is view state, not numeric-entry or unit-conversion acceptance.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No design operation is authored; no new journal record is allowed and no edit undo/redo capability is claimed.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers unchanged-source reopen.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S05 covers live native accessibility.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers recovery after refusal.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S02 missing consumer |"
+            }
+          ]
+        }
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "PILOT-S03",
+      "consumer_ids": [
+        "about",
+        "documents",
+        "fit",
+        "layers"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "| PILOT-S03 context/focus change |"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "marker": "## How it rides the substrate (why this is Datum-shaped)"
+        }
+      ],
+      "preconditions": "Archived fixture includes an empty schematic (no sheets); establish and record the normal Board plus unresolved schematic placeholder context through existing View / Layout: Board + Schematic. Candidate must identify focused pane and whether it has a resolved camera; no test-only context injection.",
+      "inputs": [
+        "Zoom Board with two wheel-up events, then open View and press Escape; press F after dismissal.",
+        "Use Tab to focus the schematic placeholder; open View and inspect Fit; attempt Enter on Fit, then dismiss with Escape.",
+        "Return to Board with Shift+Tab; zoom and invoke F; check each missing-consumer row remains unavailable after these focus changes.",
+        "Use the existing View / Fill Pane: Schematic and Fill Pane: Board entries to change the focused pane content; repeat readiness inspection and Escape dismissal without touching Project source."
+      ],
+      "expected_visible": "Escape dismisses the menu and leaves visible focus usable. Fit is enabled for the resolved Board, unavailable with its contract reason for the unresolved placeholder, and usable again on return. Missing consumers do not become enabled because focus changed.",
+      "expected_state": "No Fit invocation in an unresolved camera context, no successful no-op, and no refit of another pane. Menu dismissal returns keyboard ownership to the focused editor. Apart from explicitly requested pane/focus/camera view changes, selection, source and journal are unchanged.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the declared native input and visible result.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Refuse the unsupported consumer or ineligible context without false success.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Escape must dismiss the menu without executing its focused row or trapping focus.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Only the focused eligible pane may be affected; availability follows the current context.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "This scenario authors no numeric value or geometry; camera framing is view state, not numeric-entry or unit-conversion acceptance.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No design operation is authored; no new journal record is allowed and no edit undo/redo capability is claimed.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers unchanged-source reopen.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S05 covers live native accessibility.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "After refusal or ineligible context, return to a supported view and prove continued use without private writes.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S03 context/focus change |"
+            }
+          ]
+        }
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "PILOT-S04",
+      "consumer_ids": [
+        "about",
+        "documents",
+        "fit",
+        "layers"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "| PILOT-S04 failure and recovery |"
+        }
+      ],
+      "preconditions": "Same fixture/candidate identities, all archive members hashed before launch; no pending authored edits. Runtime sidecars distinguished from archived design/journal files.",
+      "inputs": [
+        "Attempt Help / About Datum, Window / Documents and View / Layer Visibility through their native menu rows; these are real unsupported production keys, not a test-only injected key.",
+        "Dismiss any open menu with Escape; focus Board, wheel up twice and press F to prove use continues after refusal.",
+        "Close via the window manager normal close request and wait for process exit; reopen the same scratch Project with the same binary.",
+        "Inspect Board, invoke Fit, close normally again, and compare all archived files plus any newly created paths."
+      ],
+      "expected_visible": "Truthful refusal followed by usable fitted Board; clean close exits successfully and reopen displays the same Project. No crash, missing-feature dialog or authored-change recovery story.",
+      "expected_state": "Every archived source and journal byte is identical before/after interaction and reopen; no new design partition or transaction. Enumerate new paths and explain permitted runtime sidecars; do not ignore new source writes. No Save, undo or crash-recovery acceptance.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the declared native input and visible result.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Refuse the unsupported consumer or ineligible context without false success.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S03 and PILOT-S05 cover cancellation.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S03 covers context scope.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "This scenario authors no numeric value or geometry; camera framing is view state, not numeric-entry or unit-conversion acceptance.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No design operation is authored; no new journal record is allowed and no edit undo/redo capability is claimed.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Compare the archived source and journal before and after clean process close and reopen; no Save or pending-edit recovery claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S05 covers live native accessibility.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "After refusal or ineligible context, return to a supported view and prove continued use without private writes.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S04 failure and recovery |"
+            }
+          ]
+        }
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "PILOT-S05",
+      "consumer_ids": [
+        "about",
+        "documents",
+        "fit",
+        "layers"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+          "marker": "| PILOT-S05 accessibility |"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "marker": "## How it rides the substrate (why this is Datum-shaped)"
+        }
+      ],
+      "preconditions": "Same Linux/X11 candidate with a working private native accessibility bus. Production menu nodes must be observable; absent nodes or bus failure block proof, never justify N/A. Menus are pointer-opened because a keyboard-only menubar entry is not established by current production code.",
+      "inputs": [
+        "Click View; collect the live accessible menu/row identities, labels, focus, enabled/sensitive states and unavailable reasons alongside the rendered menu.",
+        "Use Down/Up to visit Fit and Layer Visibility; record accessible focus/state after each key, then press Enter on the unavailable row.",
+        "Repeat row navigation/refusal for pointer-opened Help / About Datum and Window / Documents; press Escape and verify editor focus and F operability.",
+        "Change focused content Board to unresolved schematic and back through the existing pane controls; repeat View accessibility observations and confirm Fit availability changes with the rendered row.",
+        "Inspect that existing Terminal and Preferences accessibility objects are not replaced by menu objects; no setting change is made."
+      ],
+      "expected_visible": "Focus is visibly locatable; disabled rows remain inspectable and explain their unavailability without invoking their actions. Escape releases the menu and the supported Board F shortcut works. Keyboard-row behavior and native accessible states agree with paint.",
+      "expected_state": "Real native menu nodes expose stable identity/label and correct enabled, sensitive, focused and reason information from the shared readiness state. Unavailable rows never expose executable success; state changes follow actual input/context. No phantom menu nodes after dismissal, no replacement of existing accessibility consumers, and no source/journal mutation.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the declared native input and visible result.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Refuse the unsupported consumer or ineligible context without false success.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Escape must dismiss the menu without executing its focused row or trapping focus.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Only the focused eligible pane may be affected; availability follows the current context.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "This scenario authors no numeric value or geometry; camera framing is view state, not numeric-entry or unit-conversion acceptance.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No design operation is authored; no new journal record is allowed and no edit undo/redo capability is claimed.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers unchanged-source reopen.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Correlate native keyboard focus and operability with live accessible control identity, enabled state and explanation, not paint alone.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "not_applicable",
+          "reason": "This scenario does not claim this dimension; PILOT-S04 covers recovery after refusal.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md",
+              "marker": "| PILOT-S05 accessibility |"
+            }
+          ]
+        }
+      },
+      "method": "native_input"
+    }
+  ],
+  "proof_path": "docs/reviews/workflow-delivery-pilot/proof.json",
+  "review_path": "docs/reviews/workflow-delivery-pilot/review.json"
+}
