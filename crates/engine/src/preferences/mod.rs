@@ -12,6 +12,7 @@ use serde_json::Value;
 mod catalog;
 mod product_acceptance;
 mod product_actor;
+mod product_dispatch;
 mod product_idempotency;
 mod product_model;
 mod product_proposal;
