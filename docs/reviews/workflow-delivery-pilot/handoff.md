@@ -1,11 +1,17 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G04 complete; G05 independent replay is selected and pending;
+Status: G01–G04 complete; G05 independent replay is selected and in progress;
 activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`.
 
 ## G05 handoff boundary
+
+The owner's subsequent `please proceed` starts G05 under the already approved
+G03–G05 implementation/review window. The synchronized claim reserves the
+existing independent lane's `independent-*` artifacts and `review.json`; the
+original producer owns only coordination, gate-mechanics tests and unsigned
+activation preparation. No new production correction is scheduled.
 
 G04 closes only the bounded implementation/original-proof step. The separate
 reviewer must replay all five mandatory scenarios on fresh identified bytes,
@@ -28,6 +34,58 @@ Shared production files are committed and clean; this lane schedules no new
 production edit in the handoff. Coordinate any future corrective edit explicitly
 and repeat affected proof. Preferences remains paused at its own approval
 boundary; this handoff grants neither GP-CM05 execution nor G06 activation.
+
+## G05 gate-mechanics rehearsal; independent verdict still outstanding
+
+Recorded 2026-09-06 UTC against `200ea142`, with only this lane's G05 claim/test
+changes. The reserved reviewer verified the actual GUI/CLI hashes and all 1,778
+build-manifest members against the clean build snapshot and both the production
+source revision and current committed input closure. It is collecting new native
+observations; that identity check is not a native replay verdict.
+
+Producer-side verification:
+
+- `python3 -m unittest discover -s scripts -p 'test_workflow_delivery*.py' -v`:
+  the existing 96 tests passed, covering the N01–N20/P01–P07 refusal matrix.
+- `python3 -m unittest discover -s scripts -p 'test_project_status*.py' -v`:
+  50 tests passed, including owner boundaries, exact presentation and claims.
+- `python3 -m unittest discover -s scripts -p test_workflow_delivery_rehearsal.py -v`:
+  two additional full-checkpoint rehearsals passed in disposable synthetic Git
+  repositories. Infrastructure ends at verification with null activation and
+  acceptance, no review receipt, no claim and no successor selection. An accepted
+  synthetic product remains valid after an unrelated committed file/HEAD change;
+  changed/new relevant source refuses with `WDQ-STALE`, and removal of its
+  registered handler refuses earlier with `WDQ-ARTIFACT`. Restoring the exact
+  source restores validity. Every check leaves candidate bytes, the receipt,
+  Frontier, projection and tracker unchanged. These are not real owner receipts.
+- The committed actual producer proof passed `validate_proof`, explicit
+  `validate_environment` and `validate_correlations` for all five typed scenario
+  event records. An in-memory delivery mapping from ready=G01, activate=G04,
+  verify=G05, accept=G06 passed `validate_delivery(..., phase="verify")` against
+  the same actual proof. No such mapping was installed in the live Frontier.
+- Source health passed (1,796 source files); evidence traceability passed
+  (20 routes, 114 artifacts). No route digest, prototype, golden or production
+  source was changed for these checks.
+- The combined suite passed again with 98 tests after adding the two rehearsals.
+  Frontier/check-render, spec governance (203 classifications), parity
+  (16 inventories), progress coverage and Cargo resource policy also passed.
+
+Current original-proof identities, to be rechecked before an activation packet:
+
+| Identity | SHA-256 |
+| --- | --- |
+| Contract | `21a57c4ffbc54828bd2a48ca2abd8fa470dcaa0d74cddf8fe38bcd7e2be10c30` |
+| Canonical proof | `e1b83bb6e9e577516267c83ebdabf4129f2572e346cbf2e4384744ae3b2f597b` |
+| Authority closure | `b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562` |
+| Packet | `ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0` |
+
+The independent review digest and defect dispositions are not yet available;
+there is deliberately no owner ACCEPT request or fabricated receipt here.
+The local authority/base Git configuration remains unset. Hook, drift runner
+and alignment CI still invoke report-only checks; no live enrollment exists.
+G06 must use the owner-controlled promotion/runner boundary, not a candidate
+HEAD fallback. The two open Console findings still require independent triage
+and, if nonblocking, explicit owner deferral before acceptance.
 
 ## G04 identified producer proof validated
 
