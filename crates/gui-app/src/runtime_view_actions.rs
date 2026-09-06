@@ -24,14 +24,27 @@ fn style_label(style: datum_gui_protocol::CrosshairStyle) -> &'static str {
 
 impl Runtime {
     pub(super) fn activate_gui_local_menu_action(&mut self, action: &str) -> bool {
+        use datum_gui_protocol::gui_menu_model::action_registry::{self, ActionHandler};
+        if action_registry::consumer(action).is_some() {
+            match action_registry::admit(action, self.workspace()) {
+                Ok(ActionHandler::FitCamera) => {
+                    self.fit_camera();
+                    self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
+                }
+                Err(reason) => {
+                    self.log_console_refusal_for_action(
+                        ConsoleFeedbackSource::Viewport,
+                        action,
+                        reason,
+                    );
+                    self.invalidate_frame();
+                }
+            }
+            return true;
+        }
         match action {
             "preferences.global.open" => self.open_global_preferences(),
             "preferences.project.open" => self.open_project_preferences(),
-            "view.fit" => {
-                self.fit_camera();
-                self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
-                true
-            }
             "view.zoom_in" => {
                 self.zoom_focused_view(1.2);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "view zoom in");

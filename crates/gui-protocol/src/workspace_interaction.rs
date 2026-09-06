@@ -1,4 +1,7 @@
-//! Shared transient pointer and crosshair state for every workspace surface.
+//! Shared transient viewport interaction and camera context for every surface.
+
+mod camera;
+pub use camera::camera_scene_for_pane;
 
 use crate::PaneContent;
 
