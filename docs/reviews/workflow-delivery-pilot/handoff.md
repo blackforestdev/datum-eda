@@ -1,7 +1,7 @@
 # WDQ-G01 operational handoff candidate
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: incomplete handoff; no execution, enrollment or acceptance authorization.
+Status: G01 planning handoff complete; G02 execution decision pending.
 
 This is an operational record under the ratified PM041 gate contract and
 WORKFLOW_DELIVERY_ADOPTION_PACKET, not a new product specification. It is outside
@@ -70,7 +70,7 @@ receives the comparison base independently. Never derive authority from candidat
 HEAD, repository policy fields or an implementing session's chosen receipt.
 No trust values, Git settings, CI variables or activation flags are installed here.
 
-## Session separation and missing dispositions
+## Session separation at the initial handoff
 
 - Planning session: codex-wdq-g01-planning-20260906.
 - Proposed implementation/original-proof producer: this session only if explicitly
@@ -86,7 +86,52 @@ No trust values, Git settings, CI variables or activation flags are installed he
 - Trusted owner-selected authority/base values: intentionally not set during
   bootstrap; only the owner-controlled boundary can promote them at activation.
 
-G01 remains in progress pending the reviewer assignment and exact file/session
-handoff. G02 still decides the implementation window and the candidate's explicit
-keyboard-access scope limit. G06 still requires actual proof, independent replay
-and the exact owner receipt before activation. This record closes no issue.
+The unassigned/unconfirmed entries above describe the initial ed1ef716 handoff.
+The owner disposition below supersedes those two missing coordination choices.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G01-HANDOFF -->
+## Owner-reviewed coordination and completed planning handoff
+
+The owner first replied `I reviewed the handoff markdown please proceed.`
+This session then asked: `One coordination choice remains before I can close
+WDQ-G01: may I use a fresh, independent review-only session and let the Preferences
+session continue on nonoverlapping files, with shared accessibility files held
+until an explicit handoff?` The owner replied exactly `yeah, peoceed`.
+Recorded 2026-09-06 UTC from this conversation. This approves the reviewed
+handoff and that coordination arrangement, not unperformed proof or G02 execution.
+
+- Independent lane actually created: `/root/wdq_independent_review`, fresh context,
+  review only. Receipt-facing session label: `wdq-independent-review-20260906`;
+  this label maps to that actual lane, not a fictional reviewer. It acknowledged
+  document intake only, no implementation/original proof, no file/tracker edits
+  and no owner approval. No blocker to reservation was reported. G05 is not started.
+- Intended implementation/original-proof producer remains
+  `codex-wdq-g01-planning-20260906` (this session), subject to G02 execution
+  authorization and its synchronized lease. Any replacement of either session
+  requires a recorded handoff before participation; separation must be preserved.
+- Preferences continues under its unchanged claim on nonoverlapping files.
+  At this transaction its daemon dispatch.rs, main.rs and preferences_state.rs
+  changes were already staged by the other lane; none belongs to this commit.
+  No blanket pause, completion claim or canonical-task transfer occurs.
+- The complete shared accessibility path group in the table remains held,
+  excluded from an executable lease until an explicit bounded handoff with its
+  consumer owner and complete owning-route review. A future newly overlapping
+  path also stops at that boundary. This is the approved reservation, not a claim
+  that the other session has already transferred those files.
+- Initial implementation window proposed for G02: report-only G03 validator and
+  selector integration on the listed nonoverlapping script/governance paths.
+  G04 native work must observe the held-file condition; no native acceptance can
+  skip S05 because accessibility work is held. Preferences needs no resume action
+  while it continues; if an actual overlap later requires a pause, record the
+  bounded commit, retained step/claim and explicit resume condition first.
+- Trusted-runner disposition is the report-only/owner-run fallback above. No
+  candidate-selected trust values or CI enforcement are installed. G06 must
+  establish the external owner-controlled trust boundary before activation.
+
+G01 completes its planning deliverables: ratified contract and real input paths,
+four-consumer/five-scenario candidate, reviewed hook authority, named independent
+lane, file reservations and trusted-runner fallback. It does not assert native
+readiness, completed implementation or acceptance. The sole selected successor
+is G02 for the exact bounded implementation authorization, including review of
+the candidate's keyboard-access scope limit. G06 remains the separate activation
+decision. The parent issue remains open.

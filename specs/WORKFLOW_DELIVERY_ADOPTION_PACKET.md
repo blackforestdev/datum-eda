@@ -99,9 +99,12 @@ the absent native menu accessibility projection, real F shortcut bypass, and
 inactive legacy Fit button (not a live entry). The candidate tests menu-row
 keyboard operation after pointer opening, not whole-application keyboard-only
 access. G02 must review that explicit limit. These artifacts are not native proof,
-enrollment, a production registry export or G01 handoff completion. Exact shared
-accessibility-file ownership, independent session and trusted-runner handoffs
-remain outstanding.
+enrollment or a production registry export. The completed G01 operational handoff
+in `docs/reviews/workflow-delivery-pilot/handoff.md` records the owner's approved
+independent review lane, Preferences continuation on nonoverlapping files, shared
+accessibility hold and report-only bootstrap fallback. Shared-file release is
+still required before those edits; G02 implementation permission and G06 native
+acceptance/activation are not implied by planning completion.
 
 <!-- REQ:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02 -->
 <!-- OWNER:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02:WDQ-G02 -->

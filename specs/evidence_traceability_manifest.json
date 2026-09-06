@@ -12,7 +12,8 @@
         "research/process-quality/WORKFLOW_DELIVERY_PILOT_REVIEW.md"
       ],
       "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md", "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md", "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "specs/workflow_delivery/pilot.contract.json"],
-      "reviewed_digest": "5dafac11e0dab87f6ace9f64253d320358ea388338a2a487a63c35c3e8bccd94",
+      "reviewed_digest": "ec4b5a58ecf43f323e5a05ca25f9ede2de3e972716db5a6d83a35d075c843e0b",
+      "review_note_addendum": "G01 closure reconciliation: the complete five-source/five-consumer route remains reviewed; only adoption status links advance to the owner's explicit coordination disposition in the operational handoff. Candidate requirements and PM041 mechanism are unchanged. The actual independent review lane is reserved, Preferences continues on nonoverlapping files, shared accessibility remains held, and bootstrap stays report-only. G02 execution and G06 activation remain owner boundaries; no native proof or independent replay is claimed. The prior review_note below describes the b64a79ba pre-handoff checkpoint.",
       "review_note": "WDQ-G01: five sources and five complete consumers reviewed, including the new pilot source review and candidate JSON instance. The complete prototype-editor-shell-and-panes route was also read without editing it. PM041 and PILOT-S01-S05 remain controlling; candidate requirements expose native menu accessibility absence and the real F bypass, correct the inactive FitBoard path, cover verified GUI/CLI input closure and explicitly limit keyboard claims. Mechanical instance checks are not an implemented delivery gate or native proof. G01 ownership/session/trusted-runner handoff, G02 authorization and G06 activation remain outstanding. No unrelated route digest, prototype, runtime, hook, CI, dependency or canonical selection was changed."
     },
     {
