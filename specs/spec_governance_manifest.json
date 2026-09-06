@@ -46,7 +46,7 @@
   "entries": {
     "docs/reviews/workflow-delivery-pilot/handoff.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
-      "notes": "Completed WDQ-G01-G03 operational handoff under PM041, outside the pilot authority route to avoid receipt cycles. Records bounded implementation authorization, report-only validator and 82 hermetic tests, independent code-inspection limits, held accessibility files and separate global drift failures. G04 is selected; G06 activation remains unapproved."
+      "notes": "Completed WDQ-G01-G05 operational evidence under PM041, outside the pilot authority route to avoid receipt cycles. Records bounded implementation, identified native producer proof and distinct independent replay, 98 delivery tests, retained defects, owner-approved recoverable archival and the unsigned exact activation candidate. G06 remains an owner-decision boundary; no live enrollment, owner receipt, external trust promotion or Preferences approval."
     },
     "specs/workflow_delivery/pilot.contract.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",

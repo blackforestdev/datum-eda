@@ -1,9 +1,44 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G04 complete; G05 independent replay is selected and in progress;
-activation remains off. G04 producer proof landed in `8d96e3a1` after the
-production corrections in `dde90c75`.
+Status: G01–G05 complete; G06 is the selected owner-decision boundary.
+Activation remains off. G04 producer proof landed in `8d96e3a1` after the
+production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-INDEPENDENT-REPLAY -->
+## G05 completed handoff
+
+The distinct reserved reviewer completed new native S01–S05 and pointer-regression
+runs, inspected all 69 PNGs, passed 83 machine observations and recorded 19
+required-dimension judgments. It read every source/consumer in both bound
+authority routes, all 26 dimension N/A dispositions, all eight foundation
+answers and the complete 1,778-file input closure. Its report, assessment, raw
+replay, typed artifacts and `review.json` are committed in `fd117641`.
+
+Independent disposition: approve **only the finite replay**. Both Console
+findings remain nonblocking, open and not owner-deferred. Their prospective
+owner-section references are unfulfilled; `owner_receipt` is null. Read
+`independent-review.md` for actual observations, the extra failed diagnostic's
+limits and the full triage. No independent verdict was authored by the producer.
+
+The coordinating lane revalidated the committed original and replay Proofs,
+explicit identical environments, builds, fixtures and input manifests, distinct
+sessions, matching packet hash, and five plus five disjoint typed event records.
+The review SHA-256 is
+`b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba`;
+the replay blob SHA-256 is
+`b75b15e40e5f9188814ebaaa4b10b19c6b700c5d9b2cd2b3517fc2624a4c9c1b`.
+Full trusted acceptance is deliberately unavailable without the owner receipt,
+explicit deferrals and external promotion. Mechanical checks do not replace
+the reviewer's visual judgments or the owner's acceptance.
+
+The gate-mechanics evidence below and commit `2e164b5e` cover narrow infrastructure
+completion, accepted-packet invalidation, unrelated-change preservation and
+unchanged selection/claims. The clean-worktree precondition was resolved through
+the owner's explicitly approved recoverable archive, not a filter or source
+change. The unsigned policy and exact response below prepare G06 without
+installing enrollment, accepting defects, setting trust or resuming Preferences.
+The G05 claim is released at this handoff; the parent issue remains open for G06.
 
 ## G05 handoff boundary
 
@@ -35,7 +70,7 @@ production edit in the handoff. Coordinate any future corrective edit explicitly
 and repeat affected proof. Preferences remains paused at its own approval
 boundary; this handoff grants neither GP-CM05 execution nor G06 activation.
 
-## G05 gate-mechanics rehearsal; independent verdict still outstanding
+## G05 gate-mechanics rehearsal (recorded before replay completion)
 
 Recorded 2026-09-06 UTC against `200ea142`, with only this lane's G05 claim/test
 changes. The reserved reviewer verified the actual GUI/CLI hashes and all 1,778
@@ -79,13 +114,144 @@ Current original-proof identities, to be rechecked before an activation packet:
 | Authority closure | `b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562` |
 | Packet | `ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0` |
 
-The independent review digest and defect dispositions are not yet available;
-there is deliberately no owner ACCEPT request or fabricated receipt here.
+At this rehearsal checkpoint the independent review digest was not yet available;
+the completed replay and unsigned request now appear above/below. No owner
+receipt or defect disposition has been fabricated.
 The local authority/base Git configuration remains unset. Hook, drift runner
 and alignment CI still invoke report-only checks; no live enrollment exists.
 G06 must use the owner-controlled promotion/runner boundary, not a candidate
-HEAD fallback. The two open Console findings still require independent triage
-and, if nonblocking, explicit owner deferral before acceptance.
+HEAD fallback. The two open Console findings have now received independent
+nonblocking triage and still require explicit owner deferral before acceptance.
+
+### Live-worktree activation precondition
+
+A read-only local clone at `2e164b5e`, checked out detached in
+`/home/bfadmin/Documents/datum-wdq-activation-check-dSgXRJRt`, passes the actual
+producer proof's full in-memory `verify` checkpoint from a **worktree** view:
+all 1,778 declared inputs match. No policy, receipt, Git trust configuration or
+live Frontier delivery mapping was installed in either checkout.
+
+Before the owner-approved archive, the shared worktree had 1,816 files in that closure, including
+38 pre-existing ignored runtime/test outputs. The same check refuses with
+`WDQ-STALE` at `corrected-build/input-manifest.json`. The extra files are under
+four text-native fixture `.datum` directories and the Console golden directory
+(three `.actual.png`, `.diff.png`, `.report.txt` outputs). Runtime material
+includes credential-bearing files: contents were not printed, committed or
+reclassified as source. This is an actual activation precondition, not an excuse
+to filter ignored inputs or claim that a clean Git status establishes freshness.
+
+The owner answered `yes` to the explicit bounded-archive request in this thread.
+After checking that none of the seven exact targets contained tracked files,
+all four directory `lsof +D` checks and the three-output `lsof` check reported
+no open handles; no Cargo/rustc process was active. The 35 files in the four
+`.datum` directories and three Console outputs were moved, preserving their
+relative paths, to the private mode-700 directory
+`/home/bfadmin/Documents/datum-wdq-ignored-archive-xZsytO1s`. Nothing was deleted.
+The before/after tar-stream SHA-256 was identical:
+`2e4bd1911b4408b46f69218e29c5b56b73491d0818eb2484705ca6db651234eb`.
+Credential-bearing content stays private and is not a repository artifact.
+
+The seven recoverable targets are the `.datum` directories beneath
+`text-density-repro`, `text-fidelity-repro`, `text-intent-repro` and
+`text-transform-repro` in `crates/engine/testdata/golden/text/native`, plus
+`routine-focused.actual.png`, `routine-focused.diff.png` and
+`routine-focused.report.txt` in `crates/gui-render/testdata/golden/console`.
+Restoration must check for new destination files first, then return only these
+archived paths; never overwrite later work. Their restoration would deliberately
+make this proof stale again until the input closure is reconciled.
+
+The shared worktree now has exactly the recorded 1,778 inputs and passes the
+same actual in-memory `verify` checkpoint. No tracked source, input-root filter,
+policy, trust setting or other lane's development file changed. This resolves
+the observed clean-worktree precondition, not future test pollution or external
+trust promotion. Both development lanes remain in their original workspace;
+Preferences resumption and G06 activation are still unauthorized.
+
+<!-- OWNER:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06:G06-ACTIVATION-PACKET -->
+## G06 unsigned activation candidate
+
+This is a proposal for the separate G06 owner decision, not a recorded response.
+The native scope remains four action keys, nine existing entry surfaces and
+five scenarios at Linux/X11 1280x768/scale 1.0. No Preferences, general Console,
+new feature, other platform or native-authoring acceptance follows.
+
+The proposed policy is `activation-policy.candidate.json` beside this handoff.
+Its closed shape, legacy baseline and ratified decision reference validate.
+It enrolls **only** WORKFLOW-DELIVERY-GATE-PILOT and preserves `200ea142` as
+historical baseline. Its activation reference deliberately names a future owner
+section, not an already approved enrollment. No live policy exists.
+
+The proposed `completion.delivery` value on the existing item is:
+
+```json
+{
+  "contract_path": "specs/workflow_delivery/pilot.contract.json",
+  "checkpoints": {
+    "ready": "WDQ-G01",
+    "activate": "WDQ-G04",
+    "verify": "WDQ-G05",
+    "accept": "WDQ-G06"
+  }
+}
+```
+
+The checkpoint mapping has passed actual producer verification in memory; it
+creates no new completion steps, ordering, claims or lifecycle. The final trusted
+comparison base must be the committed **G05-complete** handoff, not the earlier
+G04-only baseline: acceptance cannot skip the verified baseline.
+
+Proposed activation is owner-local, through the PM041 owner-controlled runner
+boundary. G06 first records the owner's exact response and explicit defect
+dispositions, prepares the enrollment/receipt/completion transaction and its
+scoped blocking integration, and validates existing gates. The owner then
+reviews and externally promotes that exact commit. The implementing lane must
+not choose its own trusted authority, set approval credentials or infer promotion
+from an ACCEPT line. Only the trusted revision's validator may certify the final
+candidate. Local/CI report-only output is not enforcement evidence.
+
+Owner-controlled configuration must explicitly identify the full authority and
+comparison-base commits plus the reviewed environment path. The trusted runner
+must execute outside candidate-controlled code, against the candidate revision
+or index, preserving the existing file-lane and staged-format checks. Relevant
+edits, missing configuration, stale/altered evidence and candidate policy/gate
+changes must refuse; unrelated edits must retain the proven behavior. No remote
+CI activation or tamper-proof security claim is included. If that controlled
+runner cannot be established, stay report-only and leave G06 incomplete.
+
+Final verification invocation shape, with values supplied by the owner rather
+than inferred by an implementing agent:
+
+```text
+python3 <owner-controlled-trusted-scripts>/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --enforce --authority-ref <full-owner-promoted-commit> --base-ref <full-G05-complete-commit> --candidate-ref <full-activation-candidate-commit> --environment-path docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json
+```
+
+The current Preferences checkpoint remains GP-CM04, unclaimed, awaiting its own
+owner approval for GP-CM05. Completing WDQ must release only this lane; it must
+not approve or resume Preferences, enroll its task, change canonical selection,
+or schedule a successor. Shared production files remain available only through
+the established coordination/ownership rules. This is the proposed resume
+disposition, not a request for Preferences approval.
+
+Two explicit nonblocking owner deferrals are requested with acceptance. Neither
+is currently approved: oversized Console records can still hide their tails,
+and scrolling beyond available records can show blank history. The reviewer
+approved only the finite pilot's complete refusal records. Both beads stay open
+for future owning-lane correction; no general Console compliance is claimed.
+
+The exact proposed response below binds the original packet and independently
+authored review, whose hash excludes only the future owner-receipt pointer.
+These lines are an **unsigned request**, not a receipt or owner disposition:
+
+```text
+ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba
+DEFER dat-console-oversized-history-9uz
+DEFER dat-console-scroll-range-4y3
+```
+
+Alternatively respond `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific
+correction>` or `WORKFLOW-DELIVERY-GATE-PILOT: defer — <reason>`. G06 cannot close
+from a bare general instruction to proceed, an agent-authored approval, or the
+receipt alone without the owner-controlled promotion and passing enforcement.
 
 ## G04 identified producer proof validated
 
