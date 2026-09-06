@@ -14,6 +14,26 @@ use super::{
 };
 
 impl GlobalPreferencesProductService {
+    pub fn rows(&self) -> Vec<GlobalPreferenceRow> {
+        self.service.rows()
+    }
+
+    pub fn surface(&self) -> &super::PreferenceSurfaceCatalog {
+        self.service.surface()
+    }
+
+    pub fn registry(&self) -> &super::DescriptorRegistry {
+        self.service.registry()
+    }
+
+    pub fn status(&self) -> &super::PreferenceServiceStatus {
+        self.service.status()
+    }
+
+    pub fn legacy_migration(&self) -> &super::LegacyConsoleMigrationState {
+        self.service.legacy_migration()
+    }
+
     pub fn query(
         &self,
         query: PreferenceQueryV1,

@@ -1,5 +1,25 @@
 use super::*;
 
+fn product_service(
+    repository_root: PathBuf,
+    legacy_console_path: &std::path::Path,
+    writer_instance: &str,
+    _scope: &str,
+) -> std::result::Result<GlobalPreferencesProductService, PreferenceErrorV1> {
+    let configuration_base = repository_root
+        .parent()
+        .unwrap_or_else(|| std::path::Path::new("/"))
+        .to_path_buf();
+    GlobalPreferencesProductService::open(
+        &FixedPreferenceLocationProvider(PreferenceLocations {
+            configuration_base,
+            repository_root,
+            legacy_console_path: legacy_console_path.to_path_buf(),
+        }),
+        writer_instance,
+    )
+}
+
 #[test]
 fn preference_notice_priority_distinguishes_status_from_refusal_and_recovery() {
     let (_, polite) = global_preferences_notice_announcement(GlobalPreferencesNoticeUi::Polite(
@@ -22,7 +42,7 @@ fn projection_preserves_the_accepted_slice_while_full_catalog_work_remains_stage
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "gui-test-writer",
@@ -130,7 +150,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
     let before_hash = project_tree_hash(&project);
 
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "zero-project-writer",
@@ -182,7 +202,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
     drop(coordinator);
 
     let mut restarted = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "zero-project-restart-writer",
@@ -196,7 +216,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
     std::fs::write(base.join("repository/head.json"), b"{corrupt-head").unwrap();
     drop(restarted);
     let mut corrupt = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "zero-project-corrupt-writer",
@@ -237,7 +257,7 @@ fn every_visible_value_updates_its_declared_live_consumer() {
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "consumer-test-writer",
@@ -308,7 +328,7 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "keyboard-test-writer",
@@ -442,7 +462,7 @@ fn projected_default_ui(name: &str) -> WorkspaceUiState {
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "projection-test-writer",
@@ -472,7 +492,7 @@ fn dialog_is_unique_and_restores_the_original_invoker_focus() {
     let _ = std::fs::remove_dir_all(&base);
     std::fs::create_dir_all(&base).unwrap();
     let mut coordinator = GlobalPreferencesCoordinator {
-        service: GlobalPreferencesService::open(
+        service: product_service(
             base.join("repository"),
             &base.join("legacy.json"),
             "unique-dialog-test-writer",

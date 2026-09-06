@@ -1,4 +1,7 @@
 //! Application coordinator for the one engine-owned Global Preferences service.
+#[path = "global_preferences_product_adapter.rs"]
+mod product_adapter;
+
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
@@ -10,9 +13,11 @@ use datum_gui_protocol::{
 };
 use eda_engine::ir::units::{ACTIVE_UNITS_KEYS, profile_from_descriptor_values};
 use eda_engine::preferences::{
-    GlobalPreferencesService, PreferenceKey, PreferenceLiveConsumer, PreferenceServiceRefusal,
+    FixedPreferenceLocationProvider, GlobalPreferencesProductService, PreferenceErrorV1,
+    PreferenceKey, PreferenceLiveConsumer, PreferenceLocations, PreferenceMutationRequestV1,
 };
 use serde_json::Value;
+use uuid::Uuid;
 
 use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
@@ -20,12 +25,13 @@ use crate::global_preferences_projection::{
     apply_live_consumers, bool_consumer_value, control_projection, explanation_lines,
     provenance_label, repository_notice,
 };
+use product_adapter::{head_expectation, human_gui_actor, platform_config_root};
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, NamedKey};
 
 pub(super) const SCOPE: &str = "Global · this device";
 pub(super) struct GlobalPreferencesCoordinator {
-    service: GlobalPreferencesService,
+    service: GlobalPreferencesProductService,
     return_focus: ApplicationFocus,
     terminal_theme_before_high_contrast: Option<datum_gui_protocol::TerminalTheme>,
 }
@@ -39,9 +45,13 @@ impl GlobalPreferencesCoordinator {
             .map(PathBuf::from)
             .unwrap_or_else(|| config_root.join("gui-preferences.json"));
         let writer_instance = format!("datum-gui-{}", std::process::id());
-        let service =
-            GlobalPreferencesService::open(repository_root, &legacy_path, writer_instance, SCOPE)
-                .context("open Global Preferences service")?;
+        let provider = FixedPreferenceLocationProvider(PreferenceLocations {
+            configuration_base: config_root,
+            repository_root,
+            legacy_console_path: legacy_path,
+        });
+        let service = GlobalPreferencesProductService::open(&provider, &writer_instance)
+            .map_err(|error| anyhow::anyhow!("open Global Preferences service: {error:?}"))?;
         Ok(Self {
             service,
             return_focus: ApplicationFocus::default(),
@@ -172,17 +182,23 @@ impl GlobalPreferencesCoordinator {
         key: &str,
         value: Value,
         ui: &mut WorkspaceUiState,
-    ) -> Result<(), PreferenceServiceRefusal> {
-        let key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
-        let expected = self.service.status().generation().cloned();
-        match self.service.set_user(key.clone(), value, expected.as_ref()) {
+    ) -> Result<(), PreferenceErrorV1> {
+        let typed_key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
+        let request = PreferenceMutationRequestV1::SetUser {
+            key: key.to_owned(),
+            value,
+            expected: head_expectation(self.service.status()),
+            request_id: Uuid::new_v4(),
+            reason: "Global Preferences control activation".to_owned(),
+        };
+        match self.service.mutate(request, &human_gui_actor()) {
             Ok(_) => {
                 self.publish_projection(ui);
                 ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Polite(format!(
                     "{} changed for this device.",
                     self.service
                         .registry()
-                        .get(&key)
+                        .get(&typed_key)
                         .unwrap()
                         .presentation
                         .label
@@ -199,21 +215,22 @@ impl GlobalPreferencesCoordinator {
         }
     }
 
-    fn reset(
-        &mut self,
-        key: &str,
-        ui: &mut WorkspaceUiState,
-    ) -> Result<(), PreferenceServiceRefusal> {
-        let key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
-        let expected = self.service.status().generation().cloned();
-        match self.service.reset_user(key.clone(), expected.as_ref()) {
+    fn reset(&mut self, key: &str, ui: &mut WorkspaceUiState) -> Result<(), PreferenceErrorV1> {
+        let typed_key = PreferenceKey::parse(key).expect("UI key came from typed surface catalog");
+        let request = PreferenceMutationRequestV1::ResetUser {
+            key: key.to_owned(),
+            expected: head_expectation(self.service.status()),
+            request_id: Uuid::new_v4(),
+            reason: "Global Preferences Reset activation".to_owned(),
+        };
+        match self.service.mutate(request, &human_gui_actor()) {
             Ok(_) => {
                 self.publish_projection(ui);
                 ui.global_preferences.notice = Some(GlobalPreferencesNoticeUi::Polite(format!(
                     "{} reset to its effective default.",
                     self.service
                         .registry()
-                        .get(&key)
+                        .get(&typed_key)
                         .unwrap()
                         .presentation
                         .label
@@ -229,13 +246,6 @@ impl GlobalPreferencesCoordinator {
             }
         }
     }
-}
-
-fn platform_config_root() -> Option<PathBuf> {
-    std::env::var_os("XDG_CONFIG_HOME")
-        .map(PathBuf::from)
-        .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config")))
-        .map(|base| base.join("datum"))
 }
 
 impl Runtime {
