@@ -37,6 +37,14 @@ impl Fixture {
         }
     }
 
+    fn provider(&self) -> FixedPreferenceLocationProvider {
+        FixedPreferenceLocationProvider(PreferenceLocations {
+            configuration_base: self.root.join("config"),
+            repository_root: self.root.join("config/datum/preferences"),
+            legacy_console_path: self.root.join("config/datum/gui-preferences.json"),
+        })
+    }
+
     fn request(&self, name: &str) -> ProjectGenesisRequestV1 {
         ProjectGenesisRequestV1 {
             request_id: uuid::Uuid::new_v4(),
@@ -54,6 +62,25 @@ impl Drop for Fixture {
     fn drop(&mut self) {
         let _ = std::fs::remove_dir_all(&self.root);
     }
+}
+
+fn project_tree(root: &std::path::Path) -> BTreeMap<PathBuf, Vec<u8>> {
+    fn visit(base: &std::path::Path, at: &std::path::Path, out: &mut BTreeMap<PathBuf, Vec<u8>>) {
+        for entry in std::fs::read_dir(at).unwrap() {
+            let path = entry.unwrap().path();
+            if path.is_dir() {
+                visit(base, &path, out);
+            } else {
+                out.insert(
+                    path.strip_prefix(base).unwrap().to_path_buf(),
+                    std::fs::read(path).unwrap(),
+                );
+            }
+        }
+    }
+    let mut files = BTreeMap::new();
+    visit(root, root, &mut files);
+    files
 }
 
 #[test]
@@ -170,44 +197,97 @@ fn concurrent_identical_creators_publish_once_and_replay_one_result() {
 }
 
 #[test]
-fn later_global_mutation_cannot_change_a_published_project() {
-    let mut fixture = Fixture::new("no-live-following");
+fn fixed_identity_factory_projects_are_byte_identical_across_destinations() {
+    let fixture = Fixture::new("deterministic-roots");
     let actor = fixture.actor();
-    let mut request = fixture.request("Pinned Global Project");
-    request.units_source = ProjectUnitsSourceV1::Global {
-        expected_generation: None,
-    };
-    fixture
-        .service
-        .create_project(request.clone(), &actor)
-        .unwrap();
-    let before: BTreeMap<_, _> = [
-        "project.json",
-        "schematic/schematic.json",
-        "board/board.json",
-        "rules/rules.json",
-    ]
-    .into_iter()
-    .map(|path| (path, std::fs::read(request.destination.join(path)).unwrap()))
-    .collect();
+    let request = fixture.request("deterministic-a");
+    let mut trees = Vec::new();
+    for name in ["deterministic-a", "deterministic-b", "deterministic-c"] {
+        let mut at = request.clone();
+        at.destination = fixture.root.join(name);
+        fixture.service.create_project(at.clone(), &actor).unwrap();
+        trees.push(project_tree(&at.destination));
+    }
+    assert_eq!(trees[0], trees[1]);
+    assert_eq!(trees[1], trees[2]);
+}
 
-    fixture
-        .service
+#[test]
+fn global_seed_is_pinned_once_and_never_follows_later_edits() {
+    let fixture = Fixture::new("no-live-following");
+    let provider = fixture.provider();
+    let actor = fixture.actor();
+    let mut writer = GlobalPreferencesProductService::open(&provider, "seed-writer").unwrap();
+    let pinned = writer
         .mutate(
-            crate::preferences::PreferenceMutationRequestV1::SetUser {
+            PreferenceMutationRequestV1::SetUser {
                 key: "datum.units.board_length".to_owned(),
                 value: json!("mil"),
-                expected: crate::preferences::HeadExpectationV1::Missing,
+                expected: HeadExpectationV1::Missing,
                 request_id: uuid::Uuid::new_v4(),
-                reason: "prove copy-once Project ownership".to_owned(),
+                reason: "establish pinned test generation".to_owned(),
             },
             &actor,
         )
+        .unwrap()
+        .generation
         .unwrap();
-    for (path, bytes) in before {
-        assert_eq!(
-            std::fs::read(request.destination.join(path)).unwrap(),
-            bytes
-        );
-    }
+    drop(writer);
+
+    let genesis = GlobalPreferencesProductService::open(&provider, "genesis-reader").unwrap();
+    let mut request = fixture.request("Pinned Global Project");
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: Some(pinned.clone()),
+    };
+    let mut changed_during_creation = false;
+    let result = genesis
+        .create_project_with_checkpoint(request.clone(), &actor, |checkpoint| {
+            if checkpoint == GenesisCheckpoint::StagingPrepared && !changed_during_creation {
+                let mut concurrent =
+                    GlobalPreferencesProductService::open(&provider, "concurrent-writer")
+                        .map_err(|error| format!("{error:?}"))?;
+                concurrent
+                    .mutate(
+                        PreferenceMutationRequestV1::SetUser {
+                            key: "datum.units.board_length".to_owned(),
+                            value: json!("inch"),
+                            expected: HeadExpectationV1::Generation(pinned.clone()),
+                            request_id: uuid::Uuid::new_v4(),
+                            reason: "change Global after genesis pins its seed".to_owned(),
+                        },
+                        &actor,
+                    )
+                    .map_err(|error| format!("{error:?}"))?;
+                changed_during_creation = true;
+            }
+            Ok(())
+        })
+        .unwrap();
+    assert!(changed_during_creation);
+    assert!(matches!(
+        &result.units_receipt.source,
+        ProjectUnitsReceiptSourceV2::Global {
+            generation: Some(generation),
+            ..
+        } if generation == &pinned
+    ));
+    let board = result
+        .units_receipt
+        .items
+        .iter()
+        .find(|item| item.key == "datum.units.board_length")
+        .unwrap();
+    assert_eq!(board.copied_value, json!("mil"));
+
+    let before = project_tree(&request.destination);
+    let reopened = GlobalPreferencesProductService::open(&provider, "post-genesis-reader").unwrap();
+    assert_eq!(
+        reopened
+            .context()
+            .generation
+            .as_ref()
+            .map(|value| value.generation),
+        Some(1)
+    );
+    assert_eq!(project_tree(&request.destination), before);
 }

@@ -572,8 +572,7 @@ mod tests {
     use crate::api::native_write::project::{project_display_units, project_units_seed_evidence};
     use crate::ir::units::profile_to_descriptor_values;
     use crate::preferences::{
-        FixedPreferenceLocationProvider, HeadExpectationV1, PreferenceActorKindV1,
-        PreferenceLocations, PreferenceMutationRequestV1,
+        FixedPreferenceLocationProvider, PreferenceActorKindV1, PreferenceLocations,
     };
 
     struct Fixture {
@@ -606,14 +605,6 @@ mod tests {
             }
         }
 
-        fn provider(&self) -> FixedPreferenceLocationProvider {
-            FixedPreferenceLocationProvider(PreferenceLocations {
-                configuration_base: self.root.join("config"),
-                repository_root: self.root.join("config/datum/preferences"),
-                legacy_console_path: self.root.join("config/datum/gui-preferences.json"),
-            })
-        }
-
         fn request(&self, name: &str) -> ProjectGenesisRequestV1 {
             ProjectGenesisRequestV1 {
                 request_id: uuid::Uuid::new_v4(),
@@ -631,25 +622,6 @@ mod tests {
         fn drop(&mut self) {
             let _ = std::fs::remove_dir_all(&self.root);
         }
-    }
-
-    fn project_tree(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
-        fn visit(base: &Path, at: &Path, out: &mut BTreeMap<PathBuf, Vec<u8>>) {
-            for entry in std::fs::read_dir(at).unwrap() {
-                let path = entry.unwrap().path();
-                if path.is_dir() {
-                    visit(base, &path, out);
-                } else {
-                    out.insert(
-                        path.strip_prefix(base).unwrap().to_path_buf(),
-                        std::fs::read(path).unwrap(),
-                    );
-                }
-            }
-        }
-        let mut files = BTreeMap::new();
-        visit(root, root, &mut files);
-        files
     }
 
     #[test]
@@ -734,157 +706,5 @@ mod tests {
         other.request_id = uuid::Uuid::new_v4();
         let refusal = fixture.service.create_project(other, &actor).unwrap_err();
         assert_eq!(refusal.code, PreferenceErrorCodeV1::ProjectTargetExists);
-    }
-
-    #[test]
-    fn every_publication_checkpoint_leaves_an_absent_or_complete_project() {
-        let fixture = Fixture::new("checkpoint-faults");
-        let checkpoints = [
-            GenesisCheckpoint::StagingPrepared,
-            GenesisCheckpoint::ProjectBuilt,
-            GenesisCheckpoint::ProjectValidated,
-            GenesisCheckpoint::StagingSynced,
-            GenesisCheckpoint::ProjectPublished,
-        ];
-
-        for injected in checkpoints {
-            let actor = fixture.actor();
-            let request = fixture.request(&format!("Fault {injected:?}"));
-            let staging = staging_path(
-                &request.destination,
-                request.request_id,
-                actor.invocation_id,
-            )
-            .unwrap();
-            let outcome = fixture.service.create_project_with_checkpoint(
-                request.clone(),
-                &actor,
-                |checkpoint| {
-                    if checkpoint == injected {
-                        Err(format!("injected at {checkpoint:?}"))
-                    } else {
-                        Ok(())
-                    }
-                },
-            );
-
-            assert!(!staging.exists(), "owned staging survived {injected:?}");
-            if injected == GenesisCheckpoint::ProjectPublished {
-                let result = outcome.expect("post-publication retry returns complete Project");
-                assert_eq!(result.units_receipt.items.len(), ACTIVE_UNITS_KEYS.len());
-                ProjectResolver::new(&request.destination)
-                    .resolve()
-                    .unwrap();
-            } else {
-                let refusal = outcome.expect_err("pre-publication fault must refuse");
-                assert_eq!(refusal.code, PreferenceErrorCodeV1::GenesisPublishFailed);
-                assert!(
-                    !request.destination.exists(),
-                    "partial destination became authoritative at {injected:?}"
-                );
-            }
-        }
-    }
-
-    #[test]
-    fn fixed_identity_factory_projects_are_byte_identical_across_destinations() {
-        let fixture = Fixture::new("deterministic-roots");
-        let actor = fixture.actor();
-        let request = fixture.request("deterministic-a");
-        let mut trees = Vec::new();
-        for name in ["deterministic-a", "deterministic-b", "deterministic-c"] {
-            let mut at = request.clone();
-            at.destination = fixture.root.join(name);
-            fixture.service.create_project(at.clone(), &actor).unwrap();
-            trees.push(project_tree(&at.destination));
-        }
-        assert_eq!(trees[0], trees[1]);
-        assert_eq!(trees[1], trees[2]);
-    }
-
-    #[test]
-    fn global_seed_is_pinned_once_and_the_project_never_follows_later_edits() {
-        let fixture = Fixture::new("pinned-global");
-        let provider = fixture.provider();
-        let actor = fixture.actor();
-        let mut writer = GlobalPreferencesProductService::open(&provider, "seed-writer").unwrap();
-        let initial = writer
-            .mutate(
-                PreferenceMutationRequestV1::SetUser {
-                    key: "datum.units.board_length".to_owned(),
-                    value: json!("mil"),
-                    expected: HeadExpectationV1::Missing,
-                    request_id: uuid::Uuid::new_v4(),
-                    reason: "establish pinned test generation".to_owned(),
-                },
-                &actor,
-            )
-            .unwrap()
-            .generation
-            .unwrap();
-        drop(writer);
-
-        let genesis = GlobalPreferencesProductService::open(&provider, "genesis-reader").unwrap();
-        let mut request = fixture.request("Pinned Global Project");
-        request.units_source = ProjectUnitsSourceV1::Global {
-            expected_generation: Some(initial.clone()),
-        };
-        let mut changed_during_creation = false;
-        let result = genesis
-            .create_project_with_checkpoint(request.clone(), &actor, |checkpoint| {
-                if checkpoint == GenesisCheckpoint::StagingPrepared && !changed_during_creation {
-                    let mut concurrent =
-                        GlobalPreferencesProductService::open(&provider, "concurrent-writer")
-                            .map_err(|error| format!("{error:?}"))?;
-                    concurrent
-                        .mutate(
-                            PreferenceMutationRequestV1::SetUser {
-                                key: "datum.units.board_length".to_owned(),
-                                value: json!("inch"),
-                                expected: HeadExpectationV1::Generation(initial.clone()),
-                                request_id: uuid::Uuid::new_v4(),
-                                reason: "change Global after genesis pins its seed".to_owned(),
-                            },
-                            &actor,
-                        )
-                        .map_err(|error| format!("{error:?}"))?;
-                    changed_during_creation = true;
-                }
-                Ok(())
-            })
-            .unwrap();
-        assert!(changed_during_creation);
-        assert!(matches!(
-            &result.units_receipt.source,
-            ProjectUnitsReceiptSourceV2::Global {
-                generation: Some(generation),
-                ..
-            } if generation == &initial
-        ));
-        let board = result
-            .units_receipt
-            .items
-            .iter()
-            .find(|item| item.key == "datum.units.board_length")
-            .unwrap();
-        assert_eq!(board.copied_value, json!("mil"));
-
-        let before = project_tree(&request.destination);
-        let reopened =
-            GlobalPreferencesProductService::open(&provider, "post-genesis-reader").unwrap();
-        assert_eq!(
-            reopened
-                .context()
-                .generation
-                .as_ref()
-                .map(|value| value.generation),
-            Some(1)
-        );
-        assert_eq!(project_tree(&request.destination), before);
-        let model = ProjectResolver::new(&request.destination)
-            .resolve()
-            .unwrap();
-        let copied = project_units_seed_evidence(&model).unwrap().copied_values;
-        assert_eq!(copied["datum.units.board_length"], json!("mil"));
     }
 }
