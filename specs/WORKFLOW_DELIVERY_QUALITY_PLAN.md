@@ -1,6 +1,6 @@
 # Workflow delivery quality: staged adoption plan
 
-Status: governed planning contract; proposed enforcement, not active policy
+Status: WDQ-C01–C05 planning outcome approved; PM041 ratified, enforcement inactive
 Frontier key: WORKFLOW-DELIVERY-QUALITY
 Owner evidence: research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md
 
@@ -198,6 +198,17 @@ selects or authorizes its successor.
 
 ## Present delivery status
 
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C05-COMPLETE -->
+
+The owner replied `WORKFLOW-DELIVERY-QUALITY: approve adoption packet` after the
+`6ba8ea37` packet and `6549794e` handoff. PM041 records the exact disposition and
+reviewed hashes, ratifying the unchanged mechanism. WDQ-C01–C05 are complete as
+the planning/adoption outcome. The future contract-instance inventory is
+registered at zero; its fields and refusal semantics remain unimplemented.
+No runtime pilot, new gate suite, enforcement, successor selection or execution
+authorization is claimed. Foundation research and gate implementation retain
+their separate scheduled contracts and owner boundaries.
+
 <!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C04-COMPLETE -->
 
 WDQ-C04 is complete as the concrete adoption packet committed in `6ba8ea37`.
@@ -206,8 +217,8 @@ consumer-readiness pilot, exact G01–G06 contract, file ownership and budgets,
 legacy boundary, independent proof, owner-controlled activation and fresh
 existing-work handoff/resume transaction. Proposed PM041 and the exact gate
 contract were committed with it. The runtime pilot and new N/P suite have not
-been implemented or executed. WDQ-C05 now awaits owner disposition of this
-specific packet; the planning claim is released and no successor is authorized.
+been implemented or executed. The subsequent WDQ-C05 disposition is recorded
+above; the planning claim remains released and no successor is authorized.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C03-COMPLETE -->
 
@@ -242,15 +253,15 @@ workflow. Selection, zoom, Fit, dismissal and argument-based reopen are observed
 native authoring and manufacturing completion remain unavailable/unverified.
 
 The owner has authorized completion of this entire planning item. Foundation
-domain research, mechanism ratification, gate implementation and native pilot
-acceptance remain outstanding. Proposed data shapes are now explicit; no runtime
-inventory or executable gate is introduced. Parity registration and enforcement
-belong to the separately authorized implementation transaction.
+domain research, gate implementation and native pilot acceptance remain
+outstanding; mechanism ratification is complete at WDQ-C05. Ratified data shapes
+are explicit, with a zero-instance parity registration, not executable validation.
+Enforcement belongs to the separately authorized implementation transaction.
 
 ## Bounded foundational specification follow-on
 
 Frontier key: FOUNDATION-WORKFLOW-SPEC; issue:
-`dat-manual-foundation-contracts-fsw`. Blocked on reviewed WDQ adoption, planning
+`dat-manual-foundation-contracts-fsw`. Reviewed WDQ adoption is approved, planning
 only. This is an explicit future contract, not alternate next work or permission
 to rewrite another owner's route. Scope is an ordinary native project doorway,
 one exact board-edit/reopen path and its library/connectivity handoff; broad

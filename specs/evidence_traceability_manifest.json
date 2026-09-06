@@ -3,7 +3,7 @@
   "routes": [
     {
       "id": "workflow-delivery-quality",
-      "status": "in_progress",
+      "status": "integrated",
       "sources": [
         "research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md",
         "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md",
@@ -11,8 +11,8 @@
         "research/process-quality/WORKFLOW_DELIVERY_REFUSAL_CASES.md"
       ],
       "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md", "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md", "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md"],
-      "reviewed_digest": "ec53e58e4def380ae28d333d6d0af224eba16234becfe57589f796cf12a108de",
-      "review_note": "All four sources and four complete consumers re-reviewed at the C04-to-C05 handoff. C01-C04 deliverables are committed audit/research/proposal evidence, not native pilot or gate execution. The plan now cites concrete 6ba8ea37 packet evidence and replaces the historical GP-CM01 checkpoint with a fresh G02 owner handoff. C05 requires explicit disposition; the planning claim is released. Proposed PM041, source/proof/receipt separation, bounded About/Fit pilot, F1-F8 future domain work and all existing lane/selection/dependency boundaries remain unchanged. No unrelated route refresh, ratification, activation or product acceptance is authorized."
+      "reviewed_digest": "2fbe071e051bfdbdb17644a3f8cb3aa11474a471aefe427dd70a3d29c691efff",
+      "review_note": "All four sources and four complete consumers re-reviewed following the owner's exact WORKFLOW-DELIVERY-QUALITY: approve adoption packet response. PM041 records the 6ba8ea37/6549794e reviewed packet and pre-ratification hashes; unchanged mechanism and contract are ratified, not implemented. C01-C05 planning/adoption evidence is complete. The future instance inventory is registered at zero without schema/refusal proof claims. F1-F8 domain research, G02 execution authorization and G06 native proof/activation remain separate. No unrelated route, prototype, runtime, dependency, canonical selection or product acceptance was changed."
     },
     {
       "id": "research-governance-index",

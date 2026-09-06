@@ -66,7 +66,16 @@ through the dependent planning steps and preparing the full adoption packet.
 WDQ-C05 still requires disposition of the concrete packet; this instruction does
 not assert that an unspecified mechanism or unperformed pilot already passed.
 
-## Consumer
+## Concrete adoption approval
+
+After the committed packet was presented at WDQ-C05, the owner replied exactly
+`WORKFLOW-DELIVERY-QUALITY: approve adoption packet`. Recorded 2026-09-06 UTC
+(2026-09-05 owner-local date). The approved packet was committed in `6ba8ea37`
+and handed off in `6549794e`. PM041 records the reviewed hashes and resulting
+ratification. This supplies the previously missing adoption disposition, not
+execution/activation authorization, native pilot proof or product acceptance.
+
+## Consumer and authority
 
 `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md` defines the bounded planning contract.
-Its Frontier entry owns scheduling. No new mechanism is ratified by this brief.
+Its Frontier entry owns scheduling. PM041, not this brief, ratifies the mechanism.

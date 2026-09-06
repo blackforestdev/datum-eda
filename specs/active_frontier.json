@@ -7255,7 +7255,7 @@
       "issue_id": "dat-workflow-delivery-quality-xgj",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
       "state": "specified",
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": false,
       "parallel": true,
       "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
@@ -7263,7 +7263,7 @@
       "unblocks": ["dat-manual-foundation-contracts-fsw", "dat-workflow-gate-pilot-b3s"],
       "completion": {
         "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
-        "canonical_next_step_id": "WDQ-C05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -7306,11 +7306,11 @@
             "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C04-COMPLETE"}]
           },
           {
-            "id": "WDQ-C05", "kind": "owner_decision", "status": "pending",
+            "id": "WDQ-C05", "kind": "owner_decision", "status": "complete",
             "action": "Obtain explicit owner disposition of the concrete adoption packet before numbered ratification and separately authorized implementation; do not infer pilot acceptance or successor selection.",
             "depends_on": ["WDQ-C04"],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C05"}],
-            "completion_evidence": [],
+            "completion_evidence": [{"kind": "decision", "path": "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C05-APPROVED"}],
             "owner_input": {
               "response_format": "Reply `WORKFLOW-DELIVERY-QUALITY: approve adoption packet`, `WORKFLOW-DELIVERY-QUALITY: revise — <specific correction>`, or `WORKFLOW-DELIVERY-QUALITY: defer — <reason>`.",
               "requests": [{

@@ -1,7 +1,12 @@
 # Workflow delivery quality: owner adoption packet
 
-Status: WDQ-C04 concrete proposal; WDQ-C05 owner disposition pending
+Status: WDQ-C04 packet approved at WDQ-C05; implementation/activation not authorized
 Tracking: `dat-workflow-delivery-quality-xgj`
+
+Owner response: `WORKFLOW-DELIVERY-QUALITY: approve adoption packet`, recorded
+2026-09-06 UTC. PM041 records the exact reviewed revision and pre-ratification
+hashes. The proposal below is retained as the approved scope; future-tense
+implementation and acceptance requirements are not claims of completed work.
 
 ## What is being proposed
 
@@ -73,7 +78,7 @@ that environment; other platform/backend claims require their own evidence.
 
 Frontier: WORKFLOW-DELIVERY-GATE-PILOT
 Issue: `dat-workflow-gate-pilot-b3s`
-Blocked on WDQ adoption; planning only until WDQ-G02 explicit authorization.
+WDQ adoption prerequisite approved; planning only until WDQ-G02 explicit authorization.
 This successor is scheduled, not selected. Its gate code cannot certify itself
 during bootstrap; existing gates and independent owner-run proof govern it.
 

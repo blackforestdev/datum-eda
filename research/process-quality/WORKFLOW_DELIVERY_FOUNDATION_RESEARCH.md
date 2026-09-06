@@ -83,7 +83,8 @@ affected scenario. An unresolved mandatory answer may not become `N/A`.
 
 `FOUNDATION-WORKFLOW-SPEC` / `dat-manual-foundation-contracts-fsw` collects F1–F8
 into **one bounded pre-implementation contract**, governed by WDQ-F01–F03 in the
-WDQ plan. It is blocked on the reviewed WDQ adoption and is not canonical-next
+WDQ plan. At C02 it was blocked on WDQ adoption (subsequently approved at C05);
+it is not canonical-next
 or an execution authorization. The existing owners above are consumers and
 review boundaries, not newly assigned parallel work. Their claims, completion
 criteria and implementation dependencies remain unchanged.
