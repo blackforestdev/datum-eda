@@ -6,6 +6,71 @@ G06 remains incomplete pending the prepared transaction's external promotion
 and passing scoped enforcement. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
 
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-PREPARED -->
+## G06P preparation validated; owner promotion remains separate
+
+The owner-authorized sequencing correction and first-party tooling landed in
+`2f9a696e`, `5c43f335`, `db82cf0c` and `9c924e38`. The first two real generation
+attempts stopped safely on isolated projection/predecessor reconciliation errors;
+their diagnostic directories were retained, not promoted. Corrected generation
+succeeded from base `9c924e38ba3141ee22ac3cc7bf0f4ebff514deda` to detached proposal
+`8830ce0b891b1275e20beb606475b107909225db`, with the complete output in
+`/home/bfadmin/Documents/datum-wdq-preparation-owner-handoff/preparation.json`
+and its adjacent `promotion.md`. This is intermediate preparation evidence,
+not the final publishable candidate after this completion record lands.
+
+The real run checked source Frontier/claim validity, the exact accepted receipt,
+packet/review hashes and the entire 1,778-file live input closure. It generated
+and committed exactly six proposal paths, passed spec governance, evidence
+traceability and full structural Frontier validation, copied the external runner
+and hook, and verified unchanged live HEAD, semantic index, worktree, local Git
+configuration and input closure. Tracker closure exists only inside the detached
+proposal; live tracker and main remain incomplete for G06. The only related
+predecessor change removes this pilot from both remaining-unblocks projections.
+No trust configuration, live hook installation or real enforcement invocation
+using agent-selected authority was performed.
+
+Verification: all 112 workflow tests and 50 selector tests passed; source health
+(1,800 files), traceability (20 routes/114 artifacts), spec governance (203),
+parity (16 inventories), progress coverage, Cargo resource policy, project status
+(50 items), shell syntax and diff whitespace checks passed. The 14 preparation
+tests include the real external validator through the proposed hook in a
+disposable synthetic authority fixture: baseline passes, staged input drift
+refuses with WDQ-INDEX/1, and runner drift refuses with WDQ-TRUST/2. Missing
+trust, moving refs, internal runners, gate failure propagation, live-state drift,
+proposal scoping and quoted command syntax are covered. These fixture checks
+are not production promotion or a new native replay. No full drift-suite pass
+is claimed.
+
+The reserved independent reviewer rechecked the corrected implementation and
+reported no remaining blocker in its read-only review. It verified the six-path
+proposal and bounded predecessor reconciliation, the corrected sequencing and
+the owner-only command ordering. It did not execute tests, edit files, promote
+authority or change its original native-review verdict.
+
+After committing this truthful G06P completion, regenerate the final candidate
+from the fresh clean base using:
+
+```bash
+python3 scripts/workflow_delivery_prepare.py --output /home/bfadmin/Documents/datum-wdq-activation-final
+```
+
+The resulting `preparation.json` identifies the exact final candidate/base and
+external runner; adjacent `promotion.md` contains the fully pinned owner-only
+review, verification, fast-forward publication, configuration and post-install
+commands. The generator refuses an existing output directory or a changed live
+worktree. Do not publish an earlier candidate, force history, bypass a refusal,
+or infer authority from a retained local candidate ref. Only the owner may
+select and execute the final promotion. Preserve that external directory after
+installation because the blocking hook uses its pinned validator.
+
+Your exact ACCEPT and both DEFER responses remain valid and must not be requested
+again for these unchanged hashes. G06P is complete; the parent remains open,
+the claim is released, and G06 is the sole selected owner checkpoint. Preferences
+stays at GP-CM04 without GP-CM05 authorization or resumption. Canonical task
+selection, all bound authority/input digests and both open Console defects are
+unchanged. No production, prototype, dependency or licensing change occurred.
+
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-AUTHORIZED -->
 ## Owner-authorized preparation sequencing correction
 
