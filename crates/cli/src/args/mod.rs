@@ -101,7 +101,9 @@ pub(crate) use self::native_support::{
 };
 pub(crate) use self::output::{FailOn, OutputFormat};
 pub(crate) use self::pool::{PoolCommands, ReplacementPolicyArg};
-pub(crate) use self::preferences::{PreferencesCommands, PreferencesSeedSource};
+pub(crate) use self::preferences::{
+    PreferencesCommands, PreferencesProposalCommands, PreferencesSeedSource,
+};
 pub(crate) use self::project::ProjectCommands;
 pub(crate) use self::project_command_args_artifacts::*;
 pub(crate) use self::project_command_args_board::*;

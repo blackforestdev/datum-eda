@@ -70,6 +70,17 @@ impl GlobalPreferencesProductService {
                     .reject_proposal(proposal)
                     .map(PreferenceProposalResultV1::Rejected)
                     .map(PreferenceProductResultV1::Proposal),
+                PreferenceProposalActionV1::AcceptAndApply { proposal }
+                    if matches!(
+                        actor.kind,
+                        super::PreferenceActorKindV1::HumanGui
+                            | super::PreferenceActorKindV1::HumanCli
+                    ) =>
+                {
+                    self.accept_proposal_human(proposal, actor)
+                        .map(PreferenceProposalResultV1::Accepted)
+                        .map(PreferenceProductResultV1::Proposal)
+                }
                 PreferenceProposalActionV1::AcceptAndApply { proposal } => Err(self.error(
                     PreferenceErrorCodeV1::MissingAcceptance,
                     "Proposal application requires a daemon-held human acceptance capability",

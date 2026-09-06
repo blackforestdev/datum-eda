@@ -263,6 +263,46 @@ fn generic_product_envelope_does_not_bypass_mcp_acceptance() {
 }
 
 #[test]
+fn trusted_human_product_envelope_can_accept_a_valid_proposal() {
+    let (_locations, mut service) = service("product-envelope-human-acceptance");
+    let requesting = actor(PreferenceActorKindV1::ScriptAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "script proposes a preference".to_owned(),
+            &requesting,
+        )
+        .unwrap();
+    let response = service.execute(
+        PreferenceProductRequestV1 {
+            schema: PreferenceSchemaRefV1 {
+                name: "datum.preferences.proposal.accept_apply".to_owned(),
+                version: 1,
+            },
+            payload: PreferenceProductPayloadV1::Proposal(
+                PreferenceProposalActionV1::AcceptAndApply {
+                    proposal: prepared.proposal,
+                },
+            ),
+        },
+        &actor(PreferenceActorKindV1::HumanCli),
+    );
+    assert!(response.ok);
+    assert!(matches!(
+        response.result,
+        Some(PreferenceProductResultV1::Proposal(
+            PreferenceProposalResultV1::Accepted(_)
+        ))
+    ));
+}
+
+#[test]
 fn proposal_prepare_validate_and_reject_are_portable_and_side_effect_free() {
     let (locations, service) = service("proposal-pure");
     let prepared = service
