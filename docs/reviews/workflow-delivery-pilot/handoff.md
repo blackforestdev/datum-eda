@@ -1,7 +1,8 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G03 complete; G04 selected and unclaimed; activation remains off.
+Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
+activation remains off.
 
 This is an operational record under the ratified PM041 gate contract and
 WORKFLOW_DELIVERY_ADOPTION_PACKET, not a new product specification. It is outside
@@ -286,3 +287,103 @@ consumer-owner handoff; a nonoverlapping scope does not release that hold.
 The separate reviewer remains reserved for G05 native replay. G06 still requires
 owner acceptance and external trusted-runner promotion; report-only operation
 must not be described as activated enforcement.
+
+## G04 production admission: first implementation unit
+
+Recorded 2026-09-06 UTC. The owner replied `pkease proceed` after confirming
+that the other session was still developing Preferences. The refreshed selector
+selected G04 with execution authorization and no claim. The synchronized lease
+now names the menu/protocol/runtime/render files and the shared viewport camera
+resolver; the implementation/original-proof session remains unchanged. No
+Preferences claim, selected step or authorization was transferred.
+
+The production registry owns exactly the four reviewed pilot keys, typed Fit
+handler identity, actual entry-surface identities and stable unavailable reasons.
+Menu paint and invocation consult the same admission function; editor F reaches
+the same dispatch instead of directly bypassing it. Missing consumers stay
+unavailable, and missing registry keys never acquire handlers. Other GUI-local
+families retain their existing dispatch ownership, including Preferences, pane
+navigation and individual layer controls.
+
+Shared viewport camera-scene resolution lives in `workspace_interaction/camera.rs`,
+not in the menu model. Readiness and actual camera routing consume that resolver;
+hidden, stale or unresolved panes cannot silently target another Board. Menu
+activation/refusal restores editor focus before a supported action establishes
+any new overlay focus. Existing Preferences submenu navigation tests remain in
+place. No prototype, golden, menu inventory, dependency or source-health policy
+changed. All touched source modules remain within normal budgets.
+
+The reserved independent reviewer inspected this bounded diff read-only and
+reported no concrete blocking defect. It ran no tests or native input and did
+not perform G05 replay or acceptance.
+
+### Remaining work and held ownership
+
+This unit is not G04 completion. Production registry export, native event/state
+correlation, accessible menu publication, proof-grade GUI/CLI build receipts and all
+PILOT-S01–S05 native evidence remain outstanding. Unit/render construction tests
+do not replace those observations. No `proof.json`, `review.json`, policy
+enrollment, trusted setting or owner acceptance is created here.
+
+The owner was asked to obtain a bounded Preferences consumer-owner handoff for
+the shared accessibility files already listed above, naming its current commit,
+retained ownership and in-flight changes. Those files remain untouched and held;
+this request is not a release. The other session may continue on nonoverlapping
+files. No native window has been opened on the owner's desktop.
+
+The pre-existing menu CSV round-trip failure was reproduced without writes:
+`menu_model_csv.build_obj()` omits the live `edit.preferences` submenu, and its
+column/entry schema cannot retain `requires_project`. Captured as
+`dat-menu-csv-roundtrip-etp`; blindly following the checker's regeneration advice
+would remove current Preferences semantics. The owning menu/Preferences lane
+must reconcile that separately. Neither CSV/JSON nor generator was edited here.
+
+### First-unit verification
+
+Guarded, offline/locked tests for the application, protocol and renderer passed
+558 library/binary tests: 294 application, 112 protocol and 152 renderer;
+eight existing application tests were ignored, not passed. The final rerun used
+`cargo test --offline --locked -q -p datum-gui-protocol -p datum-gui-render
+-p datum-gui-app --lib --bins` through the guarded proof runner. The
+focused runs also passed 11 menu protocol tests and 18 application/renderer menu
+tests. Coverage includes real menu inventory mapping, exact pilot handler/reason
+identities, unresolved/hidden/stale camera contexts, inspectable unavailable rows,
+rendered enabled/disabled state and existing Preferences submenu navigation.
+These are unit/construction tests, not native user-input proof.
+
+Delivery tests passed 82; existing project-status tests passed 45, claim tests
+five and source-health regressions 13. Source health, evidence traceability
+(20 routes / 114 artifacts), spec governance (203 classified), progress coverage,
+project-state/projection, menu-model validity and dependency/Cargo-resource policy
+checks passed. No authority digest was refreshed.
+
+Full drift was attempted: delivery and Cargo-resource checks plus workspace
+rustfmt passed, then workspace Clippy stopped with 33 Preferences-owned engine
+diagnostics (large error/enum payloads and repository open options). This is
+ongoing other-lane work, not a completed Preferences verdict or a WDQ repair
+authorization. The separate CSV round-trip failure above is also unresolved.
+No full-repository green claim is made.
+
+### Offscreen render inspection, not native proof
+
+The guarded command `cargo build --offline --locked -p datum-gui-app
+-p datum-eda-cli --features datum-gui-app/visual` passed. Diagnostic binary hashes:
+
+- GUI: `ecec45fea1746c89b48c0849eb5d1154d9f5f91c52b609c0f94aafdb5223484d`.
+- CLI: `32b79c2f0addf2cefd6d8eb1f979c50bfb2b469d8e6bd0df21568f3a014900be`.
+
+The existing C01 archive was extracted under the isolated temporary directory
+`/tmp/datum-wdq-g04-preview-ptukH1/project`. Captures used that Project, pinned
+`EDA_CLI_BIN` to the just-built CLI, private XDG config/runtime directories,
+unset DISPLAY/WAYLAND_DISPLAY, and `--visual-test --exit-after-screenshot
+--window-size 1280x768`. Help used `--open-menu Help`; the unresolved schematic
+capture used `--open-menu View --focus-pane schematic`. No native input was sent.
+
+Both [Help preview](g04-help-preview.png) and
+[unresolved schematic View preview](g04-schematic-preview.png) were inspected.
+About and the ineligible Fit row are muted, focus outlines remain visible and
+the existing menu/pane geometry is preserved. The displayed fixture revision
+is not a build identity. `tar --compare` confirmed all archived source/journal
+bytes unchanged after both captures; this is not a complete new-path or native
+reopen audit. Concurrent Preferences inputs were not frozen into a full proof
+manifest; these previews must never substitute for fresh PILOT-S01–S05 evidence.

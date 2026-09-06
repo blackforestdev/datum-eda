@@ -2,6 +2,8 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
+pub mod action_registry;
+
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 pub struct GuiMenuModel {
     pub schema: String,
@@ -59,6 +61,11 @@ impl GuiMenuItem {
     }
 
     pub fn is_phase_one_enabled(&self) -> bool {
+        if let GuiMenuBinding::GuiLocal(key) = self.binding()
+            && let Some(consumer) = action_registry::consumer(key)
+        {
+            return consumer.handler.is_some();
+        }
         matches!(
             self.binding(),
             GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_)
@@ -67,6 +74,24 @@ impl GuiMenuItem {
 
     pub fn is_enabled(&self, project_open: bool) -> bool {
         self.is_phase_one_enabled() && (!self.requires_project || project_open)
+    }
+
+    /// Contextual production state used by paint and invocation. The legacy
+    /// project-only query cannot establish focused-camera eligibility.
+    pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
+        if let GuiMenuBinding::GuiLocal(key) = self.binding()
+            && let Some(consumer) = action_registry::consumer(key)
+        {
+            return consumer.admit(state).err();
+        }
+        if self.requires_project && state.backing.is_none() {
+            return Some("This action requires an open Project.");
+        }
+        match self.binding() {
+            GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_) => None,
+            GuiMenuBinding::NotBuilt(reason) => Some(reason),
+            _ => Some("This action is unavailable in this build."),
+        }
     }
 }
 

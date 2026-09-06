@@ -7381,8 +7381,24 @@
       "title": "Implement and validate the bounded workflow delivery gate pilot",
       "issue_id": "dat-workflow-gate-pilot-b3s",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md", "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md"],
-      "state": "ready", "authorization": "execution",
+      "state": "in_progress", "authorization": "execution",
       "canonical_next": false, "parallel": true,
+      "claim": {
+        "agent": "codex", "harness": "codex-cli",
+        "session": "codex-wdq-g01-planning-20260906",
+        "claimed_at": "2026-09-06T15:32:03Z", "heartbeat_at": "2026-09-06T15:32:03Z",
+        "expires_at": "2026-09-06T23:32:03Z",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "6755474e057329588313f06ba6276251cd0fa933",
+        "scope": [
+          "WDQ-G04 bounded production readiness: crates/gui-protocol/src/gui_menu_model.rs and gui_menu_model/action_registry.rs plus its focused tests",
+          "Shared camera-scene resolution in crates/gui-protocol/src/workspace_interaction.rs and workspace_interaction/camera.rs; actual camera routing and menu readiness consume the same resolver",
+          "crates/gui-app/src/runtime_menu_actions.rs, runtime_view_actions.rs, workspace_keyboard.rs and runtime_camera_pane.rs; preserve Preferences dispatch and all other action families",
+          "crates/gui-render/src/menu_chrome.rs and focused menu_chrome tests; no prototype or golden changes",
+          "Owned WDQ Frontier/beads/projection and docs/reviews/workflow-delivery-pilot/handoff.md records only; shared accessibility files remain held pending explicit consumer-owner handoff",
+          "Diagnostic native-render captures docs/reviews/workflow-delivery-pilot/g04-help-preview.png and g04-schematic-preview.png; not native-input proof or acceptance"
+        ]
+      },
       "summary": "Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance.",
       "dependencies": ["dat-workflow-delivery-quality-xgj"],
       "unblocks": [],
@@ -7395,7 +7411,7 @@
           {"id": "WDQ-G01", "kind": "planning", "status": "complete", "action": "Freeze the ratified contract, production pilot paths, ownership and trusted-runner handoff.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G01"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-delivery-pilot/handoff.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G01-HANDOFF"}]},
           {"id": "WDQ-G02", "kind": "owner_decision", "status": "complete", "action": "Obtain explicit owner authorization for the exact implementation window and existing-work resume disposition.", "depends_on": ["WDQ-G01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G02"}], "completion_evidence": [{"kind": "review", "path": "docs/reviews/workflow-delivery-pilot/handoff.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G02-AUTHORIZED"}], "owner_input": {"response_format": "Reply `WORKFLOW-DELIVERY-GATE-PILOT: authorize bounded implementation`, `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific correction>`, or `WORKFLOW-DELIVERY-GATE-PILOT: defer — <reason>`.", "requests": [{"id": "GATE-IMPLEMENTATION", "question": "Do you authorize the exact G01 pilot contract, file-lane handoff and implementation window while preserving the recorded resume condition?", "recommended_response": "Authorize only the reviewed G03-G05 build/proof scope; blocking activation still requires G06 acceptance.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G02"}}]}},
           {"id": "WDQ-G03", "kind": "execution", "status": "complete", "action": "Implement report-only delivery validation and pass N01-N20/P01-P07 with unchanged selector and claim semantics.", "depends_on": ["WDQ-G02"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G03"}], "completion_evidence": [{"kind": "commit", "revision": "9cb42473"}, {"kind": "document", "path": "docs/reviews/workflow-delivery-pilot/handoff.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G03-VALIDATED"}]},
-          {"id": "WDQ-G04", "kind": "execution", "status": "pending", "action": "Implement one production consumer registry for the bounded action pilot and prove native PILOT-S01-S05 on fresh identified bytes.", "depends_on": ["WDQ-G03"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G04"}], "completion_evidence": []},
+          {"id": "WDQ-G04", "kind": "execution", "status": "in_progress", "action": "Implement one production consumer registry for the bounded action pilot and prove native PILOT-S01-S05 on fresh identified bytes.", "depends_on": ["WDQ-G03"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G04"}], "completion_evidence": []},
           {"id": "WDQ-G05", "kind": "execution", "status": "pending", "action": "Obtain independent replay, resolve blocking defects and prepare exact owner activation evidence.", "depends_on": ["WDQ-G04"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G05"}], "completion_evidence": []},
           {"id": "WDQ-G06", "kind": "owner_decision", "status": "pending", "action": "Accept the proven native pilot, activate only the approved enrollment through trusted authority and record the existing-work resume disposition.", "depends_on": ["WDQ-G05"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G06"}], "completion_evidence": [], "owner_input": {"response_format": "Reply with the exact ACCEPT receipt in the reviewed activation packet, or `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific correction>` or `WORKFLOW-DELIVERY-GATE-PILOT: defer — <reason>`.", "requests": [{"id": "GATE-ACTIVATION", "question": "Does the final native pilot, independent replay, refusal suite and trusted-runner setup justify the exact proposed acceptance and scoped enforcement activation?", "recommended_response": "Accept only the exact packet and enrollment after passing proof; no blanket rollout or native authoring acceptance.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md", "marker": "WDQ-G06"}}]}}
         ],

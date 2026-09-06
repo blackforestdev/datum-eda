@@ -24,17 +24,15 @@ struct CameraViewport {
 impl Runtime {
     /// Resolve the FOCUSED pane to its `(slot, bounds, viewport)` — one path for board,
     /// schematic, and any future pane, collapsing the old per-surface fork. `None` = a
-    /// focused schematic with no resolved scene; handlers then bail (pan/zoom) or fit board.
+    /// focused pane with no resolved scene; camera handlers then refuse to act.
     fn camera_viewport_for_pane(&self, pane: datum_gui_protocol::PaneId) -> Option<CameraViewport> {
         let panes = self
             .current_layout()
             .viewport_panes(&self.workspace().ui.layout);
         let leaf = panes.panes.iter().find(|leaf| leaf.id == pane)?;
-        let bounds = match leaf.content {
-            datum_gui_protocol::PaneContent::Board => self.workspace().scene.bounds.clone(),
-            datum_gui_protocol::PaneContent::Schematic => self.schematic_bounds()?,
-            datum_gui_protocol::PaneContent::Revision(_) => return None,
-        };
+        let bounds = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?
+            .bounds
+            .clone();
         Some(CameraViewport {
             pane,
             content: leaf.content,
@@ -70,8 +68,8 @@ impl Runtime {
     }
 
     pub(super) fn fit_camera(&mut self) {
-        // S2: fit the FOCUSED pane's camera to its bounds via the one resolver; a focused
-        // schematic with no resolved scene falls back to the board (pre-collapse behavior).
+        // Fit only the focused resolved pane. An unavailable pane never falls
+        // back to a different Board and must not be narrated as a successful Fit.
         let Some(route) = self.focused_viewport() else {
             return;
         };

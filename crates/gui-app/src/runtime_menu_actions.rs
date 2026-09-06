@@ -252,18 +252,22 @@ impl Runtime {
             self.invalidate_frame();
             return true;
         }
-        if !item.is_enabled(self.workspace().backing.is_some()) {
+        if let Some(reason) = item.unavailable_reason(self.workspace()) {
             self.session.workspace_mut().ui.active_menu = None;
             self.session.workspace_mut().ui.active_submenu = None;
+            let pane = self.workspace().ui.layout.focused;
+            self.set_application_focus(ApplicationFocus::Editor(pane));
             self.log_console_refusal(
                 ConsoleFeedbackSource::Menu,
-                format!("{menu_name} / {label} requires an open Project"),
+                format!("{menu_name} / {label}: {reason}"),
             );
             self.invalidate_frame();
             return true;
         }
         self.session.workspace_mut().ui.active_menu = None;
         self.session.workspace_mut().ui.active_submenu = None;
+        let pane = self.workspace().ui.layout.focused;
+        self.set_application_focus(ApplicationFocus::Editor(pane));
         if let Some(action) = item.gui_local.as_deref() {
             return self.activate_gui_local_menu_action(action);
         }
@@ -333,6 +337,46 @@ impl Runtime {
 #[cfg(test)]
 mod menu_keyboard_tests {
     use super::*;
+
+    #[test]
+    fn unavailable_pilot_rows_remain_keyboard_inspectable_and_dismissible() {
+        let model = datum_gui_protocol::load_default_gui_menu_model().unwrap();
+        for (menu_name, key) in [
+            ("Help", "help.about"),
+            ("Window", "window.documents"),
+            ("View", "view.layers"),
+        ] {
+            let group = model
+                .menubar
+                .iter()
+                .find(|group| group.menu == menu_name)
+                .unwrap();
+            let index = group
+                .items
+                .iter()
+                .position(|item| item.gui_local.as_deref() == Some(key))
+                .unwrap();
+            assert!(!group.items[index].is_phase_one_enabled());
+            let previous = (index + group.items.len() - 1) % group.items.len();
+            assert_eq!(
+                menu_key_intent(group, None, previous, &Key::Named(NamedKey::ArrowDown)),
+                MenuKeyIntent::Focus(index),
+            );
+            // Enter reaches the production activation/refusal boundary; disabled
+            // rows are not skipped and cannot acquire a synthetic handler.
+            assert_eq!(
+                menu_key_intent(group, None, index, &Key::Named(NamedKey::Enter)),
+                MenuKeyIntent::Activate {
+                    menu: menu_name.to_owned(),
+                    label: group.items[index].label.clone()
+                },
+            );
+            assert_eq!(
+                menu_key_intent(group, None, index, &Key::Named(NamedKey::Escape)),
+                MenuKeyIntent::CloseMenu,
+            );
+        }
+    }
 
     fn edit_menu() -> datum_gui_protocol::GuiMenu {
         datum_gui_protocol::load_default_gui_menu_model()
