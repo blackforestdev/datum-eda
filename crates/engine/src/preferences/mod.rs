@@ -10,6 +10,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde_json::Value;
 
 mod catalog;
+mod product_idempotency;
 mod product_model;
 mod product_proposal;
 mod product_query;

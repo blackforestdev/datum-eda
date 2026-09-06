@@ -39,6 +39,7 @@ fn metadata(reason: &str) -> MutationMetadata {
         actor: "test-user".to_owned(),
         reason: reason.to_owned(),
         writer_instance: "test-process".to_owned(),
+        audit: None,
     }
 }
 

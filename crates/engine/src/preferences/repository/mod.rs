@@ -22,10 +22,10 @@ pub use migration::{
     MigrationTransformResult, PreferenceMigration,
 };
 pub use model::{
-    ExactBackupRef, GenerationRef, HeadExpectation, MigrationIssue, MutationMetadata,
-    MutationReceipt, PreferenceMutation, PreferencePartition, RepositoryError, RepositorySnapshot,
-    RepositoryStatus, RestoreOutcome, RestorePlan, StoredPreferenceValue, UnknownEnvelope,
-    UnknownEnvelopeRef, UnreadableEvidence,
+    ExactBackupRef, GenerationRef, HeadExpectation, MigrationIssue, MutationAuditMetadata,
+    MutationMetadata, MutationReceipt, PreferenceMutation, PreferencePartition, RepositoryError,
+    RepositorySnapshot, RepositoryStatus, RestoreOutcome, RestorePlan, StoredPreferenceValue,
+    UnknownEnvelope, UnknownEnvelopeRef, UnreadableEvidence,
 };
 
 use io::{
@@ -210,6 +210,21 @@ impl PreferenceRepository {
             &generation_dir(&self.root, snapshot.generation.generation),
             envelope,
         ))?)
+    }
+
+    pub fn snapshot_at_generation(
+        &self,
+        generation_number: u64,
+    ) -> Result<RepositorySnapshot, RepositoryError> {
+        let generation = io::list_valid_generations(&self.root)
+            .into_iter()
+            .find(|candidate| candidate.generation == generation_number)
+            .ok_or_else(|| {
+                RepositoryError::Invariant(format!(
+                    "immutable preference generation {generation_number} is unavailable"
+                ))
+            })?;
+        load_snapshot(&self.root, &generation)
     }
 
     fn apply_mutation(
@@ -446,6 +461,28 @@ fn receipt(
         before_digests,
         after_digests,
         redacted_keys: Vec::new(),
+        request_id: metadata.audit.as_ref().map(|audit| audit.request_id),
+        canonical_request_digest: metadata
+            .audit
+            .as_ref()
+            .map(|audit| audit.canonical_request_digest.clone()),
+        actor_kind: metadata
+            .audit
+            .as_ref()
+            .map(|audit| audit.actor_kind.clone()),
+        local_actor_id: metadata
+            .audit
+            .as_ref()
+            .map(|audit| audit.local_actor_id.clone()),
+        actor_session_id: metadata
+            .audit
+            .as_ref()
+            .map(|audit| audit.actor_session_id.clone()),
+        invocation_id: metadata.audit.as_ref().map(|audit| audit.invocation_id),
+        expected_generation_ref: metadata
+            .audit
+            .as_ref()
+            .and_then(|audit| audit.expected_generation_ref.clone()),
     })
 }
 
